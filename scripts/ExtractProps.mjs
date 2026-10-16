@@ -140,6 +140,28 @@ export function extractProps() {
         ? String(type.value)
         : checker.typeToString(type);
 
+  const keywordTypes = new Set([
+    ts.SyntaxKind.BooleanKeyword,
+    ts.SyntaxKind.StringKeyword,
+    ts.SyntaxKind.NumberKeyword,
+    ts.SyntaxKind.NullKeyword,
+    ts.SyntaxKind.UndefinedKeyword,
+  ]);
+  /** The text of a resolved type, such as an instantiated type parameter, without undefined. */
+  const resolvedText = (type) => {
+    const texts = withoutUndefined(type).map(literalText);
+    if (texts.includes('true') && texts.includes('false')) {
+      texts.splice(texts.indexOf('true'), 1, 'boolean');
+      texts.splice(texts.indexOf('false'), 1);
+    }
+    return texts.join(' | ');
+  };
+  /** Whether a type node names a type parameter, such as State in CheckedProps<State>. */
+  const isTypeParameter = (node) =>
+    node &&
+    ts.isTypeReferenceNode(node) &&
+    (checker.getSymbolAtLocation(node.typeName)?.flags ?? 0) & ts.SymbolFlags.TypeParameter;
+
   /**
    * The readable text of a type node: as written, with envUI's own aliases of literal unions, such
    * as ButtonVariant, spelled out as their values, since agents and readers need the values.
@@ -157,6 +179,7 @@ export function extractProps() {
         const members = ts.isUnionTypeNode(alias.type) ? alias.type.types : [alias.type];
         const literal = (member) =>
           ts.isLiteralTypeNode(member) ||
+          keywordTypes.has(member.kind) ||
           (ts.isTypeReferenceNode(member) && typeText(member) !== member.getText());
         if (members.every(literal)) return typeText(alias.type);
       }
@@ -277,7 +300,9 @@ export function extractProps() {
           .filter((o) => o.declarations.some((d) => originOf(d) !== 'native'))
           .map((o) => {
             const own = o.declarations.find((d) => originOf(d) !== 'native');
-            return typeText(own.type) ?? withoutUndefined(o.type).map(literalText).join(' | ');
+            // A type parameter reads as the type it is instantiated with, such as boolean | 'mixed'.
+            if (!own.type || isTypeParameter(own.type)) return resolvedText(o.type);
+            return typeText(own.type);
           }),
       );
       // Forms that each allow one boolean value, such as iconOnly?: false and iconOnly: true.

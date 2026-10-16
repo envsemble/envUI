@@ -1059,13 +1059,13 @@
         },
         {
           "name": "checked",
-          "type": "State",
+          "type": "boolean | 'mixed'",
           "required": false,
           "description": ""
         },
         {
           "name": "defaultChecked",
-          "type": "State",
+          "type": "boolean | 'mixed'",
           "required": false,
           "default": "false",
           "description": ""
@@ -5553,13 +5553,13 @@
         },
         {
           "name": "checked",
-          "type": "State",
+          "type": "boolean",
           "required": false,
           "description": ""
         },
         {
           "name": "defaultChecked",
-          "type": "State",
+          "type": "boolean",
           "required": false,
           "default": "false",
           "description": ""
