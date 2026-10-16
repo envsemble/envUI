@@ -208,11 +208,36 @@ test('specs, fixtures and helpers run the specs they belong to', () => {
   assert.ok(fast(contrast).includes('ThemeContrast.spec.ts'));
 });
 
-test('specs that need a build or edit sources wait for the affected tier', () => {
-  const scope = select('apps/catalogue/src/examples/menu/Choices.tsx');
-  assert.ok(!fast(scope).includes('Catalogue.spec.ts'));
-  assert.ok(affected(scope).includes('Catalogue.spec.ts'));
-  assert.equal(scope.build.site, true);
+test('the fast tier builds the catalogue its specs open; library-build and live specs wait', () => {
+  const example = select('apps/catalogue/src/examples/menu/Choices.tsx');
+  assert.ok(fast(example).includes('DenseContent.spec.ts'));
+  assert.ok(affected(example).includes('Catalogue.spec.ts'));
+  assert.equal(example.build.site, true);
+  const page = select('apps/catalogue/src/pages/Overview.tsx');
+  assert.ok(fast(page).includes('Catalogue.spec.ts'));
+  assert.deepEqual(page.fastBuild, { catalogue: true, site: true });
+  const hydration = select('tests/browser/Hydration.spec.ts');
+  assert.deepEqual(fast(hydration), []);
+  assert.ok(affected(hydration).includes('Hydration.spec.ts'));
+  assert.equal(hydration.build.library, true);
+  assert.deepEqual(fast(select('tests/browser/LiveDevelopment.spec.ts')), []);
+});
+
+test('catalogue parts run the specs that import them or are about them', () => {
+  assert.deepEqual(fast(select('apps/catalogue/src/search/DocumentationSearch.tsx')), [
+    'CatalogueSearch.spec.ts',
+  ]);
+  assert.deepEqual(fast(select('scripts/SearchIndex.mjs')), ['CatalogueSearch.spec.ts']);
+  assert.ok(
+    fast(select('apps/catalogue/src/navigation/Sidebar.tsx')).includes('CatalogueSearch.spec.ts'),
+  );
+  // A file no spec names falls back to the catalogue's shared specs.
+  assert.deepEqual(
+    fast(select('apps/catalogue/src/styles/Shell.css')),
+    [...overrides.catalogueSpecs].sort(),
+  );
+  for (const specs of Object.values(overrides.catalogueAreas))
+    for (const spec of specs) assert.ok(index.specs.has(spec), `${spec} is a spec`);
 });
 
 test('lint and format take only changed files, and their configuration everything', () => {

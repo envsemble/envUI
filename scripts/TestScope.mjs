@@ -83,6 +83,18 @@ export const overrides = {
   ],
   /** Run for a change to the catalogue's own shell, navigation or styles. */
   catalogueSpecs: ['Catalogue.spec.ts', 'Spacing.spec.ts', 'DenseContent.spec.ts'],
+  /**
+   * Parts of the catalogue and the specs about them, beside the specs that import a part's
+   * modules, which the map finds itself.
+   */
+  catalogueAreas: {
+    'apps/catalogue/src/search/': ['CatalogueSearch.spec.ts'],
+    'apps/catalogue/src/navigation/': ['CatalogueSearch.spec.ts', 'Catalogue.spec.ts'],
+    'apps/catalogue/src/pages/': ['Catalogue.spec.ts', 'CatalogueSearch.spec.ts'],
+    'apps/catalogue/src/theme/': ['CatalogueSearch.spec.ts', 'Catalogue.spec.ts'],
+    'apps/catalogue/src/layout/': ['Catalogue.spec.ts', 'Spacing.spec.ts'],
+    'apps/catalogue/site/': ['Catalogue.spec.ts', 'CatalogueSearch.spec.ts'],
+  },
   /** Catalogue pages scanned and screenshotted for a shared change. */
   smokePages: [
     'foundations/colors',
@@ -410,7 +422,14 @@ export function buildIndex(root = repositoryRoot) {
   const fixtureByName = parseFixtureApp(root, fixtureKnown);
 
   // Specs.
-  const helpers = new Set(walk(root, 'tests', /\.(?:ts|mjs|js|json)$/));
+  // What specs import: test helpers, and the catalogue and script modules they read directly.
+  const helpers = new Set([
+    ...walk(root, 'tests', /\.(?:ts|mjs|js|json)$/),
+    ...walk(root, 'apps/catalogue', /\.(?:tsx?|mjs)$/).filter(
+      (file) => !file.includes('/generated/'),
+    ),
+    ...walk(root, 'scripts', /\.mjs$/),
+  ]);
   const specs = new Map();
   for (const file of walk(root, 'tests/browser', /\.spec\.ts$/)) {
     const name = posix.basename(file);
@@ -616,6 +635,8 @@ export function selectScope(paths, index) {
     catalogueShell: false,
     unit: false,
     build: { library: false, catalogue: false, site: false },
+    // The catalogue builds the fast tier's specs open.
+    fastBuild: { catalogue: false, site: false },
     // spec name → reasons; fast specs run in Chromium, affected ones in every engine.
     fastSpecs: new Map(),
     affectedSpecs: new Map(),
@@ -757,15 +778,24 @@ export function selectScope(paths, index) {
     }
     if (
       path.startsWith('apps/catalogue/') ||
-      /^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes)\.mjs$/.test(
+      /^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings)\.m?[jt]s$/.test(
         path,
       )
     ) {
       scope.generated.add('docs');
       scope.catalogueShell = true;
       scope.build.catalogue = scope.build.site = true;
-      for (const spec of overrides.catalogueSpecs)
-        want(scope.fastSpecs, spec, `catalogue (${path})`);
+      // The specs that import the file or are about its part of the catalogue, else the shared set.
+      const related = new Set([
+        ...specsWhere((spec) => spec.imports.has(path)),
+        ...Object.entries(overrides.catalogueAreas)
+          .filter(([area]) => path.startsWith(area))
+          .flatMap(([, specs]) => specs),
+      ]);
+      const chosen =
+        related.size && related.size <= budgets.fast ? [...related] : overrides.catalogueSpecs;
+      for (const spec of chosen)
+        if (!index.specs.get(spec)?.live) want(scope.fastSpecs, spec, `catalogue (${path})`);
       for (const spec of specsWhere(
         (spec) => spec.catalogue || spec.needs.site || spec.needs.offline,
       ))
@@ -884,14 +914,18 @@ export function selectScope(paths, index) {
     addPages(directPages.length ? directPages : closurePages, `shows ${label}`);
   }
 
-  // Specs that need a build run in the affected tier, which builds first.
+  // The catalogue builds take seconds, so the fast tier builds what its specs open. Specs that
+  // need the library build, and live development, which edits sources, wait for the affected tier.
   for (const name of [...scope.fastSpecs.keys()]) {
     const spec = index.specs.get(name);
-    if (spec && (spec.needs.offline || spec.needs.hydration || spec.needs.site || spec.live)) {
+    if (spec && (spec.needs.hydration || spec.live)) {
       scope.fastSpecs.delete(name);
-      want(scope.affectedSpecs, name, 'needs a build');
-      scope.notes.push(`${name} needs a build or edits sources: check:affected runs it`);
+      want(scope.affectedSpecs, name, 'needs the library build or edits sources');
+      scope.notes.push(`${name} needs the library build or edits sources: check:affected runs it`);
+      continue;
     }
+    if (spec?.needs.offline) scope.fastBuild.catalogue = true;
+    if (spec?.needs.site) scope.fastBuild.site = true;
   }
   for (const name of scope.affectedSpecs.keys()) {
     const spec = index.specs.get(name);

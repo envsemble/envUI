@@ -87,6 +87,10 @@ if (specs.length)
     )}`,
   );
 else console.log('  browser specs: none for this change');
+if (!affected && specs.length && (scope.fastBuild.catalogue || scope.fastBuild.site))
+  console.log(
+    `  builds those specs open: ${[scope.fastBuild.catalogue && 'catalogue', scope.fastBuild.site && 'site'].filter(Boolean).join(', ')}`,
+  );
 if (affected) {
   const builds = Object.entries(scope.build)
     .filter(([, needed]) => needed)
@@ -177,6 +181,7 @@ if (scope.generated.has('tokens'))
 if (scope.generated.has('docs'))
   staticTasks.push(
     task('docs:check props', node('scripts/ExtractProps.mjs', '--check')),
+    task('docs:check pages', node('scripts/GenerateDocumentation.mjs', '--check')),
     task('docs:check manifest', node('scripts/GenerateManifest.mjs', '--check')),
   );
 if (scope.generated.has('icons'))
@@ -212,11 +217,19 @@ const browserTask = (selected, projects, label) => {
 };
 
 if (!affected) {
-  const browser =
-    fastSpecs.length || scope.contrast
-      ? [browserTask(fastSpecs, ['chromium'], 'browser (Chromium)')]
-      : [];
-  await parallel([...staticTasks, ...browser]);
+  // The browser specs start once the catalogue builds they open, if any, are done.
+  const builds = [
+    scope.fastBuild.catalogue &&
+      task('build:catalogue', [...bin.npm, 'run', '-s', 'build:catalogue']),
+    scope.fastBuild.site && task('build:site', [...bin.npm, 'run', '-s', 'build:site']),
+  ].filter(Boolean);
+  const browser = async () => {
+    if (!fastSpecs.length && !scope.contrast) return;
+    const built = await parallel(builds);
+    if (built.every((result) => result.ok))
+      await parallel([browserTask(fastSpecs, ['chromium'], 'browser (Chromium)')]);
+  };
+  await Promise.all([parallel(staticTasks), browser()]);
 } else {
   // Phase 1: static checks, unit tests and the builds the later phases need.
   const live = affectedSpecs.filter((name) => index.specs.get(name)?.live);
