@@ -1234,7 +1234,7 @@
           "name": "label",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The color's name above the picker; it names the group and, with \"HEX\", the field."
         },
         {
           "name": "value",
@@ -1247,7 +1247,7 @@
           "type": "string",
           "required": false,
           "default": "'#000000'",
-          "description": ""
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default."
         },
         {
           "name": "onValueChange",

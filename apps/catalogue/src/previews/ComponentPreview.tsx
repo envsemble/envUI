@@ -14,7 +14,6 @@ import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
-import { ColorPickerPreview } from './ColorPicking';
 import { ComposerPreview, MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
@@ -46,8 +45,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SliderPreview />;
     case 'drop-zone':
       return <DropZonePreview />;
-    case 'color-picker':
-      return <ColorPickerPreview />;
     case 'composer':
       return <ComposerPreview />;
     case 'nav-list':
