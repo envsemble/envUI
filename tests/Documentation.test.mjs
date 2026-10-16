@@ -144,9 +144,10 @@ async function templateFixture(run) {
   await writeFile(join(examples, 'switch', 'Basic.tsx'), switchExample);
   await writeFile(join(specimens, 'switch', 'States.tsx'), 'export default function States() {}\n');
   const page = join(docs, 'components', 'switch.md');
-  const read = () => readDocumentation(docs, { props: switchProps, examples, specimens });
+  const versions = new Set(['0.1.0', '0.2.0']);
+  const read = () => readDocumentation(docs, { props: switchProps, examples, specimens, versions });
   try {
-    await run({ page, read, examples });
+    await run({ page, read, examples, docs });
   } finally {
     const contained = relative(cache, fixture);
     assert.ok(contained && !contained.startsWith('..') && !isAbsolute(contained));
@@ -233,7 +234,70 @@ test('the template rejects pages that break its contract', async () => {
       /lists props in a table/,
     );
     await rejects(frontmatter + body.replace('```tsx example=Basic', '```tsx'), /example file/);
+    // Metadata that says nothing or points nowhere.
+    await rejects(frontmatter.replace('related: []', 'related: [switch]') + body, /itself/);
+    await rejects(frontmatter.replace('aliases: [toggle]', 'aliases: []') + body, /aliases must/);
+    await rejects(frontmatter.replace('since: 0.1.0', 'since: 9.9.9') + body, /since 9\.9\.9/);
+    await rejects(
+      frontmatter.replace('components: [Switch]', 'components: [Switch, Menu.Item]') + body,
+      /Menu\.Item, a part/,
+    );
+    // Lists, props and headings the template generates or needs in Markdown.
+    await rejects(
+      frontmatter +
+        body.replace('### envUI provides\n\n- The switch role.\n', '### envUI provides\n'),
+      /"### envUI provides" list/,
+    );
+    await rejects(
+      frontmatter +
+        body.replace('## Changelog', '| Option | Type |\n| --- | --- |\n| a | b |\n\n## Changelog'),
+      /lists props in a table/,
+    );
+    await rejects(
+      frontmatter + body.replace('## Changelog', '#### Props\n\nsize is sm or md.\n\n## Changelog'),
+      /"#### Props" lists props by hand/,
+    );
+    await rejects(
+      frontmatter + body.replace('## Changelog', '<h2>Notes</h2>\n\n## Changelog'),
+      /headings in Markdown/,
+    );
+    // A page with the template's parts that does not start with its Overview.
+    await rejects(
+      frontmatter +
+        body.replace(
+          '## Overview\n\nTurns a setting on or off.\n\n',
+          '## Usage\n\nTurns a setting on or off.\n\n',
+        ),
+      /first section must be "## Overview", not "## Usage"/,
+    );
+    // Saved with CRLF line endings, the page reads as it does with LF.
+    await writeFile(page, (frontmatter + body).replaceAll('\n', '\r\n'));
+    assert.deepEqual(
+      read()[1].sections.map((section) => section.id),
+      ['overview', 'states', 'accessibility', 'examples', 'changelog'],
+    );
     await writeFile(page, frontmatter + body);
     assert.doesNotThrow(read);
+  });
+});
+
+test('a filled-in example keeps its fence closed, with backticks in its source', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    const source = "export default function Basic() {\n  return <Code>{'```'}</Code>;\n}\n";
+    await writeFile(join(examples, 'switch', 'Basic.tsx'), source);
+    // Text right after the empty fence, without a blank line.
+    await writeFile(
+      page,
+      switchFrontmatter +
+        switchBody.replace(
+          '```tsx example=Basic\n```\n',
+          '```tsx example=Basic\n```\nAfter the example.\n',
+        ),
+    );
+    const documents = read();
+    const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
+    assert.ok(
+      compiled.includes(`\`\`\`\`tsx example=Basic\n${source}\`\`\`\`\nAfter the example.\n`),
+    );
   });
 });

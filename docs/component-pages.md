@@ -11,9 +11,9 @@ A component page opens with YAML frontmatter. The build validates it and fails o
 title: TextField # The component's name; the file is its kebab case.
 summary: A labelled single-line text input with a description and an error. # One sentence.
 status: beta # experimental, beta, stable or deprecated.
-since: 0.1.0 # The release that added the component, under any earlier name.
+since: 0.1.0 # The release that added the component, under any earlier name: a released version, or the next.
 category: Forms & selection # The index group the page is listed under.
-aliases: # Words people and agents search for, including earlier names.
+aliases: # Words people and agents search for, including earlier names; at least one.
   - Input
   - text input
   - text box
@@ -22,7 +22,7 @@ useWhen: # Situations the component is for.
 avoidWhen: # Situations it is not for, each naming what to use instead where something fits.
   - text: Text that runs over several lines.
     use: Textarea
-related: # Other indexed pages, by file name.
+related: # Other indexed pages, by file name, not the page itself.
   - select
   - combobox
 components: # The exports the page documents; each export has exactly one page.
@@ -33,7 +33,7 @@ components: # The exports the page documents; each export has exactly one page.
 ```
 
 - `use` names an export. The catalogue links it to the page that documents it, and agents read it as "need this, use that".
-- List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts.
+- List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
 - Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components` and `aliases`.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
@@ -54,7 +54,7 @@ After the `# Title`, a page has these `##` sections in this order. Omit a sectio
 | Examples             | yes      | One `###` heading per example, a sentence or two, and the example's fence.                                  |
 | Changelog            |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                |
 
-The build adds **Props**, generated from the TypeScript declarations, and **Related**, from the frontmatter, before Changelog. Don't write them, and don't list props in a table anywhere: the build rejects a table whose first column is Name or Prop beside a Type, Default, Contract or Description column.
+The build adds **Props**, generated from the TypeScript declarations, and **Related**, from the frontmatter, before Changelog. Don't write them, and don't list props anywhere: the build rejects a table whose first column is Name, Prop, Option, Attribute or the like beside a Type, Default, Contract or Description column, and a `###` or deeper heading named Props. Write headings in Markdown, not as HTML. A page that uses the template's parts, such as an example fence or `useWhen`, must start with `## Overview`.
 
 In the catalogue the sections become tabs: Overview (overview, examples, related, changelog), Guidelines (anatomy to do and don't), Accessibility and Props.
 
