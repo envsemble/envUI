@@ -137,6 +137,15 @@ body {
   width: 100%;
   height: 100%;
 }
+/* In a narrow banner the page's views wrap onto another row rather than scroll out of sight, so
+   every view, Props included, stays visible. */
+@container (max-inline-size: 30rem) {
+  .docs-reference-tabs .env-tabs-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    --env-surface-radius: var(--radius-surface);
+  }
+}
 .docs-page-controls {
   margin-inline-start: auto;
   flex-shrink: 0;

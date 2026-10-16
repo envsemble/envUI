@@ -370,6 +370,94 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   await expect(preview.locator('details')).toHaveAttribute('open', '');
 });
 
+test('old addresses are replaced by the address of the page they open', async ({ page }) => {
+  await page.goto(`${offline}#/components/buttons/usage`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect
+    .poll(() => page.evaluate(() => location.hash))
+    .toBe('#/components/button/guidelines');
+  await page.goto(`${offline}#/components/tables/usage?section=keyboard`);
+  await expect
+    .poll(() => page.evaluate(() => location.hash))
+    .toBe('#/components/table/guidelines?section=keyboard');
+});
+
+test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
+  await page.goto(`${offline}#/components/link/overview`);
+  await page.goto(`${offline}#/components/menu/accessibility?section=keyboard`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Menu');
+  const before = await page.evaluate(() => history.length);
+  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
+  await tabs.getByRole('tab', { name: 'Accessibility', exact: true }).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(tabs.getByRole('tab', { name: 'Guidelines', exact: true })).toBeFocused();
+  await page.keyboard.press('ArrowLeft');
+  await expect(tabs.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe('#/components/menu/overview');
+  expect(await page.evaluate(() => history.length)).toBe(before);
+  // Back leaves the page rather than stepping through the views passed on the way.
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Link');
+});
+
+test('the views of a page stay in sight on a narrow screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${offline}#/components/menu/overview`);
+  const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
+  for (const name of ['Overview', 'Guidelines', 'Accessibility', 'Props']) {
+    const box = await tabs.getByRole('tab', { name, exact: true }).boundingBox();
+    expect(box, name).not.toBeNull();
+    expect(box!.x, name).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width, name).toBeLessThanOrEqual(390);
+  }
+});
+
+test('removing a row moves focus to the next row, not the page', async ({ page }) => {
+  await page.goto(`${offline}#/components/button/overview`);
+  const members = page.getByRole('group', { name: 'Confirm in place example', exact: true });
+  await members.getByRole('button', { name: 'Remove', exact: true }).first().click();
+  // A second press counts once the double-press guard has passed.
+  await page.waitForTimeout(450);
+  await members.getByRole('button', { name: 'Remove Alex?', exact: true }).click();
+  await expect(members.getByRole('button', { name: 'Remove', exact: true }).first()).toBeFocused();
+  await expect(members.getByText('Alex Morgan')).toHaveCount(0);
+  await members.getByRole('button', { name: 'Delete draft', exact: true }).click();
+  await page.waitForTimeout(450);
+  await members.getByRole('button', { name: 'Delete draft?', exact: true }).click();
+  await expect(members.getByRole('button', { name: 'Draft deleted. Restore' })).toBeFocused();
+
+  await page.goto(`${offline}#/components/menu/overview`);
+  const documents = page.getByRole('group', { name: 'Context menu example', exact: true });
+  for (const [name, next] of [
+    ['Quarterly report', 'More actions for Meeting notes'],
+    ['Budget', 'More actions for Meeting notes'],
+  ]) {
+    await documents.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Delete/ }).click();
+    await expect(documents.getByRole('button', { name: next, exact: true })).toBeFocused();
+  }
+  await documents.getByRole('button', { name: 'More actions for Meeting notes' }).click();
+  await page.getByRole('menuitem', { name: /^Delete/ }).click();
+  await expect(documents.getByRole('list', { name: 'Documents', exact: true })).toBeFocused();
+});
+
+test('an example that fails to load says so in place, and loads again on request', async ({
+  page,
+}) => {
+  const example = '**/src/examples/button/CreateProject.tsx*';
+  await page.route(example, (route) => route.abort());
+  await page.goto(`${catalogueUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  // The rest of the page is still there.
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(hero.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
+  await page.unroute(example);
+  await hero.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(hero.getByText('The example could not load')).toHaveCount(0);
+  await expect(hero.getByRole('button').first()).toBeVisible();
+});
+
 test('offline hashes support direct links and back/forward navigation', async ({ page }) => {
   await page.goto(`${offline}#/components/select/usage`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');

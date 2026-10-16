@@ -53,6 +53,8 @@ export default function App() {
   }, []);
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
+    // Moving between a page's views keeps focus on its tabs, where the reader is.
+    if (document.activeElement?.closest('[role="tablist"]')) return;
     mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(contentRoute.split('?')[1]).get('section');
     if (section) document.getElementById(section)?.scrollIntoView();
