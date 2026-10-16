@@ -19,17 +19,8 @@ import {
  */
 const unconverted = ['chips'];
 
-/**
- * Exports documented on foundations/colors.md, which the palette step is rewriting; they get its
- * frontmatter once that lands.
- */
-const undocumentedExports = [
-  'Theme',
-  'ThemePreferenceProvider',
-  'ThemeToggle',
-  'useTheme',
-  'useThemePreference',
-];
+/** Exports without a page that lists them in its frontmatter; the list only shrinks. */
+const undocumentedExports = [];
 
 /**
  * Modules an example may import: only what an application can, so its source can be copied, and

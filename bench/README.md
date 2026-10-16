@@ -272,11 +272,11 @@ export default {
 
 Planned conditions:
 
-- **AGENTS.md index.** `setup` runs `npx envui agents` in the workspace, or appends the generated block between the `BEGIN/END envui` markers.
+- **AGENTS.md index.** `setup` runs `npx --no envui agents` in the workspace, or appends the generated block between the `BEGIN/END envui` markers.
 - **MCP server.**
   - `setup` writes `.mcp.json`.
   - For Claude Code, `agentArgs` returns `['--mcp-config', join(appDir, '.mcp.json')]`, because `--strict-mcp-config` ignores other sources.
-  - For Codex, it returns `['-c', 'mcp_servers.envui.command="npx"', '-c', 'mcp_servers.envui.args=["envui","mcp"]']`.
+  - For Codex, it returns `['-c', 'mcp_servers.envui.command="node"', '-c', 'mcp_servers.envui.args=["node_modules/@envsemble/envui/bin/envui.mjs","mcp"]']`.
 - **ESLint plugin.** `setup` adds the plugin and an `eslint.config.js`, and adds `npm run lint` to the AGENTS.md commands. If the plugin isn't published yet, the fixture's `package.json` gets it as a `file:` tarball before install. That changes the template hash, so the template is reinstalled automatically.
 
 Run several conditions in one go with `--condition baseline,agents-md`. Workspaces are then named `<condition>-<agent>-<task>`.

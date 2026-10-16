@@ -13,6 +13,8 @@ aliases:
   - listbox
   - picker
   - option picker
+  - pick list
+  - choose from a list
 useWhen:
   - People choose one of several known options, such as a role, a sort order or a time zone, and the choice can stay collapsed.
   - A setting in a row or a toolbar takes one of a few values, such as an e-mail digest's frequency or a zoom level.

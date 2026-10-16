@@ -16,6 +16,8 @@ aliases:
   - navigation
   - navigation list
   - nav links
+  - navigation links
+  - sidebar links
 useWhen:
   - An application's main destinations, such as the pages in a sidebar.
   - The pages of an area listed beside its content, such as the sections of a guide or of the account settings.

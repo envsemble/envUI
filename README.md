@@ -10,9 +10,9 @@
 ![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
 ![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
 
-envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and two versioned agent skills.
+envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and tooling for coding agents.
 
-[Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
+[For agents](docs/agent-tooling.md) · [Use envUI](.agents/skills/envui-use/SKILL.md) · [Migrate an app](.agents/skills/envui-migrate/SKILL.md) · [Changelog](packages/ui/CHANGELOG.md) · [CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/catalogue-dark.png">
@@ -100,18 +100,21 @@ export function ProjectForm() {
 
 ## Working with agents
 
-There are two guides:
+Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agent-tooling.md) describes it all:
 
-| Skill                                                  | Responsibility                                                                        |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| [envui-use](.agents/skills/envui-use/SKILL.md)         | Build interfaces, choose and compose components, handle themes and extend the library |
-| [envui-migrate](.agents/skills/envui-migrate/SKILL.md) | Adopt envUI in existing projects while preserving routes, forms, data and behavior    |
+- `npx --no envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
+- `npx --no envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
+- `manifest.json`, `llms.txt` and `llms-full.txt` hold the library as data and as text, generated from the same pages.
 
-The skills are short entry points. The [documentation index](docs/index.md) directs agents to focused Markdown pages with examples and behavior; they read only the topics needed for the task. The catalogue renders those same pages. Each component page carries frontmatter (summary, status, aliases, when to use it and what to use instead) and a Props section generated from the public TypeScript declarations, which define the exact API for each installed version.
+| Skill                                                        | Responsibility                                                                          |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| [envui-use](.agents/skills/envui-use/SKILL.md)               | Build interfaces, looking up every element in envUI first                               |
+| [envui-migrate](.agents/skills/envui-migrate/SKILL.md)       | Adopt envUI, or upgrade it, while preserving routes, forms, data and behavior           |
+| [envui-contribute](.agents/skills/envui-contribute/SKILL.md) | When envUI lacks something, propose and add it upstream instead of keeping a local copy |
 
-Both skill folders ship under `skills/` in the npm package. Install or copy them from `node_modules/@envsemble/envui/skills` into your project’s `.agents/skills`, keeping them together and aligned with the package version. Installing the npm package does not register the skills automatically.
+The skills ship under `skills/` in the npm package; copy the three folders together into the project's skills folder, aligned with the package version. Installing the npm package registers nothing by itself.
 
-Documentation ships separately under `node_modules/@envsemble/envui/docs/`, so copied skills can consult the installed version without loading unrelated topics. The packaged pages have their examples and props tables filled in; the example files are in `docs/examples/` and every export’s props in `docs/generated/props.json`. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
+Documentation ships under `node_modules/@envsemble/envui/docs/`, with examples and props tables filled in, the example files in `docs/examples/` and every export’s props in `docs/generated/props.json`. Each component page carries frontmatter (summary, status, aliases, when to use it and what to use instead) and a Props section generated from the public TypeScript declarations. Edit the maintained pages under `docs/`; improve the relevant page as integrations reveal gaps.
 
 ## Versions and license
 

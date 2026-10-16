@@ -5,13 +5,22 @@ import { useViewTabs } from '../navigation/useDocumentationRoute';
 import { Documentation } from './Documentation';
 import usageSkill from '../../../../.agents/skills/envui-use/SKILL.md?raw';
 import migrationSkill from '../../../../.agents/skills/envui-migrate/SKILL.md?raw';
+import contributionSkill from '../../../../.agents/skills/envui-contribute/SKILL.md?raw';
 
 function skillBody(source: string) {
   return source.replace(/^---\r?\n[\s\S]*?\r?\n---\s*/, '');
 }
 
+/** The tab of each skill, by the folder its links name, such as `../envui-contribute/SKILL.md`. */
+const skillTabsByFolder: Record<string, string> = {
+  'envui-use': 'use',
+  'envui-migrate': 'migrate',
+  'envui-contribute': 'contribute',
+};
+
 function renderSkillLink({ href, ...props }: MarkdownLinkProps) {
-  const skill = href === '../envui-use/SKILL.md' ? 'use' : 'migrate';
+  const folder = href?.match(/^\.\.\/([^/]+)\/SKILL\.md$/)?.[1] ?? '';
+  const skill = skillTabsByFolder[folder] ?? 'use';
   return (
     <Link {...props} href={`#/overview/get-started?skill=${skill}&section=local-development`} />
   );
@@ -62,6 +71,15 @@ export function GettingStarted() {
               content: (
                 <Markdown headingOffset={1} codeCopyable renderLink={renderSkillLink}>
                   {skillBody(migrationSkill)}
+                </Markdown>
+              ),
+            },
+            {
+              value: 'contribute',
+              button: <Button>Contribute to envUI</Button>,
+              content: (
+                <Markdown headingOffset={1} codeCopyable renderLink={renderSkillLink}>
+                  {skillBody(contributionSkill)}
                 </Markdown>
               ),
             },

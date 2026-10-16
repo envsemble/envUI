@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs/promises';
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
@@ -742,6 +742,11 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     'README.md',
     'skills/envui-use/SKILL.md',
     'skills/envui-migrate/SKILL.md',
+    'skills/envui-contribute/SKILL.md',
+    'manifest.json',
+    'llms.txt',
+    'llms-full.txt',
+    'bin/envui.mjs',
     'THIRD_PARTY_NOTICES.md',
     'icon-manifest.json',
   ]) {
@@ -810,7 +815,7 @@ test('packed skills locate separate versioned documentation and match the releas
     );
   }
   const skillNames = await readdir(join(installedDirectory, 'skills'));
-  assert.deepEqual(skillNames.sort(), ['envui-migrate', 'envui-use']);
+  assert.deepEqual(skillNames.sort(), ['envui-contribute', 'envui-migrate', 'envui-use']);
   for (const skillName of skillNames) {
     const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
     const source = await readFile(skillFile, 'utf8');
@@ -853,6 +858,106 @@ test('packed skills locate separate versioned documentation and match the releas
   assert.deepEqual(
     JSON.parse(await readFile(join(installedDirectory, 'docs/generated/props.json'), 'utf8')),
     JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),
+  );
+});
+
+test('the installed envui command writes the AGENTS.md index and serves MCP through npx', async function () {
+  // The agent files sit at the package root, the manifest with the version; the packaged docs
+  // leave out the committed copies.
+  const { version } = JSON.parse(
+    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
+  );
+  const { version: packagedVersion, ...manifest } = JSON.parse(
+    await readFile(join(installedDirectory, 'manifest.json'), 'utf8'),
+  );
+  assert.equal(packagedVersion, version);
+  assert.deepEqual(
+    manifest,
+    JSON.parse(await readFile(join(repository, 'docs/generated/manifest.json'), 'utf8')),
+  );
+  assert.equal(
+    await readFile(join(installedDirectory, 'llms.txt'), 'utf8'),
+    await readFile(join(repository, 'docs/generated/llms.txt'), 'utf8'),
+  );
+  assert.match(
+    await readFile(join(installedDirectory, 'llms-full.txt'), 'utf8'),
+    /<!-- docs\/components\/button\.md -->\n\n# Button\n/,
+  );
+  for (const name of ['manifest.json', 'llms.txt'])
+    assert.equal(existsSync(join(installedDirectory, 'docs/generated', name)), false, name);
+
+  // npx runs the installed bin; --yes=false never fetches a package of that name instead.
+  const npx = ['exec', '--yes=false', '--', 'envui'];
+  const agentsFile = join(consumerDirectory, 'AGENTS.md');
+  await writeFile(agentsFile, '# Consumer\n\nKeep this.\n');
+  assert.match(run(npmCli(), [...npx, 'agents']), /Updated AGENTS\.md with the envUI index/);
+  const written = await readFile(agentsFile, 'utf8');
+  assert.ok(written.startsWith('# Consumer\n\nKeep this.\n\n<!-- BEGIN envui -->\n'));
+  assert.ok(written.includes(`(\`@envsemble/envui\` ${version})`));
+  const block = written.slice(written.indexOf('<!-- BEGIN envui -->'));
+  assert.ok(Buffer.byteLength(block) <= 8192, `The index is ${Buffer.byteLength(block)} bytes.`);
+  assert.match(run(npmCli(), [...npx, 'agents', '--check']), /has the current envUI index/);
+  await writeFile(agentsFile, written.replace('## envUI', '## envUI, edited'));
+  assert.throws(() => run(npmCli(), [...npx, 'agents', '--check']), /outdated envUI index/);
+  run(npmCli(), [...npx, 'agents']);
+  assert.equal(await readFile(agentsFile, 'utf8'), written);
+
+  const server = spawn(process.execPath, [npmCli(), ...npx, 'mcp'], {
+    cwd: consumerDirectory,
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: {
+      ...Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^npm_/i.test(name))),
+      NODE_OPTIONS: '',
+    },
+  });
+  const responses = [];
+  let buffer = '';
+  let stderr = '';
+  server.stderr.on('data', (chunk) => (stderr += chunk));
+  const exited = new Promise((resolveExit) => server.on('exit', resolveExit));
+  const answered = new Promise((resolveAnswers, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`envui mcp did not answer:\n${stderr}`)),
+      60000,
+    );
+    server.stdout.on('data', (chunk) => {
+      buffer += chunk;
+      for (let end = buffer.indexOf('\n'); end !== -1; end = buffer.indexOf('\n')) {
+        responses.push(JSON.parse(buffer.slice(0, end)));
+        buffer = buffer.slice(end + 1);
+      }
+      if (responses.length === 3) {
+        clearTimeout(timer);
+        resolveAnswers();
+      }
+    });
+  });
+  const send = (message) =>
+    server.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', ...message })}\n`);
+  send({
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: '2025-11-25',
+      capabilities: {},
+      clientInfo: { name: 'consumer', version: '1' },
+    },
+  });
+  send({ method: 'notifications/initialized' });
+  send({ id: 2, method: 'tools/call', params: { name: 'search', arguments: { query: 'modal' } } });
+  send({
+    id: 3,
+    method: 'tools/call',
+    params: { name: 'get_example', arguments: { component: 'Dialog', example: 'ConfirmDelete' } },
+  });
+  await answered;
+  server.stdin.end();
+  assert.equal(await exited, 0, stderr);
+  assert.equal(responses[0].result.serverInfo.version, version);
+  assert.equal(JSON.parse(responses[1].result.content[0].text).results[0].name, 'Dialog');
+  assert.equal(
+    JSON.parse(responses[2].result.content[0].text).source,
+    await readFile(join(installedDirectory, 'docs/examples/dialog/ConfirmDelete.tsx'), 'utf8'),
   );
 });
 

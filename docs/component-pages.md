@@ -34,7 +34,7 @@ components: # The exports the page documents; each export has exactly one page.
 
 - `use` names an export. The catalogue links it to the page that documents it, and agents read it as "need this, use that".
 - List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components` and `aliases`.
+- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases` and `exportAliases`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 
@@ -101,6 +101,7 @@ The Props section and `docs/generated/props.json` come from the component's Type
 - Write a TSDoc comment on every prop of the component's props interface: what it does, its values and its default where the code can't show it.
 - Add `@default` where the default is computed, such as `@default 'outlined', or 'secondary' with icon`, and `@deprecated` with what to use instead.
 - Run `npm run docs:props` and commit `docs/generated/props.json`. `npm run docs:check` and `npm test` fail while it is stale.
+- Then run `npm run docs:manifest` and commit `docs/generated/manifest.json` and `llms.txt`, which agents read; they follow every change to a page's frontmatter, examples and props.
 
 Native DOM props are summarised by element, so document only the props envUI declares or narrows.
 

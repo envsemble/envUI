@@ -32,7 +32,17 @@ Edit the relevant Markdown page under `docs/`; add a focused page when a new top
 
 Keep examples, behavior and contracts in the Markdown page and its example files. The build generates the catalogue's internal TypeScript data from these files, and compiles the packaged documentation with the examples and props tables filled in; edit the maintained Markdown, examples and TSDoc, not generated files.
 
-The two skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
+The skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
+
+## Agent files and skills
+
+The files agents read come from the documentation's sources, as [For agents](agent-tooling.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
+
+The `envui` command is plain JavaScript in `packages/ui/bin`, run as it is from the installed package: `agents.mjs` renders the AGENTS.md index, `mcp.mjs` is the MCP server and `catalog.mjs` the lookups and ranking they share. It uses Node's own modules only, so installing envUI adds no dependency for it. `tests/Agents.test.mjs` holds the index to its 8 KB budget and calls every MCP tool over stdio.
+
+The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and the build copies them into the package's `skills/`. Validate them with the available skill validator after editing them.
+
+[For agents](agent-tooling.md) describes publishing the skills and the MCP server as a plugin.
 
 ## Record the change
 
@@ -66,4 +76,4 @@ The browser suite starts or reuses the catalogue on port 8770 and the test fixtu
 
 Exercise meaningful interaction changes in both themes, with keyboard focus and dismissal, native form submit/reset, narrow containers and enlarged text. Check portals, wrapping and local scrolling where affected. Inspect bundle boundaries when optional content or icon imports change.
 
-Validate both skill folders with the available skill validator after editing them. Report changes, checks and remaining gaps.
+Validate the skill folders with the available skill validator after editing them. Report changes, checks and remaining gaps.
