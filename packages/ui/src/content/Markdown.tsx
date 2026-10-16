@@ -22,11 +22,13 @@ export interface MarkdownLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string;
 }
 export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  /** The Markdown string to render. */
   children: string;
   /** Add to the document's heading levels; levels are capped at h6. */
   headingOffset?: 0 | 1 | 2 | 3 | 4 | 5;
   /** Receives safe hrefs and native anchor props. Retain a real anchor destination. */
   renderLink?: (props: MarkdownLinkProps) => ReactNode;
+  /** Gives each code block a copy button; false by default. */
   codeCopyable?: boolean;
   /**
    * react-markdown component overrides, merged over envUI's own; the application's win. Native

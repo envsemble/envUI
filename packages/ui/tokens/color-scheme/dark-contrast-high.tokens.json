@@ -6,8 +6,12 @@
     "color": {
       "bg": {
         "selected": {
-          "$root": { "$value": "{palette.neutral.80}" },
-          "hover": { "$value": "{palette.neutral.75}" },
+          "$root": { "$value": "{palette.slate.86}" },
+          "hover": { "$value": "{palette.slate.82}" },
+          "pressed": { "$value": "{palette.slate.80}" }
+        },
+        "navigation": {
+          "hover": { "$value": "{palette.neutral.80}" },
           "pressed": { "$value": "{palette.neutral.75}" }
         },
         "page": {
@@ -27,6 +31,7 @@
           "pressed": { "$value": "{palette.neutral.80}" }
         },
         "popup": {
+          "$root": { "$value": "{palette.neutral.84}" },
           "hover": { "$value": "{palette.neutral.80}" },
           "pressed": { "$value": "{palette.neutral.75}" }
         },
@@ -108,9 +113,9 @@
             }
           },
           "strong": {
-            "$root": { "$value": "{palette.green.75}" },
-            "hover": { "$value": "{palette.green.80}" },
-            "pressed": { "$value": "{palette.green.84}" }
+            "$root": { "$value": "{palette.teal.75}" },
+            "hover": { "$value": "{palette.teal.80}" },
+            "pressed": { "$value": "{palette.teal.84}" }
           }
         },
         "warning": {
@@ -177,7 +182,7 @@
           "pressed": { "$value": "{palette.blue.2}" }
         },
         "accent": { "$value": "{palette.blue.6}" },
-        "on-selected": { "$value": "{palette.blue.4}" },
+        "on-selected": { "$value": "{palette.blue.10}" },
         "success": { "$value": "{palette.green.6}" },
         "warning": { "$value": "{palette.amber.6}" },
         "danger": { "$value": "{palette.red.6}" },
@@ -205,7 +210,8 @@
           "hover": { "$value": "{palette.red.4}" },
           "pressed": { "$value": "{palette.red.2}" }
         },
-        "focus": { "$value": "{palette.blue.15}" }
+        "focus": { "$value": "{palette.blue.15}" },
+        "scrim": { "$value": "{palette.neutral.30}" }
       }
     }
   }

@@ -20,7 +20,7 @@ function ColorSwatch({
   value?: MeasuredColor;
   label: string;
 }) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const { setValue } = usePaletteCustomization();
   return (
     <Dialog
@@ -53,7 +53,7 @@ function ColorSwatch({
 }
 
 function ColorPalette() {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const { palettes } = usePaletteCustomization();
   const paletteElement = useRef<HTMLDivElement>(null);
   const [colorValues, setColorValues] = useState<Record<string, MeasuredColor>>({});

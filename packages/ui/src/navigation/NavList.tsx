@@ -37,14 +37,39 @@ function listItems(children: ReactNode) {
 }
 
 interface ItemSharedProps {
+  /**
+   * The label size: standard, 0.9375 rem, or compact, 0.875 rem, for a dense sidebar. Both keep the
+   * 2.5 rem item height and the 1 rem icon.
+   * @default 'standard'
+   */
   size?: 'standard' | 'compact';
+  /**
+   * The item is the current destination or view: it takes the navigation selection fill and label
+   * color, fills its Material Symbol, and reports aria-current="page" unless aria-current is set.
+   */
   selected?: boolean;
+  /**
+   * The destination is unavailable: dimmed, and left out of the tab order. A disabled button cannot
+   * be pressed; a disabled link has no destination and reports aria-disabled. An icon-only item
+   * still shows its label on hover.
+   */
   disabled?: boolean;
-  /** Official Material Symbols automatically follow the selected state. */
+  /**
+   * A decorative icon before the label, such as one of envUI's Material Symbols, which shows
+   * filled while the item is selected and outlined otherwise, also inside a wrapper. Required with
+   * iconOnly.
+   */
   icon?: ReactNode;
-  /** Optional alternate content for custom icons when selected. */
+  /**
+   * The icon shown while the item is selected, for a custom icon without a filled form; Material
+   * Symbols need none.
+   */
   selectedIcon?: ReactNode;
-  /** End content, such as a CounterBadge; icon-only items show a small dot instead. */
+  /**
+   * Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's
+   * accessible name. An icon-only item shows a small accent dot instead, hidden from assistive
+   * technology, so say what the content says in its aria-label.
+   */
   trailing?: ReactNode;
 }
 
@@ -53,14 +78,24 @@ export type ItemProps = ItemSharedProps &
   (
     | { iconOnly?: false }
     | {
-        /** Hide the visible label, as in a compact sidebar; a tooltip shows it on hover and focus. */
+        /**
+         * Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip
+         * at the item's inline end shows aria-label on hover and keyboard focus. Inside a compact
+         * AppShell sidebar, items with an icon show only it without this prop.
+         */
         iconOnly: boolean;
         icon: ReactNode;
+        /** The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. */
         'aria-label': string;
       }
   );
 
-/** A navigation destination: a link with href, or a button that changes the view. */
+/**
+ * A navigation destination: a native link with href, through the LinkProvider's link component,
+ * or a button that changes the view. It shows an optional icon, its label and trailing content,
+ * marks the current destination with selected, and shows only its icon with iconOnly or inside a
+ * compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.
+ */
 function Item(props: ItemProps) {
   const sidebarCompact = useSidebarCompact();
   const inList = useContext(ListContext);
@@ -148,8 +183,9 @@ function Item(props: ItemProps) {
 export type RootProps = ComponentPropsWithRef<'ul'>;
 
 /**
- * A plain list of navigation items and groups, for a sidebar or anywhere else. Name it with
- * aria-label or aria-labelledby when the page has more than one; it adds no landmark of its own.
+ * A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark
+ * of its own: place it in a nav element, or in a region that is one, such as AppShell's sidebar.
+ * Name it with aria-label or aria-labelledby when the page has more than one.
  */
 function Root({ className, children, ...props }: RootProps) {
   return (
@@ -160,13 +196,16 @@ function Root({ className, children, ...props }: RootProps) {
 }
 
 export interface GroupProps extends Omit<ComponentPropsWithRef<'li'>, 'children'> {
-  /** The group's visible heading, which also names its list. */
+  /**
+   * The group's visible heading, such as Settings, in small muted text above its items; it also
+   * names the group's list for assistive technology.
+   */
   label: ReactNode;
-  /** The group's NavList.Item elements. */
+  /** The group's NavList.Item elements, each of which renders its own list item. */
   children: ReactNode;
 }
 
-/** Related items under a small heading, inside NavList.Root. */
+/** Related items under a small heading, as an item of NavList.Root with a list of its own. */
 function Group({ label, children, className, ...props }: GroupProps) {
   const labelId = useId();
   return (

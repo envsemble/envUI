@@ -13,7 +13,7 @@
   /* Collapsed, it holds one control and its insets, so the toggle and icons share a center line. */
   --env-sidebar-collapsed-width: calc(var(--control-height) + 2 * var(--env-sidebar-inset));
   --env-sidebar-width: var(--env-sidebar-expanded-width);
-  --env-app-divider: 0.0625rem solid var(--color-border-strong);
+  --env-app-divider: 0.0625rem solid var(--color-border-muted);
   /* The standard control height, for parts that line up with the navigation while a title bar makes
      its own controls compact. */
   --env-app-control-height: var(--control-height);
@@ -221,7 +221,7 @@ button.env-app-sidebar-toggle:focus-visible {
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
 .env-app-sidebar-resize:hover::after {
-  background: var(--color-border-hover);
+  background: var(--color-border-muted-hover);
   transition-delay: var(--motion-duration-medium);
 }
 .env-app-sidebar-resize:focus-visible::after,
@@ -309,7 +309,7 @@ button.env-app-sidebar-toggle:focus-visible {
   position: fixed;
   inset: var(--topbar-height) 0 0 0;
   z-index: 29;
-  background: hsl(from var(--color-dialog-overlay) h s l / 0.3);
+  background: var(--color-bg-overlay-muted);
 }
 
 /* A full topbar is one row across the window, independent of the sidebar: the toggle, the context at

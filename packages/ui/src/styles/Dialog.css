@@ -1,7 +1,8 @@
-/* Centered dialogs and edge panels share one surface: the popover's look, with a hairline border and
-   the surface corners, plus text and action geometry. */
+/* Centered dialogs and edge panels share one surface: the popover's look at elevation 3, a shadow
+   and a hairline edge, with the surface corners, plus text and action geometry. */
 .env-modal-pane {
-  border: 0.0625rem solid var(--color-popup-border);
+  border: 0.0625rem solid var(--elevation-3-border);
+  box-shadow: var(--elevation-3-shadow);
   color: var(--color-text-primary);
   font: var(--type-body);
   width: min(28rem, 100%);
@@ -71,7 +72,7 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: hsl(from var(--color-dialog-overlay) h s l / var(--state-dialog-overlay-opacity));
+  background: var(--color-bg-overlay);
 }
 .env-dialog-positioner {
   box-sizing: border-box;

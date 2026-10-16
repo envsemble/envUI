@@ -20,47 +20,88 @@ import { ContextMenu } from './ContextMenu.js';
 export interface TreeItem {
   /** Stable, unique identifier; rows carry it as data-id. */
   id: string;
-  /** Nesting level of the visible row, starting at 0. */
+  /** The row's nesting level, 0 for a top-level row; each level indents it by 0.75 rem. */
   depth: number;
-  /** The row has children and shows a chevron. */
+  /**
+   * The row has children: it shows a chevron, which expands and collapses it, as do the arrow
+   * keys.
+   */
   expandable?: boolean;
+  /** The row's children show, as the rows that follow it in items; its chevron points down. */
   expanded?: boolean;
+  /**
+   * The row's text, which names it and ends with an ellipsis where the row is too narrow;
+   * type-ahead matches it where it is a string.
+   */
   label: ReactNode;
-  /** Optional leading icon. */
+  /**
+   * A decorative icon before the label, such as a folder or a document: 1 rem, or 1.125 rem in
+   * standard density.
+   */
   icon?: ReactNode;
-  /** Muted text after the label, such as a status or a path. */
+  /**
+   * Muted text after the label, such as a status or a path. It gives way first where the row runs
+   * out of room, and is read with the label.
+   */
   detail?: ReactNode;
-  /** End content, such as a CounterBadge or Badge. */
+  /** Content at the end of the row, such as a CounterBadge or a Badge; it is read with the label. */
   trailing?: ReactNode;
-  /** Native tooltip of the row, such as the full path. */
+  /** The row's native tooltip, such as the full path of a truncated name. */
   title?: string;
-  /** Text for type-ahead when the label is not a plain string. */
+  /** The text type-ahead matches, where the label is not a plain string. */
   textValue?: string;
+  /**
+   * The row is dimmed and reports aria-disabled: the keyboard still reaches it, but it neither
+   * opens nor expands.
+   */
   disabled?: boolean;
 }
 
 export interface TreeOpenOptions {
-  /** Single click and Space preview an item; double click and Enter open it. */
+  /**
+   * True for a single click and Space, which preview the item, such as in a preview tab; false for
+   * a double click and Enter, which open it to keep.
+   */
   preview: boolean;
 }
 
 export interface TreeProps<T extends TreeItem> {
-  /** The visible rows in order, flattened; the application owns expansion. */
+  /**
+   * The visible rows in order, flattened: an expanded row is followed by its visible descendants.
+   * The application owns expansion; collapsing a row removes its descendants from items.
+   */
   items: readonly T[];
-  /** Accessible name of the tree. */
+  /** The tree's accessible name, such as Files. */
   'aria-label': string;
-  /** The selected row; it scrolls into view when it changes. */
+  /**
+   * The selected row's id: it takes the navigation selection colors and scrolls into view when it
+   * changes. The application sets it, usually from onOpen.
+   */
   selectedId?: string | null;
-  /** Click and Space call it with preview true; double click and Enter with preview false. */
+  /**
+   * Called when people open a row: with preview true on a single click and Space, and false on a
+   * double click and Enter. Expandable rows call it too, and disabled rows don't.
+   */
   onOpen: (item: T, options: TreeOpenOptions) => void;
-  /** Chevron clicks, ArrowRight on a collapsed row and ArrowLeft on an expanded row. */
+  /**
+   * Called with the row and its new state from a press on its chevron, the right arrow key on a
+   * collapsed row and the left arrow key on an expanded one, mirrored in right-to-left text. The
+   * application updates items.
+   */
   onExpandedChange: (item: T, expanded: boolean) => void;
-  /** Menu items for a row, or for the tree's empty area when the item is null. */
+  /**
+   * Menu items for the row people right-click, or press Shift+F10 or the Menu key on, or for the
+   * tree's empty area when the item is null. Without it, the browser's own context menu stays.
+   */
   contextMenu?: (item: T | null) => ReactNode;
-  /** Accessible name of the context menu. */
+  /** The context menu's accessible name, in the application's language. */
   contextMenuLabel?: string;
-  /** compact (default) rows are about 1.75 rem tall, with a compact context menu; standard rows about 2.25 rem. */
+  /**
+   * compact rows are 1.75 rem tall, with 0.875 rem text and a compact context menu; standard rows
+   * are 2.25 rem tall, with 0.9375 rem text. On touch screens both are 2.75 rem.
+   */
   density?: 'compact' | 'standard';
+  /** A class for the tree, the element that scrolls. */
   className?: string;
 }
 
@@ -106,7 +147,8 @@ function siblingPositions(items: readonly TreeItem[]) {
 
 /**
  * A virtualized tree of rows for large hierarchies such as file trees. The application passes the
- * visible rows and owns expansion; the tree owns focus, keyboard navigation and scrolling.
+ * visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and
+ * scrolling. It fills its parent's height, scrolls itself and renders only the rows in view.
  */
 export function Tree<T extends TreeItem>({
   items,

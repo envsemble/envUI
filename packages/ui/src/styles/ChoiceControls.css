@@ -73,13 +73,15 @@
 .env-radio-control:active:not(:disabled) {
   accent-color: var(--color-radio-pressed);
 }
-.env-radio-control:disabled {
-  opacity: var(--state-disabled-opacity);
-}
 .env-radio-option:has(input:disabled),
 .env-choice-control:has(input:disabled) {
   cursor: default;
-  color: var(--color-disabled-text);
+}
+/* A disabled control fades with its label, at the opacity of every disabled control. The row of a
+   row radio keeps its surface, so the group's shape stays whole. */
+.env-radio-option:has(input:disabled) > *,
+.env-choice-control:has(input:disabled) > * {
+  opacity: var(--state-disabled-opacity);
 }
 
 /* Switch track, thumb, and label have independent palette roles. */
@@ -116,6 +118,10 @@
   transform: translateX(calc(1rem * var(--scale, 1)));
   background: var(--color-switch-thumb-on);
 }
+/* In right-to-left text the thumb starts at the right, so it travels its own width to the left. */
+.env-switch-control:checked:dir(rtl)::before {
+  transform: translateX(-100%);
+}
 .env-switch-control:hover:not(:disabled) {
   background: var(--color-switch-off-hover);
 }
@@ -131,9 +137,6 @@
 .env-switch-control:focus-visible {
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
   outline-offset: calc(0.125rem * var(--scale, 1));
-}
-.env-switch-control:disabled {
-  opacity: var(--state-disabled-opacity);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-switch-control,
@@ -210,9 +213,6 @@
   outline: calc(0.125rem * var(--scale, 1)) solid var(--color-focus-ring);
   outline-offset: calc(0.125rem * var(--scale, 1));
 }
-.env-checkbox-box:has(:disabled) {
-  opacity: var(--state-disabled-opacity);
-}
 
 .env-radio-inline {
   display: flex;
@@ -239,7 +239,4 @@
 }
 .env-choice-control:has(.env-radio-control) {
   color: var(--color-radio-text);
-}
-.env-choice-control:has(input:disabled) {
-  color: var(--color-disabled-text);
 }

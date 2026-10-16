@@ -873,7 +873,7 @@ test.describe('Title bar', () => {
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(`${catalogueUrl}/#/components/app-shell/preview`);
+    await page.goto(`${catalogueUrl}/#/components/app-shell/overview`);
     await expect(page.locator('.env-app-shell[data-title-bar]')).toBeVisible();
     await page.keyboard.press('PageDown');
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);

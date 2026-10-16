@@ -42,7 +42,7 @@ test('overview cards are single named links, including their padding', async ({ 
   const catalogue = page.locator('.docs-catalogue-grid');
   const card = catalogue.getByRole('link', { name: 'Card', exact: true });
   await expect(card).toHaveAccessibleDescription(
-    'A content surface with automatic spacing and optional actions.',
+    'A rounded surface that groups content about one subject, as a content card, a card with an action strip, or one link or button.',
   );
   await expect(catalogue.locator('a a, a button')).toHaveCount(0);
   await expect(catalogue.getByText(/^Explore /)).toHaveCount(0);
@@ -53,5 +53,5 @@ test('overview cards are single named links, including their padding', async ({ 
     );
   }
   await card.click({ position: { x: (await card.boundingBox())!.width / 2, y: 8 } });
-  await expect(page).toHaveURL(/#\/components\/card\/preview$/);
+  await expect(page).toHaveURL(/#\/components\/card\/overview$/);
 });

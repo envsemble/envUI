@@ -9,7 +9,7 @@
   max-inline-size: 100%;
   block-size: 2.5rem;
   padding-inline: var(--space-1);
-  border-block-end: 0.0625rem solid var(--color-border-strong);
+  border-block-end: 0.0625rem solid var(--color-border-muted);
   /* The strip takes the width it is given; its tabs never widen a grid or flex parent. */
   contain: inline-size;
   overflow-x: auto;

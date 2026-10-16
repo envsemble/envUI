@@ -14,7 +14,7 @@ export function TooltipPopup({ content, side }: { content: ReactNode; side: Tool
   const theme = useTheme();
   return (
     <BaseTooltip.Portal>
-      <Theme theme={theme} className="env-tooltip-theme">
+      <Theme {...theme} className="env-tooltip-theme">
         <BaseTooltip.Positioner side={side} sideOffset={6} className="env-tooltip-positioner">
           <BaseTooltip.Popup className="env-tooltip">{content}</BaseTooltip.Popup>
         </BaseTooltip.Positioner>

@@ -1,21 +1,40 @@
 ---
 title: DatePicker
-summary: Choose a date, or a date and time, from a calendar, which also stands on its own.
+summary: A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.
 status: beta
 since: 0.6.0
 category: Forms & selection
 aliases:
   - DateTimeField
-  - DateField
+  - date field
   - date input
-  - time picker
+  - date time picker
+  - datetime picker
   - datetime
+  - time picker
   - calendar
+  - calendar picker
+  - day picker
+  - month view
+useWhen:
+  - People choose a day, such as when a report goes out or a task is due.
+  - People choose a day and a time, such as when a meeting starts (`withTime`).
+  - A day is chosen within a page or a panel from a month that stays visible, such as in a planning view (Calendar).
+avoidWhen:
+  - text: A moment shown relative to now, such as "3 hours ago".
+    use: RelativeTime
+  - text: Activity per day over months, shown as shades.
+    use: CalendarHeatmap
+  - text: A free-text date that people type in any format.
+    use: TextField
+  - text: A choice among a few named periods, such as This week or This month.
+    use: SegmentedControl
 related:
   - text-field
   - popover
   - combobox
   - calendar-heatmap
+  - relative-time
   - accessibility
 components:
   - DatePicker
@@ -24,102 +43,151 @@ components:
 
 # DatePicker
 
-## DatePicker
+## Overview
 
-```tsx
-import { DatePicker } from '@envsemble/envui';
+A date picker is a field that shows a date, or with `withTime` a date and time, in the reader's locale, such as 20 Oct 2026 or Oct 20, 2026, 9:30 AM, and opens a calendar to choose it. Its values are local dates and times without a zone: a day as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm` with a time. Converting them to and from a moment in time belongs to the application. The field is the shared text field, and the calendar follows the WAI-ARIA date picker.
 
-<DatePicker
-  label="Publish on"
-  name="publish"
-  value={publishOn}
-  onValueChange={setPublishOn}
-  clearable
-/>
+**Calendar** is the month of days the field opens, which also stands on its own within a page or a panel.
 
-<DatePicker
-  label="Meeting"
-  name="meeting"
-  withTime
-  defaultTime="09:00"
-  min="2026-10-01"
-  value={meeting}
-  onValueChange={setMeeting}
-/>
+```tsx example=PublishDate
 
-<DatePicker density="compact" aria-label="Due" placeholder="Due" withTime clearable />;
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                              | Contract                                                                                                             |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| value / defaultValue              | A day as YYYY-MM-DD, or with withTime a local date and time as YYYY-MM-DDTHH:mm; null or an empty string for none    |
-| onValueChange                     | Receives the new value, or null once the field is cleared                                                            |
-| withTime                          | Choose a time as well, in the calendar below the days                                                                |
-| min / max                         | The earliest and latest value, as YYYY-MM-DD or YYYY-MM-DDTHH:mm; days outside are unavailable                       |
-| defaultTime                       | The time a newly chosen day starts with, as HH:mm; 00:00 by default                                                  |
-| locale                            | The locale of the shown value and the calendar's names and numbers; the browser's by default                         |
-| formatOptions                     | Intl.DateTimeFormat options for the shown value; the medium date style, and the short time style with withTime       |
-| aria-label / aria-labelledby      | Name a field without a label; aria-labelledby also takes the place of a label                                        |
-| weekStart                         | The calendar's first day of the week, 0 for Sunday to 6 for Saturday; the locale's by default                        |
-| label / hint / error              | Floating label, guidance and validation like TextField; hint and error are linked to the field                       |
-| density / showLabel               | standard (default) or compact, 2 rem; the label shows inside the field unless the field is compact                   |
-| placeholder                       | Shown while the field is empty and its label floats or is hidden, or the field has no label                          |
-| clearable                         | A clear button in the field and in the calendar removes the value                                                    |
-| open / defaultOpen / onOpenChange | Optional control of the calendar                                                                                     |
-| Labels                            | clearLabel, todayLabel, nowLabel, doneLabel, timeLabel, previousMonthLabel and nextMonthLabel, in English by default |
-| Native participation              | name, form, required, disabled and readOnly; a form reset restores an uncontrolled field's defaultValue              |
-| Native button props               | ref and other attributes of the field's button                                                                       |
+1. **Field**: a button in the shared text field's frame, with the floating `label`, `hint` and `error`, showing the value or the `placeholder`.
+2. **Clear button** (`clearable`): a text icon button named `clearLabel` (Clear), while there is a value.
+3. **Calendar icon**: a calendar, or a calendar with a clock with `withTime`, at the end of the field.
+4. **Popup**: the Popover surface below the field, with the calendar and its footer.
+5. **Month heading**: the month and year between the previous and next month buttons (`previousMonthLabel`, `nextMonthLabel`).
+6. **Days**: a grid of six weeks under the weekday names, each day a round mark; today has a ring and the chosen day a solid fill.
+7. **Time field** (`withTime`): a compact time field labelled `timeLabel` (Time), below the days.
+8. **Footer**: Today, or Now with `withTime`, at the start; Clear with `clearable`, and Done with `withTime`, at the end.
 
-## Calendar
+## Variants and sizes
 
-```tsx
-import { Calendar } from '@envsemble/envui';
+| Variant             | Use for                                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Date                | A day. Choosing one closes the calendar. The default.                                                               |
+| `withTime`          | A day and a time: the calendar stays open for the time field, Now and Done.                                         |
+| `density="compact"` | Toolbars and dense surfaces: the 2 rem height of compact controls, with the label hidden unless `showLabel` is set. |
 
-<Calendar
-  aria-label="Planning"
-  value={day}
-  onValueChange={setDay}
-  min="2026-01-01"
-  max="2026-12-31"
-  locale="en-GB"
-/>;
-```
+<!-- specimen: States -->
 
-### Props & contracts
-
-| Name                                | Contract                                                                                         |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------ |
-| value / defaultValue                | The chosen day as YYYY-MM-DD, or null                                                            |
-| onValueChange                       | Receives the chosen day as YYYY-MM-DD                                                            |
-| min / max                           | The earliest and latest day that can be chosen; the month buttons stop at them                   |
-| weekStart                           | 0 for Sunday to 6 for Saturday; by default the locale's, or Monday where the browser cannot tell |
-| locale                              | The locale of the month and weekday names and the day numbers; the browser's by default          |
-| previousMonthLabel / nextMonthLabel | Accessible names of the month buttons; Previous month and Next month by default                  |
-| aria-label / aria-labelledby        | Name the calendar, which is then a group around the month's grid                                 |
-| Native div props                    | className, ref and other attributes of the calendar's root                                       |
-
-## Guidelines
-
-- Use a date field for a day, or with withTime a day and time, such as when something is due or a meeting starts. Values are local dates and times without a zone; converting them to and from a moment in time belongs to the application.
-- The field shows the value in the reader's locale, such as 20 Oct 2026 or Oct 20, 2026, 9:30 AM. Pressing it, its label or its calendar icon opens the calendar on the Popover surface, as does <kbd>↓</kbd>; pressing the field or its label again closes it. With clearable, the clear button and <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field remove the value.
-- The calendar follows the WAI-ARIA date picker: focus moves to the chosen day, or today, as it opens. <kbd>←</kbd> and <kbd>→</kbd> move by a day, <kbd>↑</kbd> and <kbd>↓</kbd> by a week, <kbd>Page Up</kbd> and <kbd>Page Down</kbd> by a month and with <kbd>Shift</kbd> by a year, <kbd>Home</kbd> and <kbd>End</kbd> to the start and end of the week, and <kbd>Enter</kbd> or <kbd>Space</kbd> chooses the day. <kbd>Esc</kbd> closes the calendar and returns focus to the field. A field in right-to-left text opens a calendar that runs right to left, where <kbd>←</kbd> and <kbd>→</kbd> follow the reading direction.
-- Choosing a day closes a date field's calendar. With withTime it stays open: below the days a time field sets the hours and minutes, Now chooses the current date and time, and Done closes it. Today or Now, and Clear when clearable, sit in the calendar's footer; values outside min and max are kept within them.
-- Days are round marks, each named by its full date. Today has a ring and the chosen day a solid fill, blue with white text in the light theme and light blue with dark text in the dark theme, with their own color roles and at least 3:1 against the surface; unavailable days are faded. The calendar keeps six weeks, so its size stays the same from month to month, and empty cells before and after the month keep each day under its weekday, also for assistive technology.
-- The calendar is Gregorian. Its month and weekday names and day numbers come from the locale, also from one with a calendar of its own, such as Persian, which then names the Gregorian months.
+- A field fills its container's width.
 - The calendar is as wide as seven days, 2.5 rem each and 2.25 rem in a compact field's popup; on touch screens days are 2.75 rem, and the calendar fits a phone's width.
-- The field is the shared text field, with TextField's label, guidance, invalid and disabled states, compact height and touch sizes. Read-only fields show the value and cannot open the calendar; like read-only inputs they are not validated, so an empty required one never keeps its form from submitting.
-- Native forms submit the value under name, and a form reset restores an uncontrolled field's defaultValue. required asks for a value, and an empty field takes focus when the form is submitted. Validation stays with the application.
-- Use Calendar on its own to choose a day within a page or panel, such as a planning view; it has the same keyboard and appearance. Name it with aria-label or aria-labelledby: it is then a group around the month's grid, so calendars showing the same month stay apart.
-- Rendered on a server, a field or calendar without locale writes British English, and a calendar without a value leaves its days empty and its month buttons available, as only the reader's clock knows today and so the month that min and max limit. Once the page hydrates, they show the reader's language, week and today, without a mismatch error. Pass locale, such as the language the server chose for the request, and weekStart for server output in the reader's language.
+- The calendar always shows six weeks, so its height stays the same from month to month; empty cells before and after the month keep each day under its weekday.
 
-TypeScript declarations provide the complete public API.
+## States and behaviour
 
-## Related topics
+- **Opening and closing**: pressing the field, its label or its icon opens the calendar, as does <kbd>↓</kbd> or <kbd>↑</kbd>; pressing the field or its label again, a press outside and <kbd>Esc</kbd> close it and return focus to the field. As it opens, focus moves to the chosen day, or today. `open`, `defaultOpen` and `onOpenChange` control it.
+- **Choosing**: choosing a day calls `onValueChange` with the new value and closes the calendar of a date field. With `withTime`, a newly chosen day starts at `defaultTime` (00:00), the time field sets the hours and minutes, Now chooses the current date and time, and Done closes it.
+- **Clearing**: with `clearable`, the clear button, Clear in the calendar and <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field remove the value, and `onValueChange` receives null.
+- **Limits**: days outside `min` and `max` are unavailable and faded, the month buttons stop at them, Today or Now is unavailable outside them, and values are kept within them.
+- **Days**: today has a ring and the chosen day a solid fill, blue with white text in the light theme and light blue with dark text in the dark theme, each with at least 3:1 contrast against the surface.
+- **Locale and week**: `locale` sets the value's format and the calendar's names and numbers, the browser's by default; `formatOptions` changes the field's format. `weekStart` is the locale's first weekday, or Monday where the browser can't tell. The calendar is Gregorian, also in a locale with a calendar of its own, which then names the Gregorian months.
+- **Right to left**: a field in right-to-left text opens a calendar that runs right to left, where <kbd>←</kbd> and <kbd>→</kbd> follow the reading direction.
+- **Read only and disabled**: a read-only field shows its value and can be focused, but its calendar doesn't open; like a read-only input it isn't validated, so an empty required one never keeps its form from submitting. A disabled field can't be focused and is left out of the form.
+- **In forms**: `name` submits the value, `required` asks for one, and an empty required field takes focus when its form is submitted; a form reset restores an uncontrolled field's `defaultValue`. Validation and its `error` belong to the application.
+- **Server rendering**: without `locale`, a field or calendar rendered on a server writes British English, and a calendar without a value leaves its days empty until it hydrates; then the reader's language, week and today replace them without a mismatch error. Pass `locale` and `weekStart` for server output in the reader's language.
 
-- [TextField](../components/text-field.md)
-- [Popover](../components/popover.md)
-- [Combobox](../components/combobox.md)
-- [CalendarHeatmap](../components/calendar-heatmap.md)
-- [Accessibility](../foundations/accessibility.md)
+## Content guidelines
+
+- Name the field after the moment, in sentence case: "Publish on", "Meeting", "Last day".
+- Use the hint for the limits or what the date affects: "Any day this quarter."
+- Write an error that says how to correct the value: "Choose a last day on or after the first."
+- Translate `clearLabel`, `todayLabel`, `nowLabel`, `doneLabel`, `timeLabel`, `previousMonthLabel` and `nextMonthLabel` where the interface is not in English.
+
+## Do and don't
+
+### Do
+
+- Store and send the field's `YYYY-MM-DD` or `YYYY-MM-DDTHH:mm` values, and convert them to moments with the time zone the application knows.
+- Use `min` and `max` for the days that can be chosen, and say so in the hint.
+- Use `withTime` only when the time matters.
+- Name a Calendar on its own with `aria-label` or `aria-labelledby`.
+
+### Don't
+
+- Don't ask people to type a date in a TextField when they choose it from a calendar.
+- Don't use a date picker for a range of two dates in one field; use two fields, such as First day and Last day.
+- Don't disable a date picker to show a date; use `readOnly`, which people can still focus and read.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                           | Action                                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                               | Moves focus to the field, then its clear button. In an open calendar, moves between the month buttons, the active day, the time field and the footer's buttons; moving focus out of the calendar closes it. |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd> or <kbd>↑</kbd> on the field | Opens the calendar with focus on the chosen day, or today.                                                                                                                                                  |
+| <kbd>Backspace</kbd> or <kbd>Delete</kbd> on the field                        | Clears the value of a clearable field.                                                                                                                                                                      |
+| <kbd>←</kbd>, <kbd>→</kbd>                                                    | Moves to the previous or next day, in the reading direction.                                                                                                                                                |
+| <kbd>↑</kbd>, <kbd>↓</kbd>                                                    | Moves to the same day of the previous or next week.                                                                                                                                                         |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>                                      | Moves to the same day of the previous or next month.                                                                                                                                                        |
+| <kbd>Shift</kbd>+<kbd>Page Up</kbd>, <kbd>Shift</kbd>+<kbd>Page Down</kbd>    | Moves to the same day of the previous or next year.                                                                                                                                                         |
+| <kbd>Home</kbd>, <kbd>End</kbd>                                               | Moves to the first or last day of the week.                                                                                                                                                                 |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on a day                                 | Chooses the day.                                                                                                                                                                                            |
+| <kbd>Esc</kbd>                                                                | Closes the calendar and returns focus to the field; in a dialog, the next <kbd>Esc</kbd> closes the dialog.                                                                                                 |
+
+### envUI provides
+
+- The field as a `combobox` button named by its label, with the hint and error as its description, `aria-invalid`, `aria-required` and `aria-readonly`.
+- The calendar as a grid of days, each named by its full date, such as "Tuesday, 20 October 2026", with the chosen day selected, today marked as the current date and unavailable days disabled; the active day is the grid's one tab stop.
+- A Calendar named with `aria-label` or `aria-labelledby` as a group around its month, so calendars showing the same month stay apart.
+- Focus that moves into the calendar as it opens and back to the field as it closes, and stays where it was when a key doesn't move the day.
+- The month heading as a polite live region, so the new month is announced as it changes, and month buttons that stay focusable at `min` and `max` and report `aria-disabled`.
+- Day colors with their own roles, and today's ring and the chosen day's fill with at least 3:1 contrast.
+
+### You provide
+
+- A `label`, or `aria-label` or `aria-labelledby` on a field without one.
+- Validation, such as the order of two dates, and its `error`.
+- The labels in the application's language.
+
+## Examples
+
+### A date and a time
+
+With `withTime`, the calendar stays open for the time field; Now chooses the current date and time, and Done closes it.
+
+```tsx example=MeetingTime
+
+```
+
+### Within a range
+
+`min` and `max` make the days outside this quarter unavailable, and the month buttons stop at them.
+
+```tsx example=WithinRange
+
+```
+
+### Compact, in a toolbar
+
+A compact field takes the height of compact buttons, and its placeholder shows in place of the hidden label.
+
+```tsx example=CompactToolbar
+
+```
+
+### In a form
+
+Two required fields submit their days; the application checks their order and shows the error, and Reset returns them to `defaultValue`.
+
+```tsx example=LeaveRequest
+
+```
+
+### A calendar on its own
+
+Calendar chooses a day within the page, named by `aria-label`; a status says which day is chosen.
+
+```tsx example=PlanningCalendar
+
+```
+
+## Changelog
+
+- **1.0.0**: `DateTimeField` is `DatePicker`, with the `env-date-picker-*` classes; the page is `date-picker`.
+- **0.6.0**: DateTimeField, for a day or, with `withTime`, a date and time, and Calendar.

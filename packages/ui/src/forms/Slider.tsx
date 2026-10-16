@@ -17,37 +17,66 @@ import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface SliderProps
   extends Omit<ComponentPropsWithRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
-  /** Visible label and the slider's accessible name. */
+  /**
+   * The value's name above the track, such as Opacity. It names the slider, and pressing it moves
+   * focus to the slider.
+   */
   label: ReactNode;
-  /** Guidance below the slider, linked to it. */
+  /**
+   * Lasting guidance under the track, such as what the value applies to, linked to the slider as
+   * its description.
+   */
   hint?: ReactNode;
+  /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
-  /** Starting value when the slider owns it; min by default. */
+  /**
+   * The value an uncontrolled slider starts with; a native form reset returns to it.
+   * @default min
+   */
   defaultValue?: number;
-  /** Receives the value while it changes, by dragging, pressing the track or with the keyboard. */
+  /**
+   * Receives the value while it changes, by dragging, pressing the track or with the keyboard, as
+   * often as the thumb moves.
+   */
   onValueChange?: (value: number) => void;
-  /** Receives the value once a change is complete, such as when the thumb is released. */
+  /**
+   * Receives the value once a change is complete: when the thumb is released or the track pressed,
+   * and after each key. Use it for work that runs once per change, such as saving.
+   */
   onValueCommit?: (value: number) => void;
-  /** 0 by default. */
+  /** The lowest value, at the start of the track. */
   min?: number;
-  /** 100 by default. */
+  /** The highest value, at the end of the track. */
   max?: number;
-  /** The values between min and max that the slider can take; 1 by default. */
+  /**
+   * The distance between the values the slider can take, counted from min; an arrow key moves by
+   * it.
+   */
   step?: number;
-  /** The change of Page Up, Page Down and arrow keys with Shift; a tenth of the range by default. */
+  /**
+   * The change of Page Up, Page Down and an arrow key with Shift.
+   * @default a tenth of the range in whole steps, at least one step
+   */
   largeStep?: number;
-  /** The value as people read and hear it, such as (value) => `${value}%`. */
+  /**
+   * The value as people read it above the track and assistive technology announces it, such as
+   * (value) => `${value}%`. Without it, the number shows as it is.
+   */
   formatValue?: (value: number) => string;
+  /** Dim the slider; it can't be focused or moved, and forms leave it out. */
   disabled?: boolean;
   /** Submits the value with a form under this name. */
   name?: string;
-  /** The id of a form the slider belongs to when it is outside of it. */
+  /** The id of a form the slider belongs to when it sits outside of it. */
   form?: string;
   /** The native range input, for example to focus it. */
   inputRef?: Ref<HTMLInputElement>;
 }
 
-/** A value in a range, chosen by dragging a thumb along a track or with the keyboard. */
+/**
+ * A value in a range, chosen by dragging a thumb along a track, pressing the track or with the
+ * keyboard, with its label and current value above the track and an optional hint below.
+ */
 export function Slider({
   label,
   hint,

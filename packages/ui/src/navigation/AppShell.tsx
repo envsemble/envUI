@@ -181,6 +181,7 @@ interface AppShellFrameProps {
    * scrolls it as it would the document. Meant for the full topbar.
    */
   titleBar?: boolean;
+  /** Classes for the shell's root. */
   className?: string;
 }
 
@@ -197,12 +198,15 @@ export interface AppShellProps extends AppShellFrameProps {
   loadingLabel?: string;
   /** Persist the collapsed preference under this localStorage key. */
   storageKey?: string;
+  /** Whether an uncontrolled sidebar starts collapsed on wide viewports; expanded by default. */
   defaultCollapsed?: boolean;
   /** Controlled collapsed preference on wide viewports. */
   collapsed?: boolean;
+  /** Called with the new preference when the toggle collapses or expands the sidebar. */
   onCollapsedChange?: (collapsed: boolean) => void;
-  /** Labels for the sidebar toggle. */
+  /** Accessible name of the toggle while the sidebar is collapsed; Expand sidebar by default. */
   expandLabel?: string;
+  /** Accessible name of the toggle while the sidebar is expanded; Collapse sidebar by default. */
   collapseLabel?: string;
   /**
    * Content below the navigation, such as a Tree. It fills the remaining sidebar height and scrolls
@@ -684,10 +688,13 @@ export interface AppShellSkeletonProps
   navigationItems?: number;
   /** Match the stored collapsed preference of the AppShell it precedes. */
   storageKey?: string;
+  /** Match the defaultCollapsed of the AppShell it precedes. */
   defaultCollapsed?: boolean;
   /** Match a resizable AppShell's stored width and bounds. */
   resizable?: boolean;
+  /** Match the AppShell's smallest resizable width in pixels; 12 rem by default. */
   sidebarMinWidth?: number;
+  /** Match the AppShell's largest resizable width in pixels; 32 rem by default. */
   sidebarMaxWidth?: number;
   /** Placeholder for the page content. */
   children?: ReactNode;

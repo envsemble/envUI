@@ -11,9 +11,14 @@ import { Warning } from '../icons/Warning.js';
 export type AlertTone = 'info' | 'success' | 'warning' | 'error';
 
 export interface AlertProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
-  /** info (default), success, warning or error; each has its tone color and default icon. */
+  /**
+   * What the message means: info, success, warning or error. Sets the tint, the border and the
+   * icon; info and success alerts are also status messages.
+   */
   tone?: AlertTone;
+  /** A short heading for the message, such as "Sync paused", above the message. */
   title?: ReactNode;
+  /** The message: what it means and what people can do. */
   children?: ReactNode;
   /** Replaces the tone's icon; false shows none. */
   icon?: ReactNode | false;
@@ -21,7 +26,7 @@ export interface AlertProps extends Omit<ComponentPropsWithRef<'div'>, 'title' |
   action?: ReactNode;
   /** Shows a dismiss button that calls it; the application removes the alert. */
   onDismiss?: () => void;
-  /** Accessible name of the dismiss button; Dismiss by default. */
+  /** Accessible name of the dismiss button, also shown as its tooltip. */
   dismissLabel?: string;
   /**
    * The alert appeared because of something that just happened and should interrupt: warning and

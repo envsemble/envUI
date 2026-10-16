@@ -15,7 +15,7 @@
   gap: var(--space-3);
   padding: var(--space-5);
   overflow-y: auto;
-  border: 0.0625rem solid var(--color-popup-border);
+  border: 0.0625rem solid var(--elevation-2-border);
   border-radius: var(--radius-surface);
   background: var(--color-popup);
   box-shadow: var(--elevation-2-shadow);

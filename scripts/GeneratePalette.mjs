@@ -67,11 +67,17 @@ export const hues = {
       'The brand blue: primary actions, links, selection and focus. Seeded from the light selection tint, the dark theme’s soft blue and the primary blue.',
     seeds: ['#e8f0fe', '#a8c7fa', '#1a73e8'],
   },
+  slate: {
+    description:
+      'The low-chroma blue-gray of quiet tints: the dark theme’s selection and the light theme’s navigation hover. Seeded from 0.7’s light navigation hover and press and its dark selected option.',
+    seeds: ['#ccd9ea', '#a7bfdc', '#364863'],
+  },
   steel: {
     description: 'The quieter blue of information, seeded from the info toast.',
     seeds: ['#295ea3'],
   },
   green: { description: 'Success.', seeds: ['#7dd49a', '#197136'] },
+  teal: { description: 'The teal green of success toasts, seeded from 0.7’s.', seeds: ['#287156'] },
   amber: { description: 'Warning.', seeds: ['#f1bd55', '#855000'] },
   red: { description: 'Danger and errors.', seeds: ['#f5a9a3', '#b42318'] },
   violet: { description: 'Done: completed work.', seeds: ['#d1b1f6', '#7639c6'] },

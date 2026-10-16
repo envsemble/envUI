@@ -29,21 +29,22 @@ test('a default that names a private value shows the value, or nothing', () => {
   const publicNames = new Set(Object.keys(exports));
   // A private const and a private label function read as what they hold.
   assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
-  assert.equal(
-    props('Rating').formatLabel.default,
-    `(value: number, max: number) => \`\${value} out of \${max} stars\``,
-  );
+  assert.equal(props('DocumentTabs').closeLabel.default, '(label: string) => `Close ${label}`');
+  // A TSDoc @default says it in words instead.
+  assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
   // Private names inside a value are resolved too.
   assert.equal(
     props('CalendarHeatmap').formatValue.default,
     "(value: number) => new Intl.NumberFormat('en').format(value)",
   );
-  // No default names something a reader cannot import.
+  // No default names something a reader cannot import, other than another of its props, such as
+  // Slider's defaultValue, which starts at min.
   for (const [name, entry] of Object.entries(exports))
     for (const prop of entry.props ?? [])
       if (
         /^[A-Za-z_$][\w$]*$/.test(prop.default ?? '') &&
-        !['true', 'false', 'null', 'undefined'].includes(prop.default)
+        !['true', 'false', 'null', 'undefined'].includes(prop.default) &&
+        !entry.props.some((other) => other.name === prop.default)
       )
         assert.ok(
           publicNames.has(prop.default),

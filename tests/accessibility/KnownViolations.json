@@ -1,136 +1,152 @@
 {
-  "components/app-shell/preview": {
+  "components/app-shell/overview": {
     "dark": {
       "landmark-main-is-top-level": {
-        "Application shell :: main.env-app-content": 1,
-        "Full-width title bar :: main.env-app-content": 1
+        "article :: main.env-app-content": 2
       },
       "landmark-no-duplicate-main": {
         "main :: main.docs-main": 1
       },
       "landmark-unique": {
         "main :: main.docs-main": 1
-      },
-      "scrollable-region-focusable": {
-        "Title bar alone :: div.env-window-frame-content": 1
       }
     },
     "light": {
       "landmark-main-is-top-level": {
-        "Application shell :: main.env-app-content": 1,
-        "Full-width title bar :: main.env-app-content": 1
+        "article :: main.env-app-content": 2
       },
       "landmark-no-duplicate-main": {
         "main :: main.docs-main": 1
       },
       "landmark-unique": {
         "main :: main.docs-main": 1
-      },
-      "scrollable-region-focusable": {
-        "Title bar alone :: div.env-window-frame-content": 1
       }
     }
   },
-  "components/combobox/preview": {
-    "dark": {
-      "aria-allowed-attr": {
-        "Validation & availability :: div.env-combobox-chip": 1
-      }
-    },
-    "light": {
-      "aria-allowed-attr": {
-        "Validation & availability :: div.env-combobox-chip": 1
-      }
-    }
-  },
-  "components/document-tabs/preview": {
-    "dark": {
-      "nested-interactive": {
-        "Open documents :: div.env-document-tab": 1
-      }
-    },
-    "light": {
-      "nested-interactive": {
-        "Open documents :: div.env-document-tab": 1
-      }
-    }
-  },
-  "components/drop-zone/preview": {
+  "components/card/overview": {
     "dark": {
       "label-content-name-mismatch": {
-        "Drop or browse :: button.env-drop-zone-target": 1,
-        "States :: button.env-drop-zone-target": 2
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+      }
+    },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "Drop or browse :: button.env-drop-zone-target": 1,
-        "States :: button.env-drop-zone-target": 2
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
+      }
+    },
+    "light-hc": {
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface.env-surface-row.env-surface-corners-surface": 3
       }
     }
   },
-  "components/empty-state/preview": {
+  "components/combobox/guidelines": {
     "dark": {
-      "heading-order": {
-        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
+      "aria-allowed-attr": {
+        "Combobox states :: div.env-combobox-chip": 2
       }
     },
     "light": {
-      "heading-order": {
-        "In place of a page’s content :: h4.env-text.env-text-section-heading": 1
+      "aria-allowed-attr": {
+        "Combobox states :: div.env-combobox-chip": 2
       }
     }
   },
-  "components/menubar/preview": {
+  "components/document-tabs/overview": {
+    "dark": {
+      "nested-interactive": {
+        "article :: div.env-document-tab": 2
+      }
+    },
+    "light": {
+      "nested-interactive": {
+        "article :: div.env-document-tab": 2
+      }
+    }
+  },
+  "components/drop-zone/guidelines": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "Drop zone states :: button.env-drop-zone-target": 2
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "Drop zone states :: button.env-drop-zone-target": 2
+      }
+    }
+  },
+  "components/drop-zone/overview": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "article :: button.env-drop-zone-target": 4
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "article :: button.env-drop-zone-target": 4
+      }
+    }
+  },
+  "components/menubar/overview": {
     "dark": {
       "target-size": {
-        "Application menubar :: button.env-textarea-resize-edge": 1
+        "article :: button.env-textarea-resize-edge": 1
       }
     },
     "light": {
       "target-size": {
-        "Application menubar :: button.env-textarea-resize-edge": 1
+        "article :: button.env-textarea-resize-edge": 1
       }
     }
   },
-  "components/panel-dock/preview": {
-    "dark": {
-      "landmark-unique": {
-        "Docked panels :: section.env-panel-dock-panel": 2
-      },
-      "target-size": {
-        "Docked panels :: button.env-textarea-resize-edge": 2,
-        "Maximized panel :: button.env-textarea-resize-edge": 2,
-        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
-      }
-    },
-    "light": {
-      "landmark-unique": {
-        "Docked panels :: section.env-panel-dock-panel": 2
-      },
-      "target-size": {
-        "Docked panels :: button.env-textarea-resize-edge": 2,
-        "Maximized panel :: button.env-textarea-resize-edge": 2,
-        "Minimize what does not fit :: button.env-textarea-resize-edge": 2
-      }
-    }
-  },
-  "components/rich-text/preview": {
+  "components/panel-dock/overview": {
     "dark": {
       "target-size": {
-        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+        "article :: button.env-textarea-resize-edge": 2
       }
     },
     "light": {
       "target-size": {
-        "Formatted editing and saved content :: div.env-markdown.env-rich-text-document input": 2
+        "article :: button.env-textarea-resize-edge": 2
       }
     }
   },
-  "components/segmented-control/preview": {
+  "components/rich-text/overview": {
+    "dark": {
+      "target-size": {
+        "article :: div.env-markdown.env-rich-text-document input": 2
+      }
+    },
+    "light": {
+      "target-size": {
+        "article :: div.env-markdown.env-rich-text-document input": 2
+      }
+    }
+  },
+  "components/segmented-control/guidelines": {
     "light": {
       "color-contrast": {
-        "One choice among a few :: span.env-segment-count": 2
+        "Sizes and states :: span.env-segment-count": 3
+      }
+    }
+  },
+  "components/slider/overview": {
+    "dark": {
+      "color-contrast": {
+        "article :: div.env-slider-label": 1,
+        "article :: output.env-slider-value": 1
+      }
+    },
+    "light": {
+      "color-contrast": {
+        "article :: div.env-slider-label": 1,
+        "article :: output.env-slider-value": 1
       }
     }
   },
@@ -141,7 +157,19 @@
         "Textarea states :: button.env-textarea-resize-edge": 3
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
     "light": {
+      "target-size": {
+        "Appearances :: button.env-textarea-resize-edge": 1,
+        "Textarea states :: button.env-textarea-resize-edge": 3
+      }
+    },
+    "light-hc": {
       "target-size": {
         "Appearances :: button.env-textarea-resize-edge": 1,
         "Textarea states :: button.env-textarea-resize-edge": 3
@@ -154,7 +182,17 @@
         "article :: button.env-textarea-resize-edge": 1
       }
     },
+    "dark-hc": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
+      }
+    },
     "light": {
+      "target-size": {
+        "article :: button.env-textarea-resize-edge": 1
+      }
+    },
+    "light-hc": {
       "target-size": {
         "article :: button.env-textarea-resize-edge": 1
       }
@@ -179,10 +217,50 @@
         "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
       }
     },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
     "light": {
       "color-contrast": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
         "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
+      },
+      "label-content-name-mismatch": {
+        "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
+        "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
+        "Checkboxes :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Content & loading :: button.env-button.env-button-secondary.docs-swatch": 2,
+        "Direction links :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch": 9,
+        "Navigation :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Page & surfaces :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Radio :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Rows :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Select options :: button.env-button.env-button-secondary.docs-swatch": 4,
+        "Switches :: button.env-button.env-button-secondary.docs-swatch": 5,
+        "Text & focus :: button.env-button.env-button-secondary.docs-swatch": 7,
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch": 8
+      }
+    },
+    "light-hc": {
+      "color-contrast": {
+        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,

@@ -6,6 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { RECOMMENDED_CONFIG } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
+import { makeCSSVar } from '@terrazzo/token-tools/css';
 import { converter, formatHex } from 'culori';
 
 /** The token sources, and where the build writes; a test can build other tokens elsewhere. */
@@ -16,8 +17,14 @@ const resolverIn = (directory) => new URL('envui.resolver.json', directory);
 /** The vendor key of envUI's `$extensions`. */
 const extension = 'com.envsemble.envui';
 
-/** The CSS custom property of a token: its path joined with hyphens, as Tokens.css names it. */
-export const cssVariable = (id) => `--${id.split('.').join('-')}`;
+/**
+ * The CSS custom property of a token, as plugin-css writes it in Tokens.css, in a var() that
+ * aliases it, and for each part of a composite token (`--text-label-font-size`): makeCSSVar()
+ * keeps letters and digits, joins the words with hyphens and lowercases them. The lint rule
+ * envui/unique-css-names makes it the token's path joined with hyphens, `color.fg.muted` as
+ * `--color-fg-muted`.
+ */
+export const cssVariable = (id) => makeCSSVar(id);
 
 /**
  * Token groups that are build input only: the primitive palette, and the high-contrast values of
@@ -75,6 +82,45 @@ function declaredTokens(document, path = [], ids = []) {
     else declaredTokens(value, [...path, key], ids);
   }
   return ids;
+}
+
+/**
+ * The tokens that two sources of the same set, or of the same modifier context, declare, as
+ * messages: the resolver merges the sources in order, so the last would silently replace the
+ * first. A context overriding the base set, as the dark scheme and high contrast do, is how themes
+ * work and is not reported.
+ */
+export function duplicateTokens(tokensDirectory = defaultTokensDirectory) {
+  const resolverFile = resolverIn(tokensDirectory);
+  const resolver = JSON.parse(readFileSync(resolverFile, 'utf8'));
+  const groups = [
+    ...Object.entries(resolver.sets ?? {}).map(([name, set]) => [`the ${name} set`, set.sources]),
+    ...Object.entries(resolver.modifiers ?? {}).flatMap(([modifier, { contexts }]) =>
+      Object.entries(contexts).map(([context, sources]) => [
+        `the ${context} context of ${modifier}`,
+        sources,
+      ]),
+    ),
+  ];
+  const messages = [];
+  for (const [where, sources] of groups) {
+    const files = new Map();
+    for (const [index, source] of sources.entries()) {
+      // A source is a file, or tokens written inline; a reference to a set is that set's sources.
+      if (source.$ref?.startsWith('#')) continue;
+      const name = source.$ref?.replace(/^\.\//, '') ?? `inline source ${index + 1}`;
+      const document = source.$ref
+        ? JSON.parse(readFileSync(new URL(source.$ref, resolverFile), 'utf8'))
+        : source;
+      for (const id of declaredTokens(document)) files.set(id, [...(files.get(id) ?? []), name]);
+    }
+    for (const [id, names] of files)
+      if (names.length > 1)
+        messages.push(
+          `${id} is declared in both ${names.join(' and ')}, which ${where} merges: declare it once.`,
+        );
+  }
+  return messages;
 }
 
 /** IDs of the tokens one context of a resolver modifier overrides, read from its sources. */
@@ -221,14 +267,23 @@ const highContrastRule = {
   },
 };
 
-/** `envui/unique-css-names`: no two tokens become the same custom property. */
+/**
+ * `envui/unique-css-names`: no two tokens become the same custom property, compared as Tokens.css
+ * writes them, and a token's path spells its property: `space.4+` would be written `--space-4`,
+ * where space.4 already is.
+ */
 const uniqueNamesRule = {
-  meta: { docs: { description: 'Every token has its own CSS custom property.' } },
+  meta: { docs: { description: 'Every token has its own CSS custom property, its path.' } },
   create({ tokens, report }) {
     const seen = new Map();
     for (const id of Object.keys(tokens)) {
       if (internal(id)) continue;
       const name = cssVariable(id);
+      const spelled = `--${id.split('.').join('-')}`;
+      if (name !== spelled)
+        report({
+          message: `${id} becomes ${name}, not ${spelled}: name tokens with lowercase letters, digits and hyphens.`,
+        });
       if (seen.has(name)) report({ message: `${id} and ${seen.get(name)} both become ${name}.` });
       seen.set(name, id);
     }
@@ -236,47 +291,105 @@ const uniqueNamesRule = {
 };
 
 /**
- * The custom properties a style sheet declares for every element it styles, outside at-rules such
- * as the coarse-pointer overrides, which change a token's value only where they apply.
+ * `envui/declared-once`: each token is declared in one source file of its set or modifier context,
+ * as duplicateTokens() reads them from the resolver.
  */
-export function unconditionalCustomProperties(css) {
-  const names = new Set();
+const declaredOnceRule = {
+  meta: { docs: { description: 'A set or context declares each token in one file.' } },
+  create({ options, report }) {
+    for (const message of options.duplicates) report({ message });
+  },
+};
+
+/**
+ * The declarations of a style sheet, each with its property, its value, the preludes of the
+ * at-rules around it (outermost first) and the selector of its rule, with whitespace collapsed.
+ * Comments are dropped; quoted strings and parentheses are read whole, so a `;` or a brace inside
+ * them ends nothing. Nested style rules are not read apart: a declaration takes the innermost
+ * selector.
+ */
+export function cssDeclarations(css) {
+  const declarations = [];
   const blocks = [];
-  let prelude = '';
-  const declaration = () => {
-    const name = prelude.match(/^\s*(--[\w-]+)\s*:/)?.[1];
-    if (name && !blocks.includes('at-rule')) names.add(name);
-    prelude = '';
+  let text = '';
+  let quote = null;
+  let depth = 0;
+  const end = () => {
+    const match = text.match(/^\s*(--[\w-]+|-?[A-Za-z][\w-]*)\s*:([\s\S]*)$/);
+    if (match && blocks.length > 0)
+      declarations.push({
+        property: match[1],
+        value: match[2].trim(),
+        atRules: blocks.filter((block) => block.atRule).map((block) => block.prelude),
+        selector: blocks.findLast((block) => !block.atRule)?.prelude,
+      });
+    text = '';
   };
   for (const character of css.replace(/\/\*[\s\S]*?\*\//g, '')) {
-    if (character === '{') {
-      blocks.push(prelude.trim().startsWith('@') ? 'at-rule' : 'rule');
-      prelude = '';
+    if (quote) {
+      if (character === quote) quote = null;
+      text += character;
+    } else if (character === '"' || character === "'") {
+      quote = character;
+      text += character;
+    } else if (character === '(' || (character === ')' && depth > 0) || depth > 0) {
+      depth += character === '(' ? 1 : character === ')' ? -1 : 0;
+      text += character;
+    } else if (character === '{') {
+      const prelude = text.trim().replace(/\s+/g, ' ');
+      blocks.push({ prelude, atRule: prelude.startsWith('@') });
+      text = '';
     } else if (character === '}') {
-      declaration();
+      end();
       blocks.pop();
-    } else if (character === ';') declaration();
-    else prelude += character;
+    } else if (character === ';') end();
+    else text += character;
   }
-  return names;
+  return declarations;
+}
+
+/**
+ * The media queries under which TokensHandwritten.css may change a token's value: the touch sizes
+ * under a coarse pointer, which the resolver has no modifier for. Only these: a token's value in
+ * another condition, such as `prefers-contrast: more`, belongs in the tokens, where the generated
+ * modules see it, and a declaration under any other at-rule (`@layer`, `@supports`, `@container`,
+ * another media query or a list of them) can apply in every theme, so it replaces the token.
+ */
+export const conditionalMediaQueries = ['(pointer: coarse)'];
+
+const compact = (text) => text.replace(/\s+/g, '').toLowerCase();
+const conditional = new Set(conditionalMediaQueries.map((query) => compact(`@media ${query}`)));
+
+/**
+ * The custom properties a style sheet declares that replace a token wherever they apply: every
+ * declaration, in any rule, except under a media query of conditionalMediaQueries.
+ */
+export function overridingCustomProperties(css) {
+  return new Set(
+    cssDeclarations(css)
+      .filter(({ property }) => property.startsWith('--'))
+      .filter(({ atRules }) => !atRules.some((prelude) => conditional.has(compact(prelude))))
+      .map(({ property }) => property),
+  );
 }
 
 /**
  * Fails the build when two tokens would declare one custom property, or when TokensHandwritten.css
- * declares one of the tokens' for every theme: Tokens.css would keep only the last declaration,
- * and TokensHandwritten.css, which loads after it, would silently replace the token. A composite
- * token, such as typography, also declares a property per part, `--type-body-font-size`.
+ * declares one of the tokens' outside conditionalMediaQueries: Tokens.css would keep only the last
+ * declaration, and TokensHandwritten.css, which loads after it, would silently replace the token.
+ * A composite token, such as typography, also declares a property per part,
+ * `--type-body-font-size`.
  */
 function checkCustomProperties(list, handwrittenFile) {
   const owners = new Map();
   for (const token of list) {
-    const parts = Object.values(token.values).find(
-      ({ css }) => css && typeof css === 'object',
-    )?.css;
-    const names = [
-      token.cssVariable,
-      ...Object.keys(parts ?? {}).map((part) => `${token.cssVariable}-${part}`),
-    ];
+    // A theme can give a composite token parts that the others don't, so take them from every one.
+    const parts = new Set(
+      Object.values(token.values).flatMap(({ css }) =>
+        css && typeof css === 'object' ? Object.keys(css) : [],
+      ),
+    );
+    const names = [token.cssVariable, ...[...parts].map((part) => `${token.cssVariable}-${part}`)];
     for (const name of names) {
       if (owners.has(name))
         throw new Error(
@@ -286,7 +399,7 @@ function checkCustomProperties(list, handwrittenFile) {
     }
   }
   if (!existsSync(handwrittenFile)) return;
-  for (const name of unconditionalCustomProperties(readFileSync(handwrittenFile, 'utf8')))
+  for (const name of overridingCustomProperties(readFileSync(handwrittenFile, 'utf8')))
     if (owners.has(name))
       throw new Error(
         `TokensHandwritten.css declares ${name}, which the token ${owners.get(name)} becomes: move the hand-written value into the token, or give one of them another name.`,
@@ -295,7 +408,8 @@ function checkCustomProperties(list, handwrittenFile) {
 
 /**
  * envUI's own plugin: the lint rules, and the generated token modules, a typed TypeScript module, a
- * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles.
+ * JSON token list for the docs, and the migration map from the 0.7 custom properties to the roles,
+ * which scripts/BuildTokens.mjs copies into the codemods' rename map and the migration guide.
  * The modules carry each token's value in every theme, as the browser resolves Tokens.css alone:
  * TokensHandwritten.css can change a few of them under a condition, such as the touch sizes of
  * --control-height and --title-bar-height under a coarse pointer, and those values are not in them.
@@ -304,6 +418,7 @@ function envui({ removedFile, handwrittenFile }) {
   return {
     name: 'envui',
     lint: () => ({
+      'envui/declared-once': declaredOnceRule,
       'envui/color-schemes': colorSchemesRule,
       'envui/high-contrast': highContrastRule,
       'envui/unique-css-names': uniqueNamesRule,
@@ -318,17 +433,19 @@ function envui({ removedFile, handwrittenFile }) {
           default: item.default,
         }));
       // Tokens.css declares the base set, then each theme's overrides on top of its scheme's; var()
-      // resolves in the element's own theme, as in the browser.
+      // resolves in the element's own theme, as in the browser. Each part of a composite token is
+      // a custom property of its own, which a token that aliases it reads.
       const declared = Object.fromEntries(
-        themes.map((theme) => [
-          theme.name,
-          new Map(
-            getTransforms({ format: 'css', input: theme.input }).map((entry) => [
-              entry.localID,
-              entry.value,
-            ]),
-          ),
-        ]),
+        themes.map((theme) => {
+          const values = new Map();
+          for (const { localID, value } of getTransforms({ format: 'css', input: theme.input })) {
+            values.set(localID, value);
+            if (value && typeof value === 'object')
+              for (const [part, partValue] of Object.entries(value))
+                values.set(`${localID}-${part}`, partValue);
+          }
+          return [theme.name, values];
+        }),
       );
       const fallback = { dark: ['light'], 'light-high-contrast': ['light'] };
       fallback['dark-high-contrast'] = ['dark', 'light'];
@@ -405,18 +522,35 @@ function envui({ removedFile, handwrittenFile }) {
             ? { primitive }
             : distinct.length === 1
               ? { token: distinct[0], cssVariable: cssVariable(distinct[0]) }
-              : { tokens: roles }),
+              : {
+                  tokens: roles,
+                  cssVariables: Object.fromEntries(
+                    Object.entries(roles).map(([theme, role]) => [
+                      theme,
+                      role === null ? null : cssVariable(role),
+                    ]),
+                  ),
+                }),
           ...(component && { component }),
         };
       }
       for (const [name, entry] of Object.entries(removed)) {
         if (migration[name]) throw new Error(`${name} is listed as removed but still exists.`);
-        migration[name] = { removed: true, ...entry };
+        const { replacement } = entry;
+        if (replacement && (!tokens[replacement] || internal(replacement)))
+          throw new Error(
+            `removed-tokens.json replaces ${name} with ${replacement}, which is no public token.`,
+          );
+        migration[name] = {
+          removed: true,
+          ...entry,
+          ...(replacement && { cssVariable: cssVariable(replacement) }),
+        };
       }
       outputFile(
         'generated/token-migration.json',
         JSON.stringify({
-          $comment: `${header} Maps each 0.7 custom property to the token that replaces it: one role, a role per theme for component tokens, or removed with its replacement.`,
+          $comment: `${header} Maps each 0.7 custom property to the token that replaces it, with its custom property (cssVariable, or cssVariables per theme): one role, a role per theme for component tokens, a palette color that no role replaces (primitive), or removed with its replacement. npm run tokens:build copies it into the tokens section of the codemods' rename map and the token list of docs/migration.md.`,
           names: Object.fromEntries(
             Object.entries(migration).sort(([a], [b]) => a.localeCompare(b)),
           ),
@@ -477,7 +611,10 @@ export function createConfig({
       withoutDescriptions(
         css({
           filename: 'styles/Tokens.css',
-          variableName: (token) => cssVariable(token.id),
+          // No variableName: plugin-css names every property itself, cssVariable() as it does. A
+          // custom one would also name the parts that an alias of a composite token reads, as
+          // `text.label-fontSize`, which plugin-css passes it before writing them as
+          // `--text-label-font-size`.
           exclude: internalGroups.map((group) => `${group}.**`),
           transform,
           permutations: [
@@ -518,6 +655,7 @@ export function createConfig({
         // The value checks for every DTCG type, as Terrazzo recommends; names must be kebab-case.
         ...RECOMMENDED_CONFIG,
         'core/consistent-naming': ['error', { format: 'kebab-case' }],
+        'envui/declared-once': ['error', { duplicates: duplicateTokens(tokensDirectory) }],
         'envui/color-schemes': ['error', { dark }],
         'envui/high-contrast': [
           'error',

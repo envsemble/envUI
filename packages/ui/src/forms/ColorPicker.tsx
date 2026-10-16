@@ -22,9 +22,11 @@ export interface ColorPickerProps
     | 'maxLength'
     | 'pattern'
   > {
+  /** The color's name above the picker; it names the group and, with "HEX", the field. */
   label: string;
   /** An opaque six-digit HEX color, with an optional # prefix. */
   value?: string;
+  /** The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default. */
   defaultValue?: string;
   /** Receives valid colors normalized to lowercase #rrggbb. */
   onValueChange?: (value: string) => void;

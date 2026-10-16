@@ -11,9 +11,17 @@ import { Surface } from '../foundations/Surface.js';
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
   value: string;
-  /** Button, IconButton, button-based NavList.Item, or a compatible native button component. */
+  /**
+   * The tab's control: a Button, an IconButton, a NavList.Item without href, or a component that
+   * forwards native button props and its ref. It keeps its own look; a link is not allowed.
+   */
   button: ReactElement<ComponentPropsWithRef<'button'>>;
+  /** The panel's content, shown while the tab is selected. */
   content: ReactNode;
+  /**
+   * The tab cannot be selected; it is dimmed and reports aria-disabled, and the arrow keys still
+   * reach it. A disabled button does the same.
+   */
   disabled?: boolean;
 }
 
@@ -22,29 +30,56 @@ export interface TabsProps
     ComponentPropsWithRef<'div'>,
     'children' | 'defaultValue' | 'onChange' | 'aria-label'
   > {
+  /** The tabs in order, each with its value, button and panel content. */
   items: readonly TabsItem[];
-  /** Accessible name of the tab list. */
+  /** The tab list's accessible name, such as Project views. */
   'aria-label': string;
+  /** The selected tab's value, for controlled tabs; update it from onValueChange. */
   value?: string | null;
+  /**
+   * The tab that uncontrolled tabs start on.
+   * @default the first enabled item's value
+   */
   defaultValue?: string | null;
+  /** Receives the value of the tab people select, by pressing it or from the keyboard. */
   onValueChange?: (value: string | null) => void;
-  /** Automatic selection on arrow-key focus; manual requires Enter or Space. */
+  /**
+   * automatic selects a tab as the arrow keys move focus to it; manual only moves focus, and Enter
+   * or Space selects, for panels that take a moment to show.
+   * @default 'automatic'
+   */
   activation?: 'automatic' | 'manual';
+  /**
+   * horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical
+   * in a column, with the up and down arrow keys. The panels stay below the list either way.
+   * @default 'horizontal'
+   */
   orientation?: 'horizontal' | 'vertical';
-  /** Preserve local panel state while inactive. Hidden panels are inert. */
+  /**
+   * Keep the panels of unselected tabs mounted and hidden, so their state, such as a draft or a
+   * scroll position, survives switching; otherwise a panel unmounts once it has faded out.
+   * @default false
+   */
   keepMounted?: boolean;
-  /** Wrap the supplied list in a custom layout, such as a Card with a heading. Render it once. */
+  /**
+   * Places the tab list in a layout of your own, such as beside a heading: it receives the list and
+   * returns what to render in its place, with the list in it once. The panels stay below.
+   */
   renderList?: (list: ReactElement) => ReactNode;
+  /** A class for the tab list, the rail that holds the tabs. */
   listClassName?: string;
+  /** A class for every panel. */
   panelClassName?: string;
   /**
-   * The selected panel takes the height left below the list; give the Tabs a height (for example as
-   * a flex child). For content that fills a region, such as a canvas.
+   * The selected panel takes the height left below the list, for content that fills a region,
+   * such as a canvas; give the tabs a height, for example as a flex child.
+   * @default false
    */
   fill?: boolean;
   /**
-   * standard (default) matches buttons; compact makes the whole rail as tall as a compact control,
-   * for toolbars and bars, like a compact `SegmentedControl`.
+   * standard tabs are as tall as buttons; compact makes the whole rail as tall as a compact
+   * control, 2 rem, for toolbars and bars, as a compact SegmentedControl is.
+   * @default 'standard'
    */
   size?: 'standard' | 'compact';
 }
@@ -87,7 +122,11 @@ function TabButton({
   return <NavigationIconState selected={active}>{element}</NavigationIconState>;
 }
 
-/** Linked tab panels; supplied buttons retain their own colors, geometry and behavior. */
+/**
+ * Switches between panels of related content in one place: a rail of the buttons you supply, each
+ * a tab linked to its panel, with selection from the keyboard and panels that fade as they change.
+ * The selected tab keeps its button's own look; the others are quiet on the rail.
+ */
 export function Tabs({
   items,
   'aria-label': label,

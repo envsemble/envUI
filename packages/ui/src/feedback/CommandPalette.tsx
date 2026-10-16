@@ -20,11 +20,13 @@ import { Kbd } from '../content/Kbd.js';
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
   id: string;
+  /** The option's text; also its accessible name unless textValue is set. */
   label: ReactNode;
   /** Plain text of the label when it is not a string, for the option's accessible name. */
   textValue?: string;
   /** Muted text after the label, such as a folder path. */
   detail?: ReactNode;
+  /** A decorative icon before the label. */
   icon?: ReactNode;
   /** A heading shows where the group changes between consecutive items. */
   group?: string;
@@ -36,6 +38,7 @@ export interface CommandPaletteItem {
 export interface CommandPaletteHint {
   /** One key or a combination, such as ['Ctrl', 'Enter']. */
   keys: readonly string[];
+  /** What the keys do, such as "Open to the side". */
   label: ReactNode;
 }
 
@@ -45,11 +48,15 @@ export interface CommandPaletteSelectOptions {
 }
 
 export interface CommandPaletteProps {
+  /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
+  /** Called with false when Esc, a press on the backdrop or a choice closes the palette. */
   onOpenChange: (open: boolean) => void;
   /** Accessible name of the dialog, the search field and the list. */
   'aria-label': string;
+  /** The text in the search field. */
   query: string;
+  /** Receives the text as people type. */
   onQueryChange: (query: string) => void;
   /** Filtered and ranked by the application, in display order. */
   items: readonly CommandPaletteItem[];
@@ -57,13 +64,15 @@ export interface CommandPaletteProps {
   onSelect: (item: CommandPaletteItem, options: CommandPaletteSelectOptions) => void;
   /** Close after an item is selected; true by default. */
   closeOnSelect?: boolean;
+  /** Shown in the empty search field, such as "Search documents by name or folder". */
   placeholder?: string;
-  /** Shown when there are no items. */
+  /** Shown in place of the list when there are no items; No results by default. */
   emptyLabel?: ReactNode;
   /** Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. */
   hints?: readonly CommandPaletteHint[];
   /** Other content below the list, after the hints. */
   footer?: ReactNode;
+  /** Classes for the dialog's surface. */
   className?: string;
 }
 
@@ -170,7 +179,7 @@ export function CommandPalette({
   return (
     <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
       <BaseDialog.Portal>
-        <Theme theme={theme}>
+        <Theme {...theme}>
           <BaseDialog.Backdrop className="env-dialog-backdrop env-command-palette-backdrop" />
           <div className="env-command-palette-positioner">
             <BaseDialog.Popup

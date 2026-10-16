@@ -1,18 +1,37 @@
 ---
 title: CommandPalette
-summary: 'Quick open: search and choose from a ranked list near the top of the window.'
+summary: A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
 status: beta
 since: 0.5.0
 category: Feedback & overlays
 aliases:
   - quick open
   - command menu
-  - cmdk
-  - spotlight
   - command bar
+  - command launcher
+  - cmdk
+  - Ctrl+K
+  - spotlight
+  - go to anything
+  - jump to
+  - omnibox
+useWhen:
+  - People jump to a document, a page or a person by name, from anywhere in the application.
+  - People run a command by name, such as one that has no visible control or a shortcut they don't remember.
+avoidWhen:
+  - text: Choosing a value for a form field from a long list.
+    use: Combobox
+  - text: A short list of actions behind one control.
+    use: Menu
+  - text: Searching or filtering the content on the page.
+    use: SearchField
+  - text: A task with fields and a decision.
+    use: Dialog
 related:
   - dialog
   - menu
+  - combobox
+  - kbd
   - text-field
   - accessibility
 components:
@@ -21,71 +40,100 @@ components:
 
 # CommandPalette
 
-## React usage
+## Overview
 
-```tsx
-import { CommandPalette } from '@envsemble/envui';
-import { Description } from '@envsemble/envui/icons/Description';
+A command palette is a modal dialog near the top of the window: a search field over a list of options. People type, move the highlight with the arrow keys and choose with <kbd>Enter</kbd> or a click, while focus stays in the field. The application owns everything else: the shortcut that opens it, the items, how they are filtered and ranked, and what choosing one does.
 
-// The application filters and ranks its items, in display order.
-const items = rankDocuments(documents, query).map((document) => ({
-  id: document.path,
-  label: document.name,
-  detail: document.folder,
-  icon: <Description />,
-  group: document.recent ? 'Recently opened' : 'Documents',
-}));
+```tsx example=GoToDocument
 
-<CommandPalette
-  open={quickOpen}
-  onOpenChange={(open) => {
-    setQuickOpen(open);
-    if (!open) setQuery('');
-  }}
-  aria-label="Go to document"
-  placeholder="Search documents"
-  query={query}
-  onQueryChange={setQuery}
-  items={items}
-  onSelect={(item, { modifier }) => openDocument(item.id, { toTheSide: modifier })}
-  emptyLabel="No matching documents"
-  hints={[
-    { keys: ['Enter'], label: 'Open' },
-    { keys: ['Ctrl', 'Enter'], label: 'Open to the side' },
-  ]}
-/>;
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                  | Contract                                                                                                                         |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| open / onOpenChange   | Controlled visibility; <kbd>Esc</kbd>, the backdrop and a selection call onOpenChange(false)                                     |
-| aria-label            | Required name of the dialog, its search field and its list                                                                       |
-| query / onQueryChange | Controlled search text                                                                                                           |
-| items                 | `{ id, label, textValue?, detail?, icon?, group?, trailing? }` already filtered and ranked                                       |
-| onSelect              | <kbd>Enter</kbd> or click; modifier is true with <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> held                                          |
-| closeOnSelect         | Close after onSelect; true by default                                                                                            |
-| placeholder           | Hint inside the empty search field                                                                                               |
-| emptyLabel            | Message when there are no items (No results by default)                                                                          |
-| hints                 | Key hints below the list: `{ keys, label }`, such as `{ keys: ['Ctrl', 'Enter'], label: 'Open to the side' }`, shown as Kbd keys |
-| footer                | Other content below the list, after the hints                                                                                    |
-| Option elements       | role option with a data-item-id attribute                                                                                        |
+1. **Backdrop**: the dialog backdrop over the page; a press on it closes the palette.
+2. **Surface**: the raised surface Dialog and Popover share, up to 40 rem wide, with 0.5 rem padding and 1.75 rem corners.
+3. **Search field**: a pill with a search icon and the text input, named by `aria-label`, with the `placeholder` while empty.
+4. **Group heading** (an item's `group`): a small heading where the group changes between consecutive items.
+5. **Option** (each entry of `items`): an optional `icon`, the `label`, a muted `detail` and `trailing` content, such as a Kbd shortcut or a Badge, at its end.
+6. **Empty message** (`emptyLabel`): shown in place of the list when there are no items; No results by default.
+7. **Footer** (`hints`, `footer`): key hints as Kbd keys with what they do, then other content.
 
-## Guidelines
+## Variants and sizes
 
-- Use the palette for jumping to a document or running a command by name. The application owns the shortcut that opens it, the data, filtering and ranking, and what selection does.
-- The search field keeps focus. It is a combobox that controls the list and points aria-activedescendant at the highlighted option. <kbd>↑</kbd> and <kbd>↓</kbd> move the highlight and wrap, <kbd>Home</kbd> and <kbd>End</kbd> reach the ends, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> move by a page. A new query highlights the first item again.
-- Pointer movement highlights an option; a click selects it. <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> with <kbd>Enter</kbd> or a click sets modifier, for example to open beside the current document.
-- A heading appears where group changes between consecutive items, and those items form a labelled group. Keep groups together in items.
-- Use textValue when a label is not plain text, so the option keeps a clear accessible name. Use detail for a muted fact such as a folder, and trailing for a Kbd hint or Badge.
-- The palette opens near the top of the window over a backdrop, in the originating theme. The list scrolls the highlighted option into view and is at most 60% of the viewport tall. <kbd>Esc</kbd> closes it and focus returns to where it was.
+- The palette is up to 40 rem wide and fills narrower windows less the window gutter; it sits up to 6 rem, or 12% of the window, below the top.
+- The search field is as tall as a control. Options are at least 2.5 rem tall, and 2.75 rem on touch screens, with rounded corners inset by the surface's padding.
+- The list scrolls beyond 60% of the window's height, keeping the highlighted option in view.
 
-TypeScript declarations provide the complete public API.
+## States and behaviour
 
-## Related topics
+- **Opening and closing**: `open` and `onOpenChange` control the palette. It opens over a backdrop in the theme of the page around it, with focus in the search field; <kbd>Esc</kbd>, a press on the backdrop and, unless `closeOnSelect` is false, choosing an option call `onOpenChange(false)`, and focus returns to where it was.
+- **Searching**: `query` and `onQueryChange` hold the text. A new query, and opening the palette, highlight the first item again.
+- **Highlight**: the arrow keys move the highlight and wrap at the ends; <kbd>Home</kbd> and <kbd>End</kbd> reach the first and last option, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> move by a page of options. The pointer highlights the option it moves over.
+- **Choosing**: <kbd>Enter</kbd> or a click calls `onSelect` with the item; with <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> held, `modifier` is true, such as to open a document beside the current one. Pressing an option leaves focus in the field.
+- **Groups**: items with the same `group` next to each other form a labelled group under one heading; keep a group's items together.
+- **Input methods**: keys that belong to an input method's composition don't move the highlight or choose.
 
-- [Dialog](../components/dialog.md)
-- [Menu](../components/menu.md)
-- [TextField](../components/text-field.md)
-- [Accessibility](../foundations/accessibility.md)
+## Content guidelines
+
+- Name the palette after what it finds or does, with `aria-label`: "Go to document", "Run a command".
+- Write a placeholder that says what can be searched: "Search documents by name or folder".
+- Name commands with a verb and what they act on: "Invite people", "Open settings".
+- Use `detail` for what tells similar items apart, such as a folder, and `emptyLabel` for what to try next: "No matching documents".
+- Show key hints only for keys the palette or the application handles.
+
+## Do and don't
+
+### Do
+
+- Open the palette with a shortcut the application handles, such as <kbd>Ctrl</kbd>+<kbd>K</kbd>, and from a visible control too.
+- Rank the best matches first, and show recent items while the query is empty.
+- Clear the query as the palette closes, so it opens fresh.
+- Use `textValue` where an item's label isn't plain text.
+
+### Don't
+
+- Don't put fields or buttons inside options; an option is chosen as a whole.
+- Don't make the palette the only way to reach a command.
+- Don't show more groups than people can scan; let the query narrow them.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                 | Action                                                                    |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Typing                                                              | Changes the query; the first item is highlighted again.                   |
+| <kbd>↓</kbd>, <kbd>↑</kbd>                                          | Moves the highlight to the next or previous option, wrapping at the ends. |
+| <kbd>Home</kbd>, <kbd>End</kbd>                                     | Moves the highlight to the first or last option.                          |
+| <kbd>Page Down</kbd>, <kbd>Page Up</kbd>                            | Moves the highlight by a page of options.                                 |
+| <kbd>Enter</kbd>                                                    | Chooses the highlighted option.                                           |
+| <kbd>Ctrl</kbd>+<kbd>Enter</kbd> or <kbd>Cmd</kbd>+<kbd>Enter</kbd> | Chooses the highlighted option with `modifier`.                           |
+| <kbd>Esc</kbd>                                                      | Closes the palette and returns focus to where it was.                     |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                     | Stay in the dialog, which keeps focus while it is open.                   |
+
+### envUI provides
+
+- A modal dialog named by `aria-label`, which takes focus into its search field, keeps it inside and returns it on close.
+- The search field as a `combobox` that controls the `listbox`, with `aria-expanded` while there are options and the highlighted option as its active descendant, so focus never leaves the field.
+- Options with `aria-selected` on the highlighted one, named by their content or by `textValue`, in groups named by their headings; decorative icons hidden from assistive technology.
+- The empty message as a status, and key hints as Kbd keys.
+
+### You provide
+
+- The shortcut that opens the palette, and a visible control that opens it too.
+- An `aria-label` that names the palette, and the items, filtered and ranked.
+- What choosing an item does, and `textValue` for labels that aren't plain text.
+
+## Examples
+
+### Run a command
+
+Commands with shortcuts as Kbd keys and a Badge as trailing content, under one group, with a footer.
+
+```tsx example=RunCommand
+
+```
+
+## Changelog
+
+- **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

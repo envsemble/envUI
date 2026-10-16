@@ -6,6 +6,7 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { useLinkComponent } from './LinkProvider.js';
 
 export interface BreadcrumbItem {
+  /** The level's name, such as a folder's title; it ends with an ellipsis beyond 20 rem. */
   label: ReactNode;
   /** A destination, rendered through the LinkProvider link. */
   href?: string;
@@ -22,8 +23,9 @@ export interface BreadcrumbsProps {
    * their width.
    */
   wrap?: boolean;
-  /** Accessible name of the navigation; Breadcrumb by default. */
+  /** Accessible name of the navigation landmark; name each trail where a page has several. */
   'aria-label'?: string;
+  /** Classes for the `nav` element. */
   className?: string;
 }
 

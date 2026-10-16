@@ -46,14 +46,15 @@
   list-style: none;
   padding-inline-start: 0;
 }
-.env-rich-text :where(li[data-type='taskItem']),
-.env-rich-text-document :where(li[data-type='taskItem']) {
+/* The editor renders task items without data-type, so select them by their list. */
+.env-rich-text :where(ul[data-type='taskList'] > li),
+.env-rich-text-document :where(ul[data-type='taskList'] > li) {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
 }
-.env-rich-text :where(li[data-type='taskItem'] > div),
-.env-rich-text-document :where(li[data-type='taskItem'] > div) {
+.env-rich-text :where(ul[data-type='taskList'] > li > div),
+.env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
   min-inline-size: 0;
   flex: 1;
 }
@@ -97,12 +98,11 @@
   max-block-size: min(18rem, calc(100dvh - 2 * var(--viewport-gutter)));
   overflow: auto;
   padding: var(--space-2);
-  border: 0.0625rem solid var(--color-markdown-border);
+  border: 0.0625rem solid var(--elevation-2-border);
   border-radius: 0.25rem;
   background: var(--color-field);
   color: var(--color-text-primary);
-  /* stylelint-disable-next-line color-no-hex -- The popup's shadow, until there is an elevation token. */
-  box-shadow: 0 0.25rem 1rem #0002;
+  box-shadow: var(--elevation-2-shadow);
   z-index: 100;
 }
 .env-rich-text-suggestions .env-button {

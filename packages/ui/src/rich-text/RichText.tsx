@@ -13,7 +13,11 @@ import { ReferenceContent } from './Reference.js';
 import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
 import type { RichTextProps } from './Types.js';
 
-/** Static, SSR-capable view using exactly the editor's Tiptap schema and Markdown parser. */
+/**
+ * Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it
+ * shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes.
+ * It renders on the server too.
+ */
 export function RichText({
   children,
   extensions,

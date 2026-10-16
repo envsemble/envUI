@@ -4,25 +4,25 @@
     "ActionCard": {
       "kind": "component",
       "source": "packages/ui/src/content/ActionCard.tsx",
-      "description": "",
+      "description": "An `article` card with an action strip: Card with `layout=\"action\"`, kept for earlier applications.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The card's title, Card's `heading`: an `h3` in the section heading type."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact at the end of the heading row, such as when the card was updated."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Controls in a strip along the bottom of the card, such as Buttons."
         }
       ],
       "native": [
@@ -35,27 +35,27 @@
     "ActionGroup": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "Wrapped actions use a 1 rem gap; stacked actions use 0.5 rem and fill the group.",
+      "description": "A set of actions laid out together, such as a form's Cancel and Save: a row 1 rem apart that wraps when it runs out of room, or a column 0.5 rem apart whose labelled buttons fill it. It adds layout only, no role or keyboard behaviour.",
       "props": [
         {
           "name": "stacked",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Stack the actions in a column, 0.5 rem apart, where each labelled button takes the group's width and icon-only buttons keep their size. Otherwise they sit in a row, 1 rem apart, and wrap onto more rows when they don't fit."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'start'",
-          "description": ""
+          "description": "Where a row of actions sits: at the start, in the center or at the end, such as at the end of a form. A stacked group fills its width instead."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or footer for the actions of a card or a form, or section, article, nav, main, aside or header."
         }
       ],
       "native": [
@@ -75,19 +75,19 @@
           "type": "'info' | 'success' | 'warning' | 'error'",
           "required": false,
           "default": "'info'",
-          "description": "info (default), success, warning or error; each has its tone color and default icon."
+          "description": "What the message means: info, success, warning or error. Sets the tint, the border and the icon; info and success alerts are also status messages."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short heading for the message, such as \"Sync paused\", above the message."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The message: what it means and what people can do."
         },
         {
           "name": "icon",
@@ -112,7 +112,7 @@
           "type": "string",
           "required": false,
           "default": "'Dismiss'",
-          "description": "Accessible name of the dismiss button; Dismiss by default."
+          "description": "Accessible name of the dismiss button, also shown as its tooltip."
         },
         {
           "name": "announce",
@@ -138,14 +138,14 @@
           "name": "value",
           "type": "number",
           "required": true,
-          "description": ""
+          "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
         },
         {
           "name": "format",
           "type": "(value: number) => string",
           "required": false,
           "default": "(value: number) => value.toLocaleString()",
-          "description": "Text for the value; the locale's number format by default."
+          "description": "Writes the value as text, such as a currency; the browser locale's number format by default."
         }
       ],
       "native": [
@@ -203,7 +203,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled sidebar starts collapsed on wide viewports; expanded by default."
         },
         {
           "name": "collapsed",
@@ -215,21 +215,21 @@
           "name": "onCollapsedChange",
           "type": "(collapsed: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new preference when the toggle collapses or expands the sidebar."
         },
         {
           "name": "expandLabel",
           "type": "string",
           "required": false,
           "default": "'Expand sidebar'",
-          "description": "Labels for the sidebar toggle."
+          "description": "Accessible name of the toggle while the sidebar is collapsed; Expand sidebar by default."
         },
         {
           "name": "collapseLabel",
           "type": "string",
           "required": false,
           "default": "'Collapse sidebar'",
-          "description": ""
+          "description": "Accessible name of the toggle while the sidebar is expanded; Collapse sidebar by default."
         },
         {
           "name": "sidebarContent",
@@ -324,7 +324,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the shell's root."
         }
       ],
       "native": [],
@@ -362,7 +362,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Match the defaultCollapsed of the AppShell it precedes."
         },
         {
           "name": "resizable",
@@ -375,13 +375,13 @@
           "name": "sidebarMinWidth",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "Match the AppShell's smallest resizable width in pixels; 12 rem by default."
         },
         {
           "name": "sidebarMaxWidth",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "Match the AppShell's largest resizable width in pixels; 32 rem by default."
         },
         {
           "name": "children",
@@ -393,7 +393,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the shell's root."
         },
         {
           "name": "brand",
@@ -464,7 +464,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Announce the name; omit when adjacent text already names the person."
+          "description": "Name the avatar as an image by `name`; leave it off when text beside it already names the person."
         }
       ],
       "native": [
@@ -501,7 +501,7 @@
           "name": "fallback",
           "type": "AvatarProps['fallback']",
           "required": false,
-          "description": ""
+          "description": "Shown without a picture: the default person picture (default), or the initials of `name`."
         },
         {
           "name": "size",
@@ -599,13 +599,13 @@
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon before the label, such as a check mark; hidden from assistive technology."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
         }
       ],
       "native": [
@@ -658,13 +658,13 @@
           "type": "string",
           "required": false,
           "default": "'Breadcrumb'",
-          "description": "Accessible name of the navigation; Breadcrumb by default."
+          "description": "Accessible name of the navigation landmark; name each trail where a page has several."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the `nav` element."
         }
       ],
       "native": [],
@@ -795,7 +795,7 @@
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": ""
+          "description": "The day an uncontrolled calendar starts with; none by default, which shows today's month."
         },
         {
           "name": "onValueChange",
@@ -957,14 +957,14 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-labelledby` is not set",
-          "description": ""
+          "description": "Names the grid of days, such as \"Deployments in the last year\"; this or aria-labelledby."
         },
         {
           "name": "aria-labelledby",
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-label` is not set",
-          "description": ""
+          "description": "The id of visible text that names the grid of days, such as a heading; this or aria-label."
         }
       ],
       "native": [
@@ -983,32 +983,33 @@
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
           "name": "tone",
           "type": "Exclude<SurfaceAppearanceProps['tone'], 'alternate'>",
           "required": false,
           "default": "'row'",
-          "description": ""
+          "description": "The surface's fill: `row`, the standalone card fill; `pane`, a quieter fill that groups content; or `canvas`, the page's own color."
         },
         {
           "name": "heading",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A title in the section heading type, as an `h3`, at the top of a content card."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact at the end of the heading row, such as when the card was updated."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Controls in a strip along the bottom of the card, such as Buttons; implies the action layout."
         },
         {
           "name": "layout",
@@ -1021,19 +1022,19 @@
           "name": "as",
           "type": "'div' | 'article' | 'button' | 'a'",
           "required": false,
-          "description": ""
+          "description": "The element: `div` (default) or `article` for a content card, `button` for a card that starts an action. With `href` the card is a link."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
         }
       ],
       "native": [
@@ -1049,32 +1050,32 @@
     "Checkbox": {
       "kind": "component",
       "source": "packages/ui/src/forms/Checkbox.tsx",
-      "description": "",
+      "description": "A native checkbox inside its label, checked, unchecked or mixed.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The text beside the box, which names the checkbox; pressing it toggles the checkbox."
         },
         {
           "name": "checked",
           "type": "boolean | 'mixed'",
           "required": false,
-          "description": ""
+          "description": "Whether the box is checked, unchecked or \"mixed\", for a parent whose children are partly chosen. With `onCheckedChange` it controls the checkbox."
         },
         {
           "name": "defaultChecked",
           "type": "boolean | 'mixed'",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "How an uncontrolled checkbox starts, and what a form reset restores; unchecked by default."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when people press the checkbox; a mixed checkbox reports true."
         }
       ],
       "native": [
@@ -1087,19 +1088,19 @@
     "ClickableCard": {
       "kind": "component",
       "source": "packages/ui/src/content/ClickableCard.tsx",
-      "description": "A single interactive surface. Do not nest links or controls inside it.",
+      "description": "A single interactive surface: Card with `href`, or Card `as=\"button\"`, kept for earlier applications. Do not nest links or controls inside it.",
       "props": [
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
         }
       ],
       "native": [
@@ -1131,33 +1132,33 @@
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The source, as one string; it is shown, highlighted and copied as it is."
         },
         {
           "name": "language",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml, md or ini, or their full names. Other values, and none, leave the source plain text."
         },
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Names the block in its heading and for assistive technology, such as a file name."
         },
         {
           "name": "copyable",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Shows a copy button in the heading that copies the source; false by default."
         },
         {
           "name": "wrap",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Wraps long lines instead of scrolling them; false by default."
         }
       ],
       "native": [
@@ -1234,7 +1235,7 @@
           "name": "label",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The color's name above the picker; it names the group and, with \"HEX\", the field."
         },
         {
           "name": "value",
@@ -1247,7 +1248,7 @@
           "type": "string",
           "required": false,
           "default": "'#000000'",
-          "description": ""
+          "description": "The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default."
         },
         {
           "name": "onValueChange",
@@ -1348,7 +1349,7 @@
           "name": "ref",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": ""
+          "description": "The text input."
         },
         {
           "name": "items",
@@ -1420,13 +1421,13 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the list is open; with `onOpenChange` it controls the popup."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether an uncontrolled list starts open; closed by default."
         },
         {
           "name": "onOpenChange",
@@ -1474,7 +1475,7 @@
           "name": "defaultValue",
           "type": "string | null | readonly string[]",
           "required": false,
-          "description": ""
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
         },
         {
           "name": "onValueChange",
@@ -1499,13 +1500,13 @@
           "name": "open",
           "type": "boolean",
           "required": true,
-          "description": ""
+          "description": "Whether the palette is open; the application opens it, such as from a shortcut."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": true,
-          "description": ""
+          "description": "Called with false when Esc, a press on the backdrop or a choice closes the palette."
         },
         {
           "name": "aria-label",
@@ -1517,13 +1518,13 @@
           "name": "query",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The text in the search field."
         },
         {
           "name": "onQueryChange",
           "type": "(query: string) => void",
           "required": true,
-          "description": ""
+          "description": "Receives the text as people type."
         },
         {
           "name": "items",
@@ -1548,14 +1549,14 @@
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Shown in the empty search field, such as \"Search documents by name or folder\"."
         },
         {
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
           "default": "'No results'",
-          "description": "Shown when there are no items."
+          "description": "Shown in place of the list when there are no items; No results by default."
         },
         {
           "name": "hints",
@@ -1573,7 +1574,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the dialog's surface."
         }
       ],
       "native": [],
@@ -1676,14 +1677,14 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-labelledby` is not set",
-          "description": ""
+          "description": "Names the field, which has no visible label, such as \"Message\"; this or aria-labelledby."
         },
         {
           "name": "aria-labelledby",
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-label` is not set",
-          "description": ""
+          "description": "The id of visible text that names the field; this or aria-label."
         }
       ],
       "native": [
@@ -1925,7 +1926,7 @@
           "name": "value",
           "type": "number | string",
           "required": true,
-          "description": ""
+          "description": "The count, such as 12, or short text such as 99+; shown in tabular figures."
         },
         {
           "name": "aria-label",
@@ -1957,7 +1958,7 @@
           "name": "ref",
           "type": "Ref<HTMLButtonElement>",
           "required": false,
-          "description": ""
+          "description": "The field's button."
         },
         {
           "name": "value",
@@ -1970,7 +1971,7 @@
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": ""
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
         },
         {
           "name": "onValueChange",
@@ -2026,14 +2027,14 @@
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The name the value is submitted under with a form, as YYYY-MM-DD or YYYY-MM-DDTHH:mm."
         },
         {
           "name": "required",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
           "name": "readOnly",
@@ -2072,20 +2073,20 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the calendar is open; with `onOpenChange` it controls it."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled calendar starts open; closed by default."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when the calendar opens or closes."
         },
         {
           "name": "clearLabel",
@@ -2126,13 +2127,13 @@
           "name": "previousMonthLabel",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Accessible name of the calendar's previous month button; Previous month by default."
         },
         {
           "name": "nextMonthLabel",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Accessible name of the calendar's next month button; Next month by default."
         },
         {
           "name": "label",
@@ -2375,13 +2376,25 @@
     "Disclosure": {
       "kind": "component",
       "source": "packages/ui/src/content/Disclosure.tsx",
-      "description": "",
+      "description": "A summary that shows and hides the details below it, on the native details element.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The summary: one line that says what the details hold and opens or closes them."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The details, shown below the summary while the disclosure is open."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the details show; with `onToggle` it controls the disclosure. Closed by default."
         }
       ],
       "native": [
@@ -2400,7 +2413,7 @@
           "name": "items",
           "type": "readonly DocumentTab[]",
           "required": true,
-          "description": ""
+          "description": "The open documents, in tab order."
         },
         {
           "name": "value",
@@ -2443,7 +2456,7 @@
           "type": "(label: string) => string",
           "required": false,
           "default": "(label: string) => `Close ${label}`",
-          "description": "Accessible name of each close button; receives the tab label."
+          "description": "Accessible name of each close button and the menu's close item; Close and the label by default."
         },
         {
           "name": "onCloseAll",
@@ -2456,7 +2469,7 @@
           "type": "string",
           "required": false,
           "default": "'Close all tabs'",
-          "description": "Label of the Close all tabs item."
+          "description": "Label of the Close all tabs item; Close all tabs by default."
         },
         {
           "name": "contextMenuLabel",
@@ -2469,7 +2482,7 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the strip."
         }
       ],
       "native": [],
@@ -2530,7 +2543,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "The zone can't be pressed or focused and takes no files; it still keeps the browser from opening dropped files."
         },
         {
           "name": "pending",
@@ -2593,25 +2606,31 @@
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "What is missing or what happened, such as \"No projects yet\"; a heading of `headingLevel`."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "Why, and what people can do, in a sentence or two of muted text under the title."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon above the text; an error state shows the error icon without it."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The action that resolves the state, such as a Button that creates the first item."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content under the description, such as a short list of next steps."
         },
         {
           "name": "tone",
@@ -2665,31 +2684,31 @@
     "FeatureCard": {
       "kind": "component",
       "source": "packages/ui/src/content/FeatureCard.tsx",
-      "description": "",
+      "description": "A card that presents a feature: an icon, a title, a description and one action.",
       "props": [
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A decorative icon at the start, 1.5 rem in the muted color; hidden from assistive technology."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The feature's name, an `h2` in the page heading type."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A sentence under the title in supporting text."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "One control at the end, such as a Button; it moves below the text and fills the card's width in a card narrower than 38 rem."
         }
       ],
       "native": [
@@ -2728,7 +2747,7 @@
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": ""
+          "description": "Lines the card up with the trigger's centre (default), start or end along the side."
         },
         {
           "name": "delay",
@@ -2755,26 +2774,26 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether the card shows; with `onOpenChange` it controls the card."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled card starts open; closed by default."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Called with the new state when hover, focus or Esc opens or closes the card."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Classes for the card."
         }
       ],
       "native": [],
@@ -2860,7 +2879,7 @@
           "name": "keys",
           "type": "readonly string[]",
           "required": false,
-          "description": "A key combination, such as ['Ctrl', 'P']; rendered as keys joined by +."
+          "description": "Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by +, inside an outer `<kbd>`. Without it, the children are one key."
         }
       ],
       "native": [
@@ -2940,25 +2959,31 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "",
+      "description": "One `li` row with a title, a detail and an action.",
       "props": [
         {
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short fact in muted text below the title, such as who changed the item and when."
         },
         {
           "name": "action",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A control at the end of the row, such as a Button; it moves below the text when it doesn't fit."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content after the title and the detail, such as a Badge."
         },
         {
           "name": "interactive",
@@ -2978,14 +3003,14 @@
     "List.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "",
+      "description": "A `ul` of connected rows with shared outer corners.",
       "props": [
         {
           "name": "contrast",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Sets the rows on a muted pane of their own, 0.75 rem around them, in the alternate row fill, so they stand out from the pane."
         }
       ],
       "native": [
@@ -2998,14 +3023,14 @@
     "LoadingState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "description": "",
+      "description": "A region of placeholders for content that is loading, such as Skeletons in the shape of a card: a status named by label and marked busy, which stacks its children 0.5 rem apart.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Loading'",
-          "description": ""
+          "description": "What is loading, such as Loading project, which names the region for assistive technology; an aria-label overrides it."
         }
       ],
       "native": [
@@ -3024,7 +3049,7 @@
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The Markdown string to render."
         },
         {
           "name": "headingOffset",
@@ -3044,7 +3069,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Gives each code block a copy button; false by default."
         },
         {
           "name": "components",
@@ -3081,20 +3106,20 @@
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
           "default": "''",
-          "description": ""
+          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the whole source after typing, formatting, undo or redo."
         },
         {
           "name": "toolbar",
@@ -3113,7 +3138,7 @@
           "name": "previewProps",
           "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
           "required": false,
-          "description": ""
+          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
         },
         {
           "name": "onRequestLink",
@@ -3679,7 +3704,7 @@
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "The trigger stays in place, dimmed, but doesn't open its menu."
         },
         {
           "name": "open",
@@ -3691,7 +3716,7 @@
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether an uncontrolled menu starts open; closed by default."
         },
         {
           "name": "onOpenChange",
@@ -3760,7 +3785,7 @@
     "Message": {
       "kind": "component",
       "source": "packages/ui/src/content/Message.tsx",
-      "description": "One entry of a conversation, such as a chat message or a comment.",
+      "description": "One entry of a conversation, such as a chat message or a comment, as an article: a compact bubble at the inline end for your own messages, full-width content for others', with an optional author, meta, status and actions.",
       "props": [
         {
           "name": "from",
@@ -3772,37 +3797,38 @@
           "name": "author",
           "type": "ReactNode",
           "required": false,
-          "description": "Who wrote the message, shown above it."
+          "description": "Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the conversation makes it clear, such as on your own messages in a conversation with one person."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": "Supporting facts beside the author, such as the time."
+          "description": "Supporting facts beside the author, in the muted color, such as the time or a RelativeTime."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as copy or retry."
+          "description": "Small actions below the message, such as Copy or Retry, at the 2 rem compact height, or the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",
           "type": "'sending' | 'failed'",
           "required": false,
-          "description": "A message on its way, or one that could not be sent; shown with an icon and text."
+          "description": "A message on its way, sending, with a spinner and Sending; or one that could not be sent, failed, with an error icon and Not sent in the danger tone and, on your own message, a red outline around the bubble. Without it the message is sent."
         },
         {
           "name": "statusLabel",
           "type": "string",
           "required": false,
-          "description": "Text of the status: Sending or Not sent by default."
+          "default": "'Sending' or 'Not sent'",
+          "description": "The text beside the status icon, in the page's language, such as \"Could not deliver\"."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else."
         }
       ],
       "native": [
@@ -3835,51 +3861,51 @@
     "Meter": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Meter.tsx",
-      "description": "A known quantity within a range, such as used seats or storage.",
+      "description": "A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota: a label, an optional value and a bar, exposed as a meter. For how much of a task is done, use Progress.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and accessible name."
+          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
         },
         {
           "name": "value",
           "type": "number",
           "required": true,
-          "description": ""
+          "description": "The measurement, between min and max. A value outside the range shows, and is reported, as the nearest end."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": ""
+          "description": "The low end of the range."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": ""
+          "description": "The high end of the range."
         },
         {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
-          "description": "Visible formatted value, such as \"2 of 5\"; omit to show nothing."
+          "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
         },
         {
           "name": "aria-valuetext",
           "type": "string",
           "required": false,
-          "description": "Text read by assistive technology instead of the raw number."
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the root element, such as one that sets its width."
         }
       ],
       "native": [],
@@ -3903,19 +3929,19 @@
     "NavList.Group": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "Related items under a small heading, inside NavList.Root.",
+      "description": "Related items under a small heading, as an item of NavList.Root with a list of its own.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The group's visible heading, which also names its list."
+          "description": "The group's visible heading, such as Settings, in small muted text above its items; it also names the group's list for assistive technology."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": "The group's NavList.Item elements."
+          "description": "The group's NavList.Item elements, each of which renders its own list item."
         }
       ],
       "native": [
@@ -3928,51 +3954,52 @@
     "NavList.Item": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A navigation destination: a link with href, or a button that changes the view.",
+      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and trailing content, marks the current destination with selected, and shows only its icon with iconOnly or inside a compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.",
       "props": [
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
-          "description": ""
+          "default": "'standard'",
+          "description": "The label size: standard, 0.9375 rem, or compact, 0.875 rem, for a dense sidebar. Both keep the 2.5 rem item height and the 1 rem icon."
         },
         {
           "name": "selected",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "The item is the current destination or view: it takes the navigation selection fill and label color, fills its Material Symbol, and reports aria-current=\"page\" unless aria-current is set."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+          "description": "The destination is unavailable: dimmed, and left out of the tab order. A disabled button cannot be pressed; a disabled link has no destination and reports aria-disabled. An icon-only item still shows its label on hover."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "Official Material Symbols automatically follow the selected state."
+          "description": "A decorative icon before the label, such as one of envUI's Material Symbols, which shows filled while the item is selected and outlined otherwise, also inside a wrapper. Required with iconOnly."
         },
         {
           "name": "selectedIcon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional alternate content for custom icons when selected."
+          "description": "The icon shown while the item is selected, for a custom icon without a filled form; Material Symbols need none."
         },
         {
           "name": "trailing",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a CounterBadge; icon-only items show a small dot instead."
+          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead, hidden from assistive technology, so say what the content says in its aria-label."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": ""
+          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it."
         },
         {
           "name": "href",
@@ -3985,7 +4012,7 @@
           "type": "boolean",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "Hide the visible label, as in a compact sidebar; a tooltip shows it on hover and focus."
+          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. Inside a compact AppShell sidebar, items with an icon show only it without this prop."
         }
       ],
       "native": [
@@ -3999,7 +4026,7 @@
     "NavList.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. Name it with aria-label or aria-labelledby when the page has more than one; it adds no landmark of its own.",
+      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as AppShell's sidebar. Name it with aria-label or aria-labelledby when the page has more than one.",
       "props": [],
       "native": [
         "ul"
@@ -4100,25 +4127,32 @@
     "Pager.Next": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination after this one, with rel=\"next\".",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next, and an optional icon after them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The destination; the link renders through the LinkProvider's link component."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional decorative icon, placed before the previous link and after the next link."
+          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
+          "description": "The link's relation to this page."
         }
       ],
       "native": [
@@ -4131,25 +4165,32 @@
     "Pager.Previous": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "The destination before this one, with rel=\"prev\".",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous, and an optional icon before them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The destination; the link renders through the LinkProvider's link component."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The destination's title, such as the name of the next page. It shows below the direction label, wraps between words, and names the link after the label."
         },
         {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Optional decorative icon, placed before the previous link and after the next link."
+          "description": "A decorative icon, such as ArrowBack, before the previous destination's text, or such as ArrowForward, after the next one's; none by default."
+        },
+        {
+          "name": "rel",
+          "type": "string",
+          "required": false,
+          "default": "'prev' on Pager.Previous, 'next' on Pager.Next",
+          "description": "The link's relation to this page."
         }
       ],
       "native": [
@@ -4162,19 +4203,32 @@
     "Pager.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pager.tsx",
-      "description": "A centered pair of previous and next destinations, from the previous and next props or from Pager.Previous and Pager.Next children; either one can be omitted.",
+      "description": "A centered pair of previous and next destinations in a navigation landmark, from the previous and next props or from Pager.Previous and Pager.Next children; either one can be left out, and without any it renders nothing.",
       "props": [
         {
           "name": "previous",
           "type": "PreviousProps | null",
           "required": false,
-          "description": "The previous destination, as the props of Pager.Previous."
+          "description": "The destination before this page, as the props of Pager.Previous; leave it out, or pass null, on the first page of a sequence."
         },
         {
           "name": "next",
           "type": "NextProps | null",
           "required": false,
-          "description": "The next destination, as the props of Pager.Next."
+          "description": "The destination after this page, as the props of Pager.Next; leave it out, or pass null, on the last page of a sequence."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Pager.Previous and Pager.Next, instead of the previous and next props; they render after the links of the props."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Previous and next content'",
+          "description": "The navigation landmark's name; give each pager its own where a page has several."
         }
       ],
       "native": [
@@ -4187,85 +4241,94 @@
     "Pagination": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Pagination.tsx",
-      "description": "A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and buttons for the previous and next pages, in a navigation landmark. The application loads the pages.",
+      "description": "A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons for the previous and next pages, in a navigation landmark. The application loads the pages; the range is announced as it changes, and focus stays on the button pressed.",
       "props": [
         {
           "name": "page",
           "type": "number",
           "required": true,
-          "description": "The page shown, counted from 1."
+          "description": "The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the end shows the last one."
         },
         {
           "name": "pageSize",
           "type": "number",
           "required": true,
-          "description": "The most items a page shows."
+          "description": "The most items a page shows, such as 60; at least 1."
         },
         {
           "name": "total",
           "type": "number",
           "required": false,
-          "description": "All items; omit when it is not known, such as for a list read in batches."
+          "description": "All items, when known; the range then ends with it, as in 1–60 of 245, and the last page ends the list. Leave it out for a list read in batches, where hasNextPage says when it ends."
         },
         {
           "name": "hasNextPage",
           "type": "boolean",
           "required": false,
-          "description": "Whether a later page exists, for a list without total; true by default."
+          "default": "true",
+          "description": "Whether a later page exists, for a list without total, such as from a cursor's has more."
         },
         {
           "name": "onPageChange",
           "type": "(page: number) => void",
           "required": true,
-          "description": "Receives the page before or after the current one when a button is pressed."
+          "description": "Receives the page before or after the current one when its button is pressed. The application loads that page and passes it back as page."
         },
         {
           "name": "pending",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "A page is loading: the button pressed shows a spinner, and both wait."
+          "description": "A page is loading: the button pressed shows a spinner, also when the load starts in an effect after the page changes, and both buttons ignore presses while staying focusable. A load for another reason, such as a refresh, makes both wait without a spinner."
         },
         {
           "name": "hideWhenSinglePage",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Renders nothing while all items fit on one page."
+          "description": "Render nothing while every item fits on one page, so neither button has anywhere to go."
         },
         {
           "name": "formatRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
-          "description": "Text for the range, such as \"1–60 of 245\", for example in another language."
+          "default": "1–60 of 245, or 61–120 without total, in English numbers",
+          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for example in another language."
         },
         {
           "name": "previousLabel",
           "type": "string",
           "required": false,
           "default": "'Previous page'",
-          "description": "Name and tooltip of the previous button; Previous page by default."
+          "description": "The previous button's accessible name and tooltip, in the application's language."
         },
         {
           "name": "nextLabel",
           "type": "string",
           "required": false,
           "default": "'Next page'",
-          "description": "Name and tooltip of the next button; Next page by default."
+          "description": "The next button's accessible name and tooltip, in the application's language."
         },
         {
           "name": "variant",
           "type": "'primary' | 'important' | 'secondary' | 'outlined' | 'destructive' | 'text' | 'quiet'",
           "required": false,
           "default": "'secondary'",
-          "description": "As IconButton; secondary by default."
+          "description": "The buttons' variant, as on IconButton, such as text for a quiet toolbar."
         },
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) takes the surrounding density; compact gives 2 rem buttons anywhere."
+          "description": "standard takes the height of the surroundings, 2.5 rem, or 2 rem in a compact surface; compact gives the buttons the 2 rem compact height anywhere. Touch screens keep 2.75 rem."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Pagination'",
+          "description": "The navigation landmark's name, such as Report pages, where a page has more than one."
         }
       ],
       "native": [
@@ -4284,13 +4347,13 @@
           "name": "panels",
           "type": "readonly T[]",
           "required": true,
-          "description": "The panels in order; open panels sit side by side and chips follow in the same order."
+          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and chips follow in the same order. The application owns them."
         },
         {
           "name": "children",
           "type": "(panel: T) => ReactNode",
           "required": true,
-          "description": "Renders a panel's content, such as a PanelDockHeader above the panel's body."
+          "description": "Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body. The content mounts once and stays mounted until the panel closes."
         },
         {
           "name": "onModeChange",
@@ -4341,28 +4404,28 @@
           "type": "string",
           "required": false,
           "default": "'Hidden panels'",
-          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out; Hidden panels by default."
+          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out."
         },
         {
           "name": "showLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "(label: string) => `Show ${label}`",
-          "description": "Accessible name of a chip's button that shows its panel, from the chip's text: Show and the text by default. A function, as each chip names its own panel; PanelDockControls takes plain strings."
+          "default": "Show and the text, such as Show Budget",
+          "description": "Accessible name of a chip's button that shows its panel, from the chip's text. A function, as each chip names its own panel; PanelDockControls takes plain strings."
         },
         {
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "(label: string) => `Close ${label}`",
-          "description": "Accessible name of a chip's close button, from the chip's text: Close and the text by default."
+          "default": "Close and the text, such as Close Budget",
+          "description": "Accessible name of a chip's close button, from the chip's text."
         },
         {
           "name": "resizeLabel",
           "type": "(title: string) => string",
           "required": false,
-          "default": "(title: string) => `Resize ${title}`",
-          "description": "Accessible name of a panel's resize handle, from its title: Resize and the title by default."
+          "default": "Resize and the title, such as Resize Quarterly report",
+          "description": "Accessible name of a panel's resize handle, from its title."
         }
       ],
       "native": [
@@ -4382,28 +4445,28 @@
           "type": "string",
           "required": false,
           "default": "'Minimize'",
-          "description": "Accessible name and tooltip of the control that minimizes the panel; Minimize by default."
+          "description": "Accessible name and tooltip of the control that minimizes the panel to a chip."
         },
         {
           "name": "maximizeLabel",
           "type": "string",
           "required": false,
           "default": "'Maximize'",
-          "description": "Accessible name and tooltip of the control that maximizes the panel; Maximize by default."
+          "description": "Accessible name and tooltip of the control that maximizes the panel to fill the region."
         },
         {
           "name": "restoreLabel",
           "type": "string",
           "required": false,
           "default": "'Restore'",
-          "description": "The same for a maximized panel, which returns it to the row; Restore by default."
+          "description": "Accessible name and tooltip of the same control on a maximized panel, which returns it."
         },
         {
           "name": "closeLabel",
           "type": "string",
           "required": false,
           "default": "'Close'",
-          "description": "Accessible name and tooltip of the control that closes the panel; Close by default."
+          "description": "Accessible name and tooltip of the control that closes the panel."
         }
       ],
       "native": [
@@ -4422,38 +4485,38 @@
           "name": "title",
           "type": "ReactNode",
           "required": true,
-          "description": "The panel's title, as a heading."
+          "description": "The panel's title, as a heading in 1.125 rem medium-weight text; it wraps between words rather than truncating."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": "Supporting text below the title, such as who changed it last."
+          "description": "Supporting text below the title, in 0.875 rem muted text, such as who changed it last."
         },
         {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The application's own actions before the window controls, such as Edit and a menu of more."
+          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; icon-only text buttons take the window controls' quiet icon color."
         },
         {
           "name": "controls",
           "type": "ReactNode",
           "required": false,
-          "description": "The window controls; PanelDockControls inside a PanelDock by default, null for none."
+          "description": "The window controls: PanelDockControls inside a PanelDock by default. null leaves them out, and an element replaces them, such as PanelDockControls with translated labels."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
           "default": "2",
-          "description": "The title's heading level in the page outline; 2 by default. The appearance stays the same."
+          "description": "The title's heading level in the page outline; the look stays the same."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "Content below the title row that stays with the header, such as Tabs."
+          "description": "Content below the title row that stays with the sticky header, such as Tabs."
         }
       ],
       "native": [
@@ -4466,77 +4529,77 @@
     "Popover": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Popover.tsx",
-      "description": "A floating panel opened from a trigger, for details or a small form beside the control.",
+      "description": "A floating panel beside its trigger, for details or a small form: it opens on press, moves focus into itself, and closes with Esc, a press outside or when focus leaves it.",
       "props": [
         {
           "name": "trigger",
           "type": "ReactElement",
           "required": true,
-          "description": "The control that opens the popover; it receives the expanded state and ref."
+          "description": "The control that opens and closes the popover, such as a Button or an IconButton. It must take a ref and props: it receives the press handler, aria-haspopup and aria-expanded."
         },
         {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "A heading that also names the popover."
+          "description": "A heading at the top, such as the name of what the popover describes; it names the popover."
         },
         {
           "name": "children",
           "type": "ReactNode | ((close: () => void) => ReactNode)",
           "required": true,
-          "description": "Content, or a function that receives close for actions inside the popover."
+          "description": "The popover's content, or a function that receives close, for an action inside it that should close the popover once it is done, such as a form's submit."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "description": "Accessible name when there is no title."
+          "description": "The popover's accessible name when it has no title, such as Rename document."
         },
         {
           "name": "side",
           "type": "'top' | 'bottom' | 'left' | 'right'",
           "required": false,
           "default": "'bottom'",
-          "description": ""
+          "description": "The side of the trigger the popover opens on; it flips to the other side without room."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end'",
           "required": false,
           "default": "'center'",
-          "description": ""
+          "description": "How the popover lines up with the trigger along that side: its start, center or end."
         },
         {
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether a controlled popover is open; update it from onOpenChange."
         },
         {
           "name": "defaultOpen",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled popover starts open."
         },
         {
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the requested state each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close."
         },
         {
           "name": "width",
           "type": "'standard' | 'wide'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) about 20 rem wide; wide about 28 rem."
+          "description": "The popover's width: standard, 20 rem, for details and a field or two; wide, 28 rem, for a longer form. Both narrow to fit the window."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the popover's surface."
         }
       ],
       "native": [],
@@ -4547,51 +4610,51 @@
     "Progress": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Meter.tsx",
-      "description": "Completion of a task; pass value null while the amount of work is unknown.",
+      "description": "How much of a task is done, such as an upload or an import: a label, an optional value and a bar, exposed as a progress bar. Pass value null while the amount of work is unknown, and the bar sweeps instead.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and accessible name."
+          "description": "What the bar shows, such as Seats assigned; it is visible above the bar and names it."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the root element, such as one that sets its width."
         },
         {
           "name": "aria-valuetext",
           "type": "string",
           "required": false,
-          "description": "Text read by assistive technology instead of the raw number."
+          "description": "The value as assistive technology reads it, with its unit in words, such as 2 of 5 seats. Without it, a screen reader reads the bare number, aria-valuenow."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": ""
+          "description": "The high end of the range."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": ""
+          "description": "The low end of the range."
         },
         {
           "name": "valueText",
           "type": "ReactNode",
           "required": false,
-          "description": "Visible formatted value, such as \"2 of 5\"; omit to show nothing."
+          "description": "The value as text at the end of the label's row, formatted by the application, such as 2 of 5 or 40%. Without it, no value shows."
         },
         {
           "name": "value",
           "type": "number | null",
           "required": true,
-          "description": ""
+          "description": "How much of the task is done, between min and max, such as 40 of 100; null while the amount of work is unknown, which shows an indeterminate bar."
         }
       ],
       "native": [],
@@ -4602,25 +4665,25 @@
     "Radio": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "",
+      "description": "One option of a RadioGroup: a native radio input with its label, and an optional detail.",
       "props": [
         {
           "name": "value",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The value the group reports and a form submits when this option is chosen."
         },
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The option's visible name, such as Private; pressing it chooses the option."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
         }
       ],
       "native": [
@@ -4633,51 +4696,58 @@
     "RadioGroup": {
       "kind": "component",
       "source": "packages/ui/src/forms/Radio.tsx",
-      "description": "",
+      "description": "A set of options to choose exactly one from: a native fieldset whose legend names the group, with Radio options inline or as selectable rows.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The group's visible name, such as Visibility, as the fieldset's legend above the options. It names the group for assistive technology; without it, use aria-label or aria-labelledby."
         },
         {
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The value of the chosen option in a controlled group; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The value of the option an uncontrolled group starts with; a native form reset returns to it. Without value or defaultValue, no option is chosen until people choose one."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the value of the option people choose."
         },
         {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The name every radio of the group submits its value under. Set it in a form; without it the group takes a unique generated name, so its radios still work as one group."
         },
         {
           "name": "required",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Require a choice before the form submits, through native constraint validation."
         },
         {
           "name": "variant",
           "type": "'inline' | 'rows'",
           "required": false,
           "default": "'inline'",
-          "description": ""
+          "description": "The group's look: inline, radios before their labels side by side that wrap onto more lines; or rows, connected selectable rows that fill the width, with the label and detail at the start and the radio at the end, for options that need explaining."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Disable every option of the group; a disabled group can't be focused or changed."
         }
       ],
       "native": [
@@ -4690,34 +4760,34 @@
     "Rating": {
       "kind": "component",
       "source": "packages/ui/src/content/Rating.tsx",
-      "description": "A read-only rating: stars filled to the value in half steps, in the warning tone.",
+      "description": "A read-only rating, such as a review score: stars filled to the value in half steps in the warning tone, with an optional number before them, named once for assistive technology as an image, such as \"4.5 out of 5 stars\". It shows a rating; it does not ask for one.",
       "props": [
         {
           "name": "value",
           "type": "number",
           "required": true,
-          "description": "The rating, from 0 to max; it shows in half-star steps."
+          "description": "The rating, from 0 to max, such as 4.5. It shows rounded to the nearest half star, kept within 0 and max; a value that is not a number, such as NaN, shows no stars filled."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "5",
-          "description": "How many stars; 5 by default."
+          "description": "How many stars the scale has, as a whole number, such as 10. A fraction rounds to the nearest whole star; a value below 1 or not a number shows 5 stars."
         },
         {
           "name": "showValue",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the number before the stars, such as 4.5."
+          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
         },
         {
           "name": "formatLabel",
           "type": "(value: number, max: number) => string",
           "required": false,
-          "default": "(value: number, max: number) => `${value} out of ${max} stars`",
-          "description": "The accessible name; \"4.5 out of 5 stars\" by default."
+          "default": "'{value} out of {max} stars'",
+          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars, such as for another language."
         }
       ],
       "native": [
@@ -4736,7 +4806,7 @@
           "name": "value",
           "type": "RelativeTimeValue",
           "required": true,
-          "description": "The moment to describe."
+          "description": "The moment to describe: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. An invalid moment renders nothing."
         },
         {
           "name": "now",
@@ -4749,26 +4819,28 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Show the date and time in a tooltip on hover; true by default. Inside an application's own Tooltip, that one describes the time instead."
+          "description": "Show the date and time in a tooltip on hover, such as \"Oct 14, 2026, 9:41 AM\", in the reader's time zone and the locale. Turn it off where the exact moment shows nearby. Inside an application's own Tooltip, that one describes the time instead."
         },
         {
           "name": "locale",
           "type": "string | readonly string[]",
           "required": false,
-          "description": "Language of the text, such as \"en-GB\" or \"de\"; the runtime's default by default."
+          "default": "the runtime's language: the browser's, or the server's while rendering there",
+          "description": "The language of the text, and of the date and time in RelativeTime's tooltip, as a BCP 47 tag such as \"en-GB\" or \"de\", or a list of them in order of preference."
         },
         {
           "name": "format",
           "type": "'long' | 'short' | 'narrow'",
           "required": false,
           "default": "'long'",
-          "description": "long \"3 hours ago\" (default), short \"3 hr. ago\" or narrow \"3h ago\"."
+          "description": "How long the words are, from Intl.RelativeTimeFormat: long \"3 hours ago\", short \"3 hr. ago\" or narrow \"3h ago\", in the locale's own wording."
         },
         {
           "name": "nowLabel",
           "type": "string",
           "required": false,
-          "description": "Text for a moment less than 45 seconds away: \"just now\" for past moments in English, \"now\" for coming ones, and the locale's own word for now in other languages."
+          "default": "'just now' or 'now' in English, the locale's word for now elsewhere",
+          "description": "Text for a moment less than 45 seconds away, past or coming, such as \"moments ago\". English says \"just now\" of a past moment and \"now\" of a coming one; other languages the locale's word."
         }
       ],
       "native": [
@@ -4781,37 +4853,39 @@
     "RichText": {
       "kind": "component",
       "source": "packages/ui/src/rich-text/RichText.tsx",
-      "description": "Static, SSR-capable view using exactly the editor's Tiptap schema and Markdown parser.",
+      "description": "Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes. It renders on the server too.",
       "props": [
         {
           "name": "children",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The Markdown to show, such as what RichTextEditor saved."
         },
         {
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
-          "description": "Keep this array stable; extensions must implement Markdown parsing and serialization."
+          "default": "[]",
+          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
         },
         {
           "name": "renderReference",
           "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
           "required": false,
-          "description": ""
+          "default": "the trigger and the label, such as #Launch",
+          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
         },
         {
           "name": "onReferenceClick",
           "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
         },
         {
           "name": "onLinkClick",
           "type": "(href: string, event: RichTextLinkEvent) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
         }
       ],
       "native": [
@@ -4824,128 +4898,137 @@
     "RichTextEditor": {
       "kind": "component",
       "source": "packages/ui/src/rich-text/RichTextEditor.tsx",
-      "description": "Markdown IO with Tiptap owning document editing, history, and selection.",
+      "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
           "name": "value",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The Markdown of a controlled editor; update it from onValueChange. A new value from outside, such as another draft, replaces the document and keeps the caret where it can."
         },
         {
           "name": "defaultValue",
           "type": "string",
           "required": false,
           "default": "''",
-          "description": ""
+          "description": "The Markdown an uncontrolled editor starts with, and returns to when its form resets."
         },
         {
           "name": "onValueChange",
           "type": "(markdown: string) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the document as Markdown after every edit, normalized by the editor's schema, so it can differ from the Markdown it was given, such as * for _ around italics."
         },
         {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Submits the Markdown with a native form under this name, through a hidden input."
         },
         {
           "name": "form",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The ID of the form the hidden input belongs to, where the editor sits outside it."
         },
         {
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Text shown in an empty document, such as what to write."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Makes the editor unavailable: it cannot be edited or focused, the toolbar is disabled, its value is left out of form submission and it takes the shared disabled opacity."
         },
         {
           "name": "readOnly",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Shows the document without editing it: the toolbar is disabled and the document cannot be focused, but its links and references can, and the form still submits its value."
         },
         {
           "name": "toolbar",
           "type": "readonly RichTextCommand[] | false",
           "required": false,
-          "description": ""
+          "default": "every command, from heading to table",
+          "description": "The toolbar's commands, in order, or false for no toolbar; Undo and Redo, and Attach files with onUpload, follow them."
         },
         {
           "name": "references",
           "type": "readonly RichTextReferenceSource[]",
           "required": false,
           "default": "[]",
-          "description": ""
+          "description": "Kinds of references people insert by typing a trigger, such as @ for people and # for topics, each with its own lookup. Triggers must be unique, and the array must stay the same between renders, such as at module scope."
         },
         {
           "name": "slashCommands",
           "type": "boolean | readonly RichTextSlashCommand[]",
           "required": false,
           "default": "false",
-          "description": "true enables standard block commands; an array adds application commands to them."
+          "description": "Typing / opens a menu of block commands: true offers heading, the lists, quote, code block and table; an array adds the application's commands after them. A / reference source can't be used beside it."
         },
         {
           "name": "onRequestLink",
           "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
           "required": false,
-          "description": "For selections the URL marks existing content; label is used only for new links at the caret."
+          "description": "Opens the application's own link picker for Insert link, with the selected text, instead of the built-in dialog. Return the link, null to cancel, or a promise of either. A selection becomes a link to its href; at the caret, the label is inserted as the link's text."
         },
         {
           "name": "onUpload",
           "type": "(file: File, request: { signal: AbortSignal }) => RichTextAttachment | null | Promise<RichTextAttachment | null>",
           "required": false,
-          "description": ""
+          "description": "Uploads a file people chose with Attach files, which shows in the toolbar only with this. Return where it lives as an attachment, null to skip it, or a promise of either; the signal aborts when the editor becomes read-only or disabled, or when a controlled value changes."
         },
         {
           "name": "accept",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "The file types Attach files offers, as in a file input's accept, such as \"image/*,.pdf\"."
         },
         {
           "name": "multiple",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": ""
+          "description": "Lets people choose several files at once with Attach files."
+        },
+        {
+          "name": "variant",
+          "type": "'outlined' | 'plain' | 'quiet'",
+          "required": false,
+          "default": "'outlined'",
+          "description": "The editor's look: outlined, the document in a bordered well on the field background, or plain, without a border or fill. quiet is accepted for the shared field type, but draws as outlined."
         },
         {
           "name": "extensions",
           "type": "AnyExtension[]",
           "required": false,
           "default": "[]",
-          "description": "Keep this array stable; extensions must implement Markdown parsing and serialization."
+          "description": "Tiptap extensions added to the shared schema, such as a custom mark. They must parse and write Markdown, and the array must stay the same between renders, such as at module scope; a new array starts a new editing session. Pass the same extensions to RichText."
         },
         {
           "name": "renderReference",
           "type": "(reference: RichTextReference, context: { readOnly: boolean; selected: boolean }) => ReactNode",
           "required": false,
-          "description": ""
+          "default": "the trigger and the label, such as #Launch",
+          "description": "Renders a reference's content, such as an avatar beside the name; it receives whether the document is read-only and whether the reference is selected."
         },
         {
           "name": "onReferenceClick",
           "type": "(reference: RichTextReference, event: MouseEvent<HTMLElement>) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a reference, with the reference and the event, such as to open the record. A reference with an href is a link, which the editor never follows while it is editable; without an href, this makes the reference a button."
         },
         {
           "name": "onLinkClick",
           "type": "(href: string, event: RichTextLinkEvent) => void",
           "required": false,
-          "description": ""
+          "description": "Called when people activate a link in the document, with its href and the event: a native MouseEvent in the editor, a React mouse event in RichText. The editor never follows links while editable; call preventDefault to keep RichText or a read-only editor from following it."
         },
         {
           "name": "label",
@@ -4964,13 +5047,6 @@
           "type": "ReactNode",
           "required": false,
           "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
-        },
-        {
-          "name": "variant",
-          "type": "'outlined' | 'plain' | 'quiet'",
-          "required": false,
-          "default": "'outlined'",
-          "description": "The field's look: outlined, with a thin border; plain, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         }
       ],
       "native": [
@@ -5073,38 +5149,38 @@
     "SegmentedControl": {
       "kind": "component",
       "source": "packages/ui/src/actions/SegmentedControl.tsx",
-      "description": "One choice among a few options on a pill rail; the chosen segment takes the primary colors.",
+      "description": "One choice among a few options on a pill rail, such as views or filters of the same content; the chosen segment takes the primary colors. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
           "name": "options",
           "type": "readonly SegmentedControlOption[]",
           "required": true,
-          "description": "Two to five options."
+          "description": "The options, two to five, in the order they show."
         },
         {
           "name": "value",
           "type": "string",
           "required": true,
-          "description": ""
+          "description": "The chosen option's value. The control is always controlled: update it from onValueChange."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": true,
-          "description": ""
+          "description": "Receives the value of the option people choose, by pressing it or with the arrow keys."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the group."
+          "description": "The group's accessible name, such as Work items; the control has no visible label."
         },
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) matches buttons; compact matches compact fields and toolbars."
+          "description": "The rail's height: standard matches buttons, at 2.5 rem; compact matches compact fields and toolbars, at 2 rem."
         },
         {
           "name": "fullWidth",
@@ -5118,13 +5194,13 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Disable every option; the control can't be focused or changed."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the rail, such as for its placement in a layout."
         }
       ],
       "native": [],
@@ -5135,69 +5211,69 @@
     "Select": {
       "kind": "component",
       "source": "packages/ui/src/forms/Select.tsx",
-      "description": "A single selection with native form participation and a themed popup.",
+      "description": "One choice from a list that stays collapsed until opened: a Button-style trigger that shows the chosen option and opens a popup list, with a label above it, a hint, an error and native form participation.",
       "props": [
         {
           "name": "options",
           "type": "readonly SelectOption[]",
           "required": true,
-          "description": ""
+          "description": "The options of the list, in order, each with a value, a label and whether it is disabled."
         },
         {
           "name": "value",
           "type": "string | null",
           "required": false,
-          "description": ""
+          "description": "The chosen option's value in a controlled select, or null for none, which shows the placeholder; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "string | null",
           "required": false,
-          "description": ""
+          "description": "The chosen option's value an uncontrolled select starts with; a native form reset returns to it. Without it, nothing is chosen and the trigger shows the placeholder."
         },
         {
           "name": "onValueChange",
           "type": "(value: string | null) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the value of the option people choose."
         },
         {
           "name": "name",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "Submits the chosen option's value with a form under this name, through a hidden input."
         },
         {
           "name": "required",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Require a choice before the form submits: the browser refuses the form and moves focus to the trigger while nothing is chosen."
         },
         {
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "What the trigger shows while nothing is chosen, such as Choose an owner."
         },
         {
           "name": "autoComplete",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A hint for the browser's autofill, such as country, set on the hidden input."
         },
         {
           "name": "variant",
           "type": "'secondary' | 'outlined'",
           "required": false,
           "default": "'secondary'",
-          "description": "The trigger's Button style, to suit its surroundings: secondary (default) for the page canvas, outlined for panes, dialogs, rows and toolbars."
+          "description": "The trigger's Button style, to suit its surroundings: secondary, a filled pill, for the page; or outlined, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend with the surface."
         },
         {
           "name": "density",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "compact suits dense desktop surfaces: a compact trigger and the compact menu's popup, where a check mark shows the selected option."
+          "description": "standard, or compact for dense desktop surfaces such as toolbars: a 2 rem trigger, and the compact menu's popup with short rows, where a check mark shows the chosen option."
         },
         {
           "name": "label",
@@ -5228,26 +5304,27 @@
     "Skeleton": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Skeleton.tsx",
-      "description": "",
+      "description": "A placeholder in the shape of content that is loading, such as a line of text or a row: a block with rounded corners on the neutral fill, which pulses unless people prefer reduced motion. It is hidden from assistive technology; put placeholders in a LoadingState, which names the region.",
       "props": [
         {
           "name": "width",
           "type": "CSSProperties['width']",
           "required": false,
-          "description": ""
+          "description": "The placeholder's width, as a CSS length, such as 38% or 12rem, for the content it stands for. Without it, the placeholder fills the width of its container."
         },
         {
           "name": "height",
           "type": "CSSProperties['height']",
           "required": false,
-          "description": ""
+          "default": "0.8rem",
+          "description": "The placeholder's height, as a CSS length, such as 1.25rem for a heading or 3.5rem for a row."
         },
         {
           "name": "tone",
           "type": "'base' | 'highlight'",
           "required": false,
           "default": "'base'",
-          "description": ""
+          "description": "The fill: base, the neutral fill, or highlight, one step stronger, for a placeholder that stands out among the others, such as a title."
         }
       ],
       "native": [
@@ -5260,84 +5337,85 @@
     "Slider": {
       "kind": "component",
       "source": "packages/ui/src/forms/Slider.tsx",
-      "description": "A value in a range, chosen by dragging a thumb along a track or with the keyboard.",
+      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional hint below.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "Visible label and the slider's accessible name."
+          "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
         },
         {
           "name": "hint",
           "type": "ReactNode",
           "required": false,
-          "description": "Guidance below the slider, linked to it."
+          "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
         },
         {
           "name": "value",
           "type": "number",
           "required": false,
-          "description": ""
+          "description": "The value of a controlled slider; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "number",
           "required": false,
-          "description": "Starting value when the slider owns it; min by default."
+          "default": "min",
+          "description": "The value an uncontrolled slider starts with; a native form reset returns to it."
         },
         {
           "name": "onValueChange",
           "type": "(value: number) => void",
           "required": false,
-          "description": "Receives the value while it changes, by dragging, pressing the track or with the keyboard."
+          "description": "Receives the value while it changes, by dragging, pressing the track or with the keyboard, as often as the thumb moves."
         },
         {
           "name": "onValueCommit",
           "type": "(value: number) => void",
           "required": false,
-          "description": "Receives the value once a change is complete, such as when the thumb is released."
+          "description": "Receives the value once a change is complete: when the thumb is released or the track pressed, and after each key. Use it for work that runs once per change, such as saving."
         },
         {
           "name": "min",
           "type": "number",
           "required": false,
           "default": "0",
-          "description": "0 by default."
+          "description": "The lowest value, at the start of the track."
         },
         {
           "name": "max",
           "type": "number",
           "required": false,
           "default": "100",
-          "description": "100 by default."
+          "description": "The highest value, at the end of the track."
         },
         {
           "name": "step",
           "type": "number",
           "required": false,
           "default": "1",
-          "description": "The values between min and max that the slider can take; 1 by default."
+          "description": "The distance between the values the slider can take, counted from min; an arrow key moves by it."
         },
         {
           "name": "largeStep",
           "type": "number",
           "required": false,
-          "default": "Math.max(step, Math.round((max - min) / 10 / step) * step)",
-          "description": "The change of Page Up, Page Down and arrow keys with Shift; a tenth of the range by default."
+          "default": "a tenth of the range in whole steps, at least one step",
+          "description": "The change of Page Up, Page Down and an arrow key with Shift."
         },
         {
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read and hear it, such as (value) => `${value}%`."
+          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows as it is."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Dim the slider; it can't be focused or moved, and forms leave it out."
         },
         {
           "name": "name",
@@ -5349,7 +5427,7 @@
           "name": "form",
           "type": "string",
           "required": false,
-          "description": "The id of a form the slider belongs to when it is outside of it."
+          "description": "The id of a form the slider belongs to when it sits outside of it."
         },
         {
           "name": "inputRef",
@@ -5368,20 +5446,20 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Ongoing work of unknown length in a small area, such as a button or a panel that is updating.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "Accessible name. Omit it when a busy control or region already announces the work."
+          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
         },
         {
           "name": "size",
           "type": "'small' | 'standard' | 'large'",
           "required": false,
           "default": "'standard'",
-          "description": "small 1 rem (inside controls), standard 1.5 rem (default) or large 3 rem."
+          "description": "small, 1 rem, inside controls and beside a line of text; standard, 1.5 rem, beside a heading or in a panel; or large, 3 rem, in the middle of a region whose content is on its way."
         }
       ],
       "native": [
@@ -5394,33 +5472,33 @@
     "Stack": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "Vertical composition. The parent owns spacing between its direct children.",
+      "description": "A vertical layout: its direct children in a column, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
       "props": [
         {
           "name": "gap",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
           "default": "4",
-          "description": ""
+          "description": "The space between the direct children, as a step of the spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is 1.5 rem, 6 is 2 rem, 7 is 2.5 rem, 8 is 3 rem and 9 is 4 rem; 0 removes it."
         },
         {
           "name": "align",
           "type": "'start' | 'center' | 'end' | 'stretch'",
           "required": false,
           "default": "'stretch'",
-          "description": ""
+          "description": "How the children line up across the stack: stretch makes each as wide as the stack, except controls such as buttons, which keep their own width; start, center and end keep every child at its own width, at that side or in the middle."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Compose layout onto another component without adding a wrapper."
+          "description": "Another element to lay out as the stack, without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs."
         }
       ],
       "native": [
@@ -5449,16 +5527,17 @@
       "props": [
         {
           "name": "tone",
-          "type": "'pane' | 'row' | 'canvas' | 'alternate'",
+          "type": "SurfaceAppearanceProps['tone']",
           "required": false,
           "default": "'pane'",
-          "description": ""
+          "description": "The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so its stats stand apart; canvas or alternate where those fit."
         },
         {
           "name": "padding",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "type": "SurfaceAppearanceProps['padding']",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
         }
       ],
       "native": [
@@ -5471,31 +5550,31 @@
     "Stat.Root": {
       "kind": "component",
       "source": "packages/ui/src/content/Stat.tsx",
-      "description": "A labelled key figure for a dashboard, with an optional trend and detail.",
+      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and detail. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What the figure measures, such as Active projects."
+          "description": "What the figure measures, such as Active projects, in muted text above it."
         },
         {
           "name": "value",
           "type": "ReactNode",
           "required": true,
-          "description": "The figure, such as a formatted number or an AnimatedNumber."
+          "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
         },
         {
           "name": "detail",
           "type": "ReactNode",
           "required": false,
-          "description": "A muted line below, such as the period: Last 30 days."
+          "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
         },
         {
           "name": "trend",
           "type": "Trend",
           "required": false,
-          "description": "The change since an earlier period, shown with an icon and text in its tone."
+          "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
         }
       ],
       "native": [
@@ -5508,46 +5587,47 @@
     "Surface": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Surface.tsx",
-      "description": "Shared background geometry. Layout, spacing between children and behavior belong to consumers.",
+      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Stack. Card and other containers build on it.",
       "props": [
         {
           "name": "tone",
           "type": "'pane' | 'row' | 'canvas' | 'alternate'",
           "required": false,
           "default": "'pane'",
-          "description": ""
+          "description": "The background: pane, the default background of panes and side regions; row, the muted background of rows; canvas, the page background; or alternate, the raised background, such as a block that stands out on a pane."
         },
         {
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
-          "description": "Omit for responsive padding; 0 removes padding."
+          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
+          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
           "name": "corners",
           "type": "'surface' | 'standard' | 'pill' | 'none'",
           "required": false,
           "default": "'surface'",
-          "description": ""
+          "description": "The corner radius: surface, the large 1.75 rem corners of panes; standard, 0.5 rem for small blocks; pill, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
         },
         {
           "name": "density",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "compact gives the controls inside the compact control height, which still grows for touch."
+          "description": "compact gives the buttons, icon buttons, selects and compact fields inside, also nested ones, the 2 rem compact control height, for toolbars over dense content; touch screens keep the 2.75 rem touch height. standard leaves them at their own height."
         },
         {
           "name": "as",
           "type": "Element",
           "required": false,
-          "description": ""
+          "description": "The element to render, for its meaning: div by default, or section, article, nav, main, aside, header or footer. With render, set the element there instead."
         },
         {
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "Compose another component onto the same root. It must forward native props and refs."
+          "description": "Another element to render the surface onto, without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs."
         }
       ],
       "native": [
@@ -5560,32 +5640,32 @@
     "Switch": {
       "kind": "component",
       "source": "packages/ui/src/forms/Switch.tsx",
-      "description": "",
+      "description": "An on/off setting that takes effect at once: a native checkbox with the switch role, drawn as a track and a thumb, with its label beside it.",
       "props": [
         {
           "name": "label",
           "type": "ReactNode",
           "required": false,
-          "description": ""
+          "description": "The setting the switch turns on or off, such as Show completed tasks, beside the track. It names the switch, stays the same in both states, and pressing it toggles the switch too. Without it, name the switch with aria-label or aria-labelledby."
         },
         {
           "name": "checked",
           "type": "boolean",
           "required": false,
-          "description": ""
+          "description": "Whether a controlled switch is on; update it from onCheckedChange."
         },
         {
           "name": "defaultChecked",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": ""
+          "description": "Whether an uncontrolled switch starts on; a native form reset returns it to this state."
         },
         {
           "name": "onCheckedChange",
           "type": "(checked: boolean) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the new state each time people turn the switch on or off."
         }
       ],
       "native": [
@@ -5862,90 +5942,91 @@
     "Tabs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tabs.tsx",
-      "description": "Linked tab panels; supplied buttons retain their own colors, geometry and behavior.",
+      "description": "Switches between panels of related content in one place: a rail of the buttons you supply, each a tab linked to its panel, with selection from the keyboard and panels that fade as they change. The selected tab keeps its button's own look; the others are quiet on the rail.",
       "props": [
         {
           "name": "items",
           "type": "readonly TabsItem[]",
           "required": true,
-          "description": ""
+          "description": "The tabs in order, each with its value, button and panel content."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the tab list."
+          "description": "The tab list's accessible name, such as Project views."
         },
         {
           "name": "value",
           "type": "string | null",
           "required": false,
-          "description": ""
+          "description": "The selected tab's value, for controlled tabs; update it from onValueChange."
         },
         {
           "name": "defaultValue",
           "type": "string | null",
           "required": false,
-          "description": ""
+          "default": "the first enabled item's value",
+          "description": "The tab that uncontrolled tabs start on."
         },
         {
           "name": "onValueChange",
           "type": "(value: string | null) => void",
           "required": false,
-          "description": ""
+          "description": "Receives the value of the tab people select, by pressing it or from the keyboard."
         },
         {
           "name": "activation",
           "type": "'automatic' | 'manual'",
           "required": false,
           "default": "'automatic'",
-          "description": "Automatic selection on arrow-key focus; manual requires Enter or Space."
+          "description": "automatic selects a tab as the arrow keys move focus to it; manual only moves focus, and Enter or Space selects, for panels that take a moment to show."
         },
         {
           "name": "orientation",
           "type": "'horizontal' | 'vertical'",
           "required": false,
           "default": "'horizontal'",
-          "description": ""
+          "description": "horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical in a column, with the up and down arrow keys. The panels stay below the list either way."
         },
         {
           "name": "keepMounted",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Preserve local panel state while inactive. Hidden panels are inert."
+          "description": "Keep the panels of unselected tabs mounted and hidden, so their state, such as a draft or a scroll position, survives switching; otherwise a panel unmounts once it has faded out."
         },
         {
           "name": "renderList",
           "type": "(list: ReactElement) => ReactNode",
           "required": false,
-          "description": "Wrap the supplied list in a custom layout, such as a Card with a heading. Render it once."
+          "description": "Places the tab list in a layout of your own, such as beside a heading: it receives the list and returns what to render in its place, with the list in it once. The panels stay below."
         },
         {
           "name": "listClassName",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the tab list, the rail that holds the tabs."
         },
         {
           "name": "panelClassName",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for every panel."
         },
         {
           "name": "fill",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The selected panel takes the height left below the list; give the Tabs a height (for example as a flex child). For content that fills a region, such as a canvas."
+          "description": "The selected panel takes the height left below the list, for content that fills a region, such as a canvas; give the tabs a height, for example as a flex child."
         },
         {
           "name": "size",
           "type": "'standard' | 'compact'",
           "required": false,
           "default": "'standard'",
-          "description": "standard (default) matches buttons; compact makes the whole rail as tall as a compact control, for toolbars and bars, like a compact `SegmentedControl`."
+          "description": "standard tabs are as tall as buttons; compact makes the whole rail as tall as a compact control, 2 rem, for toolbars and bars, as a compact SegmentedControl is."
         }
       ],
       "native": [
@@ -6117,13 +6198,19 @@
     "Theme": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "An explicit, scoped theme. Theme preference and persistence belong to the app.",
+      "description": "An explicit, scoped theme: a color scheme and a contrast, which nested Themes and envUI's popups keep. Theme preference and persistence belong to the app.",
       "props": [
         {
           "name": "theme",
           "type": "'light' | 'dark'",
           "required": true,
-          "description": ""
+          "description": "The color scheme."
+        },
+        {
+          "name": "contrast",
+          "type": "'standard' | 'high' | 'system'",
+          "required": false,
+          "description": "`high` for the high-contrast colors; `standard` keeps the standard ones even while the system asks for more contrast; `system` follows `prefers-contrast: more`. Defaults to the contrast of the enclosing Theme, and to `system` outside any."
         }
       ],
       "native": [
@@ -6164,6 +6251,12 @@
           "required": false,
           "default": "true",
           "description": "Theme the document root as well as this subtree (default). Root theming covers the page background, native controls, portals rendered by other libraries and the content of every theme-color meta tag, which takes the canvas color."
+        },
+        {
+          "name": "contrast",
+          "type": "'standard' | 'high' | 'system'",
+          "required": false,
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system."
         },
         {
           "name": "className",
@@ -6247,27 +6340,27 @@
     "Toast.Provider": {
       "kind": "component",
       "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
-      "description": "Hosts the managed notifications that useToast shows, in a region per placement.",
+      "description": "Hosts the notifications that useToast shows: brief feedback at the edge of the window, announced and dismissed after a few seconds or by people. Put one near the root of the application; it renders a region for each placement in a portal, in the theme of the place it is rendered.",
       "props": [
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": ""
+          "description": "The application, or the part of it whose components call useToast."
         },
         {
           "name": "defaultPlacement",
           "type": "'bottom-right' | 'top-center'",
           "required": false,
           "default": "'bottom-right'",
-          "description": ""
+          "description": "Where notifications show unless show names a placement: bottom-right, stacking upward from the bottom corner, or top-center, stacking downward from the top."
         },
         {
           "name": "visibleLimit",
           "type": "number",
           "required": false,
           "default": "3",
-          "description": "Maximum visible per placement (default 3). Newest notices stay visible; older ones hide behind a count."
+          "description": "How many notifications each placement shows at once, a positive integer. The newest stay visible; older ones wait behind a count of hidden notifications and come back as newer ones close."
         }
       ],
       "native": [],
@@ -6278,33 +6371,33 @@
     "Tooltip": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Tooltip.tsx",
-      "description": "A small label that describes a control on hover and keyboard focus.",
+      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed.",
       "props": [
         {
           "name": "content",
           "type": "ReactNode",
           "required": true,
-          "description": "Short supplementary text; never the only place essential information appears."
+          "description": "What the tooltip shows: a short, supplementary text, such as an icon-only control's name or why a control is disabled. It is visual only and not linked to the control for assistive technology, so the control's name or the page says the same; never the only place essential information appears."
         },
         {
           "name": "children",
           "type": "ReactElement<{ disabled?: boolean }>",
           "required": true,
-          "description": "The described control. A disabled control is wrapped so it can still be focused and hovered."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element, so hovering and keyboard focus still open the tooltip."
         },
         {
           "name": "side",
           "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
           "default": "'top'",
-          "description": "top (default), bottom, left, right, or inline-start and inline-end, which follow the text direction."
+          "description": "The side of the control it opens on: top, bottom, left, right, or inline-start and inline-end, which follow the text direction. Where the window has no room, it flips to the other side."
         },
         {
           "name": "delay",
           "type": "number",
           "required": false,
           "default": "400",
-          "description": "Milliseconds before the tooltip opens on hover; focus opens it immediately. Defaults to 400."
+          "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
         }
       ],
       "native": [],
@@ -6315,64 +6408,64 @@
     "Tree": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Tree.tsx",
-      "description": "A virtualized tree of rows for large hierarchies such as file trees. The application passes the visible rows and owns expansion; the tree owns focus, keyboard navigation and scrolling.",
+      "description": "A virtualized tree of rows for large hierarchies such as file trees. The application passes the visible rows and owns expansion and selection; the tree owns focus, keyboard navigation and scrolling. It fills its parent's height, scrolls itself and renders only the rows in view.",
       "props": [
         {
           "name": "items",
           "type": "readonly T[]",
           "required": true,
-          "description": "The visible rows in order, flattened; the application owns expansion."
+          "description": "The visible rows in order, flattened: an expanded row is followed by its visible descendants. The application owns expansion; collapsing a row removes its descendants from items."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the tree."
+          "description": "The tree's accessible name, such as Files."
         },
         {
           "name": "selectedId",
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": "The selected row; it scrolls into view when it changes."
+          "description": "The selected row's id: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onOpen."
         },
         {
           "name": "onOpen",
           "type": "(item: T, options: TreeOpenOptions) => void",
           "required": true,
-          "description": "Click and Space call it with preview true; double click and Enter with preview false."
+          "description": "Called when people open a row: with preview true on a single click and Space, and false on a double click and Enter. Expandable rows call it too, and disabled rows don't."
         },
         {
           "name": "onExpandedChange",
           "type": "(item: T, expanded: boolean) => void",
           "required": true,
-          "description": "Chevron clicks, ArrowRight on a collapsed row and ArrowLeft on an expanded row."
+          "description": "Called with the row and its new state from a press on its chevron, the right arrow key on a collapsed row and the left arrow key on an expanded one, mirrored in right-to-left text. The application updates items."
         },
         {
           "name": "contextMenu",
           "type": "(item: T | null) => ReactNode",
           "required": false,
-          "description": "Menu items for a row, or for the tree's empty area when the item is null."
+          "description": "Menu items for the row people right-click, or press Shift+F10 or the Menu key on, or for the tree's empty area when the item is null. Without it, the browser's own context menu stays."
         },
         {
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
           "default": "'Actions'",
-          "description": "Accessible name of the context menu."
+          "description": "The context menu's accessible name, in the application's language."
         },
         {
           "name": "density",
           "type": "'compact' | 'standard'",
           "required": false,
           "default": "'compact'",
-          "description": "compact (default) rows are about 1.75 rem tall, with a compact context menu; standard rows about 2.25 rem."
+          "description": "compact rows are 1.75 rem tall, with 0.875 rem text and a compact context menu; standard rows are 2.25 rem tall, with 0.9375 rem text. On touch screens both are 2.75 rem."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": ""
+          "description": "A class for the tree, the element that scrolls."
         }
       ],
       "native": [],
@@ -6423,7 +6516,7 @@
     "createRichTextExtensions": {
       "kind": "function",
       "source": "packages/ui/src/rich-text/Extensions.ts",
-      "description": "Shared schema for editing, Markdown IO, and static rendering. Custom extensions append.",
+      "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
       "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
       "entries": [
         "@envsemble/envui/rich-text"
@@ -6460,8 +6553,8 @@
     "useTheme": {
       "kind": "function",
       "source": "packages/ui/src/foundations/Theme.tsx",
-      "description": "Returns the originating theme, including across React portals.",
-      "signature": "(): ThemeValue",
+      "description": "The theme of the nearest Theme, including across React portals. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.",
+      "signature": "(): ThemeContextValue",
       "entries": [
         "@envsemble/envui"
       ]
@@ -6478,7 +6571,7 @@
     "useToast": {
       "kind": "function",
       "source": "packages/ui/src/feedback/toast/useToast.ts",
-      "description": "Shows and dismisses notifications through the nearest Toast.Provider.",
+      "description": "Shows and dismisses notifications through the nearest Toast.Provider: show, dismiss and clear. Throws outside a provider.",
       "signature": "(): ToastManager",
       "entries": [
         "@envsemble/envui"

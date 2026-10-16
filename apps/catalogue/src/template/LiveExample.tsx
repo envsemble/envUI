@@ -70,7 +70,7 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
   return (
     <Stack gap={3} className="docs-live-example-entry">
       <Stack
-        render={<Theme theme={theme} />}
+        render={<Theme {...theme} />}
         gap={0}
         role="group"
         aria-label={`${title} example`}

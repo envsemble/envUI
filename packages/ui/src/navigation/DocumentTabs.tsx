@@ -18,6 +18,7 @@ import * as Menu from './Menu.js';
 export interface DocumentTab {
   /** Stable identifier; the tab carries it as data-tab-id. */
   id: string;
+  /** The document's name, which names the tab and its close button. */
   label: string;
   /** Optional leading icon. */
   icon?: ReactNode;
@@ -28,6 +29,7 @@ export interface DocumentTab {
 }
 
 export interface DocumentTabsProps {
+  /** The open documents, in tab order. */
   items: readonly DocumentTab[];
   /** The active tab, or null. */
   value: string | null;
@@ -41,7 +43,7 @@ export interface DocumentTabsProps {
   'aria-label': string;
   /** Id of the panel the application renders for the active tab. */
   panelId?: string;
-  /** Accessible name of each close button; receives the tab label. */
+  /** Accessible name of each close button and the menu's close item; Close and the label by default. */
   closeLabel?: (label: string) => string;
   /**
    * Called from Close all tabs in the strip's context menu. With it, the strip and each tab open
@@ -49,10 +51,11 @@ export interface DocumentTabsProps {
    * closing that tab.
    */
   onCloseAll?: () => void;
-  /** Label of the Close all tabs item. */
+  /** Label of the Close all tabs item; Close all tabs by default. */
   closeAllLabel?: string;
   /** Accessible name of the context menu; Tab actions by default. */
   contextMenuLabel?: string;
+  /** Classes for the strip. */
   className?: string;
 }
 

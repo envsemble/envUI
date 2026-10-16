@@ -1,24 +1,33 @@
 /**
- * Accessibility gate: axe scans every catalogue page in both themes and compares the violations
- * with KnownViolations.json. A new violation fails, and so does a listed one that no longer occurs,
- * so the list only shrinks. Run `npm run test:a11y`; after fixing violations, or when a reviewed
- * change has to add one, rewrite the list with `npm run test:a11y:update` and review its diff.
+ * Accessibility gate: axe scans every catalogue page in both themes, and the key pages of
+ * highContrastPages (tests/browser/CatalogueThemes.ts) in light and dark high contrast too, and
+ * compares the violations with KnownViolations.json. A new violation fails, and so does a listed
+ * one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
+ * violations, or when a reviewed change has to add one, rewrite the list with
+ * `npm run test:a11y:update` and review its diff.
  *
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
  * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
  */
-import { test, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { catalogueUrl } from '../browser/Servers';
 import {
+  emulateContrast,
+  themesFor,
+  type CatalogueTheme,
+  type ThemeName,
+} from '../browser/CatalogueThemes';
+import {
   documentationPages,
   overviewViews,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
-type Theme = 'light' | 'dark';
+/** light and dark on every page, and light-hc and dark-hc on the pages of highContrastPages. */
+type Theme = ThemeName;
 /** rule id → stable target → count */
 type RuleCounts = Record<string, Record<string, number>>;
 /** page route → theme → rule counts */
@@ -35,7 +44,6 @@ interface Scan {
 }
 
 const exceptionsFile = fileURLToPath(new URL('./KnownViolations.json', import.meta.url));
-const themes: Theme[] = ['light', 'dark'];
 /** WCAG 2.0–2.2 A and AA plus axe's best practices: every rule except AAA and deprecated ones. */
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
@@ -99,16 +107,24 @@ async function settle(page: Page) {
     .getByText(/^Loading .*…$/)
     .first()
     .waitFor({ state: 'detached' });
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-    // Theme changes transition colors; contrast measured mid-transition is neither theme's.
-    const finite = document
-      .getAnimations()
-      .filter((animation) =>
-        Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
-      );
-    await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
-  });
+  await page.evaluate(() => document.fonts.ready);
+  // Theme changes transition colors; contrast measured mid-transition is neither theme's. The
+  // animations' states are polled rather than their finished promises awaited: Chromium does not
+  // resolve that promise for a transition inside a closed disclosure, though the transition ends.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter(
+              (animation) =>
+                animation.playState === 'running' &&
+                Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)),
+            ).length,
+      ),
+    )
+    .toBe(0);
 }
 
 /**
@@ -143,11 +159,15 @@ async function highlighted(page: Page) {
   );
 }
 
-async function setTheme(page: Page, theme: Theme) {
+/** Switches the catalogue to the theme's scheme with its button, under the theme's contrast. */
+async function setTheme(page: Page, theme: CatalogueTheme) {
+  await emulateContrast(page, theme);
   const app = page.locator('.docs-app');
-  if ((await app.getAttribute('data-env-theme')) !== theme)
-    await page.getByRole('button', { name: `Switch to ${theme} theme`, exact: true }).click();
-  await page.locator(`.docs-app[data-env-theme="${theme}"]`).waitFor();
+  if ((await app.getAttribute('data-env-theme')) !== theme.scheme)
+    await page
+      .getByRole('button', { name: `Switch to ${theme.scheme} theme`, exact: true })
+      .click();
+  await page.locator(`.docs-app[data-env-theme="${theme.scheme}"]`).waitFor();
 }
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
@@ -256,16 +276,17 @@ function compare(scan: Scan, known: RuleCounts = {}) {
 
 for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
-    test.setTimeout(120_000);
+    // Pages scanned in high contrast as well take twice as long.
+    test.setTimeout(240_000);
     const scans: Scan[] = [];
     for (const route of pageRoutes) {
       await page.goto(`${catalogueUrl}/#/${route}`);
       await expandCode(page);
-      for (const theme of themes) {
+      for (const theme of themesFor(path)) {
         await setTheme(page, theme);
         await settle(page);
         await highlighted(page);
-        scans.push(await scan(page, route, theme));
+        scans.push(await scan(page, route, theme.name));
       }
     }
 

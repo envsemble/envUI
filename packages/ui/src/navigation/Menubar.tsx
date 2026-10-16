@@ -291,9 +291,11 @@ export interface MenuProps {
   children: ReactNode;
   /** Accessible name of the menu; by default the label, when it is a string. */
   'aria-label'?: string;
+  /** The trigger stays in place, dimmed, but doesn't open its menu. */
   disabled?: boolean;
   /** Controlled visibility. */
   open?: boolean;
+  /** Whether an uncontrolled menu starts open; closed by default. */
   defaultOpen?: boolean;
   /**
    * Called when the menu opens or closes, with the element that had focus before the menubar took it.
@@ -426,7 +428,7 @@ function Menu({
         <AccessKeyLabel label={label} accessKey={key} />
       </BaseMenu.Trigger>
       <BaseMenu.Portal>
-        <Theme theme={theme} className="env-menu-theme">
+        <Theme {...theme} className="env-menu-theme">
           <BaseMenu.Positioner
             className="env-menu-positioner"
             side="bottom"

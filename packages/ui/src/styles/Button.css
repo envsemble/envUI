@@ -151,18 +151,18 @@
 .env-button-important {
   --icon-button-size: var(--control-height-compact);
   min-height: calc(var(--control-height-compact) * var(--scale, 1));
-  background: var(--color-accent);
-  color: var(--color-on-accent);
+  background: var(--color-bg-important-strong);
+  color: var(--color-fg-on-strong);
   border: 0;
   border-radius: calc(var(--radius-standard) * var(--scale, 1));
 }
 
 .env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-accent-hover);
+  background: var(--color-bg-important-strong-hover);
 }
 
 .env-button-important:active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-accent-pressed);
+  background: var(--color-bg-important-strong-pressed);
 }
 
 .env-button:focus-visible {

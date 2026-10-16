@@ -8,23 +8,37 @@ import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 
+/** One option of a SegmentedControl. */
 export interface SegmentedControlOption {
+  /** The value onValueChange reports when this option is chosen. */
   value: string;
+  /** The option's short visible name, such as Open or Board; it names the option. */
   label: ReactNode;
-  /** A small muted number after the label, such as the items in a view. */
+  /**
+   * A small muted number after the label, such as the items in a view; it is read as part of the
+   * option's name, such as Open 12.
+   */
   count?: number;
+  /** A decorative icon before the label, at the control icon size of 1 rem. */
   icon?: ReactNode;
+  /** Show the option but don't let people choose it; the arrow keys skip it. */
   disabled?: boolean;
 }
 
 export interface SegmentedControlProps {
-  /** Two to five options. */
+  /** The options, two to five, in the order they show. */
   options: readonly SegmentedControlOption[];
+  /** The chosen option's value. The control is always controlled: update it from onValueChange. */
   value: string;
+  /** Receives the value of the option people choose, by pressing it or with the arrow keys. */
   onValueChange: (value: string) => void;
-  /** Accessible name of the group. */
+  /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
-  /** standard (default) matches buttons; compact matches compact fields and toolbars. */
+  /**
+   * The rail's height: standard matches buttons, at 2.5 rem; compact matches compact fields and
+   * toolbars, at 2 rem.
+   * @default 'standard'
+   */
   size?: 'standard' | 'compact';
   /**
    * Fill the available width, split evenly between the options; a label too long for its share is
@@ -32,11 +46,16 @@ export interface SegmentedControlProps {
    * its options, and scrolls in a container too narrow for them.
    */
   fullWidth?: boolean;
+  /** Disable every option; the control can't be focused or changed. */
   disabled?: boolean;
+  /** A class for the rail, such as for its placement in a layout. */
   className?: string;
 }
 
-/** One choice among a few options on a pill rail; the chosen segment takes the primary colors. */
+/**
+ * One choice among a few options on a pill rail, such as views or filters of the same content; the
+ * chosen segment takes the primary colors. A radio group, with one tab stop and arrow keys.
+ */
 export function SegmentedControl({
   options,
   value,

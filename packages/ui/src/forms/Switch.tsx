@@ -1,12 +1,29 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { useCheckedInput, type CheckedProps } from './internal/useCheckedInput.js';
 
-export interface SwitchProps extends CheckedProps<boolean> {}
+export interface SwitchProps extends CheckedProps<boolean> {
+  /**
+   * The setting the switch turns on or off, such as Show completed tasks, beside the track. It names
+   * the switch, stays the same in both states, and pressing it toggles the switch too. Without it,
+   * name the switch with aria-label or aria-labelledby.
+   */
+  label?: ReactNode;
+  /** Whether a controlled switch is on; update it from onCheckedChange. */
+  checked?: boolean;
+  /** Whether an uncontrolled switch starts on; a native form reset returns it to this state. */
+  defaultChecked?: boolean;
+  /** Receives the new state each time people turn the switch on or off. */
+  onCheckedChange?: (checked: boolean) => void;
+}
 
+/**
+ * An on/off setting that takes effect at once: a native checkbox with the switch role, drawn as a
+ * track and a thumb, with its label beside it.
+ */
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
   { label, checked, defaultChecked = false, onCheckedChange, onChange, className, ...props },
   ref,

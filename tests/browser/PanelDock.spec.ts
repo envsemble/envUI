@@ -769,12 +769,15 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
 }) => {
   const errors = collectErrors(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(`${catalogueUrl}/#/components/panel-dock/preview`);
-  const examples = page.locator('.docs-preview .docs-example');
-  const docked = examples.filter({ has: page.getByRole('heading', { name: 'Docked panels' }) });
-  const maximized = examples.filter({
-    has: page.getByRole('heading', { name: 'Maximized panel' }),
-  });
+  await page.goto(`${catalogueUrl}/#/components/panel-dock/overview`);
+  const example = (name: string) => page.locator(`.docs-live-example[data-example="${name}"]`);
+  // Each example's region is the dock's positioned parent; it may outgrow the example.
+  const resize = (dock: Locator, size: string) =>
+    dock.locator('.env-panel-dock').evaluate((element, inlineSize) => {
+      Object.assign(element.parentElement!.style, { inlineSize, maxInlineSize: 'none' });
+    }, size);
+  const docked = example('DocumentDrafts');
+  const maximized = example('MaximizedPanel');
   const report = docked.getByRole('region', { name: 'Quarterly report' });
   await expect(report).toHaveAttribute('data-mode', 'open');
   await expect(docked.getByRole('region', { name: 'Meeting notes' })).toHaveAttribute(
@@ -784,11 +787,11 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
   await expect(docked.getByRole('button', { name: 'Show Budget' })).toHaveAccessibleDescription(
     'Unsaved changes',
   );
-  await expect(maximized.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
+  await expect(maximized.getByRole('region', { name: 'Launch plan' })).toHaveAttribute(
     'data-mode',
     'maximized',
   );
-  await expect(maximized.getByRole('region', { name: 'Meeting notes' })).toHaveAttribute(
+  await expect(maximized.getByRole('region', { name: 'Press release' })).toHaveAttribute(
     'data-mode',
     'open',
   );
@@ -809,28 +812,28 @@ test('the catalogue shows open, minimized and maximized panels whose drafts surv
   await expect(draft).toHaveValue('Ask for the regional numbers.');
 
   // A dock that minimizes what does not fit shows its least recently active panel as a chip.
-  const minimizing = examples.filter({
-    has: page.getByRole('heading', { name: 'Minimize what does not fit' }),
-  });
-  await expect(minimizing.getByRole('button', { name: 'Show Quarterly report' })).toBeVisible();
-  await expect(minimizing.getByRole('region', { name: 'Roadmap' })).toHaveAttribute(
+  const minimizing = example('MinimizeWhatDoesNotFit');
+  await expect(minimizing.getByRole('button', { name: 'Show Support queue' })).toBeVisible();
+  await expect(minimizing.getByRole('region', { name: 'Hiring plan' })).toHaveAttribute(
     'data-placement',
     'row',
   );
   await expect(minimizing.locator('.env-panel-dock-row')).not.toHaveAttribute('data-overflowing');
   // As the region widens, the panel comes back.
   await page.setViewportSize({ width: 1800, height: 900 });
-  await minimizing
-    .locator('.docs-dock-frame')
-    .evaluate((element) => (element.style.inlineSize = '80rem'));
-  await expect(minimizing.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
+  await resize(minimizing, '80rem');
+  await expect(minimizing.getByRole('region', { name: 'Support queue' })).toHaveAttribute(
     'data-placement',
     'row',
   );
-  await expect(minimizing.getByRole('button', { name: 'Show Quarterly report' })).toHaveCount(0);
+  await expect(minimizing.getByRole('button', { name: 'Show Support queue' })).toHaveCount(0);
 
-  // A narrow region stacks the dock.
-  await docked.getByRole('button', { name: 'Narrow region' }).click();
+  // A narrow region stacks the dock, and the draft stays.
+  await expect(example('NarrowRegion').locator('.env-panel-dock')).toHaveAttribute(
+    'data-stacked',
+    'true',
+  );
+  await resize(docked, '24rem');
   await expect(docked.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
   await expect(draft).toHaveValue('Ask for the regional numbers.');
   expect(errors).toEqual([]);

@@ -7,10 +7,23 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from './LinkProvider.js';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
+  /** The destination; the link renders through the LinkProvider's link component. */
   href: string;
+  /**
+   * The destination's title, such as the name of the next page. It shows below the direction
+   * label, wraps between words, and names the link after the label.
+   */
   children: ReactNode;
-  /** Optional decorative icon, placed before the previous link and after the next link. */
+  /**
+   * A decorative icon, such as ArrowBack, before the previous destination's text, or such as
+   * ArrowForward, after the next one's; none by default.
+   */
   icon?: ReactNode;
+  /**
+   * The link's relation to this page.
+   * @default 'prev' on Pager.Previous, 'next' on Pager.Next
+   */
+  rel?: string;
 }
 
 /** The link to the previous page. */
@@ -48,26 +61,49 @@ function PagerLink({
   );
 }
 
-/** The destination before this one, with rel="prev". */
+/**
+ * The destination before this one: a native link with rel="prev", its title under the label
+ * Previous, and an optional icon before them. It also stands alone, outside Pager.Root.
+ */
 function Previous(props: PreviousProps) {
   return <PagerLink {...props} direction="previous" />;
 }
 
-/** The destination after this one, with rel="next". */
+/**
+ * The destination after this one: a native link with rel="next", its title under the label Up
+ * next, and an optional icon after them. It also stands alone, outside Pager.Root.
+ */
 function Next(props: NextProps) {
   return <PagerLink {...props} direction="next" />;
 }
 
 export interface RootProps extends ComponentPropsWithRef<'nav'> {
-  /** The previous destination, as the props of Pager.Previous. */
+  /**
+   * The destination before this page, as the props of Pager.Previous; leave it out, or pass null,
+   * on the first page of a sequence.
+   */
   previous?: PreviousProps | null;
-  /** The next destination, as the props of Pager.Next. */
+  /**
+   * The destination after this page, as the props of Pager.Next; leave it out, or pass null, on
+   * the last page of a sequence.
+   */
   next?: NextProps | null;
+  /**
+   * Pager.Previous and Pager.Next, instead of the previous and next props; they render after the
+   * links of the props.
+   */
+  children?: ReactNode;
+  /**
+   * The navigation landmark's name; give each pager its own where a page has several.
+   * @default 'Previous and next content'
+   */
+  'aria-label'?: string;
 }
 
 /**
- * A centered pair of previous and next destinations, from the previous and next props or from
- * Pager.Previous and Pager.Next children; either one can be omitted.
+ * A centered pair of previous and next destinations in a navigation landmark, from the previous
+ * and next props or from Pager.Previous and Pager.Next children; either one can be left out, and
+ * without any it renders nothing.
  */
 function Root({
   previous,

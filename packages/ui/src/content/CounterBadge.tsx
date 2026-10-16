@@ -2,6 +2,7 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 export interface CounterBadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
+  /** The count, such as 12, or short text such as 99+; shown in tabular figures. */
   value: number | string;
   /** Full meaning for assistive technology, such as "12 unread"; the number alone otherwise. */
   'aria-label'?: string;

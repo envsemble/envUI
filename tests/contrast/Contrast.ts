@@ -1,4 +1,4 @@
-import { blend, clampRgb, converter, parse, wcagContrast } from 'culori';
+import { blend, clampRgb, converter, differenceEuclidean, parse, wcagContrast } from 'culori';
 import type { ContrastKind } from './Pairs';
 
 export interface Rgb {
@@ -28,6 +28,13 @@ export function flatten(layers: readonly Rgb[], backdrop: Rgb): Rgb {
 
 export function contrastRatio(foreground: Rgb, background: Rgb): number {
   return wcagContrast(foreground, background);
+}
+
+const oklabDistance = differenceEuclidean('oklab');
+
+/** How far apart two opaque colors look: their Euclidean distance in OKLab, ΔEOK. */
+export function colorDifference(a: Rgb, b: Rgb): number {
+  return oklabDistance(a, b);
 }
 
 /**
@@ -71,15 +78,19 @@ export interface ContrastRow {
 
 export const formatRatio = (ratio: number) => (Math.floor(ratio * 100) / 100).toFixed(2);
 
+/** A measured value as the table shows it: a ratio to 2 decimals, a ΔEOK difference to 4. */
+export const formatValue = (kind: ContrastKind, value: number) =>
+  kind === 'difference' ? (Math.floor(value * 10000) / 10000).toFixed(4) : formatRatio(value);
+
 /** A plain-text table of rows, one per line, with a detail line under each row that has one. */
 export function formatTable(rows: readonly ContrastRow[]): string {
-  const header = ['pair', 'theme', 'kind', 'ratio', 'min', 'APCA Lc', 'status'];
+  const header = ['pair', 'theme', 'kind', 'value', 'min', 'APCA Lc', 'status'];
   const cells = rows.map((row) => [
     row.pair,
     row.theme,
     row.kind,
-    row.ratio === null ? '-' : formatRatio(row.ratio),
-    row.min.toFixed(2),
+    row.ratio === null ? '-' : formatValue(row.kind, row.ratio),
+    row.kind === 'difference' ? row.min.toFixed(4) : row.min.toFixed(2),
     row.apca === null ? '-' : row.apca.toFixed(1),
     row.status,
   ]);
