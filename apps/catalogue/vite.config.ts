@@ -14,6 +14,7 @@ import {
 // `--mode site` it makes the hosted catalogue: separate files with content-hashed names that
 // browsers keep cached.
 import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
+import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -39,6 +40,8 @@ export default defineConfig(({ mode }) => {
   return {
     define: { __ENVUI_SOURCE_REVISION__: JSON.stringify(sourceRevision()) },
     plugins: [
+      // Tells the browser tests which checkout this server serves.
+      checkoutMarker(),
       // Rebuilds Tokens.css from packages/ui/tokens on every token edit; Vite hot-reloads it.
       tokensVitePlugin(),
       {
