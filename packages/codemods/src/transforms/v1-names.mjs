@@ -363,16 +363,36 @@ export default function transform(file, api, options = {}) {
     rewritten.add(info.declaration);
     changed = true;
   };
-  /** Comments to keep where names changed: all but a leading @ts-expect-error, reported at `node`. */
-  const withoutExpectError = (comments, node) =>
+  /**
+   * Comments to keep where names changed: all but a leading @ts-expect-error, reported at `node`.
+   * `kept` names the names below it that stay as they are, whose error it may have expected.
+   */
+  const withoutExpectError = (comments, node, kept = []) =>
     comments?.filter((comment) => {
       if (!comment.leading || !isExpectError(comment)) return true;
       warn(
         node,
-        `dropped ${commentText(comment)}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`,
+        kept.length
+          ? `dropped ${commentText(comment)}, which expected an error from the 0.x names or from ${listOf(kept)}, which ${kept.length > 1 ? 'stay' : 'stays'}: TypeScript fails on a @ts-expect-error with no error below it, so put it back if ${listOf(kept)} still ${kept.length > 1 ? 'have' : 'has'} the error.`
+          : `dropped ${commentText(comment)}, which expected an error from the 0.x names: TypeScript fails on a @ts-expect-error with no error below it.`,
       );
       return false;
     });
+  /** The names an import or re-export lists that the map does not change. */
+  const unchangedNames = (specifiers, entry) =>
+    specifiers
+      .filter((specifier) => originalSpecifiers.has(specifier))
+      .filter(
+        (specifier) => specifier.type === 'ImportSpecifier' || specifier.type === 'ExportSpecifier',
+      )
+      .map((specifier) =>
+        specifier.type === 'ImportSpecifier' ? specifier.imported : specifier.local,
+      )
+      .filter((name) => name?.type === 'Identifier')
+      .map(({ name }) => name)
+      .filter(
+        (name) => !entry.renames.has(name) && !entry.splits.has(name) && !entry.removed.has(name),
+      );
   // Specifiers are replaced whole: in `{ Input }` the imported and local names share one source
   // range, and recast would reprint a changed `imported` over both.
   const replaceImport = (info, imported, local) => {
@@ -798,6 +818,7 @@ export default function transform(file, api, options = {}) {
   // `export { … } from '@envsemble/envui'`: flat renames move to the new name; the rest is reported.
   for (const exportPath of reExports) {
     const entry = entries.get(exportPath.node.source.value);
+    let renamed = false;
     for (const specifier of exportPath.node.specifiers ?? []) {
       if (specifier.type !== 'ExportSpecifier' || specifier.local?.type !== 'Identifier') continue;
       const name = specifier.local.name;
@@ -806,6 +827,7 @@ export default function transform(file, api, options = {}) {
       const removed = entry.removed.get(name);
       if (rename && !rename.namespace) {
         changed = true;
+        renamed = true;
         const exported = specifier.exported?.name ?? name;
         edits.push(() =>
           replaceExport(
@@ -837,6 +859,14 @@ export default function transform(file, api, options = {}) {
         );
       }
     }
+    // As above an import, a @ts-expect-error above a re-export whose names change goes stale.
+    const declaration = exportPath.node;
+    if (renamed && declaration.comments)
+      declaration.comments = withoutExpectError(
+        declaration.comments,
+        declaration,
+        unchangedNames(declaration.specifiers, entry),
+      );
   }
 
   if (!changed) {
@@ -867,12 +897,14 @@ export default function transform(file, api, options = {}) {
         });
         continue;
       }
+      // The type-only import gives way to a value import, which takes its comments.
       removals.add(type.specifier);
       movedTo.set(type.specifier, () => namespace.declaration);
       namespace.declaration = undefined;
-    } else {
-      namespace.local = freeName(namespace.name);
+      insertions.push({ namespace, needsValue, replaces: type.specifier });
+      continue;
     }
+    namespace.local = freeName(namespace.name);
     insertions.push({ namespace, needsValue });
   }
 
@@ -880,10 +912,13 @@ export default function transform(file, api, options = {}) {
 
   /** Removed specifiers whose place a namespace specifier takes, which gets their comments. */
   const heirs = new Map();
-  for (const { namespace, needsValue, local = namespace.local } of insertions) {
+  /** Namespace specifiers that took line comments from the specifiers they replace. */
+  const commented = new Set();
+  for (const { namespace, needsValue, local = namespace.local, replaces } of insertions) {
     const contributors = namespace.contributors.map(({ info }) => info);
     const anchor = needsValue ? contributors.find((info) => !info.isType) : contributors[0];
     const specifier = j.importSpecifier(j.identifier(namespace.name), j.identifier(local));
+    if (replaces) heirs.set(replaces, specifier);
     if (anchor) {
       if (!needsValue && anchor.declaration.importKind !== 'type') specifier.importKind = 'type';
       const list = anchor.declaration.specifiers;
@@ -922,8 +957,16 @@ export default function transform(file, api, options = {}) {
       if (heir) {
         heir.comments = [
           ...(heir.comments ?? []),
-          ...withoutExpectError(specifier.comments, specifier),
+          // Leading, so that a comment that followed the removed name stays out of the list's
+          // commas.
+          ...withoutExpectError(specifier.comments, specifier).map((comment) => ({
+            ...comment,
+            leading: true,
+            trailing: false,
+          })),
         ];
+        if (heir.comments.some(({ type }) => type === 'CommentLine' || type === 'Line'))
+          commented.add(heir);
         continue;
       }
       const { imported, local } = specifier;
@@ -961,8 +1004,27 @@ export default function transform(file, api, options = {}) {
       if (others.length && next) next.comments = [...others, ...(next.comments ?? [])];
       declarationPath.prune();
     } else if (rewritten.has(declaration) && declaration.comments)
-      declaration.comments = withoutExpectError(declaration.comments, declaration);
+      declaration.comments = withoutExpectError(
+        declaration.comments,
+        declaration,
+        unchangedNames(declaration.specifiers, entries.get(declaration.source.value)),
+      );
   }
+
+  // Recast prints a list's comments after the comma before them, so a line comment above a name
+  // that follows another would land on that name's line. These imports are printed with a name on
+  // each line instead, as a formatter would, and read back in.
+  root.find(j.ImportDeclaration).forEach((declarationPath) => {
+    const { specifiers = [] } = declarationPath.node;
+    if (!specifiers.some((specifier, index) => index > 0 && commented.has(specifier))) return;
+    // A copy, without the original it would otherwise be patched into.
+    const printed = j({ ...declarationPath.node }).toSource({
+      ...printOptions(file.source, quote),
+      wrapColumn: 0,
+      tabWidth: root.get().node.loc?.lines?.guessTabWidth?.() ?? 2,
+    });
+    declarationPath.replace(j(printed).find(j.ImportDeclaration).nodes()[0]);
+  });
 
   // The rewrites and the pruned imports can still add reports.
   reporter.flush();

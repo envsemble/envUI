@@ -1,7 +1,8 @@
 import {
-Button, // The compact item replaces this once it lands.
-// the settings entries
-Menu
+  Button,
+  // The compact item replaces this once it lands.
+  // the settings entries
+  Menu,
 } from '@envsemble/envui';
 import { Table } from '@envsemble/envui';
 import { TextField } from '@envsemble/envui';

@@ -66,10 +66,17 @@ const reports = {
     expectError(10, 'not exported by the installed 1.0'),
     expectError(13, 'not exported by the installed 1.0'),
   ],
+  'expect-error-unchanged.tsx': [
+    'line 2: dropped // @ts-expect-error -- Sidebar is not exported by the installed version, which expected an error from the 0.x names or from Sidebar, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Sidebar still has the error.',
+  ],
   'literal-keys.tsx': [
     `line 5: ui.LoadingBar is no longer exported by ${library}: ${use('LoadingBar')}`,
     'line 6: ui[…] reads an export by a name computed at run time, which is not changed: if it can name an export that 1.0 renames, rename it by hand.',
     'line 7: destructures Notice from ui, which is Alert in 1.0: rename it by hand.',
+  ],
+  're-export-expect-error.ts': [
+    expectError(2, 'not exported by the installed 0.x'),
+    'line 4: dropped // @ts-expect-error -- not exported by the installed 0.x, which expected an error from the 0.x names or from Button, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Button still has the error.',
   ],
   'theme-bootstrap-directive.ts': [
     'line 3: dropped // eslint-disable-next-line envui/no-renamed-exports -- until the 1.0 upgrade, which applied to the import that was removed.',
