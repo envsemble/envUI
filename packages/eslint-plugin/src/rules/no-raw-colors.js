@@ -105,22 +105,42 @@ function fromCustomProperties(channels, depth = 0) {
     });
 }
 
+/** A literal number or percentage, such as `0.5`, `.5` or `50%`. */
+const literalAlpha = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?%?$/i;
+
+/**
+ * Whether a color's alpha keeps it from custom properties: a literal number or percentage, or one
+ * `var()` whose fallbacks are `var()`s, as a channel's are. The Stylelint config reads it alike.
+ * A template's expression stands for a literal number here, as in `rgb(var(--rgb) / ${alpha})`.
+ */
+function isTokenAlpha(alpha) {
+  const text = alpha.trim();
+  return (
+    literalAlpha.test(text.replaceAll(expressionStandIn, '1')) ||
+    (splitTopLevel(text, /[\s,]/).filter((token) => token.trim()).length === 1 &&
+      fromCustomProperties(text))
+  );
+}
+
 /**
  * Whether a color function's arguments make a raw color: any channel that is not a custom
  * property. A relative color derived from a token (`hsl(from …)`) passes, and so does one whose
- * channels are custom properties with a literal alpha, after the `/` or as the last of two or four
- * comma-separated arguments: `rgb(var(--rgb) / 50%)` and `rgba(var(--rgb), 0.5)` alike.
+ * channels are custom properties with an alpha that is a literal or a custom property, after the
+ * `/` or as the last of two or four comma-separated arguments: `rgb(var(--rgb) / 50%)` and
+ * `rgba(var(--rgb), var(--alpha))` alike.
  */
 function isRawColorFunction(name, args) {
   if (/^\s*from\b/i.test(args)) return false;
   let channels = name.toLowerCase() === 'color' ? args.replace(/^\s*[a-z][\w-]*\s/i, ' ') : args;
+  let alpha;
   const slash = splitTopLevel(channels, /\//);
-  if (slash.length > 1) channels = slash[0];
+  if (slash.length > 1) [channels, alpha] = [slash[0], slash.slice(1).join('/')];
   else {
     const commas = splitTopLevel(channels, /,/);
-    if (commas.length === 2 || commas.length === 4) channels = commas.slice(0, -1).join(',');
+    if (commas.length === 2 || commas.length === 4)
+      [channels, alpha] = [commas.slice(0, -1).join(','), commas.at(-1)];
   }
-  return !fromCustomProperties(channels);
+  return !fromCustomProperties(channels) || (alpha !== undefined && !isTokenAlpha(alpha));
 }
 
 /** The color function calls in a value whose channels are not all custom properties. */
