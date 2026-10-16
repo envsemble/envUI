@@ -11,21 +11,22 @@ export const propSection = (name, prop) => `props-${name}-${prop}`;
 export const tokenSection = (cssVariable) => `token-${cssVariable.replace(/^--/, '')}`;
 
 /**
- * The id of a heading in rendered Markdown, from its text as the reader sees it, as GitHub writes
- * them: lowercase, without punctuation, words joined by hyphens. "Scale and density" is
- * scale-and-density, so a Markdown link to #scale-and-density reaches it.
+ * The id of a heading in rendered Markdown, from its text as the reader sees it, as common
+ * Markdown renderers write them: lowercase, without punctuation but with letters, combining marks,
+ * digits, underscores and hyphens, each space a hyphen. "Scale and density" is scale-and-density,
+ * so a Markdown link to #scale-and-density reaches it.
  */
 export function headingSlug(text) {
   return text
     .trim()
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/[^\p{L}\p{M}\p{N}\p{Pc}\s-]/gu, '')
     .replace(/\s/g, '-');
 }
 
 /**
  * Gives the headings of one Markdown document their ids in order: a repeated heading takes -1, -2
- * and so on after its slug, as GitHub numbers them.
+ * and so on after its slug, as common Markdown renderers number them.
  */
 export function headingSlugger() {
   const seen = new Map();
