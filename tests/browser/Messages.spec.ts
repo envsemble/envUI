@@ -50,6 +50,8 @@ test('messages written inline keep the context while they stay the same', async 
   await page.goto(`${fixtureUrl}/?fixture=message-strings`);
   const probe = page.getByTestId('inline-probe');
   await expect(probe).toHaveText('⟦inline.close⟧');
+  // The count is written in an effect, after the first paint.
+  await expect(probe).toHaveAttribute('data-renders', /^\d+$/);
   const before = await probe.getAttribute('data-renders');
   const rerender = page.getByRole('button', { name: /⟦rerender⟧/ });
   for (const count of [1, 2, 3]) {
