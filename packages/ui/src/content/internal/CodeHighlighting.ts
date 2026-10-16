@@ -19,13 +19,16 @@ export interface CodeTokenStyle {
   color?: string;
   fontStyle?: number;
 }
-/** A token with its style in each code theme: standard, and `High` for high contrast. */
+/**
+ * A token with its style in each code theme: standard, and `High` for high contrast, which a token
+ * may lack; it then keeps its standard color.
+ */
 export interface CodeToken {
   content: string;
   light: CodeTokenStyle;
   dark: CodeTokenStyle;
-  lightHigh: CodeTokenStyle;
-  darkHigh: CodeTokenStyle;
+  lightHigh?: CodeTokenStyle;
+  darkHigh?: CodeTokenStyle;
 }
 
 /** The code themes every token carries, by the key of its style. */
@@ -80,8 +83,8 @@ export async function highlightCode(source: string, language: string): Promise<C
         content: token.content,
         light: token.variants.light!,
         dark: token.variants.dark!,
-        lightHigh: token.variants.lightHigh!,
-        darkHigh: token.variants.darkHigh!,
+        lightHigh: token.variants.lightHigh,
+        darkHigh: token.variants.darkHigh,
       })),
     );
   cache.set(key, tokens);
