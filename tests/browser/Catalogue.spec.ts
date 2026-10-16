@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { resolve } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import {
   references,
   foundations as foundationReferences,
@@ -14,6 +14,18 @@ import {
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
 const offline = pathToFileURL(resolve('dist/envUI.html')).href;
+/** The hosted catalogue from `npm run build:site`, served at a made-up address. */
+const site = resolve('dist/site');
+const siteUrl = 'http://envui.site.test';
+const contentTypes: Record<string, string> = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json',
+  '.png': 'image/png',
+};
 const version = JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version;
 const components = references.map(({ id }) => id);
 const foundations = foundationReferences.map(({ id }) => id);
@@ -504,6 +516,36 @@ test('an example that fails to load says so in place, and loads again on request
   await expect(hero.getByText('The example could not load')).toHaveCount(0);
   // Focus stays where the example is, rather than falling to the page.
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
+});
+
+test('in the hosted build, an example that fails to load offers a reload, which loads it', async ({
+  page,
+}) => {
+  // A build's chunk that failed stays failed until the page reloads, in Chromium and WebKit, and in
+  // WebKit even then, unless it is fetched again.
+  test.skip(!existsSync(resolve(site, 'index.html')), 'Needs the hosted build: npm run build:site');
+  let failing = true;
+  await page.route(`${siteUrl}/**`, (route) => {
+    const { pathname } = new URL(route.request().url());
+    // The hosted Worker's answer for a file that is gone.
+    if (failing && /^\/assets\/CreateProject-[\w-]+\.js$/.test(pathname))
+      return route.fulfill({ status: 404, headers: { 'Cache-Control': 'no-store' } });
+    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
+    if (!existsSync(file)) return route.fulfill({ status: 404 });
+    return route.fulfill({
+      body: readFileSync(file),
+      contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
+    });
+  });
+  await page.goto(`${siteUrl}/#/components/button/overview`);
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  await expect(hero.getByText('Reloading the page loads the example again.')).toBeVisible();
+  await expect(hero.getByRole('button', { name: 'Try again' })).toHaveCount(0);
+  failing = false;
+  await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
 
 test('code that fails to load is asked for once, not on every render', async ({ page }) => {

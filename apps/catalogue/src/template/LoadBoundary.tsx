@@ -18,10 +18,17 @@ export function loadModule<T>(load: () => Promise<T>) {
 }
 
 /**
- * A loader that asks for a module again after it failed to load. A browser keeps a module that
- * failed as failed under its URL, so in development, where Vite serves each file at its own path,
- * the retry asks for the file at `path`, relative to `base`, under a new URL, with `query` (such as
- * `raw`) first. A build's chunks are asked for again as they are.
+ * Whether a file that failed to load can be asked for again in place. A browser keeps a module that
+ * failed as failed under its URL for as long as the page is open. In development, Vite serves each
+ * file at its own path, which can be asked for under a new URL. A build's chunks have hashed names
+ * that a loader doesn't reveal, so there only reloading the page fetches them again.
+ */
+export const canRetryLoad = import.meta.env.DEV;
+
+/**
+ * A loader that asks for a module again after it failed to load, in development: it asks for the
+ * file at `path`, relative to `base`, under a new URL, with `query` (such as `raw`) first. A build,
+ * where LoadBoundary offers no retry, keeps `load` as it is.
  */
 export function reloadModule<T>(
   load: () => Promise<T>,
@@ -29,12 +36,34 @@ export function reloadModule<T>(
   base: string,
   { query, pick = (module) => module as T }: { query?: string; pick?: (module: unknown) => T } = {},
 ): () => Promise<T> {
-  if (!import.meta.env.DEV) return load;
+  if (!canRetryLoad) return load;
   const { pathname } = new URL(path, base);
   return () =>
     import(/* @vite-ignore */ `${pathname}?${query ? `${query}&` : ''}retry=${Date.now()}`).then(
       pick,
     );
+}
+
+/**
+ * Reloads the page, which fetches the files of the current deployment. WebKit keeps a module that
+ * failed to load, such as one Vite preloaded with a link, as failed for the whole tab, across
+ * reloads, until the file is fetched again; so the page's scripts that arrived empty are fetched
+ * anew first.
+ */
+export async function reloadPage() {
+  const failed = performance
+    .getEntriesByType('resource')
+    .filter(
+      (entry): entry is PerformanceResourceTiming =>
+        entry instanceof PerformanceResourceTiming &&
+        ['script', 'link', 'other'].includes(entry.initiatorType) &&
+        entry.decodedBodySize === 0 &&
+        new URL(entry.name).origin === window.location.origin,
+    );
+  await Promise.all(
+    failed.map(({ name }) => fetch(name, { cache: 'reload' }).catch(() => undefined)),
+  );
+  window.location.reload();
 }
 
 /** What went wrong, as a message for people: the error's own message when it has one. */
@@ -61,8 +90,8 @@ interface LoadBoundaryState {
 /**
  * Keeps a part of a page that loads on its own, such as an example, from taking the page down. When
  * its file fails to load, as after a new deploy that removed the old file, it says so in place,
- * with a retry and a reload of the page, which fetches the current files. Any other error, such as
- * a bug in an example, is shown in place as a failure to render, with its message.
+ * with a retry in development and a reload of the page, which fetches the current files. Any other
+ * error, such as a bug in an example, is shown in place as a failure to render, with its message.
  */
 export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
   state: LoadBoundaryState = { failure: null, wrapped: false };
@@ -110,16 +139,22 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
           title={`The ${what} could not load`}
           action={
             <ActionGroup>
-              <Button variant="secondary" onClick={this.retry}>
-                Try again
-              </Button>
-              <Button variant="text" onClick={() => window.location.reload()}>
+              {canRetryLoad && (
+                <Button variant="secondary" onClick={this.retry}>
+                  Try again
+                </Button>
+              )}
+              <Button
+                variant={canRetryLoad ? 'text' : 'secondary'}
+                onClick={() => void reloadPage()}
+              >
                 Reload the page
               </Button>
             </ActionGroup>
           }
         >
           The catalogue may have been updated since this page opened, or the connection dropped.
+          {!canRetryLoad && ` Reloading the page loads the ${what} again.`}
         </Alert>
       );
     // Until a retry, the content stands on its own, as the page lays it out.
