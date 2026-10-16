@@ -93,11 +93,11 @@ async function moduleFiles(): Promise<Record<string, string[]> | null> {
  * with a link, as failed for the whole tab, across reloads, until its file is fetched again; so in
  * the hosted build, the files of `modules` are fetched anew first. Each is a module's path in the
  * catalogue app, such as `src/examples/button/CreateProject.tsx`. The connection seems down when
- * the browser says it is offline, or when none of those files can be fetched; a file that answers,
- * even as not found after a new deploy, shows that it is up.
+ * module-files.json can't be fetched, or none of those files can; a file that answers, even as not
+ * found after a new deploy, shows that it is up. Elsewhere it always reloads: the offline catalogue
+ * reloads from its own file, which needs no connection whatever the browser says of it.
  */
 export async function reloadPage(modules: readonly string[] = []): Promise<boolean> {
-  if (!navigator.onLine) return false;
   if (hostedBuild) {
     const map = await moduleFiles();
     if (!map) return false;

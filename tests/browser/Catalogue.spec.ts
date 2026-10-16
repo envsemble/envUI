@@ -1,8 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { catalogueUrl } from './Servers';
-import { extname, resolve } from 'node:path';
+import { dirname, extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import worker from '../../apps/catalogue/site/Worker.mjs';
 import {
   references,
@@ -542,12 +542,13 @@ function moduleFiles(module: string) {
  * Serves the hosted build at siteUrl through the hosted Worker script, with an asset server that
  * answers as Cloudflare's does from dist/site: a path without a file gets index.html. The files
  * `failing` returns true for fail as `failure` says: gone after a deploy, which the Worker answers
- * as not found, or with the connection dropped.
+ * as not found, or with the connection dropped. `script` rewrites the scripts it serves.
  */
 async function serveSite(
   page: Page,
   failing: (pathname: string) => boolean,
   failure: 'missing' | 'aborted',
+  script: (text: string) => string = (text) => text,
 ) {
   await page.route(`${siteUrl}/**`, async (route) => {
     const request = route.request();
@@ -561,7 +562,9 @@ async function serveSite(
           `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`,
         );
         const file = !gone && existsSync(path) ? path : resolve(site, 'index.html');
-        return new Response(readFileSync(file), {
+        const body =
+          extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
+        return new Response(body, {
           headers: { 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' },
         });
       },
@@ -657,6 +660,66 @@ test("in the hosted build, a reload whose files can't be fetched keeps the page 
   set('up');
   await hero.getByRole('button', { name: 'Reload the page', exact: true }).click();
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
+});
+
+/** A build's script with the overview made to throw as it renders, where it is in the script. */
+const breakOverview = (script: string) =>
+  script.replace(/(["'`])Overview views\1/, '(() => { throw new Error("Broken page"); })()');
+
+test('the offline catalogue reloads from an overview that failed, also without a connection', async ({
+  page,
+}, testInfo) => {
+  // A file opened from disk reloads from disk, whatever the browser says of the connection. The
+  // browser says it is offline here; WebKit's emulated offline mode would block the file too.
+  await page.addInitScript(() =>
+    Object.defineProperty(Navigator.prototype, 'onLine', { get: () => false }),
+  );
+  const html = readFileSync(resolve('dist/envUI.html'), 'utf8');
+  const broken = breakOverview(html);
+  expect(broken, 'the overview in dist/envUI.html').not.toBe(html);
+  const file = testInfo.outputPath('envUI.html');
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, broken);
+  await page.goto(`${pathToFileURL(file).href}#/overview`);
+  const main = page.getByRole('main');
+  await expect(main.getByText('Broken page')).toBeVisible();
+  expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await Promise.all([
+    page.waitForEvent('load', { timeout: 10_000 }),
+    main.getByRole('button', { name: 'Reload the page', exact: true }).click(),
+  ]);
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(false);
+  await expect(main.getByText('Broken page')).toBeVisible();
+});
+
+test('in the hosted build, a reload from an overview that failed keeps the page while the connection is down', async ({
+  page,
+  context,
+}) => {
+  requireSite();
+  let down = false;
+  await serveSite(page, () => down, 'aborted', breakOverview);
+  await page.goto(`${siteUrl}/#/overview`);
+  const main = page.getByRole('main');
+  const alert = main.locator('.env-alert');
+  await expect(alert.getByText('Broken page')).toBeVisible();
+  await page.evaluate(() => Object.assign(window, { stillHere: true }));
+  await context.setOffline(true);
+  down = true;
+  await alert.getByRole('button', { name: 'Reload the page', exact: true }).click();
+  await expect(alert.getByRole('status')).toHaveText(
+    'The connection seems to be down. Reload the page once it is back.',
+  );
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(true);
+  await context.setOffline(false);
+  down = false;
+  await Promise.all([
+    page.waitForEvent('load'),
+    alert.getByRole('button', { name: 'Reload the page', exact: true }).click(),
+  ]);
+  expect(await page.evaluate(() => 'stillHere' in window)).toBe(false);
+  await expect(alert.getByText('Broken page')).toBeVisible();
 });
 
 for (const down of ['offline', 'unreachable'] as const) {
