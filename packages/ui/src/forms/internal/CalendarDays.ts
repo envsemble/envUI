@@ -1,3 +1,5 @@
+import { defaultServerLocale } from '../../internal/locale.js';
+
 /** A day of the week: 0 for Sunday through 6 for Saturday. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -129,7 +131,7 @@ export function dateFormat(locale: string | undefined, options: Intl.DateTimeFor
  * output hydrates: the server cannot know the reader's language. Its weeks start on Monday, as where
  * a browser has no week data, so every browser reproduces the server's output.
  */
-export const serverLocale = 'en-GB';
+export const serverLocale = defaultServerLocale;
 
 type LocaleWithWeekInfo = Intl.Locale & {
   getWeekInfo?: () => { firstDay: number };
