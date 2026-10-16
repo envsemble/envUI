@@ -10,11 +10,12 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonProps, type ButtonVariant } from './Button.js';
+import { Button, type ButtonProps, type IconButtonEmphasisProps } from './Button.js';
 import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
+import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { writeToClipboard } from '../internal/useCopy.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { copy as copyMessages } from '../foundations/messages/copy.js';
@@ -26,10 +27,6 @@ interface CopyButtonBaseProps
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
   onCopy?: (text: string) => void;
-  /** As Button's, among its designed pairs with tone; secondary by default. */
-  variant?: ButtonVariant;
-  /** As Button's: neutral by default, or danger. */
-  tone?: 'neutral' | 'danger';
   /** As Button's: sm, md or lg; without it, the control height of the container. */
   size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
@@ -52,7 +49,12 @@ interface CopyButtonBaseProps
  */
 export type CopyButtonLabel = Exclude<ReactNode, boolean | null | undefined>;
 
+/**
+ * The variant and tone, as IconButton's designed pairs: without a variant, the container's, such as
+ * ghost in a toolbar, and else a neutral secondary button.
+ */
 export type CopyButtonProps = CopyButtonBaseProps &
+  IconButtonEmphasisProps &
   (
     | {
         /**
@@ -76,7 +78,8 @@ const feedbackDuration = 2_000;
 export function CopyButton({
   value,
   onCopy,
-  variant = 'secondary',
+  variant,
+  tone,
   size,
   icon,
   copiedLabel: ownCopiedLabel,
@@ -93,6 +96,7 @@ export function CopyButton({
   const copiedLabel = ownCopiedLabel ?? messages.copied;
   const failedLabel = ownFailedLabel ?? messages.failed;
   const copyLabel = ownCopyLabel ?? messages.copy;
+  const emphasis = useButtonEmphasis({ variant, tone, fallbackVariant: 'secondary' });
   // Inside an application's own Tooltip, that tooltip describes the button.
   const nested = useContext(TooltipNestingContext);
   const [result, setResult] = useState<{ copied: boolean; count: number } | null>(null);
@@ -143,7 +147,7 @@ export function CopyButton({
   const symbol = result?.copied ? <Check /> : (icon ?? <ContentCopy />);
   const shared = {
     ...props,
-    variant,
+    ...emphasis,
     pending: waiting,
     onClick: copy,
     className: classNames('env-copy-button', className),

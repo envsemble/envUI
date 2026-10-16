@@ -125,7 +125,8 @@
    action also show a translucent state layer on hover and press. A container whose chrome is quiet,
    such as a field's end or a title bar, sets --env-button-text-icon-color and
    --env-button-text-icon-color-active on its own element: the icon takes that color at rest and the
-   active one on hover and press, in place of the link blue. */
+   active one on hover and press, in place of the link blue. The hook is documented on the button
+   page; a ghost button looks the same without it, and replaces it where a container is reworked. */
 .env-button:where([data-variant='text']).env-icon-button {
   color: var(--env-button-text-icon-color, var(--env-color-fg-link));
   transition-property: background-color, color;

@@ -1,0 +1,5 @@
+{
+  "$comment": "The calls test map as a folder, as the bundled map stores its sections: this header and a fragment per section and component family.",
+  "version": "1.0.0",
+  "package": "@envsemble/envui"
+}

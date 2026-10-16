@@ -57,13 +57,20 @@ export interface PopupSurfaceProps {
   collisionPadding?: number;
   /** What it opens beside, where that isn't its trigger. */
   anchor?: Anchor;
+  /**
+   * The trigger, whose text direction the popup takes as it opens where it has no anchor. An owner
+   * passes the ref it gives its trigger: a popup opened by a pointer, a hover or code may open
+   * while focus is elsewhere.
+   */
+  trigger?: RefObject<Element | null>;
   /** Where focus goes as it opens, where its Popup takes it. */
   initialFocus?: FocusTarget;
   /** Where focus goes as it closes, where its Popup takes it. */
   finalFocus?: FocusTarget;
   /**
    * The text direction inside it, for its placement and keyboard: the nearest EnvUIProvider's,
-   * else the direction at the anchor, or at the focused trigger, as it opens.
+   * else the direction at the anchor or the trigger as it opens; without either, at the focused
+   * element.
    */
   dir?: Direction;
   /** How far it floats above the page: 1, 2 (the default, as menus and popovers) or 3. */
@@ -87,14 +94,19 @@ function anchorElement(anchor: Anchor | undefined): Element | null {
   return null;
 }
 
-/** The popup's content in a direction: the given one, the provider's, or the anchor's on opening. */
+/**
+ * The popup's content in a direction: the given one, the provider's, or else the anchor's or the
+ * trigger's on opening.
+ */
 function Directed({
   dir,
   anchor,
+  trigger,
   children,
 }: {
   dir: Direction | undefined;
   anchor: Anchor | undefined;
+  trigger: RefObject<Element | null> | undefined;
   children: (direction: Direction | undefined) => ReactNode;
 }) {
   const provided = useEnvUI().dir;
@@ -102,9 +114,13 @@ function Directed({
   // It mounts as the popup opens, so the direction is read then, before the popup is painted.
   useLayoutEffect(() => {
     if (dir || provided) return;
-    const source = anchorElement(anchor) ?? document.activeElement ?? document.documentElement;
+    const source =
+      anchorElement(anchor) ??
+      trigger?.current ??
+      document.activeElement ??
+      document.documentElement;
     setRead(getComputedStyle(source).direction === 'rtl' ? 'rtl' : 'ltr');
-  }, [dir, provided, anchor]);
+  }, [dir, provided, anchor, trigger]);
   const direction = dir ?? provided ?? read;
   const content = children(direction);
   return direction ? (
@@ -120,7 +136,7 @@ function Directed({
  * shared env-popup look and the text direction at its trigger.
  *
  *   <PopupSurface parts={{ Portal: Popover.Portal, Positioner: Popover.Positioner,
- *     Popup: Popover.Popup }} className="env-popover" width="md">…</PopupSurface>
+ *     Popup: Popover.Popup }} trigger={triggerRef} className="env-popover" width="md">…</PopupSurface>
  */
 export function PopupSurface({
   parts: { Portal, Positioner, Popup },
@@ -129,6 +145,7 @@ export function PopupSurface({
   sideOffset = 8,
   collisionPadding = 8,
   anchor,
+  trigger,
   initialFocus,
   finalFocus,
   dir,
@@ -142,7 +159,7 @@ export function PopupSurface({
   const theme = useTheme();
   return (
     <Portal>
-      <Directed dir={dir} anchor={anchor}>
+      <Directed dir={dir} anchor={anchor} trigger={trigger}>
         {(direction) => (
           <Theme {...theme} className="env-popup-theme" dir={direction}>
             <Positioner

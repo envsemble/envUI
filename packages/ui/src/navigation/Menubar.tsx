@@ -1,5 +1,6 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Menubar as BaseMenubar } from '@base-ui/react/menubar';
 import {
@@ -15,6 +16,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useDirection } from '../internal/useDirection.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { renderMenuPopup } from './internal/MenuPopup.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -78,9 +80,13 @@ function Root({
   disabled = false,
   className,
   ref,
+  onFocus,
   ...props
 }: RootProps) {
   const root = useRef<HTMLDivElement>(null);
+  // The arrow keys between the menus, and the side submenus open on, follow the text direction,
+  // which Base UI only knows from its own provider.
+  const [direction, readDirection] = useDirection(root);
   // The last element outside the menubar and its menus that had focus, such as a text field.
   const lastFocus = useRef<Element | null>(null);
   const closers = useRef(new Set<() => void>());
@@ -254,18 +260,24 @@ function Root({
   );
   return (
     <MenubarContext value={context}>
-      <BaseMenubar
-        {...props}
-        ref={setRoot}
-        aria-label={label}
-        // Opening a menu leaves the page scrollable and the layout in place.
-        modal={false}
-        disabled={disabled}
-        className={classNames('env-menubar', className)}
-        data-access-keys-shown={accessKeys && (altHeld || activated) ? '' : undefined}
-      >
-        {children}
-      </BaseMenubar>
+      <DirectionProvider direction={direction}>
+        <BaseMenubar
+          {...props}
+          ref={setRoot}
+          onFocus={(event) => {
+            readDirection();
+            onFocus?.(event);
+          }}
+          aria-label={label}
+          // Opening a menu leaves the page scrollable and the layout in place.
+          modal={false}
+          disabled={disabled}
+          className={classNames('env-menubar', className)}
+          data-access-keys-shown={accessKeys && (altHeld || activated) ? '' : undefined}
+        >
+          {children}
+        </BaseMenubar>
+      </DirectionProvider>
     </MenubarContext>
   );
 }

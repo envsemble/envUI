@@ -1,15 +1,31 @@
 import { useState } from 'react';
-import { EnvUIProvider } from '@envsemble/envui';
+import {
+  Button,
+  EnvUIProvider,
+  Menu,
+  Menubar,
+  SegmentedControl,
+  Tabs,
+  Text,
+  Toolbar,
+} from '@envsemble/envui';
+import { FormatBold } from '@envsemble/envui/icons/FormatBold';
+import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
+import { FormatUnderlined } from '@envsemble/envui/icons/FormatUnderlined';
 // Internal primitives, which envUI's own components build on: the fixture mounts them directly.
 import { ResizeHandle } from '../../packages/ui/src/internal/ResizeHandle.js';
 import { useRovingFocus } from '../../packages/ui/src/internal/useRovingFocus.js';
 
 const cells = Array.from({ length: 7 }, (_, index) => `${index + 1}`);
 
-/** A resize handle and a roving grid that read the direction themselves. */
+/**
+ * A resize handle and a roving grid, which read the direction themselves, and the components on
+ * Base UI parts whose arrow keys follow the direction Base UI is told.
+ */
 function DirectedControls() {
   const [width, setWidth] = useState(200);
   const [active, setActive] = useState<string | null>(null);
+  const [view, setView] = useState('list');
   const roving = useRovingFocus({
     items: cells,
     getKey: (cell) => cell,
@@ -35,6 +51,36 @@ function DirectedControls() {
           </div>
         ))}
       </div>
+      <Toolbar.Root aria-label="Formatting">
+        <Toolbar.Button icon={<FormatBold />} label="Bold" />
+        <Toolbar.Button icon={<FormatItalic />} label="Italic" />
+        <Toolbar.Button icon={<FormatUnderlined />} label="Underline" />
+      </Toolbar.Root>
+      <SegmentedControl
+        aria-label="View"
+        value={view}
+        onValueChange={setView}
+        options={[
+          { value: 'list', label: 'List' },
+          { value: 'board', label: 'Board' },
+          { value: 'calendar', label: 'Calendar' },
+        ]}
+      />
+      <Tabs
+        aria-label="Sections"
+        items={['Overview', 'Activity', 'Settings'].map((name) => ({
+          value: name,
+          button: <Button>{name}</Button>,
+          content: <Text>{name}</Text>,
+        }))}
+      />
+      <Menubar.Root aria-label="Application">
+        {['File', 'Edit', 'View'].map((name) => (
+          <Menubar.Menu key={name} label={name}>
+            <Menu.Item>{name} item</Menu.Item>
+          </Menubar.Menu>
+        ))}
+      </Menubar.Root>
     </>
   );
 }

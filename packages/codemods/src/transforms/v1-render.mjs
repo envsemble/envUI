@@ -1,15 +1,18 @@
 // v1-render: replaces the `as` prop of envUI 0.x components with 1.0's `render`, as the rename
 // map's `render` section lists the components.
 //
-// - `<Text as="h2">` becomes `<Text render={<h2 />}>`, in the prop's place among the attributes.
+// - `<Text as="h2">` becomes `<Text render={<h2 />}>`, in the prop's place among the attributes;
+//   only the attribute's text changes, so the file keeps its layout.
 // - An expression, such as `as={level}`, stays as it is and is reported: render takes an element,
 //   such as `render={<Heading />}`, which the codemod can't build from a value.
 // - A value the map lists under `except`, such as a Card's `as="button"`, stays and is reported
 //   with the entry's text, and so does an `as` beside a `render` the element already has.
+// - An element that also spreads props gets its render, and a report: the spread may set as or
+//   render too, which the codemod can't see.
 // Elements are matched by their import from @envsemble/envui, as v1-props matches them.
 import { loadMap } from '../map.mjs';
 import { componentResolver, envuiImports, literalKey } from '../elements.mjs';
-import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
+import { createReporter, parserFor } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -27,7 +30,14 @@ export default function transform(file, api, options = {}) {
   if (imports.components.size === 0 && imports.namespaceImports.size === 0) return undefined;
   const componentOf = componentResolver(imports);
 
-  let changed = false;
+  // Each rewrite replaces one attribute's text: printing a changed element again, as recast does,
+  // can move the text of a parenthesized element's children.
+  const edits = [];
+  // The parser's positions are lines and columns; the source's line starts turn them into offsets.
+  const lineStarts = [0];
+  for (const match of file.source.matchAll(/\r\n|\r|\n/g))
+    lineStarts.push(match.index + match[0].length);
+  const offsetOf = ({ line, column }) => lineStarts[line - 1] + column;
   root.find(j.JSXOpeningElement).forEach((path) => {
     const component = componentOf(path);
     const rule = component && component.entry.render.get(component.name);
@@ -58,16 +68,22 @@ export default function transform(file, api, options = {}) {
       );
       return;
     }
-    const element = j.jsxElement(j.jsxOpeningElement(j.jsxIdentifier(value), [], true));
-    attributes.splice(
-      index,
-      1,
-      j.jsxAttribute(j.jsxIdentifier('render'), j.jsxExpressionContainer(element)),
-    );
-    changed = true;
+    edits.push({
+      start: offsetOf(node.loc.start),
+      end: offsetOf(node.loc.end),
+      text: `render={<${value} />}`,
+    });
+    if (attributes.some((each) => each.type === 'JSXSpreadAttribute'))
+      reporter.warn(
+        node,
+        `${where}="${value}" is render={<${value} />} now, and the element spreads props too: check they set neither as nor render.`,
+      );
   });
 
   reporter.flush();
-  if (!changed) return undefined;
-  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, 'double')));
+  if (edits.length === 0) return undefined;
+  let output = file.source;
+  for (const { start, end, text } of edits.sort((a, b) => b.start - a.start))
+    output = output.slice(0, start) + text + output.slice(end);
+  return output;
 }
