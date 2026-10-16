@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -44,7 +45,9 @@ export interface ThemePreferenceProviderProps {
   /**
    * Contrast of the Theme boundary around the children, and of the document root with
    * applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme.
-   * Defaults to the contrast of an enclosing Theme, and to system.
+   * Defaults to the contrast of an enclosing Theme, and to system. With system, the provider
+   * removes from the root only a contrast it wrote; pass the same contrast to
+   * createThemeBootstrapScript so the root has it before the first paint.
    */
   contrast?: ThemeContrast;
   /** Class name for the Theme boundary around the children. */
@@ -89,6 +92,8 @@ export function ThemePreferenceProvider({
       : readSystemTheme(),
   );
   const theme: ThemeValue = preference === 'system' ? systemTheme : preference;
+  // Whether the root's data-env-contrast is this provider's.
+  const wroteContrast = useRef(false);
 
   useEffect(() => {
     if (preference !== 'system' || !window.matchMedia) return;
@@ -117,9 +122,15 @@ export function ThemePreferenceProvider({
     const root = document.documentElement;
     root.classList.add('env-theme');
     root.dataset.envTheme = theme;
-    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more.
-    if (contrast === 'system') delete root.dataset.envContrast;
-    else root.dataset.envContrast = contrast;
+    // Like a Theme boundary, the root leaves system contrast to prefers-contrast: more. The
+    // provider removes only a contrast it wrote, so one the page set itself stays.
+    if (contrast !== 'system') {
+      root.dataset.envContrast = contrast;
+      wroteContrast.current = true;
+    } else if (wroteContrast.current) {
+      delete root.dataset.envContrast;
+      wroteContrast.current = false;
+    }
     root.style.colorScheme = theme;
     // The browser's own interface, such as a mobile address bar, takes the canvas color. Every
     // theme-color tag follows, including ones written for a system color scheme with media.

@@ -1,6 +1,25 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
+test('a provider without a contrast leaves the contrast the page set on the root', async ({
+  page,
+}) => {
+  // The document arrives with a contrast on its root, as a server or the bootstrap script sets it.
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace('<html', '<html data-env-contrast="standard"');
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  const root = page.locator('html');
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+  await expect(root).toHaveAttribute('data-env-contrast', 'standard');
+  const before = await root.getAttribute('data-env-theme');
+  await page.getByTestId('theme-toggle').click();
+  await expect(root).not.toHaveAttribute('data-env-theme', before!);
+  await expect(root).toHaveAttribute('data-env-contrast', 'standard');
+});
+
 test('a theme chosen in one window applies in the other windows of the same origin', async ({
   context,
 }) => {
