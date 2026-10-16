@@ -59,7 +59,7 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 
 - Tabs are 2.5 rem tall, and 2.75 rem on touch screens; labels are in the small body type and end with an ellipsis beyond about 14 rem.
 - A preview tab (`preview`) shows its label in italics until it is pinned.
-- The close button keeps its space while hidden, so tabs don't change width; on touch screens it always shows.
+- The close button keeps its space while hidden, so tabs don't change width; on touch screens it always shows, as tall and wide as its tab.
 - The strip takes the width it is given and never widens its container.
 
 ## States and behaviour
