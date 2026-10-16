@@ -322,8 +322,8 @@
 }
 
 /* Forced colors: the system paints no fills or shadows, so every button but an underlined text
-   button, which reads as a link, takes the system's button edge, and an unavailable one the disabled
-   color. */
+   button, which reads as a link, takes the system's button edge, and an unavailable one the
+   disabled color. */
 @media (forced-colors: active) {
   .env-button:not(.env-button-underlined) {
     border: var(--env-control-border-width) solid ButtonText;
