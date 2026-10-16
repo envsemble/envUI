@@ -3834,7 +3834,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry, at the small control height, with the touch hit area on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Retry, at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",
@@ -6268,13 +6268,13 @@
           "name": "contrast",
           "type": "'standard' | 'high' | 'system'",
           "required": false,
-          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme, and to system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
+          "description": "Contrast of the Theme boundary around the children, and of the document root with applyToDocument: high, standard, or system to follow `prefers-contrast: more`, as on Theme. Defaults to the contrast of an enclosing Theme; outside any, a provider applying to the document gives its boundary a contrast the page set on the root, and otherwise system. With system, the provider removes from the root only a contrast that envUI wrote and the page left unchanged: a provider, this one or one before it, or the bootstrap script. Pass a contrast that is fixed for the application to createThemeBootstrapScript too, so the root has it before the first paint."
         },
         {
           "name": "scale",
           "type": "'comfortable' | 'compact'",
           "required": false,
-          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme, or comfortable, and the root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
+          "description": "The app scale, comfortable or compact for a desktop productivity app, as on Theme: of the Theme boundary around the children, and, marked as envUI's own, of the document root with applyToDocument. Without it, the boundary takes the scale of an enclosing Theme; outside any, a provider applying to the document gives its boundary a scale the page set on the root, so the application, the page and its portals share it, and otherwise comfortable. The root keeps a scale the page set but drops one that envUI wrote and the page left unchanged. Pass the same scale to createThemeBootstrapScript so the root has it before the first paint."
         },
         {
           "name": "className",
