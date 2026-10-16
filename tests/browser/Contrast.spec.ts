@@ -404,6 +404,39 @@ test.describe('contrast', { tag: '@contrast' }, () => {
     ).toEqual([]);
   });
 
+  test('a pair renamed onto a recorded name is held to both records', () => {
+    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'text' };
+    const b: ContrastPair = { fg: '--c', bg: ['--d'], kind: 'non-text' };
+    const base = { dropped: [], relaxed: [], themes, pairName, update: false, ci: false };
+    const recorded = checkSnapshot({
+      ...base,
+      pairs: [a, b],
+      renamed: [],
+      recorded: undefined,
+      update: true,
+    }).write!;
+    // A is folded into B, which keeps its own weaker requirement: A's text minimums are lost.
+    const renamed = [{ from: '--a on --b', to: '--c on --d' }];
+    expect(checkSnapshot({ ...base, pairs: [b], renamed, recorded }).problems).toEqual([
+      expect.stringMatching(
+        /--c on --d, renamed from --a on --b, is held to less than .*the weaker non-text/,
+      ),
+    ]);
+    // Through a chain of renames too, while the first name is still in the snapshot.
+    const chain = [
+      { from: '--a on --b', to: '--a2 on --b' },
+      { from: '--a2 on --b', to: '--a3 on --b' },
+    ];
+    const third: ContrastPair = { ...a, fg: '--a3', kind: 'non-text' };
+    expect(
+      checkSnapshot({ ...base, pairs: [third, b], renamed: chain, recorded }).problems,
+    ).toEqual([expect.stringContaining('--a3 on --b, renamed from --a on --b, is held to less')]);
+    // Held to as much as A asked, B only asks for the snapshot to be updated.
+    expect(
+      checkSnapshot({ ...base, pairs: [{ ...b, kind: 'text' }], renamed, recorded }).problems,
+    ).toEqual([expect.stringContaining('out of date')]);
+  });
+
   test('the snapshot treats a switch between a distance and a ratio as a loosening', () => {
     const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'distinct' };
     const base = {

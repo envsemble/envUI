@@ -5,7 +5,8 @@
  * unexplained, and on one that is held to less than before, by a weaker kind, a switch between a
  * ΔEOK distance and a ratio, a lower minimum or a contrast it is no longer measured in, unless a new
  * entry of `relaxed` in Pairs.ts lists that change with its rationale. A renamed pair is held to
- * what its old name recorded. Each `relaxed` entry approves one loosening: once recorded it is
+ * what its old name recorded, as well as to its own record when it takes a name already recorded,
+ * and through a chain of renames. Each `relaxed` entry approves one loosening: once recorded it is
  * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
  * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
  * updated either.
@@ -79,6 +80,19 @@ function countRelaxations(entries: readonly Omit<Relaxation, 'rationale'>[]) {
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   return counts;
+}
+
+/** Every old name renamed into `name`, directly or through other renamed names. */
+function renamedInto(name: string, renamed: readonly { from: string; to: string }[]) {
+  const names = new Set<string>();
+  const queue = [name];
+  for (let next = queue.shift(); next !== undefined; next = queue.shift())
+    for (const entry of renamed)
+      if (entry.to === next && entry.from !== name && !names.has(entry.from)) {
+        names.add(entry.from);
+        queue.push(entry.from);
+      }
+  return [...names];
 }
 
 const measure = (kind: ContrastKind) => (isDistance(kind) ? 'a ΔEOK distance' : 'a ratio');
@@ -196,11 +210,12 @@ export function checkSnapshot(input: SnapshotInput): {
     return left > 0;
   };
   for (const [name, requirement] of Object.entries(current.pairs)) {
-    const baselines = recorded.pairs[name]
-      ? [{ from: name, before: recorded.pairs[name] }]
-      : input.renamed
-          .filter((entry) => entry.to === name && recorded.pairs[entry.from])
-          .map((entry) => ({ from: entry.from, before: recorded.pairs[entry.from] }));
+    // Its own record, and the record of every name renamed into it, directly or through a chain of
+    // renames, that the snapshot still holds: a pair renamed onto a name already recorded keeps
+    // what it asked too.
+    const baselines = [name, ...renamedInto(name, input.renamed)]
+      .filter((from) => recorded.pairs[from])
+      .map((from) => ({ from, before: recorded.pairs[from] }));
     const loosened = baselines
       .map(({ from, before }) => ({ from, ways: loosening(requirement, before) }))
       .filter(({ ways }) => ways.length > 0);
