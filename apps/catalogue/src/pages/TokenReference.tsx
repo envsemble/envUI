@@ -14,17 +14,24 @@ const tokenGroups: { title: string; prefixes: string[]; legacy?: boolean }[] = [
   { title: 'Typography', prefixes: ['font', 'type', 'body'] },
   { title: 'Spacing', prefixes: ['space'] },
   { title: 'Corners', prefixes: ['radius', 'md'] },
-  { title: 'Sizes', prefixes: ['control', 'field', 'row', 'icon', 'title-bar', 'topbar'] },
+  {
+    title: 'Sizes',
+    prefixes: ['control', 'field', 'row', 'tree', 'icon', 'title-bar', 'topbar'],
+  },
   { title: 'Motion', prefixes: ['motion'] },
   { title: 'States', prefixes: ['state'] },
   { title: '0.7 color names', prefixes: ['color'], legacy: true },
+  // Tokens of a family the groups above don't name yet, so every token has a row.
+  { title: 'Other tokens', prefixes: [] },
 ];
 
 function groupOf(token: Token) {
   const prefix = token.id.split('.')[0];
   const legacy = 'legacy' in token && token.legacy === true;
-  return tokenGroups.find(
-    (group) => group.prefixes.includes(prefix) && Boolean(group.legacy) === legacy,
+  return (
+    tokenGroups.find(
+      (group) => group.prefixes.includes(prefix) && Boolean(group.legacy) === legacy,
+    ) ?? tokenGroups.at(-1)
   );
 }
 
