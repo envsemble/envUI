@@ -7,7 +7,7 @@ import { lazy, Suspense } from 'react';
 import { Text } from '@envsemble/envui';
 import { SpinnerPreview, SkeletonPreview } from './Feedback';
 import { ToastsPreview } from './Toasts';
-import { ComposerPreview, MessagesPreview } from './Conversation';
+import { MessagesPreview } from './Conversation';
 import { CalendarHeatmapPreview, StatsPreview } from './Dashboard';
 import { MenubarPreview, TooltipPreview, MeterPreview, ProgressPreview } from './Overlays';
 import { AppShellPreview } from './Shell';
@@ -32,8 +32,6 @@ export function ComponentPreview({ id }: { id: string }) {
       return <SelectPreview />;
     case 'slider':
       return <SliderPreview />;
-    case 'composer':
-      return <ComposerPreview />;
     case 'nav-list':
       return <NavListPreview />;
     case 'tabs':

@@ -64,7 +64,12 @@ interface ComposerOptions {
 
 /** The field needs a name: aria-label without a visible label, or aria-labelledby. */
 type ComposerName =
-  | { 'aria-label': string; 'aria-labelledby'?: string }
+  | {
+      /** Names the field, which has no visible label, such as "Message"; this or aria-labelledby. */
+      'aria-label': string;
+      /** The id of visible text that names the field; this or aria-label. */
+      'aria-labelledby'?: string;
+    }
   | { 'aria-label'?: string; 'aria-labelledby': string };
 
 export type ComposerProps = ComposerOptions &

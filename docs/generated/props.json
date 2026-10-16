@@ -1676,14 +1676,14 @@
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-labelledby` is not set",
-          "description": ""
+          "description": "Names the field, which has no visible label, such as \"Message\"; this or aria-labelledby."
         },
         {
           "name": "aria-labelledby",
           "type": "string",
           "required": false,
           "requiredWhen": "`aria-label` is not set",
-          "description": ""
+          "description": "The id of visible text that names the field; this or aria-label."
         }
       ],
       "native": [

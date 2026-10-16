@@ -21,7 +21,6 @@ const unconverted = [
   'calendar-heatmap',
   'chips',
   'command-palette',
-  'composer',
   'document-tabs',
   'markdown',
   'menubar',
