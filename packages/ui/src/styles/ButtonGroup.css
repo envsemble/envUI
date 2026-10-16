@@ -8,6 +8,8 @@
   /* Connected buttons retain their corners and remain reachable in narrow containers. */
   overflow: auto;
   scrollbar-width: thin;
+  /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
+  --env-button-focus-inner-ring: 4px;
 }
 .env-button-group > .env-button:focus-visible {
   outline-offset: -0.125rem;

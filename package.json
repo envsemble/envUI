@@ -41,8 +41,9 @@
     "icons:sync": "node scripts/SyncIcons.mjs",
     "icons:generate": "node scripts/GenerateIcons.mjs",
     "icons:check": "node scripts/GenerateIcons.mjs --check",
+    "palette:generate": "node scripts/GeneratePalette.mjs",
     "tokens:build": "node scripts/BuildTokens.mjs",
-    "tokens:check": "node scripts/BuildTokens.mjs --check",
+    "tokens:check": "node scripts/GeneratePalette.mjs --check && node scripts/BuildTokens.mjs --check",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts"
   },

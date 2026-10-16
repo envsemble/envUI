@@ -2,212 +2,1044 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "color": {
     "$type": "color",
-    "$description": "Every color as the light scheme shows it; color-scheme/dark.tokens.json overrides them for dark. The light palette: a white canvas, cool panes, pale gray surfaces and blue actions. Primitive roles are distinct; composed components reuse these values.",
-    "control-blue": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "link": { "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] } },
-    "accent": { "$value": { "colorSpace": "hsl", "components": [284.182, 43.651, 50.588] } },
-    "text-primary": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
-    "text-muted": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "border-strong": {
-      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
-    },
-    "canvas": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "canvas-dark": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
-    "surface-base": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "pane": { "$value": { "colorSpace": "hsl", "components": [213.333333, 42.857143, 95.882353] } },
-    "surface-raised": { "$value": { "colorSpace": "hsl", "components": [220, 0, 100] } },
-    "surface": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "neutral-fill": { "$value": { "colorSpace": "hsl", "components": [0, 0, 28] } },
-    "toast-neutral": { "$value": { "colorSpace": "hsl", "components": [0, 0, 28] } },
-    "toast-success": { "$value": { "colorSpace": "hsl", "components": [158, 48, 30] } },
-    "toast-info": { "$value": { "colorSpace": "hsl", "components": [214, 60, 40] } },
-    "toast-error": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
-    "on-toast": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "white": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "on-accent": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "surface-muted": {
-      "$value": { "colorSpace": "hsl", "components": [210, 16.666667, 97.647059] }
-    },
-    "text-strong": {
-      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
-    },
-    "control-text": {
-      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
-    },
-    "icon": { "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] } },
-    "text-quiet": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "disabled-text": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "row": { "$value": { "colorSpace": "hsl", "components": [200, 12, 95.098039] } },
-    "row-alternate": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "menu-row": {
-      "$description": "Rows on a menu pane: white in light, raised from the pane in dark.",
-      "$value": "{color.row-alternate}"
-    },
-    "row-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
-    "row-detail": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "on-secondary-action": {
-      "$description": "Labels on action and navigation fills keep 4.5:1 on their hover shades too, also on a tab rail: outlined and selected navigation labels are a deeper blue than links.",
-      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
-    },
-    "on-subtle-action": {
-      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
-    },
-    "subtle-action-border": {
-      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
-    },
-    "navigation-text": {
-      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
-    },
-    "navigation-icon": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "navigation-quiet": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 42.857143, 95.882353] }
-    },
-    "on-navigation-selected": {
-      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 39] }
-    },
-    "direction-link": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "direction-link-text": {
-      "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] }
-    },
-    "direction-link-label": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "direction-link-icon": {
-      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
-    },
-    "direction-link-border": {
-      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
-    },
-    "field": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "field-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
-    "field-label": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "field-hint": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "field-placeholder": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "field-border": { "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] } },
-    "field-active": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "field-error": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
-    "popup": {
-      "$description": "Popups raised over the page, such as the open list of a Select.",
-      "$value": { "colorSpace": "hsl", "components": [0, 0, 100] }
-    },
-    "popup-border": { "$value": "{color.border-strong}" },
-    "dialog": {
-      "$description": "Dialogs and the command palette: the popup surface, which in the dark theme stays the pane color so rows and fields inside keep their contrast.",
-      "$value": "{color.popup}"
-    },
-    "select-option": { "$value": "{color.popup}" },
-    "select-option-text": {
-      "$value": { "colorSpace": "hsl", "components": [213.333, 9.333, 29.412] }
-    },
-    "select-selected": {
-      "$value": { "colorSpace": "hsl", "components": [218.181818, 91.666667, 95.294118] }
-    },
-    "on-select-selected": {
-      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
-    },
-    "radio": { "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] } },
-    "radio-row": { "$value": { "colorSpace": "hsl", "components": [210, 16.666667, 97.647059] } },
-    "radio-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
-    "radio-detail": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "checkbox": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "on-checkbox": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "checkbox-border": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "checkbox-text": {
-      "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] }
-    },
-    "calendar-selected": {
-      "$description": "Calendars: the chosen day is a solid blue circle with white text (4.5:1), today a blue ring.",
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "on-calendar-selected": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "calendar-today": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "switch-on": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
-    },
-    "switch-thumb": {
-      "$value": { "colorSpace": "hsl", "components": [205.714286, 5.511811, 24.901961] }
-    },
-    "switch-thumb-on": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "switch-text": { "$value": { "colorSpace": "hsl", "components": [225, 5.882353, 13.333333] } },
-    "chip-text": {
-      "$value": { "colorSpace": "hsl", "components": [216.852792, 89.954338, 42.941176] }
-    },
-    "disclosure-text": {
-      "$value": { "colorSpace": "hsl", "components": [213.333333, 4.522613, 39.019608] }
-    },
-    "dialog-overlay": { "$value": { "colorSpace": "hsl", "components": [0, 0, 12.157] } },
-    "markdown-border": {
-      "$value": { "colorSpace": "hsl", "components": [220, 8.823529, 86.666667] }
-    },
-    "avatar": {
-      "$description": "The envsemble avatar: the default person picture and initials share it in both themes.",
-      "$value": { "colorSpace": "hsl", "components": [217.9, 100, 81.4] }
-    },
-    "avatar-figure": { "$value": { "colorSpace": "hsl", "components": [221.3, 71.7, 57.1] } },
-    "on-avatar": {
-      "$description": "Initials use a deeper shade of the figure blue: 5:1 on the avatar fill.",
-      "$value": { "colorSpace": "hsl", "components": [221.3, 71.7, 36] }
-    },
-    "tone": {
-      "$description": "Status tones for small text, icons and badges. Each keeps at least 4.5:1 on the canvas, panes and rows, also over its own subtle badge fill. Solid badges put --color-on-tone on the tone.",
-      "neutral": { "$value": { "colorSpace": "hsl", "components": [213.333, 4.523, 39.02] } },
-      "accent": { "$value": { "colorSpace": "hsl", "components": [216.853, 89.954, 42.941] } },
-      "success": { "$value": { "colorSpace": "hsl", "components": [140, 64, 27] } },
-      "warning": { "$value": { "colorSpace": "hsl", "components": [36, 100, 26] } },
-      "danger": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
+    "$description": "Semantic colors: {bg|fg|border}.{role}.{emphasis}[.{state}], aliasing the palette. Every fg.on-X pairs with its bg.X, and every hover and pressed state is its own token, so the contrast gate, the docs and the generated modules see the real values. This file holds the light scheme at standard contrast; color-scheme/dark.tokens.json and contrast/high.tokens.json override it. The flat names after the groups are the 0.7 custom properties, kept as aliases until components move to the semantic names.",
+    "bg": {
+      "page": {
+        "$root": {
+          "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\".",
+          "$value": "{palette.neutral.0}"
+        },
+        "hover": {
+          "$description": "An interactive page-colored surface under the pointer.",
+          "$value": "{palette.neutral.4}"
+        },
+        "pressed": {
+          "$description": "An interactive page-colored surface while pressed.",
+          "$value": "{palette.neutral.8}"
+        }
+      },
+      "default": {
+        "$root": {
+          "$description": "The default surface: Surface, sidebars, standard menus.",
+          "$value": "{palette.neutral.4}"
+        },
+        "hover": {
+          "$description": "An interactive default surface, such as a card or a navigation item, under the pointer.",
+          "$value": "{palette.neutral.10}"
+        },
+        "pressed": {
+          "$description": "An interactive default surface while pressed.",
+          "$value": "{palette.neutral.15}"
+        }
+      },
+      "muted": {
+        "$root": {
+          "$description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
+          "$value": "{palette.neutral.2}"
+        },
+        "hover": {
+          "$description": "An interactive muted surface under the pointer.",
+          "$value": "{palette.neutral.6}"
+        },
+        "pressed": {
+          "$description": "An interactive muted surface while pressed.",
+          "$value": "{palette.neutral.10}"
+        }
+      },
+      "raised": {
+        "$root": {
+          "$description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
+          "$value": "{palette.neutral.0}"
+        },
+        "hover": {
+          "$description": "An interactive raised surface under the pointer.",
+          "$value": "{palette.neutral.6}"
+        },
+        "pressed": {
+          "$description": "An interactive raised surface while pressed.",
+          "$value": "{palette.neutral.10}"
+        }
+      },
+      "popup": {
+        "$root": {
+          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
+          "$value": "{palette.neutral.0}"
+        },
+        "hover": {
+          "$description": "A highlighted row in a popup.",
+          "$value": "{palette.neutral.4}"
+        },
+        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.8}" }
+      },
+      "field": { "$description": "Text fields and other inputs.", "$value": "{palette.neutral.0}" },
+      "overlay": {
+        "$description": "The scrim behind dialogs, drawn translucent by the component.",
+        "$value": "{palette.neutral.92}"
+      },
+      "selected": {
+        "$root": {
+          "$description": "Selected navigation items, tabs, tree and table rows, and Select options; paired with fg.on-selected.",
+          "$value": "{palette.blue.4}"
+        },
+        "hover": {
+          "$description": "A selected item under the pointer.",
+          "$value": "{palette.blue.10}"
+        },
+        "pressed": {
+          "$description": "A selected item while pressed.",
+          "$value": "{palette.blue.15}"
+        }
+      },
+      "neutral": {
+        "muted": {
+          "$root": {
+            "$description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "alpha": 0.06
+            }
+          },
+          "hover": {
+            "$description": "The neutral fill under the pointer.",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "alpha": 0.17
+            }
+          },
+          "pressed": {
+            "$description": "The neutral fill while pressed.",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "alpha": 0.29
+            }
+          }
+        },
+        "subtle": {
+          "$root": {
+            "$description": "Controls without a fill at rest, such as quiet buttons, inactive tabs and menubar triggers.",
+            "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+          },
+          "hover": {
+            "$description": "The state layer over a control without a fill, under the pointer.",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "alpha": 0.08
+            }
+          },
+          "pressed": {
+            "$description": "The state layer over a control without a fill, while pressed.",
+            "$value": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/92/$value/components" },
+              "alpha": 0.1
+            }
+          }
+        },
+        "emphasis": {
+          "$description": "A solid neutral fill, such as a solid neutral badge; paired with fg.on-emphasis.",
+          "$value": "{palette.neutral.60}"
+        },
+        "strong": {
+          "$root": {
+            "$description": "The dark neutral fill of tooltips and neutral toasts in both themes; paired with fg.on-strong.",
+            "$value": "{palette.neutral.75}"
+          },
+          "hover": {
+            "$description": "A control on the strong neutral fill under the pointer.",
+            "$value": "{palette.neutral.60}"
+          },
+          "pressed": {
+            "$description": "A control on the strong neutral fill while pressed.",
+            "$value": "{palette.neutral.50}"
+          }
+        }
+      },
+      "brand": {
+        "emphasis": {
+          "$root": {
+            "$description": "The brand fill of primary actions, chosen radios and the chosen calendar day; paired with fg.on-emphasis.",
+            "$value": "{palette.blue.50}"
+          },
+          "hover": {
+            "$description": "A primary action under the pointer.",
+            "$value": "{palette.blue.60}"
+          },
+          "pressed": {
+            "$description": "A primary action while pressed.",
+            "$value": "{palette.blue.75}"
+          }
+        },
+        "strong": {
+          "$root": {
+            "$description": "The saturated brand fill of checked checkboxes, switches that are on, sliders, meters and spinners; paired with fg.on-strong.",
+            "$value": "{palette.blue.50}"
+          },
+          "hover": {
+            "$description": "A checked control under the pointer.",
+            "$value": "{palette.blue.60}"
+          },
+          "pressed": {
+            "$description": "A checked control while pressed.",
+            "$value": "{palette.blue.75}"
+          }
+        }
+      },
+      "accent": {
+        "emphasis": {
+          "$description": "A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis.",
+          "$value": "{palette.blue.60}"
+        },
+        "muted": {
+          "$description": "The translucent accent tint of badges and info alerts.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "alpha": 0.12
+          }
+        }
+      },
+      "success": {
+        "emphasis": {
+          "$description": "A solid success fill; paired with fg.on-emphasis.",
+          "$value": "{palette.green.60}"
+        },
+        "muted": {
+          "$description": "The translucent success tint of badges and alerts.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/green/60/$value/components" },
+            "alpha": 0.12
+          }
+        },
+        "strong": {
+          "$root": {
+            "$description": "The success fill of toasts in both themes; paired with fg.on-strong.",
+            "$value": "{palette.green.60}"
+          },
+          "hover": {
+            "$description": "A control on the success toast under the pointer.",
+            "$value": "{palette.green.50}"
+          },
+          "pressed": {
+            "$description": "A control on the success toast while pressed.",
+            "$value": "{palette.green.45}"
+          }
+        }
+      },
+      "warning": {
+        "emphasis": {
+          "$description": "A solid warning fill; paired with fg.on-emphasis.",
+          "$value": "{palette.amber.60}"
+        },
+        "muted": {
+          "$description": "The translucent warning tint of badges and alerts.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/amber/60/$value/components" },
+            "alpha": 0.12
+          }
+        }
+      },
+      "danger": {
+        "emphasis": {
+          "$description": "A solid danger fill; paired with fg.on-emphasis.",
+          "$value": "{palette.red.60}"
+        },
+        "muted": {
+          "$description": "The translucent danger tint of badges and alerts.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/red/60/$value/components" },
+            "alpha": 0.12
+          }
+        },
+        "strong": {
+          "$root": {
+            "$description": "The danger fill of destructive actions and error toasts in both themes; paired with fg.on-strong.",
+            "$value": "{palette.red.60}"
+          },
+          "hover": {
+            "$description": "A destructive action under the pointer.",
+            "$value": "{palette.red.55}"
+          },
+          "pressed": {
+            "$description": "A destructive action while pressed.",
+            "$value": "{palette.red.50}"
+          }
+        }
+      },
       "done": {
-        "$description": "Completed work, such as a merged or closed-as-done item.",
-        "$value": { "colorSpace": "hsl", "components": [266, 55, 50] }
+        "emphasis": {
+          "$description": "A solid done fill; paired with fg.on-emphasis.",
+          "$value": "{palette.violet.60}"
+        },
+        "muted": {
+          "$description": "The translucent done tint of badges.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/violet/60/$value/components" },
+            "alpha": 0.12
+          }
+        }
+      },
+      "info": {
+        "strong": {
+          "$root": {
+            "$description": "The information fill of toasts in both themes; paired with fg.on-strong.",
+            "$value": "{palette.steel.60}"
+          },
+          "hover": {
+            "$description": "A control on the information toast under the pointer.",
+            "$value": "{palette.steel.50}"
+          },
+          "pressed": {
+            "$description": "A control on the information toast while pressed.",
+            "$value": "{palette.steel.40}"
+          }
+        }
+      },
+      "important": {
+        "strong": {
+          "$root": {
+            "$description": "The accent purple of important actions in both themes; paired with fg.on-strong.",
+            "$value": "{palette.purple.55}"
+          },
+          "hover": {
+            "$description": "An important action under the pointer.",
+            "$value": "{palette.purple.65}"
+          },
+          "pressed": {
+            "$description": "An important action while pressed.",
+            "$value": "{palette.purple.75}"
+          }
+        }
       }
     },
-    "on-tone": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "state-layer": {
-      "$description": "The content color that fills and state layers mix with transparency, in TokensHandwritten.css.",
-      "$value": "{color.text-primary}"
+    "fg": {
+      "default": {
+        "$description": "Body text and the labels of rows, fields and choice controls.",
+        "$value": "{palette.neutral.92}"
+      },
+      "muted": {
+        "$root": {
+          "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
+          "$value": "{palette.neutral.60}"
+        },
+        "hover": {
+          "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
+          "$value": "{palette.neutral.65}"
+        },
+        "pressed": { "$description": "Muted text while pressed.", "$value": "{palette.neutral.70}" }
+      },
+      "control": {
+        "$description": "The labels of navigation items, secondary buttons and Select options, the values of meters and sliders, and the thumb of a switch that is off.",
+        "$value": "{palette.neutral.75}"
+      },
+      "link": {
+        "$root": {
+          "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
+          "$value": "{palette.blue.55}"
+        },
+        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.60}" },
+        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.65}" }
+      },
+      "accent": {
+        "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
+        "$value": "{palette.blue.60}"
+      },
+      "on-selected": {
+        "$description": "Text and indicators on bg.selected and its states.",
+        "$value": "{palette.blue.65}"
+      },
+      "success": { "$description": "Success text and icons.", "$value": "{palette.green.60}" },
+      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.60}" },
+      "danger": {
+        "$description": "Danger text and icons, and field errors.",
+        "$value": "{palette.red.60}"
+      },
+      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.60}" },
+      "on-emphasis": {
+        "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
+        "$value": "{palette.neutral.0}"
+      },
+      "on-strong": {
+        "$description": "Text and icons on the strong fills: white in both themes.",
+        "$value": "{palette.neutral.0}"
+      }
     },
-    "text-subtle": { "$value": "{color.text-quiet}" },
-    "focus-ring": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+    "border": {
+      "default": {
+        "$root": {
+          "$description": "The boundary of a control that has no other edge: outlined fields and buttons, the track of a switch that is off. At least 3:1 on every surface.",
+          "$value": "{palette.neutral.45}"
+        },
+        "hover": {
+          "$description": "A control boundary under the pointer.",
+          "$value": "{palette.neutral.50}"
+        },
+        "pressed": {
+          "$description": "A control boundary while pressed.",
+          "$value": "{palette.neutral.55}"
+        }
+      },
+      "muted": {
+        "$root": {
+          "$description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, popup edges with elevation.",
+          "$value": "{palette.neutral.10}"
+        },
+        "hover": {
+          "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
+          "$value": "{palette.neutral.20}"
+        },
+        "pressed": {
+          "$description": "A decorative outline while pressed.",
+          "$value": "{palette.neutral.30}"
+        }
+      },
+      "accent": {
+        "$root": {
+          "$description": "The active border and label of a focused field, and today’s ring in a calendar.",
+          "$value": "{palette.blue.50}"
+        },
+        "hover": {
+          "$description": "An active field border under the pointer.",
+          "$value": "{palette.blue.60}"
+        },
+        "pressed": {
+          "$description": "An active field border while pressed.",
+          "$value": "{palette.blue.75}"
+        }
+      },
+      "danger": {
+        "$root": {
+          "$description": "The border of an invalid field.",
+          "$value": "{palette.red.60}"
+        },
+        "hover": {
+          "$description": "An invalid field border under the pointer.",
+          "$value": "{palette.red.50}"
+        },
+        "pressed": {
+          "$description": "An invalid field border while pressed.",
+          "$value": "{palette.red.40}"
+        }
+      },
+      "focus": {
+        "$description": "Focus rings: at least 3:1 against what they are drawn on.",
+        "$value": "{palette.blue.50}"
+      }
     },
-    "outlined-focus": { "$value": "{color.focus-ring}" },
+    "canvas": {
+      "$value": "{color.bg.page}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "pane": {
+      "$value": "{color.bg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "surface-muted": {
+      "$value": "{color.bg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "surface": {
+      "$value": "{color.bg.raised}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "popup": {
+      "$value": "{color.bg.popup}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "dialog": {
+      "$value": "{color.bg.raised}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "field": {
+      "$value": "{color.bg.field}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "dialog-overlay": {
+      "$value": "{color.bg.overlay}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "menu-row": {
+      "$value": "{color.bg.popup}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Menu rows" } }
+    },
+    "row": {
+      "$value": "{color.bg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
+    },
+    "row-hover": {
+      "$value": "{color.bg.default.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
+    },
+    "row-pressed": {
+      "$value": "{color.bg.default.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
+    },
+    "row-alternate": {
+      "$value": "{color.bg.raised}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "List rows on a contrasting surface" }
+      }
+    },
+    "action-strip": {
+      "$value": "{color.bg.default}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "The action strip of a card" }
+      }
+    },
+    "select-option": {
+      "$value": "{color.bg.popup}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "select-option-hover": {
+      "$value": "{color.bg.popup.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "select-option-pressed": {
+      "$value": "{color.bg.popup.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "select-selected": {
+      "$value": "{color.bg.selected}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "select-selected-hover": {
+      "$value": "{color.bg.selected.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "select-selected-pressed": {
+      "$value": "{color.bg.selected.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
     "navigation-selected": {
-      "$value": { "colorSpace": "hsl", "components": [218.181818, 91.666667, 95.294118] }
+      "$value": "{color.bg.selected}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
     },
-    "action-strip": { "$value": { "colorSpace": "hsl", "components": [200, 12, 95.098039] } },
+    "navigation-hover": {
+      "$value": "{color.bg.selected.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "navigation-pressed": {
+      "$value": "{color.bg.selected.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "row-selected-hover": {
+      "$value": "{color.bg.selected.hover}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Tree and table rows" }
+      }
+    },
+    "row-selected-pressed": {
+      "$value": "{color.bg.selected.pressed}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Tree and table rows" }
+      }
+    },
+    "navigation-quiet": {
+      "$value": "{color.bg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "navigation-quiet-hover": {
+      "$value": "{color.bg.default.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "navigation-quiet-pressed": {
+      "$value": "{color.bg.default.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "direction-link": {
+      "$value": "{color.bg.raised}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "radio-row": {
+      "$value": "{color.bg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
+    },
+    "radio-row-hover": {
+      "$value": "{color.bg.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
+    },
+    "radio-row-pressed": {
+      "$value": "{color.bg.muted.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radio rows" } }
+    },
+    "fill": {
+      "$value": "{color.bg.neutral.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "state-layer": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "state-layer-hover": {
+      "$value": "{color.bg.neutral.subtle.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "state-layer-pressed": {
+      "$value": "{color.bg.neutral.subtle.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "secondary-action": {
+      "$value": "{color.bg.neutral.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
+    },
+    "secondary-action-hover": {
+      "$value": "{color.bg.neutral.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
+    },
+    "secondary-action-pressed": {
+      "$value": "{color.bg.neutral.muted.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
+    },
+    "on-secondary-action": {
+      "$value": "{color.fg.control}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Secondary buttons" } }
+    },
+    "switch-off": {
+      "$value": "{color.bg.neutral.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-off-hover": {
+      "$value": "{color.bg.neutral.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-off-pressed": {
+      "$value": "{color.bg.neutral.muted.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "chip": {
+      "$value": "{color.bg.neutral.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Chips" } }
+    },
+    "skeleton-base": {
+      "$value": "{color.bg.neutral.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Skeletons" } }
+    },
+    "skeleton-highlight": {
+      "$value": "{color.bg.neutral.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Skeletons" } }
+    },
     "primary-action": {
-      "$value": { "colorSpace": "hsl", "components": [214.07767, 81.746032, 50.588235] }
+      "$value": "{color.bg.brand.emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
     },
-    "on-primary-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "subtle-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } },
-    "destructive-action": { "$value": { "colorSpace": "hsl", "components": [4.231, 76.471, 40] } },
-    "on-destructive-action": { "$value": { "colorSpace": "hsl", "components": [0, 0, 100] } }
+    "primary-action-hover": {
+      "$value": "{color.bg.brand.emphasis.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
+    },
+    "primary-action-pressed": {
+      "$value": "{color.bg.brand.emphasis.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
+    },
+    "on-primary-action": {
+      "$value": "{color.fg.on-emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Primary buttons" } }
+    },
+    "subtle-action": {
+      "$value": "{color.bg.raised}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "subtle-action-hover": {
+      "$value": "{color.bg.raised.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "subtle-action-pressed": {
+      "$value": "{color.bg.raised.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "on-subtle-action": {
+      "$value": "{color.fg.accent}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "subtle-action-border": {
+      "$value": "{color.border.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "subtle-action-border-hover": {
+      "$value": "{color.border.default.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "subtle-action-border-pressed": {
+      "$value": "{color.border.default.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "accent": {
+      "$value": "{color.bg.important.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
+    },
+    "accent-hover": {
+      "$value": "{color.bg.important.strong.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
+    },
+    "accent-pressed": {
+      "$value": "{color.bg.important.strong.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
+    },
+    "on-accent": {
+      "$value": "{color.fg.on-strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Important buttons" } }
+    },
+    "destructive-action": {
+      "$value": "{color.bg.danger.strong}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
+      }
+    },
+    "destructive-action-hover": {
+      "$value": "{color.bg.danger.strong.hover}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
+      }
+    },
+    "destructive-action-pressed": {
+      "$value": "{color.bg.danger.strong.pressed}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
+      }
+    },
+    "on-destructive-action": {
+      "$value": "{color.fg.on-strong}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Destructive buttons" }
+      }
+    },
+    "control-blue": {
+      "$value": "{color.bg.brand.strong}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Spinners, sliders and meters" }
+      }
+    },
+    "text-primary": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "text-muted": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "text-quiet": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "text-strong": {
+      "$value": "{color.fg.control}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "disabled-text": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "icon": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "link": {
+      "$value": "{color.fg.link}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "link-hover": {
+      "$value": "{color.fg.link.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "link-pressed": {
+      "$value": "{color.fg.link.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "disclosure-text": {
+      "$value": "{color.fg.muted}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
+      }
+    },
+    "quiet-label-hover": {
+      "$value": "{color.fg.muted.hover}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
+      }
+    },
+    "quiet-label-pressed": {
+      "$value": "{color.fg.muted.pressed}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Disclosure summaries" }
+      }
+    },
+    "row-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
+    },
+    "row-detail": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "List rows" } }
+    },
+    "navigation-text": {
+      "$value": "{color.fg.control}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "navigation-icon": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "on-navigation-selected": {
+      "$value": "{color.fg.on-selected}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Navigation items" } }
+    },
+    "select-option-text": {
+      "$value": "{color.fg.control}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "on-select-selected": {
+      "$value": "{color.fg.on-selected}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Select options" } }
+    },
+    "chip-text": {
+      "$value": "{color.fg.accent}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Chips" } }
+    },
+    "field-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-label": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-hint": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-placeholder": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-error": {
+      "$value": "{color.fg.danger}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-border": {
+      "$value": "{color.border.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "field-active": {
+      "$value": "{color.border.accent}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fields" } }
+    },
+    "direction-link-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "direction-link-label": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "direction-link-icon": {
+      "$value": "{color.fg.accent}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "direction-link-border": {
+      "$value": "{color.border.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "direction-link-border-hover": {
+      "$value": "{color.border.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "direction-link-border-pressed": {
+      "$value": "{color.border.muted.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Pager links" } }
+    },
+    "border-strong": {
+      "$value": "{color.border.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "border-hover": {
+      "$value": "{color.border.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "markdown-border": {
+      "$value": "{color.border.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Markdown" } }
+    },
+    "popup-border": {
+      "$value": "{elevation.2.border}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Popups" } }
+    },
+    "focus-ring": {
+      "$value": "{color.border.focus}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "outlined-focus": {
+      "$value": "{color.border.focus}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Outlined buttons" } }
+    },
+    "radio": {
+      "$value": "{color.bg.brand.emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
+    },
+    "radio-hover": {
+      "$value": "{color.bg.brand.emphasis.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
+    },
+    "radio-pressed": {
+      "$value": "{color.bg.brand.emphasis.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
+    },
+    "radio-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
+    },
+    "radio-detail": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Radios" } }
+    },
+    "checkbox": {
+      "$value": "{color.bg.brand.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-hover": {
+      "$value": "{color.bg.brand.strong.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-pressed": {
+      "$value": "{color.bg.brand.strong.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "on-checkbox": {
+      "$value": "{color.fg.on-strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-border": {
+      "$value": "{color.fg.muted}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-ring-hover": {
+      "$value": "{color.fg.muted.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-ring-pressed": {
+      "$value": "{color.fg.muted.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "checkbox-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Checkboxes" } }
+    },
+    "switch-on": {
+      "$value": "{color.bg.brand.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-on-hover": {
+      "$value": "{color.bg.brand.strong.hover}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-on-pressed": {
+      "$value": "{color.bg.brand.strong.pressed}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-thumb": {
+      "$value": "{color.fg.control}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-thumb-on": {
+      "$value": "{color.fg.on-strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "switch-text": {
+      "$value": "{color.fg.default}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Switches" } }
+    },
+    "calendar-selected": {
+      "$value": "{color.bg.brand.emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
+    },
+    "on-calendar-selected": {
+      "$value": "{color.fg.on-emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
+    },
+    "calendar-today": {
+      "$value": "{color.border.accent}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Calendars" } }
+    },
+    "on-tone": {
+      "$value": "{color.fg.on-emphasis}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true } }
+    },
+    "toast-neutral": {
+      "$value": "{color.bg.neutral.strong}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Toasts and tooltips" }
+      }
+    },
+    "toast-success": {
+      "$value": "{color.bg.success.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
+    },
+    "toast-info": {
+      "$value": "{color.bg.info.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
+    },
+    "toast-error": {
+      "$value": "{color.bg.danger.strong}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Toasts" } }
+    },
+    "on-toast": {
+      "$value": "{color.fg.on-strong}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Toasts and tooltips" }
+      }
+    },
+    "white": {
+      "$value": "{palette.neutral.0}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Fixed white" } }
+    },
+    "canvas-dark": {
+      "$value": "{palette.neutral.92}",
+      "$extensions": {
+        "com.envsemble.envui": { "legacy": true, "component": "Fixed dark page color" }
+      }
+    },
+    "avatar": {
+      "$value": "{palette.blue.20}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
+    },
+    "avatar-figure": {
+      "$value": "{palette.blue.45}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
+    },
+    "on-avatar": {
+      "$value": "{palette.blue.70}",
+      "$extensions": { "com.envsemble.envui": { "legacy": true, "component": "Avatars" } }
+    },
+    "tone": {
+      "neutral": {
+        "$value": "{color.fg.muted}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      },
+      "accent": {
+        "$value": "{color.fg.accent}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      },
+      "success": {
+        "$value": "{color.fg.success}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      },
+      "warning": {
+        "$value": "{color.fg.warning}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      },
+      "danger": {
+        "$value": "{color.fg.danger}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      },
+      "done": {
+        "$value": "{color.fg.done}",
+        "$extensions": { "com.envsemble.envui": { "legacy": true } }
+      }
+    }
   }
 }

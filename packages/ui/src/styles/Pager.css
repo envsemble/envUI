@@ -53,11 +53,11 @@
   color: var(--color-direction-link-icon);
 }
 .env-pager-link:hover {
-  background: hsl(from var(--color-direction-link) h s var(--state-hover-lightness));
+  background: var(--color-bg-raised-hover);
   border-color: var(--color-direction-link-border-hover);
 }
 .env-pager-link:active {
-  background: hsl(from var(--color-direction-link) h s var(--state-pressed-lightness));
+  background: var(--color-bg-raised-pressed);
   border-color: var(--color-direction-link-border-pressed);
 }
 .env-pager-link:focus-visible {

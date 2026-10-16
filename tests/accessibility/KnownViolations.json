@@ -413,13 +413,6 @@
       }
     }
   },
-  "components/list/preview": {
-    "light": {
-      "color-contrast": {
-        "Rows that open something :: a.env-button.env-button-text.env-link": 2
-      }
-    }
-  },
   "components/list/usage": {
     "dark": {
       "color-contrast": {
@@ -444,13 +437,6 @@
       }
     }
   },
-  "components/markdown/preview": {
-    "light": {
-      "color-contrast": {
-        "Rendered markdown :: a.env-button.env-button-text.env-button-underlined.env-link": 1
-      }
-    }
-  },
   "components/markdown/usage": {
     "dark": {
       "color-contrast": {
@@ -466,13 +452,6 @@
       },
       "landmark-unique": {
         "article :: div.env-markdown-table": 1
-      }
-    }
-  },
-  "components/menu/preview": {
-    "light": {
-      "color-contrast": {
-        "Building blocks :: button.env-button.env-button-text": 3
       }
     }
   },
@@ -833,12 +812,6 @@
   },
   "foundations/colors/preview": {
     "dark": {
-      "color-contrast": {
-        "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch code": 1
-      },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,
         "Cards :: button.env-button.env-button-secondary.docs-swatch": 1,
@@ -859,9 +832,7 @@
     "light": {
       "color-contrast": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Content & loading :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Feedback :: button.env-button.env-button-secondary.docs-swatch code": 1,
-        "Switches :: button.env-button.env-button-secondary.docs-swatch code": 1
+        "Text fields :: button.env-button.env-button-secondary.docs-swatch code": 1
       },
       "label-content-name-mismatch": {
         "Buttons :: button.env-button.env-button-secondary.docs-swatch": 11,

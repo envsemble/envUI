@@ -1,0 +1,112 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "elevation": {
+    "0": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 },
+          "offsetX": { "value": 0, "unit": "px" },
+          "offsetY": { "value": 0, "unit": "px" },
+          "blur": { "value": 0, "unit": "px" },
+          "spread": { "value": 0, "unit": "px" }
+        }
+      },
+      "border": {
+        "$type": "color",
+        "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 }
+      }
+    },
+    "1": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.3
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 1, "unit": "px" },
+            "blur": { "value": 2, "unit": "px" },
+            "spread": { "value": 0, "unit": "px" }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.15
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 1, "unit": "px" },
+            "blur": { "value": 3, "unit": "px" },
+            "spread": { "value": 1, "unit": "px" }
+          }
+        ]
+      },
+      "border": { "$type": "color", "$value": "{color.border.muted}" }
+    },
+    "2": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.3
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 1, "unit": "px" },
+            "blur": { "value": 2, "unit": "px" },
+            "spread": { "value": 0, "unit": "px" }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.15
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 2, "unit": "px" },
+            "blur": { "value": 6, "unit": "px" },
+            "spread": { "value": 2, "unit": "px" }
+          }
+        ]
+      },
+      "border": { "$type": "color", "$value": "{color.border.muted}" }
+    },
+    "3": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.3
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 1, "unit": "px" },
+            "blur": { "value": 3, "unit": "px" },
+            "spread": { "value": 0, "unit": "px" }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": { "$ref": "#/palette/neutral/75/$value/components" },
+              "alpha": 0.15
+            },
+            "offsetX": { "value": 0, "unit": "px" },
+            "offsetY": { "value": 4, "unit": "px" },
+            "blur": { "value": 8, "unit": "px" },
+            "spread": { "value": 3, "unit": "px" }
+          }
+        ]
+      },
+      "border": { "$type": "color", "$value": "{color.border.muted}" }
+    },
+    "$description": "Elevation 0–3: a shadow and an edge color per level, for layers that float over the page. Level 0 is flat; menus, Select lists and popovers take level 2. In high contrast the edge takes border.default."
+  }
+}

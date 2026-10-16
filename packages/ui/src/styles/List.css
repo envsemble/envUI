@@ -10,6 +10,8 @@
 }
 .env-list > .env-list-item {
   --env-list-item-fill: var(--color-row);
+  --env-list-item-fill-hover: var(--color-row-hover);
+  --env-list-item-fill-pressed: var(--color-row-pressed);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -33,6 +35,8 @@
 }
 .env-list-surface .env-list > .env-list-item {
   --env-list-item-fill: var(--color-row-alternate);
+  --env-list-item-fill-hover: var(--color-bg-raised-hover);
+  --env-list-item-fill-pressed: var(--color-bg-raised-pressed);
 }
 /* A row that opens something through a link or button inside reacts like a clickable card: to
    hover, to keyboard focus inside it and to presses. The link or button marked data-row-target
@@ -52,14 +56,14 @@
   inset: 0;
 }
 .env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {
-  background: hsl(from var(--env-list-item-fill) h s var(--state-surface-hover-lightness));
+  background: var(--env-list-item-fill-hover);
 }
 .env-list
   > .env-list-item[data-interactive]:is(
     :has([data-row-target]:active),
     :not(:has([data-row-target])):active
   ) {
-  background: hsl(from var(--env-list-item-fill) h s var(--state-surface-pressed-lightness));
+  background: var(--env-list-item-fill-pressed);
 }
 /* The row shows the press, so a link or button in its content does not also shrink: shrinking, it
    would hold a pseudo-element stretched over the row in place of the row. */

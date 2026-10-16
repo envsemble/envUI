@@ -1,0 +1,13 @@
+---
+'@envsemble/envui': major
+---
+
+Colors now come from a primitive palette with contrast built in, through semantic color tokens, and every theme passes the contrast gate with no exceptions, including two new high-contrast themes.
+
+- **Palette.** Eight hues (neutral, blue, steel, green, amber, red, violet, purple) seeded from the previous colors, on one grade scale from 0 (white) to 100 (black). Each grade is a band of WCAG luminance, so colors 40, 50 and 70 grades apart have at least 3:1, 4.5:1 and 7:1, in any hue. The palette is internal.
+- **Semantic tokens.** `--color-{bg|fg|border}-{role}-{emphasis}[-{state}]`, for example `--color-bg-default`, `--color-fg-muted`, `--color-border-default` and `--color-bg-brand-emphasis-hover`. Hover and pressed colors are tokens of their own instead of a runtime lightness shift. The previous names, such as `--color-text-muted`, still work as aliases of these roles; the synonyms of muted text (quiet, icon, field label, hint, placeholder, row detail) now share one value.
+- **High contrast.** Set `data-env-contrast="high"` on a Theme boundary, or let the system's `prefers-contrast: more` apply it, for text at 7:1 and boundaries, indicators and focus rings at 4.5:1. `data-env-contrast="standard"` keeps the standard colors.
+- **Elevation.** `--elevation-{0…3}-shadow` and `--elevation-{0…3}-border`. Menus, Select lists and popovers take level 2, so they stand out from a page of their own color.
+- **Contrast fixes.** Links reach 4.5:1 on panes and rows. Outlined fields and buttons, and the track of a switch that is off, get a 3:1 boundary. Dark checkboxes, switches, sliders and meters reach 3:1 on every surface. Pressed and hover states keep their labels at 4.5:1. The empty stars of a Rating reach 3:1. A focus ring inside a solid fill gains an inner ring in the label color.
+
+Removed custom properties: the runtime state rule (`--state-lightness-threshold`, `--state-hover-shift`, `--state-pressed-shift`, `--state-surface-hover-shift`, `--state-surface-pressed-shift`, `--state-lightness-direction` and the `--state-*-lightness` values), the state opacities that are color tokens now (`--state-layer-hover-opacity`, `--state-layer-pressed-opacity`, `--state-fill-hover-opacity`, `--state-fill-pressed-opacity`, `--state-tone-subtle-opacity`), and the unused `--color-surface-base`, `--color-surface-raised`, `--color-text-subtle`, `--color-control-text`, `--color-neutral-fill`, `--color-border-pressed`, `--color-control-blue-hover`, `--color-control-blue-pressed`, `--color-fill-hover`, `--color-fill-pressed`, `--state-card-strip-weight`, `--state-selected-base-weight` and `--member-identity-*`. The 1.0 migration lists the replacement of each, where there is one.

@@ -36,6 +36,8 @@
 .env-text-field-well {
   --env-field-border-base: var(--color-field-border);
   --env-field-interaction-color: var(--color-field-active);
+  --env-field-interaction-hover: var(--color-border-accent-hover);
+  --env-field-interaction-pressed: var(--color-border-accent-pressed);
   --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
@@ -46,9 +48,7 @@
 }
 @media (hover: hover) {
   .env-text-field-well:hover:not(:has(> .env-text-input:disabled)) {
-    --env-field-border-color: hsl(
-      from var(--env-field-interaction-color) h s var(--state-hover-lightness)
-    );
+    --env-field-border-color: var(--env-field-interaction-hover);
   }
   .env-text-field-well[data-variant='plain']:hover:not(:has(> .env-text-input:disabled)) {
     border-block-end-color: var(--env-field-border-color);
@@ -61,9 +61,7 @@
 .env-text-field-well:is(:active, :has(> .env-textarea-resize-edge[data-resizing])):not(
     :has(> .env-text-input:disabled)
   ) {
-  --env-field-border-color: hsl(
-    from var(--env-field-interaction-color) h s var(--state-pressed-lightness)
-  );
+  --env-field-border-color: var(--env-field-interaction-pressed);
 }
 .env-text-field-well:focus-within {
   --env-field-border-color: var(--env-field-interaction-color);
@@ -186,6 +184,8 @@
 .env-dropdown-trigger[aria-invalid='true'] {
   --env-field-border-base: var(--env-field-error-color);
   --env-field-interaction-color: var(--env-field-error-color);
+  --env-field-interaction-hover: var(--color-border-danger-hover);
+  --env-field-interaction-pressed: var(--color-border-danger-pressed);
 }
 .env-text-field-well[data-variant='plain']:has(> .env-text-input[aria-invalid='true'])::after {
   content: '';

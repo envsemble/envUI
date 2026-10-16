@@ -58,7 +58,7 @@
 }
 @media (hover: hover) {
   .env-drop-zone-target:hover:not(:disabled, [aria-disabled='true']) {
-    --env-drop-zone-border: hsl(from var(--color-field-active) h s var(--state-hover-lightness));
+    --env-drop-zone-border: var(--color-border-accent-hover);
     background: var(--color-state-layer-hover);
   }
 }

@@ -1,6 +1,7 @@
 /* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone. */
 .env-alert {
   --env-alert-tone: var(--color-tone-accent);
+  --env-alert-tint: var(--color-bg-accent-muted);
   box-sizing: border-box;
   min-inline-size: 0;
   display: grid;
@@ -10,23 +11,22 @@
   padding: var(--space-4);
   border: 0.0625rem solid color-mix(in srgb, var(--env-alert-tone) 28%, transparent);
   border-radius: var(--md-sys-shape-corner-large);
-  background: color-mix(
-    in srgb,
-    var(--env-alert-tone) var(--state-tone-subtle-opacity),
-    transparent
-  );
+  background: var(--env-alert-tint);
   color: var(--color-text-primary);
   font: var(--type-body);
   overflow-wrap: anywhere;
 }
 .env-alert[data-tone='success'] {
   --env-alert-tone: var(--color-tone-success);
+  --env-alert-tint: var(--color-bg-success-muted);
 }
 .env-alert[data-tone='warning'] {
   --env-alert-tone: var(--color-tone-warning);
+  --env-alert-tint: var(--color-bg-warning-muted);
 }
 .env-alert[data-tone='error'] {
   --env-alert-tone: var(--color-tone-danger);
+  --env-alert-tint: var(--color-bg-danger-muted);
 }
 .env-alert-icon {
   grid-column: 1;

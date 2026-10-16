@@ -94,6 +94,8 @@
   border: 0;
   border-radius: 100vmax;
   background: var(--color-switch-off);
+  /* The translucent track is too faint to be the switch's boundary, so a ring draws it at 3:1. */
+  box-shadow: inset 0 0 0 1px var(--color-border-default);
   cursor: inherit;
   transition: background-color var(--motion-duration-fast) var(--motion-ease);
 }
@@ -108,6 +110,7 @@
 }
 .env-switch-control:checked {
   background: var(--color-switch-on);
+  box-shadow: none;
 }
 .env-switch-control:checked::before {
   transform: translateX(calc(1rem * var(--scale, 1)));

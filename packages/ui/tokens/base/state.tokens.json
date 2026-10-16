@@ -2,41 +2,15 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "state": {
     "$type": "number",
-    "$description": "The numbers of the color-based interaction rule, identical in both themes: below the lightness threshold, hover and pressed colors lighten by their shift; at or above it, they darken. TokensHandwritten.css applies them. Numbers with the cssUnit extension are percentages: color-mix() weights and opacities.",
-    "tone-subtle-opacity": {
-      "$value": 12,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
-    },
-    "lightness-threshold": { "$value": 50 },
-    "hover-shift": { "$value": 10 },
-    "pressed-shift": { "$value": 20 },
-    "surface-hover-shift": { "$value": 6 },
-    "surface-pressed-shift": { "$value": 10 },
+    "$description": "Opacities of interaction states that components apply themselves. Hover, pressed and selected colors are color tokens of their own (color.bg, color.fg, color.border). Numbers with the cssUnit extension are percentages.",
     "disabled-opacity": { "$value": 0.48 },
-    "selected-base-weight": {
-      "$value": 13,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
+    "dialog-overlay-opacity": {
+      "$description": "The opacity of the scrim (color.bg.overlay) behind a dialog.",
+      "$value": 0.55
     },
-    "card-strip-weight": {
-      "$value": 35,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
-    },
-    "dialog-overlay-opacity": { "$value": 0.55 },
-    "layer-hover-opacity": {
-      "$value": 8,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
-    },
-    "layer-pressed-opacity": {
-      "$value": 12,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
-    },
-    "fill-opacity": { "$value": 6, "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } } },
-    "fill-hover-opacity": {
-      "$value": 17,
-      "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
-    },
-    "fill-pressed-opacity": {
-      "$value": 29,
+    "fill-opacity": {
+      "$description": "The weight of the text color in the fill of an avatar group’s overflow count, which mixes it into the surrounding ring color.",
+      "$value": 6,
       "$extensions": { "com.envsemble.envui": { "cssUnit": "%" } }
     }
   }

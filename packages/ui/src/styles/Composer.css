@@ -90,7 +90,7 @@
 }
 @media (hover: hover) {
   .env-composer:not([data-disabled]) .env-composer-surface:hover {
-    --env-composer-border: hsl(from var(--color-field-active) h s var(--state-hover-lightness));
+    --env-composer-border: var(--color-border-accent-hover);
   }
 }
 /* Focus in the field recolors the outline and doubles its weight; the action has its own ring. */

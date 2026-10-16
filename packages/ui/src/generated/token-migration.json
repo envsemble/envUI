@@ -1,0 +1,811 @@
+{
+  "$comment": "Generated from packages/ui/tokens by `npm run tokens:build`. Do not edit: change the tokens and rebuild. Maps each 0.7 custom property to the token that replaces it: one role, a role per theme for component tokens, or removed with its replacement.",
+  "names": {
+    "--color-accent": {
+      "token": "color.bg.important.strong",
+      "cssVariable": "--color-bg-important-strong",
+      "component": "Important buttons"
+    },
+    "--color-accent-hover": {
+      "token": "color.bg.important.strong.hover",
+      "cssVariable": "--color-bg-important-strong-hover",
+      "component": "Important buttons"
+    },
+    "--color-accent-pressed": {
+      "token": "color.bg.important.strong.pressed",
+      "cssVariable": "--color-bg-important-strong-pressed",
+      "component": "Important buttons"
+    },
+    "--color-action-strip": {
+      "tokens": {
+        "light": "color.bg.default",
+        "dark": "color.bg.muted",
+        "light-high-contrast": "color.bg.default",
+        "dark-high-contrast": "color.bg.muted"
+      },
+      "component": "The action strip of a card"
+    },
+    "--color-avatar": { "primitive": "palette.blue.20", "component": "Avatars" },
+    "--color-avatar-figure": { "primitive": "palette.blue.45", "component": "Avatars" },
+    "--color-border-hover": {
+      "token": "color.border.muted.hover",
+      "cssVariable": "--color-border-muted-hover"
+    },
+    "--color-border-pressed": {
+      "removed": true,
+      "replacement": "color.border.muted.pressed",
+      "note": "Unused."
+    },
+    "--color-border-strong": {
+      "token": "color.border.muted",
+      "cssVariable": "--color-border-muted"
+    },
+    "--color-calendar-selected": {
+      "token": "color.bg.brand.emphasis",
+      "cssVariable": "--color-bg-brand-emphasis",
+      "component": "Calendars"
+    },
+    "--color-calendar-today": {
+      "token": "color.border.accent",
+      "cssVariable": "--color-border-accent",
+      "component": "Calendars"
+    },
+    "--color-canvas": { "token": "color.bg.page", "cssVariable": "--color-bg-page" },
+    "--color-canvas-dark": {
+      "primitive": "palette.neutral.92",
+      "component": "Fixed dark page color"
+    },
+    "--color-checkbox": {
+      "tokens": {
+        "light": "color.bg.brand.strong",
+        "dark": "color.bg.brand.strong",
+        "light-high-contrast": "color.bg.brand.emphasis",
+        "dark-high-contrast": "color.bg.brand.emphasis"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-border": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-hover": {
+      "tokens": {
+        "light": "color.bg.brand.strong.hover",
+        "dark": "color.bg.brand.strong.hover",
+        "light-high-contrast": "color.bg.brand.emphasis.hover",
+        "dark-high-contrast": "color.bg.brand.emphasis.hover"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-pressed": {
+      "tokens": {
+        "light": "color.bg.brand.strong.pressed",
+        "dark": "color.bg.brand.strong.pressed",
+        "light-high-contrast": "color.bg.brand.emphasis.pressed",
+        "dark-high-contrast": "color.bg.brand.emphasis.pressed"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-ring-hover": {
+      "token": "color.fg.muted.hover",
+      "cssVariable": "--color-fg-muted-hover",
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-ring-pressed": {
+      "token": "color.fg.muted.pressed",
+      "cssVariable": "--color-fg-muted-pressed",
+      "component": "Checkboxes"
+    },
+    "--color-checkbox-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "Checkboxes"
+    },
+    "--color-chip": {
+      "token": "color.bg.neutral.muted",
+      "cssVariable": "--color-bg-neutral-muted",
+      "component": "Chips"
+    },
+    "--color-chip-text": {
+      "token": "color.fg.accent",
+      "cssVariable": "--color-fg-accent",
+      "component": "Chips"
+    },
+    "--color-control-blue": {
+      "tokens": {
+        "light": "color.bg.brand.strong",
+        "dark": "color.bg.brand.strong",
+        "light-high-contrast": "color.bg.brand.emphasis",
+        "dark-high-contrast": "color.bg.brand.emphasis"
+      },
+      "component": "Spinners, sliders and meters"
+    },
+    "--color-control-blue-hover": {
+      "removed": true,
+      "replacement": "color.bg.brand.strong.hover",
+      "note": "Unused."
+    },
+    "--color-control-blue-pressed": {
+      "removed": true,
+      "replacement": "color.bg.brand.strong.pressed",
+      "note": "Unused."
+    },
+    "--color-control-text": {
+      "removed": true,
+      "replacement": "color.fg.control",
+      "note": "Unused synonym."
+    },
+    "--color-destructive-action": {
+      "token": "color.bg.danger.strong",
+      "cssVariable": "--color-bg-danger-strong",
+      "component": "Destructive buttons"
+    },
+    "--color-destructive-action-hover": {
+      "token": "color.bg.danger.strong.hover",
+      "cssVariable": "--color-bg-danger-strong-hover",
+      "component": "Destructive buttons"
+    },
+    "--color-destructive-action-pressed": {
+      "token": "color.bg.danger.strong.pressed",
+      "cssVariable": "--color-bg-danger-strong-pressed",
+      "component": "Destructive buttons"
+    },
+    "--color-dialog": { "token": "color.bg.raised", "cssVariable": "--color-bg-raised" },
+    "--color-dialog-overlay": { "token": "color.bg.overlay", "cssVariable": "--color-bg-overlay" },
+    "--color-direction-link": {
+      "token": "color.bg.raised",
+      "cssVariable": "--color-bg-raised",
+      "component": "Pager links"
+    },
+    "--color-direction-link-border": {
+      "token": "color.border.muted",
+      "cssVariable": "--color-border-muted",
+      "component": "Pager links"
+    },
+    "--color-direction-link-border-hover": {
+      "token": "color.border.muted.hover",
+      "cssVariable": "--color-border-muted-hover",
+      "component": "Pager links"
+    },
+    "--color-direction-link-border-pressed": {
+      "token": "color.border.muted.pressed",
+      "cssVariable": "--color-border-muted-pressed",
+      "component": "Pager links"
+    },
+    "--color-direction-link-icon": {
+      "token": "color.fg.accent",
+      "cssVariable": "--color-fg-accent",
+      "component": "Pager links"
+    },
+    "--color-direction-link-label": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Pager links"
+    },
+    "--color-direction-link-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "Pager links"
+    },
+    "--color-disabled-text": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
+    "--color-disclosure-text": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Disclosure summaries"
+    },
+    "--color-field": { "token": "color.bg.field", "cssVariable": "--color-bg-field" },
+    "--color-field-active": {
+      "token": "color.border.accent",
+      "cssVariable": "--color-border-accent",
+      "component": "Fields"
+    },
+    "--color-field-border": {
+      "token": "color.border.default",
+      "cssVariable": "--color-border-default",
+      "component": "Fields"
+    },
+    "--color-field-error": {
+      "token": "color.fg.danger",
+      "cssVariable": "--color-fg-danger",
+      "component": "Fields"
+    },
+    "--color-field-hint": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Fields"
+    },
+    "--color-field-label": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Fields"
+    },
+    "--color-field-placeholder": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Fields"
+    },
+    "--color-field-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "Fields"
+    },
+    "--color-fill": {
+      "token": "color.bg.neutral.muted",
+      "cssVariable": "--color-bg-neutral-muted"
+    },
+    "--color-fill-hover": {
+      "removed": true,
+      "replacement": "color.bg.neutral.muted.hover",
+      "note": "Unused."
+    },
+    "--color-fill-pressed": {
+      "removed": true,
+      "replacement": "color.bg.neutral.muted.pressed",
+      "note": "Unused."
+    },
+    "--color-focus-ring": { "token": "color.border.focus", "cssVariable": "--color-border-focus" },
+    "--color-icon": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
+    "--color-link": { "token": "color.fg.link", "cssVariable": "--color-fg-link" },
+    "--color-link-hover": {
+      "token": "color.fg.link.hover",
+      "cssVariable": "--color-fg-link-hover"
+    },
+    "--color-link-pressed": {
+      "token": "color.fg.link.pressed",
+      "cssVariable": "--color-fg-link-pressed"
+    },
+    "--color-markdown-border": {
+      "token": "color.border.muted",
+      "cssVariable": "--color-border-muted",
+      "component": "Markdown"
+    },
+    "--color-menu-row": {
+      "token": "color.bg.popup",
+      "cssVariable": "--color-bg-popup",
+      "component": "Menu rows"
+    },
+    "--color-navigation-hover": {
+      "token": "color.bg.selected.hover",
+      "cssVariable": "--color-bg-selected-hover",
+      "component": "Navigation items"
+    },
+    "--color-navigation-icon": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Navigation items"
+    },
+    "--color-navigation-pressed": {
+      "token": "color.bg.selected.pressed",
+      "cssVariable": "--color-bg-selected-pressed",
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet": {
+      "tokens": {
+        "light": "color.bg.default",
+        "dark": "color.bg.muted",
+        "light-high-contrast": "color.bg.default",
+        "dark-high-contrast": "color.bg.muted"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet-hover": {
+      "tokens": {
+        "light": "color.bg.default.hover",
+        "dark": "color.bg.muted.hover",
+        "light-high-contrast": "color.bg.default.hover",
+        "dark-high-contrast": "color.bg.muted.hover"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-quiet-pressed": {
+      "tokens": {
+        "light": "color.bg.default.pressed",
+        "dark": "color.bg.muted.pressed",
+        "light-high-contrast": "color.bg.default.pressed",
+        "dark-high-contrast": "color.bg.muted.pressed"
+      },
+      "component": "Navigation items"
+    },
+    "--color-navigation-selected": {
+      "token": "color.bg.selected",
+      "cssVariable": "--color-bg-selected",
+      "component": "Navigation items"
+    },
+    "--color-navigation-text": {
+      "token": "color.fg.control",
+      "cssVariable": "--color-fg-control",
+      "component": "Navigation items"
+    },
+    "--color-neutral-fill": {
+      "removed": true,
+      "replacement": "color.bg.neutral.strong",
+      "note": "Unused."
+    },
+    "--color-on-accent": {
+      "token": "color.fg.on-strong",
+      "cssVariable": "--color-fg-on-strong",
+      "component": "Important buttons"
+    },
+    "--color-on-avatar": { "primitive": "palette.blue.70", "component": "Avatars" },
+    "--color-on-calendar-selected": {
+      "token": "color.fg.on-emphasis",
+      "cssVariable": "--color-fg-on-emphasis",
+      "component": "Calendars"
+    },
+    "--color-on-checkbox": {
+      "tokens": {
+        "light": "color.fg.on-strong",
+        "dark": "color.fg.on-strong",
+        "light-high-contrast": "color.fg.on-emphasis",
+        "dark-high-contrast": "color.fg.on-emphasis"
+      },
+      "component": "Checkboxes"
+    },
+    "--color-on-destructive-action": {
+      "token": "color.fg.on-strong",
+      "cssVariable": "--color-fg-on-strong",
+      "component": "Destructive buttons"
+    },
+    "--color-on-navigation-selected": {
+      "token": "color.fg.on-selected",
+      "cssVariable": "--color-fg-on-selected",
+      "component": "Navigation items"
+    },
+    "--color-on-primary-action": {
+      "token": "color.fg.on-emphasis",
+      "cssVariable": "--color-fg-on-emphasis",
+      "component": "Primary buttons"
+    },
+    "--color-on-secondary-action": {
+      "token": "color.fg.control",
+      "cssVariable": "--color-fg-control",
+      "component": "Secondary buttons"
+    },
+    "--color-on-select-selected": {
+      "token": "color.fg.on-selected",
+      "cssVariable": "--color-fg-on-selected",
+      "component": "Select options"
+    },
+    "--color-on-subtle-action": {
+      "token": "color.fg.accent",
+      "cssVariable": "--color-fg-accent",
+      "component": "Outlined buttons"
+    },
+    "--color-on-toast": {
+      "token": "color.fg.on-strong",
+      "cssVariable": "--color-fg-on-strong",
+      "component": "Toasts and tooltips"
+    },
+    "--color-on-tone": { "token": "color.fg.on-emphasis", "cssVariable": "--color-fg-on-emphasis" },
+    "--color-outlined-focus": {
+      "token": "color.border.focus",
+      "cssVariable": "--color-border-focus",
+      "component": "Outlined buttons"
+    },
+    "--color-pane": { "token": "color.bg.default", "cssVariable": "--color-bg-default" },
+    "--color-popup": { "token": "color.bg.popup", "cssVariable": "--color-bg-popup" },
+    "--color-popup-border": {
+      "token": "elevation.2.border",
+      "cssVariable": "--elevation-2-border",
+      "component": "Popups"
+    },
+    "--color-primary-action": {
+      "token": "color.bg.brand.emphasis",
+      "cssVariable": "--color-bg-brand-emphasis",
+      "component": "Primary buttons"
+    },
+    "--color-primary-action-hover": {
+      "token": "color.bg.brand.emphasis.hover",
+      "cssVariable": "--color-bg-brand-emphasis-hover",
+      "component": "Primary buttons"
+    },
+    "--color-primary-action-pressed": {
+      "token": "color.bg.brand.emphasis.pressed",
+      "cssVariable": "--color-bg-brand-emphasis-pressed",
+      "component": "Primary buttons"
+    },
+    "--color-quiet-label-hover": {
+      "token": "color.fg.muted.hover",
+      "cssVariable": "--color-fg-muted-hover",
+      "component": "Disclosure summaries"
+    },
+    "--color-quiet-label-pressed": {
+      "token": "color.fg.muted.pressed",
+      "cssVariable": "--color-fg-muted-pressed",
+      "component": "Disclosure summaries"
+    },
+    "--color-radio": {
+      "token": "color.bg.brand.emphasis",
+      "cssVariable": "--color-bg-brand-emphasis",
+      "component": "Radios"
+    },
+    "--color-radio-detail": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "Radios"
+    },
+    "--color-radio-hover": {
+      "token": "color.bg.brand.emphasis.hover",
+      "cssVariable": "--color-bg-brand-emphasis-hover",
+      "component": "Radios"
+    },
+    "--color-radio-pressed": {
+      "token": "color.bg.brand.emphasis.pressed",
+      "cssVariable": "--color-bg-brand-emphasis-pressed",
+      "component": "Radios"
+    },
+    "--color-radio-row": {
+      "token": "color.bg.muted",
+      "cssVariable": "--color-bg-muted",
+      "component": "Radio rows"
+    },
+    "--color-radio-row-hover": {
+      "token": "color.bg.muted.hover",
+      "cssVariable": "--color-bg-muted-hover",
+      "component": "Radio rows"
+    },
+    "--color-radio-row-pressed": {
+      "token": "color.bg.muted.pressed",
+      "cssVariable": "--color-bg-muted-pressed",
+      "component": "Radio rows"
+    },
+    "--color-radio-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "Radios"
+    },
+    "--color-row": {
+      "tokens": {
+        "light": "color.bg.default",
+        "dark": "color.bg.muted",
+        "light-high-contrast": "color.bg.default",
+        "dark-high-contrast": "color.bg.muted"
+      },
+      "component": "List rows"
+    },
+    "--color-row-alternate": {
+      "token": "color.bg.raised",
+      "cssVariable": "--color-bg-raised",
+      "component": "List rows on a contrasting surface"
+    },
+    "--color-row-detail": {
+      "token": "color.fg.muted",
+      "cssVariable": "--color-fg-muted",
+      "component": "List rows"
+    },
+    "--color-row-hover": {
+      "tokens": {
+        "light": "color.bg.default.hover",
+        "dark": "color.bg.muted.hover",
+        "light-high-contrast": "color.bg.default.hover",
+        "dark-high-contrast": "color.bg.muted.hover"
+      },
+      "component": "List rows"
+    },
+    "--color-row-pressed": {
+      "tokens": {
+        "light": "color.bg.default.pressed",
+        "dark": "color.bg.muted.pressed",
+        "light-high-contrast": "color.bg.default.pressed",
+        "dark-high-contrast": "color.bg.muted.pressed"
+      },
+      "component": "List rows"
+    },
+    "--color-row-selected-hover": {
+      "token": "color.bg.selected.hover",
+      "cssVariable": "--color-bg-selected-hover",
+      "component": "Tree and table rows"
+    },
+    "--color-row-selected-pressed": {
+      "token": "color.bg.selected.pressed",
+      "cssVariable": "--color-bg-selected-pressed",
+      "component": "Tree and table rows"
+    },
+    "--color-row-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "List rows"
+    },
+    "--color-secondary-action": {
+      "token": "color.bg.neutral.muted",
+      "cssVariable": "--color-bg-neutral-muted",
+      "component": "Secondary buttons"
+    },
+    "--color-secondary-action-hover": {
+      "token": "color.bg.neutral.muted.hover",
+      "cssVariable": "--color-bg-neutral-muted-hover",
+      "component": "Secondary buttons"
+    },
+    "--color-secondary-action-pressed": {
+      "token": "color.bg.neutral.muted.pressed",
+      "cssVariable": "--color-bg-neutral-muted-pressed",
+      "component": "Secondary buttons"
+    },
+    "--color-select-option": {
+      "token": "color.bg.popup",
+      "cssVariable": "--color-bg-popup",
+      "component": "Select options"
+    },
+    "--color-select-option-hover": {
+      "token": "color.bg.popup.hover",
+      "cssVariable": "--color-bg-popup-hover",
+      "component": "Select options"
+    },
+    "--color-select-option-pressed": {
+      "token": "color.bg.popup.pressed",
+      "cssVariable": "--color-bg-popup-pressed",
+      "component": "Select options"
+    },
+    "--color-select-option-text": {
+      "token": "color.fg.control",
+      "cssVariable": "--color-fg-control",
+      "component": "Select options"
+    },
+    "--color-select-selected": {
+      "token": "color.bg.selected",
+      "cssVariable": "--color-bg-selected",
+      "component": "Select options"
+    },
+    "--color-select-selected-hover": {
+      "token": "color.bg.selected.hover",
+      "cssVariable": "--color-bg-selected-hover",
+      "component": "Select options"
+    },
+    "--color-select-selected-pressed": {
+      "token": "color.bg.selected.pressed",
+      "cssVariable": "--color-bg-selected-pressed",
+      "component": "Select options"
+    },
+    "--color-skeleton-base": {
+      "token": "color.bg.neutral.muted",
+      "cssVariable": "--color-bg-neutral-muted",
+      "component": "Skeletons"
+    },
+    "--color-skeleton-highlight": {
+      "token": "color.bg.neutral.muted.hover",
+      "cssVariable": "--color-bg-neutral-muted-hover",
+      "component": "Skeletons"
+    },
+    "--color-state-layer": { "token": "color.fg.default", "cssVariable": "--color-fg-default" },
+    "--color-state-layer-hover": {
+      "token": "color.bg.neutral.subtle.hover",
+      "cssVariable": "--color-bg-neutral-subtle-hover"
+    },
+    "--color-state-layer-pressed": {
+      "token": "color.bg.neutral.subtle.pressed",
+      "cssVariable": "--color-bg-neutral-subtle-pressed"
+    },
+    "--color-subtle-action": {
+      "token": "color.bg.raised",
+      "cssVariable": "--color-bg-raised",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-border": {
+      "token": "color.border.default",
+      "cssVariable": "--color-border-default",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-border-hover": {
+      "token": "color.border.default.hover",
+      "cssVariable": "--color-border-default-hover",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-border-pressed": {
+      "token": "color.border.default.pressed",
+      "cssVariable": "--color-border-default-pressed",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-hover": {
+      "token": "color.bg.raised.hover",
+      "cssVariable": "--color-bg-raised-hover",
+      "component": "Outlined buttons"
+    },
+    "--color-subtle-action-pressed": {
+      "token": "color.bg.raised.pressed",
+      "cssVariable": "--color-bg-raised-pressed",
+      "component": "Outlined buttons"
+    },
+    "--color-surface": { "token": "color.bg.raised", "cssVariable": "--color-bg-raised" },
+    "--color-surface-base": {
+      "removed": true,
+      "replacement": "color.bg.raised",
+      "note": "Unused."
+    },
+    "--color-surface-muted": { "token": "color.bg.muted", "cssVariable": "--color-bg-muted" },
+    "--color-surface-raised": {
+      "removed": true,
+      "replacement": "color.bg.raised",
+      "note": "Unused."
+    },
+    "--color-switch-off": {
+      "token": "color.bg.neutral.muted",
+      "cssVariable": "--color-bg-neutral-muted",
+      "component": "Switches"
+    },
+    "--color-switch-off-hover": {
+      "token": "color.bg.neutral.muted.hover",
+      "cssVariable": "--color-bg-neutral-muted-hover",
+      "component": "Switches"
+    },
+    "--color-switch-off-pressed": {
+      "token": "color.bg.neutral.muted.pressed",
+      "cssVariable": "--color-bg-neutral-muted-pressed",
+      "component": "Switches"
+    },
+    "--color-switch-on": {
+      "tokens": {
+        "light": "color.bg.brand.strong",
+        "dark": "color.bg.brand.strong",
+        "light-high-contrast": "color.bg.brand.emphasis",
+        "dark-high-contrast": "color.bg.brand.emphasis"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-on-hover": {
+      "tokens": {
+        "light": "color.bg.brand.strong.hover",
+        "dark": "color.bg.brand.strong.hover",
+        "light-high-contrast": "color.bg.brand.emphasis.hover",
+        "dark-high-contrast": "color.bg.brand.emphasis.hover"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-on-pressed": {
+      "tokens": {
+        "light": "color.bg.brand.strong.pressed",
+        "dark": "color.bg.brand.strong.pressed",
+        "light-high-contrast": "color.bg.brand.emphasis.pressed",
+        "dark-high-contrast": "color.bg.brand.emphasis.pressed"
+      },
+      "component": "Switches"
+    },
+    "--color-switch-text": {
+      "token": "color.fg.default",
+      "cssVariable": "--color-fg-default",
+      "component": "Switches"
+    },
+    "--color-switch-thumb": {
+      "token": "color.fg.control",
+      "cssVariable": "--color-fg-control",
+      "component": "Switches"
+    },
+    "--color-switch-thumb-on": {
+      "tokens": {
+        "light": "color.fg.on-strong",
+        "dark": "color.fg.on-strong",
+        "light-high-contrast": "color.fg.on-emphasis",
+        "dark-high-contrast": "color.fg.on-emphasis"
+      },
+      "component": "Switches"
+    },
+    "--color-text-muted": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
+    "--color-text-primary": { "token": "color.fg.default", "cssVariable": "--color-fg-default" },
+    "--color-text-quiet": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
+    "--color-text-strong": { "token": "color.fg.control", "cssVariable": "--color-fg-control" },
+    "--color-text-subtle": {
+      "removed": true,
+      "replacement": "color.fg.muted",
+      "note": "Unused synonym."
+    },
+    "--color-toast-error": {
+      "token": "color.bg.danger.strong",
+      "cssVariable": "--color-bg-danger-strong",
+      "component": "Toasts"
+    },
+    "--color-toast-info": {
+      "token": "color.bg.info.strong",
+      "cssVariable": "--color-bg-info-strong",
+      "component": "Toasts"
+    },
+    "--color-toast-neutral": {
+      "token": "color.bg.neutral.strong",
+      "cssVariable": "--color-bg-neutral-strong",
+      "component": "Toasts and tooltips"
+    },
+    "--color-toast-success": {
+      "token": "color.bg.success.strong",
+      "cssVariable": "--color-bg-success-strong",
+      "component": "Toasts"
+    },
+    "--color-tone-accent": { "token": "color.fg.accent", "cssVariable": "--color-fg-accent" },
+    "--color-tone-danger": { "token": "color.fg.danger", "cssVariable": "--color-fg-danger" },
+    "--color-tone-done": { "token": "color.fg.done", "cssVariable": "--color-fg-done" },
+    "--color-tone-neutral": { "token": "color.fg.muted", "cssVariable": "--color-fg-muted" },
+    "--color-tone-success": { "token": "color.fg.success", "cssVariable": "--color-fg-success" },
+    "--color-tone-warning": { "token": "color.fg.warning", "cssVariable": "--color-fg-warning" },
+    "--color-white": { "primitive": "palette.neutral.0", "component": "Fixed white" },
+    "--member-identity-avatar-size": { "removed": true, "replacement": null, "note": "Unused." },
+    "--member-identity-copy-height": { "removed": true, "replacement": null, "note": "Unused." },
+    "--member-identity-email-line-height": {
+      "removed": true,
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-email-size": { "removed": true, "replacement": null, "note": "Unused." },
+    "--member-identity-gap": { "removed": true, "replacement": null, "note": "Unused." },
+    "--member-identity-name-line-height": {
+      "removed": true,
+      "replacement": null,
+      "note": "Unused."
+    },
+    "--member-identity-name-size": { "removed": true, "replacement": null, "note": "Unused." },
+    "--state-card-strip-weight": { "removed": true, "replacement": null, "note": "Unused." },
+    "--state-fill-hover-opacity": {
+      "removed": true,
+      "replacement": "color.bg.neutral.muted.hover",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-fill-pressed-opacity": {
+      "removed": true,
+      "replacement": "color.bg.neutral.muted.pressed",
+      "note": "The fill's states are color tokens now."
+    },
+    "--state-hover-lightness": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the role's -hover token."
+    },
+    "--state-hover-shift": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-layer-hover-opacity": {
+      "removed": true,
+      "replacement": "color.bg.neutral.subtle.hover",
+      "note": "The state layer is a color token now."
+    },
+    "--state-layer-pressed-opacity": {
+      "removed": true,
+      "replacement": "color.bg.neutral.subtle.pressed",
+      "note": "The state layer is a color token now."
+    },
+    "--state-lightness-direction": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone: every role has hover and pressed tokens."
+    },
+    "--state-lightness-threshold": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-pressed-lightness": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the role's -pressed token."
+    },
+    "--state-pressed-shift": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-selected-base-weight": { "removed": true, "replacement": null, "note": "Unused." },
+    "--state-surface-hover-lightness": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the surface's -hover token."
+    },
+    "--state-surface-hover-shift": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-surface-pressed-lightness": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone: use the surface's -pressed token."
+    },
+    "--state-surface-pressed-shift": {
+      "removed": true,
+      "replacement": null,
+      "note": "The runtime hover rule is gone."
+    },
+    "--state-tone-subtle-opacity": {
+      "removed": true,
+      "replacement": null,
+      "note": "Each tone has its tint as a color token: color.bg.{tone}.muted."
+    }
+  }
+}

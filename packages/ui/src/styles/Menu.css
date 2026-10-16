@@ -16,6 +16,8 @@
   padding: var(--space-2);
   border-radius: var(--radius-surface);
   background: var(--color-pane);
+  /* Menus float over the page at elevation 2, so they separate from a surface of their own color. */
+  box-shadow: var(--elevation-2-shadow);
   outline: none;
 }
 .env-menu-header,
@@ -96,14 +98,14 @@
 }
 /* A row that opened a submenu stays highlighted while the submenu is open. */
 .env-menu-item:is([data-highlighted], [data-popup-open]) {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+  background: var(--color-bg-popup-hover);
 }
 /* A submenu row ends in a chevron that points to the side the submenu opens on. */
 .env-menu-submenu-chevron:dir(rtl) {
   transform: scaleX(-1);
 }
 .env-menu-item:active {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+  background: var(--color-bg-popup-pressed);
 }
 .env-menu-item:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);
@@ -200,10 +202,10 @@
   font: var(--type-body-small);
 }
 .env-menu[data-density='compact'] .env-menu-item:is([data-highlighted], [data-popup-open]) {
-  background: hsl(from var(--color-popup) h s var(--state-surface-hover-lightness));
+  background: var(--color-bg-popup-hover);
 }
 .env-menu[data-density='compact'] .env-menu-item:active {
-  background: hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness));
+  background: var(--color-bg-popup-pressed);
 }
 .env-menu[data-density='compact'] .env-menu-item .env-symbol,
 .env-menu[data-density='compact'] .env-menu-item-check {
@@ -339,10 +341,10 @@
   block-size: var(--control-icon-size);
 }
 .env-organization-switcher-create[data-highlighted] {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness));
+  background: var(--color-bg-popup-hover);
 }
 .env-organization-switcher-create:active {
-  background: hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness));
+  background: var(--color-bg-popup-pressed);
 }
 .env-organization-switcher-create:focus-visible {
   outline: 0.125rem solid var(--color-focus-ring);

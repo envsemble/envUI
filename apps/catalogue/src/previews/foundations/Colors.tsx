@@ -70,7 +70,9 @@ function ColorPalette() {
         probe.style.color = `var(--color-${token})`;
         probe.hidden = true;
         paletteElement.current!.append(probe);
-        context.clearRect(0, 0, 1, 1);
+        // Translucent colors, such as the neutral fill, are measured as painted on the page.
+        context.fillStyle = computedStyle.getPropertyValue('--color-canvas');
+        context.fillRect(0, 0, 1, 1);
         context.fillStyle = getComputedStyle(probe).color;
         context.fillRect(0, 0, 1, 1);
         const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
@@ -110,19 +112,20 @@ function ColorPalette() {
 
 function InteractionColors() {
   const states = [
-    { label: 'Default', token: '--color-primary-action', shift: null },
-    { label: 'Hover', token: '--color-primary-action-hover', shift: '--state-hover-shift' },
-    { label: 'Pressed', token: '--color-primary-action-pressed', shift: '--state-pressed-shift' },
-    { label: 'Disabled', token: '--color-primary-action', shift: null },
+    { label: 'Default', token: '--color-primary-action' },
+    { label: 'Hover', token: '--color-primary-action-hover' },
+    { label: 'Pressed', token: '--color-primary-action-pressed' },
+    { label: 'Disabled', token: '--color-primary-action' },
   ];
 
   return (
     <Example title="Derived interaction colors" size="collection">
       <Text tone="muted">
-        Below 50% HSL lightness, add lightness; otherwise subtract it. Clamp to 0–100%.
+        Hover and pressed are derived when the tokens are built: other grades of the same hue, each
+        a token of its own, so the contrast gate checks the label on every state.
       </Text>
       <SpecimenGrid size="compact">
-        {states.map(({ label, token, shift }) => (
+        {states.map(({ label, token }) => (
           <Specimen key={label} title={label}>
             <div
               className="docs-color-state"
@@ -133,16 +136,12 @@ function InteractionColors() {
               }}
             />
             <Text variant="caption">
-              {shift ? (
-                <>
-                  <TokenValue token={shift} /> point shift
-                </>
-              ) : label === 'Disabled' ? (
+              {label === 'Disabled' ? (
                 <>
                   <TokenValue token="--state-disabled-opacity" /> opacity
                 </>
               ) : (
-                'Primary action base color'
+                <code>{token}</code>
               )}
             </Text>
           </Specimen>

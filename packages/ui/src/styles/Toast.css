@@ -17,18 +17,26 @@
 }
 .env-toast-neutral {
   --toast-fill: var(--color-toast-neutral);
+  --toast-fill-hover: var(--color-bg-neutral-strong-hover);
+  --toast-fill-pressed: var(--color-bg-neutral-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-success {
   --toast-fill: var(--color-toast-success);
+  --toast-fill-hover: var(--color-bg-success-strong-hover);
+  --toast-fill-pressed: var(--color-bg-success-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-info {
   --toast-fill: var(--color-toast-info);
+  --toast-fill-hover: var(--color-bg-info-strong-hover);
+  --toast-fill-pressed: var(--color-bg-info-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-error {
   --toast-fill: var(--color-toast-error);
+  --toast-fill-hover: var(--color-bg-danger-strong-hover);
+  --toast-fill-pressed: var(--color-bg-danger-strong-pressed);
   background: var(--toast-fill);
 }
 .env-toast-message {
@@ -77,10 +85,10 @@
   height: 1.125rem;
 }
 .env-toast-dismiss:hover {
-  background: hsl(from var(--toast-fill) h s var(--state-hover-lightness));
+  background: var(--toast-fill-hover);
 }
 .env-toast-dismiss:active {
-  background: hsl(from var(--toast-fill) h s var(--state-pressed-lightness));
+  background: var(--toast-fill-pressed);
 }
 .env-toast-dismiss:focus-visible {
   outline: 0.125rem solid var(--color-on-toast);

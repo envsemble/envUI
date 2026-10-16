@@ -32,11 +32,11 @@
 }
 @media (hover: hover) {
   .env-button.env-dropdown-trigger[aria-invalid='true']:hover:not(:disabled) {
-    border-color: hsl(from var(--env-field-border-base) h s var(--state-hover-lightness));
+    border-color: var(--env-field-interaction-hover);
   }
 }
 .env-button.env-dropdown-trigger[aria-invalid='true']:active:not(:disabled) {
-  border-color: hsl(from var(--env-field-border-base) h s var(--state-pressed-lightness));
+  border-color: var(--env-field-interaction-pressed);
 }
 
 .env-dropdown-trigger .env-symbol {
@@ -54,6 +54,7 @@
   --env-surface-scale: var(--scale, 1);
   border: calc(0.0625rem * var(--scale, 1)) solid var(--color-popup-border);
   background: var(--color-popup);
+  box-shadow: var(--elevation-2-shadow);
   display: grid;
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));

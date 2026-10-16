@@ -1,21 +1,24 @@
 /**
- * The contrast gate's pair registry: every foreground envUI paints on a background, with the
- * minimum WCAG 2.x ratio between them. tests/browser/Contrast.spec.ts resolves each pair in every
- * theme of Themes.ts, in a real browser, and fails on any pair below its minimum that
- * Exceptions.json doesn't list.
+ * The contrast gate's pair registry: every foreground envUI paints on a background, with the kind
+ * of contrast WCAG 2.x asks of it. tests/browser/Contrast.spec.ts resolves each pair in every theme
+ * of Themes.ts, in a real browser, and fails on any pair below the theme's minimum for its kind
+ * that Exceptions.json doesn't list.
  *
- * - `fg` and each `bg` layer name a token (`--color-…`) or a color from `derived`.
+ * - `fg` and each `bg` layer name a custom property: a semantic role (`--color-{bg|fg|border}-…`),
+ *   or a component token where the component takes a different role per theme (`--color-row`,
+ *   `--color-checkbox`…). Every color the gate measures is a token; nothing is composed at runtime.
  * - `bg` lists what the foreground sits on, nearest first. A translucent layer is composited over
- *   the next one, and the last over the theme's canvas. A translucent foreground is composited over
+ *   the next one, and the last over the theme's page. A translucent foreground is composited over
  *   its background before it is measured.
- * - `kind`: text needs 4.5:1 (WCAG 1.4.3); non-text needs 3:1 (1.4.11: icons, borders that are a
- *   control's only boundary, state indicators); focus needs 3:1 (2.4.13: the ring against what it
- *   is drawn on, which is the surface behind an offset ring and the element's own fill behind an
- *   inset one).
+ * - `kind`: text (WCAG 1.4.3); non-text (1.4.11: icons, borders that are a control's only boundary,
+ *   state indicators); focus (2.4.13: the ring against what it is drawn on, which is the surface
+ *   behind an offset ring and the element's own fill behind an inset one). Themes.ts sets the
+ *   minimum of each kind: 4.5, 3 and 3 at standard contrast, 7, 4.5 and 4.5 at high contrast.
+ * - `contrast: 'high'` measures a pair only in the high-contrast themes, for boundaries that are
+ *   decorative at standard contrast, such as dividers and the edges of elevated popups.
  * - Disabled states are exempt from 1.4.3 and 1.4.11, so none is listed.
  *
  * A pair is named `<fg> on <bg> over <next layer>`, which is also how Exceptions.json refers to it.
- * When tokens are renamed or become precomputed, update the names here and in Exceptions.json.
  */
 
 export type ContrastKind = 'text' | 'non-text' | 'focus';
@@ -24,61 +27,38 @@ export interface ContrastPair {
   fg: string;
   bg: readonly string[];
   kind: ContrastKind;
-  min: number;
+  /** Measured only in the themes of this contrast; both when absent. */
+  contrast?: 'high';
   note?: string;
 }
 
-export const minimums: Readonly<Record<ContrastKind, number>> = {
-  text: 4.5,
-  'non-text': 3,
-  focus: 3,
-};
-
 const tones = ['neutral', 'accent', 'success', 'warning', 'danger', 'done'] as const;
-const toastTones = ['neutral', 'success', 'info', 'error'] as const;
 
-/**
- * Colors the CSS composes from tokens where they are painted, which have no token of their own
- * yet. Each name stands for the CSS color it lists, resolved inside the theme.
- */
-export const derived: Readonly<Record<string, string>> = {
-  // Menu.css: highlighted and pressed menu rows, and rows of a compact menu on the popup.
-  'menu-row-hover': 'hsl(from var(--color-menu-row) h s var(--state-surface-hover-lightness))',
-  'menu-row-pressed': 'hsl(from var(--color-menu-row) h s var(--state-surface-pressed-lightness))',
-  'popup-hover': 'hsl(from var(--color-popup) h s var(--state-surface-hover-lightness))',
-  'popup-pressed': 'hsl(from var(--color-popup) h s var(--state-surface-pressed-lightness))',
-  // Pager.css: the link's fill on hover and press.
-  'direction-link-hover': 'hsl(from var(--color-direction-link) h s var(--state-hover-lightness))',
-  'direction-link-pressed':
-    'hsl(from var(--color-direction-link) h s var(--state-pressed-lightness))',
-  // Badge.css and Alert.css: the subtle fill of each tone.
-  ...Object.fromEntries(
-    tones.map((tone) => [
-      `tone-${tone}-subtle`,
-      `color-mix(in srgb, var(--color-tone-${tone}) var(--state-tone-subtle-opacity), transparent)`,
-    ]),
-  ),
-  // Toast.css: the dismiss button's fill on hover.
-  ...Object.fromEntries(
-    toastTones.map((tone) => [
-      `toast-${tone}-hover`,
-      `hsl(from var(--color-toast-${tone}) h s var(--state-hover-lightness))`,
-    ]),
-  ),
-};
+/** The text color of each status tone; the neutral tone is muted text. */
+const toneText = (tone: (typeof tones)[number]) =>
+  tone === 'neutral'
+    ? '--color-fg-muted'
+    : tone === 'accent'
+      ? '--color-fg-accent'
+      : `--color-fg-${tone}`;
 
 // Surfaces, by role.
-const canvas = '--color-canvas'; // the page, the app frame, title bars
-const pane = '--color-pane'; // Surface's default, sidebars, the standard menu
-const rowSurface = '--color-surface-muted'; // Surface tone="row"
-const alternate = '--color-surface'; // Surface tone="alternate", a table's region
-const row = '--color-row'; // List
-const rowAlternate = '--color-row-alternate'; // rows on a contrasting pane
-const menuRow = '--color-menu-row';
-const popup = '--color-popup'; // popovers, Select lists, compact menus, the composer
-const dialog = '--color-dialog'; // dialogs, the command palette, docked panels
-const field = '--color-field';
-const fill = '--color-fill'; // the translucent fill of tab rails, chips, segmented controls
+const page = '--color-bg-page'; // the app frame, title bars, Surface background="page"
+const surface = '--color-bg-default'; // Surface's default, sidebars, standard menus
+const muted = '--color-bg-muted'; // Surface background="muted", radio rows
+const raised = '--color-bg-raised'; // Surface background="raised", dialogs, rows on a contrasting surface
+const popup = '--color-bg-popup'; // menus, Select lists, popovers, the composer
+const field = '--color-bg-field';
+const selected = '--color-bg-selected';
+const fill = '--color-bg-neutral-muted'; // the translucent fill of tab rails, chips, secondary buttons
+const layerHover = '--color-bg-neutral-subtle-hover';
+const layerPressed = '--color-bg-neutral-subtle-pressed';
+// Component tokens that take a different role per theme.
+const row = '--color-row'; // List rows: the default surface in light, the muted one in dark
+const actionStrip = '--color-action-strip';
+// Navigation items: the default surface's states in light, the muted surface's in dark.
+const navigationHover = '--color-navigation-quiet-hover';
+const navigationPressed = '--color-navigation-quiet-pressed';
 
 type Background = string | readonly string[];
 
@@ -87,355 +67,326 @@ function on(
   fg: string,
   backgrounds: readonly Background[],
   note?: string,
+  contrast?: 'high',
 ): ContrastPair[] {
   return backgrounds.map((bg) => ({
     fg,
     bg: typeof bg === 'string' ? [bg] : bg,
     kind,
-    min: minimums[kind],
+    ...(contrast ? { contrast } : {}),
     ...(note ? { note } : {}),
   }));
 }
 
 const text = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('text', fg, backgrounds, note);
-const nonText = (fg: string, backgrounds: readonly Background[], note?: string) =>
-  on('non-text', fg, backgrounds, note);
+const nonText = (
+  fg: string,
+  backgrounds: readonly Background[],
+  note?: string,
+  contrast?: 'high',
+) => on('non-text', fg, backgrounds, note, contrast);
 const focus = (fg: string, backgrounds: readonly Background[], note?: string) =>
   on('focus', fg, backgrounds, note);
 
 export const pairs: readonly ContrastPair[] = [
-  // Body text on every surface role.
-  ...text('--color-text-primary', [canvas, pane, rowSurface, alternate, popup, dialog]),
-  ...text('--color-text-muted', [canvas, pane, rowSurface, alternate, popup, dialog]),
-  ...text('--color-text-quiet', [canvas, pane, rowSurface, alternate], 'Text tone="quiet"'),
-  ...text('--color-text-strong', [canvas, pane], 'Meter and Slider values'),
-  ...text('--color-row-text', [row, rowAlternate, '--color-row-hover', '--color-row-pressed']),
-  ...text('--color-row-text', [menuRow, 'menu-row-hover', 'menu-row-pressed'], 'Menu items'),
-  ...text('--color-row-detail', [row, rowAlternate, menuRow, 'menu-row-hover']),
+  // Text on every surface role.
+  ...text('--color-fg-default', [page, surface, muted, raised, popup]),
   ...text(
-    '--color-text-primary',
-    ['popup-hover', 'popup-pressed', '--color-select-option-hover'],
-    'Compact menus and Select lists, and Combobox options',
+    '--color-fg-muted',
+    [page, surface, muted, raised, popup],
+    'Supporting text, icons, field descriptions, unchecked checkbox rings',
   ),
   ...text(
-    '--color-icon',
-    [canvas, pane, rowSurface],
-    'Quiet buttons take the icon color for their labels too',
+    '--color-fg-control',
+    [page, surface],
+    'Navigation labels, meter and slider values, the thumb of a switch that is off',
   ),
-  ...nonText('--color-icon', [menuRow, popup, dialog], 'Icons in menus, chips and docked panels'),
+  ...text('--color-fg-default', [row, '--color-row-hover', '--color-row-pressed'], 'List rows'),
+  ...text('--color-fg-muted', [row], 'List row details'),
+  ...text(
+    '--color-fg-default',
+    ['--color-bg-popup-hover', '--color-bg-popup-pressed'],
+    'Menu items and Select and Combobox options, highlighted and pressed',
+  ),
+  ...text('--color-fg-muted', ['--color-bg-popup-hover'], 'Menu item descriptions'),
 
   // Links and text buttons on every surface, and in their states.
-  ...text('--color-link', [canvas, pane, rowSurface, alternate, row, rowAlternate, menuRow]),
-  ...text('--color-link', [popup, dialog, '--color-action-strip']),
-  ...text('--color-link-hover', [canvas, pane, rowSurface]),
-  ...text('--color-link-pressed', [canvas, pane, rowSurface]),
-  ...text('--color-disclosure-text', [canvas, pane], 'Disclosure'),
-  ...text('--color-quiet-label-hover', [canvas, pane], 'Disclosure summary on hover'),
-  ...text('--color-quiet-label-pressed', [canvas, pane], 'Disclosure summary on press'),
+  ...text('--color-fg-link', [page, surface, muted, raised, popup, row, actionStrip]),
+  ...text('--color-fg-link-hover', [page, surface, muted]),
+  ...text('--color-fg-link-pressed', [page, surface, muted]),
+  ...text(
+    '--color-fg-muted-hover',
+    [page, surface],
+    'Disclosure summaries and checkbox rings on hover',
+  ),
+  ...text('--color-fg-muted-pressed', [page, surface], 'Disclosure summaries on press'),
 
   // Actions: labels on their fills, at rest, hovered and pressed.
-  ...text('--color-on-primary-action', [
-    '--color-primary-action',
-    '--color-primary-action-hover',
-    '--color-primary-action-pressed',
-  ]),
   ...text(
-    '--color-on-secondary-action',
+    '--color-fg-on-emphasis',
     [
-      ['--color-secondary-action', canvas],
-      ['--color-secondary-action-hover', canvas],
-      ['--color-secondary-action-pressed', canvas],
-      ['--color-secondary-action', pane],
-      ['--color-secondary-action-hover', pane],
-      ['--color-secondary-action-pressed', pane],
-      ['--color-secondary-action', rowSurface],
-      ['--color-secondary-action-hover', rowSurface],
-      ['--color-secondary-action-pressed', rowSurface],
-      ['--color-secondary-action', dialog],
-      ['--color-secondary-action-hover', dialog],
-      ['--color-secondary-action-pressed', dialog],
-      ['--color-secondary-action', '--color-action-strip'],
+      '--color-bg-brand-emphasis',
+      '--color-bg-brand-emphasis-hover',
+      '--color-bg-brand-emphasis-pressed',
     ],
-    'The secondary fill is translucent, so it is measured on each surface it sits on',
+    'Primary buttons and the chosen calendar day',
   ),
-  ...text('--color-on-subtle-action', [
-    '--color-subtle-action',
-    '--color-subtle-action-hover',
-    '--color-subtle-action-pressed',
-  ]),
-  ...text('--color-on-destructive-action', [
-    '--color-destructive-action',
-    '--color-destructive-action-hover',
-    '--color-destructive-action-pressed',
-  ]),
   ...text(
-    '--color-on-accent',
-    ['--color-accent', '--color-accent-hover', '--color-accent-pressed'],
+    '--color-fg-control',
+    [
+      [fill, page],
+      ['--color-bg-neutral-muted-hover', page],
+      ['--color-bg-neutral-muted-pressed', page],
+      [fill, surface],
+      ['--color-bg-neutral-muted-hover', surface],
+      ['--color-bg-neutral-muted-pressed', surface],
+      [fill, muted],
+      ['--color-bg-neutral-muted-hover', muted],
+      ['--color-bg-neutral-muted-pressed', muted],
+      [fill, raised],
+      ['--color-bg-neutral-muted-hover', raised],
+      ['--color-bg-neutral-muted-pressed', raised],
+      [fill, actionStrip],
+    ],
+    'Secondary buttons, and the thumb of a switch that is off on its track: the fill is translucent, so it is measured on each surface it sits on',
+  ),
+  ...text(
+    '--color-fg-accent',
+    [raised, '--color-bg-raised-hover', '--color-bg-raised-pressed'],
+    'Outlined buttons and the icon of a pager link',
+  ),
+  ...text(
+    '--color-fg-on-strong',
+    [
+      '--color-bg-danger-strong',
+      '--color-bg-danger-strong-hover',
+      '--color-bg-danger-strong-pressed',
+    ],
+    'Destructive buttons and error toasts',
+  ),
+  ...text(
+    '--color-fg-on-strong',
+    [
+      '--color-bg-important-strong',
+      '--color-bg-important-strong-hover',
+      '--color-bg-important-strong-pressed',
+    ],
     'Button variant="important"',
   ),
   ...text(
-    '--color-text-primary',
+    '--color-fg-default',
     [
-      ['--color-state-layer-hover', canvas],
-      ['--color-state-layer-pressed', canvas],
-      ['--color-state-layer-hover', pane],
-      ['--color-state-layer-pressed', pane],
+      [layerHover, page],
+      [layerPressed, page],
+      [layerHover, surface],
+      [layerPressed, surface],
+      [layerHover, fill, page],
     ],
-    'Quiet buttons, menubar triggers and document tabs on hover and press',
+    'Quiet buttons, menubar triggers and document tabs on hover and press, and hovered segments',
   ),
 
   // Fields.
-  ...text('--color-field-text', [field]),
-  ...text('--color-field-label', [field], 'Labels, prefixes, suffixes and icons in the field'),
-  ...text('--color-field-placeholder', [field]),
-  ...text('--color-field-active', [field], 'The label of a focused field'),
-  ...text('--color-field-hint', [canvas, pane, rowSurface], 'Hints sit below the field'),
-  ...text('--color-field-error', [field, canvas, pane, rowSurface], 'Error messages'),
+  ...text('--color-fg-default', [field]),
   ...text(
-    '--color-field-text',
+    '--color-fg-muted',
+    [field],
+    'Labels, prefixes, suffixes, placeholders and icons in the field',
+  ),
+  ...text('--color-border-accent', [field], 'The label of a focused field'),
+  ...text('--color-fg-danger', [field], 'The label and message of an invalid field'),
+  ...text(
+    '--color-fg-default',
     [
-      [fill, canvas],
-      [fill, pane],
-      [fill, dialog],
+      [fill, page],
+      [fill, surface],
+      [fill, raised],
     ],
-    'Quiet fields while focused, and the command palette search',
+    'Quiet fields while focused, the command palette search, active document tabs, keyboard keys, counters and own messages',
   ),
-  ...text('--color-field-placeholder', [[fill, dialog]], 'The command palette search'),
-  ...nonText(
-    '--color-field-border',
-    [field, canvas, pane, rowSurface],
-    "The border is an outlined field's boundary; DropZone uses it too",
-  ),
-  // The focused and invalid borders on the field itself are held to 4.5 above, as label and message.
-  ...nonText('--color-field-active', [canvas, pane], 'The border of a focused field'),
-
-  // Outlined controls and popups: the border is the boundary.
-  ...nonText(
-    '--color-subtle-action-border',
-    ['--color-subtle-action', canvas, pane],
-    'Outlined buttons and Select triggers',
+  ...text(
+    '--color-fg-muted',
+    [
+      [fill, page],
+      [fill, surface],
+      [fill, muted],
+      [fill, popup],
+      [fill, raised],
+    ],
+    'Unselected tabs and segments on their rail, keyboard keys in compact menus, table header cells and the command palette placeholder',
   ),
   ...nonText(
-    '--color-popup-border',
-    [popup, canvas, pane],
-    'Menus, Select lists, popovers and the composer',
+    '--color-border-default',
+    [field, page, surface, muted, raised],
+    'The only boundary of outlined fields, outlined buttons, Select triggers and the track of a switch that is off; DropZone and the empty stars of a Rating take it too',
+  ),
+  ...nonText(
+    '--color-border-accent',
+    [page, surface, popup],
+    'The border of a focused field, and today’s ring in a calendar',
+  ),
+  ...nonText('--color-border-danger', [field, page, surface], 'The border of an invalid field'),
+  ...nonText(
+    '--color-border-muted',
+    [page, surface, muted],
+    'Dividers: decorative at standard contrast, boundaries at high contrast',
+    'high',
+  ),
+  ...nonText(
+    '--elevation-2-border',
+    [popup, page, surface],
+    'The edge of menus, Select lists and popovers: elevation separates them at standard contrast, the edge does at high contrast',
+    'high',
   ),
 
   // Choice controls.
-  ...text('--color-radio-text', [
-    canvas,
-    pane,
-    '--color-radio-row',
-    '--color-radio-row-hover',
-    '--color-radio-row-pressed',
-  ]),
-  ...text('--color-radio-detail', ['--color-radio-row', '--color-radio-row-hover']),
-  ...text('--color-checkbox-text', [canvas, pane]),
-  ...text('--color-switch-text', [canvas, pane]),
-  ...nonText(
-    '--color-radio',
-    [canvas, pane, '--color-radio-row', '--color-radio-row-hover'],
-    'A chosen radio; the chosen row of a row radio group takes the hover fill',
+  ...text(
+    '--color-fg-default',
+    ['--color-bg-muted-hover', '--color-bg-muted-pressed'],
+    'Radio rows',
   ),
-  ...nonText('--color-checkbox-border', [canvas, pane, rowSurface, menuRow]),
-  ...nonText('--color-checkbox', [canvas, pane, rowSurface], 'A checked checkbox'),
+  ...text('--color-fg-muted', ['--color-bg-muted-hover'], 'Radio row details'),
+  ...nonText(
+    '--color-bg-brand-emphasis',
+    [page, surface, muted, '--color-bg-muted-hover', popup, '--color-bg-popup-hover', selected],
+    'A chosen radio, also in a chosen row; check marks in menus and options; the chosen calendar day',
+  ),
+  ...nonText('--color-checkbox', [page, surface, muted], 'A checked checkbox'),
   ...nonText('--color-on-checkbox', [
     '--color-checkbox',
     '--color-checkbox-hover',
     '--color-checkbox-pressed',
   ]),
-  ...nonText('--color-switch-off', [canvas, pane], 'The track of a switch that is off'),
-  ...nonText(
-    '--color-switch-thumb',
-    [
-      ['--color-switch-off', canvas],
-      ['--color-switch-off', pane],
-    ],
-    'The thumb of a switch that is off',
-  ),
-  ...nonText('--color-switch-on', [canvas, pane], 'The track of a switch that is on'),
+  ...nonText('--color-switch-on', [page, surface], 'The track of a switch that is on'),
   ...nonText('--color-switch-thumb-on', [
     '--color-switch-on',
     '--color-switch-on-hover',
     '--color-switch-on-pressed',
   ]),
 
-  // Selection: menus, Select, the command palette, tabs, navigation, trees, tables, calendars.
-  ...text('--color-select-option-text', [
-    '--color-select-option',
-    '--color-select-option-hover',
-    '--color-select-option-pressed',
-    dialog,
-  ]),
+  // Selection: menus, Select, the command palette, tabs, navigation, trees, tables.
   ...text(
-    '--color-on-select-selected',
-    ['--color-select-selected', '--color-select-selected-hover', '--color-select-selected-pressed'],
-    'Selected Select options and the highlighted command palette option',
-  ),
-  ...nonText(
-    '--color-radio',
-    [menuRow, 'menu-row-hover', popup, '--color-select-selected'],
-    'Check marks in menus, Select and Combobox options',
+    '--color-fg-control',
+    [popup, '--color-bg-popup-hover', '--color-bg-popup-pressed', raised],
+    'Select options; the command palette lists them on a dialog',
   ),
   ...text(
-    '--color-text-muted',
+    '--color-fg-on-selected',
+    [selected, '--color-bg-selected-hover', '--color-bg-selected-pressed'],
+    'Selected navigation items, tabs, tree rows and Select options',
+  ),
+  ...text('--color-fg-default', [selected, '--color-bg-selected-hover'], 'Selected table rows'),
+  ...text(
+    '--color-fg-muted',
     [
-      [fill, canvas],
-      [fill, pane],
-      [fill, rowSurface],
-      [fill, popup],
-    ],
-    'Unselected tabs and segments on their rail, and keyboard keys in compact menus',
-  ),
-  ...text(
-    '--color-text-muted',
-    [
-      ['--color-state-layer-hover', fill, canvas],
-      ['--color-state-layer-pressed', fill, canvas],
+      [layerHover, fill, page],
+      [layerPressed, fill, page],
     ],
     'Unselected tabs on hover and press',
   ),
   ...text(
-    '--color-text-primary',
+    '--color-fg-control',
     [
-      [fill, canvas],
-      [fill, pane],
-      ['--color-state-layer-hover', fill, canvas],
-    ],
-    'Active document tabs, keyboard keys, counters, own messages and hovered segments',
-  ),
-  ...text(
-    '--color-on-secondary-action',
-    [
-      ['--color-secondary-action', fill, canvas],
-      ['--color-secondary-action-hover', fill, canvas],
-      ['--color-secondary-action', fill, pane],
+      [fill, fill, page],
+      ['--color-bg-neutral-muted-hover', fill, page],
+      [fill, fill, surface],
     ],
     'The active tab of a secondary tab rail',
   ),
-  ...text('--color-navigation-text', [
-    canvas,
-    pane,
-    '--color-navigation-quiet-hover',
-    '--color-navigation-quiet-pressed',
-    ['--color-state-layer-hover', canvas],
-    ['--color-state-layer-hover', pane],
-  ]),
-  ...nonText('--color-navigation-icon', [canvas, pane]),
   ...text(
-    '--color-on-navigation-selected',
-    [
-      '--color-navigation-selected',
-      '--color-navigation-hover',
-      '--color-navigation-pressed',
-      '--color-row-selected-hover',
-      '--color-row-selected-pressed',
-    ],
-    'Selected navigation items, tabs and tree rows',
+    '--color-fg-control',
+    [navigationHover, navigationPressed, [layerHover, page], [layerHover, surface]],
+    'Navigation labels on hover and press',
   ),
-  ...text(
-    '--color-text-primary',
-    ['--color-navigation-selected', '--color-row-selected-hover'],
-    'Selected table rows',
-  ),
-  ...nonText(
-    '--color-on-navigation-selected',
-    [[fill, canvas]],
-    'The bar of the active document tab; a selected table row is held to 4.5 above',
-  ),
-  ...text('--color-text-muted', [[fill, alternate]], 'Table header cells'),
-  ...text('--color-on-calendar-selected', ['--color-calendar-selected']),
-  ...nonText(
-    '--color-calendar-selected',
-    [popup, canvas, pane],
-    'The chosen day stands out from its surface',
-  ),
-  ...nonText('--color-calendar-today', [popup, canvas, pane], "Today's ring"),
+  ...nonText('--color-fg-on-selected', [[fill, page]], 'The bar of the active document tab'),
 
-  // Status tones as text, on their subtle fills, and as fills for on-tone labels.
+  // Status tones as text, on their tints, and as fills for labels.
+  // The neutral tone is muted text on the neutral fill, which the pairs above already measure.
   ...tones.flatMap((tone) => [
-    ...text(`--color-tone-${tone}`, [
-      canvas,
-      pane,
-      row,
-      [`tone-${tone}-subtle`, canvas],
-      [`tone-${tone}-subtle`, pane],
-    ]),
-    ...text('--color-on-tone', [`--color-tone-${tone}`], 'Solid badges and counters'),
+    ...(tone === 'neutral'
+      ? []
+      : text(toneText(tone), [
+          page,
+          surface,
+          row,
+          [`--color-bg-${tone}-muted`, page],
+          [`--color-bg-${tone}-muted`, surface],
+        ])),
+    ...text('--color-fg-on-emphasis', [`--color-bg-${tone}-emphasis`], 'Solid badges and counters'),
   ]),
   ...(['accent', 'success', 'warning', 'danger'] as const).flatMap((tone) =>
-    text(
-      '--color-text-primary',
-      [[`tone-${tone}-subtle`, canvas]],
-      `Alert tone="${tone === 'danger' ? 'error' : tone === 'accent' ? 'info' : tone}"`,
-    ),
+    text('--color-fg-default', [[`--color-bg-${tone}-muted`, page]], `Alert tone="${tone}"`),
+  ),
+  ...text(
+    '--color-fg-on-strong',
+    ['--color-bg-neutral-strong', '--color-bg-success-strong', '--color-bg-info-strong'],
+    'Toasts and tooltips, and the focus ring of a toast’s dismiss button',
   ),
   ...nonText(
-    '--color-border-strong',
-    [canvas, pane],
-    'The empty stars of a Rating, which show its scale',
+    '--color-fg-on-strong',
+    [
+      '--color-bg-neutral-strong-hover',
+      '--color-bg-success-strong-hover',
+      '--color-bg-info-strong-hover',
+    ],
+    'A toast’s dismiss icon on hover',
   ),
-  ...toastTones.flatMap((tone) => [
-    ...text(
-      '--color-on-toast',
-      [`--color-toast-${tone}`],
-      'Toasts and the focus ring of their dismiss button; tooltips use the neutral one',
-    ),
-    ...nonText('--color-on-toast', [`toast-${tone}-hover`], 'A toast dismiss icon on hover'),
-  ]),
 
   // Content.
-  ...text('--color-chip-text', [
-    ['--color-chip', canvas],
-    ['--color-chip', pane],
-  ]),
-  ...text('--color-field-text', [['--color-chip', field]], 'Combobox chips'),
+  ...text(
+    '--color-fg-accent',
+    [
+      [fill, page],
+      [fill, surface],
+    ],
+    'Chips',
+  ),
+  ...text('--color-fg-default', [[fill, field]], 'Combobox chips'),
   ...text('--color-on-avatar', ['--color-avatar'], 'Avatar initials'),
-  ...text('--color-direction-link-text', [
-    '--color-direction-link',
-    'direction-link-hover',
-    'direction-link-pressed',
-  ]),
-  ...text('--color-direction-link-label', ['--color-direction-link', 'direction-link-hover']),
-  ...nonText('--color-direction-link-icon', ['--color-direction-link', 'direction-link-hover']),
+  ...text(
+    '--color-fg-default',
+    ['--color-bg-raised-hover', '--color-bg-raised-pressed'],
+    'Pager links and rows on a contrasting surface, hovered and pressed',
+  ),
+  ...text('--color-fg-muted', ['--color-bg-raised-hover'], 'Pager link captions on hover'),
   ...nonText(
     '--color-control-blue',
-    [canvas, pane, [fill, canvas]],
-    'Spinners, Slider thumbs and indicators, and Meter indicators on their track',
+    [page, surface, [fill, page]],
+    'Spinners, slider thumbs and indicators, and meter indicators on their track',
   ),
 
-  // Focus rings, against what they are drawn on.
+  // Focus rings, against what they are drawn on. Inset rings on solid fills add an inner ring in the
+  // label's color, which the label pairs above measure.
   ...focus(
-    '--color-focus-ring',
-    [canvas, pane, rowSurface, alternate, row, popup, dialog, field],
+    '--color-border-focus',
+    [page, surface, muted, raised, row, popup, field],
     'Offset rings sit on the surface around the control',
   ),
   ...focus(
-    '--color-focus-ring',
+    '--color-border-focus',
     [
-      'menu-row-hover',
-      '--color-select-option-hover',
-      '--color-select-selected',
-      '--color-navigation-selected',
-      '--color-navigation-quiet-hover',
-      '--color-radio-row-hover',
-      [fill, dialog],
-      ['--color-secondary-action', fill, canvas],
+      '--color-bg-popup-hover',
+      selected,
+      '--color-bg-selected-hover',
+      navigationHover,
+      '--color-bg-muted-hover',
+      [fill, raised],
+      [fill, fill, page],
     ],
     'Inset rings sit on the focused element: menu and Select options, navigation items, tree rows, row radios, the command palette search and tabs',
   ),
-  ...focus(
-    '--color-focus-ring',
-    ['--color-primary-action'],
-    'Inset rings on an active primary tab and on a primary button in a ButtonGroup',
-  ),
-  ...focus('--color-outlined-focus', [canvas, pane], 'Outlined buttons'),
 ];
 
 export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
   return `${pair.fg} on ${pair.bg.join(' over ')}`;
 }
+
+/**
+ * Colors the CSS composes from tokens where they are painted. None: every hover, pressed and
+ * translucent color is a token of its own, so the gate measures what the browser paints. Keep it
+ * empty; add a token instead.
+ */
+export const derived: Readonly<Record<string, string>> = {};
 
 /** The CSS color a name in a pair stands for. */
 export function cssColor(name: string): string {

@@ -678,12 +678,21 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   const css = await readFile(fileURLToPath(ssr.css), 'utf8');
   assert.ok(/\.env-theme\s*\{/.test(css), 'Missing explicit theme boundary.');
   assert.ok(/\[data-env-theme=["']?dark["']?\]/.test(css), 'Missing dark theme boundary.');
-  assert.ok(/--state-lightness-threshold:\s*50/.test(css), 'Preserve the 50% lightness threshold.');
-  assert.ok(/--state-hover-shift:\s*10/.test(css), 'Preserve the 10% hover shift.');
-  assert.ok(/--state-pressed-shift:\s*20/.test(css), 'Preserve the 20% press shift.');
   assert.ok(
-    /--state-lightness-direction:.*sign\(l - var\(--state-lightness-threshold\)\)/.test(css),
-    'Preserve the shared HSL direction rule.',
+    /\[data-env-contrast=["']?high["']?\]/.test(css),
+    'Missing high-contrast theme boundary.',
+  );
+  assert.ok(
+    /@media\s*\(prefers-contrast:\s*more\)/.test(css),
+    'Map prefers-contrast: more onto the high-contrast themes.',
+  );
+  assert.ok(
+    /--color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
+    'Hover and pressed colors are precomputed tokens.',
+  );
+  assert.ok(
+    !/sign\(|--state-[a-z-]*lightness/.test(css),
+    'No runtime lightness rule: every state color is a token the contrast gate can measure.',
   );
   assert.ok(
     /@font-face\s*\{[^}]*font-family:\s*["']envUI Inter["']/.test(css),

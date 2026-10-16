@@ -9,10 +9,8 @@
   /* Controls can opt into their input-aware scale without changing ordinary panes. */
   --env-surface-scale: 1;
   --env-surface-inset: calc(var(--env-surface-padding) * var(--env-surface-scale));
-  --env-surface-hover: hsl(from var(--env-surface-color) h s var(--state-surface-hover-lightness));
-  --env-surface-pressed: hsl(
-    from var(--env-surface-color) h s var(--state-surface-pressed-lightness)
-  );
+  --env-surface-hover: var(--color-bg-default-hover);
+  --env-surface-pressed: var(--color-bg-default-pressed);
   padding: var(--env-surface-inset);
   border: 0;
   border-radius: calc(var(--env-surface-radius) * var(--env-surface-scale));
@@ -20,12 +18,18 @@
 }
 .env-surface-row {
   --env-surface-color: var(--color-surface-muted);
+  --env-surface-hover: var(--color-bg-muted-hover);
+  --env-surface-pressed: var(--color-bg-muted-pressed);
 }
 .env-surface-canvas {
   --env-surface-color: var(--color-canvas);
+  --env-surface-hover: var(--color-bg-page-hover);
+  --env-surface-pressed: var(--color-bg-page-pressed);
 }
 .env-surface-alternate {
   --env-surface-color: var(--color-surface);
+  --env-surface-hover: var(--color-bg-raised-hover);
+  --env-surface-pressed: var(--color-bg-raised-pressed);
 }
 .env-surface-corners-standard {
   --env-surface-radius: var(--radius-standard);
