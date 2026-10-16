@@ -60,9 +60,29 @@
     }
   },
   "interactive": {
-    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive.",
+    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
     "elements": ["button", "a", "input", "textarea", "select"],
-    "roles": ["button"],
+    "roles": [
+      "button",
+      "link",
+      "checkbox",
+      "radio",
+      "switch",
+      "slider",
+      "combobox",
+      "listbox",
+      "option",
+      "menu",
+      "menuitem",
+      "menuitemcheckbox",
+      "menuitemradio",
+      "tab",
+      "tablist",
+      "tree",
+      "treeitem",
+      "grid",
+      "gridcell"
+    ],
     "leafControls": {
       "internal/ActionElement.tsx": ["a", "button"],
       "forms/TextField.tsx": ["input"],
@@ -72,7 +92,10 @@
       "forms/Radio.tsx": ["input"],
       "forms/Switch.tsx": ["input"],
       "forms/DropZone.tsx": ["input"],
-      "actions/SegmentedControl.tsx": ["button"]
+      "actions/SegmentedControl.tsx": ["button"],
+      "navigation/Tree.tsx": ["role=\"tree\"", "role=\"treeitem\""],
+      "forms/Calendar.tsx": ["role=\"grid\""],
+      "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""]
     }
   },
   "classes": {

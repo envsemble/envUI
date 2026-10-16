@@ -16,15 +16,20 @@
     { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
     { "module": "content/Table.tsx", "element": "button", "count": 1 },
     { "module": "feedback/CommandPalette.tsx", "element": "input", "count": 1 },
+    { "module": "feedback/CommandPalette.tsx", "element": "role=\"listbox\"", "count": 1 },
+    { "module": "feedback/CommandPalette.tsx", "element": "role=\"option\"", "count": 1 },
     { "module": "feedback/toast/Toast.tsx", "element": "button", "count": 1 },
     { "module": "forms/Composer.tsx", "element": "textarea", "count": 1 },
     { "module": "forms/DropZone.tsx", "element": "button", "count": 1 },
     { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 },
     { "module": "navigation/Breadcrumbs.tsx", "element": "button", "count": 1 },
     { "module": "navigation/DocumentTabs.tsx", "element": "button", "count": 1 },
+    { "module": "navigation/DocumentTabs.tsx", "element": "role=\"tab\"", "count": 1 },
+    { "module": "navigation/DocumentTabs.tsx", "element": "role=\"tablist\"", "count": 1 },
     { "module": "navigation/PanelDock.tsx", "element": "button", "count": 2 },
     { "module": "rich-text/Reference.tsx", "element": "a", "count": 1 },
-    { "module": "rich-text/RichTextEditor.tsx", "element": "input", "count": 1 }
+    { "module": "rich-text/RichTextEditor.tsx", "element": "input", "count": 1 },
+    { "module": "rich-text/Suggestions.tsx", "element": "role=\"listbox\"", "count": 1 }
   ],
   "tsxClasses": [
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip", "count": 1 },
