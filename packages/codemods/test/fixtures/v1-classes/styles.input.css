@@ -54,3 +54,10 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 [data-variant='env-notice'] {
   color: inherit;
 }
+
+/* DiffCount's label had the counter's class; DiffStat names it for itself. */
+.env-diff-count .env-counter-label,
+.env-diff-count:hover > .env-counter-label,
+.env-counter .env-counter-label {
+  clip-path: inset(50%);
+}

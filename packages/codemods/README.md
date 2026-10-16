@@ -71,6 +71,8 @@ It reports instead of changing:
 
 Renames 0.x `env-*` class names and custom properties. An entry also renames every name that continues it with a hyphen, the longest entry wins, and names that already have the new name are left alone: `env-notice-title` becomes `env-alert-title`, `--env-notice-tone` becomes `--env-alert-tone`, and `env-counter-badge` stays.
 
+A few classes depend on where they are. 0.7 gave DiffCount's label the counter's class, `env-counter-label`, which becomes `env-counter-badge-label`; 1.0's DiffStat names its label `env-diff-stat-label`. In a selector that puts the class inside DiffCount, such as `.env-diff-count .env-counter-label` or `.env-diff-count > .env-counter-label`, the label takes the DiffStat name. A selector nested inside a DiffCount rule in Sass or Less, and class names in markup, are not changed by context: rename those by hand.
+
 - **Style sheets** (`.css`, `.scss`, `.sass`, `.less`, `.pcss`): `.env-*` class selectors, including those inside `:is()` and `:not()`; `--env-*` custom property declarations and `var()` uses; and `[class~='env-*']`, `[class*='env-*']` and similar attribute selectors.
 - **Scripts:** whole class tokens in strings and template literals inside JSX `className` and `class` attributes, including `classNames()`, `clsx()` and conditional expressions; `className` properties and assignments; selectors passed to `querySelector`, `querySelectorAll`, `closest` and `matches`; `classList` methods and `getElementsByClassName`; and `--env-*` custom properties in `style` attributes, string property keys, `style.setProperty()` and `var()` references in any string. Only the literals change, so the rest of the file keeps its formatting.
 
@@ -78,7 +80,7 @@ Both transforms keep a file's line endings, CRLF or LF, and its byte order mark;
 
 ## The rename map
 
-`src/maps/v1.json` is the single source of the renames: `exports` (old export name to new name per entry point; a dot names a namespace part), `split` (components that became several parts, chosen by a prop value), `removed` (exports that became internal, with what to use instead), `classes` and `docs` (documentation page slugs). The transforms hardcode no names. Pass `--map` to run them with a map of the same shape; the map is checked before anything runs.
+`src/maps/v1.json` is the single source of the renames: `exports` (old export name to new name per entry point; a dot names a namespace part), `split` (components that became several parts, chosen by a prop value), `removed` (exports that became internal, with what to use instead), `classes`, `classesWithin` (class renames inside an ancestor's selector) and `docs` (documentation page slugs). The transforms hardcode no names. Pass `--map` to run them with a map of the same shape; the map is checked before anything runs.
 
 ## Limitations
 

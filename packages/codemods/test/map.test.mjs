@@ -16,7 +16,7 @@ test('the v1 map is well-formed', () => {
 });
 
 test('the v1 map has the expected sections', () => {
-  for (const section of ['exports', 'split', 'removed', 'classes', 'docs'])
+  for (const section of ['exports', 'split', 'removed', 'classes', 'classesWithin', 'docs'])
     assert.ok(isObject(map[section]), section);
   assert.equal(map.package, '@envsemble/envui');
   assert.match(map.version, /^1\.0\.0/);
@@ -106,6 +106,18 @@ test('validateMap reports malformed maps', () => {
   assert.match(problems({ classes: { 'env-a': 'Env-B' } }), /env- class name/);
   assert.match(problems({ classes: { 'env-a': 'env-b', 'env-b': 'env-c' } }), /renames again/);
   assert.match(problems({ docs: { a: 'a' } }), /maps to itself/);
+  assert.match(problems({ classesWithin: { 'env-a': { 'env-b': 'B' } } }), /env- class name/);
+  assert.match(
+    problems({ classes: { 'env-c': 'env-d' }, classesWithin: { 'env-a': { 'env-b': 'env-c' } } }),
+    /classes renames again/,
+  );
+});
+
+test('a class inside an ancestor takes its own name in the ancestor selector', () => {
+  const { classesWithin } = loadMap();
+  assert.deepEqual(classesWithin, [
+    { ancestor: 'env-diff-count', from: 'env-counter-label', to: 'env-diff-stat-label' },
+  ]);
 });
 
 test('loadMap reports a map it cannot read or that is malformed', () => {

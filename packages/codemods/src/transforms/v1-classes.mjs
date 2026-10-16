@@ -32,9 +32,22 @@ const attributeName = /(?<![A-Za-z0-9_-])env-[a-z0-9][a-z0-9_-]*(?![A-Za-z0-9_-]
 /** A whole whitespace-separated `env-*` class token. */
 const classToken = /(?<!\S)env-[a-z0-9][a-z0-9_-]*(?!\S)/g;
 
+/**
+ * Renames the classes that depend on an ancestor first: in one selector, a `.from` class after the
+ * `.ancestor` class, as in `.env-diff-count > .env-counter-label`, becomes `.to`.
+ */
+function renameWithin(text, classesWithin) {
+  let output = text;
+  for (const { ancestor, from, to } of classesWithin) {
+    const inside = new RegExp(String.raw`(\.${ancestor}(?![\w-])[^{},;]*?\.)${from}(?![\w-])`, 'g');
+    output = output.replace(inside, (match, before) => before + to);
+  }
+  return output;
+}
+
 /** Renames class selectors, attribute selectors and custom properties in style sheet text. */
-export function renameInStyles(text, classes) {
-  return text
+export function renameInStyles(text, classes, classesWithin = []) {
+  return renameWithin(text, classesWithin)
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
@@ -71,10 +84,10 @@ function lineStarts(source) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { classes } = loadMap(options.map);
+  const { classes, classesWithin } = loadMap(options.map);
   if (!file.source.includes('env-')) return undefined;
   if (styleSheets.has(extname(file.path).toLowerCase())) {
-    const output = renameInStyles(file.source, classes);
+    const output = renameInStyles(file.source, classes, classesWithin);
     return output === file.source ? file.source : output;
   }
 
@@ -167,7 +180,7 @@ export default function transform(file, api, options = {}) {
 
   const rewrite = (text, mode, atStart) =>
     mode === 'selector'
-      ? renameInStyles(text, classes)
+      ? renameInStyles(text, classes, classesWithin)
       : mode === 'property'
         ? renameCustomProperties(text, classes)
         : mode === 'var'
