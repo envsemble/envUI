@@ -55,7 +55,7 @@
   --env-field-border-color: var(--env-field-border-base);
   position: relative;
   min-width: 0;
-  border: 0.0625rem solid var(--env-field-border-color);
+  border: var(--control-border-width) solid var(--env-field-border-color);
   border-radius: var(--radius-large);
   background: var(--color-field);
   transition: border-color var(--motion-duration-medium) var(--motion-ease);
@@ -369,8 +369,10 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
      block padding gives way where a line and the padding would outgrow it. */
   flex: 1 1 auto;
   min-height: 0;
-  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- the border's two hairlines */
-  padding-block: min(var(--space-1), calc((var(--env-field-height) - 0.125rem - 1lh) / 2));
+  padding-block: min(
+    var(--space-1),
+    calc((var(--env-field-height) - 2 * var(--control-border-width) - 1lh) / 2)
+  );
 }
 /* The label rests at the vertical center and floats into the outline like a tall field's, without
    reserving space above the field, so the field still lines up with adjacent buttons. */
@@ -392,7 +394,7 @@ textarea.env-text-input:disabled + .env-textarea-resize-edge {
   white-space: nowrap;
 }
 .env-text-field:not([data-tall]) .env-text-field-end {
-  --control-height: calc(var(--env-field-height) - var(--space-2));
+  --control-height: max(var(--control-target-min), calc(var(--env-field-height) - var(--space-2)));
   inset-inline-end: var(--space-1);
 }
 .env-text-field:not([data-tall]) .env-text-field-well[data-end-action] > .env-text-input {

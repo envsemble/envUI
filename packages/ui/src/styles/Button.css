@@ -10,9 +10,12 @@
   min-height: var(--control-height);
   /* The block padding gives way where a line of the label and the padding would outgrow the
      control height, as in a small control of the compact scale. */
-  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- the border's two hairlines */
-  padding: min(var(--space-1), calc((var(--control-height) - 0.125rem - 1lh) / 2)) var(--space-3);
-  border: 0.0625rem solid transparent;
+  padding: min(
+      var(--space-1),
+      calc((var(--control-height) - 2 * var(--control-border-width) - 1lh) / 2)
+    )
+    var(--space-3);
+  border: var(--control-border-width) solid transparent;
   border-radius: 100vmax;
   font: var(--body-font-weight) var(--font-size-label) / 1.4 var(--font-family);
   white-space: normal;
@@ -162,15 +165,12 @@
   background: var(--color-destructive-action-pressed);
 }
 
-/* Important buttons are small and square-cornered unless they set a size. */
+/* Important buttons have square corners; like every button they take the row's control height. */
 .env-button-important {
   background: var(--color-bg-important-strong);
   color: var(--color-fg-on-strong);
   border: 0;
   border-radius: var(--radius-standard);
-}
-.env-button-important:not([data-size]) {
-  --control-height: var(--control-height-sm);
 }
 
 .env-button-important:hover:not(:disabled):not([aria-disabled='true']) {
@@ -212,17 +212,43 @@
 }
 
 /* Under a coarse pointer, a button smaller than the touch height keeps its look and gains an
-   invisible hit area of that height and width around it. A link-like text button in running text
-   keeps its own, and so does a button that already covers its row. */
+   invisible hit area around it, up to that height and width, which grows only into free space: not
+   towards a sibling beside it in a row, or above or below it in a column, whose own presses it
+   would take. A container of joined controls, such as ButtonGroup or a tab rail, grows its controls
+   instead and sets --env-button-hit-area to 0rem. A link-like text button in running text keeps
+   its own hit area, and so does a button that already covers its row. */
 @media (pointer: coarse) {
   :where(.env-button:not(.env-link, [data-row-target])) {
     position: relative;
   }
   .env-button:not(.env-link, [data-row-target])::before {
+    --env-button-hit-slop: min(
+      0%,
+      calc((100% - var(--env-button-hit-area, var(--control-height-touch))) / 2)
+    );
     content: '';
     position: absolute;
-    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
-    inset-inline: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset: var(--env-button-hit-slop);
+  }
+  .env-button:not(.env-link, [data-row-target]):has(+ *)::before {
+    inset-inline-end: 0%;
+  }
+  * + .env-button:not(.env-link, [data-row-target])::before {
+    inset-inline-start: 0%;
+  }
+  /* In a column, the neighbours are above and below. */
+  :is(.env-stack, .env-action-group[data-stacked])
+    > .env-button:not(.env-link, [data-row-target])::before {
+    inset: var(--env-button-hit-slop);
+  }
+  :is(.env-stack, .env-action-group[data-stacked])
+    > .env-button:not(.env-link, [data-row-target]):has(+ *)::before {
+    inset-block-end: 0%;
+  }
+  :is(.env-stack, .env-action-group[data-stacked])
+    > *
+    + .env-button:not(.env-link, [data-row-target])::before {
+    inset-block-start: 0%;
   }
 }
 

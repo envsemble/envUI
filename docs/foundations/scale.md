@@ -40,35 +40,39 @@ Within a scale, a control's **size** (`sm`, `md` or `lg`) chooses one of three h
 
 At the default 16 px root. Every value is a token, in rem, so it follows the reader's text size.
 
-| Token                                                       | Comfortable           | Compact               |
-| ----------------------------------------------------------- | --------------------- | --------------------- |
-| `--control-height-xs` / `-sm` / `-md` / `-lg`               | 24 / 32 / 40 / 48     | 20 / 26 / 32 / 38     |
-| `--row-height` (menu, Select and Combobox rows)             | 36                    | 28                    |
-| `--row-padding-block-xs` / `-sm` / `-md` / `-lg`            | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
-| `--space-1` … `--space-9`                                   | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
-| `--control-gap`                                             | 7                     | 6                     |
-| `--font-size-caption` / `-body-small` / `-label`            | 12 / 14 / 14          | 11 / 12 / 13          |
-| `--font-size-body` / `-heading-small` / `-heading`          | 15 / 16 / 18          | 13 / 14 / 16          |
-| `--icon-size-sm` / `-md` / `-lg`                            | 16 / 18 / 20          | 16 / 16 / 18          |
-| `--radius-standard` / `--radius-large` / `--radius-surface` | 8 / 16 / 28           | 6 / 12 / 22           |
-| `--field-floating-height`                                   | 56                    | 44                    |
-| `--topbar-height` / `--title-bar-height`                    | 52 / 40               | 42 / 32               |
-| Borders, focus rings, `--control-height-touch`              | 1, 2, 44              | 1, 2, 44              |
+| Token                                                           | Comfortable           | Compact               |
+| --------------------------------------------------------------- | --------------------- | --------------------- |
+| `--control-height-sm` / `-md` / `-lg`                           | 32 / 40 / 48          | 26 / 32 / 38          |
+| `--control-target-min`                                          | 24                    | 24                    |
+| `--row-height` (menu, Select and Combobox rows)                 | 36                    | 28                    |
+| `--row-content-height` (tree rows)                              | 20                    | 22                    |
+| `--row-padding-block-xs` / `-sm` / `-md` / `-lg`                | 2 / 4 / 8 / 12        | 2 / 3 / 4 / 6         |
+| `--space-1` … `--space-9`                                       | 4, 8, 12, 16, 24 … 64 | 4, 6, 10, 12, 20 … 52 |
+| `--control-gap`                                                 | 7                     | 6                     |
+| `--font-size-caption` / `-body-small` / `-label`                | 12 / 14 / 14          | 11 / 12 / 13          |
+| `--font-size-label-small` (combobox chips)                      | 13                    | 12                    |
+| `--font-size-body` / `-heading-small` / `-heading`              | 15 / 16 / 18          | 13 / 14 / 16          |
+| `--icon-size-sm` / `-md` / `-lg`                                | 16 / 18 / 20          | 16 / 16 / 18          |
+| `--radius-standard` / `--radius-large` / `--radius-surface`     | 8 / 16 / 28           | 6 / 12 / 22           |
+| `--field-floating-height` (inside the 1 px border)              | 56                    | 44                    |
+| `--topbar-height` / `--title-bar-height`                        | 52 / 40               | 42 / 32               |
+| `--control-border-width`, focus rings, `--control-height-touch` | 1, 2, 44              | 1, 2, 44              |
 
-- A tree row is its 20 px content line plus its density's padding on both sides: 28 at `sm`, the default, and 36 at `md` in the comfortable scale. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
+- A tree row is its content line plus its density's padding on both sides: 28 at `sm`, the default, and 36 at `md` in the comfortable scale, and 28 at `sm` and 30 at `md` in the compact one. A table cell adds 4 px to its row padding, so a `md` table row of one line is 45 px tall, and a list row is at least as tall as a small control with its padding, 56 px at `md`.
 - Controls in table cells take the small control height, so a row with an action stays close to the height of its text.
 - `--control-height` is the height of a control that sets no size: md, unless its container sets it to another control height. Set it in an application's own toolbar the same way: `--control-height: var(--control-height-sm)`.
 
 ## Fields
 
 - A field takes the control height of its size and is a pill, so it lines up with buttons. Its label rests inside while the field is empty and floats into the outline, without changing the height; `showLabel={false}` hides it and leaves the placeholder as the visible guidance.
-- `variant="floating"` on TextField, Combobox and DatePicker is the tall field, 3.5 rem in the comfortable scale, whose label floats above the value, for a long form on a page. Plain fields and text areas are tall too.
+- `variant="floating"` on TextField, Combobox and DatePicker is the tall field, whose label floats above the value, for a long form on a page: 58 px with its border in the comfortable scale and 46 px in the compact one. Plain fields and text areas are tall too.
 - Menus and the popups of Select and Combobox share one anatomy: a raised popup with small corners and rows of `--row-height`, where a check mark shows the chosen option.
 
 ## Touch
 
-- Under a coarse pointer, a control smaller than 44 px (`--control-height-touch`) keeps its look and gains an invisible hit area that tall and wide, in either scale. Rows, such as menu items, tree rows and navigation items, and text fields grow to 44 px instead, and entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
-- Every interactive target is at least 24 px in both scales, WCAG 2.2's minimum.
+- Under a coarse pointer, a button, an icon button or a menubar trigger smaller than 44 px (`--control-height-touch`) keeps its look and gains an invisible hit area up to 44 px tall and wide, in either scale. The hit area grows only into free space: never towards a control beside it in a row, or above or below it in a column, so a press on a control always reaches that control.
+- Controls joined in a rail or a group, such as segments, tabs and the buttons of a ButtonGroup, grow to 44 px themselves under a coarse pointer, and so do rows, such as menu items, tree rows and navigation items, and text fields. Entered text becomes 1 rem, so touch browsers don't zoom into a focused field.
+- With a mouse, every target is at least 24 px in both scales, WCAG 2.2's minimum: segments, tabs and the actions inside fields keep 24 px even in a small rail or field of the compact scale. A few targets are shorter but keep 24 px of room around them, which WCAG 2.5.8 allows as its spacing exception: a breadcrumb link, a line of text 21 px tall, and the remove button of a combobox chip.
 
 ## Guidelines
 

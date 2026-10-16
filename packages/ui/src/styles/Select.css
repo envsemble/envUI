@@ -11,7 +11,7 @@
 }
 /* A transparent border lets an invalid secondary trigger show the error color without resizing. */
 .env-button-secondary.env-dropdown-trigger {
-  border: 0.0625rem solid var(--env-field-border-base, transparent);
+  border: var(--control-border-width) solid var(--env-field-border-base, transparent);
 }
 .env-button-secondary.env-dropdown-trigger[aria-expanded='true']:not(:disabled, :active) {
   background: var(--color-secondary-action-hover);

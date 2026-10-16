@@ -482,12 +482,12 @@ test.describe('on a coarse pointer', () => {
     const action = composerOf(field).getByRole('button', { name: 'Send' });
     await expect(action).toHaveCSS('width', '40px');
     await expect(action).toHaveCSS('height', '40px');
-    // An invisible overlay around the action is 2.75 rem tall and wide.
+    // An invisible overlay around the action is 2.75 rem tall; it leaves the text beside it alone.
     const overlay = await action.evaluate((element) => {
       const style = getComputedStyle(element, '::before');
       return { top: parseFloat(style.top), left: parseFloat(style.left) };
     });
-    expect(overlay).toEqual({ top: -2, left: -2 });
+    expect(overlay).toEqual({ top: -2, left: 0 });
     await expect(field).toHaveCSS('font-size', '16px');
     expect((await field.boundingBox())!.height).toBeCloseTo(40, 0);
   });

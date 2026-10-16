@@ -152,7 +152,7 @@ export function Tabs({
       : defaultValue;
   const list = (
     <BaseTabs.List
-      render={<Surface tone="row" padding={1} corners="pill" />}
+      render={<Surface tone="row" corners="pill" />}
       aria-label={label}
       data-size={size}
       className={classNames('env-tabs-list', listClassName)}

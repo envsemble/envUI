@@ -17,11 +17,11 @@
   display: inline-flex;
   align-items: stretch;
   gap: var(--space-1);
-  /* The padding gives way where a segment's line, its label size times 1.4, would outgrow a small
-     rail of the compact scale. */
+  /* The padding gives way where a segment would be shorter than the smallest target, as in a
+     small rail of the compact scale. */
   --env-segmented-control-inset: min(
     var(--space-1),
-    calc((var(--control-height) - 1.4 * var(--font-size-label)) / 2)
+    calc((var(--control-height) - var(--control-target-min)) / 2)
   );
   padding: var(--env-segmented-control-inset);
   min-block-size: var(--control-height);
@@ -39,7 +39,12 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: 0 var(--space-4);
+  /* The block padding gives way where a line and the padding would outgrow the segment. */
+  padding: min(
+      var(--space-1),
+      calc((var(--control-height) - 2 * var(--env-segmented-control-inset) - 1lh) / 2)
+    )
+    var(--space-4);
   border: 0;
   border-radius: 100vmax;
   background: transparent;
@@ -75,16 +80,14 @@
   outline: 0.125rem solid var(--color-focus-ring);
   outline-offset: 0.125rem;
 }
-/* Under a coarse pointer, a segment keeps its look and gains a hit area of the touch height. */
+/* Under a coarse pointer the segments grow to the touch height themselves: an overlay would reach
+   over the next segment, and out of the rail, which scrolls. */
 @media (pointer: coarse) {
   .env-segment {
-    position: relative;
-  }
-  .env-segment::before {
-    content: '';
-    position: absolute;
-    inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
-    inset-inline: 0;
+    min-block-size: max(
+      calc(var(--control-height) - 2 * var(--env-segmented-control-inset)),
+      var(--control-height-touch)
+    );
   }
 }
 .env-segment[data-disabled] {

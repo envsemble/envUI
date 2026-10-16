@@ -82,7 +82,7 @@ The family builds on it:
 
 - Initials are the first letters of the first and last words of `name`, or the first two letters of a single word, in capitals, at 0.4 of the avatar's size, and read at 5:1 on the avatar blue.
 - An AvatarButton is its avatar plus 0.25 rem of halo on every side.
-- In an AvatarGroup, each avatar lies over the one before it by a quarter of its size, and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. A standard group is as tall as a 2 rem compact control. A group never wraps or shrinks; choose `max` to fit the room.
+- In an AvatarGroup, each avatar lies over the one before it by a quarter of its size, and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. A standard group is as tall as a small control, 2 rem. A group never wraps or shrinks; choose `max` to fit the room.
 - On touch screens, pressable avatars in a group keep at least 1.5 rem uncovered, so small ones sit side by side.
 
 ## States and behaviour

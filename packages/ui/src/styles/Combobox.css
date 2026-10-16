@@ -17,7 +17,10 @@
    end. While one row tall it is a pill; wrapped chips keep the same rounded ends. */
 .env-combobox .env-combobox-well {
   --env-combobox-row: 1.375rem;
-  --env-combobox-action: calc(var(--env-field-height) - var(--space-2));
+  --env-combobox-action: max(
+    var(--control-target-min),
+    calc(var(--env-field-height) - var(--space-2))
+  );
   --env-combobox-actions: 1;
   --env-combobox-end: var(--space-1);
   display: flex;
@@ -115,7 +118,7 @@
   outline: none;
 }
 .env-combobox:not([data-tall]) .env-combobox-chip {
-  font-size: calc(var(--font-size-label) - 0.0625rem);
+  font-size: var(--font-size-label-small);
 }
 .env-combobox-chip:not(:has(> .env-combobox-chip-remove)) {
   padding-inline-end: var(--space-2);

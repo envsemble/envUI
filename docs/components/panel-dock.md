@@ -62,7 +62,7 @@ The application owns the panels: which exist, their order and mode, which one is
 2. **Row**: the open panels, 0.5 rem apart at the bottom inline-end edge, the newest at the end.
 3. **Panel** (each item of `panels`): a labelled region on the dialog surface, with a hairline border and a shadow, its top corners 1.75 rem. The active panel is in front, with a deeper shadow.
 4. **Resize handle**: the panel's top edge, a 0.75 rem band between its rounded corners; a 2.5 rem bar shows on hover, in the focus color with the keyboard and while dragging.
-5. **Header** (PanelDockHeader): sticks to the top of the content, with 0.75 rem block and 1.5 rem start padding. The **title** is a heading in 1.125 rem medium text and the **meta** below it 0.875 rem muted text; the **actions** and the **window controls** (PanelDockControls) are 2 rem compact icon buttons at the end; `children`, such as Tabs, go below the title row.
+5. **Header** (PanelDockHeader): sticks to the top of the content, with 0.75 rem block and 1.5 rem start padding. The **title** is a heading in 1.125 rem medium text and the **meta** below it 0.875 rem muted text; the **actions** and the **window controls** (PanelDockControls) are 2 rem small icon buttons at the end; `children`, such as Tabs, go below the title row.
 6. **Content**: the panel's body from `children`, which scrolls within the panel below the header.
 7. **Strip of chips**: minimized panels at the bottom inline-end, in panel order. Each **chip** is 2 rem tall and at most 14 rem wide, on the popup surface with 0.5 rem top corners: an optional icon, the label, an attention dot and a close button.
 8. **Maximized panel**: fills the region above the chips, behind the open panels, without border or corners.

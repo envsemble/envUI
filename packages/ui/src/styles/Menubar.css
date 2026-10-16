@@ -39,7 +39,8 @@
   opacity: var(--state-disabled-opacity);
   cursor: default;
 }
-/* Under a coarse pointer, each trigger keeps its look and gains a hit area of the touch height. */
+/* Under a coarse pointer, each trigger keeps its look and gains a hit area of the touch height,
+   which grows above and below it and at the menubar's ends, not over the next trigger. */
 @media (pointer: coarse) {
   .env-menubar-trigger {
     position: relative;
@@ -48,7 +49,13 @@
     content: '';
     position: absolute;
     inset-block: min(0%, calc((100% - var(--control-height-touch)) / 2));
-    inset-inline: min(0%, calc((100% - var(--control-height-touch)) / 2));
+    inset-inline: 0%;
+  }
+  .env-menubar-trigger:first-child::before {
+    inset-inline-start: min(0%, calc((100% - var(--control-height-touch)) / 2));
+  }
+  .env-menubar-trigger:last-child::before {
+    inset-inline-end: min(0%, calc((100% - var(--control-height-touch)) / 2));
   }
 }
 /* Access keys are underlined while Alt is held, or while the keyboard has activated the menubar. */

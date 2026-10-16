@@ -14,7 +14,10 @@
 /* The actions at the end are as tall as the field's own icon buttons: the small control height in a
    floating field, a little less than the field elsewhere. */
 .env-date-picker .env-date-picker-well {
-  --env-date-picker-action: calc(var(--env-field-height) - var(--space-2));
+  --env-date-picker-action: max(
+    var(--control-target-min),
+    calc(var(--env-field-height) - var(--space-2))
+  );
   --env-date-picker-actions: 1;
   --env-date-picker-end: var(--space-1);
 }

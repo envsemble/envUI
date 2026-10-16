@@ -66,10 +66,10 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 ## Variants and sizes
 
-| Variant    | Use for                                                                                                     |
-| ---------- | ----------------------------------------------------------------------------------------------------------- |
-| `outlined` | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default. |
-| `floating` | A long form on a page: the 3.5 rem field whose label floats above the value, as TextField's floating one.   |
+| Variant    | Use for                                                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `outlined` | In forms, dialogs and toolbars: the field at the control height of its `size`, as a TextField. The default.                       |
+| `floating` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's floating one. |
 
 <!-- specimen: States -->
 

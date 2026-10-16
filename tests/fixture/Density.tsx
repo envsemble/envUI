@@ -1,7 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import {
   Badge,
+  Breadcrumbs,
   Button,
+  ButtonGroup,
   Checkbox,
   Combobox,
   CopyButton,
@@ -109,7 +111,7 @@ function SizeRow({ size }: { size: ControlSize }) {
       <TextField size={size} label="Name" defaultValue="Quarterly report" />
       <SearchField size={size} label="Search" placeholder="Search" />
       <Select size={size} aria-label="Plan" options={plans} defaultValue="team" />
-      <Combobox size={size} label="Owner" items={owners} />
+      <Combobox size={size} label="Owner" items={owners} defaultValue="sam-lee" clearable />
       <DatePicker size={size} label="Due" />
       <SegmentedControl
         size={size}
@@ -123,6 +125,23 @@ function SizeRow({ size }: { size: ControlSize }) {
       />
       <CopyButton size={size} value="Quarterly report" aria-label="Copy title" />
       <Pagination size={size} page={page} pageSize={25} total={240} onPageChange={setPage} />
+      <ButtonGroup aria-label="Alignment">
+        <Button size={size} variant="secondary">
+          Left
+        </Button>
+        <Button size={size} variant="secondary">
+          Right
+        </Button>
+      </ButtonGroup>
+      <Tabs
+        aria-label="Views"
+        size={size}
+        items={['Overview', 'Activity'].map((name) => ({
+          value: name.toLowerCase(),
+          button: <Button variant="secondary">{name}</Button>,
+          content: null,
+        }))}
+      />
     </Row>
   );
 }
@@ -399,8 +418,16 @@ function Sidebar({ label }: { label: string }) {
 function NavigationSection() {
   return (
     <div className="density-columns">
-      <Column title="NavList.Item">
+      <Column title="NavList.Item and Breadcrumbs">
         <Sidebar label="Navigation" />
+        <Breadcrumbs
+          aria-label="Location"
+          items={[
+            { label: 'Plans', href: '#plans' },
+            { label: 'Design', href: '#design' },
+            { label: 'Quarterly review' },
+          ]}
+        />
       </Column>
       <Column title="Tree (default) for comparison">
         <div className="density-tree-frame">

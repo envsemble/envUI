@@ -2705,6 +2705,17 @@ export const tokens = {
       'dark-high-contrast': '#ffffff',
     },
   },
+  /** The hairline border of controls and fields, which stays 1 px in both scales. */
+  'control.border-width': {
+    cssVariable: '--control-border-width',
+    type: 'dimension',
+    values: {
+      light: '1px',
+      dark: '1px',
+      'light-high-contrast': '1px',
+      'dark-high-contrast': '1px',
+    },
+  },
   'control.font-size': {
     cssVariable: '--control-font-size',
     type: 'dimension',
@@ -2785,18 +2796,6 @@ export const tokens = {
       'dark-high-contrast': '2.75rem',
     },
   },
-  /** The extra-small control height, for actions inside a row or a chip. Kept at 1.5 rem or more by the hit area wherever it is pressed. */
-  'control.height-xs': {
-    cssVariable: '--control-height-xs',
-    type: 'dimension',
-    values: {
-      light: '1.5rem',
-      dark: '1.5rem',
-      'light-high-contrast': '1.5rem',
-      'dark-high-contrast': '1.5rem',
-    },
-    scales: { compact: '1.25rem' },
-  },
   /** The icon in a control. 1 rem in both scales: icons never get smaller than this. */
   'control.icon-size': {
     cssVariable: '--control-icon-size',
@@ -2806,6 +2805,17 @@ export const tokens = {
       dark: '1rem',
       'light-high-contrast': '1rem',
       'dark-high-contrast': '1rem',
+    },
+  },
+  /** The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this. */
+  'control.target-min': {
+    cssVariable: '--control-target-min',
+    type: 'dimension',
+    values: {
+      light: '1.5rem',
+      dark: '1.5rem',
+      'light-high-contrast': '1.5rem',
+      'dark-high-contrast': '1.5rem',
     },
   },
   'elevation.0.border': {
@@ -2977,6 +2987,18 @@ export const tokens = {
       'dark-high-contrast': '0.875rem',
     },
     scales: { compact: '0.8125rem' },
+  },
+  /** A label inside a field at the control height, such as a combobox chip's. */
+  'font.size.label-small': {
+    cssVariable: '--font-size-label-small',
+    type: 'dimension',
+    values: {
+      light: '0.8125rem',
+      dark: '0.8125rem',
+      'light-high-contrast': '0.8125rem',
+      'dark-high-contrast': '0.8125rem',
+    },
+    scales: { compact: '0.75rem' },
   },
   /** A leading icon in a large row, such as a list item's. */
   'icon.size-lg': {
@@ -3219,6 +3241,7 @@ export const tokens = {
       'light-high-contrast': '1.25rem',
       'dark-high-contrast': '1.25rem',
     },
+    scales: { compact: '1.375rem' },
   },
   /** The row of a menu and of a select's or combobox's popup. */
   'row.height': {

@@ -2,10 +2,6 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "control": {
     "$type": "dimension",
-    "height-xs": {
-      "$description": "The extra-small control height, for actions inside a row or a chip. Kept at 1.5 rem or more by the hit area wherever it is pressed.",
-      "$value": { "value": 1.5, "unit": "rem" }
-    },
     "height-sm": {
       "$description": "The small control height: a control of size sm, the actions in a table cell, a title bar or a panel header.",
       "$value": { "value": 2, "unit": "rem" }
@@ -21,6 +17,14 @@
     "height": {
       "$description": "The height a control takes when it sets no size: md, unless a container sets it to another control height for what it holds, as a table cell does with sm.",
       "$value": "{control.height-md}"
+    },
+    "target-min": {
+      "$description": "The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this.",
+      "$value": { "value": 1.5, "unit": "rem" }
+    },
+    "border-width": {
+      "$description": "The hairline border of controls and fields, which stays 1 px in both scales.",
+      "$value": { "value": 1, "unit": "px" }
     },
     "height-touch": {
       "$description": "The hit area of a control under a coarse pointer, whatever the scale: a control smaller than it keeps its look and gains an invisible overlay this tall and wide. Rows and text fields grow to it instead.",

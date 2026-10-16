@@ -268,8 +268,13 @@
         {
           "stylesheet": "ButtonGroup.css",
           "classes": ["env-button", "env-icon-button", "env-button-important"],
-          "properties": ["border-radius", "border-*-radius", "outline-offset", "--control-height"],
-          "note": "ButtonGroup joins its buttons into one control: it sizes them, giving an important button the group's control height, squares their inner corners and insets their focus rings."
+          "properties": ["border-radius", "border-*-radius", "outline-offset"],
+          "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings."
+        },
+        {
+          "stylesheet": "Button.css",
+          "classes": ["env-stack", "env-action-group"],
+          "note": "Under a coarse pointer a button's hit area grows into free space only: in a Stack or a stacked ActionGroup, its neighbours are above and below it."
         },
         {
           "stylesheet": "Layout.css",

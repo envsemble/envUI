@@ -13,6 +13,10 @@
         "$description": "The label of a control, and the text of menu, tree and option rows.",
         "$value": { "value": 0.875, "unit": "rem" }
       },
+      "label-small": {
+        "$description": "A label inside a field at the control height, such as a combobox chip's.",
+        "$value": { "value": 0.8125, "unit": "rem" }
+      },
       "body": { "$value": { "value": 0.9375, "unit": "rem" } },
       "heading-small": { "$value": { "value": 1, "unit": "rem" } },
       "heading": { "$value": { "value": 1.125, "unit": "rem" } }

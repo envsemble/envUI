@@ -78,22 +78,22 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 
 ## Variants and sizes
 
-| Variant       | Use for                                                                                |
-| ------------- | -------------------------------------------------------------------------------------- |
-| `primary`     | The main action of a view or group. Use one per group.                                 |
-| `important`   | A rare, consequential action that must stand out; it is smaller, with 0.5 rem corners. |
-| `secondary`   | Other actions, on the neutral fill without a border.                                   |
-| `outlined`    | Other actions on panes, dialogs and rows, with a border in the link color.             |
-| `destructive` | An action that deletes or ends something.                                              |
-| `text`        | A link-like action without fill, border or inset; `underline` adds an underline.       |
-| `quiet`       | Actions in an application's chrome, such as a sidebar toggle or a toolbar.             |
+| Variant       | Use for                                                                          |
+| ------------- | -------------------------------------------------------------------------------- |
+| `primary`     | The main action of a view or group. Use one per group.                           |
+| `important`   | A rare, consequential action that must stand out, with 0.5 rem corners.          |
+| `secondary`   | Other actions, on the neutral fill without a border.                             |
+| `outlined`    | Other actions on panes, dialogs and rows, with a border in the link color.       |
+| `destructive` | An action that deletes or ends something.                                        |
+| `text`        | A link-like action without fill, border or inset; `underline` adds an underline. |
+| `quiet`       | Actions in an application's chrome, such as a sidebar toggle or a toolbar.       |
 
 <!-- specimen: VariantMatrix -->
 
 <!-- specimen: Sizes -->
 
 - **Sizes**: `sm` for a small action where space is short, such as in a toolbar beside small fields or in a table cell; `md` for most actions; `lg` for the one prominent call to action of a page.
-- `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes. Important buttons are `sm` unless they set a size.
+- `size` sets the height, the same for every control of that size in the app's [scale](../foundations/scale.md): `sm`, `md` and `lg` are 2, 2.5 and 3 rem in the comfortable scale, and 1.625, 2 and 2.375 rem in the compact one. IconButton and CopyButton take the same sizes, and so do important buttons.
 - A button without a size takes the control height of its container: buttons in a table cell are `sm`, as are those in a title bar, a panel header or a message's actions. A button beside a field takes the field's size.
 - On touch screens a button keeps its size and gains an invisible hit area 2.75 rem tall and wide.
 - Labels are 0.875 rem, 0.8125 rem in the compact scale, with 0.25 rem vertical and 0.75 rem horizontal padding. Buttons fit their content; a labelled button can shrink and wrap its label, while an icon-only button keeps its square size, also in a squeezed row.

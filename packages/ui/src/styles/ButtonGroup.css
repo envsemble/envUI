@@ -34,13 +34,6 @@
   min-inline-size: var(--control-height);
 }
 
-/* Mixed rows share the regular control size, important buttons too; wrapped labels may increase
-   their height. */
-.env-button-group:where(:has(> .env-button:not(.env-button-important):not([hidden])))
-  > .env-button-important:not([data-size]) {
-  --control-height: inherit;
-}
-
 .env-button-group > .env-button[hidden] {
   display: none;
 }
@@ -95,4 +88,18 @@
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
   border-end-start-radius: var(--radius-row-inner);
   border-end-end-radius: var(--radius-row-inner);
+}
+/* Under a coarse pointer the joined buttons grow to the touch height themselves: an overlay would
+   reach over the next button, and out of the group, which scrolls. */
+@media (pointer: coarse) {
+  .env-button-group {
+    --env-button-hit-area: 0rem;
+  }
+  .env-button-group > .env-button {
+    min-height: max(var(--control-height), var(--control-height-touch));
+  }
+  .env-button-group > .env-button.env-icon-button {
+    inline-size: max(var(--control-height), var(--control-height-touch));
+    min-inline-size: max(var(--control-height), var(--control-height-touch));
+  }
 }

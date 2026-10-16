@@ -66,11 +66,11 @@ A date picker is a field that shows a date, or with `withTime` a date and time, 
 
 ## Variants and sizes
 
-| Variant              | Use for                                                                                      |
-| -------------------- | -------------------------------------------------------------------------------------------- |
-| Date                 | A day. Choosing one closes the calendar. The default.                                        |
-| `withTime`           | A day and a time: the calendar stays open for the time field, Now and Done.                  |
-| `variant="floating"` | A long form on a page: the 3.5 rem field whose label floats above the value, as TextField's. |
+| Variant              | Use for                                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Date                 | A day. Choosing one closes the calendar. The default.                                                                |
+| `withTime`           | A day and a time: the calendar stays open for the time field, Now and Done.                                          |
+| `variant="floating"` | A long form on a page: the field 3.5 rem tall inside its border, whose label floats above the value, as TextField's. |
 
 <!-- specimen: States -->
 
