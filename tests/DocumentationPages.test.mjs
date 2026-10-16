@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { marked } from 'marked';
+import ts from 'typescript';
 import {
   examplesDirectory,
   isPropsTable,
@@ -81,9 +82,40 @@ const undocumentedExports = [
   'useThemePreference',
 ];
 
-/** Modules an example may import: only what an application can, so its source can be copied. */
+/**
+ * Modules an example may import: only what an application can, so its source can be copied, and
+ * each icon by its own path, as the setup guide asks, rather than through the icons barrel.
+ */
 const publicModules =
-  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|icons(?:\/[A-Za-z\d]+)?))?)$/;
+  /^(?:react|@envsemble\/envui(?:\/(?:content|diff|rich-text|icons\/[A-Za-z\d]+))?)$/;
+
+/**
+ * Every module a source loads: static imports and re-exports, imports for their side effects, and
+ * import() and require() with a literal path.
+ */
+function moduleSpecifiers(source) {
+  const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
+  const specifiers = [];
+  const visit = (node) => {
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    )
+      specifiers.push(node.moduleSpecifier.text);
+    if (
+      ts.isCallExpression(node) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === 'require')) &&
+      node.arguments[0] &&
+      ts.isStringLiteralLike(node.arguments[0])
+    )
+      specifiers.push(node.arguments[0].text);
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  return specifiers;
+}
 
 const props = readProps();
 const documents = readDocumentation();
@@ -172,7 +204,7 @@ test('every example file is referenced once, by its page, and imports only publi
       /^export default function [A-Z]/m,
       `examples/${key}.tsx default-exports a component.`,
     );
-    for (const [, specifier] of source.matchAll(/^\s*(?:import|export)\b[^'"]*?from\s+'([^']+)'/gm))
+    for (const specifier of moduleSpecifiers(source))
       assert.match(
         specifier,
         publicModules,
@@ -180,6 +212,31 @@ test('every example file is referenced once, by its page, and imports only publi
       );
     assert.doesNotMatch(source, /\bdocs-[a-z]/, `examples/${key}.tsx uses a catalogue class.`);
   }
+});
+
+test('the import check reads every way a source loads a module', () => {
+  assert.deepEqual(
+    moduleSpecifiers(
+      [
+        "import 'side-effect';",
+        "import { Button } from '@envsemble/envui';",
+        "import type { ButtonProps } from '@envsemble/envui';",
+        "export { Home } from '@envsemble/envui/icons/Home';",
+        "const Editor = lazy(() => import('./Editor'));",
+        "const legacy = require('legacy');",
+      ].join('\n'),
+    ),
+    [
+      'side-effect',
+      '@envsemble/envui',
+      '@envsemble/envui',
+      '@envsemble/envui/icons/Home',
+      './Editor',
+      'legacy',
+    ],
+  );
+  assert.doesNotMatch('@envsemble/envui/icons', publicModules);
+  assert.match('@envsemble/envui/icons/Home', publicModules);
 });
 
 test('every specimen file is placed by its page', () => {
