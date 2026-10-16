@@ -229,37 +229,32 @@ test('compositions reuse primitive colors while unrelated roles stay independent
         { probes: selectors, token },
       );
     }
+    // Each role, and every part that paints it: a component shares the role of what it means.
     const cases = [
       ['--env-color-bg-page', ['canvas', 'canvasCard']],
-      ['--env-color-bg-default', ['pane', 'paneCard']],
-      ['--env-color-bg-muted', ['surface', 'card', 'contrastPane']],
+      // A list item's component token is the default surface in light and the muted one in dark.
+      ['--env-color-bg-default', ['pane', 'paneCard', ...(theme === 'light' ? ['row'] : [])]],
+      [
+        '--env-color-bg-muted',
+        ['surface', 'card', 'contrastPane', 'radioRow', ...(theme === 'dark' ? ['row'] : [])],
+      ],
       ['--env-color-list-item-bg', ['row']],
-      ['--env-color-bg-neutral-muted', ['secondary', 'icon', 'select', 'selectError']],
-      ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
-      ['--env-color-fg-link', ['link', 'textButton']],
-      ['--env-color-bg-brand-emphasis', ['primary', 'tab']],
-      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
-      ['--env-color-bg-selected', ['navigation']],
-      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon']],
-      ['--env-color-bg-raised', ['direction']],
-      ['--env-color-bg-field', ['fieldWell', 'fieldError']],
-      ['--env-color-border-accent-emphasis', ['fieldWell']],
-      ['--env-color-fg-danger', ['fieldError', 'selectError']],
-      ['--env-color-fg-default', ['field', 'fieldWell', 'fieldError', 'selectLabel']],
-      ['--env-color-fg-muted', ['selectHint']],
-      ['--env-color-bg-danger-strong', ['destructive']],
-      ['--env-color-bg-muted', ['radioRow']],
-      ['--env-color-bg-brand-emphasis', ['radio']],
-      ['--env-color-bg-brand-emphasis', ['checkbox']],
-      ['--env-color-bg-brand-emphasis', ['switch']],
-      ['--env-color-bg-neutral-muted', ['chip']],
-      // The neutral fill: the 0.7 names of its uses (secondary actions, chips, skeletons, the tab
-      // rail) all alias the one semantic token.
       [
         '--env-color-bg-neutral-muted',
         ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
       ],
-      ['--env-color-bg-neutral-muted', ['skeleton']],
+      ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
+      ['--env-color-fg-link', ['link', 'textButton']],
+      ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
+      ['--env-color-fg-on-emphasis', ['primary', 'tab']],
+      ['--env-color-bg-selected', ['navigation']],
+      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon', 'selectHint']],
+      ['--env-color-bg-raised', ['direction']],
+      ['--env-color-bg-field', ['fieldWell', 'fieldError']],
+      ['--env-color-border-accent-emphasis', ['fieldWell']],
+      ['--env-color-fg-danger', ['fieldError', 'selectError']],
+      // The default text color is every part's that sets no other, so it has no case of its own.
+      ['--env-color-bg-danger-strong', ['destructive']],
     ] as const;
     for (const [token, targets] of cases) {
       if (token === '--env-color-border-accent-emphasis')

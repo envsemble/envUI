@@ -889,12 +889,14 @@ test.describe('Title bar', () => {
     await page.goto(fullShell);
     // The window reports a smaller height once the page is zoomed in; the bar keeps its least height.
     // Its hairline runs below the title bar area, under the window controls too.
-    expect(await declaredValue(page, '.env-title-bar', 'block-size')).toContain(
-      'max(calc(env(titlebar-area-height, 0px) + 0.0625rem)',
+    // Compared without white space, which a declaration that wraps over lines keeps.
+    const compact = (value: string | undefined) => value?.replace(/\s+/g, '');
+    expect(compact(await declaredValue(page, '.env-title-bar', 'block-size'))).toContain(
+      'max(calc(env(titlebar-area-height,0px)+0.0625rem)',
     );
     expect(
-      await declaredValue(page, '.env-app-shell[data-title-bar]', '--env-topbar-height'),
-    ).toContain('max(calc(env(titlebar-area-height, 0px) + 0.0625rem)');
+      compact(await declaredValue(page, '.env-app-shell[data-title-bar]', '--env-topbar-height')),
+    ).toContain('max(calc(env(titlebar-area-height,0px)+0.0625rem)');
     await page
       .locator('.env-app-shell')
       .evaluate((shell: HTMLElement) => shell.style.setProperty('--env-title-bar-height', '48px'));
