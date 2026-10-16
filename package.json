@@ -5,6 +5,7 @@
   "workspaces": [
     "packages/ui",
     "packages/eslint-plugin",
+    "packages/stylelint-config",
     "apps/catalogue"
   ],
   "engines": {
