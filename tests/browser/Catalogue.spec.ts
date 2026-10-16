@@ -3,6 +3,7 @@ import { catalogueUrl } from './Servers';
 import { extname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { existsSync, readFileSync } from 'node:fs';
+import worker from '../../apps/catalogue/site/Worker.mjs';
 import {
   references,
   foundations as foundationReferences,
@@ -518,17 +519,6 @@ test('an example that fails to load says so in place, and loads again on request
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
 });
 
-/** The hosted Worker's answer for a file under /assets/ that is gone. */
-const notFound = {
-  status: 404,
-  body: 'Not found\n',
-  headers: {
-    'Cache-Control': 'no-store',
-    'Content-Type': 'text/plain; charset=utf-8',
-    'X-Content-Type-Options': 'nosniff',
-  },
-};
-
 /**
  * Requires the hosted build. `npm run verify` builds it first, and so does CI, where a missing build
  * fails rather than skips; a local run without one skips.
@@ -549,23 +539,41 @@ function moduleFiles(module: string) {
 }
 
 /**
- * Serves the hosted build at siteUrl as the Worker does, except that the files `failing` returns
- * true for fail as `failure` says: gone after a deploy, or with the connection dropped.
+ * Serves the hosted build at siteUrl through the hosted Worker script, with an asset server that
+ * answers as Cloudflare's does from dist/site: a path without a file gets index.html. The files
+ * `failing` returns true for fail as `failure` says: gone after a deploy, which the Worker answers
+ * as not found, or with the connection dropped.
  */
 async function serveSite(
   page: Page,
   failing: (pathname: string) => boolean,
   failure: 'missing' | 'aborted',
 ) {
-  await page.route(`${siteUrl}/**`, (route) => {
-    const { pathname } = new URL(route.request().url());
-    if (failing(pathname))
-      return failure === 'aborted' ? route.abort('internetdisconnected') : route.fulfill(notFound);
-    const file = resolve(site, `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`);
-    if (!existsSync(file)) return route.fulfill(notFound);
+  await page.route(`${siteUrl}/**`, async (route) => {
+    const request = route.request();
+    const gone = failing(new URL(request.url()).pathname);
+    if (gone && failure === 'aborted') return route.abort('internetdisconnected');
+    const assets = {
+      async fetch(assetRequest: Request) {
+        const { pathname } = new URL(assetRequest.url);
+        const path = resolve(
+          site,
+          `.${pathname.endsWith('/') ? `${pathname}index.html` : pathname}`,
+        );
+        const file = !gone && existsSync(path) ? path : resolve(site, 'index.html');
+        return new Response(readFileSync(file), {
+          headers: { 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' },
+        });
+      },
+    };
+    const response: Response = await worker.fetch(
+      new Request(request.url(), { method: request.method() }),
+      { ASSETS: assets },
+    );
     return route.fulfill({
-      body: readFileSync(file),
-      contentType: contentTypes[extname(file)] ?? 'application/octet-stream',
+      status: response.status,
+      headers: Object.fromEntries(response.headers),
+      body: Buffer.from(await response.arrayBuffer()),
     });
   });
 }
