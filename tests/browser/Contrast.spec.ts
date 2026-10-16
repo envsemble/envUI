@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 import { cssColor, dropped, pairName, pairs, type ContrastPair } from '../contrast/Pairs';
@@ -28,6 +29,11 @@ import {
  */
 
 const exceptionsFile = 'tests/contrast/Exceptions.json';
+
+/** The generated token list: every custom property the token build writes. */
+const tokenList = JSON.parse(readFileSync('packages/ui/src/generated/tokens.json', 'utf8')) as {
+  tokens: { cssVariable: string }[];
+};
 
 interface ContrastException {
   pair: string;
@@ -281,10 +287,26 @@ test.describe('contrast', { tag: '@contrast' }, () => {
   }) => {
     await page.goto(`${fixtureUrl}/contrast.html`);
     await page.waitForSelector('body[data-styles-ready]', { state: 'attached' });
-    const names = [...new Set(pairs.flatMap((pair) => [pair.fg, ...pair.bg]))];
+    // Every token, of every type, not only the colors the pairs name.
+    const names = tokenList.tokens.map((token) => token.cssVariable);
     for (const scheme of ['light', 'dark']) {
       const read = async (attributes: Record<string, string>) =>
-        (await resolveColors(page, { 'data-env-theme': scheme, ...attributes }, names)).resolved;
+        page.evaluate(
+          ({ attributes, names }) => {
+            const boundary = document.createElement('div');
+            boundary.className = 'env-theme';
+            for (const [name, value] of Object.entries(attributes))
+              boundary.setAttribute(name, value);
+            document.body.append(boundary);
+            const style = getComputedStyle(boundary);
+            const values = Object.fromEntries(
+              names.map((name) => [name, style.getPropertyValue(name).trim()]),
+            );
+            boundary.remove();
+            return values;
+          },
+          { attributes: { 'data-env-theme': scheme, ...attributes }, names },
+        );
       await page.emulateMedia({ contrast: 'no-preference' });
       const standard = await read({});
       const high = await read({ 'data-env-contrast': 'high' });
