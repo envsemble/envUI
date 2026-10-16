@@ -71,7 +71,7 @@
 .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
   position: sticky;
   inset-block-start: 0;
-  z-index: 1;
+  z-index: var(--env-z-raised);
 }
 /* Rows are separated by hairlines; the first body row meets the header without one. */
 .env-table-body > .env-table-row + .env-table-row > :is(.env-table-cell, .env-table-header-cell) {
@@ -199,7 +199,7 @@
   position: absolute;
   inset-block: 0;
   inset-inline-end: 0;
-  z-index: 1;
+  z-index: var(--env-z-raised);
   inline-size: var(--env-space-3);
   cursor: col-resize;
   touch-action: none;

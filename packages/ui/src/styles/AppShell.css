@@ -35,7 +35,7 @@
 .env-app-topbar {
   position: fixed;
   inset: 0 0 auto 0;
-  z-index: 25;
+  z-index: calc(var(--env-z-sticky) + 1);
   block-size: var(--env-topbar-height);
   display: grid;
   grid-template-columns: var(--env-sidebar-width) minmax(0, 1fr);
@@ -179,7 +179,7 @@ button.env-app-sidebar-toggle:focus-visible {
 .env-app-sidebar {
   position: fixed;
   inset: var(--env-topbar-height) auto 0 0;
-  z-index: 20;
+  z-index: var(--env-z-sticky);
   inline-size: var(--env-sidebar-width);
   display: flex;
   flex-direction: column;
@@ -222,7 +222,7 @@ button.env-app-sidebar-toggle:focus-visible {
   position: absolute;
   inset-block: 0;
   inset-inline-end: calc(-0.25rem - 0.03125rem);
-  z-index: 1;
+  z-index: var(--env-z-raised);
   inline-size: 0.5rem;
   cursor: col-resize;
   touch-action: none;
@@ -320,12 +320,12 @@ button.env-app-sidebar-toggle:focus-visible {
    content such as a list of recent documents has room, while some of the page stays in view. */
 .env-app-shell[data-narrow] .env-app-sidebar {
   inline-size: min(max(var(--env-sidebar-expanded-width), 20rem), calc(100vw - var(--env-space-8)));
-  z-index: 30;
+  z-index: var(--env-z-peek);
 }
 .env-app-sidebar-backdrop {
   position: fixed;
   inset: var(--env-topbar-height) 0 0 0;
-  z-index: 29;
+  z-index: calc(var(--env-z-peek) - 1);
   background: var(--env-color-bg-overlay-muted);
 }
 

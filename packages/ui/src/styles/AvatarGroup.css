@@ -65,7 +65,7 @@
 /* The avatar under the pointer or keyboard focus comes in front of its neighbours. */
 .env-avatar-group
   > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible) {
-  z-index: 1;
+  z-index: var(--env-z-raised);
 }
 .env-avatar-group-item:focus-visible,
 .env-avatar-group-overflow:focus-visible {

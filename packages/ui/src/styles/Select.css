@@ -106,7 +106,7 @@
 
 /* Portaled positioning stays with Base UI's collision and viewport handling. */
 .env-select-positioner {
-  z-index: 110;
+  z-index: var(--env-z-popover);
 }
 .env-form-field > .env-dropdown-trigger {
   justify-self: start;
