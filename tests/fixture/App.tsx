@@ -62,6 +62,7 @@ import { RatingsFixture } from './Ratings.js';
 import { DensityFixture } from './Density.js';
 import {
   ThemeContrastFixture,
+  ThemeContrastNestedFixture,
   ThemeContrastProviderFixture,
   ThemeContrastRemountFixture,
 } from './ThemeContrasts.js';
@@ -91,6 +92,7 @@ export default function App() {
   if (fixture === 'theme-contrast') return <ThemeContrastFixture />;
   if (fixture === 'theme-contrast-provider') return <ThemeContrastProviderFixture />;
   if (fixture === 'theme-contrast-remount') return <ThemeContrastRemountFixture />;
+  if (fixture === 'theme-contrast-nested') return <ThemeContrastNestedFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
   if (Standalone)
     return (

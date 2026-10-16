@@ -5,11 +5,14 @@
  * unexplained, and on one that is held to less than before, by a weaker kind, a switch between a
  * ΔEOK distance and a ratio, a lower minimum or a contrast it is no longer measured in, unless a new
  * entry of `relaxed` in Pairs.ts lists that change with its rationale. A renamed pair is held to
- * what its old name recorded. Each `relaxed` entry approves one loosening: once recorded it is
+ * what its old name recorded, as well as to its own record when it takes a name already recorded,
+ * and through a chain of renames. Each `relaxed` entry approves one loosening: once recorded it is
  * spent, so loosening the pair the same way again later needs another entry. Entries of `dropped`,
  * `renamed` and `relaxed` stay once recorded, so the reasons can't be removed after the snapshot is
- * updated either.
+ * updated either. The pairs are also compared with the base branch's copy of the file
+ * (readBaseSnapshot), which a branch can't edit along with Pairs.ts.
  */
+import { execFileSync } from 'node:child_process';
 import type { ContrastKind, ContrastPair, Relaxation, Requirement } from './Pairs';
 import type { ContrastTheme } from './Themes';
 import { isDistance } from './Contrast';
@@ -81,6 +84,19 @@ function countRelaxations(entries: readonly Omit<Relaxation, 'rationale'>[]) {
   return counts;
 }
 
+/** Every old name renamed into `name`, directly or through other renamed names. */
+function renamedInto(name: string, renamed: readonly { from: string; to: string }[]) {
+  const names = new Set<string>();
+  const queue = [name];
+  for (let next = queue.shift(); next !== undefined; next = queue.shift())
+    for (const entry of renamed)
+      if (entry.to === next && entry.from !== name && !names.has(entry.from)) {
+        names.add(entry.from);
+        queue.push(entry.from);
+      }
+  return [...names];
+}
+
 const measure = (kind: ContrastKind) => (isDistance(kind) ? 'a ΔEOK distance' : 'a ratio');
 
 /** How `current` asks less than `recorded`, one line per way; empty when it asks as much or more. */
@@ -106,6 +122,34 @@ export function loosening(current: Requirement, recorded: Requirement): string[]
   return ways;
 }
 
+/**
+ * Where each renamed pair went: its new name must be declared, or be dropped or renamed onward in
+ * turn, so a pair that was once a rename's target can leave the registry too.
+ */
+export function checkRenameTargets(
+  renamed: readonly { from: string; to: string }[],
+  declared: ReadonlySet<string>,
+  dropped: readonly { pair: string }[],
+): string[] {
+  const problems: string[] = [];
+  for (const entry of renamed) {
+    const seen = new Set([entry.from]);
+    let target = entry.to;
+    while (!declared.has(target) && !dropped.some((other) => other.pair === target)) {
+      const onward = renamed.find((other) => other.from === target);
+      if (!onward || seen.has(target)) {
+        problems.push(
+          `${entry.from} is listed as renamed to ${entry.to}, which tests/contrast/Pairs.ts doesn't declare, drop, or rename onward to a declared or dropped pair.`,
+        );
+        break;
+      }
+      seen.add(target);
+      target = onward.to;
+    }
+  }
+  return problems;
+}
+
 export interface SnapshotInput {
   pairs: readonly ContrastPair[];
   dropped: readonly { pair: string }[];
@@ -119,6 +163,17 @@ export interface SnapshotInput {
   update: boolean;
   /** Whether the run is in CI, where a missing snapshot is never written. */
   ci: boolean;
+  /**
+   * The snapshot on the base branch, as readBaseSnapshot reads it, when there is one: the declared
+   * pairs are compared with it too, and a loosening since needs a relaxation new since.
+   */
+  base?: BaseSnapshot;
+}
+
+export interface BaseSnapshot {
+  /** Where it was read, for messages. */
+  label: string;
+  recorded: DeclaredPairs;
 }
 
 /**
@@ -175,69 +230,13 @@ export function checkSnapshot(input: SnapshotInput): {
     return { problems, write: problems.length === 0 ? current : undefined };
   }
 
-  const declared = new Set(Object.keys(current.pairs));
-  const accounted = new Set([...current.dropped, ...current.renamed]);
-
-  // Every name declared when the snapshot was taken is still declared, dropped or renamed.
-  for (const name of Object.keys(recorded.pairs))
-    if (!declared.has(name) && !accounted.has(name))
-      problems.push(
-        `${name} was declared (${declaredFile}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
-      );
-
-  // No pair is held to less than it was, under its name or the one it was renamed from, unless a
-  // relaxation not yet recorded lists the change. Each relaxation approves one loosening.
-  const unspent = countRelaxations(current.relaxed);
-  for (const [key, count] of countRelaxations(recorded.relaxed))
-    unspent.set(key, (unspent.get(key) ?? 0) - count);
-  const spend = (key: string) => {
-    const left = unspent.get(key) ?? 0;
-    if (left > 0) unspent.set(key, left - 1);
-    return left > 0;
-  };
-  for (const [name, requirement] of Object.entries(current.pairs)) {
-    const baselines = recorded.pairs[name]
-      ? [{ from: name, before: recorded.pairs[name] }]
-      : input.renamed
-          .filter((entry) => entry.to === name && recorded.pairs[entry.from])
-          .map((entry) => ({ from: entry.from, before: recorded.pairs[entry.from] }));
-    const loosened = baselines
-      .map(({ from, before }) => ({ from, ways: loosening(requirement, before) }))
-      .filter(({ ways }) => ways.length > 0);
-    if (loosened.length === 0 || spend(relaxationKey({ pair: name, ...requirement }))) continue;
-    for (const { from, ways } of loosened) {
-      const renamedFrom = from === name ? '' : `, renamed from ${from},`;
-      const recordedFor = from === name ? '' : ` for ${from}`;
-      problems.push(
-        `${name}${renamedFrom} is held to less than ${declaredFile} records${recordedFor}: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, add an entry to relaxed in tests/contrast/Pairs.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
-      );
-    }
-  }
-  // A new relaxation is spent on a loosening now, so it can't be recorded ahead of one and used later.
-  for (const entry of current.relaxed)
-    if (spend(relaxationKey(entry)))
-      problems.push(
-        `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}, which relaxes nothing ${declaredFile} records: remove the entry, or list exactly what the pair is held to now, when that is less than recorded.`,
-      );
-
-  // Recorded reasons stay: a dropped or renamed pair until it is declared again, a relaxation always.
-  for (const name of recorded.dropped)
-    if (!current.dropped.includes(name) && !declared.has(name))
-      problems.push(
-        `${name} is recorded as dropped (${declaredFile}) but no longer listed in dropped in tests/contrast/Pairs.ts: keep its entry and reason.`,
-      );
-  for (const name of recorded.renamed)
-    if (!current.renamed.includes(name) && !declared.has(name))
-      problems.push(
-        `${name} is recorded as renamed (${declaredFile}) but no longer listed in renamed in tests/contrast/Pairs.ts: keep its entry and reason.`,
-      );
-  for (const [key, count] of countRelaxations(recorded.relaxed))
-    if ((countRelaxations(current.relaxed).get(key) ?? 0) < count) {
-      const entry = recorded.relaxed.find((other) => relaxationKey(other) === key)!;
-      problems.push(
-        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${declaredFile}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
-      );
-    }
+  problems.push(...compare(current, recorded, input.renamed, declaredFile, { fresh: true }));
+  // Against the base branch's snapshot too, so that a snapshot edited by hand along with Pairs.ts,
+  // or a recorded relaxation deleted from both, can't weaken a pair unnoticed.
+  if (problems.length === 0 && input.base)
+    problems.push(
+      ...compare(current, input.base.recorded, input.renamed, input.base.label, { fresh: false }),
+    );
 
   if (problems.length > 0) return { problems };
   if (update) return { problems, write: current };
@@ -257,8 +256,131 @@ export function checkSnapshot(input: SnapshotInput): {
   return { problems };
 }
 
+/**
+ * Compares the declared pairs, `current`, with a recorded snapshot, read from `source`: names gone
+ * unexplained, pairs held to less without a relaxation new since the record, and recorded reasons
+ * removed. `fresh` is the working tree's snapshot, where an unspent new relaxation fails too.
+ */
+function compare(
+  current: DeclaredPairs,
+  recorded: DeclaredPairs,
+  renamed: readonly { from: string; to: string }[],
+  source: string,
+  { fresh }: { fresh: boolean },
+): string[] {
+  const problems: string[] = [];
+  const declared = new Set(Object.keys(current.pairs));
+  const accounted = new Set([...current.dropped, ...current.renamed]);
+
+  // Every name declared when the snapshot was taken is still declared, dropped or renamed.
+  for (const name of Object.keys(recorded.pairs))
+    if (!declared.has(name) && !accounted.has(name))
+      problems.push(
+        `${name} was declared (${source}) and is gone from tests/contrast/Pairs.ts: list it in dropped or renamed there, with the reason.`,
+      );
+
+  // No pair is held to less than it was, under its name or the one it was renamed from, unless a
+  // relaxation not yet recorded lists the change. Each relaxation approves one loosening.
+  const unspent = countRelaxations(current.relaxed);
+  for (const [key, count] of countRelaxations(recorded.relaxed))
+    unspent.set(key, (unspent.get(key) ?? 0) - count);
+  const spend = (key: string) => {
+    const left = unspent.get(key) ?? 0;
+    if (left > 0) unspent.set(key, left - 1);
+    return left > 0;
+  };
+  for (const [name, requirement] of Object.entries(current.pairs)) {
+    // Its own record, and the record of every name renamed into it, directly or through a chain of
+    // renames, that the snapshot still holds: a pair renamed onto a name already recorded keeps
+    // what it asked too.
+    const baselines = [name, ...renamedInto(name, renamed)]
+      .filter((from) => recorded.pairs[from])
+      .map((from) => ({ from, before: recorded.pairs[from] }));
+    const loosened = baselines
+      .map(({ from, before }) => ({ from, ways: loosening(requirement, before) }))
+      .filter(({ ways }) => ways.length > 0);
+    if (loosened.length === 0 || spend(relaxationKey({ pair: name, ...requirement }))) continue;
+    for (const { from, ways } of loosened) {
+      const renamedFrom = from === name ? '' : `, renamed from ${from},`;
+      const recordedFor = from === name ? '' : ` for ${from}`;
+      problems.push(
+        `${name}${renamedFrom} is held to less than ${source} records${recordedFor}: ${ways.join('; ')}. Restore it, or, for a deliberate relaxation, add an entry to relaxed in tests/contrast/Pairs.ts with its rationale: ${JSON.stringify({ pair: name, ...requirement, rationale: '…' })}`,
+      );
+    }
+  }
+  // A new relaxation is spent on a loosening now, so it can't be recorded ahead of one and used later.
+  // Against the base, an entry recorded on the branch may since have been spent and tightened back.
+  if (fresh)
+    for (const entry of current.relaxed)
+      if (spend(relaxationKey(entry)))
+        problems.push(
+          `relaxed in tests/contrast/Pairs.ts lists ${entry.pair} at ${describe(entry)}, which relaxes nothing ${source} records: remove the entry, or list exactly what the pair is held to now, when that is less than recorded.`,
+        );
+
+  // Recorded reasons stay: a dropped or renamed pair until it is declared again, a relaxation always.
+  for (const name of recorded.dropped)
+    if (!current.dropped.includes(name) && !declared.has(name))
+      problems.push(
+        `${name} is recorded as dropped (${source}) but no longer listed in dropped in tests/contrast/Pairs.ts: keep its entry and reason.`,
+      );
+  for (const name of recorded.renamed)
+    if (!current.renamed.includes(name) && !declared.has(name))
+      problems.push(
+        `${name} is recorded as renamed (${source}) but no longer listed in renamed in tests/contrast/Pairs.ts: keep its entry and reason.`,
+      );
+  for (const [key, count] of countRelaxations(recorded.relaxed))
+    if ((countRelaxations(current.relaxed).get(key) ?? 0) < count) {
+      const entry = recorded.relaxed.find((other) => relaxationKey(other) === key)!;
+      problems.push(
+        `The relaxation of ${entry.pair} to ${describe(entry)} is recorded${count > 1 ? ` ${count} times` : ''} (${source}) but no longer listed${count > 1 ? ' as often' : ''} in relaxed in tests/contrast/Pairs.ts: keep its entry and rationale.`,
+      );
+    }
+  return problems;
+}
+
 function stripComment({ pairs, dropped, renamed, relaxed }: DeclaredPairs): DeclaredPairs {
   return { pairs, dropped, renamed, relaxed };
+}
+
+/**
+ * The snapshot on the base branch: at ENVUI_CONTRAST_BASE, any revision git knows, or else at the
+ * merge-base with origin/dev. It reads only what the clone already has, never fetching. Without git,
+ * origin/dev or the file at the base, it returns a note instead, and the gate compares with the
+ * working tree's snapshot alone; a base that was asked for and can't be read is a problem.
+ */
+export function readBaseSnapshot(requested = process.env.ENVUI_CONTRAST_BASE): {
+  base?: BaseSnapshot;
+  note?: string;
+  problem?: string;
+} {
+  const git = (...args: string[]) =>
+    execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  let commit: string;
+  let label: string;
+  try {
+    if (requested) {
+      commit = git('rev-parse', '--verify', `${requested}^{commit}`);
+      label = `${declaredFile} at ${requested} (ENVUI_CONTRAST_BASE)`;
+    } else {
+      commit = git('merge-base', 'HEAD', 'origin/dev');
+      label = `${declaredFile} at ${commit.slice(0, 8)}, the merge-base with origin/dev`;
+    }
+  } catch {
+    return requested
+      ? { problem: `ENVUI_CONTRAST_BASE is ${requested}, which git can't find in this clone.` }
+      : {
+          note: `No merge-base with origin/dev in this clone, so ${declaredFile} is not compared with the base branch's. Set ENVUI_CONTRAST_BASE to a revision to compare with.`,
+        };
+  }
+  let text: string;
+  try {
+    text = git('show', `${commit}:${declaredFile}`);
+  } catch {
+    return {
+      note: `${declaredFile} doesn't exist at the base, ${commit.slice(0, 8)}: nothing to compare with.`,
+    };
+  }
+  return { base: { label, recorded: JSON.parse(text) as DeclaredPairs } };
 }
 
 /** The file's text for a snapshot. */

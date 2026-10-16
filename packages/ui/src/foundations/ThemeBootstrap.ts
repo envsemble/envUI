@@ -12,17 +12,18 @@ export interface ThemeBootstrapOptions {
    * The application's contrast, as ThemePreferenceProvider's `contrast`: `high` or `standard` is
    * written to the root as `data-env-contrast` before the first paint; `system`, the default,
    * writes nothing and leaves the choice to `prefers-contrast: more`. The script marks what it
-   * writes with `data-env-contrast-source="envui"`, as ThemePreferenceProvider marks its own, so the
-   * provider treats it as its own: once the application starts, the provider's contrast replaces
-   * it, and a provider at `system` removes it.
+   * writes with `data-env-contrast-source`, `envui:high` or `envui:standard`, as
+   * ThemePreferenceProvider marks its own, so the provider treats it as its own: once the
+   * application starts, the provider's contrast replaces it, and a provider at `system` removes it
+   * while the page has left it unchanged.
    */
   contrast?: ThemeContrast;
   /**
    * The application's scale, as ThemePreferenceProvider's `scale`: `compact` is written to the root
    * as `data-env-scale` before the first paint, so a compact app does not load at the comfortable
    * size. `comfortable`, the default, writes nothing. The script marks what it writes with
-   * `data-env-scale-source="envui"`, as it marks the contrast, so a ThemePreferenceProvider replaces
-   * or removes it as its own.
+   * `data-env-scale-source="envui:compact"`, as it marks the contrast, so a ThemePreferenceProvider
+   * replaces or removes it as its own while the page has left it unchanged.
    */
   scale?: ThemeScale;
 }
@@ -32,13 +33,18 @@ export const defaultThemeStorageKey = 'env-theme';
 /**
  * Marks a root `data-env-contrast` that envUI wrote, the bootstrap script or a
  * ThemePreferenceProvider, so that any provider, including one mounted later, replaces or removes
- * it as its own rather than leaving it as one the page set. The marker lives on the root with the
- * contrast, and goes with it.
+ * it as its own rather than leaving it as one the page set. The marker holds the value written,
+ * `envui:high`, so a contrast the page wrote over envUI's no longer matches it and stays. The marker
+ * lives on the root with the contrast, and goes with it.
  */
 export const contrastSourceAttribute = 'data-env-contrast-source';
-export const ownContrastSource = 'envui';
-/** Marks a root `data-env-scale` that envUI wrote, as contrastSourceAttribute marks a contrast. */
+export const ownContrastSource = (contrast: string) => `envui:${contrast}`;
+/**
+ * Marks a root `data-env-scale` that envUI wrote, as contrastSourceAttribute marks a contrast: the
+ * marker holds the value written, `envui:compact`, so a scale the page wrote over envUI's stays.
+ */
 export const scaleSourceAttribute = 'data-env-scale-source';
+export const ownScaleSource = (scale: string) => `envui:${scale}`;
 
 /**
  * Inline script for the document head. It themes the root element before the first paint, so a
@@ -53,11 +59,11 @@ export function createThemeBootstrapScript({
 }: ThemeBootstrapOptions = {}) {
   const writeContrast =
     contrast === 'high' || contrast === 'standard'
-      ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});r.setAttribute(${JSON.stringify(contrastSourceAttribute)},${JSON.stringify(ownContrastSource)});`
+      ? `r.setAttribute("data-env-contrast",${JSON.stringify(contrast)});r.setAttribute(${JSON.stringify(contrastSourceAttribute)},${JSON.stringify(ownContrastSource(contrast))});`
       : '';
   const writeScale =
     scale === 'compact'
-      ? `r.setAttribute("data-env-scale","compact");r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownContrastSource)});`
+      ? `r.setAttribute("data-env-scale","compact");r.setAttribute(${JSON.stringify(scaleSourceAttribute)},${JSON.stringify(ownScaleSource('compact'))});`
       : '';
   return `(function(){var r=document.documentElement,t="light";try{var p=localStorage.getItem(${JSON.stringify(storageKey)});if(p!=="light"&&p!=="dark"&&p!=="system")p=${JSON.stringify(defaultPreference)};t=p==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):p}catch(e){}r.classList.add("env-theme");r.setAttribute("data-env-theme",t);${writeContrast}${writeScale}r.style.colorScheme=t})();`;
 }

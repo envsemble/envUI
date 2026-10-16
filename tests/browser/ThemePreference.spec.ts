@@ -27,7 +27,7 @@ test('a provider at system removes the contrast the bootstrap script wrote', asy
     const response = await route.fetch();
     const body = (await response.text()).replace(
       '<html',
-      '<html data-env-contrast="high" data-env-contrast-source="envui"',
+      '<html data-env-contrast="high" data-env-contrast-source="envui:high"',
     );
     await route.fulfill({ response, body });
   });
@@ -44,14 +44,14 @@ test('a provider with a contrast replaces the one the bootstrap script wrote', a
     const response = await route.fetch();
     const body = (await response.text()).replace(
       '<html',
-      '<html data-env-contrast="standard" data-env-contrast-source="envui"',
+      '<html data-env-contrast="standard" data-env-contrast-source="envui:standard"',
     );
     await route.fulfill({ response, body });
   });
   await page.goto(url);
   const root = page.locator('html');
   await expect(root).toHaveAttribute('data-env-contrast', 'high');
-  await expect(root).toHaveAttribute('data-env-contrast-source', 'envui');
+  await expect(root).toHaveAttribute('data-env-contrast-source', 'envui:high');
   // The contrast is now the provider's own, so following the system removes it.
   await page.getByRole('button', { name: 'Follow the system contrast' }).click();
   await expect(root).not.toHaveAttribute('data-env-contrast');
@@ -66,6 +66,39 @@ test('a provider mounted again removes the contrast its predecessor wrote', asyn
   await page.getByRole('button', { name: 'Switch to the second user' }).click();
   await expect(root).not.toHaveAttribute('data-env-contrast');
   await expect(root).not.toHaveAttribute('data-env-contrast-source');
+});
+
+test('a provider leaves a contrast the application wrote over its own', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast-provider`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  // The application sets the root's contrast itself, leaving envUI's marker in place.
+  await root.evaluate((element) => element.setAttribute('data-env-contrast', 'standard'));
+  await page.getByRole('button', { name: 'Follow the system contrast' }).click();
+  await expect(root).toHaveAttribute('data-env-contrast', 'standard');
+  await expect(root).not.toHaveAttribute('data-env-contrast-source');
+});
+
+test('a provider at system leaves the contrast another mounted provider wrote', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  await page.goto(`${fixtureUrl}/?fixture=theme-contrast-nested`);
+  const root = page.locator('html');
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  // The inner provider applies its theme to the root again, at system contrast.
+  const before = await root.getAttribute('data-env-theme');
+  await page.getByTestId('inner-theme-toggle').click();
+  await expect(root).not.toHaveAttribute('data-env-theme', before!);
+  await expect(root).toHaveAttribute('data-env-contrast', 'high');
+  // The outer provider's compact scale stays too.
+  await expect(root).toHaveAttribute('data-env-scale', 'compact');
+  await expect(root).toHaveAttribute('data-env-scale-source', 'envui:compact');
+  // Only one provider should apply to the document, and development says so.
+  expect(errors.filter((error) => error.includes('applyToDocument={false}'))).toHaveLength(1);
 });
 
 test('a provider without a scale leaves the scale the page set on the root', async ({ page }) => {
@@ -89,7 +122,7 @@ test('a provider without a scale removes the scale the bootstrap script wrote', 
     const response = await route.fetch();
     const body = (await response.text()).replace(
       '<html',
-      '<html data-env-scale="compact" data-env-scale-source="envui"',
+      '<html data-env-scale="compact" data-env-scale-source="envui:compact"',
     );
     await route.fulfill({ response, body });
   });
@@ -97,6 +130,24 @@ test('a provider without a scale removes the scale the bootstrap script wrote', 
   const root = page.locator('html');
   await expect(page.getByTestId('theme-toggle')).toBeVisible();
   await expect(root).not.toHaveAttribute('data-env-scale');
+  await expect(root).not.toHaveAttribute('data-env-scale-source');
+});
+
+test('a provider without a scale leaves a scale the page wrote over the bootstrap script one', async ({
+  page,
+}) => {
+  await page.route(`${fixtureUrl}/?fixture=adoption`, async (route) => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      '<html',
+      '<html data-env-scale="comfortable" data-env-scale-source="envui:compact"',
+    );
+    await route.fulfill({ response, body });
+  });
+  await page.goto(`${fixtureUrl}/?fixture=adoption`);
+  const root = page.locator('html');
+  await expect(page.getByTestId('theme-toggle')).toBeVisible();
+  await expect(root).toHaveAttribute('data-env-scale', 'comfortable');
   await expect(root).not.toHaveAttribute('data-env-scale-source');
 });
 

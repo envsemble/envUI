@@ -644,7 +644,8 @@ export const dropped: readonly { pair: string; rationale: string }[] = [
 
 /**
  * Pairs the gate still measures under another name, from the old name to the new, with the reason.
- * tests/browser/Contrast.spec.ts checks that each new name is declared and each old one is not.
+ * tests/browser/Contrast.spec.ts checks that each old name is not declared, and that each new one
+ * is, or has since been dropped or renamed onward in turn.
  */
 export const renamed: readonly { from: string; to: string; rationale: string }[] = [
   {

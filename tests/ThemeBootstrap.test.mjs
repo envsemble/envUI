@@ -39,8 +39,9 @@ test('the bootstrap script writes a high or standard contrast before the first p
   for (const contrast of ['high', 'standard']) {
     const root = bootstrap(createThemeBootstrapScript({ contrast }));
     assert.equal(root.attributes['data-env-contrast'], contrast, contrast);
-    // Marked as envUI's, so ThemePreferenceProvider replaces or removes it as its own.
-    assert.equal(root.attributes['data-env-contrast-source'], 'envui', contrast);
+    // Marked as envUI's, with the value written, so ThemePreferenceProvider replaces or removes it
+    // as its own while the page leaves it unchanged.
+    assert.equal(root.attributes['data-env-contrast-source'], `envui:${contrast}`, contrast);
   }
 });
 
@@ -61,7 +62,7 @@ test('an unknown contrast writes nothing, as system does', () => {
 test('the bootstrap script writes a compact scale before the first paint, and nothing else', () => {
   const root = bootstrap(createThemeBootstrapScript({ scale: 'compact' }));
   assert.equal(root.attributes['data-env-scale'], 'compact');
-  assert.equal(root.attributes['data-env-scale-source'], 'envui');
+  assert.equal(root.attributes['data-env-scale-source'], 'envui:compact');
   for (const options of [{}, { scale: 'comfortable' }])
     assert.doesNotMatch(createThemeBootstrapScript(options), /data-env-scale/);
 });

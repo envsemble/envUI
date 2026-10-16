@@ -98,10 +98,15 @@ export function Theme({
   children,
   ...props
 }: ThemeProps) {
-  // Written inline so bundlers replace process.env.NODE_ENV and drop the warning from production
-  // builds; where nothing defines `process`, as in a browser without a bundler, it stays silent.
-  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production')
-    warnAboutTheme(theme);
+  // Written inline so bundlers replace process.env.NODE_ENV, which leaves the check standing in a
+  // development build and drops the warning from a production one. `process` itself stays
+  // undefined in a browser, so the check must not test it: where nothing replaced the expression,
+  // as without a bundler, reading it throws and the warning stays silent.
+  try {
+    if (process.env.NODE_ENV !== 'production') warnAboutTheme(theme);
+  } catch {
+    // No bundler defined process.env.NODE_ENV.
+  }
   const inherited = useContext(ThemeContext);
   // The prop wins; without it, a data-env-contrast or data-env-scale written on the Theme counts,
   // so that the context its nested Themes and popups read agrees with the attribute.
