@@ -1,7 +1,7 @@
 ---
 title: CommandPalette
 summary: A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
-status: beta
+status: stable
 since: 0.5.0
 category: Feedback & overlays
 aliases:
@@ -42,7 +42,7 @@ components:
 
 ## Overview
 
-A command palette is a modal dialog near the top of the window: a search field over a list of options. People type, move the highlight with the arrow keys and choose with <kbd>Enter</kbd> or a click, while focus stays in the field. The application owns everything else: the shortcut that opens it, the items, how they are filtered and ranked, and what choosing one does.
+A command palette is a modal dialog near the top of the window: a search field over a list of options, built on Base UI's autocomplete. People type, move the highlight with the arrow keys and choose with <kbd>Enter</kbd> or a click, while focus stays in the field. The application owns everything else: the shortcut that opens it, the items, how they are filtered and ranked, and what choosing one does.
 
 ```tsx example=GoToDocument
 
@@ -54,8 +54,8 @@ A command palette is a modal dialog near the top of the window: a search field o
 2. **Surface**: the raised surface Dialog and Popover share, up to 40 rem wide, with 0.5 rem padding and 1.75 rem corners.
 3. **Search field**: a pill with a search icon and the text input, named by `aria-label`, with the `placeholder` while empty.
 4. **Group heading** (an item's `group`): a small heading where the group changes between consecutive items.
-5. **Option** (each entry of `items`): an optional `icon`, the `label`, a muted `detail` and `trailing` content, such as a Kbd shortcut or a Badge, at its end.
-6. **Empty message** (`emptyLabel`): shown in place of the list when there are no items; No results by default.
+5. **Option** (each entry of `items`): a list row with an optional `icon`, the `label` with a muted `description` under it, and `end` content, such as a Kbd shortcut or a Badge.
+6. **Status** (`emptyLabel`): shown in place of the list when there are no items, No results by default; while there are items, it announces how many, such as 12 results, without showing.
 7. **Footer** (`hints`, `footer`): key hints as Kbd keys with what they do, then other content.
 
 ## Variants and sizes
@@ -66,11 +66,12 @@ A command palette is a modal dialog near the top of the window: a search field o
 
 ## States and behaviour
 
-- **Opening and closing**: `open` and `onOpenChange` control the palette. It opens over a backdrop in the theme of the page around it, with focus in the search field; <kbd>Esc</kbd>, a press on the backdrop and, unless `closeOnSelect` is false, choosing an option call `onOpenChange(false)`, and focus returns to where it was.
-- **Searching**: `query` and `onQueryChange` hold the text. A new query, and opening the palette, highlight the first item again.
+- **Opening and closing**: `open` and `onOpenChange` control the palette. It opens over a backdrop in the theme of the page around it, with focus in the search field; <kbd>Esc</kbd>, a press on the backdrop and, unless `closeOnAction` is false, choosing an option call `onOpenChange(false)`, and focus returns to where it was.
+- **Searching**: `inputValue` and `onInputValueChange` hold the text. A new query, and opening the palette, highlight the first item again, and the number of results is announced politely.
 - **Highlight**: the arrow keys move the highlight and wrap at the ends; <kbd>Home</kbd> and <kbd>End</kbd> reach the first and last option, and <kbd>Page Up</kbd> and <kbd>Page Down</kbd> move by a page of options. The pointer highlights the option it moves over.
-- **Choosing**: <kbd>Enter</kbd> or a click calls `onSelect` with the item; with <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> held, `modifier` is true, such as to open a document beside the current one. Pressing an option leaves focus in the field.
+- **Choosing**: <kbd>Enter</kbd> or a click calls `onAction` with the item; with <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> held, `modifier` is true, such as to open a document beside the current one. Pressing an option leaves focus in the field.
 - **Groups**: items with the same `group` next to each other form a labelled group under one heading; keep a group's items together.
+- **Disabled options**: an item with `disabled` shows but can't be chosen.
 - **Input methods**: keys that belong to an input method's composition don't move the highlight or choose.
 
 ## Content guidelines
@@ -78,7 +79,7 @@ A command palette is a modal dialog near the top of the window: a search field o
 - Name the palette after what it finds or does, with `aria-label`: "Go to document", "Run a command".
 - Write a placeholder that says what can be searched: "Search documents by name or folder".
 - Name commands with a verb and what they act on: "Invite people", "Open settings".
-- Use `detail` for what tells similar items apart, such as a folder, and `emptyLabel` for what to try next: "No matching documents".
+- Use `description` for what tells similar items apart, such as a folder, and `emptyLabel` for what to try next: "No matching documents".
 - Show key hints only for keys the palette or the application handles.
 
 ## Do and don't
@@ -115,8 +116,8 @@ A command palette is a modal dialog near the top of the window: a search field o
 
 - A modal dialog named by `aria-label`, which takes focus into its search field, keeps it inside and returns it on close.
 - The search field as a `combobox` that controls the `listbox`, with `aria-expanded` while there are options and the highlighted option as its active descendant, so focus never leaves the field.
-- Options with `aria-selected` on the highlighted one, named by their content or by `textValue`, in groups named by their headings; decorative icons hidden from assistive technology.
-- The empty message as a status, and key hints as Kbd keys.
+- Options named by their content or by `textValue`, in groups named by their headings; decorative icons hidden from assistive technology.
+- A polite status that announces the number of results as they change (`messages.commandPalette.results`), and says the empty message when nothing matches; key hints as Kbd keys.
 
 ### You provide
 
@@ -128,7 +129,7 @@ A command palette is a modal dialog near the top of the window: a search field o
 
 ### Run a command
 
-Commands with shortcuts as Kbd keys and a Badge as trailing content, under one group, with a footer.
+Commands with shortcuts as Kbd keys and a Badge as end content, under one group, with a footer.
 
 ```tsx example=RunCommand
 
@@ -136,4 +137,5 @@ Commands with shortcuts as Kbd keys and a Badge as trailing content, under one g
 
 ## Changelog
 
+- **1.0.0**: Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
 - **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

@@ -9,7 +9,7 @@ export default function RenameInPlace() {
       <Text>{name}</Text>
       <Popover
         aria-label="Rename document"
-        width="wide"
+        width="lg"
         trigger={
           <Button variant="secondary" startIcon={<Edit />}>
             Rename

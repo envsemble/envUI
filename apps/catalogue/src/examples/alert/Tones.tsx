@@ -8,7 +8,7 @@ export default function Tones() {
       <Alert tone="warning" title="Storage almost full">
         Northwind has used 9.2 of 10 GB. Uploads stop once the space runs out.
       </Alert>
-      <Alert tone="error" title="Search is unavailable">
+      <Alert tone="danger" title="Search is unavailable">
         The search service didn’t respond. Your open documents are still here.
       </Alert>
     </Stack>

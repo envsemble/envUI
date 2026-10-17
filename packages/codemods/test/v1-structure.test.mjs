@@ -5,12 +5,14 @@ import * as v1Structure from '../src/transforms/v1-structure.mjs';
 import { encodings, fixtures, map, packageDirectory, runTransform } from './helpers.mjs';
 
 const actionGroup = map.structure['@envsemble/envui'].ActionGroup;
+const dialog = map.structure['@envsemble/envui'].Dialog;
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
   'action-group.tsx': [
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
     `line 21: ActionGroup: ${actionGroup.report}`,
@@ -32,7 +34,9 @@ for (const fixture of fixtures('v1-structure')) {
     assert.equal(again.output, result.output);
     assert.deepEqual(
       again.reports,
-      result.reports.filter((report) => report.endsWith(actionGroup.report)),
+      result.reports.filter(
+        (report) => report.endsWith(actionGroup.report) || report.endsWith(dialog.report),
+      ),
     );
   });
 }

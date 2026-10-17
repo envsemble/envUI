@@ -1,7 +1,7 @@
 ---
 title: Tooltip
 summary: A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
-status: beta
+status: stable
 since: 0.2.0
 category: Feedback & overlays
 aliases:
@@ -40,7 +40,7 @@ components:
 
 A tooltip is a short label that appears beside a control while the pointer rests on it or it has keyboard focus: the name of an icon-only button, why a control is disabled, or a keyboard shortcut. It wraps one control, and closes when the pointer or focus leaves, on <kbd>Esc</kbd> and when the control is pressed.
 
-A tooltip is visual only. Assistive technology doesn't read it, and touch screens don't show it, so the control's accessible name or the page says the same.
+While it is open, a control with a name of its own is described by the tooltip, so assistive technology reads the tooltip after the name; a tooltip that only repeats the name adds nothing. Touch screens don't show tooltips, so the control's accessible name or the page says what matters.
 
 ```tsx example=IconActions
 
@@ -48,8 +48,8 @@ A tooltip is visual only. Assistive technology doesn't read it, and touch screen
 
 ## Anatomy
 
-1. **Control** (`children`): the one control the tooltip describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element with a pill-shaped focus ring, since disabled controls take neither pointer nor focus events.
-2. **Tooltip** (`content`): 0.875 rem text with 0.25 and 0.5 rem padding and 0.5 rem corners, in the neutral strong fill with light text, 0.375 rem from the control. It is at most 18 rem wide, or the window's width less 2 rem, and long words wrap anywhere.
+1. **Control** (`children`): the one control the tooltip describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element with a pill-shaped focus ring, since disabled controls take neither pointer nor focus events; the wrapper takes the control's role and name and reports it disabled.
+2. **Tooltip** (`content`): 0.875 rem text with 0.25 and 0.5 rem padding and 0.5 rem corners, in the neutral strong fill with light text, 0.375 rem from the control. It is at most 18 rem wide, or the window's width less 2 rem, and long words wrap anywhere. A Kbd inside takes light key caps for the dark fill.
 
 ## Variants and sizes
 
@@ -67,9 +67,10 @@ Where the window has no room on its side, the tooltip flips to the opposite side
 - **Opening**: once the pointer rests on the control for `delay` milliseconds (400), and at once when the control gets keyboard focus. A tap, or focus from a pointer, doesn't open it.
 - **Closing**: when the pointer leaves the control and the tooltip, when focus leaves the control, on <kbd>Esc</kbd>, and when the control is pressed, with a pointer, <kbd>Enter</kbd> or <kbd>Space</kbd>. <kbd>Esc</kbd> closes only the tooltip: focus stays on the control and an enclosing dialog stays open.
 - **Hovering the tooltip**: the pointer can move from the control onto the tooltip, which stays open, so people can read or magnify it.
-- **Disabled controls**: a control whose `disabled` prop is true is wrapped in a focusable element, so the tooltip opens on hover and keyboard focus. When the control becomes enabled or disabled, such as a back button once there is somewhere to go, the tooltip follows it.
+- **Disabled controls**: a control whose `disabled` prop is true is wrapped in an element that opens the tooltip on hover. Where the page gives the control a name and a role, such as a button or a link, the wrapper is a tab stop too: it takes that role and name with `aria-disabled` and stands in for the control, so it is announced once, as disabled. When the control becomes enabled or disabled, such as a back button once there is somewhere to go, the tooltip follows it.
 - **Controls with their own tooltip**: an icon-only CopyButton, an icon-only NavList item and a RelativeTime show their own tooltips, and leave it to a Tooltip around them.
-- **Theme**: the tooltip renders in a portal at the end of the document, in the theme of its control.
+- **Description**: while the tooltip is open, a control with a name of its own, read from the page as the tooltip opens, also where its content names it, has `aria-describedby` pointing at it (`role="tooltip"`). A tooltip whose text is the control's name describes nothing.
+- **Theme**: the tooltip renders in a portal at the end of the document, in the theme and text direction of its control. `className`, `style`, `ref` and data attributes reach the tooltip's popup.
 - **Motion**: the tooltip fades in and out; without a reduced-motion preference, it also grows from its control.
 
 ## Content guidelines
@@ -77,7 +78,7 @@ Where the window has no room on its side, the tooltip flips to the opposite side
 - Keep it to a few words or one short sentence, in sentence case, without ending punctuation for a name: "Refresh members", "Download as CSV".
 - For an icon-only control, repeat its accessible name exactly, so what people see and what assistive technology reads match.
 - For a disabled control, say why it is disabled and, where it helps, what would enable it: "All seats are assigned. Remove a member to invite someone else."
-- Write a shortcut after the name, as the keys read on the keyboard: "Bold (Ctrl+B)".
+- Write a shortcut after the name, as the keys read on the keyboard, or as Kbd keys: "Bold (Ctrl+B)".
 - Don't repeat a visible label in a tooltip; it adds nothing.
 
 ## Do and don't
@@ -109,13 +110,14 @@ Where the window has no room on its side, the tooltip flips to the opposite side
 
 - A tooltip that opens on keyboard focus as well as on hover, and closes on <kbd>Esc</kbd> without closing what it sits in.
 - A tooltip that stays open while the pointer moves onto it, so people can read or magnify it.
-- A focusable wrapper with a focus ring around a disabled control, so the keyboard reaches its tooltip.
+- A focusable wrapper with a focus ring around a disabled control, so the keyboard reaches its tooltip, named as the control and reported disabled.
+- `role="tooltip"`, and `aria-describedby` from a named control to the tooltip while it is open.
 - Light text on the neutral strong fill, at 9:1 in both themes.
 - The control's theme in the portal, and fades only with a reduced-motion preference.
 
 ### You provide
 
-- An accessible name on the control that says what the tooltip says, such as `aria-label` on an icon-only button, since the tooltip isn't linked to its control for assistive technology.
+- An accessible name on the control, such as `aria-label` on an icon-only button: the tooltip describes the control while it is open, and names nothing.
 - The reason a control is disabled in the page too, where people using a screen reader or a touch screen can find it.
 - `aria-keyshortcuts` on a control whose tooltip shows a shortcut, and the shortcut's handling.
 - A control as the child, which takes the trigger's props and ref, such as a Button or an IconButton.
@@ -148,6 +150,7 @@ The tooltip shows the shortcut after the name, below the toolbar; `aria-keyshort
 
 ## Changelog
 
+- **1.0.0**: The tooltip describes a named control (`aria-describedby`) while it is open; a disabled control's wrapper carries its role, name and `aria-disabled`; a Kbd inside takes light key caps; `className`, `style`, `ref` and data attributes reach the popup; it renders on PopupSurface, in the control's text direction.
 - **0.5.0**: `side` takes `inline-start` and `inline-end`, which follow the text direction. A tooltip keeps opening on hover after its control becomes enabled or disabled.
 - **0.3.0**: Tooltips grow from their control.
 - **0.2.0**: Tooltip.

@@ -31,15 +31,18 @@ export function runTransform(module, path, source, options = {}) {
 
 const crlf = (text) => text.replaceAll('\n', '\r\n');
 const bom = (text) => `\uFEFF${text}`;
+/** Each two spaces of a line's indentation as a tab. */
+const tabs = (text) => text.replace(/^(?: {2})+/gm, (indent) => '\t'.repeat(indent.length / 2));
 
 /**
- * How Windows editors may save a fixture, each as a function from its LF text: CRLF line endings, a
- * byte order mark, or both. The fixtures are LF, as .gitattributes checks them out.
+ * How editors may save a fixture, each as a function from its LF text: CRLF line endings, a byte
+ * order mark, both, or tab indentation. The fixtures are LF, as .gitattributes checks them out.
  */
 export const encodings = [
   ['CRLF line endings', crlf],
   ['a byte order mark', bom],
   ['a byte order mark and CRLF line endings', (text) => bom(crlf(text))],
+  ['tab indentation', tabs],
 ];
 
 /** The fixture pairs of a transform: `<case>.input.<ext>` with `<case>.output.<ext>`. */

@@ -45,6 +45,7 @@ export * from './forms/DatePicker.js';
 export * from './forms/Slider.js';
 export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
+export * from './feedback/Drawer.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Alert.js';
 export * from './feedback/Popover.js';
@@ -56,7 +57,7 @@ export * from './feedback/Spinner.js';
 export * as Toast from './feedback/toast/ToastProvider.js';
 export { useToast } from './feedback/toast/useToast.js';
 export type {
-  ToastVariant,
+  ToastTone,
   ToastPlacement,
   ToastAction,
   ToastNotification,
@@ -73,6 +74,7 @@ export {
 export * from './forms/SearchField.js';
 export * from './feedback/Tooltip.js';
 export * from './feedback/Meter.js';
+export * from './feedback/Progress.js';
 export * from './content/Avatar.js';
 export * from './content/AvatarGroup.js';
 export * from './content/AnimatedNumber.js';

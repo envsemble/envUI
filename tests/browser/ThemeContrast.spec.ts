@@ -91,7 +91,7 @@ type PopupKind = (typeof popupKinds)[number];
 
 /** The element that draws a popup's surface: its fill, edge and shadow. */
 const popupSurfaces =
-  '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-modal-pane, .env-command-palette, .env-toast';
+  '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-hover-card, .env-dialog-surface, .env-command-palette, .env-toast';
 
 /** Opens one popup of a boundary of the fixture and returns it. */
 async function open(page: Page, kind: PopupKind, name: string): Promise<Locator> {

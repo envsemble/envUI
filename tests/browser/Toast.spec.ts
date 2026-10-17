@@ -5,13 +5,9 @@ test.beforeEach(async ({ page }) => {
   await page.clock.install();
   await page.goto(`${fixtureUrl}/?fixture=toast`);
 });
-const region = (page: import('@playwright/test').Page, placement = 'bottom-right') =>
-  page.locator(`.env-toast-viewport-${placement}`);
-const notice = (
-  page: import('@playwright/test').Page,
-  message: string,
-  placement = 'bottom-right',
-) =>
+const region = (page: import('@playwright/test').Page, placement = 'bottom-end') =>
+  page.locator(`.env-toast-viewport[data-placement="${placement}"]`);
+const notice = (page: import('@playwright/test').Page, message: string, placement = 'bottom-end') =>
   region(page, placement)
     .locator('.env-toast')
     .filter({ has: page.locator('.env-toast-message', { hasText: message }) });
@@ -51,6 +47,69 @@ test('errors and notices with actions persist', async ({ page }) => {
     .getByRole('button', { name: 'Undo notice' })
     .click();
   await expect(page.getByTestId('toast-action-count')).toHaveText('1');
+});
+
+test('danger notices are alerts at once and never wait behind the hidden count', async ({
+  page,
+}) => {
+  await page.getByTestId('toast-queue-bottom').click();
+  await page.getByTestId('toast-error').click();
+  const danger = notice(page, 'Persistent error notice');
+  await expect(danger).toBeVisible();
+  await expect(danger).toHaveAttribute('data-tone', 'danger');
+  await expect(danger).not.toHaveAttribute('data-limited');
+  // It is an alert as it appears, readable without focusing the region first.
+  await expect(danger).toHaveRole('alert');
+  await expect(danger).not.toHaveAttribute('aria-hidden');
+  await expect(page.getByRole('alert')).toHaveCount(1);
+  // The alert is announced once: no polite live region holds it, and the polite status that reads
+  // the ordinary notices leaves it out.
+  expect(
+    await danger.evaluate((element) => {
+      for (let node = element.parentElement; node; node = node.parentElement) {
+        const live = node.getAttribute('aria-live');
+        if (live && live !== 'off') return live;
+        if (['status', 'log', 'alert'].includes(node.getAttribute('role') ?? '')) return node.role;
+      }
+      return null;
+    }),
+  ).toBeNull();
+  const announcer = page.locator('.env-toast-announcer').first();
+  await expect(announcer).toHaveRole('status');
+  await expect(announcer).toContainText('Bottom queue 4');
+  await expect(announcer).not.toContainText('Persistent error notice');
+  // It takes a place of its own, so two of the four ordinary notices wait.
+  await expect(region(page).locator('.env-toast:not([data-limited])')).toHaveCount(3);
+  await expect(region(page).locator('.env-toast-queued-count')).toContainText(
+    '2 older notifications hidden',
+  );
+});
+
+test('in right-to-left text the bottom-end stack sits at the left and the top stack stays centred', async ({
+  page,
+}) => {
+  await page.evaluate(() => document.documentElement.setAttribute('dir', 'rtl'));
+  await page.getByTestId('toast-queue-bottom').click();
+  await page.getByTestId('toast-queue-top').click();
+  await expect(region(page)).toHaveAccessibleName('Notifications');
+  await expect(region(page, 'top-center')).toHaveAccessibleName('Top notifications');
+  const width = page.viewportSize()!.width;
+  await expect.poll(async () => (await region(page).boundingBox())!.x).toBeLessThan(width / 4);
+  await expect
+    .poll(async () => {
+      const box = (await region(page, 'top-center').boundingBox())!;
+      return Math.abs(box.x + box.width / 2 - width / 2);
+    })
+    .toBeLessThan(1);
+  // A swipe toward the end of the line, to the left here, dismisses a notice.
+  const leaving = notice(page, 'Bottom queue 4');
+  const box = (await leaving.locator('.env-toast-message').boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  for (let step = 1; step <= 8; step += 1)
+    await page.mouse.move(box.x + box.width / 2 - step * 15, box.y + box.height / 2);
+  await page.mouse.up();
+  await expect(leaving).toHaveCount(0);
 });
 
 test('visible timers pause for focus and hover together and resume after both leave', async ({
@@ -99,7 +158,7 @@ test('viewport focus pauses existing and newly displayed timers', async ({ page 
 test('Strict Mode mount effects preserve capacity after effect replay', async ({ page }) => {
   await page.getByRole('button', { name: 'Mount strict toast provider' }).click();
   const active = page.locator(
-    '.env-toast-viewport-bottom-right .env-toast:not([data-ending-style]):not([data-limited])',
+    '.env-toast-viewport[data-placement="bottom-end"] .env-toast:not([data-ending-style]):not([data-limited])',
   );
   await expect(active).toHaveCount(1);
   await page.getByRole('button', { name: 'Add strict notices' }).click();
@@ -172,12 +231,12 @@ test('placement stacks, keyboard access, wrapped sizing and contextual action st
   });
 });
 
-test('the hidden count sits beyond the stack: above at the bottom right, below and centered at the top center', async ({
+test('the hidden count sits beyond the stack: above at the bottom end, below and centered at the top center', async ({
   page,
 }) => {
   await page.getByTestId('toast-queue-bottom').click();
   await page.getByTestId('toast-queue-top').click();
-  for (const placement of ['bottom-right', 'top-center']) {
+  for (const placement of ['bottom-end', 'top-center']) {
     const viewport = region(page, placement);
     const count = viewport.locator('.env-toast-queued-count');
     await expect(count).toHaveClass(/env-counter-badge/);
@@ -196,7 +255,7 @@ test('the hidden count sits beyond the stack: above at the bottom right, below a
           const top = Math.min(...notices.map((notice) => notice.top));
           const bottom = Math.max(...notices.map((notice) => notice.bottom));
           const center = (notice: DOMRect) => notice.left + notice.width / 2;
-          return element.classList.contains('env-toast-viewport-bottom-right')
+          return element.dataset.placement === 'bottom-end'
             ? count.bottom <= top
             : count.top >= bottom && Math.abs(center(count) - center(notices[0])) < 1;
         }),
@@ -241,7 +300,7 @@ test('existing notices glide from their previous place when another arrives', as
 });
 
 for (const motion of ['reduce', 'no-preference'] as const)
-  for (const placement of ['bottom-right', 'top-center'] as const)
+  for (const placement of ['bottom-end', 'top-center'] as const)
     test(`dismissed notices step out at once, so the stack neither grows, scrolls nor jumps (${placement}, ${motion} motion)`, async ({
       page,
     }) => {

@@ -11,6 +11,7 @@
         "to": [],
         "use": "StackProps, with direction, wrap, align, justify and gap."
       },
+      "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
       "Counter": { "to": ["CounterBadge"] },
       "CounterProps": { "to": ["CounterBadgeProps"] },
       "DateTimeField": { "to": ["DatePicker"] },
@@ -128,6 +129,7 @@
       },
       "ToastProvider": { "to": ["Toast.Provider"] },
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
+      "ToastVariant": { "to": ["ToastTone"] },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."

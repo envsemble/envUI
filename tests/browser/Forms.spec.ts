@@ -322,7 +322,7 @@ test('Dialog traps and restores focus and its nested Select retains the dark the
   const option = page.getByRole('option', { name: 'Boreal', exact: true });
   await expect(option).toBeVisible();
   // The open list stands apart from the dark dialog it opens over.
-  const separation = await popupSeparation(page, '.env-modal-pane');
+  const separation = await popupSeparation(page, '.env-dialog-surface');
   expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
   expect(separation.border).toBeGreaterThan(0);
   await expect

@@ -9,7 +9,7 @@ const activity = [
 export default function UpdatingPanel() {
   return (
     // The activity shown stays while newer entries load; the spinner says it is updating.
-    <Card heading="Recent activity" meta={<Spinner size="small" label="Updating activity" />}>
+    <Card heading="Recent activity" meta={<Spinner size="sm" label="Updating activity" />}>
       <List.Root aria-label="Recent activity" aria-busy="true">
         {activity.map((entry) => (
           <List.Item key={entry.id} title={entry.title} detail={entry.detail} />

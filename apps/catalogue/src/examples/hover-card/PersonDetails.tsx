@@ -7,7 +7,7 @@ export default function PersonDetails() {
   return (
     <Text>
       Assigned to{' '}
-      <HoverCard width="wide" trigger={<Link href="/people/priya-shah">Priya Shah</Link>}>
+      <HoverCard width="lg" trigger={<Link href="/people/priya-shah">Priya Shah</Link>}>
         <Stack gap={3}>
           <div style={person}>
             <Avatar name="Priya Shah" size="large" />

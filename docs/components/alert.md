@@ -1,7 +1,7 @@
 ---
 title: Alert
-summary: An inline message about a page or a section, in an info, success, warning or error tone, with an optional action and dismiss button.
-status: beta
+summary: An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
+status: stable
 since: 0.5.0
 category: Feedback & overlays
 aliases:
@@ -44,7 +44,7 @@ components:
 
 ## Overview
 
-An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warnings and errors interrupt only with `announce`.
+An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warning and danger alerts interrupt only with `announce`.
 
 ```tsx example=BlockedRelease
 
@@ -66,7 +66,7 @@ An alert is a message about a page or a section that stays in place, above the c
 | `info`    | Something people should know about the page or section, such as a paused sync or planned maintenance. The default.  |
 | `success` | A result that stays relevant, such as a plan that was shared, where a toast would leave too soon.                   |
 | `warning` | Something that will cause a problem unless people act, such as storage that is almost full or a blocked release.    |
-| `error`   | Something that failed or stopped working, such as a save that didn't go through or a service that isn't responding. |
+| `danger`  | Something that failed or stopped working, such as a save that didn't go through or a service that isn't responding. |
 
 - An alert fills the width of its container, and its text wraps, also within a long word or an address.
 - The icon, the content and the dismiss button sit in three columns 0.75 rem apart; the content takes the room the other two leave.
@@ -74,7 +74,7 @@ An alert is a message about a page or a section that stays in place, above the c
 
 ## States and behaviour
 
-- **Live role**: info and success alerts have the `status` role, a polite live region, whether `announce` is set or not. Warning and error alerts have no live role by default, since an alert that is there when the page loads should not interrupt; with `announce` they take the `alert` role and are announced at once.
+- **Live role**: info and success alerts have the `status` role, a polite live region, whether `announce` is set or not. Warning and danger alerts have no live role by default, since an alert that is there when the page loads should not interrupt; with `announce` they take the `alert` role and are announced at once.
 - **Dismissing**: with `onDismiss`, a dismiss button named `dismissLabel` (Dismiss) shows; a press calls `onDismiss`, and the application removes the alert. The button's name also shows as its native tooltip. On hover and press its circle takes a tint of the tone.
 - **Actions**: `action` holds any controls, such as a Button or a Link, and keeps their own states.
 
@@ -94,7 +94,7 @@ An alert is a message about a page or a section that stays in place, above the c
 
 - Place the alert above the content it concerns, such as at the top of a page or a section.
 - Remove an alert once it no longer applies, such as when the sync resumes.
-- Set `announce` on a warning or an error that appears because of something people just did, such as a failed save.
+- Set `announce` on a warning or a danger alert that appears because of something people just did, such as a failed save.
 - Let people dismiss an alert only when the message can safely be hidden.
 
 ### Don't
@@ -115,7 +115,7 @@ An alert is a message about a page or a section that stays in place, above the c
 
 ### envUI provides
 
-- The `status` role on info and success alerts, and the `alert` role on warning and error alerts with `announce`, so they are announced without interrupting or at once.
+- The `status` role on info and success alerts, and the `alert` role on warning and danger alerts with `announce`, so they are announced without interrupting or at once.
 - An icon for each tone, hidden from assistive technology, beside text in the primary text color, so the tone is not told by color alone.
 - A native dismiss button named by `dismissLabel`, with the name as its tooltip, the shared focus ring and a 2.75 rem touch target on coarse pointers.
 
@@ -130,7 +130,7 @@ An alert is a message about a page or a section that stays in place, above the c
 
 ### Tones
 
-Info for something to know, success for a result that stays relevant, warning before a problem and error after one.
+Info for something to know, success for a result that stays relevant, warning before a problem and danger after one.
 
 ```tsx example=Tones
 
@@ -138,7 +138,7 @@ Info for something to know, success for a result that stays relevant, warning be
 
 ### Announce a failure
 
-A save that fails shows an error alert with `announce`, so it is read at once. Dismissing it moves focus back to the button that saves.
+A save that fails shows a danger alert with `announce`, so it is read at once. Dismissing it moves focus back to the button that saves.
 
 ```tsx example=SaveFailed
 
@@ -154,5 +154,6 @@ A save that fails shows an error alert with `announce`, so it is read at once. D
 
 ## Changelog
 
+- **1.0.0**: `tone="danger"` for `error`; the dismiss button is a CloseButton named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
 - **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

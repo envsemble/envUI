@@ -6,6 +6,7 @@ const keyNames: Record<string, string> = {
   command: 'Meta',
   meta: 'Meta',
   '⌘': 'Meta',
+  '⌃': 'Control',
   win: 'Meta',
   alt: 'Alt',
   option: 'Alt',
@@ -49,7 +50,14 @@ export function shortcutChords(shortcut: string) {
  */
 export function keyShortcuts(chords: string[][]) {
   if (chords.length !== 1) return undefined;
-  return chords[0]!
-    .map((key) => (key === '+' ? 'Plus' : (keyNames[key.toLowerCase()] ?? key)))
-    .join('+');
+  return (
+    chords[0]!
+      // Modifier symbols written without +, as in ⌘B or ⌥⇧K, are keys of their own.
+      .flatMap((key) => {
+        const symbols = /^([⌘⌃⌥⇧]+)(.+)$/u.exec(key);
+        return symbols ? [...symbols[1]!, symbols[2]!] : [key];
+      })
+      .map((key) => (key === '+' ? 'Plus' : (keyNames[key.toLowerCase()] ?? key)))
+      .join('+')
+  );
 }

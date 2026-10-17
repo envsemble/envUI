@@ -170,7 +170,7 @@ test('the buttons show their names in tooltips in both themes', async ({ page })
     await pager.getByRole('button', { name: 'Next page' }).hover();
     await expect(tooltip).toHaveText('Next page');
     await expect(
-      page.locator('.env-tooltip-theme:has(.env-tooltip:not([data-ending-style]))'),
+      page.locator('.env-popup-theme:has(.env-tooltip:not([data-ending-style]))'),
     ).toHaveAttribute('data-env-theme', theme);
     // An unavailable button still names itself.
     await pager.getByRole('button', { name: 'Previous page' }).hover();

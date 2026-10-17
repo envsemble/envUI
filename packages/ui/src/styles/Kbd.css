@@ -8,11 +8,12 @@
   align-items: center;
   justify-content: center;
   padding-inline: 0.3125rem;
-  border: 0.0625rem solid var(--env-color-border-muted);
+  /* Hooks: a container sets --env-kbd-fg, --env-kbd-bg and --env-kbd-border for its own fill. */
+  border: 0.0625rem solid var(--env-kbd-border, var(--env-color-border-muted));
   border-block-end-width: 0.125rem;
   border-radius: 0.3125rem;
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
+  background: var(--env-kbd-bg, var(--env-color-bg-neutral-muted));
+  color: var(--env-kbd-fg, var(--env-color-fg-default));
   font: 500 0.75rem / 1 var(--env-font-family);
   white-space: nowrap;
   vertical-align: baseline;
@@ -30,6 +31,6 @@
 }
 .env-kbd-separator {
   padding-inline: 0.1875rem;
-  color: var(--env-color-fg-muted);
+  color: var(--env-kbd-fg, var(--env-color-fg-muted));
   font: var(--env-type-body-small);
 }

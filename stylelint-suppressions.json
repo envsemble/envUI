@@ -88,7 +88,7 @@
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 9
     },
     "declaration-property-value-allowed-list": {
       "count": 1
@@ -111,10 +111,7 @@
   },
   "packages/ui/src/styles/Dialog.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
-    },
-    "no-duplicate-selectors": {
-      "count": 2
+      "count": 6
     }
   },
   "packages/ui/src/styles/Pager.css": {
@@ -248,7 +245,7 @@
   },
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 4
     }
   },
   "packages/ui/src/styles/Rating.css": {
@@ -324,7 +321,7 @@
   },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 12
+      "count": 10
     },
     "no-duplicate-selectors": {
       "count": 1

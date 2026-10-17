@@ -7,7 +7,7 @@ export default function LoadingPreview() {
       background="muted"
       style={{ display: 'grid', placeItems: 'center', minBlockSize: '12rem' }}
     >
-      <Spinner size="large" label="Loading the preview of quarterly-report.pdf" />
+      <Spinner size="lg" label="Loading the preview of quarterly-report.pdf" />
     </Surface>
   );
 }

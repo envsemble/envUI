@@ -1,7 +1,7 @@
 ---
 title: EmptyState
 summary: Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action.
-status: beta
+status: stable
 since: 0.1.0
 category: Feedback & overlays
 aliases:
@@ -17,7 +17,7 @@ aliases:
 useWhen:
   - A list, table or page has no content yet, such as before the first project.
   - A search or filter matches nothing.
-  - Content failed to load and people can try again (`tone="error"`).
+  - Content failed to load and people can try again (`tone="danger"`).
   - A state takes the place of a whole page's or region's content (`align="center"`).
 avoidWhen:
   - text: Content that is on its way, which keeps its layout while it loads.
@@ -64,7 +64,7 @@ An empty state takes the place of content that isn't there: it says why, such as
 | `align="start"`  | A state inside a card, a panel or a dialog, lined up with the content around it. The default.                              |
 | `align="center"` | A state that takes the place of a page's or region's content, such as an empty list: centred, with a larger, quieter icon. |
 | `tone="neutral"` | Nothing yet, or no results. The default.                                                                                   |
-| `tone="error"`   | Content that failed to load: the error icon in the error color, announced as an alert. Pair it with a retry action.        |
+| `tone="danger"`  | Content that failed to load: the error icon in the error color, announced as an alert. Pair it with a retry action.        |
 
 - A start-aligned state has 1.5 rem padding and 1 rem between the icon, the text and the action.
 - A centred state centres its icon, text and action, keeps 3 rem of block padding and limits its text to 30 rem. It is centred vertically in the height the application gives it, so give the region its height, such as with a grid that fills the rest of the page.
@@ -90,7 +90,7 @@ An empty state takes the place of content that isn't there: it says why, such as
 ### Do
 
 - Offer one action that resolves the state, such as creating the first item or clearing the filters.
-- Use `tone="error"` with a retry action when content failed to load.
+- Use `tone="danger"` with a retry action when content failed to load.
 - Use `align="center"` when the state takes the place of a region's content, and give that region its height.
 - Set `headingLevel` so the title fits the page's outline.
 
@@ -143,6 +143,7 @@ An error state replaces the list that failed to load and is announced; Try again
 
 ## Changelog
 
+- **1.0.0**: `tone="danger"` for `error`; the tone and alignment are `data-tone` and `data-align`, and the text column is `env-empty-state-description`.
 - **0.7.0**: `align="center"`, for a state that takes the place of a page's or region's content.
 - **0.4.0**: `headingLevel`, for an empty or error state that is the whole page.
 - **0.2.0**: `tone="error"`, for content that failed to load.

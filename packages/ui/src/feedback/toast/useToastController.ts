@@ -62,7 +62,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         const delivery = placementStores.current.get(entry.placement);
         if (!delivery) return true;
         const durationMs =
-          entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
+          entry.duration ?? (entry.tone === 'danger' || entry.action ? Infinity : 5000);
         if (durationMs > 0 && Number.isFinite(durationMs)) {
           dismissalTimers.current.set(entry.id, {
             durationMs,
@@ -78,9 +78,11 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         delivery.add({
           id: entry.id,
           title: entry.message,
-          type: entry.variant,
+          type: entry.tone,
           data: entry,
-          priority: entry.variant === 'error' ? 'high' : 'low',
+          // Danger notifications announce themselves as alerts (ToastRegion), so Base UI's
+          // high-priority copy, which hides the notification until the region has focus, is unused.
+          priority: 'low',
           timeout: 0,
           onClose() {
             notifications.current.delete(entry.id);
@@ -121,7 +123,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         ...notification,
         id,
         placement,
-        variant: notification.variant ?? 'neutral',
+        tone: notification.tone ?? 'neutral',
       };
       notifications.current.set(id, entry);
       pendingNotifications.current.push(entry);

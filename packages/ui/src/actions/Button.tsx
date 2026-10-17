@@ -159,7 +159,7 @@ function renderButton(
       {pending ? (
         <>
           <span className="env-button-content">{content}</span>
-          <Spinner size="small" className="env-button-spinner" />
+          <Spinner size="sm" className="env-button-spinner" />
         </>
       ) : (
         content

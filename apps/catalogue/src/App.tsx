@@ -4,11 +4,11 @@ import {
   IconButton,
   Button,
   Stack,
-  Dialog,
   Link,
   LinkProvider,
   EnvUILogo,
   ThemeToggle,
+  Drawer,
 } from '@envsemble/envui';
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -135,14 +135,13 @@ function Catalogue() {
             title="Search"
             onClick={openSearch}
           />
-          <Dialog
+          <Drawer
             open={navigationOpen}
             onOpenChange={(open) => {
               if (open) setFocusContentOnClose(false);
               setNavigationOpen(open);
             }}
             title="Documentation"
-            placement="right"
             finalFocus={focusContentOnClose ? mainElement : undefined}
             trigger={
               <Button variant="secondary" startIcon={<Menu />}>
@@ -160,7 +159,7 @@ function Catalogue() {
                 setNavigationOpen(false);
               }}
             />
-          </Dialog>
+          </Drawer>
         </Stack>
       </header>
       <div className="docs-shell">

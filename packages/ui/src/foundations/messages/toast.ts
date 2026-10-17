@@ -5,10 +5,10 @@ import { plural } from './plural.js';
  * `messages.toast` overrides any of them.
  */
 export const toast = {
-  /** Names the notifications at the bottom end. */
-  regionBottomEnd: 'Bottom right notifications',
+  /** Names the notifications at the bottom end: the right, or the left in right-to-left text. */
+  regionBottomEnd: 'Notifications',
   /** Names the notifications at the top center. */
-  regionTopCenter: 'Top center notifications',
+  regionTopCenter: 'Top notifications',
   /** The count of notifications waiting behind the shown ones. */
   hidden: ({ count }: { count: number }) =>
     `${count} older ${plural(count, 'notification', 'notifications')} hidden`,

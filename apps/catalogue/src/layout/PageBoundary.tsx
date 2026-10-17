@@ -60,7 +60,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
         <Alert
           ref={this.alert}
           tabIndex={-1}
-          tone="error"
+          tone="danger"
           title="This page failed to render"
           action={
             overview ? (

@@ -9,7 +9,7 @@ function SaveButton() {
     // Saving takes a moment; a timer stands in for it here.
     window.setTimeout(() => {
       setSaving(false);
-      toast.show({ variant: 'success', message: 'Changes saved.' });
+      toast.show({ tone: 'success', message: 'Changes saved.' });
     }, 1200);
   };
   return (

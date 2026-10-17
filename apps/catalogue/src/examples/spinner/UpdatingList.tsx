@@ -33,7 +33,7 @@ export default function UpdatingList() {
           onValueChange={choose}
         />
         {/* The tasks shown stay while the new ones load; the spinner says they are updating. */}
-        {updating && <Spinner size="small" label="Updating tasks" />}
+        {updating && <Spinner size="sm" label="Updating tasks" />}
       </Stack>
       <List.Root aria-label="Tasks" aria-busy={updating}>
         {visible.map((task) => (
