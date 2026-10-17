@@ -9,7 +9,8 @@ const safeLength = /^[\w.%+\-*/(), ]+$/;
  * The rules that stack a layout below its stackBelow width before any script runs: the style sheet
  * carries them for the default width, and this hoisted style for any other. `rules` receives the
  * root's selector for this width, such as `[data-stack-below="30rem"]`. React keeps one style per
- * href, so each width is written once however many layouts use it.
+ * href, so each width is written once however many layouts use it; the href has no spaces, which
+ * React rejects, so `calc(30rem + 2px)` becomes `calc(30rem_+_2px)`.
  */
 export function StackStyle({
   name,
@@ -27,7 +28,7 @@ export function StackStyle({
     `@layer env.components{@container env-split-pane (inline-size < ${stackBelow}){` +
     `${rules(`[data-stack-below="${stackBelow}"]`)}}}`;
   return (
-    <style href={`${name}-stack-${stackBelow}`} precedence="env">
+    <style href={`${name}-stack-${stackBelow.replace(/\s+/g, '_')}`} precedence="env">
       {css}
     </style>
   );

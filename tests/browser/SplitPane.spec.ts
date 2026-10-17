@@ -148,6 +148,71 @@ test.describe('SplitPane', () => {
     await expect(page.getByTestId('stacked')).toHaveText('side by side');
   });
 
+  test('stacked with a height of its own, keeps its panes in place as it hydrates', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 400, height: 600 });
+    const hydrate = await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {SplitPane} from '@envsemble/envui';
+      export const element = h(SplitPane.Root, {'data-testid': 'root', stackBelow: 600,
+          style: {blockSize: '300px'}},
+        h(SplitPane.Pane, {label: 'First'}, h('div', {style: {blockSize: '200px'}}, 'First pane')),
+        h(SplitPane.ResizeHandle, {label: 'Resize'}),
+        h(SplitPane.Pane, {label: 'Second'}, h('div', {style: {blockSize: '250px'}}, 'Second pane')));`,
+      { hydrate: true },
+    );
+    const root = page.getByTestId('root');
+    const first = page.getByRole('region', { name: 'First' });
+    const second = page.getByRole('region', { name: 'Second' });
+    const boxes = async () => ({
+      first: await first.boundingBox(),
+      second: await second.boundingBox(),
+      scroll: await root.evaluate((element) => element.scrollHeight),
+    });
+    const before = await boxes();
+    expect(await hydrate()).toEqual([]);
+    await expect(root).toHaveAttribute('data-stacked', '');
+    expect(await boxes()).toEqual(before);
+    // The panes take the height of their content, one after the other, and scroll together.
+    expect(before.second!.y).toBeCloseTo(before.first!.y + 200, 0);
+    expect(before.scroll).toBeGreaterThan(450);
+  });
+
+  test('writes the stacked rules for a width with spaces once, through hydration', async ({
+    page,
+  }) => {
+    const warnings: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') warnings.push(message.text());
+    });
+    await page.setViewportSize({ width: 400, height: 600 });
+    const hydrate = await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {SplitPane} from '@envsemble/envui';
+      export const element = h(SplitPane.Root, {stackBelow: 'calc(30rem + 2px)'},
+        h(SplitPane.Pane, {label: 'First'}, 'First pane'),
+        h(SplitPane.ResizeHandle, {label: 'Resize'}),
+        h(SplitPane.Pane, {label: 'Second'}, 'Second pane'));`,
+      { hydrate: true },
+    );
+    const styles = () =>
+      page.evaluate(
+        () =>
+          [...document.querySelectorAll('style')].filter((style) =>
+            style.textContent?.includes('calc(30rem + 2px)'),
+          ).length,
+      );
+    await expect(page.getByRole('separator', { name: 'Resize' })).toBeHidden();
+    expect(await styles()).toBe(1);
+    expect(await hydrate()).toEqual([]);
+    await expect(page.locator('[data-stacked]')).toHaveCount(1);
+    expect(await styles()).toBe(1);
+    expect(warnings).toEqual([]);
+  });
+
   test.describe('server-rendered', () => {
     test.use({ javaScriptEnabled: false });
 

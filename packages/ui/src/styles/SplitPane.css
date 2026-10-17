@@ -1,25 +1,38 @@
 /* SplitPane: two panes and the handle that resizes them. The first pane takes the root's size, the
    handle its own and the second pane the rest; each pane scrolls on its own when the split pane has
    a size of its own. A size in rem never pushes the handle out of a split pane narrower than it.
-   Stacked panes follow each other. The root is a container, so the server's markup stacks below
-   stackBelow before any script measures it. */
+   Stacked panes follow each other. With stackBelow, the root is a container, so the server's markup
+   stacks below it before any script measures it. */
 .env-split-pane {
   --env-split-pane-size: 50%;
-  container: env-split-pane / inline-size;
+  /* The handle's width across its axis, which caps the first pane's size. */
+  --env-split-pane-handle: var(--env-space-2);
   position: relative;
   display: grid;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
+@media (pointer: coarse) {
+  .env-split-pane {
+    --env-split-pane-handle: var(--env-control-height-touch);
+  }
+}
+/* Stacked panes that outgrow a height of its own scroll together, in the root. Side by side, the
+   panes fit it, so the root never scrolls. */
+.env-split-pane[data-stack-below] {
+  container: env-split-pane / inline-size;
+  overflow-y: auto;
+}
 .env-split-pane[data-orientation='horizontal'] {
-  grid-template-columns: min(var(--env-split-pane-size), 100% - var(--env-space-2)) auto minmax(
-      0,
-      1fr
-    );
+  grid-template-columns:
+    min(var(--env-split-pane-size), 100% - var(--env-split-pane-handle))
+    auto minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
 }
 .env-split-pane[data-orientation='vertical'] {
-  grid-template-rows: min(var(--env-split-pane-size), 100% - var(--env-space-2)) auto minmax(0, 1fr);
+  grid-template-rows:
+    min(var(--env-split-pane-size), 100% - var(--env-split-pane-handle))
+    auto minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
 }
 .env-split-pane-pane {
@@ -30,26 +43,54 @@
 .env-split-pane-pane[hidden] {
   display: none;
 }
-/* Stacked, the panes take the height of their content, the first above the second, with a hairline
-   between them; within a set height they scroll together. */
-.env-split-pane[data-stacked] {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
+/* Stacked, the panes take the whole row, and the height of their content, the first above the second
+   with a hairline between them, and the handle goes. The panes take rows of their own before the
+   root's row, which takes any height left, so a split pane with a height of its own neither stretches
+   nor squeezes them. The container query stacks the server's markup with the same rules below
+   stackBelow, before the script sets data-stacked. These are the rules for 44rem; SplitPane writes
+   the same for any other width. A vertical split pane keeps its rows. */
 .env-split-pane[data-stacked] > .env-split-pane-pane {
-  flex: 0 0 auto;
+  grid-column: 1 / -1;
+}
+.env-split-pane[data-stacked][data-orientation='horizontal'] > .env-split-pane-pane {
+  grid-row: -4 / -3;
+  min-block-size: auto;
   overflow: visible;
+}
+.env-split-pane[data-stacked][data-orientation='horizontal']
+  > .env-split-pane-pane
+  ~ .env-split-pane-pane {
+  grid-row: -3 / -2;
+}
+.env-split-pane[data-stacked][data-orientation='vertical']
+  > .env-split-pane-pane
+  ~ .env-split-pane-pane {
+  grid-row: 3;
+}
+.env-split-pane[data-stacked] > .env-split-pane-handle {
+  display: none;
 }
 .env-split-pane[data-stacked] > .env-split-pane-pane:not([hidden]) ~ .env-split-pane-pane {
   border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
 }
-/* Below stackBelow, the container query stacks the panes from the first paint, in the grid: each
-   takes the whole row and the handle goes. The script then sets data-stacked, as above. These are
-   the rules for 44rem; SplitPane writes the same for any other width. */
 @container env-split-pane (inline-size < 44rem) {
   .env-split-pane[data-stack-below='44rem'] > .env-split-pane-pane {
     grid-column: 1 / -1;
+  }
+  .env-split-pane[data-stack-below='44rem'][data-orientation='horizontal'] > .env-split-pane-pane {
+    grid-row: -4 / -3;
+    min-block-size: auto;
+    overflow: visible;
+  }
+  .env-split-pane[data-stack-below='44rem'][data-orientation='horizontal']
+    > .env-split-pane-pane
+    ~ .env-split-pane-pane {
+    grid-row: -3 / -2;
+  }
+  .env-split-pane[data-stack-below='44rem'][data-orientation='vertical']
+    > .env-split-pane-pane
+    ~ .env-split-pane-pane {
+    grid-row: 3;
   }
   .env-split-pane[data-stack-below='44rem'] > .env-split-pane-handle {
     display: none;

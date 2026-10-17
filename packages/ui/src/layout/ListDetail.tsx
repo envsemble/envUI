@@ -2,7 +2,6 @@
 
 import {
   createContext,
-  useCallback,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -109,13 +108,14 @@ function focusCurrentRow(list: HTMLElement | null) {
 
 /**
  * The stacked rules for one stackBelow width, which ListDetail.css carries for 44rem: the list or the
- * detail, by data-detail-shown, without a hairline above the detail.
+ * detail, by data-detail-shown, without a hairline above the detail, and the back button.
  */
 const stackRules = (width: string) =>
   `.env-list-detail${width}[data-detail-shown]>.env-list-detail-list{display:none}` +
   `.env-list-detail${width}:not([data-detail-shown])>.env-list-detail-detail{display:none}` +
   `.env-list-detail${width}>.env-list-detail-list:not([hidden])~.env-list-detail-detail:not([hidden]){` +
-  'border-block-start:none}';
+  'border-block-start:none}' +
+  `.env-list-detail${width}>.env-list-detail-detail>.env-list-detail-back{display:block}`;
 
 /**
  * A list beside the detail of its chosen item, on SplitPane, with the list's width resizable. Below
@@ -189,26 +189,19 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
   const detail = useRef<HTMLDivElement>(null);
   const previous = useRef({ detailShown, stacked });
 
-  // The back button goes as the layout widens: focus on it moves to the detail first, rather than
-  // falling to the page. The callback is stable, so this runs only when the button leaves.
-  const backRef = useCallback((node: HTMLButtonElement | null) => {
-    back.current = node;
-    if (!node) return;
-    return () => {
-      back.current = null;
-      const pane = detail.current;
-      if (document.activeElement !== node || !pane) return;
-      if (!pane.hasAttribute('tabindex')) pane.tabIndex = -1;
-      pane.focus();
-    };
-  }, []);
-
   // Stacked, focus follows what shows: the back button once the detail opens, the list's current
   // row once it closes. Focus left inside a pane that the layout hides goes there too. Focus
   // elsewhere on the page stays where it is.
   useLayoutEffect(() => {
     const before = previous.current;
     previous.current = { detailShown, stacked };
+    // The back button hides as the layout widens: focus on it moves to the detail, rather than
+    // falling to the page.
+    const pane = detail.current;
+    if (!stacked && before.stacked && pane && document.activeElement === back.current) {
+      if (!pane.hasAttribute('tabindex')) pane.tabIndex = -1;
+      pane.focus();
+    }
     if (!stacked) return;
     const active = document.activeElement;
     const root = detail.current?.parentElement;
@@ -232,13 +225,13 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
         className={classNames('env-list-detail-detail', className)}
         hidden={(stacked && !detailShown) || props.hidden}
       >
-        {stacked && (
-          <div className="env-list-detail-back">
-            <Button ref={backRef} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
-              {backLabel}
-            </Button>
-          </div>
-        )}
+        {/* Always rendered, so the server's markup has it; the style sheet shows it only while
+            stacked, and hidden it is out of the tab order and the accessibility tree. */}
+        <div className="env-list-detail-back">
+          <Button ref={back} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
+            {backLabel}
+          </Button>
+        </div>
         {children}
       </SplitPane.Pane>
     </>
