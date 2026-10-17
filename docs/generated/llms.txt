@@ -131,6 +131,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 ## Templates
 
 - [App frame with sidebar](docs/templates/app-frame.md): The application's frame, with a sidebar of destinations that collapses to a rail, search, the account menu and a phone's top bar, around the page people are on. (a whole screen)
+- [Settings page](docs/templates/settings-page.md): A page inside the app frame where people change their profile, notifications and appearance, and delete the workspace, with each section saved the way its settings need. (inside the app frame)
 - [Sign-in page](docs/templates/sign-in-page.md): A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens. (a whole screen)
 
 ## Optional

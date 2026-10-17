@@ -149,6 +149,7 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -223,6 +224,7 @@
         ],
         "templates": [
           "app-frame",
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -310,7 +312,8 @@
           "empty-states"
         ],
         "templates": [
-          "app-frame"
+          "app-frame",
+          "settings-page"
         ]
       }
     },
@@ -481,6 +484,7 @@
           "empty-states"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -603,7 +607,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -853,6 +859,7 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -1150,6 +1157,7 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -1375,6 +1383,7 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -1711,7 +1720,9 @@
         "patterns": [
           "settings"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -1802,7 +1813,9 @@
           "forms",
           "settings"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -2456,7 +2469,8 @@
           "feedback"
         ],
         "templates": [
-          "app-frame"
+          "app-frame",
+          "settings-page"
         ]
       }
     },
@@ -2855,7 +2869,8 @@
       "usedIn": {
         "patterns": [],
         "templates": [
-          "app-frame"
+          "app-frame",
+          "settings-page"
         ]
       }
     },
@@ -3814,7 +3829,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -4534,7 +4551,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -5155,7 +5174,9 @@
           "destructive-actions",
           "feedback"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -5247,6 +5268,7 @@
           "feedback"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -5517,7 +5539,9 @@
           "settings",
           "destructive-actions"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -7230,6 +7254,82 @@
           "description": "The frame every page of an application sits in: a sidebar at the start with the application's name, search and its destinations, the account menu at its foot, and the page in the main region. The sidebar collapses to a rail of icons, and on a phone it becomes a drawer that a top bar opens. Start from it for any application with a handful of destinations; render it once, at the application's root, around the router's outlet. The other templates on `frame: app` pages, such as the index page, are the pages that go inside it. Set up the providers at the application's root as setup says, since the template brings none.",
           "file": "docs/examples/app-frame/AppFrame.tsx",
           "frame": "none",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
+      "name": "settings-page",
+      "title": "Settings page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page inside the app frame where people change their profile, notifications and appearance, and delete the workspace, with each section saved the way its settings need.",
+      "aliases": [
+        "settings",
+        "preferences",
+        "account settings",
+        "profile settings",
+        "notification settings",
+        "options page"
+      ],
+      "useWhen": [
+        "People change their own profile and preferences in one place.",
+        "Some settings apply at once and others wait for Save, and the page has to keep them apart."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Creating or editing one object, such as a project, in a single form.",
+          "see": "forms"
+        },
+        {
+          "text": "A single setting beside the content it changes.",
+          "use": "Switch"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "Sidebar",
+        "NavList",
+        "Stack",
+        "Surface",
+        "Text",
+        "TextField",
+        "Avatar",
+        "Badge",
+        "Button",
+        "Link",
+        "Alert",
+        "List",
+        "Switch",
+        "RadioGroup",
+        "Radio",
+        "useThemePreference",
+        "useToast",
+        "ConfirmDialog"
+      ],
+      "related": [
+        "settings",
+        "forms",
+        "destructive-actions",
+        "app-frame",
+        "sidebar"
+      ],
+      "doc": "docs/templates/settings-page.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "SettingsPage",
+          "title": "Settings page",
+          "description": "A settings page inside the app frame: the person's profile, their notifications, the theme and density, and a danger zone, as sections of one page with an \"On this page\" navigation beside them. Each section saves the way its settings need: the profile waits for Save, switches and choices apply at once, and deleting the workspace asks for its name. Start from it for a page of personal or workspace settings; it follows the settings pattern.",
+          "file": "docs/examples/settings-page/SettingsPage.tsx",
+          "frame": "app",
           "primary": true
         }
       ],

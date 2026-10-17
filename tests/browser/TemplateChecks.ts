@@ -196,7 +196,117 @@ const appFrame: TemplateCheck[] = [
   },
 ];
 
+const settings: TemplateCheck[] = [
+  {
+    name: 'the page’s own sidebar in Main keeps its own state and adds no skip link or region to the frame',
+    async run(page, { width }) {
+      // The frame's skip links: content and, beside a phone's drawer, the frame's sidebar; nothing
+      // for the page's.
+      await expect(page.getByRole('link', { name: /^Skip to / })).toHaveText(
+        width < 768 ? ['Skip to content'] : ['Skip to content', 'Skip to Primary'],
+      );
+      const sections = page.getByRole('navigation', { name: 'Settings sections' });
+      if (width < 768) {
+        // On a phone it hides, and opening the frame's drawer shows only the frame's navigation.
+        await expect(sections).toHaveCount(0);
+        await page.getByRole('banner').getByRole('button', { name: 'Open navigation' }).click();
+        await expect(page.getByRole('dialog', { name: 'Primary' })).toBeVisible();
+        await expect(page.getByRole('dialog')).toHaveCount(1);
+        await page.keyboard.press('Escape');
+        await expect(page.getByRole('dialog')).toHaveCount(0);
+        return;
+      }
+      await expect(sections).toBeVisible();
+      // Each sidebar is its navigation landmark.
+      const own = sections;
+      const frame = page.getByRole('navigation', { name: 'Primary' });
+      await expect(own).toHaveAttribute('data-state', 'expanded');
+      // Collapsing the frame's sidebar leaves the page's alone, and the page's has no trigger.
+      await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+      await expect(frame).toHaveAttribute('data-rail', '');
+      await expect(own).toHaveAttribute('data-state', 'expanded');
+      await expect(own).not.toHaveAttribute('data-rail', '');
+      await expect(page.getByRole('button', { name: /sidebar/ })).toHaveCount(1);
+      await page.mouse.move(width - 10, 400);
+      await page.getByRole('button', { name: 'Expand sidebar' }).click();
+      // A section's item moves focus to its heading and marks it.
+      await sections.getByRole('link', { name: 'Appearance' }).click();
+      await expect(page.getByRole('heading', { name: 'Appearance', level: 2 })).toBeFocused();
+      await expect(sections.getByRole('link', { name: 'Appearance' })).toHaveAttribute(
+        'aria-current',
+        'page',
+      );
+    },
+  },
+  {
+    name: 'a notification switch applies at once, and the weekly summary says so in a toast',
+    async run(page) {
+      const summary = page.getByRole('switch', { name: 'Weekly summary' });
+      await expect(summary).not.toBeChecked();
+      await summary.click();
+      await expect(summary).toBeChecked();
+      await expect(page.getByRole('heading', { name: 'Weekly summary turned on' })).toBeVisible();
+      const comments = page.getByRole('switch', { name: 'Comments' });
+      await comments.click();
+      await expect(comments).not.toBeChecked();
+      await expect(page.getByRole('heading', { name: /turned/ })).toHaveCount(1);
+    },
+  },
+  {
+    name: 'Save profile lists two errors in a summary, says one in the status after Enter, and saves pending',
+    async run(page, { reload }) {
+      await page.clock.install();
+      await reload();
+      const name = page.getByRole('textbox', { name: 'Name', exact: true });
+      const email = page.getByRole('textbox', { name: 'Email address' });
+      const save = page.getByRole('button', { name: 'Save profile' });
+      await name.fill('');
+      await email.fill('');
+      await expect(page.getByText('Unsaved changes')).toBeVisible();
+      await save.click();
+      const problem = page.locator('.env-alert', { hasText: 'There is a problem' });
+      await expect(problem).toBeFocused();
+      await problem.getByRole('link', { name: 'Enter your email address' }).click();
+      await expect(email).toBeFocused();
+      await email.fill('alex.morgan@example.com');
+      await expect(email).not.toHaveAttribute('aria-invalid', 'true');
+      await name.press('Enter');
+      await expect(name).toBeFocused();
+      await expect(page.getByRole('main').getByRole('status').first()).toHaveText(
+        'Enter your name',
+      );
+      await name.fill('Sam Lee');
+      await save.click();
+      await expect(save).toHaveAttribute('aria-busy', 'true');
+      await expect(save).not.toHaveAttribute('disabled');
+      await page.clock.runFor(1100);
+      await expect(page.getByRole('heading', { name: 'Profile saved' })).toBeVisible();
+      await expect(page.getByText('Unsaved changes')).toHaveCount(0);
+    },
+  },
+  {
+    name: 'deleting the workspace asks for its name, and Enter in the field confirms',
+    async run(page) {
+      const open = page.getByRole('button', { name: 'Delete workspace…' });
+      await open.click();
+      const dialog = page.getByRole('alertdialog', { name: 'Delete the Northwind workspace?' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+      const field = dialog.getByRole('textbox', { name: 'Workspace name' });
+      await field.fill('North');
+      await field.press('Enter');
+      await expect(field).toHaveAccessibleDescription(/Enter Northwind to confirm/);
+      await expect(dialog).toBeVisible();
+      await field.fill('Northwind');
+      await field.press('Enter');
+      await expect(dialog).toHaveCount(0);
+      await expect(page.getByText('Northwind workspace deleted.')).toBeVisible();
+    },
+  },
+];
+
 export const templateChecks: Record<string, TemplateCheck[]> = {
+  'settings-page/SettingsPage': settings,
   'app-frame/AppFrame': appFrame,
   'sign-in-page/SignInPage': signIn,
 };
