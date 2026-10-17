@@ -3,6 +3,7 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   cloneElement,
+  useContext,
   useId,
   useLayoutEffect,
   useRef,
@@ -12,7 +13,12 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { TooltipNestingContext, TooltipPopup, type TooltipSide } from './internal/TooltipPopup.js';
+import {
+  TooltipDescribesContext,
+  TooltipNestingContext,
+  TooltipPopup,
+  type TooltipSide,
+} from './internal/TooltipPopup.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -174,7 +180,9 @@ export function Tooltip({
   const ownWords = isDisabled ? stand.name : name;
   // A control named by the same words needs no description that repeats them.
   const describes =
-    ownWords !== undefined && !(typeof content === 'string' && content.trim() === ownWords);
+    useContext(TooltipDescribesContext) &&
+    ownWords !== undefined &&
+    !(typeof content === 'string' && content.trim() === ownWords);
   const describedBy =
     open && describes && (!isDisabled || standsIn)
       ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
