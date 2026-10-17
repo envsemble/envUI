@@ -1,8 +1,13 @@
+'use client';
+
 import type { ComponentPropsWithRef, MouseEvent } from 'react';
-import { Avatar, type AvatarProps } from './Avatar.js';
+import { Avatar, type AvatarProps, type AvatarSize } from './Avatar.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
+import { avatarGroup as avatarGroupMessages } from '../foundations/messages/avatarGroup.js';
 
 export interface AvatarGroupPerson {
   /** The person's name: the tooltip and accessible name of a pressable avatar, and the initials. */
@@ -22,18 +27,27 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
   people: readonly AvatarGroupPerson[];
   /** The most avatars to show; the overflow chip after them counts the rest. All by default. */
   max?: number;
-  /** As Avatar: small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem. */
-  size?: AvatarProps['size'];
+  /**
+   * As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem.
+   * @default 'md'
+   */
+  size?: AvatarSize;
   /** How many people there are in all, when people is only a preview of them. */
   total?: number;
   /** Makes every avatar a button with a name tooltip; receives the person pressed. */
   onPersonClick?: (person: AvatarGroupPerson, event: MouseEvent<HTMLElement>) => void;
-  /** Text for people beyond the list, in the overflow tooltip and the group's name; "N more". */
+  /**
+   * Text for people beyond the list, in the overflow tooltip and the group's name. It overrides
+   * EnvUIProvider's `messages.avatarGroup.more` for this group.
+   * @default '{count} more'
+   */
   formatMore?: (count: number) => string;
   /**
    * The group's name from the number of people and their names, which end with formatMore's text
-   * for people counted in total but not listed: "3 people: Alex Morgan, Sam Lee, 1 more" by
-   * default. aria-label replaces it.
+   * for people counted in total but not listed, such as "3 people: Alex Morgan, Sam Lee, 1 more".
+   * It overrides EnvUIProvider's `messages.avatarGroup.label` for this group; aria-label replaces
+   * it.
+   * @default '{count} people: {names}'
    */
   formatLabel?: (count: number, names: readonly string[]) => string;
 }
@@ -46,15 +60,29 @@ export interface AvatarGroupProps extends Omit<ComponentPropsWithRef<'div'>, 'ch
 export function AvatarGroup({
   people,
   max,
-  size = 'standard',
+  size = 'md',
   total,
   onPersonClick,
-  formatMore = formatMorePeople,
-  formatLabel = formatGroupLabel,
+  formatMore: ownFormatMore,
+  formatLabel: ownFormatLabel,
   className,
   'aria-label': label,
   ...props
 }: AvatarGroupProps) {
+  // A format prop wins over the provider's messages, which win over the English defaults.
+  const messages = useMessages('avatarGroup', avatarGroupMessages);
+  const formatters = useFormatters();
+  const formatMore =
+    ownFormatMore ??
+    ((count: number) => messages.more({ count, number: formatters.number().format(count) }));
+  const formatLabel =
+    ownFormatLabel ??
+    ((count: number, names: readonly string[]) =>
+      messages.label({
+        count,
+        number: formatters.number().format(count),
+        names: names.join(', '),
+      }));
   // A total or max that is no count, such as NaN from missing data, an endless total or a max of
   // null, counts and shows everyone passed.
   const count = Math.max(isCount(total) ? Math.floor(total) : 0, people.length);
@@ -78,7 +106,8 @@ export function AvatarGroup({
       role="group"
       {...props}
       aria-label={label ?? formatLabel(count, names)}
-      className={classNames('env-avatar-group', `env-avatar-group-${size}`, className)}
+      className={classNames('env-avatar-group', className)}
+      data-size={size}
       data-interactive={interactive ? '' : undefined}
     >
       {shown.map((person, index) => (
@@ -123,7 +152,7 @@ function AvatarGroupItem({
   onPersonClick,
 }: {
   person: AvatarGroupPerson;
-  size: AvatarProps['size'];
+  size: AvatarSize;
   onPersonClick: AvatarGroupProps['onPersonClick'];
 }) {
   const avatar = (
@@ -150,14 +179,6 @@ function AvatarGroupItem({
       )}
     </Tooltip>
   );
-}
-
-function formatMorePeople(count: number) {
-  return `${count} more`;
-}
-
-function formatGroupLabel(count: number, names: readonly string[]) {
-  return `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`;
 }
 
 /** A number of people: finite, so neither NaN nor endless. */
