@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithRef, CSSProperties, ReactElement } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
 
@@ -46,7 +46,12 @@ export type StackProps = StackOptions & {
    * refs. A div by default.
    */
   render?: ReactElement;
-} & Omit<ComponentPropsWithRef<'div'>, keyof StackOptions>;
+  /**
+   * The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a
+   * section; a ref to a div, or to the element render makes, works too.
+   */
+  ref?: Ref<HTMLElement>;
+} & Omit<ComponentPropsWithRef<'div'>, keyof StackOptions | 'ref'>;
 
 /**
  * A layout of its direct children in a column, or a row, a step of the spacing scale apart, so the

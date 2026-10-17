@@ -55,6 +55,9 @@ const reports = {
     `line 2: re-exports LoadingBar, which ${library} no longer exports: ${use('LoadingBar')}`,
     'line 3: re-exports MenuItemProps, which is Menu.ItemProps in 1.0 and cannot be re-exported by its old name: re-export the Menu namespace instead.',
   ],
+  // ActionGroup, FeatureCard and AppShellSkeleton used as elements are left to v1-structure and
+  // v1-app-shell, which rewrite each one; ActionCard used as a value is reported.
+  'later-transforms.tsx': removedFrom(1, ['ActionCard']),
   'removed.tsx': [
     ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
     ...removedFrom(2, ['LoadingBarProps', 'MenuDensity', 'SurfaceDensity', 'ToastProps']),

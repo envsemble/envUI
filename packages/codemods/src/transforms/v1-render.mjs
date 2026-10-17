@@ -3,15 +3,23 @@
 //
 // - `<Text as="h2">` becomes `<Text render={<h2 />}>`, in the prop's place among the attributes;
 //   only the attribute's text changes, so the file keeps its layout.
-// - An expression, such as `as={level}`, stays as it is and is reported: render takes an element,
-//   such as `render={<Heading />}`, which the codemod can't build from a value.
+// - A ternary whose values are element names, such as `as={section ? 'h2' : 'h1'}`, becomes a
+//   ternary of elements, `render={section ? <h2 /> : <h1 />}`, nested ternaries too.
+// - Another expression, such as `as={level}`, stays as it is and is reported: render takes an
+//   element, such as `render={<Heading />}`, which the codemod can't build from a value.
 // - A value the map lists under `except`, such as a Card's `as="button"`, stays and is reported
 //   with the entry's text, and so does an `as` beside a `render` the element already has.
 // - An element that also spreads props gets its render, and a report: the spread may set as or
 //   render too, which the codemod can't see.
 // Elements are matched by their import from @envsemble/envui, as v1-props matches them.
 import { loadMap } from '../map.mjs';
-import { componentResolver, envuiImports, literalKey } from '../elements.mjs';
+import {
+  componentResolver,
+  conditionalValues,
+  envuiImports,
+  expressionKey,
+  literalKey,
+} from '../elements.mjs';
 import { createReporter, parserFor, sourceRanges } from '../shared.mjs';
 
 export const parser = 'tsx';
@@ -57,6 +65,40 @@ export default function transform(file, api, options = {}) {
     if (value !== undefined && Object.hasOwn(rule.except, value)) {
       reporter.warn(node, `${where}="${value}": ${rule.except[value]}`);
       return;
+    }
+    if (value === undefined && node.value?.type === 'JSXExpressionContainer') {
+      // A ternary of intrinsic names, such as as={section ? 'h2' : 'h1'}, becomes a ternary of
+      // elements, render={section ? <h2 /> : <h1 />}; `undefined` stays, which renders the default.
+      const values = conditionalValues(node.value.expression);
+      const names = values?.literals.map(({ node: leaf }) => expressionKey(leaf));
+      const range = rangeOf(node);
+      const rawValues =
+        range?.node.value?.type === 'JSXExpressionContainer'
+          ? conditionalValues(range.node.value.expression)
+          : undefined;
+      if (
+        values?.ternary &&
+        values.opaque.length === 0 &&
+        values.unset.every((leaf) => leaf.type === 'Identifier') &&
+        names.length > 0 &&
+        names.every((name) => intrinsic.test(name) && !Object.hasOwn(rule.except, name)) &&
+        rawValues?.literals.length === names.length
+      ) {
+        const expression = range.node.value.expression;
+        let text = file.source.slice(expression.start, expression.end);
+        for (const { node: leaf } of [...rawValues.literals].reverse())
+          text =
+            text.slice(0, leaf.start - expression.start) +
+            `<${expressionKey(leaf)} />` +
+            text.slice(leaf.end - expression.start);
+        edits.push({ start: range.start, end: range.end, text: `render={${text}}` });
+        if (attributes.some((each) => each.type === 'JSXSpreadAttribute'))
+          reporter.warn(
+            node,
+            `${where} is render now, with an element for each of its values, and the element spreads props too: check they set neither as nor render.`,
+          );
+        return;
+      }
     }
     if (value === undefined || !intrinsic.test(value)) {
       reporter.warn(

@@ -12,3 +12,5 @@ Toast takes the 1.0 vocabulary and reads in every language and direction.
 - Classes: `env-toast-{variant}` is `.env-toast[data-tone]`, and `env-toast-viewport-{placement}` is `.env-toast-viewport[data-placement]`.
 
 Migrate with the codemods: `envui-codemods v1-props` moves `variant` and `placement` in `useToast().show({ … })` object literals and `defaultPlacement` on Toast.Provider, and reports an argument it can't read; `v1-names` renames `ToastVariant`; `v1-classes` rewrites the classes.
+
+Migration guide: [Overlays and feedback](../../docs/migration.md#overlays-and-feedback).

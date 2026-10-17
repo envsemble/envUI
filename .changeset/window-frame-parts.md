@@ -10,3 +10,5 @@ TitleBar and WindowFrame are one namespace, `WindowFrame`, with three parts:
 - The classes follow: `env-title-bar` is `env-window-frame-title-bar`, with its parts `-layout`, `-start`, `-center` and `-end`, and the custom properties `--env-title-bar-start` and `--env-title-bar-end` are `--env-window-frame-title-bar-start` and `-end`. `--env-title-bar-height` keeps its name.
 
 The codemods cover it: `v1-names` renames `TitleBar` to `WindowFrame.TitleBar` and `<WindowFrame>` to `<WindowFrame.Root>`; `v1-structure` makes the `titleBar` prop the first child and wraps the children in `WindowFrame.Content`, which takes `scrollRef` as its `ref`; `v1-classes` renames the classes and custom properties.
+
+Migration guide: [Shell, dock, editors and code](../../docs/migration.md#shell-dock-editors-and-code).
