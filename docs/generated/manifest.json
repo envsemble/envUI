@@ -6985,7 +6985,7 @@
           "name": "initialState",
           "type": "AppShellState",
           "required": false,
-          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup."
+          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup. Without it the frame reads its storage after hydration: a server-rendered page first shows the defaults, and a page rendered only in the browser reads it before its first paint."
         },
         {
           "name": "breakpoint",
@@ -13218,13 +13218,13 @@
     "Sidebar.Handle": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The sidebar's edge as a window splitter: dragging it or its arrow keys resize a resizable sidebar; Enter, or a click without a drag, collapses or expands it. It sits at the sidebar's inline end (its inline start at the end side), inside the sidebar. A resizable Sidebar.Root adds one where it has none.",
+      "description": "The sidebar's edge as a window splitter: dragging it or its arrow keys resize a resizable sidebar, its value the width in rem; Enter, or a click without a drag, collapses or expands it. On a sidebar that isn't resizable its value is only collapsed or expanded. It sits at the sidebar's inline end (its inline start at the end side), inside the sidebar. A resizable Sidebar.Root adds one where it has none.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar",
+          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar; on a sidebar that isn't resizable, Collapse sidebar or Expand sidebar, as its trigger",
           "description": "The handle's name."
         }
       ],
@@ -13305,7 +13305,7 @@
           "name": "initialState",
           "type": "AppShellState",
           "required": false,
-          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup."
+          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup. Without it the frame reads its storage after hydration: a server-rendered page first shows the defaults, and a page rendered only in the browser reads it before its first paint."
         },
         {
           "name": "breakpoint",
@@ -13463,7 +13463,7 @@
           "name": "side",
           "type": "'start' | 'end'",
           "required": false,
-          "default": "'start'",
+          "default": "the sidebar around the trigger, else 'start'",
           "description": "Which sidebar the trigger opens and closes."
         },
         {

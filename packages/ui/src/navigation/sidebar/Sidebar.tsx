@@ -9,13 +9,17 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
+import { appShell } from '../../foundations/messages/appShell.js';
 import { classNames } from '../../internal/classNames.js';
+import { useMessages } from '../../internal/EnvUIContext.js';
+import { useFormatters } from '../../internal/useFormatters.js';
 import { useResize } from '../../internal/useResize.js';
 import { withDisplayName } from '../../internal/withDisplayName.js';
 import {
   FrameProvider,
   FrameShapeContext,
   useFrameState,
+  useNestedShape,
   type FrameStateProps,
 } from '../app-shell/FrameStore.js';
 import { useSidebarRail } from '../internal/SidebarCompact.js';
@@ -50,7 +54,13 @@ export interface ProviderProps extends FrameStateProps {
  */
 function Provider({ children, ...props }: ProviderProps) {
   const value = useFrameState(props, false);
-  return <FrameProvider value={value}>{children}</FrameProvider>;
+  // Inside a frame its sidebars are no part of the frame's title bar.
+  const shape = useNestedShape();
+  return (
+    <FrameProvider value={value}>
+      <FrameShapeContext value={shape}>{children}</FrameShapeContext>
+    </FrameProvider>
+  );
 }
 
 export type HeaderProps = ComponentPropsWithRef<'div'>;
@@ -150,7 +160,8 @@ export interface HandleProps extends Omit<ComponentPropsWithRef<'div'>, 'childre
   /**
    * The handle's name.
    * @default the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's
-   * messages.appShell.resizeSidebar
+   * messages.appShell.resizeSidebar; on a sidebar that isn't resizable, Collapse sidebar or Expand
+   * sidebar, as its trigger
    */
   label?: string;
 }
@@ -160,7 +171,8 @@ const clickSlop = 4;
 
 /**
  * The sidebar's edge as a window splitter: dragging it or its arrow keys resize a resizable
- * sidebar; Enter, or a click without a drag, collapses or expands it. It sits at the sidebar's
+ * sidebar, its value the width in rem; Enter, or a click without a drag, collapses or expands it.
+ * On a sidebar that isn't resizable its value is only collapsed or expanded. It sits at the sidebar's
  * inline end (its inline start at the end side), inside the sidebar. A resizable Sidebar.Root
  * adds one where it has none.
  */
@@ -173,8 +185,16 @@ function Handle({
   ...props
 }: HandleProps) {
   const scope = useContext(HandleContext);
+  const messages = useMessages('appShell', appShell);
+  const formatters = useFormatters();
   const press = useRef<{ x: number; y: number } | null>(null);
   const resizing = scope?.resizable === true && !scope.collapsed;
+  const remPixels = scope?.remPixels ?? 16;
+  // The width read in rem, as people set it, such as 16 rem.
+  const remText = (pixels: number) =>
+    messages.sidebarWidth({
+      size: formatters.number({ maximumFractionDigits: 1 }).format(pixels / remPixels),
+    });
   const { handleProps } = useResize({
     axis: 'inline',
     value: scope?.value ?? 0,
@@ -184,6 +204,7 @@ function Handle({
     largeStep: (scope?.remPixels ?? 16) * 4,
     reverse: scope?.side === 'end',
     disabled: !resizing,
+    valueText: remText,
     onChange: (next, { committed }) => scope?.setWidth(next, committed),
   });
   if (!scope) return null;
@@ -231,7 +252,6 @@ function Handle({
   };
   const common = {
     ...props,
-    'aria-label': label ?? scope.label,
     'aria-controls': scope.id,
     className: classNames('env-sidebar-handle', className),
     onKeyDown: toggleKeys,
@@ -244,6 +264,7 @@ function Handle({
       <div
         {...handleProps}
         {...common}
+        aria-label={label ?? scope.label}
         data-resizable=""
         onPointerCancel={end}
         onLostPointerCapture={(event) => {
@@ -252,7 +273,24 @@ function Handle({
         }}
       />
     );
-  // Collapsed, or not resizable: a splitter between collapsed (0) and expanded (100).
+  // A resizable sidebar collapsed: the splitter at its collapsed end, which Enter restores.
+  if (scope.resizable)
+    return (
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-valuenow={0}
+        aria-valuemin={0}
+        aria-valuemax={Math.round(scope.max)}
+        aria-valuetext={messages.sidebarCollapsed}
+        tabIndex={0}
+        {...common}
+        aria-label={label ?? scope.label}
+        onPointerCancel={end}
+        data-axis="inline"
+      />
+    );
+  // Not resizable: a splitter with two positions, collapsed and expanded, named for what Enter does.
   return (
     <div
       role="separator"
@@ -260,8 +298,10 @@ function Handle({
       aria-valuenow={scope.collapsed ? 0 : 100}
       aria-valuemin={0}
       aria-valuemax={100}
+      aria-valuetext={scope.collapsed ? messages.sidebarCollapsed : messages.sidebarExpanded}
       tabIndex={0}
       {...common}
+      aria-label={label ?? (scope.collapsed ? messages.expandSidebar : messages.collapseSidebar)}
       onPointerCancel={end}
       data-axis="inline"
     />

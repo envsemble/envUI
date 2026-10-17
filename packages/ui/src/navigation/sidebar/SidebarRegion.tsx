@@ -6,7 +6,6 @@ import {
   useContext,
   isValidElement,
   useCallback,
-  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -15,17 +14,21 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import type { Breakpoint } from '../../foundations/breakpoints.js';
+import { breakpointQuery, type Breakpoint } from '../../foundations/breakpoints.js';
 import { classNames } from '../../internal/classNames.js';
 import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { appShell } from '../../foundations/messages/appShell.js';
 import { InSidebarContext, SidebarRailContext } from '../internal/SidebarCompact.js';
 import {
+  docksLater,
   FrameProvider,
   FrameShapeContext,
+  FrameSlotContext,
+  mobileQuery,
   useFrameState,
   useFrameStore,
+  useNestedShape,
   type FrameStore,
 } from '../app-shell/FrameStore.js';
 import type { SidebarSide } from '../app-shell/persistence.js';
@@ -139,15 +142,71 @@ function useRemPixels() {
   return pixels;
 }
 
-/** The frame's provider, or a sidebar's own one where it has none (expanded, not remembered). */
+/**
+ * The frame's provider, or a sidebar's own one (expanded, not remembered) where it has none or
+ * isn't one of AppShell.Root's regions, such as a settings page's sub-navigation in AppShell.Main.
+ */
 export function WithFrame({ children }: { children: ReactNode }) {
   const store = useFrameStore();
-  return store ? children : <ImplicitFrame>{children}</ImplicitFrame>;
+  const inSlot = useContext(FrameSlotContext);
+  return store && (!store.inShell || inSlot) ? children : <ImplicitFrame>{children}</ImplicitFrame>;
 }
 
 function ImplicitFrame({ children }: { children: ReactNode }) {
   const value = useFrameState({}, false);
-  return <FrameProvider value={value}>{children}</FrameProvider>;
+  const shape = useNestedShape();
+  return (
+    <FrameProvider value={value}>
+      <FrameShapeContext value={shape}>{children}</FrameShapeContext>
+    </FrameProvider>
+  );
+}
+
+/** The media query at or above a frame's breakpoint, where its sidebars show inline. */
+function inlineQuery(breakpoint: Breakpoint) {
+  return breakpoint === 'md'
+    ? `${breakpointQuery('md')} and (not ((max-height: 32rem) and (max-width: 54rem)))`
+    : breakpointQuery(breakpoint);
+}
+
+/** An id in a CSS string, its quotes and backslashes escaped. */
+const cssString = (value: string) => `"${value.replace(/["\\]/g, '\\$&')}"`;
+
+/**
+ * Hides the triggers of a sidebar with nothing to toggle where it has nothing (collapsible none
+ * above the breakpoint, mobile none below it), from the server's markup on, before the sidebar
+ * registers; the triggers find it by aria-controls. A hoisted style, written once per sidebar.
+ */
+function TriggerStyle({
+  ids,
+  breakpoint,
+  collapsible,
+  mobile,
+}: {
+  ids: string[];
+  breakpoint: Breakpoint;
+  collapsible: string;
+  mobile: string;
+}) {
+  const queries = [
+    ...(collapsible === 'none' ? [inlineQuery(breakpoint)] : []),
+    ...(mobile === 'none' ? [mobileQuery(breakpoint)] : []),
+  ];
+  if (queries.length === 0) return null;
+  const selector = ids
+    .map((id) => `.env-sidebar-trigger[aria-controls=${cssString(id)}]`)
+    .join(',');
+  const css =
+    '@layer env.reset, env.tokens, env.base, env.components, env.utilities;' +
+    `@layer env.components{${queries.map((query) => `@media ${query}{${selector}{display:none}}`).join('')}}`;
+  return (
+    <style
+      href={`env-sidebar-trigger-${ids[0]!.replace(/\s+/g, '_')}-${collapsible}-${mobile}-${breakpoint}`}
+      precedence="env"
+    >
+      {css}
+    </style>
+  );
 }
 
 /** Whether the children include a Sidebar.Handle, so none is added. */
@@ -193,14 +252,17 @@ export function SidebarRegion(props: SidebarRegionProps) {
     ...rest
   } = props;
   const messages = useMessages('appShell', appShell);
-  const generatedId = useId();
-  const id = ownId ?? `${generatedId}-sidebar`;
+  const id = ownId ?? store.sideIds[side];
   const dockAt = ownDockAt ?? store.breakpoint;
+  // The element in a ref for reading, and in state for what attaches to it: below the breakpoint
+  // the drawer replaces it, and a new one comes back.
   const element = useRef<HTMLElement | null>(null);
+  const [node, setNode] = useState<HTMLElement | null>(null);
   const attach = useCallback(
-    (node: HTMLElement | null) => {
-      element.current = node;
-      setRef(ref, node as HTMLDivElement | null);
+    (each: HTMLElement | null) => {
+      element.current = each;
+      setNode(each);
+      setRef(ref, each as HTMLDivElement | null);
     },
     [ref],
   );
@@ -225,7 +287,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
   const outOfView = collapsed && !shown && collapsible === 'offcanvas';
 
   const popupOpen = usePeek({
-    element,
+    element: node,
     side,
     id,
     store,
@@ -239,15 +301,17 @@ export function SidebarRegion(props: SidebarRegionProps) {
   // Width: a chosen width, else the number given, else the content's, in rem.
   const remPixels = useRemPixels();
   const fixed = typeof width === 'number' ? width : undefined;
-  const chosen = resizable ? (state.width ?? fixed) : fixed;
   const min = ownMin ?? 12;
   const max = Math.max(min, ownMax ?? (resizable || fixed !== undefined ? 32 : 20));
+  // A remembered or controlled width stays within the bounds, which may have changed since.
+  const wanted = resizable ? (state.width ?? fixed) : fixed;
+  const chosen = wanted === undefined ? undefined : Math.min(max, Math.max(min, wanted));
   // A resizable sidebar fits its content, up to 20 rem, until people choose a width.
   const contentMax = chosen === undefined ? Math.min(max, Math.max(min, 20)) : max;
   const [resizing, setResizing] = useState(false);
   const [natural, setNatural] = useState<number>();
   useLayoutEffect(() => {
-    const panel = element.current?.firstElementChild as HTMLElement | null | undefined;
+    const panel = node?.firstElementChild as HTMLElement | null | undefined;
     if (!resizable || chosen !== undefined || !panel || typeof ResizeObserver === 'undefined')
       return;
     const observer = new ResizeObserver(() => {
@@ -257,7 +321,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
     });
     observer.observe(panel);
     return () => observer.disconnect();
-  }, [resizable, chosen]);
+  }, [resizable, chosen, node]);
   const value = chosen !== undefined ? chosen * remPixels : (natural ?? min * remPixels);
 
   const handleScope = useMemo<HandleScope>(
@@ -360,15 +424,26 @@ export function SidebarRegion(props: SidebarRegionProps) {
   const role = shape && !shape.landmarks ? 'none' : landmark;
   const Landmark = role === 'navigation' ? 'nav' : role === 'complementary' ? 'aside' : 'div';
   const sizes = {
-    '--env-sidebar-width': chosen !== undefined ? `${chosen}rem` : undefined,
+    '--env-sidebar-chosen-width': chosen !== undefined ? `${chosen}rem` : undefined,
     '--env-sidebar-min-width': `${min}rem`,
     '--env-sidebar-max-width': `${contentMax}rem`,
   } as CSSProperties;
+  const triggerStyle = (
+    <TriggerStyle
+      ids={id === store.sideIds[side] ? [id] : [id, store.sideIds[side]]}
+      breakpoint={store.breakpoint}
+      collapsible={collapsible}
+      mobile={mobile}
+    />
+  );
+  // A Sidebar.Root in the sidebar's content is none of the frame's regions.
+  const content = <FrameSlotContext value={false}>{children}</FrameSlotContext>;
 
   if (isMobile) {
-    if (mobile === 'none') return null;
+    if (mobile === 'none') return triggerStyle;
     return (
       <SidebarScopeContext value={scope}>
+        {triggerStyle}
         <InSidebarContext value>
           <SidebarRailContext value={false}>
             <SidebarDrawer
@@ -386,7 +461,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
               className={className}
               style={style}
             >
-              {children}
+              {content}
             </SidebarDrawer>
           </SidebarRailContext>
         </InSidebarContext>
@@ -396,6 +471,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
 
   return (
     <SidebarScopeContext value={scope}>
+      {triggerStyle}
       <InSidebarContext value>
         <SidebarRailContext value={api.isRail}>
           <HandleContext value={handleScope}>
@@ -417,13 +493,13 @@ export function SidebarRegion(props: SidebarRegionProps) {
               data-frame={store.inShell ? '' : undefined}
               data-region={region}
               data-breakpoint={store.breakpoint}
-              data-dock-at={dockAt !== store.breakpoint ? dockAt : undefined}
+              data-dock-at={docksLater(dockAt, store.breakpoint) ? dockAt : undefined}
               data-width={chosen !== undefined ? 'fixed' : 'content'}
               data-resizing={resizing ? '' : undefined}
               data-ready={store.ready ? '' : undefined}
             >
               <div className="env-sidebar-panel">
-                {children}
+                {content}
                 {resizable && !hasHandle(children, handlePart) && renderHandle()}
               </div>
             </Landmark>

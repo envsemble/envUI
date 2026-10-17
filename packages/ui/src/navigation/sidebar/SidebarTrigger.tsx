@@ -23,7 +23,7 @@ export type SidebarTriggerProps = Omit<
 > & {
   /**
    * Which sidebar the trigger opens and closes.
-   * @default 'start'
+   * @default the sidebar around the trigger, else 'start'
    */
   side?: SidebarSide;
   /**
@@ -97,13 +97,14 @@ export function SidebarTrigger({
     throw new Error(
       'SidebarTrigger must be used inside AppShell.Root or Sidebar.Provider, or inside its Sidebar.Root.',
     );
-  const side = ownSide ?? 'start';
+  const side = ownSide ?? scope?.side ?? 'start';
   const own = scope?.side === side ? scope : null;
   const state = store.sides[side];
   const registration = state.registration;
   const api = sidebarApi(store, side, own);
   const label = own?.label ?? registration?.label ?? '';
-  const id = own?.id ?? registration?.id;
+  // Before the sidebar registers, as on the server, the id its side gives it.
+  const id = own?.id ?? registration?.id ?? store.sideIds[side];
   const mobile = api.isMobile;
   // A trigger in the sidebar's own drawer closes it.
   const inDrawer = own?.inDrawer ?? false;
