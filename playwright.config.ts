@@ -83,7 +83,16 @@ export default defineConfig({
       testIgnore: /LiveDevelopment/,
       grepInvert: /@contrast/,
       workers: engineWorkers,
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        // Firefox's bounce-tracking protection, after many quick visits to one address, warns that
+        // 127.0.0.1 "has been classified as a bounce tracker" in the console of whichever test is
+        // running, which fails the specs that collect console warnings.
+        launchOptions: {
+          // 0 is MODE_DISABLED: no classification, so no warning.
+          firefoxUserPrefs: { 'privacy.bounceTrackingProtection.mode': 0 },
+        },
+      },
     },
     {
       name: 'webkit',
