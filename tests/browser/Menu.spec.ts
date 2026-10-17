@@ -450,6 +450,43 @@ test.describe('ContextMenu', () => {
     await expect(row).toBeFocused();
   });
 
+  test('content that renders nothing leaves the browser its own context menu', async ({ page }) => {
+    await page.goto(menusFixture);
+    const area = page.getByTestId('context-area-light');
+    const field = area.getByRole('textbox', { name: 'Note light' });
+    const text = area.getByText('Plain text');
+    await page.evaluate(() => {
+      // Records, after every listener, whether each contextmenu or ContextMenu-key event was cancelled.
+      const log: string[] = [];
+      (window as Window & { cancelled?: string[] }).cancelled = log;
+      for (const type of ['contextmenu', 'keydown']) {
+        window.addEventListener(
+          type,
+          (event) => {
+            if (type === 'keydown' && (event as KeyboardEvent).key !== 'F10') return;
+            setTimeout(() => log.push(`${type} ${event.defaultPrevented}`));
+          },
+          { capture: true },
+        );
+      }
+    });
+    const cancelled = () =>
+      page.evaluate(() => (window as Window & { cancelled?: string[] }).cancelled);
+    // The field's content is false, as from editable && <Menu.Item>; the text's is ''.
+    await field.click({ button: 'right' });
+    await text.click({ button: 'right' });
+    await field.focus();
+    await page.keyboard.press('Shift+F10');
+    await expect
+      .poll(async () => (await cancelled())?.slice(0, 3))
+      .toEqual(['contextmenu false', 'contextmenu false', 'keydown false']);
+    // Past the time a menu takes to mount, none has, and the contextmenu event some browsers send
+    // after Shift+F10 was not cancelled either.
+    await page.waitForTimeout(300);
+    expect((await cancelled())?.filter((entry) => entry.endsWith('true'))).toEqual([]);
+    await expect(page.getByRole('menu')).toHaveCount(0);
+  });
+
   test('a controlled context menu opens at a supplied point', async ({ page }) => {
     await page.goto(menusFixture);
     const scope = page.getByTestId('menus-light');

@@ -68,17 +68,24 @@ function useTruncated(element: RefObject<HTMLElement | null>) {
 function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
   const label = useRef<HTMLSpanElement>(null);
   const truncated = useTruncated(label);
+  const [focused, setFocused] = useState(false);
   const content = (
     <span className="env-breadcrumbs-label" ref={label}>
       {item.label}
     </span>
   );
-  // A label cut short that is no link takes keyboard focus, so the keyboard can show it in full.
-  const focusable = truncated ? 0 : undefined;
+  // A label cut short that is no link takes keyboard focus, so the keyboard can show it in full. It
+  // leaves the tab order only once it has lost focus: a label that comes to fit while focused, as
+  // the window widens, keeps focus instead of dropping it to the page.
+  const focusable = {
+    tabIndex: truncated || focused ? 0 : undefined,
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
+  };
   let crumb: ReactElement;
   if (current) {
     crumb = (
-      <span className="env-breadcrumbs-current" aria-current="page" tabIndex={focusable}>
+      <span className="env-breadcrumbs-current" aria-current="page" {...focusable}>
         {content}
       </span>
     );
@@ -94,7 +101,7 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
     );
   } else {
     crumb = (
-      <span className="env-breadcrumbs-text" tabIndex={focusable}>
+      <span className="env-breadcrumbs-text" {...focusable}>
         {content}
       </span>
     );
