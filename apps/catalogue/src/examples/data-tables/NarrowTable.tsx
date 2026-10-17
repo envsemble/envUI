@@ -67,7 +67,7 @@ export default function NarrowTable() {
         </Stack>
       )}
       <Table.Root
-        aria-label="Projects"
+        aria-label="Recent projects"
         density="sm"
         narrowLayout="stack"
         onStackedChange={setStacked}

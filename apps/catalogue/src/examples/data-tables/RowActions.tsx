@@ -44,7 +44,7 @@ export default function RowActions() {
 
   return (
     <>
-      <Table.Root aria-label="Projects">
+      <Table.Root aria-label="Your projects">
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>

@@ -3,7 +3,6 @@ import {
   Button,
   Checkbox,
   ConfirmDialog,
-  Link,
   Stack,
   Table,
   Text,
@@ -88,7 +87,7 @@ function Projects() {
         </Stack>
       )}
       {/* A narrow column for the checkboxes; the others share the rest. */}
-      <Table.Root aria-label="Projects" defaultColumnWidths={[8, 50, 42]}>
+      <Table.Root aria-label="Team projects" defaultColumnWidths={[8, 50, 42]}>
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell>
@@ -117,9 +116,7 @@ function Projects() {
                   onCheckedChange={(checked) => toggle(project.id, checked)}
                 />
               </Table.Cell>
-              <Table.Cell>
-                <Link href={`/projects/${project.id}`}>{project.name}</Link>
-              </Table.Cell>
+              <Table.Cell>{project.name}</Table.Cell>
               <Table.Cell>{project.owner}</Table.Cell>
             </Table.Row>
           ))}

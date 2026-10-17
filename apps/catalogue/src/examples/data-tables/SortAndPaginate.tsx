@@ -35,7 +35,7 @@ export default function SortAndPaginate() {
 
   return (
     <Stack gap={3}>
-      <Table.Root aria-label="Projects">
+      <Table.Root aria-label="All projects">
         <Table.Head>
           <Table.Row>
             <Table.HeaderCell sortDirection={direction('name')} onSortChange={sortBy('name')}>
