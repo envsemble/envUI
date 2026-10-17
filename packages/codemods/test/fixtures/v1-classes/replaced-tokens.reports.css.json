@@ -1,0 +1,4 @@
+[
+  "line 13: --state-dialog-overlay-opacity is removed in 1.0; use --env-color-bg-overlay: The scrim is a translucent color token now.",
+  "line 14: --scale is removed in 1.0: The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+]

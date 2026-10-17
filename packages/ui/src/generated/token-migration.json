@@ -384,10 +384,10 @@
       "cssVariable": "--env-color-border-neutral-strong"
     },
     "--color-border-pressed": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.border.muted.pressed",
       "cssVariable": "--env-color-border-muted-pressed",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named."
     },
     "--color-border-strong": {
       "kind": "alias",
@@ -511,22 +511,22 @@
       "note": "Light took the brand’s strong fill, the same color as its emphasis fill there: one role in every theme now."
     },
     "--color-control-blue-hover": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.brand.strong.hover",
       "cssVariable": "--env-color-bg-brand-strong-hover",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-blue-pressed": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.brand.strong.pressed",
       "cssVariable": "--env-color-bg-brand-strong-pressed",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
     },
     "--color-control-text": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.fg.control",
       "cssVariable": "--env-color-fg-control",
-      "note": "Unused synonym."
+      "note": "A synonym of the control text color, which envUI didn't read."
     },
     "--color-destructive-action": {
       "kind": "alias",
@@ -682,16 +682,16 @@
       "cssVariable": "--env-color-bg-neutral-muted"
     },
     "--color-fill-hover": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.neutral.muted.hover",
       "cssVariable": "--env-color-bg-neutral-muted-hover",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
     },
     "--color-fill-pressed": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.neutral.muted.pressed",
       "cssVariable": "--env-color-bg-neutral-muted-pressed",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
     },
     "--color-focus-ring": {
       "kind": "alias",
@@ -780,10 +780,10 @@
       "component": "Navigation items"
     },
     "--color-neutral-fill": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.neutral.strong",
       "cssVariable": "--env-color-bg-neutral-strong",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the neutral strong fill is the role it named."
     },
     "--color-on-accent": {
       "kind": "alias",
@@ -1138,10 +1138,10 @@
       "cssVariable": "--env-color-bg-raised"
     },
     "--color-surface-base": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.raised",
       "cssVariable": "--env-color-bg-raised",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
     },
     "--color-surface-muted": {
       "kind": "alias",
@@ -1149,10 +1149,10 @@
       "cssVariable": "--env-color-bg-muted"
     },
     "--color-surface-raised": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.bg.raised",
       "cssVariable": "--env-color-bg-raised",
-      "note": "Unused."
+      "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
     },
     "--color-switch-off": {
       "kind": "alias",
@@ -1233,10 +1233,10 @@
       "cssVariable": "--env-color-fg-control"
     },
     "--color-text-subtle": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "color.fg.muted",
       "cssVariable": "--env-color-fg-muted",
-      "note": "Unused synonym."
+      "note": "A synonym of the muted text color, which envUI didn't read."
     },
     "--color-toast-error": {
       "kind": "alias",
@@ -1298,7 +1298,7 @@
     "--control-gap": { "kind": "prefixed", "cssVariable": "--env-control-gap" },
     "--control-height": { "kind": "prefixed", "cssVariable": "--env-control-height" },
     "--control-height-compact": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "control.height-sm",
       "cssVariable": "--env-control-height-sm",
       "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
@@ -1307,7 +1307,7 @@
     "--control-height-md": { "kind": "prefixed", "cssVariable": "--env-control-height-md" },
     "--control-height-sm": { "kind": "prefixed", "cssVariable": "--env-control-height-sm" },
     "--control-height-small": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "control.height",
       "cssVariable": "--env-control-height",
       "note": "It always equalled --control-height, which every control reads now."
@@ -1390,7 +1390,7 @@
     "--font-size-label": { "kind": "prefixed", "cssVariable": "--env-font-size-label" },
     "--font-size-label-small": { "kind": "prefixed", "cssVariable": "--env-font-size-label-small" },
     "--icon-button-size": {
-      "kind": "removed",
+      "kind": "renamed",
       "token": "control.height",
       "cssVariable": "--env-control-height",
       "note": "An icon button is as tall as the other controls of its size."

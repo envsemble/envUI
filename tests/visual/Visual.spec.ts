@@ -36,6 +36,7 @@ import {
   referencePages,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 import { templateScales } from '../../apps/catalogue/src/template/TemplateViewports';
+import { templateStates } from '../browser/TemplateChecks';
 
 /** The density fixture's themes, which its boundaries take from the address. */
 const densityThemes = ['light', 'dark'] as const;
@@ -500,7 +501,10 @@ test.describe('templates', () => {
   for (const { page: id, name } of screensTaken) {
     test(`${id}/${name}`, async ({ page }, testInfo) => {
       const directory = join(snapshots, 'templates', id);
-      const recorded = contents(directory).filter((file) => file.endsWith(`-${name}.png`));
+      // The screen's images, and those of its states: light-compact-desktop-<Name>-<state>.png.
+      const recorded = contents(directory).filter((file) =>
+        new RegExp(`-${name}(?:-[a-z0-9-]+)?\\.png$`).test(file),
+      );
       const taken = new Set<string>();
       await page.clock.setFixedTime(now);
       for (const shot of screenShots) {
@@ -518,6 +522,23 @@ test.describe('templates', () => {
             await expect.soft(page).toHaveScreenshot(['templates', id, file]);
           }
       }
+      // States the screen reaches through its controls, such as a refused submit, at the desktop
+      // width in light.
+      const states = templateStates[`${id}/${name}`] ?? [];
+      if (states.length) await page.setViewportSize({ width: 1280, height: 800 });
+      for (const state of states)
+        for (const { value: scale } of templateScales) {
+          await page.goto(
+            `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale, theme: 'light' })}`,
+          );
+          await page.locator('[data-template-frame]').waitFor();
+          await settle(page);
+          await state.act(page);
+          await settle(page);
+          const file = `light-${scale}-desktop-${name}-${state.name}.png`;
+          taken.add(file);
+          await expect.soft(page).toHaveScreenshot(['templates', id, file]);
+        }
       reconcile(testInfo, directory, recorded, taken);
     });
   }

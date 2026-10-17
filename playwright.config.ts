@@ -133,6 +133,10 @@ export default defineConfig({
         locale: 'en-US',
         timezoneId: 'UTC',
         colorScheme: 'light',
+        // Grayscale text everywhere. Chromium draws subpixel (LCD) text only where the content
+        // sits in an opaque, uncomposited layer, so a fixed or sticky element elsewhere on the page
+        // would switch every specimen's antialiasing; the baseline records grayscale.
+        launchOptions: { args: ['--disable-lcd-text'] },
       },
     },
   ],

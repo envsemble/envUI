@@ -9,3 +9,5 @@ Popover, HoverCard and Tooltip open on the shared popup surface.
 - A Tooltip describes a control with a name of its own while it is open (`aria-describedby` to its `role="tooltip"` popup). Around a disabled button, link, tab or menu item, its wrapper is a tab stop where it can read the control's name, and takes its role and name with `aria-disabled`, and a button's or tab's pressed, expanded, popup and selected state. A disabled checkbox, radio, switch, slider or select keeps its own role and state, with no stand-in. A Kbd in a tooltip takes light key caps.
 
 Migrate with the codemods: `envui-codemods v1-props` maps `width` and reports an expression.
+
+Migration guide: [Overlays and feedback](../../docs/migration.md#overlays-and-feedback).

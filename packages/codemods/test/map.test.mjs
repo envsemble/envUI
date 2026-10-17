@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
@@ -12,7 +12,7 @@ import {
   renameClass,
   validateMap,
 } from '../src/map.mjs';
-import { map } from './helpers.mjs';
+import { map, packageDirectory } from './helpers.mjs';
 
 const name = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const part = /^[A-Za-z_$][A-Za-z0-9_$]*\.[A-Za-z_$][A-Za-z0-9_$]*$/;
@@ -264,4 +264,18 @@ test('loadMap lists the namespaces each entry point has in 1.0', () => {
     part: 'Item',
   });
   assert.deepEqual(library.renames.get('Input'), { to: 'TextField' });
+});
+
+test('the migration guide names every renamed and removed export and every moved page', () => {
+  const guide = readFileSync(join(packageDirectory, '../../docs/migration.md'), 'utf8');
+  const named = (name) =>
+    new RegExp(`(?<![\\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w])`).test(guide);
+  for (const [section, names] of [
+    ['exports', map.exports['@envsemble/envui']],
+    ['split', map.split['@envsemble/envui']],
+    ['removed', map.removed['@envsemble/envui']],
+    ['docs', map.docs],
+  ])
+    for (const name of Object.keys(names).filter((key) => !key.startsWith('$')))
+      assert.ok(named(name), `docs/migration.md does not name ${name} (${section})`);
 });

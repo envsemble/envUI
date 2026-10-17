@@ -8,3 +8,5 @@ Stat.Root's `detail` is `description`, and Stat.Group's `tone` is `background`.
 - Stat.Group's `tone` is `background`, as Surface's: `pane` is `default`, the default, `row` is `muted`, `canvas` is `page` and `alternate` is `raised`.
 
 Migrate with the codemods: `envui-codemods v1-props` renames both props and maps the values, and `v1-classes` renames the class.
+
+Migration guide: [Content and display](../../docs/migration.md#content-and-display).

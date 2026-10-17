@@ -148,7 +148,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -219,7 +221,9 @@
         "patterns": [
           "settings"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -473,7 +477,9 @@
           "settings",
           "empty-states"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -843,7 +849,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1136,7 +1144,9 @@
           "feedback",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1359,7 +1369,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1607,7 +1619,9 @@
           "destructive-actions",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -2723,7 +2737,9 @@
         "patterns": [
           "loading"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -5216,7 +5232,9 @@
           "forms",
           "feedback"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -7129,7 +7147,76 @@
       ]
     }
   ],
-  "templates": [],
+  "templates": [
+    {
+      "name": "sign-in-page",
+      "title": "Sign-in page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens.",
+      "aliases": [
+        "sign in",
+        "sign-in page",
+        "login page",
+        "log in",
+        "login form",
+        "authentication",
+        "password"
+      ],
+      "useWhen": [
+        "People sign in to the application with an email address and a password before they reach its pages.",
+        "The application also offers single sign-on through the organisation's own account service."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Asking for information once people are signed in.",
+          "see": "forms"
+        },
+        {
+          "text": "Confirming a sensitive action again inside the application.",
+          "use": "ConfirmDialog"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "Page",
+        "Stack",
+        "Surface",
+        "Text",
+        "TextField",
+        "IconButton",
+        "Checkbox",
+        "Button",
+        "Link",
+        "Alert"
+      ],
+      "related": [
+        "forms",
+        "text-field",
+        "alert",
+        "button",
+        "app-shell"
+      ],
+      "doc": "docs/templates/sign-in-page.md",
+      "frame": "none",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "SignInPage",
+          "title": "Sign in page",
+          "description": "The screen people see before the application opens: the application's name, an email address and a password, \"Keep me signed in\", the way back to a forgotten password and single sign-on. It's a whole screen of its own, outside the app frame, with one `main` landmark and the form centred in the window. Start from it for any application that signs people in with a password; set up the providers at the application's root as setup says, since the template brings none.",
+          "file": "docs/examples/sign-in-page/SignInPage.tsx",
+          "frame": "none",
+          "primary": true
+        }
+      ],
+      "examples": []
+    }
+  ],
   "exports": {
     "AccountMenu": {
       "kind": "namespace",
@@ -7949,14 +8036,14 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
@@ -9167,13 +9254,13 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "description": ""
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text button."
@@ -9416,14 +9503,15 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
@@ -9902,14 +9990,14 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
@@ -10889,14 +10977,15 @@
       "props": [
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
@@ -14564,6 +14653,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, for its meaning, such as render={<section />} or render={<footer />}, or another component to lay out as the stack without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -14680,6 +14775,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -15129,6 +15230,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, for its meaning, such as render={<h2 />} for a heading or render={<span />} inside a line; a p by default. The text's class and attributes merge into its props."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a p by default: an HTMLElement, since render can make it any element, such as a section; a ref to a paragraph, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -15457,14 +15564,15 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
@@ -18643,9 +18751,8 @@
       {
         "cssVariable": "--color-border-pressed",
         "use": "--env-color-border-muted-pressed",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named."
       },
       {
         "cssVariable": "--color-border-strong",
@@ -18759,23 +18866,20 @@
       {
         "cssVariable": "--color-control-blue-hover",
         "use": "--env-color-bg-brand-strong-hover",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
       },
       {
         "cssVariable": "--color-control-blue-pressed",
         "use": "--env-color-bg-brand-strong-pressed",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
       },
       {
         "cssVariable": "--color-control-text",
         "use": "--env-color-fg-control",
-        "removed": true,
         "type": "color",
-        "note": "Unused synonym."
+        "note": "A synonym of the control text color, which envUI didn't read."
       },
       {
         "cssVariable": "--color-destructive-action",
@@ -18960,16 +19064,14 @@
       {
         "cssVariable": "--color-fill-hover",
         "use": "--env-color-bg-neutral-muted-hover",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
       },
       {
         "cssVariable": "--color-fill-pressed",
         "use": "--env-color-bg-neutral-muted-pressed",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
       },
       {
         "cssVariable": "--color-focus-ring",
@@ -19050,9 +19152,8 @@
       {
         "cssVariable": "--color-neutral-fill",
         "use": "--env-color-bg-neutral-strong",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the neutral strong fill is the role it named."
       },
       {
         "cssVariable": "--color-on-accent",
@@ -19357,9 +19458,8 @@
       {
         "cssVariable": "--color-surface-base",
         "use": "--env-color-bg-raised",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
       },
       {
         "cssVariable": "--color-surface-muted",
@@ -19369,9 +19469,8 @@
       {
         "cssVariable": "--color-surface-raised",
         "use": "--env-color-bg-raised",
-        "removed": true,
         "type": "color",
-        "note": "Unused."
+        "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
       },
       {
         "cssVariable": "--color-switch-off",
@@ -19445,9 +19544,8 @@
       {
         "cssVariable": "--color-text-subtle",
         "use": "--env-color-fg-muted",
-        "removed": true,
         "type": "color",
-        "note": "Unused synonym."
+        "note": "A synonym of the muted text color, which envUI didn't read."
       },
       {
         "cssVariable": "--color-toast-error",
@@ -19523,7 +19621,6 @@
       {
         "cssVariable": "--control-height-compact",
         "use": "--env-control-height-sm",
-        "removed": true,
         "type": "dimension",
         "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
       },
@@ -19542,7 +19639,6 @@
       {
         "cssVariable": "--control-height-small",
         "use": "--env-control-height",
-        "removed": true,
         "type": "dimension",
         "note": "It always equalled --control-height, which every control reads now."
       },
@@ -19698,7 +19794,6 @@
       {
         "cssVariable": "--icon-button-size",
         "use": "--env-control-height",
-        "removed": true,
         "type": "dimension",
         "note": "An icon button is as tall as the other controls of its size."
       },

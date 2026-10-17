@@ -56,6 +56,18 @@ const reports = {
     `line 10: ${report('Radio', 'className')}`,
   ],
   'disclosure.tsx': [`line 4: ${report('Disclosure', 'onToggle')}`],
+  // Conditionals map each literal value; an expression beside them, or a value that maps to
+  // several props, is reported.
+  'conditionals.tsx': [
+    `line 10: Alert's tone has a value the codemod can't move: ${report('Alert', 'tone')}`,
+    `line 16: Text's tone is emphasis now, with a value the codemod can't check: ${report('Text', 'tone')}`,
+    `line 18: Button's variant has a value the codemod can't move: ${report('Button', 'variant')}`,
+    `line 19: Card's layout: ${report('Card', 'layout', 'action')}`,
+  ],
+  // Code's appearance, Markdown's inlineCode and CodeBlock's theme went in 0.7; an expression stays.
+  'code.tsx': [
+    `line 8: Code's appearance has a value the codemod can't move: ${report('Code', 'appearance', undefined, content)}`,
+  ],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,

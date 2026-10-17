@@ -1,0 +1,15 @@
+.page-toolbar {
+  --control-height-small: var(--control-height-compact);
+  min-block-size: var(--icon-button-size);
+  background: var(--color-surface-base);
+}
+
+.search-field:hover {
+  background: var(--color-fill-hover);
+  color: var(--color-text-subtle);
+}
+
+.scrim {
+  opacity: var(--state-dialog-overlay-opacity);
+  transform: scale(var(--scale));
+}

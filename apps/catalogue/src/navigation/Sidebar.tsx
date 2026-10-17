@@ -23,10 +23,10 @@ import { History } from '@envsemble/envui/icons/History';
 import { references, foundations, componentGroups } from '../Reference';
 import {
   changelogPage,
+  guidePages,
   pageHref,
   pagesOf,
   referencePages,
-  templatesPage,
   tokensPage,
   type ReferencePage,
   type SiteSection,
@@ -34,6 +34,20 @@ import {
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 import { DisplayMenu } from '../theme/DisplaySettings';
+
+/**
+ * The pattern pages under one heading per intent, what people are doing, in the order of the index,
+ * which lists the patterns by intent.
+ */
+const patternGroups = guidePages
+  .filter((page) => page.section === 'Patterns')
+  .reduce<{ intent: string; pages: { path: string; title: string }[] }[]>((groups, page) => {
+    const intent = page.document?.metadata?.intent ?? 'Other patterns';
+    const group = groups.find((entry) => entry.intent === intent);
+    if (group) group.pages.push(page);
+    else groups.push({ intent, pages: [page] });
+    return groups;
+  }, []);
 
 interface SectionsProps {
   routePath: string;
@@ -43,7 +57,8 @@ interface SectionsProps {
 /**
  * The navigation's sections, in order: Get started, Foundations, Components, Patterns, Templates,
  * Contributing and Changelog. Each is a Sidebar.Group named by its title around a NavList.Root of
- * its pages, so a rail and the drawer name them too.
+ * its pages, so a rail and the drawer name them too. Components are grouped by kind and patterns by
+ * intent; Templates lists the overview, then each template page.
  */
 function Sections({ routePath, page }: SectionsProps) {
   const reference = page?.reference;
@@ -122,9 +137,17 @@ function Sections({ routePath, page }: SectionsProps) {
       )}
       {section(
         'Patterns',
-        pagesOf('Patterns').map(({ path, title }) => item(path, title, <Pattern />)),
+        patternGroups.map(({ intent, pages }) => (
+          <NavList.Group key={intent} label={intent}>
+            {pages.map(({ path, title }) => item(path, title, <Pattern />))}
+          </NavList.Group>
+        )),
       )}
-      {section('Templates', item(templatesPage.path, templatesPage.title, <ViewQuilt />))}
+      {section(
+        'Templates',
+        // The overview first, then the template pages it introduces.
+        pagesOf('Templates').map(({ path, title }) => item(path, title, <ViewQuilt />)),
+      )}
       {section(
         'Contributing',
         pagesOf('Contributing').map(({ path, title }) => item(path, title, <Handyman />)),

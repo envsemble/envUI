@@ -9,6 +9,7 @@
         "minWidth": "sidebarMinWidth and sidebarMaxWidth are minWidth and maxWidth in rem in 1.0: the codemod divides the expression by 16; check it.",
         "label": "Sidebar.Root needs a label, and the AppShell had no navigationLabel: the codemod named its sidebar Navigation; name it by its content.",
         "ambiguous": "AppShell.Root has none of the props only 0.x's AppShell took, so the codemod can't tell a 0.x AppShell that v1-names renamed from a 1.0 one, and left it as it is: if it is 0.x's, put its page in AppShell.Main and add AppShell.SkipLinks and AppShell.Header, as the migration guide's app frame section shows.",
+        "navigation": "The navigation is an expression the codemod can't see into, or holds NavList items beside other content, so it stays in Sidebar.Content as it is: put its NavList items in a NavList.Root, which renders their list.",
         "topbar": "topbar is an expression, so the codemod can't tell where the mark and the context go: it placed them for the split topbar (headerSpan=\"main\"); move them to AppShell.Header's start for headerSpan=\"full\"."
       }
     },

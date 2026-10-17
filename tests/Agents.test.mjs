@@ -664,7 +664,19 @@ test('envui mcp answers every tool over stdio from the installed files', async (
     (await server.call('list_patterns', {})).patterns.map((pattern) => pattern.name),
     manifest.patterns.map((pattern) => pattern.name),
   );
-  assert.deepEqual((await server.call('list_templates', {})).templates, []);
+  const { templates } = await server.call('list_templates', {});
+  assert.deepEqual(
+    templates.map((template) => template.name),
+    manifest.templates.map((template) => template.name),
+  );
+  assert.ok(templates.some((template) => template.name === 'sign-in-page'));
+  const signIn = await server.call('get_template', { name: 'login page', file: 'SignInPage' });
+  assert.equal(signIn.template, 'sign-in-page');
+  assert.equal(signIn.frame, 'none');
+  assert.equal(
+    signIn.source,
+    readFileSync(join(examplesDirectory, 'sign-in-page/SignInPage.tsx'), 'utf8'),
+  );
 
   const spacing = await server.call('get_tokens', { prefix: 'space.' });
   assert.ok(spacing.total >= 5);
@@ -812,8 +824,8 @@ test('search and plan rank by names, aliases and situations', () => {
   // Structure words lead to templates and patterns, not to Pager or Pagination.
   const signIn = plan(manifest, 'a sign-in page');
   assert.deepEqual(signIn.candidates, []);
-  assert.deepEqual(signIn.uncovered, ['a sign-in page']);
-  assert.ok(signIn.next.some((step) => /No template matches "a sign-in page"/.test(step)));
+  assert.equal(signIn.templates[0]?.name, 'sign-in-page');
+  assert.ok(signIn.next.some((step) => /Start from get_template sign-in-page/.test(step)));
   // A part a chosen component also matches stays with it.
   assert.deepEqual(
     plan(manifest, 'add a collapsible sidebar with a toggle').candidates.map(
@@ -1175,10 +1187,10 @@ test('the pattern and template tools answer from the manifest', () => {
     call('get_example', { component: 'stand-in-page' }).value.examples.map((item) => item.name),
     ['StandInPage'],
   );
-  // The installed manifest has no templates yet, and says so.
+  // A manifest without templates says so.
   const installed = createServer({
     root: packageRoot,
-    manifest: { ...manifest, version: '1.0.0' },
+    manifest: { ...manifest, version: '1.0.0', templates: [] },
   });
   const { result } = installed.handle({
     jsonrpc: '2.0',

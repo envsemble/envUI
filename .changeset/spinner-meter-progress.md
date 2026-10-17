@@ -10,3 +10,5 @@ Spinner, Meter and Progress take the 1.0 sizes and classes, and read their value
 - LoadingState's name defaults to `messages.common.loading`.
 
 Migrate with the codemods: `envui-codemods v1-props` maps Spinner's `size`; `v1-classes` renames `env-bar` to `env-meter` and the Spinner size classes; rename a Progress's `env-bar` selectors to `env-progress` by hand.
+
+Migration guide: [Overlays and feedback](../../docs/migration.md#overlays-and-feedback).
