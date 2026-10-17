@@ -38,7 +38,7 @@ interface StackOptions {
    */
   justify?: 'start' | 'center' | 'end' | 'between';
 }
-export type StackProps = StackOptions & {
+export type StackProps<RenderedElement extends HTMLElement = HTMLDivElement> = StackOptions & {
   /**
    * The element to render, for its meaning, such as render={<section />} or render={<footer />},
    * or another component to lay out as the stack without a wrapper, such as a Surface or a Theme:
@@ -47,17 +47,19 @@ export type StackProps = StackOptions & {
    */
   render?: ReactElement;
   /**
-   * The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a
-   * section; a ref to a div, or to the element render makes, works too.
+   * The rendered element, a div by default. Its type is the element type parameter, which a ref
+   * passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with
+   * render={<section />}, type-checks, and `StackProps['ref']` is a ref to the default element, so a
+   * wrapper can forward it to one.
    */
-  ref?: Ref<HTMLElement>;
+  ref?: Ref<RenderedElement>;
 } & Omit<ComponentPropsWithRef<'div'>, keyof StackOptions | 'ref'>;
 
 /**
  * A layout of its direct children in a column, or a row, a step of the spacing scale apart, so the
  * parent owns the space between them and the children need no margins.
  */
-export function Stack({
+export function Stack<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   direction = 'column',
   wrap = false,
@@ -67,7 +69,7 @@ export function Stack({
   className,
   style,
   ...props
-}: StackProps) {
+}: StackProps<RenderedElement>) {
   return useRender({
     defaultTagName: 'div',
     render,

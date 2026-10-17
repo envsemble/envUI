@@ -67,6 +67,8 @@ const reports = {
   // Code's appearance, Markdown's inlineCode and CodeBlock's theme went in 0.7; an expression stays.
   'code.tsx': [
     `line 8: Code's appearance has a value the codemod can't move: ${report('Code', 'appearance', undefined, content)}`,
+    // A literal beside an expression stays, rather than becoming undefined in a prop 1.0 removed.
+    `line 9: Code's appearance has a value the codemod can't move: ${report('Code', 'appearance', undefined, content)}`,
   ],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,

@@ -17,7 +17,7 @@ export function Member({ muted }: { muted: boolean }) {
 }
 
 export function highlight(element: HTMLElement) {
-  element.style.setProperty('--color-link', 'rebeccapurple');
+  element.style.setProperty('--color-fg-link', 'rebeccapurple');
   return getComputedStyle(element).getPropertyValue('--row-height');
 }
 
