@@ -3,7 +3,6 @@ import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
 import { generateDocumentation, packageDocumentation } from './GenerateDocumentation.mjs';
 import { buildTokens } from './BuildTokens.mjs';
@@ -28,7 +27,6 @@ async function findTypeScriptFiles(directory) {
 }
 await buildTokens();
 generateDocumentation();
-await generateBrandAssets();
 await writeFile(
   resolve(libraryDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'),
   await collectDependencyNotices(repositoryRoot),
@@ -73,10 +71,6 @@ for (const output of stylesheetBuild.outputFiles) {
   await mkdir(resolve(output.path, '..'), { recursive: true });
   await writeFile(output.path, output.contents);
 }
-await cp(
-  resolve(repositoryRoot, 'assets/brand/envsemble/envsemble-lockup-black.svg'),
-  resolve(outputDirectory, 'assets/envsemble-lockup-black.svg'),
-);
 await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {
   recursive: true,
 });

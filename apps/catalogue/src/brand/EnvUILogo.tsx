@@ -1,9 +1,9 @@
 // Generated from assets/brand/envUI by scripts/GenerateBrandAssets.mjs.
-import { Icon, type IconProps } from './Icon.js';
+import { Icon, type IconProps } from '@envsemble/envui';
 
 export type EnvUILogoProps = IconProps;
 
-/** Official envUI lockup; inherits its containing theme's text color. */
+/** The catalogue's envUI lockup; inherits its containing theme's text color. */
 export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   return (
     <Icon

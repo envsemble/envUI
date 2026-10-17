@@ -1,6 +1,7 @@
 import { Fragment, useId, type ReactNode } from 'react';
 import { version } from '@envsemble/envui/package.json';
-import { Button, EnvUILogo, Kbd, Link, NavList, Stack, Text } from '@envsemble/envui';
+import { Button, Kbd, Link, NavList, Stack, Text } from '@envsemble/envui';
+import { EnvUILogo } from '../brand/EnvUILogo';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
 import { RocketLaunch } from '@envsemble/envui/icons/RocketLaunch';

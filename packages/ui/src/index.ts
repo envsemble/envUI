@@ -18,12 +18,8 @@ export * as NavList from './navigation/NavList.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
 export * from './content/Card.js';
-export * from './content/ClickableCard.js';
-export * from './content/ActionCard.js';
-export * from './content/FeatureCard.js';
 export * as List from './content/List.js';
 export * from './content/Disclosure.js';
-export * from './content/InfoChip.js';
 export * from './content/Badge.js';
 export * from './content/CounterBadge.js';
 export * from './content/DiffStat.js';
@@ -63,8 +59,6 @@ export type {
   ToastManager,
 } from './feedback/toast/ToastTypes.js';
 export * from './Icon.js';
-export * from './BrandLogo.js';
-export * from './EnvUILogo.js';
 export {
   LinkProvider,
   type LinkProviderProps,

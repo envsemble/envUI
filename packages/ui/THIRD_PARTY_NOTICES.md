@@ -58,9 +58,5 @@ and embeds the same notices in the offline documentation artifact.
 
 ## Brand artwork
 
-`EnvUILogo` reproduces the supplied envUI lockup from `assets/brand/envUI`.
-`BrandLogo` reproduces the shared official envsemble lockup. Both React wrappers
-use `currentColor` so the monochrome artwork follows the containing theme.
-Raw envUI logos and favicons are bundled under `dist/assets/envUI`; the envsemble
-lockup is bundled as `dist/assets/envsemble-lockup-black.svg`. This artwork
-belongs to envsemble and is not covered by Google's or Inter's licenses.
+The envUI lockup and favicons the README shows are bundled under `dist/assets/envUI`.
+This artwork belongs to envsemble and is not covered by Google's or Inter's licenses.

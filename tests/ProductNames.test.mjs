@@ -108,7 +108,7 @@ const sources = [
 /** Generated from pinned inputs: Material Symbols names its own icons, such as ChromeMaximize. */
 const generated = [
   'packages/ui/src/icons/',
-  'packages/ui/src/EnvUILogo.tsx',
+  'apps/catalogue/src/brand/EnvUILogo.tsx',
   'apps/catalogue/src/generated/',
   // Results of benchmark runs, and the lists of third-party packages its scorer recognizes.
   'bench/results/',

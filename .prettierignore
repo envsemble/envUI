@@ -9,7 +9,7 @@ packages/ui/llms.txt
 packages/ui/llms-full.txt
 apps/catalogue/src/generated
 packages/codemods/test/fixtures
-packages/ui/src/EnvUILogo.tsx
+apps/catalogue/src/brand/EnvUILogo.tsx
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt
 **/dist
 node_modules

@@ -6,10 +6,10 @@ import {
   Stack,
   Link,
   LinkProvider,
-  EnvUILogo,
   ThemeToggle,
   Drawer,
 } from '@envsemble/envui';
+import { EnvUILogo } from './brand/EnvUILogo';
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { Search } from '@envsemble/envui/icons/Search';
 import {
