@@ -21,7 +21,8 @@ test.describe('Drawer', () => {
     const drawer = page.getByRole('dialog', { name: 'Filters' });
     await expect(drawer).toBeVisible();
     await expect(drawer).toHaveAccessibleDescription('Narrow the list.');
-    await expect.poll(() => holdsFocus(page, 'Filters')).toBe(true);
+    // Focus starts on the first element that takes Tab, the close button.
+    await expect(drawer.getByRole('button', { name: 'Close' })).toBeFocused();
     // Tab and Shift+Tab cycle through the close button, the field and the action, never leaving.
     // WebKit's Tab reaches only fields, as Safari's does by default; Alt+Tab reaches every control.
     const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
