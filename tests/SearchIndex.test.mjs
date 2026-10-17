@@ -155,3 +155,38 @@ test('the index stays small enough to load with the offline catalogue', () => {
   // About 0.5 MB, 0.1 MB compressed, in 2026-10; the offline catalogue's budget is 25 MiB.
   assert.ok(serialized.length < 1_000_000, `${serialized.length} bytes`);
 });
+
+test('a pattern or template names its kind, and what it composes finds it', () => {
+  const loading = records.find(({ id }) => id === 'page:loading');
+  assert.equal(loading.kind, 'pattern');
+  assert.equal(loading.detail, 'Pattern · Keep people informed');
+  assert.match(loading.keywords, /\bSkeleton\b/);
+  assert.match(loading.keywords, /Keep people informed/);
+  for (const record of records.filter(({ kind }) => kind === 'template'))
+    assert.equal(record.detail, 'Template', record.id);
+});
+
+/**
+ * Queries people ask, and the pages they lead to: each runs once the pages it names are written.
+ * `first` must be the best result; `among` must be in the first `within`.
+ */
+const goldenQueries = [
+  { query: 'error summary', first: 'page:forms' },
+  { query: 'sign in', first: 'page:sign-in-page' },
+  { query: 'login page', first: 'page:sign-in-page' },
+  { query: 'dashboard', first: 'page:dashboard-page' },
+  { query: '404', first: 'page:error-pages' },
+  { query: 'not found', first: 'page:error-pages' },
+  { query: 'empty state', first: 'page:empty-state', second: 'page:empty-states' },
+  { query: 'undo delete', first: 'page:destructive-actions' },
+];
+for (const { query, first, second } of goldenQueries) {
+  const missing = [first, second].filter((id) => id && !records.some((record) => record.id === id));
+  test(
+    `"${query}" finds ${[first, second].filter(Boolean).join(' then ')}`,
+    { skip: missing.length > 0 && `${missing.join(' and ')} not written yet` },
+    () => {
+      assert.deepEqual(best(query, second ? 2 : 1), second ? [first, second] : [first]);
+    },
+  );
+}

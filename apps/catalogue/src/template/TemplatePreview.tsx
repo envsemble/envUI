@@ -2,17 +2,7 @@ import { useRef, useState } from 'react';
 import { Link, SegmentedControl, Stack, Text, useContainerSize, useTheme } from '@envsemble/envui';
 import { ExampleCode } from './LiveExample';
 import { frameHref } from './TemplateFrame';
-
-/** The nominal viewports a template renders at, scaled down to the column's width. */
-export const templateWidths = [
-  { value: 'desktop', label: 'Desktop', width: 1280, height: 800 },
-  { value: 'tablet', label: 'Tablet', width: 834, height: 1112 },
-  { value: 'phone', label: 'Phone', width: 390, height: 844 },
-] as const;
-export const templateScales = [
-  { value: 'comfortable', label: 'Comfortable' },
-  { value: 'compact', label: 'Compact' },
-] as const;
+import { templateScales, templateWidths } from './TemplateViewports';
 
 /** CSS zoom scales a frame's layout box too; where a browser lacks it, a transform scales it. */
 const zoomSupported = typeof CSS !== 'undefined' && CSS.supports('zoom', '0.5');

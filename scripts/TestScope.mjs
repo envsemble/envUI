@@ -88,7 +88,7 @@ export const overrides = {
    * and the selection skips it; once all exist, empty these lists.
    */
   planned: {
-    specs: ['FrameNeeds.spec.ts'],
+    specs: ['FrameNeeds.spec.ts', 'Templates.spec.ts'],
     names: ['Sidebar'],
   },
   /**
@@ -117,12 +117,17 @@ export const overrides = {
   ],
   /** Run for a change to the catalogue's own shell, navigation or styles. */
   catalogueSpecs: ['Catalogue.spec.ts', 'Spacing.spec.ts', 'DenseContent.spec.ts'],
+  /** Run for a template's screen: each screen opened alone at its frame route. */
+  templateSpecs: ['Templates.spec.ts'],
   /**
    * Parts of the catalogue and the specs about them, beside the specs that import a part's
    * modules, which the map finds itself.
    */
   catalogueAreas: {
     'apps/catalogue/src/search/': ['CatalogueSearch.spec.ts'],
+    // The frame route and the template previews, which every template screen renders through.
+    'apps/catalogue/src/template/Template': ['Templates.spec.ts', 'Catalogue.spec.ts'],
+    'apps/catalogue/src/main.tsx': ['Templates.spec.ts', 'Catalogue.spec.ts'],
     'apps/catalogue/src/navigation/': ['CatalogueSearch.spec.ts', 'Catalogue.spec.ts'],
     'apps/catalogue/src/pages/': ['Catalogue.spec.ts', 'CatalogueSearch.spec.ts'],
     'apps/catalogue/src/theme/': ['CatalogueSearch.spec.ts', 'Catalogue.spec.ts'],
@@ -362,8 +367,9 @@ export function buildIndex(root = repositoryRoot) {
     for (const name of names) if (!pageOfName.has(name)) pageOfName.set(name, page);
   }
   const pages = new Set(namesOfPage.keys());
-  for (const file of walk(root, 'docs/foundations', /\.md$/))
-    pages.add(`foundations/${posix.basename(file, '.md')}`);
+  for (const section of ['foundations', 'patterns', 'templates'])
+    for (const file of walk(root, `docs/${section}`, /\.md$/))
+      pages.add(`${section}/${posix.basename(file, '.md')}`);
   const publicNames = new Set([
     ...Object.keys(manifest.exports ?? {}).map((name) => name.split('.')[0]),
     ...pageOfName.keys(),
@@ -600,12 +606,12 @@ export function parseFixtureApp(root, fixtureKnown) {
 /** The page of a catalogue source or documentation file, such as components/button. */
 export function pageOfFile(path, pages) {
   const match =
-    /^docs\/(components|foundations)\/([a-z0-9-]+)\.md$/.exec(path) ??
+    /^docs\/(components|foundations|patterns|templates)\/([a-z0-9-]+)\.md$/.exec(path) ??
     /^apps\/catalogue\/src\/(?:examples|specimens|usage)\/([a-z0-9-]+)\//.exec(path);
   if (match && match.length === 3)
     return pages.has(`${match[1]}/${match[2]}`) ? `${match[1]}/${match[2]}` : undefined;
   if (match) {
-    for (const section of ['components', 'foundations'])
+    for (const section of ['components', 'foundations', 'patterns', 'templates'])
       if (pages.has(`${section}/${match[1]}`)) return `${section}/${match[1]}`;
     return undefined;
   }
@@ -813,6 +819,12 @@ export function selectScope(paths, index) {
         scope.generated.add('docs');
       const visiting = specsWhere((spec) => spec.routes.has(page));
       want(scope.pages, page, `page ${page} (${path})`);
+      // A template's screens are also checked alone, at their frame route.
+      if (page.startsWith('templates/'))
+        for (const spec of overrides.templateSpecs.filter((name) => index.specs.has(name))) {
+          want(scope.fastSpecs, spec, `template ${page} (${path})`);
+          want(scope.affectedSpecs, spec, `template ${page} (${path})`);
+        }
       if (path.endsWith('.md')) {
         // Text: the fast tier checks the generated docs; browser checks wait for the affected tier.
         for (const spec of visiting) want(scope.affectedSpecs, spec, `opens ${page}`);
@@ -842,7 +854,9 @@ export function selectScope(paths, index) {
         ...specsWhere((spec) => spec.imports.has(path)),
         ...Object.entries(overrides.catalogueAreas)
           .filter(([area]) => path.startsWith(area))
-          .flatMap(([, specs]) => specs),
+          .flatMap(([, specs]) => specs)
+          // A planned spec joins once it exists.
+          .filter((spec) => index.specs.has(spec)),
       ]);
       const chosen =
         related.size && related.size <= budgets.fast ? [...related] : overrides.catalogueSpecs;

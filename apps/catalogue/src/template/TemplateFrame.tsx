@@ -93,13 +93,11 @@ function FrameLink({ onClick, ...props }: LinkComponentProps) {
   );
 }
 
-const screens = new Map<string, ComponentType<{ children?: ReactNode; current?: string }>>();
-function screenOf(page: string, name: string) {
-  const path = examplePath(page, name);
-  if (!loaders[path]) return undefined;
-  if (!screens.has(path)) screens.set(path, lazy(loadModule(loaders[path])));
-  return screens.get(path);
-}
+/** Every screen as a lazy component, made once at load, as LiveExample makes its examples. */
+const screens = new Map(
+  Object.entries(loaders).map(([path, load]) => [path, lazy(loadModule(load))]),
+);
+const screenOf = (page: string, name: string) => screens.get(examplePath(page, name));
 
 function Missing({ what }: { what: string }) {
   return <Text role="alert">No template {what} in the catalogue.</Text>;
@@ -137,10 +135,15 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
                 {!Screen ? (
                   <Missing what={`${page}/${name}`} />
                 ) : Frame ? (
+                  // The frame and the screen are looked up among module-level lazy components,
+                  // not created here.
+                  // eslint-disable-next-line react-hooks/static-components
                   <Frame current={page}>
+                    {/* eslint-disable-next-line react-hooks/static-components */}
                     <Screen />
                   </Frame>
                 ) : (
+                  // eslint-disable-next-line react-hooks/static-components
                   <Screen />
                 )}
               </Suspense>
