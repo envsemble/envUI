@@ -147,7 +147,7 @@ The application owns the panels: which exist, their order and mode, which one is
 
 ### You provide
 
-- A positioned container with a height, or a Main that scrolls with the dock directly in it, and `inert` on the content beneath while a panel fills the region.
+- A positioned container with a height, or a Main that scrolls with the dock directly in it, and `inert` on the content beneath while a panel fills the region. While a dock is directly in Main, Main is a size container, so an unnamed `@container` query on a block size inside it resolves against Main.
 - The panels: their order, modes, the active one and their heights, through the callbacks.
 - A PanelDock.Header with a title in each panel, which names it for people who see it.
 - `attention` text for a tab's dot, and a `tooltip` with the full title where labels truncate.
