@@ -144,8 +144,10 @@ export default defineConfig({
         colorScheme: 'light',
         // Grayscale text everywhere. Chromium draws subpixel (LCD) text only where the content
         // sits in an opaque, uncomposited layer, so a fixed or sticky element elsewhere on the page
-        // would switch every specimen's antialiasing; the baseline records grayscale.
-        launchOptions: { args: ['--disable-lcd-text'] },
+        // would switch every specimen's antialiasing; the baseline records grayscale. Whole tiles
+        // are drawn again rather than only the changed part of one: a partial redraw's edges
+        // depend on which frames came before, so the tooltip's capture varied by a pixel run to run.
+        launchOptions: { args: ['--disable-lcd-text', '--disable-partial-raster'] },
       },
     },
   ],
