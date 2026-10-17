@@ -136,6 +136,14 @@ test('validateMap reports malformed maps', () => {
     }),
     /1\.0 names/,
   );
+  const attribute = (rule) => problems({ classReports: { '[data-chips]': rule } });
+  assert.equal(attribute({ on: 'env-panel-dock', report: 'Use data-tabs.' }), '');
+  assert.match(attribute({ report: 'Use data-tabs.' }), /needs "on"/);
+  assert.match(
+    attribute({ on: 'env-panel-dock', within: 'env-panel-dock', report: 'Use data-tabs.' }),
+    /takes "on", not "within"/,
+  );
+  assert.match(problems({ classReports: { '[aria-x]': { report: 'x' } } }), /\[data-\*\]/);
   const structure = (each) =>
     problems({ structure: { x: { Frame: { report: 'Restructure it.', cases: [each] } } } });
   assert.equal(structure({ has: ['titleBar'], element: 'Frame.Root' }), '');

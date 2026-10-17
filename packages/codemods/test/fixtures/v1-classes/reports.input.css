@@ -10,3 +10,7 @@
 .env-organization-menu-option[data-checked] .env-organization-menu-radio-dot {
   color: var(--env-color-fg-accent);
 }
+.env-panel-dock[data-chips] .env-panel-dock-chip,
+.env-panel-dock:not([data-maximized])[data-chips] {
+  gap: 0;
+}

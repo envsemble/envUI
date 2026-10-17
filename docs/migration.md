@@ -295,7 +295,7 @@ Change by hand what the codemods report or can't see:
 - **PanelDockControls** is internal. Drop a `controls={<PanelDockControls …/>}`, which `v1-props` reports, and name the window controls through EnvUIProvider's `messages.panelDock` (`minimize`, `maximize`, `restore`, `close`), which also names the list of tabs and a tab's buttons.
 - **A WindowFrame element with spread props**, which `v1-structure` reports: put its title bar first among its children and its content in `WindowFrame.Content`.
 - **Buttons in a title bar or a panel header** that set no variant are ghost, at the small height in a title bar. An icon-only `variant="text"` button there took the quiet icon color from the container and shows the link color now: drop its variant.
-- **`[data-chips]`** on PanelDock's root is `[data-tabs]`, which `v1-classes` doesn't rename.
+- **`[data-chips]`** on PanelDock's root is `[data-tabs]`, which `v1-classes` reports but doesn't rename.
 - **`env-markdown` on rich text**: RichText's root and RichTextEditor's document no longer carry it; select them by `env-prose`, their shared typography, or by `env-rich-text` and `env-rich-text-document`. Markdown keeps `env-markdown` beside `env-prose`.
 - **RichTextEditor `quiet`**, which drew as outlined, is `ghost` now, the field's quiet look: choose `outline` to keep the border.
 - **A RichTextEditor `variant`** that is an expression, which `v1-props` reports.

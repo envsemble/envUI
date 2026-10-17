@@ -174,11 +174,25 @@ export function renameInStyles(
 /**
  * Reports the classes and selectors that the map's classReports list, in renamed text: a class 1.0
  * neither keeps nor renames, in a selector or a class string, and in a selector only, a class
- * inside another that no longer holds it.
+ * inside another that no longer holds it, and an attribute on a class that no longer takes it.
  */
 export function reportClasses(text, classReports, report, selectors = true) {
   for (const rule of classReports) {
-    if (rule.within && !selectors) continue;
+    if ((rule.within || rule.on) && !selectors) continue;
+    if (rule.on) {
+      // The attribute in the same compound selector as the class, such as .env-x:hover[data-y].
+      const attribute = rule.name.slice(1, -1);
+      const pattern = new RegExp(
+        String.raw`\.${rule.on}(?![\w-])[^{},;\s+~>]*?\[${attribute}(?![\w-])`,
+        'g',
+      );
+      for (const match of text.matchAll(pattern))
+        report(
+          match.index + match[0].length - attribute.length - 1,
+          `${rule.name} on .${rule.on} matches nothing in 1.0: ${rule.report}`,
+        );
+      continue;
+    }
     const pattern = rule.within
       ? new RegExp(
           String.raw`\.${rule.within}(?![\w-])[^{},;+~]*?[\s>][^{},;+~]*?\.${rule.name}(?![\w-])`,
