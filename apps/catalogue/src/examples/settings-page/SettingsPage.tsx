@@ -45,46 +45,44 @@ export default function SettingsPage() {
     // The section's heading takes focus, so reading and the keyboard continue from there.
     headings.current.get(section)?.focus();
   };
-  // The selection follows scrolling: the current section is the last whose top has passed into the
-  // top 40% of the window, or the last section once the page has scrolled to show all of it, since
-  // a short last section can't reach that far.
+  // The selection follows scrolling: the current section is the one whose top most recently
+  // passed above the line 40% down the window, the first before any has, and the last only once
+  // the page has scrolled to the bottom, since a short last section can't reach that line.
   useEffect(() => {
-    const crossing = new Set<string>();
-    let atEnd = false;
-    const update = () => {
-      if (performance.now() - chosenAt.current < 500) return;
-      const scrolled = !crossing.has(`${id}-${sections[0].id}`);
-      const current =
-        atEnd && scrolled
-          ? sections[sections.length - 1]
-          : [...sections].reverse().find((section) => crossing.has(`${id}-${section.id}`));
-      if (current) setChosen(current.id);
+    const elements = sections.map((section) => document.getElementById(`${id}-${section.id}`));
+    // What scrolls the sections: the nearest ancestor that scrolls, else the document.
+    const scroller = () => {
+      for (let node = elements[0]?.parentElement; node; node = node.parentElement) {
+        const { overflowY } = getComputedStyle(node);
+        if (/auto|scroll/.test(overflowY) && node.scrollHeight > node.clientHeight) return node;
+      }
+      return document.scrollingElement ?? document.documentElement;
     };
-    const bands = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          if (entry.isIntersecting) crossing.add(entry.target.id);
-          else crossing.delete(entry.target.id);
-        update();
-      },
-      { rootMargin: '0px 0px -60% 0px' },
-    );
-    const ends = new IntersectionObserver(
-      ([entry]) => {
-        atEnd = entry.isIntersecting;
-        update();
-      },
-      { threshold: 1 },
-    );
-    for (const section of sections) {
-      const element = document.getElementById(`${id}-${section.id}`);
-      if (element) bands.observe(element);
-    }
-    const last = document.getElementById(`${id}-${sections[sections.length - 1].id}`);
-    if (last) ends.observe(last);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (performance.now() - chosenAt.current < 500) return;
+      const line = window.innerHeight * 0.4;
+      const { scrollTop, clientHeight, scrollHeight } = scroller();
+      const atBottom = scrollTop > 0 && scrollTop + clientHeight >= scrollHeight - 1;
+      let current = 0;
+      elements.forEach((element, index) => {
+        if (element && element.getBoundingClientRect().top <= line) current = index;
+      });
+      if (atBottom) current = sections.length - 1;
+      setChosen(sections[current].id);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    schedule();
+    // Scroll events don't bubble: listening as they pass the document catches any scroller's.
+    document.addEventListener('scroll', schedule, { capture: true, passive: true });
+    window.addEventListener('resize', schedule);
     return () => {
-      bands.disconnect();
-      ends.disconnect();
+      cancelAnimationFrame(frame);
+      document.removeEventListener('scroll', schedule, { capture: true });
+      window.removeEventListener('resize', schedule);
     };
   }, [id]);
 
