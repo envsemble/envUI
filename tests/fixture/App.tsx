@@ -74,7 +74,7 @@ import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
-import { AccountMenusFixture } from './AccountMenus.js';
+import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import { ListsFixture } from './Lists.js';
 import {
@@ -110,6 +110,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   meters: MetersFixture,
   'search-triggers': SearchTriggersFixture,
   'account-menus': AccountMenusFixture,
+  'account-menu-shell': AccountMenuShellFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
 };
