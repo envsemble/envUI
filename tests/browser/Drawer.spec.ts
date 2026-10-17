@@ -83,6 +83,40 @@ test.describe('Drawer', () => {
     expect(await offset(rtl)).toBe('-2rem');
   });
 
+  test('a drag toward its edge moves the drawer with the pointer, in either direction', async ({
+    page,
+  }) => {
+    await page.goto(drawers);
+    for (const [trigger, name, toward] of [
+      ['Open filters', 'Filters', 1],
+      ['Open details rtl', 'Details', -1],
+    ] as const) {
+      await page.getByRole('button', { name: trigger }).click();
+      const drawer = page.getByRole('dialog', { name });
+      await expect(drawer).toBeVisible();
+      await drawer.evaluate((element) =>
+        Promise.all(element.getAnimations().map((animation) => animation.finished)),
+      );
+      const rest = (await drawer.boundingBox())!;
+      // Press on the heading's text, away from the controls, and drag 54 px toward the edge.
+      const heading = (await drawer.getByRole('heading', { name }).boundingBox())!;
+      const start = { x: heading.x + 4, y: heading.y + heading.height / 2 };
+      await page.mouse.move(start.x, start.y);
+      await page.mouse.down();
+      for (let step = 1; step <= 6; step += 1)
+        await page.mouse.move(start.x + toward * 9 * step, start.y);
+      await expect(drawer).toHaveAttribute('data-swiping');
+      // The drawer follows the pointer once: 54 px, not twice that.
+      await expect
+        .poll(async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward))
+        .toBeGreaterThan(44);
+      expect(Math.round(((await drawer.boundingBox())!.x - rest.x) * toward)).toBeLessThan(64);
+      await page.mouse.up();
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+    }
+  });
+
   test('a drawer the application opens reports why it closes and sends focus where it says', async ({
     page,
   }) => {

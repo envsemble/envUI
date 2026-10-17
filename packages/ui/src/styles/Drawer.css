@@ -25,8 +25,10 @@
   padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
   padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
   outline: none;
-  /* A swipe toward the edge moves the drawer with the finger. */
-  translate: var(--drawer-swipe-movement-x, 0) 0;
+  /* A swipe toward the edge moves the drawer with the finger: Base UI sets the movement, and its
+     own transform while the finger is down. */
+  --env-drawer-swipe: var(--drawer-swipe-movement-x, 0rem);
+  transform: translateX(var(--env-drawer-swipe));
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-drawer-popup[data-width='lg'] {
@@ -94,7 +96,7 @@
   }
   .env-drawer-popup[data-starting-style],
   .env-drawer-popup[data-ending-style] {
-    transform: translateX(var(--env-drawer-offset));
+    transform: translateX(calc(var(--env-drawer-swipe) + var(--env-drawer-offset)));
   }
   .env-drawer-popup[data-ending-style] {
     transition-duration: var(--env-motion-duration-fast);
