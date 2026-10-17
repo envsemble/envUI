@@ -1,5 +1,4 @@
 import { test, expect, type Page } from '@playwright/test';
-import { resolve } from 'node:path';
 import { fixtureUrl } from './Servers';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;

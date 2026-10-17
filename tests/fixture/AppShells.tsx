@@ -586,4 +586,3 @@ export function LoadingFrameFixture() {
   );
   return real ? frame : <LoadingState label="Loading workspace">{frame}</LoadingState>;
 }
-
