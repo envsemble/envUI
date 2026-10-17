@@ -21,11 +21,12 @@ export interface PeekOptions {
 }
 
 /**
- * Popups opened from the sidebar, such as a menu: their trigger reports aria-expanded, or the popup
- * root sets data-popup-open. The sidebar's own trigger and tree rows don't count.
+ * Popups opened from the sidebar, such as a menu: their trigger reports aria-expanded, or, for a
+ * context menu, is open (data-popup-open) and has a popup. A tooltip, which sets data-popup-open
+ * on its trigger too, doesn't count, nor do the sidebar's own trigger and tree rows.
  */
 const popupSelector = (id: string) =>
-  `[aria-expanded="true"]:not([aria-controls="${id}"]):not([role="treeitem"]):not([data-sidebar-trigger]), [data-popup-open]`;
+  `[aria-expanded="true"]:not([aria-controls="${id}"]):not([role="treeitem"]):not([data-sidebar-trigger]), [data-popup-open][aria-haspopup]:not([aria-expanded]):not([data-sidebar-trigger])`;
 
 /** Whether focus at an element shows from the keyboard, or is in a field that takes typing. */
 function keyboardFocus(target: EventTarget | null) {
@@ -66,7 +67,25 @@ export function usePeek({
   const latest = useRef({ store, active, hoverable, mode, delay, closeOnNavigate });
   latest.current = { store, active, hoverable, mode, delay, closeOnNavigate };
 
+  const stopTimer = () => {
+    clearTimeout(timer.current);
+    timer.current = undefined;
+  };
+  // A dismissal lets go of the pointer and focus that held the sidebar: it stays a rail until the
+  // pointer leaves, and until focus moves again. It is taken in as soon as anything reads the
+  // state, since focus leaving a removed element reports before the layout effects run.
+  const seenDismissals = useRef(store.dismissals[side]);
+  const takeDismissal = () => {
+    const count = latest.current.store.dismissals[side];
+    if (count === seenDismissals.current) return;
+    seenDismissals.current = count;
+    stopTimer();
+    hover.current = false;
+    focus.current = false;
+    suppressed.current = inside.current;
+  };
   const update = () => {
+    takeDismissal();
     const current = latest.current;
     // A popup opened from the sidebar keeps the state it had until it closes.
     if (popup.current) return;
@@ -75,22 +94,11 @@ export function usePeek({
       current.active && ((hover.current && !suppressed.current) || focus.current),
     );
   };
-  const stopTimer = () => {
-    clearTimeout(timer.current);
-    timer.current = undefined;
-  };
 
-  // A dismissal lets go of the pointer and focus that held the sidebar: it stays a rail until the
-  // pointer leaves, and until focus moves again.
   const dismissals = store.dismissals[side];
-  const firstDismissal = useRef(dismissals);
-  useLayoutEffect(() => {
-    if (dismissals === firstDismissal.current) return;
-    stopTimer();
-    hover.current = false;
-    focus.current = false;
-    suppressed.current = inside.current;
-  }, [dismissals]);
+  // takeDismissal reads the latest store; the count alone decides when it runs.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useLayoutEffect(takeDismissal, [dismissals]);
 
   // Docked, or in a drawer, nothing peeks.
   useLayoutEffect(() => {

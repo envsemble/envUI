@@ -76,8 +76,11 @@ export function SidebarDrawer({
       finalFocus={() => {
         // After a navigation, focus goes to the page that opened; otherwise to the trigger.
         if (store.closeReasons.current[side] !== 'navigate') return true;
-        const main = popup.current?.ownerDocument.getElementById(store.mainId);
-        return main ?? true;
+        const main = (popup.current?.ownerDocument ?? document).getElementById(store.mainId);
+        if (!main) return true;
+        // Main itself, not the first control inside it, which is where a focus target moves focus.
+        requestAnimationFrame(() => main.focus({ preventScroll: true }));
+        return false;
       }}
       id={id}
       className={classNames('env-sidebar', className)}

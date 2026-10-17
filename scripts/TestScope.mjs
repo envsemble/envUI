@@ -29,6 +29,8 @@ export const overrides = {
   /** Specs whose names don't name a component, and the public names or pages they are about. */
   specSubjects: {
     'Adoption.spec.ts': ['Theme', 'ThemePreferenceProvider', 'AppShell', 'ConfirmButton'],
+    // The frame's specs cover its hooks and its trigger too.
+    'AppShell.spec.ts': ['AppShell', 'Sidebar'],
     'ButtonCounts.spec.ts': ['CounterBadge', 'DiffStat', 'Button'],
     'Cards.spec.ts': ['components/card'],
     'ContainerSize.spec.ts': ['useContainerSize'],
@@ -77,7 +79,6 @@ export const overrides = {
     // Its centre-line test lines a sidebar's rail icons up with the sidebar toggle.
     'Scale.spec.ts': ['foundations/scale', 'AppShell', 'Sidebar'],
     'SegmentedControl.spec.ts': ['SegmentedControl'],
-    'Shell.spec.ts': ['components/app-shell'],
     'Spacing.spec.ts': ['foundations/spacing', 'Stack'],
     'ThemeContrast.spec.ts': ['Theme', 'ThemePreferenceProvider'],
     'ThemePreference.spec.ts': ['Theme', 'ThemePreferenceProvider'],

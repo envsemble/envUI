@@ -52,6 +52,10 @@
 .env-sidebar[data-frame][data-side='end'] {
   grid-area: end;
 }
+/* Its panel over the content lifts the whole column over the frame's other sticky parts. */
+.env-sidebar[data-frame][data-peek] {
+  z-index: var(--env-z-peek);
+}
 
 .env-sidebar-panel {
   box-sizing: border-box;

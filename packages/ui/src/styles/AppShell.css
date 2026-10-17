@@ -121,7 +121,8 @@
 .env-app-shell[data-scroll='document'] > .env-app-shell-header {
   position: sticky;
   inset-block-start: 0;
-  z-index: var(--env-z-sticky);
+  /* Over the sticky sidebars below a header across the window. */
+  z-index: calc(var(--env-z-sticky) + 1);
   align-self: start;
 }
 /* Across the window, its start content lines up with a rail's icons below it. */
@@ -172,7 +173,7 @@
   align-self: end;
   position: sticky;
   inset-block-start: var(--env-app-shell-loading-bar-offset);
-  z-index: calc(var(--env-z-sticky) + 1);
+  z-index: calc(var(--env-z-sticky) + 2);
 }
 .env-app-shell[data-scroll='main'] > .env-app-shell-loading-bar {
   position: relative;

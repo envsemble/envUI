@@ -318,28 +318,29 @@ export function SidebarRegion(props: SidebarRegionProps) {
   // takes focus in the inline sidebar, else Main.
   const drawerFocus = useRef<number | undefined>(undefined);
   const wasMobile = useRef(isMobile);
+  const wasOpen = useRef(state.openMobile);
   useLayoutEffect(() => {
-    const widened = wasMobile.current && !isMobile;
+    const widened = wasMobile.current && !isMobile && wasOpen.current;
     wasMobile.current = isMobile;
-    if (!widened || store.closeReasons.current[side] !== 'breakpoint') return;
+    wasOpen.current = state.openMobile;
+    if (!widened) return;
     const index = drawerFocus.current;
     drawerFocus.current = undefined;
     if (index === undefined) return;
     const root = element.current;
     const page = root?.ownerDocument ?? document;
-    // After the drawer hands focus back to what opened it.
-    const frame = requestAnimationFrame(() => {
+    // After the drawer hands focus back to what opened it; the drawer's closing, which follows at
+    // once, doesn't cancel it.
+    requestAnimationFrame(() => {
       const control = root?.querySelectorAll<HTMLElement>(tabbable)[index];
       const target =
         control && control.checkVisibility?.({ visibilityProperty: true }) !== false
           ? control
           : page.getElementById(store.mainId);
-      target?.focus();
+      if (target?.isConnected) target.focus();
     });
-    return () => cancelAnimationFrame(frame);
-  }, [isMobile, side, store]);
-  if (!state.openMobile && store.closeReasons.current[side] !== 'breakpoint')
-    drawerFocus.current = undefined;
+  }, [isMobile, state.openMobile, store.mainId]);
+  if (!state.openMobile) drawerFocus.current = undefined;
 
   const scope = useMemo<SidebarScope>(
     () => ({ side, id, label, collapsible, inDrawer: isMobile, registerTrigger }),
@@ -394,8 +395,6 @@ export function SidebarRegion(props: SidebarRegionProps) {
               ref={attach}
               id={id}
               aria-label={Landmark === 'div' ? rest['aria-label'] : label}
-              // A skip link moves focus here.
-              tabIndex={-1}
               className={classNames('env-sidebar', className)}
               style={{ ...sizes, ...style }}
               inert={outOfView || undefined}

@@ -34,7 +34,7 @@
 }
 
 /* Shell and title bar fixtures fill the viewport; the host document margin would offset them. */
-body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-page)) {
+body:has(:is(.fixture-app-shell, .fixture-full-shell, .fixture-title-bar-page)) {
   margin: 0;
 }
 .fixture-sidebar-list {
@@ -46,7 +46,7 @@ body:has(:is(.fixture-resizable-shell, .fixture-full-shell, .fixture-title-bar-p
 }
 .fixture-sticky-header {
   position: sticky;
-  inset-block-start: var(--env-app-sticky-top);
+  inset-block-start: var(--env-frame-sticky-top);
   z-index: 1;
   padding: 0.75rem 1.5rem;
   background: var(--env-color-bg-page);
@@ -444,4 +444,20 @@ body:has(.density-fixture) {
 }
 .fixture-stacking-ladder [data-layer] {
   position: absolute;
+}
+
+/* Sidebars beside a page, without the frame. */
+.fixture-sidebar-row {
+  display: flex;
+  block-size: 20rem;
+  border: 1px solid var(--env-color-border-muted);
+}
+.fixture-sidebar-page {
+  flex: 1;
+  padding: 1rem;
+}
+.fixture-avatar-rail {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
 }

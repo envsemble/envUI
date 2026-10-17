@@ -36,7 +36,20 @@ import {
   DatePicker,
   Calendar,
   SplitPane,
+  Sidebar,
+  SidebarTrigger,
+  NavList,
+  readAppShellCookie,
 } from '@envsemble/envui';
+
+/**
+ * The frame state a server reads from the request's cookie, here a fixed Cookie header, so the
+ * server and the browser render the same collapsed sidebar with its chosen width.
+ */
+const frameState = readAppShellCookie(
+  'theme=dark; hydrated-frame=start.open%3D0%26start.width%3D18',
+  'hydrated-frame',
+);
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
   id: `doc-${index}`,
@@ -299,6 +312,19 @@ export function HydrationApp() {
           total={30}
           onPageChange={setPage}
         />
+        <Sidebar.Provider
+          persist={{ key: 'hydrated-frame', storage: 'cookie' }}
+          initialState={frameState}
+        >
+          <SidebarTrigger data-testid="hydrated-sidebar-trigger" />
+          <Sidebar.Root label="Hydrated sidebar" resizable>
+            <Sidebar.Content>
+              <NavList.Root>
+                <NavList.Item href="#hydrated-home">Hydrated home</NavList.Item>
+              </NavList.Root>
+            </Sidebar.Content>
+          </Sidebar.Root>
+        </Sidebar.Provider>
         <output>{name}</output>
       </Toast.Provider>
     </Theme>

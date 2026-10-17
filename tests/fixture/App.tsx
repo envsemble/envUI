@@ -12,14 +12,16 @@ import { LayoutFixture } from './Layout.js';
 import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
-import { AdoptionFixture, ShellFixture, TwoShellsFixture } from './Adoption.js';
-import { ResizableShellFixture } from './ResizableShell.js';
+import { AdoptionFixture } from './Adoption.js';
 import {
-  FramedShellFixture,
+  AppShellFixture,
+  FramedAppShellFixture,
   FullShellFixture,
-  FullShellSkeletonFixture,
+  LoadingFrameFixture,
   ScrollKeysFixture,
-} from './WindowShell.js';
+  TwoAppShellsFixture,
+} from './AppShells.js';
+import { SidebarRailsFixture, SidebarsFixture } from './Sidebars.js';
 import { WindowFrameFixture } from './WindowFrames.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
 import { MarkdownFixture } from './Markdowns.js';
@@ -94,16 +96,17 @@ import {
 
 /** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
-  shell: ShellFixture,
-  'two-shells': TwoShellsFixture,
-  'resizable-shell': ResizableShellFixture,
+  'app-shell': AppShellFixture,
+  'two-app-shells': TwoAppShellsFixture,
+  'framed-app-shell': FramedAppShellFixture,
   'full-shell': FullShellFixture,
-  'full-shell-skeleton': FullShellSkeletonFixture,
+  'loading-frame': LoadingFrameFixture,
+  'sidebar-rails': SidebarRailsFixture,
+  sidebars: SidebarsFixture,
   'window-frame': WindowFrameFixture,
   'code-block': CodeBlockFixture,
   'markdown-tables': MarkdownFixture,
   'scroll-keys': ScrollKeysFixture,
-  'framed-shell': FramedShellFixture,
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,

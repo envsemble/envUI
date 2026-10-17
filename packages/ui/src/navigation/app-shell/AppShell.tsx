@@ -198,7 +198,12 @@ function skipTo(event: MouseEvent<HTMLElement>, href: string) {
   const target = page.getElementById(decodeURIComponent(href.slice(1)));
   if (!target) return;
   event.preventDefault();
-  if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+  // A region that takes no focus, such as a sidebar, takes it for as long as it keeps it, so a
+  // press inside it later doesn't focus the region itself.
+  if (!target.hasAttribute('tabindex')) {
+    target.setAttribute('tabindex', '-1');
+    target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+  }
   // The document's scroll padding, or Main's own scrolling, keeps it below the header.
   target.focus();
 }

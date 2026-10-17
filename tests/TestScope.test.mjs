@@ -149,7 +149,7 @@ test('the overrides name specs, pages and names that exist', () => {
 test('fixtures map to the files they mount', () => {
   assert.deepEqual(index.fixtureByName.get('menus'), ['tests/fixture/Menus.tsx']);
   assert.deepEqual(index.fixtureByName.get('colors'), ['tests/fixture/Colors.tsx']);
-  assert.ok(index.fixtureByName.get('shell').includes('tests/fixture/Adoption.tsx'));
+  assert.ok(index.fixtureByName.get('app-shell').includes('tests/fixture/AppShells.tsx'));
   assert.ok(index.specs.get('Menu.spec.ts').fixtureFiles.has('tests/fixture/Menus.tsx'));
   assert.ok(index.specs.get('Menu.spec.ts').primary.has('Menu'));
 });
