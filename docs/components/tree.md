@@ -1,7 +1,7 @@
 ---
 title: Tree
 summary: A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
-status: beta
+status: stable
 since: 0.5.0
 category: Navigation
 aliases:
@@ -57,8 +57,8 @@ The application owns the data. It passes the visible rows in order, flattened, e
 3. **Chevron** (with `expandable`): points to the inline end, and down while `expanded`. Rows without children keep its place, so labels line up.
 4. **Icon** (optional, `icon`): decorative, 1 rem.
 5. **Label** (`label`): the row's text on one line, ending with an ellipsis where it doesn't fit; `title` gives the row a native tooltip, such as the full path.
-6. **Detail** (optional, `detail`): muted text after the label, such as a status, which gives way first when the row runs out of room.
-7. **Trailing content** (optional, `trailing`): at the row's end, such as a CounterBadge.
+6. **Description** (optional, `description`): muted text after the label, such as a status, which gives way first when the row runs out of room.
+7. **End content** (optional, `end`): at the row's end, such as a CounterBadge.
 8. **Focus ring**: on the active row, only while the tree has keyboard focus.
 
 ## Variants and sizes
@@ -78,8 +78,8 @@ The application owns the data. It passes the visible rows in order, flattened, e
 
 - **Visible rows**: `items` holds the rows that show, in order: an expanded row is followed by its visible descendants. Collapsing a row removes them from `items`; the tree reads `aria-level`, `aria-posinset` and `aria-setsize` from the order and the depths.
 - **Expanding**: a press on the chevron, <kbd>→</kbd> on a collapsed row and <kbd>←</kbd> on an expanded one call `onExpandedChange` with the row and its new state; the application updates `items`. In right-to-left text the arrow keys are mirrored, and so is the chevron.
-- **Opening and previewing**: a single click and <kbd>Space</kbd> call `onOpen` with `preview: true`, and a double click and <kbd>Enter</kbd> with `preview: false`, as an editor previews a file in a tab before keeping it. Rows that expand call `onOpen` too, so the application decides whether that toggles them or opens an index document. A press on the chevron only expands.
-- **Selection**: `selectedId` marks the selected row, which takes the selection colors and scrolls into view, to the middle, when it changes, once its row is among `items` and the tree has a size. The tree doesn't select by itself; set `selectedId` from `onOpen`.
+- **Opening and previewing**: a single click and <kbd>Space</kbd> call `onAction` with `preview: true`, and a double click and <kbd>Enter</kbd> with `preview: false`, as an editor previews a file in a tab before keeping it. Rows that expand call `onOpen` too, so the application decides whether that toggles them or opens an index document. A press on the chevron only expands.
+- **Selection**: `value` marks the selected row, which takes the selection colors and scrolls into view, to the middle, when it changes, once its row is among `items` and the tree has a size. The tree doesn't select by itself; set `selectedId` from `onOpen`.
 - **Focus**: the tree keeps focus and points `aria-activedescendant` at the active row, which the arrow keys move; the active row stays rendered while it scrolls out of view. It starts at the selected row and falls back to the selected or the nearest row when its row leaves `items`. A click makes a row active without the focus ring.
 - **Type-ahead**: typing moves to the next row whose label starts with the typed text; keys typed within 0.6 s join, and a repeated first letter cycles through its matches. Rows match their `label` where it is a string, or their `textValue`.
 - **Disabled rows**: `disabled` dims a row and reports `aria-disabled`; the keyboard still reaches it, but it neither opens nor expands.
@@ -90,7 +90,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 ## Content guidelines
 
 - Name rows as their items are named, such as file names, and keep them short; put a full path in `title` where names truncate.
-- Use `detail` for one short fact, such as "Draft" or "Shared", and `trailing` for a count or a Badge.
+- Use `description` for one short fact, such as "Draft" or "Shared", and `end` for a count or a Badge.
 - Give folders and documents icons that tell them apart, such as Folder and Description.
 - Name the tree after what it holds, such as "Files" or "Mailboxes".
 
@@ -132,17 +132,17 @@ The application owns the data. It passes the visible rows in order, flattened, e
 
 - The tree pattern: a `tree` named by `aria-label`, and `treeitem` rows with `aria-level`, `aria-posinset`, `aria-setsize`, `aria-expanded` on rows that expand, `aria-selected` and `aria-disabled`.
 - Focus management with `aria-activedescendant`: one tab stop, the active row kept in the document and scrolled into view, and its focus ring only for keyboard focus.
-- Each row's detail and trailing content read with its label, and decorative icons and chevrons hidden from assistive technology.
+- Each row's description and end content read with its label, and decorative icons and chevrons hidden from assistive technology.
 - The context menu's keys, with its row as the target, and focus back on the tree when it closes.
 - Rows 2.75 rem tall on coarse pointers.
 
 ### You provide
 
-- An `aria-label` for every tree, and a `contextMenuLabel` that names its menu in the page's language.
+- An `aria-label` for every tree, and its menu's name in the page's language, through EnvUIProvider's `messages.tree.actions` or `contextMenuLabel`.
 - The visible rows, their expansion and the selection, and what opening and previewing do.
 - A `textValue` for rows whose label is not plain text, so type-ahead finds them.
 - Visible controls for the context menu's actions.
-- An `aria-label` on trailing content whose number alone doesn't say what it counts, such as "12 unread" on a CounterBadge.
+- An `aria-label` on end content whose number alone doesn't say what it counts, such as "12 unread" on a CounterBadge.
 
 ## Examples
 
@@ -172,4 +172,5 @@ Expanding every folder makes over 10,000 rows; only those in view are in the doc
 
 ## Changelog
 
+- **1.0.0**: `selectedId` is `value` and `onOpen` is `onAction`, with `TreeActionOptions` (was `TreeOpenOptions`); a TreeItem's `detail` is `description` and its `trailing` is `end`. The context menu's default name comes from `messages.tree`, and the tree takes `ref` and `style`. A row's class is `env-tree-item` (was `env-tree-row`), and `env-tree-detail` and `-trailing` are `env-tree-description` and `-end`.
 - **0.5.0**: Tree: a virtualized tree for thousands of rows, with keyboard navigation, type-ahead, preview and open callbacks, a context menu and two densities. Keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application.

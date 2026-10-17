@@ -111,12 +111,12 @@ export function AdoptionFixture() {
           </Menu.Root>
           <output data-testid="menu-action">{action}</output>
           <OrganizationSwitcher
-            organizations={[
-              { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
-              { id: 'contoso', name: 'Contoso', detail: 'Member' },
+            items={[
+              { id: 'northwind', name: 'Northwind Labs', description: 'Admin' },
+              { id: 'contoso', name: 'Contoso', description: 'Member' },
             ]}
-            currentOrganizationId={organizationId}
-            onSelect={(id) => {
+            value={organizationId}
+            onValueChange={(id) => {
               setOrganizationId(id);
               setAction(`Selected ${id}`);
             }}
@@ -124,9 +124,9 @@ export function AdoptionFixture() {
           />
           <div data-testid="no-organization">
             <OrganizationSwitcher
-              organizations={[]}
-              currentOrganizationId={null}
-              onSelect={() => undefined}
+              items={[]}
+              value={null}
+              onValueChange={() => undefined}
               onCreate={() => setAction('Create first organization')}
             />
           </div>
@@ -181,7 +181,7 @@ export function AdoptionFixture() {
           <Button onClick={() => setSeatsFull((value) => !value)}>Toggle seats</Button>
           <List.Root>
             <List.Item
-              title="Seat"
+              label="Seat"
               data-testid="secondary-row"
               action={<Button variant="secondary">Remove</Button>}
             />

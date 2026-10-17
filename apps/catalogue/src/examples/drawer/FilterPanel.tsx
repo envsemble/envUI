@@ -87,7 +87,7 @@ export default function FilterPanel() {
       {shown.length > 0 ? (
         <List.Root aria-label="Projects" style={{ inlineSize: 'min(100%, 24rem)' }}>
           {shown.map((project) => (
-            <List.Item key={project.name} title={project.name} detail={project.owner} />
+            <List.Item key={project.name} label={project.name} description={project.owner} />
           ))}
         </List.Root>
       ) : (

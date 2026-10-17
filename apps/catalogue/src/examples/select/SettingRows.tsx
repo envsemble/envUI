@@ -15,8 +15,8 @@ export default function SettingRows() {
   return (
     <List.Root aria-label="Notifications">
       <List.Item
-        title="E-mail digest"
-        detail="A summary of what changed in your projects."
+        label="E-mail digest"
+        description="A summary of what changed in your projects."
         action={
           // The row's title shows the name, so the select takes it as its aria-label.
           <Select
@@ -28,8 +28,8 @@ export default function SettingRows() {
         }
       />
       <List.Item
-        title="Due date reminders"
-        detail="For tasks assigned to you."
+        label="Due date reminders"
+        description="For tasks assigned to you."
         action={
           <Select
             variant="outline"

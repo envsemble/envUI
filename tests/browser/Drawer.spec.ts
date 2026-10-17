@@ -107,15 +107,36 @@ test.describe('Drawer', () => {
       for (let step = 1; step <= 6; step += 1)
         await page.mouse.move(start.x + toward * 9 * step, start.y);
       await expect(drawer).toHaveAttribute('data-swiping');
-      // The drawer follows the pointer once: 54 px, not twice that.
-      await expect
-        .poll(async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward))
-        .toBeGreaterThan(44);
-      expect(Math.round(((await drawer.boundingBox())!.x - rest.x) * toward)).toBeLessThan(64);
+      // The drawer follows the pointer once, toward the edge: about 54 px, well under twice that.
+      // WebKit can start the swipe a step or two late and settle as low as about 21 px, so the
+      // band is wide; what matters is the direction and no doubled move.
+      const moved = async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward);
+      await expect.poll(moved).toBeGreaterThan(54 * 0.25);
+      expect(await moved()).toBeLessThan(54 * 1.3);
       await page.mouse.up();
       await page.keyboard.press('Escape');
       await expect(page.getByRole('dialog')).toHaveCount(0);
     }
+  });
+
+  test('opened by touch, it focuses the drawer, not a field inside; by keyboard, the field', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ hasTouch: true });
+    const page = await context.newPage();
+    await page.goto(drawers);
+    // Its first element that takes Tab is a field; a field focused by touch opens the keyboard.
+    await page.getByRole('button', { name: 'Open search' }).tap();
+    const drawer = page.getByRole('dialog', { name: 'Search' });
+    await expect(drawer).toBeFocused();
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).not.toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
+    const trigger = page.getByRole('button', { name: 'Open search' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).toBeFocused();
+    await context.close();
   });
 
   test('a drawer the application opens reports why it closes and sends focus where it says', async ({

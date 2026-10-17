@@ -32,7 +32,7 @@ export default function WorkItems() {
         {items
           .filter((item) => item.status === status)
           .map((item) => (
-            <List.Item key={item.id} title={item.title} />
+            <List.Item key={item.id} label={item.title} />
           ))}
       </List.Root>
     </Stack>

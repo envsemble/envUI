@@ -33,12 +33,12 @@
   }
 }
 
-.env-nav-list-item-selected {
+.env-nav-list-item[data-selected] {
   color: var(--env-color-fg-on-selected);
   background: var(--env-color-bg-selected);
 }
 
-.env-nav-list-item-icon-only {
+.env-nav-list-item[data-icon-only] {
   inline-size: var(--env-nav-list-item-height);
   block-size: var(--env-nav-list-item-height);
   min-inline-size: var(--env-nav-list-item-height);
@@ -47,12 +47,11 @@
   padding: 0;
 }
 
-.env-nav-list-item:not(.env-nav-list-item-selected):not(:disabled):not([aria-disabled='true'])
-  .env-icon {
+.env-nav-list-item:not([data-selected]):not(:disabled):not([aria-disabled='true']) .env-icon {
   color: var(--env-color-fg-muted);
 }
 
-.env-nav-list-item-selected .env-icon {
+.env-nav-list-item[data-selected] .env-icon {
   color: inherit;
 }
 
@@ -64,11 +63,11 @@
   background: var(--env-color-bg-navigation-pressed);
 }
 
-.env-nav-list-item-selected:hover:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item[data-selected]:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-color-bg-selected-hover);
 }
 
-.env-nav-list-item-selected:active:not(:disabled):not([aria-disabled='true']) {
+.env-nav-list-item[data-selected]:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-color-bg-selected-pressed);
 }
 
@@ -86,15 +85,15 @@
   color: inherit;
 }
 
-/* Trailing content, such as a CounterBadge, follows the label; icon-only items show a dot instead. */
-.env-nav-list-item-trailing {
+/* End content, such as a CounterBadge, follows the label; icon-only items show a dot instead. */
+.env-nav-list-item-end {
   flex: 0 0 auto;
   margin-inline-start: auto;
   padding-inline-start: var(--env-space-1);
   display: inline-flex;
   align-items: center;
 }
-.env-nav-list-item-icon-only:has(> .env-nav-list-item-dot) {
+.env-nav-list-item[data-icon-only]:has(> .env-nav-list-item-dot) {
   position: relative;
 }
 .env-nav-list-item-dot {
@@ -171,19 +170,19 @@
 /* Forced colors: the system paints no fills or shadows, so the selected item takes the system’s
    selection colors. */
 @media (forced-colors: active) {
-  .env-nav-list-item-selected {
+  .env-nav-list-item[data-selected] {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
-  .env-nav-list-item-selected :where(*) {
+  .env-nav-list-item[data-selected] :where(*) {
     color: inherit;
   }
   .env-nav-list-item:is(:disabled, [aria-disabled='true']) {
     color: GrayText;
   }
-  .env-nav-list-item-selected:focus-visible,
-  .env-nav-list-item-selected :focus-visible {
+  .env-nav-list-item[data-selected]:focus-visible,
+  .env-nav-list-item[data-selected] :focus-visible {
     outline-color: HighlightText;
   }
 }

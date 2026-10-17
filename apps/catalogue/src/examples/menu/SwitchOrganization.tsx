@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { OrganizationSwitcher, Stack, Text } from '@envsemble/envui';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind Labs', detail: 'Admin' },
-  { id: 'contoso', name: 'Contoso', detail: 'Member' },
-  { id: 'fabrikam', name: 'Fabrikam Research and Development', detail: 'Member' },
+  { id: 'northwind', name: 'Northwind Labs', description: 'Admin' },
+  { id: 'contoso', name: 'Contoso', description: 'Member' },
+  { id: 'fabrikam', name: 'Fabrikam Research and Development', description: 'Member' },
 ];
 
 export default function SwitchOrganization() {
@@ -14,9 +14,9 @@ export default function SwitchOrganization() {
     // As wide as the context area of an application shell's sidebar.
     <Stack align="start" style={{ inlineSize: 'min(100%, 14rem)' }}>
       <OrganizationSwitcher
-        organizations={organizations}
-        currentOrganizationId={currentId}
-        onSelect={(id) => {
+        items={organizations}
+        value={currentId}
+        onValueChange={(id: string) => {
           setCurrentId(id);
           setMessage(`Switched to ${organizations.find((item) => item.id === id)?.name}`);
         }}

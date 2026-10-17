@@ -5,21 +5,33 @@ import {
   useId,
   useRef,
   type ComponentPropsWithRef,
+  type CSSProperties,
+  type MouseEvent,
   type ReactElement,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import type { PopupSide } from '../internal/PopupSurface.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
-import { menuPopupInlineInset, menuPopupInset, renderMenuPopup } from './internal/MenuPopup.js';
+import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
+import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 
-export interface RootProps {
+/** The Base UI parts every menu's popup is made of. */
+const menuParts = {
+  Portal: BaseMenu.Portal,
+  Positioner: BaseMenu.Positioner,
+  Popup: BaseMenu.Popup,
+};
+
+export interface RootProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'> {
   /**
    * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
    * button semantics and ref, so it must accept native props and a ref.
@@ -34,10 +46,14 @@ export interface RootProps {
   children: ReactNode;
   /**
    * The side of the trigger the menu opens on; it flips to the other side where the window has no
-   * room.
+   * room. inline-start and inline-end follow the text direction.
+   * @default 'bottom'
    */
-  side?: 'top' | 'bottom' | 'left' | 'right';
-  /** How the menu lines up with the trigger along that side. */
+  side?: PopupSide;
+  /**
+   * How the menu lines up with the trigger along that side.
+   * @default 'end'
+   */
   align?: 'start' | 'center' | 'end';
   /**
    * Whether the menu is open, for a controlled menu; leave it out and the menu opens and closes
@@ -51,7 +67,10 @@ export interface RootProps {
   defaultOpen?: boolean;
   /** Called with the new visibility as the menu opens or closes. */
   onOpenChange?: (open: boolean) => void;
-  /** Class of the menu popup. */
+  /**
+   * Class of the menu popup. ref, style, data attributes and the other native props go to the popup
+   * too; the trigger is the element you pass.
+   */
   className?: string;
 }
 
@@ -70,33 +89,31 @@ function Root({
   defaultOpen,
   onOpenChange,
   className,
+  ref,
+  ...popupProps
 }: RootProps) {
-  const theme = useTheme();
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
     <BaseMenu.Root
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next) => onOpenChange?.(next)}
     >
-      <BaseMenu.Trigger render={trigger} />
-      <BaseMenu.Portal>
-        <Theme {...theme} className="env-menu-theme">
-          <BaseMenu.Positioner
-            side={side}
-            align={align}
-            sideOffset={8}
-            className="env-menu-positioner"
-          >
-            <BaseMenu.Popup
-              className={classNames('env-menu', className)}
-              // Base UI names the menu after its trigger; the menu's own label replaces that name.
-              render={renderMenuPopup(label)}
-            >
-              {children}
-            </BaseMenu.Popup>
-          </BaseMenu.Positioner>
-        </Theme>
-      </BaseMenu.Portal>
+      <BaseMenu.Trigger ref={triggerRef} render={trigger} />
+      {/* Base UI names the menu after its trigger; the menu's own label replaces that name. */}
+      <MenuPopup
+        parts={menuParts}
+        label={label}
+        side={side}
+        align={align}
+        sideOffset={8}
+        trigger={triggerRef}
+        className={className}
+        popupRef={ref}
+        popupProps={popupProps}
+      >
+        {children}
+      </MenuPopup>
     </BaseMenu.Root>
   );
 }
@@ -127,12 +144,12 @@ interface ItemContentProps {
    */
   shortcut?: string;
   /** End content, such as a Badge or CounterBadge; it is part of the item's name. */
-  trailing?: ReactNode;
+  end?: ReactNode;
 }
 
-/** Shared item layout: indicator, icon, label with optional description, trailing content, shortcut. */
+/** Shared item layout: indicator, icon, label with optional description, end content, shortcut. */
 function useMenuItemContent(
-  { icon, children, description, shortcut, trailing }: ItemContentProps,
+  { icon, children, description, shortcut, end }: ItemContentProps,
   indicator?: ReactNode,
 ) {
   const descriptionId = useId();
@@ -150,7 +167,12 @@ function useMenuItemContent(
           </span>
         )}
       </span>
-      {trailing != null && <span className="env-menu-item-trailing">{trailing}</span>}
+      {end != null && (
+        <>
+          {/* The space keeps the end content a separate word in the item's accessible name. */}{' '}
+          <span className="env-menu-item-end">{end}</span>
+        </>
+      )}
       {chords.length > 0 && (
         // aria-keyshortcuts announces the shortcut; the keys show it.
         <span className="env-menu-item-shortcut" aria-hidden="true">
@@ -173,7 +195,7 @@ function useMenuItemContent(
 interface ItemSharedProps extends ItemContentProps {
   /**
    * The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does
-   * not run.
+   * not run, and a destination has no link to follow.
    * @default false
    */
   disabled?: boolean;
@@ -184,7 +206,10 @@ interface ItemSharedProps extends ItemContentProps {
 export type ItemProps = ItemSharedProps &
   (
     | {
-        /** The destination: the item is a link, through the LinkProvider's link component. */
+        /**
+         * The destination: the item is a link, through the LinkProvider's link component, and the
+         * menu closes as it is followed.
+         */
         href: string;
         onClick?: never;
         /** Where the destination opens, such as _blank, as on a native link. */
@@ -201,13 +226,19 @@ export type ItemProps = ItemSharedProps &
       }
   );
 
-/** One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link. */
+/** A disabled destination is no link, so a press follows nothing. */
+const preventActivation = (event: MouseEvent<HTMLElement>) => event.preventDefault();
+
+/**
+ * One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link
+ * and close the menu as they are followed.
+ */
 function Item({
   icon,
   children,
   description,
   shortcut,
-  trailing,
+  end,
   disabled,
   className,
   ...props
@@ -218,17 +249,19 @@ function Item({
     children,
     description,
     shortcut,
-    trailing,
+    end,
   });
   const itemClassName = classNames('env-menu-item', className);
-  if (props.href !== undefined) {
+  // A disabled destination renders no link: it stays in place, dimmed, and reports aria-disabled,
+  // as a disabled action does.
+  if (props.href !== undefined && !disabled) {
     return (
       <BaseMenu.LinkItem
         className={itemClassName}
+        closeOnClick
         // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
-        aria-disabled={disabled || undefined}
         {...accessibility}
       >
         {content}
@@ -239,7 +272,7 @@ function Item({
     <BaseMenu.Item
       className={itemClassName}
       disabled={disabled}
-      onClick={props.onClick}
+      onClick={props.href === undefined ? props.onClick : preventActivation}
       {...accessibility}
     >
       {content}
@@ -252,7 +285,7 @@ function Separator() {
   return <BaseMenu.Separator className="env-menu-separator" />;
 }
 
-export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'trailing'> {
+export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'shortcut' | 'end'> {
   /** The label of the row that opens the submenu, which names the row. */
   label: ReactNode;
   /** The submenu's items: Menu.Item, Menu.Group, Menu.Separator and the other parts, nested submenus too. */
@@ -277,6 +310,10 @@ export interface SubmenuProps extends Omit<ItemContentProps, 'children' | 'short
   onOpenChange?: (open: boolean) => void;
   /** Class of the submenu popup. */
   className?: string;
+  /** The submenu popup's ref. */
+  ref?: Ref<HTMLDivElement>;
+  /** The submenu popup's inline style. */
+  style?: CSSProperties;
 }
 
 /** Gap between a submenu and the edge of the menu it opens from, in pixels. */
@@ -299,10 +336,11 @@ function Submenu({
   defaultOpen,
   onOpenChange,
   className,
+  ref,
+  style,
 }: SubmenuProps) {
-  const theme = useTheme();
   const trigger = useRef<HTMLDivElement>(null);
-  const popup = useRef<HTMLDivElement>(null);
+  const popup = useRef<HTMLDivElement | null>(null);
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
@@ -327,36 +365,30 @@ function Submenu({
           <ChevronRight />
         </span>
       </BaseMenu.SubmenuTrigger>
-      <BaseMenu.Portal>
-        <Theme {...theme} className="env-menu-theme">
-          <BaseMenu.Positioner
-            className="env-menu-positioner"
-            side="inline-end"
-            align="start"
-            // The submenu clears the edge of its menu by a small gap, and its first row lines up
-            // with the row that opened it. Collisions flip it to the other side.
-            sideOffset={() =>
-              menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap
-            }
-            alignOffset={() => -menuPopupInset(popup.current)}
-          >
-            <BaseMenu.Popup
-              ref={popup}
-              className={classNames('env-menu', className)}
-              render={renderMenuPopup(ariaLabel ?? textLabel)}
-              // Escape and ← close only the submenu and return to its row. Otherwise focus has
-              // moved on, or an item closed the whole menu, whose own trigger takes focus.
-              finalFocus={() =>
-                submenuReturnReasons.has(closeReason.current ?? '')
-                  ? (trigger.current ?? false)
-                  : false
-              }
-            >
-              {children}
-            </BaseMenu.Popup>
-          </BaseMenu.Positioner>
-        </Theme>
-      </BaseMenu.Portal>
+      <MenuPopup
+        parts={menuParts}
+        label={ariaLabel ?? textLabel}
+        side="inline-end"
+        align="start"
+        // The submenu clears the edge of its menu by a small gap, and its first row lines up with
+        // the row that opened it. Collisions flip it to the other side.
+        sideOffset={() => menuPopupInlineInset(trigger.current?.closest('.env-menu')) + submenuGap}
+        alignOffset={() => -menuPopupInset(popup.current)}
+        trigger={trigger}
+        // Escape and ← close only the submenu and return to its row. Otherwise focus has moved on,
+        // or an item closed the whole menu, whose own trigger takes focus.
+        finalFocus={() =>
+          submenuReturnReasons.has(closeReason.current ?? '') ? (trigger.current ?? false) : false
+        }
+        className={className}
+        popupRef={(node: HTMLDivElement | null) => {
+          popup.current = node;
+          setRef(ref, node);
+        }}
+        popupProps={{ style }}
+      >
+        {children}
+      </MenuPopup>
     </BaseMenu.SubmenuRoot>
   );
 }
@@ -421,7 +453,7 @@ function CheckIndicator({ kind }: { kind: 'radio' | 'checkbox' }) {
   );
 }
 
-export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut' | 'trailing'> {
+export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut'> {
   /** The value the Menu.RadioGroup reports when this item is chosen. */
   value: string;
   /**
@@ -429,7 +461,10 @@ export interface RadioItemProps extends Omit<ItemContentProps, 'shortcut' | 'tra
    * @default false
    */
   disabled?: boolean;
-  /** Close the menu after choosing. */
+  /**
+   * Close the menu after choosing.
+   * @default true
+   */
   closeOnClick?: boolean;
   /** Class of the item's row. */
   className?: string;
@@ -460,7 +495,7 @@ function RadioItem({
   );
 }
 
-export interface CheckboxItemProps extends Omit<ItemContentProps, 'trailing'> {
+export interface CheckboxItemProps extends ItemContentProps {
   /** Whether the option is on; a check mark shows while it is. */
   checked: boolean;
   /** Called with the new state when the item is toggled. */

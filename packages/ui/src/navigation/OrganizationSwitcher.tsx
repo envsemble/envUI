@@ -1,66 +1,92 @@
 'use client';
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
+import type { CSSProperties, Ref } from 'react';
 import { Button } from '../actions/Button.js';
 import { Add } from '../icons/Add.js';
 import { Groups3 } from '../icons/Groups3.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { organizationSwitcher } from '../foundations/messages/organizationSwitcher.js';
 import * as Menu from './Menu.js';
 
-export interface OrganizationSwitcherOrganization {
-  /** Identifies the organization; onSelect receives it. */
+export interface OrganizationSwitcherItem {
+  /** Identifies the organization; it is the value onValueChange receives. */
   id: string;
   /** The organization's name, on the trigger while it is active and in the menu. */
   name: string;
-  /** A short muted note after the name, such as the person's role in the organization. */
-  detail?: string;
+  /**
+   * A short muted note at the end of its row, such as the person's role in the organization; it
+   * is read with the name.
+   */
+  description?: string;
 }
 
 export interface OrganizationSwitcherProps {
   /** Organizations the signed-in person belongs to, in display order. */
-  organizations: readonly OrganizationSwitcherOrganization[];
-  /** The active organization, or null before one is chosen. */
-  currentOrganizationId: string | null;
+  items: readonly OrganizationSwitcherItem[];
+  /** The active organization's id, or null before one is chosen. */
+  value: string | null;
   /**
    * Called with the id of the organization chosen, unless it is the active one; the application
    * switches and reports progress.
    */
-  onSelect: (organizationId: string) => void;
+  onValueChange: (value: string) => void;
   /** Offers creating an organization at the end of the menu, or as the only action without organizations. */
   onCreate?: () => void;
-  /** Heading inside the menu. */
+  /**
+   * Heading inside the menu.
+   * @default 'Organizations', or EnvUIProvider's messages.organizationSwitcher.heading
+   */
   heading?: string;
-  /** Label of the create action. */
+  /**
+   * Label of the create action.
+   * @default 'Create organization', or EnvUIProvider's messages.organizationSwitcher.create
+   */
   createLabel?: string;
-  /** Trigger text while no organization is active. */
+  /**
+   * Trigger text while no organization is active.
+   * @default 'Choose organization', or EnvUIProvider's messages.organizationSwitcher.placeholder
+   */
   placeholder?: string;
   /**
    * Prevents opening, for example while a switch is in progress.
    * @default false
    */
   disabled?: boolean;
-  /** Accessible name of the menu. */
+  /**
+   * Accessible name of the menu.
+   * @default 'Organizations', or EnvUIProvider's messages.organizationSwitcher.label
+   */
   'aria-label'?: string;
   /** Class of the trigger button, or of the create button without organizations. */
   className?: string;
+  /** The menu popup's ref; the trigger is a Button of its own. */
+  ref?: Ref<HTMLDivElement>;
+  /** The menu popup's inline style. */
+  style?: CSSProperties;
 }
 
 /** Shows the active organization and switches between the person's organizations; fits AppShell's context area. */
 export function OrganizationSwitcher({
-  organizations,
-  currentOrganizationId,
-  onSelect,
+  items,
+  value,
+  onValueChange,
   onCreate,
-  heading = 'Organizations',
-  createLabel = 'Create organization',
-  placeholder = 'Choose organization',
+  heading,
+  createLabel,
+  placeholder,
   disabled,
-  'aria-label': label = 'Organizations',
+  'aria-label': label,
   className,
+  ref,
+  style,
 }: OrganizationSwitcherProps) {
-  if (organizations.length === 0) {
+  const messages = useMessages('organizationSwitcher', organizationSwitcher);
+  const createText = createLabel ?? messages.create;
+  if (items.length === 0) {
     return onCreate ? (
       <Button
         variant="secondary"
@@ -69,17 +95,19 @@ export function OrganizationSwitcher({
         onClick={onCreate}
         disabled={disabled}
       >
-        <span className="env-organization-switcher-trigger-label">{createLabel}</span>
+        <span className="env-organization-switcher-trigger-label">{createText}</span>
       </Button>
     ) : null;
   }
 
-  const current = organizations.find((organization) => organization.id === currentOrganizationId);
+  const current = items.find((item) => item.id === value);
   return (
     <Menu.Root
-      aria-label={label}
+      aria-label={label ?? messages.label}
       align="start"
       className="env-organization-switcher"
+      ref={ref}
+      style={style}
       trigger={
         <Button
           variant="secondary"
@@ -88,7 +116,7 @@ export function OrganizationSwitcher({
           disabled={disabled}
         >
           <span className="env-organization-switcher-trigger-label">
-            {current?.name ?? placeholder}
+            {current?.name ?? placeholder ?? messages.placeholder}
           </span>
         </Button>
       }
@@ -97,42 +125,36 @@ export function OrganizationSwitcher({
         <DecorativeIcon>
           <Groups3 />
         </DecorativeIcon>
-        <span className="env-organization-switcher-heading">{heading}</span>
+        <span className="env-organization-switcher-heading">{heading ?? messages.heading}</span>
       </div>
-      <BaseMenu.RadioGroup
+      <Menu.RadioGroup
         className="env-organization-switcher-options"
         value={current?.id ?? null}
-        onValueChange={(organizationId: string) => {
-          if (organizationId !== current?.id) onSelect(organizationId);
+        onValueChange={(next) => {
+          if (next !== current?.id) onValueChange(next);
         }}
       >
-        {organizations.map((organization) => (
-          <BaseMenu.RadioItem
-            key={organization.id}
-            value={organization.id}
-            closeOnClick
-            className="env-menu-item env-organization-switcher-option"
+        {items.map((item) => (
+          <Menu.RadioItem
+            key={item.id}
+            value={item.id}
+            className="env-organization-switcher-option"
+            end={
+              item.description ? (
+                <span className="env-organization-switcher-description">{item.description}</span>
+              ) : undefined
+            }
           >
-            <span className="env-organization-switcher-radio" aria-hidden="true">
-              <BaseMenu.RadioItemIndicator className="env-organization-switcher-radio-dot" />
-            </span>
-            <span className="env-menu-item-label">{organization.name}</span>
-            {/* The space keeps the detail a separate word in the item's accessible name. */}
-            {organization.detail && (
-              <>
-                {' '}
-                <span className="env-organization-switcher-detail">{organization.detail}</span>
-              </>
-            )}
-          </BaseMenu.RadioItem>
+            {item.name}
+          </Menu.RadioItem>
         ))}
-      </BaseMenu.RadioGroup>
+      </Menu.RadioGroup>
       {onCreate && (
         <BaseMenu.Item className="env-organization-switcher-create" onClick={onCreate}>
           <DecorativeIcon>
             <Add />
           </DecorativeIcon>
-          {createLabel}
+          {createText}
         </BaseMenu.Item>
       )}
     </Menu.Root>

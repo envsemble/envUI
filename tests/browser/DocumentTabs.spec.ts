@@ -24,7 +24,7 @@ test.describe('DocumentTabs', () => {
     await expect(roadmap).toHaveAttribute('aria-controls', 'document-panel-light');
     await expect(decisions).toHaveAttribute('tabindex', '-1');
     await expect(retrospective).toHaveAttribute('data-preview', 'true');
-    await expect(retrospective.locator('.env-document-tab-label')).toHaveCSS(
+    await expect(retrospective.locator('.env-document-tabs-tab-label')).toHaveCSS(
       'font-style',
       'italic',
     );
@@ -72,9 +72,17 @@ test.describe('DocumentTabs', () => {
     await expect(decisions).toHaveAttribute('aria-selected', 'true');
     await expect(decisions).toBeFocused();
 
-    // So does the close button.
-    const closeDecisions = decisions.getByRole('button', { name: 'Close Decisions.md' });
+    // So does the close button, a pointer's affordance beside the tab, outside it and hidden from
+    // assistive technology: Delete and the context menu close a tab from the keyboard.
+    await expect(decisions).toHaveAttribute('aria-keyshortcuts', 'Delete');
+    await expect(decisions.locator('button')).toHaveCount(0);
+    const closeDecisions = strip
+      .locator('.env-document-tabs-item')
+      .filter({ has: page.getByRole('tab', { name: 'Decisions.md', exact: true }) })
+      .locator('.env-document-tabs-close');
     await expect(closeDecisions).toHaveAttribute('tabindex', '-1');
+    await expect(closeDecisions).toHaveAttribute('aria-hidden', 'true');
+    await expect(closeDecisions).toHaveAttribute('title', 'Close Decisions.md');
     await closeDecisions.click();
     await expect.poll(() => lastLog(page)).toBe('close plans/decisions.md');
     await expect(decisions).toHaveCount(0);
@@ -192,18 +200,47 @@ test.describe('DocumentTabs', () => {
     await page.goto(tabsFixture);
     for (const theme of ['light', 'dark']) {
       const strip = page.getByRole('tablist', { name: `Open documents ${theme}` });
-      const active = strip.getByRole('tab', { name: 'Roadmap.md', exact: true });
-      const other = strip.getByRole('tab', { name: 'Decisions.md', exact: true });
-      await expect(active.locator('.env-document-tab-close')).toBeVisible();
+      const item = (name: string) =>
+        strip
+          .locator('.env-document-tabs-item')
+          .filter({ has: page.getByRole('tab', { name, exact: true }) });
+      const active = item('Roadmap.md');
+      const other = item('Decisions.md');
+      await expect(active.locator('.env-document-tabs-close')).toBeVisible();
       await page.mouse.move(0, 0);
-      await expect(other.locator('.env-document-tab-close')).toBeHidden();
+      await expect(other.locator('.env-document-tabs-close')).toBeHidden();
       await other.hover();
-      await expect(other.locator('.env-document-tab-close')).toBeVisible();
+      await expect(other.locator('.env-document-tabs-close')).toBeVisible();
       const indicator = await active.evaluate(
         (tab) => getComputedStyle(tab, '::after').backgroundColor,
       );
       expect(indicator).not.toBe('rgba(0, 0, 0, 0)');
     }
+  });
+
+  test('in right-to-left text the arrow keys and the wheel run toward the end', async ({
+    page,
+  }) => {
+    await page.goto(`${fixtureUrl}/?fixture=rtl-document-tabs`);
+    const strip = page.getByRole('tablist', { name: 'Right-to-left documents' });
+    const roadmap = strip.getByRole('tab', { name: 'Roadmap.md', exact: true });
+    const decisions = strip.getByRole('tab', { name: 'Decisions.md', exact: true });
+    await roadmap.focus();
+    // The next tab is to the left.
+    await page.keyboard.press('ArrowLeft');
+    await expect(decisions).toBeFocused();
+    await expect(decisions).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('ArrowRight');
+    await expect(roadmap).toBeFocused();
+    // Turning the wheel down scrolls toward the end, the left, where scrollLeft is negative.
+    const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
+    expect(await scrollLeft()).toBe(0);
+    await strip.hover();
+    await page.mouse.wheel(0, 200);
+    await expect.poll(scrollLeft).toBeLessThan(0);
+    const scrolled = await scrollLeft();
+    await page.mouse.wheel(0, -100);
+    await expect.poll(scrollLeft).toBeGreaterThan(scrolled);
   });
 
   test.describe('on a coarse pointer', () => {
@@ -221,10 +258,10 @@ test.describe('DocumentTabs', () => {
         ).toHaveAttribute('data-env-scale', scale);
         const boxes = await strip.evaluate((element) => ({
           inside: element.clientHeight,
-          tabs: [...element.querySelectorAll('.env-document-tab')].map(
+          tabs: [...element.querySelectorAll('.env-document-tabs-item')].map(
             (tab) => tab.getBoundingClientRect().height,
           ),
-          closes: [...element.querySelectorAll('.env-document-tab-close')].map((close) => {
+          closes: [...element.querySelectorAll('.env-document-tabs-close')].map((close) => {
             const box = close.getBoundingClientRect();
             return [box.width, box.height];
           }),
@@ -235,7 +272,7 @@ test.describe('DocumentTabs', () => {
         expect(boxes.tabs.length).toBeGreaterThan(0);
         expect(boxes.tabs.filter((height) => height !== 44)).toEqual([]);
         expect(boxes.closes.filter(([width, height]) => width !== 44 || height !== 44)).toEqual([]);
-        await expect(strip.locator('.env-document-tab-close').first()).toBeVisible();
+        await expect(strip.locator('.env-document-tabs-close').first()).toBeVisible();
       });
   });
 });

@@ -24,7 +24,7 @@ export default function IconsAndShortcuts() {
         </Menu.Item>
         <Menu.Item
           icon={<Comment />}
-          trailing={<CounterBadge value={3} aria-label="3 unresolved" />}
+          end={<CounterBadge value={3} aria-label="3 unresolved" />}
           onClick={() => setLastAction('Show comments')}
         >
           Show comments

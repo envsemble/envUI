@@ -82,7 +82,7 @@ Here a drawer at the end edge holds the filters of a list, and a DialogClose sho
 - **Closing**: <kbd>Esc</kbd>, a press outside, the close button, a DialogClose and a swipe toward the drawer's edge on a touch screen close it. `actions` don't close it by themselves: set `open` to false, or use DialogClose.
 - **Non-modal**: with `modal={false}` the page stays usable beside the drawer, which has no backdrop and closes when focus or a press goes outside it, unless `disablePointerDismissal`, as an inspector needs.
 - **Pending**: while `pending` is true, nothing dismisses the drawer, its close button is disabled and it reports `aria-busy`.
-- **Focus on open**: focus moves to `initialFocus`, a ref or a function of how the drawer was opened, or else to the first element inside that takes Tab, such as the close button. Opened by touch, or with nothing inside that takes focus, the drawer itself takes focus.
+- **Focus on open**: focus moves to `initialFocus`, a ref or a function of how the drawer was opened, or else, opened by keyboard or mouse, to the first element inside that takes Tab, such as the close button. Opened by touch, or with nothing inside that takes focus, the drawer itself takes focus, so a field inside doesn't open the on-screen keyboard.
 - **Focus on close**: focus returns to `finalFocus`, a ref or a function of how it closed, or else to the trigger, or to the element that had focus when it opened.
 - **Direction**: the drawer reads the text direction at its trigger as it opens, or the nearest EnvUIProvider's `dir`, so its side, its slide and its swipe follow it.
 - **Theme**: the drawer renders in a portal in the theme of the place it opens from.

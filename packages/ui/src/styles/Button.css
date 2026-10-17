@@ -408,6 +408,11 @@
   .env-avatar-button:active:not(:disabled) {
     transform: scale(0.97);
   }
+  /* A row target, stretched over its row or card by a pseudo-element, leaves the press to the row:
+     shrinking, it would hold the pseudo-element in place of the row. */
+  .env-button[data-row-target]:active:not(:disabled):not([aria-disabled='true']) {
+    transform: none;
+  }
 }
 
 /* Forced colors: the system paints no fills or shadows, so every button takes the system's button

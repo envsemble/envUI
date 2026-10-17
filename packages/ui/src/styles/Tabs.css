@@ -41,11 +41,11 @@
   .env-tabs-list:not([data-orientation='vertical']) {
     --env-touch-height: 0rem;
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tab {
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
     position: relative;
     min-inline-size: var(--env-control-height-touch);
   }
-  .env-tabs-list:not([data-orientation='vertical']) > .env-tab::before {
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab::before {
     content: '';
     position: absolute;
     inset-block: calc(-1 * var(--env-tabs-inset));
@@ -58,7 +58,7 @@
 .env-tabs-list[data-size='md'] {
   --env-tabs-rail: var(--env-control-height-md);
 }
-.env-tabs-list[data-size='sm'] > .env-tab {
+.env-tabs-list[data-size='sm'] > .env-tabs-tab {
   padding-block: 0;
 }
 .env-tabs-list[data-orientation='vertical'] {
@@ -66,7 +66,7 @@
   align-items: stretch;
   --env-surface-radius: var(--env-radius-surface);
 }
-.env-tabs-list > .env-tab {
+.env-tabs-list > .env-tabs-tab {
   flex-shrink: 0;
   white-space: normal;
   overflow-wrap: anywhere;
@@ -76,24 +76,25 @@
     border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 /* Only the active tab uses its variant's fill and interaction colors. */
-.env-tabs-list > .env-tab:not([data-active]),
-.env-tabs-list > .env-tab:not([data-active]):is(:hover, :active) {
+.env-tabs-list > .env-tabs-tab:not([data-active]),
+.env-tabs-list > .env-tabs-tab:not([data-active]):is(:hover, :active) {
   background: transparent;
   border-color: transparent;
   color: var(--env-color-fg-muted);
 }
-.env-tabs-list > .env-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
+.env-tabs-list > .env-tabs-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-color-bg-neutral-subtle-hover);
 }
-.env-tabs-list > .env-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
+.env-tabs-list
+  > .env-tabs-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-tabs-list > .env-tab:focus-visible {
+.env-tabs-list > .env-tabs-tab:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
 /* The active tab's ring is inset, so on a solid fill Button adds its inner ring in the label color. */
-.env-tabs-list > .env-tab[data-active] {
+.env-tabs-list > .env-tabs-tab[data-active] {
   --env-button-focus-inner-ring: 0.25rem;
 }
 .env-tabs-panels {
@@ -112,12 +113,12 @@
 }
 /* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
    stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
-.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tab-panel:not([hidden])) {
+.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tabs-panel:not([hidden])) {
   display: flex;
   flex-direction: column;
   min-block-size: 0;
 }
-.env-tab-panel {
+.env-tabs-panel {
   grid-area: 1 / 1;
   min-inline-size: 0;
   opacity: 1;
@@ -125,16 +126,16 @@
     opacity var(--env-motion-duration-medium) var(--env-motion-ease),
     transform var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-.env-tab-panel[hidden] {
+.env-tabs-panel[hidden] {
   display: none;
 }
-.env-tab-panel[data-starting-style] {
+.env-tabs-panel[data-starting-style] {
   opacity: 0;
   transform: translateY(var(--env-space-1));
 }
 /* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
    instead of jumping when the fade ends. */
-.env-tab-panel[data-ending-style] {
+.env-tabs-panel[data-ending-style] {
   position: absolute;
   inset-inline: 0;
   inset-block-start: 0;
@@ -142,16 +143,16 @@
   transform: translateY(calc(-1 * var(--env-space-1)));
   pointer-events: none;
 }
-.env-tab-panel:focus-visible {
+.env-tabs-panel:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-tabs-list > .env-tab,
-  .env-tab-panel {
+  .env-tabs-list > .env-tabs-tab,
+  .env-tabs-panel {
     transition: none;
   }
-  .env-tab-panel:is([data-starting-style], [data-ending-style]) {
+  .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
     transform: none;
   }
 }
@@ -159,16 +160,16 @@
 /* Forced colors: the system paints no fills or shadows, so the selected tab takes the system’s
    selection colors. */
 @media (forced-colors: active) {
-  .env-tabs-list > .env-tab[data-active] {
+  .env-tabs-list > .env-tabs-tab[data-active] {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
-  .env-tabs-list > .env-tab[data-active] :where(*) {
+  .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
     color: inherit;
   }
-  .env-tabs-list > .env-tab[data-active]:focus-visible,
-  .env-tabs-list > .env-tab[data-active] :focus-visible {
+  .env-tabs-list > .env-tabs-tab[data-active]:focus-visible,
+  .env-tabs-list > .env-tabs-tab[data-active] :focus-visible {
     outline-color: HighlightText;
   }
 }

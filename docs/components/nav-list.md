@@ -1,7 +1,7 @@
 ---
 title: NavList
 summary: A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.
-status: beta
+status: stable
 since: 0.1.0
 category: Navigation
 aliases:
@@ -58,7 +58,7 @@ A navigation list holds an application's destinations, such as the pages in a si
 The `NavList` namespace has three parts:
 
 - **NavList.Root** is a plain list of items and groups.
-- **NavList.Item** is one destination, with an optional icon and trailing content such as a count. With `iconOnly` it shows only its icon, and its label in a tooltip.
+- **NavList.Item** is one destination, with an optional icon and end content such as a count. With `iconOnly` it shows only its icon, and its label in a tooltip.
 - **NavList.Group** puts related items under a small heading, inside NavList.Root.
 
 Items also stand on their own, such as in AppShell's `navigation`, where they follow the collapsed sidebar, or as the buttons of Tabs.
@@ -74,7 +74,7 @@ Items also stand on their own, such as in AppShell's `navigation`, where they fo
 3. **Item** (NavList.Item): a pill at least 2.5 rem tall, with 0.25 rem by 0.75 rem padding.
 4. **Icon** (optional, `icon`): decorative, at the control icon size of 1 rem, 0.5 rem before the label. A Material Symbol shows filled while the item is selected and outlined otherwise; `selectedIcon` swaps a custom icon.
 5. **Label** (children): 0.9375 rem text that wraps when space runs out. In AppShell's sidebar it stays on one line.
-6. **Trailing content** (optional, `trailing`): at the end of the item, 0.75 rem after the label, such as a CounterBadge. An icon-only item shows a 0.4375 rem accent **dot** at its icon's top end instead.
+6. **End content** (optional, `end`): at the end of the item, 0.75 rem after the label, such as a CounterBadge. An icon-only item shows a 0.4375 rem accent **dot** at its icon's top end instead, and says the count in its name.
 7. **Tooltip** (icon-only): the item's label, at its inline end.
 8. **Focus ring**: the shared ring, 0.125 rem inside the pill, shown for keyboard focus.
 
@@ -99,7 +99,7 @@ Items also stand on their own, such as in AppShell's `navigation`, where they fo
 - **Icon-only**: with `iconOnly` the item shows its icon in a circle, named by `aria-label`, and its label in a tooltip at its inline end, after 400 ms of hover or at once on keyboard focus; <kbd>Esc</kbd> hides it. A disabled icon-only item shows it on hover. An application Tooltip around the item replaces the label tooltip, so only one shows. Keep the label as children: the item shows it again once `iconOnly` turns off.
 - **In AppShell**: inside the compact sidebar, items with an icon show only it, without `iconOnly`; the label text names the item where it has no `aria-label`. A narrow window's sidebar closes after a link in it is followed.
 - **Trailing content**: it follows the label and is part of the item's accessible name, so a CounterBadge needs an `aria-label` where its number alone doesn't say what it counts. An icon-only item shows a dot instead, which assistive technology doesn't hear.
-- **Lists and groups**: inside NavList.Root and NavList.Group, each item renders its own list item, also through the application's components. An element the application writes in the list, such as its own `<li>`, and an item inside an item, such as in trailing content, render no list item of their own.
+- **Lists and groups**: inside NavList.Root and NavList.Group, each item renders its own list item, also through the application's components. An element the application writes in the list, such as its own `<li>`, and an item inside an item, such as in end content, render no list item of their own.
 
 <!-- specimen: InteractionStates -->
 
@@ -108,8 +108,8 @@ Items also stand on their own, such as in AppShell's `navigation`, where they fo
 - Name each destination after its page, with a short noun in sentence case, such as "Inbox" or "Billing and invoices", and use the page's own title.
 - Give each item an icon that says something about its page, or give none of a list's items one; a group of items with and without icons doesn't line up.
 - Name a group's heading with a short noun phrase, such as "Settings" or "Getting started".
-- Use trailing content for a short fact that helps choose, such as an unread count or New, not for actions.
-- Name an icon-only item after its destination, and add what its trailing content says, such as "Inbox, 12 unread".
+- Use end content for a short fact that helps choose, such as an unread count or New, not for actions.
+- Name an icon-only item after its destination alone, such as "Inbox": the item adds its count, as "Inbox, 12 new".
 
 ## Do and don't
 
@@ -152,8 +152,9 @@ Items also stand on their own, such as in AppShell's `navigation`, where they fo
 
 - A `nav` landmark around the list, named with `aria-label` where the page has more than one, unless the list sits in one already, such as AppShell's sidebar.
 - `selected` on the current destination, and the routing behind `href`, through `LinkProvider`.
-- An `aria-label` on every icon-only item that says its destination and what its trailing content says.
-- An `aria-label` on trailing content whose number alone doesn't say what it counts, such as "4 unread" on a CounterBadge.
+- An `aria-label` on every icon-only item that names its destination; leave the count out, which the item adds.
+- An `aria-label` on end content whose number alone doesn't say what it counts, such as "4 unread" on a CounterBadge, for a labelled item, whose name its content gives.
+- `messages.navList.itemCount` in the application's language, through EnvUIProvider.
 - Labels that name destinations, unique within the list.
 
 ## Examples
@@ -184,7 +185,7 @@ With `iconOnly` the items show only their icons and their labels in tooltips; th
 
 ## Changelog
 
-- **1.0.0**: `NavigationItem` is `NavList.Item`, with the `env-nav-list-item-*` classes, and the page is `nav-list`. New: NavList.Root, a plain list of items, and NavList.Group, related items under a small heading. An item renders its `<li>` only as an item of NavList.Root or NavList.Group, not inside the application's own `<li>` or inside another item.
+- **1.0.0**: `NavigationItem` is `NavList.Item`, with the `env-nav-list-item-*` classes, and the page is `nav-list`. New: NavList.Root, a plain list of items, and NavList.Group, related items under a small heading. An item renders its `<li>` only as an item of NavList.Root or NavList.Group, not inside the application's own `<li>` or inside another item. NavList.Item's `trailing` is `end`. An icon-only item, or one named by `aria-label`, says the count of its end content in its name, such as Inbox, 12 new, from `messages.navList.itemCount`; the dot alone was hidden from assistive technology. The selected and icon-only modifiers are the `data-selected` and `data-icon-only` attributes instead of the `env-nav-list-item-selected` and `-icon-only` classes, and inside a compact sidebar an item sets `data-icon-only` itself.
 - **0.5.0**: `trailing` content, a dot while icon-only. An icon-only item shows its label in a tooltip at its inline end instead of a native title. Selected labels keep 4.5:1 contrast on hover.
 - **0.3.0**: Items follow a compact AppShell sidebar, showing their icon with the label as accessible name.
 - **0.2.0**: Destinations render through the `LinkProvider`'s link component.

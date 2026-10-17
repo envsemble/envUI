@@ -37,7 +37,7 @@ export default function UpdatingList() {
       </Stack>
       <List.Root aria-label="Tasks" aria-busy={updating}>
         {visible.map((task) => (
-          <List.Item key={task.id} title={task.title} detail={task.owner} />
+          <List.Item key={task.id} label={task.title} description={task.owner} />
         ))}
       </List.Root>
     </Stack>

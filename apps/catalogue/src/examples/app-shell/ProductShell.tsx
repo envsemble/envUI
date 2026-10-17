@@ -15,8 +15,8 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind', detail: 'Admin' },
-  { id: 'example', name: 'Example Labs', detail: 'Member' },
+  { id: 'northwind', name: 'Northwind', description: 'Admin' },
+  { id: 'example', name: 'Example Labs', description: 'Member' },
 ];
 const pages = [
   { id: 'home', label: 'Home', icon: <Home /> },
@@ -46,9 +46,9 @@ export default function ProductShell() {
         brand={<Apps />}
         context={
           <OrganizationSwitcher
-            organizations={organizations}
-            currentOrganizationId={organization}
-            onSelect={setOrganization}
+            items={organizations}
+            value={organization}
+            onValueChange={setOrganization}
           />
         }
         title={current.label}

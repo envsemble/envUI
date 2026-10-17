@@ -181,7 +181,7 @@ before(
       unselectedNavigation: renderToString(h(ui.NavList.Item, { icon: h(Home, { filled: true }) }, 'Home')),
       navigationWrapped: renderToString(h(ui.NavList.Root, null,
         h('li', { className: 'own' }, h('div', null, h(ui.NavList.Item, { href: '/own' }, 'Own'))),
-        h(ui.NavList.Item, { href: '/outer', trailing: h(ui.NavList.Item, { href: '/inner' }, 'Inner') }, 'Outer'))),
+        h(ui.NavList.Item, { href: '/outer', end: h(ui.NavList.Item, { href: '/inner' }, 'Inner') }, 'Outer'))),
       navigationList: renderToString(h(ui.NavList.Root, { 'aria-label': 'Main' },
         h(ui.NavList.Item, { href: '/home' }, 'Home'),
         h(ui.NavList.Group, { label: 'Settings' }, h(ui.NavList.Item, { href: '/profile' }, 'Profile')))),
@@ -236,7 +236,7 @@ test("a navigation list's item list items are its own items only", () => {
   assert.match(html, /^<ul class="env-nav-list"><li class="own"><div><a [^>]*href="\/own"/);
   assert.equal(html.match(/<li/g).length, 2, html);
   assert.match(html, /<li><a [^>]*href="\/outer"/);
-  assert.match(html, /<span class="env-nav-list-item-trailing"><a [^>]*href="\/inner"/);
+  assert.match(html, /<span class="env-nav-list-item-end"><a [^>]*href="\/inner"/);
 });
 
 test('no 0.x name of the rename map is exported, and every namespace is', async () => {

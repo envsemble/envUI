@@ -202,7 +202,7 @@ button.env-app-sidebar-toggle:focus-visible {
   overflow-x: hidden;
   overflow-y: auto;
 }
-.env-app-navigation .env-nav-list-item:not(.env-nav-list-item-icon-only) {
+.env-app-navigation .env-nav-list-item:not([data-icon-only]) {
   white-space: nowrap;
 }
 /* Content below the navigation, such as a Tree, fills the remaining height and scrolls itself. */

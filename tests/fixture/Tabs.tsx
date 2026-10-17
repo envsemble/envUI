@@ -3,6 +3,8 @@ import {
   Button,
   CounterBadge,
   DocumentTabs,
+  EnvUIProvider,
+  Slider,
   NavList,
   Surface,
   Tabs,
@@ -220,5 +222,61 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
         />
       </Surface>
     </Theme>
+  );
+}
+
+const directionItems = ['One', 'Two', 'Three'].map((label) => ({
+  value: label.toLowerCase(),
+  button: <Button variant="secondary">{label}</Button>,
+  content: <p>{label} panel</p>,
+}));
+
+/**
+ * Tabs in right-to-left text, from a dir attribute and from EnvUIProvider's dir, mounted with
+ * ?fixture=rtl-tabs.
+ */
+export function RtlTabsFixture() {
+  return (
+    <>
+      <div dir="rtl">
+        <Tabs aria-label="Right-to-left tabs" items={directionItems} />
+      </div>
+      <EnvUIProvider dir="rtl">
+        <Tabs aria-label="Provider tabs" items={directionItems} />
+      </EnvUIProvider>
+      {/* A left-to-right region in a panel of right-to-left tabs keeps its own direction. */}
+      <div dir="rtl">
+        <Tabs
+          aria-label="Tabs around a slider"
+          items={[
+            {
+              value: 'volume',
+              button: <Button variant="secondary">Volume</Button>,
+              content: (
+                <div dir="ltr">
+                  <Slider label="Volume" defaultValue={50} />
+                </div>
+              ),
+            },
+          ]}
+        />
+      </div>
+    </>
+  );
+}
+
+/** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
+export function RtlDocumentTabsFixture() {
+  const [value, setValue] = useState<string | null>(initialTabs[0]!.id);
+  return (
+    <div dir="rtl" style={{ inlineSize: '30rem' }}>
+      <DocumentTabs
+        aria-label="Right-to-left documents"
+        items={initialTabs}
+        value={value}
+        onValueChange={setValue}
+        onClose={() => undefined}
+      />
+    </div>
   );
 }

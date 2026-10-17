@@ -44,7 +44,10 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
-.env-list-surface .env-list > .env-list-item {
+/* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
+   they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
+   fill. */
+.env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list > .env-list-item {
   --env-list-item-fill: var(--env-color-bg-raised);
   --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
   --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
@@ -76,16 +79,11 @@
   ) {
   background: var(--env-list-item-fill-pressed);
 }
-/* The row shows the press, so a link or button in its content does not also shrink: shrinking, it
-   would hold a pseudo-element stretched over the row in place of the row. */
-.env-list > .env-list-item[data-interactive] > div .env-button:active {
-  transform: none;
-}
 @media (prefers-reduced-motion: reduce) {
   .env-list > .env-list-item[data-interactive] {
     transition: none;
   }
 }
-.env-list-surface .env-list + .env-list {
+.env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list + .env-list {
   margin-top: var(--env-space-3);
 }

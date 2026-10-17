@@ -15,13 +15,13 @@ export default function Swatches() {
       {labels.map(({ name, color }) => (
         <List.Item
           key={name}
-          title={
+          label={
             <span style={label}>
               <ColorSwatch color={color} />
               {name}
             </span>
           }
-          detail={color.toUpperCase()}
+          description={color.toUpperCase()}
         />
       ))}
     </List.Root>

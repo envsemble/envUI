@@ -1,4 +1,5 @@
 {
   "env-navigation-item": "env-nav-list-item",
-  "env-navigation": "env-nav-list-item"
+  "env-navigation": "env-nav-list-item",
+  "env-navigation-trailing": "env-nav-list-item-end"
 }

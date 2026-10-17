@@ -12,7 +12,7 @@ export default function ChangeSize() {
       {files.map(({ name, additions, deletions }) => (
         <List.Item
           key={name}
-          title={name}
+          label={name}
           action={<DiffStat additions={additions} deletions={deletions} />}
         />
       ))}

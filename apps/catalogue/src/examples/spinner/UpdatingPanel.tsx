@@ -12,7 +12,7 @@ export default function UpdatingPanel() {
     <Card heading="Recent activity" meta={<Spinner size="sm" label="Updating activity" />}>
       <List.Root aria-label="Recent activity" aria-busy="true">
         {activity.map((entry) => (
-          <List.Item key={entry.id} title={entry.title} detail={entry.detail} />
+          <List.Item key={entry.id} label={entry.title} description={entry.detail} />
         ))}
       </List.Root>
     </Card>

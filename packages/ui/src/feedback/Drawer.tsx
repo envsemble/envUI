@@ -129,10 +129,6 @@ function readDirection(source: Element | null): Direction {
   return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
-/** The elements that take Tab, in document order. */
-const tabbable =
-  'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
-
 /**
  * A panel that slides in from the start or end edge of the window over the page, for filters,
  * details, an inspector or a phone's navigation: a modal by default, which traps focus and returns
@@ -178,8 +174,9 @@ export function Drawer({
   useLayoutEffect(() => {
     if (shown && !provided) setRead(readDirection(triggerRef.current));
   }, [shown, provided]);
-  // By default focus moves to the first element that takes Tab, as in a dialog; by touch, and
-  // where nothing inside takes focus, to the drawer itself.
+  // By keyboard or mouse, focus moves to the first element that takes Tab, as in a dialog (true:
+  // Base UI's own tabbable order, which knows radio groups and inert content), else the drawer. By
+  // touch, to the drawer itself, so a field first inside doesn't open the on-screen keyboard.
   const popup = useRef<HTMLDivElement | null>(null);
   const attachPopup = useCallback(
     (element: HTMLDivElement | null) => {
@@ -188,13 +185,10 @@ export function Drawer({
     },
     [ref],
   );
-  const firstTabbable = useCallback((interaction: string) => {
-    if (interaction === 'touch') return true;
-    const first = Array.from(popup.current?.querySelectorAll<HTMLElement>(tabbable) ?? []).find(
-      (element) => element.tabIndex >= 0 && element.getClientRects().length > 0,
-    );
-    return first ?? true;
-  }, []);
+  const defaultFocus = useCallback(
+    (interaction: string) => (interaction === 'touch' ? (popup.current ?? true) : true),
+    [],
+  );
   const towardEnd = (side === 'end') === (direction === 'ltr');
   const named = width === 'md' || width === 'lg';
   return (
@@ -228,7 +222,7 @@ export function Drawer({
               data-width={named ? width : 'custom'}
               aria-label={title == null ? label : undefined}
               aria-busy={pending || undefined}
-              initialFocus={initialFocus ?? firstTabbable}
+              initialFocus={initialFocus ?? defaultFocus}
               finalFocus={finalFocus}
             >
               <DialogContent>

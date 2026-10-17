@@ -22,7 +22,11 @@ export default function ShowCompleted() {
       </Stack>
       <List.Root aria-label="Tasks">
         {shown.map((task) => (
-          <List.Item key={task.id} title={task.title} detail={task.done ? 'Completed' : 'Open'} />
+          <List.Item
+            key={task.id}
+            label={task.title}
+            description={task.done ? 'Completed' : 'Open'}
+          />
         ))}
       </List.Root>
     </Stack>

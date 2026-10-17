@@ -29,8 +29,12 @@ test('a default that names a private value shows the value, or nothing', () => {
   const publicNames = new Set(Object.keys(exports));
   // A private const and a private label function read as what they hold.
   assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
-  assert.equal(props('DocumentTabs').closeLabel.default, `(label: string) => \`Close \${label}\``);
+  assert.equal(props('AvatarGroup').formatMore.default, `(count: number) => \`\${count} more\``);
   // A TSDoc @default says it in words instead.
+  assert.equal(
+    props('DocumentTabs').closeLabel.default,
+    "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
+  );
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
   // A default that can't be shown as a value is marked built in rather than left out.
   assert.equal(props('MarkdownEditor').toolbar.default, undefined);

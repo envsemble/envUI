@@ -2,7 +2,7 @@
   "@envsemble/envui": {
     "OrganizationMenu": "OrganizationSwitcher",
     "OrganizationMenuProps": "OrganizationSwitcherProps",
-    "OrganizationMenuOrganization": "OrganizationSwitcherOrganization",
+    "OrganizationMenuOrganization": "OrganizationSwitcherItem",
     "Menu": "Menu.Root",
     "MenuProps": "Menu.RootProps",
     "MenuItem": "Menu.Item",
@@ -19,6 +19,7 @@
     "MenuHeader": "Menu.Header",
     "MenuHeaderProps": "Menu.HeaderProps",
     "MenuSubmenu": "Menu.Submenu",
-    "MenuSubmenuProps": "Menu.SubmenuProps"
+    "MenuSubmenuProps": "Menu.SubmenuProps",
+    "OrganizationSwitcherOrganization": "OrganizationSwitcherItem"
   }
 }

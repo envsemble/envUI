@@ -11,21 +11,21 @@ export default function NavigationCounts() {
           href="/inbox"
           icon={<Inbox />}
           selected
-          trailing={<CounterBadge value={12} tone="accent" aria-label="12 unread" />}
+          end={<CounterBadge value={12} tone="accent" aria-label="12 unread" />}
         >
           Inbox
         </NavList.Item>
         <NavList.Item
           href="/plans"
           icon={<Description />}
-          trailing={<CounterBadge value={4} aria-label="4 drafts" />}
+          end={<CounterBadge value={4} aria-label="4 drafts" />}
         >
           Plans
         </NavList.Item>
         <NavList.Item
           href="/later"
           icon={<Schedule />}
-          trailing={<CounterBadge value="99+" aria-label="More than 99 items" />}
+          end={<CounterBadge value="99+" aria-label="More than 99 items" />}
         >
           Later
         </NavList.Item>

@@ -1,7 +1,7 @@
 ---
 title: Breadcrumbs
 summary: The path from the top level to the current page, with earlier levels as links or buttons.
-status: beta
+status: stable
 since: 0.5.0
 category: Navigation
 aliases:
@@ -59,7 +59,7 @@ Breadcrumbs show the path from the top level to the current page, such as a work
 | `wrap={false}`   | A bar or header that must stay one line tall: the current page is cut short first with an ellipsis, and earlier levels keep their width. |
 
 - Levels are 0.875 rem text with 0.125 rem block and 0.25 rem inline padding and 0.5 rem corners, 0.25 rem from their separators; the chevrons are 1 rem.
-- A label longer than 20 rem ends with an ellipsis.
+- A label longer than 20 rem ends with an ellipsis, and a tooltip shows it in full on hover and, on a link, on keyboard focus.
 - The trail is as wide as its container allows; in a one-line bar, give it the room the other controls leave, such as a `minmax(0, 1fr)` grid column.
 
 ## States and behaviour
@@ -103,7 +103,8 @@ Breadcrumbs show the path from the top level to the current page, such as a work
 
 ### envUI provides
 
-- A `nav` landmark named "Breadcrumb" by default, around an ordered list of the levels.
+- A `nav` landmark named "Breadcrumb" by default, or by EnvUIProvider's `messages.breadcrumbs.label`, around an ordered list of the levels.
+- A cut-short label's full text in a tooltip, and in its link's name.
 - `aria-current="page"` on the last level, which is never a link.
 - Native links through `LinkProvider` and native buttons with `type="button"`, with a visible focus outline.
 - Separators hidden from assistive technology, so only the levels are read.
@@ -143,4 +144,5 @@ An entry without `href` or `onClick` is plain text, for a level that can't be op
 
 ## Changelog
 
+- **1.0.0**: A label cut short with an ellipsis shows in full in a tooltip, on hover and keyboard focus. The landmark's default name comes from `messages.breadcrumbs`, and the `nav` takes `ref`, `style` and native props. Classes: `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
 - **0.5.0**: Breadcrumbs, with `wrap={false}` for a trail that stays on one line in a bar or header.

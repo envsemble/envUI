@@ -494,7 +494,7 @@ test('OrganizationSwitcher switches organizations and offers creating one', asyn
   await expect(
     menu.getByRole('menuitemradio', { name: 'Contoso Member', exact: true }),
   ).toBeVisible();
-  await expect(menu.locator('.env-organization-switcher-detail').first()).toHaveText('Admin');
+  await expect(menu.locator('.env-organization-switcher-description').first()).toHaveText('Admin');
   // Choosing the active organization again does not switch.
   await menu.getByRole('menuitemradio', { name: 'Northwind Labs' }).click();
   await expect(menu).toBeHidden();

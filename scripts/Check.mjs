@@ -162,6 +162,7 @@ if (scope.typecheck)
     ['ui', 'packages/ui/tsconfig.json'],
     ['catalogue', 'apps/catalogue/tsconfig.json'],
     ['types', 'tests/types/tsconfig.json'],
+    ['fixture', 'tests/fixture/tsconfig.json'],
   ])
     staticTasks.push(
       task(`tsc ${name}`, [
@@ -209,6 +210,8 @@ const browserTask = (selected, projects, label) => {
       ...bin.playwright,
       'test',
       ...projects.map((project) => `--project=${project}`),
+      // Live development depends on the three engine projects; the run has already tested them.
+      ...(projects.includes('live-development') ? ['--no-deps'] : []),
       '--reporter=dot',
       // A test that fails once under the load of three engines and passes again is reported as
       // flaky; one that fails twice fails the run.

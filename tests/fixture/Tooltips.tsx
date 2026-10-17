@@ -3,11 +3,16 @@ import { Button, IconButton, Kbd, Link, Popover, Text, Tooltip } from '@envsembl
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { Pin } from '@envsemble/envui/icons/Pin';
 import { Save } from '@envsemble/envui/icons/Save';
 
-/** Tooltips that describe a named control, repeat a name, wait on a disabled control and hold a Kbd. */
+/**
+ * Tooltips that describe a named control, repeat a name, wait on disabled controls, a toggle and a
+ * checkbox among them, and hold a Kbd.
+ */
 export function TooltipsFixture() {
   const [seats, setSeats] = useState(false);
+  const [pinned, setPinned] = useState(true);
   return (
     <div className="fixture-actions fixture-section">
       <Tooltip content="Moves it out of the list" delay={0}>
@@ -33,6 +38,17 @@ export function TooltipsFixture() {
         <Link href="/billing" disabled>
           Billing
         </Link>
+      </Tooltip>
+      {/* A disabled toggle: its wrapper stands in as a button and keeps its pressed state. */}
+      <Tooltip content="Only owners pin items" delay={0}>
+        <IconButton icon={<Pin />} aria-label="Pin" aria-pressed={pinned} disabled />
+      </Tooltip>
+      <Button variant="secondary" onClick={() => setPinned((current) => !current)}>
+        Toggle pinned
+      </Button>
+      {/* A disabled checkbox needs its checked state: no stand-in, the checkbox stays exposed. */}
+      <Tooltip content="Owners are always notified" delay={0}>
+        <input type="checkbox" aria-label="Notify owners" defaultChecked disabled />
       </Tooltip>
       <Tooltip
         delay={0}

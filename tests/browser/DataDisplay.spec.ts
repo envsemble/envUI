@@ -33,7 +33,7 @@ function trailLayout(navigation: Locator) {
       lines:
         list.getBoundingClientRect().height /
         Math.max(...items.map((item) => item.getBoundingClientRect().height)),
-      truncated: [...nav.querySelectorAll('.env-breadcrumb-label')].map(
+      truncated: [...nav.querySelectorAll('.env-breadcrumbs-label')].map(
         (label) => label.scrollWidth > label.clientWidth,
       ),
       outside: [...nav.querySelectorAll('*')]
@@ -58,8 +58,8 @@ test('breadcrumbs link earlier levels and mark the current page', async ({ page 
   await expect(navigation.locator('[aria-current="page"]')).toHaveText('Roadmap.md');
   await expect(navigation.getByRole('link', { name: 'Roadmap.md' })).toHaveCount(0);
   // Separators are decorative.
-  await expect(navigation.locator('.env-breadcrumb-separator')).toHaveCount(3);
-  await expect(navigation.locator('.env-breadcrumb-separator').first()).toHaveAttribute(
+  await expect(navigation.locator('.env-breadcrumbs-separator')).toHaveCount(3);
+  await expect(navigation.locator('.env-breadcrumbs-separator').first()).toHaveAttribute(
     'aria-hidden',
     'true',
   );
@@ -111,6 +111,37 @@ test('a breadcrumb trail without wrap stays on one line and cuts the current pag
     expect(trail.x + trail.width).toBeLessThanOrEqual(status.x);
     expect(status.x + status.width).toBeLessThanOrEqual(action.x);
   }
+});
+
+test('a breadcrumb cut short shows its full label in a tooltip, on hover and keyboard focus', async ({
+  page,
+}) => {
+  await page.goto(dataFixture);
+  const scope = page.getByTestId('data-light');
+  const tooltip = page.locator('.env-tooltip');
+  const long = 'A folder whose name runs well past the room that one level of a trail takes';
+  const trail = scope.getByRole('navigation', { name: 'Long level trail' });
+  // Keyboard focus, which WebKit gives links only through focus(): a key press first makes the
+  // focus that follows keyboard focus (:focus-visible) in every engine.
+  const keyboardFocus = async (name: string) => {
+    await page.keyboard.press('Shift');
+    await trail.getByRole('link', { name }).focus();
+    await expect(trail.getByRole('link', { name })).toBeFocused();
+  };
+  // A level that fits shows no tooltip.
+  await keyboardFocus('Workspace');
+  await expect(tooltip).toHaveCount(0);
+  // The link's name is its whole label; the tooltip shows it as keyboard focus reaches it.
+  await keyboardFocus(long);
+  await expect(tooltip).toHaveText(long);
+  await page.keyboard.press('Escape');
+  await expect(tooltip).toHaveCount(0);
+  // The current page of a one-line trail, cut short first, shows it on hover.
+  await scope
+    .getByRole('navigation', { name: 'One-line trail' })
+    .locator('[aria-current="page"]')
+    .hover();
+  await expect(tooltip).toHaveText('Quarterly review of the shared design tokens');
 });
 
 test('keys render as key caps joined by plus', async ({ page }) => {

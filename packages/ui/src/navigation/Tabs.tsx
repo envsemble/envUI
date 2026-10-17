@@ -151,68 +151,69 @@ export function Tabs({
   ...props
 }: TabsProps) {
   // A horizontal tab list's arrow keys follow the text direction, which Base UI only knows from
-  // its own provider.
+  // its own provider. Only the list reads it: the panels keep the direction around the tabs, so a
+  // slider or a popup in a panel of another direction follows its own.
   const scope = useDirectionScope(ref);
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
       : defaultValue;
   const list = (
-    <BaseTabs.List
-      render={<Surface background="muted" radius="full" />}
-      aria-label={label}
-      data-size={size}
-      className={classNames('env-tabs-list', listClassName)}
-      activateOnFocus={activation === 'automatic'}
-    >
-      {items.map((item) => (
-        <BaseTabs.Tab
-          key={item.value}
-          value={item.value}
-          disabled={isDisabled(item)}
-          className="env-tab"
-          render={(tabProps, state) => (
-            <TabButton
-              {...tabProps}
-              button={item.button}
-              active={state.active}
-              disabled={state.disabled}
-            />
-          )}
-        />
-      ))}
-    </BaseTabs.List>
+    <DirectionProvider direction={scope.direction}>
+      <BaseTabs.List
+        render={<Surface background="muted" radius="full" />}
+        aria-label={label}
+        data-size={size}
+        className={classNames('env-tabs-list', listClassName)}
+        activateOnFocus={activation === 'automatic'}
+      >
+        {items.map((item) => (
+          <BaseTabs.Tab
+            key={item.value}
+            value={item.value}
+            disabled={isDisabled(item)}
+            className="env-tabs-tab"
+            render={(tabProps, state) => (
+              <TabButton
+                {...tabProps}
+                button={item.button}
+                active={state.active}
+                disabled={state.disabled}
+              />
+            )}
+          />
+        ))}
+      </BaseTabs.List>
+    </DirectionProvider>
   );
   return (
-    <DirectionProvider direction={scope.direction}>
-      <BaseTabs.Root
-        {...props}
-        ref={scope.ref}
-        onFocus={(event) => {
-          scope.onFocus();
-          onFocus?.(event);
-        }}
-        className={classNames('env-tabs', className)}
-        data-fill={fill ? '' : undefined}
-        value={value}
-        defaultValue={initialValue}
-        onValueChange={onValueChange}
-        orientation={orientation}
-      >
-        {renderList ? renderList(list) : list}
-        <div className="env-tabs-panels">
-          {items.map((item) => (
-            <BaseTabs.Panel
-              key={item.value}
-              value={item.value}
-              keepMounted={keepMounted}
-              className={classNames('env-tab-panel', panelClassName)}
-            >
-              {item.content}
-            </BaseTabs.Panel>
-          ))}
-        </div>
-      </BaseTabs.Root>
-    </DirectionProvider>
+    <BaseTabs.Root
+      {...props}
+      ref={scope.ref}
+      onFocus={(event) => {
+        scope.onFocus();
+        onFocus?.(event);
+      }}
+      className={classNames('env-tabs', className)}
+      data-fill={fill ? '' : undefined}
+      value={value}
+      defaultValue={initialValue}
+      onValueChange={onValueChange}
+      orientation={orientation}
+    >
+      {renderList ? renderList(list) : list}
+      <div className="env-tabs-panels">
+        {items.map((item) => (
+          <BaseTabs.Panel
+            key={item.value}
+            value={item.value}
+            keepMounted={keepMounted}
+            className={classNames('env-tabs-panel', panelClassName)}
+          >
+            {item.content}
+          </BaseTabs.Panel>
+        ))}
+      </div>
+    </BaseTabs.Root>
   );
 }

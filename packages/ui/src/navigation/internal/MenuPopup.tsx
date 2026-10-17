@@ -1,4 +1,12 @@
-import type { ComponentPropsWithRef } from 'react';
+import type { ComponentPropsWithRef, ReactNode, Ref } from 'react';
+import { classNames } from '../../internal/classNames.js';
+import {
+  PopupSurface,
+  type PopupAlign,
+  type PopupParts,
+  type PopupSide,
+  type PopupSurfaceProps,
+} from '../../internal/PopupSurface.js';
 
 /**
  * Renders a menu popup element with, when given, its own name. Base UI names a menu after its
@@ -14,6 +22,68 @@ export function renderMenuPopup(label: string | undefined) {
       />
     );
   };
+}
+
+export interface MenuPopupProps {
+  /** The Base UI parts of the menu: Menu's or ContextMenu's Portal, Positioner and Popup. */
+  parts: PopupParts;
+  /** The menu's accessible name, in place of its trigger's. */
+  label?: string;
+  side?: PopupSide;
+  align?: PopupAlign;
+  sideOffset?: PopupSurfaceProps['sideOffset'];
+  alignOffset?: PopupSurfaceProps['alignOffset'];
+  anchor?: PopupSurfaceProps['anchor'];
+  /** The menu's trigger, whose text direction the menu takes as it opens. */
+  trigger?: PopupSurfaceProps['trigger'];
+  finalFocus?: PopupSurfaceProps['finalFocus'];
+  /** The application's class for the popup, beside env-menu. */
+  className?: string;
+  /** The popup element's ref. */
+  popupRef?: Ref<HTMLDivElement>;
+  /** More props for the popup element, such as style and data attributes. */
+  popupProps?: Record<string, unknown>;
+  children?: ReactNode;
+}
+
+/**
+ * The popup of every envUI menu (Menu.Root, Menu.Submenu, ContextMenu and Menubar.Menu): a
+ * PopupSurface with the menu's own look, env-menu, and its own name.
+ */
+export function MenuPopup({
+  parts,
+  label,
+  side,
+  align,
+  sideOffset,
+  alignOffset,
+  anchor,
+  trigger,
+  finalFocus,
+  className,
+  popupRef,
+  popupProps,
+  children,
+}: MenuPopupProps) {
+  return (
+    <PopupSurface
+      parts={parts}
+      side={side}
+      align={align}
+      sideOffset={sideOffset}
+      alignOffset={alignOffset}
+      // Base UI's own room from the window's edges for menus.
+      collisionPadding={5}
+      anchor={anchor}
+      trigger={trigger}
+      finalFocus={finalFocus}
+      className={classNames('env-menu', className)}
+      positionerClassName="env-menu-positioner"
+      popupProps={{ ...popupProps, ref: popupRef, render: renderMenuPopup(label) }}
+    >
+      {children}
+    </PopupSurface>
+  );
 }
 
 /** Padding and border between a menu popup's block-start edge and its first row, in pixels. */

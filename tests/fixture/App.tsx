@@ -28,6 +28,8 @@ import {
   CompactTabsFixture,
   DocumentTabsFixture,
   FillTabsFixture,
+  RtlDocumentTabsFixture,
+  RtlTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
@@ -41,6 +43,7 @@ import {
 } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
+import { PagersFixture } from './Pagers.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
@@ -94,6 +97,9 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
   direction: DirectionFixture,
+  'rtl-tabs': RtlTabsFixture,
+  'rtl-document-tabs': RtlDocumentTabsFixture,
+  pagers: PagersFixture,
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,

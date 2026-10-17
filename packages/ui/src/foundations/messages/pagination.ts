@@ -9,13 +9,14 @@ export const pagination = {
   previous: 'Previous page',
   /** The next-page button's name. */
   next: 'Next page',
-  /** The shown range, such as 1–60 of 245. */
-  range: ({ start, end, total }: { start: string; end: string; total?: string }) =>
-    total === undefined
-      ? `${start}–${end}`
-      : start === end
-        ? `${start} of ${total}`
-        : `${start}–${end} of ${total}`,
+  /**
+   * The shown range from its first and last item and the total, formatted in the locale: 1–60 of
+   * 245, 245 of 245 for a single item, or 61–120 without a total.
+   */
+  range: ({ start, end, total }: { start: string; end: string; total?: string }) => {
+    const shown = start === end ? end : `${start}–${end}`;
+    return total === undefined ? shown : `${shown} of ${total}`;
+  },
 };
 
 export type PaginationMessages = typeof pagination;
