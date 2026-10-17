@@ -20,6 +20,7 @@ import {
   examplesDirectory,
   packageDocumentation,
   readDocumentation,
+  statuses,
 } from '../scripts/GenerateDocumentation.mjs';
 import {
   buildManifest,
@@ -787,6 +788,37 @@ test('a message the server fails on gets an internal error, and the server goes 
   assert.deepEqual(server.handleLine('{"jsonrpc":"2.0","id":8,"method":"ping"}').result, {});
   // A line that starts with a byte order mark, from a pipe that adds one, still parses.
   assert.deepEqual(server.handleLine('\uFEFF{"jsonrpc":"2.0","id":9,"method":"ping"}').result, {});
+});
+
+test("every export has a status, a guide's exports stable unless its statuses says otherwise", () => {
+  assert.deepEqual(
+    Object.entries(manifest.exports)
+      .filter(([, entry]) => !statuses.includes(entry.status))
+      .map(([name]) => name),
+    [],
+  );
+  for (const name of ['EnvUIProvider', 'useContainerSize', 'useTheme', 'Text', 'Icon'])
+    assert.equal(manifest.exports[name].status, 'stable', name);
+  const directory = mkdtempSync(join(workDirectory, 'docs-'));
+  cpSync(documentationDirectory, directory, { recursive: true });
+  const responsive = join(directory, 'foundations', 'responsive.md');
+  const withStatuses = (statusLines) =>
+    writeFileSync(
+      responsive,
+      readFileSync(join(documentationDirectory, 'foundations', 'responsive.md'), 'utf8').replace(
+        'aliases:\n',
+        `statuses:\n${statusLines}aliases:\n`,
+      ),
+    );
+  withStatuses('  useContainerSize: beta\n');
+  const changed = buildManifest({ directory });
+  assert.equal(changed.exports.useContainerSize.status, 'beta');
+  assert.equal(changed.exports.useMediaQuery.status, 'stable');
+  withStatuses('  useMediaQuery: stable\n');
+  assert.throws(
+    () => readDocumentation(directory, { props, versions: undefined }),
+    /statuses of useMediaQuery repeats the default status of a guide's exports/,
+  );
 });
 
 test('search finds exports without a component page by name', () => {
