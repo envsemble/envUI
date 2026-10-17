@@ -300,6 +300,13 @@ function validateTokens(tokens) {
 const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
 const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
 
+/** An element a structure case adds as a prop, such as `{ "element": "article" }` for render={<article />}. */
+const elementValue = (value) =>
+  isObject(value) &&
+  Object.keys(value).length === 1 &&
+  typeof value.element === 'string' &&
+  /^[a-z][a-z0-9]*$/.test(value.element);
+
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a
  * `report` that says what replaces it, and `values` mapping its literal values to the props that
@@ -442,8 +449,8 @@ function validateStructureCase(at, each) {
   for (const [prop, operation] of entriesOf(each.props))
     problems.push(...validatePropOperation(`${at}.props.${prop}`, operation));
   for (const [prop, value] of Object.entries(each.add ?? {}))
-    if (!propName.test(prop) || !propValue(value))
-      problems.push(`${at}.add: ${prop} must be a prop with a literal.`);
+    if (!propName.test(prop) || !(propValue(value) || elementValue(value)))
+      problems.push(`${at}.add: ${prop} must be a prop with a literal or an { "element" }.`);
   if (each.wrap !== undefined) {
     if (!isObject(each.wrap) || !isComponentName(each.wrap.element))
       problems.push(`${at}.wrap needs an "element".`);

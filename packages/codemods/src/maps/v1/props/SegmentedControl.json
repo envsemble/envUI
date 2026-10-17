@@ -12,6 +12,10 @@
           },
           "standard": {}
         }
+      },
+      "options": {
+        "to": "items",
+        "report": "SegmentedControl's options are items in 1.0."
       }
     }
   }

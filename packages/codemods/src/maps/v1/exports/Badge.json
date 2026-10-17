@@ -3,6 +3,8 @@
     "Counter": "CounterBadge",
     "CounterProps": "CounterBadgeProps",
     "DiffCount": "DiffStat",
-    "DiffCountProps": "DiffStatProps"
+    "DiffCountProps": "DiffStatProps",
+    "InfoChip": "Badge",
+    "InfoChipProps": "BadgeProps"
   }
 }

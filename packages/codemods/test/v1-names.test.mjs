@@ -115,6 +115,7 @@ const reports = {
     `line 7: Toast is no longer exported as a component by ${library}: ${use('Toast')}`,
     `line 12: Toast is no longer exported as a component by ${library}: ${use('Toast')}`,
   ],
+  'content.tsx': removedFrom(2, ['BrandLogo']),
 };
 
 const cases = fixtures('v1-names');

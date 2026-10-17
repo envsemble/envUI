@@ -3,6 +3,14 @@
   "source": "packages/codemods/src/maps/v1",
   "modules": {
     "@envsemble/envui": {
+      "ActionCard": {
+        "to": [],
+        "use": "Card with render={<article />}, heading, meta and actions; v1-structure rewrites each use."
+      },
+      "ActionCardProps": {
+        "to": [],
+        "use": "CardProps: heading for title, with meta and actions."
+      },
       "ActionGroup": {
         "to": [],
         "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
@@ -11,6 +19,16 @@
         "to": [],
         "use": "StackProps, with direction, wrap, align, justify and gap."
       },
+      "BrandLogo": {
+        "to": [],
+        "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+      },
+      "BrandLogoProps": {
+        "to": [],
+        "use": "IconProps, for an application component that draws its artwork with Icon."
+      },
+      "ClickableCard": { "to": ["Card"] },
+      "ClickableCardProps": { "to": ["CardProps"] },
       "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
       "Counter": { "to": ["CounterBadge"] },
       "CounterProps": { "to": ["CounterBadgeProps"] },
@@ -29,6 +47,22 @@
       "DirectionLinksProps": { "to": ["Pager.RootProps"] },
       "DisclosureNote": { "to": ["Disclosure"] },
       "DisclosureNoteProps": { "to": ["DisclosureProps"] },
+      "EnvUILogo": {
+        "to": [],
+        "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+      },
+      "EnvUILogoProps": {
+        "to": [],
+        "use": "IconProps, for an application component that draws its artwork with Icon."
+      },
+      "FeatureCard": {
+        "to": [],
+        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, heading for title, description and actions for action; v1-structure rewrites each use."
+      },
+      "FeatureCardProps": {
+        "to": [],
+        "use": "CardProps, with layout=\"feature\": heading for title and actions for action."
+      },
       "FileDropzone": { "to": ["DropZone"] },
       "FileDropzoneProps": { "to": ["DropZoneProps"] },
       "GroupedRows": { "to": ["List.Root"] },
@@ -37,6 +71,8 @@
       "HeatmapCell": { "to": ["CalendarHeatmapCell"] },
       "HeatmapDay": { "to": ["CalendarHeatmapDay"] },
       "HeatmapProps": { "to": ["CalendarHeatmapProps"] },
+      "InfoChip": { "to": ["Badge"] },
+      "InfoChipProps": { "to": ["BadgeProps"] },
       "Input": { "to": ["TextField"] },
       "InputProps": { "to": ["TextFieldProps"] },
       "LoadingBar": {
@@ -83,6 +119,7 @@
       "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
       "Row": { "to": ["List.Item"] },
       "RowProps": { "to": ["List.ItemProps"] },
+      "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
       "StackElement": {
         "to": [],
         "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."

@@ -11,7 +11,8 @@
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
 //   and `{ "to", "values" }` renames it and maps its literal values (null drops one).
-// - `add`: props the element gets, unless it already sets them.
+// - `add`: props the element gets, unless it already sets them: a literal, or `{ "element": "article" }`
+//   for an element such as render={<article />}.
 // - `children`: per component of a direct child element, props it gets (`add`, unless it sets one
 //   of `unless`) or a `report`; `*` stands for any other child, text and expressions included.
 // - `wrap`: an element the result is wrapped in, with its props.
@@ -203,7 +204,16 @@ export default function transform(file, api, options = {}) {
     const reports = applyProps(attributes, chosen.props, where);
     const added = Object.entries(chosen.add ?? {})
       .filter(([prop]) => !hasAttribute(attributes, prop))
-      .map(([prop, value]) => jsxAttribute(j, prop, value));
+      .map(([prop, value]) =>
+        typeof value === 'object'
+          ? j.jsxAttribute(
+              j.jsxIdentifier(prop),
+              j.jsxExpressionContainer(
+                j.jsxElement(j.jsxOpeningElement(j.jsxIdentifier(value.element), [], true)),
+              ),
+            )
+          : jsxAttribute(j, prop, value),
+      );
     attributes.unshift(...added);
 
     for (const [index, child] of (path.node.children ?? []).entries()) {

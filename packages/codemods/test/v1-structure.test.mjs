@@ -6,6 +6,7 @@ import { encodings, fixtures, map, packageDirectory, runTransform } from './help
 
 const actionGroup = map.structure['@envsemble/envui'].ActionGroup;
 const dialog = map.structure['@envsemble/envui'].Dialog;
+const card = map.structure['@envsemble/envui'].Card;
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
@@ -13,6 +14,7 @@ const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
+  'cards.tsx': [`line 7: Card: ${card.report}`],
   'action-group.tsx': [
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
     `line 21: ActionGroup: ${actionGroup.report}`,
@@ -35,7 +37,10 @@ for (const fixture of fixtures('v1-structure')) {
     assert.deepEqual(
       again.reports,
       result.reports.filter(
-        (report) => report.endsWith(actionGroup.report) || report.endsWith(dialog.report),
+        (report) =>
+          report.endsWith(actionGroup.report) ||
+          report.endsWith(dialog.report) ||
+          report.endsWith(card.report),
       ),
     );
   });

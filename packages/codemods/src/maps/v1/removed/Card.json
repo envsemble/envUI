@@ -1,0 +1,16 @@
+{
+  "@envsemble/envui": {
+    "ActionCard": {
+      "use": "Card with render={<article />}, heading, meta and actions; v1-structure rewrites each use."
+    },
+    "ActionCardProps": {
+      "use": "CardProps: heading for title, with meta and actions."
+    },
+    "FeatureCard": {
+      "use": "Card with layout=\"feature\" and headingLevel={2}: icon, heading for title, description and actions for action; v1-structure rewrites each use."
+    },
+    "FeatureCardProps": {
+      "use": "CardProps, with layout=\"feature\": heading for title and actions for action."
+    }
+  }
+}

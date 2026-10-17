@@ -1,0 +1,20 @@
+{
+  "env-clickable-card": {
+    "class": "env-card",
+    "attributes": {
+      "data-interactive": ""
+    }
+  },
+  "env-action-card": {
+    "class": "env-card",
+    "attributes": {
+      "data-actions": ""
+    }
+  },
+  "env-feature-card": {
+    "class": "env-card",
+    "attributes": {
+      "data-layout": "feature"
+    }
+  }
+}
