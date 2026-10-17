@@ -191,6 +191,10 @@ const result = spawnSync(
     ...(process.env.CI ? ['--env', 'CI=1'] : []),
     // Limits the run to some pages; see tests/visual/Visual.spec.ts.
     ...(process.env.ENVUI_PAGES ? ['--env', `ENVUI_PAGES=${process.env.ENVUI_PAGES}`] : []),
+    // Worker count and server ports, so a run can share a machine with other checkouts' servers.
+    ...['ENVUI_WORKERS', 'ENVUI_CATALOGUE_PORT', 'ENVUI_FIXTURE_PORT'].flatMap((name) =>
+      process.env[name] ? ['--env', `${name}=${process.env[name]}`] : [],
+    ),
     image,
     'bash',
     '-c',
