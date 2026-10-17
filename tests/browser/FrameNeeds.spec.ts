@@ -251,9 +251,10 @@ test.describe("Need: a phone's top bar", () => {
     await expect.poll(async () => Math.round((await box(navigation)).x)).toBe(0);
     // Focus stays inside while it is open.
     for (let step = 0; step < 12; step++) await page.keyboard.press('Tab');
-    expect(await navigation.evaluate((element) => element.contains(document.activeElement))).toBe(
-      true,
-    );
+    // The trap's guards hand focus back to the drawer's first or last control.
+    await expect
+      .poll(() => navigation.evaluate((element) => element.contains(document.activeElement)))
+      .toBe(true);
     await page.keyboard.press('Escape');
     await expect(navigation).toBeHidden();
     await expect(navigationTrigger).toBeFocused();
