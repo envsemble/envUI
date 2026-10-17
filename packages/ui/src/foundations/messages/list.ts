@@ -8,9 +8,12 @@ export const list = {
   /** Describes each drag handle: how to move its row without a pointer. */
   instructions:
     'Press Space or Enter, or click, to pick the row up. Then use the arrow keys to move it, and press Space or Enter, or click, to drop it. Escape cancels.',
-  /** Announced when a row is picked up by keyboard or a press of its handle. */
+  /**
+   * Announced when a row is picked up by keyboard or a press of its handle; the handle's
+   * description already says how to move it.
+   */
   lifted: ({ label, position, count }: { label: string; position: string; count: string }) =>
-    `${label} picked up, position ${position} of ${count}. Use the arrow keys to move it, Space to drop it and Escape to cancel.`,
+    `${label} picked up, position ${position} of ${count}.`,
   /** Announced when the pointer starts dragging a row. */
   liftedByPointer: ({
     label,
