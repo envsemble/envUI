@@ -1,6 +1,8 @@
-/* Tooltips float above menus and popovers: PopupSurface's positioner takes this layer. */
+/* Tooltips float above menus and popovers: PopupSurface's positioner takes this layer, and so
+   does the tooltip's positioner on its own. */
 .env-tooltip-positioner {
   --env-popup-layer: var(--env-z-tooltip);
+  z-index: var(--env-z-tooltip);
 }
 .env-tooltip {
   max-inline-size: min(18rem, calc(100vw - 2rem));
