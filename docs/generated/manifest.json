@@ -9326,7 +9326,7 @@
     "List.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One `li` row with a label, a description and an action.",
+      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle.",
       "props": [
         {
           "name": "label",
@@ -9356,7 +9356,6 @@
           "name": "interactive",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row."
         },
         {
