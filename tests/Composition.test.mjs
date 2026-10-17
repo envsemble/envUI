@@ -1,7 +1,14 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { analyze, exceptionsFile, keyOf, rulesFile } from './composition/Analysis.mjs';
+import { createRequire } from 'node:module';
+import {
+  analyze,
+  exceptionsFile,
+  interactiveElements,
+  keyOf,
+  rulesFile,
+} from './composition/Analysis.mjs';
 
 /**
  * Composition rules for packages/ui/src, described by tests/composition/Rules.json:
@@ -78,9 +85,50 @@ test('raw interactive HTML stays in leaf controls and internals', () => {
       label: (entry) => `raw ${element(entry.element)} in ${entry.module}`,
       describe: ({ entry, sites }) =>
         `${source(entry.module, sites)} renders a raw ${element(entry.element)} ${times(sites.length)}`,
-      fix: () =>
-        `Render envUI's Button, IconButton or Link, or give a Base UI part render={<IconButton />}. Only the leaf controls and internals under interactive.leafControls in ${rulesFile} render raw interactive HTML.`,
+      fix: ({ entry }) =>
+        entry.element === 'role={…}'
+          ? `List the roles it can take under interactive.dynamicRoles in ${rulesFile}, so the check can tell whether it is interactive.`
+          : `Render envUI's Button, IconButton or Link, or give a Base UI part render={<IconButton />}. Only the leaf controls and internals under interactive.leafControls in ${rulesFile} render raw interactive HTML.`,
     }),
+  );
+});
+
+test('a role set by a condition counts with each branch, and one the source hides needs its roles listed', () => {
+  const ts = createRequire(import.meta.url)('typescript');
+  const tag = (source) => {
+    const file = ts.createSourceFile(
+      'Probe.tsx',
+      source,
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TSX,
+    );
+    let found;
+    const visit = (node) => {
+      if (!found && ts.isJsxSelfClosingElement(node)) found = node;
+      ts.forEachChild(node, visit);
+    };
+    visit(file);
+    return found;
+  };
+  const rules = { elements: ['button'], roles: ['button', 'link'] };
+  assert.deepEqual(
+    interactiveElements(tag("<span role={on ? 'button' : undefined} />"), rules, 'Probe.tsx'),
+    ['role="button"'],
+  );
+  assert.deepEqual(
+    interactiveElements(tag("<span role={on ? 'img' : null} />"), rules, 'Probe.tsx'),
+    [],
+  );
+  const hidden = tag('<span role={on ? stand.role : undefined} />');
+  assert.deepEqual(interactiveElements(hidden, rules, 'Probe.tsx'), ['role={…}']);
+  assert.deepEqual(
+    interactiveElements(
+      hidden,
+      { ...rules, dynamicRoles: { 'Probe.tsx': ['link', 'status'] } },
+      'Probe.tsx',
+    ),
+    ['role="link"'],
   );
 });
 

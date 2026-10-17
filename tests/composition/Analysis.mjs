@@ -311,6 +311,10 @@ export function analyze() {
   const interactive = rules.interactive;
   for (const module of Object.keys(interactive.leafControls))
     requireModule(module, 'interactive.leafControls');
+  const dynamicRoles = Object.entries(interactive.dynamicRoles ?? {}).filter(
+    ([module]) => module !== '$comment',
+  );
+  for (const [module] of dynamicRoles) requireModule(module, 'interactive.dynamicRoles');
   const interactiveFindings = new Map();
   const tsxClassFindings = new Map();
   for (const module of modules) {
@@ -327,16 +331,17 @@ export function analyze() {
     const importsOf = imports.get(module);
     const visit = (node) => {
       if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
-        const element = interactiveElement(node, interactive);
-        if (element && interactive.leafControls[module]?.includes(element))
-          usedAllowances.add(`leafControls ${module} ${element}`);
-        else if (element)
-          record(
-            interactiveFindings,
-            'interactive',
-            { module, element },
-            { line: file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1 },
-          );
+        for (const element of interactiveElements(node, interactive, module, usedAllowances)) {
+          if (interactive.leafControls[module]?.includes(element))
+            usedAllowances.add(`leafControls ${module} ${element}`);
+          else
+            record(
+              interactiveFindings,
+              'interactive',
+              { module, element },
+              { line: file.getLineAndCharacterOfPosition(node.getStart(file)).line + 1 },
+            );
+        }
       }
       if (
         ts.isStringLiteral(node) ||
@@ -398,6 +403,11 @@ export function analyze() {
     );
 
   // Allowances that no longer allow anything, so the rules can't hide a later regression.
+  for (const [module] of dynamicRoles)
+    if (!usedAllowances.has(`dynamicRoles ${module}`))
+      problems.push(
+        `${rulesFile} interactive.dynamicRoles lists the roles of a role={…} in ${module}, which sets no role it can't read: remove it.`,
+      );
   for (const [module, elements] of Object.entries(interactive.leafControls))
     for (const element of elements)
       if (!usedAllowances.has(`leafControls ${module} ${element}`))
@@ -440,20 +450,62 @@ export function analyze() {
   };
 }
 
-/** The raw interactive element a JSX tag renders, such as `button` or `role="button"`, if any. */
-function interactiveElement(node, { elements, roles }) {
-  if (!ts.isIdentifier(node.tagName)) return undefined;
+/**
+ * The raw interactive elements a JSX tag can render, such as `button` or `role="button"`. A role
+ * set by a condition counts with each role its branches can take. A role the source doesn't spell
+ * out, such as role={role}, takes the roles listed for its module under interactive.dynamicRoles;
+ * without them it is `role={…}`, a finding of its own until they are listed.
+ */
+export function interactiveElements(node, { elements, roles, dynamicRoles = {} }, module, used) {
+  if (!ts.isIdentifier(node.tagName)) return [];
   const tag = node.tagName.text;
-  if (!/^[a-z]/.test(tag)) return undefined;
+  if (!/^[a-z]/.test(tag)) return [];
   const value = (name) => attributeValue(node, name);
   if (elements.includes(tag)) {
-    if (tag === 'input' && value('type') === 'hidden') return undefined;
+    if (tag === 'input' && value('type') === 'hidden') return [];
     const hidden = value('aria-hidden') === true || value('aria-hidden') === 'true';
-    if (hidden && value('tabIndex') === -1) return undefined;
-    return tag;
+    if (hidden && value('tabIndex') === -1) return [];
+    return [tag];
   }
-  const role = value('role');
-  return roles.includes(role) ? `role="${role}"` : undefined;
+  const taken = roleValues(node);
+  if (taken === undefined) return [];
+  if (taken.unknown) {
+    if (!dynamicRoles[module]) return ['role={…}'];
+    used?.add(`dynamicRoles ${module}`);
+    taken.roles.push(...dynamicRoles[module]);
+  }
+  return [...new Set(taken.roles)]
+    .filter((role) => roles.includes(role))
+    .map((role) => `role="${role}"`);
+}
+
+/**
+ * The roles a JSX tag's role attribute can take: its literal, or the literals of a condition's
+ * branches, and whether some branch is no literal. Undefined without a role attribute.
+ */
+function roleValues(node) {
+  const attribute = node.attributes.properties.find(
+    (property) => ts.isJsxAttribute(property) && property.name.getText() === 'role',
+  );
+  if (attribute === undefined || attribute.initializer === undefined) return undefined;
+  const result = { roles: [], unknown: false };
+  const visit = (expression) => {
+    if (expression === undefined) return;
+    if (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression))
+      result.roles.push(expression.text);
+    else if (ts.isParenthesizedExpression(expression)) visit(expression.expression);
+    else if (ts.isConditionalExpression(expression)) {
+      visit(expression.whenTrue);
+      visit(expression.whenFalse);
+    } else if (
+      !(ts.isIdentifier(expression) && expression.text === 'undefined') &&
+      expression.kind !== ts.SyntaxKind.NullKeyword
+    )
+      result.unknown = true;
+  };
+  const { initializer } = attribute;
+  visit(ts.isJsxExpression(initializer) ? initializer.expression : initializer);
+  return result;
 }
 
 /** A JSX attribute's literal value: a string, a number, true, or undefined when it is dynamic. */
