@@ -18503,14 +18503,49 @@
         "use": "--env-elevation-3-shadow"
       },
       {
+        "cssVariable": "--env-app-control-height",
+        "removed": true,
+        "note": "The frame's rails line up on --env-control-height, which a title bar's small controls keep."
+      },
+      {
+        "cssVariable": "--env-app-divider",
+        "removed": true,
+        "note": "The frame's hairlines follow AppShell.Root's dividers prop."
+      },
+      {
         "cssVariable": "--env-app-sticky-top",
         "use": "--env-frame-sticky-top",
         "note": "Where sticky content sticks below the app frame's header or title bar, which the frame sets."
       },
       {
+        "cssVariable": "--env-app-toggle-size",
+        "removed": true,
+        "note": "SidebarTrigger is an IconButton: give it a size, or let a coarse pointer grow it to 44 px."
+      },
+      {
         "cssVariable": "--env-app-topbar-block-size",
         "use": "--env-frame-header-block-size",
         "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      },
+      {
+        "cssVariable": "--env-sidebar-collapsed-width",
+        "removed": true,
+        "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."
+      },
+      {
+        "cssVariable": "--env-sidebar-content-width",
+        "removed": true,
+        "note": "AppShell no longer measures its sidebar: Sidebar.Root's content width fits its content between minWidth and maxWidth."
+      },
+      {
+        "cssVariable": "--env-sidebar-expanded-width",
+        "removed": true,
+        "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+      },
+      {
+        "cssVariable": "--env-sidebar-width",
+        "removed": true,
+        "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
       },
       {
         "cssVariable": "--env-split-view-gutter",
