@@ -5,6 +5,9 @@ export * from './foundations/Surface.js';
 export * from './foundations/breakpoints.js';
 export * from './foundations/useMediaQuery.js';
 export * from './foundations/useContainerSize.js';
+// PageContext stays internal: a sticky PageHeader publishes its height on its Page through it.
+export { Page, type PageProps, type PageWidth } from './layout/Page.js';
+export * from './layout/PageHeader.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './actions/Button.js';
 export * from './actions/CloseButton.js';

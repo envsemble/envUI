@@ -969,7 +969,7 @@ const corpus = [
   ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],
-  ['A header with the page title', [], ['AppShell'], ['PanelDock']],
+  ['A header with the page title', [], ['AppShell', 'PageHeader'], ['PanelDock']],
   ['Add a "Delete" button and a confirm dialog', ['Button', 'Dialog'], [], []],
   ['show the account details', [], [], ['Disclosure']],
   ['a toggle for the newsletter', ['Switch'], [], ['ThemeToggle']],

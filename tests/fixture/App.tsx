@@ -73,6 +73,7 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
+import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
 import {
@@ -106,6 +107,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
 };

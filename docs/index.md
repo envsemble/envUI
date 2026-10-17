@@ -30,6 +30,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Layout & surfaces
 
 - [Stack](components/stack.md)
+- [Page](components/page.md)
+- [PageHeader](components/page-header.md)
 - [Surface](components/surface.md)
 - [List](components/list.md)
 - [Card](components/card.md)
