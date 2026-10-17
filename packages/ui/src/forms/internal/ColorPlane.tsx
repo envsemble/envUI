@@ -58,6 +58,8 @@ export interface ColorPlaneProps {
   areaValueText: (hsv: Hsv) => string;
   /** Names the hue slider. */
   hueLabel: string;
+  /** The hue's value in words, such as 120 degrees. */
+  hueValueText: (hue: number) => string;
   /** The locale of the hue's number. */
   locale?: string;
 }
@@ -73,6 +75,7 @@ export function ColorPlane({
   areaLabel,
   areaValueText,
   hueLabel,
+  hueValueText,
   locale,
 }: ColorPlaneProps) {
   const area = useRef<HTMLDivElement>(null);
@@ -140,6 +143,10 @@ export function ColorPlane({
           onPointerCancel={() => {
             dragging.current = null;
           }}
+          // The capture can end without a pointerup, as when the element leaves the page.
+          onLostPointerCapture={(event) => {
+            if (dragging.current === event.pointerId) dragging.current = null;
+          }}
           onKeyDown={handleKeyDown}
         >
           <span
@@ -165,7 +172,11 @@ export function ColorPlane({
         >
           <BaseSlider.Control className="env-color-picker-hue-control">
             <BaseSlider.Track className="env-color-picker-hue-track">
-              <BaseSlider.Thumb className="env-color-picker-hue-thumb" aria-label={hueLabel} />
+              <BaseSlider.Thumb
+                className="env-color-picker-hue-thumb"
+                aria-label={hueLabel}
+                getAriaValueText={(_formatted, value) => hueValueText(value)}
+              />
             </BaseSlider.Track>
           </BaseSlider.Control>
         </BaseSlider.Root>

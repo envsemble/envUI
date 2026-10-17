@@ -13,10 +13,13 @@ export const colorPicker = {
   hexLabel: ({ label }: { label: string }) => `${label} HEX`,
   /** Announced when an invalid color is discarded. */
   restored: 'Invalid color discarded. The previous color has been restored.',
-  /** Names the hue slider. */
-  hue: 'Hue',
-  /** Names the saturation and brightness area. */
-  area: 'Color',
+  /** Names the hue slider after the picker, such as Accent color hue. */
+  hue: ({ label }: { label: string }) => `${label} hue`,
+  /**
+   * Names the area after the picker, such as Accent color saturation and brightness: labels often
+   * end in "color" already.
+   */
+  area: ({ label }: { label: string }) => `${label} saturation and brightness`,
   /** The area's value, such as Saturation 40%, Brightness 80%. */
   areaValue: ({ saturation, brightness }: { saturation: string; brightness: string }) =>
     `Saturation ${saturation}, Brightness ${brightness}`,

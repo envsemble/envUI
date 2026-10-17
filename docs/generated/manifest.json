@@ -6627,7 +6627,7 @@
     "ColorPicker": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named in the EnvUIProvider's language.",
+      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named after the label in the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.",
       "props": [
         {
           "name": "ref",

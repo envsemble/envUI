@@ -49,8 +49,8 @@ function normalizeHex(value: string) {
 
 /**
  * A labelled color area, hue slider and native HEX field; the application owns the result. The
- * area and the hue are sliders for the keyboard and assistive technology, named in the
- * EnvUIProvider's language.
+ * area and the hue are sliders for the keyboard and assistive technology, named after the label in
+ * the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.
  */
 export function ColorPicker({
   ref,
@@ -124,6 +124,12 @@ export function ColorPicker({
   }
 
   const percent = format.number({ style: 'percent', maximumFractionDigits: 0 });
+  const degrees = format.number({
+    style: 'unit',
+    unit: 'degree',
+    unitDisplay: 'long',
+    maximumFractionDigits: 0,
+  });
   const inactive = disabled || readOnly;
 
   return (
@@ -152,14 +158,15 @@ export function ColorPicker({
             setHsv(next);
             commit(hsvToHex(next));
           }}
-          areaLabel={messages.area}
+          areaLabel={messages.area({ label })}
           areaValueText={({ s, v }) =>
             messages.areaValue({
               saturation: percent.format(s / 100),
               brightness: percent.format(v / 100),
             })
           }
-          hueLabel={messages.hue}
+          hueLabel={messages.hue({ label })}
+          hueValueText={(hue) => degrees.format(hue)}
         />
       </div>
       <TextField
