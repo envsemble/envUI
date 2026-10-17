@@ -27,10 +27,10 @@ test('props carry readable types, defaults from destructuring and their TSDoc', 
 
 test('a default that names a private value shows the value, or nothing', () => {
   const publicNames = new Set(Object.keys(exports));
-  // A private const and a private label function read as what they hold.
+  // A private const reads as what it holds.
   assert.equal(props('ThemePreferenceProvider').storageKey.default, "'env-theme'");
-  assert.equal(props('AvatarGroup').formatMore.default, `(count: number) => \`\${count} more\``);
-  // A TSDoc @default says it in words instead.
+  // A TSDoc @default says it in words instead, as for a label function the messages now hold.
+  assert.equal(props('AvatarGroup').formatMore.default, "'{count} more'");
   assert.equal(
     props('DocumentTabs').closeLabel.default,
     "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
