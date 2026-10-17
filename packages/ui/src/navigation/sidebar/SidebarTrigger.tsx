@@ -167,7 +167,9 @@ export function SidebarTrigger({
       }}
     />
   );
-  if (!tooltip) return button;
+  // In its drawer the trigger takes focus as the drawer opens: a tooltip there would take the first
+  // Escape, which should close the drawer.
+  if (!tooltip || inDrawer) return button;
   return (
     // The tooltip shows the name and keys that aria-label and aria-keyshortcuts announce.
     <TooltipDescribesContext value={false}>
