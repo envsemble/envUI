@@ -444,11 +444,14 @@ test.describe('Need: an application layout without .env-* overrides', () => {
     const risks = await box(page.getByTestId('body-Risks'));
     expect(risks.height).toBeCloseTo(800 - titleBar.height, 0);
     await page.getByRole('tab', { name: 'Overview' }).click();
-    // The PageHeader's controls are small.
-    expect((await box(page.getByRole('button', { name: 'Share' }))).height).toBeCloseTo(32, 0);
-    expect((await box(page.getByRole('button', { name: 'Filter' }))).height).toBeCloseTo(32, 0);
+    // The PageHeader's controls are small. Look inside the Overview body: the Risks one can still be
+    // on its way out.
+    const overview = page.getByTestId('body-Overview');
+    await expect(page.getByTestId('body-Risks')).toBeHidden();
+    expect((await box(overview.getByRole('button', { name: 'Share' }))).height).toBeCloseTo(32, 0);
+    expect((await box(overview.getByRole('button', { name: 'Filter' }))).height).toBeCloseTo(32, 0);
     expect(
-      (await box(page.getByRole('searchbox', { name: 'Search overview' }))).height,
+      (await box(overview.getByRole('searchbox', { name: 'Search overview' }))).height,
     ).toBeLessThanOrEqual(32);
     // The aside sticks flush at the top of the content, right under the title bar.
     await page
