@@ -162,6 +162,7 @@ Change by hand what the codemods can't see:
 | `.env-document-tab`, `-label`, `-close`                                   | `.env-document-tabs-tab`, `-tab-label`, `.env-document-tabs-close`                         |
 | `.env-breadcrumb`, `.env-breadcrumb-link` and the other parts             | `.env-breadcrumbs-item`, `.env-breadcrumbs-link` and the other parts                       |
 | `.env-tree-row`, `.env-tree-detail`, `.env-tree-trailing`                 | `.env-tree-item`, `.env-tree-description`, `.env-tree-end`                                 |
+| `--env-tree-row-height`                                                   | `--env-tree-item-height`; the `--env-tree-row-padding-block-*` tokens keep their names     |
 | `.env-navigation-selected`, `.env-navigation-icon-only`                   | `.env-nav-list-item:where([data-selected])`, `.env-nav-list-item:where([data-icon-only])`  |
 | `.env-navigation-trailing`, `.env-menu-item-trailing`                     | `.env-nav-list-item-end`, `.env-menu-item-end`                                             |
 

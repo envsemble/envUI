@@ -71,3 +71,8 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 .env-menu-item-end {
   color: inherit;
 }
+/* A tree's row height follows its rows' class; the 1.0 tokens keep their names. */
+.files .env-tree {
+  --env-tree-item-height: 2rem;
+  --env-tree-row-padding-block-sm: 0.5rem;
+}

@@ -71,3 +71,8 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 .env-menu-item-trailing {
   color: inherit;
 }
+/* A tree's row height follows its rows' class; the 1.0 tokens keep their names. */
+.files .env-tree {
+  --env-tree-row-height: 2rem;
+  --env-tree-row-padding-block-sm: 0.5rem;
+}
