@@ -67,6 +67,14 @@ export default function DangerZone() {
           description={`Enter ${workspace} to confirm.`}
           autoComplete="off"
           spellCheck={false}
+          // The dialog holds no form, so Enter in the field confirms here once the name matches,
+          // as the confirm button would.
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter' || event.nativeEvent.isComposing || !matches) return;
+            event.preventDefault();
+            setDeleted(true);
+            setOpen(false);
+          }}
           value={typed}
           error={error}
           onValueChange={(value) => {

@@ -1,5 +1,5 @@
-import { useRef, useState, type FormEvent } from 'react';
-import { Button, Stack, Text, TextField } from '@envsemble/envui';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { Alert, Button, Link, Stack, Text, TextField } from '@envsemble/envui';
 
 type FieldName = 'address' | 'email';
 
@@ -17,6 +17,7 @@ const rules: Record<FieldName, (value: string) => string | undefined> = {
 };
 
 export default function ValidationTiming() {
+  const id = useId();
   const [values, setValues] = useState<Record<FieldName, string>>({ address: '', email: '' });
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   // A field is checked when people leave it only once they have typed in it.
@@ -26,6 +27,13 @@ export default function ValidationTiming() {
     address: useRef<HTMLInputElement>(null),
     email: useRef<HTMLInputElement>(null),
   };
+  // The fields the last refused submit listed; each refusal moves focus to the summary.
+  const [listed, setListed] = useState<FieldName[]>([]);
+  const summary = useRef<HTMLDivElement>(null);
+  const [refused, setRefused] = useState(0);
+  useEffect(() => {
+    if (refused) summary.current?.focus();
+  }, [refused]);
 
   const change = (field: FieldName, value: string) => {
     edited.current.add(field);
@@ -44,10 +52,11 @@ export default function ValidationTiming() {
     event.preventDefault();
     const found = { address: rules.address(values.address), email: rules.email(values.email) };
     setErrors(found);
-    const first = (Object.keys(found) as FieldName[]).find((field) => found[field]);
-    if (first) {
+    const wrong = (Object.keys(found) as FieldName[]).filter((field) => found[field]);
+    setListed(wrong);
+    if (wrong.length) {
       setResult('');
-      refs[first].current?.focus();
+      setRefused((count) => count + 1);
       return;
     }
     setResult(`Workspace example.com/${values.address} created.`);
@@ -57,12 +66,44 @@ export default function ValidationTiming() {
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
       <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+        {listed.some((field) => errors[field]) && (
+          // Two fields or more: a refused submit lists the errors at the top and moves focus there.
+          <Alert
+            ref={summary}
+            tabIndex={-1}
+            tone="danger"
+            title={
+              <span role="heading" aria-level={2}>
+                There is a problem
+              </span>
+            }
+          >
+            <Stack render={<ul />} gap={1}>
+              {listed
+                .filter((field) => errors[field])
+                .map((field) => (
+                  <li key={field}>
+                    <Link
+                      href={`#${id}-${field}`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        refs[field].current?.focus();
+                      }}
+                    >
+                      {errors[field]}
+                    </Link>
+                  </li>
+                ))}
+            </Stack>
+          </Alert>
+        )}
         <TextField
           ref={refs.address}
+          id={`${id}-address`}
           label="Workspace address"
           name="address"
           prefix="example.com/"
-          description="Lowercase letters, numbers and hyphens."
+          description="Lowercase letters, numbers and hyphens"
           autoComplete="off"
           spellCheck={false}
           value={values.address}
@@ -72,6 +113,7 @@ export default function ValidationTiming() {
         />
         <TextField
           ref={refs.email}
+          id={`${id}-email`}
           label="Billing email address"
           name="email"
           type="email"

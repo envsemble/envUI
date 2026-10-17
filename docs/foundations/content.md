@@ -22,7 +22,7 @@ These rules cover the words in an interface built with envUI: titles, labels, bu
 Write as a calm, direct colleague who knows the task: plain words, short sentences and the active voice.
 
 - Speak to the reader as "you", and call them "people" in documentation. Never write "the user" in the interface.
-- Say what happened and what to do next, without blame: "That password is too short", not "You entered an invalid password".
+- Say what happened and what to do next, without blame, starting with the fix where there is one: "Enter a password with at least 12 characters", not "You entered an invalid password".
 - Leave out jargon, codes and internal names: "Couldn't reach the server", not "ECONNRESET".
 - Leave out exclamation marks, "please", "simply", "just", "easy" and "oops". An interface that is calm and clear needs no apology and no cheer.
 - Let the interface stay out of the sentence. "We" belongs only where a person or a service really acted: "We sent a code to sam.lee@example.com" names the sender, but "Your changes weren't saved" needs no "we".
@@ -37,7 +37,7 @@ Write as a calm, direct colleague who knows the task: plain words, short sentenc
 ## Capitalisation and punctuation
 
 - Use sentence case everywhere: page and section titles, labels, buttons, menu items, tabs, column headers and toasts. Only the first word and proper names take a capital: "Create project", "Invite people to Northwind".
-- End no label, button, title, tab or menu item with a full stop. End a description, a message or any other text that is a sentence with one.
+- End no label, button, title, tab or menu item with a full stop. End a description, a message or any other text that is a sentence with one; a description that is only a format or a constraint, such as "Lowercase letters, numbers and hyphens", takes none.
 - Use an ellipsis (…, one character) only on an action that asks for more before it acts, such as "Rename…" or "Delete project…" in a menu. An action that acts at once has none.
 - Use curly quotes and apostrophes in interface text: “Website refresh”, can’t. Use an en dash for a range: 1–5 March, 10:00–11:30.
 - Don't write in capitals for emphasis; the type styles carry emphasis.
@@ -100,7 +100,7 @@ Avoid "OK", "Yes" and "No", "Submit" and "Click here": they make people read the
 
 - Say what is wrong and how to fix it, in the field's own terms. Start with the fix where you can: "Enter an email address like name@example.com", "Enter a due date after the start date".
 - Write no "Error:" prefix and no codes on their own. The tone and the icon already say it is an error; a code may follow the sentence for support, as "Reference 4F2A".
-- Don't blame: "Enter a password with at least 12 characters", not "You entered an invalid password".
+- Don't blame: "Choose a due date after 4 March 2026", not "You picked an invalid date".
 - Title the list of a form's errors "There is a problem", and repeat each field's message in it, linked to the field.
 - For a failure of the system, say what happened, whether people's work is safe and what to do: "Your changes weren't saved. Check your connection and try again."
 - Show a field's error after people submit the form or leave the field, never while they type, and remove it as soon as the value is fixed.
@@ -122,7 +122,7 @@ There are four kinds of empty, and each needs its own words. The title states th
 
 ## Feedback and status
 
-- Write a toast as a short sentence in the past tense, with what happened to what: "Website refresh archived." Offer one action at most, such as "Undo".
+- Write a toast as one short sentence that says what happened to what, in the past tense: "Website refresh archived." Where the past tense says too little, as for a setting, say the state the change leaves instead: "Other people at Northwind can now find you in the directory." Offer one action at most, such as "Undo".
 - Give an Alert a title that says the condition and one sentence on what it means or what to do: "This project is read-only" — "Ask an owner for edit access to change it."
 - Name what is loading: "Loading projects", not "Loading…" or "Please wait".
 - Count progress in the units people think in: "Uploading 3 of 5 files", "12 of 40 MB".

@@ -18,14 +18,15 @@ export default function ShowMore() {
           <List.Item key={item.id} label={item.text} description={item.when} />
         ))}
       </List.Root>
-      {/* The button stays where it is and keeps focus; it says how many there are in all. */}
+      {/* The button stays where it is and keeps focus. Its label says how many there are in all
+          and stays the same; aria-expanded says whether they all show. */}
       <Button
         variant="text"
         aria-expanded={expanded}
         aria-controls={`${id}-list`}
         onClick={() => setExpanded((current) => !current)}
       >
-        {expanded ? 'Show fewer' : `Show all ${activity.length}`}
+        {`Show all ${activity.length}`}
       </Button>
     </Stack>
   );

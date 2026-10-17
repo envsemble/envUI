@@ -88,7 +88,7 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 ### Don't
 
 - Don't confirm an action people do often and can undo; act at once and offer undo in a [Toast](../components/toast.md).
-- Don't put fields or several actions in a confirmation; use [Dialog](../components/dialog.md).
+- Don't put fields or several actions in a confirmation; use [Dialog](../components/dialog.md). The exception is one field for typing the object's name before an irreversible action; see [Confirmation and destructive actions](../patterns/destructive-actions.md).
 - Don't confirm in a dialog what [ConfirmButton](../components/button.md#confirm-in-place) can confirm in place.
 
 ## Accessibility

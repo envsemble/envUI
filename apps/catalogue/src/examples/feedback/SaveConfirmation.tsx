@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button, Select, Stack, TextField, Toast, useToast } from '@envsemble/envui';
+import { Button, Select, Stack, Text, TextField, Toast, useToast } from '@envsemble/envui';
 import { Send } from '@envsemble/envui/icons/Send';
 
 const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -8,6 +8,8 @@ function InviteForm() {
   const toast = useToast();
   const [email, setEmail] = useState('jordan.kim@example.com');
   const [error, setError] = useState<string>();
+  // Says a refused submit's error where focus can't: the outcome itself goes in the toast.
+  const [status, setStatus] = useState('');
   const [sending, setSending] = useState(false);
   const field = useRef<HTMLInputElement>(null);
   const timer = useRef<number>(undefined);
@@ -17,10 +19,15 @@ function InviteForm() {
     event.preventDefault();
     if (!isEmail(email)) {
       // A problem with a field shows on the field, never in a toast.
-      setError('Enter an email address like name@example.com');
+      const message = 'Enter an email address like name@example.com';
+      setError(message);
+      // After Enter in the field, focus is already there and focusing it again reads nothing, so
+      // the status says the error too.
+      setStatus(message);
       field.current?.focus();
       return;
     }
+    setStatus('');
     setSending(true);
     // The invitation goes to a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => {
@@ -46,7 +53,10 @@ function InviteForm() {
           error={error}
           onValueChange={(value) => {
             setEmail(value);
-            if (isEmail(value)) setError(undefined);
+            if (isEmail(value)) {
+              setError(undefined);
+              setStatus('');
+            }
           }}
         />
         <Select label="Role" name="role" defaultValue="editor" items={roles} />
@@ -56,6 +66,9 @@ function InviteForm() {
             Send invitation
           </Button>
         </Stack>
+        <Text role="status" emphasis="muted">
+          {status}
+        </Text>
       </Stack>
     </form>
   );
