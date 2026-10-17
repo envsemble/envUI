@@ -20,7 +20,6 @@ import {
   Text,
   Tooltip,
   useBreakpoint,
-  useMediaQuery,
   useToast,
   type BadgeTone,
 } from '@envsemble/envui';
@@ -92,8 +91,6 @@ export default function IndexPage() {
   });
   // On a phone the search takes the toolbar's whole width.
   const wide = useBreakpoint('sm');
-  // Under a touch screen's coarse pointer, a row's checkbox gets a touch-sized target across too.
-  const coarse = useMediaQuery('(pointer: coarse)');
 
   const term = query.trim().toLowerCase();
   const filtered = term !== '' || status !== 'all' || owner !== 'anyone';
@@ -350,16 +347,6 @@ export default function IndexPage() {
                     <Stack direction="row" align="center" gap={3}>
                       <Checkbox
                         aria-label={`Select ${project.name}`}
-                        // envUI has no touch-sized target across a lone checkbox yet: under a
-                        // coarse pointer it takes one here.
-                        style={
-                          coarse
-                            ? {
-                                minInlineSize: 'var(--env-control-height-touch)',
-                                justifyContent: 'center',
-                              }
-                            : undefined
-                        }
                         checked={selected.includes(project.id)}
                         onCheckedChange={(checked) => select([project.id], checked)}
                       />

@@ -10,6 +10,8 @@
   font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
   cursor: pointer;
+  /* The row is at least the 24 px minimum target in both scales, with the track as drawn. */
+  min-block-size: var(--env-control-target-min);
 }
 .env-switch > span {
   min-inline-size: 0;

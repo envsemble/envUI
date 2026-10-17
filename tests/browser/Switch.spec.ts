@@ -16,7 +16,7 @@ test('a switch takes its class and style on its root, and its ref and native pro
   await expect(page.getByTestId('choice-refs')).toHaveText(/INPUT:checkbox INPUT:checkbox/);
 });
 
-test('the track and thumb follow the scale, and the row grows to the touch height on touch screens', async ({
+test('the track and thumb follow the scale, and the row is a 24 px target, or the touch height on touch screens', async ({
   browser,
 }) => {
   for (const [scale, track, thumb, touch] of [
@@ -36,7 +36,7 @@ test('the track and thumb follow the scale, and the row grows to the touch heigh
       .poll(() => input.evaluate((element) => getComputedStyle(element, '::before').width))
       .toBe(`${thumb}px`);
     const row = (await page.locator('label.env-switch', { has: input }).boundingBox())!;
-    expect(row.height).toBeGreaterThanOrEqual(touch ? 44 : track[1]);
+    expect(row.height).toBeGreaterThanOrEqual(touch ? 44 : 24);
     await context.close();
   }
 });

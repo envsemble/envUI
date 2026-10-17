@@ -4,7 +4,8 @@ import { Checkbox, Radio, RadioGroup, Stack, Switch } from '@envsemble/envui';
 /**
  * Checkbox, Switch and Radio with a class, a style and a ref each, for
  * tests/browser/Checkbox.spec.ts, Switch.spec.ts and Radio.spec.ts: the class and the style reach
- * the root, the label around the control; the ref and the other native props reach the input.
+ * the root, the label around the control; the ref and the other native props reach the input. A
+ * checkbox without a visible label shows its hit area.
  */
 export function ChoiceControlsFixture() {
   const checkbox = useRef<HTMLInputElement>(null);
@@ -21,6 +22,11 @@ export function ChoiceControlsFixture() {
         name="subscribe"
         data-testid="checkbox-input"
       />
+      {/* A checkbox without a visible label, as in a table's selection column, apart from the
+          rest, so its hit area reaches past the box. */}
+      <div style={{ display: 'flex', paddingInline: '40px' }}>
+        <Checkbox aria-label="Select row" />
+      </div>
       <Switch
         ref={toggle}
         label="Alerts"

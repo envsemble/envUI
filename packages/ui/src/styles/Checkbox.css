@@ -10,6 +10,8 @@
   font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
   cursor: pointer;
+  /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
+  min-block-size: var(--env-control-target-min);
 }
 .env-checkbox > span {
   min-inline-size: 0;
@@ -20,9 +22,25 @@
 .env-checkbox:has(input:disabled) > * {
   opacity: var(--env-state-disabled-opacity);
 }
+/* A checkbox without a visible label is no wider than its box: an invisible hit area centered on
+   it takes presses across the minimum target, and the touch target under a coarse pointer, while
+   the box and the layout around it stay as they are. */
+.env-checkbox:not(:has(> .env-checkbox-label)) {
+  --env-checkbox-target: var(--env-control-target-min);
+  position: relative;
+}
+.env-checkbox:not(:has(> .env-checkbox-label))::before {
+  content: '';
+  position: absolute;
+  inset-block: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+  inset-inline: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+}
 @media (pointer: coarse) {
   .env-checkbox {
     min-height: var(--env-control-height-touch);
+  }
+  .env-checkbox:not(:has(> .env-checkbox-label)) {
+    --env-checkbox-target: var(--env-control-height-touch);
   }
 }
 
@@ -52,7 +70,9 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: calc(var(--env-checkbox-size) / 9);
+  /* Snapped to whole pixels, so the check mark sits on the pixel grid at every box size. */
+  /* stylelint-disable-next-line unit-disallowed-list -- The pixel grid is in CSS pixels. */
+  padding: round(calc(var(--env-checkbox-size) / 9), 1px);
   color: var(--env-color-fg-on-emphasis);
   pointer-events: none;
   visibility: hidden;
