@@ -76,6 +76,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Code](components/code.md)
 - [Badge](components/badge.md)
 - [Table](components/table.md)
+- [DescriptionList](components/description-list.md)
 - [Kbd](components/kbd.md)
 - [AnimatedNumber](components/animated-number.md)
 - [Rating](components/rating.md)
