@@ -2,26 +2,13 @@
 // tier, run before committing or merging a branch. Both check only what the branch changed against
 // its integration branch, as scripts/TestScope.mjs selects it; `npm run verify` checks everything.
 //
-//   node scripts/Check.mjs [--affected] [--base <ref>] [--files <a,b,...>] [--dry-run] [--skip-visual]
+//   node scripts/Check.mjs [--affected] [--base <ref>] [--files <a,b,...>] [--dry-run]
 //
 // --base       the branch to compare with; else ENVUI_BASE, else origin/envui-1.0, else origin/dev
 // --files      check these paths instead of the branch's changes, such as to try the selection
 // --dry-run    print the selection and stop
-// --skip-visual  leave the screenshots out of the affected tier (also ENVUI_SKIP_VISUAL=1), with a
-//              warning; without Docker the affected tier fails, as `npm run verify` does
-import { buildIndex, changedFiles, selectScope, serversFor, unitTestFiles } from './TestScope.mjs';
-import {
-  bin,
-  bold,
-  dim,
-  dockerRunning,
-  parallel,
-  red,
-  series,
-  summary,
-  task,
-  yellow,
-} from './TestTasks.mjs';
+import { changedFiles, selectScope, serversFor, specNeeds, unitTestFiles } from './TestScope.mjs';
+import { bin, bold, dim, parallel, red, series, summary, task, yellow } from './TestTasks.mjs';
 
 const started = performance.now();
 const argv = process.argv.slice(2);
@@ -31,7 +18,6 @@ const option = (name) => {
 };
 const affected = argv.includes('--affected');
 const dryRun = argv.includes('--dry-run');
-const skipVisual = argv.includes('--skip-visual') || process.env.ENVUI_SKIP_VISUAL === '1';
 const tier = affected ? 'check:affected' : 'check';
 
 let paths;
@@ -51,77 +37,68 @@ if (!paths.length) {
   process.exit(0);
 }
 
-const index = buildIndex();
-const scope = selectScope(paths, index);
+const scope = selectScope(paths);
 const { built: builtUnitTests, fast: fastUnitTests } = unitTestFiles();
 // A changed test of the build needs the build to run.
 if (paths.some((path) => builtUnitTests.includes(path))) scope.build.library = true;
+
+// The specs, split by what they need: live development edits sources and runs alone, and a spec
+// that opens what the library build renders waits for it; both run in the affected tier only.
+const needs = new Map([...scope.specs.keys()].map((name) => [name, specNeeds(name)]));
+const live = [...needs].filter(([, need]) => need.live).map(([name]) => name);
+const browserSpecs = [...needs]
+  .filter(([, need]) => !need.live && (affected || !need.library))
+  .map(([name]) => name);
+const deferred = affected ? [] : [...needs.keys()].filter((name) => !browserSpecs.includes(name));
+// The catalogue builds take seconds, so the fast tier builds what its specs open.
+const builds = {
+  library: affected && scope.build.library,
+  catalogue: browserSpecs.some((name) => needs.get(name).catalogue),
+  site: browserSpecs.some((name) => needs.get(name).site),
+};
 
 // What runs, and why.
 const list = (items) =>
   items.length > 6
     ? `${items.slice(0, 6).join(', ')} and ${items.length - 6} more`
     : items.join(', ');
-const reasons = (map) =>
-  [...map].map(([name, why]) => `    ${name} ${dim(`← ${[...why].join('; ')}`)}`).join('\n');
 console.log(dim(`  ${list(paths)}`));
-const fastSpecs = [...scope.fastSpecs.keys()];
-const affectedSpecs = [...new Set([...fastSpecs, ...scope.affectedSpecs.keys()])];
-const specs = affected ? affectedSpecs : fastSpecs;
-const pages = [...scope.pages.keys()];
 console.log(
   `  lint ${scope.whole.lint ? 'everything' : `${scope.lint.length} files`}, stylelint ${scope.whole.css ? 'everything' : `${scope.css.length} files`}, prettier ${scope.whole.format ? 'everything' : `${scope.format.length} files`}`,
 );
 console.log(`  typecheck: ${scope.typecheck ? 'yes, incrementally' : 'no TypeScript changed'}`);
 if (scope.generated.size) console.log(`  generated files: ${[...scope.generated].join(', ')}`);
 console.log(
-  `  unit tests: ${fastUnitTests.length} files${affected && scope.build.library ? `, and ${builtUnitTests.length} on the library build` : ''}`,
+  `  unit tests: ${fastUnitTests.length} files${builds.library ? `, and ${builtUnitTests.length} on the library build` : ''}`,
 );
-if (scope.contrast) console.log('  contrast gate: tokens or shared styles changed');
-if (specs.length)
+const shown = affected ? [...browserSpecs, ...live] : browserSpecs;
+if (shown.length)
   console.log(
-    `  browser specs in ${affected ? 'Chromium, Firefox and WebKit' : 'Chromium'}:\n${reasons(
-      new Map(
-        specs.map((name) => [name, scope.affectedSpecs.get(name) ?? scope.fastSpecs.get(name)]),
-      ),
-    )}`,
+    `  browser specs in ${affected ? 'Chromium, and their @engines tests in Firefox and WebKit' : 'Chromium'}:\n${shown
+      .map((name) => `    ${name} ${dim(`← ${[...scope.specs.get(name)].join('; ')}`)}`)
+      .join('\n')}`,
   );
 else console.log('  browser specs: none for this change');
-if (!affected && specs.length && (scope.fastBuild.catalogue || scope.fastBuild.site))
+const opened = Object.entries(builds)
+  .filter(([, needed]) => needed)
+  .map(([name]) => name);
+if (opened.length) console.log(`  builds: ${opened.join(', ')}`);
+if (deferred.length)
   console.log(
-    `  builds those specs open: ${[scope.fastBuild.catalogue && 'catalogue', scope.fastBuild.site && 'site'].filter(Boolean).join(', ')}`,
-  );
-if (affected) {
-  const builds = Object.entries(scope.build)
-    .filter(([, needed]) => needed)
-    .map(([name]) => name);
-  console.log(`  builds: ${builds.length ? builds.join(', ') : 'none needed'}`);
-  if (pages.length)
-    console.log(
-      `  accessibility scan and screenshots of:\n${reasons(scope.pages)}${scope.density ? '\n    and the density specimens' : ''}`,
-    );
-}
-if (scope.templates && specs.includes('Templates.spec.ts'))
-  console.log(`  template screens checked: ${scope.templates.join(', ')}`);
-for (const note of scope.notes) console.log(yellow(`  note: ${note}`));
-if (scope.unmapped.length)
-  console.log(dim(`  no checks beyond lint and unit tests: ${list(scope.unmapped)}`));
-if (!affected && (scope.affectedSpecs.size > scope.fastSpecs.size || pages.length))
-  console.log(
-    dim(
-      '  `npm run check:affected` adds the other engines, more specs, builds, accessibility and screenshots.',
+    yellow(
+      `  note: ${deferred.join(', ')} edit sources or need the library build: check:affected runs them`,
     ),
   );
+for (const [helper, users] of scope.helpers)
+  if (!users.some((name) => scope.specs.has(name)) && users.length)
+    console.log(dim(`  ${helper}: ${users.length} specs import it; verify covers them`));
+const unmatched = scope.unmatched.filter((path) => !scope.helpers.has(path));
+if (unmatched.length) console.log(dim(`  no spec for ${list(unmatched)}; verify covers it`));
 console.log('');
 if (dryRun) process.exit(0);
 
 // Tasks.
 const node = (script, ...args) => [...bin.node, script, ...args];
-const playwrightEnv = (names) => ({
-  ENVUI_SERVERS: serversFor(names, index).join(',') || 'none',
-  // Templates.spec.ts checks only the changed templates' screens.
-  ...(scope.templates && { ENVUI_TEMPLATES: scope.templates.join(',') }),
-});
 const staticTasks = [];
 if (scope.whole.lint)
   staticTasks.push(
@@ -203,14 +180,8 @@ staticTasks.push(
 // The catalogue reads the generated documentation, which is not committed.
 await series([task('generate documentation', node('scripts/GenerateDocumentation.mjs'))]);
 
-const specFiles = (names) => names.map((name) => index.specs.get(name).file);
-const browserTask = (selected, projects, label) => {
-  const names =
-    scope.contrast && !selected.includes('Contrast.spec.ts')
-      ? [...selected, 'Contrast.spec.ts']
-      : selected;
-  const files = specFiles(names);
-  return task(
+const browserTask = (names, projects, label) =>
+  task(
     label,
     [
       ...bin.playwright,
@@ -222,87 +193,49 @@ const browserTask = (selected, projects, label) => {
       // A test that fails once under the load of three engines and passes again is reported as
       // flaky; one that fails twice fails the run.
       ...(affected ? ['--retries=1'] : ['--max-failures=5']),
-      ...files,
+      ...names.map((name) => `tests/browser/${name}.spec.ts`),
     ],
-    { env: playwrightEnv(names), detail: `${files.length} specs` },
+    {
+      env: { ENVUI_SERVERS: serversFor(names).join(',') || 'none' },
+      detail: `${names.length} specs`,
+    },
   );
-};
+const npmScript = (name) => series([task(name, [...bin.npm, 'run', '-s', name])]);
+const catalogueBuilds = [
+  builds.catalogue && npmScript('build:catalogue'),
+  builds.site && npmScript('build:site'),
+].filter(Boolean);
 
 if (!affected) {
   // The browser specs start once the catalogue builds they open, if any, are done.
-  const builds = [
-    scope.fastBuild.catalogue &&
-      task('build:catalogue', [...bin.npm, 'run', '-s', 'build:catalogue']),
-    scope.fastBuild.site && task('build:site', [...bin.npm, 'run', '-s', 'build:site']),
-  ].filter(Boolean);
   const browser = async () => {
-    if (!fastSpecs.length && !scope.contrast) return;
-    const built = await parallel(builds);
+    if (!browserSpecs.length) return;
+    const built = (await Promise.all(catalogueBuilds)).flat();
     if (built.every((result) => result.ok))
-      await parallel([browserTask(fastSpecs, ['chromium'], 'browser (Chromium)')]);
+      await parallel([browserTask(browserSpecs, ['chromium'], 'browser (Chromium)')]);
   };
   await Promise.all([parallel(staticTasks), browser()]);
 } else {
-  // Phase 1: static checks, unit tests and the builds the later phases need.
-  const live = affectedSpecs.filter((name) => index.specs.get(name)?.live);
-  const browserSpecs = affectedSpecs.filter((name) => !live.includes(name));
-  const builds = [];
-  // The unit tests on the build also write .cache/Hydration.html, which Hydration.spec.ts opens.
-  if (scope.build.library)
-    builds.push(
+  // Phase 1: static checks, unit tests and the builds the browser specs need. The unit tests on
+  // the build also write .cache/Hydration.html, which Hydration.spec.ts opens.
+  await Promise.all([
+    parallel(staticTasks),
+    ...catalogueBuilds,
+    builds.library &&
       series([
         task('build:library', node('scripts/BuildLibrary.mjs')),
         task('unit tests on the build', [...bin.node, '--test', ...builtUnitTests], {
           detail: `${builtUnitTests.length} files`,
         }),
       ]),
-    );
-  if (scope.build.catalogue) builds.push(npmScript('build:catalogue'));
-  if (scope.build.site || (scope.a11y && pages.length)) builds.push(npmScript('build:site'));
-  await Promise.all([parallel(staticTasks), ...builds]);
-
-  // Phase 2: browser specs in every engine, the scans and the screenshots of the affected pages.
-  const phase = [];
-  if (browserSpecs.length || scope.contrast)
-    phase.push(browserTask(browserSpecs, ['chromium', 'firefox', 'webkit'], 'browser (3 engines)'));
-  if (scope.a11y && pages.length)
-    phase.push(
-      task('accessibility', [...bin.playwright, 'test', '--project=a11y', '--reporter=dot'], {
-        env: { ENVUI_SERVERS: 'none', ENVUI_PAGES: pages.join(',') },
-        detail: `${pages.length} pages`,
-      }),
-    );
-  const visualPages = [...pages, ...(scope.density ? ['density'] : [])];
-  if (scope.visual && visualPages.length) {
-    if (skipVisual)
-      console.log(
-        yellow(
-          '! Skipped the screenshots of the affected pages: --skip-visual or ENVUI_SKIP_VISUAL=1.',
-        ),
-      );
-    else if (!(await dockerRunning()))
-      phase.push(
-        task('visual', [
-          ...bin.node,
-          '-e',
-          "console.error('Docker is not running: start it, or pass --skip-visual.'); process.exit(1)",
-        ]),
-      );
-    else
-      phase.push(
-        task('visual', node('scripts/VisualTests.mjs', '--reporter=dot'), {
-          env: { ENVUI_PAGES: visualPages.join(',') },
-          detail: `${visualPages.length} pages`,
-        }),
-      );
-  }
-  await parallel(phase);
+  ]);
+  // Phase 2: the specs in Chromium, and their @engines tests in Firefox and WebKit.
+  if (browserSpecs.length)
+    await parallel([
+      browserTask(browserSpecs, ['chromium', 'firefox', 'webkit'], 'browser (3 engines)'),
+    ]);
   // Live development edits sources, so it runs once nothing else reads them.
   if (live.length) await series([browserTask(live, ['live-development'], 'live development')]);
-}
-
-function npmScript(name) {
-  return series([task(name, [...bin.npm, 'run', '-s', name])]);
 }
 
 const ok = summary(tier, started);

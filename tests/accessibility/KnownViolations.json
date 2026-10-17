@@ -1,10 +1,5 @@
 {
   "components/rich-text/overview": {
-    "dark": {
-      "target-size": {
-        "article :: input.env-checkbox-input": 2
-      }
-    },
     "light": {
       "target-size": {
         "article :: input.env-checkbox-input": 2

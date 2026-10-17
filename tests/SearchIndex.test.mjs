@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import MiniSearch from 'minisearch';
-import { readDocumentation, readProps } from '../scripts/GenerateDocumentation.mjs';
+import {
+  documentedExports,
+  readDocumentation,
+  readProps,
+} from '../scripts/GenerateDocumentation.mjs';
+import { headingsOf } from '../scripts/MarkdownHeadings.mjs';
+import { exportSection, propSection, tokenSection } from '../scripts/SearchAnchors.mjs';
 import {
   buildSearchIndex,
   cataloguePages,
@@ -45,6 +51,32 @@ test('search covers every page, export, prop and token', () => {
   }
   assert.equal(ids.size, records.length, 'every search document has an id of its own');
   for (const { page } of cataloguePages) assert.ok(index.has(`page:${page}`), page);
+});
+
+test('every search result leads to a page there is, and to an element that page renders', () => {
+  const pages = new Map(documents.map((document) => [document.id, document]));
+  const tokenRows = new Set(tokens.tokens.map(({ cssVariable }) => tokenSection(cssVariable)));
+  // The ids a page renders: its headings, and on its Props view each export's props and their rows
+  // (apps/catalogue/src/template/PropsTables.tsx).
+  const elements = (document, view) =>
+    new Set(
+      view === 'props'
+        ? documentedExports(document.frontmatter?.components ?? [], props).flatMap((name) => {
+            const entry = props.exports[name];
+            return [
+              exportSection(name),
+              ...(entry.props ?? []).map((prop) => propSection(name, prop.name)),
+            ];
+          })
+        : headingsOf(document.markdown).map(({ id }) => id),
+    );
+  for (const { id, page, view, section } of records) {
+    const document = pages.get(page);
+    assert.ok(document || cataloguePages.some((entry) => entry.page === page), `${id}: ${page}`);
+    if (!section) continue;
+    const ids = page === 'tokens' ? tokenRows : elements(document, view);
+    assert.ok(ids.has(section), `${id}: ${page} renders no #${section}`);
+  }
 });
 
 test('search finds components by alias, props and tokens by name, and pages before their parts', () => {

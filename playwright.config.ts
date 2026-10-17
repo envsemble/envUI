@@ -18,8 +18,7 @@ function wantedServers() {
         ? [argument.slice(10)]
         : [],
   );
-  if (projects.length && projects.every((project) => /^a11y(?:-setup)?$/.test(project)))
-    return new Set<string>();
+  if (projects.length && projects.every((project) => project === 'a11y')) return new Set<string>();
   return new Set(['catalogue', 'fixture']);
 }
 const wanted = wantedServers();
@@ -50,13 +49,16 @@ const workers = configured
 /**
  * Firefox and WebKit stop gaining beyond a few workers each (on 24 threads, about 1.5 tests a second
  * from 4 workers on), and with more their slowest specs run out of time. Locally each takes at most
- * a third of the workers, and Chromium and the accessibility scan the rest; CI keeps its 3 shared.
+ * half the workers, and 4; CI keeps its 3 shared. They come first in the projects, so their capped
+ * share starts at once and Chromium and the accessibility scan, uncapped, fill the rest and the end.
  */
 const totalWorkers =
   typeof workers === 'number'
     ? workers
     : Math.max(1, Math.floor((availableParallelism() * parseFloat(workers)) / 100));
-const engineWorkers = process.env.CI ? undefined : Math.max(1, Math.round(totalWorkers / 3));
+const engineWorkers = process.env.CI
+  ? undefined
+  : Math.max(1, Math.min(4, Math.floor(totalWorkers / 2)));
 
 export default defineConfig({
   testDir: './tests/browser',
@@ -76,12 +78,12 @@ export default defineConfig({
   },
   // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
-    { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
-    // The contrast gate (`npm run test:contrast`) measures computed colors once, in Chromium.
+    // Firefox and WebKit run only the tests tagged @engines, which depend on the engine; the rest,
+    // and the contrast gate (`npm run test:contrast`), run once, in Chromium.
     {
       name: 'firefox',
       testIgnore: /LiveDevelopment/,
-      grepInvert: /@contrast/,
+      grep: /@engines/,
       workers: engineWorkers,
       use: {
         ...devices['Desktop Firefox'],
@@ -97,23 +99,21 @@ export default defineConfig({
     {
       name: 'webkit',
       testIgnore: /LiveDevelopment/,
-      grepInvert: /@contrast/,
+      grep: /@engines/,
       workers: engineWorkers,
       use: { ...devices['Desktop Safari'] },
     },
+    { name: 'chromium', testIgnore: /LiveDevelopment/, use: { ...devices['Desktop Chrome'] } },
     {
       name: 'live-development',
       testMatch: /LiveDevelopment/,
       dependencies: ['chromium', 'firefox', 'webkit'],
       use: { ...devices['Desktop Chrome'] },
     },
-    // `npm run test:a11y`: axe over every catalogue page in both themes, Chromium only. Its setup
-    // first removes the lock a stopped update can leave on KnownViolations.json.
-    { name: 'a11y-setup', testDir: './tests/accessibility', testMatch: /Lock\.setup\.ts/ },
+    // `npm run test:a11y`: axe over every catalogue page, Chromium only.
     {
       name: 'a11y',
       testDir: './tests/accessibility',
-      dependencies: ['a11y-setup'],
       use: { ...devices['Desktop Chrome'], screenshot: 'off' },
     },
     // `npm run test:visual`: the screenshot baseline, rendered in the Linux Playwright image.

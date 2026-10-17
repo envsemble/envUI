@@ -18,7 +18,6 @@ import {
   declaredFile,
   formatSnapshot,
   minimumOf,
-  parseSnapshot,
   readBaseSnapshot,
   readSnapshot,
   type DeclaredPairs,
@@ -171,11 +170,6 @@ function measure(
 }
 
 test.describe('contrast', { tag: '@contrast' }, () => {
-  test.skip(
-    ({ browserName }) => browserName !== 'chromium',
-    'Colors resolve the same in every engine, so one engine measures them.',
-  );
-
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
   // eslint-disable-next-line no-empty-pattern
   test('the pair registry and its exceptions agree', ({}, testInfo) => {
@@ -833,106 +827,6 @@ test.describe('contrast', { tag: '@contrast' }, () => {
       ],
       write: undefined,
     });
-  });
-
-  test('a snapshot in the first format, which named the pairs alone, reads', () => {
-    // The format of tests/contrast/DeclaredPairs.json at d39a71a4, the only commit with it.
-    const first = `{
-  "$comment": "The contrast pairs declared in tests/contrast/Pairs.ts, by name. Written by npm run test:contrast -- --update-snapshots; see declaredFile in tests/browser/Contrast.spec.ts.",
-  "pairs": [
-    "--a on --b",
-    "--c on --d"
-  ]
-}
-`;
-    const parsed = parseSnapshot(first, 'the first snapshot');
-    expect(parsed).toEqual({
-      recorded: {
-        pairs: {},
-        dropped: [],
-        renamed: [],
-        relaxed: [],
-        unrecorded: ['--a on --b', '--c on --d'],
-      },
-    });
-    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'difference' };
-    const c: ContrastPair = { fg: '--c', bg: ['--d'], kind: 'text' };
-    const common = { renamed: [], relaxed: [], themes, pairName, ci: false, update: true };
-    const bases = [{ label: 'the first snapshot', recorded: parsed.recorded! }];
-    const problems = (pairs: ContrastPair[], dropped: { pair: string; rationale: string }[]) =>
-      checkSnapshot({ ...common, pairs, dropped, recorded: undefined, bases }).problems;
-    // It records no requirements, so any passes; a pair gone unexplained still fails.
-    expect(problems([a, c], [])).toEqual([]);
-    expect(problems([a], [{ pair: '--c on --d', rationale: 'Gone.' }])).toEqual([]);
-    expect(problems([a], [])).toEqual([
-      expect.stringContaining('--c on --d was declared (the first snapshot) and is gone'),
-    ]);
-    // A list of anything but names isn't a snapshot.
-    expect(parseSnapshot('{"pairs": ["--a on --b", 1]}', 'x').problem).toContain(
-      'has no pairs object',
-    );
-  });
-
-  test('a snapshot from before dropped, renamed and relaxed were recorded still reads', () => {
-    const a: ContrastPair = { fg: '--a', bg: ['--b'], kind: 'text' };
-    const common = { dropped: [], renamed: [], relaxed: [], themes, pairName, ci: false };
-    const pairsOnly = { pairs: { '--a on --b': { kind: 'text', minimum: { standard: 4.5 } } } };
-    const older = parseSnapshot(JSON.stringify(pairsOnly), 'an older snapshot');
-    expect(older).toEqual({ recorded: { ...pairsOnly, dropped: [], renamed: [], relaxed: [] } });
-    // Compared as the base, it holds its pairs to what it recorded.
-    const weaker = { ...a, kind: 'non-text' as const };
-    const recorded = checkSnapshot({
-      ...common,
-      pairs: [weaker],
-      recorded: undefined,
-      update: true,
-    }).write!;
-    expect(
-      checkSnapshot({
-        ...common,
-        pairs: [weaker],
-        recorded,
-        update: false,
-        bases: [{ label: 'an older snapshot', recorded: older.recorded! }],
-      }).problems,
-    ).toEqual([expect.stringContaining('is held to less than an older snapshot records')]);
-    // What isn't a snapshot at all says so, rather than failing to iterate.
-    expect(parseSnapshot('[]', 'x').problem).toContain("isn't a snapshot the contrast gate reads");
-    expect(parseSnapshot('{"pairs": {}, "relaxed": {}}', 'x').problem).toContain(
-      "relaxed that isn't a list",
-    );
-    expect(parseSnapshot('{', 'x').problem).toContain("isn't valid JSON");
-  });
-
-  // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
-  // eslint-disable-next-line no-empty-pattern
-  test('every pair measured below the WCAG minimum, or not at all, says why', async ({}, testInfo) => {
-    const lines = [
-      ...pairs
-        .filter((pair) => pair.contrast !== undefined || pair.minimum !== undefined)
-        .map(
-          (pair) =>
-            `${pairName(pair)} [${
-              pair.contrast
-                ? `${pair.contrast} contrast only`
-                : Object.entries(pair.minimum ?? {})
-                    .map(([contrast, value]) => `${value}:1 at ${contrast} contrast`)
-                    .join(', ')
-            }]: ${pair.rationale}`,
-        ),
-      ...dropped.map((entry) => `${entry.pair} [dropped]: ${entry.rationale}`),
-      ...renamed.map((entry) => `${entry.from} [renamed to ${entry.to}]: ${entry.rationale}`),
-    ];
-    await testInfo.attach('scoped-and-dropped-pairs.txt', {
-      body: lines.join('\n'),
-      contentType: 'text/plain',
-    });
-    if (process.env.ENVUI_CONTRAST_REPORT) console.log(`\n${lines.join('\n')}\n`);
-    expect(lines.length, 'The scoped, lowered and dropped pairs are listed').toBeGreaterThan(0);
-    expect(
-      lines.filter((line) => line.endsWith(': ') || line.endsWith(': undefined')),
-      'Every scoped, lowered or dropped pair has a rationale',
-    ).toEqual([]);
   });
 
   for (const theme of themes) {

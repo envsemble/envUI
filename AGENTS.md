@@ -4,22 +4,23 @@ This file is for agents working on envUI itself. It stays in the repository and 
 
 ## Testing: three tiers, never the full suite every turn
 
-| Tier     | Command                  | When                                                                                       | Time (24 threads)                        |
-| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| Fast     | `npm run check`          | After each change, while you work                                                          | 10–20 s for a change; about 1 s for none |
-| Affected | `npm run check:affected` | Before committing a branch or merging it into the integration branch                       | About 2 min for a component change       |
-| Full     | `npm run verify`         | Before a release (tagging, publishing), before merging into `dev` or `main`, or when asked | About 20 min (30 before the tiers)       |
+| Tier     | Command                  | When                                                                                       | Time (24 threads)                     |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------- |
+| Fast     | `npm run check`          | After each change, while you work                                                          | Under a minute for a component change |
+| Affected | `npm run check:affected` | Before committing a branch or merging it into the integration branch                       | A few minutes for a component change  |
+| Full     | `npm run verify`         | Before a release (tagging, publishing), before merging into `dev` or `main`, or when asked | About 20 min (30 before the tiers)    |
 
 - **The fast tier** checks what the branch changed since its merge-base with `origin/envui-1.0` (else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another), with uncommitted and untracked files: ESLint, Stylelint and Prettier on the changed files, incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related browser specs in Chromium. It prints what it selected and why; `-- --dry-run` prints only that.
-- **The affected tier** adds the related specs in Firefox and WebKit, the builds the change needs with the unit tests on them, and the accessibility scan and screenshots of the affected catalogue pages. The screenshots need Docker; `-- --skip-visual` leaves them out with a warning.
+- **The affected tier** adds the related specs' `@engines` tests in Firefox and WebKit, the builds the change needs with the unit tests on them, and live development when the catalogue changed. The accessibility scan and the screenshots run in the full tier.
 - **The full tier** runs everything. Don't run it, or `npm run test:browser`, `test:a11y` or `test:visual`, as a routine step: they take minutes, and the tiers above answer for a change.
-- A token, theme or other shared change runs the contrast gate and a small shared set of specs and pages, not everything; the selection says so. Leave the rest to the full tier.
-- The selection is derived from the sources in `scripts/TestScope.mjs`. When it misses a spec, add the spec's subject to `overrides` there instead of running everything.
+- A token, theme or other shared change runs the contrast gate and a small shared set of specs, not everything; the selection says so. Leave the rest to the full tier.
+- A spec runs when the component it is named after changes (`scripts/TestScope.mjs`). When a file's name doesn't name its spec, add it to `aliases` there instead of running everything.
+- Firefox and WebKit run only the tests tagged `@engines`: tag a test that depends on the engine (scrolling, focus, pointer and input methods, native forms, platform keys), and leave the rest to Chromium.
 
 ## Write tests that stay fast
 
 - Prefer a unit test (`node --test`, `tests/*.test.mjs`) to a browser spec, and a computed-style or DOM assertion to a screenshot.
-- Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers, so the selection finds it.
+- Give a browser spec its own fixture (`?fixture=<name>` in `tests/fixture`) and name it after the component it covers, so the selection finds it. Test a behaviour once, in its component's spec; leave colour to the contrast gate and appearance to the visual baseline.
 - No fixed sleeps: wait for a condition, such as `expect(…).toHaveText`, `expect.poll` or the element's animations finishing. Where a test must show that nothing happens for a while, wait just past the delay it proves and say so.
 - Navigate only as much as the test needs; check independent states on one page load.
 - Keep heavy checks out of the inner loop: builds, packed-tarball tests, three engines, the accessibility scan and the visual baseline belong to the affected and full tiers.

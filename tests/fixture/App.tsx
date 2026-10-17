@@ -23,11 +23,6 @@ import {
 } from './AppShells.js';
 import { SidebarRailsFixture, SidebarsFixture } from './Sidebars.js';
 import { WindowFrameFixture } from './WindowFrames.js';
-import { RailsFrameFixture } from './frame/RailsFrame.js';
-import { DocumentFrameFixture } from './frame/DocumentFrame.js';
-import { TitleBarFrameFixture } from './frame/TitleBarFrame.js';
-import { WindowSectionsFixture } from './frame/WindowSections.js';
-import { SplitHeaderFrameFixture } from './frame/SplitHeaderFrame.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
@@ -109,12 +104,6 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'sidebar-rails': SidebarRailsFixture,
   sidebars: SidebarsFixture,
   'window-frame': WindowFrameFixture,
-  // The proof that the frame parts meet the applications' needs (tests/browser/FrameNeeds.spec.ts).
-  'frame-rails': RailsFrameFixture,
-  'frame-document': DocumentFrameFixture,
-  'frame-title-bar': TitleBarFrameFixture,
-  'frame-window': WindowSectionsFixture,
-  'frame-split': SplitHeaderFrameFixture,
   'code-block': CodeBlockFixture,
   'markdown-tables': MarkdownFixture,
   'scroll-keys': ScrollKeysFixture,

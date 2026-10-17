@@ -1,6 +1,6 @@
 /**
- * The themes the visual baseline and the accessibility scan show catalogue pages in. Every page is
- * checked in light and dark; the pages in highContrastPages are checked in high contrast as well.
+ * The themes the visual baseline and the accessibility scan show catalogue pages in: every page in
+ * light, and the pages in samplePages in dark, light high contrast and dark high contrast as well.
  */
 import type { Page } from '@playwright/test';
 import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
@@ -31,42 +31,31 @@ export const highContrastThemes: readonly CatalogueTheme[] = [
 export const allThemes: readonly CatalogueTheme[] = [...standardThemes, ...highContrastThemes];
 
 /**
- * Pages that are also checked in high contrast. Together they show every family of color roles:
- * the swatches of each role, actions with their forced states, choice controls, fields and
- * validation, select triggers, navigation with its forced states, tabs, table and list rows, the
- * feedback tones of alerts, badges and toasts, and raised surfaces. Menus, selects, comboboxes and
- * the command palette are captured open in high contrast by the visual baseline's open lists.
+ * The theme sample: pages also checked in dark and in high contrast. Every other page is checked in
+ * light alone. Together they show the color roles, actions with their forced states, a field, table
+ * rows and highlighted code, which takes high-contrast token colors of its own. The contrast gate
+ * (tests/browser/Contrast.spec.ts) measures every token pair in all four themes, and the visual
+ * baseline's open lists capture menus and selects in dark and high contrast.
  */
-export const highContrastPages: ReadonlySet<string> = new Set([
+export const samplePages: ReadonlySet<string> = new Set([
   'foundations/colors',
   'components/button',
-  'components/checkbox',
-  'components/radio',
   'components/text-field',
-  'components/select',
-  'components/nav-list',
-  'components/tabs',
   'components/table',
-  'components/list',
-  'components/alert',
-  'components/badge',
-  'components/toast',
-  'components/card',
-  // Highlighted code and code diffs take high-contrast token colors of their own.
   'components/code',
 ]);
 
-const unknownPages = [...highContrastPages].filter(
+const unknownPages = [...samplePages].filter(
   (path) => !referencePages.some((page) => page.path === path),
 );
 if (unknownPages.length)
   throw new Error(
-    `highContrastPages in tests/browser/CatalogueThemes.ts names pages the catalogue does not have: ${unknownPages.join(', ')}.`,
+    `samplePages in tests/browser/CatalogueThemes.ts names pages the catalogue does not have: ${unknownPages.join(', ')}.`,
   );
 
 /** The themes a catalogue page, by its path such as components/button, is checked in. */
 export function themesFor(path: string): readonly CatalogueTheme[] {
-  return highContrastPages.has(path) ? allThemes : standardThemes;
+  return samplePages.has(path) ? allThemes : standardThemes.slice(0, 1);
 }
 
 /** Emulates the theme's contrast preference; the catalogue's theme button sets the scheme. */

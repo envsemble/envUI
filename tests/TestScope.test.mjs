@@ -5,29 +5,18 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import {
-  buildIndex,
   changedFiles,
-  exportedNames,
-  markupClasses,
   mergeChanges,
-  nameCandidates,
-  overrides,
-  ownClassPrefix,
-  pageOfFile,
-  ownedClasses,
   parseNameStatus,
-  relativeImports,
   selectScope,
   serversFor,
-  stylesheetClasses,
+  specNeeds,
+  specsFor,
   unitTestFiles,
 } from '../scripts/TestScope.mjs';
 import { checkoutId, checkoutPort } from '../scripts/CheckoutMarker.mjs';
 
-const index = buildIndex();
-const select = (...paths) => selectScope(paths, index);
-const fast = (scope) => [...scope.fastSpecs.keys()].sort();
-const affected = (scope) => [...scope.affectedSpecs.keys()].sort();
+const specs = (...paths) => [...specsFor(paths).specs.keys()].sort();
 
 test('diff parsing reads statuses, renames and untracked files', () => {
   const entries = parseNameStatus(
@@ -83,300 +72,65 @@ test('changed files come from the merge-base, uncommitted edits and untracked fi
   }
 });
 
-test('names, classes, imports and exports are read from sources', () => {
-  assert.deepEqual(nameCandidates('Menus'), ['Menus', 'Menu']);
-  assert.deepEqual(nameCandidates('Comboboxes'), ['Comboboxes', 'Combobox', 'Comboboxe']);
-  assert.equal(ownClassPrefix('packages/ui/src/styles/TextField.css'), 'env-text-field');
-  assert.deepEqual(
-    stylesheetClasses(
-      '/* .env-old */ .env-tree .env-symbol, .env-tree-row:hover { color: var(--env-x); }',
-    ),
-    ['env-tree', 'env-symbol', 'env-tree-row'],
-  );
-  // A stylesheet owns the classes named after it, not the icon it styles inside them.
-  assert.deepEqual(
-    ownedClasses('Tree.css', ['env-tree', 'env-symbol', 'env-tree-row'], ['env-tree', 'env-icon']),
-    ['env-tree', 'env-tree-row'],
-  );
-  // A group stylesheet owns what no other stylesheet is named for.
-  assert.deepEqual(
-    ownedClasses(
-      'Indicators.css',
-      ['env-badge-dot', 'env-tooltip'],
-      ['env-indicators', 'env-badge'],
-    ),
-    ['env-tooltip'],
-  );
-  // The source of `className={classNames('env-button', `env-button-${variant}`, …)}`.
-  const markup = markupClasses(
-    "className={classNames('env-button', `env-button-$" +
-      "{variant}`, 'data-env-theme', '--env-gap')}",
-  );
-  assert.deepEqual([...markup.literal], ['env-button']);
-  assert.deepEqual([...markup.prefixes], ['env-button-']);
-  assert.deepEqual(
-    relativeImports(
-      "import { a } from './a.js';\nexport * from '../b.js';\nimport './c.css';\nconst d = import('./d.js');\nimport x from 'react';",
-    ),
-    ['./a.js', '../b.js', './c.css', './d.js'],
-  );
-  assert.deepEqual(
-    exportedNames(
-      'export function Button() {}\nexport const useThing = 1;\nexport { A, B as C, type D };\nexport type E = 1;',
-    ).sort(),
-    ['A', 'Button', 'C', 'D', 'useThing'],
-  );
+test('a component runs the spec of its name, or of the name its alias gives', () => {
+  assert.deepEqual(specs('packages/ui/src/forms/Checkbox.tsx'), ['Checkbox']);
+  assert.deepEqual(specs('packages/ui/src/styles/Table.css'), ['Table']);
+  // A fixture is named in the plural; a file in a component's folder is about that component.
+  assert.deepEqual(specs('tests/fixture/Comboboxes.tsx'), ['Combobox']);
+  assert.deepEqual(specs('packages/ui/src/navigation/panel-dock/Header.tsx'), ['PanelDock']);
+  assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
+    'ThemeContrast',
+    'ThemePreference',
+  ]);
+  // Names match as written, whatever the file system: messages/table.ts is not about Table.
+  assert.deepEqual(specs('packages/ui/src/foundations/messages/table.ts'), ['Messages']);
 });
 
-test('the overrides name specs, pages and names that exist', () => {
-  for (const name of [
-    ...Object.keys(overrides.specSubjects),
-    ...overrides.smokeSpecs,
-    ...overrides.catalogueSpecs,
-    ...overrides.stylesheetSpecs,
-  ])
-    assert.ok(
-      index.specs.has(name) || overrides.planned.specs.includes(name),
-      `${name} is a spec in tests/browser`,
-    );
-  for (const page of overrides.smokePages) assert.ok(index.pages.has(page), `${page} is a page`);
-  for (const file of overrides.sharedLibrary)
-    assert.ok(
-      index.namesOfModule.has(file) || index.stylesheets.has(file),
-      `${file} is a library module`,
-    );
+test('a shared file runs the shared set, and an unknown file runs no spec', () => {
+  assert.deepEqual(specs('packages/ui/src/styles/Tokens.css'), [
+    'Colors',
+    'Contrast',
+    'Scale',
+    'ThemeContrast',
+  ]);
+  const { specs: none, unmatched } = specsFor(['packages/ui/src/internal/classNames.ts']);
+  assert.equal(none.size, 0);
+  assert.deepEqual(unmatched, ['packages/ui/src/internal/classNames.ts']);
 });
 
-test('fixtures map to the files they mount', () => {
-  assert.deepEqual(index.fixtureByName.get('menus'), ['tests/fixture/Menus.tsx']);
-  assert.deepEqual(index.fixtureByName.get('colors'), ['tests/fixture/Colors.tsx']);
-  assert.ok(index.fixtureByName.get('app-shell').includes('tests/fixture/AppShells.tsx'));
-  assert.ok(index.specs.get('Menu.spec.ts').fixtureFiles.has('tests/fixture/Menus.tsx'));
-  assert.ok(index.specs.get('Menu.spec.ts').primary.has('Menu'));
+test('a changed spec runs itself, and a changed helper the specs that import it', () => {
+  assert.deepEqual(specs('tests/browser/Tree.spec.ts'), ['Tree']);
+  assert.deepEqual(specs('tests/browser/TemplateChecks.ts'), ['Templates']);
+  // Every spec imports Servers.ts: verify covers it.
+  assert.deepEqual(specs('tests/browser/Servers.ts'), []);
 });
 
-test('a fixture stylesheet runs the specs of the fixtures that import it', () => {
-  // Frame.css styles the frame fixtures alone, which FrameNeeds.spec.ts opens.
-  assert.ok(
-    index.specs.get('FrameNeeds.spec.ts').fixtureFiles.has('tests/fixture/frame/Frame.css'),
-  );
-  const scope = select('tests/fixture/frame/Frame.css');
-  assert.deepEqual(fast(scope), ['FrameNeeds.spec.ts']);
-  assert.equal(scope.shared, false);
-  // It is no library stylesheet: no lint of library CSS and no stylesheet-wide specs.
-  assert.deepEqual(scope.css, []);
+test('the catalogue runs its specs and live development, with the builds they open', () => {
+  const scope = selectScope(['apps/catalogue/src/main.tsx']);
+  assert.deepEqual([...scope.specs.keys()].sort(), [
+    'Catalogue',
+    'CatalogueSearch',
+    'LiveDevelopment',
+  ]);
+  assert.equal(scope.build.site, true);
+  assert.equal(specNeeds('LiveDevelopment').live, true);
+  assert.equal(specNeeds('Hydration').library, true);
+  assert.equal(selectScope(['tests/browser/Hydration.spec.ts']).build.library, true);
 });
 
-test('a component stylesheet runs the specs about that component', () => {
-  const scope = select('packages/ui/src/styles/Menu.css');
-  assert.ok(fast(scope).includes('Menu.spec.ts'));
-  assert.ok(fast(scope).includes('Menubar.spec.ts'));
-  // Any style sheet: the cascade layers and the forced-colors states.
-  for (const spec of overrides.stylesheetSpecs) assert.ok(fast(scope).includes(spec));
-  assert.ok(!fast(scope).includes('Toast.spec.ts'));
-  assert.deepEqual(scope.css, ['packages/ui/src/styles/Menu.css']);
-  assert.equal(scope.contrast, false);
-  assert.equal(scope.typecheck, false);
-  assert.ok(scope.pages.has('components/menu'));
-});
-
-test('a stylesheet named for a component reaches it through internal modules', () => {
-  const scope = select('packages/ui/src/styles/TextField.css');
-  assert.ok(fast(scope).includes('Forms.spec.ts'));
-  assert.ok(fast(scope).includes('InputAffixes.spec.ts'));
-  assert.ok(scope.pages.has('components/text-field'));
-});
-
-test('a component module runs its specs, and the modules using it in the affected tier', () => {
-  const scope = select('packages/ui/src/navigation/Tree.tsx');
-  assert.deepEqual(fast(scope), ['Tree.spec.ts']);
-  assert.ok(affected(scope).length > 1);
+test('static checks cover the changed files, and configuration the whole of its check', () => {
+  const scope = selectScope(['packages/ui/src/forms/Checkbox.tsx', 'docs/setup.md']);
+  assert.deepEqual(scope.lint, ['packages/ui/src/forms/Checkbox.tsx']);
   assert.equal(scope.typecheck, true);
-  assert.equal(scope.build.library, true);
-});
-
-test('tokens run the contrast gate and the shared set, not every spec', () => {
-  const scope = select('packages/ui/tokens/base/color.json');
-  assert.equal(scope.contrast, true);
-  assert.equal(scope.shared, true);
-  assert.ok(scope.generated.has('tokens'));
-  assert.deepEqual(fast(scope), [...overrides.smokeSpecs].sort());
-  assert.ok(scope.pages.size <= overrides.smokePages.length);
-});
-
-test('a widely shared module runs the shared set', () => {
-  const scope = select('packages/ui/src/internal/classNames.ts');
-  assert.equal(scope.shared, true);
-  assert.deepEqual(fast(scope), [...overrides.smokeSpecs].sort());
-});
-
-test('a documentation page runs no browser spec in the fast tier', () => {
-  const scope = select('docs/components/button.md');
-  assert.deepEqual(fast(scope), []);
-  assert.ok(scope.pages.has('components/button'));
   assert.ok(scope.generated.has('docs'));
-  assert.ok(affected(scope).includes('Catalogue.spec.ts'));
-});
-
-test('specs, fixtures and helpers run the specs they belong to', () => {
-  assert.deepEqual(fast(select('tests/browser/Tree.spec.ts')), ['Tree.spec.ts']);
-  assert.deepEqual(fast(select('tests/fixture/Menus.tsx')), ['Menu.spec.ts']);
-  assert.equal(select('tests/fixture/App.tsx').shared, true);
-  const contrast = select('tests/contrast/Pairs.ts');
-  assert.equal(contrast.contrast, true);
-  assert.ok(fast(contrast).includes('ThemeContrast.spec.ts'));
-});
-
-test('the fast tier builds the catalogue its specs open; library-build and live specs wait', () => {
-  const example = select('apps/catalogue/src/examples/menu/Choices.tsx');
-  assert.ok(fast(example).includes('DenseContent.spec.ts'));
-  assert.ok(affected(example).includes('Catalogue.spec.ts'));
-  assert.equal(example.build.site, true);
-  const page = select('apps/catalogue/src/pages/Overview.tsx');
-  assert.ok(fast(page).includes('Catalogue.spec.ts'));
-  assert.deepEqual(page.fastBuild, { catalogue: true, site: true });
-  const hydration = select('tests/browser/Hydration.spec.ts');
-  assert.deepEqual(fast(hydration), []);
-  assert.ok(affected(hydration).includes('Hydration.spec.ts'));
-  assert.equal(hydration.build.library, true);
-  assert.deepEqual(fast(select('tests/browser/LiveDevelopment.spec.ts')), []);
-});
-
-test('catalogue parts run the specs that import them or are about them', () => {
-  assert.deepEqual(fast(select('apps/catalogue/src/search/DocumentationSearch.tsx')), [
-    'CatalogueSearch.spec.ts',
-  ]);
-  assert.deepEqual(fast(select('scripts/SearchIndex.mjs')), ['CatalogueSearch.spec.ts']);
-  assert.ok(
-    fast(select('apps/catalogue/src/navigation/Sidebar.tsx')).includes('CatalogueSearch.spec.ts'),
-  );
-  // A file no spec names falls back to the catalogue's shared specs.
-  assert.deepEqual(
-    fast(select('apps/catalogue/src/styles/Shell.css')),
-    [...overrides.catalogueSpecs].sort(),
-  );
-  for (const specs of Object.values(overrides.catalogueAreas))
-    for (const spec of specs)
-      assert.ok(
-        index.specs.has(spec) || overrides.planned.specs.includes(spec),
-        `${spec} is a spec`,
-      );
-  // The frame route and the template previews run the catalogue's specs, and the template spec
-  // once it exists.
-  for (const path of [
-    'apps/catalogue/src/main.tsx',
-    'apps/catalogue/src/template/TemplateFrame.tsx',
-  ])
-    assert.ok(fast(select(path)).includes('Catalogue.spec.ts'), path);
-  // They also scan every template's screens at their frame routes.
-  const withTemplate = { ...index, pages: new Set([...index.pages, 'templates/settings-page']) };
-  for (const path of [
-    'apps/catalogue/src/main.tsx',
-    'apps/catalogue/src/template/TemplateFrame.tsx',
-    'apps/catalogue/src/template/TemplatePreview.tsx',
-  ]) {
-    const scope = selectScope([path], withTemplate);
-    assert.ok(scope.pages.has('templates/settings-page'), path);
-    assert.ok(scope.a11y, path);
-  }
-});
-
-test('pattern and template pages, and their example files, map to their catalogue pages', () => {
-  const pageOf = (path) => pageOfFile(path, index.pages);
-  assert.equal(pageOf('docs/patterns/loading.md'), 'patterns/loading');
-  assert.equal(pageOf('apps/catalogue/src/examples/loading/SkeletonList.tsx'), 'patterns/loading');
-  const pages = new Set([...index.pages, 'templates/settings-page', 'foundations/content']);
-  assert.equal(pageOfFile('docs/templates/settings-page.md', pages), 'templates/settings-page');
-  assert.equal(
-    pageOfFile('apps/catalogue/src/examples/settings-page/SettingsPage.tsx', pages),
-    'templates/settings-page',
-  );
-  assert.equal(pageOfFile('docs/foundations/content.md', pages), 'foundations/content');
-  assert.equal(
-    pageOfFile('apps/catalogue/src/previews/foundations/Content.tsx', pages),
-    'foundations/content',
-  );
-  // A pattern page's change scans and screenshots it.
-  assert.ok(select('docs/patterns/loading.md').pages.has('patterns/loading'));
-});
-
-test('a template change checks only its screens; the app frame checks every template it frames', () => {
-  const withTemplates = {
-    ...index,
-    pages: new Set([
-      ...index.pages,
-      'templates/sign-in-page',
-      'templates/app-frame',
-      'templates/settings-page',
-    ]),
-    templateFrames: new Map([
-      ['sign-in-page', 'none'],
-      ['app-frame', 'none'],
-      ['settings-page', 'app'],
-    ]),
-  };
-  const scopeOf = (...paths) => selectScope(paths, withTemplates);
-  const signIn = scopeOf('apps/catalogue/src/examples/sign-in-page/SignInPage.tsx');
-  assert.ok(signIn.fastSpecs.has('Templates.spec.ts'));
-  assert.deepEqual(signIn.templates, ['sign-in-page']);
-  assert.deepEqual(scopeOf('docs/templates/sign-in-page.md').templates, ['sign-in-page']);
-  assert.deepEqual(scopeOf('apps/catalogue/src/examples/app-frame/AppFrame.tsx').templates, [
-    'app-frame',
-    'settings-page',
-  ]);
-  // The frame route itself checks every template.
-  assert.equal(scopeOf('apps/catalogue/src/template/TemplateFrame.tsx').templates, undefined);
-  assert.equal(
-    scopeOf(
-      'apps/catalogue/src/examples/sign-in-page/SignInPage.tsx',
-      'apps/catalogue/src/main.tsx',
-    ).templates,
-    undefined,
-  );
-  // A template's images scan and screenshot its page, not the shared set.
-  const images = scopeOf(
-    'tests/visual/snapshots/templates/sign-in-page/light-compact-phone-SignInPage.png',
-  );
-  assert.deepEqual([...images.pages.keys()], ['templates/sign-in-page']);
-  // The real index knows each template page's frame.
-  assert.equal(index.templateFrames.get('sign-in-page'), 'none');
-});
-
-test('the plugin and its marketplaces run the unit tests, no browser spec', () => {
-  for (const path of [
-    'plugin/.claude-plugin/plugin.json',
-    'plugin/skills/envui-use/SKILL.md',
-    '.claude-plugin/marketplace.json',
-    '.agents/plugins/marketplace.json',
-    'scripts/GeneratePlugin.mjs',
-  ]) {
-    const scope = select(path);
-    assert.equal(scope.unit, true, path);
-    assert.deepEqual(scope.unmapped, [], path);
-    assert.deepEqual(fast(scope), [], path);
-    assert.equal(scope.build.library, false, path);
-  }
-});
-
-test('lint and format take only changed files, and their configuration everything', () => {
-  const scope = select('scripts/Check.mjs', 'README.md');
-  assert.deepEqual(scope.lint, ['scripts/Check.mjs']);
-  assert.deepEqual(scope.format, ['scripts/Check.mjs', 'README.md']);
-  assert.equal(scope.whole.lint, false);
-  assert.equal(select('eslint.config.mjs').whole.lint, true);
-  assert.equal(select('stylelint-suppressions.json').whole.css, true);
-  // A deleted file is neither linted nor formatted.
-  assert.deepEqual(select('scripts/NoSuchScript.mjs').lint, []);
+  assert.equal(selectScope(['eslint.config.mjs']).whole.lint, true);
 });
 
 test('servers follow the specs that need them', () => {
-  assert.deepEqual(serversFor(['Tree.spec.ts'], index), ['fixture']);
-  assert.deepEqual(serversFor(['Catalogue.spec.ts'], index), ['catalogue']);
-  assert.deepEqual(serversFor(['Tree.spec.ts', 'Spacing.spec.ts'], index).sort(), [
-    'catalogue',
-    'fixture',
-  ]);
-  assert.deepEqual(serversFor([], index), []);
+  assert.deepEqual(serversFor(['Tree']), ['fixture']);
+  assert.deepEqual(serversFor(['Catalogue']), ['catalogue']);
+  assert.deepEqual(serversFor(['Tree', 'Catalogue']), ['catalogue', 'fixture']);
+  assert.deepEqual(serversFor([]), []);
 });
 
 test('unit tests that read the library build are kept apart', () => {
