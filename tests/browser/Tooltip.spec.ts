@@ -137,6 +137,42 @@ test.describe('Tooltip', () => {
     await expect(enabled).not.toHaveClass(/env-tooltip-disabled-target/);
   });
 
+  test('a disabled control named by mixed content keeps its name, with no render loop', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    // The stand-in hides the control it names; the name, read from the hidden control, stays.
+    const archiveAll = page.getByRole('button', { name: 'Archive all B', exact: true });
+    await expect(archiveAll).toHaveClass('env-tooltip-disabled-target');
+    await expect(archiveAll).toHaveAttribute('aria-disabled', 'true');
+    const mutations = await archiveAll.evaluate(
+      (wrapper) =>
+        new Promise<number>((resolve) => {
+          let count = 0;
+          const observer = new MutationObserver((records) => (count += records.length));
+          observer.observe(wrapper, { attributes: true, subtree: true, childList: true });
+          setTimeout(() => {
+            observer.disconnect();
+            resolve(count);
+          }, 500);
+        }),
+    );
+    expect(mutations).toBeLessThan(10);
+    await archiveAll.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('Nothing to archive');
+    await expect(archiveAll).toHaveAccessibleDescription('Nothing to archive');
+  });
+
+  test('a hidden label that aria-labelledby references directly names the control', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const rename = page.getByRole('button', { name: 'Rename file', exact: true });
+    await rename.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Gives the file a new name');
+    await expect(rename).toHaveAccessibleDescription('Gives the file a new name');
+  });
+
   test('a disabled control keeps valid ARIA: a toggle keeps its state, a checkbox its own role', async ({
     page,
   }) => {

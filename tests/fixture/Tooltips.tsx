@@ -77,6 +77,21 @@ export function TooltipsFixture() {
           Export <span aria-hidden="true">↗</span>
         </Button>
       </Tooltip>
+      {/* Disabled and named by mixed content alone: its stand-in hides it, yet keeps its name. */}
+      <Tooltip content="Nothing to archive" delay={0}>
+        <Button variant="secondary" disabled>
+          Archive all <Kbd>B</Kbd>
+        </Button>
+      </Tooltip>
+      {/* Named by a hidden label that aria-labelledby references directly, which still names. */}
+      <span id="fixture-rename-label" hidden>
+        Rename file
+      </span>
+      <Tooltip content="Gives the file a new name" delay={0}>
+        <Button variant="secondary" aria-labelledby="fixture-rename-label">
+          <Archive />
+        </Button>
+      </Tooltip>
       {/* Its name and tooltip turn to Copied together, with C, while the tooltip is open. */}
       <Tooltip content={copied ? 'Copied' : 'Copy link'} delay={0}>
         <IconButton
