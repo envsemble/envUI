@@ -118,6 +118,26 @@ test.describe('Drawer', () => {
     }
   });
 
+  test('opened by touch, it focuses the drawer, not a field inside; by keyboard, the field', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ hasTouch: true });
+    const page = await context.newPage();
+    await page.goto(drawers);
+    // Its first element that takes Tab is a field; a field focused by touch opens the keyboard.
+    await page.getByRole('button', { name: 'Open search' }).tap();
+    const drawer = page.getByRole('dialog', { name: 'Search' });
+    await expect(drawer).toBeFocused();
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).not.toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
+    const trigger = page.getByRole('button', { name: 'Open search' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).toBeFocused();
+    await context.close();
+  });
+
   test('a drawer the application opens reports why it closes and sends focus where it says', async ({
     page,
   }) => {
