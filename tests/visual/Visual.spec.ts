@@ -76,8 +76,8 @@ interface OpenList {
   /** A modal palette covers the page, so its capture leaves the trigger out. */
   withTrigger: boolean;
   /**
-   * Stops the page's timers once the popups have opened, so toasts that close after a few seconds
-   * stay for the capture.
+   * Stops the page's timers before the popups open and runs only the frames they need to enter,
+   * so toasts that close after a few seconds stay for the capture.
    */
   pauseTimers?: boolean;
 }
@@ -331,12 +331,24 @@ async function capture(locator: Locator, path: string[]) {
 }
 
 /** Waits until open popups have finished growing in, so their boxes have their final size. */
-async function settlePopups(page: Page) {
-  await expect(page.locator('[data-starting-style]')).toHaveCount(0);
-  // The transition starts in the frame after the starting style is removed.
-  await page.evaluate(
-    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-  );
+async function settlePopups(page: Page, paused = false) {
+  if (paused) {
+    // A stopped clock runs no frames, so it runs a frame at a time until the popups have entered:
+    // a fraction of a second against the seconds a toast stays.
+    await expect
+      .poll(async () => {
+        await page.clock.runFor(16);
+        return page.locator('[data-starting-style]').count();
+      })
+      .toBe(0);
+    await page.clock.runFor(32);
+  } else {
+    await expect(page.locator('[data-starting-style]')).toHaveCount(0);
+    // The transition starts in the frame after the starting style is removed.
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
+  }
   await finishAnimations(page);
 }
 
@@ -567,7 +579,7 @@ test.describe('open lists', () => {
   for (const list of listsTaken) {
     for (const theme of allThemes) {
       test(`${list.name} (${theme.name})`, async ({ page }) => {
-        // Timers keep running until the popups are open, so the page and its animations settle.
+        // Timers keep running until just before the popups open, so the page and its animations settle.
         if (list.pauseTimers) await page.clock.install({ time: now });
         else await page.clock.setFixedTime(now);
         await page.goto(`${catalogueUrl}/#/${list.route}`);
@@ -582,6 +594,10 @@ test.describe('open lists', () => {
           element.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }),
         );
         await page.mouse.move(0, 0);
+        // Toasts start their timers as they show, so the clock stops before they open. Nothing
+        // waits on a timer yet, so the second it skips to stop changes nothing.
+        if (list.pauseTimers)
+          await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
         if (list.open) await list.open(page, trigger);
         else {
           await trigger.focus();
@@ -590,8 +606,7 @@ test.describe('open lists', () => {
         const popup = list.popup(page);
         await expect(popup).toHaveCount(list.count ?? 1);
         for (const each of await popup.all()) await expect(each).toBeVisible();
-        await settlePopups(page);
-        if (list.pauseTimers) await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1));
+        await settlePopups(page, list.pauseTimers);
         if (list.highlighted) {
           // Options pass data-highlighted on to their parts, such as a radio item's indicator.
           const highlighted = popup.locator(
