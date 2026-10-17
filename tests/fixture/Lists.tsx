@@ -49,9 +49,53 @@ function Slides({ testId }: { testId: string }) {
   );
 }
 
+/** A row component, as an application writes one, which passes the props it doesn't use on. */
+function SlideRow({ slide, ...props }: { slide: string } & Omit<List.ItemProps, 'label'>) {
+  return <List.Item {...props} label={slide} description="Slide" />;
+}
+
+/** A row component that drops the props it doesn't use, so its row gets no handle. */
+function BareSlideRow({ slide }: { slide: string }) {
+  return (
+    <List.Item
+      interactive
+      label={
+        <a href={`#${slide.toLowerCase()}`} data-row-target>
+          {slide}
+        </a>
+      }
+    />
+  );
+}
+
+/** Slides in row components, which pass their props on, or with `bare`, drop them. */
+function WrappedSlides({ bare = false }: { bare?: boolean }) {
+  const [items, setItems] = useState(slides);
+  const testId = bare ? 'bare-slides' : 'wrapped-slides';
+  return (
+    <Stack gap={2}>
+      <List.Root
+        aria-label={`Slides ${testId}`}
+        data-testid={testId}
+        onReorder={(from, to) => setItems((list) => moved(list, from, to))}
+      >
+        {items.map((slide) =>
+          bare ? (
+            <BareSlideRow key={slide} slide={slide} />
+          ) : (
+            <SlideRow key={slide} slide={slide} />
+          ),
+        )}
+      </List.Root>
+      <output data-testid={`${testId}-order`}>{items.join(',')}</output>
+    </Stack>
+  );
+}
+
 /**
  * Lists, mounted with ?fixture=lists: reorderable slides with a current one, the same in
- * right-to-left text, people with avatars in the start slot, and rows chosen by checkboxes.
+ * right-to-left text, slides in a row component, people with avatars in the start slot, and rows
+ * chosen by checkboxes. With &bare-rows, slides in a row component that drops List.Root's props.
  */
 export function ListsFixture() {
   const [checked, setChecked] = useState<string[]>(['Sam Lee']);
@@ -63,6 +107,8 @@ export function ListsFixture() {
           <Slides testId="slides-rtl" />
         </div>
       </EnvUIProvider>
+      <WrappedSlides />
+      {new URLSearchParams(location.search).has('bare-rows') && <WrappedSlides bare />}
       <List.Root aria-label="People">
         {['Alex Morgan', 'Sam Lee'].map((name) => (
           <List.Item

@@ -128,11 +128,18 @@ export function ConfirmDialog({
     onOpenChange?.(next, details);
   };
   // Set before onConfirm runs, so a second press in the same tick or during the closing animation
-  // doesn't run the action again; cleared when it fails and when the dialog opens again.
+  // doesn't run the action again; cleared when it fails, when the dialog opens again, and when it
+  // succeeds but the application keeps a controlled dialog open.
   const running = useRef(false);
   useEffect(() => {
     if (isOpen) running.current = false;
   }, [isOpen]);
+  const [confirmed, setConfirmed] = useState(0);
+  useEffect(() => {
+    if (confirmed > 0 && isOpen) running.current = false;
+    // Only after a confirmation: the render it closed the dialog in, or that kept it open.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmed]);
   const run = async () => {
     if (!isOpen || running.current) return;
     running.current = true;
@@ -158,6 +165,7 @@ export function ConfirmDialog({
       }
     }
     change(false, { reason: 'imperative-action' });
+    setConfirmed((count) => count + 1);
   };
   return (
     <BaseAlertDialog.Root
