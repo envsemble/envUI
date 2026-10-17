@@ -300,6 +300,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/notices(?=\/|$)/, 'components/alert')
     .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
     .replace(/^components\/rows(?=\/|$)/, 'components/list')
+    .replace(/^components\/split-view(?=\/|$)/, 'components/split-pane')
     .replace(/^components\/navigation(?=\/|$)/, 'components/nav-list')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
