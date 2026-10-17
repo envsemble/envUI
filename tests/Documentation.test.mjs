@@ -758,7 +758,35 @@ test('pattern and template pages are validated as their kind', async () => {
       source.replace('(patterns/settings.md)', '(patterns/settings.md) — Settings.'),
       /repeats a summary/,
     );
+    // Each page's folder matches the index section that lists it.
+    await rejects(
+      index,
+      source.replace('## Templates', '## Foundations'),
+      /templates\/sign-in-page\.md is a template page, from docs\/templates, but the index lists it under "## Foundations"; list it under "## Templates"/,
+    );
+    await rejects(
+      index,
+      source.replace('## Patterns', '## Templates'),
+      /patterns\/settings\.md is a pattern page.*under "## Templates"; list it under "## Patterns"/,
+    );
+    await rejects(
+      index,
+      source.replace('## Forms & selection', '## Patterns'),
+      /components\/switch\.md is a component page.*under "## Patterns"; move it to docs\/patterns/,
+    );
+    await rejects(
+      index,
+      source.replace('## Patterns', '## Actions'),
+      /patterns\/settings\.md is a pattern page.*under "## Actions"; list it under "## Patterns"/,
+    );
     await writeFile(index, source);
+    // A fence that names a file but doesn't parse is an error, not a code block.
+    await rejects(
+      template,
+      t + templateBody.replace('frame=app', 'layout=app'),
+      /the fence `tsx template=SignedOut layout=app` is malformed/,
+    );
+    await writeFile(template, templateFrontmatter + templateBody);
     assert.doesNotThrow(read);
   });
 });

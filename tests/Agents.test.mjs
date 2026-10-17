@@ -180,7 +180,7 @@ test('the manifest has every component page, export, example and token', () => {
   assert.ok(loading.composes.includes('Skeleton') && loading.examples.length >= 3);
   for (const page of manifest.patterns)
     assert.ok(manifest.intents.includes(page.intent), page.name);
-  assert.deepEqual(manifest.templates, []);
+  for (const page of manifest.templates) assert.ok(page.frame && page.files.length > 0, page.name);
   // A component page leads to the patterns and templates that compose it.
   assert.ok(
     manifest.components
@@ -1156,6 +1156,11 @@ test('the pattern and template tools answer from the manifest', () => {
   assert.equal(file.name, 'StandInPage');
   assert.equal(file.frame, 'app');
   assert.equal(file.source, readFileSync(join(packageRoot, screen.file), 'utf8'));
+  assert.equal(file.requested, undefined);
+  assert.equal(
+    call('get_template', { name: 'placeholder screen', file: 'StandInPage' }).value.requested,
+    'placeholder screen',
+  );
   assert.match(file.note, /inside AppShell\.Main\. Start the frame from get_template app-frame/);
   assert.match(
     call('get_template', { name: 'stand-in-page', file: 'Other' }).error,
@@ -1183,9 +1188,14 @@ test('the pattern and template tools answer from the manifest', () => {
   assert.ok(planned.next.some((step) => /Start from get_template stand-in-page/.test(step)));
 });
 
+// Runs once the settings-page template and the settings pattern are written.
+const settingsMissing = [
+  !manifest.templates.some((item) => item.name === 'settings-page') && 'settings-page template',
+  !manifest.patterns.some((item) => item.name === 'settings') && 'settings pattern',
+].filter(Boolean);
 test(
   'plan leads a settings page to its template and pattern',
-  { todo: 'until the settings pattern and template land' },
+  { skip: settingsMissing.length > 0 && `${settingsMissing.join(' and ')} not written yet` },
   () => {
     const result = plan(manifest, 'a settings page with notification toggles');
     assert.ok(result.templates.some((item) => item.name === 'settings-page'));

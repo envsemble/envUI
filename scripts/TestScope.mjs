@@ -136,6 +136,15 @@ export const overrides = {
     'apps/catalogue/src/layout/': ['Catalogue.spec.ts', 'Spacing.spec.ts'],
     'apps/catalogue/site/': ['Catalogue.spec.ts', 'CatalogueSearch.spec.ts'],
   },
+  /**
+   * The frame route and the template previews: a change to them scans every template's screens
+   * alone at their frame routes, as the accessibility scan does for a template page.
+   */
+  frameFiles: [
+    'apps/catalogue/src/template/TemplateFrame',
+    'apps/catalogue/src/template/TemplatePreview',
+    'apps/catalogue/src/main.tsx',
+  ],
   /** Catalogue pages scanned and screenshotted for a shared change. */
   smokePages: [
     'foundations/colors',
@@ -870,6 +879,9 @@ export function selectScope(paths, index) {
         if (!spec.startsWith('LiveDevelopment'))
           want(scope.affectedSpecs, spec, `catalogue (${path})`);
       for (const page of overrides.smokePages) want(scope.pages, page, `catalogue (${path})`);
+      if (overrides.frameFiles.some((file) => path.startsWith(file)))
+        for (const page of [...index.pages].filter((name) => name.startsWith('templates/')))
+          want(scope.pages, page, `template frame (${path})`);
       continue;
     }
     if (

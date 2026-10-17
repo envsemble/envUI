@@ -256,6 +256,17 @@ test('catalogue parts run the specs that import them or are about them', () => {
     'apps/catalogue/src/template/TemplateFrame.tsx',
   ])
     assert.ok(fast(select(path)).includes('Catalogue.spec.ts'), path);
+  // They also scan every template's screens at their frame routes.
+  const withTemplate = { ...index, pages: new Set([...index.pages, 'templates/settings-page']) };
+  for (const path of [
+    'apps/catalogue/src/main.tsx',
+    'apps/catalogue/src/template/TemplateFrame.tsx',
+    'apps/catalogue/src/template/TemplatePreview.tsx',
+  ]) {
+    const scope = selectScope([path], withTemplate);
+    assert.ok(scope.pages.has('templates/settings-page'), path);
+    assert.ok(scope.a11y, path);
+  }
 });
 
 test('pattern and template pages, and their example files, map to their catalogue pages', () => {
