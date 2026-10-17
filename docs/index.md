@@ -38,6 +38,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Button](components/button.md)
 - [CloseButton](components/close-button.md)
+- [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
 
@@ -68,6 +69,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [PanelDock](components/panel-dock.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [Pagination](components/pagination.md)
+- [AccountMenu](components/account-menu.md)
 
 ## Content & guidance
 
@@ -95,6 +97,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)
 - [Drawer](components/drawer.md)
+- [ConfirmDialog](components/confirm-dialog.md)
 - [CommandPalette](components/command-palette.md)
 - [Menu](components/menu.md)
 - [Menubar](components/menubar.md)

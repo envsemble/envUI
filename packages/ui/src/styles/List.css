@@ -39,6 +39,73 @@
   min-inline-size: 0;
   max-inline-size: 100%;
 }
+/* A row with content before its label, such as a drag handle, an avatar or a checkbox: the start
+   slot, then the text, which takes the room left, then the action. */
+.env-list > .env-list-item[data-start] {
+  justify-content: flex-start;
+}
+.env-list > .env-list-item[data-start] > .env-list-item-content {
+  flex: 1 1 0;
+}
+/* The start slot stays above an interactive row's target, which covers the row, so its handle,
+   checkbox or other control takes its own presses. */
+.env-list-item-start {
+  position: relative;
+  z-index: var(--env-z-raised);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+/* The handle, ahead of the label, reaches in toward the row's corner rather than the text. */
+.env-list-item-start > .env-list-item-handle {
+  margin-inline-start: calc(-1 * var(--env-space-3));
+  cursor: grab;
+  touch-action: none;
+}
+.env-list[data-reordering] .env-list-item-handle {
+  cursor: grabbing;
+}
+/* The current row, and a row whose checkbox in its start slot is checked, take the selected fill. */
+.env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
+  --env-list-item-fill: var(--env-color-bg-selected);
+  --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
+  --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
+}
+/* The current row's target, a link or button that names the row, reads in the row's text color
+   on the selected fill, where a link's color would lose its contrast. */
+.env-list > .env-list-item[data-selected][data-interactive] [data-row-target] {
+  color: inherit;
+}
+/* A moving row is raised above the others, which make room for it. */
+.env-list[data-reordering] > .env-list-item {
+  position: relative;
+  transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-list > .env-list-item[data-moving] {
+  z-index: var(--env-z-raised);
+  box-shadow: var(--env-elevation-2-shadow);
+}
+/* The row under the pointer follows it without delay. */
+.env-list > .env-list-item[data-moving='pointer'] {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-list[data-reordering] > .env-list-item {
+    transition: none;
+  }
+}
+/* The reorder announcements: read, not shown. */
+.env-list-announcer {
+  --env-list-announcer-size: 0.0625rem;
+  position: absolute;
+  inline-size: var(--env-list-announcer-size);
+  block-size: var(--env-list-announcer-size);
+  margin: calc(-1 * var(--env-list-announcer-size));
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .env-list small {
   display: block;
   color: var(--env-color-fg-muted);
@@ -86,4 +153,17 @@
 }
 .env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list + .env-list {
   margin-top: var(--env-space-3);
+}
+/* Forced colors: the system paints no fills or shadows, so the current or checked row takes an
+   outline in the system's selection color, as a selected table row does, and a moving row one in
+   the text color. The row keeps the system's colors for the controls inside it. */
+@media (forced-colors: active) {
+  .env-list > .env-list-item:is([data-selected], :has(> .env-list-item-start input:checked)) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  .env-list > .env-list-item[data-moving] {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }

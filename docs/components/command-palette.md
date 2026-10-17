@@ -28,6 +28,7 @@ avoidWhen:
   - text: A task with fields and a decision.
     use: Dialog
 related:
+  - search-trigger
   - dialog
   - menu
   - combobox
@@ -43,6 +44,8 @@ components:
 ## Overview
 
 A command palette is a modal dialog near the top of the window: a search field over a list of options, built on Base UI's autocomplete. People type, move the highlight with the arrow keys and choose with <kbd>Enter</kbd> or a click, while focus stays in the field. The application owns everything else: the shortcut that opens it, the items, how they are filtered and ranked, and what choosing one does.
+
+Open it from a [SearchTrigger](../components/search-trigger.md): the trigger shows where search is, shows its shortcut, ⌘K or Ctrl+K, and presses itself when the shortcut is pressed, so its `onClick` is the one place that opens the palette. Closing the palette returns focus to the trigger.
 
 ```tsx example=GoToDocument
 
@@ -137,5 +140,5 @@ Commands with shortcuts as Kbd keys and a Badge as end content, under one group,
 
 ## Changelog
 
-- **1.0.0**: Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
+- **1.0.0**: Opens from SearchTrigger, which handles the shortcut. Rebuilt on Base UI's autocomplete: `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction` for `query`, `onQueryChange`, `onSelect` and `closeOnSelect`, and `CommandPaletteActionOptions`; items take `description`, `end` and `disabled`; options are list rows; the number of results is announced; `className`, `style`, `ref` and data attributes reach the surface.
 - **0.5.0**: CommandPalette, with grouped options, keyboard highlight, modifier selection and key `hints` shown as Kbd keys.

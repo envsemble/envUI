@@ -86,17 +86,7 @@ export const overrides = {
    */
   planned: {
     specs: ['FrameNeeds.spec.ts'],
-    names: [
-      'AccountMenu',
-      'ConfirmDialog',
-      'DescriptionList',
-      'ListDetail',
-      'Page',
-      'PageHeader',
-      'SearchTrigger',
-      'Sidebar',
-      'SplitPane',
-    ],
+    names: ['DescriptionList', 'ListDetail', 'Page', 'PageHeader', 'Sidebar', 'SplitPane'],
   },
   /**
    * Library files that most components depend on. A change to one runs the shared set rather than
@@ -811,6 +801,8 @@ export function selectScope(paths, index) {
       continue;
     }
 
+    // The setup page's router recipes are type-checked by a unit test, tests/RouterRecipes.test.mjs.
+    if (path === 'docs/setup.md') scope.unit = true;
     // Documentation and catalogue pages.
     const page = pageOfFile(path, index.pages);
     if (page) {

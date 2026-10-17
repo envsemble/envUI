@@ -122,7 +122,7 @@ test('an export on a page without a Props view leads to the section that shows i
   assert.deepEqual(place('prop:LinkProvider.component'), {
     page: 'setup',
     view: undefined,
-    section: 'router-links',
+    section: 'connect-your-router',
   });
   assert.deepEqual(place('export:useTheme'), {
     page: 'colors',

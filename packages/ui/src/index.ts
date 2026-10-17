@@ -13,6 +13,7 @@ export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
+export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
 export * as NavList from './navigation/NavList.js';
 export * as Pager from './navigation/Pager.js';
@@ -41,6 +42,7 @@ export * from './forms/DatePicker.js';
 export * from './forms/Slider.js';
 export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
+export * from './feedback/ConfirmDialog.js';
 export * from './feedback/Drawer.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Alert.js';
@@ -90,10 +92,12 @@ export {
   type ThemeBootstrapOptions,
   type ThemePreference,
 } from './foundations/ThemeBootstrap.js';
+export * from './foundations/ThemeRadioGroup.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
+export * as AccountMenu from './navigation/AccountMenu.js';
 export * from './navigation/AppShell.js';
 export * from './navigation/TitleBar.js';
 export * from './navigation/WindowFrame.js';

@@ -218,7 +218,7 @@
       "category": "Layout & surfaces",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.",
+      "summary": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.",
       "aliases": [
         "GroupedRows",
         "Row",
@@ -228,16 +228,22 @@
         "settings list",
         "rows",
         "item list",
-        "list view"
+        "list view",
+        "reorderable list",
+        "sortable list",
+        "drag and drop list",
+        "selectable rows"
       ],
       "useWhen": [
         "Related items with a title, a short detail and an action each, such as the sections of a settings page.",
         "Items that each open a page or a document, such as recent plans (`interactive`).",
-        "A short set of results or members under a search field."
+        "A short set of results or members under a search field.",
+        "The list beside an item's details, with its current row marked (`selected`).",
+        "Items people put in their own order, such as the slides of a deck or an agenda (`onReorder`)."
       ],
       "avoidWhen": [
         {
-          "text": "Data compared across columns, or rows people sort and select.",
+          "text": "Data compared across columns, or rows people sort by a value.",
           "use": "Table"
         },
         {
@@ -274,7 +280,7 @@
         {
           "name": "SettingsRows",
           "title": "List",
-          "description": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.",
+          "description": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.",
           "file": "docs/examples/list/SettingsRows.tsx"
         },
         {
@@ -288,6 +294,24 @@
           "title": "Rows on a pane",
           "description": "A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.",
           "file": "docs/examples/list/OnAPane.tsx"
+        },
+        {
+          "name": "CurrentRow",
+          "title": "The current row",
+          "description": "An avatar leads each row, and choosing a person marks their row as the current one, as for a list beside the person's details.",
+          "file": "docs/examples/list/CurrentRow.tsx"
+        },
+        {
+          "name": "CheckedRows",
+          "title": "Checked rows",
+          "description": "A checkbox in the start slot chooses rows for an action on several at once, and a checked row takes the selected fill.",
+          "file": "docs/examples/list/CheckedRows.tsx"
+        },
+        {
+          "name": "Reorder",
+          "title": "Put in order",
+          "description": "With `onReorder`, each row gets a handle: drag it, or press <kbd>Space</kbd> on it and move the row with the arrow keys. The list reports the move, and the application moves the item.",
+          "file": "docs/examples/list/Reorder.tsx"
         },
         {
           "name": "ExtraContent",
@@ -589,6 +613,61 @@
           "title": "Translated name",
           "description": "An EnvUIProvider's `messages` name every CloseButton inside it.",
           "file": "docs/examples/close-button/TranslatedLabel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "SearchTrigger",
+      "page": "search-trigger",
+      "doc": "docs/components/search-trigger.md",
+      "category": "Actions",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
+      "aliases": [
+        "SearchButton",
+        "quick open button",
+        "search button",
+        "command palette button",
+        "search shortcut"
+      ],
+      "useWhen": [
+        "Search or a command palette opens from a button at the top of a sidebar or in a header.",
+        "The application opens search with a keyboard shortcut and shows it where people look for search.",
+        "A narrow header or a sidebar showing icons only needs search as an icon."
+      ],
+      "avoidWhen": [
+        {
+          "text": "People type the search on the page itself and the results filter in place.",
+          "use": "SearchField"
+        },
+        {
+          "text": "The search itself, with its field and results.",
+          "use": "CommandPalette"
+        }
+      ],
+      "related": [
+        "command-palette",
+        "text-field",
+        "kbd",
+        "button",
+        "app-shell"
+      ],
+      "exports": [
+        "SearchTrigger"
+      ],
+      "examples": [
+        {
+          "name": "InSidebar",
+          "title": "SearchTrigger",
+          "description": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
+          "file": "docs/examples/search-trigger/InSidebar.tsx"
+        },
+        {
+          "name": "IconOnly",
+          "title": "Icon only",
+          "description": "In a narrow header, the trigger shows only its icon, with the label and the keys in its tooltip. It doesn't listen, since the sidebar's trigger already opens the same search.",
+          "file": "docs/examples/search-trigger/IconOnly.tsx"
         }
       ]
     },
@@ -2572,6 +2651,68 @@
       ]
     },
     {
+      "name": "AccountMenu",
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md",
+      "category": "Navigation",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.",
+      "aliases": [
+        "account menu",
+        "user menu",
+        "profile menu",
+        "avatar menu",
+        "sign out menu"
+      ],
+      "useWhen": [
+        "The signed-in person's settings, theme and sign out, behind their avatar in a header or their name at the foot of a sidebar.",
+        "The theme choice, System, Light or Dark, in the account's menu rather than a toggle of its own.",
+        "Switching organizations from the account's menu, where the frame has no switcher of its own."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A switch between organizations at the top of a sidebar, on its own.",
+          "use": "OrganizationSwitcher"
+        },
+        {
+          "text": "Switching between the light and dark themes with one button.",
+          "use": "ThemeToggle"
+        },
+        {
+          "text": "Actions on an item or a view rather than on the account.",
+          "use": "Menu"
+        }
+      ],
+      "related": [
+        "menu",
+        "avatar",
+        "app-shell",
+        "nav-list",
+        "setup"
+      ],
+      "exports": [
+        "AccountMenu",
+        "AccountMenu.Root",
+        "AccountMenu.ThemeSubmenu",
+        "AccountMenu.OrganizationSubmenu"
+      ],
+      "examples": [
+        {
+          "name": "ThemeAndOrganizations",
+          "title": "AccountMenu",
+          "description": "The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.",
+          "file": "docs/examples/account-menu/ThemeAndOrganizations.tsx"
+        },
+        {
+          "name": "RowTrigger",
+          "title": "A row at the foot of a sidebar",
+          "description": "The row shows the name and the e-mail address, and opens the menu above it. The theme submenu here sets a theme the application stores itself, and closes the menu after the choice.",
+          "file": "docs/examples/account-menu/RowTrigger.tsx"
+        }
+      ]
+    },
+    {
       "name": "RichText",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md",
@@ -4261,8 +4402,7 @@
       "aliases": [
         "modal",
         "modal dialog",
-        "popup",
-        "confirm dialog"
+        "popup"
       ],
       "useWhen": [
         "People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.",
@@ -4274,6 +4414,10 @@
         {
           "text": "Confirming one action in place that cannot be undone, such as removing a member from a list.",
           "use": "ConfirmButton"
+        },
+        {
+          "text": "A question before one action, with Cancel and a button that names the consequence.",
+          "use": "ConfirmDialog"
         },
         {
           "text": "Details or a few fields beside the control that opens them.",
@@ -4439,6 +4583,65 @@
       ]
     },
     {
+      "name": "ConfirmDialog",
+      "page": "confirm-dialog",
+      "doc": "docs/components/confirm-dialog.md",
+      "category": "Feedback & overlays",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.",
+      "aliases": [
+        "ConfirmationDialog",
+        "confirm dialog",
+        "confirm delete",
+        "alert dialog",
+        "are you sure",
+        "delete confirmation"
+      ],
+      "useWhen": [
+        "An action deletes or ends something and people should read what it affects first, such as deleting a project.",
+        "An action started from a menu item, which can't confirm in place, needs a confirmation.",
+        "The action takes a moment and can fail, and the confirmation should stay until it has finished."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Confirming a low-stakes action in place with a second press, such as removing a row.",
+          "use": "ConfirmButton"
+        },
+        {
+          "text": "A task with fields, a choice between several actions or content to review.",
+          "use": "Dialog"
+        },
+        {
+          "text": "Undoing an action after it ran, such as an archived item.",
+          "use": "Toast"
+        }
+      ],
+      "related": [
+        "dialog",
+        "menu",
+        "alert",
+        "button"
+      ],
+      "exports": [
+        "ConfirmDialog"
+      ],
+      "examples": [
+        {
+          "name": "DeleteProject",
+          "title": "ConfirmDialog",
+          "description": "An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.",
+          "file": "docs/examples/confirm-dialog/DeleteProject.tsx"
+        },
+        {
+          "name": "AsyncWithError",
+          "title": "An action that can fail",
+          "description": "The action takes a moment, and the dialog stays pending until it ends. The first attempt fails, and the dialog stays open with the error; the second succeeds and closes it.",
+          "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
+        }
+      ]
+    },
+    {
       "name": "CommandPalette",
       "page": "command-palette",
       "doc": "docs/components/command-palette.md",
@@ -4481,6 +4684,7 @@
         }
       ],
       "related": [
+        "search-trigger",
         "dialog",
         "menu",
         "combobox",
@@ -4526,7 +4730,8 @@
         "MenuItem",
         "OrganizationMenu",
         "organization switcher",
-        "account menu"
+        "theme menu",
+        "theme choice"
       ],
       "useWhen": [
         "A short list of actions behind one control, such as a row's or a toolbar's More actions.",
@@ -4536,6 +4741,10 @@
         "Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher)."
       ],
       "avoidWhen": [
+        {
+          "text": "The signed-in person's menu, with its header and theme submenu.",
+          "use": "AccountMenu"
+        },
         {
           "text": "Choosing a value for a form field.",
           "use": "Select"
@@ -4589,7 +4798,8 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem",
         "ContextMenu",
-        "OrganizationSwitcher"
+        "OrganizationSwitcher",
+        "ThemeRadioGroup"
       ],
       "examples": [
         {
@@ -5363,6 +5573,207 @@
   ],
   "templates": [],
   "exports": {
+    "AccountMenu": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "AccountMenu.Root",
+        "AccountMenu.ThemeSubmenu",
+        "AccountMenu.OrganizationSubmenu"
+      ],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.OrganizationSubmenu": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A submenu that switches between the person's organizations, with OrganizationSwitcher's rows, for an application whose account menu holds the switch. OrganizationSwitcher stays the control for a switch of its own, such as at the top of a sidebar.",
+      "props": [
+        {
+          "name": "items",
+          "type": "readonly OrganizationSwitcherItem[]",
+          "required": true,
+          "description": "Organizations the signed-in person belongs to, in display order."
+        },
+        {
+          "name": "value",
+          "type": "string | null",
+          "required": true,
+          "description": "The active organization's id, or null before one is chosen; its name shows under the row's label."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": true,
+          "description": "Called with the id of the organization chosen, unless it is the active one."
+        },
+        {
+          "name": "onCreate",
+          "type": "() => void",
+          "required": false,
+          "description": "Offers creating an organization after the organizations."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Organization', or EnvUIProvider's messages.accountMenu.organization",
+          "description": "The label of the row that opens the submenu."
+        },
+        {
+          "name": "createLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
+          "description": "Label of the create action."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the Groups3 icon",
+          "description": "A decorative icon before the label."
+        }
+      ],
+      "native": [],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The signed-in person's menu: their avatar, or a row with their name, opens a Menu with a header that shows who is signed in, then the application's items, such as account settings, the theme and sign out.",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The signed-in person's name, on the trigger row, in the avatar's tooltip and in the menu's header."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A second line under the name, such as the e-mail address, on the trigger row and in the header."
+        },
+        {
+          "name": "avatarSrc",
+          "type": "string",
+          "required": false,
+          "description": "The person's picture; the default person picture shows without one."
+        },
+        {
+          "name": "trigger",
+          "type": "'auto' | 'avatar' | 'row'",
+          "required": false,
+          "default": "'auto'",
+          "description": "What opens the menu: `row`, the avatar with the name and description, for the foot of a sidebar; `avatar`, the avatar alone, for a header or a sidebar showing icons only; `auto`, a row in an expanded sidebar and the avatar elsewhere."
+        },
+        {
+          "name": "side",
+          "type": "Menu.RootProps['side']",
+          "required": false,
+          "default": "'top' for a row, 'inline-end' for the avatar in a sidebar, else 'bottom'",
+          "description": "The side of the trigger the menu opens on; it flips where the window has no room."
+        },
+        {
+          "name": "align",
+          "type": "Menu.RootProps['align']",
+          "required": false,
+          "default": "'start' for a row, else 'end'",
+          "description": "How the menu lines up with the trigger along that side."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Account', or EnvUIProvider's messages.accountMenu.label",
+          "description": "Accessible name of the menu."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The menu's items after its header: Menu.Item, Menu.Separator, AccountMenu.ThemeSubmenu, AccountMenu.OrganizationSubmenu and the other Menu parts."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "Class of the menu popup. ref, style, data attributes and the other native props go to the popup too; the trigger is the element you pass."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the menu is open, for a controlled menu; leave it out and the menu opens and closes itself."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether an uncontrolled menu starts open."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Called with the new visibility as the menu opens or closes."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.ThemeSubmenu": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A submenu with the theme choice, System, Light and Dark: a ThemeRadioGroup, which stores the choice through the nearest ThemePreferenceProvider unless value and onValueChange are given.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Theme', or EnvUIProvider's messages.accountMenu.theme",
+          "description": "The label of the row that opens the submenu."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the Palette icon",
+          "description": "A decorative icon before the label."
+        },
+        {
+          "name": "value",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's preference",
+          "description": "The chosen preference: system, light or dark."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: ThemePreference) => void",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
+          "description": "Called with the preference chosen, for an application that stores the theme itself."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+        }
+      ],
+      "native": [],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
     "Alert": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -7171,6 +7582,99 @@
       "page": "button",
       "doc": "docs/components/button.md"
     },
+    "ConfirmDialog": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Asks people to confirm an action whose consequence needs a sentence, such as deleting a project: an alert dialog with a question, a description, Cancel and a confirm button that names the consequence. It waits for onConfirm's promise, pending, and stays open when it fails. className, style, ref and data attributes go to the dialog's surface.",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the dialog is open, for a dialog the application controls with onOpenChange."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether a dialog the application doesn't control is open on the first render."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the requested state, and why, when the dialog opens or closes: from the trigger, Escape, Cancel, or after onConfirm finishes. Not called for a dismissal that a running onConfirm blocks."
+        },
+        {
+          "name": "trigger",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element that opens the dialog, such as a Button. Omit it for a dialog the application opens with open, such as from a menu item."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The question, which names the dialog, such as “Delete Northwind launch?”."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What confirming does and whether it can be undone; it describes the dialog."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content between the heading and the actions, such as what else the action affects."
+        },
+        {
+          "name": "confirmLabel",
+          "type": "string",
+          "required": true,
+          "description": "The confirm button's label: a verb that names the consequence, such as Delete project."
+        },
+        {
+          "name": "cancelLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Cancel', or EnvUIProvider's messages.confirmDialog.cancel",
+          "description": "The cancel button's label."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "danger for an action that deletes or ends something: the confirm button is a danger one and focus starts on Cancel, so a hurried Enter doesn't confirm. neutral starts focus on the confirm button."
+        },
+        {
+          "name": "onConfirm",
+          "type": "() => void | Promise<void>",
+          "required": true,
+          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. A rejected promise or a thrown error keeps it open, so show what went wrong with error."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What went wrong, shown as a danger Alert above the actions and announced."
+        },
+        {
+          "name": "finalFocus",
+          "type": "RefObject<HTMLElement | null>",
+          "required": false,
+          "description": "The element to focus when the dialog closes, such as the menu button whose item opened it. By default focus returns to the trigger, or to the element that had focus when it opened."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "confirm-dialog",
+      "doc": "docs/components/confirm-dialog.md"
+    },
     "ContextMenu": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -8822,7 +9326,7 @@
     "List.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One `li` row with a label, a description and an action.",
+      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle.",
       "props": [
         {
           "name": "label",
@@ -8852,8 +9356,27 @@
           "name": "interactive",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target`, or on the row without one."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label, such as an Avatar, an icon or a Checkbox for choosing several rows; a row whose checkbox is checked takes the selected fill."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "the label's text",
+          "description": "The row's label as plain text, for its drag handle's name and the reorder announcements where `label` isn't a string."
         }
       ],
       "native": [
@@ -8865,7 +9388,7 @@
     "List.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it.",
+      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
       "props": [
         {
           "name": "density",
@@ -8873,6 +9396,12 @@
           "required": false,
           "default": "'md'",
           "description": "How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text."
+        },
+        {
+          "name": "onReorder",
+          "type": "(from: number, to: number) => void",
+          "required": false,
+          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does."
         }
       ],
       "native": [
@@ -11054,6 +11583,67 @@
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
+    "SearchTrigger": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The button that opens search or a command palette: a field-like button with its label and the shortcut's keys, or a search icon alone. It presses itself when the shortcut is pressed, and the application opens the search from onClick.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Search', or EnvUIProvider's messages.searchTrigger.label",
+          "description": "The label, and the name of the icon-only trigger."
+        },
+        {
+          "name": "shortcut",
+          "type": "string | false",
+          "required": false,
+          "default": "'mod+k'",
+          "description": "The keyboard shortcut, shown as keys at the end and announced as aria-keyshortcuts: `mod+k` is ⌘K on Apple platforms and Ctrl+K elsewhere. false shows and handles none."
+        },
+        {
+          "name": "listen",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible takes it. A key press that something else already handled, such as an editor's own shortcut, is left alone."
+        },
+        {
+          "name": "iconOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "true inside a sidebar showing icons only, else false",
+          "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
+        },
+        {
+          "name": "tooltipSide",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
+          "required": false,
+          "default": "'inline-end' inside a sidebar showing icons only, else 'bottom'",
+          "description": "The side of the trigger the icon-only tooltip opens on."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "default": "the container's control height, md unless the container sets another",
+          "description": "The height, as on every control."
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Fill the width of the container, such as at the top of a sidebar."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "page": "search-trigger",
+      "doc": "docs/components/search-trigger.md"
+    },
     "SegmentedControl": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -12254,6 +12844,49 @@
       ],
       "page": "setup",
       "doc": "docs/setup.md"
+    },
+    "ThemeRadioGroup": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
+      "props": [
+        {
+          "name": "value",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's preference",
+          "description": "The chosen preference: system, light or dark."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: ThemePreference) => void",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
+          "description": "Called with the preference chosen, for an application that stores the theme itself."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small heading above the choices, which names the group. Leave it out inside a submenu, which its row already names."
+        },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+        }
+      ],
+      "native": [],
+      "page": "menu",
+      "doc": "docs/components/menu.md"
     },
     "ThemeToggle": {
       "kind": "component",

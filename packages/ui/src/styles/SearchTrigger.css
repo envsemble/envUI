@@ -1,1 +1,26 @@
 /* SearchTrigger: the button that opens search, as a field-like row or an icon. */
+
+/* The labelled trigger reads like a search field: the icon and label at the start, the shortcut's
+   keys at the end. */
+.env-search-trigger:not([data-icon-only]) {
+  justify-content: flex-start;
+  text-align: start;
+}
+.env-search-trigger-label {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-search-trigger-shortcut {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  /* The keys sit quieter than the label, as a field's hint does. */
+  --env-kbd-fg: var(--env-color-fg-muted);
+}
+/* The tooltip of the icon-only trigger: the label, then the keys. */
+.env-search-trigger-tooltip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--env-space-2);
+}

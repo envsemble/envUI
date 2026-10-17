@@ -8,7 +8,6 @@ aliases:
   - modal
   - modal dialog
   - popup
-  - confirm dialog
 useWhen:
   - People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.
   - A short task needs people's attention before they go on, such as inviting a member or renaming a project.
@@ -17,6 +16,8 @@ useWhen:
 avoidWhen:
   - text: Confirming one action in place that cannot be undone, such as removing a member from a list.
     use: ConfirmButton
+  - text: A question before one action, with Cancel and a button that names the consequence.
+    use: ConfirmDialog
   - text: Details or a few fields beside the control that opens them.
     use: Popover
   - text: Feedback after an action, such as Saved or Invitation sent.

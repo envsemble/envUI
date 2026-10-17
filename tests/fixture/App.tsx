@@ -73,6 +73,10 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
+import { SearchTriggersFixture } from './SearchTriggers.js';
+import { AccountMenusFixture } from './AccountMenus.js';
+import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { ListsFixture } from './Lists.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -104,6 +108,10 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'search-triggers': SearchTriggersFixture,
+  'account-menus': AccountMenusFixture,
+  'confirm-dialogs': ConfirmDialogsFixture,
+  lists: ListsFixture,
 };
 
 export default function App() {

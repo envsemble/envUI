@@ -32,6 +32,7 @@
       "MaterialSymbolState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
+      "foundations/ThemeRadioGroup.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
       "navigation/PanelDockHeader.tsx": "shell",
@@ -62,7 +63,8 @@
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
-      "content/List.tsx": "base",
+      "content/List.tsx": "composites",
+      "content/internal/ListBehavior.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",
@@ -116,6 +118,7 @@
       "navigation/Menubar.tsx": "base",
       "navigation/NavList.tsx": "base",
       "navigation/OrganizationSwitcher.tsx": "composites",
+      "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tabs.tsx": "composites",
@@ -131,14 +134,11 @@
   "planned": {
     "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
     "modules": [
-      "actions/SearchTrigger.tsx",
       "content/DescriptionList.tsx",
-      "feedback/ConfirmDialog.tsx",
       "layout/ListDetail.tsx",
       "layout/Page.tsx",
       "layout/PageHeader.tsx",
       "layout/SplitPane.tsx",
-      "navigation/AccountMenu.tsx",
       "navigation/app-shell/AppShell.tsx",
       "navigation/sidebar/Sidebar.tsx"
     ]
@@ -227,8 +227,11 @@
       "Alert": {
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
+      "List": {
+        "modules": ["content/internal/ListBehavior.tsx"]
+      },
       "Dialog": {
-        "modules": ["feedback/internal/DialogParts.tsx"]
+        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"]
       },
       "Progress": {
         "styles": ["Meter.css"]
@@ -294,7 +297,8 @@
       },
       "ThemePreference": {
         "classes": ["env-theme-toggle"],
-        "styles": ["ThemeToggle.css"]
+        "styles": ["ThemeToggle.css"],
+        "modules": ["foundations/ThemePreferenceContext.ts"]
       },
       "AppShell": {
         "classes": ["env-app", "env-app-shell"]
@@ -309,7 +313,8 @@
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
       "OrganizationSwitcher": {
-        "styles": ["Menu.css"]
+        "styles": ["Menu.css"],
+        "modules": ["navigation/internal/OrganizationOptions.tsx"]
       },
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]

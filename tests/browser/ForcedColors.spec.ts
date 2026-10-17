@@ -48,6 +48,7 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-text-field-control:has-text("Valid") >> nth=0',
   ],
   'a selected table row': ['[data-testid=row-selected]', '[data-testid=row]'],
+  'the current list row': ['[data-testid=list-selected]', '[data-testid=list-item]'],
   'the selected tree row': ['[role=treeitem] >> nth=0', '[role=treeitem] >> nth=1'],
   'the chosen calendar day': [
     '.env-calendar-day[aria-selected=true]',
