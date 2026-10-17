@@ -10,6 +10,7 @@ import { resolve, sep } from 'node:path';
 import { createInterface } from 'node:readline';
 import {
   findComponent,
+  findPage,
   loadManifest,
   packageRoot,
   plan,
@@ -99,10 +100,10 @@ export const tools = [
     name: 'get_example',
     title: 'Get an envUI example',
     description:
-      "The source of an example: a small component an application can copy. Without an example name, lists the component's examples with what each shows.",
+      "The source of an example: a small component an application can copy. Without an example name, lists the examples of a component, pattern, template, export or alias, with what each shows; a template's screens are listed too.",
     inputSchema: object(
       {
-        component: string('A component, export, page name or alias.'),
+        component: string('A component, pattern, template, export, page name or alias.'),
         example: string('The example file name, such as ConfirmDelete; leave out to list them.'),
       },
       ['component'],
@@ -112,15 +113,46 @@ export const tools = [
     name: 'list_patterns',
     title: 'List envUI patterns',
     description:
-      'Patterns: guidance for a recurring need, such as loading, that combines components.',
-    inputSchema: object({}),
+      'Patterns: guidance for a recurring need, such as forms, empty states, loading or destructive actions, that combines components; each with its intent, summary, status and the exports it composes.',
+    inputSchema: object({
+      intent: string(
+        'Only patterns of this intent, such as "Keep people informed"; the result lists the intents.',
+      ),
+    }),
+  },
+  {
+    name: 'get_pattern',
+    title: 'Get an envUI pattern',
+    description:
+      'A pattern: its summary, when to use it and what to use or read instead, what it composes, its examples and related pages. Accepts a name, title or alias. Set docs to true for the whole page as Markdown, with the examples inline.',
+    inputSchema: object(
+      {
+        name: string('A pattern name, title or alias, such as loading.'),
+        docs: { type: 'boolean', description: "Include the page's Markdown." },
+      },
+      ['name'],
+    ),
   },
   {
     name: 'list_templates',
     title: 'List envUI templates',
     description:
-      'Templates: whole pages, such as settings or sign-in, built from envUI to start from.',
+      'Templates: whole screens, such as a settings page or a sign-in page, built from envUI as source to copy and edit; each with whether it renders inside the app frame and its files.',
     inputSchema: object({}),
+  },
+  {
+    name: 'get_template',
+    title: 'Get an envUI template',
+    description:
+      'A template: its summary, when to use it, what it composes and its files. With file, the source of one of its screens or examples, to copy into the application and edit. Set docs to true for the whole page as Markdown.',
+    inputSchema: object(
+      {
+        name: string('A template name, title or alias, such as settings-page.'),
+        file: string('A file name or title of the template, such as SettingsPage.'),
+        docs: { type: 'boolean', description: "Include the page's Markdown." },
+      },
+      ['name'],
+    ),
   },
   {
     name: 'get_tokens',
@@ -182,6 +214,51 @@ function componentOrError(manifest, name) {
     `envUI has no component, export or alias "${name}".${close.length ? ` Closest: ${close.join(', ')}.` : ''} Try search.`,
   );
 }
+
+/** A pattern or template page by name, title or alias, or a ToolError that lists them. */
+function pageOrError(manifest, kind, name) {
+  const found = findPage(manifest, kind, name);
+  if (found) return found;
+  const pages = manifest[`${kind}s`];
+  throw new ToolError(
+    pages.length
+      ? `envUI has no ${kind} "${name}". Its ${kind}s: ${pages.map((page) => page.name).join(', ')}.`
+      : `This version of envUI has no ${kind}s yet. Try search or plan.`,
+  );
+}
+
+/**
+ * The page whose examples get_example lists: a pattern or template by its own name or title, else
+ * a component page by name, export or alias, else a pattern or template by alias.
+ */
+function exampleOwner(manifest, name) {
+  const ofPage = (kind, page) => ({
+    name: page.name,
+    kind,
+    examples: [...(page.files ?? []), ...page.examples],
+  });
+  for (const kind of ['pattern', 'template']) {
+    const found = findPage(manifest, kind, name);
+    if (found && !found.requested) return ofPage(kind, found.page);
+  }
+  const component = findComponent(manifest, name);
+  if (component) return { name: component.component.name, examples: component.component.examples };
+  for (const kind of ['pattern', 'template']) {
+    const found = findPage(manifest, kind, name);
+    if (found) return ofPage(kind, found.page);
+  }
+  const { exported } = componentOrError(manifest, name);
+  if (exported) throw new ToolError(`${name} has no component page with examples.`);
+  return undefined;
+}
+
+/** A file of a list by its name or title, in any case. */
+const fileOf = (files, wanted) =>
+  files.find(
+    (item) =>
+      item.name.toLowerCase() === wanted.toLowerCase() ||
+      item.title.toLowerCase() === wanted.toLowerCase(),
+  );
 
 /** Reads a file of the package by a path the manifest gave, never outside the package. */
 function readPackageFile(root, path) {
@@ -287,34 +364,46 @@ export function callTool(context, name, args = {}) {
       return { page: component.name, exports: entries.map(propsOf) };
     }
     case 'get_example': {
-      const { component, exported } = componentOrError(manifest, requireString(args, 'component'));
-      if (exported) throw new ToolError(`${args.component} has no component page with examples.`);
+      const owner = exampleOwner(manifest, requireString(args, 'component'));
+      const named = { component: owner.name, ...(owner.kind && { kind: owner.kind }) };
       if (args.example === undefined || args.example === '')
         return {
-          component: component.name,
-          examples: component.examples.map(({ name: exampleName, title, description }) => ({
+          ...named,
+          examples: owner.examples.map(({ name: exampleName, title, description }) => ({
             name: exampleName,
             title,
             description,
           })),
         };
-      const wanted = requireString(args, 'example');
-      const example = component.examples.find(
-        (item) =>
-          item.name.toLowerCase() === wanted.toLowerCase() ||
-          item.title.toLowerCase() === wanted.toLowerCase(),
-      );
+      const example = fileOf(owner.examples, requireString(args, 'example'));
       if (!example)
         throw new ToolError(
-          `${component.name} has no example "${wanted}". Its examples: ${component.examples.map((item) => item.name).join(', ')}.`,
+          `${owner.name} has no example "${args.example}". Its examples: ${owner.examples.map((item) => item.name).join(', ')}.`,
         );
-      return { component: component.name, ...example, source: readPackageFile(root, example.file) };
+      return { ...named, ...example, source: readPackageFile(root, example.file) };
     }
-    case 'list_patterns':
+    case 'list_patterns': {
+      if (args.intent !== undefined && typeof args.intent !== 'string')
+        throw new ToolError('"intent" must be a string.');
+      const intents = manifest.intents ?? [];
+      const intent = args.intent?.trim()
+        ? intents.find((item) => item.toLowerCase() === args.intent.trim().toLowerCase())
+        : undefined;
+      if (args.intent?.trim() && !intent)
+        throw new ToolError(`"intent" must be one of ${intents.join(', ')}.`);
+      const patterns = manifest.patterns.filter((page) => !intent || page.intent === intent);
       return {
-        patterns: manifest.patterns.map((page) => summarize(manifest, 'pattern', page)),
+        intents,
+        patterns: patterns.map((page) => summarize(manifest, 'pattern', page)),
         ...(!manifest.patterns.length && { note: 'This version has no patterns yet.' }),
       };
+    }
+    case 'get_pattern': {
+      const { page, requested } = pageOrError(manifest, 'pattern', requireString(args, 'name'));
+      const result = { ...page, ...(requested && { requested }) };
+      if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
+      return result;
+    }
     case 'list_templates':
       return {
         templates: manifest.templates.map((page) => summarize(manifest, 'template', page)),
@@ -322,6 +411,34 @@ export function callTool(context, name, args = {}) {
           note: 'This version has no templates yet. Use plan to choose components for a page.',
         }),
       };
+    case 'get_template': {
+      const { page, requested } = pageOrError(manifest, 'template', requireString(args, 'name'));
+      if (args.file === undefined || args.file === '') {
+        const result = { ...page, ...(requested && { requested }) };
+        if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
+        return result;
+      }
+      const files = [...(page.files ?? []), ...page.examples];
+      const file = fileOf(files, requireString(args, 'file'));
+      if (!file)
+        throw new ToolError(
+          `${page.name} has no file "${args.file}". Its files: ${files.map((item) => item.name).join(', ')}.`,
+        );
+      const result = {
+        template: page.name,
+        name: file.name,
+        title: file.title,
+        description: file.description,
+        ...(file.frame && { frame: file.frame }),
+        file: file.file,
+        source: readPackageFile(root, file.file),
+        ...(file.frame === 'app' && {
+          note: 'Renders inside AppShell.Main. Start the frame from get_template app-frame.',
+        }),
+      };
+      if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
+      return result;
+    }
     case 'get_tokens': {
       const { tokens } = manifest;
       const limit = Number.isInteger(args.limit) ? Math.min(Math.max(args.limit, 1), 400) : 60;
@@ -404,7 +521,7 @@ export function createServer({
 } = {}) {
   const version = manifest.version ?? JSON.parse(readPackageFile(root, 'package.json')).version;
   const context = { manifest, root };
-  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for candidates for a screen or feature and search to find a component, then get_component and get_props to confirm one before using it, and get_example for code to start from. Use only exports these tools confirm exist.`;
+  const instructions = `envUI ${version} (${manifest.package}). ${manifest.rule} Use plan for candidates for a screen or feature and search to find a component, then get_component and get_props to confirm one before using it, and get_example for code to start from. Use list_templates and get_template for whole screens, and list_patterns and get_pattern for recurring needs such as forms, empty states or destructive actions. Use only exports these tools confirm exist.`;
   const result = (id, value) => ({ jsonrpc: '2.0', id, result: value });
   const error = (id, code, message) => ({ jsonrpc: '2.0', id, error: { code, message } });
 

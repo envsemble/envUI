@@ -87,6 +87,7 @@ test('the manifest has every component page, export, example and token', () => {
     'files',
     'imports',
     'categories',
+    'intents',
     'components',
     'guides',
     'foundations',
@@ -123,6 +124,7 @@ test('the manifest has every component page, export, example and token', () => {
     'related',
     'exports',
     'examples',
+    'usedIn',
   ]);
   assert.deepEqual(button.exports, [
     'Button',
@@ -173,8 +175,19 @@ test('the manifest has every component page, export, example and token', () => {
   const menu = findComponent(manifest, 'Menu.Item');
   assert.equal(menu.component.name, 'Menu');
   assert.equal(menu.entry.name, 'Menu.Item');
-  assert.ok(manifest.patterns.some((page) => page.name === 'loading'));
+  const loading = manifest.patterns.find((page) => page.name === 'loading');
+  assert.equal(loading.intent, 'Keep people informed');
+  assert.ok(loading.composes.includes('Skeleton') && loading.examples.length >= 3);
+  for (const page of manifest.patterns)
+    assert.ok(manifest.intents.includes(page.intent), page.name);
   assert.deepEqual(manifest.templates, []);
+  // A component page leads to the patterns and templates that compose it.
+  assert.ok(
+    manifest.components
+      .find((item) => item.name === 'Skeleton')
+      .usedIn.patterns.includes('loading'),
+  );
+  for (const component of manifest.components) assert.ok(component.usedIn, component.name);
   // Tokens: current names with values, and the 0.7 names with their successors.
   const muted = manifest.tokens.items.find((token) => token.id === 'color.fg.muted');
   assert.equal(muted.cssVariable, '--env-color-fg-muted');
@@ -549,7 +562,9 @@ test('envui mcp answers every tool over stdio from the installed files', async (
       'get_props',
       'get_example',
       'list_patterns',
+      'get_pattern',
       'list_templates',
+      'get_template',
       'get_tokens',
       'plan',
     ],
@@ -1037,4 +1052,150 @@ test('plan never drops words silently', () => {
   // A part reads as written, without the gaps the left-out words leave.
   for (const candidate of sidebar.candidates)
     for (const part of candidate.parts) assert.doesNotMatch(part, /\s{2,}|^\s|\s$/, part);
+});
+
+test('the pattern and template tools answer from the manifest', () => {
+  // A template stands in until the template pages land: a copy of the loading pattern's lead
+  // example as its screen, inside the app frame.
+  const screen = manifest.patterns[0].examples[0];
+  const template = {
+    name: 'stand-in-page',
+    title: 'Stand-in page',
+    group: 'Templates',
+    status: 'beta',
+    since: '1.0.0',
+    summary: 'A screen to start from.',
+    aliases: ['placeholder screen'],
+    useWhen: ['A screen.'],
+    avoidWhen: [],
+    composes: ['Button'],
+    related: [],
+    doc: manifest.patterns[0].doc,
+    frame: 'app',
+    scales: ['comfortable', 'compact'],
+    files: [
+      { ...screen, name: 'StandInPage', title: 'Stand-in page', frame: 'app', primary: true },
+    ],
+    examples: [],
+  };
+  const withTemplate = { ...manifest, version: '1.0.0', templates: [template] };
+  const server = createServer({ root: packageRoot, manifest: withTemplate });
+  const call = (name, args) => {
+    const { result } = server.handle({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'tools/call',
+      params: { name, arguments: args },
+    });
+    if (result.isError) return { error: result.content[0].text };
+    return { value: JSON.parse(result.content[0].text), more: result.content.slice(1) };
+  };
+
+  // Patterns: the list, by intent, and one by name, title or alias.
+  const listed = call('list_patterns', {}).value;
+  assert.deepEqual(listed.intents, manifest.intents);
+  assert.deepEqual(
+    listed.patterns.map((pattern) => pattern.name),
+    manifest.patterns.map((pattern) => pattern.name),
+  );
+  assert.deepEqual(Object.keys(listed.patterns[0]), [
+    'name',
+    'title',
+    'intent',
+    'summary',
+    'status',
+    'composes',
+    'doc',
+  ]);
+  const informed = call('list_patterns', { intent: 'keep people INFORMED' }).value.patterns;
+  assert.ok(
+    informed.length && informed.every((pattern) => pattern.intent === 'Keep people informed'),
+  );
+  assert.match(call('list_patterns', { intent: 'Nope' }).error, /"intent" must be one of Collect/);
+  const loading = call('get_pattern', { name: 'loading indicator', docs: true });
+  assert.equal(loading.value.name, 'loading');
+  assert.equal(loading.value.requested, 'loading indicator');
+  assert.match(
+    loading.more[0].text,
+    /^---\ntitle: Loading\n[\s\S]*```tsx example=SkeletonList\nimport /,
+  );
+  assert.equal(call('get_pattern', { name: 'Loading' }).value.requested, undefined);
+  assert.match(
+    call('get_pattern', { name: 'Nope' }).error,
+    /no pattern "Nope". Its patterns: loading/,
+  );
+  // get_example takes a pattern by its name before a component that has it as an alias.
+  const examples = call('get_example', { component: 'loading' }).value;
+  assert.equal(examples.kind, 'pattern');
+  assert.ok(examples.examples.some((example) => example.name === 'RefreshInPlace'));
+  const example = call('get_example', { component: 'loading', example: 'refreshinplace' }).value;
+  assert.equal(
+    example.source,
+    readFileSync(join(examplesDirectory, 'loading/RefreshInPlace.tsx'), 'utf8'),
+  );
+
+  // Templates: the list, one by alias, and a screen's source with where it renders.
+  assert.deepEqual(call('list_templates', {}).value.templates, [
+    {
+      name: 'stand-in-page',
+      title: 'Stand-in page',
+      summary: 'A screen to start from.',
+      status: 'beta',
+      frame: 'app',
+      composes: ['Button'],
+      files: ['StandInPage'],
+      doc: template.doc,
+    },
+  ]);
+  assert.equal(
+    call('get_template', { name: 'placeholder screen' }).value.requested,
+    'placeholder screen',
+  );
+  const file = call('get_template', { name: 'stand-in-page', file: 'stand-in page' }).value;
+  assert.equal(file.template, 'stand-in-page');
+  assert.equal(file.name, 'StandInPage');
+  assert.equal(file.frame, 'app');
+  assert.equal(file.source, readFileSync(join(packageRoot, screen.file), 'utf8'));
+  assert.match(file.note, /inside AppShell\.Main\. Start the frame from get_template app-frame/);
+  assert.match(
+    call('get_template', { name: 'stand-in-page', file: 'Other' }).error,
+    /no file "Other". Its files: StandInPage/,
+  );
+  assert.deepEqual(
+    call('get_example', { component: 'stand-in-page' }).value.examples.map((item) => item.name),
+    ['StandInPage'],
+  );
+  // The installed manifest has no templates yet, and says so.
+  const installed = createServer({
+    root: packageRoot,
+    manifest: { ...manifest, version: '1.0.0' },
+  });
+  const { result } = installed.handle({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'tools/call',
+    params: { name: 'get_template', arguments: { name: 'settings-page' } },
+  });
+  assert.match(result.content[0].text, /has no templates yet/);
+  // plan points at a template that matches.
+  const planned = plan(withTemplate, 'a stand-in page');
+  assert.ok(planned.templates.some((item) => item.name === 'stand-in-page'));
+  assert.ok(planned.next.some((step) => /Start from get_template stand-in-page/.test(step)));
+});
+
+test(
+  'plan leads a settings page to its template and pattern',
+  { todo: 'until the settings pattern and template land' },
+  () => {
+    const result = plan(manifest, 'a settings page with notification toggles');
+    assert.ok(result.templates.some((item) => item.name === 'settings-page'));
+    assert.ok(result.patterns.some((item) => item.name === 'settings'));
+  },
+);
+
+test('llms.txt lists patterns by intent', () => {
+  const llms = readFileSync(join(repository, 'docs/generated/llms.txt'), 'utf8');
+  for (const intent of new Set(manifest.patterns.map((pattern) => pattern.intent)))
+    assert.ok(llms.includes(`## Patterns: ${intent}\n`), intent);
+  assert.doesNotMatch(llms, /^## Patterns$/m);
 });
