@@ -106,6 +106,11 @@ test('validateMap reports malformed maps', () => {
     problems({ split: { x: { Link: { prop: 'direction', values: { next: 'Next' } } } } }),
     /Namespace\.Part/,
   );
+  const props = (rule) => problems({ props: { x: { Field: { className: rule } } } });
+  assert.equal(props({ report: "Field's className now goes to the root element." }), '');
+  assert.match(props({}), /needs a "report"/);
+  assert.match(props({ report: 'Moved.', current: ['a'] }), /report-only rule/);
+  assert.match(props({ report: 'Moved.', values: {} }), /needs "values"/);
   assert.match(problems({ removed: { x: { Bar: {} } } }), /"use" hint/);
   assert.match(
     problems({ exports: { x: { A: 'B' } }, removed: { x: { A: { use: 'C' } } } }),

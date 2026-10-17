@@ -139,6 +139,11 @@ export function applyPropRules(items, rules, where, item, report) {
     const rule = rules.get(name);
     if (!rule) continue;
     const at = `${where}'s ${name}`;
+    // A report-only rule: the prop stays as it is, and what changed about it is reported.
+    if (rule.to === undefined && Object.keys(rule.values).length === 0) {
+      report(node, rule.report);
+      continue;
+    }
     const key = item.key(node);
     // A 1.0 value, such as density="sm" on a Table, is already moved: no change, no report.
     if (key !== undefined && rule.current.has(key)) continue;

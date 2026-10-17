@@ -32,6 +32,12 @@
             }
           }
         }
+      },
+      "className": {
+        "report": "Select's className now goes to the root element, not the trigger: check styles that targeted the trigger, which `.env-select-trigger` inside the root selects."
+      },
+      "style": {
+        "report": "Select's style now goes to the root element, not the trigger: move declarations meant for the trigger to a rule for `.env-select-trigger` inside the root."
       }
     }
   }
