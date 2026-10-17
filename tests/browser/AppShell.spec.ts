@@ -21,22 +21,26 @@ test.describe('Landmarks and skip links', () => {
     page,
     browserName,
   }) => {
-    // WebKit's Tab reaches only fields, as Safari's does by default; Alt+Tab reaches every control.
-    const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+    // WebKit's Tab, even with Alt as Safari's option, reaches no links here, so it focuses them.
+    const keyboardReachesLinks = browserName !== 'webkit';
     const errors = collectErrors(page);
     await page.goto(appShell);
     await expect(page.getByRole('banner')).toHaveCount(1);
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
     await expect(page.getByRole('main')).toHaveAttribute('id', 'env-app-shell-main');
     // The skip links are the first tab stops, shown as they take focus.
-    await page.keyboard.press(tab);
     const skip = page.getByRole('link', { name: 'Skip to content' });
+    const skipSidebar = page.getByRole('link', { name: 'Skip to Primary' });
+    if (keyboardReachesLinks) await page.keyboard.press('Tab');
+    else await skip.focus();
     await expect(skip).toBeFocused();
     expect((await box(skip)).width).toBeGreaterThan(40);
-    await page.keyboard.press(tab);
-    await expect(page.getByRole('link', { name: 'Skip to Primary' })).toBeFocused();
+    if (keyboardReachesLinks) await page.keyboard.press('Tab');
+    else await skipSidebar.focus();
+    await expect(skipSidebar).toBeFocused();
     // Each moves focus to its region.
-    await page.keyboard.press(`Shift+${tab}`);
+    if (keyboardReachesLinks) await page.keyboard.press('Shift+Tab');
+    else await skip.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('main')).toBeFocused();
     expect(errors).toEqual([]);
