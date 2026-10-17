@@ -181,17 +181,26 @@ test.describe('Tooltip', () => {
     const [button, popup] = [(await more.boundingBox())!, (await menu.boundingBox())!];
     expect(popup.y).toBeGreaterThanOrEqual(button.y + button.height - 1);
     expect(await overlayViolations(page)).toEqual([]);
+    // The pointer leaving and coming back onto the button opens no tooltip while the menu is open:
+    // past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
+    await page.mouse.move(1, 1);
     await more.hover();
+    await page.waitForTimeout(300);
     await expect(menu).toBeVisible();
     await expect(tooltip).toHaveCount(0);
 
-    // Esc closes the menu first and returns focus to the button.
+    // Esc closes the menu first and returns focus to the button, which opens no tooltip: one Esc.
     await page.keyboard.press('Escape');
     await expect(menu).toHaveCount(0);
     await expect(more).toBeFocused();
     await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await page.waitForTimeout(300);
+    await expect(tooltip).toHaveCount(0);
+    // The pointer coming back onto the button opens it again.
     await page.mouse.move(1, 1);
-    await page.keyboard.press('Escape');
+    await more.hover();
+    await expect(tooltip).toHaveText('More actions');
+    await page.mouse.move(1, 1);
     await expect(tooltip).toHaveCount(0);
 
     // Keyboard: focus opens the tooltip at once; Enter opens the menu in its place, Esc closes the
@@ -237,12 +246,21 @@ test.describe('Tooltip', () => {
     );
     await expect(popover.getByRole('button', { name: 'Only open items' })).toBeFocused();
     expect(await overlayViolations(page)).toEqual([]);
+    // The pointer leaving and coming back onto the button opens no tooltip while the popover is
+    // open: past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
+    await page.mouse.move(1, 1);
+    await filters.hover();
+    await page.waitForTimeout(300);
+    await expect(popover).toBeVisible();
+    await expect(tooltip).toHaveCount(0);
 
-    // Esc closes the popover first and returns focus to the button.
+    // Esc closes the popover first and returns focus to the button, which opens no tooltip.
     await page.keyboard.press('Escape');
     await expect(popover).toHaveCount(0);
     await expect(filters).toBeFocused();
     await expect(filters).toHaveAttribute('aria-expanded', 'false');
+    await page.waitForTimeout(300);
+    await expect(tooltip).toHaveCount(0);
 
     // Focus from the keyboard opens the tooltip; Enter opens the popover in its place.
     await page.mouse.move(1, 1);
@@ -256,6 +274,52 @@ test.describe('Tooltip', () => {
     await page.keyboard.press('Escape');
     await expect(popover).toHaveCount(0);
     await expect(filters).toBeFocused();
+  });
+
+  test('around a HoverCard, or as its trigger, shows no tooltip but the card', async ({ page }) => {
+    await page.goto(`${tooltips}&warnings`);
+    const tooltip = page.getByRole('tooltip');
+    for (const [name, card] of [
+      ['Ada Lovelace', 'Ada card'],
+      ['Alan Turing', 'Alan card'],
+    ]) {
+      await page.getByRole('link', { name }).hover();
+      await expect(page.getByText(card)).toBeVisible();
+      // Past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
+      await page.waitForTimeout(300);
+      await expect(tooltip).toHaveCount(0);
+      await page.mouse.move(1, 1);
+      await expect(page.getByText(card)).toHaveCount(0);
+    }
+  });
+
+  test("describes a control of the application's own that takes a trigger prop", async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const badge = page.getByRole('button', { name: 'Badge button' });
+    await badge.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Shows the badge');
+    await expect(badge).toHaveAccessibleDescription('Shows the badge');
+  });
+
+  test('says while developing when its child takes no props or ref', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await page.goto(`${tooltips}&warnings`);
+    await expect(page.getByText('Plain text')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'In a fragment' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Ref-less' })).toBeVisible();
+    await expect
+      .poll(() => errors.filter((error) => error.startsWith('envUI: A Tooltip')).length)
+      .toBe(4);
+    const reports = errors.join(' ');
+    expect(reports).toContain('it got string');
+    expect(reports).toContain('it got a Fragment');
+    expect(reports).toContain("child, RefLessButton, doesn't pass the ref");
+    expect(reports).toContain('around a HoverCard');
   });
 
   test.describe('on a touch screen', () => {

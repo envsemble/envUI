@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
 const parts = {
@@ -108,13 +109,16 @@ export function HoverCard({
       open={open}
       onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
     >
-      <BasePreviewCard.Trigger
-        ref={triggerRef}
-        render={trigger}
-        delay={delay}
-        closeDelay={closeDelay}
-        onFocus={openOnKeyboardFocus}
-      />
+      {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}
+      <HoverCardTriggerContext value={isTooltip(trigger.type)}>
+        <BasePreviewCard.Trigger
+          ref={triggerRef}
+          render={trigger}
+          delay={delay}
+          closeDelay={closeDelay}
+          onFocus={openOnKeyboardFocus}
+        />
+      </HoverCardTriggerContext>
       <PopupSurface
         parts={parts}
         trigger={triggerRef}
@@ -129,3 +133,5 @@ export function HoverCard({
     </BasePreviewCard.Root>
   );
 }
+
+markTriggerOwner(HoverCard);

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 
 const parts = {
@@ -136,3 +137,5 @@ export function Popover({
     </BasePopover.Root>
   );
 }
+
+markTriggerOwner(Popover);

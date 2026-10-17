@@ -14,6 +14,7 @@ import { Button } from '../actions/Button.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { confirmDialog } from '../foundations/messages/confirmDialog.js';
 import { classNames } from '../internal/classNames.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { Alert } from './Alert.js';
@@ -228,3 +229,5 @@ export function ConfirmDialog({
     </BaseAlertDialog.Root>
   );
 }
+
+markTriggerOwner(ConfirmDialog);
