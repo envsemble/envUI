@@ -36,7 +36,7 @@ export interface ContextMenuProps {
    * Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives
    * the element the menu was opened on: the deepest element under the pointer, or the focused
    * element (its active descendant, when it has one) for the keyboard. Where it returns null, the
-   * menu doesn't open on that element.
+   * menu doesn't open on that element and the browser keeps its own.
    */
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
@@ -128,7 +128,13 @@ export function ContextMenu({
     }
     const element = event.target instanceof Element ? event.target : null;
     if (!offersMenu(element)) {
+      // Where no menu is offered, the browser keeps its own. Base UI's trigger also cancels every
+      // contextmenu event inside the region from a listener on the document, so the event stops
+      // here, before it leaves React's root. Listeners of the application's own on the document
+      // don't see it either. Base UI's -webkit-touch-callout: none still applies to the whole
+      // region, so a long press there shows no callout on iOS.
       event.preventBaseUIHandler?.();
+      event.stopPropagation();
       return;
     }
     setTarget(element);

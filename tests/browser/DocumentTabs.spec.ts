@@ -180,12 +180,43 @@ test.describe('DocumentTabs', () => {
     await expect.poll(() => lastLog(page, 'dark')).toBe('close plans/decisions.md');
     await expect(darkDecisions).toHaveCount(0);
 
-    // The strip around the tabs offers no menu without onCloseAll.
-    await dark.evaluate((element) =>
-      element.dispatchEvent(
-        new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 1, clientY: 1 }),
+    // The strip around the tabs offers no menu without onCloseAll, and leaves the browser its own:
+    // neither a right click in the gap before the first tab nor a contextmenu event is cancelled.
+    await dark.evaluate((element) => {
+      element.scrollLeft = 0;
+      element.addEventListener('contextmenu', (event) => {
+        const strip = element as HTMLElement & { lastContextMenu?: MouseEvent };
+        if (event.target === element) strip.lastContextMenu = event;
+      });
+    });
+    const gap = { x: 2, y: 8 };
+    expect(
+      await dark.evaluate((element, point) => {
+        const box = element.getBoundingClientRect();
+        return document.elementFromPoint(box.left + point.x, box.top + point.y) === element;
+      }, gap),
+    ).toBe(true);
+    await dark.click({ button: 'right', position: gap });
+    expect(
+      await dark.evaluate(
+        (element) =>
+          (element as HTMLElement & { lastContextMenu?: MouseEvent }).lastContextMenu
+            ?.defaultPrevented,
       ),
-    );
+    ).toBe(false);
+    // dispatchEvent returns false for an event that was cancelled.
+    expect(
+      await dark.evaluate((element) =>
+        element.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            cancelable: true,
+            clientX: 1,
+            clientY: 1,
+          }),
+        ),
+      ),
+    ).toBe(true);
     // Past the time a menu takes to mount, none has.
     await page.waitForTimeout(300);
     await expect(page.getByRole('menu')).toHaveCount(0);
