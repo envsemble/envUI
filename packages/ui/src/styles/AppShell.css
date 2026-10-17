@@ -107,7 +107,6 @@
   grid-area: header;
   block-size: var(--env-app-shell-header-height);
   min-inline-size: 0;
-  padding-inline: var(--env-space-4);
   display: flex;
   align-items: center;
   gap: var(--env-space-3);
@@ -116,6 +115,10 @@
   background: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
   white-space: nowrap;
+}
+/* Its inline padding; a title bar has its own, which leaves room for the window controls. */
+.env-app-shell-header:not([data-title-bar]) {
+  padding-inline: var(--env-space-4);
 }
 /* While the document scrolls, the header sticks to the top of the window. */
 .env-app-shell[data-scroll='document'] > .env-app-shell-header {
@@ -126,7 +129,7 @@
   align-self: start;
 }
 /* Across the window, its start content lines up with a rail's icons below it. */
-.env-app-shell[data-header-span='full'] > .env-app-shell-header {
+.env-app-shell[data-header-span='full'] > .env-app-shell-header:not([data-title-bar]) {
   padding-inline-start: var(--env-sidebar-inset);
 }
 .env-app-shell-header-start,
@@ -246,4 +249,40 @@
   .env-app-shell[data-breakpoint='xl'] > .env-app-shell-header[data-mobile-only] {
     display: none;
   }
+}
+
+/* As the window's title bar (titleBar), the header takes the title bar area's height, at least
+   --env-title-bar-height, and --env-app-shell-header-height follows it, so a sidebar's header
+   lines up with it. The title bar's own rules (WindowFrame.css) give it its drag regions, its room
+   for the window controls and its small controls; here it takes the frame's insets, its title the
+   small body text, and a trigger in it keeps the centre line of a rail's icons below it. Main
+   scrolls below the bar, so the window controls never cover a scrollbar. */
+.env-app-shell[data-title-bar] {
+  --env-app-shell-header-height: max(
+    calc(env(titlebar-area-height, 0px) + 0.0625rem),
+    var(--env-title-bar-height)
+  );
+}
+.env-app-shell-header[data-title-bar] {
+  --env-window-frame-title-bar-start: var(--env-space-4);
+  --env-window-frame-title-bar-end: var(--env-space-3);
+  --env-frame-mark-size: 1.25rem;
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
+}
+.env-app-shell[data-header-span='full'] > .env-app-shell-header[data-title-bar] {
+  --env-window-frame-title-bar-start: var(--env-sidebar-inset);
+}
+.env-app-shell-header[data-title-bar] > .env-app-shell-header-title {
+  font: var(--env-type-body-small);
+}
+/* Beside a start sidebar, the sidebar's header holds the window's leading edge, so the header's
+   own leading padding is its inset alone. */
+.env-app-shell[data-header-span='main']:has(> [data-side='start'])
+  > .env-app-shell-header[data-title-bar]:dir(ltr) {
+  padding-left: var(--env-space-4);
+}
+.env-app-shell[data-header-span='main']:has(> [data-side='start'])
+  > .env-app-shell-header[data-title-bar]:dir(rtl) {
+  padding-right: var(--env-space-4);
 }

@@ -1,6 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
-import { fixtureUrl } from './Servers';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
 const appShell = `${fixtureUrl}/?fixture=app-shell`;
 const fullShell = `${fixtureUrl}/?fixture=full-shell`;
@@ -737,4 +737,125 @@ test.describe('Main scroll', () => {
     await page.keyboard.press('PageDown');
     await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
+});
+
+/** Computed app-region of an element, or null where the engine has no app regions. */
+function appRegion(locator: Locator) {
+  return locator.evaluate((element) => {
+    if (!CSS.supports('app-region', 'drag') && !CSS.supports('-webkit-app-region', 'drag'))
+      return null;
+    const style = getComputedStyle(element);
+    return style.getPropertyValue('app-region') || style.getPropertyValue('-webkit-app-region');
+  });
+}
+
+test.describe('Title bar', () => {
+  test("the header is the window's title bar: its height, small controls and drag regions", async ({
+    page,
+  }) => {
+    const errors = collectErrors(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(fullShell);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-title-bar', '');
+    const header = page.getByRole('banner');
+    expect((await box(header)).height).toBe(40);
+    // --env-app-shell-header-height follows the title bar, so the sidebar and Main line up below it.
+    const sidebar = page.getByRole('navigation', { name: 'Notes navigation' });
+    expect((await box(sidebar)).y).toBe(40);
+    expect((await box(page.locator('.env-app-shell-main'))).y).toBe(40);
+    // Controls take the small height.
+    for (const control of [
+      page.getByTestId('action'),
+      page.getByTestId('context-picker'),
+      page.getByRole('menuitem', { name: 'File', exact: true }),
+    ])
+      expect((await box(control)).height).toBeCloseTo(32, 0);
+    const trigger = header.getByRole('button', { name: 'Collapse sidebar' });
+    const triggerBox = await box(trigger);
+    expect([triggerBox.width, triggerBox.height]).toEqual([32, 32]);
+    // Collapsed, the trigger keeps the centre line of the rail's icons.
+    await trigger.click();
+    await page.mouse.move(800, 500);
+    await expect(sidebar).toHaveAttribute('data-rail', '');
+    const icon = await box(sidebar.locator('.env-icon').first());
+    expect(icon.x + icon.width / 2).toBeCloseTo(triggerBox.x + triggerBox.width / 2, 0);
+    // The bar selects no text; empty space drags the window and controls stay clickable, in the
+    // engines that have app regions.
+    expect(
+      await header.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return style.userSelect || style.getPropertyValue('-webkit-user-select');
+      }),
+    ).toBe('none');
+    const region = await appRegion(header);
+    if (region !== null) {
+      expect(region).toBe('drag');
+      for (const control of [
+        page.getByTestId('action'),
+        page.getByTestId('context-picker'),
+        page.getByRole('menubar', { name: 'Application menu' }),
+        header.getByRole('button', { name: 'Expand sidebar' }),
+      ])
+        expect(await appRegion(control)).toBe('no-drag');
+    }
+    expect(errors).toEqual([]);
+  });
+
+  test('Main scrolls below the title bar, and a full-window view still covers the window', async ({
+    page,
+  }) => {
+    await page.goto(fullShell);
+    const main = page.locator('.env-app-shell-main');
+    const viewport = page.viewportSize()!;
+    const geometry = await main.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const root = document.scrollingElement!;
+      return {
+        top: box.top,
+        bottom: box.bottom,
+        documentOverflow: root.scrollHeight - root.clientHeight,
+      };
+    });
+    expect([geometry.top, geometry.bottom]).toEqual([40, viewport.height]);
+    expect(geometry.documentOverflow).toBeLessThanOrEqual(0);
+    await main.evaluate((element) => element.scrollTo(0, 600));
+    // Sticky content sticks at the top of Main, just below the title bar.
+    await expect.poll(async () => (await box(page.getByTestId('sticky-header'))).y).toBe(40);
+    await page.getByRole('button', { name: 'Show full view' }).click();
+    const view = await box(page.getByTestId('full-view'));
+    expect([view.x, view.y, view.width, view.height]).toEqual([
+      0,
+      0,
+      viewport.width,
+      viewport.height,
+    ]);
+  });
+
+  test('the title bar keeps at least --env-title-bar-height, which an application can set', async ({
+    page,
+  }) => {
+    await page.goto(fullShell);
+    await page
+      .locator('.env-app-shell')
+      .evaluate((shell: HTMLElement) => shell.style.setProperty('--env-title-bar-height', '48px'));
+    expect((await box(page.getByRole('banner'))).height).toBe(48);
+    expect((await box(page.locator('.env-app-shell-main'))).y).toBe(48);
+    await page.getByRole('button', { name: 'Read the first scroll element' }).click();
+    await expect(page.getByTestId('first-scroll-element')).toHaveText('main');
+  });
+});
+
+test('a page whose document scrolls keeps its keys while it shows a frame whose Main scrolls', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`${catalogueUrl}/components/app-shell/overview`);
+  await expect(page.locator(".env-app-shell[data-scroll='main']").first()).toBeVisible();
+  await page.locator('#docs-main').focus();
+  await page.keyboard.press('PageDown');
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  for (const scroller of await page.locator('.env-app-shell-main').all())
+    expect(await scroller.evaluate((element) => element.scrollTop)).toBe(0);
 });

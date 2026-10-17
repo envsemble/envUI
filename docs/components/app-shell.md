@@ -15,6 +15,8 @@ aliases:
   - header
   - app bar
   - skip link
+  - title bar
+  - window controls overlay
   - skip to content
   - AppShellSkeleton
   - loading frame
@@ -22,6 +24,7 @@ useWhen:
   - An application needs its frame, with a header with the page's title and actions, sidebars that collapse, and the page's content.
   - Content needs to stick below the frame's header, or to know which element scrolls (useAppShell).
   - The application's first load shows the frame before the data arrives.
+  - An installed web app or desktop shell with sidebars draws its own title bar over the window (`titleBar`).
 avoidWhen:
   - text: The sidebar's own parts, its trigger and its state.
     use: Sidebar
@@ -73,14 +76,15 @@ AppShell is the frame of an application, made of parts: `AppShell.Root` lays out
 
 ## Variants and sizes
 
-| Prop                  | Values                           | Use for                                                                                                                                     |
-| --------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `headerSpan`          | `main` (default)                 | The sidebars run the full height and the header sits beside them; a sidebar's header lines up with it, with one hairline.                   |
-|                       | `full`                           | The header runs across the window and the sidebars sit below it, such as for a menubar and a picker beside the trigger.                     |
-| `scroll`              | `document` (default)             | The document scrolls under a sticky header; the sidebars stick.                                                                             |
-|                       | `main`                           | The frame fills its container (`100dvh`, or `--env-app-shell-block-size`) and Main scrolls, with the keyboard scrolling it as the document. |
-| `breakpoint`          | `sm`, `md` (default), `lg`, `xl` | Below 40, 48, 64 or 80 rem the sidebars are drawers; `md` also covers short landscape windows (32 rem tall and 54 rem wide).                |
-| `header` `mobileOnly` | `true`                           | A phone's top bar: the header shows only below the breakpoint, with the triggers that open the drawers.                                     |
+| Prop                  | Values                           | Use for                                                                                                                                                 |
+| --------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `headerSpan`          | `main` (default)                 | The sidebars run the full height and the header sits beside them; a sidebar's header lines up with it, with one hairline.                               |
+|                       | `full`                           | The header runs across the window and the sidebars sit below it, such as for a menubar and a picker beside the trigger.                                 |
+| `scroll`              | `document` (default)             | The document scrolls under a sticky header; the sidebars stick.                                                                                         |
+|                       | `main`                           | The frame fills its container (`100dvh`, or `--env-app-shell-block-size`) and Main scrolls, with the keyboard scrolling it as the document.             |
+| `breakpoint`          | `sm`, `md` (default), `lg`, `xl` | Below 40, 48, 64 or 80 rem the sidebars are drawers; `md` also covers short landscape windows (32 rem tall and 54 rem wide).                            |
+| `titleBar`            | `true`                           | The header is the window's title bar, in an app that draws its own (the Window Controls Overlay); Main scrolls below it. Meant for `headerSpan="full"`. |
+| `header` `mobileOnly` | `true`                           | A phone's top bar: the header shows only below the breakpoint, with the triggers that open the drawers.                                                 |
 
 - The header is `--env-app-shell-header-height` tall (3.25 rem; 2.625 rem in the compact scale; 3.25 rem under a coarse pointer, where its controls grow to 2.75 rem). It never wraps, which is what lets the frame publish its size from CSS.
 - `dividers` (true) draws hairlines between the header, the sidebars and the content. `landmarks={false}` renders the parts without landmark roles, for a preview of a frame inside another page.
@@ -93,6 +97,7 @@ AppShell is the frame of an application, made of parts: `AppShell.Root` lays out
 - **Persistence**: `persist="app.frame"` keeps each sidebar's docked preference and chosen width (in rem) in localStorage, read after hydration. `persist={{ key, storage: 'cookie' }}` keeps them in a cookie the client reads as the frame mounts and the server reads with `readAppShellCookie(cookieHeader, key)`, passed as `initialState`, so the server's markup and the first paint agree. Controlled props come first, then `initialState`, then storage, then `defaultSidebarOpen` and `defaultSidebarWidth`. Peeks, holds and drawers are never kept.
 - **Shortcut**: `shortcut="mod+b"` (⌘B on Apple platforms, Ctrl+B elsewhere) toggles the start sidebar, or its drawer below the breakpoint; it is off by default, as Mod+B is Bold in editors, and it leaves text fields and editors alone. Per side: `shortcut={{ start: 'mod+b', end: 'mod+shift+b' }}`.
 - **Below the breakpoint**: the sidebars render nothing inline, even before hydration, and their content opens in a drawer from their side; the header's title hides.
+- **Title bar**: with `titleBar` the header takes the height of the title bar area the window reports, and at least `--env-title-bar-height` (2.5 rem, 2 rem in the compact scale); empty space drags the window, its controls stay clickable and are small, with buttons that set no variant ghost, and it leaves room for the window controls through `env(titlebar-area-*)`, as [WindowFrame](../components/window-frame.md)'s title bar does. A trigger in it keeps the centre line of a rail's icons below it, and beside a title bar a sidebar's header drags the window too. The frame scrolls Main, so `--env-frame-sticky-top` is `0px`.
 - **Loading**: `loading` shows page progress along the header's bottom edge after a short delay, then completes.
 - **Loading frame**: the same parts, with [NavList.Skeleton](../components/nav-list.md) in `Sidebar.Content` and the same `persist`, stand in for the frame on the first load inside a [LoadingState](../components/skeleton.md).
 - **Motion**: the sidebars' widths animate after the first frame and never under a reduced-motion preference.
@@ -122,11 +127,11 @@ AppShell is the frame of an application, made of parts: `AppShell.Root` lays out
 
 ### Keyboard
 
-| Key                                                                                                                     | Action                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd> from the top of the page                                                                                 | Shows the skip links, the first tab stops; <kbd>Enter</kbd> moves focus to the region.    |
-| The shortcut, such as <kbd>Ctrl</kbd>+<kbd>B</kbd>                                                                      | Toggles the sidebar, or opens and closes its drawer, where the frame sets one.            |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> | With `scroll="main"`, scroll Main as they would the document, unless a control uses them. |
+| Key                                                                                                                     | Action                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd> from the top of the page                                                                                 | Shows the skip links, the first tab stops; <kbd>Enter</kbd> moves focus to the region.                  |
+| The shortcut, such as <kbd>Ctrl</kbd>+<kbd>B</kbd>                                                                      | Toggles the sidebar, or opens and closes its drawer, where the frame sets one.                          |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> | With `scroll="main"` or `titleBar`, scroll Main as they would the document, unless a control uses them. |
 
 The sidebars' keys are on the [Sidebar](../components/sidebar.md) page.
 
@@ -148,6 +153,14 @@ The sidebars' keys are on the [Sidebar](../components/sidebar.md) page.
 With `headerSpan="full"` the header runs across the window with the trigger at its start, in line with a rail below it; this sidebar collapses off canvas.
 
 ```tsx example=HeaderAcross
+
+```
+
+### A title bar
+
+With `titleBar` and `headerSpan="full"`, the header is the window's title bar: the trigger and a menubar at its start, the title and an action, all small, and the page scrolling below it.
+
+```tsx example=TitleBarFrame
 
 ```
 

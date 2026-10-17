@@ -383,11 +383,11 @@ function attachPlainField(host: HTMLSpanElement | null) {
 /**
  * A frame whose Main scrolls, for the scrolling keys, mounted with ?fixture=scroll-keys: a button
  * and a link in the navigation, fields in open and closed shadow roots, media controls, a list
- * that scrolls without taking focus and a long page. ?titleBar makes its header the title bar.
+ * that scrolls without taking focus and a long page, with its header as the window's title bar.
  */
 export function ScrollKeysFixture() {
   return (
-    <AppShell.Root headerSpan="full" scroll="main" className="fixture-full-shell">
+    <AppShell.Root headerSpan="full" titleBar className="fixture-full-shell">
       <Sidebar.Root label="Keys navigation">
         <Sidebar.Content>
           <NavList.Root>
@@ -435,16 +435,23 @@ export function ScrollKeysFixture() {
 }
 
 /**
- * A frame whose header runs across the window and whose Main scrolls, mounted with
- * ?fixture=full-shell: a menubar and a picker beside the trigger, a resizable sidebar with a list
- * that fills it, actions, a sticky page header and a full-window view inside the page.
+ * A frame whose header runs across the window as its title bar, unless ?titleBar=off, and whose
+ * Main scrolls, mounted with ?fixture=full-shell: a menubar and a picker beside the trigger, a
+ * resizable sidebar with a list that fills it, actions, a sticky page header and a full-window view
+ * inside the page.
  */
 export function FullShellFixture() {
+  const titleBar = params().get('titleBar') !== 'off';
   const [page, setPage] = useState('notes');
   const [fullView, setFullView] = useState(false);
   const [short, setShort] = useState(false);
   return (
-    <AppShell.Root headerSpan="full" scroll="main" className="fixture-full-shell">
+    <AppShell.Root
+      headerSpan="full"
+      scroll="main"
+      titleBar={titleBar}
+      className="fixture-full-shell"
+    >
       <Sidebar.Root label="Notes navigation" resizable>
         <Sidebar.Content>
           <NavList.Root>

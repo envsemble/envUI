@@ -19,6 +19,7 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { withDisplayName } from '../../internal/withDisplayName.js';
 import { useScrollKeys } from '../internal/useScrollKeys.js';
+import { TitleBarControls, titleBarClassName } from '../internal/TitleBarFrame.js';
 import { SidebarRegion, type SidebarProps } from '../sidebar/SidebarRegion.js';
 import { Handle } from '../sidebar/Sidebar.js';
 import {
@@ -47,6 +48,13 @@ export interface RootProps extends FrameStateProps, Omit<ComponentPropsWithRef<'
    * @default 'document'
    */
   scroll?: 'document' | 'main';
+  /**
+   * The header is the window's title bar, in an installed web app or a desktop shell that draws
+   * its own (the Window Controls Overlay): empty space drags the window, it leaves room for the
+   * window controls, and its controls are small, with buttons that set no variant ghost. Implies
+   * scroll="main", so Main scrolls below the bar. Meant for headerSpan="full".
+   */
+  titleBar?: boolean;
   /**
    * Hairlines between the header, the sidebars and the content.
    * @default true
@@ -78,7 +86,8 @@ export interface RootProps extends FrameStateProps, Omit<ComponentPropsWithRef<'
  */
 function Root({
   headerSpan = 'main',
-  scroll = 'document',
+  scroll: ownScroll = 'document',
+  titleBar = false,
   dividers = true,
   loading = false,
   loadingLabel,
@@ -99,6 +108,8 @@ function Root({
   ...props
 }: RootProps) {
   const messages = useMessages('appShell', appShell);
+  // A title bar draws over the window, so a region scrolls below it rather than the document.
+  const scroll = titleBar ? 'main' : ownScroll;
   const store = useFrameState(
     {
       defaultSidebarOpen,
@@ -152,8 +163,8 @@ function Root({
     [getScrollElement, getStickyTop, scroll],
   );
   const shape = useMemo<FrameShape>(
-    () => ({ landmarks, scroll, headerSpan, titleBar: false, setHeader, setMain }),
-    [landmarks, scroll, headerSpan],
+    () => ({ landmarks, scroll, headerSpan, titleBar, setHeader, setMain }),
+    [landmarks, scroll, headerSpan, titleBar],
   );
   return (
     <FrameProvider value={store}>
@@ -165,6 +176,7 @@ function Root({
             className={classNames('env-app-shell', className)}
             data-header-span={headerSpan}
             data-scroll={scroll}
+            data-title-bar={titleBar ? '' : undefined}
             data-dividers={dividers ? '' : undefined}
             data-breakpoint={store.breakpoint}
             data-mobile={store.isMobile ? '' : undefined}
@@ -290,16 +302,25 @@ function Header({
     [ref, setHeader],
   );
   const Element = shape && !shape.landmarks ? 'div' : 'header';
+  const titleBar = shape?.titleBar ?? false;
+  const content = (
+    <>
+      {start != null && <div className="env-app-shell-header-start">{start}</div>}
+      <div className="env-app-shell-header-title">{children}</div>
+      {end != null && <div className="env-app-shell-header-end">{end}</div>}
+    </>
+  );
   return (
     <Element
       {...props}
       ref={attach}
-      className={classNames('env-app-shell-header', className)}
+      // In a title-bar frame the header is the window's title bar, with its drag regions, its room
+      // for the window controls and its small ghost controls.
+      className={classNames(titleBar && titleBarClassName, 'env-app-shell-header', className)}
       data-mobile-only={mobileOnly ? '' : undefined}
+      data-title-bar={titleBar ? '' : undefined}
     >
-      {start != null && <div className="env-app-shell-header-start">{start}</div>}
-      <div className="env-app-shell-header-title">{children}</div>
-      {end != null && <div className="env-app-shell-header-end">{end}</div>}
+      {titleBar ? <TitleBarControls>{content}</TitleBarControls> : content}
     </Element>
   );
 }

@@ -12,7 +12,12 @@ import {
 import { classNames } from '../../internal/classNames.js';
 import { useResize } from '../../internal/useResize.js';
 import { withDisplayName } from '../../internal/withDisplayName.js';
-import { FrameProvider, useFrameState, type FrameStateProps } from '../app-shell/FrameStore.js';
+import {
+  FrameProvider,
+  FrameShapeContext,
+  useFrameState,
+  type FrameStateProps,
+} from '../app-shell/FrameStore.js';
 import { useSidebarRail } from '../internal/SidebarCompact.js';
 import { HandleContext, SidebarRegion, WithFrame, type SidebarProps } from './SidebarRegion.js';
 
@@ -56,7 +61,16 @@ export type HeaderProps = ComponentPropsWithRef<'div'>;
  * the trigger.
  */
 function Header({ className, ...props }: HeaderProps) {
-  return <div {...props} className={classNames('env-sidebar-header', className)} />;
+  // Beside a title bar, the sidebar's header is part of the window's title area: it drags the
+  // window and leaves room for window controls at its edge.
+  const titleBar = useContext(FrameShapeContext)?.titleBar ?? false;
+  return (
+    <div
+      {...props}
+      className={classNames('env-sidebar-header', className)}
+      data-title-bar={titleBar ? '' : undefined}
+    />
+  );
 }
 
 export interface ContentProps extends ComponentPropsWithRef<'div'> {

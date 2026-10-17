@@ -2451,6 +2451,8 @@
         "header",
         "app bar",
         "skip link",
+        "title bar",
+        "window controls overlay",
         "skip to content",
         "AppShellSkeleton",
         "loading frame"
@@ -2458,7 +2460,8 @@
       "useWhen": [
         "An application needs its frame, with a header with the page's title and actions, sidebars that collapse, and the page's content.",
         "Content needs to stick below the frame's header, or to know which element scrolls (useAppShell).",
-        "The application's first load shows the frame before the data arrives."
+        "The application's first load shows the frame before the data arrives.",
+        "An installed web app or desktop shell with sidebars draws its own title bar over the window (`titleBar`)."
       ],
       "avoidWhen": [
         {
@@ -2508,6 +2511,12 @@
           "title": "A header across the window",
           "description": "With `headerSpan=\"full\"` the header runs across the window with the trigger at its start, in line with a rail below it; this sidebar collapses off canvas.",
           "file": "docs/examples/app-shell/HeaderAcross.tsx"
+        },
+        {
+          "name": "TitleBarFrame",
+          "title": "A title bar",
+          "description": "With `titleBar` and `headerSpan=\"full\"`, the header is the window's title bar: the trigger and a menubar at its start, the title and an action, all small, and the page scrolling below it.",
+          "file": "docs/examples/app-shell/TitleBarFrame.tsx"
         },
         {
           "name": "TwoSidebars",
@@ -6514,6 +6523,13 @@
           "required": false,
           "default": "'document'",
           "description": "document: the document scrolls under a sticky header. main: the frame fills its container (100dvh, or --env-app-shell-block-size) and AppShell.Main scrolls, with the keyboard scrolling it as it would the document."
+        },
+        {
+          "name": "titleBar",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The header is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls, and its controls are small, with buttons that set no variant ghost. Implies scroll=\"main\", so Main scrolls below the bar. Meant for headerSpan=\"full\"."
         },
         {
           "name": "dividers",

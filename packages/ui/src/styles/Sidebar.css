@@ -13,7 +13,6 @@
   --env-sidebar-min-width: 12rem;
   --env-sidebar-max-width: 20rem;
   --env-sidebar-hairline: 0.0625rem;
-  --env-sidebar-mark-size: 1.5rem;
   --env-sidebar-handle-touch-size: 1.5rem;
   /* Where a panel collapsed off canvas slides: toward the sidebar's own edge of the window. */
   --env-sidebar-out: -100%;
@@ -255,6 +254,21 @@
     visibility: visible;
   }
 }
+/* In a title bar, the trigger's small size keeps the centre line of a rail's icons, and its mark
+   is smaller. */
+.env-sidebar-trigger {
+  --env-sidebar-mark-size: var(--env-frame-mark-size, 1.5rem);
+  /* Centred on the frame's control height, which a title bar's small controls keep. */
+  margin-inline: calc(
+    (var(--env-frame-control-height, var(--env-control-height)) - var(--env-control-height)) / 2
+  );
+}
+/* Under a coarse pointer every control is the touch height, the trigger and the frame's alike. */
+@media (pointer: coarse) {
+  .env-sidebar-trigger {
+    margin-inline: 0;
+  }
+}
 .env-sidebar-trigger-tooltip {
   display: inline-flex;
   align-items: baseline;
@@ -412,4 +426,22 @@
   .env-sidebar-handle[data-dragging]::after {
     background: Highlight;
   }
+}
+
+/* Beside a title bar, a sidebar's header is part of the window's title area: empty space drags the
+   window, controls stay clickable, and a header at the window's leading edge leaves room for
+   window controls there, such as on macOS. */
+.env-sidebar-header[data-title-bar] {
+  -webkit-app-region: drag;
+  app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-sidebar-header[data-title-bar]
+  :is(a, button, input, select, textarea, label, [role], [tabindex], [contenteditable]) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.env-sidebar[data-side='start']:dir(ltr) .env-sidebar-header[data-title-bar] {
+  padding-left: max(var(--env-sidebar-inset), env(titlebar-area-x, 0px));
 }

@@ -455,6 +455,13 @@
           "description": "document: the document scrolls under a sticky header. main: the frame fills its container (100dvh, or --env-app-shell-block-size) and AppShell.Main scrolls, with the keyboard scrolling it as it would the document."
         },
         {
+          "name": "titleBar",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The header is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls, and its controls are small, with buttons that set no variant ghost. Implies scroll=\"main\", so Main scrolls below the bar. Meant for headerSpan=\"full\"."
+        },
+        {
           "name": "dividers",
           "type": "boolean",
           "required": false,
