@@ -95,7 +95,7 @@ Some visual references are not examples: a matrix of every variant in every form
 <!-- specimen: VariantMatrix -->
 ```
 
-The visual baseline captures specimens and examples alike.
+The visual baseline captures a page's specimens, and its first example when it has no specimen.
 
 ## Props
 

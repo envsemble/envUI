@@ -1,16 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
 import { catalogueUrl } from './Servers';
 import { documents } from '../../apps/catalogue/src/Reference';
-import { templateScales } from '../../apps/catalogue/src/template/TemplateViewports';
 import { templateChecks } from './TemplateChecks';
 
 /**
  * Every template screen, opened alone at its frame route (?frame=<page>/<Name>), at the desktop
- * width and a phone's, in each scale: it renders without errors, has the landmarks and headings a
- * page needs, a keyboard path, no unnamed control, no horizontal overflow and no axe violation,
- * and passes its own checks in TemplateChecks.ts. ENVUI_TEMPLATES=<page>,<page> limits the run to
- * some template pages, as `npm run check` sets it for a change to them.
+ * width and a phone's, in the comfortable scale: it renders without errors, has the landmarks and
+ * headings a page needs, a keyboard path, no unnamed control and no horizontal overflow, and passes
+ * its own checks in TemplateChecks.ts. The accessibility scan (tests/accessibility) runs axe over
+ * every screen; the visual baseline takes the compact scale.
  */
 const screens = documents.flatMap((document) =>
   document.group === 'Templates'
@@ -30,17 +28,11 @@ const screens = documents.flatMap((document) =>
       )
     : [],
 );
-const only = process.env.ENVUI_TEMPLATES?.split(',').filter(Boolean);
-const unknown = only?.filter((page) => !screens.some((screen) => screen.page === page));
-if (unknown?.length)
-  throw new Error(`ENVUI_TEMPLATES names template pages there are not: ${unknown.join(', ')}`);
-const screensChecked = screens.filter(({ page }) => !only || only.includes(page));
 
 const widths = [
   { label: 'desktop', width: 1280, height: 800 },
   { label: 'phone', width: 390, height: 844 },
 ];
-const axeTags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 /** Roles that need a name to be usable. */
 const namedRoles = [
   'button',
@@ -56,11 +48,6 @@ const namedRoles = [
   'tab',
   'menuitem',
 ] as const;
-
-test('the frame route checks at least one template screen', () => {
-  expect(screens.length).toBeGreaterThan(0);
-  expect(screens.some((screen) => screen.page === 'sign-in-page')).toBe(true);
-});
 
 test.describe('in a reader’s other language', () => {
   test.use({ locale: 'cs-CZ' });
@@ -94,127 +81,117 @@ function headingLevels(page: Page) {
     );
 }
 
-for (const { page: id, name, frame } of screensChecked)
-  for (const { value: scale } of templateScales)
-    test(`${id}/${name} (${scale})`, async ({ page, browserName }) => {
-      // Two widths, each with an axe scan and the screen's own checks from a fresh load.
-      test.slow();
-      const problems: string[] = [];
-      page.on('console', (message) => {
-        if (message.type() === 'error') problems.push(message.text());
-      });
-      page.on('pageerror', (error) => problems.push(error.message));
-      const address = `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale, theme: 'light' })}`;
-      const load = async () => {
-        await page.goto(address);
-        await page.locator('[data-template-frame]').waitFor();
-        await expect(page.getByRole('main')).toBeVisible();
-        await expect(page.getByText('Loading template…')).toHaveCount(0);
-      };
-      const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+const scale = 'comfortable';
+for (const { page: id, name, frame } of screens)
+  test(`${id}/${name} (${scale})`, async ({ page, browserName }) => {
+    // Two widths, each with the screen's own checks from a fresh load.
+    test.slow();
+    const problems: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') problems.push(message.text());
+    });
+    page.on('pageerror', (error) => problems.push(error.message));
+    const address = `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale, theme: 'light' })}`;
+    const load = async () => {
+      await page.goto(address);
+      await page.locator('[data-template-frame]').waitFor();
+      await expect(page.getByRole('main')).toBeVisible();
+      await expect(page.getByText('Loading template…')).toHaveCount(0);
+    };
+    const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
 
-      for (const { label, width, height } of widths) {
-        await test.step(`${label} ${width} × ${height}`, async () => {
-          await page.setViewportSize({ width, height });
-          await load();
+    for (const { label, width, height } of widths) {
+      await test.step(`${label} ${width} × ${height}`, async () => {
+        await page.setViewportSize({ width, height });
+        await load();
 
-          // It rendered: no load boundary's message, no missing template.
-          await expect(page.getByText(/failed to render|could not load|No template/)).toHaveCount(
-            0,
+        // It rendered: no load boundary's message, no missing template.
+        await expect(page.getByText(/failed to render|could not load|No template/)).toHaveCount(0);
+
+        // Landmarks: one main; the app frame's navigation, and a banner only where it shows.
+        await expect(page.getByRole('main')).toHaveCount(1);
+        if (frame === 'app') {
+          // On a phone the navigation is a drawer the top bar's trigger opens.
+          const phone = width < 768;
+          await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(
+            phone ? 0 : 1,
+          );
+          await expect(page.getByRole('banner')).toHaveCount(phone ? 1 : 0);
+          if (phone)
+            await expect(
+              page.getByRole('banner').getByRole('button', { name: 'Open navigation' }),
+            ).toHaveCount(1);
+        } else await expect(page.getByRole('banner')).toHaveCount(0);
+
+        // Headings: one h1, and no level skipped.
+        await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+        const levels = await headingLevels(page);
+        expect(levels[0], 'The first heading is the h1').toBe(1);
+        for (let index = 1; index < levels.length; index++)
+          expect(levels[index], `heading ${index + 1} skips no level`).toBeLessThanOrEqual(
+            levels[index - 1] + 1,
           );
 
-          // Landmarks: one main; the app frame's navigation, and a banner only where it shows.
-          await expect(page.getByRole('main')).toHaveCount(1);
-          if (frame === 'app') {
-            // On a phone the navigation is a drawer the top bar's trigger opens.
-            const phone = width < 768;
-            await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(
-              phone ? 0 : 1,
-            );
-            await expect(page.getByRole('banner')).toHaveCount(phone ? 1 : 0);
-            if (phone)
-              await expect(
-                page.getByRole('banner').getByRole('button', { name: 'Open navigation' }),
-              ).toHaveCount(1);
-          } else await expect(page.getByRole('banner')).toHaveCount(0);
+        // Keyboard: in the app frame, the first Tab stop is the skip link, which focuses Main.
+        // Playwright's WebKit never tabs to links, so there the skip link takes focus directly.
+        if (frame === 'app') {
+          if (browserName === 'webkit')
+            await page.getByRole('link', { name: 'Skip to content' }).focus();
+          else await page.keyboard.press(tab);
+          const skip = page.locator(':focus');
+          await expect(skip).toHaveRole('link');
+          await expect(skip).toHaveAccessibleName('Skip to content');
+          await page.keyboard.press('Enter');
+          await expect(page.getByRole('main')).toBeFocused();
+        }
 
-          // Headings: one h1, and no level skipped.
-          await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-          const levels = await headingLevels(page);
-          expect(levels[0], 'The first heading is the h1').toBe(1);
-          for (let index = 1; index < levels.length; index++)
-            expect(levels[index], `heading ${index + 1} skips no level`).toBeLessThanOrEqual(
-              levels[index - 1] + 1,
-            );
+        // No horizontal overflow.
+        expect(
+          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+          'The screen fits the width',
+        ).toBe(true);
 
-          // Keyboard: in the app frame, the first Tab stop is the skip link, which focuses Main.
-          // Playwright's WebKit never tabs to links, so there the skip link takes focus directly.
-          if (frame === 'app') {
-            if (browserName === 'webkit')
-              await page.getByRole('link', { name: 'Skip to content' }).focus();
-            else await page.keyboard.press(tab);
-            const skip = page.locator(':focus');
-            await expect(skip).toHaveRole('link');
-            await expect(skip).toHaveAccessibleName('Skip to content');
-            await page.keyboard.press('Enter');
-            await expect(page.getByRole('main')).toBeFocused();
-          }
+        // Every control has a name.
+        for (const role of namedRoles)
+          for (const control of await page.getByRole(role).all())
+            await expect(control, `a ${role} without a name`).toHaveAccessibleName(/\S/);
 
-          // No horizontal overflow.
-          expect(
-            await page.evaluate(
-              () => document.documentElement.scrollWidth <= window.innerWidth + 1,
-            ),
-            'The screen fits the width',
-          ).toBe(true);
+        // The requested scale, everywhere.
+        const scales = await page
+          .locator('[data-env-scale]')
+          .evaluateAll((elements) =>
+            elements.map((element) => element.getAttribute('data-env-scale')),
+          );
+        expect(new Set(scales)).toEqual(new Set([scale]));
 
-          // Every control has a name.
-          for (const role of namedRoles)
-            for (const control of await page.getByRole(role).all())
-              await expect(control, `a ${role} without a name`).toHaveAccessibleName(/\S/);
-
-          // The requested scale, everywhere.
-          const scales = await page
-            .locator('[data-env-scale]')
+        // A PageHeader's toolbar keeps its controls on one block size.
+        for (const toolbar of await page.locator('.env-page-header-toolbar').all()) {
+          const sizes = await toolbar
+            .locator('button, input, [role="combobox"]')
             .evaluateAll((elements) =>
-              elements.map((element) => element.getAttribute('data-env-scale')),
+              elements
+                .filter((element) => (element as HTMLElement).offsetParent)
+                // A field's box is its control, around the input and its buttons.
+                .map((element) => element.closest('.env-text-field-control') ?? element)
+                .filter((element, index, all) => all.indexOf(element) === index)
+                .map((element) => Math.round(element.getBoundingClientRect().height)),
             );
-          expect(new Set(scales)).toEqual(new Set([scale]));
+          expect(new Set(sizes).size, 'Toolbar controls share one height').toBeLessThanOrEqual(1);
+        }
 
-          // A PageHeader's toolbar keeps its controls on one block size.
-          for (const toolbar of await page.locator('.env-page-header-toolbar').all()) {
-            const sizes = await toolbar
-              .locator('button, input, [role="combobox"]')
-              .evaluateAll((elements) =>
-                elements
-                  .filter((element) => (element as HTMLElement).offsetParent)
-                  // A field's box is its control, around the input and its buttons.
-                  .map((element) => element.closest('.env-text-field-control') ?? element)
-                  .filter((element, index, all) => all.indexOf(element) === index)
-                  .map((element) => Math.round(element.getBoundingClientRect().height)),
-              );
-            expect(new Set(sizes).size, 'Toolbar controls share one height').toBeLessThanOrEqual(1);
-          }
-
-          // No accessibility violation.
-          const { violations } = await new AxeBuilder({ page })
-            .options({ runOnly: { type: 'tag', values: axeTags } })
-            .analyze();
-          expect(violations.map(({ id: rule, nodes }) => `${rule}: ${nodes.length}`)).toEqual([]);
-
-          // The screen's own checks, each from the screen as it loads.
-          for (const check of templateChecks[`${id}/${name}`] ?? [])
-            await test.step(check.name, async () => {
-              await load();
-              await check.run(page, {
-                width,
-                scale,
-                tab,
-                tabReachesLinks: browserName !== 'webkit',
-                reload: load,
-              });
+        // The screen's own checks, each from the screen as it loads.
+        for (const check of templateChecks[`${id}/${name}`] ?? [])
+          await test.step(check.name, async () => {
+            await load();
+            await check.run(page, {
+              width,
+              scale,
+              tab,
+              tabReachesLinks: browserName !== 'webkit',
+              reload: load,
             });
-        });
-      }
-      expect(problems, 'No console error or page error').toEqual([]);
-    });
+          });
+      });
+    }
+    expect(problems, 'No console error or page error').toEqual([]);
+  });

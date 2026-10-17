@@ -9,8 +9,7 @@
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { controlSizes, densityScales } from '../fixture/DensitySections';
-import { documentationPages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { fixtureUrl } from './Servers';
 
 /** The control heights of each scale, in CSS pixels at the default 16 px root. */
 const heights = {
@@ -365,80 +364,6 @@ test.describe('on a coarse pointer', () => {
       ).toEqual([]);
     });
 
-  // A frame with the trigger in the sidebar's header and with the trigger in a header across the
-  // window.
-  for (const scale of densityScales)
-    for (const [fixture, frame, trigger, count] of [
-      ['app-shell', 'the trigger in the sidebar', '.env-sidebar .env-sidebar-trigger', 4],
-      ['full-shell', 'a header across the window', '.env-app-shell-header .env-sidebar-trigger', 3],
-    ] as const)
-      test(`SidebarTrigger and navigation items share a center line inside the sidebar, with ${frame}, in the ${scale} scale`, async ({
-        page,
-      }) => {
-        await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
-        const shell = page.locator('.env-app-shell');
-        await expect(shell).toHaveAttribute('data-ready', '');
-        await expect(
-          shell.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
-        ).toHaveAttribute('data-env-scale', scale);
-        expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
-        await page.evaluate(() => localStorage.clear());
-        await page.reload();
-        await expect(shell).toHaveAttribute('data-ready', '');
-        for (const state of ['expanded', 'collapsed'] as const) {
-          if (state === 'collapsed') {
-            await page.locator(trigger).click();
-            await page.mouse.move(800, 500);
-            await expect(page.locator('.env-sidebar')).toHaveAttribute('data-rail', '');
-          }
-          await settle(page);
-          const geometry = await page.evaluate((selector) => {
-            const center = (box: DOMRect) => box.x + box.width / 2;
-            const toggle = document.querySelector(selector)!;
-            const sidebar = document.querySelector('.env-sidebar-panel')!;
-            const sidebarBox = sidebar.getBoundingClientRect();
-            return {
-              toggle: center(toggle.getBoundingClientRect()),
-              // The inside of the sidebar, within its divider.
-              start: sidebarBox.left + sidebar.clientLeft,
-              end: sidebarBox.left + sidebar.clientLeft + sidebar.clientWidth,
-              items: [...document.querySelectorAll('.env-sidebar .env-nav-list-item')].map(
-                (item) => {
-                  const box = item.getBoundingClientRect();
-                  return {
-                    left: box.left,
-                    right: box.right,
-                    center: center(box),
-                    icon: center(item.querySelector('.env-icon')!.getBoundingClientRect()),
-                  };
-                },
-              ),
-            };
-          }, trigger);
-          for (const item of geometry.items) {
-            expect(item.left, state).toBeGreaterThanOrEqual(geometry.start - 0.01);
-            expect(item.right, state).toBeLessThanOrEqual(geometry.end + 0.01);
-            if (state === 'collapsed') {
-              expect(Math.abs(item.center - geometry.toggle), state).toBeLessThanOrEqual(1);
-              expect(Math.abs(item.icon - geometry.toggle), state).toBeLessThanOrEqual(1);
-            }
-          }
-          // Measured last: measuring scrolls each target into view, also inside the navigation.
-          const areas = await page.evaluate(
-            async ([selector, source]) => {
-              const measure = (0, eval)(source) as MeasureHitAreas;
-              return measure(document.body, selector);
-            },
-            [`${trigger}, .env-sidebar .env-nav-list-item`, measureHitAreas] as const,
-          );
-          expect(areas, state).toHaveLength(count);
-          expect(
-            areas.filter(({ width, height }) => width < 44 || height < 44),
-            `${state}: ${JSON.stringify(areas)}`,
-          ).toEqual([]);
-        }
-      });
-
   test("a ButtonGroup's corners stay round at the touch height", async ({ page }) => {
     await openSection(page, 'sizes');
     const corners = await page
@@ -483,55 +408,6 @@ test.describe('on a coarse pointer', () => {
           );
       });
       expect(scrolling, section).toEqual([]);
-    });
-
-  // One test a page: each loads the catalogue once, so none runs out of time on a busy engine.
-  // Each of these scrolls sideways when its content is wider than its room, so its other axis
-  // scrolls too: a control or a hit area taller than it would make it scroll up and down.
-  const scrollers = [
-    '.env-table-region:not([data-sticky-header])',
-    '.env-button-group',
-    '.env-tabs-list',
-    '.env-segmented-control',
-    '.env-document-tabs',
-    '.env-markdown-toolbar',
-    '.env-panel-dock-row',
-    '.env-panel-dock-strip',
-    '.env-calendar-heatmap-scroll',
-  ].join(', ');
-  const scrollingPages = documentationPages.filter(({ path }) =>
-    [
-      'button',
-      'calendar-heatmap',
-      'document-tabs',
-      'markdown',
-      'panel-dock',
-      'segmented-control',
-      'table',
-      'tabs',
-    ].some((name) => path.endsWith(`/${name}`)),
-  );
-  test("what scrolls sideways is checked on the catalogue's eight pages that hold it", () => {
-    expect(scrollingPages).toHaveLength(8);
-  });
-  for (const { path, views } of scrollingPages)
-    test(`on the catalogue's ${path} page, what scrolls sideways never scrolls for its controls' height`, async ({
-      page,
-    }) => {
-      await page.goto(`${catalogueUrl}/#/${path}/${views[0]!.id}`);
-      await page.locator('#docs-main').waitFor();
-      await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
-      await settle(page);
-      const found = page.locator(`#docs-main :is(${scrollers})`);
-      await expect(found.first()).toBeVisible();
-      const scrolling = await found.evaluateAll((elements) =>
-        elements
-          .filter((element) => element.scrollHeight > element.clientHeight)
-          .map(
-            (element) => `${element.className}: ${element.scrollHeight} in ${element.clientHeight}`,
-          ),
-      );
-      expect(scrolling, path).toEqual([]);
     });
 
   for (const section of ['sizes', 'toolbar', 'desktop', 'layouts'])

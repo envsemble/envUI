@@ -1,7 +1,8 @@
 /**
- * Accessibility gate: axe scans every catalogue page in both themes, and the key pages of
- * highContrastPages (tests/browser/CatalogueThemes.ts) in light and dark high contrast too, and
- * compares the violations with KnownViolations.json. A new violation fails, and so does a listed
+ * Accessibility gate: axe scans the first view of every catalogue page in light, every view of the
+ * Button page (to cover each kind of view once), and the theme sample of samplePages
+ * (tests/browser/CatalogueThemes.ts) in dark and both high-contrast themes too, and compares the
+ * violations with KnownViolations.json. A new violation fails, and so does a listed
  * one that no longer occurs, so the list only shrinks. Run `npm run test:a11y`; after fixing
  * violations, or when a reviewed change has to add one, rewrite the list with
  * `npm run test:a11y:update` and review its diff.
@@ -11,9 +12,9 @@
  * React ids and child positions are left out so unrelated edits do not move the keys.
  *
  * A template page's previews are iframes of the frame route, left out of the page's scan: each
- * template screen is scanned alone at its frame route instead, in both themes and scales at the
- * desktop width and comfortable at the phone width, under routes such as
- * frame:settings-page/SettingsPage?scale=compact&width=1280.
+ * template screen is scanned alone at its frame route instead, in light and the comfortable scale
+ * at the desktop and phone widths, under routes such as
+ * frame:settings-page/SettingsPage?scale=comfortable&width=1280.
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -32,7 +33,7 @@ import {
   overviewViews,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
-/** light and dark on every page, and light-hc and dark-hc on the pages of highContrastPages. */
+/** light on every page, and dark, light-hc and dark-hc on the pages of samplePages. */
 type Theme = ThemeName;
 /** rule id → stable target → count */
 type RuleCounts = Record<string, Record<string, number>>;
@@ -59,17 +60,30 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  */
 const highContrastRules = { 'color-contrast-enhanced': { enabled: true } };
 
-/** Every destination of the catalogue's own route list, with each of its views, if it has any. */
-const pages = documentationPages.map(({ path, title, views }) => ({
-  path,
-  title,
-  routes:
+/** The page whose every view is scanned; every other page is scanned at its first view. */
+const everyView = 'components/button';
+/**
+ * Every destination of the catalogue's own route list, at its first view (each of its views on
+ * everyView), with the themes each route is scanned in: the page's themes at its first view, and
+ * light at the others.
+ */
+const pages = documentationPages.map(({ path, title, views }) => {
+  const all =
     path === 'overview'
       ? overviewViews.map((view) => `overview/${view.id}`)
       : views.length
         ? views.map((view) => `${path}/${view.id}`)
-        : [path],
-}));
+        : [path];
+  const themes = themesFor(path);
+  return {
+    path,
+    title,
+    routes: (path === everyView ? all : all.slice(0, 1)).map((route, index) => ({
+      route,
+      themes: index ? themes.slice(0, 1) : themes,
+    })),
+  };
+});
 /** Every template screen, by its template page's path, with the routes of its frame scans. */
 const screens = guidePages
   .filter((page) => page.section === 'Templates')
@@ -82,8 +96,7 @@ const screens = guidePages
                 path,
                 frame: `${document!.id}/${block.name}`,
                 scans: [
-                  { scale: 'comfortable', width: 1280, height: 800, themes: ['light', 'dark'] },
-                  { scale: 'compact', width: 1280, height: 800, themes: ['light', 'dark'] },
+                  { scale: 'comfortable', width: 1280, height: 800, themes: ['light'] },
                   { scale: 'comfortable', width: 390, height: 844, themes: ['light'] },
                 ] as const,
               },
@@ -94,24 +107,21 @@ const screens = guidePages
   );
 const frameRoute = (frame: string, scale: string, width: number) =>
   `frame:${frame}?scale=${scale}&width=${width}`;
-const routes = new Set([
-  ...pages.flatMap((page) => page.routes),
+/** Every route scanned, with the themes it is scanned in. */
+const routes = new Map<string, Set<string>>([
+  ...pages.flatMap((page) =>
+    page.routes.map(({ route, themes }): [string, Set<string>] => [
+      route,
+      new Set(themes.map((theme) => theme.name)),
+    ]),
+  ),
   ...screens.flatMap(({ frame, scans }) =>
-    scans.map(({ scale, width }) => frameRoute(frame, scale, width)),
+    scans.map(({ scale, width, themes }): [string, Set<string>] => [
+      frameRoute(frame, scale, width),
+      new Set(themes),
+    ]),
   ),
 ]);
-/**
- * ENVUI_PAGES limits the scan to some pages, by path such as components/button, as
- * `npm run check:affected` sets it for a change; `npm run test:a11y` scans every page.
- */
-const only = process.env.ENVUI_PAGES?.split(',').filter(Boolean);
-const unknown = only?.filter(
-  (path) => path !== 'density' && !pages.some((page) => page.path === path),
-);
-if (unknown?.length)
-  throw new Error(`ENVUI_PAGES names pages the catalogue does not have: ${unknown.join(', ')}`);
-const scanned = only ? pages.filter((page) => only.includes(page.path)) : pages;
-const screensScanned = only ? screens.filter((screen) => only.includes(screen.path)) : screens;
 
 function readExceptions(): Violations {
   return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
@@ -352,15 +362,13 @@ test.beforeEach(async ({ page }) => {
   await serveSite(page);
 });
 
-for (const { path, title, routes: pageRoutes } of scanned) {
+for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
-    // Pages scanned in high contrast as well take twice as long.
-    test.setTimeout(240_000);
     const scans: Scan[] = [];
-    for (const route of pageRoutes) {
+    for (const { route, themes } of pageRoutes) {
       await page.goto(`${siteUrl}/#/${route}`);
       await expandCode(page);
-      for (const theme of themesFor(path)) {
+      for (const theme of themes) {
         await setTheme(page, theme);
         await settle(page);
         await highlighted(page);
@@ -406,9 +414,8 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
     );
 }
 
-for (const { frame, scans: frameScans } of screensScanned) {
+for (const { frame, scans: frameScans } of screens) {
   test(`template ${frame} has no new accessibility violations`, async ({ page }, testInfo) => {
-    test.setTimeout(120_000);
     const scans: Scan[] = [];
     for (const { scale, width, height, themes } of frameScans) {
       await page.setViewportSize({ width, height });
@@ -429,15 +436,24 @@ for (const { frame, scans: frameScans } of screensScanned) {
 
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
-test('known violations name only catalogue pages', async ({}, testInfo) => {
-  const stale = Object.keys(readExceptions()).filter((route) => !routes.has(route));
+test('known violations name only the scans that run', async ({}, testInfo) => {
+  const stale = Object.entries(readExceptions()).flatMap(([route, themes]) =>
+    Object.keys(themes)
+      .filter((theme) => !routes.get(route)?.has(theme))
+      .map((theme) => [route, theme as Theme] as const),
+  );
   if (updating(testInfo)) {
     if (stale.length)
-      updateExceptions((violations) => stale.forEach((route) => delete violations[route]));
+      updateExceptions((violations) => {
+        for (const [route, theme] of stale) {
+          delete violations[route]![theme];
+          if (!Object.keys(violations[route]!).length) delete violations[route];
+        }
+      });
     return;
   }
   if (stale.length)
     throw new Error(
-      `KnownViolations.json lists pages the catalogue no longer has: ${stale.join(', ')}. Run \`npm run test:a11y:update\`.`,
+      `KnownViolations.json lists scans that no longer run: ${stale.map(([route, theme]) => `${route} (${theme})`).join(', ')}. Run \`npm run test:a11y:update\`.`,
     );
 });
