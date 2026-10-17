@@ -62,8 +62,18 @@ export default function ErrorSummary() {
       <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
         {listed.length > 0 && (
           // envUI has no error summary yet: a danger Alert that takes focus lists the errors, each
-          // linked to its field.
-          <Alert ref={summary} tabIndex={-1} tone="danger" title="There is a problem">
+          // linked to its field. Without `announce` it has no role, so it's read once, as it takes
+          // focus; its title is a heading, so people can find it again.
+          <Alert
+            ref={summary}
+            tabIndex={-1}
+            tone="danger"
+            title={
+              <span role="heading" aria-level={2}>
+                There is a problem
+              </span>
+            }
+          >
             <Stack render={<ul />} gap={1}>
               {listed.map((field) => (
                 <li key={field}>
@@ -109,7 +119,7 @@ export default function ErrorSummary() {
           id={`${id}-team`}
           label="Team"
           name="team"
-          placeholder="Choose a team"
+          placeholder="No team"
           items={teams}
           value={values.team || null}
           error={errors.team}

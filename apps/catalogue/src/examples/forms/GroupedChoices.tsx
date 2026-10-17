@@ -9,9 +9,11 @@ export default function GroupedChoices() {
     // A checked box submits its value under the group's name; an unchecked one submits nothing.
     const topics = data.getAll('topics').length;
     setSaved(
-      topics === 1
-        ? `Saved: ${data.get('frequency')} email about 1 topic.`
-        : `Saved: ${data.get('frequency')} email about ${topics} topics.`,
+      topics === 0
+        ? 'Preferences saved. You won’t get notifications.'
+        : topics === 1
+          ? 'Preferences saved. You’ll get notifications about 1 topic.'
+          : `Preferences saved. You’ll get notifications about ${topics} topics.`,
     );
   };
   return (
@@ -26,7 +28,7 @@ export default function GroupedChoices() {
         {/* envUI has no checkbox group yet: a fieldset and its legend name the choices, and are
             read with each one, as RadioGroup's are. */}
         <fieldset style={{ minInlineSize: 0, margin: 0, padding: 0, border: 0 }}>
-          {/* envUI has no checkbox group yet: the legend keeps RadioGroup's space below it. */}
+          {/* The legend keeps RadioGroup's space below it. */}
           <legend style={{ padding: 0, marginBlockEnd: 'var(--env-space-4)' }}>
             Notify me about
           </legend>

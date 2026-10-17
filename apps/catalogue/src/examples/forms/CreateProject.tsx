@@ -15,7 +15,8 @@ export default function CreateProject() {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState<string>();
   const [creating, setCreating] = useState(false);
-  const [created, setCreated] = useState('');
+  // The status under the actions: the outcome, or the error when a submit is refused.
+  const [status, setStatus] = useState('');
   const nameField = useRef<HTMLInputElement>(null);
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -23,16 +24,20 @@ export default function CreateProject() {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!name.trim()) {
-      setNameError('Enter a project name');
+      const message = 'Enter a project name';
+      setNameError(message);
+      // After Enter in the field, focus is already there and focusing it again reads nothing, so
+      // the status says the error too.
+      setStatus(message);
       nameField.current?.focus();
       return;
     }
     setCreating(true);
-    setCreated('');
+    setStatus('');
     // The project is created on a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => {
       setCreating(false);
-      setCreated(`${name.trim()} created.`);
+      setStatus(`${name.trim()} created.`);
     }, 1200);
   };
 
@@ -51,7 +56,10 @@ export default function CreateProject() {
           error={nameError}
           onValueChange={(value) => {
             setName(value);
-            if (value.trim()) setNameError(undefined);
+            if (value.trim()) {
+              setNameError(undefined);
+              setStatus('');
+            }
           }}
         />
         <Textarea
@@ -76,7 +84,7 @@ export default function CreateProject() {
           </Button>
         </Stack>
         <Text role="status" emphasis="muted">
-          {created}
+          {status}
         </Text>
       </Stack>
     </form>

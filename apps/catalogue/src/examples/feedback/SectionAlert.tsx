@@ -4,7 +4,8 @@ import { Alert, Button, DescriptionList, Stack, Text } from '@envsemble/envui';
 export default function SectionAlert() {
   const [requested, setRequested] = useState(false);
   const alert = useRef<HTMLDivElement>(null);
-  // The button goes once the request is sent, so focus moves to the message that replaces it.
+  // The button goes once the request is sent, so focus moves to the message that replaces it,
+  // which reads its new text as it takes focus.
   useEffect(() => {
     if (requested) alert.current?.focus();
   }, [requested]);
@@ -14,10 +15,13 @@ export default function SectionAlert() {
         Quarterly report
       </Text>
       {/* A condition of the page, there when it loads: it stays until the condition changes, and
-          is read with the page rather than announced. */}
+          is read with the page rather than announced. A warning Alert has no role without
+          `announce`, so its change is read once, with focus; an info Alert, a status message,
+          would announce it a second time. */}
       <Alert
         ref={alert}
         tabIndex={-1}
+        tone="warning"
         title="This project is read-only"
         action={
           requested ? undefined : (
