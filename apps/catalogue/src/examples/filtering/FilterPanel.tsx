@@ -1,6 +1,16 @@
 import { useRef, useState } from 'react';
-import { Button, Checkbox, CounterBadge, List, Popover, Stack, Text } from '@envsemble/envui';
+import {
+  Button,
+  Checkbox,
+  CounterBadge,
+  EmptyState,
+  List,
+  Popover,
+  Stack,
+  Text,
+} from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const documentCount = (count: number) => (count === 1 ? '1 document' : `${count} documents`);
 
@@ -8,6 +18,7 @@ export default function FilterPanel() {
   // The values of the boxes checked, such as report and Sam Lee.
   const [filters, setFilters] = useState<string[]>(['report']);
   const first = useRef<HTMLInputElement>(null);
+  const toolbar = useRef<HTMLDivElement>(null);
   const types = filters.filter((value) => value in typeLabels);
   const editors = filters.filter((value) => !(value in typeLabels));
   const applied = filters.length;
@@ -20,7 +31,7 @@ export default function FilterPanel() {
 
   return (
     <Stack gap={4}>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Stack ref={toolbar} direction="row" wrap align="center" justify="between" gap={3}>
         <Popover
           title="Filter documents"
           align="start"
@@ -85,16 +96,36 @@ export default function FilterPanel() {
           {documentCount(shown.length)}
         </Text>
       </Stack>
-      <List.Root aria-label="Documents">
-        {shown.map((document) => (
-          <List.Item
-            key={document.name}
-            label={document.name}
-            description={`${typeLabels[document.type]} · ${document.editor}`}
-          />
-        ))}
-        {shown.length === 0 && <List.Item label="No documents match these filters." />}
-      </List.Root>
+      {shown.length > 0 ? (
+        <List.Root aria-label="Documents">
+          {shown.map((document) => (
+            <List.Item
+              key={document.name}
+              label={document.name}
+              description={`${typeLabels[document.type]} · ${document.editor}`}
+            />
+          ))}
+        </List.Root>
+      ) : (
+        // The Filters button stays above the empty state, so people can change one filter instead.
+        <EmptyState
+          icon={<SearchOff />}
+          title="No matching documents"
+          description="No documents match these filters."
+          action={
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setFilters([]);
+                // The empty state goes with the filters, so focus moves to the Filters button.
+                toolbar.current?.querySelector('button')?.focus();
+              }}
+            >
+              Clear filters
+            </Button>
+          }
+        />
+      )}
     </Stack>
   );
 }

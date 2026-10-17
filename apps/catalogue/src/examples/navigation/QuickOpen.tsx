@@ -46,7 +46,8 @@ export default function QuickOpen() {
     <Stack ref={page} gap={4}>
       {/* Where the frame puts search: the sidebar's top, or the header's end. */}
       <Stack align="start">
-        <SearchTrigger label="Search Northwind" onClick={() => setOpen(true)} />
+        {/* The catalogue's own search keeps Ctrl+K here; an application's one trigger listens. */}
+        <SearchTrigger label="Search Northwind" listen={false} onClick={() => setOpen(true)} />
       </Stack>
       <PageHeader headingLevel={3} title={current.label} description={current.description} />
       <CommandPalette
@@ -66,9 +67,12 @@ export default function QuickOpen() {
           const destination = destinations.find(({ href }) => href === item.id);
           if (!destination) return;
           setCurrent(destination);
+          // The palette returns focus to its trigger as it closes, but only while focus is still
+          // on the body or inside it; waiting a task lets that happen first, so the heading keeps
+          // focus rather than losing it to the trigger.
           setTimeout(() => focusHeading(page.current));
         }}
-        emptyLabel="No matching pages, projects or people"
+        emptyLabel="No matching pages, projects, documents or people"
       />
     </Stack>
   );

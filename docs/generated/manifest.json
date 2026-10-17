@@ -7125,7 +7125,7 @@
         {
           "name": "PageProgress",
           "title": "Page progress",
-          "description": "Choosing a page in the sidebar starts loading it: the page on screen stays, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, and focus moves to `AppShell.Main`, which takes focus without being a tab stop. The frame sits in a box here, with `landmarks={false}` and `scroll=\"main\"`; an application renders it at its root.",
+          "description": "Choosing a page in the sidebar starts loading it: the page on screen stays, and stays selected in the sidebar, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the sidebar selects it, and focus moves to `AppShell.Main`, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The frame sits in a box here, with `landmarks={false}` and `scroll=\"main\"`; an application renders it at its root.",
           "file": "docs/examples/loading/PageProgress.tsx"
         },
         {
@@ -7327,7 +7327,7 @@
         {
           "name": "QuickOpen",
           "title": "Quick open",
-          "description": "The SearchTrigger opens a CommandPalette of pages, projects, documents and people, also with its shortcut. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.",
+          "description": "The SearchTrigger opens a CommandPalette of pages, projects, documents and people. In an application its shortcut opens it too; here it takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.",
           "file": "docs/examples/navigation/QuickOpen.tsx"
         },
         {
@@ -7512,13 +7512,13 @@
         {
           "name": "SelectAndBulkActions",
           "title": "Select and act on several rows",
-          "description": "Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and \"Clear selection\". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone.",
+          "description": "Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and \"Clear selection\". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone, and back to Delete when its confirmation is cancelled. The count is announced through a status that is always there.",
           "file": "docs/examples/data-tables/SelectAndBulkActions.tsx"
         },
         {
           "name": "RowActions",
           "title": "Row actions",
-          "description": "The project's name is the row's link, and its other actions wait in a menu named for the row. \"Delete project…\" opens a confirmation; after the delete, focus moves to the next row's menu button.",
+          "description": "The project's name is the row's link, and its other actions wait in a menu named for the row. \"Delete project…\" opens a confirmation; after the delete, focus moves to the next row's menu button, and after the last, to the empty state's \"Create project\".",
           "file": "docs/examples/data-tables/RowActions.tsx"
         },
         {
@@ -15609,9 +15609,9 @@
         },
         {
           "name": "ref",
-          "type": "Ref<HTMLElement>",
+          "type": "Ref<RenderedElement>",
           "required": false,
-          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks, and `StackProps['ref']` is a ref to the default element, so a wrapper can forward it to one."
         }
       ],
       "native": [
@@ -15731,9 +15731,9 @@
         },
         {
           "name": "ref",
-          "type": "Ref<HTMLElement>",
+          "type": "Ref<RenderedElement>",
           "required": false,
-          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks, and `SurfaceProps['ref']` is a ref to the default element, so a wrapper can forward it to one."
         }
       ],
       "native": [
@@ -16186,9 +16186,9 @@
         },
         {
           "name": "ref",
-          "type": "Ref<HTMLElement>",
+          "type": "Ref<RenderedElement>",
           "required": false,
-          "description": "The rendered element, a p by default: an HTMLElement, since render can make it any element, such as a section; a ref to a paragraph, or to the element render makes, works too."
+          "description": "The rendered element, a p by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks, and `TextProps['ref']` is a ref to the default element, so a wrapper can forward it to one."
         }
       ],
       "native": [

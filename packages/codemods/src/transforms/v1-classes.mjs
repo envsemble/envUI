@@ -21,10 +21,16 @@
 // - CSS-in-JS templates tagged css, keyframes, createGlobalStyle, injectGlobal or styled, as style
 //   sheets; selectors in test locators (locator, waitForSelector, $, $) and class names in
 //   toHaveClass and expect(el.classList) assertions.
-// - Test files: a string that is exactly one 0.x class or class selector, wherever it is; a 0.x
-//   class in a regular expression or a longer string is reported.
+// - Test files: a string that is exactly one 0.x class passed to a call that names classes, or one
+//   class selector passed to any call; another exact class string, such as a test id, and a 0.x
+//   class or token in a regular expression or a longer string are reported.
+// - A declaration of a token's name before 1.0 is renamed only where the name is the one that
+//   becomes its token; where 1.0 merges several names into one token, as --control-height-small
+//   and --icon-button-size into --env-control-height, a declaration of another stays and is
+//   reported, and so does one beside its 1.0 name in the same block. Uses are always renamed.
 // Scripts are edited in place, literal by literal, so everything else keeps its formatting.
-import { extname } from 'node:path';
+import { existsSync } from 'node:fs';
+import { basename, dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { loadMap, renameClass } from '../map.mjs';
 import { createReporter, parserFor, sourceRanges } from '../shared.mjs';
 
@@ -51,11 +57,48 @@ const valueAssertions = new Set(['toContain', 'toBe', 'toEqual', 'toMatch']);
 /** Tags of CSS-in-JS templates: css`…`, keyframes`…`, createGlobalStyle`…` and styled.div`…`. */
 const styleTags = new Set(['css', 'keyframes', 'createGlobalStyle', 'injectGlobal', 'styled']);
 /**
- * A test file, where plain strings that are a 0.x class are renamed too: `*.test.*`, `*.spec.*`,
- * or a file in a `tests`, `__tests__`, `e2e`, `playwright` or `cypress` folder.
+ * A test file, where a string that is a 0.x class is renamed in more contexts: `*.test.*`,
+ * `*.spec.*`, or a file in a `tests`, `__tests__`, `e2e`, `playwright` or `cypress` folder.
  */
 const testFile =
   /(?:^|[\\/])(?:__tests__|tests|e2e|playwright|cypress)[\\/]|\.(?:test|spec|e2e)\.[cm]?[jt]sx?$/i;
+
+/**
+ * Whether `path` is a test file, judged by its path below its project: the deepest of `roots`, the
+ * projects of the folders the CLI scans, that holds it, or else the nearest folder with a
+ * package.json, so the folders above the project, and the working folder, don't count.
+ */
+export function isTestFile(path, roots = []) {
+  const file = resolve(path);
+  const below = (folder) => {
+    if (folder === undefined) return undefined;
+    const part = relative(folder, file);
+    return part && !part.startsWith('..') && !isAbsolute(part) ? part : undefined;
+  };
+  const scanned = roots
+    .map((root) => below(resolve(root)))
+    .filter((part) => part !== undefined)
+    .sort((a, b) => a.length - b.length)[0];
+  return testFile.test(scanned ?? below(projectRoot(dirname(file))) ?? basename(file));
+}
+
+const projectRoots = new Map();
+/** The nearest folder at or above `folder` that has a package.json, or undefined. */
+export function projectRoot(folder) {
+  if (!projectRoots.has(folder)) {
+    const parent = dirname(folder);
+    projectRoots.set(
+      folder,
+      existsSync(join(folder, 'package.json'))
+        ? folder
+        : parent === folder
+          ? undefined
+          : projectRoot(parent),
+    );
+  }
+  return projectRoots.get(folder);
+}
+
 const classListMethods = new Set(['add', 'remove', 'toggle', 'contains', 'replace']);
 const propertyMethods = new Set(['setProperty', 'getPropertyValue', 'removeProperty']);
 
@@ -67,34 +110,72 @@ const styleToken = /(\.|(?<![A-Za-z0-9_-])--)(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z
  */
 const tokenProperty =
   /(?<![A-Za-z0-9_-])(--)((?!env-)[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![A-Za-z0-9_-])/g;
+/** Any custom property, for reports. */
+const anyCustomProperty = /(?<![A-Za-z0-9_-])--([a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![A-Za-z0-9_-])/g;
 /** A `var()` of a custom property without the --env- prefix. */
 const tokenVariable = /(var\(\s*--)((?!env-)[a-z][a-z0-9]*(?:-[a-z0-9]+)*)(?![A-Za-z0-9_-])/g;
 
+/** Whether the custom property at `offset` in `text`, `length` long, is declared: a colon follows. */
+const declaredAt = (text, offset, length) => /^\s*:/.test(text.slice(offset + length));
+
+/** Whether the innermost block around `offset` in `text` declares the custom property `--name`. */
+function blockDeclares(text, offset, name) {
+  const start = Math.max(text.lastIndexOf('{', offset), text.lastIndexOf('}', offset)) + 1;
+  const after = text.slice(offset).search(/[{}]/);
+  const block = text.slice(start, after === -1 ? text.length : offset + after);
+  return new RegExp(String.raw`(?<![A-Za-z0-9_-])--${name}\s*:`).test(block);
+}
+
+/**
+ * The 1.0 name of the token `name` at `offset` in `text`, or undefined where it stays, after
+ * `report` has its reason: a removed name; or a declaration of a name that shares its target with others and isn't the
+ * target's own, or one whose block already declares the target, which two declarations of one
+ * property would leave to their order. `declared` is undefined in style sheet text, where a colon
+ * after the name makes a declaration; false for a use; or, for a style key or setProperty's name,
+ * a function telling whether the same object declares another property too.
+ */
+function tokenTarget(name, tokens, text, offset, length, report, declared) {
+  const entry = tokens.get(name);
+  if (!entry.to) {
+    report?.(offset, entry.report);
+    return undefined;
+  }
+  if (declared === undefined ? !declaredAt(text, offset, length) : declared === false)
+    return entry.to;
+  if (entry.declaration) {
+    report?.(offset, entry.declaration);
+    return undefined;
+  }
+  if (declared ? declared(`--${entry.to}`) : blockDeclares(text, offset, entry.to)) {
+    report?.(
+      offset,
+      `--${name} is declared here next to --${entry.to}, which replaces it in 1.0. The codemod ` +
+        `leaves it rather than declare --${entry.to} twice: keep one of the two.`,
+    );
+    return undefined;
+  }
+  return entry.to;
+}
+
 /**
  * Renames the tokens' custom properties before 1.0 in `text`, as the map's tokens section lists
- * them, and calls `report` with the offset and message of each that 1.0 removes. `pattern` finds
- * the names: every custom property, or only those in `var()`.
+ * them, and calls `report` with the offset and message of each that stays (see tokenTarget).
+ * `pattern` finds the names: every custom property, or only those in `var()`.
  */
-function renameTokens(text, tokens, report, pattern = tokenProperty) {
+function renameTokens(text, tokens, report, pattern = tokenProperty, declared = undefined) {
   return text.replace(pattern, (match, prefix, name, offset) => {
-    const entry = tokens.get(name);
-    if (!entry) return match;
-    if (entry.to) return prefix + entry.to;
-    report?.(offset, entry.report);
-    return match;
+    if (!tokens.has(name)) return match;
+    const to = tokenTarget(name, tokens, text, offset, match.length, report, declared);
+    return to ? prefix + to : match;
   });
 }
 
 /**
  * A `--env-*` custom property that the tokens section lists, a name of 1.0's development such as
- * --env-topbar-height: its 1.0 name, or the name itself after `report` for a removed one.
+ * --env-topbar-height: its 1.0 name, or the name itself where it stays (see tokenTarget).
  */
-function renameDevelopmentToken(name, tokens, report, offset) {
-  const entry = tokens.get(name);
-  if (entry.to) return entry.to;
-  report?.(offset, entry.report);
-  return name;
-}
+const renameDevelopmentToken = (name, tokens, report, text, offset, length, declared) =>
+  tokenTarget(name, tokens, text, offset, length, report, declared) ?? name;
 
 /** A `--env-*` custom property. */
 const customProperty = /(?<![A-Za-z0-9_-])--(env-[a-z0-9][a-z0-9_-]*)(?![A-Za-z0-9_-])/g;
@@ -190,9 +271,9 @@ export function renameInStyles(
     .replace(classAttribute, (selector) =>
       selector.replace(attributeName, (name) => renameClass(name, classes)),
     )
-    .replace(styleToken, (match, prefix, name, offset) =>
+    .replace(styleToken, (match, prefix, name, offset, whole) =>
       prefix === '--' && tokens.has(name)
-        ? prefix + renameDevelopmentToken(name, tokens, report, offset)
+        ? prefix + renameDevelopmentToken(name, tokens, report, whole, offset, match.length)
         : prefix === '--' && tokenNames.has(name)
           ? match
           : prefix + renameClass(name, classes),
@@ -243,17 +324,19 @@ export function reportClasses(text, classReports, report, selectors = true) {
   }
 }
 
-const renameCustomProperties = (text, classes, tokens, tokenNames, report) =>
+const renameCustomProperties = (text, classes, tokens, tokenNames, report, declared) =>
   renameTokens(
     text.replace(customProperty, (match, name, offset) =>
       tokens.has(name)
-        ? `--${renameDevelopmentToken(name, tokens, report, offset)}`
+        ? `--${renameDevelopmentToken(name, tokens, report, text, offset, match.length, declared)}`
         : tokenNames.has(name)
           ? match
           : `--${renameClass(name, classes)}`,
     ),
     tokens,
     report,
+    tokenProperty,
+    declared,
   );
 
 /** A `var(--env-*)` reference. */
@@ -262,7 +345,7 @@ const renameVariables = (text, classes, tokens, tokenNames, report) =>
   renameTokens(
     text.replace(variable, (match, prefix, name, offset) =>
       tokens.has(name)
-        ? prefix + renameDevelopmentToken(name, tokens, report, offset)
+        ? prefix + renameDevelopmentToken(name, tokens, report, text, offset, match.length, false)
         : tokenNames.has(name)
           ? match
           : prefix + renameClass(name, classes),
@@ -270,6 +353,7 @@ const renameVariables = (text, classes, tokens, tokenNames, report) =>
     tokens,
     report,
     tokenVariable,
+    false,
   );
 
 /**
@@ -373,11 +457,23 @@ export default function transform(file, api, options = {}) {
           : undefined;
     if (mode) markWithin(path.get('value'), mode);
   });
+  /**
+   * The custom property names that are declared, style keys and setProperty's, each with whether
+   * its object declares another property too, or false for getPropertyValue's, which is a use.
+   */
+  const declarations = new Map();
   root.find(j.ObjectProperty).forEach((path) => {
     const key = keyName(path.node);
     if (key === 'className') markWithin(path.get('value'), 'class');
-    else if (key?.startsWith('--') && path.node.key.type === 'StringLiteral')
+    else if (key?.startsWith('--') && path.node.key.type === 'StringLiteral') {
       mark(path.node.key, 'property');
+      const object = path.parent.node;
+      declarations.set(path.node.key, (name) =>
+        (object.properties ?? []).some(
+          (property) => property !== path.node && property.key && keyName(property) === name,
+        ),
+      );
+    }
   });
   root.find(j.AssignmentExpression).forEach((path) => {
     const { left } = path.node;
@@ -426,9 +522,10 @@ export default function transform(file, api, options = {}) {
       markWithin(argument(0), 'selector');
     else if (method === 'getElementsByClassName' && path.node.arguments[0])
       markWithin(argument(0), 'class');
-    else if (propertyMethods.has(method) && path.node.arguments[0])
+    else if (propertyMethods.has(method) && path.node.arguments[0]) {
       markWithin(argument(0), 'property');
-    else if (
+      declarations.set(path.node.arguments[0], method === 'getPropertyValue' ? false : () => false);
+    } else if (
       classListMethods.has(method) &&
       (object.type === 'MemberExpression' || object.type === 'OptionalMemberExpression') &&
       !object.computed &&
@@ -452,11 +549,13 @@ export default function transform(file, api, options = {}) {
     .filter((path) => isStyleTag(path.node.tag))
     .forEach((path) => mark(path.node.quasi, 'styles'));
 
-  // In a test file, a plain string that is one 0.x class, or one class selector, is renamed as
-  // well, wherever it is, such as `findByClass(root, 'env-app-sidebar')`. A 0.x class inside a
-  // longer string or a regular expression stays, and is reported: the codemod can't tell a
-  // class there from other text, or rewrite a pattern.
-  if (testFile.test(file.path)) {
+  // In a test file, a string that is one 0.x class, or one class selector, is renamed in a class
+  // context the passes above don't know: a call that names classes, such as
+  // `findByClass(root, 'env-app-sidebar')`, and for a class selector, such as `cy.get('.env-row')`,
+  // any call. Elsewhere, such as a test id, an id or an object key, the string may not be a class,
+  // so it stays and is reported, as does a 0.x class or token inside a longer string or a regular
+  // expression: the codemod can't tell a class there from other text, or rewrite a pattern.
+  if (isTestFile(file.path, options.roots)) {
     const oneClass = /^\s*(\.?)(env-[a-z0-9][a-z0-9_-]*)\s*$/;
     const literalText = (node) =>
       node.type === 'StringLiteral'
@@ -470,20 +569,52 @@ export default function transform(file, api, options = {}) {
         if (message) reporter.warn(node, `${match[0]} in ${where}: ${message}`);
       }
     };
+    /** Reports the tokens' custom properties before 1.0, and the --env-* names they list. */
+    const reportTokensIn = (node, text, where) => {
+      for (const match of text.matchAll(anyCustomProperty)) {
+        const entry = tokens.get(match[1]);
+        if (entry)
+          reporter.warn(
+            node,
+            `--${match[1]} in ${where}: ${
+              entry.to
+                ? `a 0.x custom property, which the codemod leaves here: it is --${entry.to} in 1.0.`
+                : entry.report
+            }`,
+          );
+      }
+    };
+    /** The name a call calls: `findByClass` in findByClass(…) and in page.findByClass(…). */
+    const calleeName = (callee) =>
+      callee.type === 'Identifier'
+        ? callee.name
+        : (callee.type === 'MemberExpression' || callee.type === 'OptionalMemberExpression') &&
+            !callee.computed &&
+            callee.property.type === 'Identifier'
+          ? callee.property.name
+          : '';
     const inTests = (path) => {
       const { node } = path;
       if (modes.has(node) || path.parent.node.type === 'ImportDeclaration') return;
       const text = literalText(node);
       const one = text?.match(oneClass);
-      if (one && oldClass(one[2])) mark(node, one[1] ? 'selector' : 'class');
-      else if (text !== undefined) reportIn(node, text, 'a string');
+      if (one && oldClass(one[2])) {
+        const call = path.parent.node;
+        const argument =
+          (call.type === 'CallExpression' || call.type === 'OptionalCallExpression') &&
+          call.arguments.includes(node);
+        if (argument && one[1]) mark(node, 'selector');
+        else if (argument && /class/i.test(calleeName(call.callee))) mark(node, 'class');
+        else reportIn(node, text, 'a string outside a class context, such as a test id or a key');
+      } else if (text !== undefined) reportIn(node, text, 'a string');
       else for (const quasi of node.quasis) reportIn(quasi, quasi.value.cooked ?? '', 'a string');
     };
     root.find(j.StringLiteral).forEach(inTests);
     root.find(j.TemplateLiteral).forEach(inTests);
-    root
-      .find(j.RegExpLiteral)
-      .forEach((path) => reportIn(path.node, path.node.pattern, 'a regular expression'));
+    root.find(j.RegExpLiteral).forEach((path) => {
+      reportIn(path.node, path.node.pattern, 'a regular expression');
+      reportTokensIn(path.node, path.node.pattern, 'a regular expression');
+    });
   }
 
   // `var(--env-*)` is a custom property in any string, such as a style object's value.
@@ -501,7 +632,7 @@ export default function transform(file, api, options = {}) {
         );
     }
   };
-  const rewrite = (text, mode, atStart, report) =>
+  const rewrite = (text, mode, atStart, report, declared) =>
     mode === 'selector' || mode === 'styles'
       ? renameInStyles(
           text,
@@ -515,7 +646,7 @@ export default function transform(file, api, options = {}) {
           mode === 'styles' ? "'" : '',
         )
       : mode === 'property'
-        ? renameCustomProperties(text, classes, tokens, tokenNames, report)
+        ? renameCustomProperties(text, classes, tokens, tokenNames, report, declared)
         : mode === 'var'
           ? renameVariables(text, classes, tokens, tokenNames, report)
           : (reportModifiers(text, report), renameClassTokens(text, classes, atStart));
@@ -539,7 +670,13 @@ export default function transform(file, api, options = {}) {
       const raw = file.source.slice(start - 1, end + 1);
       if (!sameText(raw, range.node.extra.raw)) continue;
       const text = file.source.slice(start, end);
-      const next = rewrite(text, mode, true, reportAt(text, node.loc.start.line));
+      const next = rewrite(
+        text,
+        mode,
+        true,
+        reportAt(text, node.loc.start.line),
+        declarations.get(node),
+      );
       reportRemaining(next, mode, node.loc.start.line);
       if (next !== text) edits.push({ start, end, text: next });
       continue;

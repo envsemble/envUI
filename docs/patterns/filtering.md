@@ -81,8 +81,8 @@ Use this pattern to help people find items in a long list or table: a search fie
 - **Clear filters.** It shows while anything is filtered, and sets every filter back to all, the search included. When the button goes with the filters, focus moves to the search field or the first control.
 - **No results.** The EmptyState names the query, "No project names contain “roadmap”", and offers "Clear filters". The toolbar stays above it, so people can change one filter instead.
 - **A popover of filters.** Its checkboxes apply as they change, and it stays open until people close it, with <kbd>Esc</kbd>, a press outside or <kbd>Tab</kbd> past its last control; the list behind it changes as they go. The Filters button counts the filters in use.
-- **Filter tokens.** Each filter in use shows as a token named after it, "Status: Open". Pressing it removes the filter; focus moves to the next token, or to "Add filter" when none is left. envUI has no removable token, or chip, yet: each is a `Button variant="secondary" size="sm"` with a Close `endIcon`.
-- **Narrow windows.** Below the `md` breakpoint, from [useBreakpoint](../foundations/responsive.md), the filters move into a Drawer opened by the Filters button, and the search stays in view. The drawer's filters apply at once too; its primary button closes it and says how many results it shows.
+- **Filter tokens.** Each filter in use shows as a token named after it, "Status: Open". Pressing it removes the filter; focus moves to the next token, to the previous one when it was the last, or to "Add filter" when none is left. "Add filter" offers only the fields not yet filtered, since a field takes one value at a time. envUI has no removable token, or chip, yet: each is a `Button variant="secondary" size="sm"` with a Close `endIcon`.
+- **Narrow windows.** Below the `md` breakpoint, from [useBreakpoint](../foundations/responsive.md), the filters move into a Drawer opened by the Filters button, and the search stays in view. The drawer's filters apply at once too; its primary button closes it and says how many results it shows. The page behind a modal drawer is hidden from assistive technology, so the drawer has its own count in a `role="status"` element, which announces each change.
 
 ## Content guidelines
 
@@ -112,7 +112,7 @@ Use this pattern to help people find items in a long list or table: a search fie
 
 ### Focus and keyboard
 
-The search field, each Select and each button in the toolbar is a tab stop, in the order they show. Typing filters without moving focus, and the count is announced politely once the results change. A Select returns focus to its trigger once an option is chosen. The Filters popover takes focus into itself as it opens. <kbd>Tab</kbd> moves through its checkboxes, and past the last one closes it and goes on from the Filters button; <kbd>Esc</kbd> closes it and returns focus to the button. "Clear filters" moves focus to the search field when it goes. Removing a token moves focus to the next token, or to "Add filter". The Drawer traps focus while open and returns it to its trigger on closing.
+The search field, each Select and each button in the toolbar is a tab stop, in the order they show. Typing filters without moving focus, and the count is announced politely once the results change. A Select returns focus to its trigger once an option is chosen. The Filters popover takes focus into itself as it opens. <kbd>Tab</kbd> moves through its checkboxes, and past the last one closes it and goes on from the Filters button; <kbd>Esc</kbd> closes it and returns focus to the button. "Clear filters" moves focus to the search field when it goes. Removing a token moves focus to the next token, to the previous one when it was the last, or to "Add filter" when none is left. The Drawer traps focus while open, announces the new count through its own status, and returns focus to its trigger on closing.
 
 ### envUI provides
 

@@ -28,7 +28,8 @@ export default function InSidebar() {
   return (
     // A sidebar's width, which an application's frame sets.
     <Stack gap={3} style={{ inlineSize: '16rem' }}>
-      <SearchTrigger fullWidth onClick={() => setOpen(true)} />
+      {/* The catalogue's own search keeps Ctrl+K here; an application's one trigger listens. */}
+      <SearchTrigger fullWidth listen={false} onClick={() => setOpen(true)} />
       <nav aria-label="Workspace">
         <NavList.Root>
           <NavList.Item href="/" icon={<Home />} selected>

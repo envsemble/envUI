@@ -617,4 +617,30 @@ test.describe('Several Sidebar.Content sections', () => {
         );
       }
     });
+
+  test('a long section before the last scrolls too, and the footer stays in view', async ({
+    page,
+  }) => {
+    await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {AppShell, Sidebar} from '@envsemble/envui';
+      const items = (name) => Array.from({length: 30}, (_, index) => h('p', {key: index}, name + ' ' + index));
+      export const element = h(AppShell.Root, null,
+        h(Sidebar.Root, {label: 'Sections', collapsible: 'none'},
+          h(Sidebar.Content, {'data-testid': 'first'}, items('First')),
+          h(Sidebar.Content, {'data-testid': 'second'}, items('Second')),
+          h(Sidebar.Footer, null, h('div', {'data-testid': 'footer'}, 'Footer'))),
+        h(AppShell.Main, null, 'Main'));`,
+    );
+    const panel = await box(page.locator('.env-sidebar-panel'));
+    const footer = await box(page.getByTestId('footer'));
+    expect(footer.y + footer.height).toBeLessThanOrEqual(panel.y + panel.height + 0.5);
+    // The first section gave way once the last had none left, and scrolls its own items.
+    const first = page.getByTestId('first');
+    expect(await first.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+      true,
+    );
+    expect((await box(first)).height).toBeGreaterThan(0);
+  });
 });

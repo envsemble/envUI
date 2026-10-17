@@ -36,15 +36,19 @@ export default function PageProgress() {
   const open = (id: string) => {
     if (id === (next ?? shown)) return;
     window.clearTimeout(timer.current);
-    // The page on screen stays until the next one arrives; the bar says it is on its way.
+    // The page on screen stays, selected, until the next one arrives; the bar says it is on its way.
     setNext(id === shown ? null : id);
     if (id === shown) return;
+    // Where focus was when people chose the page: the item they pressed, or the body.
+    const origin = document.activeElement;
     // The page's data loads from a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => {
       setShown(id);
       setNext(null);
-      // People asked for the page, so focus moves to it once it has arrived.
-      main.current?.focus();
+      // People asked for the page, so focus moves to it once it has arrived, unless they have
+      // moved focus elsewhere in the meantime.
+      const current = document.activeElement;
+      if (current === origin || current === document.body) main.current?.focus();
     }, 1500);
   };
 
@@ -70,7 +74,7 @@ export default function PageProgress() {
                 key={id}
                 href={href}
                 icon={icon}
-                selected={id === (next ?? shown)}
+                selected={id === shown}
                 onClick={() => open(id)}
               >
                 {label}

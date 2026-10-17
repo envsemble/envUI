@@ -3,10 +3,11 @@
 // files with jscodeshift's runner. See README.md.
 import { readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { extname, join, posix, relative, resolve, sep } from 'node:path';
+import { dirname, extname, join, posix, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { loadMap } from '../src/map.mjs';
+import { projectRoot } from '../src/transforms/v1-classes.mjs';
 import { transforms } from '../src/transforms.mjs';
 
 const require = createRequire(import.meta.url);
@@ -151,7 +152,14 @@ const extensions = new Set(
     .filter(Boolean),
 );
 const isIgnored = ignoreMatcher(['node_modules', 'dist', '.git', ...values['ignore-pattern']]);
-const { files, missing } = collectFiles(paths.length ? paths : ['.'], extensions, isIgnored);
+const scanned = paths.length ? paths : ['.'];
+const { files, missing } = collectFiles(scanned, extensions, isIgnored);
+// The projects scanned, each the nearest folder with a package.json at or above a path:
+// v1-classes tells test files by their path below their project, not the working folder.
+const roots = scanned
+  .map((path) => resolve(path))
+  .map((path) => (isDirectory(path) ? path : dirname(path)))
+  .map((folder) => projectRoot(folder) ?? folder);
 for (const path of missing) console.error(`Skipped ${path}, which does not exist.`);
 
 const Runner = require('jscodeshift/src/Runner.js');
@@ -170,6 +178,7 @@ const result = await Runner.run(
     printChanges: values.print,
     transform: name,
     map,
+    roots,
     verbose: 0,
   },
 );

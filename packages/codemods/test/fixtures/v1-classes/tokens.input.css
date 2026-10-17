@@ -28,8 +28,16 @@
 
 /* An application that themes envUI sets the tokens, which keep their meaning. */
 .env-theme[data-env-theme='dark'] {
-  --color-link: rgb(159 193 248);
+  --color-fg-link: rgb(159 193 248);
   --avatar-group-ring: var(--color-surface-muted);
+}
+
+/*
+ * A 0.7 alias that 1.0 merges into a token with other names: its declaration stays and is
+ * reported, since rewriting it would set the token for every component that reads it.
+ */
+.members-page {
+  --color-link: rgb(159 193 248);
 }
 
 /* Look-alikes and the application's own properties stay as they are. */

@@ -39,27 +39,30 @@ export interface SurfaceAppearanceProps {
   radius?: SurfaceRadius;
 }
 
-export type SurfaceProps = SurfaceAppearanceProps & {
-  /**
-   * The element to render the surface as, for its meaning, such as render={<section />}, or
-   * another component to render it onto without a wrapper, such as a Stack that lays out its
-   * content: the surface's class, style and attributes merge into its props. It must forward
-   * native props and refs. A div by default.
-   */
-  render?: ReactElement;
-  /**
-   * The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a
-   * section; a ref to a div, or to the element render makes, works too.
-   */
-  ref?: Ref<HTMLElement>;
-} & Omit<ComponentPropsWithRef<'div'>, keyof SurfaceAppearanceProps | 'ref'>;
+export type SurfaceProps<RenderedElement extends HTMLElement = HTMLDivElement> =
+  SurfaceAppearanceProps & {
+    /**
+     * The element to render the surface as, for its meaning, such as render={<section />}, or
+     * another component to render it onto without a wrapper, such as a Stack that lays out its
+     * content: the surface's class, style and attributes merge into its props. It must forward
+     * native props and refs. A div by default.
+     */
+    render?: ReactElement;
+    /**
+     * The rendered element, a div by default. Its type is the element type parameter, which a ref
+     * passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with
+     * render={<section />}, type-checks, and `SurfaceProps['ref']` is a ref to the default element, so a
+     * wrapper can forward it to one.
+     */
+    ref?: Ref<RenderedElement>;
+  } & Omit<ComponentPropsWithRef<'div'>, keyof SurfaceAppearanceProps | 'ref'>;
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between
  * its children, alignment and behaviour come from what it holds, such as a Stack. Card and other
  * containers build on it.
  */
-export function Surface({
+export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
   render,
   background = 'default',
   padding,
@@ -67,7 +70,7 @@ export function Surface({
   className,
   style,
   ...props
-}: SurfaceProps) {
+}: SurfaceProps<RenderedElement>) {
   return useRender({
     defaultTagName: 'div',
     render,

@@ -136,9 +136,10 @@
   gap: var(--env-space-2);
   border-block-end: var(--env-frame-header-divider, 0 solid transparent);
 }
-/* Sidebar.Content: scrolls when it is taller than the room left. */
+/* Sidebar.Content: scrolls when it is taller than the room left. It gives up height before the
+   sections listed below that only shrink once it has none left. */
 .env-sidebar-content {
-  flex: 0 1 auto;
+  flex: 0 1000 auto;
   min-block-size: 0;
   min-inline-size: 0;
   padding: var(--env-space-3) var(--env-sidebar-inset);
@@ -159,14 +160,17 @@
 /* Several sections share the height: those before the last keep their size, such as a search
    field above the navigation, and the last one shrinks and scrolls. Beside a fill section that
    shows, every other section keeps its size and the fill section takes the rest; in a rail, where
-   fill sections hide, the last of the others shrinks again. */
+   fill sections hide, the last of the others shrinks again. They shrink a thousandth as fast rather
+   than not at all: once the last (or the fill) section has given up its height, they shrink and
+   scroll too, so no section and no footer is cut off. (A factor below 1 would not do: flex layout
+   hands out only that fraction of the missing space.) */
 .env-sidebar-content:not([data-fill]):has(~ .env-sidebar-content:not([data-fill])),
 .env-sidebar:not([data-rail])
   .env-sidebar-content:not([data-fill]):is(
     :has(~ .env-sidebar-content[data-fill]),
     .env-sidebar-content[data-fill] ~ *
   ) {
-  flex-shrink: 0;
+  flex-shrink: 1;
 }
 /* Sidebar.Group: a heading in line with the items' labels, an action at its end. */
 .env-sidebar-group {

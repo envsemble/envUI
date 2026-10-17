@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -137,12 +137,12 @@ test("v1-classes renames the custom properties of 1.0's development in style she
 `,
   );
   const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-app-topbar-block-size');
-export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
+export const a = <div style={{ '--env-app-topbar-block-size': '4rem', top: 'var(--env-app-sticky-top)' }} />;
 `;
   assert.equal(
     runTransform(v1Classes, 'a.tsx', tsx).output,
     `const top = getComputedStyle(root).getPropertyValue('--env-frame-header-block-size');
-export const a = <div style={{ '--env-app-shell-header-height': '4rem', top: 'var(--env-frame-sticky-top)' }} />;
+export const a = <div style={{ '--env-frame-header-block-size': '4rem', top: 'var(--env-frame-sticky-top)' }} />;
 `,
   );
 });
@@ -150,14 +150,20 @@ export const a = <div style={{ '--env-app-shell-header-height': '4rem', top: 'va
 test('v1-classes renames every token entry, and no class entry renames a 1.0 token', () => {
   const tokens = Object.entries(map.tokens).filter(([from]) => !from.startsWith('$'));
   assert.ok(tokens.length > 300);
+  const sources = Map.groupBy(
+    tokens.filter(([, entry]) => entry.to && !entry.removed),
+    ([, entry]) => entry.to,
+  );
   for (const [from, entry] of tokens) {
     if (!entry.to || entry.removed) continue;
+    // A declaration is rewritten where the name is the only one that becomes the token, or the
+    // token's own name; any other is reported, and only its uses are renamed.
+    const declared =
+      sources.get(entry.to).length === 1 || entry.to === `--env-${from.slice(2)}` ? entry.to : from;
     const css = `.a { ${from}: 1; margin: var(${from}); }\n`;
-    assert.equal(
-      runTransform(v1Classes, 'styles.css', css).output,
-      `.a { ${entry.to}: 1; margin: var(${entry.to}); }\n`,
-      from,
-    );
+    const result = runTransform(v1Classes, 'styles.css', css);
+    assert.equal(result.output, `.a { ${declared}: 1; margin: var(${entry.to}); }\n`, from);
+    assert.equal(result.reports.length, declared === from ? 1 : 0, from);
   }
   const { tokenNames } = loadMap();
   for (const name of tokenNames)
@@ -179,4 +185,25 @@ test('v1-classes reports modifier classes in markup, which props set in 1.0', ()
   assert.deepEqual(result.reports, [
     "line 2: env-button-important is gone in 1.0: .env-button carries [data-variant='primary'][data-tone='accent'] instead, which the component's props set.",
   ]);
+});
+
+test('v1-classes tells a test file by its path below the folder it was found in', () => {
+  const { isTestFile } = v1Classes;
+  const work = join(tmpdir(), 'tests', 'app');
+  // Folders above the scanned one, such as a checkout kept in a `tests` folder, don't count.
+  assert.equal(isTestFile(join(work, 'src', 'menu.tsx'), [work]), false);
+  assert.equal(isTestFile(join(work, 'e2e', 'menu.ts'), [work]), true);
+  assert.equal(isTestFile(join(work, 'src', 'menu.test.tsx'), [work]), true);
+  // The deepest scanned folder that holds the file decides.
+  assert.equal(isTestFile(join(work, 'src', 'menu.tsx'), [tmpdir(), work]), false);
+  // Without scanned folders, the path below the nearest package.json counts.
+  const project = mkdtempSync(join(tmpdir(), 'envui-codemods-tests-'));
+  try {
+    mkdirSync(join(project, 'tests', 'app', 'src'), { recursive: true });
+    writeFileSync(join(project, 'tests', 'app', 'package.json'), '{}');
+    assert.equal(isTestFile(join(project, 'tests', 'app', 'src', 'menu.tsx')), false);
+    assert.equal(isTestFile(join(project, 'tests', 'app', 'tests', 'menu.ts')), true);
+  } finally {
+    rmSync(project, { recursive: true, force: true });
+  }
 });

@@ -106,9 +106,10 @@ function focusOn(element: HTMLElement) {
 
 /**
  * Scrolls an element to the top of the window, below the document's scroll padding, which follows
- * the header that shows, and its scroll margin. WebKit scrolls past that place after a press on a
- * link to a heading of the same page (about 265 px on the migration guide), so the document's part
- * of the scroll is measured and corrected; where the browser lands right, the correction is nothing.
+ * the header that shows, and its scroll margin. In the catalogue, WebKit scrolls past that place
+ * on the first press on a link to a heading of the same page (about 265 px on the migration guide;
+ * later presses land right, and a plain AppShell lands right every time), so the document's part of
+ * the scroll is measured and corrected; where the browser lands right, the correction is nothing.
  */
 function scrollToTop(element: HTMLElement) {
   element.scrollIntoView();

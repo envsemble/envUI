@@ -81,12 +81,12 @@ Use this pattern to show records people compare, sort and act on: a table with a
 
 ## States and behaviour
 
-- **Sorting.** A press on a sortable header asks for the other order of that column: descending once it is sorted ascending, else ascending. Sort the rows, set its `sortDirection`, and go back to the first page.
-- **Paging.** Pagination shows the range, "1–5 of 7", and moves a page at a time; the application shows that page's rows. Set `pending` while a page loads from a server.
+- **Sorting.** A press on a sortable header asks for the other order of that column: descending once it is sorted ascending, else ascending. Sort the rows, set its `sortDirection`, go back to the first page, and announce the new order in a polite status, "Sorted by updated, descending".
+- **Paging.** Pagination shows the range, "1–4 of 6", and moves a page at a time; the application shows that page's rows. Set `pending` while a page loads from a server.
 - **Density.** `density` changes only the rows' padding. Controls above the table match it: small controls, `size="sm"`, over `density="sm"` or `"xs"` rows.
 - **Selecting.** Each row's checkbox selects it, and the row shows it is selected. The header's checkbox is checked when every row is, `'mixed'` when some are, and a press on it selects all, or none once all are.
 - **Bulk actions.** The bulk bar shows while rows are selected and goes with the selection. Put the count in every action, "Archive 2 projects", "Delete 2 projects…". Archive acts at once with "Undo" in the toast; Delete asks first. When an action ends the selection, move focus to the header's checkbox.
-- **Row actions.** The name links to the record; the other actions wait in the row's menu. envUI has no danger tone for a menu item yet: label the item with the consequence, "Delete project…", put it last after a separator, and confirm it with a ConfirmDialog. After the delete, move focus to the next row's menu button.
+- **Row actions.** The name links to the record; the other actions wait in the row's menu. envUI has no danger tone for a menu item yet: label the item with the consequence, "Delete project…", put it last after a separator, and confirm it with a ConfirmDialog. After the delete, move focus to the next row's menu button, or, once the last row has gone, to the empty state's action.
 - **Loading.** The first load shows Skeleton rows in the shape of the table after 200 ms, as in [Loading](loading.md). A refresh keeps the rows in place.
 - **Empty.** With no records, an EmptyState takes the table's place, with the first action; with no results from filters, see [Filtering and search](filtering.md).
 - **Narrow screens.** With `narrowLayout="stack"`, a table narrower than `stackBelow` shows each row as a block, its first cell first and the others with their labels. The header row is then hidden, so a Select of the columns and an IconButton for the order sort it, shown while `onStackedChange` reports the rows stacked.
@@ -119,7 +119,7 @@ Use this pattern to show records people compare, sort and act on: a table with a
 
 ### Focus and keyboard
 
-<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and each control in the cells, in order. A sort button keeps focus as the rows reorder, and a Pagination button keeps focus as the page changes, while the new range is announced. A press on a row's checkbox keeps focus on it. The bulk bar's Toolbar is one tab stop, with the arrow keys between its buttons. When an action clears the selection, the bar goes, and focus moves to the header's checkbox; a ConfirmDialog returns it there through `finalFocus`. A row's menu returns focus to its button as it closes; after deleting the row, focus moves to the next row's menu button. While the rows stack, the Select and the IconButton come before the table.
+<kbd>Tab</kbd> reaches the table's scroll region, then each sort button and each control in the cells, in order. A sort button keeps focus as the rows reorder, and a polite status the application provides announces the new order, and a Pagination button keeps focus as the page changes, while the new range is announced. A press on a row's checkbox keeps focus on it. The bulk bar's Toolbar is one tab stop, with the arrow keys between its buttons. A polite status, there before the selection changes, announces the count as it changes. When an action clears the selection, the bar goes, and focus moves to the header's checkbox; a ConfirmDialog returns it there through `finalFocus` after the delete, and to the Delete button when it is cancelled. A row's menu returns focus to its button as it closes; after deleting the row, focus moves to the next row's menu button, or to the empty state's action after the last row. While the rows stack, the Select and the IconButton come before the table.
 
 ### envUI provides
 
@@ -137,13 +137,14 @@ Use this pattern to show records people compare, sort and act on: a table with a
 - A checkbox labelled with the row's name in every selectable row, beside `selected`.
 - Names for icon-only buttons that name their row or their count.
 - Focus after an action removes the control that had it.
+- Polite statuses that announce the new sort order and the selection count.
 - A `label` on every cell after the first in a stacking table, and the sort controls while it stacks.
 
 ## Examples
 
 ### Select and act on several rows
 
-Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and "Clear selection". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone.
+Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and "Clear selection". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone, and back to Delete when its confirmation is cancelled. The count is announced through a status that is always there.
 
 ```tsx example=SelectAndBulkActions
 
@@ -151,7 +152,7 @@ Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that nam
 
 ### Row actions
 
-The project's name is the row's link, and its other actions wait in a menu named for the row. "Delete project…" opens a confirmation; after the delete, focus moves to the next row's menu button.
+The project's name is the row's link, and its other actions wait in a menu named for the row. "Delete project…" opens a confirmation; after the delete, focus moves to the next row's menu button, and after the last, to the empty state's "Create project".
 
 ```tsx example=RowActions
 
