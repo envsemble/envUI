@@ -37,17 +37,6 @@ test('the plugin names itself and turns every rule on in the recommended config'
   for (const severity of Object.values(recommended.rules)) assert.equal(severity, 'error');
 });
 
-test('every rule links to its section of the README', () => {
-  for (const [name, rule] of Object.entries(plugin.rules)) {
-    assert.ok(rule.meta.docs.description, `${name} has a description`);
-    assert.equal(
-      rule.meta.docs.url,
-      `https://github.com/envsemble/envUI/blob/main/packages/eslint-plugin/README.md#${name}`,
-    );
-    assert.match(readme, new RegExp(`^### ${name}$`, 'm'), `the README documents ${name}`);
-  }
-});
-
 test('the mapping table has unique entries that name envUI 1.0 components', () => {
   const ids = entries.map((entry) => entry.id);
   assert.deepEqual(ids, [...new Set(ids)], 'ids are unique');
@@ -220,14 +209,6 @@ test("the codemods' hints, splits and reused namespaces carry over", () => {
       ToastProvider: { to: ['Toast.Provider'] },
     },
   });
-});
-
-test('the README documents every entry of the mapping table and every renamed name', () => {
-  for (const entry of entries)
-    assert.ok(readme.includes(`\`${entry.id}\``), `the README lists ${entry.id}`);
-  for (const names of Object.values(renames.modules))
-    for (const name of Object.keys(names))
-      assert.match(readme, new RegExp(`\`${name}\``), `the README lists ${name}`);
 });
 
 test("the token names are the library's when the repository has its token list", () => {

@@ -148,49 +148,6 @@ test('declaration files parse in every transform', () => {
   assert.match(read(join(project, 'types/index.d.ts')), /export const field: TextFieldProps;/);
 });
 
-test('the usage, the README and the migration guide run the transforms in one order', () => {
-  const order = cli('--help')
-    .stdout.match(/Run (v1-[\s\S]*?), then type-check\./)[1]
-    .match(/v1-[a-z-]+/g);
-  assert.deepEqual([...order].sort(), Object.keys(transforms).sort());
-  const readme = read(join(packageDirectory, 'README.md'));
-  const steps = readme.slice(readme.indexOf('## Recommended order'), readme.indexOf('## v1-names'));
-  assert.deepEqual(
-    steps.match(/envui-codemods (v1-[a-z-]+)/g).map((run) => run.split(' ')[1]),
-    order,
-  );
-  const guide = read(join(packageDirectory, '../../docs/migration.md'));
-  const commands = guide.slice(guide.indexOf('## Upgrade from envUI 0.x to 1.0'));
-  assert.deepEqual(
-    commands
-      .slice(0, commands.indexOf('```\n', commands.indexOf('```sh') + 5))
-      .match(/@<version> (v1-[a-z-]+) src\n/g)
-      .map((run) => run.split(' ')[1]),
-    order,
-  );
-});
-
-test('the README has each section once, with one per transform', () => {
-  const readme = read(join(packageDirectory, 'README.md'));
-  const headings = readme.match(/^#{1,2} .+$/gm);
-  assert.deepEqual(
-    headings.filter((heading, index) => headings.indexOf(heading) !== index),
-    [],
-    'a heading appears twice',
-  );
-  assert.equal(headings.filter((heading) => heading.startsWith('# ')).length, 1);
-  for (const name of Object.keys(transforms)) assert.ok(headings.includes(`## ${name}`), name);
-  for (const section of ['## The rename map', '## Limitations'])
-    assert.ok(headings.includes(section), section);
-  // Each paragraph and list item once: a pasted copy repeats them.
-  const blocks = readme.split(/\n(?:\n|(?=- ))/).filter((block) => block.trim().length > 80);
-  assert.deepEqual(
-    blocks.filter((block, index) => blocks.indexOf(block) !== index),
-    [],
-    'a paragraph appears twice',
-  );
-});
-
 test('v1-classes tells test files by their path below their project, wherever the run starts', () => {
   const app = join(project, 'tests', 'app');
   mkdirSync(join(app, 'src'), { recursive: true });

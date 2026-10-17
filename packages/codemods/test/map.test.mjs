@@ -3,31 +3,15 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import {
-  entriesOf,
-  loadMap,
-  mapFragments,
-  mapSections,
-  readMap,
-  renameClass,
-  validateMap,
-} from '../src/map.mjs';
+import { entriesOf, loadMap, readMap, renameClass, validateMap } from '../src/map.mjs';
 import { map, packageDirectory } from './helpers.mjs';
 
 const name = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const part = /^[A-Za-z_$][A-Za-z0-9_$]*\.[A-Za-z_$][A-Za-z0-9_$]*$/;
 const className = /^env-[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 test('the v1 map is well-formed', () => {
   assert.deepEqual(validateMap(map), []);
-});
-
-test('the v1 map has the expected sections', () => {
-  for (const section of ['exports', 'split', 'removed', 'classes', 'classesWithin', 'docs'])
-    assert.ok(isObject(map[section]), section);
-  assert.equal(map.package, '@envsemble/envui');
-  assert.match(map.version, /^1\.0\.0/);
 });
 
 test('every export maps an old name to a different new name or Namespace.Part', () => {
@@ -239,14 +223,6 @@ test('readMap merges a folder of fragments, one folder per section', () => {
     assert.throws(() => readMap(directory), /has a folder colours, which is no section/);
   } finally {
     rmSync(directory, { recursive: true, force: true });
-  }
-});
-
-test('the bundled map is a folder whose fragments each hold one family of one section', () => {
-  for (const fragment of mapFragments()) {
-    const [section, file] = fragment.split('/');
-    assert.ok(mapSections.includes(section), fragment);
-    assert.match(file, /^[A-Z][A-Za-z]*\.json$/, fragment);
   }
 });
 

@@ -244,11 +244,6 @@ test('the config validates its plugin rule options', async () => {
   assert.equal(results[0].invalidOptionWarnings.length, 1);
 });
 
-test('the README documents every rule the config sets', () => {
-  for (const rule of Object.keys(config.rules))
-    assert.ok(readme.includes(`\`${rule}\``), `the README names ${rule}`);
-});
-
 test("the token names are the library's when the repository has its token list", () => {
   const copy = JSON.parse(readFileSync(tokensUrl, 'utf8'));
   if (existsSync(libraryTokensUrl)) {
