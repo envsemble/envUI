@@ -17,8 +17,8 @@ export default function AttachDocuments() {
           {documents.map((file, index) => (
             <List.Item
               key={`${index}-${file.name}`}
-              title={file.name}
-              detail={`${Math.max(1, Math.round(file.size / 1024))} KB`}
+              label={file.name}
+              description={`${Math.max(1, Math.round(file.size / 1024))} KB`}
               action={
                 <Button
                   variant="text"

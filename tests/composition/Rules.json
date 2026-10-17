@@ -102,7 +102,7 @@
       "forms/Switch.tsx": "base",
       "forms/TextField.tsx": "base",
       "forms/Textarea.tsx": "base",
-      "navigation/Breadcrumbs.tsx": "base",
+      "navigation/Breadcrumbs.tsx": "composites",
       "navigation/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/Menu.tsx": "composites",
@@ -288,15 +288,11 @@
       "AppShell": {
         "classes": ["env-app"]
       },
-      "Breadcrumbs": {
-        "classes": ["env-breadcrumb"]
-      },
-      "DocumentTabs": {
-        "classes": ["env-document-tab"]
-      },
+      "Breadcrumbs": {},
+      "DocumentTabs": {},
       "NavList": {},
       "Menu": {
-        "modules": ["navigation/ContextMenu.tsx"]
+        "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
       "OrganizationSwitcher": {
         "styles": ["Menu.css"]
@@ -304,9 +300,7 @@
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
       },
-      "Tabs": {
-        "classes": ["env-tab"]
-      },
+      "Tabs": {},
       "WindowFrame": {
         "styles": ["TitleBar.css"]
       },

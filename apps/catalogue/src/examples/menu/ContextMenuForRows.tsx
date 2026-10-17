@@ -79,8 +79,8 @@ export default function ContextMenuForRows() {
             <List.Item
               key={entry.id}
               data-entry={entry.id}
-              title={entry.name}
-              detail={`Edited by ${entry.editor}`}
+              label={entry.name}
+              description={`Edited by ${entry.editor}`}
               action={
                 <Menu.Root
                   aria-label={`Actions for ${entry.name}`}

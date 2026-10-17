@@ -1,0 +1,14 @@
+{
+  "@envsemble/envui": {
+    "List.Item": {
+      "title": {
+        "to": "label",
+        "report": "List.Item's title is label in 1.0."
+      },
+      "detail": {
+        "to": "description",
+        "report": "List.Item's detail is description in 1.0."
+      }
+    }
+  }
+}

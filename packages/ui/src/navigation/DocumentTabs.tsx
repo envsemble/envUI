@@ -1,17 +1,24 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import {
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
-  type MouseEvent,
   type ReactNode,
+  type Ref,
 } from 'react';
+import { CloseButton } from '../actions/CloseButton.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Close } from '../icons/Close.js';
+import { useDirection } from '../internal/useDirection.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { setRef } from '../internal/setRef.js';
+import { documentTabs } from '../foundations/messages/documentTabs.js';
 import { ContextMenu } from './ContextMenu.js';
 import * as Menu from './Menu.js';
 
@@ -43,7 +50,10 @@ export interface DocumentTabsProps {
   'aria-label': string;
   /** Id of the panel the application renders for the active tab. */
   panelId?: string;
-  /** Accessible name of each close button and the menu's close item; Close and the label by default. */
+  /**
+   * The name of the context menu's item that closes a tab, and the tooltip of its close button.
+   * @default 'Close {label}', or EnvUIProvider's messages.documentTabs.close
+   */
   closeLabel?: (label: string) => string;
   /**
    * Called from Close all tabs in the strip's context menu. With it, the strip and each tab open
@@ -51,15 +61,23 @@ export interface DocumentTabsProps {
    * closing that tab.
    */
   onCloseAll?: () => void;
-  /** Label of the Close all tabs item; Close all tabs by default. */
+  /**
+   * Label of the Close all tabs item.
+   * @default 'Close all tabs', or EnvUIProvider's messages.documentTabs.closeAll
+   */
   closeAllLabel?: string;
-  /** Accessible name of the context menu; Tab actions by default. */
+  /**
+   * Accessible name of the context menu.
+   * @default 'Tab actions', or EnvUIProvider's messages.documentTabs.actions
+   */
   contextMenuLabel?: string;
-  /** Classes for the strip. */
+  /** Classes for the strip, the tab list. */
   className?: string;
+  /** The strip's inline style. */
+  style?: CSSProperties;
+  /** The strip, the tab list element. */
+  ref?: Ref<HTMLDivElement>;
 }
-
-const defaultCloseLabel = (label: string) => `Close ${label}`;
 
 /** Editor-style closable tabs for open documents; the application renders the active document. */
 export function DocumentTabs({
@@ -70,13 +88,19 @@ export function DocumentTabs({
   onPin,
   'aria-label': label,
   panelId,
-  closeLabel = defaultCloseLabel,
+  closeLabel,
   onCloseAll,
-  closeAllLabel = 'Close all tabs',
-  contextMenuLabel = 'Tab actions',
+  closeAllLabel,
+  contextMenuLabel,
   className,
+  style,
+  ref,
 }: DocumentTabsProps) {
-  const list = useRef<HTMLDivElement>(null);
+  const messages = useMessages('documentTabs', documentTabs);
+  const closeName = closeLabel ?? ((name: string) => messages.close({ label: name }));
+  const list = useRef<HTMLDivElement | null>(null);
+  // ← and → follow the text direction: the EnvUIProvider's, or the one at the strip.
+  const [direction] = useDirection(list);
   const focusable = items.some((item) => item.id === value) ? value : (items[0]?.id ?? null);
 
   function tabElement(id: string | null) {
@@ -88,13 +112,27 @@ export function DocumentTabs({
 
   // The active tab scrolls into view within the strip, without scrolling the page.
   useLayoutEffect(() => {
-    const strip = list.current;
-    const tab = tabElement(value);
-    if (!strip || !tab) return;
-    const stripBox = strip.getBoundingClientRect();
-    const tabBox = tab.getBoundingClientRect();
-    if (tabBox.left < stripBox.left) strip.scrollLeft -= stripBox.left - tabBox.left;
-    else if (tabBox.right > stripBox.right) strip.scrollLeft += tabBox.right - stripBox.right;
+    function reveal() {
+      const strip = list.current;
+      const tab = tabElement(value)?.parentElement;
+      if (!strip || !tab) return;
+      const stripBox = strip.getBoundingClientRect();
+      const tabBox = tab.getBoundingClientRect();
+      if (tabBox.left < stripBox.left) strip.scrollLeft -= stripBox.left - tabBox.left;
+      else if (tabBox.right > stripBox.right) strip.scrollLeft += tabBox.right - stripBox.right;
+    }
+    reveal();
+    // Base UI also scrolls the active tab into view, and the labels may still widen as the font
+    // loads: the whole item, close button included, is revealed again once both have settled.
+    let cancelled = false;
+    const frame = requestAnimationFrame(reveal);
+    void document.fonts?.ready.then(() => {
+      if (!cancelled) reveal();
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
   }, [value, items]);
 
   // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
@@ -114,7 +152,8 @@ export function DocumentTabs({
     tabElement(focusable)?.focus();
   }, [items, focusable, focusWasInside, closedFromMenu]);
 
-  // A vertical wheel scrolls an overflowing strip sideways.
+  // A vertical wheel scrolls an overflowing strip sideways, toward its end as the wheel turns down.
+  // In right-to-left text the end is on the left, where scrollLeft runs from 0 down to -max.
   useEffect(() => {
     const strip = list.current;
     if (!strip) return;
@@ -122,7 +161,10 @@ export function DocumentTabs({
       if (event.deltaX !== 0 || event.deltaY === 0 || event.ctrlKey) return;
       const max = strip.scrollWidth - strip.clientWidth;
       if (max <= 0) return;
-      const next = Math.min(max, Math.max(0, strip.scrollLeft + event.deltaY));
+      const rtl = getComputedStyle(strip).direction === 'rtl';
+      const next = rtl
+        ? Math.min(0, Math.max(-max, strip.scrollLeft - event.deltaY))
+        : Math.min(max, Math.max(0, strip.scrollLeft + event.deltaY));
       if (next === strip.scrollLeft) return;
       event.preventDefault();
       strip.scrollLeft = next;
@@ -131,63 +173,42 @@ export function DocumentTabs({
     return () => strip.removeEventListener('wheel', onWheel);
   }, []);
 
-  function select(index: number) {
-    const item = items[index];
-    if (!item) return;
-    onValueChange(item.id);
-    tabElement(item.id)?.focus();
+  // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
+  function onListKeyDown(
+    event: KeyboardEvent<HTMLDivElement> & { preventBaseUIHandler?: () => void },
+  ) {
+    if (event.altKey || event.ctrlKey || event.metaKey) event.preventBaseUIHandler?.();
   }
 
-  function onKeyDown(event: KeyboardEvent<HTMLDivElement>, index: number) {
-    // Keys with Alt, Ctrl or ⌘ belong to the application, such as Ctrl+W or Alt+← for going back.
-    if (event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey)
-      return;
-    const rtl = getComputedStyle(event.currentTarget).direction === 'rtl';
-    const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
-    const backward = rtl ? 'ArrowRight' : 'ArrowLeft';
-    if (event.key === forward) select((index + 1) % items.length);
-    else if (event.key === backward) select((index - 1 + items.length) % items.length);
-    else if (event.key === 'Home') select(0);
-    else if (event.key === 'End') select(items.length - 1);
-    else if (event.key === 'Enter' || event.key === ' ') select(index);
-    else if (event.key === 'Delete' && !event.shiftKey && items[index]) onClose(items[index].id);
-    else return;
+  function onTabKeyDown(event: KeyboardEvent<HTMLElement>, id: string) {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.key !== 'Delete') return;
     event.preventDefault();
-  }
-
-  function onCloseClick(event: MouseEvent<HTMLButtonElement>, id: string) {
-    event.stopPropagation();
     onClose(id);
   }
 
   const strip = (
-    <div
-      ref={list}
-      role="tablist"
+    <BaseTabs.List
+      ref={(node: HTMLDivElement | null) => {
+        list.current = node;
+        setRef(ref, node);
+      }}
       aria-label={label}
-      aria-orientation="horizontal"
+      activateOnFocus
       className={classNames('env-document-tabs', className)}
+      style={style}
+      onKeyDown={onListKeyDown}
     >
-      {items.map((item, index) => {
+      {items.map((item) => {
         const active = item.id === value;
         return (
+          // The item lays out the tab and its close button side by side, so the close button
+          // isn't nested in the tab. It is a pointer's affordance: the keyboard closes a tab with
+          // Delete or from the context menu, as aria-keyshortcuts says.
           <div
             key={item.id}
-            role="tab"
-            aria-selected={active}
-            aria-controls={active ? panelId : undefined}
-            // The label names the tab; the close button keeps its own name.
-            aria-label={item.label}
-            title={item.title ?? item.label}
-            tabIndex={item.id === focusable ? 0 : -1}
-            className="env-document-tab"
-            data-tab-id={item.id}
-            data-preview={item.preview ? 'true' : 'false'}
+            className="env-document-tabs-item"
             data-active={active ? '' : undefined}
-            onClick={() => onValueChange(item.id)}
-            onDoubleClick={(event) => {
-              if (!(event.target as Element).closest('.env-document-tab-close')) onPin?.(item.id);
-            }}
             onMouseDown={(event) => {
               // A middle press would otherwise start autoscrolling.
               if (event.button === 1) event.preventDefault();
@@ -197,62 +218,86 @@ export function DocumentTabs({
               event.preventDefault();
               onClose(item.id);
             }}
-            onKeyDown={(event) => onKeyDown(event, index)}
           >
-            {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
-            <span className="env-document-tab-label">{item.label}</span>
-            <button
-              type="button"
-              tabIndex={-1}
-              className="env-document-tab-close"
-              aria-label={closeLabel(item.label)}
-              title={closeLabel(item.label)}
-              onClick={(event) => onCloseClick(event, item.id)}
+            <BaseTabs.Tab
+              value={item.id}
+              className="env-document-tabs-tab"
+              // The label names the tab, whatever its icon.
+              aria-label={item.label}
+              aria-controls={active ? panelId : undefined}
+              aria-keyshortcuts="Delete"
+              title={item.title ?? item.label}
+              tabIndex={item.id === focusable ? 0 : -1}
+              data-tab-id={item.id}
+              data-preview={item.preview ? 'true' : 'false'}
+              onDoubleClick={() => onPin?.(item.id)}
+              onKeyDown={(event: KeyboardEvent<HTMLElement>) => onTabKeyDown(event, item.id)}
             >
-              <DecorativeIcon>
-                <Close />
-              </DecorativeIcon>
-            </button>
+              {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
+              <span className="env-document-tabs-tab-label">{item.label}</span>
+            </BaseTabs.Tab>
+            <CloseButton
+              aria-hidden
+              tabIndex={-1}
+              title={closeName(item.label)}
+              className="env-document-tabs-close"
+              onClick={() => onClose(item.id)}
+            />
           </div>
         );
       })}
-    </div>
+    </BaseTabs.List>
   );
 
-  if (!onCloseAll) return strip;
   return (
-    <ContextMenu
-      aria-label={contextMenuLabel}
-      onOpenChange={(open) => {
-        if (open)
-          menuOpenedInside.current = Boolean(
-            list.current?.contains(list.current.ownerDocument.activeElement),
-          );
-      }}
-      content={(target) => {
-        // Read from the tab element, so the menu keeps its items while it closes after the tab.
-        const tab = target?.closest<HTMLElement>('.env-document-tab');
-        const id = tab?.dataset.tabId;
-        return (
-          <>
-            {tab && id !== undefined && (
-              <Menu.Item
-                onClick={() => {
-                  if (menuOpenedInside.current) setClosedFromMenu(true);
-                  onClose(id);
-                }}
-              >
-                {closeLabel(tab.getAttribute('aria-label') ?? '')}
-              </Menu.Item>
-            )}
-            <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
-              {closeAllLabel}
-            </Menu.Item>
-          </>
-        );
-      }}
-    >
-      {strip}
-    </ContextMenu>
+    <DirectionProvider direction={direction}>
+      <BaseTabs.Root
+        value={value}
+        onValueChange={(next) => {
+          if (typeof next === 'string') onValueChange(next);
+        }}
+        className="env-document-tabs-root"
+      >
+        {onCloseAll ? (
+          <ContextMenu
+            aria-label={contextMenuLabel ?? messages.actions}
+            onOpenChange={(open) => {
+              if (open)
+                menuOpenedInside.current = Boolean(
+                  list.current?.contains(list.current.ownerDocument.activeElement),
+                );
+            }}
+            content={(target) => {
+              // Read from the tab's item, so the menu keeps its items while it closes after the tab.
+              const tab = target
+                ?.closest('.env-document-tabs-item')
+                ?.querySelector<HTMLElement>('[role="tab"]');
+              const id = tab?.dataset.tabId;
+              return (
+                <>
+                  {tab && id !== undefined && (
+                    <Menu.Item
+                      onClick={() => {
+                        if (menuOpenedInside.current) setClosedFromMenu(true);
+                        onClose(id);
+                      }}
+                    >
+                      {closeName(tab.getAttribute('aria-label') ?? '')}
+                    </Menu.Item>
+                  )}
+                  <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
+                    {closeAllLabel ?? messages.closeAll}
+                  </Menu.Item>
+                </>
+              );
+            }}
+          >
+            {strip}
+          </ContextMenu>
+        ) : (
+          strip
+        )}
+      </BaseTabs.Root>
+    </DirectionProvider>
   );
 }

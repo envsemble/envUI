@@ -216,7 +216,7 @@
       "page": "list",
       "doc": "docs/components/list.md",
       "category": "Layout & surfaces",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.",
       "aliases": [
@@ -286,7 +286,7 @@
         {
           "name": "OnAPane",
           "title": "Rows on a pane",
-          "description": "`contrast` puts the rows on a muted pane of their own, in the alternate row fill.",
+          "description": "A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.",
           "file": "docs/examples/list/OnAPane.tsx"
         },
         {
@@ -1841,7 +1841,7 @@
       "page": "nav-list",
       "doc": "docs/components/nav-list.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.",
       "aliases": [
@@ -1939,7 +1939,7 @@
       "page": "tabs",
       "doc": "docs/components/tabs.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "Switches between panels of related content in one place, from a rail of buttons.",
       "aliases": [
@@ -2202,7 +2202,7 @@
       "page": "tree",
       "doc": "docs/components/tree.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.",
       "aliases": [
@@ -2282,7 +2282,7 @@
       "page": "document-tabs",
       "doc": "docs/components/document-tabs.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.",
       "aliases": [
@@ -2429,7 +2429,7 @@
       "page": "breadcrumbs",
       "doc": "docs/components/breadcrumbs.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "The path from the top level to the current page, with earlier levels as links or buttons.",
       "aliases": [
@@ -2505,7 +2505,7 @@
       "page": "pagination",
       "doc": "docs/components/pagination.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.6.0",
       "summary": "The range of items shown with previous and next page buttons, small enough for a toolbar.",
       "aliases": [
@@ -2566,7 +2566,7 @@
         {
           "name": "AnotherLanguage",
           "title": "In another language",
-          "description": "`previousLabel`, `nextLabel` and `formatRange` localize the pager; `lang` tells assistive technology the language.",
+          "description": "EnvUIProvider's `messages.pagination` localizes every pager inside it and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` localize one pager. `lang` tells assistive technology the language.",
           "file": "docs/examples/pagination/AnotherLanguage.tsx"
         }
       ]
@@ -2965,7 +2965,7 @@
         {
           "name": "NavigationCounts",
           "title": "Counts in navigation",
-          "description": "A CounterBadge as a NavList.Item's `trailing` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.",
+          "description": "A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.",
           "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
@@ -2987,7 +2987,7 @@
       "page": "table",
       "doc": "docs/components/table.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.",
       "aliases": [
@@ -3062,7 +3062,7 @@
         {
           "name": "SortableColumns",
           "title": "Sort by a column",
-          "description": "A header with `onSort` becomes a sort button. The application keeps the order, sorts the rows and gives each sortable header its `sortDirection`.",
+          "description": "A header with `onSortChange` becomes a sort button. The application keeps the order, sorts the rows and gives each sortable header its `sortDirection`.",
           "file": "docs/examples/table/SortableColumns.tsx"
         },
         {
@@ -4511,7 +4511,7 @@
       "page": "menu",
       "doc": "docs/components/menu.md",
       "category": "Feedback & overlays",
-      "status": "beta",
+      "status": "stable",
       "since": "0.3.0",
       "summary": "Actions, destinations and the shared organization switcher, opened from a trigger or a right click.",
       "aliases": [
@@ -4659,7 +4659,7 @@
       "page": "menubar",
       "doc": "docs/components/menubar.md",
       "category": "Feedback & overlays",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.",
       "aliases": [
@@ -5927,7 +5927,7 @@
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "default": "'Breadcrumb'",
+          "default": "'Breadcrumb', or EnvUIProvider's messages.breadcrumbs.label",
           "description": "Accessible name of the navigation landmark; name each trail where a page has several."
         },
         {
@@ -5937,7 +5937,9 @@
           "description": "Classes for the `nav` element."
         }
       ],
-      "native": [],
+      "native": [
+        "nav"
+      ],
       "page": "breadcrumbs",
       "doc": "docs/components/breadcrumbs.md"
     },
@@ -7171,9 +7173,23 @@
           "type": "string",
           "required": false,
           "description": "Class of the menu popup."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The menu popup's ref; the region is the element you pass as children."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The menu popup's inline style."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -7836,8 +7852,8 @@
           "name": "closeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "default": "(label: string) => `Close ${label}`",
-          "description": "Accessible name of each close button and the menu's close item; Close and the label by default."
+          "default": "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
+          "description": "The name of the context menu's item that closes a tab, and the tooltip of its close button."
         },
         {
           "name": "onCloseAll",
@@ -7849,24 +7865,38 @@
           "name": "closeAllLabel",
           "type": "string",
           "required": false,
-          "default": "'Close all tabs'",
-          "description": "Label of the Close all tabs item; Close all tabs by default."
+          "default": "'Close all tabs', or EnvUIProvider's messages.documentTabs.closeAll",
+          "description": "Label of the Close all tabs item."
         },
         {
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
-          "default": "'Tab actions'",
-          "description": "Accessible name of the context menu; Tab actions by default."
+          "default": "'Tab actions', or EnvUIProvider's messages.documentTabs.actions",
+          "description": "Accessible name of the context menu."
         },
         {
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "Classes for the strip."
+          "description": "Classes for the strip, the tab list."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The strip's inline style."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The strip, the tab list element."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "document-tabs",
       "doc": "docs/components/document-tabs.md"
     },
@@ -7976,7 +8006,7 @@
           "name": "initialFocus",
           "type": "DialogFocusTarget",
           "required": false,
-          "description": "The element to focus when the drawer opens, as a ref or a function of how it was opened. By default focus moves to the first focusable element inside, or to the drawer when opened by touch."
+          "description": "The element to focus when the drawer opens, as a ref or a function of how it was opened. By default focus moves to the first element inside that takes Tab, such as the close button, or to the drawer itself when opened by touch or when nothing inside takes focus."
         },
         {
           "name": "finalFocus",
@@ -8559,9 +8589,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state when hover, focus or Esc opens or closes the card."
+          "description": "Called with the new state, and why, when hover, focus or Esc opens or closes the card."
         }
       ],
       "native": [
@@ -8727,19 +8757,19 @@
     "List.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One `li` row with a title, a detail and an action.",
+      "description": "One `li` row with a label, a description and an action.",
       "props": [
         {
-          "name": "title",
+          "name": "label",
           "type": "ReactNode",
           "required": true,
           "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row."
         },
         {
-          "name": "detail",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A short fact in muted text below the title, such as who changed the item and when."
+          "description": "A short fact in muted text below the label, such as who changed the item and when."
         },
         {
           "name": "action",
@@ -8751,7 +8781,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content after the title and the detail, such as a Badge."
+          "description": "More content after the label and the description, such as a Badge."
         },
         {
           "name": "interactive",
@@ -8770,15 +8800,8 @@
     "List.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A `ul` of connected rows with shared outer corners.",
+      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it.",
       "props": [
-        {
-          "name": "contrast",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Sets the rows on a muted pane of their own, 0.75 rem around them, in the alternate row fill, so they stand out from the pane."
-        },
         {
           "name": "density",
           "type": "'xs' | 'sm' | 'md' | 'lg'",
@@ -9020,10 +9043,22 @@
           "description": "Class of the item's row."
         },
         {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon before the label, such as Settings."
+        },
+        {
           "name": "children",
           "type": "ReactNode",
           "required": true,
           "description": "The item's label, which names it."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A second, muted line; announced as the item's description."
         },
         {
           "name": "shortcut",
@@ -9032,16 +9067,10 @@
           "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys and announced as aria-keyshortcuts; a sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The application handles the shortcut itself."
         },
         {
-          "name": "icon",
+          "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "A decorative icon before the label, such as Settings."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A second, muted line; announced as the item's description."
+          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
         }
       ],
       "native": [],
@@ -9097,14 +9126,14 @@
     "Menu.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link.",
+      "description": "One action (onClick) or destination (href) in a Menu. Destinations use the LinkProvider's link and close the menu as they are followed.",
       "props": [
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does not run."
+          "description": "The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does not run, and a destination has no link to follow."
         },
         {
           "name": "className",
@@ -9137,7 +9166,7 @@
           "description": "Keyboard hint at the end, such as Ctrl+P, shown as Kbd keys and announced as aria-keyshortcuts; a sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The application handles the shortcut itself."
         },
         {
-          "name": "trailing",
+          "name": "end",
           "type": "ReactNode",
           "required": false,
           "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
@@ -9146,7 +9175,7 @@
           "name": "href",
           "type": "string",
           "required": false,
-          "description": "The destination: the item is a link, through the LinkProvider's link component."
+          "description": "The destination: the item is a link, through the LinkProvider's link component, and the menu closes as it is followed."
         },
         {
           "name": "onClick",
@@ -9249,6 +9278,12 @@
           "description": "The item's label, which names it."
         },
         {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+        },
+        {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
@@ -9290,10 +9325,10 @@
         },
         {
           "name": "side",
-          "type": "'top' | 'bottom' | 'left' | 'right'",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
           "default": "'bottom'",
-          "description": "The side of the trigger the menu opens on; it flips to the other side where the window has no room."
+          "description": "The side of the trigger the menu opens on; it flips to the other side where the window has no room. inline-start and inline-end follow the text direction."
         },
         {
           "name": "align",
@@ -9325,10 +9360,12 @@
           "name": "className",
           "type": "string",
           "required": false,
-          "description": "Class of the menu popup."
+          "description": "Class of the menu popup. ref, style, data attributes and the other native props go to the popup too; the trigger is the element you pass."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -9397,6 +9434,18 @@
           "description": "Class of the submenu popup."
         },
         {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The submenu popup's ref."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The submenu popup's inline style."
+        },
+        {
           "name": "icon",
           "type": "ReactNode",
           "required": false,
@@ -9409,7 +9458,9 @@
           "description": "A second, muted line; announced as the item's description."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -9482,9 +9533,23 @@
           "type": "string",
           "required": false,
           "description": "Class of the menu popup."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The menu popup's ref; the trigger is the menubar's own."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The menu popup's inline style."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -9689,7 +9754,7 @@
     "NavList.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and trailing content, marks the current destination with selected, and shows only its icon with iconOnly or inside a compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.",
+      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and end content, marks the current destination with selected, and shows only its icon with iconOnly or inside a compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.",
       "props": [
         {
           "name": "selected",
@@ -9717,17 +9782,17 @@
           "description": "The icon shown while the item is selected, for a custom icon without a filled form; Material Symbols need none."
         },
         {
-          "name": "trailing",
+          "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead, hidden from assistive technology, so say what the content says in its aria-label."
+          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the count, such as Inbox, 3 new, from EnvUIProvider's messages.navList.itemCount: the content's text, or a CounterBadge's value."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it."
+          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds the count of its end content."
         },
         {
           "name": "href",
@@ -9767,20 +9832,20 @@
       "description": "Shows the active organization and switches between the person's organizations; fits AppShell's context area.",
       "props": [
         {
-          "name": "organizations",
-          "type": "readonly OrganizationSwitcherOrganization[]",
+          "name": "items",
+          "type": "readonly OrganizationSwitcherItem[]",
           "required": true,
           "description": "Organizations the signed-in person belongs to, in display order."
         },
         {
-          "name": "currentOrganizationId",
+          "name": "value",
           "type": "string | null",
           "required": true,
-          "description": "The active organization, or null before one is chosen."
+          "description": "The active organization's id, or null before one is chosen."
         },
         {
-          "name": "onSelect",
-          "type": "(organizationId: string) => void",
+          "name": "onValueChange",
+          "type": "(value: string) => void",
           "required": true,
           "description": "Called with the id of the organization chosen, unless it is the active one; the application switches and reports progress."
         },
@@ -9794,21 +9859,21 @@
           "name": "heading",
           "type": "string",
           "required": false,
-          "default": "'Organizations'",
+          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.heading",
           "description": "Heading inside the menu."
         },
         {
           "name": "createLabel",
           "type": "string",
           "required": false,
-          "default": "'Create organization'",
+          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
           "description": "Label of the create action."
         },
         {
           "name": "placeholder",
           "type": "string",
           "required": false,
-          "default": "'Choose organization'",
+          "default": "'Choose organization', or EnvUIProvider's messages.organizationSwitcher.placeholder",
           "description": "Trigger text while no organization is active."
         },
         {
@@ -9822,7 +9887,7 @@
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "default": "'Organizations'",
+          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.label",
           "description": "Accessible name of the menu."
         },
         {
@@ -9830,9 +9895,23 @@
           "type": "string",
           "required": false,
           "description": "Class of the trigger button, or of the create button without organizations."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The menu popup's ref; the trigger is a Button of its own."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The menu popup's inline style."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -9851,7 +9930,7 @@
     "Pager.Next": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next, and an optional icon after them. It also stands alone, outside Pager.Root.",
+      "description": "The destination after this one: a native link with rel=\"next\", its title under the label Up next (EnvUIProvider's messages.pager.next), and an optional icon after them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -9888,7 +9967,7 @@
     "Pager.Previous": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous, and an optional icon before them. It also stands alone, outside Pager.Root.",
+      "description": "The destination before this one: a native link with rel=\"prev\", its title under the label Previous (EnvUIProvider's messages.pager.previous), and an optional icon before them. It also stands alone, outside Pager.Root.",
       "props": [
         {
           "name": "href",
@@ -9943,13 +10022,13 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "Pager.Previous and Pager.Next, instead of the previous and next props; they render after the links of the props."
+          "description": "Pager.Previous and Pager.Next, instead of the previous and next props or beside one of them: they render between the previous prop's link and the next prop's, so the links keep their order."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "default": "'Previous and next content'",
+          "default": "'Previous and next content', or EnvUIProvider's messages.pager.label",
           "description": "The navigation landmark's name; give each pager its own where a page has several."
         }
       ],
@@ -10013,22 +10092,22 @@
           "name": "formatRange",
           "type": "(range: PaginationRange) => ReactNode",
           "required": false,
-          "default": "1–60 of 245, or 61–120 without total, in English numbers",
-          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for example in another language."
+          "default": "1–60 of 245, or 61–120 without total, with numbers in the locale",
+          "description": "Writes the range from the first and last item shown, the total, the page and the page count, for one pager; EnvUIProvider's messages.pagination.range writes it for every pager."
         },
         {
           "name": "previousLabel",
           "type": "string",
           "required": false,
-          "default": "'Previous page'",
-          "description": "The previous button's accessible name and tooltip, in the application's language."
+          "default": "'Previous page', or EnvUIProvider's messages.pagination.previous",
+          "description": "The previous button's accessible name and tooltip."
         },
         {
           "name": "nextLabel",
           "type": "string",
           "required": false,
-          "default": "'Next page'",
-          "description": "The next button's accessible name and tooltip, in the application's language."
+          "default": "'Next page', or EnvUIProvider's messages.pagination.next",
+          "description": "The next button's accessible name and tooltip."
         },
         {
           "name": "variant",
@@ -10047,7 +10126,7 @@
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "default": "'Pagination'",
+          "default": "'Pagination', or EnvUIProvider's messages.pagination.label",
           "description": "The navigation landmark's name, such as Report pages, where a page has more than one."
         }
       ],
@@ -10300,9 +10379,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
-          "description": "Receives the requested state each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close."
+          "description": "Receives the requested state, and why, each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close (`close-press`)."
         },
         {
           "name": "width",
@@ -11443,33 +11522,33 @@
     "Table.HeaderCell": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A header cell, a native th that heads its column, or its row with scope=\"row\". With onSort it sorts its column; in a table with resizable columns it holds the column's resize handle.",
+      "description": "A header cell, a native th that heads its column, or its row with scope=\"row\". With onSortChange it sorts its column; in a table with resizable columns it holds the column's resize handle.",
       "props": [
         {
           "name": "sortDirection",
           "type": "'ascending' | 'descending' | 'none'",
           "required": false,
-          "default": "'none' with onSort",
-          "description": "The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with onSort; without onSort it only sets aria-sort."
+          "default": "'none' with onSortChange",
+          "description": "The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with onSortChange; without it only sets aria-sort."
         },
         {
-          "name": "onSort",
-          "type": "() => void",
+          "name": "onSortChange",
+          "type": "(next: 'ascending' | 'descending') => void",
           "required": false,
-          "description": "The header becomes a button across the cell that asks the application to sort the rows by this column. The application sorts the rows and sets sortDirection."
+          "description": "The header becomes a button across the cell that asks the application to sort the rows by this column, with the order pressing it asks for: descending while the column is sorted ascending, ascending otherwise. The application sorts the rows and sets sortDirection."
         },
         {
           "name": "sortLabel",
           "type": "string",
           "required": false,
-          "default": "'{header} sort {next order}'",
+          "default": "'{header} sort {next order}', from EnvUIProvider's messages.table.sortAscending and sortDescending",
           "description": "Accessible name of the sort button, which says what pressing it does: the header's name followed by \"sort ascending\", or by \"sort descending\" while the column is sorted ascending."
         },
         {
           "name": "resizeLabel",
           "type": "string",
           "required": false,
-          "default": "'Resize {header}'",
+          "default": "'Resize {header}', from EnvUIProvider's messages.table.resize",
           "description": "Accessible name of the column's resize handle, \"Resize\" followed by the header's name."
         },
         {
@@ -11509,13 +11588,13 @@
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the table and its scroll region when there is no caption. A table needs a caption or an aria-label."
+          "description": "Accessible name of the table and its scroll region when there is no caption. A table needs a caption, an aria-label or an aria-labelledby, which names its region too."
         },
         {
           "name": "caption",
           "type": "ReactNode",
           "required": false,
-          "description": "A visible caption above the rows that names the table and its scroll region, in place of aria-label. Under a sticky header it scrolls away with the rows."
+          "description": "A visible caption above the rows that names the table and its scroll region, in place of aria-label or aria-labelledby. Under a sticky header it scrolls away with the rows."
         },
         {
           "name": "density",
@@ -12286,7 +12365,7 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element that carries its name and reports it disabled, so hovering and keyboard focus still open the tooltip."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
         },
         {
           "name": "side",
@@ -12327,15 +12406,15 @@
           "description": "The tree's accessible name, such as Files."
         },
         {
-          "name": "selectedId",
+          "name": "value",
           "type": "string | null",
           "required": false,
           "default": "null",
-          "description": "The selected row's id: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onOpen."
+          "description": "The selected row's id: it takes the navigation selection colors and scrolls into view when it changes. The application sets it, usually from onAction."
         },
         {
-          "name": "onOpen",
-          "type": "(item: T, options: TreeOpenOptions) => void",
+          "name": "onAction",
+          "type": "(item: T, options: TreeActionOptions) => void",
           "required": true,
           "description": "Called when people open a row: with preview true on a single click and Space, and false on a double click and Enter. Expandable rows call it too, and disabled rows don't."
         },
@@ -12355,8 +12434,8 @@
           "name": "contextMenuLabel",
           "type": "string",
           "required": false,
-          "default": "'Actions'",
-          "description": "The context menu's accessible name, in the application's language."
+          "default": "'Actions', or EnvUIProvider's messages.tree.actions",
+          "description": "The context menu's accessible name."
         },
         {
           "name": "density",
@@ -12370,9 +12449,23 @@
           "type": "string",
           "required": false,
           "description": "A class for the tree, the element that scrolls."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "The tree's inline style, such as a height."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLDivElement>",
+          "required": false,
+          "description": "The tree element, which scrolls and holds focus."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "tree",
       "doc": "docs/components/tree.md"
     },

@@ -12,13 +12,21 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type ReactNode,
+  type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { MenuPopup } from './internal/MenuPopup.js';
 import { useDirection } from '../internal/useDirection.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { renderMenuPopup } from './internal/MenuPopup.js';
+
+/** The Base UI parts of a menubar menu's popup. */
+const menuParts = {
+  Portal: BaseMenu.Portal,
+  Positioner: BaseMenu.Positioner,
+  Popup: BaseMenu.Popup,
+};
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface MenubarContextValue {
@@ -314,6 +322,10 @@ export interface MenuProps {
   onOpenChange?: (open: boolean, details: MenuOpenChangeDetails) => void;
   /** Class of the menu popup. */
   className?: string;
+  /** The menu popup's ref; the trigger is the menubar's own. */
+  ref?: Ref<HTMLDivElement>;
+  /** The menu popup's inline style. */
+  style?: CSSProperties;
 }
 
 /**
@@ -352,15 +364,15 @@ function Menu({
   open,
   defaultOpen,
   onOpenChange,
-
   className,
+  ref,
+  style,
 }: MenuProps) {
-  const theme = useTheme();
   const menubar = useContext(MenubarContext);
   if (!menubar) throw new Error('Menubar.Menu must be used inside Menubar.Root.');
   const { registerClose } = menubar;
   const trigger = useRef<HTMLButtonElement>(null);
-  const popup = useRef<HTMLDivElement>(null);
+  const popup = useRef<HTMLDivElement | null>(null);
   const actions = useRef<BaseMenu.Root.Actions>(null);
   const previousFocus = useRef<Element | null>(null);
   const closeReason = useRef<string | null>(null);
@@ -436,25 +448,23 @@ function Menu({
       >
         <AccessKeyLabel label={label} accessKey={key} />
       </BaseMenu.Trigger>
-      <BaseMenu.Portal>
-        <Theme {...theme} className="env-menu-theme">
-          <BaseMenu.Positioner
-            className="env-menu-positioner"
-            side="bottom"
-            align="start"
-            sideOffset={4}
-          >
-            <BaseMenu.Popup
-              ref={popup}
-              className={classNames('env-menu', className)}
-              render={renderMenuPopup(ariaLabel ?? textLabel)}
-              finalFocus={finalFocus}
-            >
-              {children}
-            </BaseMenu.Popup>
-          </BaseMenu.Positioner>
-        </Theme>
-      </BaseMenu.Portal>
+      <MenuPopup
+        parts={menuParts}
+        label={ariaLabel ?? textLabel}
+        side="bottom"
+        align="start"
+        sideOffset={4}
+        trigger={trigger}
+        finalFocus={finalFocus}
+        className={className}
+        popupRef={(node: HTMLDivElement | null) => {
+          popup.current = node;
+          setRef(ref, node);
+        }}
+        popupProps={{ style }}
+      >
+        {children}
+      </MenuPopup>
     </BaseMenu.Root>
   );
 }

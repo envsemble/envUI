@@ -156,8 +156,8 @@ function Page() {
           { id: 'a', depth: 0, label: 'Selected file' },
           { id: 'b', depth: 0, label: 'Other file' },
         ]}
-        selectedId="a"
-        onOpen={noop}
+        value="a"
+        onAction={noop}
         onExpandedChange={noop}
       />
       <Calendar defaultValue="2026-10-14" />
@@ -174,7 +174,8 @@ function Page() {
       />
       <Rating value={3} />
       <Menubar.Root aria-label="Application menu">
-        <Menubar.Menu label="File">
+        {/* Held open, so its trigger shows the open state Base UI gives it. */}
+        <Menubar.Menu label="File" open>
           <Menu.Item>New document</Menu.Item>
         </Menubar.Menu>
       </Menubar.Root>

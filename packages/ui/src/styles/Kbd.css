@@ -1,20 +1,23 @@
 /* Keyboard keys: small key caps with a heavier bottom edge. Their label sits on the surrounding
-   text's baseline, so keys line up in prose whatever glyphs they show. */
+   text's baseline, so keys line up in prose whatever glyphs they show. A container that shows
+   smaller or quieter keys, such as a menu's shortcuts, sets the custom properties below on its own
+   element: --env-kbd-size, -padding-inline, -radius, -fg and -font-size for the keys, and
+   --env-kbd-separator-padding-inline and -font for the + between them. */
 .env-kbd {
   box-sizing: border-box;
-  min-inline-size: 1.375rem;
-  block-size: 1.375rem;
+  min-inline-size: var(--env-kbd-size, 1.375rem);
+  block-size: var(--env-kbd-size, 1.375rem);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding-inline: 0.3125rem;
+  padding-inline: var(--env-kbd-padding-inline, 0.3125rem);
   /* Hooks: a container sets --env-kbd-fg, --env-kbd-bg and --env-kbd-border for its own fill. */
   border: 0.0625rem solid var(--env-kbd-border, var(--env-color-border-muted));
   border-block-end-width: 0.125rem;
-  border-radius: 0.3125rem;
+  border-radius: var(--env-kbd-radius, 0.3125rem);
   background: var(--env-kbd-bg, var(--env-color-bg-neutral-muted));
   color: var(--env-kbd-fg, var(--env-color-fg-default));
-  font: 500 0.75rem / 1 var(--env-font-family);
+  font: 500 var(--env-kbd-font-size, 0.75rem) / 1 var(--env-font-family);
   white-space: nowrap;
   vertical-align: baseline;
 }
@@ -30,7 +33,7 @@
   align-items: baseline;
 }
 .env-kbd-separator {
-  padding-inline: 0.1875rem;
+  padding-inline: var(--env-kbd-separator-padding-inline, 0.1875rem);
   color: var(--env-kbd-fg, var(--env-color-fg-muted));
-  font: var(--env-type-body-small);
+  font: var(--env-kbd-separator-font, var(--env-type-body-small));
 }

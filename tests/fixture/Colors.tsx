@@ -74,11 +74,13 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
           Canvas card
         </Card>
         <List.Root>
-          <List.Item title="Row" data-testid={`${theme}-color-row`} />
+          <List.Item label="Row" data-testid={`${theme}-color-row`} />
         </List.Root>
-        <List.Root contrast data-testid={`${theme}-color-contrast-rows`}>
-          <List.Item title="Contrast row" />
-        </List.Root>
+        <Surface background="muted" padding={3}>
+          <List.Root data-testid={`${theme}-color-contrast-rows`}>
+            <List.Item label="Contrast row" />
+          </List.Root>
+        </Surface>
         <Tabs
           aria-label={`${theme} color isolation tabs`}
           data-testid={`${theme}-color-tabs`}

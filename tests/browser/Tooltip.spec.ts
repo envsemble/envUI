@@ -8,7 +8,7 @@ test.describe('Tooltip', () => {
     page,
   }) => {
     await page.goto(tooltips);
-    const archive = page.getByRole('button', { name: 'Archive' });
+    const archive = page.getByRole('button', { name: 'Archive', exact: true });
     await expect(archive).not.toHaveAttribute('aria-describedby');
     await archive.hover();
     const tooltip = page.getByRole('tooltip');
@@ -17,6 +17,14 @@ test.describe('Tooltip', () => {
     await page.mouse.move(1, 1);
     await expect(tooltip).toHaveCount(0);
     await expect(archive).not.toHaveAttribute('aria-describedby');
+
+    // A control named by mixed content counts as named, read from the page as the tooltip opens.
+    const archiveAll = page.getByRole('button', { name: 'Archive A', exact: true });
+    await archiveAll.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Moves every item out of the list');
+    await expect(archiveAll).toHaveAccessibleDescription('Moves every item out of the list');
+    await page.mouse.move(1, 1);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
 
     const remove = page.getByRole('button', { name: 'Delete' });
     await remove.hover();
@@ -40,11 +48,50 @@ test.describe('Tooltip', () => {
     await page.keyboard.press('Escape');
     await expect(page.getByRole('tooltip')).toHaveCount(0);
 
+    // The wrapper takes the role of what it wraps, such as a link.
+    const billing = page.getByRole('link', { name: 'Billing' });
+    await expect(billing).toHaveCount(1);
+    await expect(billing).toHaveClass('env-tooltip-disabled-target');
+    await expect(billing).toHaveAttribute('aria-disabled', 'true');
+
     // Enabled, the control itself is the trigger again.
     await page.getByRole('button', { name: 'Toggle seats' }).click();
     const enabled = page.getByRole('button', { name: 'Invite member' });
     await expect(enabled).toBeEnabled();
     await expect(enabled).not.toHaveClass(/env-tooltip-disabled-target/);
+  });
+
+  test('a disabled control keeps valid ARIA: a toggle keeps its state, a checkbox its own role', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    // A disabled toggle's wrapper stands in as the button, pressed, and follows its state.
+    const pin = page.getByRole('button', { name: 'Pin', exact: true });
+    await expect(pin).toHaveCount(1);
+    await expect(pin).toHaveClass('env-tooltip-disabled-target');
+    await expect(pin).toHaveAttribute('aria-disabled', 'true');
+    await expect(pin).toHaveAttribute('aria-pressed', 'true');
+    // With the wrappers rendered, none takes a role that needs a state it lacks, such as a
+    // checkbox without aria-checked.
+    const roles = await page
+      .locator('.env-tooltip-disabled-target')
+      .evaluateAll((wrappers) => wrappers.map((wrapper) => wrapper.getAttribute('role')));
+    expect(roles.length).toBeGreaterThan(0);
+    for (const role of roles) expect([null, 'button', 'link', 'tab', 'menuitem']).toContain(role);
+    await page.getByRole('button', { name: 'Toggle pinned' }).click();
+    await expect(pin).toHaveAttribute('aria-pressed', 'false');
+
+    // A disabled checkbox has no stand-in: the checkbox itself stays exposed, checked and
+    // disabled, and its wrapper is no tab stop.
+    const notify = page.getByRole('checkbox', { name: 'Notify owners' });
+    await expect(notify).toHaveCount(1);
+    await expect(notify).toBeChecked();
+    await expect(notify).toBeDisabled();
+    const wrapper = page.locator('.env-tooltip-disabled-target', { has: notify });
+    await expect(wrapper).not.toHaveAttribute('role');
+    await expect(wrapper).not.toHaveAttribute('tabindex');
+    await wrapper.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Owners are always notified');
   });
 
   test('in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger', async ({

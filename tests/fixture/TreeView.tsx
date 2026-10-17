@@ -47,7 +47,7 @@ function flatten(nodes: FileNode[], expanded: Set<string>, depth = 0, rows: File
       expanded: node.children ? isOpen : undefined,
       label: node.name,
       icon: node.children ? <Folder /> : <Description />,
-      detail: node.id === 'folder-1/doc-4.md' ? 'In progress' : undefined,
+      description: node.id === 'folder-1/doc-4.md' ? 'In progress' : undefined,
       title: node.id,
       disabled: node.id === 'folder-1/doc-6.md',
     });
@@ -69,8 +69,8 @@ export function TreeFixture({ theme }: { theme: ThemeValue }) {
         <Tree
           aria-label={`Files ${theme}`}
           items={rows}
-          selectedId={selectedId}
-          onOpen={(item, { preview }) => {
+          value={selectedId}
+          onAction={(item, { preview }) => {
             setSelectedId(item.id);
             record(`${preview ? 'preview' : 'open'} ${item.id}`);
           }}

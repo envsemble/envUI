@@ -29,7 +29,7 @@ export function focusNotice(root: HTMLElement) {
     cell.classList.toggle('env-calendar-heatmap-day', true);
   });
   const row = root.closest('.env-list .env-list-item');
-  if (row?.matches(':is(.env-list-item, .env-list-surface)')) row.classList.add('env-counter-badge', 'env-counter-badge');
+  if (row?.matches(':is(.env-list-item, .env-contrast-row-pane)')) row.classList.add('env-counter-badge', 'env-counter-badge');
   root.classList.replace('env-alert', 'env-alert');
   root.getElementsByClassName('env-list-item env-list-item-fill');
   root.style.setProperty('--env-calendar-heatmap-mix', '20%');

@@ -161,6 +161,8 @@ test('a notice dismiss button is a circle tinted with the notice tone', async ({
     .locator('.env-alert')
     .filter({ has: page.getByRole('button', { name: 'Dismiss' }) });
   const dismiss = notice.getByRole('button', { name: 'Dismiss' });
+  // Its name shows as the native tooltip too.
+  await expect(dismiss).toHaveAttribute('title', 'Dismiss');
   const box = (await dismiss.boundingBox())!;
   expect(Math.abs(box.width - box.height)).toBeLessThan(0.5);
   await expect(dismiss).toHaveCSS('border-top-left-radius', '50%');

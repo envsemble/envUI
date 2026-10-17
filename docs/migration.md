@@ -113,6 +113,39 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning, and 
 
 In style sheets the modifier classes become attributes on the component's root class, which `v1-classes` writes with the specificity they had: `.env-button-important` is `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-text-tone-muted` `.env-text:where([data-emphasis='muted'])`, `.env-surface-row` `.env-surface:where([data-background='muted'])` and `.env-skeleton-highlight` `.env-skeleton:where([data-emphasis='default'])`. The icon wrapper `env-symbol` is `env-icon`. A button without a `variant` takes its container's, such as ghost in a Toolbar.
 
+### Navigation and collections
+
+`v1-props`, `v1-structure` and `v1-names` make these changes; `v1-classes` renames the classes below.
+
+| 0.x                                                                       | 1.0                                                                                        |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `trailing` on Menu.Item and NavList.Item                                  | `end`                                                                                      |
+| OrganizationSwitcher `organizations`, `currentOrganizationId`, `onSelect` | `items`, `value`, `onValueChange`                                                          |
+| `OrganizationSwitcherOrganization` and its `detail`                       | `OrganizationSwitcherItem` and its `description`                                           |
+| Tree `selectedId`, `onOpen`, `TreeOpenOptions`                            | `value`, `onAction`, `TreeActionOptions`                                                   |
+| A TreeItem's `detail` and `trailing`                                      | `description` and `end`                                                                    |
+| Table.HeaderCell `onSort`                                                 | `onSortChange`, called with the order pressing asks for                                    |
+| List.Item `title`, `detail`                                               | `label`, `description`                                                                     |
+| `<List.Root contrast>`                                                    | `<Surface background="muted" padding={3}><List.Root></Surface>`: rows take the raised fill |
+| `.env-tab`, `.env-tab-panel`                                              | `.env-tabs-tab`, `.env-tabs-panel`                                                         |
+| `.env-document-tab`, `-label`, `-close`                                   | `.env-document-tabs-tab`, `-tab-label`, `.env-document-tabs-close`                         |
+| `.env-breadcrumb`, `.env-breadcrumb-link` and the other parts             | `.env-breadcrumbs-item`, `.env-breadcrumbs-link` and the other parts                       |
+| `.env-tree-row`, `.env-tree-detail`, `.env-tree-trailing`                 | `.env-tree-item`, `.env-tree-description`, `.env-tree-end`                                 |
+| `.env-navigation-selected`, `.env-navigation-icon-only`                   | `.env-nav-list-item:where([data-selected])`, `.env-nav-list-item:where([data-icon-only])`  |
+| `.env-navigation-trailing`, `.env-menu-item-trailing`                     | `.env-nav-list-item-end`, `.env-menu-item-end`                                             |
+
+Change by hand:
+
+- the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing` and an organization's `detail`; TypeScript reports each one;
+- a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
+- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its count in its name now, as "Inbox, 12 new", from `messages.navList.itemCount`, so name it "Inbox";
+- a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`; the close button is out of the tab order and hidden from assistive technology, and Delete or the context menu closes a tab from the keyboard;
+- a style for the 0.7 contrast pane, `.env-contrast-row-pane`, which has no class in 1.0: style the Surface around the list;
+- a selected or icon-only NavList class in a `className` string, which `v1-classes` reports: the item sets the attributes from `selected` and `iconOnly`;
+- a zero-argument `onSort` handler keeps working as `onSortChange`; take the order from its argument instead of toggling it yourself.
+
+Menu.Item with `href` closes the menu as it is followed, and a disabled one renders no link. The strings of OrganizationSwitcher, DocumentTabs, Breadcrumbs, Pagination, Pager, NavList, Table and Tree come from EnvUIProvider's `messages`; their `*Label` props still override them for one component.
+
 ### Overlays and feedback
 
 Status tones say `danger` where 0.x said `error`, popups and dialogs take a `width` of `md` or `lg`, and a panel at the edge of the window is a Drawer. `v1-structure` turns each literal `<Dialog placement="right">` into a Drawer, `v1-props` moves the literal values and `useToast().show({ … })` objects, and `v1-classes` the classes:
@@ -146,7 +179,13 @@ Change these by hand where the codemods report them:
 - an `env-bar` selector of a Progress, which the codemods rename to `env-meter`: rename it to `env-progress`;
 - selectors on `[data-tone='error']` of Alert or a toast, which are `[data-tone='danger']`.
 
-Behaviour that changes without a rename: a danger toast is an alert as it appears and is never hidden behind the count of older notifications; a disabled control inside a Tooltip is reached by its wrapper, which carries its name and `aria-disabled`; CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
+Behaviour that changes without a rename:
+
+- A danger toast is an alert as it appears and is never hidden behind the count of older notifications; the other notices are read by a polite status beside the regions, which are named Notifications and Top notifications where they were Bottom right notifications and Top center notifications.
+- A Drawer's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the drawer that takes Tab, such as that button, as it did in the side panel.
+- `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
+- A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
+- CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
 
 ### Content and display
 

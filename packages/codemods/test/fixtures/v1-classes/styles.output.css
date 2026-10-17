@@ -10,11 +10,11 @@
 }
 
 .env-list-item:not(.env-list-item-fill):hover,
-:is(.env-list, .env-list-surface) > .env-list-item {
+:is(.env-list, .env-contrast-row-pane) > .env-list-item {
   background: var(--env-list-item-fill, transparent);
 }
 
-li.env-nav-list-item.env-nav-list-item-selected .env-nav-list-item-dot {
+li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item-dot {
   color: var(--env-color-accent);
 }
 
@@ -60,4 +60,14 @@ li.env-nav-list-item.env-nav-list-item-selected .env-nav-list-item-dot {
 .env-diff-stat:hover > .env-diff-stat-label,
 .env-counter-badge .env-counter-badge-label {
   clip-path: inset(50%);
+}
+/* Navigation parts named after their components, and modifiers that became attributes. */
+.env-tabs-list > .env-tabs-tab:not([data-active]),
+.env-tabs-panel,
+.env-document-tabs-tab:hover .env-document-tabs-close,
+.env-breadcrumbs-item + .env-breadcrumbs-item .env-breadcrumbs-link,
+.env-tree-item .env-tree-description,
+.env-nav-list-item.env-nav-list-item:where([data-icon-only]) .env-nav-list-item-end,
+.env-menu-item-end {
+  color: inherit;
 }

@@ -21,7 +21,8 @@ test.describe('Drawer', () => {
     const drawer = page.getByRole('dialog', { name: 'Filters' });
     await expect(drawer).toBeVisible();
     await expect(drawer).toHaveAccessibleDescription('Narrow the list.');
-    await expect.poll(() => holdsFocus(page, 'Filters')).toBe(true);
+    // Focus starts on the first element that takes Tab, the close button.
+    await expect(drawer.getByRole('button', { name: 'Close' })).toBeFocused();
     // Tab and Shift+Tab cycle through the close button, the field and the action, never leaving.
     // WebKit's Tab reaches only fields, as Safari's does by default; Alt+Tab reaches every control.
     const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
@@ -81,6 +82,61 @@ test.describe('Drawer', () => {
     await expect(rtl.locator('xpath=ancestor-or-self::*[@dir][1]')).toHaveAttribute('dir', 'rtl');
     expect((await rtl.boundingBox())!.x).toBeCloseTo(0, 0);
     expect(await offset(rtl)).toBe('-2rem');
+  });
+
+  test('a drag toward its edge moves the drawer with the pointer, in either direction', async ({
+    page,
+  }) => {
+    await page.goto(drawers);
+    for (const [trigger, name, toward] of [
+      ['Open filters', 'Filters', 1],
+      ['Open details rtl', 'Details', -1],
+    ] as const) {
+      await page.getByRole('button', { name: trigger }).click();
+      const drawer = page.getByRole('dialog', { name });
+      await expect(drawer).toBeVisible();
+      await drawer.evaluate((element) =>
+        Promise.all(element.getAnimations().map((animation) => animation.finished)),
+      );
+      const rest = (await drawer.boundingBox())!;
+      // Press on the heading's text, away from the controls, and drag 54 px toward the edge.
+      const heading = (await drawer.getByRole('heading', { name }).boundingBox())!;
+      const start = { x: heading.x + 4, y: heading.y + heading.height / 2 };
+      await page.mouse.move(start.x, start.y);
+      await page.mouse.down();
+      for (let step = 1; step <= 6; step += 1)
+        await page.mouse.move(start.x + toward * 9 * step, start.y);
+      await expect(drawer).toHaveAttribute('data-swiping');
+      // The drawer follows the pointer once, toward the edge: about 54 px, well under twice that.
+      // WebKit can start the swipe a step or two late and settle as low as about 21 px, so the
+      // band is wide; what matters is the direction and no doubled move.
+      const moved = async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward);
+      await expect.poll(moved).toBeGreaterThan(54 * 0.25);
+      expect(await moved()).toBeLessThan(54 * 1.3);
+      await page.mouse.up();
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+    }
+  });
+
+  test('opened by touch, it focuses the drawer, not a field inside; by keyboard, the field', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ hasTouch: true });
+    const page = await context.newPage();
+    await page.goto(drawers);
+    // Its first element that takes Tab is a field; a field focused by touch opens the keyboard.
+    await page.getByRole('button', { name: 'Open search' }).tap();
+    const drawer = page.getByRole('dialog', { name: 'Search' });
+    await expect(drawer).toBeFocused();
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).not.toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
+    const trigger = page.getByRole('button', { name: 'Open search' });
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    await expect(drawer.getByRole('textbox', { name: 'Query' })).toBeFocused();
+    await context.close();
   });
 
   test('a drawer the application opens reports why it closes and sends focus where it says', async ({

@@ -78,13 +78,13 @@ Put one **Toast.Provider** near the root of the application. Any component insid
 ## States and behaviour
 
 - **Showing**: `show` adds the notification at once, at the bottom of the bottom-end stack or the top of the top-center stack, and the others glide to their new place. It fades in and, without a reduced-motion preference, arrives from its edge; with one, it only fades and the others move at once.
-- **Duration**: neutral, success and info notifications without an action close after 5 seconds. Errors and notifications with an action stay until they are dismissed. `duration` sets the milliseconds instead, and `Infinity` or `0` keeps a notification until it is dismissed.
+- **Duration**: neutral, success and info notifications without an action close after 5 seconds. Danger notifications and notifications with an action stay until they are dismissed. `duration` sets the milliseconds instead, and `Infinity` or `0` keeps a notification until it is dismissed.
 - **Pausing**: the time counts only while a notification is visible. Hovering it or focusing it with the keyboard pauses that notification; focusing the region with <kbd>F6</kbd> pauses every notification in it; leaving the window or hiding the page pauses them all.
 - **Limit**: past `visibleLimit`, the newest notifications stay visible and older ones wait behind the hidden count. They come back as newer ones close, each with its full duration again, and fade in.
-- **Dismissing**: the dismiss button, <kbd>Esc</kbd> in a notification, swiping it down or to the right by touch or with the mouse, `dismiss(id)` and `clear()` close notifications. A closing notification steps out of the stack at once and fades where it was, so the others move once.
+- **Dismissing**: the dismiss button, <kbd>Esc</kbd> in a notification, swiping it down or toward the end of the line (to the right, or to the left in right-to-left text) by touch or with the mouse, `dismiss(id)` and `clear()` close notifications. A closing notification steps out of the stack at once and fades where it was, so the others move once.
 - **Actions**: pressing an action runs its `onClick`, and the notification stays. Dismiss it there with the id `show` returned once the action has run, as an undo does.
 - **Theme**: the regions render in a portal at the end of the document, in the theme of the place the provider is rendered.
-- **Language**: the regions' names, the dismiss button's name and the hidden count are in English.
+- **Language**: the regions' names, the dismiss button's name and the hidden count come from `EnvUIProvider`'s `messages.toast`, in English by default.
 
 ## Content guidelines
 
@@ -124,9 +124,8 @@ Put one **Toast.Provider** near the root of the application. Any component insid
 
 ### envUI provides
 
-- A region for each placement, named Notifications and Top notifications, that announces new notifications politely (`aria-live="polite"`) without moving focus.
-- Errors announced at once through a visually hidden alert, which keeps their message while focus is outside the region.
-- Each notification as a non-modal `dialog` named by its message; a danger notification as an `alert`, announced at once as it appears and never waiting behind the hidden count.
+- A region for each placement, named Notifications and Top notifications, and a polite status beside it that reads each new notification without moving focus.
+- Each notification as a non-modal `dialog` named by its message; a danger notification as an `alert`, announced once and at once as it appears, outside any polite region, and never waiting behind the hidden count.
 - The hidden count as a status, such as "2 older notifications hidden".
 - <kbd>F6</kbd> to reach the notifications, and focus that moves to the next notification as one closes and returns to where it was as people leave.
 - Time to read and act: timers that pause on hover, keyboard focus and while the window is in the background, and notifications with an action or a danger tone that stay until they are dismissed.

@@ -7,6 +7,9 @@ import { Tooltip } from '../feedback/Tooltip.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
+import { pagination } from '../foundations/messages/pagination.js';
 
 /** The items a page shows, for the text of the range. */
 export interface PaginationRange {
@@ -56,13 +59,19 @@ export interface PaginationProps
   hideWhenSinglePage?: boolean;
   /**
    * Writes the range from the first and last item shown, the total, the page and the page count,
-   * for example in another language.
-   * @default 1–60 of 245, or 61–120 without total, in English numbers
+   * for one pager; EnvUIProvider's messages.pagination.range writes it for every pager.
+   * @default 1–60 of 245, or 61–120 without total, with numbers in the locale
    */
   formatRange?: (range: PaginationRange) => ReactNode;
-  /** The previous button's accessible name and tooltip, in the application's language. */
+  /**
+   * The previous button's accessible name and tooltip.
+   * @default 'Previous page', or EnvUIProvider's messages.pagination.previous
+   */
   previousLabel?: string;
-  /** The next button's accessible name and tooltip, in the application's language. */
+  /**
+   * The next button's accessible name and tooltip.
+   * @default 'Next page', or EnvUIProvider's messages.pagination.next
+   */
   nextLabel?: string;
   /**
    * The buttons' variant, as on IconButton, such as text for a quiet toolbar.
@@ -76,12 +85,10 @@ export interface PaginationProps
   size?: ControlSize;
   /**
    * The navigation landmark's name, such as Report pages, where a page has more than one.
-   * @default 'Pagination'
+   * @default 'Pagination', or EnvUIProvider's messages.pagination.label
    */
   'aria-label'?: string;
 }
-
-const englishNumbers = new Intl.NumberFormat('en');
 
 /**
  * The button last pressed, and how far its load is: pressed until the page's effects have run,
@@ -90,15 +97,6 @@ const englishNumbers = new Intl.NumberFormat('en');
 interface Press {
   direction: 'previous' | 'next';
   state: 'pressed' | 'settling' | 'loading';
-}
-
-/** "1–60 of 245", "245 of 245" for a single item, or "61–120" without a total. */
-function formatPageRange({ start, end, total }: PaginationRange) {
-  const shown =
-    start === end
-      ? englishNumbers.format(end)
-      : `${englishNumbers.format(start)}–${englishNumbers.format(end)}`;
-  return total === undefined ? shown : `${shown} of ${englishNumbers.format(total)}`;
 }
 
 /**
@@ -114,15 +112,17 @@ export function Pagination({
   onPageChange,
   pending = false,
   hideWhenSinglePage = false,
-  formatRange = formatPageRange,
-  previousLabel = 'Previous page',
-  nextLabel = 'Next page',
+  formatRange,
+  previousLabel,
+  nextLabel,
   variant = 'secondary',
   size,
   className,
-  'aria-label': label = 'Pagination',
+  'aria-label': label,
   ...props
 }: PaginationProps) {
+  const messages = useMessages('pagination', pagination);
+  const numbers = useFormatters().number();
   // A press spins its button for the load it starts: one pending in the same update as the press,
   // or one the application starts in an effect after the page changes, as a query keyed by the page
   // does. A press no load follows by then is forgotten, and so is one whose load ended, so a later
@@ -151,7 +151,10 @@ export function Pagination({
 
   function pageButton(direction: 'previous' | 'next') {
     const available = direction === 'previous' ? hasPrevious : hasNext;
-    const name = direction === 'previous' ? previousLabel : nextLabel;
+    const name =
+      direction === 'previous'
+        ? (previousLabel ?? messages.previous)
+        : (nextLabel ?? messages.next);
     const loading = pending && press?.direction === direction;
     return (
       <Tooltip content={name}>
@@ -177,13 +180,19 @@ export function Pagination({
   return (
     <nav
       {...props}
-      aria-label={label}
+      aria-label={label ?? messages.label}
       className={classNames('env-pagination', className)}
       data-size={size}
     >
       {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
-        {formatRange({ start, end, total: count, page: current, pageCount })}
+        {formatRange
+          ? formatRange({ start, end, total: count, page: current, pageCount })
+          : messages.range({
+              start: numbers.format(start),
+              end: numbers.format(end),
+              total: count === undefined ? undefined : numbers.format(count),
+            })}
       </span>
       {pageButton('previous')}
       {pageButton('next')}

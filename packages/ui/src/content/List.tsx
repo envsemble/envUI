@@ -1,15 +1,9 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Surface } from '../foundations/Surface.js';
 import type { RowDensity } from '../foundations/Theme.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 
 export interface RootProps extends ComponentPropsWithRef<'ul'> {
-  /**
-   * Sets the rows on a muted pane of their own, 0.75 rem around them, in the alternate row fill,
-   * so they stand out from the pane.
-   */
-  contrast?: boolean;
   /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'
@@ -17,32 +11,29 @@ export interface RootProps extends ComponentPropsWithRef<'ul'> {
   density?: RowDensity;
 }
 
-/** A `ul` of connected rows with shared outer corners. */
-function Root({ contrast = false, density = 'md', className, ...props }: RootProps) {
-  const rows = (
+/**
+ * A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as
+ * `<Surface background="muted" padding={3}>`, the rows take the raised fill, so they stand out
+ * from it.
+ */
+function Root({ density = 'md', className, ...props }: RootProps) {
+  return (
     <ul
       {...props}
       data-density={density}
       className={classNames('env-list', 'env-connected-rows', className)}
     />
   );
-  return contrast ? (
-    <Surface background="muted" padding={3} className="env-list-surface">
-      {rows}
-    </Surface>
-  ) : (
-    rows
-  );
 }
 
-export interface ItemProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
+export interface ItemProps extends ComponentPropsWithRef<'li'> {
   /** The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. */
-  title: ReactNode;
-  /** A short fact in muted text below the title, such as who changed the item and when. */
-  detail?: ReactNode;
+  label: ReactNode;
+  /** A short fact in muted text below the label, such as who changed the item and when. */
+  description?: ReactNode;
   /** A control at the end of the row, such as a Button; it moves below the text when it doesn't fit. */
   action?: ReactNode;
-  /** More content after the title and the detail, such as a Badge. */
+  /** More content after the label and the description, such as a Badge. */
   children?: ReactNode;
   /**
    * The row opens something through a link or button inside: it reacts to hover, keyboard focus
@@ -51,10 +42,10 @@ export interface ItemProps extends Omit<ComponentPropsWithRef<'li'>, 'title'> {
   interactive?: boolean;
 }
 
-/** One `li` row with a title, a detail and an action. */
+/** One `li` row with a label, a description and an action. */
 function Item({
-  title,
-  detail,
+  label,
+  description,
   action,
   interactive = false,
   children,
@@ -68,8 +59,8 @@ function Item({
       data-interactive={interactive ? '' : undefined}
     >
       <div>
-        {title}
-        {detail != null && <small>{detail}</small>}
+        {label}
+        {description != null && <small>{description}</small>}
         {children}
       </div>
       {action}

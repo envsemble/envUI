@@ -5,6 +5,7 @@ import * as v1Structure from '../src/transforms/v1-structure.mjs';
 import { encodings, fixtures, map, packageDirectory, runTransform } from './helpers.mjs';
 
 const actionGroup = map.structure['@envsemble/envui'].ActionGroup;
+const listRoot = map.structure['@envsemble/envui']['List.Root'];
 const dialog = map.structure['@envsemble/envui'].Dialog;
 const card = map.structure['@envsemble/envui'].Card;
 
@@ -13,6 +14,7 @@ const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  'list-contrast.tsx': [`line 6: List.Root: ${listRoot.report}`],
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
   'cards.tsx': [`line 7: Card: ${card.report}`, `line 8: Card: ${card.cases[0].report}`],
   'action-group.tsx': [
@@ -39,6 +41,7 @@ for (const fixture of fixtures('v1-structure')) {
       result.reports.filter(
         (report) =>
           report.endsWith(actionGroup.report) ||
+          report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
           report.endsWith(card.report),
       ),

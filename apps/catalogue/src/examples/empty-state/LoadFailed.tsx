@@ -14,8 +14,8 @@ export default function LoadFailed() {
   if (status === 'loaded')
     return (
       <List.Root aria-label="Projects">
-        <List.Item title="Northwind launch" detail="Updated today" />
-        <List.Item title="Pricing research" detail="Updated yesterday" />
+        <List.Item label="Northwind launch" description="Updated today" />
+        <List.Item label="Pricing research" description="Updated yesterday" />
       </List.Root>
     );
   return (

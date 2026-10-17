@@ -63,7 +63,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 - **Opening**: the card opens once the pointer rests on the trigger for `delay` (600 ms), and at once when the trigger takes keyboard focus. A focus that isn't from the keyboard, such as a click, waits for the delay.
 - **Staying open**: it stays open while the pointer is on the trigger or on the card, so people can move onto it and select its text.
 - **Closing**: it closes `closeDelay` (300 ms) after the pointer leaves both the trigger and the card, when the trigger loses focus, and with <kbd>Esc</kbd>, which leaves focus on the trigger.
-- **Control**: `open`, `defaultOpen` and `onOpenChange` control it; `onOpenChange` reports each change.
+- **Control**: `open`, `defaultOpen` and `onOpenChange` control it; `onOpenChange` reports each change and its `reason`, such as `trigger-hover` or `trigger-focus`.
 - **Theme and layers**: the card keeps the theme of the page around its trigger in its portal, and sits above dialogs.
 
 ## Content guidelines

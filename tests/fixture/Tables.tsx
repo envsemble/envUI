@@ -3,6 +3,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  EnvUIProvider,
   IconButton,
   Table,
   Text,
@@ -71,14 +72,17 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
       >
         <Table.Head>
           <Table.Row>
-            <Table.HeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
+            <Table.HeaderCell
+              sortDirection={direction('title')}
+              onSortChange={() => sortBy('title')}
+            >
               Report
             </Table.HeaderCell>
             <Table.HeaderCell>Owner</Table.HeaderCell>
             <Table.HeaderCell
               numeric
               sortDirection={direction('reviews')}
-              onSort={() => sortBy('reviews')}
+              onSortChange={() => sortBy('reviews')}
             >
               Reviews
             </Table.HeaderCell>
@@ -148,7 +152,10 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
         <Table.Root caption={`Stacked ${theme}`} narrowLayout="stack">
           <Table.Head>
             <Table.Row>
-              <Table.HeaderCell sortDirection={direction('title')} onSort={() => sortBy('title')}>
+              <Table.HeaderCell
+                sortDirection={direction('title')}
+                onSortChange={() => sortBy('title')}
+              >
                 Report
               </Table.HeaderCell>
               <Table.HeaderCell>Owner</Table.HeaderCell>
@@ -296,13 +303,13 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
             <Table.HeaderCell
               aria-label="Priority"
               sortDirection={prioritySort}
-              onSort={() =>
+              onSortChange={() =>
                 setPrioritySort((current) => (current === 'ascending' ? 'descending' : 'ascending'))
               }
             >
               <PriorityHigh />
             </Table.HeaderCell>
-            <Table.HeaderCell aria-labelledby={`due-date-${theme}`} onSort={() => undefined}>
+            <Table.HeaderCell aria-labelledby={`due-date-${theme}`} onSortChange={() => undefined}>
               <Event />
             </Table.HeaderCell>
             <Table.HeaderCell>Report</Table.HeaderCell>
@@ -321,7 +328,7 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           <Table.Head>
             <Table.Row>
               {['Report', 'Owner', 'Team', 'Reviews', 'Updated', 'Status'].map((column) => (
-                <Table.HeaderCell key={column} onSort={() => undefined}>
+                <Table.HeaderCell key={column} onSortChange={() => undefined}>
                   {column}
                 </Table.HeaderCell>
               ))}
@@ -349,6 +356,22 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
           </Table.Body>
         </Table.Root>
       </div>
+      {/* A table named by a heading, whose strings come from EnvUIProvider. */}
+      <h3 id={'labelled-table-' + theme}>Quarterly figures {theme}</h3>
+      <EnvUIProvider messages={{ table: { sortAscending: 'aufsteigend sortieren' } }}>
+        <Table.Root aria-labelledby={'labelled-table-' + theme}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell onSortChange={() => undefined}>Quarter</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row>
+              <Table.Cell>Q1</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
+      </EnvUIProvider>
       <Table.Root aria-label={`Hidden header text ${theme}`}>
         <Table.Head>
           <Table.Row>

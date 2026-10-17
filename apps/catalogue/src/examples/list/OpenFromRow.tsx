@@ -16,7 +16,7 @@ export default function OpenFromRow() {
           <List.Item
             key={id}
             interactive
-            title={
+            label={
               // data-row-target stretches the link over the row; draggable={false} keeps a press
               // that moves a little from dragging the link instead of opening it.
               <Link
@@ -29,7 +29,7 @@ export default function OpenFromRow() {
                 {name}
               </Link>
             }
-            detail={updated}
+            description={updated}
             action={
               <IconButton
                 variant="text"

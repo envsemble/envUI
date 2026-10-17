@@ -424,6 +424,11 @@
   .env-avatar-button:active:not(:disabled) {
     transform: scale(0.97);
   }
+  /* A row target, stretched over its row or card by a pseudo-element, leaves the press to the row:
+     shrinking, it would hold the pseudo-element in place of the row. */
+  .env-button[data-row-target]:active:not(:disabled):not([aria-disabled='true']) {
+    transform: none;
+  }
 }
 
 /* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the

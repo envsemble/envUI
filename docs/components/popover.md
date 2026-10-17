@@ -72,7 +72,7 @@ A popover is a floating panel that opens beside its trigger, for details people 
 - **Opening**: pressing the trigger opens the popover and sets the trigger's `aria-expanded`; pressing it again closes it. Focus moves to the popover's first field or control, or to the popover itself when it has none. The popover fades in and, without a reduced-motion preference, grows from its trigger.
 - **Closing**: <kbd>Esc</kbd> closes the popover and returns focus to the trigger. A press outside closes it too; pressing another popover's trigger closes this one and opens the other. <kbd>Tab</kbd> past its last element closes it and moves focus on from the trigger; <kbd>Shift</kbd>+<kbd>Tab</kbd> from its first element returns to the trigger and keeps it open.
 - **Closing from inside**: a function child receives `close`, for an action that should close the popover once it is done, such as a form's submit or a Cancel button; focus returns to the trigger.
-- **Controlled or not**: `open` with `onOpenChange` controls the popover, which receives the requested state each time it asks to open or close; otherwise it starts from `defaultOpen`, closed by default.
+- **Controlled or not**: `open` with `onOpenChange` controls the popover, which receives the requested state and, in its second argument, the `reason`, such as `escape-key` or `close-press`, each time it asks to open or close; otherwise it starts from `defaultOpen`, closed by default.
 - **Not modal**: the page behind stays usable and scrollable, and isn't hidden from assistive technology.
 - **Theme**: the popover renders in a portal at the end of the document, in the theme of the place it opens from, also inside a nested `Theme` or a dialog.
 

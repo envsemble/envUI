@@ -73,7 +73,7 @@ function LayeredDialog() {
       </Menu.Root>
       <Button
         variant="secondary"
-        onClick={() => toast.show({ message: 'Saved over the dialog', variant: 'info' })}
+        onClick={() => toast.show({ message: 'Saved over the dialog', tone: 'info' })}
       >
         Show a notice
       </Button>

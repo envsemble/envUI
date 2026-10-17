@@ -1,7 +1,7 @@
 ---
 title: Pagination
 summary: The range of items shown with previous and next page buttons, small enough for a toolbar.
-status: beta
+status: stable
 since: 0.6.0
 category: Navigation
 aliases:
@@ -79,7 +79,7 @@ The application owns the page, the loading and the scroll position. Pagination r
 ## Content guidelines
 
 - Name each pager after what it pages through, such as "Report pages", where a page has more than one navigation landmark.
-- Keep the default names, Previous page and Next page, unless the interface is in another language; then pass `previousLabel`, `nextLabel` and a `formatRange` in that language.
+- Keep the default names, Previous page and Next page, unless the interface is in another language; then set them, and the range, with EnvUIProvider's `messages.pagination`, or `previousLabel`, `nextLabel` and `formatRange` for one pager.
 - Write the range as numbers people can check against the list, with an en dash between the first and last item, in the reader's number format.
 
 ## Do and don't
@@ -118,7 +118,7 @@ The application owns the page, the loading and the scroll position. Pagination r
 
 - An `aria-label` that tells the pager apart where a page has several navigation landmarks, such as "Report pages".
 - `pending` while a page loads, and the page itself.
-- Translated `previousLabel`, `nextLabel` and `formatRange`, and a `lang` attribute, where the interface is not in English.
+- The strings in the application's language, through `messages.pagination` or the props, and a `lang` attribute, where the interface is not in English. The numbers follow EnvUIProvider's `locale`.
 
 ## Examples
 
@@ -140,7 +140,7 @@ A list read in batches shows the items on the page; `hasNextPage` says when the 
 
 ### In another language
 
-`previousLabel`, `nextLabel` and `formatRange` localize the pager; `lang` tells assistive technology the language.
+EnvUIProvider's `messages.pagination` localizes every pager inside it and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` localize one pager. `lang` tells assistive technology the language.
 
 ```tsx example=AnotherLanguage
 
@@ -148,4 +148,5 @@ A list read in batches shows the items on the page; `hasNextPage` says when the 
 
 ## Changelog
 
+- **1.0.0**: The range's numbers are in the locale, EnvUIProvider's or the runtime's, instead of always English, and the names and the range come from `messages.pagination`; `previousLabel`, `nextLabel`, `formatRange` and `aria-label` still override them.
 - **0.6.0**: Pagination: the range of items shown, with previous and next buttons that wait while a page loads, `formatRange`, `hideWhenSinglePage` and `size="compact"`.

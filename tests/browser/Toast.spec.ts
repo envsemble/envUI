@@ -62,6 +62,22 @@ test('danger notices are alerts at once and never wait behind the hidden count',
   await expect(danger).toHaveRole('alert');
   await expect(danger).not.toHaveAttribute('aria-hidden');
   await expect(page.getByRole('alert')).toHaveCount(1);
+  // The alert is announced once: no polite live region holds it, and the polite status that reads
+  // the ordinary notices leaves it out.
+  expect(
+    await danger.evaluate((element) => {
+      for (let node = element.parentElement; node; node = node.parentElement) {
+        const live = node.getAttribute('aria-live');
+        if (live && live !== 'off') return live;
+        if (['status', 'log', 'alert'].includes(node.getAttribute('role') ?? '')) return node.role;
+      }
+      return null;
+    }),
+  ).toBeNull();
+  const announcer = page.locator('.env-toast-announcer').first();
+  await expect(announcer).toHaveRole('status');
+  await expect(announcer).toContainText('Bottom queue 4');
+  await expect(announcer).not.toContainText('Persistent error notice');
   // It takes a place of its own, so two of the four ordinary notices wait.
   await expect(region(page).locator('.env-toast:not([data-limited])')).toHaveCount(3);
   await expect(region(page).locator('.env-toast-queued-count')).toContainText(
@@ -85,6 +101,15 @@ test('in right-to-left text the bottom-end stack sits at the left and the top st
       return Math.abs(box.x + box.width / 2 - width / 2);
     })
     .toBeLessThan(1);
+  // A swipe toward the end of the line, to the left here, dismisses a notice.
+  const leaving = notice(page, 'Bottom queue 4');
+  const box = (await leaving.locator('.env-toast-message').boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  for (let step = 1; step <= 8; step += 1)
+    await page.mouse.move(box.x + box.width / 2 - step * 15, box.y + box.height / 2);
+  await page.mouse.up();
+  await expect(leaving).toHaveCount(0);
 });
 
 test('visible timers pause for focus and hover together and resume after both leave', async ({

@@ -31,6 +31,9 @@ import {
   sameWidths,
 } from './internal/TableColumns.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { ActionElement } from '../internal/ActionElement.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { table as tableMessages } from '../foundations/messages/table.js';
 
 interface TableColumns {
   widths: readonly number[];
@@ -51,12 +54,12 @@ const TableSectionContext = createContext<'head' | 'body' | null>(null);
 export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'> {
   /**
    * Accessible name of the table and its scroll region when there is no caption. A table needs a
-   * caption or an aria-label.
+   * caption, an aria-label or an aria-labelledby, which names its region too.
    */
   'aria-label'?: string;
   /**
    * A visible caption above the rows that names the table and its scroll region, in place of
-   * aria-label. Under a sticky header it scrolls away with the rows.
+   * aria-label or aria-labelledby. Under a sticky header it scrolls away with the rows.
    */
   caption?: ReactNode;
   /**
@@ -179,6 +182,9 @@ function Root({
   ...props
 }: RootProps) {
   const captionId = useId();
+  // The region takes the table's name, from its caption, aria-labelledby or aria-label, so a
+  // keyboard user who scrolls it hears what it holds.
+  const labelledBy = caption != null ? captionId : props['aria-labelledby'];
   const stack = narrowLayout === 'stack';
   const region = useRef<HTMLDivElement>(null);
   const probe = useRef<HTMLDivElement>(null);
@@ -220,8 +226,8 @@ function Root({
       role="region"
       // The region is a tab stop so keyboard users can scroll wide tables.
       tabIndex={0}
-      aria-label={caption == null ? label : undefined}
-      aria-labelledby={caption == null ? undefined : captionId}
+      aria-label={labelledBy === undefined ? label : undefined}
+      aria-labelledby={labelledBy}
       data-sticky-header={stickyHeader ? '' : undefined}
       data-narrow-layout={stack ? 'stack' : undefined}
       data-stacked={stacked ? '' : undefined}
@@ -359,24 +365,25 @@ export interface HeaderCellProps
     TableCellLayout {
   /**
    * The column's sort order: aria-sort on the header and the arrow in its sort button. Use it with
-   * onSort; without onSort it only sets aria-sort.
-   * @default 'none' with onSort
+   * onSortChange; without it only sets aria-sort.
+   * @default 'none' with onSortChange
    */
   sortDirection?: SortDirection;
   /**
    * The header becomes a button across the cell that asks the application to sort the rows by this
-   * column. The application sorts the rows and sets sortDirection.
+   * column, with the order pressing it asks for: descending while the column is sorted ascending,
+   * ascending otherwise. The application sorts the rows and sets sortDirection.
    */
-  onSort?: () => void;
+  onSortChange?: (next: 'ascending' | 'descending') => void;
   /**
    * Accessible name of the sort button, which says what pressing it does: the header's name
    * followed by "sort ascending", or by "sort descending" while the column is sorted ascending.
-   * @default '{header} sort {next order}'
+   * @default '{header} sort {next order}', from EnvUIProvider's messages.table.sortAscending and sortDescending
    */
   sortLabel?: string;
   /**
    * Accessible name of the column's resize handle, "Resize" followed by the header's name.
-   * @default 'Resize {header}'
+   * @default 'Resize {header}', from EnvUIProvider's messages.table.resize
    */
   resizeLabel?: string;
 }
@@ -408,8 +415,8 @@ const sortIcons = {
 };
 
 /**
- * A header cell, a native th that heads its column, or its row with scope="row". With onSort it
- * sorts its column; in a table with resizable columns it holds the column's resize handle.
+ * A header cell, a native th that heads its column, or its row with scope="row". With onSortChange
+ * it sorts its column; in a table with resizable columns it holds the column's resize handle.
  */
 function HeaderCell({
   align,
@@ -417,7 +424,7 @@ function HeaderCell({
   nowrap,
   scope = 'col',
   sortDirection,
-  onSort,
+  onSortChange,
   sortLabel,
   resizeLabel,
   className,
@@ -425,6 +432,7 @@ function HeaderCell({
   ref,
   ...props
 }: HeaderCellProps) {
+  const messages = useMessages('table', tableMessages);
   const stack = useContext(TableStackContext);
   const columns = useContext(TableColumnsContext);
   const section = useContext(TableSectionContext);
@@ -439,7 +447,8 @@ function HeaderCell({
   );
   const column = useColumnIndex(cell, section === 'head' && columns?.resizable === true);
   const handle = columns && column !== undefined && column + 1 < columns.widths.length;
-  const sortable = onSort !== undefined;
+  const sortable = onSortChange !== undefined;
+  const nextSort = sortDirection === 'ascending' ? 'descending' : 'ascending';
   // The header keeps its own name; the controls inside add what they do to it through
   // aria-labelledby, so the children render once. A header named by aria-labelledby or aria-label
   // lends that name to its controls.
@@ -468,16 +477,15 @@ function HeaderCell({
       {...cellAttributes({ align, numeric, nowrap })}
     >
       {sortable ? (
-        <button
-          type="button"
+        <ActionElement
           className="env-table-sort-button"
           aria-label={sortLabel}
           aria-labelledby={sortLabel === undefined ? `${nameIds} ${id}-sort` : undefined}
-          onClick={onSort}
+          onClick={() => onSortChange(nextSort)}
         >
           {label}
           <DecorativeIcon>{sortIcons[sortDirection ?? 'none']}</DecorativeIcon>
-        </button>
+        </ActionElement>
       ) : (
         label
       )}
@@ -488,7 +496,7 @@ function HeaderCell({
       )}
       {sortable && sortLabel === undefined && (
         <span id={`${id}-sort`} hidden>
-          {sortDirection === 'ascending' ? 'sort descending' : 'sort ascending'}
+          {nextSort === 'descending' ? messages.sortDescending : messages.sortAscending}
         </span>
       )}
       {handle && (
@@ -501,7 +509,7 @@ function HeaderCell({
       )}
       {handle && resizeLabel === undefined && (
         <span id={`${id}-resize`} hidden>
-          Resize
+          {messages.resize}
         </span>
       )}
     </th>

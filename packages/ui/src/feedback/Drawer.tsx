@@ -2,7 +2,9 @@
 
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import {
+  useCallback,
   useLayoutEffect,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type CSSProperties,
@@ -11,6 +13,7 @@ import {
 } from 'react';
 import { CloseButton } from '../actions/CloseButton.js';
 import { classNames } from '../internal/classNames.js';
+import { setRef } from '../internal/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
@@ -101,8 +104,8 @@ export interface DrawerProps
   disablePointerDismissal?: boolean;
   /**
    * The element to focus when the drawer opens, as a ref or a function of how it was opened. By
-   * default focus moves to the first focusable element inside, or to the drawer when opened by
-   * touch.
+   * default focus moves to the first element inside that takes Tab, such as the close button, or
+   * to the drawer itself when opened by touch or when nothing inside takes focus.
    */
   initialFocus?: DialogFocusTarget;
   /**
@@ -119,11 +122,11 @@ export interface DrawerProps
   pending?: boolean;
 }
 
-/** The text direction at the element that has focus as the drawer opens, or the document's. */
-function readDirection(): Direction {
+/** The text direction at an element: its trigger's, else the focused element's or the document's. */
+function readDirection(source: Element | null): Direction {
   if (typeof document === 'undefined') return 'ltr';
-  const source = document.activeElement ?? document.documentElement;
-  return getComputedStyle(source).direction === 'rtl' ? 'rtl' : 'ltr';
+  const element = source ?? document.activeElement ?? document.documentElement;
+  return getComputedStyle(element).direction === 'rtl' ? 'rtl' : 'ltr';
 }
 
 /**
@@ -154,19 +157,38 @@ export function Drawer({
   pending = false,
   className,
   style,
+  ref,
   ...popupProps
 }: DrawerProps) {
   const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const provided = useEnvUI().dir;
+  // Whether it shows, also where the application doesn't control it.
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+  const shown = open ?? uncontrolledOpen;
   // The swipe that closes the drawer runs toward its edge, which is physical, so it follows the
-  // direction where the drawer opens: the provider's, else the focused element's.
+  // direction where the drawer opens: the provider's, else its trigger's, read as it opens.
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const [read, setRead] = useState<Direction>();
   const direction = provided ?? read ?? 'ltr';
-  // A drawer the application opens is read as it opens, too.
   useLayoutEffect(() => {
-    if (open && !provided) setRead(readDirection());
-  }, [open, provided]);
+    if (shown && !provided) setRead(readDirection(triggerRef.current));
+  }, [shown, provided]);
+  // By keyboard or mouse, focus moves to the first element that takes Tab, as in a dialog (true:
+  // Base UI's own tabbable order, which knows radio groups and inert content), else the drawer. By
+  // touch, to the drawer itself, so a field first inside doesn't open the on-screen keyboard.
+  const popup = useRef<HTMLDivElement | null>(null);
+  const attachPopup = useCallback(
+    (element: HTMLDivElement | null) => {
+      popup.current = element;
+      return setRef(ref, element);
+    },
+    [ref],
+  );
+  const defaultFocus = useCallback(
+    (interaction: string) => (interaction === 'touch' ? (popup.current ?? true) : true),
+    [],
+  );
   const towardEnd = (side === 'end') === (direction === 'ltr');
   const named = width === 'md' || width === 'lg';
   return (
@@ -178,14 +200,14 @@ export function Drawer({
           eventDetails.cancel();
           return;
         }
-        if (next && !provided) setRead(readDirection());
+        if (open === undefined) setUncontrolledOpen(next);
         onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
       modal={modal}
       disablePointerDismissal={disablePointerDismissal}
       swipeDirection={towardEnd ? 'right' : 'left'}
     >
-      {trigger && <BaseDrawer.Trigger render={trigger} />}
+      {trigger && <BaseDrawer.Trigger ref={triggerRef} render={trigger} />}
       <BaseDrawer.Portal>
         <Theme {...theme} dir={provided ?? read}>
           {modal && <DialogBackdrop className="env-drawer-backdrop" />}
@@ -193,13 +215,14 @@ export function Drawer({
             <BaseDrawer.Popup
               render={<DialogSurface radius="none" />}
               {...popupProps}
+              ref={attachPopup}
               className={classNames('env-drawer-popup', className)}
               style={{ ...(!named && { '--env-drawer-width': width }), ...style } as CSSProperties}
               data-side={side}
               data-width={named ? width : 'custom'}
               aria-label={title == null ? label : undefined}
               aria-busy={pending || undefined}
-              initialFocus={initialFocus}
+              initialFocus={initialFocus ?? defaultFocus}
               finalFocus={finalFocus}
             >
               <DialogContent>

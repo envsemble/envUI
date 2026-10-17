@@ -17,6 +17,27 @@ const parts = {
   Popup: BasePopover.Popup,
 };
 
+/**
+ * Why a popover or a hover card asks to open or close: a press on or a hover over its trigger, focus
+ * on it, Escape, a press outside, focus leaving, its own close, or the application.
+ */
+export type PopoverOpenChangeReason =
+  | 'trigger-press'
+  | 'trigger-hover'
+  | 'trigger-focus'
+  | 'outside-press'
+  | 'escape-key'
+  | 'close-press'
+  | 'focus-out'
+  | 'imperative-action'
+  | 'none';
+
+/** What a popover's or hover card's onOpenChange receives beside the requested state. */
+export interface PopoverOpenChangeDetails {
+  /** Why it asks to open or close. */
+  reason: PopoverOpenChangeReason;
+}
+
 export interface PopoverProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
   /**
@@ -52,10 +73,10 @@ export interface PopoverProps
    */
   defaultOpen?: boolean;
   /**
-   * Receives the requested state each time the popover asks to open or close: from the trigger,
-   * Esc, a press outside, focus leaving it or close.
+   * Receives the requested state, and why, each time the popover asks to open or close: from the
+   * trigger, Esc, a press outside, focus leaving it or close (`close-press`).
    */
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
   /**
    * The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form.
    * Both narrow to fit the window.
@@ -85,15 +106,18 @@ export function Popover({
 }: PopoverProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
-  const close = () => setOpen(false);
+  const close = () => setOpen(false, 'close-press');
   // The popup takes the text direction at its trigger.
   const triggerRef = useRef<HTMLButtonElement>(null);
   return (
-    <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
+    <BasePopover.Root
+      open={open}
+      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+    >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />
       <PopupSurface
         parts={parts}

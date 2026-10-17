@@ -41,7 +41,7 @@ export default function FindPlan() {
                 <List.Item
                   key={plan.name}
                   interactive
-                  title={
+                  label={
                     <Button
                       variant="text"
                       data-row-target
@@ -53,7 +53,7 @@ export default function FindPlan() {
                       {plan.name}
                     </Button>
                   }
-                  detail={plan.owner}
+                  description={plan.owner}
                 />
               ))}
             </List.Root>

@@ -48,16 +48,11 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
       ))}
       <NavList.Item
         icon={<Inbox />}
-        trailing={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
+        end={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
       >
         Inbox
       </NavList.Item>
-      <NavList.Item
-        icon={<Inbox />}
-        iconOnly
-        aria-label="Inbox with unread"
-        trailing={<CounterBadge value={12} />}
-      >
+      <NavList.Item icon={<Inbox />} iconOnly aria-label="Inbox" end={<CounterBadge value={12} />}>
         Inbox
       </NavList.Item>
     </Theme>

@@ -174,8 +174,8 @@ export function HydrationApp() {
           <Tree
             aria-label="Hydrated tree"
             items={treeItems}
-            selectedId={selected}
-            onOpen={(item) => setSelected(item.id)}
+            value={selected}
+            onAction={(item) => setSelected(item.id)}
             onExpandedChange={() => undefined}
           />
         </div>
@@ -189,7 +189,7 @@ export function HydrationApp() {
             <Table.Row>
               <Table.HeaderCell
                 sortDirection={sortDirection}
-                onSort={() =>
+                onSortChange={() =>
                   setSortDirection((current) =>
                     current === 'ascending' ? 'descending' : 'ascending',
                   )

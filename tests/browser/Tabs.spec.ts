@@ -90,3 +90,28 @@ test('compact tabs make the whole rail as tall as a compact control', async ({ p
     ).toBeLessThan(1.5);
   }
 });
+
+test('the arrow keys follow the text direction, from dir or from EnvUIProvider', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=rtl-tabs`);
+  for (const name of ['Right-to-left tabs', 'Provider tabs']) {
+    const list = page.getByRole('tablist', { name });
+    await list.getByRole('tab', { name: 'One' }).focus();
+    // In right-to-left text the next tab is to the left.
+    await page.keyboard.press('ArrowLeft');
+    await expect(list.getByRole('tab', { name: 'Two' })).toBeFocused();
+    await expect(list.getByRole('tab', { name: 'Two' })).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('ArrowRight');
+    await expect(list.getByRole('tab', { name: 'One' })).toBeFocused();
+  }
+});
+
+test('a panel keeps the direction around it, not the tab list’s', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=rtl-tabs`);
+  const slider = page.getByRole('slider', { name: 'Volume' });
+  await slider.focus();
+  // The slider is in a left-to-right region, so → raises it.
+  await page.keyboard.press('ArrowRight');
+  await expect(slider).toHaveAttribute('aria-valuenow', '51');
+});

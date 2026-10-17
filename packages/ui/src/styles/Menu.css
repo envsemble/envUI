@@ -1,9 +1,7 @@
-/* Menus are the desktop dropdown: a raised popup, like Popover's and Select's, with small corners
-   and concentric rows of the scale's row height that highlight on hover and keyboard focus,
-   hairline separators, small muted group labels, and shortcuts as small muted keys at the end. */
-.env-menu-theme {
-  display: contents;
-}
+/* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
+   small corners and concentric rows of the scale's row height that highlight on hover and keyboard
+   focus, hairline separators, small muted group labels, and shortcuts as small muted keys at the
+   end. env-popup gives the popup its fill, edge, shadow and motion. */
 .env-menu-positioner {
   z-index: var(--env-z-popover);
   outline: none;
@@ -12,26 +10,15 @@
   /* One leading slot holds a check mark or an icon. */
   --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-space-2));
   --env-menu-leading: 0rem;
-  box-sizing: border-box;
   display: grid;
   gap: 0;
   inline-size: max-content;
   min-inline-size: 12rem;
   max-inline-size: min(22rem, calc(100vw - 2rem));
-  max-block-size: var(--available-height, 80vh);
-  overflow-y: auto;
   padding: var(--env-space-1);
-  /* Menus float over the page at elevation 2, so they separate from a surface of their own color:
-     a shadow and a hairline edge. The edge is subtle at standard contrast, the boundary in high
-     contrast, and what forced colors paint once the shadow is gone. */
-  border: 1px solid var(--env-elevation-2-border);
+  /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
+     default: a shadow and a hairline edge that forced colors keep once the shadow is gone. */
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
-  background: var(--env-color-bg-popup);
-  box-shadow: var(--env-elevation-2-shadow);
-  outline: none;
-  /* Motion: it fades in, below, and grows from the origin its positioner sets. */
-  transform-origin: var(--transform-origin, center);
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 /* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */
 .env-menu:has(.env-menu-item > :is(.env-menu-item-check, .env-icon):first-child) {
@@ -78,7 +65,7 @@
   block-size: var(--env-control-icon-size);
   color: var(--env-color-fg-muted);
 }
-/* The label and its optional muted description share the flexible column; trailing content and the
+/* The label and its optional muted description share the flexible column; end content and the
    shortcut hint sit at the end. */
 .env-menu-item-text {
   min-inline-size: 0;
@@ -95,14 +82,22 @@
   font: var(--env-body-font-weight) var(--env-font-size-caption) / 1.4 var(--env-font-family);
   overflow-wrap: anywhere;
 }
-.env-menu-item-trailing {
+.env-menu-item-end {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-1);
 }
-/* Shortcut keys stay key caps, small enough to keep the row height, and muted like the hint they are. */
+/* Shortcut keys stay key caps, small enough to keep the row height, and muted like the hint they are:
+   the menu sets Kbd's custom properties on its own element. */
 .env-menu-item-shortcut {
+  --env-kbd-size: 1.125rem;
+  --env-kbd-padding-inline: 0.25rem;
+  --env-kbd-radius: 0.25rem;
+  --env-kbd-fg: var(--env-color-fg-muted);
+  --env-kbd-font-size: 0.6875rem;
+  --env-kbd-separator-padding-inline: 0.125rem;
+  --env-kbd-separator-font: 0.6875rem / 1 var(--env-font-family);
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -111,18 +106,6 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   white-space: nowrap;
-}
-.env-menu-item-shortcut .env-kbd {
-  min-inline-size: 1.125rem;
-  block-size: 1.125rem;
-  padding-inline: 0.25rem;
-  border-radius: 0.25rem;
-  color: var(--env-color-fg-muted);
-  font-size: 0.6875rem;
-}
-.env-menu-item-shortcut .env-kbd-separator {
-  padding-inline: 0.125rem;
-  font: 0.6875rem / 1 var(--env-font-family);
 }
 /* Radio and checkbox items keep a check-mark slot, so their labels align whether checked or not. */
 .env-menu-item-check {
@@ -211,39 +194,36 @@
 .env-organization-switcher-heading {
   font: var(--env-type-h1);
 }
-.env-organization-switcher-options {
-  display: grid;
-  gap: 0;
+/* The organizations follow the header directly, without a group's gap. */
+.env-menu > .env-organization-switcher-options:not(:first-child) {
+  margin-block-start: 0;
 }
-.env-organization-switcher-option[data-checked] {
-  font-weight: 500;
-}
-.env-organization-switcher-detail {
-  margin-inline-start: auto;
-  flex: 0 0 auto;
+.env-organization-switcher-description {
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
-/* The selection indicator follows the radio control. */
-.env-organization-switcher-radio {
+/* An organization's indicator follows the radio control: a ring, filled with a dot once chosen,
+   in place of the check mark of other radio items. */
+.env-organization-switcher-option > .env-menu-item-check {
   box-sizing: border-box;
   inline-size: 1.125rem;
   block-size: 1.125rem;
   flex: 0 0 1.125rem;
   border: 0.125rem solid var(--env-color-fg-muted);
   border-radius: 50%;
-  display: grid;
-  place-items: center;
   transition: border-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-organization-switcher-option[data-checked] .env-organization-switcher-radio {
+.env-organization-switcher-option[data-checked] > .env-menu-item-check {
   border-color: var(--env-color-bg-brand-emphasis);
 }
-.env-organization-switcher-radio-dot {
+.env-organization-switcher-option .env-menu-item-check-mark {
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: 50%;
   background: var(--env-color-bg-brand-emphasis);
+}
+.env-organization-switcher-option .env-menu-item-check-mark > svg {
+  display: none;
 }
 .env-organization-switcher-create {
   box-sizing: border-box;
@@ -285,40 +265,14 @@
   }
 }
 
-/* Motion: a menu fades in and grows from its trigger. Movement only without a reduced-motion
-   preference. Base UI's positioner sets the origin. */
-.env-menu[data-starting-style],
-.env-menu[data-ending-style] {
-  opacity: 0;
-}
-.env-menu[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
-}
-/* Moving between the menus of a menubar swaps them at once, without fading one out and in. */
+/* Motion: a menu fades in and grows from its trigger, as every PopupSurface does. Moving between the menus of a menubar swaps them at once, without fading one out and in. */
 .env-menu[data-instant='group'] {
   transition: none;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .env-menu {
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-  }
-  .env-menu[data-starting-style],
-  .env-menu[data-ending-style] {
-    transform: scale(0.96);
-  }
-  .env-menu[data-ending-style] {
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease-exit);
-  }
-}
-
 /* Motion: the chosen organization's dot settles into size. Only without a reduced-motion
    preference. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-organization-switcher-radio-dot {
+  .env-organization-switcher-option .env-menu-item-check-mark {
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
@@ -338,10 +292,10 @@
   .env-menu-item[data-disabled] {
     color: GrayText;
   }
-  .env-organization-switcher-option[data-checked] .env-organization-switcher-radio {
+  .env-organization-switcher-option[data-checked] > .env-menu-item-check {
     border-color: currentColor;
   }
-  .env-organization-switcher-radio-dot {
+  .env-organization-switcher-option .env-menu-item-check-mark {
     background-color: currentColor;
   }
   .env-menu-item:is([data-highlighted], [data-popup-open]):focus-visible,

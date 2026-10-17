@@ -10,7 +10,10 @@ import {
   type DialogOpenChangeReason,
 } from '@envsemble/envui';
 
-/** Drawers at both edges, named by a title or by aria-label, and one in right-to-left text. */
+/**
+ * Drawers at both edges, named by a title or by aria-label, one whose first element is a field, and
+ * one in right-to-left text.
+ */
 export function DrawersFixture() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
@@ -55,6 +58,13 @@ export function DrawersFixture() {
         >
           <Text>Opened by the application.</Text>
           <Button onClick={() => setOpen(false)}>Done</Button>
+        </Drawer>
+        <Drawer
+          title="Search"
+          closeButton={false}
+          trigger={<Button variant="secondary">Open search</Button>}
+        >
+          <TextField label="Query" name="query" />
         </Drawer>
       </Stack>
       <div dir="rtl">

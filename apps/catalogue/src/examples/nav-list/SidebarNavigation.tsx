@@ -22,7 +22,7 @@ export default function SidebarNavigation() {
         <NavList.Item
           {...destination('/inbox')}
           icon={<Inbox />}
-          trailing={<CounterBadge value={4} aria-label="4 unread" />}
+          end={<CounterBadge value={4} aria-label="4 unread" />}
         >
           Inbox
         </NavList.Item>

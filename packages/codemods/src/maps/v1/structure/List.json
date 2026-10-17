@@ -1,0 +1,32 @@
+{
+  "@envsemble/envui": {
+    "List.Root": {
+      "report": "List.Root's contrast is gone in 1.0: put the list directly in <Surface background=\"muted\" padding={3}>, where its rows take the raised fill.",
+      "cases": [
+        {
+          "when": {
+            "contrast": [true]
+          },
+          "props": {
+            "contrast": null
+          },
+          "wrap": {
+            "element": "Surface",
+            "props": {
+              "background": "muted",
+              "padding": 3
+            }
+          }
+        },
+        {
+          "when": {
+            "contrast": [false]
+          },
+          "props": {
+            "contrast": null
+          }
+        }
+      ]
+    }
+  }
+}

@@ -83,8 +83,10 @@ export default function FileTree() {
       <Tree
         aria-label="Files"
         items={rows}
-        selectedId={selected}
-        onOpen={(row) => (row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id))}
+        value={selected}
+        onAction={(row) =>
+          row.expandable ? setFolder(row.id, !row.expanded) : setSelected(row.id)
+        }
         onExpandedChange={(row, open) => setFolder(row.id, open)}
       />
     </div>
