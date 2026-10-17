@@ -1,18 +1,24 @@
 import { useState } from 'react';
-import { Button, IconButton, Kbd, Link, Popover, Text, Tooltip } from '@envsemble/envui';
+import { Button, IconButton, Kbd, Link, Menu, Popover, Text, Tooltip } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Delete } from '@envsemble/envui/icons/Delete';
+import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Pin } from '@envsemble/envui/icons/Pin';
 import { Save } from '@envsemble/envui/icons/Save';
 
 /**
  * Tooltips that describe a named control, repeat a name, wait on disabled controls, a toggle and a
- * checkbox among them, and hold a Kbd.
+ * checkbox among them, hold a Kbd, and name or describe the icon-only trigger of a menu and a
+ * popover.
  */
 export function TooltipsFixture() {
   const [seats, setSeats] = useState(false);
   const [pinned, setPinned] = useState(true);
+  const [presses, setPresses] = useState(0);
+  const [menuOpens, setMenuOpens] = useState(0);
+  const [popoverOpens, setPopoverOpens] = useState(0);
   return (
     <div className="fixture-actions fixture-section">
       <Tooltip content="Moves it out of the list" delay={0}>
@@ -52,7 +58,7 @@ export function TooltipsFixture() {
       </Tooltip>
       <Tooltip
         delay={0}
-        data-testid="shortcut-tooltip"
+        popupClassName="fixture-shortcut-tooltip"
         content={
           <>
             Save <Kbd keys={['Ctrl', 'S']} />
@@ -74,6 +80,38 @@ export function TooltipsFixture() {
           <Text>The second of three steps.</Text>
         </Popover>
       </div>
+      {/* The Tooltip is the menu's trigger and passes its props and ref on to the button. */}
+      <section className="fixture-actions" data-testid="overlay-triggers">
+        <Menu.Root
+          aria-label="Row actions"
+          onOpenChange={(open) => open && setMenuOpens((count) => count + 1)}
+          trigger={
+            <Tooltip content="More actions" delay={0}>
+              <IconButton
+                icon={<MoreVert />}
+                aria-label="More actions"
+                onClick={() => setPresses((count) => count + 1)}
+              />
+            </Tooltip>
+          }
+        >
+          <Menu.Item>Rename</Menu.Item>
+          <Menu.Item>Duplicate</Menu.Item>
+        </Menu.Root>
+        {/* Around a popover, the tooltip goes to its trigger, which has a name of its own. */}
+        <Tooltip content="Show only some items" delay={0}>
+          <Popover
+            title="Filters"
+            onOpenChange={(open) => open && setPopoverOpens((count) => count + 1)}
+            trigger={<IconButton icon={<FilterList />} aria-label="Filters" />}
+          >
+            <Button variant="secondary">Only open items</Button>
+          </Popover>
+        </Tooltip>
+        <Text data-testid="overlay-counts">
+          {`${presses} presses, ${menuOpens} menu opens, ${popoverOpens} popover opens`}
+        </Text>
+      </section>
     </div>
   );
 }
