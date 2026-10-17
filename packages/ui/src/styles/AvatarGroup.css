@@ -95,15 +95,25 @@
   display: grid;
 }
 
-/* On touch screens each pressable avatar keeps at least 1.5 rem uncovered, so small ones sit side
-   by side. */
+/* On touch screens each pressable avatar is a target of at least the touch height, its picture in
+   the middle, and keeps that much uncovered: smaller avatars sit apart, larger ones overlap less.
+   The state layer stays the picture's circle. */
 @media (pointer: coarse) {
   .env-avatar-group[data-interactive] {
     --env-avatar-group-overlap: clamp(
       0rem,
-      calc(var(--env-avatar-group-size) - 1.5rem),
+      calc(var(--env-avatar-group-size) - var(--env-control-height-touch)),
       calc(var(--env-avatar-group-size) / 4)
     );
+  }
+  .env-avatar-group-item {
+    justify-content: center;
+    align-items: center;
+    min-inline-size: var(--env-control-height-touch);
+    min-block-size: var(--env-control-height-touch);
+  }
+  .env-avatar-group-item::after {
+    inset: calc((100% - var(--env-avatar-group-size)) / 2);
   }
 }
 @media (prefers-reduced-motion: no-preference) {

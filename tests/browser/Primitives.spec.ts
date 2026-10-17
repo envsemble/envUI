@@ -240,10 +240,11 @@ test.describe('CloseButton', () => {
   });
 
   test.describe('on a coarse pointer', () => {
-    test.use({ hasTouch: true, isMobile: true });
-    test('reaches the touch size with its hit area', async ({ page, browserName }) => {
-      test.skip(browserName === 'firefox', 'Firefox does not emulate a coarse pointer.');
+    // A touch screen is a coarse pointer in every engine.
+    test.use({ hasTouch: true });
+    test('reaches the touch size with its hit area', async ({ page }) => {
       await open(page);
+      expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
       const area = await page.getByTestId('close-small').evaluate((element) => {
         const before = getComputedStyle(element, '::before');
         const box = element.getBoundingClientRect();
