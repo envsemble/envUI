@@ -143,9 +143,26 @@
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
 }
+/* NavList.Skeleton: placeholders as tall as the items they stand for, the icon where an item's
+   icon sits; only the icon in a rail, in the circle an icon-only item takes. */
+.env-nav-list-skeleton-item {
+  --env-nav-list-item-height: var(--env-control-height);
+  box-sizing: border-box;
+  min-block-size: var(--env-nav-list-item-height);
+  padding: var(--env-space-1) var(--env-space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+.env-nav-list-skeleton-item[data-icon-only] {
+  inline-size: var(--env-nav-list-item-height);
+  justify-content: center;
+  padding: 0;
+}
 /* Under a coarse pointer, items grow to the touch height in every scale, as buttons and rows do,
    unless their container sizes them, as a tab rail does with --env-touch-height. */
 @media (pointer: coarse) {
+  .env-nav-list-skeleton-item,
   .env-nav-list-item {
     --env-nav-list-item-height: max(
       var(--env-control-height),
