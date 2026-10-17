@@ -105,7 +105,9 @@ export function TitleBarFrameFixture() {
       <Sidebar.Root label="Projects" resizable>
         <Sidebar.Content align="stretch">
           <div className="fixture-frame-strip" data-testid="search-strip">
-            <SearchField label="Find projects" />
+            <div className="fixture-frame-strip-field">
+              <SearchField label="Find projects" />
+            </div>
             <IconButton icon={<Add />} aria-label="New project" variant="ghost" />
           </div>
           <ProjectCards />
@@ -114,7 +116,7 @@ export function TitleBarFrameFixture() {
           <Documents />
         </Sidebar.Content>
       </Sidebar.Root>
-      <AppShell.Main className="fixture-frame-main">
+      <AppShell.Main>
         <DocumentTabs
           aria-label="Open documents"
           items={tabs}

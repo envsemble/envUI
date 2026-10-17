@@ -54,9 +54,11 @@ export function WindowSectionsFixture() {
                     <Text>The {name.toLowerCase()} of the launch.</Text>
                   </div>
                 </Stack>
-                <Surface className="fixture-frame-window-aside" data-testid="aside">
-                  <Text>Owners</Text>
-                </Surface>
+                <div className="fixture-frame-window-aside" data-testid="aside">
+                  <Surface padding={4}>
+                    <Text>Owners</Text>
+                  </Surface>
+                </div>
               </div>
             ),
           }))}

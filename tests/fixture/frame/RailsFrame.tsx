@@ -84,7 +84,9 @@ function Directory() {
         ]}
       />
       <div className="fixture-frame-strip">
-        <SearchField label="Find people" defaultValue="" />
+        <div className="fixture-frame-strip-field">
+          <SearchField label="Find people" defaultValue="" />
+        </div>
         <Menu.Root
           aria-label="Sort people"
           trigger={<IconButton icon={<FilterList />} aria-label="Sort people" variant="ghost" />}
@@ -224,7 +226,7 @@ export function RailsFrameFixture() {
           </AccountMenu.Root>
         </Sidebar.Footer>
       </Sidebar.Root>
-      <AppShell.Main className="fixture-frame-main">
+      <AppShell.Main>
         <Page
           width="md"
           header={

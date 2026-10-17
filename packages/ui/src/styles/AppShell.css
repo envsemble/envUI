@@ -164,6 +164,20 @@
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
+/* A PanelDock placed directly in a Main that scrolls lies over Main's visible area and stays there
+   while Main scrolls: Main becomes a container of both its sizes, which its row in the grid sets,
+   and the dock sticks across Main's scrollport, as tall as it, taking no room in Main's flow. Its
+   negative margin lifts it by its own height, wherever it sits among Main's children. */
+.env-app-shell[data-scroll='main'] > .env-app-shell-main:has(> .env-panel-dock) {
+  container-type: size;
+}
+.env-app-shell[data-scroll='main'] > .env-app-shell-main > .env-panel-dock {
+  position: sticky;
+  inset-block: 0;
+  inset-inline: auto;
+  block-size: 100cqb;
+  margin-block-start: -100cqb;
+}
 
 /* Page progress along the header's bottom edge, across the frame, over the dividers. */
 .env-app-shell-loading-bar {

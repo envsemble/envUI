@@ -422,6 +422,23 @@ test.describe('Need: an application layout without .env-* overrides', () => {
     // Main scrolls below the title bar, holding the tabs and the dock.
     await expect(page.getByRole('tablist', { name: 'Open documents' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Assistant' })).toBeVisible();
+    // The dock lies over Main's visible area and stays there while Main scrolls.
+    const main = page.getByRole('main');
+    const assistant = page.getByRole('region', { name: 'Assistant' });
+    const visible = await main.evaluate((element) => {
+      const { top, left } = element.getBoundingClientRect();
+      return { top, left, width: element.clientWidth, height: element.clientHeight };
+    });
+    const dock = page.locator('.env-panel-dock');
+    const docked = await box(dock);
+    expect(docked.y).toBeCloseTo(visible.top, 0);
+    expect(docked.height).toBeCloseTo(visible.height, 0);
+    const panel = await box(assistant);
+    expect(panel.y + panel.height).toBeCloseTo(800, 0);
+    await main.evaluate((element) => element.scrollTo(0, 400));
+    expect(await main.evaluate((element) => element.scrollTop)).toBe(400);
+    expect(await box(dock)).toEqual(docked);
+    expect(await box(assistant)).toEqual(panel);
     // Collapsed, the cards become avatars through useSidebar().isRail.
     await header.getByRole('button', { name: 'Collapse sidebar' }).click();
     await page.mouse.move(700, 400);
