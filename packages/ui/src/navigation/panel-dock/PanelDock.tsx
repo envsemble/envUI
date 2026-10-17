@@ -1,5 +1,3 @@
-'use client';
-
 import { withDisplayName } from '../../internal/withDisplayName.js';
 import { Header } from './Header.js';
 import { Root } from './Root.js';

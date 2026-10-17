@@ -1,5 +1,3 @@
-'use client';
-
 import type { ReactNode } from 'react';
 import { ControlDefaults } from '../../internal/ControlDefaults.js';
 

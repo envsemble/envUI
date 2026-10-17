@@ -43,8 +43,9 @@ test('a code block that cannot copy selects its code for people to copy', async 
   await expect(block.getByRole('status')).toHaveText(
     'Code selected. Use your keyboard or context menu to copy.',
   );
-  expect(await page.evaluate(() => document.getSelection()?.toString())).toBe(
-    'npm install @envsemble/envui\nnpm run build',
+  // The selection covers the source; engines differ in how they serialize its line break.
+  expect(await page.evaluate(() => document.getSelection()?.toString())).toMatch(
+    /^npm install @envsemble\/envui\s+npm run build\s*$/,
   );
   await expect(block.getByRole('button', { name: 'Copy code' })).toBeVisible();
 });
