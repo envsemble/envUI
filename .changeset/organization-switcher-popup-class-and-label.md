@@ -9,4 +9,4 @@ OrganizationSwitcher passes `className` to its menu popup, as Menu.Root, Account
 
 Migrate with the codemods: `envui-codemods v1-props` renames `className` to `triggerClassName`, and an organization's `name` to `label`, and 0.x's `detail` to `description`, in an array written in `items` or 0.x's `organizations`; it reports items it can't read, such as a variable.
 
-Migration guide: [Navigation and collections](../../docs/migration.md#navigation-and-collections).
+Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
