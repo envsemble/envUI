@@ -67,7 +67,7 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
             );
             record(`pin ${id}`);
           }}
-          // The dark strip leaves onCloseAll out, so it keeps the browser's own context menu.
+          // The dark strip leaves onCloseAll out: only its tabs offer a menu, with Close alone.
           onCloseAll={
             theme === 'light'
               ? () => {

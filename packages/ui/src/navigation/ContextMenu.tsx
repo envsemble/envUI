@@ -11,6 +11,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type TouchEvent,
 } from 'react';
 import { MenuPopup } from './internal/MenuPopup.js';
 
@@ -34,7 +35,8 @@ export interface ContextMenuProps {
   /**
    * Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives
    * the element the menu was opened on: the deepest element under the pointer, or the focused
-   * element (its active descendant, when it has one) for the keyboard.
+   * element (its active descendant, when it has one) for the keyboard. Where it returns null, the
+   * menu doesn't open on that element.
    */
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
@@ -107,6 +109,9 @@ export function ContextMenu({
   // the menu at the pointer.
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
   const region = useRef<HTMLDivElement>(null);
+  // A content function that returns null for an element offers no menu there.
+  const offersMenu = (element: Element | null) =>
+    typeof content !== 'function' || content(element) != null;
 
   function setOpen(next: boolean) {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
@@ -121,8 +126,20 @@ export function ContextMenu({
       event.preventBaseUIHandler?.();
       return;
     }
-    setTarget(event.target instanceof Element ? event.target : null);
+    const element = event.target instanceof Element ? event.target : null;
+    if (!offersMenu(element)) {
+      event.preventBaseUIHandler?.();
+      return;
+    }
+    setTarget(element);
     setKeyboardAnchor(null);
+  }
+
+  // A long press where no menu is offered starts no timer to open one.
+  function checkTouch(event: TouchEvent<Element> & { preventBaseUIHandler?: () => void }) {
+    if (disabled) return;
+    if (!offersMenu(event.target instanceof Element ? event.target : null))
+      event.preventBaseUIHandler?.();
   }
 
   // A touch long press can open the menu through Base UI without a contextmenu event, so the
@@ -135,11 +152,12 @@ export function ContextMenu({
 
   function openFromKeyboard(event: KeyboardEvent<Element>) {
     if (disabled || !isContextMenuKey(event)) return;
-    event.preventDefault();
     const focused = event.target instanceof Element ? event.target : event.currentTarget;
     const descendantId = focused.getAttribute('aria-activedescendant');
     const descendant = descendantId ? focused.ownerDocument.getElementById(descendantId) : null;
     const element = descendant ?? focused;
+    if (!offersMenu(element)) return;
+    event.preventDefault();
     keyboardOpenedAt.current = performance.now();
     setTarget(element);
     setKeyboardAnchor(elementAnchor(element));
@@ -155,6 +173,7 @@ export function ContextMenu({
         render={children}
         onContextMenu={openAtPointer}
         onPointerDown={notePress}
+        onTouchStart={checkTouch}
         onKeyDown={openFromKeyboard}
       />
       <MenuPopup

@@ -1888,7 +1888,7 @@
           "name": "content",
           "type": "ReactNode | ((target: Element | null) => ReactNode)",
           "required": true,
-          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard."
+          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, the menu doesn't open on that element."
         },
         {
           "name": "children",
@@ -2584,7 +2584,7 @@
           "name": "onClose",
           "type": "(id: string) => void",
           "required": true,
-          "description": "Called from a tab's close button, a middle click and Delete on the focused tab."
+          "description": "Called from a tab's close button, a middle click, Delete or Backspace on the focused tab, and Close in the tab's context menu."
         },
         {
           "name": "onPin",
@@ -2615,7 +2615,7 @@
           "name": "onCloseAll",
           "type": "() => void",
           "required": false,
-          "description": "Called from Close all tabs in the strip's context menu. With it, the strip and each tab open that menu on right click, long press, the Menu key and Shift+F10; a tab's menu also offers closing that tab."
+          "description": "Called from Close all tabs in the context menu. Each tab opens a context menu that closes it on right click, long press, the Menu key and Shift+F10; with onCloseAll, the menu also offers Close all tabs, and the strip around the tabs opens it too."
         },
         {
           "name": "closeAllLabel",

@@ -42,7 +42,10 @@ export interface DocumentTabsProps {
   value: string | null;
   /** Called when a tab is clicked or reached with the arrow keys, Home or End. */
   onValueChange: (id: string) => void;
-  /** Called from a tab's close button, a middle click and Delete on the focused tab. */
+  /**
+   * Called from a tab's close button, a middle click, Delete or Backspace on the focused tab, and
+   * Close in the tab's context menu.
+   */
   onClose: (id: string) => void;
   /** Called when a tab is double-clicked, typically to keep a preview tab open. */
   onPin?: (id: string) => void;
@@ -56,9 +59,9 @@ export interface DocumentTabsProps {
    */
   closeLabel?: (label: string) => string;
   /**
-   * Called from Close all tabs in the strip's context menu. With it, the strip and each tab open
-   * that menu on right click, long press, the Menu key and Shift+F10; a tab's menu also offers
-   * closing that tab.
+   * Called from Close all tabs in the context menu. Each tab opens a context menu that closes it on
+   * right click, long press, the Menu key and Shift+F10; with onCloseAll, the menu also offers
+   * Close all tabs, and the strip around the tabs opens it too.
    */
   onCloseAll?: () => void;
   /**
@@ -182,7 +185,8 @@ export function DocumentTabs({
 
   function onTabKeyDown(event: KeyboardEvent<HTMLElement>, id: string) {
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    if (event.key !== 'Delete') return;
+    // Backspace too, as a Mac laptop has no forward Delete key.
+    if (event.key !== 'Delete' && event.key !== 'Backspace') return;
     event.preventDefault();
     onClose(id);
   }
@@ -204,7 +208,7 @@ export function DocumentTabs({
         return (
           // The item lays out the tab and its close button side by side, so the close button
           // isn't nested in the tab. It is a pointer's affordance: the keyboard closes a tab with
-          // Delete or from the context menu, as aria-keyshortcuts says.
+          // Delete or Backspace, as aria-keyshortcuts says, or from the context menu.
           <div
             key={item.id}
             className="env-document-tabs-item"
@@ -225,7 +229,7 @@ export function DocumentTabs({
               // The label names the tab, whatever its icon.
               aria-label={item.label}
               aria-controls={active ? panelId : undefined}
-              aria-keyshortcuts="Delete"
+              aria-keyshortcuts="Delete Backspace"
               title={item.title ?? item.label}
               tabIndex={item.id === focusable ? 0 : -1}
               data-tab-id={item.id}
@@ -258,45 +262,46 @@ export function DocumentTabs({
         }}
         className="env-document-tabs-root"
       >
-        {onCloseAll ? (
-          <ContextMenu
-            aria-label={contextMenuLabel ?? messages.actions}
-            onOpenChange={(open) => {
-              if (open)
-                menuOpenedInside.current = Boolean(
-                  list.current?.contains(list.current.ownerDocument.activeElement),
-                );
-            }}
-            content={(target) => {
-              // Read from the tab's item, so the menu keeps its items while it closes after the tab.
-              const tab = target
-                ?.closest('.env-document-tabs-item')
-                ?.querySelector<HTMLElement>('[role="tab"]');
-              const id = tab?.dataset.tabId;
-              return (
-                <>
-                  {tab && id !== undefined && (
-                    <Menu.Item
-                      onClick={() => {
-                        if (menuOpenedInside.current) setClosedFromMenu(true);
-                        onClose(id);
-                      }}
-                    >
-                      {closeName(tab.getAttribute('aria-label') ?? '')}
-                    </Menu.Item>
-                  )}
+        <ContextMenu
+          aria-label={contextMenuLabel ?? messages.actions}
+          onOpenChange={(open) => {
+            if (open)
+              menuOpenedInside.current = Boolean(
+                list.current?.contains(list.current.ownerDocument.activeElement),
+              );
+          }}
+          content={(target) => {
+            // Read from the tab's item, so the menu keeps its items while it closes after the tab.
+            const tab = target
+              ?.closest('.env-document-tabs-item')
+              ?.querySelector<HTMLElement>('[role="tab"]');
+            const id = tab?.dataset.tabId;
+            const onTab = tab != null && id !== undefined;
+            // Without onCloseAll, only a tab offers a menu.
+            if (!onTab && !onCloseAll) return null;
+            return (
+              <>
+                {onTab && (
+                  <Menu.Item
+                    onClick={() => {
+                      if (menuOpenedInside.current) setClosedFromMenu(true);
+                      onClose(id);
+                    }}
+                  >
+                    {closeName(tab.getAttribute('aria-label') ?? '')}
+                  </Menu.Item>
+                )}
+                {onCloseAll && (
                   <Menu.Item onClick={onCloseAll} disabled={items.length === 0}>
                     {closeAllLabel ?? messages.closeAll}
                   </Menu.Item>
-                </>
-              );
-            }}
-          >
-            {strip}
-          </ContextMenu>
-        ) : (
-          strip
-        )}
+                )}
+              </>
+            );
+          }}
+        >
+          {strip}
+        </ContextMenu>
       </BaseTabs.Root>
     </DirectionProvider>
   );
