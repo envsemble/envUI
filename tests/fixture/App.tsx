@@ -77,6 +77,10 @@ import { SplitPanesFixture } from './SplitPanes.js';
 import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
+import { SearchTriggersFixture } from './SearchTriggers.js';
+import { AccountMenusFixture } from './AccountMenus.js';
+import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { ListsFixture } from './Lists.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -112,6 +116,10 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
+  'search-triggers': SearchTriggersFixture,
+  'account-menus': AccountMenusFixture,
+  'confirm-dialogs': ConfirmDialogsFixture,
+  lists: ListsFixture,
 };
 
 export default function App() {

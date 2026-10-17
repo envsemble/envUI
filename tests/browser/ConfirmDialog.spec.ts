@@ -1,0 +1,96 @@
+import { test, expect } from '@playwright/test';
+import { fixtureUrl } from './Servers';
+
+const confirmDialogs = `${fixtureUrl}/?fixture=confirm-dialogs`;
+
+test.describe('ConfirmDialog', () => {
+  test('is an alert dialog that focuses its confirm button, and confirms or cancels', async ({
+    page,
+  }) => {
+    await page.goto(confirmDialogs);
+    const log = page.getByTestId('confirm-log');
+    const trigger = page.getByRole('button', { name: 'Archive project' });
+    await trigger.click();
+    const dialog = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAccessibleDescription('People can still find it under Archived.');
+    // A neutral confirmation starts on its confirm button.
+    await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
+    // A press outside doesn't dismiss an alert dialog.
+    await page.mouse.click(4, 4);
+    await expect(dialog).toBeVisible();
+    // Cancel closes it, and focus returns to the trigger.
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await expect(log).toHaveText('open trigger-press,close close-press');
+
+    // Escape closes it too.
+    await trigger.click();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+
+    // Enter on the focused confirm button confirms.
+    await trigger.click();
+    await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(dialog).toBeHidden();
+    await expect(log).toHaveText(
+      'open trigger-press,close close-press,open trigger-press,close escape-key,open trigger-press,archived,close imperative-action',
+    );
+  });
+
+  test('a danger confirmation starts on Cancel, is pending while its action runs and stays open when it fails', async ({
+    page,
+  }) => {
+    await page.goto(confirmDialogs);
+    const trigger = page.getByRole('button', { name: 'Delete project' });
+    await trigger.click();
+    const dialog = page.getByRole('alertdialog', { name: 'Delete Northwind launch?' });
+    const cancel = dialog.getByRole('button', { name: 'Cancel' });
+    const confirm = dialog.getByRole('button', { name: 'Delete project' });
+    await expect(cancel).toBeFocused();
+    await expect(confirm).toHaveAttribute('data-tone', 'danger');
+
+    await confirm.click();
+    // While the action runs, the confirm button is pending, Cancel is disabled and nothing
+    // dismisses the dialog.
+    await expect(confirm).toHaveAttribute('aria-busy', 'true');
+    await expect(cancel).toBeDisabled();
+    await expect(dialog).toHaveAttribute('aria-busy', 'true');
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeVisible();
+
+    // The action fails: the dialog stays open and announces why.
+    await page
+      .getByRole('button', { name: 'Finish the action', includeHidden: true })
+      .dispatchEvent('click');
+    const alert = dialog.getByRole('alert');
+    await expect(alert).toHaveText(/could not be deleted/);
+    await expect(confirm).not.toHaveAttribute('aria-busy');
+    await expect(cancel).toBeEnabled();
+
+    // Trying again succeeds and closes it.
+    await confirm.click();
+    await expect(confirm).toHaveAttribute('aria-busy', 'true');
+    await page
+      .getByRole('button', { name: 'Finish the action', includeHidden: true })
+      .dispatchEvent('click');
+    await expect(dialog).toBeHidden();
+    await expect(page.getByTestId('confirm-log')).toHaveText('deleted');
+    await expect(trigger).toBeFocused();
+  });
+
+  test('opened from a menu item, it returns focus to the menu button', async ({ page }) => {
+    await page.goto(confirmDialogs);
+    const menuButton = page.getByRole('button', { name: 'Project actions' });
+    await menuButton.click();
+    await page.getByRole('menuitem', { name: 'Remove member…' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Remove Sam Lee?' });
+    await expect(dialog).toContainText('Sam loses access to Northwind launch.');
+    await expect(dialog.getByRole('button', { name: 'Keep member' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(menuButton).toBeFocused();
+  });
+});

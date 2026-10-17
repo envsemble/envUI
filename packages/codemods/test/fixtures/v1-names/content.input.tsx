@@ -13,6 +13,8 @@ export const Header = () => (
   <>
     <BrandLogo />
     <ClickableCard href="/projects">Projects</ClickableCard>
+    <ClickableCard onClick={() => {}}>Start</ClickableCard>
+    <ClickableCard>Save</ClickableCard>
     <InfoChip {...chipProps} />
   </>
 );

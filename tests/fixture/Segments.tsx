@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SegmentedControl, Theme, type ThemeValue } from '@envsemble/envui';
+import { EnvUIProvider, SegmentedControl, Theme, type ThemeValue } from '@envsemble/envui';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
 
 export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
@@ -31,6 +31,14 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
         ]}
       />
       {/* Two long labels in a container too narrow for them side by side. */}
+      <EnvUIProvider locale="de-DE">
+        <SegmentedControl
+          aria-label={`Counts in German ${theme}`}
+          value="all"
+          onValueChange={() => {}}
+          items={[{ value: 'all', label: 'Alle', count: 1200 }]}
+        />
+      </EnvUIProvider>
       <div className="fixture-segments-narrow" data-testid={`segments-narrow-${theme}`}>
         <SegmentedControl
           fullWidth

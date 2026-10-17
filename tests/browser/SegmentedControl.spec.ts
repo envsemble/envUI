@@ -13,6 +13,12 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
     const done = group.getByRole('radio', { name: 'Done 40' });
     await expect(open).toHaveAttribute('aria-checked', 'true');
     await expect(group.getByRole('radio', { name: 'Archived' })).toBeDisabled();
+    // Counts take the locale's number format.
+    await expect(
+      page
+        .getByRole('radiogroup', { name: `Counts in German ${theme}` })
+        .getByRole('radio', { name: 'Alle 1.200' }),
+    ).toBeVisible();
 
     // The chosen segment takes the primary action colors.
     const fill = await open.evaluate((element) => {

@@ -23,7 +23,10 @@
         "report": "Card's layout is stack or feature in 1.0: actions alone give a card its action strip, so content and action go.",
         "values": {
           "content": {},
-          "action": {}
+          "action": {
+            "report": "layout=\"action\" gave a card the action strip, which actions alone give in 1.0: this card has no actions, so it lays out as a stack. Pass the actions it should show.",
+            "unless": ["actions"]
+          }
         }
       }
     }

@@ -1,6 +1,5 @@
 'use client';
 
-import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { useId, type CSSProperties, type Ref } from 'react';
 import { Button } from '../actions/Button.js';
 import { Add } from '../icons/Add.js';
@@ -11,6 +10,7 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { organizationSwitcher } from '../foundations/messages/organizationSwitcher.js';
 import * as Menu from './Menu.js';
+import { OrganizationOptions } from './internal/OrganizationOptions.js';
 
 export interface OrganizationSwitcherItem {
   /** Identifies the organization; it is the value onValueChange receives. */
@@ -130,37 +130,14 @@ export function OrganizationSwitcher({
           {heading ?? messages.heading}
         </span>
       </div>
-      <Menu.RadioGroup
+      <OrganizationOptions
         aria-labelledby={headingId}
-        className="env-organization-switcher-options"
-        value={current?.id ?? null}
-        onValueChange={(next) => {
-          if (next !== current?.id) onValueChange(next);
-        }}
-      >
-        {items.map((item) => (
-          <Menu.RadioItem
-            key={item.id}
-            value={item.id}
-            className="env-organization-switcher-option"
-            end={
-              item.description ? (
-                <span className="env-organization-switcher-description">{item.description}</span>
-              ) : undefined
-            }
-          >
-            {item.name}
-          </Menu.RadioItem>
-        ))}
-      </Menu.RadioGroup>
-      {onCreate && (
-        <BaseMenu.Item className="env-organization-switcher-create" onClick={onCreate}>
-          <DecorativeIcon>
-            <Add />
-          </DecorativeIcon>
-          {createText}
-        </BaseMenu.Item>
-      )}
+        items={items}
+        value={value}
+        onValueChange={onValueChange}
+        onCreate={onCreate}
+        createLabel={createText}
+      />
     </Menu.Root>
   );
 }

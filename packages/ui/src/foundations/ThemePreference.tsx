@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -26,18 +25,8 @@ import {
   scaleSourceAttribute,
   type ThemePreference,
 } from './ThemeBootstrap.js';
+import { ThemePreferenceContext, type ThemePreferenceValue } from './ThemePreferenceContext.js';
 
-interface ThemePreferenceValue {
-  /** The stored choice. */
-  preference: ThemePreference;
-  /** The theme in use after resolving "system". */
-  theme: ThemeValue;
-  setPreference: (preference: ThemePreference) => void;
-  /** Store the opposite of the current theme. */
-  toggleTheme: () => void;
-}
-
-const ThemePreferenceContext = createContext<ThemePreferenceValue | null>(null);
 const systemDarkQuery = '(prefers-color-scheme: dark)';
 
 export interface ThemePreferenceProviderProps {

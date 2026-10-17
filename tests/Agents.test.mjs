@@ -572,7 +572,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   const listed = await server.call('list_components', { category: 'Actions' });
   assert.deepEqual(
     listed.components.map((component) => component.name),
-    ['Button', 'CloseButton', 'Toolbar', 'Link'],
+    ['Button', 'CloseButton', 'SearchTrigger', 'Toolbar', 'Link'],
   );
   assert.equal(listed.components[0].import, '@envsemble/envui');
 
@@ -667,7 +667,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
       'A members page: a filterable table with an empty state, pagination and a confirm-delete dialog',
   });
   const names = planned.candidates.map((item) => item.component);
-  for (const name of ['Table', 'EmptyState', 'Pagination', 'Dialog'])
+  for (const name of ['Table', 'EmptyState', 'Pagination', 'ConfirmDialog'])
     assert.ok(names.includes(name), name);
   // Candidates to confirm, each with the words that matched, never a list of imports to paste.
   assert.equal(planned.imports, undefined);
@@ -970,7 +970,7 @@ const corpus = [
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],
   ['A header with the page title', [], ['AppShell', 'PageHeader'], ['PanelDock']],
-  ['Add a "Delete" button and a confirm dialog', ['Button', 'Dialog'], [], []],
+  ['Add a "Delete" button and a confirm dialog', ['Button', 'ConfirmDialog'], ['Dialog'], []],
   ['show the account details', [], [], ['Disclosure']],
   ['a toggle for the newsletter', ['Switch'], [], ['ThemeToggle']],
   ['a list of team members with their avatars', ['Avatar'], ['List'], []],

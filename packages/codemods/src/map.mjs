@@ -381,6 +381,13 @@ function validatePropRules(where, names) {
           problems.push(`${at}.values.${value}: ${newName} must be a prop with a literal.`);
       if (replacement.report !== undefined && typeof replacement.report !== 'string')
         problems.push(`${at}.values.${value}: "report" must be a string.`);
+      if (
+        replacement.unless !== undefined &&
+        (replacement.report === undefined ||
+          !Array.isArray(replacement.unless) ||
+          !replacement.unless.every((each) => typeof each === 'string' && propName.test(each)))
+      )
+        problems.push(`${at}.values.${value}: "unless" must list prop names beside a "report".`);
     }
   }
   return problems;

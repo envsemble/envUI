@@ -47,7 +47,10 @@ export function Disclosure({
         // follows it, and a toggle that only echoes the open prop reports nothing.
         const next = event.currentTarget.open;
         if (next === shown) return;
-        if (!controlled) setOwnOpen(next);
+        // A controlled disclosure shows what open says: the element goes back to it, and moves
+        // only when the parent passes the open that onOpenChange asks for.
+        if (controlled) event.currentTarget.open = shown;
+        else setOwnOpen(next);
         onOpenChange?.(next);
       }}
       className={classNames('env-disclosure', className)}

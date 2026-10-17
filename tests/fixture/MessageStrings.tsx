@@ -1,5 +1,9 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
+  AccountMenu,
+  ConfirmDialog,
+  List,
+  SearchTrigger,
   Calendar,
   CloseButton,
   ColorPicker,
@@ -200,6 +204,27 @@ export function MessageStringsFixture() {
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
+          {/* App parts: a search trigger, a reorderable list's handle and announcements, an
+              account menu with its theme and organization submenus, and a confirm dialog. */}
+          <SearchTrigger listen={false} />
+          <List.Root aria-label="Order" onReorder={() => {}}>
+            <List.Item label="First" />
+            <List.Item label="Second" />
+          </List.Root>
+          <AccountMenu.Root name="Alex Morgan">
+            <AccountMenu.ThemeSubmenu />
+            <AccountMenu.OrganizationSubmenu
+              items={[{ id: 'northwind', name: 'Northwind' }]}
+              value="northwind"
+              onValueChange={() => {}}
+            />
+          </AccountMenu.Root>
+          <ConfirmDialog
+            trigger={<Button variant="secondary">Open confirm</Button>}
+            title="Remove the draft?"
+            confirmLabel="Remove draft"
+            onConfirm={() => {}}
+          />
           <InlineMessages />
         </Stack>
       </EnvUIProvider>

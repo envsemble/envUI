@@ -72,6 +72,9 @@ export function AvatarGroup({
   // A format prop wins over the provider's messages, which win over the English defaults.
   const messages = useMessages('avatarGroup', avatarGroupMessages);
   const formatters = useFormatters();
+  // Names separated as the locale lists them, without a conjunction: "Alex Morgan, Sam Lee, 9 more".
+  const list = (items: readonly string[]) =>
+    formatters.list({ type: 'unit', style: 'short' }).format(items);
   const formatMore =
     ownFormatMore ??
     ((count: number) => messages.more({ count, number: formatters.number().format(count) }));
@@ -81,7 +84,7 @@ export function AvatarGroup({
       messages.label({
         count,
         number: formatters.number().format(count),
-        names: names.join(', '),
+        names: list(names),
       }));
   // A total or max that is no count, such as NaN from missing data, an endless total or a max of
   // null, counts and shows everyone passed.
@@ -136,7 +139,7 @@ export function AvatarGroup({
             className="env-avatar-group-overflow"
             tabIndex={0}
             role="img"
-            aria-label={hiddenNames.join(', ')}
+            aria-label={list(hiddenNames)}
           >
             <span dir="ltr">{`+${overflow}`}</span>
           </span>

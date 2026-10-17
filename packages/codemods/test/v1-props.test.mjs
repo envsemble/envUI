@@ -30,7 +30,8 @@ const reports = {
     `line 10: Table.Root's density has a value the codemod can't move: ${report('Table.Root', 'density')}`,
   ],
   'content.tsx': [
-    `line 29: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
+    `line 26: Card's layout: ${report('Card', 'layout', 'action')}`,
+    `line 30: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
   ],
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
@@ -47,6 +48,7 @@ const reports = {
     `line 8: ${report('Switch', 'style')}`,
     `line 10: ${report('Radio', 'className')}`,
   ],
+  'disclosure.tsx': [`line 4: ${report('Disclosure', 'onToggle')}`],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,

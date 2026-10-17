@@ -40,6 +40,29 @@ export function expressionKey(node) {
   return undefined;
 }
 
+/**
+ * Whether a structure case's `when` matches a JSX element's attributes: true, false, or undefined
+ * where a prop it tests is an expression. Per prop, `when` lists literal values, null for a prop the
+ * element doesn't set; `[null]` alone doesn't match an element that sets the prop, whatever its value.
+ */
+export function matchesWhen(attributes, when) {
+  for (const [prop, values] of Object.entries(when ?? {})) {
+    if (prop.startsWith('$')) continue;
+    const attribute = attributes.find(
+      (node) => node.type === 'JSXAttribute' && node.name.name === prop,
+    );
+    if (!attribute) {
+      if (!values.includes(null)) return false;
+      continue;
+    }
+    if (values.every((value) => value === null)) return false;
+    const key = literalKey(attribute.value);
+    if (key === undefined) return undefined;
+    if (!values.some((value) => value !== null && String(value) === key)) return false;
+  }
+  return true;
+}
+
 /** A JSX attribute with a literal: bare for true, a string in quotes, else in braces. */
 export function jsxAttribute(j, name, value) {
   if (value === true) return j.jsxAttribute(j.jsxIdentifier(name));
@@ -183,7 +206,8 @@ export function applyPropRules(items, rules, where, item, report) {
     index += added.length - 1;
     changed = true;
     const message = replacement.report ?? (replacement.reportAlways ? rule.report : undefined);
-    if (message) report(node, `${at}: ${message}`);
+    // A value's report can hold only where the element sets none of `unless`, such as actions.
+    if (message && !(replacement.unless ?? []).some(own)) report(node, `${at}: ${message}`);
   }
   return changed;
 }

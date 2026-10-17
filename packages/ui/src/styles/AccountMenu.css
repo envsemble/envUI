@@ -1,1 +1,81 @@
 /* AccountMenu: the account's trigger row and its menu header. */
+
+/* The row trigger: the avatar, the name over its description, and the unfold icon at the end, as
+   wide as its container, such as the foot of a sidebar. It takes the navigation's hover and press
+   fills, so it reads as part of the sidebar. */
+.env-account-menu-trigger {
+  margin: 0;
+  box-sizing: border-box;
+  --env-icon-size: var(--env-control-icon-size);
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--env-control-height);
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  padding: var(--env-space-1) var(--env-space-2);
+  border: 0;
+  border-radius: var(--env-radius-md);
+  background: transparent;
+  color: var(--env-color-fg-control);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-account-menu-trigger:hover:not(:disabled) {
+  background: var(--env-color-bg-navigation-hover);
+}
+.env-account-menu-trigger:is(:active, [data-popup-open]):not(:disabled) {
+  background: var(--env-color-bg-navigation-pressed);
+}
+.env-account-menu-trigger:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+.env-account-menu-trigger > .env-icon {
+  flex: 0 0 auto;
+  color: var(--env-color-fg-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-account-menu-trigger {
+    transition: none;
+  }
+}
+@media (pointer: coarse) {
+  .env-account-menu-trigger {
+    min-block-size: var(--env-control-height-touch);
+  }
+}
+@media (forced-colors: active) {
+  .env-account-menu-trigger:is(:hover, :active, [data-popup-open]) {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+}
+.env-account-menu-trigger-text,
+.env-account-menu-header-text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+.env-account-menu-trigger-name,
+.env-account-menu-trigger-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-account-menu-trigger-description,
+.env-account-menu-header-description {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+/* The header: who is signed in, the avatar beside the name and description. */
+.env-account-menu-header {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-3);
+  overflow-wrap: anywhere;
+}

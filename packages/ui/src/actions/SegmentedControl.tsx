@@ -16,6 +16,7 @@ import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirectionScope } from '../internal/useDirection.js';
+import { useFormatters } from '../internal/useFormatters.js';
 
 /** One item of a SegmentedControl. */
 export interface SegmentedControlItem {
@@ -24,8 +25,8 @@ export interface SegmentedControlItem {
   /** The item's short visible name, such as Open or Board; it names the item. */
   label: ReactNode;
   /**
-   * A small muted number after the label, such as the items in a view; it is read as part of the
-   * item's name, such as Open 12.
+   * A small muted number after the label, such as the items in a view, in the locale's number
+   * format; it is read as part of the item's name, such as Open 12.
    */
   count?: number;
   /** A decorative icon before the label, at the control icon size of 1 rem. */
@@ -109,6 +110,7 @@ export function SegmentedControl({
 
 function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: boolean }) {
   const labelRef = useRef<HTMLSpanElement>(null);
+  const formatters = useFormatters();
   // Whether a full-width segment cuts its label short, which its tooltip then shows whole.
   const [cut, setCut] = useState(false);
   useLayoutEffect(() => {
@@ -139,7 +141,9 @@ function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: b
       {item.count !== undefined && (
         <>
           {' '}
-          <span className="env-segmented-control-item-count">{item.count}</span>
+          <span className="env-segmented-control-item-count">
+            {formatters.number().format(item.count)}
+          </span>
         </>
       )}
     </Radio.Root>
