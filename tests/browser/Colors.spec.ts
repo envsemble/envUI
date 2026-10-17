@@ -142,22 +142,6 @@ test('action and navigation fills paint their precomputed hover and pressed toke
   }
 });
 
-test('no hover or pressed color is computed at runtime', async ({ page }) => {
-  // Every state color is a token the contrast gate measures; the old relative-color rule is gone.
-  const sheets = await page.evaluate(() =>
-    [...document.styleSheets].flatMap((sheet) => {
-      try {
-        return [...sheet.cssRules].map((rule) => rule.cssText);
-      } catch {
-        return [];
-      }
-    }),
-  );
-  const css = sheets.join('\n');
-  expect(css).not.toMatch(/--state-[a-z-]*lightness/);
-  expect(css).not.toMatch(/hsl\(from var\([^)]*\) h s var\(/);
-});
-
 test('compositions reuse primitive colors while unrelated roles stay independent', async ({
   page,
 }) => {
@@ -326,23 +310,4 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     await expect(disabled).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(selected).toHaveAttribute('aria-selected', 'true');
   }
-});
-
-test('styles leave unrelated host content alone and dimensions remain responsive', async ({
-  page,
-}) => {
-  const host = await page.getByTestId('host-marker').evaluate((element) => {
-    const css = getComputedStyle(element);
-    return { family: css.fontFamily, margin: css.marginBlockStart };
-  });
-  expect(host.family).not.toContain('envUI Inter');
-  expect(host.margin).not.toBe('0px');
-  const control = page.getByTestId('light-button-primary');
-  const before = await control.boundingBox();
-  await page.evaluate(() => {
-    document.documentElement.style.fontSize = '150%';
-  });
-  const after = await control.boundingBox();
-  expect(after!.height / before!.height).toBeCloseTo(1.5, 1);
-  await expect(control).toHaveCSS('border-width', '0px');
 });

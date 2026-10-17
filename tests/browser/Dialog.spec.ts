@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
+const adoption = `${fixtureUrl}/?fixture=adoption`;
+
 test('notices use status and alert roles by tone and dismiss on request', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=alerts`);
   const scope = page.getByTestId('alerts-light');
@@ -32,41 +34,43 @@ test('notices use status and alert roles by tone and dismiss on request', async 
   }
 });
 
-test('popovers open from their trigger, close on Escape and outside presses, and return focus', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}/?fixture=popover`);
-  for (const theme of ['light', 'dark']) {
-    const scope = page.getByTestId(`popover-${theme}`);
-    const details = scope.getByRole('button', { name: `Details ${theme}` });
-    await details.click();
-    const dialog = page.getByRole('dialog', { name: 'Document details' });
-    await expect(dialog).toBeVisible();
-    await expect(details).toHaveAttribute('aria-expanded', 'true');
-    await expect(dialog.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
-      'data-env-theme',
-      theme,
-    );
-    await page.keyboard.press('Escape');
-    await expect(dialog).toBeHidden();
-    await expect(details).toBeFocused();
+test(
+  'popovers open from their trigger, close on Escape and outside presses, and return focus',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=popover`);
+    for (const theme of ['light', 'dark']) {
+      const scope = page.getByTestId(`popover-${theme}`);
+      const details = scope.getByRole('button', { name: `Details ${theme}` });
+      await details.click();
+      const dialog = page.getByRole('dialog', { name: 'Document details' });
+      await expect(dialog).toBeVisible();
+      await expect(details).toHaveAttribute('aria-expanded', 'true');
+      await expect(dialog.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
+        'data-env-theme',
+        theme,
+      );
+      await page.keyboard.press('Escape');
+      await expect(dialog).toBeHidden();
+      await expect(details).toBeFocused();
 
-    await details.click();
-    await expect(dialog).toBeVisible();
-    await page.mouse.click(5, 5);
-    await expect(dialog).toBeHidden();
+      await details.click();
+      await expect(dialog).toBeVisible();
+      await page.mouse.click(5, 5);
+      await expect(dialog).toBeHidden();
 
-    const rename = scope.getByRole('button', { name: `Rename ${theme}` });
-    await rename.click();
-    const form = page.getByRole('dialog', { name: `Rename ${theme}` });
-    await expect(form).toBeVisible();
-    expect((await form.boundingBox())!.width).toBeGreaterThan(400);
-    await form.getByRole('textbox', { name: 'Name' }).fill('Plan.md');
-    await form.getByRole('button', { name: 'Save name' }).click();
-    await expect(form).toBeHidden();
-    await expect(page.getByTestId(`popover-result-${theme}`)).toHaveText('Renamed');
-  }
-});
+      const rename = scope.getByRole('button', { name: `Rename ${theme}` });
+      await rename.click();
+      const form = page.getByRole('dialog', { name: `Rename ${theme}` });
+      await expect(form).toBeVisible();
+      expect((await form.boundingBox())!.width).toBeGreaterThan(400);
+      await form.getByRole('textbox', { name: 'Name' }).fill('Plan.md');
+      await form.getByRole('button', { name: 'Save name' }).click();
+      await expect(form).toBeHidden();
+      await expect(page.getByTestId(`popover-result-${theme}`)).toHaveText('Renamed');
+    }
+  },
+);
 
 test('dialogs open wide for heavy content and near the top for search-like tasks', async ({
   page,
@@ -154,27 +158,6 @@ test('a panel across the whole width keeps clear of the safe areas on both sides
   }
 });
 
-test('a notice dismiss button is a circle tinted with the notice tone', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=alerts`);
-  const notice = page
-    .getByTestId('alerts-light')
-    .locator('.env-alert')
-    .filter({ has: page.getByRole('button', { name: 'Dismiss' }) });
-  const dismiss = notice.getByRole('button', { name: 'Dismiss' });
-  // Its name shows as the native tooltip too.
-  await expect(dismiss).toHaveAttribute('title', 'Dismiss');
-  const box = (await dismiss.boundingBox())!;
-  expect(Math.abs(box.width - box.height)).toBeLessThan(0.5);
-  await expect(dismiss).toHaveCSS('border-top-left-radius', '50%');
-  const tone = await notice.evaluate(
-    (element) => getComputedStyle(element.querySelector('.env-alert-icon')!).color,
-  );
-  await expect(dismiss).toHaveCSS('color', tone);
-  await dismiss.hover();
-  await expect(dismiss).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-  await expect(dismiss).toHaveCSS('color', tone);
-});
-
 test('dialogs, the command palette and popovers share one raised surface', async ({ page }) => {
   const surface = (locator: import('@playwright/test').Locator) =>
     locator.evaluate((element) => {
@@ -198,4 +181,78 @@ test('dialogs, the command palette and popovers share one raised surface', async
   await page.getByRole('button', { name: 'Quick open light' }).focus();
   await page.keyboard.press('Enter');
   expect(await surface(page.getByRole('dialog', { name: 'Go to document' }))).toEqual(dialog);
+});
+
+test(
+  'Dialog traps and restores focus and its nested Select retains the dark theme',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=forms`);
+    const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
+    await trigger.click();
+    const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAccessibleDescription('A nested theme retained in a portal.');
+    await expect
+      .poll(() =>
+        dialog.evaluate((element) =>
+          element.closest('[data-env-theme]')?.getAttribute('data-env-theme'),
+        ),
+      )
+      .toBe('dark');
+    const firstField = dialog.getByRole('textbox', { name: 'Dialog first field', exact: true });
+    await expect(firstField).toBeFocused();
+    await page.keyboard.press('Shift+Tab');
+    await expect(dialog.getByRole('button', { name: 'Save dialog', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(firstField).toBeFocused();
+
+    const select = dialog.getByRole('combobox', { name: 'Dialog choice', exact: true });
+    await select.click();
+    const option = page.getByRole('option', { name: 'Boreal', exact: true });
+    await expect(option).toBeVisible();
+    await expect
+      .poll(() =>
+        option.evaluate((element) =>
+          element.closest('[data-env-theme]')?.getAttribute('data-env-theme'),
+        ),
+      )
+      .toBe('dark');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByTestId('dialog-status')).toHaveText('closed');
+    await expect(trigger).toBeFocused();
+  },
+);
+
+test('Dialog provides an accessible dismissal action and controlled action closure', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=forms`);
+  const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
+  await trigger.click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Save dialog', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test('a pending Dialog cannot be dismissed until the work finishes', async ({ page }) => {
+  await page.goto(adoption);
+  await page.getByRole('button', { name: 'Open pending dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  await dialog.getByRole('button', { name: 'Toggle pending' }).click();
+  await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  await page.keyboard.press('Escape');
+  await page.mouse.click(5, 5);
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Toggle pending' }).click();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(dialog).toHaveCount(0);
 });

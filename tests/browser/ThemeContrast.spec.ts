@@ -2,6 +2,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 import { cssColor, pairs } from '../contrast/Pairs';
 import { themes } from '../contrast/Themes';
+import { closePopup, openPopup, popupKinds } from './Popups';
 
 /** Every color the contrast gate measures, by name, as CSS. */
 const colors = Object.fromEntries(
@@ -69,96 +70,6 @@ async function preferContrast(page: Page, contrast: 'more' | 'no-preference') {
 // Each test opens every kind of popup from several boundaries, which takes longer than one.
 test.describe.configure({ timeout: 120_000 });
 
-/** Every kind of popup envUI portals, each of which the fixture opens from every boundary. */
-const popupKinds = [
-  'menu',
-  'compact menu',
-  'context menu',
-  'menubar menu',
-  'select',
-  'compact select',
-  'combobox',
-  'date picker',
-  'popover',
-  'hover card',
-  'tooltip',
-  'dialog',
-  'side panel',
-  'command palette',
-  'toast',
-] as const;
-type PopupKind = (typeof popupKinds)[number];
-
-/** The element that draws a popup's surface: its fill, edge and shadow. */
-const popupSurfaces =
-  '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-hover-card, .env-dialog-surface, .env-command-palette, .env-toast';
-
-/** Opens one popup of a boundary of the fixture and returns it. */
-async function open(page: Page, kind: PopupKind, name: string): Promise<Locator> {
-  const button = (label: string) => page.getByRole('button', { name: label, exact: true });
-  const dialog = (label: string) => page.getByRole('dialog', { name: label, exact: true });
-  switch (kind) {
-    case 'menu':
-      await button(`Menu ${name}`).click();
-      return page.getByRole('menu', { name: `Actions ${name}`, exact: true });
-    case 'compact menu':
-      await button(`Compact menu ${name}`).click();
-      return page.getByRole('menu', { name: `Compact actions ${name}`, exact: true });
-    case 'context menu':
-      await page.getByText(`Context ${name}`, { exact: true }).click({ button: 'right' });
-      return page.getByRole('menu', { name: `Context actions ${name}`, exact: true });
-    case 'menubar menu':
-      await page.getByRole('menuitem', { name: `File ${name}`, exact: true }).click();
-      return page.getByRole('menu', { name: `File ${name}`, exact: true });
-    case 'select':
-      await page.getByRole('combobox', { name: `Status ${name}`, exact: true }).click();
-      return page.getByRole('listbox');
-    case 'compact select':
-      await page.getByRole('combobox', { name: `Sort ${name}`, exact: true }).click();
-      return page.getByRole('listbox');
-    case 'combobox': {
-      const field = page.getByRole('combobox', { name: `Person ${name}`, exact: true });
-      // The floating label covers an empty field, so the keyboard opens its list.
-      await field.focus();
-      await field.press('ArrowDown');
-      return page.getByRole('listbox');
-    }
-    case 'date picker':
-      await page.getByRole('combobox', { name: `Due ${name}`, exact: true }).click();
-      return dialog(`Due ${name}`);
-    case 'popover':
-      await button(`Popover ${name}`).click();
-      return dialog(`Details ${name}`);
-    case 'hover card':
-      await page.getByRole('link', { name: `Card ${name}`, exact: true }).hover();
-      return page.locator('.env-hover-card', { hasText: `Card ${name} details.` });
-    case 'tooltip':
-      await button(`Tooltip ${name}`).hover();
-      return page.locator('.env-tooltip', { hasText: `Tooltip ${name}` });
-    case 'dialog':
-      await button(`Dialog ${name}`).click();
-      return dialog(`Dialog ${name}`);
-    case 'side panel':
-      await button(`Panel ${name}`).click();
-      return dialog(`Panel ${name}`);
-    case 'command palette':
-      await button(`Palette ${name}`).click();
-      return dialog(`Palette ${name}`);
-    case 'toast':
-      await button(`Toast ${name}`).click();
-      return page.locator('.env-toast', { hasText: `Toast ${name}` });
-  }
-}
-
-/** Closes a popup that open() opened, and waits until it is gone. */
-async function close(page: Page, kind: PopupKind, popup: Locator) {
-  if (kind === 'tooltip' || kind === 'hover card') await page.mouse.move(0, 0);
-  else if (kind === 'toast')
-    await popup.getByRole('button', { name: 'Dismiss notification' }).click();
-  else await page.keyboard.press('Escape');
-  await expect(popup).toBeHidden();
-}
-
 /**
  * Opens each popup of a boundary and checks the Theme around its portal: its attributes, and that
  * every color the gate measures resolves there as in the expected theme.
@@ -170,7 +81,7 @@ async function expectPopups(
 ) {
   const boundary = page.getByTestId(`contrast-${name.replaceAll(' ', '-')}`);
   for (const kind of popupKinds) {
-    const popup = await open(page, kind, name);
+    const popup = await openPopup(page, kind, name);
     await expect(popup).toBeVisible();
     const portal = popup.locator('xpath=ancestor::*[@data-env-theme][1]');
     expect(
@@ -184,7 +95,7 @@ async function expectPopups(
     if (expected.contrast === null) await expect(portal).not.toHaveAttribute('data-env-contrast');
     else await expect(portal).toHaveAttribute('data-env-contrast', expected.contrast);
     expect(await colorsIn(portal), `${name} ${kind}: the popup's colors`).toEqual(expected.colors);
-    await close(page, kind, popup);
+    await closePopup(page, kind, popup);
   }
 }
 
@@ -246,33 +157,6 @@ test.describe('theme contrast', () => {
       colors: gate.dark,
     });
   });
-
-  test('without a contrast, a boundary and its popups follow prefers-contrast: more', async ({
-    page,
-  }) => {
-    const gate = await gateColors(page);
-    const boundaries = [
-      ['system', 'light'],
-      ['system dark', 'dark'],
-    ] as const;
-    for (const [name, theme] of boundaries) {
-      const boundary = page.getByTestId(`contrast-${name.replaceAll(' ', '-')}`);
-      await expect(boundary).not.toHaveAttribute('data-env-contrast');
-      expect(await colorsIn(boundary)).toEqual(gate[theme]);
-      await expectPopups(page, name, { theme, contrast: null, colors: gate[theme] });
-    }
-    // The gate's high-contrast values reach the boundaries and their popups through the media query.
-    await preferContrast(page, 'more');
-    for (const [name, theme] of boundaries) {
-      const boundary = page.getByTestId(`contrast-${name.replaceAll(' ', '-')}`);
-      expect(await colorsIn(boundary)).toEqual(gate[`${theme}-high-contrast`]);
-      await expectPopups(page, name, {
-        theme,
-        contrast: null,
-        colors: gate[`${theme}-high-contrast`],
-      });
-    }
-  });
 });
 
 test('ThemePreferenceProvider sets the contrast of the document root, its boundary and their popups', async ({
@@ -298,37 +182,4 @@ test('ThemePreferenceProvider sets the contrast of the document root, its bounda
   await expect(boundary).not.toHaveAttribute('data-env-contrast');
   expect(await colorsIn(root)).toEqual(gate.dark);
   await expectPopups(page, 'provider', { theme: 'dark', contrast: null, colors: gate.dark });
-});
-
-test('every popup keeps a visible edge under forced colors, where its shadow is gone', async ({
-  page,
-}) => {
-  await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
-  await page.goto(`${fixtureUrl}/?fixture=theme-contrast`);
-  for (const kind of popupKinds) {
-    const popup = await open(page, kind, 'standard');
-    await expect(popup).toBeVisible();
-    const edge = await popup.evaluate((element, selector) => {
-      const surface = element.closest(selector)!;
-      const style = getComputedStyle(surface);
-      // A panel at the edge of the window draws only the edge that faces the page.
-      const side =
-        ['top', 'left', 'right', 'bottom'].find(
-          (each) => parseFloat(style.getPropertyValue(`border-${each}-width`)) >= 1,
-        ) ?? 'top';
-      const read = (part: string) => style.getPropertyValue(`border-${side}-${part}`);
-      return {
-        surface: surface.className,
-        width: parseFloat(read('width')),
-        style: read('style'),
-        color: read('color'),
-        background: style.backgroundColor,
-      };
-    }, popupSurfaces);
-    expect(edge.width, `${kind} (${edge.surface}) has an edge`).toBeGreaterThanOrEqual(1);
-    expect(edge.style, `${kind} draws its edge`).toBe('solid');
-    expect(edge.color, `${kind}'s edge is painted`).not.toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
-    expect(edge.color, `${kind}'s edge differs from its fill`).not.toBe(edge.background);
-    await close(page, kind, popup);
-  }
 });

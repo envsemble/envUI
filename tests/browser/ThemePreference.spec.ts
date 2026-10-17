@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
+const adoption = `${fixtureUrl}/?fixture=adoption`;
+
 test('a provider without a contrast leaves the contrast the page set on the root', async ({
   page,
 }) => {
@@ -278,36 +280,101 @@ test('a provider that unmounts leaves a scale and contrast the page wrote over i
   await expect(root).not.toHaveAttribute('data-env-contrast-source');
 });
 
-test('a theme chosen in one window applies in the other windows of the same origin', async ({
-  context,
-}) => {
-  const first = await context.newPage();
-  const second = await context.newPage();
-  await first.goto(`${fixtureUrl}/?fixture=adoption`);
-  await second.goto(`${fixtureUrl}/?fixture=adoption`);
-  const before = await second.locator('html').getAttribute('data-env-theme');
-  const after = before === 'dark' ? 'light' : 'dark';
+test(
+  'a theme chosen in one window applies in the other windows of the same origin',
+  { tag: '@engines' },
+  async ({ context }) => {
+    const first = await context.newPage();
+    const second = await context.newPage();
+    await first.goto(`${fixtureUrl}/?fixture=adoption`);
+    await second.goto(`${fixtureUrl}/?fixture=adoption`);
+    const before = await second.locator('html').getAttribute('data-env-theme');
+    const after = before === 'dark' ? 'light' : 'dark';
 
-  await first.getByTestId('theme-toggle').click();
-  await expect(first.locator('html')).toHaveAttribute('data-env-theme', after);
-  await expect(second.locator('html')).toHaveAttribute('data-env-theme', after);
-  await expect(second.getByTestId('theme-toggle')).toHaveAccessibleName(
+    await first.getByTestId('theme-toggle').click();
+    await expect(first.locator('html')).toHaveAttribute('data-env-theme', after);
+    await expect(second.locator('html')).toHaveAttribute('data-env-theme', after);
+    await expect(second.getByTestId('theme-toggle')).toHaveAccessibleName(
+      `Switch to ${after === 'dark' ? 'light' : 'dark'} theme`,
+    );
+
+    // Clearing the stored choice returns the other window to the default preference.
+    await first.evaluate(() => localStorage.removeItem('fixture-theme'));
+    await second.evaluate(() =>
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: 'fixture-theme',
+          newValue: null,
+          storageArea: localStorage,
+        }),
+      ),
+    );
+    const system = await second.evaluate(() =>
+      matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    );
+    await expect(second.locator('html')).toHaveAttribute('data-env-theme', system);
+  },
+);
+
+test('ThemePreferenceProvider stores the choice and themes the document root', async ({ page }) => {
+  await page.goto(adoption);
+  const root = page.locator('html');
+  const before = await root.getAttribute('data-env-theme');
+  await page.getByTestId('theme-toggle').click();
+  const after = before === 'dark' ? 'light' : 'dark';
+  await expect(root).toHaveAttribute('data-env-theme', after);
+  await expect(root).toHaveClass(/env-theme/);
+  expect(await page.evaluate(() => localStorage.getItem('fixture-theme'))).toBe(after);
+  await page.reload();
+  await expect(root).toHaveAttribute('data-env-theme', after);
+  await expect(page.getByTestId('theme-toggle')).toHaveAccessibleName(
     `Switch to ${after === 'dark' ? 'light' : 'dark'} theme`,
   );
+});
 
-  // Clearing the stored choice returns the other window to the default preference.
-  await first.evaluate(() => localStorage.removeItem('fixture-theme'));
-  await second.evaluate(() =>
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'fixture-theme',
-        newValue: null,
-        storageArea: localStorage,
-      }),
-    ),
-  );
-  const system = await second.evaluate(() =>
-    matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-  );
-  await expect(second.locator('html')).toHaveAttribute('data-env-theme', system);
+for (const source of ['system', 'stored'] as const) {
+  test(`the browser theme color follows the canvas of a ${source} dark theme`, async ({ page }) => {
+    // The page starts with a static light theme color, as an application's index.html might.
+    await page.emulateMedia({ colorScheme: source === 'system' ? 'dark' : 'light' });
+    if (source === 'stored')
+      await page.addInitScript(() => localStorage.setItem('fixture-theme', 'dark'));
+    await page.goto(adoption);
+    await expect(page.locator('html')).toHaveAttribute('data-env-theme', 'dark');
+    const canvas = await page.evaluate(
+      () => getComputedStyle(document.documentElement).backgroundColor,
+    );
+    expect(canvas).not.toBe('rgb(255, 255, 255)');
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', canvas);
+  });
+}
+
+test('the browser theme color follows the canvas of the resolved theme', async ({ page }) => {
+  // The page starts with a static light theme color, as an application's index.html might.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(adoption);
+  const root = page.locator('html');
+  const meta = page.locator('meta[name="theme-color"]');
+  const canvas = () =>
+    page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
+  await expect(root).toHaveAttribute('data-env-theme', 'dark');
+  const dark = await canvas();
+  expect(dark).not.toBe('rgb(255, 255, 255)');
+  await expect(meta).toHaveAttribute('content', dark);
+  // A tag written for a system color scheme follows the chosen theme too.
+  await page.evaluate(() => {
+    const scheme = document.createElement('meta');
+    scheme.name = 'theme-color';
+    scheme.media = '(prefers-color-scheme: dark)';
+    scheme.content = '#000000';
+    document.head.append(scheme);
+  });
+  await page.getByTestId('theme-toggle').click();
+  await expect(root).toHaveAttribute('data-env-theme', 'light');
+  const light = await canvas();
+  await expect(meta).toHaveCount(2);
+  await expect(meta.first()).toHaveAttribute('content', light);
+  await expect(meta.last()).toHaveAttribute('content', light);
+  await page.getByTestId('theme-toggle').click();
+  await expect(meta.first()).toHaveAttribute('content', dark);
+  await expect(meta.last()).toHaveAttribute('content', dark);
 });

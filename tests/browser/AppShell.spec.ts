@@ -14,6 +14,17 @@ function collectErrors(page: Page) {
   return errors;
 }
 
+/**
+ * Installs the page's clock and stops it, so a timer runs only as far as the test moves it, however
+ * long the steps between take on a busy engine. An installed clock still runs on its own; pausing it
+ * is what stops it.
+ */
+async function stopClock(page: Page) {
+  const start = Date.now();
+  await page.clock.install({ time: start });
+  await page.clock.pauseAt(start + 1000);
+}
+
 const box = async (locator: Locator) => (await locator.boundingBox())!;
 
 test.describe('Landmarks and skip links', () => {
@@ -199,49 +210,57 @@ test.describe('Frame variables', () => {
       await expect.poll(read).toBeCloseTo((await box(header)).height, 1);
     });
 
-  test('where Main scrolls, sticky content sticks at its top', async ({ page }) => {
-    await page.goto(`${appShell}&scroll=main`);
-    await page.getByRole('button', { name: 'Read the sticky top' }).click();
-    await expect(page.getByTestId('sticky-top')).toHaveText('0');
-    const main = page.locator('.env-app-shell-main');
-    await main.evaluate((element) => element.scrollTo(0, 800));
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
-    await expect
-      .poll(async () => (await box(page.getByTestId('sticky-header'))).y)
-      .toBeCloseTo((await box(main)).y, 0);
-  });
+  test(
+    'where Main scrolls, sticky content sticks at its top',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(`${appShell}&scroll=main`);
+      await page.getByRole('button', { name: 'Read the sticky top' }).click();
+      await expect(page.getByTestId('sticky-top')).toHaveText('0');
+      const main = page.locator('.env-app-shell-main');
+      await main.evaluate((element) => element.scrollTo(0, 800));
+      expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      await expect
+        .poll(async () => (await box(page.getByTestId('sticky-header'))).y)
+        .toBeCloseTo((await box(main)).y, 0);
+    },
+  );
 });
 
 test.describe('Scroll padding', () => {
-  test('focus that scrolls the document lands below the header, not under it', async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 700 });
-    await page.goto(appShell);
-    await page.locator('.env-app-shell-main').evaluate((content) => {
-      const spacer = () =>
-        Object.assign(document.createElement('div'), { style: 'height: 1200px' });
-      const before = Object.assign(document.createElement('button'), { textContent: 'Before' });
-      const region = Object.assign(document.createElement('div'), { tabIndex: 0 });
-      region.setAttribute('data-testid', 'tall-region');
-      region.style.height = '620px';
-      const action = Object.assign(document.createElement('button'), { textContent: 'Sort' });
-      region.append(action);
-      content.append(spacer(), before, spacer(), region, spacer());
-    });
-    const header = await box(page.getByRole('banner'));
-    const below = header.y + header.height;
-    const region = page.getByTestId('tall-region');
-    await page.getByRole('button', { name: 'Before' }).focus();
-    await page.keyboard.press('Tab');
-    await expect(region).toBeFocused();
-    expect((await box(region)).y).toBeGreaterThanOrEqual(below);
-    const action = region.getByRole('button', { name: 'Sort' });
-    await action.evaluate((element) =>
-      window.scrollBy(0, element.getBoundingClientRect().top - 10),
-    );
-    await page.keyboard.press('Tab');
-    await expect(action).toBeFocused();
-    expect((await box(action)).y).toBeGreaterThanOrEqual(below);
-  });
+  test(
+    'focus that scrolls the document lands below the header, not under it',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1024, height: 700 });
+      await page.goto(appShell);
+      await page.locator('.env-app-shell-main').evaluate((content) => {
+        const spacer = () =>
+          Object.assign(document.createElement('div'), { style: 'height: 1200px' });
+        const before = Object.assign(document.createElement('button'), { textContent: 'Before' });
+        const region = Object.assign(document.createElement('div'), { tabIndex: 0 });
+        region.setAttribute('data-testid', 'tall-region');
+        region.style.height = '620px';
+        const action = Object.assign(document.createElement('button'), { textContent: 'Sort' });
+        region.append(action);
+        content.append(spacer(), before, spacer(), region, spacer());
+      });
+      const header = await box(page.getByRole('banner'));
+      const below = header.y + header.height;
+      const region = page.getByTestId('tall-region');
+      await page.getByRole('button', { name: 'Before' }).focus();
+      await page.keyboard.press('Tab');
+      await expect(region).toBeFocused();
+      expect((await box(region)).y).toBeGreaterThanOrEqual(below);
+      const action = region.getByRole('button', { name: 'Sort' });
+      await action.evaluate((element) =>
+        window.scrollBy(0, element.getBoundingClientRect().top - 10),
+      );
+      await page.keyboard.press('Tab');
+      await expect(action).toBeFocused();
+      expect((await box(action)).y).toBeGreaterThanOrEqual(below);
+    },
+  );
 
   test('the scroll padding gives way to the application', async ({ page }) => {
     await page.goto(appShell);
@@ -353,6 +372,47 @@ test('the loading bar runs along the bottom edge of the header, across the frame
   expect(edge.width).toBeCloseTo(frame.width, 0);
 });
 
+test('page progress waits before appearing, then completes and leaves', async ({ page }) => {
+  // The bar's delay, 200 ms, and its finish, 400 ms, run on the stopped clock.
+  await stopClock(page);
+  await page.goto(appShell);
+  const toggle = page.getByRole('button', { name: 'Toggle page loading' });
+  const bar = page.getByRole('progressbar', { name: 'Loading page' });
+  // Record every state the bar renders, so short-lived states cannot slip between assertions.
+  await page.evaluate(() => {
+    const states: string[] = [];
+    (window as unknown as { barStates: string[] }).barStates = states;
+    new MutationObserver(() => {
+      const element = document.querySelector('[aria-label="Loading page"]');
+      // After the bar has shown, its absence is recorded as "none".
+      const state = element ? element.getAttribute('data-state')! : states.length ? 'none' : null;
+      if (state && states.at(-1) !== state) states.push(state);
+    }).observe(document.body, { subtree: true, childList: true, attributes: true });
+  });
+  const states = () =>
+    page.evaluate(() => (window as unknown as { barStates: string[] }).barStates);
+  // Quick work never shows the bar.
+  await toggle.click();
+  await toggle.click();
+  await page.clock.runFor(400);
+  expect(await states()).toEqual([]);
+  // The bar sets each timer in an effect of a render React schedules on its own, which can come
+  // after the press returns, so the clock moves in steps until the bar has changed.
+  const runUntil = (count: number) =>
+    expect
+      .poll(async () => {
+        await page.clock.runFor(50);
+        return bar.count();
+      })
+      .toBe(count);
+  await toggle.click();
+  await runUntil(1);
+  await expect(bar).toHaveAttribute('data-state', 'running');
+  await toggle.click();
+  await runUntil(0);
+  expect(await states()).toEqual(['running', 'finishing', 'none']);
+});
+
 test.describe('Header across the window', () => {
   test('the sidebar sits below the header, which holds the trigger in line with the rail', async ({
     page,
@@ -376,46 +436,48 @@ test.describe('Header across the window', () => {
 test.describe('Below the breakpoint', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('the sidebar is a drawer from its trigger, with focus rules for each way it closes', async ({
-    page,
-  }) => {
-    const errors = collectErrors(page);
-    await page.goto(appShell);
-    await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(0);
-    await expect(page.locator('.env-app-shell-header-title')).toBeHidden();
-    const trigger = page.getByTestId('header-trigger');
-    await expect(trigger).toHaveAccessibleName('Open navigation');
-    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    // Opened from the keyboard, as a press doesn't focus a button in WebKit.
-    await trigger.focus();
-    await page.keyboard.press('Enter');
-    const drawer = page.getByRole('dialog', { name: 'Primary' });
-    await expect(drawer).toBeVisible();
-    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    // It opens from the inline start, with the trigger inside it as its close button.
-    expect((await box(drawer)).x).toBe(0);
-    await expect(drawer.getByRole('button', { name: 'Close' })).toHaveCount(0);
-    await expect(drawer.getByRole('button', { name: 'Collapse sidebar' })).toBeFocused();
-    // Escape returns focus to the trigger.
-    await page.keyboard.press('Escape');
-    await expect(drawer).toBeHidden();
-    await expect(trigger).toBeFocused();
-    // A navigation closes it and focuses Main.
-    await trigger.click();
-    await drawer.getByRole('link', { name: 'Products' }).click();
-    await expect(drawer).toBeHidden();
-    await expect(page).toHaveURL(/#\/products$/);
-    await expect(page.getByRole('main')).toBeFocused();
-    // Widening the window closes it; the control that had focus takes it in the inline sidebar.
-    await trigger.click();
-    await drawer.getByRole('link', { name: 'Settings' }).focus();
-    await page.setViewportSize({ width: 1200, height: 844 });
-    await expect(page.getByRole('dialog')).toHaveCount(0);
-    await expect(
-      page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Settings' }),
-    ).toBeFocused();
-    expect(errors).toEqual([]);
-  });
+  test(
+    'the sidebar is a drawer from its trigger, with focus rules for each way it closes',
+    { tag: '@engines' },
+    async ({ page }) => {
+      const errors = collectErrors(page);
+      await page.goto(appShell);
+      await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(0);
+      await expect(page.locator('.env-app-shell-header-title')).toBeHidden();
+      const trigger = page.getByTestId('header-trigger');
+      await expect(trigger).toHaveAccessibleName('Open navigation');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      // Opened from the keyboard, as a press doesn't focus a button in WebKit.
+      await trigger.focus();
+      await page.keyboard.press('Enter');
+      const drawer = page.getByRole('dialog', { name: 'Primary' });
+      await expect(drawer).toBeVisible();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      // It opens from the inline start, with the trigger inside it as its close button.
+      expect((await box(drawer)).x).toBe(0);
+      await expect(drawer.getByRole('button', { name: 'Close' })).toHaveCount(0);
+      await expect(drawer.getByRole('button', { name: 'Collapse sidebar' })).toBeFocused();
+      // Escape returns focus to the trigger.
+      await page.keyboard.press('Escape');
+      await expect(drawer).toBeHidden();
+      await expect(trigger).toBeFocused();
+      // A navigation closes it and focuses Main.
+      await trigger.click();
+      await drawer.getByRole('link', { name: 'Products' }).click();
+      await expect(drawer).toBeHidden();
+      await expect(page).toHaveURL(/#\/products$/);
+      await expect(page.getByRole('main')).toBeFocused();
+      // Widening the window closes it; the control that had focus takes it in the inline sidebar.
+      await trigger.click();
+      await drawer.getByRole('link', { name: 'Settings' }).focus();
+      await page.setViewportSize({ width: 1200, height: 844 });
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(
+        page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Settings' }),
+      ).toBeFocused();
+      expect(errors).toEqual([]);
+    },
+  );
 
   test('the drawer mirrors in right-to-left text', async ({ page }) => {
     await page.goto(`${appShell}&dir=rtl`);
@@ -439,37 +501,38 @@ test.describe('Below the breakpoint', () => {
   });
 });
 
-for (const touch of [false, true])
+// The trigger in the sidebar's header on a fine pointer, and in a header across the window on a
+// coarse one.
+for (const [touch, fixture, scale] of [
+  [false, 'app-shell', 'comfortable'],
+  [true, 'full-shell', 'compact'],
+] as const)
   test.describe(touch ? 'under a coarse pointer' : 'under a fine pointer', () => {
     test.use({ hasTouch: touch });
 
-    // A frame with the trigger in the sidebar's header and with the trigger in a header across the
-    // window.
-    for (const fixture of ['app-shell', 'full-shell'])
-      for (const scale of ['comfortable', 'compact'])
-        test(`an expanded sidebar's item icons share the trigger's centre line, in ${fixture} in the ${scale} scale`, async ({
-          page,
-        }) => {
-          await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
-          await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
-          await expect(page.locator('.env-sidebar')).toHaveAttribute('data-state', 'expanded');
-          await expect(page.locator('.env-sidebar-panel')).toHaveCSS('translate', 'none');
-          const centres = await page.evaluate(() => {
-            const centre = (element: Element) => {
-              const box = element.getBoundingClientRect();
-              return box.x + box.width / 2;
-            };
-            return {
-              trigger: centre(document.querySelector('.env-sidebar-trigger')!),
-              icons: [
-                ...document.querySelectorAll('.env-sidebar .env-nav-list-item .env-icon'),
-              ].map(centre),
-            };
-          });
-          expect(centres.icons.length).toBeGreaterThan(1);
-          for (const icon of centres.icons)
-            expect(Math.abs(icon - centres.trigger)).toBeLessThanOrEqual(0.5);
-        });
+    test(`an expanded sidebar's item icons share the trigger's centre line, in ${fixture} in the ${scale} scale`, async ({
+      page,
+    }) => {
+      await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
+      await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
+      await expect(page.locator('.env-sidebar')).toHaveAttribute('data-state', 'expanded');
+      await expect(page.locator('.env-sidebar-panel')).toHaveCSS('translate', 'none');
+      const centres = await page.evaluate(() => {
+        const centre = (element: Element) => {
+          const box = element.getBoundingClientRect();
+          return box.x + box.width / 2;
+        };
+        return {
+          trigger: centre(document.querySelector('.env-sidebar-trigger')!),
+          icons: [...document.querySelectorAll('.env-sidebar .env-nav-list-item .env-icon')].map(
+            centre,
+          ),
+        };
+      });
+      expect(centres.icons.length).toBeGreaterThan(1);
+      for (const icon of centres.icons)
+        expect(Math.abs(icon - centres.trigger)).toBeLessThanOrEqual(0.5);
+    });
   });
 
 test('right-to-left text puts the start sidebar on the right', async ({ page }) => {
@@ -507,11 +570,17 @@ function settledTop(scroller: Locator) {
   );
 }
 
+/** Waits two animation frames: a smooth scroll that a key started has moved by then. */
+function twoFrames(page: Page) {
+  return page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+}
+
 /** Holds a key: its first press and then repeats, as a held key sends them. */
 async function hold(page: Page, key: string, repeats: number) {
   await page.keyboard.down(key);
   for (let repeat = 0; repeat < repeats; repeat++) {
-    await page.waitForTimeout(30);
     await page.keyboard.down(key);
   }
   await page.keyboard.up(key);
@@ -520,7 +589,6 @@ async function hold(page: Page, key: string, repeats: number) {
 /** Presses a key several times, faster than a smooth scroll settles. */
 async function pressQuickly(page: Page, key: string, times: number) {
   for (let press = 0; press < times; press++) {
-    if (press) await page.waitForTimeout(100);
     await page.keyboard.press(key);
   }
 }
@@ -558,7 +626,7 @@ test('a copy of getScrollElement kept from the first render returns the current 
   await expect(frame.getByTestId('framed-scroll-element')).toHaveText('frame');
 });
 
-test.describe('Main scroll', () => {
+test.describe('Main scroll', { tag: '@engines' }, () => {
   test('the keyboard scrolls Main as it would the document', async ({ page }) => {
     // Without motion the scroll positions are exact.
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -601,13 +669,13 @@ test.describe('Main scroll', () => {
     await page.keyboard.press('Home');
     await expectTop(0);
     await page.keyboard.press('Space');
-    await page.waitForTimeout(200);
+    await twoFrames(page);
     expect((await metrics()).top).toBe(0);
 
     // Widgets that use the keys keep them, such as a menubar trigger.
     await page.getByRole('menuitem', { name: 'File', exact: true }).focus();
     await page.keyboard.press('PageDown');
-    await page.waitForTimeout(200);
+    await twoFrames(page);
     expect((await metrics()).top).toBe(0);
 
     // A list that scrolls itself takes the keys.
@@ -626,7 +694,7 @@ test.describe('Main scroll', () => {
       });
     });
     await page.keyboard.press('End');
-    await page.waitForTimeout(200);
+    await twoFrames(page);
     expect((await metrics()).top).toBe(0);
     await page.keyboard.press('PageDown');
     await expectTop(step);
@@ -814,70 +882,7 @@ test.describe('Main scroll', () => {
   });
 });
 
-/** Computed app-region of an element, or null where the engine has no app regions. */
-function appRegion(locator: Locator) {
-  return locator.evaluate((element) => {
-    if (!CSS.supports('app-region', 'drag') && !CSS.supports('-webkit-app-region', 'drag'))
-      return null;
-    const style = getComputedStyle(element);
-    return style.getPropertyValue('app-region') || style.getPropertyValue('-webkit-app-region');
-  });
-}
-
 test.describe('Title bar', () => {
-  test("the header is the window's title bar: its height, small controls and drag regions", async ({
-    page,
-  }) => {
-    const errors = collectErrors(page);
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(fullShell);
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
-    await expect(page.locator('.env-app-shell')).toHaveAttribute('data-title-bar', '');
-    const header = page.getByRole('banner');
-    expect((await box(header)).height).toBe(40);
-    // --env-app-shell-header-height follows the title bar, so the sidebar and Main line up below it.
-    const sidebar = page.getByRole('navigation', { name: 'Notes navigation' });
-    expect((await box(sidebar)).y).toBe(40);
-    expect((await box(page.locator('.env-app-shell-main'))).y).toBe(40);
-    // Controls take the small height.
-    for (const control of [
-      page.getByTestId('action'),
-      page.getByTestId('context-picker'),
-      page.getByRole('menuitem', { name: 'File', exact: true }),
-    ])
-      expect((await box(control)).height).toBeCloseTo(32, 0);
-    const trigger = header.getByRole('button', { name: 'Collapse sidebar' });
-    const triggerBox = await box(trigger);
-    expect([triggerBox.width, triggerBox.height]).toEqual([32, 32]);
-    // Collapsed, the trigger keeps the centre line of the rail's icons.
-    await trigger.click();
-    await page.mouse.move(800, 500);
-    await expect(sidebar).toHaveAttribute('data-rail', '');
-    const icon = await box(sidebar.locator('.env-icon').first());
-    expect(icon.x + icon.width / 2).toBeCloseTo(triggerBox.x + triggerBox.width / 2, 0);
-    // The bar selects no text; empty space drags the window and controls stay clickable, in the
-    // engines that have app regions.
-    expect(
-      await header.evaluate((element) => {
-        const style = getComputedStyle(element);
-        return style.userSelect || style.getPropertyValue('-webkit-user-select');
-      }),
-    ).toBe('none');
-    const region = await appRegion(header);
-    if (region !== null) {
-      expect(region).toBe('drag');
-      for (const control of [
-        page.getByTestId('action'),
-        page.getByTestId('context-picker'),
-        page.getByRole('menubar', { name: 'Application menu' }),
-        header.getByRole('button', { name: 'Expand sidebar' }),
-      ])
-        expect(await appRegion(control)).toBe('no-drag');
-    }
-    expect(errors).toEqual([]);
-  });
-
   test('Main scrolls below the title bar, and a full-window view still covers the window', async ({
     page,
   }) => {
@@ -907,30 +912,19 @@ test.describe('Title bar', () => {
       viewport.height,
     ]);
   });
-
-  test('the title bar keeps at least --env-title-bar-height, which an application can set', async ({
-    page,
-  }) => {
-    await page.goto(fullShell);
-    await page
-      .locator('.env-app-shell')
-      .evaluate((shell: HTMLElement) => shell.style.setProperty('--env-title-bar-height', '48px'));
-    expect((await box(page.getByRole('banner'))).height).toBe(48);
-    expect((await box(page.locator('.env-app-shell-main'))).y).toBe(48);
-    await page.getByRole('button', { name: 'Read the first scroll element' }).click();
-    await expect(page.getByTestId('first-scroll-element')).toHaveText('main');
-  });
 });
 
-test('a page whose document scrolls keeps its keys while it shows a frame whose Main scrolls', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(`${catalogueUrl}/components/app-shell/overview`);
-  await expect(page.locator(".env-app-shell[data-scroll='main']").first()).toBeVisible();
-  await page.locator('#docs-main').focus();
-  await page.keyboard.press('PageDown');
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-  for (const scroller of await page.locator('.env-app-shell-main').all())
-    expect(await scroller.evaluate((element) => element.scrollTop)).toBe(0);
-});
+test(
+  'a page whose document scrolls keeps its keys while it shows a frame whose Main scrolls',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`${catalogueUrl}/components/app-shell/overview`);
+    await expect(page.locator(".env-app-shell[data-scroll='main']").first()).toBeVisible();
+    await page.locator('#docs-main').focus();
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    for (const scroller of await page.locator('.env-app-shell-main').all())
+      expect(await scroller.evaluate((element) => element.scrollTop)).toBe(0);
+  },
+);

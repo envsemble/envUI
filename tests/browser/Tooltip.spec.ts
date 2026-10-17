@@ -4,6 +4,8 @@ import { fixtureUrl } from './Servers';
 
 const tooltips = `${fixtureUrl}/?fixture=tooltips`;
 
+const adoption = `${fixtureUrl}/?fixture=adoption`;
+
 /** The axe violations of the menu and popover triggers and whatever popup is open. */
 async function overlayViolations(page: Page) {
   const { violations } = await new AxeBuilder({ page })
@@ -206,34 +208,36 @@ test.describe('Tooltip', () => {
     await expect(page.getByRole('tooltip')).toHaveText('Owners are always notified');
   });
 
-  test('in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger', async ({
-    page,
-  }) => {
-    await page.goto(tooltips);
-    const forward = page.getByRole('button', { name: 'Forward' });
-    await forward.hover();
-    const tooltip = page.getByRole('tooltip');
-    await expect(tooltip).toHaveText('Next step');
-    await expect(tooltip.locator('xpath=ancestor::*[@dir][1]')).toHaveAttribute('dir', 'rtl');
-    await expect
-      .poll(async () => {
-        const [popup, trigger] = [(await tooltip.boundingBox())!, (await forward.boundingBox())!];
-        return popup.x + popup.width <= trigger.x + 1;
-      })
-      .toBe(true);
-    await page.mouse.move(1, 1);
+  test(
+    'in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(tooltips);
+      const forward = page.getByRole('button', { name: 'Forward' });
+      await forward.hover();
+      const tooltip = page.getByRole('tooltip');
+      await expect(tooltip).toHaveText('Next step');
+      await expect(tooltip.locator('xpath=ancestor::*[@dir][1]')).toHaveAttribute('dir', 'rtl');
+      await expect
+        .poll(async () => {
+          const [popup, trigger] = [(await tooltip.boundingBox())!, (await forward.boundingBox())!];
+          return popup.x + popup.width <= trigger.x + 1;
+        })
+        .toBe(true);
+      await page.mouse.move(1, 1);
 
-    const details = page.getByRole('button', { name: 'Details rtl' });
-    await details.click();
-    const popover = page.getByRole('dialog', { name: 'Step details' });
-    await expect(popover).toBeVisible();
-    await expect
-      .poll(async () => {
-        const [popup, trigger] = [(await popover.boundingBox())!, (await details.boundingBox())!];
-        return popup.x + popup.width <= trigger.x + 1;
-      })
-      .toBe(true);
-  });
+      const details = page.getByRole('button', { name: 'Details rtl' });
+      await details.click();
+      const popover = page.getByRole('dialog', { name: 'Step details' });
+      await expect(popover).toBeVisible();
+      await expect
+        .poll(async () => {
+          const [popup, trigger] = [(await popover.boundingBox())!, (await details.boundingBox())!];
+          return popup.x + popup.width <= trigger.x + 1;
+        })
+        .toBe(true);
+    },
+  );
 
   test('a Kbd in a tooltip takes key caps for its dark fill', async ({ page }) => {
     await page.goto(tooltips);
@@ -257,6 +261,7 @@ test.describe('Tooltip', () => {
   test('names an icon-only menu trigger, which keeps its menu, ARIA and focus', async ({
     page,
   }) => {
+    await page.clock.install();
     await page.goto(tooltips);
     const more = page.getByRole('button', { name: 'More actions' });
     const menu = page.getByRole('menu', { name: 'Row actions' });
@@ -287,7 +292,7 @@ test.describe('Tooltip', () => {
     // past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
     await page.mouse.move(1, 1);
     await more.hover();
-    await page.waitForTimeout(300);
+    await page.clock.runFor(300);
     await expect(menu).toBeVisible();
     await expect(tooltip).toHaveCount(0);
 
@@ -296,7 +301,7 @@ test.describe('Tooltip', () => {
     await expect(menu).toHaveCount(0);
     await expect(more).toBeFocused();
     await expect(more).toHaveAttribute('aria-expanded', 'false');
-    await page.waitForTimeout(300);
+    await page.clock.runFor(300);
     await expect(tooltip).toHaveCount(0);
     // The pointer coming back onto the button opens it again.
     await page.mouse.move(1, 1);
@@ -325,6 +330,7 @@ test.describe('Tooltip', () => {
   test('around a popover, describes its named icon-only trigger, which keeps its popover', async ({
     page,
   }) => {
+    await page.clock.install();
     await page.goto(tooltips);
     const filters = page.getByRole('button', { name: 'Filters' });
     const popover = page.getByRole('dialog', { name: 'Filters' });
@@ -353,7 +359,7 @@ test.describe('Tooltip', () => {
     // open: past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
     await page.mouse.move(1, 1);
     await filters.hover();
-    await page.waitForTimeout(300);
+    await page.clock.runFor(300);
     await expect(popover).toBeVisible();
     await expect(tooltip).toHaveCount(0);
 
@@ -362,7 +368,7 @@ test.describe('Tooltip', () => {
     await expect(popover).toHaveCount(0);
     await expect(filters).toBeFocused();
     await expect(filters).toHaveAttribute('aria-expanded', 'false');
-    await page.waitForTimeout(300);
+    await page.clock.runFor(300);
     await expect(tooltip).toHaveCount(0);
 
     // Focus from the keyboard opens the tooltip; Enter opens the popover in its place.
@@ -399,6 +405,7 @@ test.describe('Tooltip', () => {
   });
 
   test('around a HoverCard, or as its trigger, shows no tooltip but the card', async ({ page }) => {
+    await page.clock.install();
     await page.goto(`${tooltips}&warnings`);
     const tooltip = page.getByRole('tooltip');
     for (const [name, card] of [
@@ -408,7 +415,7 @@ test.describe('Tooltip', () => {
       await page.getByRole('link', { name }).hover();
       await expect(page.getByText(card)).toBeVisible();
       // Past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
-      await page.waitForTimeout(300);
+      await page.clock.runFor(300);
       await expect(tooltip).toHaveCount(0);
       await page.mouse.move(1, 1);
       await expect(page.getByText(card)).toHaveCount(0);
@@ -444,26 +451,69 @@ test.describe('Tooltip', () => {
     expect(reports).toContain('around a HoverCard');
   });
 
+  test('Tooltip keeps opening on hover after its control is enabled or disabled', async ({
+    page,
+  }) => {
+    await page.goto(adoption);
+    const invite = page.getByRole('button', { name: 'Invite member' });
+    const toggle = page.getByRole('button', { name: 'Toggle seats' });
+    await toggle.click();
+    await expect(invite).toBeDisabled();
+    // Disabled, the control is the wrapper that carries its name and reports it disabled.
+    await expect(invite).toHaveClass('env-tooltip-disabled-target');
+    await invite.hover();
+    await expect(page.locator('.env-tooltip')).toHaveText('No seats left');
+    await page.mouse.move(1, 1);
+    await expect(page.locator('.env-tooltip')).toHaveCount(0);
+    // Enabled again, the control itself is the trigger, and hovering it opens the tooltip.
+    await toggle.click();
+    await expect(invite).toBeEnabled();
+    await invite.hover();
+    await expect(page.locator('.env-tooltip')).toHaveText('Invite a member');
+  });
+
+  test('a tooltip stays open while the pointer moves onto it', async ({ page }) => {
+    await page.clock.install();
+    await page.goto(`${fixtureUrl}/?fixture=navigation`);
+    const item = page.getByTestId('navigation-icons-light').getByTestId('icon-only-navigation');
+    const tooltip = page.locator('.env-tooltip');
+    await item.hover();
+    await expect(tooltip).toHaveText('Home overview');
+    await expect(page.locator('.env-tooltip-positioner')).not.toHaveCSS('pointer-events', 'none');
+    // Hovering the tooltip itself keeps it, so its text can be read or magnified (WCAG 1.4.13).
+    const box = (await tooltip.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+    await page.clock.runFor(600);
+    await expect(tooltip).toHaveText('Home overview');
+    await page.mouse.move(0, 0);
+    await expect(tooltip).toHaveCount(0);
+  });
+
   test.describe('on a touch screen', () => {
     test.use({ hasTouch: true });
 
-    test('a tap opens the menu or popover and no tooltip', async ({ page }) => {
-      await page.goto(tooltips);
-      const tooltip = page.getByRole('tooltip');
-      await page.getByRole('button', { name: 'More actions' }).tap();
-      await expect(page.getByRole('menu', { name: 'Row actions' })).toBeVisible();
-      await expect(page.getByTestId('overlay-counts')).toHaveText(
-        '1 presses, 1 menu opens, 0 popover opens',
-      );
-      await expect(tooltip).toHaveCount(0);
-      await page.keyboard.press('Escape');
-      await expect(page.getByRole('menu')).toHaveCount(0);
+    test(
+      'a tap opens the menu or popover and no tooltip',
+      { tag: '@engines' },
+      async ({ page }) => {
+        await page.clock.install();
+        await page.goto(tooltips);
+        const tooltip = page.getByRole('tooltip');
+        await page.getByRole('button', { name: 'More actions' }).tap();
+        await expect(page.getByRole('menu', { name: 'Row actions' })).toBeVisible();
+        await expect(page.getByTestId('overlay-counts')).toHaveText(
+          '1 presses, 1 menu opens, 0 popover opens',
+        );
+        await expect(tooltip).toHaveCount(0);
+        await page.keyboard.press('Escape');
+        await expect(page.getByRole('menu')).toHaveCount(0);
 
-      await page.getByRole('button', { name: 'Filters' }).tap();
-      await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible();
-      // Past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
-      await page.waitForTimeout(300);
-      await expect(tooltip).toHaveCount(0);
-    });
+        await page.getByRole('button', { name: 'Filters' }).tap();
+        await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+        // Past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
+        await page.clock.runFor(300);
+        await expect(tooltip).toHaveCount(0);
+      },
+    );
   });
 });
