@@ -107,10 +107,10 @@ Textarea comes outline, underline or ghost.
 - **Read only** (`readOnly`): looks like an enabled field. People can focus, select and copy the value but not change it, and forms submit it.
 - **Disabled**: the field takes the shared disabled opacity, cannot be focused and is left out of form submission. Its prefix and suffix no longer place the caret, a Textarea cannot be resized and SearchField's clear button is disabled.
 - **Prefix and suffix**: they stay hidden while the label rests in an empty field and appear once the field has focus or a value; with a hidden label they always show. A long prefix is cut short with an ellipsis so the value keeps its room. Pressing the prefix places the caret at the start of the value, and the suffix at its end. A form submits only what people type.
-- **End action**: a button in the field that sets no `variant` takes `ghost`, the field's quiet icon color, which darkens to the text color over a state layer on hover and press. An end action eases in as it appears.
+- **End action**: a button in the field that sets no `variant` takes `ghost`, the field's quiet icon color, which darkens to the text color over a state layer on hover and press. An end action eases in as it appears. The buttons of a popover or menu it opens take their own variants.
 - **SearchField**: the clear button shows while there is a query. Pressing it clears the query, reports an empty string to `onValueChange` and returns focus to the field. <kbd>Esc</kbd> clears too, and consumes the key so an enclosing dialog stays open; in an empty SearchField it goes on, such as to close the dialog. The query can be controlled with `value` and `onValueChange`, or start from `defaultValue`.
-- **Textarea sizing**: with `sizing="fixed"`, the default, the field keeps its height and scrolls its text. Its whole bottom edge resizes it, by dragging or from the keyboard, never below the minimum height; the edge follows the border's color on hover, focus and error, takes the pressed shade while dragging, and is 2.75 rem tall on touch screens. With `sizing="content"` the field grows and shrinks with its text and has no resize edge; browsers without native content sizing keep the edge.
-- **Native forms**: the controls are native, so `name`, `required`, `pattern`, autofill and form reset work as usual, and an uncontrolled field returns to its `defaultValue` on reset. Validation and drafts belong to the application.
+- **Textarea sizing**: with `sizing="fixed"`, the default, the field keeps its height and scrolls its text. Its whole bottom edge resizes it, by dragging or from the keyboard, never below the minimum height nor above the maximum, or 500 lines without one; the edge follows the border's color on hover, focus and error, takes the pressed shade while dragging, and is 2.75 rem tall on touch screens. With `sizing="content"` the field grows and shrinks with its text and has no resize edge; browsers without native content sizing keep the edge.
+- **Native forms**: the controls are native, so `name`, `required`, `pattern`, autofill and form reset work as usual, and an uncontrolled field, SearchField too, returns to its `defaultValue` on reset. Validation and drafts belong to the application.
 
 <!-- specimen: States -->
 
@@ -165,7 +165,7 @@ Textarea comes outline, underline or ghost.
 - The prefix and suffix read once, after the label and before the description.
 - Decorative start icons hidden from assistive technology.
 - SearchField's clear button, named "Clear search" (`clearLabel`, or `messages.searchField.clear` of [EnvUIProvider](../setup.md#locale-strings-and-direction)), with the same text in its tooltip.
-- Textarea's resize edge, a focusable `separator` named "Resize text area" (`messages.textarea.resize`) that controls the field, reports its height and describes its keys; it leaves the tab order while the field is disabled or grows with its content.
+- Textarea's resize edge, a focusable `separator` named "Resize text area" (`messages.textarea.resize`) that controls the field, reports its height between the minimum and the CSS maximum height, or 500 lines without one, and describes its keys; it leaves the tab order while the field is disabled or grows with its content.
 - 1 rem text on touch screens, so focusing a field does not zoom the page, and a 2.75 rem resize edge for coarse pointers.
 
 ### You provide

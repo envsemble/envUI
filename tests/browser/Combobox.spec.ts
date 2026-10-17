@@ -560,6 +560,12 @@ test('disabled and read-only fields keep their value', async ({ page }) => {
   const invalid = field(page, 'Invalid light');
   await expect(invalid).toHaveAttribute('aria-invalid', 'true');
   await expect(invalid).toHaveAccessibleDescription('Choose someone on the team.');
+  // The input carries the error; the chevron repeats neither it nor the description.
+  for (const name of ['Invalid light', 'Author light']) {
+    const chevron = wellOf(field(page, name)).locator('.env-combobox-trigger');
+    await expect(chevron).not.toHaveAttribute('aria-describedby');
+    await expect(chevron).not.toHaveAttribute('aria-invalid');
+  }
 });
 
 async function openOnTouchScreen(browser: Browser) {

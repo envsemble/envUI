@@ -6,10 +6,11 @@ import { join } from 'node:path';
 import { readFileSync } from 'node:fs';
 
 const props = map.props['@envsemble/envui'];
-const report = (component, prop, value) => {
-  const rule = props[component][prop];
+const report = (component, prop, value, entry = props) => {
+  const rule = entry[component][prop];
   return value === undefined ? rule.report : rule.values[value].report;
 };
+const content = map.props['@envsemble/envui/content'];
 
 /** The fixtures that run with a map of the tests' own, for sections the v1 map has no entries in. */
 const maps = { 'calls.tsx': join(packageDirectory, 'test/maps/calls.json') };
@@ -34,6 +35,18 @@ const reports = {
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
   ],
+  'color-picker.tsx': [
+    `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
+  ],
+  'markdown-editor.tsx': [`line 9: ${report('MarkdownEditor', 'className', undefined, content)}`],
+  // A report-only rule leaves the prop as it is and reports every use, on every run.
+  'root-styles.tsx': [
+    `line 6: ${report('TextField', 'className')}`,
+    `line 7: ${report('Checkbox', 'style')}`,
+    `line 8: ${report('Switch', 'className')}`,
+    `line 8: ${report('Switch', 'style')}`,
+    `line 10: ${report('Radio', 'className')}`,
+  ],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,
@@ -42,19 +55,41 @@ const reports = {
   ],
 };
 
+/** The reports of the rules that only report, which every run repeats. */
+const reportOnly = Object.values(map.props)
+  .flatMap((components) => Object.values(components))
+  .flatMap((rules) => Object.values(rules))
+  .filter((rule) => rule.to === undefined && rule.values === undefined)
+  .map((rule) => rule.report);
+
+test('report-only rules cover className and style wherever they moved to the root', () => {
+  for (const [entry, component] of [
+    ...['TextField', 'SearchField', 'Textarea', 'Select', 'Combobox', 'DatePicker', 'Checkbox']
+      .concat(['Switch', 'Radio'])
+      .map((name) => [props, name]),
+    [content, 'MarkdownEditor'],
+  ])
+    for (const prop of ['className', 'style'])
+      assert.match(entry[component][prop].report, /root element/, `${component}'s ${prop}`);
+});
+
 for (const fixture of fixtures('v1-props')) {
   test(`v1-props: ${fixture.name}`, () => {
     const options = maps[fixture.name] ? { map: maps[fixture.name] } : {};
     const result = runTransform(v1Props, fixture.path, fixture.input, options);
     assert.equal(result.output, fixture.output);
     assert.deepEqual(result.reports, reports[fixture.name] ?? []);
-    // A second run changes nothing more, and reports only the values it could not move before.
+    // A second run changes nothing more, and reports only the values it could not move before
+    // and the uses of report-only props.
     const again = runTransform(v1Props, fixture.path, result.output, options);
     assert.equal(again.output, result.output);
     assert.deepEqual(
       again.reports,
       result.reports.filter(
-        (report) => report.includes("can't move") || report.includes("can't read"),
+        (report) =>
+          report.includes("can't move") ||
+          report.includes("can't read") ||
+          reportOnly.some((message) => report.endsWith(`: ${message}`)),
       ),
     );
   });

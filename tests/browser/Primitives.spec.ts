@@ -156,6 +156,27 @@ test.describe('Button emphasis', () => {
     expect(await emphasis('copy-resting')).toEqual(['secondary', 'neutral']);
   });
 
+  test("leaves a toolbar's and a field's ghost default outside their popovers", async ({
+    page,
+  }) => {
+    await open(page);
+    const trigger = page.getByTestId('toolbar-popover-trigger');
+    await expect(trigger).toHaveAttribute('data-variant', 'ghost');
+    await trigger.click();
+    await expect(page.getByTestId('toolbar-popover-button')).toHaveAttribute(
+      'data-variant',
+      'primary',
+    );
+    await page.keyboard.press('Escape');
+    const fieldTrigger = page.getByRole('button', { name: 'Link options' });
+    await expect(fieldTrigger).toHaveAttribute('data-variant', 'ghost');
+    await fieldTrigger.click();
+    await expect(page.getByTestId('field-popover-button')).toHaveAttribute(
+      'data-variant',
+      'primary',
+    );
+  });
+
   test('renders a pair no variant is designed in as neutral, and reports it', async ({ page }) => {
     const errors: string[] = [];
     page.on('console', (message) => {

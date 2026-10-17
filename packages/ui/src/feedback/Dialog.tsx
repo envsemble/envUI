@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogSurface,
 } from './internal/DialogParts.js';
+import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
 /**
  * Why a dialog or a drawer asks to open or close: its trigger, Escape, a press outside, focus
@@ -190,28 +191,30 @@ export function Dialog({
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal>
         <Theme {...theme}>
-          {modal && <DialogBackdrop />}
-          <div className="env-dialog-positioner" data-placement={placement}>
-            <BaseDialog.Popup
-              render={<DialogSurface radius="xl" />}
-              {...popupProps}
-              className={classNames('env-dialog-popup', className)}
-              data-placement={placement}
-              data-width={width}
-              aria-busy={pending || undefined}
-              initialFocus={initialFocus}
-              finalFocus={finalFocus}
-            >
-              <DialogContent>
-                <DialogHeader title={title} description={description} />
-                {children}
-                <DialogActions>
-                  <DialogClose disabled={pending}>{closeLabel}</DialogClose>
-                  {actions}
-                </DialogActions>
-              </DialogContent>
-            </BaseDialog.Popup>
-          </div>
+          <ResetControlDefaults>
+            {modal && <DialogBackdrop />}
+            <div className="env-dialog-positioner" data-placement={placement}>
+              <BaseDialog.Popup
+                render={<DialogSurface radius="xl" />}
+                {...popupProps}
+                className={classNames('env-dialog-popup', className)}
+                data-placement={placement}
+                data-width={width}
+                aria-busy={pending || undefined}
+                initialFocus={initialFocus}
+                finalFocus={finalFocus}
+              >
+                <DialogContent>
+                  <DialogHeader title={title} description={description} />
+                  {children}
+                  <DialogActions>
+                    <DialogClose disabled={pending}>{closeLabel}</DialogClose>
+                    {actions}
+                  </DialogActions>
+                </DialogContent>
+              </BaseDialog.Popup>
+            </div>
+          </ResetControlDefaults>
         </Theme>
       </BaseDialog.Portal>
     </BaseDialog.Root>

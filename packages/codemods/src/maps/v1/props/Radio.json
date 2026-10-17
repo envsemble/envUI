@@ -23,6 +23,12 @@
       "detail": {
         "to": "description",
         "report": "Radio's detail is description in 1.0."
+      },
+      "className": {
+        "report": "Radio's className now goes to the root element, not the input: check styles that targeted the input, which `.env-radio-input` inside the root selects."
+      },
+      "style": {
+        "report": "Radio's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-radio-input` inside the root."
       }
     }
   }

@@ -18,6 +18,7 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop } from './internal/DialogParts.js';
+import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
@@ -198,100 +199,106 @@ export function CommandPalette({
     <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
       <BaseDialog.Portal>
         <Theme {...theme}>
-          <DialogBackdrop />
-          <div className="env-command-palette-positioner">
-            <BaseDialog.Popup
-              {...popupProps}
-              className={classNames('env-command-palette', className)}
-              aria-label={label}
-              initialFocus={input}
-            >
-              <BaseAutocomplete.Root
-                open
-                inline
-                items={grouped ? sections : items}
-                filter={null}
-                autoHighlight="always"
-                keepHighlight
-                locale={locale}
-                itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
-                value={inputValue}
-                onValueChange={(next, details) => {
-                  // Choosing an option acts on it; the search text stays what people typed.
-                  if (details.reason === 'item-press') return;
-                  onInputValueChange(next);
-                }}
-                onItemHighlighted={(item: CommandPaletteItem | undefined, details) => {
-                  highlighted.current = { item, index: item ? details.index : -1 };
-                }}
+          <ResetControlDefaults>
+            <DialogBackdrop />
+            <div className="env-command-palette-positioner">
+              <BaseDialog.Popup
+                {...popupProps}
+                className={classNames('env-command-palette', className)}
+                aria-label={label}
+                initialFocus={input}
               >
-                <div className="env-command-palette-search">
-                  <DecorativeIcon>
-                    <Search />
-                  </DecorativeIcon>
-                  <BaseAutocomplete.Input
-                    ref={input}
-                    className="env-command-palette-input"
+                <BaseAutocomplete.Root
+                  open
+                  inline
+                  items={grouped ? sections : items}
+                  filter={null}
+                  autoHighlight="always"
+                  keepHighlight
+                  locale={locale}
+                  itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
+                  value={inputValue}
+                  onValueChange={(next, details) => {
+                    // Choosing an option acts on it; the search text stays what people typed.
+                    if (details.reason === 'item-press') return;
+                    onInputValueChange(next);
+                  }}
+                  onItemHighlighted={(item: CommandPaletteItem | undefined, details) => {
+                    highlighted.current = { item, index: item ? details.index : -1 };
+                  }}
+                >
+                  <div className="env-command-palette-search">
+                    <DecorativeIcon>
+                      <Search />
+                    </DecorativeIcon>
+                    <BaseAutocomplete.Input
+                      ref={input}
+                      className="env-command-palette-input"
+                      aria-label={label}
+                      autoComplete="off"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      placeholder={placeholder}
+                      onKeyDown={onKeyDown}
+                    />
+                  </div>
+                  <BaseAutocomplete.List
+                    ref={list}
+                    className="env-command-palette-list"
                     aria-label={label}
-                    autoComplete="off"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    placeholder={placeholder}
-                    onKeyDown={onKeyDown}
-                  />
-                </div>
-                <BaseAutocomplete.List
-                  ref={list}
-                  className="env-command-palette-list"
-                  aria-label={label}
-                  hidden={items.length === 0}
-                >
-                  {grouped
-                    ? (section: Section) =>
-                        section.label === undefined ? (
-                          <BaseAutocomplete.Group key={section.id} items={section.items}>
-                            <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
-                          </BaseAutocomplete.Group>
-                        ) : (
-                          <BaseAutocomplete.Group
-                            key={section.id}
-                            items={section.items}
-                            className="env-command-palette-group"
-                          >
-                            <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
-                              {section.label}
-                            </BaseAutocomplete.GroupLabel>
-                            <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
-                          </BaseAutocomplete.Group>
-                        )
-                    : renderItem}
-                </BaseAutocomplete.List>
-                {/* One polite status: the number of results as they change, read by assistive
+                    hidden={items.length === 0}
+                  >
+                    {grouped
+                      ? (section: Section) =>
+                          section.label === undefined ? (
+                            <BaseAutocomplete.Group key={section.id} items={section.items}>
+                              <BaseAutocomplete.Collection>
+                                {renderItem}
+                              </BaseAutocomplete.Collection>
+                            </BaseAutocomplete.Group>
+                          ) : (
+                            <BaseAutocomplete.Group
+                              key={section.id}
+                              items={section.items}
+                              className="env-command-palette-group"
+                            >
+                              <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
+                                {section.label}
+                              </BaseAutocomplete.GroupLabel>
+                              <BaseAutocomplete.Collection>
+                                {renderItem}
+                              </BaseAutocomplete.Collection>
+                            </BaseAutocomplete.Group>
+                          )
+                      : renderItem}
+                  </BaseAutocomplete.List>
+                  {/* One polite status: the number of results as they change, read by assistive
                     technology only, or the empty message, shown in place of the list. */}
-                <BaseAutocomplete.Status
-                  className="env-command-palette-status"
-                  data-empty={items.length === 0 || undefined}
-                >
-                  {items.length === 0
-                    ? (emptyLabel ?? messages.empty)
-                    : messages.results({ count: items.length })}
-                </BaseAutocomplete.Status>
-              </BaseAutocomplete.Root>
-              {(Boolean(hints?.length) || footer != null) && (
-                <div className="env-command-palette-footer">
-                  {hints?.map((hint, hintIndex) => (
-                    <span key={hintIndex} className="env-command-palette-hint">
-                      <Kbd keys={hint.keys} />
-                      <span>{hint.label}</span>
-                    </span>
-                  ))}
-                  {footer != null && (
-                    <span className="env-command-palette-footer-content">{footer}</span>
-                  )}
-                </div>
-              )}
-            </BaseDialog.Popup>
-          </div>
+                  <BaseAutocomplete.Status
+                    className="env-command-palette-status"
+                    data-empty={items.length === 0 || undefined}
+                  >
+                    {items.length === 0
+                      ? (emptyLabel ?? messages.empty)
+                      : messages.results({ count: items.length })}
+                  </BaseAutocomplete.Status>
+                </BaseAutocomplete.Root>
+                {(Boolean(hints?.length) || footer != null) && (
+                  <div className="env-command-palette-footer">
+                    {hints?.map((hint, hintIndex) => (
+                      <span key={hintIndex} className="env-command-palette-hint">
+                        <Kbd keys={hint.keys} />
+                        <span>{hint.label}</span>
+                      </span>
+                    ))}
+                    {footer != null && (
+                      <span className="env-command-palette-footer-content">{footer}</span>
+                    )}
+                  </div>
+                )}
+              </BaseDialog.Popup>
+            </div>
+          </ResetControlDefaults>
         </Theme>
       </BaseDialog.Portal>
     </BaseDialog.Root>

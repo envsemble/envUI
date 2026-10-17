@@ -94,7 +94,13 @@ export function MarkdownEditingFixture() {
           setRequiredSubmissions((count) => count + 1);
         }}
       >
-        <MarkdownEditor label="Required source" name="requiredSource" required />
+        <MarkdownEditor
+          label="Required source"
+          name="requiredSource"
+          required
+          className="required-markdown-editor"
+          style={{ maxInlineSize: '40rem' }}
+        />
         <Button type="submit">Submit required Markdown</Button>
         <output data-testid="required-markdown-submissions">{requiredSubmissions}</output>
       </form>

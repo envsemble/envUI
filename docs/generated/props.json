@@ -1238,7 +1238,7 @@
     "ColorPicker": {
       "kind": "component",
       "source": "packages/ui/src/forms/ColorPicker.tsx",
-      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named in the EnvUIProvider's language.",
+      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named after the label in the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.",
       "props": [
         {
           "name": "ref",
@@ -1849,7 +1849,7 @@
           "name": "content",
           "type": "ReactNode | ((target: Element | null) => ReactNode)",
           "required": true,
-          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, the menu doesn't open on that element."
+          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, undefined, false or '', the menu doesn't open on that element and the browser keeps its own."
         },
         {
           "name": "children",
@@ -5694,7 +5694,7 @@
           "type": "string",
           "required": false,
           "default": "''",
-          "description": "The query an uncontrolled field starts with."
+          "description": "The query an uncontrolled field starts with, and that a form reset restores."
         },
         {
           "name": "onValueChange",

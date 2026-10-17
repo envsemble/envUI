@@ -185,9 +185,11 @@ export function DocumentTabs({
 
   function onTabKeyDown(event: KeyboardEvent<HTMLElement>, id: string) {
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    // Backspace too, as a Mac laptop has no forward Delete key.
+    // Backspace too, for keyboards without a forward Delete key.
     if (event.key !== 'Delete' && event.key !== 'Backspace') return;
     event.preventDefault();
+    // A held key closes one tab, not the tab after it as each repeat arrives.
+    if (event.repeat) return;
     onClose(id);
   }
 

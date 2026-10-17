@@ -35,8 +35,8 @@ export interface ContextMenuProps {
   /**
    * Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives
    * the element the menu was opened on: the deepest element under the pointer, or the focused
-   * element (its active descendant, when it has one) for the keyboard. Where it returns null, the
-   * menu doesn't open on that element.
+   * element (its active descendant, when it has one) for the keyboard. Where it returns null,
+   * undefined, false or '', the menu doesn't open on that element and the browser keeps its own.
    */
   content: ReactNode | ((target: Element | null) => ReactNode);
   /** One element that becomes the region; it must accept native props and a ref. */
@@ -109,9 +109,12 @@ export function ContextMenu({
   // the menu at the pointer.
   const keyboardOpenedAt = useRef(Number.NEGATIVE_INFINITY);
   const region = useRef<HTMLDivElement>(null);
-  // A content function that returns null for an element offers no menu there.
-  const offersMenu = (element: Element | null) =>
-    typeof content !== 'function' || content(element) != null;
+  // Content that renders nothing, such as null, undefined, false or '', offers no menu: a content
+  // function returning it for an element offers none there.
+  const offersMenu = (element: Element | null) => {
+    const node = typeof content === 'function' ? content(element) : content;
+    return node != null && node !== false && node !== '';
+  };
 
   function setOpen(next: boolean) {
     if (!next) keyboardOpenedAt.current = Number.NEGATIVE_INFINITY;
@@ -128,7 +131,13 @@ export function ContextMenu({
     }
     const element = event.target instanceof Element ? event.target : null;
     if (!offersMenu(element)) {
+      // Where no menu is offered, the browser keeps its own. Base UI's trigger also cancels every
+      // contextmenu event inside the region from a listener on the document, so the event stops
+      // here, before it leaves React's root. Listeners of the application's own on the document
+      // don't see it either. Base UI's -webkit-touch-callout: none still applies to the whole
+      // region, so a long press there shows no callout on iOS.
       event.preventBaseUIHandler?.();
+      event.stopPropagation();
       return;
     }
     setTarget(element);

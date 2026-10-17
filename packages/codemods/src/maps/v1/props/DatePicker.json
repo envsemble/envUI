@@ -43,6 +43,12 @@
           },
           "false": {}
         }
+      },
+      "className": {
+        "report": "DatePicker's className now goes to the root element, not the trigger: check styles that targeted the trigger, which `.env-date-picker-trigger` inside the root selects."
+      },
+      "style": {
+        "report": "DatePicker's style now goes to the root element, not the trigger: move declarations meant for the trigger to a rule for `.env-date-picker-trigger` inside the root."
       }
     }
   }

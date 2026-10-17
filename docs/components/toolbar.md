@@ -38,7 +38,7 @@ components:
 
 A toolbar holds the controls for one subject, such as an editor's formatting, in a row or a column. It is one tab stop: <kbd>Tab</kbd> reaches its current control, and the arrow keys move between its controls, as the APG toolbar pattern describes. It is built on Base UI's Toolbar.
 
-`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path.
+`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path. The default stays in the toolbar: the buttons of a popover, menu or dialog opened from it take their own.
 
 ```tsx example=FormattingToolbar
 

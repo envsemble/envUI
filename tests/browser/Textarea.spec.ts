@@ -54,6 +54,8 @@ test('the resize edge is a named separator that the arrow keys and Home move', a
   await expect(edge).toHaveAttribute('aria-description', /Up and Down arrows/);
   const before = (await field.boundingBox())!.height;
   await expect(edge).toHaveAttribute('aria-valuenow', String(Math.round(before)));
+  // Without a CSS maximum height, the separator still has a finite maximum above its value.
+  expect(Number(await edge.getAttribute('aria-valuemax'))).toBeGreaterThan(before * 10);
   await edge.focus();
   await page.keyboard.press('ArrowDown');
   await expect.poll(async () => (await field.boundingBox())!.height).toBeGreaterThan(before);

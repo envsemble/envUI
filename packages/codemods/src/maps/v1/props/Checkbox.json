@@ -1,0 +1,20 @@
+{
+  "@envsemble/envui": {
+    "Checkbox": {
+      "className": {
+        "report": "Checkbox's className now goes to the root element, not the input: check styles that targeted the input, which `.env-checkbox-input` inside the root selects."
+      },
+      "style": {
+        "report": "Checkbox's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-checkbox-input` inside the root."
+      }
+    },
+    "Switch": {
+      "className": {
+        "report": "Switch's className now goes to the root element, not the input: check styles that targeted the input, which `.env-switch-input` inside the root selects."
+      },
+      "style": {
+        "report": "Switch's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-switch-input` inside the root."
+      }
+    }
+  }
+}

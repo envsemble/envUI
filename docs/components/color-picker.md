@@ -111,7 +111,7 @@ A color picker chooses one opaque color in three ways that stay in step: a color
 
 ### envUI provides
 
-- A group named by `label`, around the area and the slider, sliders named "Color" and "Hue" whose values say the saturation and brightness, and the HEX field named after the label, such as "Accent color HEX". Every one of these strings comes from EnvUIProvider's `messages.colorPicker`, and the percentages follow its locale.
+- A group named by `label`, around the area and the slider, sliders named after the label, such as "Accent color saturation and brightness" and "Accent color hue", whose values say the saturation and brightness and the hue in degrees, and the HEX field named after the label, such as "Accent color HEX". Every one of these strings comes from EnvUIProvider's `messages.colorPicker`, and the percentages follow its locale.
 - The colors run left to right in every text direction, as in a picture, and so do the arrow keys.
 - The description and the error linked to the field, `aria-invalid` and the form's validity while a draft is invalid, and a status that announces invalid and discarded drafts.
 - A focus outline on the area and the slider, and the shared field's focus.
@@ -151,6 +151,6 @@ ColorSwatch shows each label's color before its name, with the value written bes
 
 ## Changelog
 
-- **1.0.0**: The color area and the hue are envUI's own, the hue on Base UI's Slider, so the package no longer depends on react-colorful and its `.react-colorful` classes are gone. Their names and the area's value text, and the HEX field's labels, description and messages, come from EnvUIProvider's `messages`, and the percentages follow its locale. The area moves by 1 % per arrow key, 10 % with Shift. `hint` is `description`, which the `v1-props` codemod writes, and `ref` reaches the HEX field.
+- **1.0.0**: The color area and the hue are envUI's own, the hue on Base UI's Slider, so the package no longer depends on react-colorful and its `.react-colorful` classes are gone. Their names, after the picker's label, the area's value text, the hue's in degrees, and the HEX field's labels, description and messages, come from EnvUIProvider's `messages`, and the percentages follow its locale. The area moves by 1 % per arrow key, 10 % with Shift. `hint` is `description`, which the `v1-props` codemod writes, and `ref` reaches the HEX field.
 - **0.7.0**: ColorSwatch.
 - **0.1.0**: ColorPicker, with a color area, a hue slider and a HEX field.

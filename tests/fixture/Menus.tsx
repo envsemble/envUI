@@ -20,6 +20,15 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
       <ContextMenu
         aria-label="Document actions"
         content={(target) => {
+          // A field keeps the browser's menu: content that renders nothing, false from a condition
+          // or an empty string, offers none.
+          const field = target?.closest('[data-no-menu]');
+          if (field) {
+            const editable = field.getAttribute('data-no-menu') === 'editable';
+            return field instanceof HTMLInputElement
+              ? editable && <Menu.Item onClick={() => setLog('Edit note')}>Edit note</Menu.Item>
+              : '';
+          }
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
@@ -49,6 +58,8 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
             </button>
           ))}
           <p>Empty space</p>
+          <input aria-label={`Note ${theme}`} data-no-menu="" defaultValue="Draft" />
+          <span data-no-menu="">Plain text</span>
         </div>
       </ContextMenu>
       <Menu.Root

@@ -29,6 +29,9 @@ function measureTextarea(input: HTMLTextAreaElement): Metrics {
   };
 }
 
+/** The lines a text area without a CSS maximum height can be resized to. */
+const practicalMaximumLines = 500;
+
 const unmeasured: Metrics = {
   height: 0,
   minimumHeight: 0,
@@ -105,11 +108,16 @@ export function TextareaResizeEdge({
   }
 
   const bounded = Number.isFinite(metrics.maximumHeight);
+  // A separator needs a finite maximum: without a CSS one, a practical maximum of a few hundred
+  // lines, or the current height where it is taller.
+  const maximum = bounded
+    ? metrics.maximumHeight
+    : Math.max(metrics.height, metrics.minimumHeight, metrics.lineHeight * practicalMaximumLines);
   const { handleProps } = useResize({
     axis: 'block',
     value: metrics.height,
     min: metrics.minimumHeight,
-    max: metrics.maximumHeight,
+    max: maximum,
     step: metrics.lineHeight,
     largeStep: metrics.lineHeight * 5,
     onChange: (next) => resizeTo(next),
@@ -119,12 +127,11 @@ export function TextareaResizeEdge({
   return (
     <div
       {...handleProps}
-      // Without a maximum height, End has no height to go to.
+      // Without a maximum height, End has no height to go to: the practical maximum is not one.
       onKeyDown={(event) => {
         if (event.key === 'End' && !bounded) return;
         handleProps.onKeyDown(event);
       }}
-      aria-valuemax={bounded ? handleProps['aria-valuemax'] : undefined}
       className="env-textarea-resize-edge"
       aria-label={messages.resize}
       aria-controls={inputId}

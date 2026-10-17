@@ -550,15 +550,22 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               className="env-combobox-trigger"
               // The field's label names the trigger; without one, the field's aria-label does.
               {...(label != null ? { 'aria-labelledby': labelId } : {})}
-              render={
+              // Base UI's Field gives it the field's description and error, which the input
+              // already announces; the chevron leaves them out.
+              render={({
+                'aria-describedby': _describedBy,
+                'aria-invalid': _invalid,
+                ...triggerProps
+              }) => (
                 <IconButton
+                  {...triggerProps}
                   variant="ghost"
                   icon={<ChevronRight />}
                   {...({ 'aria-label': label != null ? undefined : ariaLabel } as {
                     'aria-label': string;
                   })}
                 />
-              }
+              )}
             />
           </span>
         </FieldFrame>

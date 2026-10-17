@@ -70,6 +70,35 @@ test('breadcrumbs link earlier levels and mark the current page', async ({ page 
   await expect(navigation.getByText('Search')).toHaveCSS('cursor', 'auto');
 });
 
+test('a focused breadcrumb label that comes to fit keeps focus until it loses it', async ({
+  page,
+}) => {
+  await page.goto(dataFixture);
+  const bar = page.getByTestId('breadcrumb-bar-light');
+  const current = bar.locator('[aria-current="page"]');
+  await expect(current).toHaveAttribute('tabindex', '0');
+  await current.focus();
+  // The bar widens, as with the window, until the label fits.
+  await bar.evaluate((element) => (element.style.inlineSize = '60rem'));
+  await expect
+    .poll(() =>
+      current
+        .locator('.env-breadcrumbs-label')
+        .evaluate((label) => label.scrollWidth > label.clientWidth),
+    )
+    .toBe(false);
+  // The browser moves focus off an element that can no longer take it at its next rendering
+  // update, so the check waits past two frames.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect(current).toBeFocused();
+  await expect(current).toHaveAttribute('tabindex', '0');
+  // Once focus moves on, the label leaves the tab order.
+  await bar.getByRole('button', { name: 'More actions' }).focus();
+  await expect(current).not.toHaveAttribute('tabindex');
+});
+
 test('a narrow breadcrumb trail wraps by default', async ({ page }) => {
   await page.goto(dataFixture);
   for (const theme of ['light', 'dark']) {

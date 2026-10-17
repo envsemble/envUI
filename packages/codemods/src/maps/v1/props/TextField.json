@@ -42,6 +42,12 @@
             }
           }
         }
+      },
+      "className": {
+        "report": "TextField's className now goes to the root element, not the input: check styles that targeted the input, which `.env-text-field-input` inside the root selects."
+      },
+      "style": {
+        "report": "TextField's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-text-field-input` inside the root."
       }
     },
     "SearchField": {
@@ -82,6 +88,12 @@
             }
           }
         }
+      },
+      "className": {
+        "report": "SearchField's className now goes to the root element, not the input: check styles that targeted the input, which `.env-text-field-input` inside the root selects."
+      },
+      "style": {
+        "report": "SearchField's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-text-field-input` inside the root."
       }
     },
     "Textarea": {
@@ -109,6 +121,12 @@
             }
           }
         }
+      },
+      "className": {
+        "report": "Textarea's className now goes to the root element, not the textarea: check styles that targeted the textarea, which `.env-text-field-input` inside the root selects."
+      },
+      "style": {
+        "report": "Textarea's style now goes to the root element, not the textarea: move declarations meant for the textarea to a rule for `.env-text-field-input` inside the root."
       }
     }
   },
@@ -138,6 +156,12 @@
             }
           }
         }
+      },
+      "className": {
+        "report": "MarkdownEditor's className now goes to the root element, not the textarea: check styles that targeted the textarea, which `.env-markdown-source` inside the root selects."
+      },
+      "style": {
+        "report": "MarkdownEditor's style now goes to the root element, not the textarea: move declarations meant for the textarea to a rule for `.env-markdown-source` inside the root."
       }
     }
   }

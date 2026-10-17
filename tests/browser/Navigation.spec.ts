@@ -122,14 +122,14 @@ test('an item named by its label says a count as new, and other end content as i
     scope
       .locator('.env-nav-list-item')
       .evaluateAll((items) => items.map((item) => item.getAttribute('aria-label')));
-  await expect
-    .poll(names)
-    .toEqual([
-      'Count, 3 new',
-      'Number, 7 new',
-      'Unread, 4 unread',
-      'Labs, Beta',
-      'Inbox, New',
-      'Reports, Recently updated',
-    ]);
+  await expect.poll(names).toEqual([
+    'Count, 3 new',
+    'Number, 7 new',
+    // A capped count reads as it shows.
+    'Capped, 99+ new',
+    'Unread, 4 unread',
+    'Labs, Beta',
+    'Inbox, New',
+    'Reports, Recently updated',
+  ]);
 });
