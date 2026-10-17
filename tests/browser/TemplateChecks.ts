@@ -107,9 +107,13 @@ const signIn: TemplateCheck[] = [
   {
     name: 'Sign in stays enabled and pending, and wrong credentials move focus to an unannounced Alert',
     async run(page, { reload }) {
-      // The sample's service answers after a timer, which the test runs on.
+      // The sample's service answers after a timer, which the test runs on. An installed clock
+      // still runs on its own, so it is stopped too: the answer comes only when the test runs the
+      // timer, however long the steps before take. Nothing waits on a timer yet, so the second it
+      // skips to stop changes nothing. It runs again at the end.
       await page.clock.install();
       await reload();
+      await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
       const email = page.getByRole('textbox', { name: 'Email address' });
       const password = page.getByRole('textbox', { name: 'Password' });
       const button = page.getByRole('button', { name: 'Sign in', exact: true });
@@ -137,6 +141,8 @@ const signIn: TemplateCheck[] = [
         'Signed in as alex.morgan@example.com.',
       );
       await expect(page.getByText('Your email address or password is wrong')).toHaveCount(0);
+      // The page loads again for the next viewport, which needs a running clock.
+      await page.clock.resume();
     },
   },
 ];
