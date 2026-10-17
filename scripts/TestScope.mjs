@@ -801,6 +801,8 @@ export function selectScope(paths, index) {
       continue;
     }
 
+    // The setup page's router recipes are type-checked by a unit test, tests/RouterRecipes.test.mjs.
+    if (path === 'docs/setup.md') scope.unit = true;
     // Documentation and catalogue pages.
     const page = pageOfFile(path, index.pages);
     if (page) {

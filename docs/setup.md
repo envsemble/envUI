@@ -111,22 +111,133 @@ An application that renders `<html>` with React, as server-rendering frameworks 
 
 When the application's contrast is fixed, such as an application that is always high contrast, pass it to both: `contrast: 'high'` to the bootstrap script as well as `contrast="high"` to the provider, so the root has it from the first paint. The script marks what it writes with `data-env-contrast-source`, such as `envui:high`, as the provider marks the contrast it writes, and a provider treats a marked contrast as its own: once the application starts, the provider's contrast replaces it, and a provider at `system` removes it, also when it mounts in place of another, such as a provider keyed by the signed-in user. The marker holds the value written, so a contrast the application writes over envUI's stays. So when the contrast is a setting that the application stores, the bootstrap script, built once, cannot know it: leave `contrast` out of the script, and the provider applies the stored setting when the application starts.
 
-### Router links
+## Connect your router
 
-Destinations in envUI render native anchors. Register the router's link once with `LinkProvider` so Button, Link, NavList.Item, Card, Pager links and Menu.Item destinations navigate on the client. The component receives native anchor props with a string `href`:
+Destinations in envUI render native anchors: Button and Link with `href`, NavList.Item, Card, Pager links, Breadcrumbs and Menu.Item destinations. Register the router's link once with `LinkProvider`, around the application, and they navigate on the client. The component receives native anchor props with a string `href`, and must render an anchor and pass the props and the ref on:
 
 ```tsx
-import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
-import { Link } from '@tanstack/react-router';
-
-function RouterLink({ href, ...props }: LinkComponentProps) {
-  return href.startsWith('/') ? <Link to={href} {...props} /> : <a href={href} {...props} />;
-}
-
-<LinkProvider component={RouterLink}>{app}</LinkProvider>;
+<LinkProvider component={RouterLink}>{app}</LinkProvider>
 ```
 
-The application still decides which destination is selected.
+Each recipe below is a client module of the application's own, with its `RouterLink` and a `RouterLinks` provider to render around the application; `tests/RouterRecipes.test.mjs` in envUI type-checks them against `LinkComponentProps`.
+
+### TanStack Router
+
+Paths inside the application go through the router's `Link`; other addresses, such as another site or `mailto:`, stay plain anchors.
+
+```tsx recipe
+import type { ReactNode } from 'react';
+import { Link } from '@tanstack/react-router';
+import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
+
+function RouterLink({ href, ...props }: LinkComponentProps) {
+  if (href.startsWith('/') && !href.startsWith('//')) return <Link to={href} {...props} />;
+  return <a href={href} {...props} />;
+}
+
+export function RouterLinks({ children }: { children: ReactNode }) {
+  return <LinkProvider component={RouterLink}>{children}</LinkProvider>;
+}
+```
+
+### React Router
+
+React Router's `Link` renders addresses outside the application as plain anchors itself.
+
+```tsx recipe
+import type { ReactNode } from 'react';
+import { Link } from 'react-router';
+import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
+
+function RouterLink({ href, ...props }: LinkComponentProps) {
+  return <Link to={href} {...props} />;
+}
+
+export function RouterLinks({ children }: { children: ReactNode }) {
+  return <LinkProvider component={RouterLink}>{children}</LinkProvider>;
+}
+```
+
+### Next.js App Router
+
+`next/link` takes the anchor's props and prefetches the destinations in view. The provider is a client component, so it goes in a module with `'use client'`, which the root layout renders around its children.
+
+```tsx recipe
+'use client';
+
+import type { ReactNode } from 'react';
+import NextLink from 'next/link';
+import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
+
+function RouterLink(props: LinkComponentProps) {
+  return <NextLink {...props} />;
+}
+
+export function RouterLinks({ children }: { children: ReactNode }) {
+  return <LinkProvider component={RouterLink}>{children}</LinkProvider>;
+}
+```
+
+### A router on the History API
+
+A router of the application's own, on `history.pushState`, takes a plain press on a link to one of its pages and lets the browser have the rest: a press with a modifier key or another button, which opens a new tab or window, a link with a `target` or `download`, and an address on another origin. Here `navigate` is the router's own function, which pushes the address and shows its page.
+
+```tsx recipe
+import type { ReactNode } from 'react';
+import { LinkProvider, type LinkComponentProps } from '@envsemble/envui';
+
+declare function navigate(path: string): void;
+
+function HistoryLink({ onClick, ...props }: LinkComponentProps) {
+  return (
+    <a
+      {...props}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if ((props.target && props.target !== '_self') || props.download !== undefined) return;
+        const url = new URL(props.href, location.href);
+        if (url.origin !== location.origin) return;
+        event.preventDefault();
+        navigate(url.pathname + url.search + url.hash);
+      }}
+    />
+  );
+}
+
+export function RouterLinks({ children }: { children: ReactNode }) {
+  return <LinkProvider component={HistoryLink}>{children}</LinkProvider>;
+}
+```
+
+### The current page and focus
+
+The application decides which destination is current: read the router's location and pass `selected` to the NavList.Item it shows, here with React Router's `useLocation`. A destination that has pages under it stays selected on them.
+
+```tsx recipe
+import { useLocation } from 'react-router';
+import { NavList } from '@envsemble/envui';
+
+export function ProjectNavigation() {
+  const { pathname } = useLocation();
+  const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
+  return (
+    <nav aria-label="Projects">
+      <NavList.Root>
+        <NavList.Item href="/projects" selected={current('/projects')}>
+          Projects
+        </NavList.Item>
+        <NavList.Item href="/people" selected={current('/people')}>
+          People
+        </NavList.Item>
+      </NavList.Root>
+    </nav>
+  );
+}
+```
+
+A page that changes without a load leaves focus on the link that was pressed, and screen readers hear nothing of the new page. After a navigation, move focus to the page: to its `main` region or its `h1`, given `tabIndex={-1}` so it takes focus without becoming a tab stop, with `preventScroll` where the page restores its own scroll position. A link that only changes a view in place, such as a tab or a filter, keeps focus where it is.
 
 ## Locale, strings and direction
 
