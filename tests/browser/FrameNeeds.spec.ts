@@ -244,10 +244,17 @@ test.describe("Need: a phone's top bar", () => {
     // The account menu shows as an avatar named by the person.
     await expect(header.getByRole('button', { name: 'Priya Shah' })).toBeVisible();
     const navigationTrigger = header.getByRole('button', { name: 'Open navigation' });
-    // Opened from the keyboard, as a press doesn't focus a button in WebKit.
-    await navigationTrigger.focus();
-    await page.keyboard.press('Enter');
     const navigation = page.getByRole('dialog', { name: 'Primary' });
+    // Opened by a press, Escape returns focus to the trigger, also in WebKit, where a press
+    // focuses no button, and with focus elsewhere before.
+    await page.getByRole('button', { name: 'Page action' }).focus();
+    await navigationTrigger.click();
+    await expect.poll(async () => Math.round((await box(navigation)).x)).toBe(0);
+    await page.keyboard.press('Escape');
+    await expect(navigation).toBeHidden();
+    await expect(navigationTrigger).toBeFocused();
+    // And opened from the keyboard.
+    await page.keyboard.press('Enter');
     await expect.poll(async () => Math.round((await box(navigation)).x)).toBe(0);
     // Focus stays inside while it is open.
     for (let step = 0; step < 12; step++) await page.keyboard.press('Tab');

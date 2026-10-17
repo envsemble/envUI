@@ -344,14 +344,21 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   }
   await expect(projectName).toHaveValue('Winter release');
   const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
-  // Opened from the keyboard, as a press doesn't focus a button in WebKit; focus returns to it.
-  await navigationTrigger.focus();
-  await page.keyboard.press('Enter');
   const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
-  await expect(mobileNavigation).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(mobileNavigation).toHaveCount(0);
-  await expect(navigationTrigger).toBeFocused();
+  // Opened by a press or from the keyboard, Escape returns focus to the trigger, also in WebKit,
+  // where a press focuses no button, and with focus elsewhere before.
+  for (const by of ['press', 'keyboard'] as const) {
+    await projectName.focus();
+    if (by === 'press') await navigationTrigger.click();
+    else {
+      await navigationTrigger.focus();
+      await page.keyboard.press('Enter');
+    }
+    await expect(mobileNavigation).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(mobileNavigation).toHaveCount(0);
+    await expect(navigationTrigger, by).toBeFocused();
+  }
   await navigationTrigger.click();
   await mobileNavigation.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
