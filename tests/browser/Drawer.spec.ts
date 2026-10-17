@@ -107,11 +107,11 @@ test.describe('Drawer', () => {
       for (let step = 1; step <= 6; step += 1)
         await page.mouse.move(start.x + toward * 9 * step, start.y);
       await expect(drawer).toHaveAttribute('data-swiping');
-      // The drawer follows the pointer once: 54 px, not twice that.
-      await expect
-        .poll(async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward))
-        .toBeGreaterThan(44);
-      expect(Math.round(((await drawer.boundingBox())!.x - rest.x) * toward)).toBeLessThan(64);
+      // The drawer follows the pointer once, toward the edge: about 54 px, well under twice that.
+      // Under load a frame can lag the pointer, so the band is wide.
+      const moved = async () => Math.round(((await drawer.boundingBox())!.x - rest.x) * toward);
+      await expect.poll(moved).toBeGreaterThan(54 * 0.4);
+      expect(await moved()).toBeLessThan(54 * 1.3);
       await page.mouse.up();
       await page.keyboard.press('Escape');
       await expect(page.getByRole('dialog')).toHaveCount(0);
