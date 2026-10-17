@@ -183,7 +183,8 @@ export function applyPropRules(items, rules, where, item, report) {
     index += added.length - 1;
     changed = true;
     const message = replacement.report ?? (replacement.reportAlways ? rule.report : undefined);
-    if (message) report(node, `${at}: ${message}`);
+    // A value's report can hold only where the element sets none of `unless`, such as actions.
+    if (message && !(replacement.unless ?? []).some(own)) report(node, `${at}: ${message}`);
   }
   return changed;
 }
