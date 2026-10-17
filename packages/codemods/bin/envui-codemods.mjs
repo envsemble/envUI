@@ -32,8 +32,8 @@ Options:
   --list                   List the transforms.
   -h, --help               Show this help.
 
-Paths default to the current folder. Run v1-names, v1-structure, v1-render, v1-props, then
-v1-classes, then type-check.`;
+Paths default to the current folder. Run v1-names, v1-app-shell, v1-structure, v1-render, v1-props,
+then v1-classes, then type-check.`;
 
 /** Paths relative to the working folder, with forward slashes, for ignore patterns. */
 const portable = (path) =>

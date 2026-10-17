@@ -44,7 +44,7 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 
 1. Commit first: the codemods write files in place.
 2. Run `npx envui-codemods v1-names src`.
-3. Run `npx envui-codemods v1-structure src`, then `npx envui-codemods v1-render src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
+3. Run `npx envui-codemods v1-app-shell src`, `npx envui-codemods v1-structure src`, then `npx envui-codemods v1-render src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
 4. Run `npx envui-codemods v1-props src`.
 5. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
 6. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
@@ -100,6 +100,18 @@ A 1.0 value, such as `density="sm"` on a Table or `size="lg"` on Tabs, is left a
 ## v1-render
 
 Replaces `as` with `render` on the components the map's `render` section lists (Text, Stack and Surface): `<Text as="h2">` becomes `<Text render={<h2 />}>`. It reports an expression, such as `as={level}`, which `render` takes as an element instead, and an element that already sets `render`. Beside a spread, as in `<Text {...heading} as="h2">`, `as` still becomes `render` and is reported, since the spread may set `as` or `render` too. Only the attribute's text changes, so the file keeps its layout.
+
+## v1-app-shell
+
+Rewrites 0.x's monolithic `AppShell` (after `v1-names` names it `AppShell.Root`) and `AppShellSkeleton` into the frame's parts, which the map's `structure` section marks with `"transform": "v1-app-shell"`. The rewrite is one-to-many, so it has its own transform:
+
+- `<AppShell.Root …>{page}</AppShell.Root>` gets `<AppShell.SkipLinks />`, a `<Sidebar.Root label={navigationLabel}>` with `<Sidebar.Content><NavList.Root>{navigation}</NavList.Root></Sidebar.Content>` and, from `sidebarContent`, a `<Sidebar.Content fill>`, an `<AppShell.Header end={actions}>{title}</AppShell.Header>` and `<AppShell.Main>{page}</AppShell.Main>`.
+- `brand` is a `<SidebarTrigger mark>` with `expandLabel` and `collapseLabel`, followed by `context`: in `Sidebar.Header` for the split topbar, in the header's `start` for `topbar="full"`, which becomes `headerSpan="full"`. A `topbar` that is an expression is reported.
+- `storageKey` is `persist` (reported once: the stored format changes); `defaultCollapsed`, `collapsed` and `onCollapsedChange` become `defaultSidebarOpen`, `sidebarOpen` and `onSidebarOpenChange`, negated; `resizable` and `resizeLabel` move to the sidebar, and `sidebarMinWidth` and `sidebarMaxWidth` become its `minWidth` and `maxWidth` in rem, a literal divided by 16 and an expression with `/ 16`, reported. `sidebarWidth` and `onSidebarWidthChange` stay on the root and are reported for their unit.
+- `AppShellSkeleton` becomes the same parts in a `LoadingState` with its `label`, with `<NavList.Skeleton items={navigationItems} />` in `Sidebar.Content` and `aria-busy` on the root.
+- `const { closeNarrowSidebar } = useAppShell()` becomes `const { dismiss: closeNarrowSidebar } = useSidebar()`; any other use of `closeNarrowSidebar` is reported.
+
+An element that spreads props is reported, and one already in its 1.0 form is left alone. Run your formatter afterwards: the new elements are printed anew.
 
 ## v1-structure
 

@@ -238,7 +238,8 @@ export default function transform(file, api, options = {}) {
     const opening = path.get('openingElement');
     const component = componentOf(opening);
     const rule = component && component.entry.structure.get(component.name);
-    if (!rule) continue;
+    // An entry with a transform of its own, such as AppShell's, is that transform's.
+    if (!rule || rule.transform) continue;
     const { attributes } = path.node.openingElement;
     const where = component.name;
     // An element with children where every old form takes content props, such as a 1.0

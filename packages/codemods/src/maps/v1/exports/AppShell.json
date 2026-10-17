@@ -1,3 +1,6 @@
 {
-  "@envsemble/envui": {}
+  "@envsemble/envui": {
+    "AppShell": "AppShell.Root",
+    "AppShellProps": "AppShell.RootProps"
+  }
 }
