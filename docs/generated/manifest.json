@@ -2655,7 +2655,13 @@
           "description": "The same parts with NavList.Skeleton and the same `persist` key stand in for the frame in a LoadingState until the application's data arrives.",
           "file": "docs/examples/app-shell/LoadingFrame.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Sidebar",
@@ -2758,7 +2764,11 @@
           "description": "A settings page's sub-navigation in a Sidebar.Provider, with its trigger in the page's own header.",
           "file": "docs/examples/sidebar/Standalone.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "WindowFrame",
@@ -2816,9 +2826,7 @@
         }
       ],
       "usedIn": {
-        "patterns": [
-          "loading"
-        ],
+        "patterns": [],
         "templates": []
       }
     },
@@ -6379,8 +6387,8 @@
           "use": "EmptyState"
         },
         {
-          "text": "The application frame itself before the first page loads.",
-          "use": "AppShellSkeleton"
+          "text": "The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.",
+          "use": "AppShell"
         }
       ],
       "composes": [
