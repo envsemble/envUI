@@ -16,6 +16,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
 
+- [Write a pattern or template page](pattern-pages.md) — The frontmatter, sections and files of pattern and template pages, and the rules for template screens.
+
 ## Foundations
 
 - [Colors & themes](foundations/colors.md) — Semantic colors that carry the same purpose across light and dark themes.
@@ -115,4 +117,4 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Patterns
 
-- [Loading](patterns/loading.md) — Choose between the page loading bar, skeletons, spinners, pending buttons and progress.
+- [Loading](patterns/loading.md)

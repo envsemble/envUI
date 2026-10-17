@@ -3,7 +3,8 @@
  * reviewed as image diffs. Every catalogue page's preview specimens and forced interaction states
  * are captured in both themes, and the pages of highContrastPages (CatalogueThemes.ts) in high
  * contrast as well; so are the density specimens of the test fixture, and a few lists, a tooltip and
- * the toasts captured open.
+ * the toasts captured open. Pattern pages give their live examples in both themes, and each
+ * template screen is captured alone, at its frame route, in both scales.
  *
  * Fonts and anti-aliasing differ between systems, so the baseline renders only in the Linux
  * Playwright image: `npm run test:visual` checks it, `npm run test:visual:update` rewrites it.
@@ -30,7 +31,11 @@ import {
   type CatalogueTheme,
 } from '../browser/CatalogueThemes';
 import { densitySectionNames } from '../fixture/DensitySections';
-import { referencePages } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import {
+  guidePages,
+  referencePages,
+} from '../../apps/catalogue/src/navigation/DocumentationRoutes';
+import { templateScales } from '../../apps/catalogue/src/template/TemplateViewports';
 
 /** The density fixture's themes, which its boundaries take from the address. */
 const densityThemes = ['light', 'dark'] as const;
@@ -200,8 +205,13 @@ const openLists: OpenList[] = [
  * `npm run check:affected` sets it for a change. `npm run test:visual` takes every image.
  */
 const only = process.env.ENVUI_PAGES?.split(',').filter(Boolean);
+/** Pattern and template pages, which have one view. */
+const patternPages = guidePages.filter((page) => page.section === 'Patterns');
+const templatePages = guidePages.filter((page) => page.section === 'Templates');
 const unknown = only?.filter(
-  (path) => path !== 'density' && !referencePages.some((page) => page.path === path),
+  (path) =>
+    path !== 'density' &&
+    ![...referencePages, ...patternPages, ...templatePages].some((page) => page.path === path),
 );
 if (unknown?.length)
   throw new Error(`ENVUI_PAGES names pages the catalogue does not have: ${unknown.join(', ')}`);
@@ -211,6 +221,22 @@ const listsTaken = openLists.filter((list) =>
   selected(list.route.split('/').slice(0, 2).join('/')),
 );
 const densityTaken = selected('density') ? densitySectionNames : [];
+const patternsTaken = patternPages.filter(({ path }) => selected(path));
+/** Every template screen of the selected template pages, as its page and file name. */
+const screensTaken = templatePages
+  .filter(({ path }) => selected(path))
+  .flatMap(({ document }) =>
+    (document?.sections ?? []).flatMap((section) =>
+      section.blocks.flatMap((block) =>
+        block.kind === 'template' ? [{ page: document!.id, name: block.name }] : [],
+      ),
+    ),
+  );
+/** The viewports a template screen is captured at, and the themes at each. */
+const screenShots = [
+  { viewport: 'desktop', width: 1280, height: 800, themes: ['light', 'dark'] },
+  { viewport: 'phone', width: 390, height: 844, themes: ['light'] },
+] as const;
 
 test.skip(
   process.env.ENVUI_VISUAL !== 'docker',
@@ -443,6 +469,60 @@ test.describe('catalogue', () => {
   }
 });
 
+test.describe('patterns', () => {
+  for (const { path, title, document } of patternsTaken) {
+    test(`${title} (${path})`, async ({ page }, testInfo) => {
+      const id = document!.id;
+      const directory = join(snapshots, 'patterns', id);
+      const recorded = contents(directory);
+      const taken = new Set<string>();
+      await page.clock.setFixedTime(now);
+      await page.goto(`${catalogueUrl}/#/${path}`);
+      await page.locator('.docs-template').waitFor();
+      for (const theme of themesFor(path)) {
+        await setTheme(page, theme);
+        await settle(page);
+        const name = namer();
+        // Example files, rendered live, are named after their file.
+        for (const example of await page.locator('.docs-live-example[data-example]').all()) {
+          const file = `${theme.name}-${name(`example-${slug((await example.getAttribute('data-example')) ?? '')}`)}.png`;
+          taken.add(file);
+          await capture(example, ['patterns', id, file]);
+        }
+      }
+      expect(taken.size, 'The page shows its examples').toBeGreaterThan(0);
+      reconcile(testInfo, directory, recorded, taken);
+    });
+  }
+});
+
+test.describe('templates', () => {
+  for (const { page: id, name } of screensTaken) {
+    test(`${id}/${name}`, async ({ page }, testInfo) => {
+      const directory = join(snapshots, 'templates', id);
+      const recorded = contents(directory).filter((file) => file.endsWith(`-${name}.png`));
+      const taken = new Set<string>();
+      await page.clock.setFixedTime(now);
+      for (const shot of screenShots) {
+        await page.setViewportSize({ width: shot.width, height: shot.height });
+        for (const theme of shot.themes)
+          for (const { value: scale } of templateScales) {
+            await page.goto(
+              `${catalogueUrl}/?${new URLSearchParams({ frame: `${id}/${name}`, scale, theme })}`,
+            );
+            await page.locator('[data-template-frame]').waitFor();
+            await settle(page);
+            const file = `${theme}-${scale}-${shot.viewport}-${name}.png`;
+            taken.add(file);
+            // The viewport, not the full page: what a reader sees first.
+            await expect.soft(page).toHaveScreenshot(['templates', id, file]);
+          }
+      }
+      reconcile(testInfo, directory, recorded, taken);
+    });
+  }
+});
+
 test.describe('density', () => {
   // The mixed desktop view is 80 rem wide; the evidence it reproduces used the same viewport.
   test.use({ viewport: { width: 1440, height: 1000 } });
@@ -510,8 +590,10 @@ test.describe('open lists', () => {
 
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
 // eslint-disable-next-line no-empty-pattern
-test('every snapshot folder belongs to a catalogue page, a density section or an open list', async ({}, testInfo) => {
+test('every snapshot folder belongs to a catalogue, pattern or template page, a density section or an open list', async ({}, testInfo) => {
   const pages = new Set(referencePages.map(({ reference }) => reference.id));
+  const patterns = new Set(patternPages.map(({ document }) => document!.id));
+  const templates = new Set(templatePages.map(({ document }) => document!.id));
   const density = new Set(
     densitySectionNames.flatMap((section) =>
       densityThemes.map((theme) => `${theme}-${section}.png`),
@@ -530,9 +612,13 @@ test('every snapshot folder belongs to a catalogue page, a density section or an
   const unused = [
     ...stale(
       '',
-      (entry) => entry.isDirectory() && ['catalogue', 'density', 'open'].includes(entry.name),
+      (entry) =>
+        entry.isDirectory() &&
+        ['catalogue', 'density', 'open', 'patterns', 'templates'].includes(entry.name),
     ),
     ...stale('catalogue', (entry) => entry.isDirectory() && pages.has(entry.name)),
+    ...stale('patterns', (entry) => entry.isDirectory() && patterns.has(entry.name)),
+    ...stale('templates', (entry) => entry.isDirectory() && templates.has(entry.name)),
     ...stale('density', (entry) => entry.isFile() && density.has(entry.name)),
     ...stale('open', (entry) => entry.isFile() && open.has(entry.name)),
   ];

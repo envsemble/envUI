@@ -37,3 +37,31 @@
 .docs-template .env-markdown-table code {
   overflow-wrap: break-word;
 }
+
+/* A template's screen: frames of the frame route, each a nominal viewport scaled to the column. */
+.docs-template-frame-box {
+  min-inline-size: 0;
+}
+
+.docs-template-frame-viewport {
+  overflow: hidden;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-page);
+}
+
+.docs-template-frame {
+  display: block;
+  border: 0;
+  transform-origin: 0 0;
+}
+
+/* The Templates overview: one card per template. */
+.docs-template-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--env-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

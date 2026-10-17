@@ -9,7 +9,7 @@ The rule they all carry: **search envUI before writing any UI element; propose a
 | Path in `node_modules/@envsemble/envui/` | What it holds                                                                                                                                                          |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `docs/`                                  | These pages, with examples and props filled in; `docs/index.md` lists them.                                                                                            |
-| `docs/examples/<page>/<Name>.tsx`        | Every example as a file an application can copy.                                                                                                                       |
+| `docs/examples/<page>/<Name>.tsx`        | Every example and template screen as a file an application can copy.                                                                                                   |
 | `manifest.json`                          | The library as data: every component with its summary, aliases, when to use it and what instead, exports, props and examples.                                          |
 | `llms.txt`                               | The index of the documentation in the [llms.txt](https://llmstxt.org) format.                                                                                          |
 | `llms-full.txt`                          | Every page in one file, about 1 MB, for tools that split it into chunks or index it. Too large for an agent to read whole: read `docs/index.md` and the pages instead. |
@@ -27,7 +27,7 @@ npx --no envui agents
 
 `--no`, here and in every command that starts envui through npx, stops it from fetching an unrelated package called `envui` from the public registry when envUI isn't installed in the folder; in CI and without a terminal, npx would otherwise install it without asking.
 
-It writes a compressed index of envUI, under 8 KB, into `AGENTS.md` in the current folder, between `<!-- BEGIN envui -->` and `<!-- END envui -->`. The index carries the rule above, where the docs are, the entry points and every component page with its exports and the names people search for. Agents read `AGENTS.md` at the start of every task, so they see it without a tool call.
+It writes a compressed index of envUI, under 8 KB, into `AGENTS.md` in the current folder, between `<!-- BEGIN envui -->` and `<!-- END envui -->`. The index carries the rule above, where the docs are, the entry points, every component page with its exports and the names people search for, and the pattern, template and foundation pages; where there are templates, it says their sources are in `docs/examples/<template>/<Name>.tsx`, to copy and edit. Agents read `AGENTS.md` at the start of every task, so they see it without a tool call.
 
 - It keeps the rest of the file, replaces an earlier index and creates the file when it is missing. Running it again changes nothing.
 - The paths in it lead from the file's folder to the installed package, also when a workspace installs it in a folder above, such as `../../node_modules/@envsemble/envui/docs/`.
@@ -64,9 +64,11 @@ The server starts in the folder the client works in. Where a workspace installs 
 | `list_components` | Every component page with its exports, import path, status and summary, optionally by category or status.                                                       |
 | `get_component`   | A component or export by name, part or alias: when to use it, what to use instead, exports, examples, related pages and, with `docs`, its page.                 |
 | `get_props`       | The props of an export or part, with types, defaults and descriptions, or a function's signature.                                                               |
-| `get_example`     | A component's examples, or the source of one.                                                                                                                   |
-| `list_patterns`   | The patterns.                                                                                                                                                   |
-| `list_templates`  | The templates.                                                                                                                                                  |
+| `get_example`     | The examples of a component, pattern or template, or the source of one.                                                                                         |
+| `list_patterns`   | The patterns, with their intent, status and what they compose, optionally of one `intent`.                                                                      |
+| `get_pattern`     | A pattern by name, title or alias: when to use it, what to use or read instead, what it composes, its examples and, with `docs`, its page.                      |
+| `list_templates`  | The templates, with whether each renders inside the app frame and its files.                                                                                    |
+| `get_template`    | A template by name, title or alias, or with `file` the source of one of its screens to copy and edit, with where it renders.                                    |
 | `get_tokens`      | Tokens by words, name prefix or type, with their custom property and values per theme and scale; with `legacy`, the 0.7 names and the tokens that replace them. |
 
 `plan` and `search` rank by plain term matching over names, aliases, summaries and when-to-use text; no model is involved. So `plan` proposes candidates, not an answer: each comes with the words that matched and the part it answers, to confirm with `get_component` and `get_props`, and it gives no list of imports to paste. Words it reads as content, such as quoted labels, code or capitalized names envUI has no component for, come back under `ignored`. `plan` reads each part of a description in the context of the whole: a part that a component already chosen also matches, such as the toggle of "a collapsible sidebar with a toggle", stays with it. Words such as page, screen, view and flow name structure, which templates and patterns answer. A part that nothing matches comes back under `uncovered`.
@@ -76,9 +78,11 @@ The server starts in the folder the client works in. Where a workspace installs 
 `manifest.json` has `schemaVersion` 1. Its paths are relative to the package root.
 
 - `package`, `version` and `rule`; `files`, the other agent files; `imports`, the entry points, the stylesheet and the icon path.
-- `categories`, the component groups in the order of the index.
-- `components`: one entry per component page, with `name`, `page`, `doc`, `category`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }`, `use` naming the export to use instead), `related` pages, the names of its `exports` and its `examples`, each with `name`, `title`, `description` and `file`, its source in `docs/examples/`.
-- `guides`, `foundations`, `patterns` and `templates`: the other pages, with `name`, `title`, `summary`, `doc`, the exports they document and the pages they link to.
+- `categories`, the component groups in the order of the index, and `intents`, the groups of the patterns: what people are doing.
+- `components`: one entry per component page, with `name`, `page`, `doc`, `category`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }`, `use` naming the export to use instead), `related` pages, the names of its `exports` and its `examples`, each with `name`, `title`, `description` and `file`, its source in `docs/examples/`, and `usedIn`, the `patterns` and `templates` that compose its exports.
+- `patterns`: one entry per pattern page, with `name`, `title`, `intent`, `status`, `since`, `summary`, `aliases`, `useWhen`, `avoidWhen` (each `{ text, use }` or `{ text, see }`, `see` naming the page to read instead), `composes`, the exports it combines, `related`, `doc` and its `examples`.
+- `templates`: the same without `intent`, with `frame` (`app`, inside the app frame template's main region, or `none`, a whole screen), the `scales` it is shown in, and its `files`, the screens to copy, each with its `frame` and `primary` for the page's main one; `examples` holds smaller snippets. A template is source to copy into the application and edit, not an export.
+- `guides` and `foundations`: the other pages, with `name`, `title`, `summary`, `doc`, the exports they document and the pages they link to.
 - `exports`: every runtime export by name, with its `kind` (component, namespace or function), `import`, `description`, the `page` and `doc` that document it, the `aliases` its page gives it when it has no component page of its own, and for a component its `props` and `native`, the elements whose native props it also accepts; a namespace lists its `parts`, which are exports too, such as `Menu.Item`, and a function its `signature`.
 - `tokens`: `themes`, `scales`, the current tokens in `items` (`id`, `cssVariable`, `type`, `description`, a `value` or `values` per theme, and the compact value under `compact`) and, in `legacy`, each 0.7 name with its `type` and the token to `use` instead.
 

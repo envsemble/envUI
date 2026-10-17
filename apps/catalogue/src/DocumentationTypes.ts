@@ -40,6 +40,11 @@ export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
   /** A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. */
   | { kind: 'example'; name: string; heading: string }
+  /**
+   * A template's screen, the file apps/catalogue/src/examples/<page>/<name>.tsx, rendered in frames of
+   * the frame route; app renders it inside the app frame template, none on its own.
+   */
+  | { kind: 'template'; name: string; heading: string; frame: 'app' | 'none' }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string };
 
@@ -62,7 +67,7 @@ export interface DocumentationSection {
   anchors?: string[];
 }
 
-/** A component page's frontmatter beyond its title, summary and category. */
+/** A component, pattern or template page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
   status: 'experimental' | 'beta' | 'stable' | 'deprecated';
   /** The status of an export that differs from the page's. */
@@ -70,9 +75,16 @@ export interface DocumentationMetadata {
   since: string;
   aliases: string[];
   useWhen: string[];
-  /** Situations that call for something else, with the component to use instead. */
-  avoidWhen: { text: string; use?: string }[];
+  /** Situations that call for something else, with the component to use or the page to read. */
+  avoidWhen: { text: string; use?: string; see?: string }[];
+  /** The exports a component page documents; none on a pattern or template page. */
   components: string[];
+  /** What people are doing, which groups a pattern page. */
+  intent?: string;
+  /** The exports a pattern or template page combines. */
+  composes?: string[];
+  /** Where a template page's screens render: inside the app frame, or on their own. */
+  frame?: 'app' | 'none';
 }
 
 export interface DocumentationEntry {
@@ -85,7 +97,7 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
-  /** The sections of a page on the template; absent on pages not converted yet. */
+  /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
   /** The exports a template page documents, with namespaces expanded to their parts. */
   props?: Record<string, ExportEntry>;

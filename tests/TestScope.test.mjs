@@ -13,6 +13,7 @@ import {
   nameCandidates,
   overrides,
   ownClassPrefix,
+  pageOfFile,
   ownedClasses,
   parseNameStatus,
   relativeImports,
@@ -243,7 +244,37 @@ test('catalogue parts run the specs that import them or are about them', () => {
     [...overrides.catalogueSpecs].sort(),
   );
   for (const specs of Object.values(overrides.catalogueAreas))
-    for (const spec of specs) assert.ok(index.specs.has(spec), `${spec} is a spec`);
+    for (const spec of specs)
+      assert.ok(
+        index.specs.has(spec) || overrides.planned.specs.includes(spec),
+        `${spec} is a spec`,
+      );
+  // The frame route and the template previews run the catalogue's specs, and the template spec
+  // once it exists.
+  for (const path of [
+    'apps/catalogue/src/main.tsx',
+    'apps/catalogue/src/template/TemplateFrame.tsx',
+  ])
+    assert.ok(fast(select(path)).includes('Catalogue.spec.ts'), path);
+});
+
+test('pattern and template pages, and their example files, map to their catalogue pages', () => {
+  const pageOf = (path) => pageOfFile(path, index.pages);
+  assert.equal(pageOf('docs/patterns/loading.md'), 'patterns/loading');
+  assert.equal(pageOf('apps/catalogue/src/examples/loading/SkeletonList.tsx'), 'patterns/loading');
+  const pages = new Set([...index.pages, 'templates/settings-page', 'foundations/content']);
+  assert.equal(pageOfFile('docs/templates/settings-page.md', pages), 'templates/settings-page');
+  assert.equal(
+    pageOfFile('apps/catalogue/src/examples/settings-page/SettingsPage.tsx', pages),
+    'templates/settings-page',
+  );
+  assert.equal(pageOfFile('docs/foundations/content.md', pages), 'foundations/content');
+  assert.equal(
+    pageOfFile('apps/catalogue/src/previews/foundations/Content.tsx', pages),
+    'foundations/content',
+  );
+  // A pattern page's change scans and screenshots it.
+  assert.ok(select('docs/patterns/loading.md').pages.has('patterns/loading'));
 });
 
 test('the plugin and its marketplaces run the unit tests, no browser spec', () => {

@@ -3,6 +3,8 @@ import { Field } from '@envsemble/envui';
 
 /** A control of the application's own: a native range input, labelled and described by the field. */
 function Volume(props: ComponentPropsWithRef<'input'>) {
+  // The application's own control is what this example shows, so it is a native input here.
+  // eslint-disable-next-line envui/no-html-elements
   return <input {...props} type="range" min={0} max={100} />;
 }
 

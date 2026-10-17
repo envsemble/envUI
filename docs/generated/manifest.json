@@ -29,6 +29,11 @@
     "Content & guidance",
     "Feedback & overlays"
   ],
+  "intents": [
+    "Collect and change information",
+    "Keep people informed",
+    "Find and navigate"
+  ],
   "components": [
     {
       "name": "Stack",
@@ -132,7 +137,13 @@
           "description": "In a narrow pane, a column of buttons with `fullWidth` gives each label the whole width.",
           "file": "docs/examples/stack/StackedActions.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Page",
@@ -197,7 +208,11 @@
           "description": "The four widths, in a muted surface that shows the space around the column.",
           "file": "docs/examples/page/Widths.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "PageHeader",
@@ -275,7 +290,11 @@
           "description": "In a side panel the actions move under the title and wrap; an avatar leads the title.",
           "file": "docs/examples/page-header/InANarrowPane.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "SplitPane",
@@ -356,7 +375,11 @@
           "description": "ListDetail shows people beside the chosen person's details; in a narrow space, one at a time.",
           "file": "docs/examples/split-pane/MasterDetail.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Surface",
@@ -433,7 +456,11 @@
           "description": "A pill surface holds controls over dense content, with controls of size `sm`. `render` lays them out as a row, and `role=\"group\"` with a label names them together. For a toolbar the arrow keys move through, render the surface as a Toolbar.",
           "file": "docs/examples/surface/Toolbar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "List",
@@ -543,7 +570,13 @@
           "description": "Children follow the title and the detail, such as a Badge with the item's status.",
           "file": "docs/examples/list/ExtraContent.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Card",
@@ -636,7 +669,11 @@
           "description": "The feature layout presents a feature with an icon and one action, and stacks them when the card is narrow.",
           "file": "docs/examples/card/FeatureCards.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Button",
@@ -776,7 +813,13 @@
           "description": "With `fullWidth` a group fills its container: the labelled button takes the room the menu's chevron leaves.",
           "file": "docs/examples/button/FillSidebar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "CloseButton",
@@ -838,7 +881,11 @@
           "description": "An EnvUIProvider's `messages` name every CloseButton inside it.",
           "file": "docs/examples/close-button/TranslatedLabel.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "SearchTrigger",
@@ -893,7 +940,11 @@
           "description": "In a narrow header, the trigger shows only its icon, with the label and the keys in its tooltip. It doesn't listen, since the sidebar's trigger already opens the same search.",
           "file": "docs/examples/search-trigger/IconOnly.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Toolbar",
@@ -989,7 +1040,11 @@
           "description": "Small controls above a table of small rows, so the bar and the rows share one density.",
           "file": "docs/examples/toolbar/TableToolbar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Link",
@@ -1049,7 +1104,11 @@
           "description": "Where the context already marks the words as links, `underline={false}` leaves the link color alone.",
           "file": "docs/examples/link/WithoutUnderline.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "ColorPicker",
@@ -1124,7 +1183,11 @@
           "description": "ColorSwatch shows each label's color before its name, with the value written beside it; a white swatch keeps its ring.",
           "file": "docs/examples/color-picker/Swatches.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "TextField",
@@ -1256,7 +1319,13 @@
           "description": "A fixed Textarea scrolls its text; drag its bottom edge, or focus the edge and use the arrow keys, to resize it. With `sizing=\"content\"` and `rows={1}`, a reply starts at one line and grows with its text.",
           "file": "docs/examples/text-field/TextareaSizing.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Field",
@@ -1329,7 +1398,11 @@
           "description": "`render` takes any control, such as a native range input, which the label and the description describe.",
           "file": "docs/examples/field/ApplicationControl.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Composer",
@@ -1408,7 +1481,11 @@
           "description": "Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which sends the text under `name`.",
           "file": "docs/examples/composer/FormSubmit.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Checkbox",
@@ -1486,7 +1563,11 @@
           "description": "Checkboxes with the same `name` submit one entry for each checked value. A fieldset's legend names the group, and Reset returns every box to `defaultChecked`.",
           "file": "docs/examples/checkbox/NotificationForm.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Switch",
@@ -1565,7 +1646,11 @@
           "description": "Disabled switches keep their state visible. A sentence linked to both with `aria-describedby` says why they can't change.",
           "file": "docs/examples/switch/ManagedSetting.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Radio",
@@ -1649,7 +1734,11 @@
           "description": "A disabled group keeps its choice visible, and a sentence linked with `aria-describedby` says where to change it.",
           "file": "docs/examples/radio/InheritedAccess.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Select",
@@ -1740,7 +1829,11 @@
           "description": "A small, outline select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.",
           "file": "docs/examples/select/SmallToolbar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "SegmentedControl",
@@ -1818,7 +1911,11 @@
           "description": "With `fullWidth` the control fills a sidebar and splits it between the options. Labels too long for their half end with an ellipsis and show whole in a tooltip on hover and keyboard focus.",
           "file": "docs/examples/segmented-control/FillSidebar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Combobox",
@@ -1912,7 +2009,11 @@
           "description": "A multiple combobox submits one entry for each chosen topic. The application checks that one is chosen and shows the error; Reset returns to `defaultValue`.",
           "file": "docs/examples/combobox/RequiredInForm.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "DatePicker",
@@ -2007,7 +2108,11 @@
           "description": "Calendar chooses a day within the page, named by `aria-label`; a status says which day is chosen.",
           "file": "docs/examples/date-picker/PlanningCalendar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Slider",
@@ -2083,7 +2188,11 @@
           "description": "A disabled slider keeps its value visible, and the description says who sets it.",
           "file": "docs/examples/slider/ManagedLimit.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "DropZone",
@@ -2160,7 +2269,11 @@
           "description": "With `name`, the form submits the files the zone took, and Reset clears them.",
           "file": "docs/examples/drop-zone/InAForm.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "NavList",
@@ -2259,7 +2372,11 @@
           "description": "With `iconOnly` the items show only their icons and their labels in tooltips; the count turns into a dot, so the item's `aria-label` carries it. The label stays as children for the expanded sidebar.",
           "file": "docs/examples/nav-list/CollapsedSidebar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Tabs",
@@ -2350,7 +2467,11 @@
           "description": "`renderList` places the rail beside a heading inside a Card, and the panels follow below.",
           "file": "docs/examples/tabs/ListBesideAHeading.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Pager",
@@ -2430,7 +2551,11 @@
           "description": "Where the pair doesn't fit side by side, each link takes a row of its own, and titles wrap between words.",
           "file": "docs/examples/pager/LongTitles.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "AppShell",
@@ -2689,7 +2814,13 @@
           "description": "Content inside the window sticks at `var(--env-frame-sticky-top)`, the top of the content below the title bar.",
           "file": "docs/examples/window-frame/StickySection.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Tree",
@@ -2769,7 +2900,11 @@
           "description": "Expanding every folder makes over 10,000 rows; only those in view are in the document.",
           "file": "docs/examples/tree/ThousandsOfRows.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "DocumentTabs",
@@ -2836,7 +2971,11 @@
           "description": "In a narrow pane the strip scrolls sideways, and the active tab stays in view.",
           "file": "docs/examples/document-tabs/ManyTabs.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "PanelDock",
@@ -2917,7 +3056,11 @@
           "description": "Below `stackBelow` one panel at a time fills the region, here the active conversation, and its tab shows the other.",
           "file": "docs/examples/panel-dock/NarrowRegion.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Breadcrumbs",
@@ -2993,7 +3136,11 @@
           "description": "An entry without `href` or `onClick` is plain text, for a level that can't be opened.",
           "file": "docs/examples/breadcrumbs/LevelWithoutPage.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Pagination",
@@ -3064,7 +3211,11 @@
           "description": "EnvUIProvider's `messages.pagination` localizes every pager inside it and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` localize one pager. `lang` tells assistive technology the language.",
           "file": "docs/examples/pagination/AnotherLanguage.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "AccountMenu",
@@ -3126,7 +3277,11 @@
           "description": "The row shows the name and the e-mail address, and opens the menu above it. The theme submenu here sets a theme the application stores itself, and closes the menu after the choice.",
           "file": "docs/examples/account-menu/RowTrigger.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "RichText",
@@ -3235,7 +3390,11 @@
           "description": "With `name`, the form submits the Markdown. `error` says what to fix.",
           "file": "docs/examples/rich-text/ReleaseNotesForm.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Markdown",
@@ -3326,7 +3485,11 @@
           "description": "`onRequestLink` lets the application choose the link, here after a pause that stands in for its picker, with a shorter toolbar.",
           "file": "docs/examples/markdown/LinkPicker.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Code",
@@ -3418,7 +3581,11 @@
           "description": "CodeDiff shows what a draft changes in a file, and countDiffLines counts its lines for a DiffStat beside the title.",
           "file": "docs/examples/code/SettingsDiff.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Badge",
@@ -3540,7 +3707,11 @@
           "description": "DiffStat beside each changed file, read as \"124 added lines and 37 removed lines\".",
           "file": "docs/examples/badge/ChangeSize.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Table",
@@ -3661,7 +3832,11 @@
           "description": "The header row is hidden while rows stack, so `onStackedChange` shows a Select for the order meanwhile. The table and the Select share the same sort state.",
           "file": "docs/examples/table/SortWhileStacked.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "DescriptionList",
@@ -3735,7 +3910,11 @@
           "description": "Settings of one item, each a small control beside its label.",
           "file": "docs/examples/description-list/WithControls.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Kbd",
@@ -3813,7 +3992,11 @@
           "description": "Apple keyboards name the Command key where others use Ctrl. Pass the keys of the reader's platform; Kbd shows what it is given.",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "AnimatedNumber",
@@ -3884,7 +4067,11 @@
           "description": "`format` writes the price as a currency; it rolls up for yearly billing and down for monthly.",
           "file": "docs/examples/animated-number/CustomFormat.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Rating",
@@ -3963,7 +4150,11 @@
           "description": "EnvUIProvider's locale writes the number, here in German with its decimal comma, and `messages.rating.label` the accessible name.",
           "file": "docs/examples/rating/TranslatedLabel.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "RelativeTime",
@@ -4051,7 +4242,11 @@
           "description": "`formatRelativeTime` returns the same text as a string, for places that take only text. The string doesn't update by itself.",
           "file": "docs/examples/relative-time/VersionLabels.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Disclosure",
@@ -4125,7 +4320,11 @@
           "description": "Advanced settings stay closed until a field in them has an error; `open` and `onOpenChange` then open the disclosure so the error shows.",
           "file": "docs/examples/disclosure/OpenOnError.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Avatar",
@@ -4218,7 +4417,11 @@
           "description": "With `onPersonClick` every avatar is a button named after the person; a person with `href` is a link. The chip lists the people it hides.",
           "file": "docs/examples/avatar/PressableAvatars.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Message",
@@ -4304,7 +4507,11 @@
           "description": "Comments by several people read best at full width: each is `from=\"other\"`, with its author and a RelativeTime in the header.",
           "file": "docs/examples/message/CommentThread.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Stat",
@@ -4386,7 +4593,11 @@
           "description": "A stat on its own has no surface; a Card gives it one.",
           "file": "docs/examples/stat/InACard.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "CalendarHeatmap",
@@ -4463,7 +4674,11 @@
           "description": "`formatTooltip` lays out the tooltip; the day's accessible name keeps its date and value.",
           "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "EmptyState",
@@ -4544,7 +4759,11 @@
           "description": "`align=\"center\"` centres the state in the height of the region it replaces, with a larger, quieter icon; `headingLevel={2}` fits it under the page's title.",
           "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Spinner",
@@ -4622,7 +4841,13 @@
           "description": "A large spinner in the middle of a preview's frame, which keeps its size while the file renders.",
           "file": "docs/examples/spinner/LoadingPreview.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Skeleton",
@@ -4701,7 +4926,13 @@
           "description": "Choosing another project shows placeholders in the card's place until it loads; focus stays on the choice.",
           "file": "docs/examples/skeleton/LoadThenShow.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     },
     {
       "name": "Toast",
@@ -4798,7 +5029,11 @@
           "description": "`defaultPlacement=\"top-center\"` stacks notifications downward from the top. With `visibleLimit={2}`, a third reminder hides the oldest behind a count until a newer one closes.",
           "file": "docs/examples/toast/TopCenter.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Alert",
@@ -4882,7 +5117,11 @@
           "description": "`icon` replaces the tone's icon with one that says more, and `icon={false}` leaves it out for a short message.",
           "file": "docs/examples/alert/CustomIcon.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Dialog",
@@ -5006,7 +5245,11 @@
           "description": "`placement=\"top\"` opens the dialog near the top of the window, so its results grow downward while the field stays in place. Choosing a result closes it.",
           "file": "docs/examples/dialog/FindPlan.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Drawer",
@@ -5073,7 +5316,11 @@
           "description": "A drawer at the start edge holds the navigation, named by `aria-label` and sized with a CSS length. Choosing a section closes it.",
           "file": "docs/examples/drawer/NavigationDrawer.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "ConfirmDialog",
@@ -5132,7 +5379,11 @@
           "description": "The action takes a moment, and the dialog stays pending until it ends. The first attempt fails, and the dialog stays open with the error; the second succeeds and closes it.",
           "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "CommandPalette",
@@ -5201,7 +5452,11 @@
           "description": "Commands with shortcuts as Kbd keys and a Badge as end content, under one group, with a footer.",
           "file": "docs/examples/command-palette/RunCommand.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Menu",
@@ -5355,7 +5610,11 @@
           "description": "Without organizations, the switcher is only the create action, which here creates the first one.",
           "file": "docs/examples/menu/FirstOrganization.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Menubar",
@@ -5422,7 +5681,11 @@
           "description": "A window that draws its own title bar holds the menubar at the start of `WindowFrame.TitleBar`, beside the document's name and its actions.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Tooltip",
@@ -5498,7 +5761,11 @@
           "description": "`side=\"inline-end\"` opens each tooltip beside a vertical rail of icon buttons, toward the content, also in right-to-left text.",
           "file": "docs/examples/tooltip/RailOfIcons.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Popover",
@@ -5581,7 +5848,11 @@
           "description": "An icon-only trigger, named after what it explains, opens the popover to its right with `side=\"right\"`.",
           "file": "docs/examples/popover/FieldHelp.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "HoverCard",
@@ -5650,7 +5921,11 @@
           "description": "`side=\"top\"` and `align=\"start\"` open the card above the link, lined up with its start, such as for a link near the bottom of a pane.",
           "file": "docs/examples/hover-card/Placement.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Meter",
@@ -5719,7 +5994,11 @@
           "description": "Meters of one plan side by side, each with its own range. The text below says what the full one means.",
           "file": "docs/examples/meter/PlanUsage.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
     },
     {
       "name": "Progress",
@@ -5799,7 +6078,13 @@
           "description": "The export starts with an unknown amount, shows the share done once it is known, and ends with a status message in place of the bar. The button stays pending meanwhile.",
           "file": "docs/examples/progress/ExportMembers.tsx"
         }
-      ]
+      ],
+      "usedIn": {
+        "patterns": [
+          "loading"
+        ],
+        "templates": []
+      }
     }
   ],
   "guides": [
@@ -5886,9 +6171,23 @@
       "doc": "docs/component-pages.md",
       "related": [
         "button",
+        "pattern-pages",
         "index",
         "text-field",
         "library-development"
+      ]
+    },
+    {
+      "name": "pattern-pages",
+      "title": "Write a pattern or template page",
+      "group": "Setup and workflows",
+      "summary": "The frontmatter, sections and files of pattern and template pages, and the rules for template screens.",
+      "doc": "docs/pattern-pages.md",
+      "related": [
+        "component-pages",
+        "loading",
+        "index",
+        "setup"
       ]
     }
   ],
@@ -6058,14 +6357,77 @@
       "name": "loading",
       "title": "Loading",
       "group": "Patterns",
-      "summary": "Choose between the page loading bar, skeletons, spinners, pending buttons and progress.",
-      "doc": "docs/patterns/loading.md",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show that something is loading, in the place and shape of what is coming, without implying how long it takes.",
+      "aliases": [
+        "loading state",
+        "loading indicator",
+        "busy state",
+        "progress",
+        "pending",
+        "placeholder"
+      ],
+      "useWhen": [
+        "A page, a region or the result of an action takes long enough that people would notice.",
+        "Work with a measurable end, such as an upload, runs while people wait."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Content that turned out empty, or that failed to load.",
+          "use": "EmptyState"
+        },
+        {
+          "text": "The application frame itself before the first page loads.",
+          "use": "AppShellSkeleton"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "LoadingState",
+        "Skeleton",
+        "Spinner",
+        "Button",
+        "Progress",
+        "List",
+        "TextField",
+        "Stack",
+        "Text"
+      ],
       "related": [
-        "app-shell",
         "skeleton",
         "spinner",
+        "progress",
         "button",
-        "progress"
+        "app-shell"
+      ],
+      "doc": "docs/patterns/loading.md",
+      "examples": [
+        {
+          "name": "SkeletonList",
+          "title": "Loading",
+          "description": "Show that something is loading, in the place and shape of what is coming, without implying how long it takes.",
+          "file": "docs/examples/loading/SkeletonList.tsx"
+        },
+        {
+          "name": "RefreshInPlace",
+          "title": "Refresh in place",
+          "description": "The activity stays while it refreshes; a small Spinner beside its heading says it is updating.",
+          "file": "docs/examples/loading/RefreshInPlace.tsx"
+        },
+        {
+          "name": "PendingButton",
+          "title": "Pending button",
+          "description": "The button that saves shows the work in progress; the outcome is announced once it is done.",
+          "file": "docs/examples/loading/PendingButton.tsx"
+        },
+        {
+          "name": "UploadProgress",
+          "title": "Upload progress",
+          "description": "Progress measures each file and says what has been sent, in megabytes.",
+          "file": "docs/examples/loading/UploadProgress.tsx"
+        }
       ]
     }
   ],

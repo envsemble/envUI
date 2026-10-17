@@ -21,6 +21,8 @@ import {
   documentationDirectory,
   documentedExports,
   examplesDirectory,
+  intents,
+  pageKindOf,
   readDocumentation,
   readProps,
 } from './GenerateDocumentation.mjs';
@@ -66,6 +68,59 @@ function linkedPages(markdown, documents) {
     if (documents.some((document) => document.id === id) && !ids.includes(id)) ids.push(id);
   }
   return ids;
+}
+
+/**
+ * The files a page shows of a kind, example or template, each with its title, what it shows and
+ * its packaged path; a template's screen also with its frame and whether it is the page's main one.
+ */
+function filesOf(document, kind) {
+  const items = [];
+  for (const section of document.sections ?? [])
+    section.blocks.forEach((block, index) => {
+      if (block.kind !== kind) return;
+      const before = section.blocks[index - 1];
+      const primary = section.id === 'overview';
+      items.push({
+        name: block.name,
+        title: block.heading,
+        description: primary
+          ? document.summary
+          : exampleDescription(before?.kind === 'markdown' ? before.markdown : ''),
+        file: `docs/examples/${document.id}/${block.name}.tsx`,
+        ...(kind === 'template' && { frame: block.frame, primary }),
+      });
+    });
+  return items;
+}
+
+/** The scales every template is shown and tested in. */
+const templateScales = ['comfortable', 'compact'];
+
+/** A pattern or template page as the manifest lists it, from its frontmatter and files. */
+function compositionEntry(document, kind, doc) {
+  const { frontmatter } = document;
+  return {
+    name: document.id,
+    title: document.title,
+    group: document.group,
+    ...(kind === 'pattern' && { intent: frontmatter.intent }),
+    status: frontmatter.status,
+    since: frontmatter.since,
+    summary: document.summary,
+    aliases: frontmatter.aliases,
+    useWhen: frontmatter.useWhen,
+    avoidWhen: frontmatter.avoidWhen,
+    composes: frontmatter.composes,
+    related: document.related,
+    doc,
+    ...(kind === 'template' && {
+      frame: frontmatter.frame,
+      scales: templateScales,
+      files: filesOf(document, 'template'),
+    }),
+    examples: filesOf(document, 'example'),
+  };
 }
 
 /**
@@ -163,6 +218,11 @@ export function buildManifest({
   for (const document of documents) {
     if (document.id === 'index') continue;
     const doc = `docs/${document.path}`;
+    const kind = pageKindOf(document.path);
+    if (kind === 'pattern' || kind === 'template') {
+      pages[`${kind}s`].push(compositionEntry(document, kind, doc));
+      continue;
+    }
     if (!document.path.startsWith('components/')) {
       const kind = pageKinds[document.group] ?? 'guides';
       pages[kind].push({
@@ -191,22 +251,7 @@ export function buildManifest({
       frontmatter.status;
     for (const name of names)
       exportPages.set(name, { page: document.id, doc, status: statusOf(name) });
-    const exampleItems = [];
-    for (const section of document.sections ?? []) {
-      section.blocks.forEach((block, index) => {
-        if (block.kind !== 'example') return;
-        const before = section.blocks[index - 1];
-        exampleItems.push({
-          name: block.name,
-          title: block.heading,
-          description:
-            section.id === 'overview'
-              ? document.summary
-              : exampleDescription(before?.kind === 'markdown' ? before.markdown : ''),
-          file: `docs/examples/${document.id}/${block.name}.tsx`,
-        });
-      });
-    }
+    const exampleItems = filesOf(document, 'example');
     components.push({
       name: document.title,
       page: document.id,
@@ -223,6 +268,13 @@ export function buildManifest({
       exports: names,
       examples: exampleItems,
     });
+  }
+  // Each component page leads to the patterns and templates that compose its exports.
+  for (const component of components) {
+    const names = new Set(component.exports.map((name) => name.split('.')[0]));
+    const using = (list) =>
+      list.filter((page) => page.composes.some((name) => names.has(name))).map(({ name }) => name);
+    component.usedIn = { patterns: using(pages.patterns), templates: using(pages.templates) };
   }
   const exportIndex = Object.fromEntries(
     Object.entries(props.exports).map(([name, entry]) => [
@@ -251,6 +303,7 @@ export function buildManifest({
     categories: [
       ...new Set(documents.filter((d) => d.path.startsWith('components/')).map((d) => d.group)),
     ],
+    intents,
     components,
     ...pages,
     exports: exportIndex,
@@ -294,8 +347,18 @@ export function renderLlmsText(manifest) {
           }`;
         }),
     );
-  section('Patterns', manifest.patterns.map(page));
-  section('Templates', manifest.templates.map(page));
+  for (const intent of manifest.intents)
+    section(
+      `Patterns: ${intent}`,
+      manifest.patterns.filter((pattern) => pattern.intent === intent).map(page),
+    );
+  section(
+    'Templates',
+    manifest.templates.map(
+      (template) =>
+        `${page(template)} (${template.frame === 'app' ? 'inside the app frame' : 'a whole screen'})`,
+    ),
+  );
   section('Optional', [
     '- [Full documentation](llms-full.txt): every page above in one file, with examples and props.',
     '- [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.',
@@ -328,6 +391,14 @@ export function renderLlmsFull(
     const component = manifest.components.find((item) => item.page === document.id);
     const head = [`<!-- docs/${document.path} -->`, '', `# ${document.title}`, ''];
     if (document.summary) head.push(`> ${document.summary}`, '');
+    const composition = [...manifest.patterns, ...manifest.templates].find(
+      (item) => item.name === document.id,
+    );
+    if (composition)
+      head.push(
+        `Status: ${composition.status}. Since: ${composition.since}.${composition.intent ? ` Intent: ${composition.intent}.` : ''}${composition.frame ? ` Frame: ${composition.frame === 'app' ? 'inside the app frame' : 'a whole screen'}.` : ''} Built from: ${composition.composes.join(', ')}.`,
+        '',
+      );
     if (component) {
       const byImport = new Map();
       for (const name of component.exports.filter((entry) => !entry.includes('.'))) {

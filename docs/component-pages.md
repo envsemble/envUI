@@ -1,6 +1,6 @@
 # Write a component page
 
-Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. [Button](components/button.md) is the model page; read it before writing another.
+Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. [Button](components/button.md) is the model page; read it before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
 
 ## Frontmatter
 

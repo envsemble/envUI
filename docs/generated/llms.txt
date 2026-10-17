@@ -12,6 +12,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Develop envUI locally](docs/local-development.md): Link a checkout while co-developing a consuming application.
 - [Extend the shared library](docs/library-development.md): Public API changes, changesets, catalogue specimens and acceptance checks.
 - [Write a component page](docs/component-pages.md): The page template, frontmatter, generated props and example files, and how to convert a page.
+- [Write a pattern or template page](docs/pattern-pages.md): The frontmatter, sections and files of pattern and template pages, and the rules for template screens.
 
 ## Foundations
 
@@ -110,9 +111,9 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Meter](docs/components/meter.md): A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
 - [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
 
-## Patterns
+## Patterns: Keep people informed
 
-- [Loading](docs/patterns/loading.md): Choose between the page loading bar, skeletons, spinners, pending buttons and progress.
+- [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
 
 ## Optional
 

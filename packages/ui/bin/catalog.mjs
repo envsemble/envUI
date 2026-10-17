@@ -151,8 +151,14 @@ function searchDocuments(manifest) {
           name: [...terms(page.title), ...terms(page.name)],
           alias: (page.aliases ?? []).flatMap(terms),
           summary: terms(page.summary),
-          use: [],
-          text: (page.exports ?? []).flatMap(terms),
+          // A pattern or template is for the situations of its useWhen, and is found by what it
+          // composes and the intent it serves.
+          use: (page.useWhen ?? []).flatMap(terms),
+          text: [
+            ...(page.exports ?? []).flatMap(terms),
+            ...(page.composes ?? []).flatMap(terms),
+            ...terms(page.intent),
+          ],
         },
       });
   }
@@ -328,7 +334,44 @@ export function summarize(manifest, kind, item) {
       type: item.type,
       ...(item.description && { summary: item.description }),
     };
+  if (kind === 'pattern')
+    return {
+      name: item.name,
+      title: item.title,
+      intent: item.intent,
+      summary: item.summary,
+      status: item.status,
+      composes: item.composes,
+      doc: item.doc,
+    };
+  if (kind === 'template')
+    return {
+      name: item.name,
+      title: item.title,
+      summary: item.summary,
+      status: item.status,
+      frame: item.frame,
+      composes: item.composes,
+      files: (item.files ?? []).map((file) => file.name),
+      doc: item.doc,
+    };
   return { name: item.name, title: item.title, summary: item.summary, doc: item.doc };
+}
+
+/**
+ * A pattern or template page by its name, title or alias; `requested` is the alias it was found
+ * by, when it was.
+ */
+export function findPage(manifest, kind, name) {
+  const key = normalize(name);
+  if (!key) return undefined;
+  const pages = manifest[`${kind}s`] ?? [];
+  const page = pages.find((item) => normalize(item.name) === key || normalize(item.title) === key);
+  if (page) return { page };
+  const aliased = pages.find((item) =>
+    (item.aliases ?? []).some((alias) => normalize(alias) === key),
+  );
+  return aliased && { page: aliased, requested: name };
 }
 
 const normalize = (name) =>
@@ -696,8 +739,11 @@ export function plan(manifest, description, { limit = 12 } = {}) {
       ignored.length
         ? 'The ignored words read as content, such as labels or code; search them if they name an element.'
         : undefined,
+      templates.length
+        ? `Start from get_template ${templates[0].name}: copy its screen and edit it, rather than laying the page out from scratch.`
+        : undefined,
       structure.length && !templates.length
-        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell, Stack and Surface around the components.`
+        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell.Root, Page and Stack around the components.`
         : undefined,
     ].filter(Boolean),
   };

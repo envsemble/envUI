@@ -3,11 +3,13 @@
 // (apps/catalogue/src/generated/Documentation.ts) and compiles the Markdown that ships in the
 // package, where example files and generated props tables are filled in.
 //
-// Component pages (docs/components/*.md) carry YAML frontmatter (see frontmatterSchema). A page on
-// the template has the fixed `##` sections of templateSections, in their order; its examples are
+// Component, pattern and template pages (docs/components, docs/patterns and docs/templates) carry
+// YAML frontmatter (see pageSchemas). A page on the template has the fixed `##` sections of
+// templateSections, in their order, the subset its kind allows (sectionRules); its examples are
 // files in apps/catalogue/src/examples/<page>/<Name>.tsx, referenced by an empty fence
-// ```tsx example=Name```, and its Props and Related sections are generated. docs/component-pages.md
-// describes the template for authors.
+// ```tsx example=Name```, a template page's screens by ```tsx template=Name```, and its Props and
+// Related sections are generated. docs/component-pages.md and docs/pattern-pages.md describe the
+// template for authors.
 import {
   cpSync,
   existsSync,
@@ -48,6 +50,28 @@ export const componentGroups = [
   'Feedback & overlays',
 ];
 export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
+/** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
+export const intents = [
+  'Collect and change information',
+  'Keep people informed',
+  'Find and navigate',
+];
+/**
+ * Where a template's screen renders: app, inside the app frame template's main region; none, a
+ * whole screen of its own.
+ */
+export const frames = ['app', 'none'];
+
+/** The kind of a page of docs/, by its folder. */
+export function pageKindOf(path) {
+  if (path.startsWith('components/')) return 'component';
+  if (path.startsWith('patterns/')) return 'pattern';
+  if (path.startsWith('templates/')) return 'template';
+  if (path.startsWith('foundations/')) return 'foundation';
+  return 'guide';
+}
+/** Page kinds that have frontmatter of their own and, once on it, the page template's sections. */
+const sectionedKinds = new Set(['component', 'pattern', 'template']);
 
 /**
  * The sections of a page on the template, in order. Props and Related are generated: Props from
@@ -84,6 +108,31 @@ export const frontmatterSchema = {
   avoidWhen: { type: 'avoid', template: true },
   related: { type: 'strings', required: true },
   components: { type: 'strings', required: true, nonEmpty: true },
+};
+/** Frontmatter of a pattern or template page: required as a whole, with what it composes. */
+const compositionFrontmatter = {
+  title: { type: 'string', required: true },
+  summary: { type: 'string', required: true },
+  status: { type: 'string', required: true, values: statuses },
+  since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
+  aliases: { type: 'strings', required: true, nonEmpty: true },
+  useWhen: { type: 'strings', required: true, nonEmpty: true },
+  avoidWhen: { type: 'avoid', required: true },
+  /** The exports, namespaces rather than parts, that the page's compositions combine. */
+  composes: { type: 'strings', required: true, nonEmpty: true },
+  related: { type: 'strings', required: true },
+};
+/** The frontmatter of each page kind that has its own; other pages take otherFrontmatter only. */
+export const pageSchemas = {
+  component: frontmatterSchema,
+  pattern: {
+    ...compositionFrontmatter,
+    intent: { type: 'string', required: true, values: intents },
+  },
+  template: {
+    ...compositionFrontmatter,
+    frame: { type: 'string', required: true, values: frames },
+  },
 };
 const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases']);
 /** A page whose slug cannot follow its title until the component it documents is merged. */
@@ -184,14 +233,15 @@ export function splitFrontmatter(source, path) {
   return { frontmatter, yaml: match[1], body: source.slice(match[0].length) };
 }
 
-function validateFrontmatter(frontmatter, path, { component, template, versions }) {
+function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
   const problems = [];
-  if (!component) {
+  const schema = pageSchemas[kind];
+  if (!schema) {
     for (const key of Object.keys(frontmatter))
       if (!otherFrontmatter.has(key))
         problems.push(`${key} is not allowed here; only components, aliases and exportAliases are`);
   }
-  if (!component && 'exportAliases' in frontmatter) {
+  if (!schema && 'exportAliases' in frontmatter) {
     // The names people search for an export by, for an export without a component page of its
     // own, such as "theme switcher" for ThemeToggle: a list per export the page documents.
     const value = frontmatter.exportAliases;
@@ -212,8 +262,8 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
       }
   }
   for (const [key, value] of Object.entries(frontmatter)) {
-    if (key === 'exportAliases' && !component) continue;
-    const rule = frontmatterSchema[key];
+    if (key === 'exportAliases' && !schema) continue;
+    const rule = (schema ?? frontmatterSchema)[key];
     if (!rule) {
       problems.push(`unknown field ${key}`);
       continue;
@@ -238,10 +288,14 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
             typeof item.text !== 'string' ||
             !item.text.trim() ||
             ('use' in item && (typeof item.use !== 'string' || !item.use.trim())) ||
-            Object.keys(item).some((field) => field !== 'text' && field !== 'use'),
+            ('see' in item && (typeof item.see !== 'string' || !item.see.trim())) ||
+            ('use' in item && 'see' in item) ||
+            Object.keys(item).some((field) => !['text', 'use', 'see'].includes(field)),
         )
       )
-        problems.push(`${key} must be a list of { text, use } entries, use naming the alternative`);
+        problems.push(
+          `${key} must be a list of { text, use } or { text, see } entries, use naming the alternative export and see its page`,
+        );
     } else if (rule.type === 'statuses') {
       const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
       if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -257,8 +311,8 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
         }
     }
   }
-  if (component) {
-    for (const [key, rule] of Object.entries(frontmatterSchema)) {
+  if (schema) {
+    for (const [key, rule] of Object.entries(schema)) {
       const required = rule.required || (rule.template && template);
       if (required && !(key in frontmatter)) problems.push(`${key} is required`);
       if ((rule.nonEmpty || (rule.template && template)) && Array.isArray(frontmatter[key]))
@@ -269,7 +323,7 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
     if (
       versions &&
       typeof frontmatter.since === 'string' &&
-      frontmatter.since.match(frontmatterSchema.since.pattern) &&
+      frontmatter.since.match(schema.since.pattern) &&
       !versions.has(frontmatter.since)
     )
       problems.push(
@@ -280,6 +334,9 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
         problems.push(
           `components lists ${name}, a part: list its namespace, ${name.split('.')[0]}, whose page documents its parts`,
         );
+    for (const name of Array.isArray(frontmatter.composes) ? frontmatter.composes : [])
+      if (typeof name === 'string' && name.includes('.'))
+        problems.push(`composes lists ${name}, a part: list its namespace, ${name.split('.')[0]}`);
   }
   if (problems.length)
     throw new Error(`Invalid frontmatter in ${path}:\n  - ${problems.join('\n  - ')}`);
@@ -329,13 +386,53 @@ export function fenceFor(source) {
 }
 
 const examplePattern = /^tsx\s+example=(?:"([^"]*)"|(\S+))\s*$/;
+/** A template page's screen: ```tsx template=Name```, with frame=app or frame=none to override. */
+const templatePattern = /^tsx\s+template=(?:"([^"]*)"|(\S+))(?:\s+frame=(\S+))?\s*$/;
 const specimenPattern = /^<!--\s*specimen:\s*([A-Za-z][\w]*)\s*-->\s*$/;
 
-/** The blocks of a template page's sections: Markdown, example files and catalogue specimens. */
-function readTemplate(document, body, { examples, specimens }) {
+/** The sections of a pattern or template page: the component template's, without Variants and Props. */
+const compositionSections = [
+  'overview',
+  'anatomy',
+  'states',
+  'content',
+  'do-and-dont',
+  'accessibility',
+  'examples',
+  'related',
+  'changelog',
+];
+/** The sections each kind of page may have, and those it needs. */
+export const sectionRules = {
+  component: {
+    allowed: templateSections.map((section) => section.id),
+    required: ['overview', 'accessibility', 'examples'],
+  },
+  pattern: {
+    allowed: compositionSections,
+    required: ['overview', 'anatomy', 'content', 'accessibility', 'examples'],
+  },
+  template: { allowed: compositionSections, required: ['overview', 'anatomy', 'accessibility'] },
+};
+/** The `###` lists each kind's Accessibility section needs. */
+const accessibilityHeadings = {
+  component: ['envUI provides', 'You provide'],
+  pattern: ['envUI provides', 'You provide'],
+  template: ['Landmarks and headings', 'envUI provides', 'You provide'],
+};
+/** Live example files a pattern shows at least: its lead example and two more. */
+export const patternExampleMinimum = 3;
+
+/**
+ * The blocks of a template page's sections: Markdown, example files, template screens and catalogue
+ * specimens.
+ */
+function readTemplate(document, body, { examples, specimens, kind = 'component', frame }) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
+  const rules = sectionRules[kind];
+  const allowed = templateSections.filter((section) => rules.allowed.includes(section.id));
   const sections = [];
   let current;
   const problems = [];
@@ -355,10 +452,10 @@ function readTemplate(document, body, { examples, specimens }) {
         `"${'#'.repeat(token.depth)} ${token.text}" lists props by hand; the Props section is generated`,
       );
     if (token.type === 'heading' && token.depth === 2) {
-      const section = templateSections.find((item) => item.title === token.text);
+      const section = allowed.find((item) => item.title === token.text);
       if (!section) {
         problems.push(
-          `"## ${token.text}" is not a template section (${templateSections.map((item) => item.title).join(', ')})`,
+          `"## ${token.text}" is not a template section${kind === 'component' ? '' : ` of a ${kind} page`} (${allowed.map((item) => item.title).join(', ')})`,
         );
         continue;
       }
@@ -392,32 +489,45 @@ function readTemplate(document, body, { examples, specimens }) {
     };
     if (token.type === 'code') {
       const example = (token.lang ?? '').match(examplePattern);
-      if (example) {
-        const name = example[1] ?? example[2];
-        // The overview shows one example first, without a heading; the rest are under Examples.
+      const screen = example ? undefined : (token.lang ?? '').match(templatePattern);
+      if (example || screen) {
+        const what = example ? 'example' : 'template';
+        const match = example ?? screen;
+        const name = match[1] ?? match[2];
+        // The overview shows one example or screen first, without a heading; the rest are under
+        // Examples.
         const hero = current.id === 'overview';
-        if (hero && blocks.some((block) => block.kind === 'example'))
+        if (hero && blocks.some((block) => block.kind === 'example' || block.kind === 'template'))
           problems.push('"## Overview" shows at most one example');
         if (!hero && current.id !== 'examples')
-          problems.push(`example ${name} must be in "## Examples" or "## Overview"`);
+          problems.push(`${what} ${name} must be in "## Examples" or "## Overview"`);
+        if (screen && kind !== 'template')
+          problems.push(`template ${name} belongs on a template page, in docs/templates`);
         if (!/^[A-Z][A-Za-z\d]*$/.test(name))
-          problems.push(`example ${name} must be a PascalCase file name`);
+          problems.push(`${what} ${name} must be a PascalCase file name`);
         if (token.text.trim())
-          problems.push(`the fence of example ${name} must be empty; the build fills in its file`);
-        if (!hero && !subheading) problems.push(`example ${name} needs a "###" heading`);
+          problems.push(`the fence of ${what} ${name} must be empty; the build fills in its file`);
+        if (!hero && !subheading) problems.push(`${what} ${name} needs a "###" heading`);
         if (!examples.has(name))
           problems.push(
-            `example ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
+            `${what} ${name} has no file apps/catalogue/src/examples/${document.id}/${name}.tsx`,
           );
-        blocks.push({
-          kind: 'example',
-          name,
-          heading: hero ? document.title : (subheading ?? name),
-        });
+        const heading = hero ? document.title : (subheading ?? name);
+        if (example) blocks.push({ kind: 'example', name, heading });
+        else {
+          const own = screen[3];
+          if (own !== undefined && !frames.includes(own))
+            problems.push(`template ${name} has frame=${own}; frame is ${frames.join(' or ')}`);
+          blocks.push({ kind: 'template', name, heading, frame: own ?? frame });
+        }
         continue;
       }
       if (current.id === 'examples')
-        problems.push('code in "## Examples" must be an example file: ```tsx example=Name```');
+        problems.push(
+          kind === 'template'
+            ? 'code in "## Examples" must be an example file, ```tsx example=Name```, or a template, ```tsx template=Name```'
+            : 'code in "## Examples" must be an example file: ```tsx example=Name```',
+        );
     }
     if (token.type === 'html' && specimenPattern.test(token.raw.trim())) {
       const name = token.raw.trim().match(specimenPattern)[1];
@@ -430,27 +540,44 @@ function readTemplate(document, body, { examples, specimens }) {
     }
     appendMarkdown(token.raw);
   }
-  for (const section of templateSections)
-    if (section.required && !sections.some((item) => item.id === section.id))
+  for (const section of allowed)
+    if (rules.required.includes(section.id) && !sections.some((item) => item.id === section.id))
       problems.push(`"## ${section.title}" is required`);
+  const shown = (section, ...kinds) =>
+    (section?.blocks ?? []).filter((block) => kinds.includes(block.kind));
+  const overview = sections.find((item) => item.id === 'overview');
   const examplesSection = sections.find((item) => item.id === 'examples');
   if (examplesSection) {
     const headings = examplesSection.tokens.filter(
       (token) => token.type === 'heading' && token.depth === 3,
     );
-    const names = examplesSection.blocks.filter((block) => block.kind === 'example');
-    if (!names.length) problems.push('"## Examples" needs at least one example file');
+    const names = shown(examplesSection, 'example', 'template');
+    if (!names.length)
+      problems.push(
+        `"## Examples" needs at least one example file${kind === 'template' ? ' or template' : ''}`,
+      );
     for (const heading of headings) {
       const count = names.filter((block) => block.heading === heading.text).length;
       if (count !== 1) problems.push(`"### ${heading.text}" must introduce exactly one example`);
     }
   }
+  if (kind === 'pattern') {
+    if (overview && !shown(overview, 'example').length)
+      problems.push('"## Overview" shows the lead example, a ```tsx example=Name``` fence');
+    const count = shown(overview, 'example').length + shown(examplesSection, 'example').length;
+    if (count < patternExampleMinimum)
+      problems.push(
+        `a pattern shows at least ${patternExampleMinimum} example files, its lead example and two under "## Examples"; it has ${count}`,
+      );
+  }
+  if (kind === 'template' && overview && !shown(overview, 'template').length)
+    problems.push('"## Overview" shows the main screen, a ```tsx template=Name``` fence');
   const accessibility = sections.find((item) => item.id === 'accessibility');
   if (accessibility) {
     const headings = accessibility.tokens
       .filter((token) => token.type === 'heading' && token.depth === 3)
       .map((token) => token.text);
-    for (const required of ['envUI provides', 'You provide']) {
+    for (const required of accessibilityHeadings[kind]) {
       const start = accessibility.tokens.findIndex(
         (token) => token.type === 'heading' && token.depth === 3 && token.text === required,
       );
@@ -548,10 +675,14 @@ export function readDocumentation(
       if (!body.startsWith(`# ${title}\n`) && !body.startsWith(`# ${title}\r\n`))
         throw new Error(`Documentation title differs from its index entry: ${path}`);
       const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
-      const component = path.startsWith('components/');
+      const kind = pageKindOf(path);
+      const component = kind === 'component';
+      // Pattern and template pages are always on the template; a component page once it starts
+      // with its Overview.
+      const composition = kind === 'pattern' || kind === 'template';
       const tokens = marked.lexer(markdown);
       const firstSection = tokens.find((t) => t.type === 'heading' && t.depth === 2);
-      const template = component && firstSection?.text === 'Overview';
+      const template = composition || (component && firstSection?.text === 'Overview');
       // A page that uses the template's parts is on the template, whatever its first section.
       // They are read from the tokens, as the page renders: a fence indented by a few spaces is a
       // fence, and one shown inside another fence is text.
@@ -559,25 +690,30 @@ export function readDocumentation(
       marked.walkTokens(tokens, (token) => {
         if (
           (token.type === 'heading' && token.depth === 2 && token.text === 'Overview') ||
-          (token.type === 'code' && examplePattern.test(token.lang ?? '')) ||
+          (token.type === 'code' &&
+            (examplePattern.test(token.lang ?? '') || templatePattern.test(token.lang ?? ''))) ||
           (token.type === 'html' && /^<!--\s*specimen:/.test(token.raw.trim()))
         )
           usesTemplate = true;
       });
       const templateParts =
         usesTemplate || (frontmatter && ('useWhen' in frontmatter || 'avoidWhen' in frontmatter));
-      if (component && !template && templateParts)
+      if (
+        (component && !template && templateParts) ||
+        (composition && firstSection?.text !== 'Overview')
+      )
         throw new Error(
-          `${path} uses the page template, so its first section must be "## Overview", not ${
+          `${path} ${composition ? `is a ${kind} page, on` : 'uses'} the page template, so its first section must be "## Overview", not ${
             firstSection ? `"## ${firstSection.text}"` : 'missing'
           }.`,
         );
-      if (component && !frontmatter) throw new Error(`Component page ${path} needs frontmatter.`);
-      if (frontmatter) validateFrontmatter(frontmatter, path, { component, template, versions });
-      if (component) {
+      if (sectionedKinds.has(kind) && !frontmatter)
+        throw new Error(`${kind[0].toUpperCase()}${kind.slice(1)} page ${path} needs frontmatter.`);
+      if (frontmatter) validateFrontmatter(frontmatter, path, { kind, template, versions });
+      if (sectionedKinds.has(kind)) {
         if (frontmatter.title !== title)
           throw new Error(`Frontmatter title of ${path} differs from its index entry.`);
-        if (frontmatter.category !== group)
+        if (component && frontmatter.category !== group)
           throw new Error(
             `Category of ${path} is ${frontmatter.category}, but the index lists it under ${group}.`,
           );
@@ -585,14 +721,17 @@ export function readDocumentation(
           throw new Error(
             `The index entry of ${path} repeats a summary; it lives in the page's frontmatter.`,
           );
-        if (kebab(title) !== id && !slugExceptions.has(id))
+        if (component && kebab(title) !== id && !slugExceptions.has(id))
           throw new Error(`${path} must be named ${kebab(title)}.md after its title.`);
-        if (!frontmatter.components.includes(title.split('.')[0]) && exported?.[title])
+        if (component && !frontmatter.components.includes(title.split('.')[0]) && exported?.[title])
           throw new Error(`${path} must list ${title}, its own component, in components.`);
       } else if (!indexSummary) throw new Error(`Invalid documentation index entry: ${item.text}`);
       for (const name of frontmatter?.components ?? [])
         if (exported && !exported[name])
           throw new Error(`${path} lists ${name} in components, but envUI exports no ${name}.`);
+      for (const name of frontmatter?.composes ?? [])
+        if (exported && !exported[name])
+          throw new Error(`${path} lists ${name} in composes, but envUI exports no ${name}.`);
       for (const { use } of frontmatter?.avoidWhen ?? [])
         if (use && exported && !exported[use])
           throw new Error(`${path} suggests ${use} in avoidWhen, but envUI exports no ${use}.`);
@@ -610,11 +749,20 @@ export function readDocumentation(
         document.sections = readTemplate(document, markdown, {
           examples: filesOf(examples, id),
           specimens: filesOf(specimens, id),
+          kind,
+          frame: frontmatter.frame,
         });
       documents.push(document);
     }
   }
   for (const document of documents) {
+    // A page an avoidWhen entry sends readers to, by its id.
+    for (const { see } of document.frontmatter?.avoidWhen ?? [])
+      if (see && (see === document.id || !documents.some((entry) => entry.id === see)))
+        throw new Error(
+          `${document.path} sends readers to ${see} in avoidWhen, which is ${see === document.id ? 'the page itself' : 'not an indexed page'}.`,
+        );
+
     let related = false;
     const listed = [];
     for (const token of marked.lexer(document.markdown)) {
@@ -794,11 +942,16 @@ export function compileDocument(document, documents, { props, examples = example
     let text = '';
     for (const block of section.blocks) {
       if (block.kind === 'markdown') text += block.markdown;
-      else if (block.kind === 'example') {
+      else if (block.kind === 'example' || block.kind === 'template') {
         // The fence outlasts any backticks in the source, and closes on a line of its own.
         const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
         const fence = fenceFor(source);
-        text += `${fence}tsx example=${block.name}\n${source}${fence}\n`;
+        // A template's screen keeps its frame where it differs from the page's.
+        const info =
+          block.kind === 'example'
+            ? `example=${block.name}`
+            : `template=${block.name}${block.frame === document.frontmatter?.frame ? '' : ` frame=${block.frame}`}`;
+        text += `${fence}tsx ${info}\n${source}${fence}\n`;
       }
     }
     return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
@@ -830,7 +983,7 @@ export function compileDocumentation(
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example')
+        if (block.kind === 'example' || block.kind === 'template')
           files.set(
             `examples/${document.id}/${block.name}.tsx`,
             exampleSource(document.id, block.name, examples),
@@ -854,7 +1007,8 @@ export function generateDocumentation() {
   const documents = readDocumentation(documentationDirectory, { props });
   const entries = documents.map((document) => {
     const { yaml: _yaml, frontmatter, sections, ...entry } = document;
-    if (!frontmatter || !document.path.startsWith('components/')) return entry;
+    const kind = pageKindOf(document.path);
+    if (!frontmatter || !sectionedKinds.has(kind)) return entry;
     const metadata = {
       status: frontmatter.status,
       since: frontmatter.since,
@@ -863,6 +1017,9 @@ export function generateDocumentation() {
       avoidWhen: frontmatter.avoidWhen ?? [],
       components: frontmatter.components ?? [],
       ...(frontmatter.statuses && { statuses: frontmatter.statuses }),
+      ...(frontmatter.intent && { intent: frontmatter.intent }),
+      ...(frontmatter.composes && { composes: frontmatter.composes }),
+      ...(frontmatter.frame && { frame: frontmatter.frame }),
     };
     if (!sections) return { ...entry, metadata };
     // The ids of the headings in each section, numbered across the page, so the catalogue opens a
@@ -877,9 +1034,15 @@ export function generateDocumentation() {
           block.kind === 'markdown' ? headingsOf(block.markdown, slug).map(({ id }) => id) : [],
         ),
       })),
-      props: Object.fromEntries(
-        documentedExports(frontmatter.components, props).map((name) => [name, props.exports[name]]),
-      ),
+      // Pattern and template pages document no exports of their own; they link to what they compose.
+      ...(kind === 'component' && {
+        props: Object.fromEntries(
+          documentedExports(frontmatter.components, props).map((name) => [
+            name,
+            props.exports[name],
+          ]),
+        ),
+      }),
     };
   });
   const source = `// Generated from docs/index.md, its pages and docs/generated/props.json; edit the sources.\nimport type { DocumentationEntry } from '../DocumentationTypes';\n\nexport const documents: DocumentationEntry[] = ${JSON.stringify(entries, null, 2)};\n`;

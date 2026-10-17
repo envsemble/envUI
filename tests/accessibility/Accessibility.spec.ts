@@ -9,6 +9,11 @@
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
  * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
+ *
+ * A template page's previews are iframes of the frame route, left out of the page's scan: each
+ * template screen is scanned alone at its frame route instead, in both themes and scales at the
+ * desktop width and comfortable at the phone width, under routes such as
+ * frame:settings-page/SettingsPage?scale=compact&width=1280.
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -23,6 +28,7 @@ import {
 } from '../browser/CatalogueThemes';
 import {
   documentationPages,
+  guidePages,
   overviewViews,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
@@ -64,7 +70,36 @@ const pages = documentationPages.map(({ path, title, views }) => ({
         ? views.map((view) => `${path}/${view.id}`)
         : [path],
 }));
-const routes = new Set(pages.flatMap((page) => page.routes));
+/** Every template screen, by its template page's path, with the routes of its frame scans. */
+const screens = guidePages
+  .filter((page) => page.section === 'Templates')
+  .flatMap(({ path, document }) =>
+    (document?.sections ?? []).flatMap((section) =>
+      section.blocks.flatMap((block) =>
+        block.kind === 'template'
+          ? [
+              {
+                path,
+                frame: `${document!.id}/${block.name}`,
+                scans: [
+                  { scale: 'comfortable', width: 1280, height: 800, themes: ['light', 'dark'] },
+                  { scale: 'compact', width: 1280, height: 800, themes: ['light', 'dark'] },
+                  { scale: 'comfortable', width: 390, height: 844, themes: ['light'] },
+                ] as const,
+              },
+            ]
+          : [],
+      ),
+    ),
+  );
+const frameRoute = (frame: string, scale: string, width: number) =>
+  `frame:${frame}?scale=${scale}&width=${width}`;
+const routes = new Set([
+  ...pages.flatMap((page) => page.routes),
+  ...screens.flatMap(({ frame, scans }) =>
+    scans.map(({ scale, width }) => frameRoute(frame, scale, width)),
+  ),
+]);
 /**
  * ENVUI_PAGES limits the scan to some pages, by path such as components/button, as
  * `npm run check:affected` sets it for a change; `npm run test:a11y` scans every page.
@@ -76,6 +111,7 @@ const unknown = only?.filter(
 if (unknown?.length)
   throw new Error(`ENVUI_PAGES names pages the catalogue does not have: ${unknown.join(', ')}`);
 const scanned = only ? pages.filter((page) => only.includes(page.path)) : pages;
+const screensScanned = only ? screens.filter((screen) => only.includes(screen.path)) : screens;
 
 function readExceptions(): Violations {
   return JSON.parse(readFileSync(exceptionsFile, 'utf8'));
@@ -191,6 +227,8 @@ async function setTheme(page: Page, theme: CatalogueTheme) {
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
   const results = await new AxeBuilder({ page })
+    // Template previews are scanned alone, at their frame route.
+    .exclude('iframe.docs-template-frame')
     .options({
       runOnly: { type: 'tag', values: tags },
       ...(theme.endsWith('-hc') && { rules: highContrastRules }),
@@ -328,39 +366,63 @@ for (const { path, title, routes: pageRoutes } of scanned) {
         scans.push(await scan(page, route, theme.name));
       }
     }
+    record(testInfo, title, scans);
+  });
+}
 
-    if (updating(testInfo)) {
-      updateExceptions((violations) => {
-        for (const { route, theme, counts } of scans) {
-          const entry = (violations[route] ??= {});
-          if (Object.keys(counts).length) entry[theme] = counts;
-          else delete entry[theme];
-          if (!Object.keys(entry).length) delete violations[route];
-        }
-      });
-      return;
-    }
+/** Rewrites the known violations of these scans, or fails on any difference from them. */
+function record(testInfo: TestInfo, title: string, scans: Scan[]) {
+  if (updating(testInfo)) {
+    updateExceptions((violations) => {
+      for (const { route, theme, counts } of scans) {
+        const entry = (violations[route] ??= {});
+        if (Object.keys(counts).length) entry[theme] = counts;
+        else delete entry[theme];
+        if (!Object.keys(entry).length) delete violations[route];
+      }
+    });
+    return;
+  }
 
-    const known = readExceptions();
-    const report: string[] = [];
-    for (const scan of scans) {
-      const { added, fixed } = compare(scan, known[scan.route]?.[scan.theme]);
-      if (added.length)
-        report.push(`  New violations on #/${scan.route} (${scan.theme}):`, ...added);
-      if (fixed.length)
-        report.push(
-          `  No longer found, so remove from KnownViolations.json: #/${scan.route} (${scan.theme}):`,
-          ...fixed,
-        );
-    }
-    if (report.length)
-      throw new Error(
-        [
-          `Accessibility scan of ${title} differs from tests/accessibility/KnownViolations.json.`,
-          ...report,
-          'Fix new violations. When the list is out of date, run `npm run test:a11y:update` and review its diff.',
-        ].join('\n'),
+  const known = readExceptions();
+  const report: string[] = [];
+  for (const scan of scans) {
+    const { added, fixed } = compare(scan, known[scan.route]?.[scan.theme]);
+    if (added.length) report.push(`  New violations on #/${scan.route} (${scan.theme}):`, ...added);
+    if (fixed.length)
+      report.push(
+        `  No longer found, so remove from KnownViolations.json: #/${scan.route} (${scan.theme}):`,
+        ...fixed,
       );
+  }
+  if (report.length)
+    throw new Error(
+      [
+        `Accessibility scan of ${title} differs from tests/accessibility/KnownViolations.json.`,
+        ...report,
+        'Fix new violations. When the list is out of date, run `npm run test:a11y:update` and review its diff.',
+      ].join('\n'),
+    );
+}
+
+for (const { frame, scans: frameScans } of screensScanned) {
+  test(`template ${frame} has no new accessibility violations`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    const scans: Scan[] = [];
+    for (const { scale, width, height, themes } of frameScans) {
+      await page.setViewportSize({ width, height });
+      for (const theme of themes) {
+        await page.goto(`${siteUrl}/?${new URLSearchParams({ frame, scale, theme })}`);
+        await page.locator('[data-template-frame]').waitFor();
+        await page
+          .getByText(/^Loading .*…$/)
+          .first()
+          .waitFor({ state: 'detached' });
+        await page.evaluate(() => document.fonts.ready);
+        scans.push(await scan(page, frameRoute(frame, scale, width), theme));
+      }
+    }
+    record(testInfo, `template ${frame}`, scans);
   });
 }
 
