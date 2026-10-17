@@ -49,8 +49,3 @@ GitHub Light Default and GitHub Dark Default theme registrations. Shiki is licen
 `licenses/Runtime-Dependencies-LICENSE.txt` includes the locked runtime dependencies'
 copyright and license notices. The build generates this file from installed packages
 and embeds the same notices in the offline documentation artifact.
-
-## Brand artwork
-
-The envUI lockup and favicons the README shows are bundled under `dist/assets/envUI`.
-This artwork belongs to envsemble and is not covered by Google's or Inter's licenses.

@@ -16,6 +16,7 @@ let consumerDirectory;
 let installedDirectory;
 let consumerRequire;
 let ssr;
+let packedFiles;
 let isolationHook;
 
 function npmCli() {
@@ -84,6 +85,7 @@ before(
     );
     const packed = Array.isArray(packResult) ? packResult : Object.values(packResult);
     assert.equal(packed.length, 1);
+    packedFiles = packed[0].files.map((file) => file.path.replaceAll('\\', '/'));
     const dependencies = {};
     for (const name of [
       'react',
@@ -188,8 +190,7 @@ before(
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
-      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
-      logo: import.meta.resolve('@envsemble/envui/assets/envUI/envUI-lockup-black.svg')
+      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2')
     }));
   `,
     );
@@ -205,6 +206,20 @@ after(async function removeConsumerFixture() {
     'Only delete the fixture created inside .cache.',
   );
   await rm(fixtureDirectory, { recursive: true, force: true });
+});
+
+test('the packed package ships no logos', () => {
+  assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
+  const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
+  // The README's catalogue captures are the only images the package ships.
+  assert.deepEqual(
+    images.filter((path) => !/^dist\/assets\/readme\/catalogue-(?:light|dark)\.png$/.test(path)),
+    [],
+  );
+  assert.deepEqual(
+    packedFiles.filter((path) => /(?:^|\/)(?:brand|envUI)\/|lockup|favicon/i.test(path)),
+    [],
+  );
 });
 
 test('pagers omit empty navigation and preserve destination attributes', () => {
@@ -733,7 +748,6 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     );
   }
   assert.equal((await readFile(fileURLToPath(ssr.font))).subarray(0, 4).toString(), 'wOF2');
-  assert.match(await readFile(fileURLToPath(ssr.logo), 'utf8'), /<svg/);
   for (const filename of [
     'README.md',
     'skills/envui-use/SKILL.md',

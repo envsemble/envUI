@@ -26,7 +26,7 @@ _Actual envUI components in the local catalogue. The preview follows your light 
 - **Shared foundations:** scoped light/dark themes, design tokens, Inter, typography, surfaces and layout primitives.
 - **Everyday interactions:** actions, navigation, native form controls, selection, color picking, dialogs and toasts, with Base UI underpinning complex interactions.
 - **Content tools:** Markdown, code highlighting and Tiptap rich text on separate entry points.
-- **Local assets:** official Material Symbols Rounded icons and envsemble branding, with no font or icon CDN required.
+- **Local assets:** Inter and the official Material Symbols Rounded icons, with no font or icon CDN required.
 - **A visual catalogue:** live component previews plus a self-contained HTML build that opens offline.
 
 ## Start using envUI
