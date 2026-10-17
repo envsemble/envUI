@@ -167,6 +167,9 @@ for (const { page: id, name, frame } of screensChecked)
               .evaluateAll((elements) =>
                 elements
                   .filter((element) => (element as HTMLElement).offsetParent)
+                  // A field's box is its control, around the input and its buttons.
+                  .map((element) => element.closest('.env-text-field-control') ?? element)
+                  .filter((element, index, all) => all.indexOf(element) === index)
                   .map((element) => Math.round(element.getBoundingClientRect().height)),
               );
             expect(new Set(sizes).size, 'Toolbar controls share one height').toBeLessThanOrEqual(1);
