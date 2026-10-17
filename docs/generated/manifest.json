@@ -5850,6 +5850,12 @@
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
+          "name": "MenuTrigger",
+          "title": "Menu trigger",
+          "description": "An icon-only button that opens a menu or a popover has a tooltip too: the Tooltip is the menu's `trigger`, and passes the menu button's props and ref on to the IconButton. A press opens the menu and closes the tooltip, which stays closed while the menu is open.",
+          "file": "docs/examples/tooltip/MenuTrigger.tsx"
+        },
+        {
           "name": "DisabledReason",
           "title": "Disabled control",
           "description": "A disabled button keeps its tooltip, through a focusable wrapper. The text below the button says the same for people who can't see the tooltip.",
@@ -15729,7 +15735,7 @@
     "Tooltip": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed. className, style, ref and data attributes go to the tooltip's popup.",
+      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed, and stays closed while the control's own popup, such as a menu, is open. Native props and ref go to the control, so a Tooltip can be the trigger of a Menu.Root or Popover; popupClassName styles the tooltip's popup.",
       "props": [
         {
           "name": "content",
@@ -15741,7 +15747,19 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a component that takes its control as `trigger`, such as Menu.Root or Popover, the tooltip describes that control. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The control's ref, as the Tooltip passes its props on to the control, such as when the Tooltip is the `trigger` of a Menu.Root or Popover, which give their trigger a ref."
+        },
+        {
+          "name": "popupClassName",
+          "type": "string",
+          "required": false,
+          "description": "Class of the tooltip's popup, beside env-tooltip."
         },
         {
           "name": "side",
@@ -15759,7 +15777,7 @@
         }
       ],
       "native": [
-        "div"
+        "button"
       ],
       "status": "stable",
       "page": "tooltip",
