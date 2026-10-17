@@ -54,7 +54,7 @@
   },
   "packages/ui/src/styles/Card.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 7
+      "count": 5
     }
   },
   "packages/ui/src/styles/Code.css": {
@@ -164,14 +164,6 @@
   "packages/ui/src/styles/Icon.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    }
-  },
-  "packages/ui/src/styles/InfoChip.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 3
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Kbd.css": {

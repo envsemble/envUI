@@ -28,8 +28,6 @@
       "Icon.tsx": "foundations",
       "MaterialSymbolState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
-      "BrandLogo.tsx": "base",
-      "EnvUILogo.tsx": "base",
       "foundations/ThemePreference.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
@@ -46,22 +44,18 @@
       "actions/Link.tsx": "composites",
       "actions/SegmentedControl.tsx": "base",
       "actions/Toolbar.tsx": "composites",
-      "content/ActionCard.tsx": "base",
       "content/AnimatedNumber.tsx": "base",
       "content/Avatar.tsx": "base",
       "content/AvatarGroup.tsx": "composites",
       "content/Badge.tsx": "base",
       "content/CalendarHeatmap.tsx": "composites",
       "content/Card.tsx": "base",
-      "content/ClickableCard.tsx": "base",
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
       "content/ColorSwatch.tsx": "base",
       "content/CounterBadge.tsx": "base",
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
-      "content/FeatureCard.tsx": "base",
-      "content/InfoChip.tsx": "base",
       "content/Kbd.tsx": "base",
       "content/List.tsx": "base",
       "content/Markdown.tsx": "composites",
@@ -191,21 +185,11 @@
       "Link": {
         "styles": ["Button.css"]
       },
-      "SegmentedControl": {
-        "classes": ["env-segment"]
-      },
       "AnimatedNumber": {
         "styles": ["Text.css"]
       },
       "Badge": {
         "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"]
-      },
-      "Card": {
-        "modules": [
-          "content/ClickableCard.tsx",
-          "content/ActionCard.tsx",
-          "content/FeatureCard.tsx"
-        ]
       },
       "Code": {
         "modules": [

@@ -8,7 +8,6 @@
     }
   ],
   "interactive": [
-    { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
     { "module": "content/Table.tsx", "element": "button", "count": 1 },
     { "module": "forms/Composer.tsx", "element": "textarea", "count": 1 },
     { "module": "forms/DropZone.tsx", "element": "button", "count": 1 },
@@ -23,9 +22,6 @@
     { "module": "rich-text/Suggestions.tsx", "element": "role=\"listbox\"", "count": 1 }
   ],
   "tsxClasses": [
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip", "count": 1 },
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-positioner", "count": 1 },
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-theme", "count": 1 },
     { "module": "forms/Combobox.tsx", "class": "env-button", "count": 2 },
     { "module": "forms/Combobox.tsx", "class": "env-dropdown-list", "count": 1 },
     { "module": "forms/Combobox.tsx", "class": "env-dropdown-options", "count": 1 },
@@ -53,8 +49,6 @@
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item-icon-only", "count": 1 },
     { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
-    { "stylesheet": "AvatarGroup.css", "class": "env-avatar", "count": 1 },
-    { "stylesheet": "Badge.css", "class": "env-button", "count": 5 },
     { "stylesheet": "Calendar.css", "class": "env-icon-button", "count": 1 },
     { "stylesheet": "Combobox.css", "class": "env-avatar", "count": 1 },
     { "stylesheet": "Combobox.css", "class": "env-dropdown-list", "count": 1 },
@@ -71,9 +65,6 @@
     { "stylesheet": "Markdown.css", "class": "env-choice-control", "count": 1 },
     { "stylesheet": "Menu.css", "class": "env-kbd", "count": 1 },
     { "stylesheet": "Menu.css", "class": "env-kbd-separator", "count": 1 },
-    { "stylesheet": "Message.css", "class": "env-button", "count": 2 },
-    { "stylesheet": "Message.css", "class": "env-icon-button", "count": 2 },
-    { "stylesheet": "Message.css", "class": "env-spinner", "count": 1 },
     { "stylesheet": "RichText.css", "class": "env-button", "count": 1 },
     { "stylesheet": "RichText.css", "class": "env-form-field", "count": 1 },
     { "stylesheet": "Select.css", "class": "env-button", "count": 4 },
