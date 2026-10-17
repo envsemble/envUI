@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -13,9 +14,11 @@ import {
 import { Button } from '../actions/Button.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
+import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useSplitPane } from './internal/SplitPaneContext.js';
+import { defaultStackBelow, StackStyle } from './internal/StackStyle.js';
 import * as SplitPane from './SplitPane.js';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -52,6 +55,11 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * @default 50
    */
   maxListSize?: number;
+  /**
+   * The name of the handle that resizes the list, such as Resize project list.
+   * @default 'Resize panes', or EnvUIProvider's messages.splitPane.resize
+   */
+  resizeLabel?: string;
   /** Keeps the list's width under this localStorage key. */
   persist?: string;
   /** The list and the detail: ListDetail.List, then ListDetail.Detail. */
@@ -72,6 +80,7 @@ interface ListDetailContextValue {
   detailShown: boolean;
   onBack: () => void;
   backLabel: string;
+  resizeLabel: string | undefined;
   listRef: RefObject<HTMLDivElement | null>;
 }
 
@@ -99,6 +108,16 @@ function focusCurrentRow(list: HTMLElement | null) {
 }
 
 /**
+ * The stacked rules for one stackBelow width, which ListDetail.css carries for 44rem: the list or the
+ * detail, by data-detail-shown, without a hairline above the detail.
+ */
+const stackRules = (width: string) =>
+  `.env-list-detail${width}[data-detail-shown]>.env-list-detail-list{display:none}` +
+  `.env-list-detail${width}:not([data-detail-shown])>.env-list-detail-detail{display:none}` +
+  `.env-list-detail${width}>.env-list-detail-list:not([hidden])~.env-list-detail-detail:not([hidden]){` +
+  'border-block-start:none}';
+
+/**
  * A list beside the detail of its chosen item, on SplitPane, with the list's width resizable. Below
  * `stackBelow` of its own width it shows one at a time: the list, or the detail with a back button,
  * which moves focus between them.
@@ -107,19 +126,20 @@ function Root({
   detailShown,
   onBack,
   backLabel,
-  stackBelow = '44rem',
+  stackBelow = defaultStackBelow,
   defaultListSize = 32,
   minListSize = 22,
   maxListSize = 50,
   persist,
+  resizeLabel,
   className,
   children,
   ...props
 }: RootProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo(
-    () => ({ detailShown, onBack, backLabel, listRef }),
-    [detailShown, onBack, backLabel],
+    () => ({ detailShown, onBack, backLabel, resizeLabel, listRef }),
+    [detailShown, onBack, backLabel, resizeLabel],
   );
   return (
     <ListDetailContext value={context}>
@@ -134,6 +154,7 @@ function Root({
         data-detail-shown={detailShown ? '' : undefined}
       >
         {children}
+        <StackStyle name="env-list-detail" stackBelow={cssLength(stackBelow)} rules={stackRules} />
       </SplitPane.Root>
     </ListDetailContext>
   );
@@ -162,19 +183,36 @@ function List({ label, className, ref, ...props }: ListProps) {
  * detailShown, with a back button to the list at its start.
  */
 function Detail({ label, className, children, ref, ...props }: DetailProps) {
-  const { detailShown, onBack, backLabel, listRef } = useListDetail('Detail');
+  const { detailShown, onBack, backLabel, resizeLabel, listRef } = useListDetail('Detail');
   const stacked = useSplitPane()?.stacked ?? false;
   const back = useRef<HTMLButtonElement>(null);
   const detail = useRef<HTMLDivElement>(null);
   const previous = useRef({ detailShown, stacked });
 
+  // The back button goes as the layout widens: focus on it moves to the detail first, rather than
+  // falling to the page. The callback is stable, so this runs only when the button leaves.
+  const backRef = useCallback((node: HTMLButtonElement | null) => {
+    back.current = node;
+    if (!node) return;
+    return () => {
+      back.current = null;
+      const pane = detail.current;
+      if (document.activeElement !== node || !pane) return;
+      if (!pane.hasAttribute('tabindex')) pane.tabIndex = -1;
+      pane.focus();
+    };
+  }, []);
+
   // Stacked, focus follows what shows: the back button once the detail opens, the list's current
-  // row once it closes. Focus left inside a pane that the layout hides goes there too.
+  // row once it closes. Focus left inside a pane that the layout hides goes there too. Focus
+  // elsewhere on the page stays where it is.
   useLayoutEffect(() => {
     const before = previous.current;
     previous.current = { detailShown, stacked };
     if (!stacked) return;
     const active = document.activeElement;
+    const root = detail.current?.parentElement;
+    if (active && active !== document.body && !root?.contains(active)) return;
     if (detailShown && (!before.detailShown || listRef.current?.contains(active)))
       back.current?.focus();
     else if (!detailShown && (before.detailShown || detail.current?.contains(active)))
@@ -183,7 +221,7 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
 
   return (
     <>
-      <SplitPane.ResizeHandle />
+      <SplitPane.ResizeHandle label={resizeLabel} />
       <SplitPane.Pane
         {...props}
         ref={(node) => {
@@ -196,7 +234,7 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
       >
         {stacked && (
           <div className="env-list-detail-back">
-            <Button ref={back} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
+            <Button ref={backRef} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
               {backLabel}
             </Button>
           </div>

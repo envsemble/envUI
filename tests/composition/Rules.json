@@ -219,6 +219,9 @@
       "Alert": {
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
+      "SplitPane": {
+        "modules": ["layout/internal/StackStyle.tsx"]
+      },
       "List": {
         "modules": ["content/internal/ListBehavior.tsx"]
       },

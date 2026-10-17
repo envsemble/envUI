@@ -1,5 +1,6 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=split-panes`;
 
@@ -94,6 +95,7 @@ test.describe('SplitPane', () => {
     const size = page.getByTestId('rem-size');
     // 12 rem of a 640 px split pane is 30 percent.
     await expect(handle).toHaveAttribute('aria-valuenow', '30');
+    await expect(handle).toHaveAttribute('aria-valuetext', '30%, 12 rem');
     await handle.focus();
     await page.keyboard.press('ArrowRight');
     await expect(size).toHaveText('13 committed');
@@ -104,6 +106,13 @@ test.describe('SplitPane', () => {
     await handle.focus();
     await page.keyboard.press('End');
     await expect(size).toHaveText('20 committed');
+    // In a split pane narrower than the size, the first pane leaves room for the handle.
+    const root = page.getByTestId('rem');
+    await root.evaluate((element) => (element.style.inlineSize = '200px'));
+    await expect.poll(async () => (await list.boundingBox())!.width).toBeCloseTo(192, 0);
+    const box = (await root.boundingBox())!;
+    const handleBox = (await handle.boundingBox())!;
+    expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
   });
 
   test('follows the reading direction in right-to-left text', async ({ page }) => {
@@ -137,5 +146,34 @@ test.describe('SplitPane', () => {
     await expect(root).not.toHaveAttribute('data-stacked');
     await expect(handle).toBeVisible();
     await expect(page.getByTestId('stacked')).toHaveText('side by side');
+  });
+
+  test.describe('server-rendered', () => {
+    test.use({ javaScriptEnabled: false });
+
+    test('stacks below stackBelow from the server markup, without the handle', async ({ page }) => {
+      await openServerMarkup(
+        page,
+        `import {createElement as h} from 'react';
+        import {SplitPane} from '@envsemble/envui';
+        export const element = h(SplitPane.Root, {stackBelow: 600},
+          h(SplitPane.Pane, {label: 'First'}, 'First pane'),
+          h(SplitPane.ResizeHandle, {label: 'Resize'}),
+          h(SplitPane.Pane, {label: 'Second'}, 'Second pane'));`,
+      );
+      const first = page.getByRole('region', { name: 'First' });
+      const second = page.getByRole('region', { name: 'Second' });
+      const handle = page.getByRole('separator', { name: 'Resize' });
+      await page.setViewportSize({ width: 800, height: 600 });
+      await expect(handle).toBeVisible();
+      expect((await second.boundingBox())!.x).toBeGreaterThan((await first.boundingBox())!.x);
+      await page.setViewportSize({ width: 500, height: 600 });
+      await expect(handle).toBeHidden();
+      const top = (await first.boundingBox())!;
+      const below = (await second.boundingBox())!;
+      expect(below.y).toBeGreaterThanOrEqual(top.y + top.height);
+      expect(below.width).toBeCloseTo(top.width, 0);
+      await expect(second).toHaveCSS('border-top-style', 'solid');
+    });
   });
 });

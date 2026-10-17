@@ -14,7 +14,7 @@
   /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
   --env-page-header-inset: var(--env-page-gutter, 0rem);
   position: sticky;
-  inset-block-start: var(--env-frame-sticky-top, 0);
+  inset-block-start: var(--env-frame-sticky-top, var(--env-app-sticky-top, 0));
   z-index: calc(var(--env-z-sticky) - 1);
   margin-block-start: calc(-1 * var(--env-space-4));
   margin-inline: calc(-1 * var(--env-page-header-inset));

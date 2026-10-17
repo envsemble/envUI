@@ -9971,6 +9971,13 @@
           "description": "The list's largest share of the width in percent."
         },
         {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize panes', or EnvUIProvider's messages.splitPane.resize",
+          "description": "The name of the handle that resizes the list, such as Resize project list."
+        },
+        {
           "name": "persist",
           "type": "string",
           "required": false,
@@ -11252,7 +11259,7 @@
         }
       ],
       "native": [
-        "header"
+        "div"
       ],
       "status": "beta",
       "page": "page-header",
@@ -12826,7 +12833,7 @@
           "name": "stackBelow",
           "type": "string | number",
           "required": false,
-          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too."
+          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too. A container query stacks the server's markup before any script runs."
         },
         {
           "name": "onStackedChange",
@@ -17898,6 +17905,16 @@
         "cssVariable": "--env-app-topbar-block-size",
         "use": "--env-frame-header-block-size",
         "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      },
+      {
+        "cssVariable": "--env-split-view-gutter",
+        "removed": true,
+        "note": "SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap."
+      },
+      {
+        "cssVariable": "--env-split-view-size",
+        "removed": true,
+        "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
       },
       {
         "cssVariable": "--env-topbar-height",

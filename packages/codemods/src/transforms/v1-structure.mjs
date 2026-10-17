@@ -241,6 +241,17 @@ export default function transform(file, api, options = {}) {
     if (!rule) continue;
     const { attributes } = path.node.openingElement;
     const where = component.name;
+    // An element with children where every old form takes content props, such as a 1.0
+    // SplitPane.Root around its panes, is in its 1.0 form, spread props or not.
+    const hasCaseProps = rule.cases.some((each) =>
+      (each.has ?? []).some((prop) => hasAttribute(attributes, prop)),
+    );
+    if (
+      !hasCaseProps &&
+      hasChildren(path.node) &&
+      rule.cases.every((each) => each.content && (each.has ?? []).length > 0)
+    )
+      continue;
     if (spreads(attributes)) {
       reporter.warn(
         path.node,

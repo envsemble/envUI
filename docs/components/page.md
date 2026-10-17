@@ -69,7 +69,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 ## States and behaviour
 
 - Page has no states and handles no keys; it is layout only.
-- A sticky PageHeader in `header` publishes its height on the page as `--env-page-header-block-size`, so content can stick below it and the frame's header: `inset-block-start: calc(var(--env-frame-sticky-top) + var(--env-page-header-block-size, 0px))`.
+- A sticky PageHeader in `header` publishes its height on the page as `--env-page-header-block-size`, so content can stick below it and the frame's header: `inset-block-start: calc(var(--env-frame-sticky-top, var(--env-app-sticky-top, 0px)) + var(--env-page-header-block-size, 0px))`.
 - There is no Container: a Page without a header is the width container.
 
 ## Do and don't

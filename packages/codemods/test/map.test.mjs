@@ -136,14 +136,23 @@ test('validateMap reports malformed maps', () => {
     }),
     /1\.0 names/,
   );
-  const attribute = (rule) => problems({ classReports: { '[data-chips]': rule } });
-  assert.equal(attribute({ on: 'env-panel-dock', report: 'Use data-tabs.' }), '');
-  assert.match(attribute({ report: 'Use data-tabs.' }), /needs "on"/);
+  const attributes = (rule, map = {}) =>
+    problems({ ...map, classReports: { 'env-panel-dock': rule } });
+  assert.equal(attributes({ attributes: ['data-chips'], report: 'Use data-tabs.' }), '');
+  for (const bad of [[], 'data-chips', ['[data-chips]']])
+    assert.match(attributes({ attributes: bad, report: 'Use data-tabs.' }), /attribute names/);
   assert.match(
-    attribute({ on: 'env-panel-dock', within: 'env-panel-dock', report: 'Use data-tabs.' }),
-    /takes "on", not "within"/,
+    attributes({ attributes: ['data-chips'], within: 'env-x', report: 'Use data-tabs.' }),
+    /without "within"/,
   );
-  assert.match(problems({ classReports: { '[aria-x]': { report: 'x' } } }), /\[data-\*\]/);
+  assert.match(
+    attributes(
+      { attributes: ['data-chips'], report: 'Use data-tabs.' },
+      { classes: { 'env-panel-dock': 'env-dock' } },
+    ),
+    /1\.0 name/,
+  );
+  assert.match(problems({ classReports: { '[data-chips]': { report: 'x' } } }), /env- class/);
   const structure = (each) =>
     problems({ structure: { x: { Frame: { report: 'Restructure it.', cases: [each] } } } });
   assert.equal(structure({ has: ['titleBar'], element: 'Frame.Root' }), '');

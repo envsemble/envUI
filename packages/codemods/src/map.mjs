@@ -122,8 +122,6 @@ const identifier = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const part = /^([A-Za-z_$][A-Za-z0-9_$]*)\.([A-Za-z_$][A-Za-z0-9_$]*)$/;
 const className = /^env-[a-z0-9][a-z0-9_-]*$/;
 const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-/** An attribute selector that classReports can list, such as `[data-chips]`. */
-const attributeSelector = /^\[data-[a-z0-9]+(?:-[a-z0-9]+)*\]$/;
 
 const isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -258,26 +256,25 @@ export function validateMap(map) {
   }
   for (const [name, rule] of entriesOf(map.classReports)) {
     const where = `classReports.${name}`;
-    const attribute = attributeSelector.test(name);
-    if (!attribute && (!className.test(name) || name.endsWith('-')))
-      problems.push(`classReports: ${name} is not an env- class name or a [data-*] attribute.`);
+    if (!className.test(name) || name.endsWith('-'))
+      problems.push(`classReports: ${name} is not an env- class name.`);
     if (!isObject(rule) || typeof rule.report !== 'string' || rule.report.trim() === '') {
       problems.push(`${where} needs a "report" that says what to use instead.`);
       continue;
     }
-    if (attribute) {
-      if (typeof rule.on !== 'string' || !className.test(rule.on))
+    if (rule.attributes !== undefined) {
+      if (
+        rule.within !== undefined ||
+        !Array.isArray(rule.attributes) ||
+        rule.attributes.length === 0 ||
+        !rule.attributes.every((attribute) => /^[a-z][a-z0-9-]*$/.test(attribute))
+      )
+        problems.push(`${where}: "attributes" must be attribute names, without "within".`);
+      else if (renameClass(name, sorted) !== name)
         problems.push(
-          `${where}: an attribute needs "on", the env- class of the element it was on.`,
+          `${where}: name its class by its 1.0 name, which it reports after the renames.`,
         );
-      else if (renameClass(rule.on, sorted) !== rule.on)
-        problems.push(`${where}: name "on" by its 1.0 name, which it reports after the renames.`);
-      if (rule.within !== undefined)
-        problems.push(`${where}: an attribute takes "on", not "within".`);
-      continue;
-    }
-    if (rule.on !== undefined) problems.push(`${where}: only an attribute takes "on".`);
-    if (rule.within !== undefined) {
+    } else if (rule.within !== undefined) {
       if (typeof rule.within !== 'string' || !className.test(rule.within))
         problems.push(`${where}: "within" must be an env- class name.`);
       else if (
@@ -634,9 +631,8 @@ const sortClasses = (classes) =>
  * - `classesWithin`: class renames that apply inside an ancestor's selector, as
  *   `{ ancestor, from, to }`;
  * - `classReports`: classes and selectors that v1-classes leaves and reports, as
- *   `{ name, within, on, report }`; a class reported without `within` is also kept by the class
- *   renames, so a shorter entry that it continues does not rename it; a `[data-*]` name is an
- *   attribute, reported in a selector that puts it on the class `on` names;
+ *   `{ name, within, attributes, report }`; a class reported without `within` or `attributes` is
+ *   also kept by the class renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
  *   name (without `--`) that replaces it, or a `report` for a fixed color or a removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
@@ -721,13 +717,13 @@ export function normalizeMap(map) {
   const classReports = entriesOf(map.classReports).map(([name, rule]) => ({
     name,
     within: rule.within,
-    on: rule.on,
+    attributes: rule.attributes,
     report: rule.report,
   }));
   const classes = sortClasses([
     ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
     ...classReports
-      .filter((rule) => !rule.within && !rule.on)
+      .filter((rule) => !rule.within && !rule.attributes)
       .map(({ name }) => ({ from: name, to: name })),
   ]);
   const classAttributes = new Map(

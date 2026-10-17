@@ -17,10 +17,12 @@ import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
 import { ResizeHandle as InternalResizeHandle } from '../internal/ResizeHandle.js';
 import { splitPane } from '../foundations/messages/splitPane.js';
 import { useContainerSize } from '../foundations/useContainerSize.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { StackStyle } from './internal/StackStyle.js';
 import {
   SplitPaneContext,
   type SizeUnit,
@@ -75,7 +77,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its
    * panes stack, the first above the second, the handle goes and the root has data-stacked. It
    * follows the split pane's own width, not the window's, so a split pane in a narrow column
-   * stacks too.
+   * stacks too. A container query stacks the server's markup before any script runs.
    */
   stackBelow?: string | number;
   /** Receives true when the panes stack and false when they sit side by side again. */
@@ -119,6 +121,16 @@ function writeStoredSize(key: string, size: number | undefined) {
     // The split pane still works when browser storage is unavailable.
   }
 }
+
+/**
+ * The stacked rules for one stackBelow width, which SplitPane.css carries for 44rem: the panes
+ * take the whole row, one above the other with a hairline between, and the handle goes.
+ */
+const stackRules = (width: string) =>
+  `.env-split-pane${width}>.env-split-pane-pane{grid-column:1/-1}` +
+  `.env-split-pane${width}>.env-split-pane-handle{display:none}` +
+  `.env-split-pane${width}>.env-split-pane-pane:not([hidden])~.env-split-pane-pane{` +
+  'border-block-start:var(--env-control-border-width) solid var(--env-color-border-muted)}';
 
 /** Sizes are kept to a tenth of a percent, or a hundredth of a rem. */
 const round = (value: number, unit: SizeUnit) =>
@@ -172,6 +184,7 @@ function Root({
     threshold !== undefined &&
     rootSize.inlineSize < threshold.inlineSize;
   useStackedReport(stacked, onStackedChange);
+  const stackWidth = stackBelow === undefined ? undefined : cssLength(stackBelow);
 
   const latest = useRef({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
   latest.current = { size, controlledSize, onSizeChange, persist, defaultSize, clamp };
@@ -213,15 +226,19 @@ function Root({
         style={{ '--env-split-pane-size': `${size}${unit}`, ...style } as CSSProperties}
         data-orientation={orientation}
         data-stacked={stacked ? '' : undefined}
+        data-stack-below={stackWidth}
       >
         {children}
-        {stackBelow !== undefined && (
-          <div
-            ref={probe}
-            className="env-split-pane-probe"
-            aria-hidden="true"
-            style={{ inlineSize: cssLength(stackBelow) }}
-          />
+        {stackWidth !== undefined && (
+          <>
+            <div
+              ref={probe}
+              className="env-split-pane-probe"
+              aria-hidden="true"
+              style={{ inlineSize: stackWidth }}
+            />
+            <StackStyle name="env-split-pane" stackBelow={stackWidth} rules={stackRules} />
+          </>
         )}
       </div>
     </SplitPaneContext>
@@ -261,6 +278,7 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
   const handle = useRef<HTMLDivElement>(null);
   const [controls, setControls] = useState<string>();
   const remPixels = useRemPixels();
+  const formatters = useFormatters();
   // The pane before the handle is the one it sizes.
   useLayoutEffect(() => {
     const previous = handle.current?.previousElementSibling;
@@ -277,6 +295,18 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
     unit === 'rem' && extent ? (rem: number) => ((rem * remPixels) / extent) * 100 : undefined;
   const fromShare = (share: number) =>
     toShare && extent ? (share * extent) / 100 / remPixels : share;
+  // In rem, the value says the size too, as the share alone would change with the window.
+  const valueText = toShare
+    ? (share: number) =>
+        messages.remValue({
+          share: formatters
+            .number({ style: 'percent', maximumFractionDigits: 0 })
+            .format(share / 100),
+          size: formatters
+            .number({ maximumFractionDigits: 1 })
+            .format(round(fromShare(share), unit)),
+        })
+    : undefined;
   return (
     <InternalResizeHandle
       {...props}
@@ -292,6 +322,7 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
       step={toShare ? toShare(1) : 2}
       largeStep={toShare ? toShare(5) : 10}
       onChange={(value, { committed }) => change(fromShare(value), committed)}
+      valueText={valueText}
       label={label ?? messages.resize}
       aria-controls={controls}
       className={classNames('env-split-pane-handle', className)}

@@ -1,7 +1,6 @@
 /* DescriptionList: labelled values in a grid, the labels in a column as wide as the longest one, or
    each label above its value. Labels are muted and wrap between words only. */
 .env-description-list {
-  container-type: inline-size;
   display: grid;
   grid-template-columns: minmax(min-content, max-content) minmax(0, 1fr);
   gap: var(--env-space-2) var(--env-space-4);
@@ -28,6 +27,11 @@
   min-inline-size: 0;
   margin: 0;
   overflow-wrap: anywhere;
+}
+/* Only an automatic layout follows its own width, so only it is a container: a container is as wide
+   as its context gives it, never as its content. */
+.env-description-list[data-layout='auto'] {
+  container-type: inline-size;
 }
 /* Stacked, each label sits above its value, the rows apart. */
 .env-description-list[data-layout='stacked'] .env-description-list-item {

@@ -1,19 +1,25 @@
 /* SplitPane: two panes and the handle that resizes them. The first pane takes the root's size, the
    handle its own and the second pane the rest; each pane scrolls on its own when the split pane has
-   a size of its own. Stacked panes follow each other. */
+   a size of its own. A size in rem never pushes the handle out of a split pane narrower than it.
+   Stacked panes follow each other. The root is a container, so the server's markup stacks below
+   stackBelow before any script measures it. */
 .env-split-pane {
   --env-split-pane-size: 50%;
+  container: env-split-pane / inline-size;
   position: relative;
   display: grid;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 .env-split-pane[data-orientation='horizontal'] {
-  grid-template-columns: var(--env-split-pane-size) auto minmax(0, 1fr);
+  grid-template-columns: min(var(--env-split-pane-size), 100% - var(--env-space-2)) auto minmax(
+      0,
+      1fr
+    );
   grid-template-rows: minmax(0, 1fr);
 }
 .env-split-pane[data-orientation='vertical'] {
-  grid-template-rows: var(--env-split-pane-size) auto minmax(0, 1fr);
+  grid-template-rows: min(var(--env-split-pane-size), 100% - var(--env-space-2)) auto minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
 }
 .env-split-pane-pane {
@@ -37,6 +43,22 @@
 }
 .env-split-pane[data-stacked] > .env-split-pane-pane:not([hidden]) ~ .env-split-pane-pane {
   border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+}
+/* Below stackBelow, the container query stacks the panes from the first paint, in the grid: each
+   takes the whole row and the handle goes. The script then sets data-stacked, as above. These are
+   the rules for 44rem; SplitPane writes the same for any other width. */
+@container env-split-pane (inline-size < 44rem) {
+  .env-split-pane[data-stack-below='44rem'] > .env-split-pane-pane {
+    grid-column: 1 / -1;
+  }
+  .env-split-pane[data-stack-below='44rem'] > .env-split-pane-handle {
+    display: none;
+  }
+  .env-split-pane[data-stack-below='44rem']
+    > .env-split-pane-pane:not([hidden])
+    ~ .env-split-pane-pane {
+    border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
 }
 /* The handle's resting line, under the line it shows on hover, focus and while dragging. */
 .env-split-pane-handle::before {
