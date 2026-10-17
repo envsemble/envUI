@@ -60,9 +60,8 @@ test('the shipped style sheet puts every rule in a cascade layer of env, in orde
   // The font face is no style rule: cascade layers don't order it.
   const rules = statements.slice(1).filter(({ prelude }) => prelude !== '@font-face');
   assert.equal(statements.length - rules.length, 2, 'One font face besides the layer order');
-  const unlayered = rules.filter(
-    ({ prelude, block }) => !block || !/^@layer env\.[a-z]+$/.test(prelude),
-  );
+  // A style sheet without rules yet, imported into a layer, bundles to a bare `@layer env.…;`.
+  const unlayered = rules.filter(({ prelude }) => !/^@layer env\.[a-z]+$/.test(prelude));
   assert.deepEqual(unlayered, [], 'Every rule is inside @layer env.…');
   const used = new Set(rules.map(({ prelude }) => prelude.slice('@layer '.length)));
   for (const layer of used) assert.ok(layerOrder.includes(layer), `${layer} is one of envUI's`);

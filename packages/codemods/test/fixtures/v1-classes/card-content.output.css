@@ -1,0 +1,7 @@
+/* A 0.7 Card class that 1.0 neither keeps nor renames. */
+.env-card-content {
+  gap: 12px;
+}
+.env-card-body.env-card-content {
+  padding-block-end: 8px;
+}

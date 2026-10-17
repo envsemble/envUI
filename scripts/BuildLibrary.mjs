@@ -3,7 +3,6 @@ import { readdir, readFile, mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
-import { generateBrandAssets } from './GenerateBrandAssets.mjs';
 import { collectDependencyNotices } from './DependencyNotices.mjs';
 import { generateDocumentation, packageDocumentation } from './GenerateDocumentation.mjs';
 import { buildTokens } from './BuildTokens.mjs';
@@ -28,7 +27,6 @@ async function findTypeScriptFiles(directory) {
 }
 await buildTokens();
 generateDocumentation();
-await generateBrandAssets();
 await writeFile(
   resolve(libraryDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'),
   await collectDependencyNotices(repositoryRoot),
@@ -73,13 +71,7 @@ for (const output of stylesheetBuild.outputFiles) {
   await mkdir(resolve(output.path, '..'), { recursive: true });
   await writeFile(output.path, output.contents);
 }
-await cp(
-  resolve(repositoryRoot, 'assets/brand/envsemble/envsemble-lockup-black.svg'),
-  resolve(outputDirectory, 'assets/envsemble-lockup-black.svg'),
-);
-await cp(resolve(repositoryRoot, 'assets/brand/envUI'), resolve(outputDirectory, 'assets/envUI'), {
-  recursive: true,
-});
+// The package ships no logos: the brand artwork stays in the repository for the catalogue.
 await cp(resolve(repositoryRoot, 'assets/readme'), resolve(outputDirectory, 'assets/readme'), {
   recursive: true,
 });
@@ -101,9 +93,16 @@ for (const name of ['manifest.json', 'llms.txt'])
 const { version } = JSON.parse(await readFile(resolve(libraryDirectory, 'package.json'), 'utf8'));
 writeAgentFiles(libraryDirectory, { version });
 const readme = await readFile(resolve(repositoryRoot, 'README.md'), 'utf8');
+// The repository README opens with the envUI lockup; the packaged copy leaves it out.
+const packagedReadme = readme.replace(
+  /^<picture>(?:(?!<\/picture>)[\s\S])*?assets\/brand\/[\s\S]*?<\/picture>\s*/m,
+  '',
+);
+if (packagedReadme.includes('assets/brand/'))
+  throw new Error('The packaged README must not show brand artwork.');
 await writeFile(
   resolve(libraryDirectory, 'README.md'),
-  readme
+  packagedReadme
     .replaceAll('](.agents/skills/', '](skills/')
     .replaceAll('](packages/ui/CHANGELOG.md)', '](CHANGELOG.md)')
     // The maintainers' guide stays in the repository.
@@ -111,8 +110,6 @@ await writeFile(
       '](CONTRIBUTING.md)',
       '](https://github.com/envsemble/envUI/blob/main/CONTRIBUTING.md)',
     )
-    .replaceAll('src="assets/brand/envUI/', 'src="dist/assets/envUI/')
-    .replaceAll('srcset="assets/brand/envUI/', 'srcset="dist/assets/envUI/')
     .replaceAll('src="assets/readme/', 'src="dist/assets/readme/')
     .replaceAll('srcset="assets/readme/', 'srcset="dist/assets/readme/')
     .replaceAll('packages/ui/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')

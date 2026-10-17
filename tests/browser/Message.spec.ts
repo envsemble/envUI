@@ -109,8 +109,8 @@ test('bubbles, text and status keep their contrast on the canvas and panes in bo
   page,
 }) => {
   await page.goto(messagesFixture);
-  // Both themes, each with seven messages on the canvas and on a pane.
-  await expect(page.locator('.env-message')).toHaveCount(14);
+  // Both themes, each with seven messages on the canvas and on a pane, and one with default actions.
+  await expect(page.locator('.env-message')).toHaveCount(16);
   const failures = await page.evaluate(() => {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;
@@ -198,4 +198,21 @@ test('message actions are small on a fine pointer', async ({ page }) => {
   const copy = page.getByTestId('messages-light').getByRole('button', { name: 'Copy answer' });
   await expect(copy).toHaveCSS('width', '32px');
   await expect(copy).toHaveCSS('height', '32px');
+  // A text icon action at the start lines its icon up with the message's edge.
+  await expect(copy).toHaveCSS('margin-inline-start', '-8px');
+});
+
+test('actions without a variant or size of their own are small ghost buttons', async ({ page }) => {
+  await page.goto(messagesFixture);
+  const list = page.getByRole('log', { name: 'Defaults light' });
+  for (const name of ['Copy note light', 'Reply']) {
+    const button = list.getByRole('button', { name });
+    await expect(button).toHaveAttribute('data-variant', 'ghost');
+    await expect(button).toHaveAttribute('data-size', 'sm');
+  }
+  // A ghost icon action keeps its round hit area at the edge.
+  await expect(list.getByRole('button', { name: 'Copy note light' })).toHaveCSS(
+    'margin-inline-start',
+    '0px',
+  );
 });

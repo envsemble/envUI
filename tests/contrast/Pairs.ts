@@ -319,7 +319,7 @@ export const pairs: readonly ContrastPair[] = merged([
       [fill, popup],
       [fill, raised],
     ],
-    'Unselected tabs and segments on their rail, keyboard keys in compact menus, table header cells and the command palette placeholder',
+    'Unselected tabs, segments and their counts on their rail, keyboard keys in compact menus, table header cells and the command palette placeholder',
   ),
   ...nonText(
     '--env-color-border-default',
@@ -1885,7 +1885,7 @@ export function pairName(pair: Pick<ContrastPair, 'fg' | 'bg'>): string {
  * a token of its own; add a token rather than an entry here.
  *
  * - A badge or counter inside a primary or important button is outlined in 55% of the button's label
- *   color, `currentColor`, which only the button knows (Badge.css).
+ *   color, `currentColor`, which only the button knows (Button.css sets Badge.css's hooks).
  * - Calendar heatmap steps mix the tone into the page by a share that depends on how many steps the
  *   data has, from 30% at the lightest to the full tone (CalendarHeatmap.tsx and .css). The
  *   lightest step of the default accent tone is measured.

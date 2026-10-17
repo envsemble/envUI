@@ -9,7 +9,7 @@ import { ColorControls } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
-import { FeatureCardsFixture } from './FeatureCards.js';
+import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture, TwoShellsFixture } from './Adoption.js';
@@ -67,6 +67,7 @@ import { DrawersFixture } from './Drawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
+import { DisclosuresFixture } from './Disclosures.js';
 import { DensityFixture } from './Density.js';
 import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
@@ -74,6 +75,14 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
+import { SplitPanesFixture } from './SplitPanes.js';
+import { PageHeadersFixture } from './PageHeaders.js';
+import { DescriptionListsFixture } from './DescriptionLists.js';
+import { ContainerSizeFixture } from './ContainerSize.js';
+import { SearchTriggersFixture } from './SearchTriggers.js';
+import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
+import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { ListsFixture } from './Lists.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -107,6 +116,15 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'split-panes': SplitPanesFixture,
+  'page-headers': PageHeadersFixture,
+  'description-lists': DescriptionListsFixture,
+  'container-size': ContainerSizeFixture,
+  'search-triggers': SearchTriggersFixture,
+  'account-menus': AccountMenusFixture,
+  'account-menu-shell': AccountMenuShellFixture,
+  'confirm-dialogs': ConfirmDialogsFixture,
+  lists: ListsFixture,
 };
 
 export default function App() {
@@ -171,7 +189,8 @@ export default function App() {
             </>
           )}
           {includes('layout') && <LayoutFixture />}
-          {includes('feature-cards') && <FeatureCardsFixture />}
+          {includes('cards') && <CardsFixture />}
+          {includes('disclosures') && <DisclosuresFixture />}
           {includes('color-picker') && (
             <>
               <ColorPickerFixture theme="light" />

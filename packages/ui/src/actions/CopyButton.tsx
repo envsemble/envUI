@@ -3,7 +3,6 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useContext,
-  useEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -16,7 +15,7 @@ import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
-import { writeToClipboard } from '../internal/useCopy.js';
+import { useCopy } from '../internal/useCopy.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { copy as copyMessages } from '../foundations/messages/copy.js';
 import type { ControlSize } from '../foundations/Theme.js';
@@ -27,6 +26,11 @@ interface CopyButtonBaseProps
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
   onCopy?: (text: string) => void;
+  /**
+   * Writes the text instead of the browser's Clipboard API, such as through a desktop app's
+   * clipboard bridge. A rejected promise shows and announces failedLabel.
+   */
+  write?: (text: string) => Promise<void>;
   /** As Button's: sm, md or lg; without it, the control height of the container. */
   size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
@@ -78,6 +82,7 @@ const feedbackDuration = 2_000;
 export function CopyButton({
   value,
   onCopy,
+  write,
   variant,
   tone,
   size,
@@ -99,37 +104,22 @@ export function CopyButton({
   const emphasis = useButtonEmphasis({ variant, tone, fallbackVariant: 'secondary' });
   // Inside an application's own Tooltip, that tooltip describes the button.
   const nested = useContext(TooltipNestingContext);
-  const [result, setResult] = useState<{ copied: boolean; count: number } | null>(null);
+  // From the press until the result shows, copying; waiting while a promised text is on its way.
+  // Every press shows and announces its result again, also the same result twice in a row.
+  const { copy, status, round, copying, waiting, reset } = useCopy({
+    write,
+    onCopy,
+    resetAfter: feedbackDuration,
+    fieldClassName: 'env-copy-button-field',
+  });
+  const result = status === 'idle' ? null : { copied: status === 'copied', count: round };
   const [hovered, setHovered] = useState(false);
-  // From the press until the result shows; waiting while a promised text is on its way.
-  const [copying, setCopying] = useState(false);
-  const [waiting, setWaiting] = useState(false);
   const shownText = useRef('');
-  useEffect(() => {
-    if (!result) return;
-    const timer = setTimeout(() => setResult(null), feedbackDuration);
-    return () => clearTimeout(timer);
-  }, [result]);
 
-  async function copy(event: MouseEvent<HTMLButtonElement>) {
+  function press(event: MouseEvent<HTMLButtonElement>) {
     onClick?.(event);
     if (event.defaultPrevented) return;
-    setCopying(true);
-    let copied = true;
-    let text = '';
-    try {
-      text = await writeToClipboard(value, event.currentTarget, {
-        onWait: () => setWaiting(true),
-        fieldClassName: 'env-copy-button-field',
-      });
-    } catch {
-      copied = false;
-    }
-    setCopying(false);
-    setWaiting(false);
-    // Every press shows and announces its result again, also the same result twice in a row.
-    setResult((current) => ({ copied, count: (current?.count ?? 0) + 1 }));
-    if (copied) onCopy?.(text);
+    void copy(value, event.currentTarget);
   }
 
   // A label without words, such as an empty string, leaves the button icon-only, as it looks.
@@ -149,7 +139,7 @@ export function CopyButton({
     ...props,
     ...emphasis,
     pending: waiting,
-    onClick: copy,
+    onClick: press,
     className: classNames('env-copy-button', className),
     size,
     'data-copied': result?.copied ? '' : undefined,
@@ -185,7 +175,7 @@ export function CopyButton({
           open={result !== null || (iconOnly && (hovered || copying))}
           onOpenChange={(open, details) => {
             setHovered(open);
-            if (!open && details.reason === 'escape-key') setResult(null);
+            if (!open && details.reason === 'escape-key') reset();
           }}
         >
           <BaseTooltip.Trigger

@@ -4,11 +4,17 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 
 export type BadgeTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done';
 
+/** A badge's emphasis: a tinted, a filled or an outlined pill. */
+export type BadgeVariant = 'soft' | 'solid' | 'outline';
+
 export interface BadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /** Meaning of the state; done is the purple of completed work. Neutral by default. */
   tone?: BadgeTone;
-  /** subtle (default) tints the background, solid fills it with the tone, outline draws a border. */
-  variant?: 'subtle' | 'solid' | 'outline';
+  /**
+   * soft tints the background, solid fills it with the tone, outline draws a border.
+   * @default 'soft'
+   */
+  variant?: BadgeVariant;
   /** A decorative icon before the label, such as a check mark; hidden from assistive technology. */
   icon?: ReactNode;
   /**
@@ -18,10 +24,13 @@ export interface BadgeProps extends Omit<ComponentPropsWithRef<'span'>, 'childre
   children: ReactNode;
 }
 
-/** A small pill label for a state, such as In progress, Blocked or Archived, or a short name. */
+/**
+ * A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata,
+ * such as a plan or a count of seats.
+ */
 export function Badge({
   tone = 'neutral',
-  variant = 'subtle',
+  variant = 'soft',
   icon,
   children,
   className,

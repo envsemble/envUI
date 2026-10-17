@@ -9,7 +9,7 @@ const tones = [
   { tone: 'danger', label: 'Failed' },
   { tone: 'done', label: 'Completed' },
 ] as const;
-const variants = ['subtle', 'solid', 'outline'] as const;
+const variants = ['soft', 'solid', 'outline'] as const;
 
 /** Every tone in every variant, and the counts on their own and in each kind of button. */
 export default function VariantMatrix() {

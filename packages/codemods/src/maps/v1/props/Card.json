@@ -1,0 +1,34 @@
+{
+  "@envsemble/envui": {
+    "Card": {
+      "tone": {
+        "to": "background",
+        "report": "Card's tone is background in 1.0: row is muted, the default, pane is default and canvas is page.",
+        "values": {
+          "row": {},
+          "pane": {
+            "props": {
+              "background": "default"
+            }
+          },
+          "canvas": {
+            "props": {
+              "background": "page"
+            }
+          }
+        }
+      },
+      "layout": {
+        "current": ["stack", "feature"],
+        "report": "Card's layout is stack or feature in 1.0: actions alone give a card its action strip, so content and action go.",
+        "values": {
+          "content": {},
+          "action": {
+            "report": "layout=\"action\" gave a card the action strip, which actions alone give in 1.0: this card has no actions, so it lays out as a stack. Pass the actions it should show.",
+            "unless": ["actions"]
+          }
+        }
+      }
+    }
+  }
+}

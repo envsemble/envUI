@@ -16,7 +16,7 @@ import {
   Radio,
   Checkbox,
   Switch,
-  InfoChip,
+  Badge,
   Skeleton,
   type ThemeValue,
 } from '@envsemble/envui';
@@ -67,10 +67,10 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         </Surface>
         <Surface data-testid={`${theme}-color-pane`}>Pane</Surface>
         <Card data-testid={`${theme}-color-card`}>Card</Card>
-        <Card tone="pane" data-testid={`${theme}-color-pane-card`}>
+        <Card background="default" data-testid={`${theme}-color-pane-card`}>
           Pane card
         </Card>
-        <Card tone="canvas" data-testid={`${theme}-color-canvas-card`}>
+        <Card background="page" data-testid={`${theme}-color-canvas-card`}>
           Canvas card
         </Card>
         <List.Root>
@@ -162,7 +162,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
           defaultChecked
           data-testid={`${theme}-color-switch`}
         />
-        <InfoChip data-testid={`${theme}-color-chip`}>Info</InfoChip>
+        <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
         <Skeleton data-testid={`${theme}-color-skeleton`} />
       </Stack>
     </Theme>

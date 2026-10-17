@@ -97,7 +97,7 @@ export function AdoptionFixture() {
             trigger={
               <AvatarButton
                 name="Alex Morgan"
-                detail="alex@example.com"
+                description="alex@example.com"
                 aria-label="Open account menu"
               />
             }

@@ -123,7 +123,7 @@
 /* A tooltip opened by hovering a day takes the pointer, so people can move onto it to read or
    magnify it (WCAG 1.4.13). One opened by keyboard focus, or closing, takes none, so it never blocks
    a press on what lies under it, such as a control above the latest weeks. */
-.env-calendar-heatmap-tooltip-positioner:is([data-focus-opened], [data-closed]) {
+.env-calendar-heatmap-tooltip-positioner:is(:has(> [data-focus-opened]), [data-closed]) {
   pointer-events: none;
 }
 

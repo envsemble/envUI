@@ -1,0 +1,74 @@
+/* SplitPane: two panes and the handle that resizes them. The first pane takes the root's size, the
+   handle its own and the second pane the rest; each pane scrolls on its own when the split pane has
+   a size of its own. Stacked panes follow each other. */
+.env-split-pane {
+  --env-split-pane-size: 50%;
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-split-pane[data-orientation='horizontal'] {
+  grid-template-columns: var(--env-split-pane-size) auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+.env-split-pane[data-orientation='vertical'] {
+  grid-template-rows: var(--env-split-pane-size) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+}
+.env-split-pane-pane {
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+}
+.env-split-pane-pane[hidden] {
+  display: none;
+}
+/* Stacked, the panes take the height of their content, the first above the second, with a hairline
+   between them; within a set height they scroll together. */
+.env-split-pane[data-stacked] {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.env-split-pane[data-stacked] > .env-split-pane-pane {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+.env-split-pane[data-stacked] > .env-split-pane-pane:not([hidden]) ~ .env-split-pane-pane {
+  border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+}
+/* The handle's resting line, under the line it shows on hover, focus and while dragging. */
+.env-split-pane-handle::before {
+  content: '';
+  position: absolute;
+  border-color: var(--env-color-border-muted);
+  border-style: solid;
+  border-width: 0;
+}
+.env-split-pane-handle[data-axis='inline']::before {
+  inset-block: 0;
+  inset-inline-start: 50%;
+  border-inline-start-width: var(--env-control-border-width);
+}
+.env-split-pane-handle[data-axis='block']::before {
+  inset-inline: 0;
+  inset-block-start: 50%;
+  border-block-start-width: var(--env-control-border-width);
+}
+/* Measures the stackBelow width in the split pane's own text size. It lies before the inline start,
+   where overflow is never scrollable. */
+.env-split-pane-probe {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 100%;
+  block-size: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Forced colors: the resting line takes the system's text color. */
+@media (forced-colors: active) {
+  .env-split-pane-handle::before {
+    border-color: CanvasText;
+  }
+}

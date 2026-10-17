@@ -62,7 +62,7 @@ test('stats keep 4.5:1 contrast on their surfaces in both themes', async ({ page
     };
     const results: string[] = [];
     for (const part of document.querySelectorAll<HTMLElement>(
-      '.env-stat-label, .env-stat-value, .env-stat-trend, .env-stat-detail',
+      '.env-stat-label, .env-stat-value, .env-stat-trend, .env-stat-description',
     )) {
       // Paint every surface from the theme down to the stat.
       const layers: string[] = [];

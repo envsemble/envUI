@@ -51,7 +51,7 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
-- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
+- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, SplitView becomes a SplitPane, as [split panes](#split-panes) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
@@ -59,7 +59,7 @@ export default defineConfig(envui.configs.recommended);
 
 Change by hand what the codemods report, each with its file and line:
 
-- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact`, and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`);
+- removed exports: `LoadingBar` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact`, `BrandLogo` and `EnvUILogo` (envUI ships no logos), and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`);
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
 - a `useTheme()` call that is returned, as by a hook that wraps it, or passed as the `value` of what may be a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
@@ -141,7 +141,7 @@ Change by hand what the codemods can't see:
 
 - **`className` and `style` style the root.** On TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio they reach the field's or the control's root, the element with `env-field` or the label around a choice, and on MarkdownEditor its root, `env-markdown-editor`, instead of the native control. `ref` and the other native props still reach the input, textarea or trigger, so form libraries keep registering them. A style meant for the input selects it through the root's class, such as `.my-field .env-text-field-input`. `v1-props` reports each `className` and `style` on these components without changing them.
 - **`env-choice-control`** was the root of Checkbox, Switch and an inline Radio alike; it is `env-checkbox`, `env-switch` or `env-radio` now, by the control. `v1-classes` leaves it as it is, since only the markup around it tells which; rename it by hand.
-- **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`.
+- **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`. Their accessible names change too: "Color" and "Hue" become "<label> saturation and brightness" and "<label> hue", so tests that find them by name need updating.
 - **DropZone** is named by its label and its description together, as its visible text is; a test that found it by its label alone matches the start of the name.
 
 ### Navigation and collections
@@ -220,6 +220,58 @@ Behaviour that changes without a rename:
 - `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
 - A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
 - CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
+
+### Content and display
+
+The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 words, and envUI ships no logos. `v1-names` renames the exports, `v1-structure` rewrites ActionCard, FeatureCard and Card's `as`, `v1-props` moves the literal values and `v1-classes` the classes:
+
+| 0.x                                                                                                                  | 1.0                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `<ClickableCard href>`, `<Card as="button" onClick>`, `<ClickableCard onClick>`                                      | `<Card href>`, `<Card onClick>`: a card with `onClick` is a native button                              |
+| `<Card as="article">`                                                                                                | `<Card render={<article />}>`                                                                          |
+| `<ActionCard title meta actions>`                                                                                    | `<Card render={<article />} heading meta actions>`                                                     |
+| `<FeatureCard icon title description action>`                                                                        | `<Card layout="feature" headingLevel={2} icon heading description actions>`                            |
+| Card `tone`: `row`, `pane`, `canvas`                                                                                 | `background`: `muted` (the default), `default`, `page`                                                 |
+| Card `layout`: `content`, `action`                                                                                   | Removed: `actions` gives the action strip; `layout` is `stack` or `feature`                            |
+| `ClickableCardProps`, `ActionCardProps`, `FeatureCardProps`                                                          | `CardProps`                                                                                            |
+| `env-clickable-card`, `env-action-card`, `env-feature-card`                                                          | `.env-card[data-interactive]`, `.env-card[data-actions]`, `.env-card[data-layout='feature']`           |
+| `env-action-card-heading`, `-meta`, `-body`, `-actions`; `env-feature-card-icon`, `-copy`, `-description`, `-action` | `env-card-header`, `-meta`, `-body`, `-footer`; `env-card-icon`, `-body`, `-description`, `-footer`    |
+| `<InfoChip>`, `InfoChipProps`, `env-info-chip`                                                                       | `<Badge>`, a neutral soft pill; `BadgeProps`; `env-badge`                                              |
+| Badge `variant="subtle"`                                                                                             | `soft`, the default                                                                                    |
+| Avatar and AvatarGroup `size`: `small`, `standard`, `large`, `display`                                               | `sm`, `md` (the default), `lg`, `xl`; `env-avatar-{size}` is `.env-avatar[data-size]`                  |
+| AvatarButton `size`: `small`, `standard`, `large`; `detail`                                                          | `sm`, `md`, `lg`; `description`                                                                        |
+| Stat.Root `detail`, `env-stat-detail`                                                                                | `description`, `env-stat-description`                                                                  |
+| Stat.Group `tone`: `pane`, `row`, `canvas`, `alternate`                                                              | `background`: `default` (the default), `muted`, `page`, `raised`                                       |
+| SegmentedControl `options`, `SegmentedControlOption`                                                                 | `items`, `SegmentedControlItem`                                                                        |
+| `env-segment`, `env-segment-label`, `env-segment-count`                                                              | `env-segmented-control-item`, `-item-label`, `-item-count`                                             |
+| `BrandLogo`, `EnvUILogo` and their props types                                                                       | Removed: keep your artwork in the application, as an SVG file or a component that draws it with `Icon` |
+
+Change these by hand where the codemods report them, or where they can't see them:
+
+- a Card `as` that is an expression; a ClickableCard without `href` or `onClick`, such as a submit button, which is a content card in 1.0: give it `onClick`, or put a Button inside;
+- a style for `env-card-content`, which 0.7 put on a card without actions and on an action card's body, and which `v1-classes` reports: style `.env-card:not([data-actions])` for the card, or `.env-card-body` for the body of a card with actions;
+- a Card with `layout="action"`, or an ActionCard, without `actions`, which the codemods report: actions alone give a 1.0 card its action strip, so pass the actions it should show;
+- a Card `tone`, Stat.Group `tone`, Badge `variant` or Avatar `size` whose value is an expression, which takes its new name and may need its values mapped;
+- a link or button card named with `aria-label` or `aria-labelledby` that leaves out part of its visible text: let its content name it;
+- a native `onToggle` on Disclosure, which `v1-props` reports: use `onOpenChange(open)`, with `open` or `defaultOpen`;
+- `BrandLogo` and `EnvUILogo`, which the codemod reports and leaves in place;
+- `formatLabel` and `formatMore` on AvatarGroup, `formatLabel` on Rating and DiffStat, `statusLabel` on Message, `nowLabel` on RelativeTime and `lessLabel` and `moreLabel` on CalendarHeatmap that only translated the English text: set the strings once with `messages` on EnvUIProvider instead; the props still override them for one instance.
+
+Behaviour that changes without a rename: a link card's accessible name is its text; Card takes `headingLevel` and `description`; Rating's number, DiffStat's and AvatarGroup's counts, AnimatedNumber and CalendarHeatmap's months, weekdays, dates and values follow EnvUIProvider's `locale`; buttons in Message's `actions` without a variant are small ghost buttons; an unchosen segment's count is muted text at 4.5:1 instead of 80% opacity; CopyButton takes `write`, a clipboard writer of the application's own.
+
+### Split panes
+
+0.6's SplitView, which 0.7 removed, is SplitPane in 1.0, a compound component whose panes and handle are parts, and ListDetail builds a list beside its detail on it. `v1-names` and `v1-structure` rewrite it:
+
+| 0.x                                    | 1.0                                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `<SplitView start={a} end={b} />`      | `<SplitPane.Root><SplitPane.Pane>{a}</SplitPane.Pane><SplitPane.ResizeHandle /><SplitPane.Pane>{b}</SplitPane.Pane></SplitPane.Root>` |
+| `resizeLabel`                          | `label` on `SplitPane.ResizeHandle`                                                                                                   |
+| `storageKey`                           | `persist`                                                                                                                             |
+| `SplitViewProps`                       | `SplitPane.RootProps`                                                                                                                 |
+| `.env-split-view`, `-pane`, `-divider` | `.env-split-pane`, `.env-split-pane-pane`, `.env-split-pane-handle`                                                                   |
+
+`size`, `defaultSize`, `minSize` and `maxSize` keep their percentages, now of the split pane's whole width; `onSizeChange` receives `{ committed }` as its second argument; `stackBelow` and `onStackedChange` are unchanged. Change by hand a SplitView that spreads props, which `v1-structure` reports. A list beside its detail that stacked with `onStackedChange` and showed one pane at a time is ListDetail now, with `detailShown`, `onBack` and `backLabel`.
 
 ### Shell, dock, editors and code
 

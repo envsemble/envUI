@@ -1,5 +1,6 @@
 // formatRelativeTime and what RelativeTime shares with it. It uses nothing but Intl, so a server
 // component can call it: it is no client module, unlike RelativeTime, which follows the clock.
+import { relativeTime as relativeTimeMessages } from '../foundations/messages/relativeTime.js';
 
 /** A moment: a Date, milliseconds since 1970 or a date string such as an ISO 8601 timestamp. */
 export type RelativeTimeValue = Date | number | string;
@@ -13,7 +14,8 @@ export interface RelativeTimeOptions {
   /**
    * The language of the text, and of the date and time in RelativeTime's tooltip, as a BCP 47
    * tag such as "en-GB" or "de", or a list of them in order of preference.
-   * @default the runtime's language: the browser's, or the server's while rendering there
+   * @default EnvUIProvider's locale for RelativeTime, else the runtime's language: the browser's,
+   * or the server's while rendering there
    */
   locale?: string | readonly string[];
   /**
@@ -25,6 +27,7 @@ export interface RelativeTimeOptions {
   /**
    * Text for a moment less than 45 seconds away, past or coming, such as "moments ago". English
    * says "just now" of a past moment and "now" of a coming one; other languages the locale's word.
+   * RelativeTime takes EnvUIProvider's `messages.relativeTime.now` without it.
    * @default 'just now' or 'now' in English, the locale's word for now elsewhere
    */
   nowLabel?: string;
@@ -108,6 +111,7 @@ export function formatRelativeTime(value: RelativeTimeValue, options: RelativeTi
   if (nowLabel !== undefined) return nowLabel;
   const auto = relativeFormatter(locale, format, 'auto');
   // English says just now of a moment that has passed; Intl has only now, in every language.
-  if (time <= now && auto.resolvedOptions().locale.split('-')[0] === 'en') return 'just now';
+  if (time <= now && auto.resolvedOptions().locale.split('-')[0] === 'en')
+    return relativeTimeMessages.now;
   return auto.format(0, 'second');
 }

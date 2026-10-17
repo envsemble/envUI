@@ -23,7 +23,10 @@ avoidWhen:
     use: SegmentedControl
   - text: An application's menus of commands, such as File and Edit.
     use: Menubar
+  - text: A page's search, filters and primary action, where fields keep their arrow keys.
+    use: PageHeader
 related:
+  - page-header
   - button
   - segmented-control
   - menubar
@@ -59,6 +62,20 @@ A toolbar holds the controls for one subject, such as an editor's formatting, in
 - **Size**: `size` gives the buttons inside the control height of `sm`, `md` or `lg`, 2, 2.5 or 3 rem in the comfortable scale; without it, they take the control height of their container. Use `sm` for a toolbar that floats over dense content.
 - **Pressed**: a pressed toggle takes the selected fill, `--env-color-bg-selected`, with the selected label color.
 - A toolbar keeps its controls on one line; give it room or fewer controls rather than letting it wrap.
+
+### Layouts
+
+Not every bar of controls is a Toolbar. A Toolbar is one tab stop that the arrow keys move through, which suits icon commands; a bar that holds a text field, a Select or a row of labelled actions is a [Stack](../components/stack.md) row, where every control keeps its tab stop and fields keep their arrow keys.
+
+| Bar                                                     | Build it with                                                                                              | Why                                                                                        |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Icon commands: an editor's formatting, a canvas's tools | `Toolbar.Root` with `Toolbar.Button`s                                                                      | One tab stop, the arrow keys between the commands, tooltips with their shortcuts           |
+| A page's search, filters and primary action             | [PageHeader](../components/page-header.md)'s `toolbar`, a `<Stack direction="row" wrap justify="between">` | Fields keep their arrow keys, every control is a tab stop, the primary action ends the row |
+| A section's heading and count, with its actions         | `<Stack direction="row" wrap align="center" justify="between">` around a heading and the actions           | The actions sit at the end and wrap under the heading when there isn't room                |
+| A table's search and actions                            | A Stack row above `Table.Root`, with controls of the size that matches the table's row density             | Small controls over small rows; while the rows stack, a Select sorts them                  |
+| Actions in a window's title bar                         | `WindowFrame.TitleBar`'s `end`                                                                             | The title bar gives its buttons the ghost variant and the small size                       |
+
+A page toolbar that lines up with a sidebar's header takes the frame's header height, `min-block-size: var(--env-app-shell-header-height)`.
 
 ## States and behaviour
 
@@ -126,6 +143,30 @@ A pill Surface rendered as the toolbar floats it over a diagram, with small butt
 A vertical toolbar of toggles, where one tool stays chosen.
 
 ```tsx example=DrawingTools
+
+```
+
+### Page toolbar
+
+A page's search and filter under its title, with the primary action at the end of the row: a Stack row in PageHeader's `toolbar`, not a Toolbar.
+
+```tsx example=PageToolbar
+
+```
+
+### Section toolbar
+
+A section's heading and count at the start and its actions at the end, wrapping when there isn't room.
+
+```tsx example=SectionToolbar
+
+```
+
+### Table toolbar
+
+Small controls above a table of small rows, so the bar and the rows share one density.
+
+```tsx example=TableToolbar
 
 ```
 

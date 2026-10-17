@@ -10,7 +10,7 @@ export default function PersonDetails() {
       <HoverCard width="lg" trigger={<Link href="/people/priya-shah">Priya Shah</Link>}>
         <Stack gap={3}>
           <div style={person}>
-            <Avatar name="Priya Shah" size="large" />
+            <Avatar name="Priya Shah" size="lg" />
             <div>
               <Text render={<strong />} variant="title">
                 Priya Shah

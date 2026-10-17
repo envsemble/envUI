@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
-import { Text, EnvUILogo, Surface, Stack, Button, Tabs } from '@envsemble/envui';
+import { Text, Surface, Stack, Button, Tabs } from '@envsemble/envui';
+import { EnvUILogo } from '../brand/EnvUILogo';
 
 import { Catalogue } from './Catalogue';
 import { GettingStarted } from './GettingStarted';

@@ -4,6 +4,12 @@ export * from './foundations/Text.js';
 export * from './foundations/Surface.js';
 export * from './foundations/breakpoints.js';
 export * from './foundations/useMediaQuery.js';
+export * from './foundations/useContainerSize.js';
+// PageContext stays internal: a sticky PageHeader publishes its height on its Page through it.
+export { Page, type PageProps, type PageWidth } from './layout/Page.js';
+export * from './layout/PageHeader.js';
+export * as SplitPane from './layout/SplitPane.js';
+export * as ListDetail from './layout/ListDetail.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './actions/Button.js';
 export * from './actions/CloseButton.js';
@@ -13,17 +19,14 @@ export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
+export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
 export * as NavList from './navigation/NavList.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
 export * from './content/Card.js';
-export * from './content/ClickableCard.js';
-export * from './content/ActionCard.js';
-export * from './content/FeatureCard.js';
 export * as List from './content/List.js';
 export * from './content/Disclosure.js';
-export * from './content/InfoChip.js';
 export * from './content/Badge.js';
 export * from './content/CounterBadge.js';
 export * from './content/DiffStat.js';
@@ -45,6 +48,7 @@ export * from './forms/DatePicker.js';
 export * from './forms/Slider.js';
 export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
+export * from './feedback/ConfirmDialog.js';
 export * from './feedback/Drawer.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Alert.js';
@@ -64,8 +68,6 @@ export type {
   ToastManager,
 } from './feedback/toast/ToastTypes.js';
 export * from './Icon.js';
-export * from './BrandLogo.js';
-export * from './EnvUILogo.js';
 export {
   LinkProvider,
   type LinkProviderProps,
@@ -89,6 +91,7 @@ export * from './content/Rating.js';
 export * from './content/ColorSwatch.js';
 export * from './content/Message.js';
 export * as Stat from './content/Stat.js';
+export * as DescriptionList from './content/DescriptionList.js';
 export * from './content/CalendarHeatmap.js';
 export * from './foundations/ThemePreference.js';
 export {
@@ -96,10 +99,12 @@ export {
   type ThemeBootstrapOptions,
   type ThemePreference,
 } from './foundations/ThemeBootstrap.js';
+export * from './foundations/ThemeRadioGroup.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
+export * as AccountMenu from './navigation/AccountMenu.js';
 export * from './navigation/AppShell.js';
 export * as WindowFrame from './navigation/WindowFrame.js';
 export * from './navigation/Tree.js';

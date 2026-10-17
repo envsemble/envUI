@@ -9,7 +9,7 @@ export default function AccountButton() {
         trigger={
           <AvatarButton
             name="Alex Morgan"
-            detail="alex.morgan@example.com"
+            description="alex.morgan@example.com"
             aria-label="Open account menu"
           />
         }

@@ -13,14 +13,17 @@
   color: var(--env-color-avatar-fg);
   font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--env-font-family);
   user-select: none;
+  /* Hook: a container draws a ring around its avatars with --env-avatar-ring, a box-shadow, such
+     as an avatar group's ring in the color of the surface below. */
+  box-shadow: var(--env-avatar-ring, none);
 }
-.env-avatar-small {
+.env-avatar[data-size='sm'] {
   --env-avatar-size: 1.5rem;
 }
-.env-avatar-large {
+.env-avatar[data-size='lg'] {
   --env-avatar-size: 3rem;
 }
-.env-avatar-display {
+.env-avatar[data-size='xl'] {
   --env-avatar-size: 5.5rem;
 }
 .env-avatar-fallback {

@@ -1,7 +1,7 @@
 ---
 title: Kbd
 summary: Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
-status: beta
+status: stable
 since: 0.5.0
 category: Content & guidance
 aliases:
@@ -57,6 +57,7 @@ Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bo
 - A key cap is 1.375 rem tall and at least 1.375 rem wide, with 0.3125 rem inline padding and a 0.75 rem label in medium weight; a longer label, such as Shift, widens it. Labels don't wrap.
 - The label sits on the baseline of the surrounding text, so keys line up in a sentence whatever glyphs they show, and a combination lines up the same way.
 - In the shortcut of a menu item, keys are 1.125 rem tall with 0.6875 rem labels in the muted text color.
+- A container whose fill the key caps don't suit sets custom properties on its own element: `--env-kbd-fg` for the label and the separator, `--env-kbd-bg` for the fill and `--env-kbd-border` for the edge. A tooltip uses them for key caps on its dark fill.
 
 ## States and behaviour
 

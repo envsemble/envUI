@@ -35,7 +35,7 @@ export default defineConfig(
     'playwright-report/**',
     // Generated from pinned inputs by scripts; edit the generator instead.
     'packages/ui/src/icons/**',
-    'packages/ui/src/EnvUILogo.tsx',
+    'apps/catalogue/src/brand/EnvUILogo.tsx',
     'apps/catalogue/src/generated/**',
     // Packaged copies of the README, skills and documentation.
     'packages/ui/docs/**',

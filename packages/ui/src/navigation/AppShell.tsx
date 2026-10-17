@@ -21,7 +21,7 @@ import { Skeleton } from '../feedback/Skeleton.js';
 import { LoadingState } from '../feedback/LoadingState.js';
 import { LoadingBar } from '../feedback/internal/LoadingBar.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
-import { SidebarCompactContext } from './internal/SidebarCompact.js';
+import { InSidebarContext, SidebarCompactContext } from './internal/SidebarCompact.js';
 
 /** Viewports where the sidebar becomes an overlay opened from the topbar. */
 const narrowQuery = '(max-width: 40rem), (max-height: 32rem) and (max-width: 54rem)';
@@ -639,14 +639,19 @@ export function AppShell({
           onClick={closeAfterNavigation}
           {...regionHandlers}
         >
-          <nav className="env-app-navigation" aria-label={navigationLabel} ref={navigationRegion}>
-            <SidebarCompactContext value={compact}>{navigation}</SidebarCompactContext>
-          </nav>
-          {sidebarContent != null && (
-            <div className="env-app-sidebar-content" ref={sidebarContentRegion}>
-              {sidebarContent}
-            </div>
-          )}
+          {/* The sidebar tells its content where it is: InSidebarContext, so AccountMenu's automatic
+              trigger is a row, and SidebarCompactContext while it shows icons only. A shell that
+              replaces this one must keep providing both. */}
+          <InSidebarContext value>
+            <nav className="env-app-navigation" aria-label={navigationLabel} ref={navigationRegion}>
+              <SidebarCompactContext value={compact}>{navigation}</SidebarCompactContext>
+            </nav>
+            {sidebarContent != null && (
+              <div className="env-app-sidebar-content" ref={sidebarContentRegion}>
+                {sidebarContent}
+              </div>
+            )}
+          </InSidebarContext>
           {resizable && !collapsed && !isNarrow && (
             <div
               role="separator"

@@ -35,6 +35,7 @@ import {
   Pagination,
   DatePicker,
   Calendar,
+  SplitPane,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -153,7 +154,7 @@ export function HydrationApp() {
           aria-label="Hydrated view"
           value={view}
           onValueChange={setView}
-          options={[
+          items={[
             { value: 'open', label: 'Open' },
             { value: 'done', label: 'Done' },
           ]}
@@ -222,6 +223,11 @@ export function HydrationApp() {
           }}
           footer="Hydrated composer footer"
         />
+        <SplitPane.Root stackBelow="20rem">
+          <SplitPane.Pane label="Hydrated start">Hydrated start pane</SplitPane.Pane>
+          <SplitPane.ResizeHandle label="Hydrated split" />
+          <SplitPane.Pane>Hydrated end pane</SplitPane.Pane>
+        </SplitPane.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
           <PanelDock.Root
             panels={dockPanels}
@@ -249,7 +255,7 @@ export function HydrationApp() {
             label="Hydrated stat"
             value="128"
             trend={{ direction: 'up', label: '+12%' }}
-            detail="Last 30 days"
+            description="Last 30 days"
           />
         </Stat.Group>
         <DropZone

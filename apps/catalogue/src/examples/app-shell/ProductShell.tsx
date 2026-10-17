@@ -58,7 +58,7 @@ export default function ProductShell() {
             trigger={
               <AvatarButton
                 name="Alex Morgan"
-                detail="alex@example.com"
+                description="alex@example.com"
                 aria-label="Open account menu"
               />
             }

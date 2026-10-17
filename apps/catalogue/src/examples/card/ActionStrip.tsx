@@ -3,7 +3,7 @@ import { Button, Card, Text } from '@envsemble/envui';
 export default function ActionStrip() {
   return (
     <Card
-      as="article"
+      render={<article />}
       heading="Pricing research"
       meta="Updated yesterday"
       actions={

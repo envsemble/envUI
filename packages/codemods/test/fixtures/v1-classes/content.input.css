@@ -1,0 +1,24 @@
+.app .env-clickable-card:hover {
+  outline: 1px solid;
+}
+.env-action-card-heading,
+.env-action-card-actions {
+  gap: 0.5rem;
+}
+.env-feature-card .env-feature-card-icon {
+  color: inherit;
+}
+.env-info-chip {
+  font-weight: 600;
+}
+.env-segment-count,
+.env-segment[data-checked] {
+  opacity: 1;
+}
+.env-avatar.env-avatar-small,
+.env-avatar-group-display {
+  --ring: red;
+}
+.env-stat-detail {
+  font-style: italic;
+}

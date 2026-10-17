@@ -94,6 +94,9 @@ export function analyze() {
     .map((path) => relative(sourceRoot, path).split(sep).join('/'))
     .sort();
   const moduleSet = new Set(modules);
+  // Planned modules don't exist yet; the rules may name them, and each stands for its component.
+  const planned = (rules.planned?.modules ?? []).filter((module) => !moduleSet.has(module));
+  const plannedSet = new Set(planned);
   const sources = new Map(
     modules
       .filter((module) => !isGenerated(module))
@@ -103,7 +106,7 @@ export function analyze() {
     .filter((name) => name.endsWith('.css'))
     .sort();
   const requireModule = (module, where) => {
-    if (!moduleSet.has(module))
+    if (!moduleSet.has(module) && !plannedSet.has(module))
       problems.push(`${rulesFile} ${where} names ${module}, which doesn't exist.`);
   };
   const requireStylesheet = (stylesheet, where) => {
@@ -122,7 +125,7 @@ export function analyze() {
       if (!rank.has(layer))
         problems.push(`${rulesFile} ${where} gives ${path} the unknown layer "${layer}".`);
       if (where === 'layers.modules') requireModule(path, where);
-      else if (!modules.some((module) => module.startsWith(path)))
+      else if (![...modules, ...planned].some((module) => module.startsWith(path)))
         problems.push(`${rulesFile} ${where} names ${path}, which holds no module.`);
     }
   const layerOf = (module) => {
@@ -208,6 +211,17 @@ export function analyze() {
       slots: new Set(),
     });
     componentOf.set(module, name);
+  }
+  for (const module of planned) {
+    const name = baseName(module);
+    if (components.has(name)) continue;
+    components.set(name, {
+      modules: new Set(),
+      prefixes: new Set([`env-${kebab(name)}`]),
+      styles: new Set(stylesheets.includes(`${name}.css`) ? [`${name}.css`] : []),
+      slots: new Set(),
+      planned: true,
+    });
   }
   for (const [name, entry] of Object.entries(classRules.components)) {
     const component = components.get(name) ?? {
@@ -401,12 +415,13 @@ export function analyze() {
     if (unused(name))
       problems.push(`${rulesFile} classes.shared lists ${name}, which nothing uses: remove it.`);
   for (const [name, entry] of Object.entries(classRules.components))
-    for (const key of ['classes', 'slots'])
-      for (const prefix of entry[key] ?? [])
-        if (unused(prefix))
-          problems.push(
-            `${rulesFile} classes.components.${name}.${key} lists ${prefix}, which nothing uses: remove it.`,
-          );
+    if (!components.get(name)?.planned)
+      for (const key of ['classes', 'slots'])
+        for (const prefix of entry[key] ?? [])
+          if (unused(prefix))
+            problems.push(
+              `${rulesFile} classes.components.${name}.${key} lists ${prefix}, which nothing uses: remove it.`,
+            );
   for (const stylesheet of Object.keys(classRules.stylesheetsWithoutComponent))
     if (stylesheetOwners.get(stylesheet)?.size)
       problems.push(

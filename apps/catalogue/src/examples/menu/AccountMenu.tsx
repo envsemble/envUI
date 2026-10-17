@@ -12,14 +12,14 @@ export default function AccountMenu() {
         trigger={
           <AvatarButton
             name="Alex Morgan"
-            detail="alex@example.com"
+            description="alex@example.com"
             aria-label="Open account menu"
           />
         }
       >
         <Menu.Header>
           <Stack gap={1} align="center">
-            <Avatar name="Alex Morgan" size="large" />
+            <Avatar name="Alex Morgan" size="lg" />
             <Text>Alex Morgan</Text>
             <Text variant="body-sm">alex@example.com</Text>
           </Stack>

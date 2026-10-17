@@ -15,8 +15,11 @@ import {
   type PointerEvent,
   type ReactNode,
 } from 'react';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters, type Formatters } from '../internal/useFormatters.js';
+import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
 import type { BadgeTone } from './Badge.js';
 
 export interface CalendarHeatmapDay {
@@ -55,19 +58,39 @@ interface CalendarHeatmapOptions {
   weekStart?: 0 | 1;
   /** The tone the colors are mixed from: accent by default. */
   tone?: BadgeTone;
-  /** Text for a value; English digit grouping by default. */
+  /**
+   * Text for a value.
+   * @default the number format of EnvUIProvider's locale, or else the browser's
+   */
   formatValue?: (value: number) => string;
-  /** Text for a day's date, in its accessible name and the default tooltip. */
+  /**
+   * Text for a day's date, in its accessible name and the default tooltip.
+   * @default the weekday, day, month and year in the locale, such as Tue 14 Oct 2025
+   */
   formatDate?: (date: string) => string;
   /** Tooltip content for a day; the date and value by default. */
   formatTooltip?: (day: CalendarHeatmapCell) => ReactNode;
-  /** Twelve month names above the weeks, from January; English abbreviations by default. */
+  /**
+   * Twelve month names above the weeks, from January.
+   * @default the locale's short month names, from Intl
+   */
   monthLabels?: readonly string[];
-  /** Seven weekday names beside the rows, from Sunday; English abbreviations by default. */
+  /**
+   * Seven weekday names beside the rows, from Sunday.
+   * @default the locale's short weekday names, from Intl
+   */
   weekdayLabels?: readonly string[];
-  /** Legend text before the lightest color; Less by default. */
+  /**
+   * Legend text before the lightest color. It overrides EnvUIProvider's
+   * `messages.calendarHeatmap.less`.
+   * @default 'Less'
+   */
   lessLabel?: string;
-  /** Legend text after the strongest color; More by default. */
+  /**
+   * Legend text after the strongest color. It overrides EnvUIProvider's
+   * `messages.calendarHeatmap.more`.
+   * @default 'More'
+   */
   moreLabel?: string;
 }
 
@@ -88,27 +111,18 @@ export type CalendarHeatmapProps = CalendarHeatmapOptions &
     keyof CalendarHeatmapOptions | 'children' | 'aria-label' | 'aria-labelledby'
   >;
 
-const englishMonths = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-] as const;
-const englishWeekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
-const englishNumbers = new Intl.NumberFormat('en');
-function formatEnglishNumber(value: number) {
-  return englishNumbers.format(value);
-}
-
 const dayMilliseconds = 86_400_000;
+
+/** The locale's short month names, from January, and weekday names, from Sunday. */
+function localeNames(formatters: Formatters) {
+  const month = formatters.dateTime({ month: 'short', timeZone: 'UTC' });
+  const weekday = formatters.dateTime({ weekday: 'short', timeZone: 'UTC' });
+  return {
+    months: Array.from({ length: 12 }, (_, index) => month.format(Date.UTC(2024, index, 1))),
+    // 7 January 2024 was a Sunday.
+    weekdays: Array.from({ length: 7 }, (_, index) => weekday.format(Date.UTC(2024, 0, 7 + index))),
+  };
+}
 /** Hover waits like Tooltip; moving between days while one is shown switches at once. */
 const hoverDelay = 400;
 
@@ -173,20 +187,48 @@ export function CalendarHeatmap({
   thresholds,
   weekStart = 0,
   tone = 'accent',
-  formatValue = formatEnglishNumber,
-  formatDate,
+  formatValue: ownFormatValue,
+  formatDate: ownFormatDate,
   formatTooltip,
-  monthLabels = englishMonths,
-  weekdayLabels = englishWeekdays,
-  lessLabel = 'Less',
-  moreLabel = 'More',
+  monthLabels: ownMonthLabels,
+  weekdayLabels: ownWeekdayLabels,
+  lessLabel: ownLessLabel,
+  moreLabel: ownMoreLabel,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   className,
   style,
   ...props
 }: CalendarHeatmapProps) {
-  const theme = useTheme();
+  // A prop wins over the provider's messages and locale, which win over English and the runtime's.
+  const messages = useMessages('calendarHeatmap', calendarHeatmapMessages);
+  const lessLabel = ownLessLabel ?? messages.less;
+  const moreLabel = ownMoreLabel ?? messages.more;
+  const formatters = useFormatters();
+  const names = useMemo(() => localeNames(formatters), [formatters]);
+  const monthLabels = ownMonthLabels ?? names.months;
+  const weekdayLabels = ownWeekdayLabels ?? names.weekdays;
+  const formatValue = useMemo(
+    () => ownFormatValue ?? ((value: number) => formatters.number().format(value)),
+    [ownFormatValue, formatters],
+  );
+  const formatDate = useMemo(() => {
+    if (ownFormatDate) return ownFormatDate;
+    // Names given as props make the date from them; else the locale writes the whole date.
+    if (ownMonthLabels || ownWeekdayLabels)
+      return (date: string) => {
+        const parts = dayParts(parseDay(date)!);
+        return `${weekdayLabels[parts.weekday]} ${parts.date} ${monthLabels[parts.month]} ${parts.year}`;
+      };
+    const format = formatters.dateTime({
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
+    return (date: string) => format.format(parseDay(date)! * dayMilliseconds);
+  }, [ownFormatDate, ownMonthLabels, ownWeekdayLabels, monthLabels, weekdayLabels, formatters]);
   // Thresholds compare by value, so a new array with the same steps keeps the model.
   const thresholdsKey = thresholds?.join(' ');
   const model = useMemo<CalendarHeatmapModel>(() => {
@@ -222,12 +264,6 @@ export function CalendarHeatmap({
     if (maxValue === undefined)
       for (const [day, entry] of values)
         if (day >= start && day <= end) top = Math.max(top, entry.value);
-    const dateText =
-      formatDate ??
-      ((date: string) => {
-        const parts = dayParts(parseDay(date)!);
-        return `${weekdayLabels[parts.weekday]} ${parts.date} ${monthLabels[parts.month]} ${parts.year}`;
-      });
     const days = new Map<number, DayModel>();
     // Each month is labelled above the week holding its first day, or above the first week.
     const monthColumns = new Map<number, number>([[0, dayParts(start).month]]);
@@ -248,7 +284,7 @@ export function CalendarHeatmap({
         value,
         label: entry?.label,
         level,
-        name: `${dateText(date)}: ${valueText}`,
+        name: `${formatDate(date)}: ${valueText}`,
       });
       const parts = dayParts(day);
       if (parts.date === 1) monthColumns.set(Math.floor((day - first) / 7), parts.month);
@@ -271,7 +307,6 @@ export function CalendarHeatmap({
     formatValue,
     formatDate,
     monthLabels,
-    weekdayLabels,
   ]);
 
   const [activeDay, setActiveDay] = useState<number>();
@@ -529,36 +564,32 @@ export function CalendarHeatmap({
           hide();
         }}
       >
-        <BaseTooltip.Portal>
-          <Theme {...theme} className="env-tooltip-theme">
-            <BaseTooltip.Positioner
-              anchor={tip?.anchor}
-              side="top"
-              sideOffset={tip?.offset ?? 0}
-              className="env-tooltip-positioner env-calendar-heatmap-tooltip-positioner"
-              data-focus-opened={tip?.focused ? '' : undefined}
-            >
-              <BaseTooltip.Popup
-                ref={popup}
-                className="env-tooltip env-calendar-heatmap-tooltip"
-                onPointerLeave={(event) => {
-                  // Back on the days, the day under the pointer takes the tooltip.
-                  if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
-                }}
-              >
-                {shown &&
-                  (formatTooltip
-                    ? formatTooltip({
-                        date: shown.date,
-                        value: shown.value,
-                        label: shown.label,
-                        level: shown.level,
-                      })
-                    : shown.name)}
-              </BaseTooltip.Popup>
-            </BaseTooltip.Positioner>
-          </Theme>
-        </BaseTooltip.Portal>
+        <TooltipPopup
+          side="top"
+          anchor={tip?.anchor}
+          sideOffset={tip?.offset ?? 0}
+          positionerClassName="env-calendar-heatmap-tooltip-positioner"
+          popupProps={{
+            ref: popup,
+            className: 'env-calendar-heatmap-tooltip',
+            'data-focus-opened': tip?.focused ? '' : undefined,
+            onPointerLeave: (event: PointerEvent<HTMLDivElement>) => {
+              // Back on the days, the day under the pointer takes the tooltip.
+              if (!grid.current?.contains(event.relatedTarget as Node | null)) hide();
+            },
+          }}
+          content={
+            shown &&
+            (formatTooltip
+              ? formatTooltip({
+                  date: shown.date,
+                  value: shown.value,
+                  label: shown.label,
+                  level: shown.level,
+                })
+              : shown.name)
+          }
+        />
       </BaseTooltip.Root>
     </div>
   );

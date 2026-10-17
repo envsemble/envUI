@@ -3,6 +3,10 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { useResolvedLocale } from '../internal/useFormatters.js';
+
+/** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
+export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /** Person or organization name; the accessible name with label, and the initials fallback. */
@@ -11,21 +15,24 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   src?: string | null;
   /** Shown without a picture: the default person picture, or initials (for example, for an organization). */
   fallback?: 'person' | 'initials';
-  /** small 1.5 rem, standard 2 rem (default), large 3 rem, display 5.5 rem. */
-  size?: 'small' | 'standard' | 'large' | 'display';
+  /**
+   * sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem, such as for a profile page.
+   * @default 'md'
+   */
+  size?: AvatarSize;
   /** Name the avatar as an image by `name`; leave it off when text beside it already names the person. */
   label?: boolean;
 }
 
 /** The first letters of the first and last words, or the first two letters of a single word. */
-function getInitials(name: string) {
+function getInitials(name: string, locale: string | undefined) {
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return '';
   const initials =
     words.length > 1
       ? `${words[0][0] ?? ''}${words[words.length - 1][0] ?? ''}`
       : words[0].slice(0, 2);
-  return initials.toLocaleUpperCase();
+  return initials.toLocaleUpperCase(locale);
 }
 
 /** The envsemble default account picture. */
@@ -54,15 +61,17 @@ export function Avatar({
   name,
   src,
   fallback = 'person',
-  size = 'standard',
+  size = 'md',
   label = false,
   className,
   ...props
 }: AvatarProps) {
+  const locale = useResolvedLocale();
   return (
     <BaseAvatar.Root
       {...props}
-      className={classNames('env-avatar', `env-avatar-${size}`, className)}
+      className={classNames('env-avatar', className)}
+      data-size={size}
       role={label ? 'img' : undefined}
       aria-label={label ? name : undefined}
       aria-hidden={label ? undefined : true}
@@ -79,7 +88,7 @@ export function Avatar({
       <BaseAvatar.Fallback
         className={classNames('env-avatar-fallback', `env-avatar-fallback-${fallback}`)}
       >
-        {fallback === 'person' ? <PersonPicture /> : getInitials(name)}
+        {fallback === 'person' ? <PersonPicture /> : getInitials(name, locale)}
       </BaseAvatar.Fallback>
     </BaseAvatar.Root>
   );

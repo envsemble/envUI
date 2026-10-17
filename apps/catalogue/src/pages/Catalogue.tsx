@@ -20,21 +20,15 @@ export function Catalogue() {
                   <Card
                     key={ref.id}
                     href={pageHref(referencePages.find((page) => page.reference === ref)!)}
-                    aria-labelledby={`catalogue-${ref.id}-title`}
-                    aria-describedby={ref.summary ? `catalogue-${ref.id}-description` : undefined}
                   >
                     <Stack align="center" className="docs-catalogue-content">
                       <Icon width="1.5rem" height="1.5rem" aria-hidden="true" />
                       <Stack gap={2} align="center">
-                        <Text render={<h4 />} variant="headline" id={`catalogue-${ref.id}-title`}>
+                        <Text render={<h4 />} variant="headline">
                           {ref.title}
                         </Text>
                         {ref.summary && (
-                          <Text
-                            variant="caption"
-                            id={`catalogue-${ref.id}-description`}
-                            className="docs-caption"
-                          >
+                          <Text variant="caption" className="docs-caption">
                             {ref.summary}
                           </Text>
                         )}

@@ -19,7 +19,10 @@ const states: Record<string, [state: string, rest: string]> = {
   'a focused button': ['[data-testid=button-focus]', '[data-testid=button]'],
   'a pressed toolbar toggle': ['[data-testid=toolbar-pressed]', '[data-testid=toolbar-released]'],
   'an invalid field part': ['[data-testid=field-invalid]', '[data-testid=field-valid]'],
-  'the chosen segment': ['.env-segment >> nth=0', '.env-segment >> nth=1'],
+  'the chosen segment': [
+    '.env-segmented-control-item >> nth=0',
+    '.env-segmented-control-item >> nth=1',
+  ],
   'the selected tab': ['[role=tab] >> nth=0', '[role=tab] >> nth=1'],
   'the selected navigation item': ['[data-testid=nav-selected]', '[data-testid=nav]'],
   'a disabled navigation item': ['[data-testid=nav-disabled]', '[data-testid=nav]'],
@@ -45,6 +48,7 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-text-field-control:has-text("Valid") >> nth=0',
   ],
   'a selected table row': ['[data-testid=row-selected]', '[data-testid=row]'],
+  'the current list row': ['[data-testid=list-selected]', '[data-testid=list-item]'],
   'the selected tree row': ['[role=treeitem] >> nth=0', '[role=treeitem] >> nth=1'],
   'the chosen calendar day': [
     '.env-calendar-day[aria-selected=true]',
@@ -153,7 +157,7 @@ test('selection and checked states take the system colors', async ({ page, brows
       .first()
       .evaluate((element) => getComputedStyle(element).backgroundColor);
   for (const selector of [
-    '.env-segment[data-checked]',
+    '.env-segmented-control-item[data-checked]',
     '.env-nav-list-item[data-selected]',
     "[role=treeitem][aria-selected='true']",
     '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
@@ -221,7 +225,7 @@ interface FocusCase {
 const focusCases: FocusCase[] = [
   { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
   { name: 'the selected navigation item', ring: '[data-testid=nav-selected]', over: 'fill' },
-  { name: 'the chosen segment', ring: '.env-segment[data-checked]', over: 'canvas' },
+  { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'canvas' },
   {
     // The ring goes around the tab's item, close button included.
     name: 'the active document tab',

@@ -1,4 +1,5 @@
 import { common } from './common.js';
+import { accountMenu } from './accountMenu.js';
 import { alert } from './alert.js';
 import { appShell } from './appShell.js';
 import { avatarGroup } from './avatarGroup.js';
@@ -12,6 +13,7 @@ import { combobox } from './combobox.js';
 import { commandPalette } from './commandPalette.js';
 import { composer } from './composer.js';
 import { confirmButton } from './confirmButton.js';
+import { confirmDialog } from './confirmDialog.js';
 import { copy } from './copy.js';
 import { datePicker } from './datePicker.js';
 import { dialog } from './dialog.js';
@@ -19,6 +21,7 @@ import { diffStat } from './diffStat.js';
 import { documentTabs } from './documentTabs.js';
 import { editor } from './editor.js';
 import { linkDialog } from './linkDialog.js';
+import { list } from './list.js';
 import { markdown } from './markdown.js';
 import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
@@ -31,6 +34,8 @@ import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
 import { searchField } from './searchField.js';
+import { searchTrigger } from './searchTrigger.js';
+import { splitPane } from './splitPane.js';
 import { table } from './table.js';
 import { textarea } from './textarea.js';
 import { themeToggle } from './themeToggle.js';
@@ -45,6 +50,7 @@ import { tree } from './tree.js';
  */
 export const defaultMessages = {
   common,
+  accountMenu,
   alert,
   appShell,
   avatarGroup,
@@ -58,6 +64,7 @@ export const defaultMessages = {
   commandPalette,
   composer,
   confirmButton,
+  confirmDialog,
   copy,
   datePicker,
   dialog,
@@ -65,6 +72,7 @@ export const defaultMessages = {
   documentTabs,
   editor,
   linkDialog,
+  list,
   markdown,
   markdownEditor,
   message,
@@ -77,6 +85,8 @@ export const defaultMessages = {
   relativeTime,
   richText,
   searchField,
+  searchTrigger,
+  splitPane,
   table,
   textarea,
   themeToggle,

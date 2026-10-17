@@ -268,20 +268,19 @@ test('avatars overlap by a quarter, line up with small controls and keep their s
   expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(104, 0);
 });
 
-test('on touch screens small pressable avatars sit side by side', async ({
-  browser,
-  browserName,
-}) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+test('on touch screens small pressable avatars sit side by side', async ({ browser }) => {
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 390, height: 844 },
   });
   const page = await context.newPage();
   await page.goto(fixture);
   expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
   const scope = page.getByTestId('avatar-groups-light');
+  // A small AvatarButton's halo grows to the 2.75 rem touch target.
+  const avatarButton = (await scope.getByTestId('avatar-button-small').boundingBox())!;
+  expect(avatarButton.width).toBeGreaterThanOrEqual(44);
+  expect(avatarButton.height).toBeGreaterThanOrEqual(44);
   const small = await boxes(scope.getByTestId('small-pressable'));
   expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 24, 48, 72]);
   // Standard pressable avatars keep 1.5 rem uncovered at their usual overlap.

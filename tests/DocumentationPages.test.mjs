@@ -17,7 +17,7 @@ import {
  * catalogue preview in apps/catalogue/src/previews (the switch in ComponentPreview.tsx). Convert a
  * page as docs/component-pages.md describes, then remove it here; the list only shrinks.
  */
-const unconverted = ['chips'];
+const unconverted = [];
 
 /** Exports without a page that lists them in its frontmatter; the list only shrinks. */
 const undocumentedExports = [];

@@ -13,7 +13,9 @@ import { test } from 'node:test';
  */
 const setupGuide = new URL('../../../docs/setup.md', import.meta.url);
 const routerAdapter = existsSync(setupGuide)
-  ? readFileSync(setupGuide, 'utf8').match(/### Router links[\s\S]*?```tsx\n([\s\S]*?)```/)?.[1]
+  ? readFileSync(setupGuide, 'utf8').match(
+      /### A router on the History API[\s\S]*?```tsx recipe\n([\s\S]*?)```/,
+    )?.[1]
   : undefined;
 
 const tail =

@@ -135,6 +135,230 @@
       ]
     },
     {
+      "name": "Page",
+      "page": "page",
+      "doc": "docs/components/page.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.",
+      "aliases": [
+        "Container",
+        "container",
+        "page container",
+        "content width",
+        "max width",
+        "page column",
+        "page layout",
+        "main column"
+      ],
+      "useWhen": [
+        "A page's content needs a readable width in a wide window, such as a form, a document or a dashboard.",
+        "A page has a heading with actions above its content, passed as its header."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The frame of an application, with its header and sidebars.",
+          "use": "AppShell"
+        },
+        {
+          "text": "Content in a column or a row with even gaps inside a page.",
+          "use": "Stack"
+        },
+        {
+          "text": "A background, an inset and corners around a part of a page.",
+          "use": "Surface"
+        },
+        {
+          "text": "Two panes side by side that people resize.",
+          "use": "SplitPane"
+        }
+      ],
+      "related": [
+        "page-header",
+        "stack",
+        "surface",
+        "app-shell",
+        "responsive"
+      ],
+      "exports": [
+        "Page"
+      ],
+      "examples": [
+        {
+          "name": "WithHeader",
+          "title": "Page",
+          "description": "The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.",
+          "file": "docs/examples/page/WithHeader.tsx"
+        },
+        {
+          "name": "Widths",
+          "title": "Widths",
+          "description": "The four widths, in a muted surface that shows the space around the column.",
+          "file": "docs/examples/page/Widths.tsx"
+        }
+      ]
+    },
+    {
+      "name": "PageHeader",
+      "page": "page-header",
+      "doc": "docs/components/page-header.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.",
+      "aliases": [
+        "page header",
+        "page heading",
+        "page title",
+        "header bar",
+        "title bar",
+        "page toolbar",
+        "heading row",
+        "sticky header"
+      ],
+      "useWhen": [
+        "A page opens with its title and the actions that apply to the whole page, such as New project.",
+        "A page needs its trail, a status or a count beside its title, or a row of search and filters under it.",
+        "The page's heading should stay in view as the page scrolls."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The application's header across every page, with its sidebar toggle and account menu.",
+          "use": "AppShell"
+        },
+        {
+          "text": "The heading of a section inside a page, with its own actions.",
+          "use": "Stack"
+        },
+        {
+          "text": "A heading with metadata and actions around a block of content.",
+          "use": "Card"
+        },
+        {
+          "text": "Controls for one subject that the arrow keys move between.",
+          "use": "Toolbar"
+        }
+      ],
+      "related": [
+        "page",
+        "breadcrumbs",
+        "toolbar",
+        "stack",
+        "button"
+      ],
+      "exports": [
+        "PageHeader"
+      ],
+      "examples": [
+        {
+          "name": "WithBreadcrumbs",
+          "title": "PageHeader",
+          "description": "A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.",
+          "file": "docs/examples/page-header/WithBreadcrumbs.tsx"
+        },
+        {
+          "name": "WithToolbar",
+          "title": "Search and filters",
+          "description": "A toolbar row under the title holds the search field and a view switch, with small controls.",
+          "file": "docs/examples/page-header/WithToolbar.tsx"
+        },
+        {
+          "name": "Sticky",
+          "title": "Sticky",
+          "description": "The header stays at the top as the page scrolls under it.",
+          "file": "docs/examples/page-header/Sticky.tsx"
+        },
+        {
+          "name": "InANarrowPane",
+          "title": "In a narrow pane",
+          "description": "In a side panel the actions move under the title and wrap; an avatar leads the title.",
+          "file": "docs/examples/page-header/InANarrowPane.tsx"
+        }
+      ]
+    },
+    {
+      "name": "SplitPane",
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item.",
+      "aliases": [
+        "SplitView",
+        "split view",
+        "splitter",
+        "window splitter",
+        "resizable panes",
+        "resizable panels",
+        "divider",
+        "master-detail",
+        "master detail",
+        "list-detail",
+        "list and detail"
+      ],
+      "useWhen": [
+        "Two related panes share a region and people size them to their task, such as a source beside its preview.",
+        "A list sits beside the detail of the chosen item, and shows one at a time on a narrow screen."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The application's sidebar, which collapses and opens as a drawer on a phone.",
+          "use": "AppShell"
+        },
+        {
+          "text": "A panel docked at an edge of the window over the page.",
+          "use": "PanelDock"
+        },
+        {
+          "text": "Content that simply follows, without a handle.",
+          "use": "Stack"
+        },
+        {
+          "text": "Columns of a table that people resize.",
+          "use": "Table"
+        }
+      ],
+      "related": [
+        "page",
+        "list",
+        "panel-dock",
+        "app-shell",
+        "responsive"
+      ],
+      "exports": [
+        "SplitPane",
+        "SplitPane.Root",
+        "SplitPane.Pane",
+        "SplitPane.ResizeHandle",
+        "ListDetail",
+        "ListDetail.Root",
+        "ListDetail.List",
+        "ListDetail.Detail"
+      ],
+      "examples": [
+        {
+          "name": "ResizablePanes",
+          "title": "SplitPane",
+          "description": "Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item.",
+          "file": "docs/examples/split-pane/ResizablePanes.tsx"
+        },
+        {
+          "name": "Persisted",
+          "title": "A persisted width",
+          "description": "A rem-sized outline that keeps its width under a localStorage key.",
+          "file": "docs/examples/split-pane/Persisted.tsx"
+        },
+        {
+          "name": "MasterDetail",
+          "title": "A list and its detail",
+          "description": "ListDetail shows people beside the chosen person's details; in a narrow space, one at a time.",
+          "file": "docs/examples/split-pane/MasterDetail.tsx"
+        }
+      ]
+    },
+    {
       "name": "Surface",
       "page": "surface",
       "doc": "docs/components/surface.md",
@@ -218,7 +442,7 @@
       "category": "Layout & surfaces",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.",
+      "summary": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.",
       "aliases": [
         "GroupedRows",
         "Row",
@@ -228,16 +452,22 @@
         "settings list",
         "rows",
         "item list",
-        "list view"
+        "list view",
+        "reorderable list",
+        "sortable list",
+        "drag and drop list",
+        "selectable rows"
       ],
       "useWhen": [
         "Related items with a title, a short detail and an action each, such as the sections of a settings page.",
         "Items that each open a page or a document, such as recent plans (`interactive`).",
-        "A short set of results or members under a search field."
+        "A short set of results or members under a search field.",
+        "The list beside an item's details, with its current row marked (`selected`).",
+        "Items people put in their own order, such as the slides of a deck or an agenda (`onReorder`)."
       ],
       "avoidWhen": [
         {
-          "text": "Data compared across columns, or rows people sort and select.",
+          "text": "Data compared across columns, or rows people sort by a value.",
           "use": "Table"
         },
         {
@@ -274,7 +504,7 @@
         {
           "name": "SettingsRows",
           "title": "List",
-          "description": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.",
+          "description": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.",
           "file": "docs/examples/list/SettingsRows.tsx"
         },
         {
@@ -290,6 +520,24 @@
           "file": "docs/examples/list/OnAPane.tsx"
         },
         {
+          "name": "CurrentRow",
+          "title": "The current row",
+          "description": "An avatar leads each row, and choosing a person marks their row as the current one, as for a list beside the person's details.",
+          "file": "docs/examples/list/CurrentRow.tsx"
+        },
+        {
+          "name": "CheckedRows",
+          "title": "Checked rows",
+          "description": "A checkbox in the start slot chooses rows for an action on several at once, and a checked row takes the selected fill.",
+          "file": "docs/examples/list/CheckedRows.tsx"
+        },
+        {
+          "name": "Reorder",
+          "title": "Put in order",
+          "description": "With `onReorder`, each row gets a handle: drag it, or press <kbd>Space</kbd> on it and move the row with the arrow keys. The list reports the move, and the application moves the item.",
+          "file": "docs/examples/list/Reorder.tsx"
+        },
+        {
           "name": "ExtraContent",
           "title": "More content in a row",
           "description": "Children follow the title and the detail, such as a Badge with the item's status.",
@@ -302,26 +550,28 @@
       "page": "card",
       "doc": "docs/components/card.md",
       "category": "Layout & surfaces",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
-      "summary": "A rounded surface that groups content about one subject, as a content card, a card with an action strip, or one link or button.",
+      "summary": "A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.",
       "aliases": [
         "tile",
         "panel",
         "content card",
         "clickable card",
         "link card",
+        "button card",
         "action card",
         "feature card",
         "promo card",
         "ClickableCard",
-        "ActionCard"
+        "ActionCard",
+        "FeatureCard"
       ],
       "useWhen": [
         "Content about one subject stands apart from the page, such as a project's summary.",
         "A summary needs its own actions along the bottom, such as Share and Open (`actions`).",
-        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `as=\"button\"`).",
-        "A feature is introduced with an icon, a sentence and one action (FeatureCard)."
+        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).",
+        "A feature is introduced with an icon, a sentence and one action (`layout=\"feature\"`)."
       ],
       "avoidWhen": [
         {
@@ -329,7 +579,7 @@
           "use": "Surface"
         },
         {
-          "text": "Rows of items with a title, a detail and an action, connected in one list.",
+          "text": "Rows of items with a label, a description and an action, connected in one list.",
           "use": "List"
         },
         {
@@ -353,28 +603,25 @@
         "typography"
       ],
       "exports": [
-        "Card",
-        "ClickableCard",
-        "ActionCard",
-        "FeatureCard"
+        "Card"
       ],
       "examples": [
         {
           "name": "ProjectSummary",
           "title": "Card",
-          "description": "A rounded surface that groups content about one subject, as a content card, a card with an action strip, or one link or button.",
+          "description": "A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
           "name": "ActionStrip",
           "title": "Action strip",
-          "description": "`heading`, `meta` and `actions` make an article with its heading row and a strip of controls along its bottom.",
+          "description": "`heading`, `meta` and `actions` make a heading row and a strip of controls along the bottom; `render` makes the card an article.",
           "file": "docs/examples/card/ActionStrip.tsx"
         },
         {
           "name": "Destinations",
           "title": "Link cards",
-          "description": "Each card is one link, named by its title and described by its summary, in a grid of as many columns as fit.",
+          "description": "Each card is one link, named by its title and summary, in a grid of as many columns as fit.",
           "file": "docs/examples/card/Destinations.tsx"
         },
         {
@@ -386,7 +633,7 @@
         {
           "name": "FeatureCards",
           "title": "Feature cards",
-          "description": "FeatureCard presents a feature with an icon and one action, and stacks them when the card is narrow.",
+          "description": "The feature layout presents a feature with an icon and one action, and stacks them when the card is narrow.",
           "file": "docs/examples/card/FeatureCards.tsx"
         }
       ]
@@ -396,7 +643,7 @@
       "page": "button",
       "doc": "docs/components/button.md",
       "category": "Actions",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group.",
       "aliases": [
@@ -512,6 +759,12 @@
           "file": "docs/examples/button/CopyValue.tsx"
         },
         {
+          "name": "CustomClipboard",
+          "title": "Your own clipboard",
+          "description": "`write` copies through the application's own clipboard, here a stand-in that takes a moment; the button shows the result as it does for the browser's.",
+          "file": "docs/examples/button/CustomClipboard.tsx"
+        },
+        {
           "name": "ConnectedButtons",
           "title": "Connected buttons",
           "description": "ButtonGroup connects related actions in a row or a column. Prefer the same variant within a group; mix variants when related actions need different emphasis.",
@@ -588,6 +841,61 @@
       ]
     },
     {
+      "name": "SearchTrigger",
+      "page": "search-trigger",
+      "doc": "docs/components/search-trigger.md",
+      "category": "Actions",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
+      "aliases": [
+        "SearchButton",
+        "quick open button",
+        "search button",
+        "command palette button",
+        "search shortcut"
+      ],
+      "useWhen": [
+        "Search or a command palette opens from a button at the top of a sidebar or in a header.",
+        "The application opens search with a keyboard shortcut and shows it where people look for search.",
+        "A narrow header or a sidebar showing icons only needs search as an icon."
+      ],
+      "avoidWhen": [
+        {
+          "text": "People type the search on the page itself and the results filter in place.",
+          "use": "SearchField"
+        },
+        {
+          "text": "The search itself, with its field and results.",
+          "use": "CommandPalette"
+        }
+      ],
+      "related": [
+        "command-palette",
+        "text-field",
+        "kbd",
+        "button",
+        "app-shell"
+      ],
+      "exports": [
+        "SearchTrigger"
+      ],
+      "examples": [
+        {
+          "name": "InSidebar",
+          "title": "SearchTrigger",
+          "description": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
+          "file": "docs/examples/search-trigger/InSidebar.tsx"
+        },
+        {
+          "name": "IconOnly",
+          "title": "Icon only",
+          "description": "In a narrow header, the trigger shows only its icon, with the label and the keys in its tooltip. It doesn't listen, since the sidebar's trigger already opens the same search.",
+          "file": "docs/examples/search-trigger/IconOnly.tsx"
+        }
+      ]
+    },
+    {
       "name": "Toolbar",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md",
@@ -623,9 +931,14 @@
         {
           "text": "An application's menus of commands, such as File and Edit.",
           "use": "Menubar"
+        },
+        {
+          "text": "A page's search, filters and primary action, where fields keep their arrow keys.",
+          "use": "PageHeader"
         }
       ],
       "related": [
+        "page-header",
         "button",
         "segmented-control",
         "menubar",
@@ -657,6 +970,24 @@
           "title": "Drawing tools",
           "description": "A vertical toolbar of toggles, where one tool stays chosen.",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
+        },
+        {
+          "name": "PageToolbar",
+          "title": "Page toolbar",
+          "description": "A page's search and filter under its title, with the primary action at the end of the row: a Stack row in PageHeader's `toolbar`, not a Toolbar.",
+          "file": "docs/examples/toolbar/PageToolbar.tsx"
+        },
+        {
+          "name": "SectionToolbar",
+          "title": "Section toolbar",
+          "description": "A section's heading and count at the start and its actions at the end, wrapping when there isn't room.",
+          "file": "docs/examples/toolbar/SectionToolbar.tsx"
+        },
+        {
+          "name": "TableToolbar",
+          "title": "Table toolbar",
+          "description": "Small controls above a table of small rows, so the bar and the rows share one density.",
+          "file": "docs/examples/toolbar/TableToolbar.tsx"
         }
       ]
     },
@@ -717,84 +1048,6 @@
           "title": "Without an underline",
           "description": "Where the context already marks the words as links, `underline={false}` leaves the link color alone.",
           "file": "docs/examples/link/WithoutUnderline.tsx"
-        }
-      ]
-    },
-    {
-      "name": "SegmentedControl",
-      "page": "segmented-control",
-      "doc": "docs/components/segmented-control.md",
-      "category": "Actions",
-      "status": "beta",
-      "since": "0.5.0",
-      "summary": "One choice among a few options on a pill rail, such as views or filters of the same content.",
-      "aliases": [
-        "segmented button",
-        "segmented buttons",
-        "button toggle",
-        "toggle group",
-        "toggle button group",
-        "content switcher",
-        "view switcher",
-        "filter switcher",
-        "pill tabs"
-      ],
-      "useWhen": [
-        "People switch between two to five views or filters of the same content, such as Open, Blocked and Done items, and the choice applies at once.",
-        "A toolbar switches how content is laid out, such as List and Board (`size=\"sm\"`).",
-        "A narrow container, such as a sidebar, holds a choice between two scopes (`fullWidth`)."
-      ],
-      "avoidWhen": [
-        {
-          "text": "Each option has a panel of its own, such as the sections of a settings page.",
-          "use": "Tabs"
-        },
-        {
-          "text": "A choice in a form that is saved with it, or options that need explaining.",
-          "use": "RadioGroup"
-        },
-        {
-          "text": "More than five options, or options with long names.",
-          "use": "Select"
-        },
-        {
-          "text": "A setting that turns on or off.",
-          "use": "Switch"
-        },
-        {
-          "text": "Actions, such as Save and Share, rather than a choice that stays selected.",
-          "use": "ButtonGroup"
-        }
-      ],
-      "related": [
-        "tabs",
-        "radio",
-        "select",
-        "button",
-        "switch",
-        "accessibility"
-      ],
-      "exports": [
-        "SegmentedControl"
-      ],
-      "examples": [
-        {
-          "name": "WorkItems",
-          "title": "SegmentedControl",
-          "description": "One choice among a few options on a pill rail, such as views or filters of the same content.",
-          "file": "docs/examples/segmented-control/WorkItems.tsx"
-        },
-        {
-          "name": "SmallToolbar",
-          "title": "Small, in a toolbar",
-          "description": "`size=\"sm\"` makes the rail as tall as the small button beside it. Timeline is disabled, and the arrow keys skip it.",
-          "file": "docs/examples/segmented-control/SmallToolbar.tsx"
-        },
-        {
-          "name": "FillSidebar",
-          "title": "Fill a sidebar",
-          "description": "With `fullWidth` the control fills a sidebar and splits it between the options. Labels too long for their half end with an ellipsis and show whole in a tooltip on hover and keyboard focus.",
-          "file": "docs/examples/segmented-control/FillSidebar.tsx"
         }
       ]
     },
@@ -1486,6 +1739,84 @@
           "title": "Small, in a toolbar",
           "description": "A small, outline select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.",
           "file": "docs/examples/select/SmallToolbar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "SegmentedControl",
+      "page": "segmented-control",
+      "doc": "docs/components/segmented-control.md",
+      "category": "Forms & selection",
+      "status": "stable",
+      "since": "0.5.0",
+      "summary": "One choice among a few items on a pill rail, such as views or filters of the same content.",
+      "aliases": [
+        "segmented button",
+        "segmented buttons",
+        "button toggle",
+        "toggle group",
+        "toggle button group",
+        "content switcher",
+        "view switcher",
+        "filter switcher",
+        "pill tabs"
+      ],
+      "useWhen": [
+        "People switch between two to five views or filters of the same content, such as Open, Blocked and Done items, and the choice applies at once.",
+        "A toolbar switches how content is laid out, such as List and Board (`size=\"sm\"`).",
+        "A narrow container, such as a sidebar, holds a choice between two scopes (`fullWidth`)."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Each option has a panel of its own, such as the sections of a settings page.",
+          "use": "Tabs"
+        },
+        {
+          "text": "A choice in a form that is saved with it, or options that need explaining.",
+          "use": "RadioGroup"
+        },
+        {
+          "text": "More than five options, or options with long names.",
+          "use": "Select"
+        },
+        {
+          "text": "A setting that turns on or off.",
+          "use": "Switch"
+        },
+        {
+          "text": "Actions, such as Save and Share, rather than a choice that stays selected.",
+          "use": "ButtonGroup"
+        }
+      ],
+      "related": [
+        "tabs",
+        "radio",
+        "select",
+        "button",
+        "switch",
+        "accessibility"
+      ],
+      "exports": [
+        "SegmentedControl"
+      ],
+      "examples": [
+        {
+          "name": "WorkItems",
+          "title": "SegmentedControl",
+          "description": "One choice among a few items on a pill rail, such as views or filters of the same content.",
+          "file": "docs/examples/segmented-control/WorkItems.tsx"
+        },
+        {
+          "name": "SmallToolbar",
+          "title": "Small, in a toolbar",
+          "description": "`size=\"sm\"` makes the rail as tall as the small button beside it. Timeline is disabled, and the arrow keys skip it.",
+          "file": "docs/examples/segmented-control/SmallToolbar.tsx"
+        },
+        {
+          "name": "FillSidebar",
+          "title": "Fill a sidebar",
+          "description": "With `fullWidth` the control fills a sidebar and splits it between the options. Labels too long for their half end with an ellipsis and show whole in a tooltip on hover and keyboard focus.",
+          "file": "docs/examples/segmented-control/FillSidebar.tsx"
         }
       ]
     },
@@ -2571,6 +2902,68 @@
       ]
     },
     {
+      "name": "AccountMenu",
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md",
+      "category": "Navigation",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.",
+      "aliases": [
+        "account menu",
+        "user menu",
+        "profile menu",
+        "avatar menu",
+        "sign out menu"
+      ],
+      "useWhen": [
+        "The signed-in person's settings, theme and sign out, behind their avatar in a header or their name at the foot of a sidebar.",
+        "The theme choice, System, Light or Dark, in the account's menu rather than a toggle of its own.",
+        "Switching organizations from the account's menu, where the frame has no switcher of its own."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A switch between organizations at the top of a sidebar, on its own.",
+          "use": "OrganizationSwitcher"
+        },
+        {
+          "text": "Switching between the light and dark themes with one button.",
+          "use": "ThemeToggle"
+        },
+        {
+          "text": "Actions on an item or a view rather than on the account.",
+          "use": "Menu"
+        }
+      ],
+      "related": [
+        "menu",
+        "avatar",
+        "app-shell",
+        "nav-list",
+        "setup"
+      ],
+      "exports": [
+        "AccountMenu",
+        "AccountMenu.Root",
+        "AccountMenu.ThemeSubmenu",
+        "AccountMenu.OrganizationSubmenu"
+      ],
+      "examples": [
+        {
+          "name": "ThemeAndOrganizations",
+          "title": "AccountMenu",
+          "description": "The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.",
+          "file": "docs/examples/account-menu/ThemeAndOrganizations.tsx"
+        },
+        {
+          "name": "RowTrigger",
+          "title": "A row at the foot of a sidebar",
+          "description": "The row shows the name and the e-mail address, and opens the menu above it. The theme submenu here sets a theme the application stores itself, and closes the menu after the choice.",
+          "file": "docs/examples/account-menu/RowTrigger.tsx"
+        }
+      ]
+    },
+    {
       "name": "RichText",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md",
@@ -2863,43 +3256,21 @@
       ]
     },
     {
-      "name": "InfoChip",
-      "page": "chips",
-      "doc": "docs/components/chips.md",
-      "category": "Content & guidance",
-      "status": "beta",
-      "since": "0.1.0",
-      "summary": "Read-only metadata beside related content.",
-      "aliases": [
-        "info chip",
-        "chip",
-        "tag",
-        "metadata"
-      ],
-      "useWhen": [],
-      "avoidWhen": [],
-      "related": [
-        "card",
-        "typography",
-        "disclosure",
-        "badge"
-      ],
-      "exports": [
-        "InfoChip"
-      ],
-      "examples": []
-    },
-    {
       "name": "Badge",
       "page": "badge",
       "doc": "docs/components/badge.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
-      "summary": "Small static pills that name a state in its tone, show a count, or the size of a change.",
+      "summary": "Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.",
       "aliases": [
         "Counter",
         "DiffCount",
+        "InfoChip",
+        "info chip",
+        "chip",
+        "chips",
+        "metadata",
         "status badge",
         "status",
         "tag",
@@ -2916,6 +3287,7 @@
       "useWhen": [
         "A short state sits beside the content it describes, such as In review, Blocked or Archived.",
         "A short name or category marks an item, such as a team or a folder (`variant=\"outline\"`).",
+        "A piece of neutral metadata sits beside related content, such as a plan or a count of seats.",
         "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (CounterBadge).",
         "The size of a change shows beside a file or a version, such as +12 −3 (DiffStat)."
       ],
@@ -2942,7 +3314,7 @@
         }
       ],
       "related": [
-        "chips",
+        "card",
         "nav-list",
         "button",
         "stat",
@@ -2958,7 +3330,7 @@
         {
           "name": "ProjectStatus",
           "title": "Badge",
-          "description": "Small static pills that name a state in its tone, show a count, or the size of a change.",
+          "description": "Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.",
           "file": "docs/examples/badge/ProjectStatus.tsx"
         },
         {
@@ -2970,8 +3342,14 @@
         {
           "name": "Emphasis",
           "title": "Emphasis",
-          "description": "Subtle badges suit most states; a solid badge stands out for the one state that must, and outline badges mark names and categories.",
+          "description": "Soft badges suit most states; a solid badge stands out for the one state that must, and outline badges mark names and categories.",
           "file": "docs/examples/badge/Emphasis.tsx"
+        },
+        {
+          "name": "NeutralMetadata",
+          "title": "Neutral metadata",
+          "description": "A neutral badge holds a fact about the content beside it, such as the plan a card describes or its seats, in place of 0.x's InfoChip.",
+          "file": "docs/examples/badge/NeutralMetadata.tsx"
         },
         {
           "name": "WithIcon",
@@ -3121,11 +3499,85 @@
       ]
     },
     {
+      "name": "DescriptionList",
+      "page": "description-list",
+      "doc": "docs/components/description-list.md",
+      "category": "Content & guidance",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.",
+      "aliases": [
+        "facts",
+        "fact list",
+        "key-value list",
+        "key value pairs",
+        "definition list",
+        "property list",
+        "details",
+        "metadata",
+        "dl"
+      ],
+      "useWhen": [
+        "A page, card or sidebar shows the facts about one item, such as a project's owner, status and dates.",
+        "Settings of one item sit beside their labels, each a small control, such as a visibility Select."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Many items compared by the same fields.",
+          "use": "Table"
+        },
+        {
+          "text": "Items people open or act on, one per row.",
+          "use": "List"
+        },
+        {
+          "text": "A form that people fill in and submit.",
+          "use": "Field"
+        },
+        {
+          "text": "One headline number with its trend.",
+          "use": "Stat"
+        }
+      ],
+      "related": [
+        "table",
+        "list",
+        "card",
+        "stat",
+        "skeleton"
+      ],
+      "exports": [
+        "DescriptionList",
+        "DescriptionList.Root",
+        "DescriptionList.Item"
+      ],
+      "examples": [
+        {
+          "name": "Facts",
+          "title": "DescriptionList",
+          "description": "The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.",
+          "file": "docs/examples/description-list/Facts.tsx"
+        },
+        {
+          "name": "Stacked",
+          "title": "Stacked",
+          "description": "Contact details with long values put each label above its value.",
+          "file": "docs/examples/description-list/Stacked.tsx"
+        },
+        {
+          "name": "WithControls",
+          "title": "With controls",
+          "description": "Settings of one item, each a small control beside its label.",
+          "file": "docs/examples/description-list/WithControls.tsx"
+        }
+      ]
+    },
+    {
       "name": "Kbd",
       "page": "kbd",
       "doc": "docs/components/kbd.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.",
       "aliases": [
@@ -3203,7 +3655,7 @@
       "page": "animated-number",
       "doc": "docs/components/animated-number.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.4.0",
       "summary": "A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.",
       "aliases": [
@@ -3274,7 +3726,7 @@
       "page": "rating",
       "doc": "docs/components/rating.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.7.0",
       "summary": "A read-only rating as stars filled in half steps, named once for assistive technology.",
       "aliases": [
@@ -3343,7 +3795,7 @@
         {
           "name": "TranslatedLabel",
           "title": "The name in another language",
-          "description": "`formatLabel` writes the accessible name, here in German with its decimal comma.",
+          "description": "EnvUIProvider's locale writes the number, here in German with its decimal comma, and `messages.rating.label` the accessible name.",
           "file": "docs/examples/rating/TranslatedLabel.tsx"
         }
       ]
@@ -3353,7 +3805,7 @@
       "page": "relative-time",
       "doc": "docs/components/relative-time.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.6.0",
       "summary": "A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.",
       "aliases": [
@@ -3441,7 +3893,7 @@
       "page": "disclosure",
       "doc": "docs/components/disclosure.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "A one-line summary that shows and hides optional details below it, on the native details element.",
       "aliases": [
@@ -3505,7 +3957,7 @@
         {
           "name": "OpenOnError",
           "title": "Open on an error",
-          "description": "Advanced settings stay closed until a field in them has an error; `open` and `onToggle` then open the disclosure so the error shows.",
+          "description": "Advanced settings stay closed until a field in them has an error; `open` and `onOpenChange` then open the disclosure so the error shows.",
           "file": "docs/examples/disclosure/OpenOnError.tsx"
         }
       ]
@@ -3515,7 +3967,7 @@
       "page": "avatar",
       "doc": "docs/components/avatar.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.2.0",
       "summary": "A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group.",
       "aliases": [
@@ -3608,7 +4060,7 @@
       "page": "message",
       "doc": "docs/components/message.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "Conversation entries in a log: compact bubbles for your own messages, full-width content from others.",
       "aliases": [
@@ -3694,7 +4146,7 @@
       "page": "stat",
       "doc": "docs/components/stat.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.",
       "aliases": [
@@ -3760,7 +4212,7 @@
         {
           "name": "OnAPane",
           "title": "On a pane",
-          "description": "On a pane, the group takes the row tone and a smaller padding; the heading names the group.",
+          "description": "On a pane, the group takes the muted background and a smaller padding; the heading names the group.",
           "file": "docs/examples/stat/OnAPane.tsx"
         },
         {
@@ -3776,7 +4228,7 @@
       "page": "calendar-heatmap",
       "doc": "docs/components/calendar-heatmap.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.",
       "aliases": [
@@ -3837,7 +4289,7 @@
         {
           "name": "Localized",
           "title": "In another language",
-          "description": "Month and weekday names from `Intl`, weeks from Monday, and dates and values in German.",
+          "description": "EnvUIProvider's locale names the months, weekdays and dates in German, and its messages translate the legend; weeks start on Monday.",
           "file": "docs/examples/calendar-heatmap/Localized.tsx"
         },
         {
@@ -4278,8 +4730,7 @@
       "aliases": [
         "modal",
         "modal dialog",
-        "popup",
-        "confirm dialog"
+        "popup"
       ],
       "useWhen": [
         "People decide on a consequence before it happens, such as deleting a project, or type a name to confirm it.",
@@ -4291,6 +4742,10 @@
         {
           "text": "Confirming one action in place that cannot be undone, such as removing a member from a list.",
           "use": "ConfirmButton"
+        },
+        {
+          "text": "A question before one action, with Cancel and a button that names the consequence.",
+          "use": "ConfirmDialog"
         },
         {
           "text": "Details or a few fields beside the control that opens them.",
@@ -4456,6 +4911,65 @@
       ]
     },
     {
+      "name": "ConfirmDialog",
+      "page": "confirm-dialog",
+      "doc": "docs/components/confirm-dialog.md",
+      "category": "Feedback & overlays",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.",
+      "aliases": [
+        "ConfirmationDialog",
+        "confirm dialog",
+        "confirm delete",
+        "alert dialog",
+        "are you sure",
+        "delete confirmation"
+      ],
+      "useWhen": [
+        "An action deletes or ends something and people should read what it affects first, such as deleting a project.",
+        "An action started from a menu item, which can't confirm in place, needs a confirmation.",
+        "The action takes a moment and can fail, and the confirmation should stay until it has finished."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Confirming a low-stakes action in place with a second press, such as removing a row.",
+          "use": "ConfirmButton"
+        },
+        {
+          "text": "A task with fields, a choice between several actions or content to review.",
+          "use": "Dialog"
+        },
+        {
+          "text": "Undoing an action after it ran, such as an archived item.",
+          "use": "Toast"
+        }
+      ],
+      "related": [
+        "dialog",
+        "menu",
+        "alert",
+        "button"
+      ],
+      "exports": [
+        "ConfirmDialog"
+      ],
+      "examples": [
+        {
+          "name": "DeleteProject",
+          "title": "ConfirmDialog",
+          "description": "An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.",
+          "file": "docs/examples/confirm-dialog/DeleteProject.tsx"
+        },
+        {
+          "name": "AsyncWithError",
+          "title": "An action that can fail",
+          "description": "The action takes a moment, and the dialog stays pending until it ends. The first attempt fails, and the dialog stays open with the error; the second succeeds and closes it.",
+          "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
+        }
+      ]
+    },
+    {
       "name": "CommandPalette",
       "page": "command-palette",
       "doc": "docs/components/command-palette.md",
@@ -4498,6 +5012,7 @@
         }
       ],
       "related": [
+        "search-trigger",
         "dialog",
         "menu",
         "combobox",
@@ -4543,7 +5058,8 @@
         "MenuItem",
         "OrganizationMenu",
         "organization switcher",
-        "account menu"
+        "theme menu",
+        "theme choice"
       ],
       "useWhen": [
         "A short list of actions behind one control, such as a row's or a toolbar's More actions.",
@@ -4553,6 +5069,10 @@
         "Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher)."
       ],
       "avoidWhen": [
+        {
+          "text": "The signed-in person's menu, with its header and theme submenu.",
+          "use": "AccountMenu"
+        },
         {
           "text": "Choosing a value for a form field.",
           "use": "Select"
@@ -4606,7 +5126,8 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem",
         "ContextMenu",
-        "OrganizationSwitcher"
+        "OrganizationSwitcher",
+        "ThemeRadioGroup"
       ],
       "examples": [
         {
@@ -5287,7 +5808,8 @@
       "exports": [
         "useMediaQuery",
         "useBreakpoint",
-        "breakpointQuery"
+        "breakpointQuery",
+        "useContainerSize"
       ],
       "aliases": [
         "breakpoint",
@@ -5296,6 +5818,9 @@
         "responsive",
         "mobile layout",
         "container query",
+        "container size",
+        "element size",
+        "resize observer",
         "z-index",
         "stacking order",
         "layers"
@@ -5330,15 +5855,15 @@
       "summary": "Local Material Symbols and official brand assets, ready to use.",
       "doc": "docs/foundations/icons.md",
       "exports": [
-        "Icon",
-        "BrandLogo",
-        "EnvUILogo"
+        "Icon"
       ],
       "aliases": [
         "icon",
         "Material Symbols",
         "symbol",
-        "logo"
+        "logo",
+        "BrandLogo",
+        "EnvUILogo"
       ],
       "related": [
         "button",
@@ -5380,35 +5905,206 @@
   ],
   "templates": [],
   "exports": {
-    "ActionCard": {
+    "AccountMenu": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "AccountMenu.Root",
+        "AccountMenu.ThemeSubmenu",
+        "AccountMenu.OrganizationSubmenu"
+      ],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.OrganizationSubmenu": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "An `article` card with an action strip: Card with `layout=\"action\"`, kept for earlier applications.",
+      "description": "A submenu that switches between the person's organizations, with OrganizationSwitcher's rows, for an application whose account menu holds the switch. OrganizationSwitcher stays the control for a switch of its own, such as at the top of a sidebar.",
       "props": [
         {
-          "name": "title",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The card's title, Card's `heading`: an `h3` in the section heading type."
+          "name": "items",
+          "type": "readonly OrganizationSwitcherItem[]",
+          "required": true,
+          "description": "Organizations the signed-in person belongs to, in display order."
         },
         {
-          "name": "meta",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A short fact at the end of the heading row, such as when the card was updated."
+          "name": "value",
+          "type": "string | null",
+          "required": true,
+          "description": "The active organization's id, or null before one is chosen; its name shows under the row's label."
         },
         {
-          "name": "actions",
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": true,
+          "description": "Called with the id of the organization chosen, unless it is the active one."
+        },
+        {
+          "name": "onCreate",
+          "type": "() => void",
+          "required": false,
+          "description": "Offers creating an organization after the organizations."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Organization', or EnvUIProvider's messages.accountMenu.organization",
+          "description": "The label of the row that opens the submenu."
+        },
+        {
+          "name": "createLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
+          "description": "Label of the create action."
+        },
+        {
+          "name": "icon",
           "type": "ReactNode",
           "required": false,
-          "description": "Controls in a strip along the bottom of the card, such as Buttons."
+          "default": "the Groups3 icon",
+          "description": "A decorative icon before the label."
+        }
+      ],
+      "native": [],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The signed-in person's menu: their avatar, or a row with their name, opens a Menu with a header that shows who is signed in, then the application's items, such as account settings, the theme and sign out.",
+      "props": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The signed-in person's name, on the trigger row, in the avatar's tooltip and in the menu's header."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A second line under the name, such as the e-mail address, on the trigger row and in the header."
+        },
+        {
+          "name": "avatarSrc",
+          "type": "string",
+          "required": false,
+          "description": "The person's picture; the default person picture shows without one."
+        },
+        {
+          "name": "trigger",
+          "type": "'auto' | 'avatar' | 'row'",
+          "required": false,
+          "default": "'auto'",
+          "description": "What opens the menu: `row`, the avatar with the name and description, for the foot of a sidebar; `avatar`, the avatar alone, for a header or a sidebar showing icons only; `auto`, a row in an expanded sidebar and the avatar elsewhere."
+        },
+        {
+          "name": "side",
+          "type": "Menu.RootProps['side']",
+          "required": false,
+          "default": "'top' for a row, 'inline-end' for the avatar in a sidebar, else 'bottom'",
+          "description": "The side of the trigger the menu opens on; it flips where the window has no room."
+        },
+        {
+          "name": "align",
+          "type": "Menu.RootProps['align']",
+          "required": false,
+          "default": "'start' for a row, else 'end'",
+          "description": "How the menu lines up with the trigger along that side."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "'Account', or EnvUIProvider's messages.accountMenu.label",
+          "description": "Accessible name of the menu."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The menu's items after its header: Menu.Item, Menu.Separator, AccountMenu.ThemeSubmenu, AccountMenu.OrganizationSubmenu and the other Menu parts."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "Class of the menu popup. ref, style, data attributes and the other native props go to the popup too; the trigger is the element you pass."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the menu is open, for a controlled menu; leave it out and the menu opens and closes itself."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether an uncontrolled menu starts open."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Called with the new visibility as the menu opens or closes."
         }
       ],
       "native": [
-        "element"
+        "div"
       ],
-      "page": "card",
-      "doc": "docs/components/card.md"
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
+    },
+    "AccountMenu.ThemeSubmenu": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A submenu with the theme choice, System, Light and Dark: a ThemeRadioGroup, which stores the choice through the nearest ThemePreferenceProvider unless value and onValueChange are given.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Theme', or EnvUIProvider's messages.accountMenu.theme",
+          "description": "The label of the row that opens the submenu."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "the Palette icon",
+          "description": "A decorative icon before the label."
+        },
+        {
+          "name": "value",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's preference",
+          "description": "The chosen preference: system, light or dark."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: ThemePreference) => void",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
+          "description": "Called with the preference chosen, for an application that stores the theme itself."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+        }
+      ],
+      "native": [],
+      "page": "account-menu",
+      "doc": "docs/components/account-menu.md"
     },
     "Alert": {
       "kind": "component",
@@ -5488,8 +6184,8 @@
           "name": "format",
           "type": "(value: number) => string",
           "required": false,
-          "default": "(value: number) => value.toLocaleString()",
-          "description": "Writes the value as text, such as a currency; the browser locale's number format by default."
+          "default": "the number format of EnvUIProvider's locale, or else the browser's",
+          "description": "Writes the value as text, such as a currency."
         }
       ],
       "native": [
@@ -5795,10 +6491,10 @@
         },
         {
           "name": "size",
-          "type": "'small' | 'standard' | 'large' | 'display'",
+          "type": "'sm' | 'md' | 'lg' | 'xl'",
           "required": false,
-          "default": "'standard'",
-          "description": "small 1.5 rem, standard 2 rem (default), large 3 rem, display 5.5 rem."
+          "default": "'md'",
+          "description": "sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem, such as for a profile page."
         },
         {
           "name": "label",
@@ -5826,7 +6522,7 @@
           "description": "The person's name: shown in the tooltip, and the accessible name unless aria-label is set."
         },
         {
-          "name": "detail",
+          "name": "description",
           "type": "string",
           "required": false,
           "description": "A second tooltip line, such as the e-mail address of the signed-in account."
@@ -5845,10 +6541,10 @@
         },
         {
           "name": "size",
-          "type": "'small' | 'standard' | 'large'",
+          "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "default": "'standard'",
-          "description": "small 1.5 rem, standard 2 rem (default) or large 3 rem picture, inside a slightly larger hit area."
+          "default": "'md'",
+          "description": "The picture: sm 1.5 rem, md 2 rem or lg 3 rem, inside a slightly larger hit area, which grows to the touch height under a coarse pointer."
         }
       ],
       "native": [
@@ -5876,10 +6572,10 @@
         },
         {
           "name": "size",
-          "type": "AvatarProps['size']",
+          "type": "'sm' | 'md' | 'lg' | 'xl'",
           "required": false,
-          "default": "'standard'",
-          "description": "As Avatar: small 1.5 rem, standard 2 rem (default), large 3 rem or display 5.5 rem."
+          "default": "'md'",
+          "description": "As Avatar: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem."
         },
         {
           "name": "total",
@@ -5897,15 +6593,15 @@
           "name": "formatMore",
           "type": "(count: number) => string",
           "required": false,
-          "default": "(count: number) => `${count} more`",
-          "description": "Text for people beyond the list, in the overflow tooltip and the group's name; \"N more\"."
+          "default": "'{count} more'",
+          "description": "Text for people beyond the list, in the overflow tooltip and the group's name. It overrides EnvUIProvider's `messages.avatarGroup.more` for this group."
         },
         {
           "name": "formatLabel",
           "type": "(count: number, names: readonly string[]) => string",
           "required": false,
-          "default": "(count: number, names: readonly string[]) => `${count} ${count === 1 ? 'person' : 'people'}: ${names.join(', ')}`",
-          "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed: \"3 people: Alex Morgan, Sam Lee, 1 more\" by default. aria-label replaces it."
+          "default": "'{count} people: {names}'",
+          "description": "The group's name from the number of people and their names, which end with formatMore's text for people counted in total but not listed, such as \"3 people: Alex Morgan, Sam Lee, 1 more\". It overrides EnvUIProvider's `messages.avatarGroup.label` for this group; aria-label replaces it."
         }
       ],
       "native": [
@@ -5917,7 +6613,7 @@
     "Badge": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or a short name.",
+      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats.",
       "props": [
         {
           "name": "tone",
@@ -5928,10 +6624,10 @@
         },
         {
           "name": "variant",
-          "type": "'subtle' | 'solid' | 'outline'",
+          "type": "'soft' | 'solid' | 'outline'",
           "required": false,
-          "default": "'subtle'",
-          "description": "subtle (default) tints the background, solid fills it with the tone, outline draws a border."
+          "default": "'soft'",
+          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
         },
         {
           "name": "icon",
@@ -5951,25 +6647,6 @@
       ],
       "page": "badge",
       "doc": "docs/components/badge.md"
-    },
-    "BrandLogo": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Official envsemble lockup, sized relative to the surrounding text.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'envsemble'",
-          "description": "Accessible name for a meaningful standalone icon. Omit for decoration."
-        }
-      ],
-      "native": [
-        "svg"
-      ],
-      "page": "icons",
-      "doc": "docs/foundations/icons.md"
     },
     "Breadcrumbs": {
       "kind": "component",
@@ -6259,13 +6936,14 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "default": "(value: number) => new Intl.NumberFormat('en').format(value)",
-          "description": "Text for a value; English digit grouping by default."
+          "default": "the number format of EnvUIProvider's locale, or else the browser's",
+          "description": "Text for a value."
         },
         {
           "name": "formatDate",
           "type": "(date: string) => string",
           "required": false,
+          "default": "the weekday, day, month and year in the locale, such as Tue 14 Oct 2025",
           "description": "Text for a day's date, in its accessible name and the default tooltip."
         },
         {
@@ -6278,29 +6956,29 @@
           "name": "monthLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']",
-          "description": "Twelve month names above the weeks, from January; English abbreviations by default."
+          "default": "the locale's short month names, from Intl",
+          "description": "Twelve month names above the weeks, from January."
         },
         {
           "name": "weekdayLabels",
           "type": "readonly string[]",
           "required": false,
-          "default": "['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']",
-          "description": "Seven weekday names beside the rows, from Sunday; English abbreviations by default."
+          "default": "the locale's short weekday names, from Intl",
+          "description": "Seven weekday names beside the rows, from Sunday."
         },
         {
           "name": "lessLabel",
           "type": "string",
           "required": false,
           "default": "'Less'",
-          "description": "Legend text before the lightest color; Less by default."
+          "description": "Legend text before the lightest color. It overrides EnvUIProvider's `messages.calendarHeatmap.less`."
         },
         {
           "name": "moreLabel",
           "type": "string",
           "required": false,
           "default": "'More'",
-          "description": "Legend text after the strongest color; More by default."
+          "description": "Legend text after the strongest color. It overrides EnvUIProvider's `messages.calendarHeatmap.more`."
         },
         {
           "name": "aria-label",
@@ -6326,27 +7004,46 @@
     "Card": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Shared card surface, optionally a native action or a content card with an action strip.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional heading row and actions, a feature card with an icon and an action, or one link or button.",
       "props": [
+        {
+          "name": "background",
+          "type": "'muted' | 'default' | 'page'",
+          "required": false,
+          "default": "'muted'",
+          "description": "The fill: muted, the standalone card fill; default, a quieter fill that groups content, such as a section of a settings page; or page, the page's own color, for a card inside a pane."
+        },
         {
           "name": "padding",
           "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
           "required": false,
           "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
-          "description": "The inset on every side, as a step of the spacing scale, from 1 (0.25 rem) to 9 (4 rem), such as 5 for 1.5 rem; 0 removes it. Without it, the inset follows the window's width."
+          "description": "The inset on every side, as a step of the spacing scale, such as 6 for 2 rem; 0 removes it. Without it, the inset follows the window's width."
         },
         {
-          "name": "tone",
-          "type": "'row' | 'pane' | 'canvas'",
+          "name": "className",
+          "type": "string",
           "required": false,
-          "default": "'row'",
-          "description": "The surface's fill: `row`, the standalone card fill; `pane`, a quieter fill that groups content; or `canvas`, the page's own color."
+          "description": ""
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": ""
         },
         {
           "name": "heading",
           "type": "ReactNode",
           "required": false,
-          "description": "A title in the section heading type, as an `h3`, at the top of a content card."
+          "description": "A title at the top of the card: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level."
+        },
+        {
+          "name": "headingLevel",
+          "type": "1 | 2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "3, or 2 in the feature layout",
+          "description": "The heading's level, for the page's outline; the type stays as the layout sets it."
         },
         {
           "name": "meta",
@@ -6355,42 +7052,60 @@
           "description": "A short fact at the end of the heading row, such as when the card was updated."
         },
         {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence under the heading, in muted text."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from assistive technology."
+        },
+        {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Controls in a strip along the bottom of the card, such as Buttons; implies the action layout."
+          "description": "The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature layout at its end, moving below the text and filling the card's width in a card narrower than 38 rem."
         },
         {
           "name": "layout",
-          "type": "'content' | 'action'",
+          "type": "'stack' | 'feature'",
           "required": false,
-          "default": "'content'",
-          "description": "An action strip implies action layout; explicit layout also works without actions."
+          "default": "'stack'",
+          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the heading and description, and the actions at the end."
         },
         {
-          "name": "as",
-          "type": "'div' | 'article' | 'button' | 'a'",
+          "name": "render",
+          "type": "ReactElement",
           "required": false,
-          "description": "The element: `div` (default) or `article` for a content card, `button` for a card that starts an action. With `href` the card is a link."
+          "description": "The element for the card's meaning, such as render={<article />} or render={<section />}. A div by default."
         },
         {
           "name": "href",
           "type": "string",
           "required": false,
-          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
+          "description": "The destination: the whole card is one native link, through the LinkProvider."
+        },
+        {
+          "name": "onClick",
+          "type": "MouseEventHandler<HTMLButtonElement>",
+          "required": false,
+          "requiredWhen": "in some forms",
+          "description": "Runs when the card is pressed: the whole card is one native button."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
-          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
+          "description": "A disabled link card has no destination, cannot be focused and reports aria-disabled; a disabled button card cannot be pressed."
         }
       ],
       "native": [
         "div",
-        "element",
-        "button",
-        "a"
+        "a",
+        "button"
       ],
       "page": "card",
       "doc": "docs/components/card.md"
@@ -6449,31 +7164,6 @@
       ],
       "page": "checkbox",
       "doc": "docs/components/checkbox.md"
-    },
-    "ClickableCard": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A single interactive surface: Card with `href`, or Card `as=\"button\"`, kept for earlier applications. Do not nest links or controls inside it.",
-      "props": [
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "description": "A disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`."
-        },
-        {
-          "name": "href",
-          "type": "string",
-          "required": false,
-          "description": "The destination: the whole card is one native link, through the `LinkProvider`."
-        }
-      ],
-      "native": [
-        "button",
-        "a"
-      ],
-      "page": "card",
-      "doc": "docs/components/card.md"
     },
     "CloseButton": {
       "kind": "component",
@@ -7224,6 +7914,99 @@
       "page": "button",
       "doc": "docs/components/button.md"
     },
+    "ConfirmDialog": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Asks people to confirm an action whose consequence needs a sentence, such as deleting a project: an alert dialog with a question, a description, Cancel and a confirm button that names the consequence. It waits for onConfirm's promise, pending, and stays open when it fails. className, style, ref and data attributes go to the dialog's surface.",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the dialog is open, for a dialog the application controls with onOpenChange."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether a dialog the application doesn't control is open on the first render."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean, details: DialogOpenChangeDetails) => void",
+          "required": false,
+          "description": "Called with the requested state, and why, when the dialog opens or closes: from the trigger, Escape, Cancel, or after onConfirm finishes. Not called for a dismissal that a running onConfirm blocks."
+        },
+        {
+          "name": "trigger",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element that opens the dialog, such as a Button. Omit it for a dialog the application opens with open, such as from a menu item."
+        },
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The question, which names the dialog, such as “Delete Northwind launch?”."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What confirming does and whether it can be undone; it describes the dialog."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "More content between the heading and the actions, such as what else the action affects."
+        },
+        {
+          "name": "confirmLabel",
+          "type": "string",
+          "required": true,
+          "description": "The confirm button's label: a verb that names the consequence, such as Delete project."
+        },
+        {
+          "name": "cancelLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Cancel', or EnvUIProvider's messages.confirmDialog.cancel",
+          "description": "The cancel button's label."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'danger'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "danger for an action that deletes or ends something: the confirm button is a danger one and focus starts on Cancel, so a hurried Enter doesn't confirm. neutral starts focus on the confirm button."
+        },
+        {
+          "name": "onConfirm",
+          "type": "() => void | Promise<void>",
+          "required": true,
+          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "What went wrong, shown as a danger Alert above the actions and announced."
+        },
+        {
+          "name": "finalFocus",
+          "type": "RefObject<HTMLElement | null>",
+          "required": false,
+          "description": "The element to focus when the dialog closes, such as the menu button whose item opened it. By default focus returns to the trigger, or to the element that had focus when it opened."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "confirm-dialog",
+      "doc": "docs/components/confirm-dialog.md"
+    },
     "ContextMenu": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -7313,6 +8096,12 @@
           "type": "(text: string) => void",
           "required": false,
           "description": "Runs once the text is on the clipboard, with that text."
+        },
+        {
+          "name": "write",
+          "type": "(text: string) => Promise<void>",
+          "required": false,
+          "description": "Writes the text instead of the browser's Clipboard API, such as through a desktop app's clipboard bridge. A rejected promise shows and announces failedLabel."
         },
         {
           "name": "size",
@@ -7642,6 +8431,74 @@
       "page": "date-picker",
       "doc": "docs/components/date-picker.md"
     },
+    "DescriptionList": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "DescriptionList.Root",
+        "DescriptionList.Item"
+      ],
+      "page": "description-list",
+      "doc": "docs/components/description-list.md"
+    },
+    "DescriptionList.Item": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "One term and its value: a `div` around a `dt` and a `dd`.",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The term, such as Owner or Created."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The value: text, a link, a Badge, or a control in a list with `controls`."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "description-list",
+      "doc": "docs/components/description-list.md"
+    },
+    "DescriptionList.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A list of labelled values, the facts about one thing, such as a project's owner, status and dates: a `dl` whose items are its terms with their values.",
+      "props": [
+        {
+          "name": "layout",
+          "type": "'inline' | 'stacked' | 'auto'",
+          "required": false,
+          "default": "'auto'",
+          "description": "Where each label sits: inline, beside its value, in a column as wide as the longest label; stacked, above its value; auto, inline, stacked below 24 rem of the list's own width."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'sm'",
+          "description": "The text size: sm, the smaller body text, for facts beside other content, such as in a sidebar or a card; md, body text, for a page of details."
+        },
+        {
+          "name": "controls",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The values hold controls, such as a Select or a Switch: each row is at least as tall as a small control, and its label sits on the control's first line."
+        }
+      ],
+      "native": [
+        "dl"
+      ],
+      "page": "description-list",
+      "doc": "docs/components/description-list.md"
+    },
     "Dialog": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -7848,20 +8705,20 @@
           "name": "additions",
           "type": "number",
           "required": true,
-          "description": "Lines or items added, shown as +12 in the success tone."
+          "description": "Lines or items added, shown as +12 in the success tone, in the locale's digits."
         },
         {
           "name": "deletions",
           "type": "number",
           "required": true,
-          "description": "Lines or items removed, shown as −3 in the danger tone."
+          "description": "Lines or items removed, shown as −3 in the danger tone, in the locale's digits."
         },
         {
           "name": "formatLabel",
           "type": "(additions: number, deletions: number) => string",
           "required": false,
-          "default": "(additions: number, deletions: number) => `${additions} added ${additions === 1 ? 'line' : 'lines'} and ${deletions} removed ${deletions === 1 ? 'line' : 'lines'}`",
-          "description": "Full meaning for assistive technology; \"12 added lines and 3 removed lines\" by default."
+          "default": "'{additions} added lines and {deletions} removed lines'",
+          "description": "Full meaning for assistive technology. It overrides EnvUIProvider's `messages.diffStat.label`."
         }
       ],
       "native": [
@@ -7891,7 +8748,20 @@
           "name": "open",
           "type": "boolean",
           "required": false,
-          "description": "Whether the details show; with `onToggle` it controls the disclosure. Closed by default."
+          "description": "Whether the details show, for a controlled disclosure: update it from onOpenChange. Use defaultOpen instead to leave it to the disclosure."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the details show at first, for a disclosure that keeps its own state."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Receives whether the details show, each time the disclosure opens or closes."
         }
       ],
       "native": [
@@ -8296,25 +9166,6 @@
       "page": "empty-state",
       "doc": "docs/components/empty-state.md"
     },
-    "EnvUILogo": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Official envUI lockup; inherits its containing theme's text color.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'envUI'",
-          "description": "Accessible name for a meaningful standalone icon. Omit for decoration."
-        }
-      ],
-      "native": [
-        "svg"
-      ],
-      "page": "icons",
-      "doc": "docs/foundations/icons.md"
-    },
     "EnvUIProvider": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -8358,42 +9209,6 @@
       ],
       "page": "setup",
       "doc": "docs/setup.md"
-    },
-    "FeatureCard": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A card that presents a feature: an icon, a title, a description and one action.",
-      "props": [
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start, 1.5 rem in the muted color; hidden from assistive technology."
-        },
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The feature's name, an `h2` in the page heading type."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A sentence under the title in supporting text."
-        },
-        {
-          "name": "action",
-          "type": "ReactNode",
-          "required": false,
-          "description": "One control at the end, such as a Button; it moves below the text and fills the card's width in a card narrower than 38 rem."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "page": "card",
-      "doc": "docs/components/card.md"
     },
     "Field": {
       "kind": "namespace",
@@ -8822,17 +9637,6 @@
       "page": "button",
       "doc": "docs/components/button.md"
     },
-    "InfoChip": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "",
-      "props": [],
-      "native": [
-        "span"
-      ],
-      "page": "chips",
-      "doc": "docs/components/chips.md"
-    },
     "Kbd": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -8922,7 +9726,7 @@
     "List.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One `li` row with a label, a description and an action.",
+      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
       "props": [
         {
           "name": "label",
@@ -8952,8 +9756,27 @@
           "name": "interactive",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "The row opens something through a link or button inside: it reacts to hover, keyboard focus inside it and presses. Mark that link or button `data-row-target` to stretch it over the row."
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content before the label, such as an Avatar, an icon or a Checkbox for choosing several rows; a row whose checkbox is checked takes the selected fill."
+        },
+        {
+          "name": "textValue",
+          "type": "string",
+          "required": false,
+          "default": "the label's text",
+          "description": "The row's label as plain text, for its drag handle's name and the reorder announcements where `label` isn't a string."
         }
       ],
       "native": [
@@ -8965,7 +9788,7 @@
     "List.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it.",
+      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it. With onReorder, people move the rows by their handles.",
       "props": [
         {
           "name": "density",
@@ -8973,6 +9796,12 @@
           "required": false,
           "default": "'md'",
           "description": "How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text."
+        },
+        {
+          "name": "onReorder",
+          "type": "(from: number, to: number) => void",
+          "required": false,
+          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The List.Item elements are the list's children, directly or in arrays and fragments."
         }
       ],
       "native": [
@@ -8980,6 +9809,124 @@
       ],
       "page": "list",
       "doc": "docs/components/list.md"
+    },
+    "ListDetail": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "ListDetail.Root",
+        "ListDetail.List",
+        "ListDetail.Detail"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "ListDetail.Detail": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The detail pane, after the handle that resizes the list. Stacked, it shows only while detailShown, with a back button to the list at its start.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the detail's region, such as the chosen item's name."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "ListDetail.List": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The list pane, a region named by its label. Stacked, it hides while the detail shows.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Names the list's region, such as Projects."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "ListDetail.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A list beside the detail of its chosen item, on SplitPane, with the list's width resizable. Below `stackBelow` of its own width it shows one at a time: the list, or the detail with a back button, which moves focus between them.",
+      "props": [
+        {
+          "name": "detailShown",
+          "type": "boolean",
+          "required": true,
+          "description": "Whether the detail is what people are looking at, such as after choosing an item. A stacked layout shows the detail instead of the list while it is true; side by side, both show."
+        },
+        {
+          "name": "onBack",
+          "type": "() => void",
+          "required": true,
+          "description": "Called by the back button of a stacked detail; set detailShown to false in it."
+        },
+        {
+          "name": "backLabel",
+          "type": "string",
+          "required": true,
+          "description": "The back button's label, which names where it goes, such as All projects. It depends on the content, so there is no default."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "default": "'44rem'",
+          "description": "A width, such as '44rem', or a number of pixels: while the layout itself is narrower, it shows the list or the detail, one at a time."
+        },
+        {
+          "name": "defaultListSize",
+          "type": "number",
+          "required": false,
+          "default": "32",
+          "description": "The list's share of the width in percent until people resize it."
+        },
+        {
+          "name": "minListSize",
+          "type": "number",
+          "required": false,
+          "default": "22",
+          "description": "The list's smallest share of the width in percent."
+        },
+        {
+          "name": "maxListSize",
+          "type": "number",
+          "required": false,
+          "default": "50",
+          "description": "The list's largest share of the width in percent."
+        },
+        {
+          "name": "persist",
+          "type": "string",
+          "required": false,
+          "description": "Keeps the list's width under this localStorage key."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The list and the detail: ListDetail.List, then ListDetail.Detail."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
     },
     "LoadingState": {
       "kind": "component",
@@ -9807,7 +10754,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "Small actions below the message, such as Copy or Retry, at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
+          "description": "Small actions below the message, such as Copy or Retry: buttons without a variant or size of their own are ghost buttons at the small control height, with the touch height on touch screens; at the inline end for your own messages. A text IconButton at the edge lines its icon up with the message. false and null count as absent."
         },
         {
           "name": "status",
@@ -9820,7 +10767,7 @@
           "type": "string",
           "required": false,
           "default": "'Sending' or 'Not sent'",
-          "description": "The text beside the status icon, in the page's language, such as \"Could not deliver\"."
+          "description": "The text beside the status icon, such as \"Could not deliver\". It overrides EnvUIProvider's `messages.message.sending` and `.failed`."
         },
         {
           "name": "children",
@@ -10103,6 +11050,125 @@
       ],
       "page": "menu",
       "doc": "docs/components/menu.md"
+    },
+    "Page": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The column a page's content sits in: centered, as wide as `width` at most, with the page gutter at its edges and the page's header at its top. It adds no landmark; put it in AppShell.Main, or the application's own main.",
+      "props": [
+        {
+          "name": "width",
+          "type": "'sm' | 'md' | 'lg' | 'full'",
+          "required": false,
+          "default": "'lg'",
+          "description": "How wide the content may grow: sm (40 rem) for a form or a settings page, md (60 rem) for a document or a detail page, lg (76 rem) for a dashboard or a list, full for content that uses the whole width, such as a board. The column is centered in the space it has."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's heading, usually a PageHeader, at the top of the same column."
+        },
+        {
+          "name": "gutter",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Pads the column at its inline edges with the page gutter, which grows from 1 to 2 rem with the viewport. False leaves the edges to the content, such as a page that is one full-bleed table."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<article />}; a div by default. The page's class and attributes merge into its props."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's content, under its header."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "page",
+      "doc": "docs/components/page.md"
+    },
+    "PageHeader": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The heading of a page: its title with an optional trail above it, a description, leading content, meta beside the title, actions at the end and a toolbar row under it. It responds to its own width, and can stick to the top of the page as it scrolls.",
+      "props": [
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The page's title. It wraps, balanced across its lines, and is never cut short."
+        },
+        {
+          "name": "headingLevel",
+          "type": "1 | 2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "1",
+          "description": "The title's heading level: 1 for the page's own heading, a lower level for a header inside a pane or a section that sits under another heading. It looks the same at every level."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence under the title, in the smaller muted text, such as what the page is for."
+        },
+        {
+          "name": "breadcrumbs",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The trail to the page, usually Breadcrumbs with wrap={false}, above the title."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Before the title: an Avatar, an icon or a back IconButton."
+        },
+        {
+          "name": "meta",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Beside the title, wrapping with it: Badges, such as a status, or a count."
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's actions, at the end of the title row: its primary action last. Below 32 rem of the header's own width they move under the title and wrap."
+        },
+        {
+          "name": "toolbar",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A second row under the title: search, filters and view switches, laid out with `<Stack direction=\"row\" wrap justify=\"between\">`; see Toolbar's layouts."
+        },
+        {
+          "name": "sticky",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keeps the header in view at the top of the page as it scrolls, at `--env-frame-sticky-top`, under the app frame's header. Its height is published on its Page as `--env-page-header-block-size`, so content can stick below both."
+        },
+        {
+          "name": "controlSize",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'md'",
+          "description": "The size of the buttons and icon buttons in `actions` and `toolbar` that set none: sm for a dense page, such as one in a small window, or md. Give fields in the toolbar the same `size`."
+        }
+      ],
+      "native": [
+        "header"
+      ],
+      "page": "page-header",
+      "doc": "docs/components/page-header.md"
     },
     "Pager": {
       "kind": "namespace",
@@ -10754,14 +11820,14 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
+          "description": "Shows the rating as a number before the stars, such as 4.5, in tabular digits and the locale's number format, such as 4,5 in German. The number is the rounded value the stars show, and it is hidden from assistive technology, since the stars' name already says it."
         },
         {
           "name": "formatLabel",
           "type": "(value: number, max: number) => string",
           "required": false,
           "default": "'{value} out of {max} stars'",
-          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars, such as for another language."
+          "description": "Writes the accessible name of the stars from the shown value, rounded to a half star, and the number of stars. It overrides EnvUIProvider's `messages.rating.label`, which receives both as text in the locale's number format."
         }
       ],
       "native": [
@@ -10798,7 +11864,7 @@
           "name": "locale",
           "type": "string | readonly string[]",
           "required": false,
-          "default": "the runtime's language: the browser's, or the server's while rendering there",
+          "default": "EnvUIProvider's locale for RelativeTime, else the runtime's language: the browser's, or the server's while rendering there",
           "description": "The language of the text, and of the date and time in RelativeTime's tooltip, as a BCP 47 tag such as \"en-GB\" or \"de\", or a list of them in order of preference."
         },
         {
@@ -10813,7 +11879,7 @@
           "type": "string",
           "required": false,
           "default": "'just now' or 'now' in English, the locale's word for now elsewhere",
-          "description": "Text for a moment less than 45 seconds away, past or coming, such as \"moments ago\". English says \"just now\" of a past moment and \"now\" of a coming one; other languages the locale's word."
+          "description": "Text for a moment less than 45 seconds away, past or coming, such as \"moments ago\". English says \"just now\" of a past moment and \"now\" of a coming one; other languages the locale's word. RelativeTime takes EnvUIProvider's `messages.relativeTime.now` without it."
         }
       ],
       "native": [
@@ -11138,28 +12204,89 @@
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
+    "SearchTrigger": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The button that opens search or a command palette: a field-like button with its label and the shortcut's keys, or a search icon alone. It presses itself when the shortcut is pressed, and the application opens the search from onClick.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Search', or EnvUIProvider's messages.searchTrigger.label",
+          "description": "The label, and the name of the icon-only trigger."
+        },
+        {
+          "name": "shortcut",
+          "type": "string | false",
+          "required": false,
+          "default": "'mod+k'",
+          "description": "The keyboard shortcut, shown as keys at the end and announced as aria-keyshortcuts: `mod+k` is ⌘K on Apple platforms and Ctrl+K elsewhere. false shows and handles none."
+        },
+        {
+          "name": "listen",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
+        },
+        {
+          "name": "iconOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "true inside a sidebar showing icons only, else false",
+          "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
+        },
+        {
+          "name": "tooltipSide",
+          "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
+          "required": false,
+          "default": "'inline-end' inside a sidebar showing icons only, else 'bottom'",
+          "description": "The side of the trigger the icon-only tooltip opens on."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "default": "the container's control height, md unless the container sets another",
+          "description": "The height, as on every control."
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Fill the width of the container, such as at the top of a sidebar."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "page": "search-trigger",
+      "doc": "docs/components/search-trigger.md"
+    },
     "SegmentedControl": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One choice among a few options on a pill rail, such as views or filters of the same content; the chosen segment takes the primary colors. A radio group, with one tab stop and arrow keys.",
+      "description": "One choice among a few items on a pill rail, such as views or filters of the same content; the chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.",
       "props": [
         {
-          "name": "options",
-          "type": "readonly SegmentedControlOption[]",
+          "name": "items",
+          "type": "readonly SegmentedControlItem[]",
           "required": true,
-          "description": "The options, two to five, in the order they show."
+          "description": "The items, two to five, in the order they show."
         },
         {
           "name": "value",
           "type": "string",
           "required": true,
-          "description": "The chosen option's value. The control is always controlled: update it from onValueChange."
+          "description": "The chosen item's value. The control is always controlled: update it from onValueChange."
         },
         {
           "name": "onValueChange",
           "type": "(value: string) => void",
           "required": true,
-          "description": "Receives the value of the option people choose, by pressing it or with the arrow keys."
+          "description": "Receives the value of the item people choose, by pressing it or with the arrow keys."
         },
         {
           "name": "aria-label",
@@ -11178,23 +12305,19 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Fill the available width, split evenly between the options; a label too long for its share is cut short with an ellipsis and shows whole in a tooltip. Without it the control is as wide as its options, and scrolls in a container too narrow for them."
+          "description": "Fill the available width, split evenly between the items; a label too long for its share is cut short with an ellipsis and shows whole in a tooltip. Without it the control is as wide as its items, and scrolls in a container too narrow for them."
         },
         {
           "name": "disabled",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Disable every option; the control can't be focused or changed."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "A class for the rail, such as for its placement in a layout."
+          "description": "Disable every item; the control can't be focused or changed."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
       "page": "segmented-control",
       "doc": "docs/components/segmented-control.md"
     },
@@ -11478,6 +12601,138 @@
       "page": "spinner",
       "doc": "docs/components/spinner.md"
     },
+    "SplitPane": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "SplitPane.Root",
+        "SplitPane.Pane",
+        "SplitPane.ResizeHandle"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "SplitPane.Pane": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "One of the two panes. It scrolls on its own when the split pane has a size of its own.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "SplitPane.ResizeHandle": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The handle between the panes: a focusable separator that the pointer drags and the arrow keys move, which names the first pane in aria-controls. A double click returns it to the default size. A stacked split pane has none.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Resize panes', or EnvUIProvider's messages.splitPane.resize",
+          "description": "The handle's name, which says what it resizes, such as Resize document list."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
+    "SplitPane.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Two panes and a handle between them that resizes them, by pointer and keyboard (the APG window splitter). Below `stackBelow` of its own width the panes stack and the handle goes.",
+      "props": [
+        {
+          "name": "orientation",
+          "type": "'horizontal' | 'vertical'",
+          "required": false,
+          "default": "'horizontal'",
+          "description": "How the panes sit: horizontal, side by side with the first at the inline start, or vertical, one above the other. A vertical split pane needs a height of its own."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "required": false,
+          "description": "The first pane's size in `unit`, for a controlled split pane."
+        },
+        {
+          "name": "defaultSize",
+          "type": "number",
+          "required": false,
+          "default": "50",
+          "description": "The first pane's size in `unit` until people choose one, or one is stored under `persist`."
+        },
+        {
+          "name": "onSizeChange",
+          "type": "(size: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new size of the first pane, in `unit`: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it."
+        },
+        {
+          "name": "minSize",
+          "type": "number",
+          "required": false,
+          "default": "20",
+          "description": "The first pane's smallest size, in `unit`."
+        },
+        {
+          "name": "maxSize",
+          "type": "number",
+          "required": false,
+          "default": "80",
+          "description": "The first pane's largest size, in `unit`."
+        },
+        {
+          "name": "unit",
+          "type": "'%' | 'rem'",
+          "required": false,
+          "default": "'%'",
+          "description": "The unit of the sizes: %, a share of the split pane's width (height when vertical), or rem, a length that follows the reader's text size, such as a list that keeps its width as the window grows."
+        },
+        {
+          "name": "persist",
+          "type": "string",
+          "required": false,
+          "description": "Keeps the size people choose under this localStorage key, for an uncontrolled split pane; a double click on the handle forgets it. It is read after the first render, so server markup and hydration agree."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too."
+        },
+        {
+          "name": "onStackedChange",
+          "type": "(stacked: boolean) => void",
+          "required": false,
+          "description": "Receives true when the panes stack and false when they sit side by side again."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The panes and the handle between them: Pane, ResizeHandle, Pane."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "split-pane",
+      "doc": "docs/components/split-pane.md"
+    },
     "Stack": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -11545,14 +12800,14 @@
     "Stat.Group": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "",
+      "description": "Stats on one surface, a pane's fill by default, in as many even columns as fit; they wrap as space runs out. Use the muted background for a group on a pane. A group named with aria-label or aria-labelledby is exposed as a group, so assistive technology announces the name.",
       "props": [
         {
-          "name": "tone",
-          "type": "'pane' | 'row' | 'canvas' | 'alternate'",
+          "name": "background",
+          "type": "'default' | 'muted' | 'page' | 'raised'",
           "required": false,
-          "default": "'pane'",
-          "description": "The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so its stats stand apart; canvas or alternate where those fit."
+          "default": "'default'",
+          "description": "The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its stats stand apart; page or raised where those fit."
         },
         {
           "name": "padding",
@@ -11571,7 +12826,7 @@
     "Stat.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and detail. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
+      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
       "props": [
         {
           "name": "label",
@@ -11586,7 +12841,7 @@
           "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
         },
         {
-          "name": "detail",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
@@ -12343,6 +13598,49 @@
       "page": "setup",
       "doc": "docs/setup.md"
     },
+    "ThemeRadioGroup": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The theme choice for a Menu: System, Light and Dark as radio items. Inside a ThemePreferenceProvider it shows and stores the provider's preference; value and onValueChange connect it to a theme the application stores itself.",
+      "props": [
+        {
+          "name": "value",
+          "type": "'light' | 'dark' | 'system'",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's preference",
+          "description": "The chosen preference: system, light or dark."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: ThemePreference) => void",
+          "required": false,
+          "default": "the nearest ThemePreferenceProvider's setPreference, which stores the choice",
+          "description": "Called with the preference chosen, for an application that stores the theme itself."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A small heading above the choices, which names the group. Leave it out inside a submenu, which its row already names."
+        },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
+        },
+        {
+          "name": "closeOnClick",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Close the menu after a choice. Off by default, so people see the theme change with the menu still open."
+        }
+      ],
+      "native": [],
+      "page": "menu",
+      "doc": "docs/components/menu.md"
+    },
     "ThemeToggle": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -12876,6 +14174,14 @@
       "import": "@envsemble/envui",
       "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
       "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "page": "responsive",
+      "doc": "docs/foundations/responsive.md"
+    },
+    "useContainerSize": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
+      "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },

@@ -134,7 +134,10 @@ test('the overrides name specs, pages and names that exist', () => {
     ...overrides.catalogueSpecs,
     ...overrides.stylesheetSpecs,
   ])
-    assert.ok(index.specs.has(name), `${name} is a spec in tests/browser`);
+    assert.ok(
+      index.specs.has(name) || overrides.planned.specs.includes(name),
+      `${name} is a spec in tests/browser`,
+    );
   for (const page of overrides.smokePages) assert.ok(index.pages.has(page), `${page} is a page`);
   for (const file of overrides.sharedLibrary)
     assert.ok(

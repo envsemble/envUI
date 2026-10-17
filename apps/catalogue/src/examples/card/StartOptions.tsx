@@ -20,7 +20,7 @@ export default function StartOptions() {
       <div style={grid}>
         {options.map(({ id, title, detail }) => (
           // A button card holds phrasing content only, so its text is spans.
-          <Card key={id} as="button" onClick={() => setStarted(title)}>
+          <Card key={id} onClick={() => setStarted(title)}>
             <Text render={<span />} variant="title">
               {title}
             </Text>
@@ -29,7 +29,7 @@ export default function StartOptions() {
             </Text>
           </Card>
         ))}
-        <Card as="button" disabled>
+        <Card disabled onClick={() => setStarted('Copy a project')}>
           <Text render={<span />} variant="title">
             Copy a project
           </Text>

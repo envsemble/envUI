@@ -4,9 +4,7 @@
       "report": "WindowFrame is WindowFrame.Root in 1.0, with its title bar as its first child and its content in WindowFrame.Content, which takes scrollRef as its ref: <WindowFrame.Root><WindowFrame.TitleBar …/><WindowFrame.Content ref={scrollRef}>…</WindowFrame.Content></WindowFrame.Root>.",
       "cases": [
         {
-          "when": {
-            "titleBar": "*"
-          },
+          "has": ["titleBar"],
           "element": "WindowFrame.Root",
           "lift": ["titleBar"],
           "wrapChildren": {

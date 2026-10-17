@@ -2,7 +2,7 @@
 title: RelativeTime
 summary: A moment as text relative to now, such as 3 hours ago, kept current, with the date and time
   in a tooltip.
-status: beta
+status: stable
 since: 0.6.0
 category: Content & guidance
 aliases:
@@ -64,7 +64,7 @@ RelativeTime shows a moment as text relative to now, such as "3 hours ago" or "i
 - **Counts, not calendar words**: counts stay numbers, such as "1 day ago" rather than "yesterday", since 24 hours ago is not always yesterday by the calendar.
 - **Kept current**: one shared clock wakes every second while a moment is less than a minute away, every minute while one is less than a day away and every hour beyond, and reads the time again at once when a hidden page shows again. Only times whose text changed render again. A new `value` joins the clock at once.
 - **Tooltip**: hovering the text shows the date and time, such as "Oct 14, 2026, 9:41 AM", in the reader's time zone and the `locale`, once the pointer rests on it for 400 ms; <kbd>Esc</kbd> closes it. `tooltip={false}` leaves it out. Inside an application's own [Tooltip](../components/tooltip.md), that tooltip describes the time instead.
-- **Languages**: `locale` sets the language of the text and of the tooltip, such as `de` for "vor 3 Stunden"; without it, the browser's language. `nowLabel` replaces the text for moments under 45 seconds away. The text keeps its own direction, so English reads in order inside right-to-left text.
+- **Languages**: `locale` sets the language of the text and of the tooltip, such as `de` for "vor 3 Stunden"; without it, EnvUIProvider's `locale`, and else the browser's language. `nowLabel`, or else EnvUIProvider's `messages.relativeTime.now`, replaces the text for moments under 45 seconds away; without either, English says "just now" and other languages the locale's own word. The text keeps its own direction, so English reads in order inside right-to-left text.
 - **Invalid moments**: a `value` that is not a valid moment renders nothing, and `formatRelativeTime` returns an empty string. An invalid `now` is ignored, and the text follows the clock.
 - **A fixed now**: `now` compares with a fixed moment instead of the clock, for tests and server rendering; the text then stays as it is.
 - **Server rendering**: on the server the text follows the server's clock and language. The page hydrates without a mismatch error and then shows the browser's text, so a page rendered earlier, or in another language, corrects itself at once. Pass the same `now` on the server and in the browser for identical output, as tests need.
@@ -75,7 +75,7 @@ RelativeTime shows a moment as text relative to now, such as "3 hours ago" or "i
 - Use relative time for recent activity and near deadlines. Show the date itself where people must act on the exact moment, such as a due date or a booking.
 - Where both matter, show the date and the relative time together, such as "Invoice sent on March 2, 2026 (2 days ago)", and set `tooltip={false}`.
 - Use one format per list, usually `long`; keep `short` and `narrow` for tight spaces.
-- Set `locale` to the page's language, and write the words around the time in the same language.
+- Set the page's language as `locale` on EnvUIProvider, or on the time, and write the words around the time in the same language.
 
 ## Do and don't
 
@@ -111,7 +111,7 @@ RelativeTime shows a moment as text relative to now, such as "3 hours ago" or "i
 
 - The words that say what happened or what is due, around the time.
 - The exact date in visible text where it matters. The tooltip opens on hover only, and the time is not focusable, so keyboard and screen reader users don't reach it.
-- A `locale` that matches the page's language.
+- A `locale` that matches the page's language, on EnvUIProvider or the time.
 
 ## Examples
 
@@ -157,5 +157,5 @@ Where the date shows beside it, the relative time needs no tooltip.
 
 ## Changelog
 
-- **1.0.0**: `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
+- **1.0.0**: RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
 - **0.6.0**: RelativeTime and `formatRelativeTime`, with `format`, `locale`, `nowLabel`, `now` and `tooltip`, kept current by one shared clock.

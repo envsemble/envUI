@@ -23,28 +23,6 @@
       }
     }
   },
-  "components/card/overview": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
-      }
-    },
-    "dark-hc": {
-      "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
-      }
-    },
-    "light-hc": {
-      "label-content-name-mismatch": {
-        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
-      }
-    }
-  },
   "components/rich-text/overview": {
     "dark": {
       "target-size": {
@@ -54,13 +32,6 @@
     "light": {
       "target-size": {
         "article :: input.env-checkbox-input": 2
-      }
-    }
-  },
-  "components/segmented-control/guidelines": {
-    "light": {
-      "color-contrast": {
-        "Sizes and states :: span.env-segment-count": 3
       }
     }
   },
@@ -157,18 +128,6 @@
         "Switches :: button.env-button.docs-swatch": 5,
         "Text & focus :: button.env-button.docs-swatch": 7,
         "Text fields :: button.env-button.docs-swatch": 8
-      }
-    }
-  },
-  "overview/components": {
-    "dark": {
-      "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
       }
     }
   }

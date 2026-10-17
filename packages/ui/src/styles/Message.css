@@ -62,14 +62,13 @@
   margin-block-end: 0;
 }
 .env-message-status {
+  /* The spinner takes the status's color, through its hook. */
+  --env-spinner-color: currentColor;
   display: flex;
   align-items: center;
   gap: var(--env-space-1);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
-}
-.env-message-status .env-spinner {
-  color: currentColor;
 }
 .env-message[data-status='failed'] .env-message-status {
   color: var(--env-color-fg-danger);
@@ -85,19 +84,18 @@
   align-items: center;
   gap: var(--env-space-1);
 }
+/* A text icon action at the edge lines its icon up with the message, not its round hit area,
+   through Button's edge hooks. */
 .env-message[data-from='self'] > .env-message-actions {
+  --env-button-text-icon-edge-end: calc(
+    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+  );
   justify-content: flex-end;
 }
-/* A text icon action at the edge lines its icon up with the message, not its round hit area. */
-.env-message[data-from='other']
-  > .env-message-actions
-  > .env-button:where([data-variant='text']).env-icon-button:first-child {
-  margin-inline-start: calc((var(--env-control-icon-size) - var(--env-message-action-height)) / 2);
-}
-.env-message[data-from='self']
-  > .env-message-actions
-  > .env-button:where([data-variant='text']).env-icon-button:last-child {
-  margin-inline-end: calc((var(--env-control-icon-size) - var(--env-message-action-height)) / 2);
+.env-message[data-from='other'] > .env-message-actions {
+  --env-button-text-icon-edge-start: calc(
+    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+  );
 }
 @media (pointer: coarse) {
   .env-message-actions {

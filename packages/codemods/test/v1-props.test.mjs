@@ -30,6 +30,10 @@ const reports = {
     `line 5: Surface's density: ${report('Surface', 'density', 'compact')}`,
     `line 10: Table.Root's density has a value the codemod can't move: ${report('Table.Root', 'density')}`,
   ],
+  'content.tsx': [
+    `line 26: Card's layout: ${report('Card', 'layout', 'action')}`,
+    `line 30: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
+  ],
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
   ],
@@ -42,7 +46,7 @@ const reports = {
   'panel-dock.tsx': [
     `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,
   ],
-  'content.tsx': [`line 9: ${report('MarkdownEditor', 'className', undefined, content)}`],
+  'markdown-editor.tsx': [`line 9: ${report('MarkdownEditor', 'className', undefined, content)}`],
   // A report-only rule leaves the prop as it is and reports every use, on every run.
   'root-styles.tsx': [
     `line 6: ${report('TextField', 'className')}`,
@@ -51,6 +55,7 @@ const reports = {
     `line 8: ${report('Switch', 'style')}`,
     `line 10: ${report('Radio', 'className')}`,
   ],
+  'disclosure.tsx': [`line 4: ${report('Disclosure', 'onToggle')}`],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,

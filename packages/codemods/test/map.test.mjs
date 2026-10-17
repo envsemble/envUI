@@ -136,6 +136,11 @@ test('validateMap reports malformed maps', () => {
     }),
     /1\.0 names/,
   );
+  const structure = (each) =>
+    problems({ structure: { x: { Frame: { report: 'Restructure it.', cases: [each] } } } });
+  assert.equal(structure({ has: ['titleBar'], element: 'Frame.Root' }), '');
+  // Any value is `has`, which matchesWhen understands; a "*" in `when` would throw there.
+  assert.match(structure({ when: { titleBar: '*' } }), /when\.titleBar must list literals/);
 });
 
 test('a reported class is kept by the class renames that a shorter entry would make', () => {
@@ -188,6 +193,9 @@ test('readMap merges a folder of fragments, one folder per section', () => {
       '@envsemble/envui': { Text: { tone: { report: 'r', values: { a: {} } } } },
     });
     write('classes/Button.json', { 'env-a': 'env-b' });
+    // An empty fragment holds a family's place in a section before it has entries.
+    write('props/Card.json', { '@envsemble/envui': {} });
+    write('classes/Card.json', {});
     assert.deepEqual(readMap(directory), {
       version: '1.0.0',
       props: {

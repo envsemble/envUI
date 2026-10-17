@@ -22,7 +22,7 @@ export function PageHeader({
 }) {
   return (
     <header className="docs-page-header">
-      <Card tone="pane" padding={6} className="docs-page-banner">
+      <Card background="default" padding={6} className="docs-page-banner">
         {symbol && (
           <span className="docs-page-banner-symbol" aria-hidden="true">
             {symbol}

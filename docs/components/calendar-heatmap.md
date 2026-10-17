@@ -1,7 +1,7 @@
 ---
 title: CalendarHeatmap
 summary: A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
-status: beta
+status: stable
 since: 0.5.0
 category: Content & guidance
 aliases:
@@ -47,10 +47,10 @@ A calendar heatmap shows a value for each day as a shade of one tone: weeks are 
 
 ## Anatomy
 
-1. **Month row**: the month names above the weeks, each above the week that holds its first day.
+1. **Month row**: the month names above the weeks, each above the week that holds its first day, short names from the locale's `Intl` by default.
 2. **Weekday column**: every other weekday name beside the rows.
 3. **Day** (each day from `startDate` to `endDate`): a 0.75 rem square with small corners in the color of its step; empty days take the translucent fill.
-4. **Legend**: `lessLabel` (Less), a swatch for each color step, and `moreLabel` (More), below the grid.
+4. **Legend**: Less (`messages.calendarHeatmap.less`, or `lessLabel`), a swatch for each color step, and More (`messages.calendarHeatmap.more`, or `moreLabel`), below the grid.
 5. **Tooltip**: one tooltip for the hovered or focused day, with the day's name or `formatTooltip`'s content.
 
 ## Variants and sizes
@@ -76,14 +76,15 @@ A calendar heatmap shows a value for each day as a shade of one tone: weeks are 
 - **Tooltip**: it shows at once on focus and on a tap, after a short delay on hover, then from day to day without waiting. <kbd>Esc</kbd> hides it wherever focus is, without closing an enclosing dialog; <kbd>Esc</kbd> with <kbd>Ctrl</kbd>, <kbd>Alt</kbd> or <kbd>Meta</kbd> leaves it and goes on. Leaving the days with the pointer hides it, and so does moving the pointer away from a day focused from the keyboard.
 - **Reading the tooltip**: the tooltip of a day hovered or clicked with the mouse sits just across the gap above the day, so the pointer can move onto it to read or magnify it; it stays while the pointer is on it. A tooltip opened by keyboard focus or a tap takes no pointer, so it never blocks a press on what lies under it.
 - **Focus**: keyboard focus scrolls its day into view in a scrolling heatmap; the focused day shows a focus outline.
-- **Right to left**: the weeks run from the right, and the arrow keys follow.
+- **Right to left**: the weeks run from the right, and the arrow keys follow: <kbd>←</kbd> moves to the next week.
+- **Locale**: month and weekday names, each day's date and its value follow EnvUIProvider's `locale`, or the browser's, such as Tue 14 Oct 2025 in British English.
 - **Performance**: the tooltip leaves nothing in the document at rest, and hovering doesn't render the days again, so a year renders and updates quickly.
 
 ## Content guidelines
 
 - Name the heatmap after what it counts and over which period: "Deployments in the last year".
 - Give each day a `label` with the unit, such as "4 deployments", or a `formatValue` that adds it.
-- Localize `monthLabels`, `weekdayLabels`, `formatDate`, `formatValue`, `lessLabel` and `moreLabel`; the defaults are English.
+- Set the page's `locale` on EnvUIProvider, which names the months, weekdays and dates and writes the numbers, and translate the legend with `messages.calendarHeatmap`. `monthLabels`, `weekdayLabels`, `formatDate` and `formatValue` override them.
 
 ## Do and don't
 
@@ -138,7 +139,7 @@ A calendar heatmap shows a value for each day as a shade of one tone: weeks are 
 
 ### In another language
 
-Month and weekday names from `Intl`, weeks from Monday, and dates and values in German.
+EnvUIProvider's locale names the months, weekdays and dates in German, and its messages translate the legend; weeks start on Monday.
 
 ```tsx example=Localized
 
@@ -154,5 +155,5 @@ Month and weekday names from `Intl`, weeks from Monday, and dates and values in 
 
 ## Changelog
 
-- **1.0.0**: `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.
+- **1.0.0**: Month and weekday names, dates and numbers follow the locale, from `Intl`, and the legend comes from `messages.calendarHeatmap`; the tooltip is the shared tooltip popup. `Heatmap` is `CalendarHeatmap`, with `CalendarHeatmapDay`, `CalendarHeatmapCell` and the `env-calendar-heatmap-*` classes; the page is `calendar-heatmap`.
 - **0.5.0**: Heatmap, with tones, color steps, `thresholds`, a tooltip and keyboard access for every day.

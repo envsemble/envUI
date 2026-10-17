@@ -36,7 +36,7 @@ export const people: ComboboxItem[] = names.map((name) => ({
   value: slug(name),
   label: name,
   description: `${slug(name).replace('-', '.')}@example.com`,
-  leading: <Avatar name={name} size="small" />,
+  leading: <Avatar name={name} size="sm" />,
   disabled: name === 'Jamie Fox',
 }));
 

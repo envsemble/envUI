@@ -1,23 +1,12 @@
 {
   "$comment": "Composition violations that exist today, counted per module or stylesheet. tests/Composition.test.mjs fails on a new violation, on a higher count, and on an entry that no longer matches, so this list only shrinks. Paths are relative to packages/ui/src and packages/ui/src/styles.",
   "imports": [],
-  "interactive": [
-    { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
-    { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 }
-  ],
+  "interactive": [{ "module": "navigation/AppShell.tsx", "element": "button", "count": 1 }],
   "tsxClasses": [
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip", "count": 1 },
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-positioner", "count": 1 },
-    { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-theme", "count": 1 },
     { "module": "navigation/AppShell.tsx", "class": "env-window-frame-title-bar", "count": 2 }
   ],
   "cssClasses": [
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-window-frame-title-bar", "count": 5 },
-    { "stylesheet": "AvatarGroup.css", "class": "env-avatar", "count": 1 },
-    { "stylesheet": "Badge.css", "class": "env-button", "count": 5 },
-    { "stylesheet": "Message.css", "class": "env-button", "count": 2 },
-    { "stylesheet": "Message.css", "class": "env-icon-button", "count": 2 },
-    { "stylesheet": "Message.css", "class": "env-spinner", "count": 1 }
+    { "stylesheet": "AppShell.css", "class": "env-window-frame-title-bar", "count": 5 }
   ]
 }

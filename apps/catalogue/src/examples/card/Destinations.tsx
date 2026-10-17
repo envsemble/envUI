@@ -17,17 +17,12 @@ export default function Destinations() {
   return (
     <div style={grid}>
       {projects.map(({ id, name, summary }) => (
-        // The title names the link and the summary describes it, instead of the whole card's text.
-        <Card
-          key={id}
-          href={`/projects/${id}`}
-          aria-labelledby={`${id}-name`}
-          aria-describedby={`${id}-summary`}
-        >
-          <Text render={<span />} variant="title" id={`${id}-name`}>
+        // The card's text names the link: its title, then its summary.
+        <Card key={id} href={`/projects/${id}`}>
+          <Text render={<span />} variant="title">
             {name}
           </Text>
-          <Text render={<span />} emphasis="muted" id={`${id}-summary`}>
+          <Text render={<span />} emphasis="muted">
             {summary}
           </Text>
         </Card>

@@ -117,8 +117,7 @@ export function IconCatalogue({
           {visibleSymbols.map(({ name, label, Symbol }) => (
             <li key={name}>
               <Card
-                as="button"
-                tone={selectedName === name ? 'row' : 'canvas'}
+                background={selectedName === name ? 'muted' : 'page'}
                 padding={4}
                 className="docs-icon-tile"
                 aria-label={label}

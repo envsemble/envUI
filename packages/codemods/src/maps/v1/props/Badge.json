@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "Badge": {
+      "variant": {
+        "current": ["soft", "solid", "outline"],
+        "report": "Badge's variant is soft (the default), solid or outline in 1.0: subtle is soft.",
+        "values": {
+          "subtle": {}
+        }
+      }
+    }
+  }
+}

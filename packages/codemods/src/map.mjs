@@ -323,6 +323,13 @@ function validateTokens(tokens) {
 const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
 const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
 
+/** An element a structure case adds as a prop, such as `{ "element": "article" }` for render={<article />}. */
+const elementValue = (value) =>
+  isObject(value) &&
+  Object.keys(value).length === 1 &&
+  typeof value.element === 'string' &&
+  /^[a-z][a-z0-9]*$/.test(value.element);
+
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a
  * `report` that says what replaces it, and `values` mapping its literal values to the props that
@@ -374,6 +381,13 @@ function validatePropRules(where, names) {
           problems.push(`${at}.values.${value}: ${newName} must be a prop with a literal.`);
       if (replacement.report !== undefined && typeof replacement.report !== 'string')
         problems.push(`${at}.values.${value}: "report" must be a string.`);
+      if (
+        replacement.unless !== undefined &&
+        (replacement.report === undefined ||
+          !Array.isArray(replacement.unless) ||
+          !replacement.unless.every((each) => typeof each === 'string' && propName.test(each)))
+      )
+        problems.push(`${at}.values.${value}: "unless" must list prop names beside a "report".`);
     }
   }
   return problems;
@@ -465,20 +479,42 @@ function validateStructureCase(at, each) {
   if (!isObject(each)) return [`${at} must be an object.`];
   const problems = [];
   for (const [prop, values] of entriesOf(each.when))
-    if (
-      values !== '*' &&
-      (!Array.isArray(values) || !values.every((value) => value === null || propValue(value)))
-    )
+    if (!Array.isArray(values) || !values.every((value) => value === null || propValue(value)))
       problems.push(
-        `${at}.when.${prop} must list literals, or null for a missing prop, or be "*" for any value.`,
+        `${at}.when.${prop} must list literals, or null for a missing prop; "has" matches any value.`,
       );
   if (each.element !== undefined && !isComponentName(each.element))
     problems.push(`${at}: "element" must be a component name.`);
   for (const [prop, operation] of entriesOf(each.props))
     problems.push(...validatePropOperation(`${at}.props.${prop}`, operation));
   for (const [prop, value] of Object.entries(each.add ?? {}))
-    if (!propName.test(prop) || !propValue(value))
-      problems.push(`${at}.add: ${prop} must be a prop with a literal.`);
+    if (!propName.test(prop) || !(propValue(value) || elementValue(value)))
+      problems.push(`${at}.add: ${prop} must be a prop with a literal or an { "element" }.`);
+  if (
+    each.has !== undefined &&
+    (!Array.isArray(each.has) ||
+      !each.has.every((prop) => typeof prop === 'string' && propName.test(prop)))
+  )
+    problems.push(`${at}.has must list prop names.`);
+  if (each.content !== undefined) {
+    if (!Array.isArray(each.content) || each.content.length === 0)
+      problems.push(`${at}.content must list the elements it makes.`);
+    for (const [index, item] of (Array.isArray(each.content) ? each.content : []).entries()) {
+      const where = `${at}.content[${index}]`;
+      if (!isObject(item) || !isComponentName(item.element)) {
+        problems.push(`${where} needs an "element".`);
+        continue;
+      }
+      if (
+        item.children !== undefined &&
+        (typeof item.children !== 'string' || !propName.test(item.children))
+      )
+        problems.push(`${where}: "children" must name the prop whose value it takes.`);
+      for (const [to, from] of Object.entries(item.props ?? {}))
+        if (!propName.test(to) || typeof from !== 'string' || !propName.test(from))
+          problems.push(`${where}.props: ${to} must name the element's prop it takes.`);
+    }
+  }
   if (each.wrap !== undefined) {
     if (!isObject(each.wrap) || !isComponentName(each.wrap.element))
       problems.push(`${at}.wrap needs an "element".`);

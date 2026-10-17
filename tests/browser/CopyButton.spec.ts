@@ -187,6 +187,31 @@ test('a copy button says when nothing could be copied, in its own words if given
   await expect(tooltip).toHaveText('Nicht kopiert');
 });
 
+test("write copies through the application's own clipboard, and its refusal says so", async ({
+  page,
+}) => {
+  // The browser's clipboard works, so a write that reached it would show up here.
+  await recordClipboard(page, 'available');
+  await page.goto(fixture);
+  const scope = page.getByTestId('writers-light');
+  const tooltip = page.locator(shownTooltip);
+  const bridged = scope.getByRole('button', { name: 'Copy through the bridge light' });
+  await bridged.click();
+  await expect(scope.getByTestId('bridged-light')).toHaveText('Bridged');
+  await expect(bridged).toHaveAttribute('data-copied', '');
+  await expect(statusOf(bridged)).toHaveText('Copied');
+  await expect(page.getByTestId('copy-buttons-light').getByTestId('copied')).toHaveText('Bridged');
+  expect(await writes(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(tooltip).toHaveCount(0);
+
+  const refused = scope.getByRole('button', { name: 'Copy refused by the bridge light' });
+  await refused.click();
+  await expect(refused).toHaveAttribute('data-failed', '');
+  await expect(statusOf(refused)).toHaveText('Couldn’t copy');
+  expect(await writes(page)).toEqual([]);
+});
+
 test('labels, onClick, application tooltips and themes', async ({ page }) => {
   await recordClipboard(page, 'available');
   await page.goto(fixture);

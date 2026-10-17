@@ -1,9 +1,9 @@
 ---
 title: SegmentedControl
-summary: One choice among a few options on a pill rail, such as views or filters of the same content.
-status: beta
+summary: One choice among a few items on a pill rail, such as views or filters of the same content.
+status: stable
 since: 0.5.0
-category: Actions
+category: Forms & selection
 aliases:
   - segmented button
   - segmented buttons
@@ -56,7 +56,7 @@ A segmented control switches between a few views or filters of the same content,
 2. **Segment**: one option, a pill button 0.25 rem from the next. The chosen segment takes the primary action colors; the others are text in the muted color.
 3. **Icon** (optional, `icon`): decorative, at the control icon size of 1 rem, 0.5 rem before the label.
 4. **Label** (`label`): the option's short name, in 0.875 rem text on one line.
-5. **Count** (optional, `count`): a small number after the label, in figures of equal width at 80% opacity, such as the items in a view. It is read as part of the option's name.
+5. **Count** (optional, `count`): a small number after the label, in figures of equal width, such as the items in a view: muted on an unchosen segment, at 4.5:1 on the rail, and in the chosen segment's text color. It is read as part of the option's name.
 6. **Tooltip** (`fullWidth`): shows a label that is cut short whole, on hover and keyboard focus.
 
 ## Variants and sizes
@@ -150,6 +150,7 @@ With `fullWidth` the control fills a sidebar and splits it between the options. 
 
 ## Changelog
 
+- **1.0.0**: `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`. The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`. An unchosen segment's count keeps 4.5:1 contrast. SegmentedControl takes `ref`, `style`, `id` and other attributes of its rail, and its page is under Forms & selection.
 - **0.7.0**: The chosen segment takes the soft blue primary in the dark theme, as primary buttons do.
 - **0.6.0**: `fullWidth`: the rail fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip, or wraps on touch screens.
 - **0.5.0**: SegmentedControl, with counts, icons and the compact size.

@@ -30,6 +30,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Layout & surfaces
 
 - [Stack](components/stack.md)
+- [Page](components/page.md)
+- [PageHeader](components/page-header.md)
+- [SplitPane](components/split-pane.md)
 - [Surface](components/surface.md)
 - [List](components/list.md)
 - [Card](components/card.md)
@@ -38,9 +41,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Button](components/button.md)
 - [CloseButton](components/close-button.md)
+- [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
-- [SegmentedControl](components/segmented-control.md)
 
 ## Forms & selection
 
@@ -52,6 +55,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Switch](components/switch.md)
 - [Radio](components/radio.md)
 - [Select](components/select.md)
+- [SegmentedControl](components/segmented-control.md)
 - [Combobox](components/combobox.md)
 - [DatePicker](components/date-picker.md)
 - [Slider](components/slider.md)
@@ -68,15 +72,16 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [PanelDock](components/panel-dock.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [Pagination](components/pagination.md)
+- [AccountMenu](components/account-menu.md)
 
 ## Content & guidance
 
 - [RichText](components/rich-text.md)
 - [Markdown](components/markdown.md)
 - [Code](components/code.md)
-- [InfoChip](components/chips.md)
 - [Badge](components/badge.md)
 - [Table](components/table.md)
+- [DescriptionList](components/description-list.md)
 - [Kbd](components/kbd.md)
 - [AnimatedNumber](components/animated-number.md)
 - [Rating](components/rating.md)
@@ -96,6 +101,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)
 - [Drawer](components/drawer.md)
+- [ConfirmDialog](components/confirm-dialog.md)
 - [CommandPalette](components/command-palette.md)
 - [Menu](components/menu.md)
 - [Menubar](components/menubar.md)

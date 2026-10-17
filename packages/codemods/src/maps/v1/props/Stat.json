@@ -1,0 +1,34 @@
+{
+  "@envsemble/envui": {
+    "Stat.Root": {
+      "detail": {
+        "to": "description",
+        "report": "Stat.Root's detail is description in 1.0."
+      }
+    },
+    "Stat.Group": {
+      "tone": {
+        "to": "background",
+        "report": "Stat.Group's tone is background in 1.0: pane is default, the default, row is muted, canvas is page and alternate is raised.",
+        "values": {
+          "pane": {},
+          "row": {
+            "props": {
+              "background": "muted"
+            }
+          },
+          "canvas": {
+            "props": {
+              "background": "page"
+            }
+          },
+          "alternate": {
+            "props": {
+              "background": "raised"
+            }
+          }
+        }
+      }
+    }
+  }
+}

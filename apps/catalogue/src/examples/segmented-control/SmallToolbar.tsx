@@ -23,7 +23,7 @@ export default function SmallToolbar() {
           size="sm"
           value={layout}
           onValueChange={setLayout}
-          options={[
+          items={[
             { value: 'list', label: 'List', icon: <ViewList /> },
             { value: 'board', label: 'Board', icon: <ViewModule /> },
             // Not available yet for this workspace.

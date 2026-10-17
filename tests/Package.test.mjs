@@ -16,6 +16,7 @@ let consumerDirectory;
 let installedDirectory;
 let consumerRequire;
 let ssr;
+let packedFiles;
 let isolationHook;
 
 function npmCli() {
@@ -84,6 +85,7 @@ before(
     );
     const packed = Array.isArray(packResult) ? packResult : Object.values(packResult);
     assert.equal(packed.length, 1);
+    packedFiles = packed[0].files.map((file) => file.path.replaceAll('\\', '/'));
     const dependencies = {};
     for (const name of [
       'react',
@@ -163,7 +165,6 @@ before(
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.Toast.Provider, null, 'Managed notifications'),
-      h(ui.BrandLogo),
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
@@ -189,8 +190,7 @@ before(
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
-      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
-      logo: import.meta.resolve('@envsemble/envui/assets/envsemble-lockup-black.svg')
+      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2')
     }));
   `,
     );
@@ -206,6 +206,20 @@ after(async function removeConsumerFixture() {
     'Only delete the fixture created inside .cache.',
   );
   await rm(fixtureDirectory, { recursive: true, force: true });
+});
+
+test('the packed package ships no logos', () => {
+  assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
+  const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
+  // The README's catalogue captures are the only images the package ships.
+  assert.deepEqual(
+    images.filter((path) => !/^dist\/assets\/readme\/catalogue-(?:light|dark)\.png$/.test(path)),
+    [],
+  );
+  assert.deepEqual(
+    packedFiles.filter((path) => /(?:^|\/)(?:brand|envUI)\/|lockup|favicon/i.test(path)),
+    [],
+  );
 });
 
 test('pagers omit empty navigation and preserve destination attributes', () => {
@@ -291,12 +305,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'NavList',
     'Pager',
     'Card',
-    'ClickableCard',
     'Stack',
-    'ActionCard',
-    'FeatureCard',
     'List',
-    'InfoChip',
     'Disclosure',
     'EmptyState',
     'Skeleton',
@@ -317,7 +327,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Toast',
     'useToast',
     'Icon',
-    'BrandLogo',
     'DropZone',
     'Alert',
     'CounterBadge',
@@ -361,7 +370,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
       EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -391,7 +400,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
-      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
+      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
@@ -496,7 +505,6 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
-  assert.match(ssr.html, /aria-label="envsemble"/);
 });
 
 /** The index of the parenthesis that closes the group opening at index, or -1. */
@@ -740,7 +748,6 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     );
   }
   assert.equal((await readFile(fileURLToPath(ssr.font))).subarray(0, 4).toString(), 'wOF2');
-  assert.match(await readFile(fileURLToPath(ssr.logo), 'utf8'), /<svg/);
   for (const filename of [
     'README.md',
     'skills/envui-use/SKILL.md',
@@ -989,7 +996,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
-  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning|BrandLogo/);
+  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every((path) => !path.includes('/forms/internal/ColorPlane')),
     'Unused color picking must stay out of basic control bundles.',
@@ -1102,7 +1109,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       type AvatarGroupPerson, type AvatarGroupProps, type CopyButtonProps, type PaginationProps,
       type PaginationRange, type RelativeTimeProps } from '@envsemble/envui';
     const person: AvatarGroupPerson = { name: 'Alex Morgan', id: 7, href: '/people/alex', src: null, fallback: 'initials' };
-    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'small', total: 12, formatMore: (count) => count + ' more' };
+    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'sm', total: 12, formatMore: (count) => count + ' more' };
     const describe = (range: PaginationRange) => range.start + '–' + range.end + ' of ' + (range.total ?? 'many');
     const pagerProps: PaginationProps = { page: 1, pageSize: 10, onPageChange: (page) => { const typed: number = page; void typed; } };
     const timeProps: RelativeTimeProps = { value: new Date(), format: 'narrow', locale: ['de', 'en'], tooltip: false };

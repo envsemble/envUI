@@ -39,7 +39,7 @@ function SizeRow({ size }: { size: ControlSize }) {
         aria-label="View"
         value={view}
         onValueChange={setView}
-        options={[
+        items={[
           { value: 'list', label: 'List' },
           { value: 'board', label: 'Board' },
         ]}

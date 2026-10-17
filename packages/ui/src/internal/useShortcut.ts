@@ -244,8 +244,8 @@ export interface ShortcutOptions {
   allowRepeat?: boolean;
   /**
    * The element the shortcut belongs to, such as the button it presses: while that element is
-   * missing or hidden (checkVisibility()), the shortcut gives the key to the one registered before
-   * it for the same combination.
+   * missing, hidden (checkVisibility()), or behind a modal dialog (inert or aria-hidden), the
+   * shortcut gives the key to the one registered before it for the same combination.
    */
   element?: RefObject<Element | null>;
 }
@@ -258,12 +258,24 @@ interface Registration {
 
 const registrations: Registration[] = [];
 
-/** Whether a registration can take its key now: it has no element, or a visible one. */
+/**
+ * Marks of content people can't reach: inert, and the aria-hidden and data-base-ui-inert that a
+ * modal dialog puts on the rest of the page instead of inert.
+ */
+const unreachable = '[inert],[aria-hidden="true"],[data-base-ui-inert]';
+
+/**
+ * Whether a registration can take its key now: it has no element, or one that is rendered,
+ * visible and not behind a modal dialog.
+ */
 function available({ options }: Registration) {
   if (!options.element) return true;
   const element = options.element.current;
   if (!element || !element.isConnected) return false;
-  return typeof element.checkVisibility === 'function' ? element.checkVisibility() : true;
+  if (typeof element.closest === 'function' && element.closest(unreachable)) return false;
+  return typeof element.checkVisibility === 'function'
+    ? element.checkVisibility({ visibilityProperty: true })
+    : true;
 }
 
 /**

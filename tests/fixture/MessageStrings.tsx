@@ -1,5 +1,9 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
+  AccountMenu,
+  ConfirmDialog,
+  List,
+  SearchTrigger,
   Calendar,
   CloseButton,
   ColorPicker,
@@ -20,6 +24,7 @@ import {
   Dialog,
   EnvUIProvider,
   SearchField,
+  SplitPane,
   Stack,
   Textarea,
   ThemePreferenceProvider,
@@ -29,6 +34,16 @@ import {
 } from '@envsemble/envui';
 import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
+// Content and display, whose strings and numbers follow the provider.
+import {
+  AvatarGroup,
+  CalendarHeatmap,
+  DiffStat,
+  Message,
+  MessageList,
+  Rating,
+  RelativeTime,
+} from '@envsemble/envui';
 // Internal: the hook envUI's components read their strings with.
 import { useMessages } from '../../packages/ui/src/internal/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
@@ -167,12 +182,36 @@ export function MessageStringsFixture() {
           {/* A blank name leaves it named by its copy label. */}
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
+          {/* Content: a group's name and overflow, a rating's and a change's names, a message's
+              status, a heatmap's legend and a moment just passed. */}
+          {/* Only people counted in total, so the overflow chip is named by the more text alone. */}
+          <AvatarGroup people={[]} total={3} />
+          <Rating value={4.5} showValue />
+          <DiffStat additions={12} deletions={3} />
+          <MessageList aria-label="Thread">
+            <Message from="self" status="sending">
+              On its way
+            </Message>
+            <Message from="self" status="failed">
+              Not delivered
+            </Message>
+          </MessageList>
+          <CalendarHeatmap
+            aria-label="Activity"
+            data={[{ date: '2026-10-14', value: 2 }]}
+            startDate="2026-10-12"
+            endDate="2026-10-18"
+          />
+          <RelativeTime
+            value={Date.UTC(2026, 9, 14, 9, 0, 0)}
+            now={Date.UTC(2026, 9, 14, 9, 0, 10)}
+          />
           <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>
           {/* Forms: the clear buttons, chip removes, the resize edge, the calendar's month
               buttons, the send button and the color picker's sliders and field. */}
-          <SearchField label="Search" defaultValue="Northwind" />
+          <SearchField label="Find a customer" defaultValue="Northwind" />
           <Textarea label="Notes" />
           <Combobox
             label="Owner"
@@ -190,10 +229,37 @@ export function MessageStringsFixture() {
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" />
+          {/* Layout: the handle between two panes. */}
+          <SplitPane.Root>
+            <SplitPane.Pane>Start</SplitPane.Pane>
+            <SplitPane.ResizeHandle />
+            <SplitPane.Pane>End</SplitPane.Pane>
+          </SplitPane.Root>
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
           <ShellAndEditorStrings />
+          {/* App parts: a search trigger, a reorderable list's handle and announcements, an
+              account menu with its theme and organization submenus, and a confirm dialog. */}
+          <SearchTrigger listen={false} />
+          <List.Root aria-label="Order" onReorder={() => {}}>
+            <List.Item label="First" />
+            <List.Item label="Second" />
+          </List.Root>
+          <AccountMenu.Root name="Alex Morgan">
+            <AccountMenu.ThemeSubmenu />
+            <AccountMenu.OrganizationSubmenu
+              items={[{ id: 'northwind', name: 'Northwind' }]}
+              value="northwind"
+              onValueChange={() => {}}
+            />
+          </AccountMenu.Root>
+          <ConfirmDialog
+            trigger={<Button variant="secondary">Open confirm</Button>}
+            title="Remove the draft?"
+            confirmLabel="Remove draft"
+            onConfirm={() => {}}
+          />
           <InlineMessages />
         </Stack>
       </EnvUIProvider>

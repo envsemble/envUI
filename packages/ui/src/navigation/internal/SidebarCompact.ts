@@ -9,3 +9,14 @@ export const SidebarCompactContext = createContext(false);
 export function useSidebarCompact() {
   return useContext(SidebarCompactContext);
 }
+
+/**
+ * Whether content sits in a sidebar, expanded or showing icons only. The sidebar provides it, so
+ * AccountMenu's automatic trigger is a row in an expanded sidebar and the avatar elsewhere.
+ */
+export const InSidebarContext = createContext(false);
+
+/** True inside a sidebar. */
+export function useInSidebar() {
+  return useContext(InSidebarContext);
+}
