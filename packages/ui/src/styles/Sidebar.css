@@ -1,1 +1,447 @@
-/* Sidebar: a frame's navigation or directory column, its rail and its parts. */
+/* Sidebar: a frame's navigation or directory column, its rail and its parts. Sidebar.Root is the
+   column (the landmark) and its panel the surface: in the column while docked or a rail, over the
+   content while it peeks or is held, out of view while collapsed off canvas. Widths are in rem, so
+   they follow the reader's font size; every placement is logical. */
+.env-sidebar {
+  /* The space between the sidebar's edge and its controls, which a rail holds on either side. */
+  --env-sidebar-inset: var(--env-space-3);
+  --env-sidebar-rail-width: calc(
+    var(--env-frame-control-height, var(--env-control-height)) + 2 * var(--env-sidebar-inset)
+  );
+  --env-sidebar-divider: var(--env-frame-divider, 0.0625rem solid var(--env-color-border-muted));
+  /* The expanded width's bounds; Sidebar.Root sets them from minWidth and maxWidth. */
+  --env-sidebar-min-width: 12rem;
+  --env-sidebar-max-width: 20rem;
+  --env-sidebar-hairline: 0.0625rem;
+  --env-sidebar-handle-touch-size: 1.5rem;
+  /* Where a panel collapsed off canvas slides: toward the sidebar's own edge of the window. */
+  --env-sidebar-out: -100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  outline: none;
+  interpolate-size: allow-keywords;
+  transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease-standard);
+}
+@media (pointer: coarse) {
+  .env-sidebar {
+    --env-sidebar-rail-width: calc(
+      max(
+          var(--env-frame-control-height, var(--env-control-height)),
+          var(--env-control-height-touch)
+        ) +
+        2 * var(--env-sidebar-inset)
+    );
+  }
+}
+.env-sidebar[data-side='start']:dir(rtl),
+.env-sidebar[data-side='end']:dir(ltr) {
+  --env-sidebar-out: 100%;
+}
+/* In AppShell.Root: a column of the grid that sticks while the document scrolls. */
+.env-sidebar[data-frame] {
+  grid-area: start;
+  position: sticky;
+  inset-block-start: var(--env-frame-sidebar-top, 0);
+  z-index: var(--env-z-sticky);
+  block-size: var(--env-frame-sidebar-block-size, auto);
+  align-self: var(--env-frame-sidebar-align, start);
+}
+.env-sidebar[data-frame][data-side='end'] {
+  grid-area: end;
+}
+/* Its panel over the content lifts the whole column over the frame's other sticky parts. */
+.env-sidebar[data-frame][data-peek] {
+  z-index: var(--env-z-peek);
+}
+
+.env-sidebar-panel {
+  box-sizing: border-box;
+  position: relative;
+  flex: 1 1 auto;
+  block-size: 100%;
+  inline-size: var(--env-sidebar-width, fit-content);
+  min-inline-size: var(--env-sidebar-min-width);
+  max-inline-size: var(--env-sidebar-max-width);
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+  transition:
+    inline-size var(--env-motion-duration-medium) var(--env-motion-ease-standard),
+    translate var(--env-motion-duration-medium) var(--env-motion-ease-standard),
+    visibility 0s;
+}
+.env-sidebar[data-side='start'] > .env-sidebar-panel {
+  border-inline-end: var(--env-sidebar-divider);
+}
+.env-sidebar[data-side='end'] > .env-sidebar-panel {
+  border-inline-start: var(--env-sidebar-divider);
+}
+
+/* A rail: icons only, in a column one control and its insets wide, so the trigger and the items
+   share a centre line. */
+.env-sidebar[data-collapsible='rail'][data-state='collapsed'] {
+  inline-size: var(--env-sidebar-rail-width);
+}
+.env-sidebar[data-collapsible='rail'][data-state='collapsed']:not([data-peek])
+  > .env-sidebar-panel {
+  inline-size: var(--env-sidebar-rail-width);
+  min-inline-size: 0;
+}
+/* Collapsed off canvas: the column closes and the panel slides out toward its edge, then hides;
+   the sidebar is inert meanwhile. */
+.env-sidebar[data-collapsible='offcanvas'][data-state='collapsed'] {
+  inline-size: 0;
+}
+.env-sidebar[data-collapsible='offcanvas'][data-state='collapsed']:not([data-peek]) {
+  overflow: hidden;
+}
+.env-sidebar[data-collapsible='offcanvas'][data-state='collapsed']:not([data-peek])
+  > .env-sidebar-panel {
+  translate: var(--env-sidebar-out) 0;
+  visibility: hidden;
+  transition-delay: 0s, 0s, var(--env-motion-duration-medium);
+}
+/* Peeking or held: the expanded panel over the content, while the column keeps its size, so Main
+   doesn't move. */
+.env-sidebar[data-peek] > .env-sidebar-panel {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: var(--env-z-peek);
+  inline-size: var(--env-sidebar-width, fit-content);
+  min-inline-size: var(--env-sidebar-min-width);
+  box-shadow: var(--env-elevation-2-shadow);
+}
+.env-sidebar[data-peek][data-side='end'] > .env-sidebar-panel {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+/* Sidebar.Header: as tall as AppShell.Header, with the hairline they share beside each other. */
+.env-sidebar-header {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  min-block-size: var(--env-app-shell-header-height);
+  padding: var(--env-space-2) var(--env-sidebar-inset);
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  border-block-end: var(--env-frame-header-divider, 0 solid transparent);
+}
+/* Sidebar.Content: scrolls when it alone is taller than the room left. */
+.env-sidebar-content {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  min-inline-size: 0;
+  padding: var(--env-space-3) var(--env-sidebar-inset);
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: var(--env-space-3);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.env-sidebar-content[data-align='stretch'] {
+  justify-items: stretch;
+}
+/* fill: the remaining height, such as for a Tree, scrolling on its own. */
+.env-sidebar-content[data-fill] {
+  flex: 1 1 0;
+}
+/* Sidebar.Group: a heading in line with the items' labels, an action at its end. */
+.env-sidebar-group {
+  display: grid;
+  justify-items: start;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.env-sidebar-content[data-align='stretch'] .env-sidebar-group {
+  justify-items: stretch;
+}
+.env-sidebar-group-heading {
+  min-block-size: var(--env-control-height-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  align-self: stretch;
+}
+.env-sidebar-group-label {
+  margin: 0;
+  padding-inline: var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  overflow-wrap: anywhere;
+}
+.env-sidebar-group-action {
+  margin-inline-start: auto;
+  display: flex;
+}
+/* Sidebar.Footer: at the bottom. */
+.env-sidebar-footer {
+  flex: 0 0 auto;
+  margin-block-start: auto;
+  padding: var(--env-space-2) var(--env-sidebar-inset) var(--env-space-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+
+/* In a rail the header shows only the trigger, sidebar content that fills the height hides, and
+   group headings are visually hidden, with a hairline between the groups. */
+.env-sidebar[data-rail]
+  .env-sidebar-header
+  > :not(.env-sidebar-trigger, :has(.env-sidebar-trigger)) {
+  display: none;
+}
+.env-sidebar[data-rail] .env-sidebar-content[data-fill] {
+  display: none;
+}
+.env-sidebar[data-rail] .env-sidebar-content {
+  overflow-y: auto;
+}
+.env-sidebar[data-rail] .env-sidebar-group + .env-sidebar-group,
+.env-sidebar[data-rail] * + .env-sidebar-group {
+  padding-block-start: var(--env-space-2);
+  border-block-start: var(--env-sidebar-divider);
+}
+.env-sidebar[data-rail] .env-sidebar-group-heading {
+  position: absolute;
+  inline-size: var(--env-sidebar-hairline);
+  block-size: var(--env-sidebar-hairline);
+  min-block-size: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* SidebarTrigger: the application's mark at rest, the toggle icon on hover and keyboard focus,
+   and always under a coarse pointer. */
+.env-sidebar-trigger-glyphs {
+  display: grid;
+  place-items: center;
+}
+.env-sidebar-trigger-mark,
+.env-sidebar-trigger-icon {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+}
+.env-sidebar-trigger-mark > :is(img, svg) {
+  display: block;
+  inline-size: var(--env-sidebar-mark-size);
+  block-size: auto;
+  max-block-size: var(--env-sidebar-mark-size);
+}
+.env-sidebar-trigger[data-mark] .env-sidebar-trigger-icon,
+.env-sidebar-trigger[data-mark]:is(:hover, :focus-visible) .env-sidebar-trigger-mark {
+  visibility: hidden;
+}
+.env-sidebar-trigger[data-mark]:is(:hover, :focus-visible) .env-sidebar-trigger-icon {
+  visibility: visible;
+}
+@media (pointer: coarse) {
+  .env-sidebar-trigger[data-mark] .env-sidebar-trigger-mark {
+    visibility: hidden;
+  }
+  .env-sidebar-trigger[data-mark] .env-sidebar-trigger-icon {
+    visibility: visible;
+  }
+}
+/* In a title bar, the trigger's small size keeps the centre line of a rail's icons, and its mark
+   is smaller. */
+.env-sidebar-trigger {
+  --env-sidebar-mark-size: var(--env-frame-mark-size, 1.5rem);
+  /* Centred on the frame's control height, which a title bar's small controls keep. */
+  margin-inline: calc(
+    (var(--env-frame-control-height, var(--env-control-height)) - var(--env-control-height)) / 2
+  );
+}
+/* Under a coarse pointer every control is the touch height, the trigger and the frame's alike. */
+@media (pointer: coarse) {
+  .env-sidebar-trigger {
+    margin-inline: 0;
+  }
+}
+.env-sidebar-trigger-tooltip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--env-space-2);
+}
+
+/* Sidebar.Handle: the sidebar's edge as a splitter, inside the sidebar, with a line at the edge on
+   hover, keyboard focus and while dragging. */
+.env-sidebar-handle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: var(--env-z-raised);
+  inline-size: var(--env-space-2);
+  cursor: pointer;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
+}
+.env-sidebar-handle[data-side='end'] {
+  inset-inline: 0 auto;
+}
+.env-sidebar-handle[data-resizable] {
+  cursor: col-resize;
+}
+.env-sidebar-handle::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: calc(2 * var(--env-control-border-width));
+  background: transparent;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-sidebar-handle[data-side='end']::after {
+  inset-inline: 0 auto;
+}
+.env-sidebar-handle:hover::after {
+  background: var(--env-color-border-muted-hover);
+  transition-delay: var(--env-motion-duration-medium);
+}
+.env-sidebar-handle:focus-visible::after,
+.env-sidebar-handle[data-dragging]::after {
+  background: var(--env-color-border-focus);
+  transition-delay: 0s;
+}
+.env-sidebar[data-peek] .env-sidebar-handle {
+  display: none;
+}
+/* Under a coarse pointer the hit area grows inside the sidebar's edge, never over the content. */
+@media (pointer: coarse) {
+  .env-sidebar-handle {
+    inline-size: var(--env-sidebar-handle-touch-size);
+  }
+}
+/* While dragging, the width follows the pointer without easing and no text is selected. */
+.env-sidebar[data-resizing] {
+  cursor: col-resize;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-sidebar[data-resizing],
+.env-sidebar[data-resizing] > .env-sidebar-panel {
+  transition: none;
+}
+
+/* Below the breakpoint the sidebar is a drawer (the drawer's popup carries .env-sidebar
+   [data-mobile]); the inline sidebar hides even before hydration, so nothing shifts. One block per
+   breakpoint; md also covers short landscape windows. */
+@media (width < 40rem) {
+  .env-sidebar[data-breakpoint='sm']:not([data-mobile]) {
+    display: none;
+  }
+}
+@media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
+  .env-sidebar[data-breakpoint='md']:not([data-mobile]) {
+    display: none;
+  }
+}
+@media (width < 64rem) {
+  .env-sidebar[data-breakpoint='lg']:not([data-mobile]) {
+    display: none;
+  }
+}
+@media (width < 80rem) {
+  .env-sidebar[data-breakpoint='xl']:not([data-mobile]) {
+    display: none;
+  }
+}
+/* Between the breakpoint and dockAt a sidebar is collapsed: so it is before hydration too. */
+@media (width < 64rem) {
+  .env-sidebar[data-dock-at='lg'][data-collapsible='rail']:not([data-ready]) > .env-sidebar-panel {
+    inline-size: var(--env-sidebar-rail-width);
+    min-inline-size: 0;
+  }
+  .env-sidebar[data-dock-at='lg'][data-collapsible='offcanvas']:not([data-ready]) {
+    inline-size: 0;
+    visibility: hidden;
+  }
+}
+@media (width < 80rem) {
+  .env-sidebar[data-dock-at='xl'][data-collapsible='rail']:not([data-ready]) > .env-sidebar-panel {
+    inline-size: var(--env-sidebar-rail-width);
+    min-inline-size: 0;
+  }
+  .env-sidebar[data-dock-at='xl'][data-collapsible='offcanvas']:not([data-ready]) {
+    inline-size: 0;
+    visibility: hidden;
+  }
+}
+/* The drawer: the sidebar's content edge to edge, clear of the safe areas. */
+.env-sidebar[data-mobile] {
+  padding: max(var(--env-space-3), env(safe-area-inset-top)) var(--env-sidebar-inset)
+    max(var(--env-space-3), env(safe-area-inset-bottom));
+}
+.env-sidebar[data-mobile] .env-sidebar-panel {
+  flex: 1 1 auto;
+  block-size: auto;
+  inline-size: auto;
+  min-inline-size: 0;
+  max-inline-size: none;
+  margin-inline: calc(-1 * var(--env-sidebar-inset));
+  border: 0;
+  overflow: visible;
+}
+.env-sidebar[data-mobile] .env-sidebar-header {
+  border-block-end: 0;
+}
+.env-sidebar[data-mobile] .env-sidebar-content[data-fill] {
+  flex: 0 0 auto;
+}
+
+/* Nothing animates before the first frame, nor under a reduced-motion preference. */
+.env-sidebar:not([data-ready]),
+.env-sidebar:not([data-ready]) > .env-sidebar-panel {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-sidebar,
+  .env-sidebar > .env-sidebar-panel {
+    transition: none;
+  }
+}
+/* Forced colors: the panel over the content keeps an edge, since shadows vanish, and the handle's
+   line takes the system's colors. */
+@media (forced-colors: active) {
+  .env-sidebar[data-peek] > .env-sidebar-panel {
+    border: var(--env-sidebar-hairline) solid CanvasText;
+  }
+  .env-sidebar-handle:hover::after {
+    background: CanvasText;
+  }
+  .env-sidebar-handle:focus-visible::after,
+  .env-sidebar-handle[data-dragging]::after {
+    background: Highlight;
+  }
+}
+
+/* Beside a title bar, a sidebar's header is part of the window's title area: empty space drags the
+   window, controls stay clickable, and a header at the window's leading edge leaves room for
+   window controls there, such as on macOS. */
+.env-sidebar-header[data-title-bar] {
+  -webkit-app-region: drag;
+  app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-sidebar-header[data-title-bar]
+  :is(a, button, input, select, textarea, label, [role], [tabindex], [contenteditable]) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.env-sidebar[data-side='start']:dir(ltr) .env-sidebar-header[data-title-bar] {
+  padding-left: max(var(--env-sidebar-inset), env(titlebar-area-x, 0px));
+}

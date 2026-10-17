@@ -1,25 +1,46 @@
-import { AppShellSkeleton, Skeleton, Stack } from '@envsemble/envui';
+import type { CSSProperties } from 'react';
+import {
+  AppShell,
+  LoadingState,
+  NavList,
+  Sidebar,
+  SidebarTrigger,
+  Skeleton,
+  Stack,
+} from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons/Apps';
 
-/** Stands in for the window, as for AppShell. */
-const frame = {
-  position: 'relative',
-  blockSize: '18rem',
+/** Stands in for the window; an application renders the frame at its root. */
+const preview = {
+  '--env-app-shell-block-size': '18rem',
   overflow: 'hidden',
   borderRadius: '1.75rem',
-  transform: 'translateZ(0)',
-} as const;
+} as CSSProperties;
 
 export default function LoadingFrame() {
   return (
-    <div style={frame}>
-      {/* The same brand, and storageKey where AppShell has one, keep the frame in place. */}
-      <AppShellSkeleton brand={<Apps />} label="Loading Northwind">
-        <Stack gap={3} style={{ padding: '2rem' }}>
-          <Skeleton width="12rem" height="2rem" />
-          <Skeleton width="100%" height="5rem" />
-        </Stack>
-      </AppShellSkeleton>
-    </div>
+    // The same parts, and the same persist key, keep the frame where it will be.
+    <LoadingState label="Loading workspace">
+      <AppShell.Root persist="app.frame" landmarks={false} scroll="main" style={preview}>
+        <Sidebar.Root label="Main navigation">
+          <Sidebar.Header>
+            <SidebarTrigger mark={<Apps />} />
+          </Sidebar.Header>
+          <Sidebar.Content>
+            <NavList.Skeleton items={4} />
+          </Sidebar.Content>
+        </Sidebar.Root>
+        <AppShell.Header>
+          <Skeleton width="6rem" />
+        </AppShell.Header>
+        <AppShell.Main>
+          <Stack gap={3} style={{ padding: '1.5rem' }}>
+            <Skeleton width="40%" height="1.25rem" />
+            <Skeleton />
+            <Skeleton width="80%" />
+          </Stack>
+        </AppShell.Main>
+      </AppShell.Root>
+    </LoadingState>
   );
 }

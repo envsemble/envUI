@@ -646,7 +646,7 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':where(.env-theme) .env-button',
     '.env-markdown > * + *',
     '.env-button + .env-button',
-    ':where(html:has(.env-app-shell:not([data-title-bar])))',
+    ":where(html:has(.env-app-shell[data-scroll='document']))",
   ])
     assert.ok(scopedSelector(selector), selector);
   for (const selector of [

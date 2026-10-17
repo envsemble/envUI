@@ -65,11 +65,11 @@ ruleTester.run('no-private-classes', rule, {
     { code: "element.classList.toggle('env-hidden', hidden);", errors: [className('env-hidden')] },
     // Selectors that find envUI's markup, in the DOM and in browser tests.
     {
-      code: "document.querySelector('.env-app-topbar').offsetHeight",
+      code: "document.querySelector('.env-app-shell-header').offsetHeight",
       errors: [
         {
           message:
-            "env-app-topbar selects envUI's private markup, which can change in any envUI release. Find the element by its role or label, or through a ref or a data attribute you own.",
+            "env-app-shell-header selects envUI's private markup, which can change in any envUI release. Find the element by its role or label, or through a ref or a data attribute you own.",
         },
       ],
     },
@@ -86,8 +86,8 @@ ruleTester.run('no-private-classes', rule, {
     { code: "document.getElementsByClassName('env-toast')", errors: [selector('env-toast')] },
     // Style sheets in JavaScript.
     {
-      code: 'const Header = styled.header`& .env-app-topbar { height: 3rem; }`;',
-      errors: [stylesheet('env-app-topbar')],
+      code: 'const Header = styled.header`& .env-app-shell-header { height: 3rem; }`;',
+      errors: [stylesheet('env-app-shell-header')],
     },
     {
       code: 'const Wrapped = styled(Card)`.env-card-title { margin: 0; }`;',

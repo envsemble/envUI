@@ -1,1 +1,11 @@
-{}
+{
+  "env-app-topbar": "env-app-shell-header",
+  "env-app-sidebar": "env-sidebar",
+  "env-app-navigation": "env-sidebar-content",
+  "env-app-sidebar-content": "env-sidebar-content",
+  "env-app-content": "env-app-shell-main",
+  "env-app-sidebar-toggle": "env-sidebar-trigger",
+  "env-app-brand": "env-sidebar-trigger-mark",
+  "env-app-title": "env-app-shell-header-title",
+  "env-app-sidebar-resize": "env-sidebar-handle"
+}

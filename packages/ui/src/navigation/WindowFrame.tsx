@@ -4,6 +4,8 @@ import {
   createContext,
   useCallback,
   useContext,
+  useMemo,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -13,6 +15,7 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { TitleBarControls, titleBarClassName } from './internal/TitleBarFrame.js';
+import { AppShellContext, readFrameLength } from './app-shell/FrameScroll.js';
 
 /** Root hands the scrolling element to the scroll keys; Content attaches it. */
 const ScrollerContext = createContext<((element: HTMLDivElement | null) => void) | null>(null);
@@ -25,22 +28,45 @@ export interface RootProps extends ComponentPropsWithRef<'div'> {
 /**
  * A window without the application shell, such as a start page: it fills the window with its title
  * bar on top and its content scrolling below it, so the window controls drawn over the title bar
- * never cover a scrollbar. The keyboard scrolls the content as it would the document.
+ * never cover a scrollbar. The keyboard scrolls the content as it would the document. It publishes
+ * the title bar's size as --env-frame-header-block-size and --env-frame-sticky-top (0, the
+ * content's top), and useAppShell inside it returns its content as the scrolling element.
  */
 function Root({ children, className, ref, ...props }: RootProps) {
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [scroller, setScroller] = useState<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  scrollerRef.current = scroller;
   useScrollKeys(root, scroller);
   const attachRoot = useCallback(
     (node: HTMLDivElement | null) => {
+      rootRef.current = node;
       setRoot(node);
       setRef(ref, node);
     },
     [ref],
   );
+  // useAppShell inside the window: its content scrolls, and sticky content sticks at its top.
+  const getScrollElement = useCallback(
+    () => scrollerRef.current,
+    // The function changes as the content attaches, so effects that depend on it run again.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [scroller],
+  );
+  const frame = useMemo(
+    () => ({
+      getScrollElement,
+      getStickyTop: () => readFrameLength(rootRef.current, '--env-frame-sticky-top'),
+      scroll: 'main' as const,
+    }),
+    [getScrollElement],
+  );
   return (
     <div {...props} ref={attachRoot} className={classNames('env-window-frame', className)}>
-      <ScrollerContext value={setScroller}>{children}</ScrollerContext>
+      <AppShellContext value={frame}>
+        <ScrollerContext value={setScroller}>{children}</ScrollerContext>
+      </AppShellContext>
     </div>
   );
 }

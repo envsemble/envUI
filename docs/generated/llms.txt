@@ -65,7 +65,9 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [NavList](docs/components/nav-list.md): A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.
 - [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.
-- [AppShell](docs/components/app-shell.md): The frame of a whole application, with a topbar, a collapsible navigation sidebar and the content area, or a window title bar. Also: AppShellSkeleton, useAppShell, WindowFrame.
+- [AppShell](docs/components/app-shell.md): The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes. Also: useAppShell, readAppShellCookie.
+- [Sidebar](docs/components/sidebar.md): A frame's sidebar and its parts, which collapse to a rail of icons or out of view, open over the content, resize and become a drawer on phones, with the trigger that opens and closes it. Also: SidebarTrigger, useSidebar.
+- [WindowFrame](docs/components/window-frame.md): A window without the app frame's sidebars that draws its own title bar, with its content scrolling below it, or the title bar on its own.
 - [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
 - [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.
 - [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.

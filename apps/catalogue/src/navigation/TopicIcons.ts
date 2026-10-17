@@ -55,6 +55,7 @@ import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
+import { ViewSidebar } from '@envsemble/envui/icons/ViewSidebar';
 import { Schedule } from '@envsemble/envui/icons/Schedule';
 import { LastPage } from '@envsemble/envui/icons/LastPage';
 import { type Reference } from '../Reference';
@@ -128,6 +129,8 @@ const referenceIcons: Record<string, typeof Palette> = {
   meter: Speed,
   progress: Speed,
   'app-shell': SpaceDashboard,
+  sidebar: ViewSidebar,
+  'window-frame': WebAsset,
   tree: AccountTree,
   'document-tabs': Tab,
   'panel-dock': DockToBottom,

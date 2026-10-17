@@ -19,6 +19,16 @@
         "to": [],
         "use": "StackProps, with direction, wrap, align, justify and gap."
       },
+      "AppShell": { "to": ["AppShell.Root"] },
+      "AppShellProps": { "to": ["AppShell.RootProps"] },
+      "AppShellSkeleton": {
+        "to": [],
+        "use": "Render the frame's own parts as its loading state, with NavList.Skeleton in Sidebar.Content, inside a LoadingState; the v1-app-shell codemod rewrites it."
+      },
+      "AppShellSkeletonProps": {
+        "to": [],
+        "use": "AppShellSkeleton is gone: the frame's own parts, with NavList.Skeleton, are its loading state."
+      },
       "BrandLogo": {
         "to": [],
         "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
@@ -77,11 +87,11 @@
       "InputProps": { "to": ["TextFieldProps"] },
       "LoadingBar": {
         "to": [],
-        "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
       },
       "LoadingBarProps": {
         "to": [],
-        "use": "AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task."
+        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
       },
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
@@ -194,7 +204,7 @@
       },
       "useSidebarCompact": {
         "to": [],
-        "use": "Keep the sidebar's collapsed state in the application through AppShell's collapsed and onCollapsedChange props."
+        "use": "useSidebar().isRail says whether the sidebar shows icons only; AppShell.Root's sidebarOpen and onSidebarOpenChange keep its state."
       }
     },
     "@envsemble/envui/theme-bootstrap": {

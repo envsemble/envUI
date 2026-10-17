@@ -207,3 +207,22 @@ test('a title bar keeps text fields inside it free of the drag region', async ({
   });
   if ((await appRegion(bar)) !== null) expect(box).toBe('no-drag');
 });
+
+test('WindowFrame.Root publishes the frame variables: the title bar above, sticky at the top of the content', async ({
+  page,
+}) => {
+  await page.goto(windowFrame);
+  const frame = page.getByTestId('window-frame');
+  const sizes = await frame.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.cssText =
+      'position:absolute;block-size:var(--env-frame-header-block-size);inline-size:var(--env-frame-sticky-top)';
+    element.append(probe);
+    const style = getComputedStyle(probe);
+    const result = [parseFloat(style.blockSize), parseFloat(style.inlineSize)];
+    probe.remove();
+    return result;
+  });
+  const bar = (await page.getByTestId('title-bar').boundingBox())!;
+  expect(sizes).toEqual([bar.height, 0]);
+});

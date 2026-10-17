@@ -13,7 +13,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { formatShortcut, useApplePlatform, useShortcut } from '../internal/useShortcut.js';
 import { searchTrigger } from '../foundations/messages/searchTrigger.js';
-import { useSidebarCompact } from '../navigation/internal/SidebarCompact.js';
+import { useSidebarRail } from '../navigation/internal/SidebarCompact.js';
 
 export interface SearchTriggerProps
   extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
@@ -74,7 +74,7 @@ export function SearchTrigger({
 }: SearchTriggerProps) {
   const messages = useMessages('searchTrigger', searchTrigger);
   const label = ownLabel ?? messages.label;
-  const inRail = useSidebarCompact();
+  const inRail = useSidebarRail();
   const iconOnly = ownIconOnly ?? inRail;
   const apple = useApplePlatform();
   const display = shortcut ? formatShortcut(shortcut, apple) : undefined;

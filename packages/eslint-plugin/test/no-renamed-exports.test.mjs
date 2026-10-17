@@ -149,7 +149,7 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [
         {
           message:
-            "LoadingBar is internal in envUI 1.0 and no longer exported. AppShell's loading and loadingLabel props show page progress along the bottom of its topbar; Progress shows the progress of a task.",
+            "LoadingBar is internal in envUI 1.0 and no longer exported. AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task.",
         },
         internal('getInitials'),
       ],

@@ -105,7 +105,20 @@ export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
 export * as AccountMenu from './navigation/AccountMenu.js';
-export * from './navigation/AppShell.js';
+export * as AppShell from './navigation/app-shell/AppShell.js';
+export * from './navigation/app-shell/useAppShell.js';
+export {
+  readAppShellCookie,
+  type AppShellState,
+  type PerSide,
+  type PersistOptions,
+  type SidebarSide,
+  type SidebarSnapshot,
+} from './navigation/app-shell/persistence.js';
+export type { FrameStateProps, SidebarChangeReason } from './navigation/app-shell/FrameStore.js';
+export * as Sidebar from './navigation/sidebar/Sidebar.js';
+export * from './navigation/sidebar/SidebarTrigger.js';
+export * from './navigation/sidebar/useSidebar.js';
 export * as WindowFrame from './navigation/WindowFrame.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';

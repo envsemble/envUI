@@ -709,6 +709,27 @@
     "--color-white": { "value": "#ffffff", "component": "Fixed white" }
   },
   "removed": {
+    "--env-sidebar-width": {
+      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+    },
+    "--env-sidebar-expanded-width": {
+      "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
+    },
+    "--env-sidebar-collapsed-width": {
+      "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."
+    },
+    "--env-sidebar-content-width": {
+      "note": "AppShell no longer measures its sidebar: Sidebar.Root's content width fits its content between minWidth and maxWidth."
+    },
+    "--env-app-divider": {
+      "note": "The frame's hairlines follow AppShell.Root's dividers prop."
+    },
+    "--env-app-control-height": {
+      "note": "The frame's rails line up on --env-control-height, which a title bar's small controls keep."
+    },
+    "--env-app-toggle-size": {
+      "note": "SidebarTrigger is an IconButton: give it a size, or let a coarse pointer grow it to 44 px."
+    },
     "--env-split-view-gutter": {
       "note": "SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap."
     },

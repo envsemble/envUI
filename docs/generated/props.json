@@ -297,274 +297,291 @@
       ]
     },
     "AppShell": {
+      "kind": "namespace",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "",
+      "parts": [
+        "AppShell.Root",
+        "AppShell.SkipLinks",
+        "AppShell.Header",
+        "AppShell.Main",
+        "AppShell.Aside"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "AppShell.Aside": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/AppShell.tsx",
-      "description": "Application frame with a topbar and a collapsible navigation sidebar. Collapsed sidebars expand while hovered or focused, the brand mark turns into the toggle on hover, and narrow viewports open the sidebar as an overlay that closes after navigation.",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "The page's region at the end, such as an inspector or details: a complementary landmark beside Main, below the header, that opens and closes (useSidebar('end')) and becomes an end drawer below the breakpoint. A frame has an end Sidebar.Root or an AppShell.Aside, not both.",
       "props": [
         {
-          "name": "navigation",
-          "type": "ReactNode",
-          "required": true,
-          "description": "NavList.Item elements for the sidebar."
-        },
-        {
-          "name": "navigationLabel",
+          "name": "label",
           "type": "string",
           "required": true,
-          "description": "Accessible name of the sidebar navigation."
+          "description": "Names the complementary landmark and its drawer, such as Details."
         },
         {
           "name": "children",
           "type": "ReactNode",
           "required": true,
-          "description": "Page content."
+          "description": "The aside's content, such as an inspector."
+        },
+        {
+          "name": "mobile",
+          "type": "'drawer' | 'none'",
+          "required": false,
+          "default": "'drawer'",
+          "description": "Below the frame's breakpoint: drawer, its content in a drawer its trigger opens; none, hidden, for an application that brings its own."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "description": "People can resize the expanded sidebar by dragging Sidebar.Handle or with its arrow keys."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "12",
+          "description": "The smallest width in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "32 when resizable or with a number width, 20 with the content width",
+          "description": "The largest width in rem."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar",
+          "description": "The handle's name."
+        },
+        {
+          "name": "closeOnNavigate",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "A press on a link inside dismisses the drawer, a peek or a held rail."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "AppShell.Header": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "The frame's header: one row that never wraps, with start content, a title that truncates first, and actions at the end. It is the banner landmark, sticky while the document scrolls, and its fixed height (--env-app-shell-header-height) is the frame's published header size.",
+      "props": [
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline start, such as a SidebarTrigger and the application's mark."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The title area, such as the page's name: it truncates first, and hides below the breakpoint."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Actions at the inline end, such as a ThemeToggle and an AccountMenu."
+        },
+        {
+          "name": "mobileOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Only below the frame's breakpoint, where the sidebars are drawers: a phone's top bar with the triggers that open them."
+        }
+      ],
+      "native": [
+        "element"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "AppShell.Main": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "The page's main content: the main landmark, which skip links and a navigation in a drawer move focus to. It has no padding of its own (Page has), and its inline size is a container for container queries. With scroll=\"main\" it is the region that scrolls.",
+      "props": [
+        {
+          "name": "skipLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Skip to content', or EnvUIProvider's messages.appShell.skipToContent",
+          "description": "The skip link's name."
+        }
+      ],
+      "native": [
+        "element"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "AppShell.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "The application frame: a header, sidebars at the start and end, the main content and an aside, laid out in a grid that follows the text direction. It keeps the sidebars' state, remembers it with persist, turns the sidebars into drawers below its breakpoint, and publishes the header's size as --env-frame-header-block-size and where sticky content sticks as --env-frame-sticky-top.",
+      "props": [
+        {
+          "name": "headerSpan",
+          "type": "'main' | 'full'",
+          "required": false,
+          "default": "'main'",
+          "description": "main: the sidebars run the full height and the header sits beside them. full: the header runs across the window and the sidebars sit below it."
+        },
+        {
+          "name": "scroll",
+          "type": "'document' | 'main'",
+          "required": false,
+          "default": "'document'",
+          "description": "document: the document scrolls under a sticky header. main: the frame fills its container (100dvh, or --env-app-shell-block-size) and AppShell.Main scrolls, with the keyboard scrolling it as it would the document."
+        },
+        {
+          "name": "titleBar",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The header is the window's title bar, in an installed web app or a desktop shell that draws its own (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls, and its controls are small, with buttons that set no variant ghost. Implies scroll=\"main\", so Main scrolls below the bar. Meant for headerSpan=\"full\"."
+        },
+        {
+          "name": "dividers",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Hairlines between the header, the sidebars and the content."
         },
         {
           "name": "loading",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows a loading bar along the bottom of the topbar, for example while the next page loads."
+          "description": "Shows page progress along the header's bottom edge, such as while the next page loads."
         },
         {
           "name": "loadingLabel",
           "type": "string",
           "required": false,
-          "default": "'Loading page'",
-          "description": "Accessible name of the loading bar."
+          "default": "'Loading page', or EnvUIProvider's messages.appShell.loadingPage",
+          "description": "The progress bar's name."
         },
         {
-          "name": "storageKey",
-          "type": "string",
-          "required": false,
-          "description": "Persist the collapsed preference under this localStorage key."
-        },
-        {
-          "name": "defaultCollapsed",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Whether an uncontrolled sidebar starts collapsed on wide viewports; expanded by default."
-        },
-        {
-          "name": "collapsed",
-          "type": "boolean",
-          "required": false,
-          "description": "Controlled collapsed preference on wide viewports."
-        },
-        {
-          "name": "onCollapsedChange",
-          "type": "(collapsed: boolean) => void",
-          "required": false,
-          "description": "Called with the new preference when the toggle collapses or expands the sidebar."
-        },
-        {
-          "name": "expandLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Expand sidebar'",
-          "description": "Accessible name of the toggle while the sidebar is collapsed; Expand sidebar by default."
-        },
-        {
-          "name": "collapseLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Collapse sidebar'",
-          "description": "Accessible name of the toggle while the sidebar is expanded; Collapse sidebar by default."
-        },
-        {
-          "name": "sidebarContent",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content below the navigation, such as a Tree. It fills the remaining sidebar height and scrolls itself; hidden while the sidebar shows icons only."
-        },
-        {
-          "name": "resizable",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Let people adjust the expanded sidebar width by dragging its edge or with the arrow keys."
-        },
-        {
-          "name": "sidebarWidth",
-          "type": "number",
-          "required": false,
-          "description": "Controlled expanded width in pixels while resizable."
-        },
-        {
-          "name": "onSidebarWidthChange",
-          "type": "(width: number) => void",
-          "required": false,
-          "description": "Called with the new width in pixels while the sidebar is resized."
-        },
-        {
-          "name": "sidebarMinWidth",
-          "type": "number",
-          "required": false,
-          "description": "Smallest resizable width in pixels; 12 rem by default."
-        },
-        {
-          "name": "sidebarMaxWidth",
-          "type": "number",
-          "required": false,
-          "description": "Largest resizable width in pixels; 32 rem by default."
-        },
-        {
-          "name": "resizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Resize sidebar'",
-          "description": "Accessible name of the resize handle."
-        },
-        {
-          "name": "brand",
-          "type": "ReactNode",
-          "required": true,
-          "description": "Brand mark in the sidebar toggle; the toggle icon replaces it while the sidebar region is hovered."
-        },
-        {
-          "name": "context",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content in the topbar beside the toggle, such as an organization switcher. In the split topbar it sits above the sidebar and hides while the sidebar is compact."
-        },
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Current page name in the topbar. Hidden on narrow viewports."
-        },
-        {
-          "name": "actions",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Topbar actions at the end, such as a ThemeToggle and an account Menu."
-        },
-        {
-          "name": "dividers",
+          "name": "landmarks",
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Separator lines between the topbar, sidebar and content (default)."
-        },
-        {
-          "name": "topbar",
-          "type": "'split' | 'full'",
-          "required": false,
-          "default": "'split'",
-          "description": "split (default): the context sits above the sidebar, as wide as the sidebar, beside the page part. full: one row across the window, independent of the sidebar: the toggle, the context at its natural width, the title, and the actions at the end."
-        },
-        {
-          "name": "titleBar",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "The topbar is the window's title bar, for installed web apps and desktop shells that draw their own title bar (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, and the controls inside are compact. The shell then fills the window and its content area scrolls below the title bar instead of the document; the keyboard scrolls it as it would the document. Meant for the full topbar."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Classes for the shell's root."
-        }
-      ],
-      "native": [],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "AppShellSkeleton": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/AppShell.tsx",
-      "description": "The AppShell frame with placeholders, for the first load before account data is available.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Loading'",
-          "description": "Accessible loading announcement."
-        },
-        {
-          "name": "navigationItems",
-          "type": "number",
-          "required": false,
-          "default": "3",
-          "description": "Number of navigation placeholders. Defaults to 3."
-        },
-        {
-          "name": "storageKey",
-          "type": "string",
-          "required": false,
-          "description": "Match the stored collapsed preference of the AppShell it precedes."
-        },
-        {
-          "name": "defaultCollapsed",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Match the defaultCollapsed of the AppShell it precedes."
-        },
-        {
-          "name": "resizable",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Match a resizable AppShell's stored width and bounds."
-        },
-        {
-          "name": "sidebarMinWidth",
-          "type": "number",
-          "required": false,
-          "description": "Match the AppShell's smallest resizable width in pixels; 12 rem by default."
-        },
-        {
-          "name": "sidebarMaxWidth",
-          "type": "number",
-          "required": false,
-          "description": "Match the AppShell's largest resizable width in pixels; 32 rem by default."
+          "description": "false renders the parts without landmark roles, for a preview of a frame inside another page's main content."
         },
         {
           "name": "children",
           "type": "ReactNode",
-          "required": false,
-          "description": "Placeholder for the page content."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Classes for the shell's root."
-        },
-        {
-          "name": "brand",
-          "type": "ReactNode",
           "required": true,
-          "description": "Brand mark in the sidebar toggle; the toggle icon replaces it while the sidebar region is hovered."
+          "description": "The frame's parts: AppShell.SkipLinks, Sidebar.Root, AppShell.Header, AppShell.Main, AppShell.Aside."
         },
         {
-          "name": "dividers",
-          "type": "boolean",
+          "name": "defaultSidebarOpen",
+          "type": "PerSide<boolean>",
           "required": false,
           "default": "true",
-          "description": "Separator lines between the topbar, sidebar and content (default)."
+          "description": "Whether a sidebar starts docked open where people can dock it; a bare value is the start sidebar's."
         },
         {
-          "name": "topbar",
-          "type": "'split' | 'full'",
+          "name": "sidebarOpen",
+          "type": "PerSide<boolean>",
           "required": false,
-          "default": "'split'",
-          "description": "split (default): the context sits above the sidebar, as wide as the sidebar, beside the page part. full: one row across the window, independent of the sidebar: the toggle, the context at its natural width, the title, and the actions at the end."
+          "description": "Whether a sidebar is docked open, for state the application controls; per side."
         },
         {
-          "name": "titleBar",
-          "type": "boolean",
+          "name": "onSidebarOpenChange",
+          "type": "(open: boolean, details: { side: SidebarSide; reason: SidebarChangeReason }) => void",
+          "required": false,
+          "description": "Called as a sidebar's docked preference changes: from its trigger, the shortcut, its handle or useSidebar().setOpen."
+        },
+        {
+          "name": "defaultSidebarWidth",
+          "type": "PerSide<number>",
+          "required": false,
+          "description": "The width a resizable sidebar starts at, in rem; per side."
+        },
+        {
+          "name": "sidebarWidth",
+          "type": "PerSide<number>",
+          "required": false,
+          "description": "A resizable sidebar's width in rem, for state the application controls; per side."
+        },
+        {
+          "name": "onSidebarWidthChange",
+          "type": "(width: number, details: { side: SidebarSide; committed: boolean }) => void",
+          "required": false,
+          "description": "Called with the new width in rem while a sidebar is resized (committed false) and once more as the drag ends or a key moves it (committed true)."
+        },
+        {
+          "name": "persist",
+          "type": "string | PersistOptions",
+          "required": false,
+          "description": "Remember the docked preference and the chosen width of each sidebar under this key: a string keeps them in localStorage, read after hydration; { key, storage: 'cookie' } keeps them in a cookie the server reads with readAppShellCookie. Peeking and the drawers are never kept."
+        },
+        {
+          "name": "initialState",
+          "type": "AppShellState",
+          "required": false,
+          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup."
+        },
+        {
+          "name": "breakpoint",
+          "type": "Breakpoint",
+          "required": false,
+          "default": "'md'",
+          "description": "Below this viewport width the sidebars become drawers opened from their triggers: sm, md, lg or xl (40, 48, 64 or 80 rem). md also covers short landscape windows, such as a phone's."
+        },
+        {
+          "name": "shortcut",
+          "type": "PerSide<string | false>",
           "required": false,
           "default": "false",
-          "description": "The topbar is the window's title bar, for installed web apps and desktop shells that draw their own title bar (the Window Controls Overlay): empty space drags the window, it leaves room for the window controls the system draws, and the controls inside are compact. The shell then fills the window and its content area scrolls below the title bar instead of the document; the keyboard scrolls it as it would the document. Meant for the full topbar."
+          "description": "A keyboard shortcut that toggles a sidebar, or its drawer below the breakpoint, such as mod+b (⌘B on Apple platforms, Ctrl+B elsewhere); a bare value is the start sidebar's. It is ignored in text fields and editors, where Mod+B is often Bold. false listens for nothing."
         }
       ],
-      "native": [],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "AppShell.SkipLinks": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/app-shell/AppShell.tsx",
+      "description": "Links before everything else that move keyboard focus past the frame: Skip to content (Main), then Skip to each sidebar that is in reach now, then `links`. Hidden until focused; the first tab stop of the page. Outside AppShell.Root it renders only `links`.",
+      "props": [
+        {
+          "name": "links",
+          "type": "{ href: string; label: string }[]",
+          "required": false,
+          "default": "[]",
+          "description": "Extra targets after the generated ones, such as a search field."
+        }
+      ],
+      "native": [
+        "div"
+      ],
       "entries": [
         "@envsemble/envui"
       ]
@@ -5031,7 +5048,8 @@
       "parts": [
         "NavList.Root",
         "NavList.Item",
-        "NavList.Group"
+        "NavList.Group",
+        "NavList.Skeleton"
       ],
       "entries": [
         "@envsemble/envui"
@@ -5065,7 +5083,7 @@
     "NavList.Item": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and end content, marks the current destination with selected, and shows only its icon with iconOnly or inside a compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.",
+      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and end content, marks the current destination with selected, and shows only its icon with iconOnly or in a sidebar rail. Inside NavList.Root or NavList.Group it renders its own list item.",
       "props": [
         {
           "name": "selected",
@@ -5116,7 +5134,7 @@
           "type": "boolean",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. Inside a compact AppShell sidebar, items with an icon show only it without this prop."
+          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. In a sidebar rail, items with an icon show only it without this prop."
         }
       ],
       "native": [
@@ -5130,8 +5148,28 @@
     "NavList.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as AppShell's sidebar. Name it with aria-label or aria-labelledby when the page has more than one.",
+      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as a Sidebar.Root. Name it with aria-label or aria-labelledby when the page has more than one.",
       "props": [],
+      "native": [
+        "ul"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "NavList.Skeleton": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/NavList.tsx",
+      "description": "Placeholders in the shape of a NavList.Root's items while the navigation loads, such as in a sidebar before the account's data arrives: an icon and a label each, at the items' height, and only the icon in a sidebar rail. Hidden from assistive technology; put the frame in a LoadingState, which names what loads.",
+      "props": [
+        {
+          "name": "items",
+          "type": "number",
+          "required": false,
+          "default": "3",
+          "description": "How many placeholder items it shows."
+        }
+      ],
       "native": [
         "ul"
       ],
@@ -6621,6 +6659,406 @@
           "type": "ReactNode",
           "required": false,
           "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar": {
+      "kind": "namespace",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "",
+      "parts": [
+        "Sidebar.Root",
+        "Sidebar.Provider",
+        "Sidebar.Header",
+        "Sidebar.Content",
+        "Sidebar.Group",
+        "Sidebar.Footer",
+        "Sidebar.Handle"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Content": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "A section of the sidebar's content, such as its NavList.Root; it scrolls when it alone is taller than the room left. Several stack in order.",
+      "props": [
+        {
+          "name": "fill",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Takes the remaining height and scrolls on its own, such as for a Tree below the navigation. Hidden in a rail."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'stretch'",
+          "required": false,
+          "default": "'start'",
+          "description": "start: children keep their width at the inline start, as navigation items do. stretch: children take the full width, such as a search field."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Footer": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "The sidebar's bottom row, such as an AccountMenu.",
+      "props": [],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Group": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "Related content under a small heading, such as a second NavList.Root.",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The group's visible heading, such as Administration; in a rail it is visually hidden and a hairline separates the groups."
+        },
+        {
+          "name": "headingLevel",
+          "type": "2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "description": "Renders the label as a heading of this level; without it, the label names a group."
+        },
+        {
+          "name": "action",
+          "type": "ReactNode",
+          "required": false,
+          "description": "An action at the label's end, such as an IconButton that adds an item; hidden in a rail."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The group's content, such as a NavList.Root."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Handle": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "The sidebar's edge as a window splitter: dragging it or its arrow keys resize a resizable sidebar; Enter, or a click without a drag, collapses or expands it. It sits at the sidebar's inline end (its inline start at the end side), inside the sidebar. A resizable Sidebar.Root adds one where it has none.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar",
+          "description": "The handle's name."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Header": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "The sidebar's top row, such as its SidebarTrigger with the application's mark and an OrganizationSwitcher: as tall as AppShell.Header, so the two line up. In a rail it shows only the trigger.",
+      "props": [],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Provider": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "The state of sidebars without AppShell.Root: their docked preference, widths, persistence, breakpoint and shortcut, for a sidebar and SidebarTriggers that sit apart from it, such as in a page's header. AppShell.Root provides the same itself.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The sidebars and their triggers, such as a settings page's sub-navigation."
+        },
+        {
+          "name": "defaultSidebarOpen",
+          "type": "PerSide<boolean>",
+          "required": false,
+          "default": "true",
+          "description": "Whether a sidebar starts docked open where people can dock it; a bare value is the start sidebar's."
+        },
+        {
+          "name": "sidebarOpen",
+          "type": "PerSide<boolean>",
+          "required": false,
+          "description": "Whether a sidebar is docked open, for state the application controls; per side."
+        },
+        {
+          "name": "onSidebarOpenChange",
+          "type": "(open: boolean, details: { side: SidebarSide; reason: SidebarChangeReason }) => void",
+          "required": false,
+          "description": "Called as a sidebar's docked preference changes: from its trigger, the shortcut, its handle or useSidebar().setOpen."
+        },
+        {
+          "name": "defaultSidebarWidth",
+          "type": "PerSide<number>",
+          "required": false,
+          "description": "The width a resizable sidebar starts at, in rem; per side."
+        },
+        {
+          "name": "sidebarWidth",
+          "type": "PerSide<number>",
+          "required": false,
+          "description": "A resizable sidebar's width in rem, for state the application controls; per side."
+        },
+        {
+          "name": "onSidebarWidthChange",
+          "type": "(width: number, details: { side: SidebarSide; committed: boolean }) => void",
+          "required": false,
+          "description": "Called with the new width in rem while a sidebar is resized (committed false) and once more as the drag ends or a key moves it (committed true)."
+        },
+        {
+          "name": "persist",
+          "type": "string | PersistOptions",
+          "required": false,
+          "description": "Remember the docked preference and the chosen width of each sidebar under this key: a string keeps them in localStorage, read after hydration; { key, storage: 'cookie' } keeps them in a cookie the server reads with readAppShellCookie. Peeking and the drawers are never kept."
+        },
+        {
+          "name": "initialState",
+          "type": "AppShellState",
+          "required": false,
+          "description": "The state the server read with readAppShellCookie, so hydration meets the server's markup."
+        },
+        {
+          "name": "breakpoint",
+          "type": "Breakpoint",
+          "required": false,
+          "default": "'md'",
+          "description": "Below this viewport width the sidebars become drawers opened from their triggers: sm, md, lg or xl (40, 48, 64 or 80 rem). md also covers short landscape windows, such as a phone's."
+        },
+        {
+          "name": "shortcut",
+          "type": "PerSide<string | false>",
+          "required": false,
+          "default": "false",
+          "description": "A keyboard shortcut that toggles a sidebar, or its drawer below the breakpoint, such as mod+b (⌘B on Apple platforms, Ctrl+B elsewhere); a bare value is the start sidebar's. It is ignored in text fields and editors, where Mod+B is often Bold. false listens for nothing."
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Sidebar.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/Sidebar.tsx",
+      "description": "A frame's sidebar: the application's navigation at the start, or a directory or an inspector at the end, in its own column. It collapses to a rail of icons (or out of view) and back, its rail opens over the content on hover and focus, people can resize it, and below the frame's breakpoint its content moves into a drawer that its SidebarTrigger opens. It is a landmark named by label. Inside AppShell.Root it is a sticky column; on its own, in a Sidebar.Provider or alone, a block.",
+      "props": [
+        {
+          "name": "side",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "The frame's side the sidebar takes: start, the left in left-to-right text, or end."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "The sidebar's name: it names its landmark, its drawer and its skip link, such as Primary."
+        },
+        {
+          "name": "landmark",
+          "type": "'navigation' | 'complementary' | 'none'",
+          "required": false,
+          "default": "'navigation' at the start, 'complementary' at the end",
+          "description": "The landmark it is: navigation, complementary, or none, for a sidebar whose navigation is only part of its content and sits in a nav element of its own."
+        },
+        {
+          "name": "collapsible",
+          "type": "'offcanvas' | 'rail' | 'none'",
+          "required": false,
+          "default": "'rail'",
+          "description": "How it collapses: rail, to its icons in a narrow column; offcanvas, out of view; or none."
+        },
+        {
+          "name": "dockAt",
+          "type": "Breakpoint",
+          "required": false,
+          "default": "the frame's breakpoint, so it can always dock",
+          "description": "From this viewport width up people can dock it expanded; between the frame's breakpoint and dockAt it is a rail that opens over the content."
+        },
+        {
+          "name": "peek",
+          "type": "'hover-focus' | 'hover' | 'none'",
+          "required": false,
+          "default": "'hover-focus'",
+          "description": "How a collapsed rail opens over the content: hover-focus, while the pointer rests on it or keyboard focus is inside it; hover, only while the pointer rests on it (focus keeps an open one open); or none, only from its trigger."
+        },
+        {
+          "name": "peekDelay",
+          "type": "number",
+          "required": false,
+          "default": "200",
+          "description": "Milliseconds the pointer rests on a rail before it opens over the content."
+        },
+        {
+          "name": "width",
+          "type": "'content' | number",
+          "required": false,
+          "default": "'content'",
+          "description": "The expanded width: content fits the content between 12 and 20 rem; a number is a width in rem."
+        },
+        {
+          "name": "resizable",
+          "type": "boolean",
+          "required": false,
+          "description": "People can resize the expanded sidebar by dragging Sidebar.Handle or with its arrow keys."
+        },
+        {
+          "name": "minWidth",
+          "type": "number",
+          "required": false,
+          "default": "12",
+          "description": "The smallest width in rem."
+        },
+        {
+          "name": "maxWidth",
+          "type": "number",
+          "required": false,
+          "default": "32 when resizable or with a number width, 20 with the content width",
+          "description": "The largest width in rem."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar",
+          "description": "The handle's name."
+        },
+        {
+          "name": "closeOnNavigate",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "A press on a link inside dismisses the drawer, a peek or a held rail."
+        },
+        {
+          "name": "mobile",
+          "type": "'drawer' | 'none'",
+          "required": false,
+          "default": "'drawer'",
+          "description": "Below the frame's breakpoint: drawer, its content in a drawer its trigger opens; none, hidden, for an application that brings its own."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The sidebar's parts: Sidebar.Header, Sidebar.Content, Sidebar.Group, Sidebar.Footer, Sidebar.Handle."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "SidebarTrigger": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/sidebar/SidebarTrigger.tsx",
+      "description": "The button that opens and closes a sidebar: it docks or collapses it where the window is wide enough, holds a rail open over the content where it isn't, and opens the sidebar's drawer below the frame's breakpoint. A ghost IconButton that reports the state it controls, the shortcut and the sidebar it controls; hidden where there's nothing to toggle. onClick runs first, and event.preventDefault() keeps the sidebar as it is. Needs AppShell.Root, Sidebar.Provider or the Sidebar.Root around it.",
+      "props": [
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "As Button's: the height, and the width, of the square button."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "description": "As Button's: a spinner replaces the icon while the work runs."
+        },
+        {
+          "name": "side",
+          "type": "'start' | 'end'",
+          "required": false,
+          "default": "'start'",
+          "description": "Which sidebar the trigger opens and closes."
+        },
+        {
+          "name": "mark",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The application's mark, shown at rest; the toggle icon replaces it on hover and keyboard focus, and always under a coarse pointer."
+        },
+        {
+          "name": "icon",
+          "type": "ReactNode",
+          "required": false,
+          "default": "a docked-panel icon for the side, mirrored in right-to-left text; a menu icon below the frame's breakpoint",
+          "description": "The icon."
+        },
+        {
+          "name": "expandLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Expand sidebar', or EnvUIProvider's messages.appShell.expandSidebar",
+          "description": "The name while the sidebar is collapsed."
+        },
+        {
+          "name": "collapseLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Collapse sidebar', or EnvUIProvider's messages.appShell.collapseSidebar",
+          "description": "The name while the sidebar is expanded, and in its drawer."
+        },
+        {
+          "name": "keepOpenLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Keep sidebar open', or EnvUIProvider's messages.appShell.keepSidebarOpen",
+          "description": "The name while a collapsed sidebar shows over the content, where a press docks it."
+        },
+        {
+          "name": "openLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Open navigation' at the start and 'Open' with the sidebar's label at the end, or EnvUIProvider's messages.appShell.openSidebar",
+          "description": "The name below the breakpoint, where a press opens the sidebar's drawer."
+        },
+        {
+          "name": "tooltip",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the name and the shortcut's keys in a tooltip."
         }
       ],
       "native": [
@@ -8302,7 +8740,7 @@
     "WindowFrame.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/WindowFrame.tsx",
-      "description": "A window without the application shell, such as a start page: it fills the window with its title bar on top and its content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "description": "A window without the application shell, such as a start page: it fills the window with its title bar on top and its content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document. It publishes the title bar's size as --env-frame-header-block-size and --env-frame-sticky-top (0, the content's top), and useAppShell inside it returns its content as the scrolling element.",
       "props": [
         {
           "name": "children",
@@ -8395,10 +8833,19 @@
         "@envsemble/envui"
       ]
     },
+    "readAppShellCookie": {
+      "kind": "function",
+      "source": "packages/ui/src/navigation/app-shell/persistence.ts",
+      "description": "The frame state a persisted cookie holds, for AppShell.Root's (or Sidebar.Provider's) initialState, so the server renders the sidebars as the person left them and hydration meets that markup without a flash. It runs on the server: pass the request's Cookie header and the key given to persist. const initialState = readAppShellCookie(request.headers.get('cookie'), 'app.frame'); <AppShell.Root persist={{ key: 'app.frame', storage: 'cookie' }} initialState={initialState}>",
+      "signature": "(cookieHeader: string | null | undefined, key: string): AppShellState | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "useAppShell": {
       "kind": "function",
-      "source": "packages/ui/src/navigation/AppShell.tsx",
-      "description": "Shell controls for content rendered inside AppShell.",
+      "source": "packages/ui/src/navigation/app-shell/useAppShell.ts",
+      "description": "The frame's scrolling, for content inside AppShell.Root or WindowFrame.Root: the element that scrolls and where sticky content sticks. Throws outside a frame.",
       "signature": "(): AppShellContextValue",
       "entries": [
         "@envsemble/envui"
@@ -8436,6 +8883,15 @@
       "source": "packages/ui/src/foundations/useMediaQuery.ts",
       "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
       "signature": "(query: string, options?: MediaQueryOptions): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useSidebar": {
+      "kind": "function",
+      "source": "packages/ui/src/navigation/sidebar/useSidebar.ts",
+      "description": "A sidebar's state and controls, for content that adapts to it, such as avatars only in a rail (isRail), or that closes it after a choice (dismiss). side defaults to the sidebar around the caller, else start. Throws outside AppShell.Root and Sidebar.Provider; a Sidebar.Root without one provides its own to its content.",
+      "signature": "(side?: SidebarSide): SidebarApi",
       "entries": [
         "@envsemble/envui"
       ]

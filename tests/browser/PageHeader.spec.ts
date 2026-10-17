@@ -73,12 +73,11 @@ test.describe('PageHeader', () => {
     expect(Number.parseFloat(published)).toBeCloseTo(height, 0);
     // Content sticks below both, from the two variables.
     await expect.poll(async () => (await box(content)).y).toBeCloseTo(48 + height, 0);
-    // Without a frame's offset, it sticks at the app shell's.
+    // Without a frame's offset, it sticks at the top.
     await sticky.evaluate((element) => {
       const frame = element.closest<HTMLElement>('[style*="--env-frame-sticky-top"]')!;
       frame.style.removeProperty('--env-frame-sticky-top');
-      frame.style.setProperty('--env-app-sticky-top', '32px');
     });
-    await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(32, 0);
+    await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
   });
 });

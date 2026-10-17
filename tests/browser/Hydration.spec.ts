@@ -7,6 +7,15 @@ test('public components hydrate server output without recoverable errors', async
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
+  // The sidebar's state came from the cookie the server read: collapsed, with its width in rem,
+  // in the server's markup and after hydration alike.
+  const sidebar = page.getByRole('navigation', { name: 'Hydrated sidebar' });
+  await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
+  await expect(sidebar).toHaveCSS('--env-sidebar-width', '18rem');
+  const sidebarTrigger = page.getByTestId('hydrated-sidebar-trigger');
+  await expect(sidebarTrigger).toHaveAttribute('aria-expanded', 'false');
+  await sidebarTrigger.click();
+  await expect(sidebar).toHaveAttribute('data-state', 'expanded');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.

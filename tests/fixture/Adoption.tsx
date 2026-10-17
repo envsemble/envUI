@@ -1,7 +1,6 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import {
   AnimatedNumber,
-  AppShell,
   Avatar,
   AvatarButton,
   Button,
@@ -13,7 +12,6 @@ import {
   LinkProvider,
   Menu,
   Meter,
-  NavList,
   OrganizationSwitcher,
   SearchField,
   Skeleton,
@@ -25,8 +23,6 @@ import {
   Tooltip,
   type LinkComponentProps,
 } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Category } from '@envsemble/envui/icons/Category';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Delete } from '@envsemble/envui/icons/Delete';
 
@@ -196,111 +192,5 @@ export function AdoptionFixture() {
         </section>
       </LinkProvider>
     </ThemePreferenceProvider>
-  );
-}
-
-/**
- * Two shells on one page, the second with a taller topbar that can be hidden or removed, mounted
- * with ?fixture=two-shells.
- */
-export function TwoShellsFixture() {
-  const [first, setFirst] = useState(true);
-  const [second, setSecond] = useState<'shown' | 'hidden' | 'gone'>('shown');
-  return (
-    <>
-      <div hidden={!first}>
-        <AppShell
-          brand={<span>A</span>}
-          title="First"
-          navigationLabel="First navigation"
-          navigation={
-            <NavList.Item href="/" icon={<Home />}>
-              Home
-            </NavList.Item>
-          }
-        >
-          <div className="fixture-two-shells-actions">
-            <button type="button" onClick={() => setSecond('hidden')}>
-              Hide the second shell
-            </button>
-            <button type="button" onClick={() => setSecond('shown')}>
-              Show the second shell
-            </button>
-            <button type="button" onClick={() => setSecond('gone')}>
-              Remove the second shell
-            </button>
-            <button type="button" onClick={() => setFirst(false)}>
-              Hide the first shell
-            </button>
-          </div>
-        </AppShell>
-      </div>
-      {second !== 'gone' && (
-        <div
-          hidden={second === 'hidden'}
-          style={{ '--env-app-shell-header-height': '5rem' } as CSSProperties}
-        >
-          <AppShell
-            brand={<span>B</span>}
-            title="Second"
-            navigationLabel="Second navigation"
-            navigation={
-              <NavList.Item href="/second" icon={<Category />}>
-                Second home
-              </NavList.Item>
-            }
-          >
-            <p>Second content</p>
-          </AppShell>
-        </div>
-      )}
-    </>
-  );
-}
-
-/** A full-page AppShell, mounted with ?fixture=shell. */
-export function ShellFixture() {
-  const [page, setPage] = useState('home');
-  const [loading, setLoading] = useState(false);
-  return (
-    <LinkProvider component={RecordingLink}>
-      <AppShell
-        brand={<span data-testid="brand">B</span>}
-        context={
-          <button type="button" aria-expanded="false" data-testid="context-trigger">
-            Organization
-          </button>
-        }
-        title={page === 'home' ? 'Home' : 'Products'}
-        navigationLabel="Fixture navigation"
-        navigation={
-          <>
-            <NavList.Item
-              href="/"
-              icon={<Home />}
-              selected={page === 'home'}
-              onClick={() => setPage('home')}
-            >
-              Home
-            </NavList.Item>
-            <NavList.Item
-              href="/products"
-              icon={<Category />}
-              selected={page === 'products'}
-              onClick={() => setPage('products')}
-            >
-              Products
-            </NavList.Item>
-          </>
-        }
-        storageKey="fixture-sidebar"
-        loading={loading}
-      >
-        <p data-testid="shell-content">Content</p>
-        <button type="button" onClick={() => setLoading((value) => !value)}>
-          Toggle page loading
-        </button>
-      </AppShell>
-    </LinkProvider>
   );
 }

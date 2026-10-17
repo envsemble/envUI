@@ -576,7 +576,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   }
 
   const found = await server.call('search', { query: 'sidebar toggle', limit: 3 });
-  assert.equal(found.results[0].name, 'AppShell');
+  assert.equal(found.results[0].name, 'Sidebar');
   assert.equal((await server.call('search', { query: 'modal' })).results[0].name, 'Dialog');
   assert.equal(
     (await server.call('search', { query: 'muted text', kind: 'token' })).results[0].name,
@@ -792,7 +792,7 @@ test('search finds exports without a component page by name', () => {
 
 test('search and plan rank by names, aliases and situations', () => {
   const top = (query) => search(manifest, query, { kinds: ['component'], limit: 1 })[0]?.name;
-  assert.equal(top('hamburger'), 'AppShell');
+  assert.equal(top('hamburger'), 'Sidebar');
   assert.equal(top('dropdown'), 'Select');
   assert.equal(top('toggle switch'), 'Switch');
   assert.equal(top('snackbar'), 'Toast');
@@ -819,7 +819,7 @@ test('search and plan rank by names, aliases and situations', () => {
     plan(manifest, 'add a collapsible sidebar with a toggle').candidates.map(
       (item) => item.component,
     ),
-    ['AppShell'],
+    ['Sidebar'],
   );
   const form = plan(manifest, 'a sign-in form with email and password');
   assert.ok(form.candidates.some((item) => item.component === 'TextField'));

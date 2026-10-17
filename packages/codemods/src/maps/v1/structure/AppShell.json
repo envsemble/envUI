@@ -1,3 +1,21 @@
 {
-  "@envsemble/envui": {}
+  "@envsemble/envui": {
+    "AppShell.Root": {
+      "transform": "v1-app-shell",
+      "report": "AppShell is made of parts in 1.0: AppShell.Root around AppShell.SkipLinks, a Sidebar.Root with the navigation, an AppShell.Header with the title and actions and an AppShell.Main with the page; move the props of one that spreads props by hand, as the migration guide's app frame section shows.",
+      "reports": {
+        "storageKey": "storageKey is persist in 1.0, which keeps both sidebars in one entry in a new format, so the remembered preference resets once.",
+        "sidebarWidth": "sidebarWidth and onSidebarWidthChange are in rem in 1.0, not pixels: divide by 16, or by the root font size.",
+        "minWidth": "sidebarMinWidth and sidebarMaxWidth are minWidth and maxWidth in rem in 1.0: the codemod divides the expression by 16; check it.",
+        "topbar": "topbar is an expression, so the codemod can't tell where the mark and the context go: it placed them for the split topbar (headerSpan=\"main\"); move them to AppShell.Header's start for headerSpan=\"full\"."
+      }
+    },
+    "AppShellSkeleton": {
+      "transform": "v1-app-shell",
+      "report": "AppShellSkeleton is gone in 1.0: render the frame's parts with NavList.Skeleton in Sidebar.Content inside a LoadingState; move the props of one that spreads props by hand.",
+      "reports": {
+        "label": "Sidebar.Root needs a label; the codemod named the skeleton's sidebar Navigation: use the real sidebar's label."
+      }
+    }
+  }
 }

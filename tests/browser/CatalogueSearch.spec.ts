@@ -124,7 +124,7 @@ test.describe('search', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('TextField');
     await expect(page.locator('#docs-main')).toBeFocused();
     // An old name of a page finds it as well.
-    await search(page, 'hamburger');
+    await search(page, 'AppShellSkeleton');
     await expect.poll(() => highlighted(page)).toBe('page:app-shell');
   });
 
@@ -443,10 +443,10 @@ test.describe('hosted build', () => {
     await openCatalogue(page, `${siteUrl}/`);
     expect(requested.filter((path) => files.includes(path))).toEqual([]);
     await search(page, 'hamburger');
-    await expect.poll(() => highlighted(page)).toBe('page:app-shell');
+    await expect.poll(() => highlighted(page)).toBe('page:sidebar');
     expect(requested).toContain(files[0]);
     await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(`${siteUrl}/components/app-shell/overview`);
+    await expect(page).toHaveURL(`${siteUrl}/components/sidebar/overview`);
 
     // An index that fails to load says so, and offers to load the page again.
     failing = true;

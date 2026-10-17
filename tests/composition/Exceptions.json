@@ -1,12 +1,7 @@
 {
   "$comment": "Composition violations that exist today, counted per module or stylesheet. tests/Composition.test.mjs fails on a new violation, on a higher count, and on an entry that no longer matches, so this list only shrinks. Paths are relative to packages/ui/src and packages/ui/src/styles.",
   "imports": [],
-  "interactive": [{ "module": "navigation/AppShell.tsx", "element": "button", "count": 1 }],
-  "tsxClasses": [
-    { "module": "navigation/AppShell.tsx", "class": "env-window-frame-title-bar", "count": 2 }
-  ],
-  "cssClasses": [
-    { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-window-frame-title-bar", "count": 5 }
-  ]
+  "interactive": [],
+  "tsxClasses": [],
+  "cssClasses": []
 }

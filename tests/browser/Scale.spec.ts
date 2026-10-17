@@ -355,13 +355,14 @@ test.describe('on a coarse pointer', () => {
     }
   });
 
-  // AppShell with a split topbar and with a title bar, whose own controls take the small height.
+  // A frame with the trigger in the sidebar's header and with the trigger in a header across the
+  // window.
   for (const scale of densityScales)
-    for (const [fixture, frame] of [
-      ['shell', 'a split topbar'],
-      ['full-shell', 'a title bar'],
+    for (const [fixture, frame, trigger, count] of [
+      ['app-shell', 'the trigger in the sidebar', '.env-sidebar .env-sidebar-trigger', 4],
+      ['full-shell', 'a header across the window', '.env-app-shell-header .env-sidebar-trigger', 3],
     ] as const)
-      test(`AppShell's toggle and navigation items share a center line inside the sidebar, with ${frame}, in the ${scale} scale`, async ({
+      test(`SidebarTrigger and navigation items share a center line inside the sidebar, with ${frame}, in the ${scale} scale`, async ({
         page,
       }) => {
         await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
@@ -371,24 +372,27 @@ test.describe('on a coarse pointer', () => {
           shell.locator('xpath=ancestor::*[contains(@class, "env-theme")][1]'),
         ).toHaveAttribute('data-env-scale', scale);
         expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+        await page.evaluate(() => localStorage.clear());
+        await page.reload();
+        await expect(shell).toHaveAttribute('data-ready', '');
         for (const state of ['expanded', 'collapsed'] as const) {
           if (state === 'collapsed') {
-            await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+            await page.locator(trigger).click();
             await page.mouse.move(800, 500);
-            await expect(shell).toHaveAttribute('data-compact', '');
+            await expect(page.locator('.env-sidebar')).toHaveAttribute('data-rail', '');
           }
           await settle(page);
-          const geometry = await page.evaluate(() => {
+          const geometry = await page.evaluate((selector) => {
             const center = (box: DOMRect) => box.x + box.width / 2;
-            const toggle = document.querySelector('.env-app-sidebar-toggle')!;
-            const sidebar = document.querySelector('.env-app-sidebar')!;
+            const toggle = document.querySelector(selector)!;
+            const sidebar = document.querySelector('.env-sidebar-panel')!;
             const sidebarBox = sidebar.getBoundingClientRect();
             return {
               toggle: center(toggle.getBoundingClientRect()),
               // The inside of the sidebar, within its divider.
               start: sidebarBox.left + sidebar.clientLeft,
               end: sidebarBox.left + sidebar.clientLeft + sidebar.clientWidth,
-              items: [...document.querySelectorAll('.env-app-navigation .env-nav-list-item')].map(
+              items: [...document.querySelectorAll('.env-sidebar .env-nav-list-item')].map(
                 (item) => {
                   const box = item.getBoundingClientRect();
                   return {
@@ -400,7 +404,7 @@ test.describe('on a coarse pointer', () => {
                 },
               ),
             };
-          });
+          }, trigger);
           for (const item of geometry.items) {
             expect(item.left, state).toBeGreaterThanOrEqual(geometry.start - 0.01);
             expect(item.right, state).toBeLessThanOrEqual(geometry.end + 0.01);
@@ -415,12 +419,9 @@ test.describe('on a coarse pointer', () => {
               const measure = (0, eval)(source) as MeasureHitAreas;
               return measure(document.body, selector);
             },
-            [
-              '.env-app-sidebar-toggle, .env-app-navigation .env-nav-list-item',
-              measureHitAreas,
-            ] as const,
+            [`${trigger}, .env-sidebar .env-nav-list-item`, measureHitAreas] as const,
           );
-          expect(areas, state).toHaveLength(3);
+          expect(areas, state).toHaveLength(count);
           expect(
             areas.filter(({ width, height }) => width < 44 || height < 44),
             `${state}: ${JSON.stringify(areas)}`,

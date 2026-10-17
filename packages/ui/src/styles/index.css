@@ -9,6 +9,7 @@
 @import './TokensHandwritten.css' layer(env.tokens);
 @import './Surface.css' layer(env.components);
 @import './Theme.css' layer(env.base);
+@import './AppShellBase.css' layer(env.base);
 @import './Icon.css' layer(env.components);
 @import './Popup.css' layer(env.components);
 @import './ListRow.css' layer(env.components);

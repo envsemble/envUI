@@ -107,7 +107,7 @@ The application owns the panels: which exist, their order and mode, which one is
 
 ### Do
 
-- Put the dock in a positioned container with a height, such as the area below a topbar, beside page content that scrolls on its own.
+- Put the dock in a positioned container with a height, such as the area below a header, beside page content that scrolls on its own.
 - Keep each panel's work, such as a draft, in the panel's own state; the dock keeps it mounted.
 - Make the content beneath inert while a panel fills the region: while a panel is maximized, or while the dock stacks and a panel is not minimized.
 - Activate a panel when it opens, and keep at most one panel maximized.

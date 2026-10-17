@@ -70,6 +70,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Tabs](components/tabs.md)
 - [Pager](components/pager.md)
 - [AppShell](components/app-shell.md)
+- [Sidebar](components/sidebar.md)
+- [WindowFrame](components/window-frame.md)
 - [Tree](components/tree.md)
 - [DocumentTabs](components/document-tabs.md)
 - [PanelDock](components/panel-dock.md)

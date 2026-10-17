@@ -17,8 +17,8 @@ useWhen:
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
-  - text: The application frame itself before the first page loads.
-    use: AppShellSkeleton
+  - text: The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.
+    use: AppShell
 composes:
   - AppShell
   - LoadingState
@@ -55,7 +55,7 @@ Here each team's projects load the first time it is chosen: skeletons in the sha
 
 Choose one indicator by what is loading:
 
-1. **A whole page or route:** the loading bar along the topbar, through `loading` on [AppShell](../components/app-shell.md). It appears after 200 ms, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
+1. **A whole page or route:** the loading bar along the bottom edge of the frame's header, through `loading` on [AppShell.Root](../components/app-shell.md). It appears after 200 ms, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
 2. **Content whose shape is known:** [Skeleton](../components/skeleton.md) placeholders in a `LoadingState`, which names the region once with its `label`.
 3. **A small area, or an update to content already shown:** a [Spinner](../components/spinner.md) with a `label`, beside what it updates.
 4. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.

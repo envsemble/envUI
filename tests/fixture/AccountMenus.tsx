@@ -2,6 +2,8 @@ import { useState } from 'react';
 import {
   AccountMenu,
   AppShell,
+  Sidebar,
+  SidebarTrigger,
   EnvUIProvider,
   Menu,
   NavList,
@@ -14,7 +16,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Settings } from '@envsemble/envui/icons/Settings';
 // Internal: the context of a sidebar showing icons only, without the one AppShell adds around it.
-import { SidebarCompactContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
+import { SidebarRailContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
 const organizations = [
   { id: 'northwind', name: 'Northwind', description: 'Owner' },
@@ -67,13 +69,13 @@ export function AccountMenusFixture() {
             <AccountMenu.ThemeSubmenu value={stored} onValueChange={setStored} closeOnClick />
           </AccountMenu.Root>
         </div>
-        <SidebarCompactContext value>
+        <SidebarRailContext value>
           <div data-testid="rail">
             <AccountMenu.Root name="Priya Shah" aria-label="Rail account">
               <Menu.Item>Profile</Menu.Item>
             </AccountMenu.Root>
           </div>
-        </SidebarCompactContext>
+        </SidebarRailContext>
         <EnvUIProvider dir="rtl">
           {/* Room at the left for the menu and its submenu, which open toward it. */}
           <div dir="rtl" data-testid="rtl" style={{ marginLeft: '30rem', width: '18rem' }}>
@@ -91,21 +93,24 @@ export function AccountMenusFixture() {
 }
 
 /**
- * An AccountMenu with the automatic trigger in an AppShell's sidebar, mounted with
- * ?fixture=account-menu-shell: a row while the sidebar is expanded, the avatar while it shows icons
- * only.
+ * An AccountMenu with the automatic trigger in a frame's sidebar, mounted with
+ * ?fixture=account-menu-shell: a row while the sidebar is expanded, the avatar while it is a rail.
  */
 export function AccountMenuShellFixture() {
   return (
-    <AppShell
-      brand="Overview"
-      title="Overview"
-      navigationLabel="Shell navigation"
-      navigation={
-        <>
-          <NavList.Item icon={<Home />} selected>
-            Overview
-          </NavList.Item>
+    <AppShell.Root>
+      <Sidebar.Root label="Shell navigation">
+        <Sidebar.Header>
+          <SidebarTrigger />
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <NavList.Root>
+            <NavList.Item icon={<Home />} selected>
+              Overview
+            </NavList.Item>
+          </NavList.Root>
+        </Sidebar.Content>
+        <Sidebar.Footer>
           <AccountMenu.Root
             name="Priya Shah"
             description="priya@example.com"
@@ -113,10 +118,12 @@ export function AccountMenuShellFixture() {
           >
             <Menu.Item>Profile</Menu.Item>
           </AccountMenu.Root>
-        </>
-      }
-    >
-      <p>Page content</p>
-    </AppShell>
+        </Sidebar.Footer>
+      </Sidebar.Root>
+      <AppShell.Header>Overview</AppShell.Header>
+      <AppShell.Main>
+        <p>Page content</p>
+      </AppShell.Main>
+    </AppShell.Root>
   );
 }
