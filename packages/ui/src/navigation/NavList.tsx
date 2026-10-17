@@ -15,7 +15,7 @@ import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/Toolti
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
-import { useSidebarCompact } from './internal/SidebarCompact.js';
+import { useSidebarRail } from './internal/SidebarCompact.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { navList, type NavListMessages } from '../foundations/messages/navList.js';
@@ -118,8 +118,8 @@ export type ItemProps = ItemSharedProps &
     | {
         /**
          * Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip
-         * at the item's inline end shows aria-label on hover and keyboard focus. Inside a compact
-         * AppShell sidebar, items with an icon show only it without this prop.
+         * at the item's inline end shows aria-label on hover and keyboard focus. In a
+         * sidebar rail, items with an icon show only it without this prop.
          */
         iconOnly: boolean;
         icon: ReactNode;
@@ -134,11 +134,11 @@ export type ItemProps = ItemSharedProps &
 /**
  * A navigation destination: a native link with href, through the LinkProvider's link component,
  * or a button that changes the view. It shows an optional icon, its label and end content,
- * marks the current destination with selected, and shows only its icon with iconOnly or inside a
- * compact AppShell sidebar. Inside NavList.Root or NavList.Group it renders its own list item.
+ * marks the current destination with selected, and shows only its icon with iconOnly or in a
+ * sidebar rail. Inside NavList.Root or NavList.Group it renders its own list item.
  */
 function Item(props: ItemProps) {
-  const sidebarCompact = useSidebarCompact();
+  const inRail = useSidebarRail();
   const inList = useContext(ListContext);
   const messages = useMessages('navList', navList);
   const {
@@ -152,8 +152,8 @@ function Item(props: ItemProps) {
     children,
     ...nativeProps
   } = props;
-  // Inside a compact AppShell sidebar, items with an icon show only the icon.
-  const iconOnly = requestedIconOnly || (sidebarCompact && icon != null);
+  // In a sidebar rail, items with an icon show only the icon.
+  const iconOnly = requestedIconOnly || (inRail && icon != null);
   const accessibleLabel =
     props['aria-label'] ?? (iconOnly && typeof children === 'string' ? children : undefined);
   // An icon-only item shows its end content as a dot, so a name it takes from its label, which
@@ -226,7 +226,7 @@ export type RootProps = ComponentPropsWithRef<'ul'>;
 
 /**
  * A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark
- * of its own: place it in a nav element, or in a region that is one, such as AppShell's sidebar.
+ * of its own: place it in a nav element, or in a region that is one, such as a Sidebar.Root.
  * Name it with aria-label or aria-labelledby when the page has more than one.
  */
 function Root({ className, children, ...props }: RootProps) {

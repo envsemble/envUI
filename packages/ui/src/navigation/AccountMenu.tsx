@@ -16,7 +16,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import * as Menu from './Menu.js';
 import type { OrganizationSwitcherItem } from './OrganizationSwitcher.js';
-import { useInSidebar, useSidebarCompact } from './internal/SidebarCompact.js';
+import { useInSidebar, useSidebarRail } from './internal/SidebarCompact.js';
 import { OrganizationOptions } from './internal/OrganizationOptions.js';
 
 export interface RootProps
@@ -74,7 +74,7 @@ function Root({
   ...menuProps
 }: RootProps) {
   const messages = useMessages('accountMenu', accountMenu);
-  const inRail = useSidebarCompact();
+  const inRail = useSidebarRail();
   // A rail is a sidebar too, whether or not its sidebar says so.
   const inSidebar = useInSidebar() || inRail;
   const row = trigger === 'row' || (trigger === 'auto' && inSidebar && !inRail);
