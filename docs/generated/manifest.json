@@ -13905,7 +13905,7 @@
           "name": "label",
           "type": "string",
           "required": false,
-          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar; on a sidebar that isn't resizable, Collapse sidebar or Expand sidebar, as its trigger",
+          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar; on a sidebar that isn't resizable, the sidebar's label",
           "description": "The handle's name."
         }
       ],

@@ -125,6 +125,8 @@ export interface HandleScope {
   max: number;
   remPixels: number;
   label: string;
+  /** The sidebar's label, which names a handle that only collapses and expands it. */
+  pane: string;
   setWidth(pixels: number, committed: boolean): void;
   toggle(): void;
   setResizing(resizing: boolean): void;
@@ -175,7 +177,8 @@ const cssString = (value: string) => `"${value.replace(/["\\]/g, '\\$&')}"`;
 /**
  * Hides the triggers of a sidebar with nothing to toggle where it has nothing (collapsible none
  * above the breakpoint, mobile none below it), from the server's markup on, before the sidebar
- * registers; the triggers find it by aria-controls. A hoisted style, written once per sidebar.
+ * registers; the triggers find it by aria-controls, and one with hidden={false} stays shown. A
+ * style in place, not a hoisted one, which React would keep after the sidebar changes or goes.
  */
 function TriggerStyle({
   ids,
@@ -194,19 +197,12 @@ function TriggerStyle({
   ];
   if (queries.length === 0) return null;
   const selector = ids
-    .map((id) => `.env-sidebar-trigger[aria-controls=${cssString(id)}]`)
+    .map((id) => `.env-sidebar-trigger[aria-controls=${cssString(id)}]:not([data-keep-shown])`)
     .join(',');
   const css =
     '@layer env.reset, env.tokens, env.base, env.components, env.utilities;' +
     `@layer env.components{${queries.map((query) => `@media ${query}{${selector}{display:none}}`).join('')}}`;
-  return (
-    <style
-      href={`env-sidebar-trigger-${ids[0]!.replace(/\s+/g, '_')}-${collapsible}-${mobile}-${breakpoint}`}
-      precedence="env"
-    >
-      {css}
-    </style>
-  );
+  return <style>{css}</style>;
 }
 
 /** Whether the children include a Sidebar.Handle, so none is added. */
@@ -335,6 +331,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
       max: max * remPixels,
       remPixels,
       label: resizeLabel ?? messages.resizeSidebar,
+      pane: label,
       setWidth: (pixels, committed) => store.setWidth(side, pixels / remPixels, committed),
       toggle: () =>
         state.canDock ? store.setOpen(side, !state.open, 'handle') : store.toggle(side, 'handle'),
@@ -350,6 +347,7 @@ export function SidebarRegion(props: SidebarRegionProps) {
       max,
       remPixels,
       resizeLabel,
+      label,
       messages,
       store,
       state,

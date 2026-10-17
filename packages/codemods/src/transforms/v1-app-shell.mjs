@@ -29,11 +29,18 @@
 // `const { closeNarrowSidebar } = useAppShell()` becomes `const { dismiss: closeNarrowSidebar } =
 // useSidebar()`; other uses of closeNarrowSidebar are reported.
 //
-// Elements are matched by their import from @envsemble/envui after v1-names, which renames
-// AppShell to AppShell.Root; an element already in its 1.0 form is left alone. An element that
-// spreads props is reported with the entry's `report`.
+// Elements are matched by their import from @envsemble/envui, under an alias or through a namespace
+// import. `<AppShell>` itself, which 1.0 can't render (AppShell is a namespace of parts), is 0.x's.
+// `<AppShell.Root>` is 1.0's, or a 0.x AppShell that v1-names renamed: it is rewritten only with a
+// prop that only 0.x took, such as navigation (not title, which 1.0's root takes as a div's);
+// without one it is left as it is, and reported with `reports.ambiguous` where no frame part is
+// inside it, as 0.x's `<AppShell loading>{page}</AppShell>` after v1-names. An element that spreads
+// props is reported with the entry's `report`.
+//
+// A 0.x AppShell with nothing for the sidebar (no navigation, sidebarContent, brand, context or
+// sidebar props) gets no Sidebar.Root and no trigger, rather than an empty Navigation sidebar.
 import { loadMap } from '../map.mjs';
-import { componentResolver, envuiImports, literalKey } from '../elements.mjs';
+import { componentResolver, envuiImports, jsxPath, literalKey } from '../elements.mjs';
 import {
   createReporter,
   indentsWithTabs,
@@ -66,8 +73,8 @@ const legacyProps = [
   'sidebarMaxWidth',
 ];
 
-/** Props both forms take: an element with only these and no frame parts inside is in its 0.x form. */
-const sharedProps = ['loading', 'className'];
+/** 0.x's props that 1.0's AppShell.Root takes too, so they don't tell the forms apart. */
+const sharedLegacyProps = ['title'];
 
 /**
  * The output of a file indented with tabs, its new lines indented with tabs too: recast reprints a
@@ -272,7 +279,7 @@ export default function transform(file, api, options = {}) {
       });
 
   /** Rewrites one AppShell or AppShellSkeleton element; returns whether it changed. */
-  function rewrite(path, component, rule, skeleton) {
+  function rewrite(path, component, rule, skeleton, bare) {
     const { node } = path;
     const attributes = node.openingElement.attributes;
     const where = component.name;
@@ -281,15 +288,19 @@ export default function transform(file, api, options = {}) {
       reporter.warn(node, `${where}: ${rule.report}`);
       return false;
     }
-    // Without a 0.x prop, an element with only props both forms take, and none of 1.0's frame
-    // parts inside, is in its 0.x form, such as `<AppShell loading>{page}</AppShell>`.
+    // AppShell.Root without a prop only 0.x took is 1.0's, or a 0.x AppShell renamed by v1-names:
+    // it is left alone, and reported where nothing inside it says it is 1.0's.
     if (
       !skeleton &&
-      !legacyProps.some((prop) => attributeIndex(attributes, prop) !== -1) &&
-      (!attributes.every((attribute) => sharedProps.includes(attribute.name.name)) ||
-        hasFrameParts(path))
-    )
+      !bare &&
+      !legacyProps.some(
+        (prop) => !sharedLegacyProps.includes(prop) && attributeIndex(attributes, prop) !== -1,
+      )
+    ) {
+      if (!hasFrameParts(path))
+        reporter.warn(node, `${where}: ${reports.ambiguous ?? rule.report}`);
       return false;
+    }
 
     // Where the mark and the context go follows topbar.
     const topbar = take(attributes, 'topbar');
@@ -389,17 +400,33 @@ export default function transform(file, api, options = {}) {
       items = take(attributes, 'navigationItems');
     }
 
+    // A shell with nothing for the sidebar gets none, nor a trigger to toggle it.
+    const hasSidebar =
+      skeleton ||
+      [
+        navigation,
+        navigationLabel,
+        sidebarContent,
+        brand,
+        context,
+        expandLabel,
+        collapseLabel,
+      ].some(Boolean) ||
+      sidebarAttributes.length > 0;
+
     // The trigger, with the mark, and the context beside it.
     const triggerAttributes = [];
     if (brand) triggerAttributes.push(renamed(brand, 'mark'));
     if (expandLabel) triggerAttributes.push(expandLabel);
     if (collapseLabel) triggerAttributes.push(collapseLabel);
-    const trigger = element(partName(component, 'SidebarTrigger'), triggerAttributes);
+    const trigger = hasSidebar
+      ? element(partName(component, 'SidebarTrigger'), triggerAttributes)
+      : null;
     const beside = context ? childrenOf(context) : [];
 
     // The sidebar.
     const sidebarChildren = [];
-    if (!full)
+    if (!full && hasSidebar)
       sidebarChildren.push(
         element(partName(component, 'Sidebar.Header'), [], [trigger, ...beside]),
       );
@@ -423,20 +450,23 @@ export default function transform(file, api, options = {}) {
           childrenOf(sidebarContent),
         ),
       );
-    let sidebarLabel = navigationLabel && renamed(navigationLabel, 'label');
-    if (!sidebarLabel) {
-      sidebarLabel = j.jsxAttribute(j.jsxIdentifier('label'), j.stringLiteral('Navigation'));
-      reporter.warn(node, `${where}: ${reports.label ?? rule.report}`);
+    let sidebar;
+    if (hasSidebar) {
+      let sidebarLabel = navigationLabel && renamed(navigationLabel, 'label');
+      if (!sidebarLabel) {
+        sidebarLabel = j.jsxAttribute(j.jsxIdentifier('label'), j.stringLiteral('Navigation'));
+        reporter.warn(node, `${where}: ${reports.label ?? rule.report}`);
+      }
+      sidebar = element(
+        partName(component, 'Sidebar.Root'),
+        [sidebarLabel, ...sidebarAttributes],
+        sidebarChildren,
+      );
     }
-    const sidebar = element(
-      partName(component, 'Sidebar.Root'),
-      [sidebarLabel, ...sidebarAttributes],
-      sidebarChildren,
-    );
 
     // The header.
     const headerAttributes = [];
-    if (full)
+    if (full && hasSidebar)
       headerAttributes.push(
         j.jsxAttribute(
           j.jsxIdentifier('start'),
@@ -465,7 +495,7 @@ export default function transform(file, api, options = {}) {
     const main = element(partName(component, 'AppShell.Main'), [], page);
     const frameChildren = [
       ...(skeleton ? [] : [element(partName(component, 'AppShell.SkipLinks'))]),
-      sidebar,
+      ...(sidebar ? [sidebar] : []),
       header,
       main,
     ];
@@ -493,7 +523,11 @@ export default function transform(file, api, options = {}) {
     const component = componentOf(path.get('openingElement'));
     const rule = component && component.entry.structure.get(component.name);
     if (!rule || rule.transform !== 'v1-app-shell') continue;
-    if (rewrite(path, component, rule, component.name === 'AppShellSkeleton')) changed = true;
+    const skeleton = component.name === 'AppShellSkeleton';
+    // `<AppShell>` or `<ui.AppShell>` itself, without a part: 0.x's element.
+    const names = jsxPath(path.node.openingElement.name);
+    const bare = names.length === (component.namespace ? 2 : 1);
+    if (rewrite(path, component, rule, skeleton, bare)) changed = true;
   }
 
   // const { closeNarrowSidebar } = useAppShell() becomes useSidebar().dismiss.

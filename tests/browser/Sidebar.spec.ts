@@ -284,6 +284,57 @@ test.describe('Remembered state', () => {
   });
 });
 
+test.describe('A trigger whose sidebar had nothing to toggle', () => {
+  test.use({ viewport: { width: 1100, height: 700 } });
+
+  const frame = (sidebar: string) =>
+    `import {createElement as h, useState} from 'react';
+    import {AppShell, Sidebar, SidebarTrigger} from '@envsemble/envui';
+    function Frame() {
+      const [rail, setRail] = useState(false);
+      return h(AppShell.Root, null,
+        h(AppShell.Header, {start: h(SidebarTrigger, {'data-testid': 'trigger'})},
+          h('button', {type: 'button', onClick: () => setRail(true)}, 'Make it a rail'),
+          h(SidebarTrigger, {'data-testid': 'shown', hidden: false})),
+        ${sidebar},
+        h(AppShell.Main, null, 'Page'));
+    }
+    export const element = h(Frame);`;
+
+  for (const [name, sidebar] of [
+    [
+      'shows again when its collapsible changes from none to rail',
+      `h(Sidebar.Root, {label: 'Primary', collapsible: rail ? 'rail' : 'none'},
+        h(Sidebar.Content, null, 'Content'))`,
+    ],
+    [
+      'shows again when a rail sidebar takes the place of one on the same side',
+      `rail
+        ? h(Sidebar.Root, {key: 'rail', label: 'Rail'}, h(Sidebar.Content, null, 'Content'))
+        : h(Sidebar.Root, {key: 'fixed', label: 'Fixed', collapsible: 'none'},
+            h(Sidebar.Content, null, 'Content'))`,
+    ],
+  ] as const)
+    test(`it ${name}`, async ({ page }) => {
+      const hydrate = await openServerMarkup(page, frame(sidebar), { hydrate: true });
+      const trigger = page.getByTestId('trigger');
+      await expect(trigger).toBeHidden();
+      expect(await hydrate()).toEqual([]);
+      await expect(trigger).toBeHidden();
+      // hidden={false} keeps a trigger shown even with nothing to toggle.
+      await expect(page.getByTestId('shown')).toBeVisible();
+      await page.getByRole('button', { name: 'Make it a rail' }).click();
+      await expect(trigger).toBeVisible();
+      await expect(page.getByTestId('shown')).toBeVisible();
+      const expanded = await trigger.getAttribute('aria-expanded');
+      await trigger.click();
+      await expect(trigger).toHaveAttribute(
+        'aria-expanded',
+        expanded === 'true' ? 'false' : 'true',
+      );
+    });
+});
+
 test.describe('Before hydration', () => {
   test.use({ javaScriptEnabled: false });
 
@@ -444,7 +495,7 @@ test.describe('Sidebar.Handle', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(sidebars);
     const filters = page.getByRole('navigation', { name: 'Filters', includeHidden: true });
-    const handle = filters.getByRole('separator', { name: 'Collapse sidebar' });
+    const handle = filters.getByRole('separator', { name: 'Filters' });
     await expect(handle).toHaveAttribute('aria-valuetext', 'Expanded');
     await expect(handle).toHaveAttribute('aria-controls', 'filters');
     await handle.focus();
@@ -452,7 +503,7 @@ test.describe('Sidebar.Handle', () => {
     await expect(filters).toHaveAttribute('data-state', 'collapsed');
     const collapsed = filters.getByRole('separator', { includeHidden: true });
     await expect(collapsed).toHaveAttribute('aria-valuetext', 'Collapsed');
-    await expect(collapsed).toHaveAttribute('aria-label', 'Expand sidebar');
+    await expect(collapsed).toHaveAttribute('aria-label', 'Filters');
   });
 
   test('the arrow keys follow the text direction', async ({ page }) => {
