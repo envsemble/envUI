@@ -64,8 +64,8 @@ const testFile =
   /(?:^|[\\/])(?:__tests__|tests|e2e|playwright|cypress)[\\/]|\.(?:test|spec|e2e)\.[cm]?[jt]sx?$/i;
 
 /**
- * Whether `path` is a test file, judged by its path below the folder it was found in: the deepest
- * of `roots`, the folders the CLI scans, that holds it, or else the nearest folder with a
+ * Whether `path` is a test file, judged by its path below its project: the deepest of `roots`, the
+ * projects of the folders the CLI scans, that holds it, or else the nearest folder with a
  * package.json, so the folders above the project, and the working folder, don't count.
  */
 export function isTestFile(path, roots = []) {
@@ -84,7 +84,7 @@ export function isTestFile(path, roots = []) {
 
 const projectRoots = new Map();
 /** The nearest folder at or above `folder` that has a package.json, or undefined. */
-function projectRoot(folder) {
+export function projectRoot(folder) {
   if (!projectRoots.has(folder)) {
     const parent = dirname(folder);
     projectRoots.set(

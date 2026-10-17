@@ -190,3 +190,21 @@ test('the README has each section once, with one per transform', () => {
     'a paragraph appears twice',
   );
 });
+
+test('v1-classes tells test files by their path below their project, wherever the run starts', () => {
+  const app = join(project, 'tests', 'app');
+  mkdirSync(join(app, 'src'), { recursive: true });
+  mkdirSync(join(app, 'e2e'), { recursive: true });
+  writeFileSync(join(app, 'package.json'), '{}');
+  const source = "find('.env-app-sidebar');\n";
+  writeFileSync(join(app, 'src', 'find.ts'), source);
+  writeFileSync(join(app, 'e2e', 'find.ts'), source);
+  // The project's own folder is in a `tests` folder, which makes none of its files a test file.
+  assert.equal(cli('v1-classes', 'tests/app').status, 0);
+  assert.equal(read(join(app, 'src', 'find.ts')), source);
+  assert.equal(read(join(app, 'e2e', 'find.ts')), "find('.env-sidebar');\n");
+  // A test folder scanned on its own is still one.
+  writeFileSync(join(app, 'e2e', 'find.ts'), source);
+  assert.equal(cli('v1-classes', 'tests/app/e2e').status, 0);
+  assert.equal(read(join(app, 'e2e', 'find.ts')), "find('.env-sidebar');\n");
+});
