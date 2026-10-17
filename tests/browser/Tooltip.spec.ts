@@ -1,7 +1,17 @@
-import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const tooltips = `${fixtureUrl}/?fixture=tooltips`;
+
+/** The axe violations of the menu and popover triggers and whatever popup is open. */
+async function overlayViolations(page: Page) {
+  const { violations } = await new AxeBuilder({ page })
+    .include('[data-testid="overlay-triggers"]')
+    .include('[role="tooltip"], [role="menu"], [role="dialog"]')
+    .analyze();
+  return violations.map(({ id, nodes }) => `${id}: ${nodes.length}`);
+}
 
 test.describe('Tooltip', () => {
   test('describes a named control while open, and adds nothing that repeats its name', async ({
@@ -126,7 +136,8 @@ test.describe('Tooltip', () => {
   test('a Kbd in a tooltip takes key caps for its dark fill', async ({ page }) => {
     await page.goto(tooltips);
     await page.getByRole('button', { name: 'Save' }).hover();
-    const tooltip = page.getByTestId('shortcut-tooltip');
+    // popupClassName reaches the popup.
+    const tooltip = page.locator('[role="tooltip"].fixture-shortcut-tooltip');
     await expect(tooltip).toBeVisible();
     const colors = await tooltip.evaluate((element) => {
       const key = element.querySelector('.env-kbd')!;
@@ -139,5 +150,134 @@ test.describe('Tooltip', () => {
     // The key's label is the tooltip's own light text, on no fill of its own.
     expect(colors.key).toBe(colors.tooltip);
     expect(colors.keyFill).toBe('rgba(0, 0, 0, 0)');
+  });
+
+  test('names an icon-only menu trigger, which keeps its menu, ARIA and focus', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const more = page.getByRole('button', { name: 'More actions' });
+    const menu = page.getByRole('menu', { name: 'Row actions' });
+    const tooltip = page.getByRole('tooltip');
+    const counts = page.getByTestId('overlay-counts');
+    // The menu button's props and ref reach the button through the Tooltip.
+    await expect(more).toHaveAttribute('aria-haspopup', 'menu');
+    await expect(more).not.toHaveAttribute('aria-expanded', 'true');
+
+    // Hover: the tooltip shows the button's name, so it describes nothing.
+    await more.hover();
+    await expect(tooltip).toHaveText('More actions');
+    await expect(more).not.toHaveAttribute('aria-describedby');
+    expect(await overlayViolations(page)).toEqual([]);
+
+    // A press opens the menu once and closes the tooltip, which stays closed while the menu is open.
+    await more.click();
+    await expect(menu).toBeVisible();
+    await expect(tooltip).toHaveCount(0);
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    await expect(more).toHaveAttribute('aria-controls', (await menu.getAttribute('id'))!);
+    await expect(counts).toHaveText('1 presses, 1 menu opens, 0 popover opens');
+    // The menu opens beside the button, which the Tooltip's ref reached.
+    const [button, popup] = [(await more.boundingBox())!, (await menu.boundingBox())!];
+    expect(popup.y).toBeGreaterThanOrEqual(button.y + button.height - 1);
+    expect(await overlayViolations(page)).toEqual([]);
+    await more.hover();
+    await expect(menu).toBeVisible();
+    await expect(tooltip).toHaveCount(0);
+
+    // Esc closes the menu first and returns focus to the button.
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
+    await expect(more).toBeFocused();
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await page.mouse.move(1, 1);
+    await page.keyboard.press('Escape');
+    await expect(tooltip).toHaveCount(0);
+
+    // Keyboard: focus opens the tooltip at once; Enter opens the menu in its place, Esc closes the
+    // menu and focus returns to the button.
+    await page.getByRole('button', { name: 'Filters' }).focus();
+    await page.keyboard.press('Shift+Tab');
+    await expect(more).toBeFocused();
+    await expect(tooltip).toHaveText('More actions');
+    await page.keyboard.press('Enter');
+    await expect(menu).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'Rename' })).toBeFocused();
+    await expect(tooltip).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveCount(0);
+    await expect(more).toBeFocused();
+    await expect(counts).toHaveText('2 presses, 2 menu opens, 0 popover opens');
+  });
+
+  test('around a popover, describes its named icon-only trigger, which keeps its popover', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const filters = page.getByRole('button', { name: 'Filters' });
+    const popover = page.getByRole('dialog', { name: 'Filters' });
+    const tooltip = page.getByRole('tooltip');
+    await expect(filters).toHaveAttribute('aria-haspopup', 'dialog');
+    await expect(filters).toHaveAttribute('aria-expanded', 'false');
+
+    // Its own name stays; the tooltip describes it while open.
+    await filters.hover();
+    await expect(tooltip).toHaveText('Show only some items');
+    await expect(filters).toHaveAccessibleName('Filters');
+    await expect(filters).toHaveAccessibleDescription('Show only some items');
+    expect(await overlayViolations(page)).toEqual([]);
+
+    await filters.click();
+    await expect(popover).toBeVisible();
+    await expect(tooltip).toHaveCount(0);
+    await expect(filters).toHaveAttribute('aria-expanded', 'true');
+    await expect(filters).toHaveAttribute('aria-controls', (await popover.getAttribute('id'))!);
+    await expect(page.getByTestId('overlay-counts')).toHaveText(
+      '0 presses, 0 menu opens, 1 popover opens',
+    );
+    await expect(popover.getByRole('button', { name: 'Only open items' })).toBeFocused();
+    expect(await overlayViolations(page)).toEqual([]);
+
+    // Esc closes the popover first and returns focus to the button.
+    await page.keyboard.press('Escape');
+    await expect(popover).toHaveCount(0);
+    await expect(filters).toBeFocused();
+    await expect(filters).toHaveAttribute('aria-expanded', 'false');
+
+    // Focus from the keyboard opens the tooltip; Enter opens the popover in its place.
+    await page.mouse.move(1, 1);
+    await page.getByRole('button', { name: 'More actions' }).focus();
+    await page.keyboard.press('Tab');
+    await expect(filters).toBeFocused();
+    await expect(tooltip).toHaveText('Show only some items');
+    await page.keyboard.press('Enter');
+    await expect(popover).toBeVisible();
+    await expect(tooltip).toHaveCount(0);
+    await page.keyboard.press('Escape');
+    await expect(popover).toHaveCount(0);
+    await expect(filters).toBeFocused();
+  });
+
+  test.describe('on a touch screen', () => {
+    test.use({ hasTouch: true });
+
+    test('a tap opens the menu or popover and no tooltip', async ({ page }) => {
+      await page.goto(tooltips);
+      const tooltip = page.getByRole('tooltip');
+      await page.getByRole('button', { name: 'More actions' }).tap();
+      await expect(page.getByRole('menu', { name: 'Row actions' })).toBeVisible();
+      await expect(page.getByTestId('overlay-counts')).toHaveText(
+        '1 presses, 1 menu opens, 0 popover opens',
+      );
+      await expect(tooltip).toHaveCount(0);
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('menu')).toHaveCount(0);
+
+      await page.getByRole('button', { name: 'Filters' }).tap();
+      await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+      // Past the tooltip's delay of 0 and its opening animation, it still hasn't opened.
+      await page.waitForTimeout(300);
+      await expect(tooltip).toHaveCount(0);
+    });
   });
 });

@@ -17,9 +17,10 @@ export default function SaveSection() {
   const [status, setStatus] = useState('');
   const nameField = useRef<HTMLInputElement>(null);
   const timer = useRef<number>(undefined);
+  // Whether the section waits for the save it sent; Cancel stops waiting.
+  const waiting = useRef(false);
   useEffect(() => () => window.clearTimeout(timer.current), []);
-  const changed =
-    draft.name !== saved.name || draft.email !== saved.email || draft.timeZone !== saved.timeZone;
+  const changed = !same(draft, saved);
 
   const edit = (patch: Partial<Profile>) => {
     setDraft((current) => ({ ...current, ...patch }));
@@ -30,26 +31,46 @@ export default function SaveSection() {
     if (!draft.name.trim()) {
       const message = 'Enter your display name';
       setNameError(message);
-      // Focus may already be in the field, where focusing it again reads nothing, so the status
-      // says the error too.
-      setStatus(message);
-      nameField.current?.focus();
+      // Focusing the field reads its error. After Enter in the field, focus is already there and
+      // focusing it again reads nothing, so only then does the status say the error.
+      if (document.activeElement === nameField.current) setStatus(message);
+      else {
+        setStatus('');
+        nameField.current?.focus();
+      }
       return;
     }
     setStatus('');
     setSaving(true);
+    waiting.current = true;
+    const before = saved;
+    const sent = draft;
     // The profile is saved on a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => {
-      setSaving(false);
-      setSaved(draft);
-      setStatus('Profile saved.');
+      // The server saved what was sent, whether or not the section still waits for it.
+      setSaved(sent);
+      if (waiting.current) {
+        waiting.current = false;
+        setSaving(false);
+        setStatus('Profile saved.');
+        return;
+      }
+      // Cancel stopped waiting and put the old values back: show what the server saved instead,
+      // unless people have edited since.
+      setDraft((current) => (same(current, before) ? sent : current));
     }, 1000);
   };
   const cancel = () => {
-    // Cancel during a save stops it, so the edits it was saving are discarded too.
-    window.clearTimeout(timer.current);
-    setSaving(false);
     setNameError(undefined);
+    if (saving) {
+      // A save already sent can't be called back: Cancel stops waiting for it, and the section
+      // shows what the server reports once it answers.
+      waiting.current = false;
+      setSaving(false);
+      setDraft(saved);
+      setStatus('Stopped waiting for the save.');
+      return;
+    }
     // With nothing to put back, Cancel has nothing to say.
     if (!changed) {
       setStatus('');
@@ -119,6 +140,9 @@ export default function SaveSection() {
     </Surface>
   );
 }
+
+const same = (a: Profile, b: Profile) =>
+  a.name === b.name && a.email === b.email && a.timeZone === b.timeZone;
 
 const initialProfile: Profile = {
   name: 'Priya Shah',

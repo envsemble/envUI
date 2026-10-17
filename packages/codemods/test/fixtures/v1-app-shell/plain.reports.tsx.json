@@ -1,3 +1,1 @@
-[
-  "line 5: AppShell.Root: Sidebar.Root needs a label, and the AppShell had no navigationLabel: the codemod named its sidebar Navigation; name it by its content."
-]
+[]

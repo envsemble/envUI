@@ -56,6 +56,10 @@
   /* Motion: the scrim fades in and out. */
   transition: opacity var(--env-motion-duration-slow) var(--env-motion-ease-enter);
 }
+.env-confirm-dialog-form {
+  /* ConfirmDialog's form, there so Enter in a field confirms; it lays out as if it weren't. */
+  display: contents;
+}
 .env-dialog-positioner {
   box-sizing: border-box;
   min-inline-size: 0;

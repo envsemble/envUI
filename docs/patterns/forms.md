@@ -68,7 +68,7 @@ Use this pattern to ask for information in a form and get it right on the first 
 
 ## States and behaviour
 
-- **Validate on submit first.** Check every field when people submit. If any is wrong, show each field's `error` and the error summary, and move focus to the summary. A form with one field, or one that only checks a single field, can move focus straight to it instead, as the lead example does; then say the error in a status as well, since after Enter in the field focus is already there, and focusing it again reads nothing.
+- **Validate on submit first.** Check every field when people submit. If any is wrong, show each field's `error` and the error summary, and move focus to the summary. A form with one field, or one that only checks a single field, can move focus straight to it instead, as the lead example does. When focus is already in that field, as after Enter in it, focusing it again reads nothing, so say the error in a status instead; otherwise only move focus, so the error isn't read twice.
 - **Then on blur.** Once people have typed in a field, check it as they leave it.
 - **Never while typing.** An error doesn't appear while people type, but it goes as soon as the value is fixed: a field that was wrong is checked on every change, only to clear it.
 - **Keep submit enabled.** Never disable the submit button to signal invalid input; people can't tell why it doesn't work, and the button can't be focused to find out. Submit, and say what is wrong.
@@ -106,7 +106,7 @@ Use this pattern to ask for information in a form and get it right on the first 
 
 ### Focus and keyboard
 
-Tab moves through the fields in the order they show, and Enter in a text field submits the form. When a submit is refused, focus moves to the error summary, whose content is read as it takes focus; Tab then reaches its links, and each link moves focus to its field rather than only scrolling to it. Where a form moves focus straight to an invalid field instead, the field reads its label and its error as focus arrives. After Enter in that field, focus is already there and nothing is read, so the status beside the actions says the error too. After a failure of the system, focus moves to the Alert at the top. After success, focus stays on the submit button and the status is announced.
+Tab moves through the fields in the order they show, and Enter in a text field submits the form. When a submit is refused, focus moves to the error summary, whose content is read as it takes focus; Tab then reaches its links, and each link moves focus to its field rather than only scrolling to it. Where a form moves focus straight to an invalid field instead, the field reads its label and its error as focus arrives. After Enter in that field, focus is already there and nothing is read, so only then does the status beside the actions say the error; after a click on the submit button, moving focus reads it, and the status stays empty. After a failure of the system, focus moves to the Alert at the top. After success, focus stays on the submit button and the status is announced.
 
 ### envUI provides
 

@@ -21,10 +21,13 @@ function InviteForm() {
       // A problem with a field shows on the field, never in a toast.
       const message = 'Enter an email address like name@example.com';
       setError(message);
-      // After Enter in the field, focus is already there and focusing it again reads nothing, so
-      // the status says the error too.
-      setStatus(message);
-      field.current?.focus();
+      // Focusing the field reads its error. After Enter in the field, focus is already there and
+      // focusing it again reads nothing, so only then does the status say the error.
+      if (document.activeElement === field.current) setStatus(message);
+      else {
+        setStatus('');
+        field.current?.focus();
+      }
       return;
     }
     setStatus('');

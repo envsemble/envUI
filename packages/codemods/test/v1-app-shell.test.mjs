@@ -17,7 +17,10 @@ for (const fixture of fixtures('v1-app-shell')) {
     assert.deepEqual(
       again.reports,
       result.reports.filter(
-        (report) => report.endsWith(appShell.report) || report.includes('closeNarrowSidebar is'),
+        (report) =>
+          report.endsWith(appShell.report) ||
+          report.endsWith(appShell.reports.ambiguous) ||
+          report.includes('closeNarrowSidebar is'),
       ),
     );
   });

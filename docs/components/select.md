@@ -91,7 +91,7 @@ A select chooses one value from a list that stays collapsed until people open it
 - Name the select with a short noun phrase in sentence case, without a colon: "Role", "Sort by", "E-mail digest".
 - Give options short labels that start with the word that sets them apart, so typing finds them: "Daily", "Weekly", "Never".
 - Order options in their natural order, such as by size or frequency, or alphabetically where there is none.
-- Use a placeholder that says what to do, such as "Choose an owner", only where nothing is chosen yet; it is not the label.
+- Use a placeholder only to name the choice to make, such as "Choose an owner", where nothing is chosen yet. It is not the label, and it never carries instructions about the format or anything else that must stay; that goes in the description.
 - Say in a disabled option's label, or in the description, why it is unavailable: "Public (turned off by your administrator)".
 - Write an error that says what to do: "Choose an owner to continue."
 

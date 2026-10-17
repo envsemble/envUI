@@ -50,7 +50,11 @@ export interface ConfirmDialogProps
   title: ReactNode;
   /** What confirming does and whether it can be undone; it describes the dialog. */
   description?: ReactNode;
-  /** More content between the heading and the actions, such as what else the action affects. */
+  /**
+   * More content between the heading and the actions, such as what else the action affects, or the
+   * one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field
+   * confirms as the confirm button does, through onConfirm.
+   */
   children?: ReactNode;
   /** The confirm button's label: a verb that names the consequence, such as Delete project. */
   confirmLabel: string;
@@ -67,7 +71,8 @@ export interface ConfirmDialogProps
    */
   tone?: 'neutral' | 'danger';
   /**
-   * Runs the action when the confirm button is pressed. The dialog closes when it returns, or,
+   * Runs the action when the confirm button is pressed, or Enter is pressed in a field in the
+   * dialog. The dialog closes when it returns, or,
    * when it returns a promise, once the promise resolves; while it runs, the confirm button is
    * pending and nothing dismisses the dialog. It runs once per opening: further presses, such as
    * the second click of a double-click, are ignored until it fails or the dialog opens again. A
@@ -199,26 +204,40 @@ export function ConfirmDialog({
               >
                 <DialogContent>
                   <DialogHeader title={title} description={description} />
-                  {children}
-                  {error != null && (
-                    <Alert tone="danger" announce>
-                      {error}
-                    </Alert>
-                  )}
-                  <DialogActions>
-                    <DialogClose ref={cancel} disabled={pending}>
-                      {cancelLabel ?? messages.cancel}
-                    </DialogClose>
-                    <Button
-                      ref={confirm}
-                      variant="primary"
-                      tone={tone}
-                      pending={pending}
-                      onClick={run}
-                    >
-                      {confirmLabel}
-                    </Button>
-                  </DialogActions>
+                  {/* A form, so Enter in a field in children confirms through the same run as the
+                      confirm button, its submit button: pending, guarded and kept open on failure.
+                      It lays out as if it weren't there. */}
+                  <form
+                    className="env-confirm-dialog-form"
+                    noValidate
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      // The dialog is portalled, but React events still bubble to a form around it.
+                      event.stopPropagation();
+                      void run();
+                    }}
+                  >
+                    {children}
+                    {error != null && (
+                      <Alert tone="danger" announce>
+                        {error}
+                      </Alert>
+                    )}
+                    <DialogActions>
+                      <DialogClose ref={cancel} disabled={pending}>
+                        {cancelLabel ?? messages.cancel}
+                      </DialogClose>
+                      <Button
+                        ref={confirm}
+                        variant="primary"
+                        tone={tone}
+                        pending={pending}
+                        type="submit"
+                      >
+                        {confirmLabel}
+                      </Button>
+                    </DialogActions>
+                  </form>
                 </DialogContent>
               </BaseAlertDialog.Popup>
             </div>

@@ -5850,6 +5850,12 @@
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
+          "name": "MenuTrigger",
+          "title": "Menu trigger",
+          "description": "An icon-only button that opens a menu or a popover has a tooltip too: the Tooltip is the menu's `trigger`, and passes the menu button's props and ref on to the IconButton. A press opens the menu and closes the tooltip, which stays closed while the menu is open.",
+          "file": "docs/examples/tooltip/MenuTrigger.tsx"
+        },
+        {
           "name": "DisabledReason",
           "title": "Disabled control",
           "description": "A disabled button keeps its tooltip, through a focusable wrapper. The text below the button says the same for people who can't see the tooltip.",
@@ -6752,7 +6758,7 @@
         {
           "name": "TypeToConfirm",
           "title": "Type to confirm",
-          "description": "Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field deletes once the name matches.",
+          "description": "Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field confirms as the button does.",
           "file": "docs/examples/destructive-actions/TypeToConfirm.tsx"
         },
         {
@@ -7099,7 +7105,7 @@
         {
           "name": "ShowMore",
           "title": "Show all",
-          "description": "The list shows its five most recent items; \"Show all 12\" shows the rest, and pressing it again hides them. The button keeps its place, its label and focus, and `aria-expanded` says which state it is in.",
+          "description": "The list shows its five most recent items; \"Show all 12\" shows the rest, and pressing it again hides them. The button keeps its place and focus; its label becomes \"Show fewer\", and `aria-expanded` says which state it is in.",
           "file": "docs/examples/progressive-disclosure/ShowMore.tsx"
         },
         {
@@ -9226,7 +9232,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content between the heading and the actions, such as what else the action affects."
+          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm."
         },
         {
           "name": "confirmLabel",
@@ -9252,7 +9258,7 @@
           "name": "onConfirm",
           "type": "() => void | Promise<void>",
           "required": true,
-          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
+          "description": "Runs the action when the confirm button is pressed, or Enter is pressed in a field in the dialog. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
         },
         {
           "name": "error",
@@ -13905,7 +13911,7 @@
           "name": "label",
           "type": "string",
           "required": false,
-          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar; on a sidebar that isn't resizable, Collapse sidebar or Expand sidebar, as its trigger",
+          "default": "the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's messages.appShell.resizeSidebar; on a sidebar that isn't resizable, the sidebar's label",
           "description": "The handle's name."
         }
       ],
@@ -15729,7 +15735,7 @@
     "Tooltip": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed. className, style, ref and data attributes go to the tooltip's popup.",
+      "description": "A short label beside a control, shown while the pointer rests on it or it has keyboard focus, such as an icon-only button's name or why a control is disabled. It closes on Esc and when the control is pressed, and stays closed while the control's own popup, such as a menu, is open. Native props and ref go to the control, so a Tooltip can be the trigger of a Menu.Root or Popover; popupClassName styles the tooltip's popup.",
       "props": [
         {
           "name": "content",
@@ -15741,7 +15747,19 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a component that takes its control as `trigger`, such as Menu.Root or Popover, the tooltip describes that control. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The control's ref, as the Tooltip passes its props on to the control, such as when the Tooltip is the `trigger` of a Menu.Root or Popover, which give their trigger a ref."
+        },
+        {
+          "name": "popupClassName",
+          "type": "string",
+          "required": false,
+          "description": "Class of the tooltip's popup, beside env-tooltip."
         },
         {
           "name": "side",
@@ -15759,7 +15777,7 @@
         }
       ],
       "native": [
-        "div"
+        "button"
       ],
       "status": "stable",
       "page": "tooltip",

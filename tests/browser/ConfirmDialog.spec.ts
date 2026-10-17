@@ -133,4 +133,40 @@ test.describe('ConfirmDialog', () => {
     await expect(dialog).toBeHidden();
     await expect(menuButton).toBeFocused();
   });
+
+  test('Enter in a field confirms through the same action: pending, once, and kept open when it fails', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto(confirmDialogs);
+    const log = page.getByTestId('confirm-log');
+    const trigger = page.getByRole('button', { name: 'Delete workspace' });
+    await trigger.click();
+    const dialog = page.getByRole('alertdialog', { name: 'Delete the Acme workspace?' });
+    const confirm = dialog.getByRole('button', { name: 'Delete workspace' });
+    const field = dialog.getByRole('textbox', { name: 'Workspace name' });
+    await field.fill('Acme');
+    await field.press('Enter');
+    // The action runs, pending, and a second Enter doesn't run it again.
+    await expect(confirm).toHaveAttribute('aria-busy', 'true');
+    await expect(dialog).toHaveAttribute('aria-busy', 'true');
+    await field.press('Enter');
+    await expect(log).toHaveText('delete workspace');
+    const finish = page.getByRole('button', {
+      name: 'Finish the workspace action',
+      includeHidden: true,
+    });
+    // It fails: the dialog stays open and announces why.
+    await finish.dispatchEvent('click');
+    await expect(dialog.getByRole('alert')).toHaveText(/could not be deleted/);
+    await expect(confirm).not.toHaveAttribute('aria-busy');
+    expect(errors).toEqual(['failed']);
+    // Enter again tries again, and success closes it; the page's form never sees a submit.
+    await field.press('Enter');
+    await expect(confirm).toHaveAttribute('aria-busy', 'true');
+    await finish.dispatchEvent('click');
+    await expect(dialog).toBeHidden();
+    await expect(log).toHaveText('delete workspace,delete workspace');
+  });
 });

@@ -26,10 +26,13 @@ export default function CreateProject() {
     if (!name.trim()) {
       const message = 'Enter a project name';
       setNameError(message);
-      // After Enter in the field, focus is already there and focusing it again reads nothing, so
-      // the status says the error too.
-      setStatus(message);
-      nameField.current?.focus();
+      // Focusing the field reads its error. After Enter in the field, focus is already there and
+      // focusing it again reads nothing, so only then does the status say the error.
+      if (document.activeElement === nameField.current) setStatus(message);
+      else {
+        setStatus('');
+        nameField.current?.focus();
+      }
       return;
     }
     setCreating(true);

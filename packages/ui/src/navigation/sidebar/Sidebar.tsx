@@ -160,8 +160,7 @@ export interface HandleProps extends Omit<ComponentPropsWithRef<'div'>, 'childre
   /**
    * The handle's name.
    * @default the sidebar's resizeLabel, 'Resize sidebar', or EnvUIProvider's
-   * messages.appShell.resizeSidebar; on a sidebar that isn't resizable, Collapse sidebar or Expand
-   * sidebar, as its trigger
+   * messages.appShell.resizeSidebar; on a sidebar that isn't resizable, the sidebar's label
    */
   label?: string;
 }
@@ -290,7 +289,8 @@ function Handle({
         data-axis="inline"
       />
     );
-  // Not resizable: a splitter with two positions, collapsed and expanded, named for what Enter does.
+  // Not resizable: a splitter with two positions, collapsed and expanded, named after the sidebar it
+  // sizes, as a window splitter is after its primary pane, so the name holds as it toggles.
   return (
     <div
       role="separator"
@@ -301,7 +301,7 @@ function Handle({
       aria-valuetext={scope.collapsed ? messages.sidebarCollapsed : messages.sidebarExpanded}
       tabIndex={0}
       {...common}
-      aria-label={label ?? (scope.collapsed ? messages.expandSidebar : messages.collapseSidebar)}
+      aria-label={label ?? scope.pane}
       onPointerCancel={end}
       data-axis="inline"
     />
