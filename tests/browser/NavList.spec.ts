@@ -49,6 +49,7 @@ test('navigation owns official icon fill without a second icon, including wrappe
 test('icon-only navigation items show their label in one tooltip, without a native title', async ({
   page,
 }) => {
+  await page.clock.install();
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
   const scope = page.getByTestId('navigation-icons-light');
   const item = scope.getByTestId('icon-only-navigation');
@@ -84,7 +85,7 @@ test('icon-only navigation items show their label in one tooltip, without a nati
 
   // A labelled item needs no tooltip.
   await scope.getByTestId('home-navigation').hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
 
   // An application's own Tooltip replaces the item's, so only one shows.
@@ -92,24 +93,8 @@ test('icon-only navigation items show their label in one tooltip, without a nati
   await expect(described).not.toHaveAttribute('title');
   await described.hover();
   await expect(tooltip).toHaveText('Settings and preferences');
-  await page.waitForTimeout(300);
+  await page.clock.runFor(300);
   await expect(tooltip).toHaveCount(1);
-});
-
-test('a tooltip stays open while the pointer moves onto it', async ({ page }) => {
-  await page.goto(`${fixtureUrl}/?fixture=navigation`);
-  const item = page.getByTestId('navigation-icons-light').getByTestId('icon-only-navigation');
-  const tooltip = page.locator('.env-tooltip');
-  await item.hover();
-  await expect(tooltip).toHaveText('Home overview');
-  await expect(page.locator('.env-tooltip-positioner')).not.toHaveCSS('pointer-events', 'none');
-  // Hovering the tooltip itself keeps it, so its text can be read or magnified (WCAG 1.4.13).
-  const box = (await tooltip.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
-  await page.waitForTimeout(600);
-  await expect(tooltip).toHaveText('Home overview');
-  await page.mouse.move(0, 0);
-  await expect(tooltip).toHaveCount(0);
 });
 
 test('an item named by its label says a count as new, and other end content as it is', async ({

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { closePopup, openPopup, popupKinds } from './Popups';
 
 /**
  * Under forced colors the system replaces envUI's colors, drops shadows and paints no fills, so a
@@ -127,48 +128,56 @@ async function open(page: Page) {
   await expect(page.getByTestId('button-focus')).toBeFocused();
 }
 
-test('every state stays distinguishable from its rest under forced colors', async ({ page }) => {
-  await open(page);
-  const same: string[] = [];
-  for (const [name, [state, rest]] of Object.entries(states)) {
-    const stateLook = await page.locator(state).first().evaluate(painted);
-    const restLook = await page.locator(rest).first().evaluate(painted);
-    if (stateLook === restLook) same.push(`${name}:\n${stateLook}`);
-  }
-  expect(same, 'States that paint the same as their rest').toEqual([]);
-});
+test(
+  'every state stays distinguishable from its rest under forced colors',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await open(page);
+    const same: string[] = [];
+    for (const [name, [state, rest]] of Object.entries(states)) {
+      const stateLook = await page.locator(state).first().evaluate(painted);
+      const restLook = await page.locator(rest).first().evaluate(painted);
+      if (stateLook === restLook) same.push(`${name}:\n${stateLook}`);
+    }
+    expect(same, 'States that paint the same as their rest').toEqual([]);
+  },
+);
 
-test('selection and checked states take the system colors', async ({ page, browserName }) => {
-  await open(page);
-  const system = await page.evaluate(() => {
-    const probe = document.createElement('span');
-    document.body.append(probe);
-    const read = (value: string) => {
-      probe.style.backgroundColor = value;
-      return getComputedStyle(probe).backgroundColor;
-    };
-    const colors = { highlight: read('Highlight'), canvas: read('Canvas') };
-    probe.remove();
-    return colors;
-  });
-  const background = (selector: string) =>
-    page
-      .locator(selector)
-      .first()
-      .evaluate((element) => getComputedStyle(element).backgroundColor);
-  for (const selector of [
-    '.env-segmented-control-item[data-checked]',
-    '.env-nav-list-item[data-selected]',
-    "[role=treeitem][aria-selected='true']",
-    '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
-    '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
-    '.env-switch:has-text("On") >> .env-switch-input',
-  ])
-    expect(await background(selector), selector).toBe(system.highlight);
-  // Where the system forces colors, an unselected item paints no fill of its own.
-  if (browserName !== 'webkit')
-    expect(await background('[data-testid=nav]')).not.toBe(system.highlight);
-});
+test(
+  'selection and checked states take the system colors',
+  { tag: '@engines' },
+  async ({ page, browserName }) => {
+    await open(page);
+    const system = await page.evaluate(() => {
+      const probe = document.createElement('span');
+      document.body.append(probe);
+      const read = (value: string) => {
+        probe.style.backgroundColor = value;
+        return getComputedStyle(probe).backgroundColor;
+      };
+      const colors = { highlight: read('Highlight'), canvas: read('Canvas') };
+      probe.remove();
+      return colors;
+    });
+    const background = (selector: string) =>
+      page
+        .locator(selector)
+        .first()
+        .evaluate((element) => getComputedStyle(element).backgroundColor);
+    for (const selector of [
+      '.env-segmented-control-item[data-checked]',
+      '.env-nav-list-item[data-selected]',
+      "[role=treeitem][aria-selected='true']",
+      '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
+      '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
+      '.env-switch:has-text("On") >> .env-switch-input',
+    ])
+      expect(await background(selector), selector).toBe(system.highlight);
+    // Where the system forces colors, an unselected item paints no fill of its own.
+    if (browserName !== 'webkit')
+      expect(await background('[data-testid=nav]')).not.toBe(system.highlight);
+  },
+);
 
 /** The system colors a forced-colors rule may use, resolved in the page. */
 function systemColors(page: Page) {
@@ -275,69 +284,76 @@ const focusCases: FocusCase[] = [
   },
 ];
 
-test('a focused item keeps a ring in a system color that shows on what it is drawn on', async ({
-  page,
-  browserName,
-}) => {
-  test.skip(browserName === 'webkit', 'WebKit keeps the page’s colors under forced colors.');
-  await open(page);
-  const system = await systemColors(page);
-  for (const { name, ring, over, focus, prepare } of focusCases) {
-    await prepare?.(page);
-    const ringElement = page.locator(ring).first();
-    const target = focus ? page.locator(focus).first() : ringElement;
-    // The ring is measured against the item at rest, before it takes focus.
-    const alreadyFocused = await target.evaluate((element) => element === document.activeElement);
-    const rest = alreadyFocused ? undefined : await ringElement.evaluate(painted);
-    await target.focus();
-    expect(await target.evaluate((element) => element.matches(':focus-visible')), name).toBe(true);
-    // The fill may still be fading in; measure it settled.
-    await ringElement.evaluate((element) =>
-      Promise.all(element.getAnimations().map((animation) => animation.finished)),
-    );
-    if (rest !== undefined)
-      expect(await ringElement.evaluate(painted), `${name} shows its focus`).not.toBe(rest);
-    const { outline, style, width, fill } = await ringElement.evaluate((element) => {
-      const computed = getComputedStyle(element);
-      return {
-        outline: computed.outlineColor,
-        style: computed.outlineStyle,
-        width: parseFloat(computed.outlineWidth),
-        fill: computed.backgroundColor,
-      };
-    });
-    expect(style, name).not.toBe('none');
-    expect(width, `${name}: the focus ring, not a thinner mark`).toBeGreaterThanOrEqual(2);
-    expect(Object.values(system), `${name}: the ring is a system color`).toContain(outline);
-    const behind = over === 'fill' ? fill : system.Canvas;
-    // At least 3:1, or as much as the system's own selection pair has, where the ring is in it.
-    const least = Math.min(3, contrast(system.HighlightText, system.Highlight));
-    expect(contrast(outline, behind), `${name}: the ring on ${behind}`).toBeGreaterThanOrEqual(
-      least,
-    );
-  }
-});
+test(
+  'a focused item keeps a ring in a system color that shows on what it is drawn on',
+  { tag: '@engines' },
+  async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'WebKit keeps the page’s colors under forced colors.');
+    await open(page);
+    const system = await systemColors(page);
+    for (const { name, ring, over, focus, prepare } of focusCases) {
+      await prepare?.(page);
+      const ringElement = page.locator(ring).first();
+      const target = focus ? page.locator(focus).first() : ringElement;
+      // The ring is measured against the item at rest, before it takes focus.
+      const alreadyFocused = await target.evaluate((element) => element === document.activeElement);
+      const rest = alreadyFocused ? undefined : await ringElement.evaluate(painted);
+      await target.focus();
+      expect(await target.evaluate((element) => element.matches(':focus-visible')), name).toBe(
+        true,
+      );
+      // The fill may still be fading in; measure it settled.
+      await ringElement.evaluate((element) =>
+        Promise.all(element.getAnimations().map((animation) => animation.finished)),
+      );
+      if (rest !== undefined)
+        expect(await ringElement.evaluate(painted), `${name} shows its focus`).not.toBe(rest);
+      const { outline, style, width, fill } = await ringElement.evaluate((element) => {
+        const computed = getComputedStyle(element);
+        return {
+          outline: computed.outlineColor,
+          style: computed.outlineStyle,
+          width: parseFloat(computed.outlineWidth),
+          fill: computed.backgroundColor,
+        };
+      });
+      expect(style, name).not.toBe('none');
+      expect(width, `${name}: the focus ring, not a thinner mark`).toBeGreaterThanOrEqual(2);
+      expect(Object.values(system), `${name}: the ring is a system color`).toContain(outline);
+      const behind = over === 'fill' ? fill : system.Canvas;
+      // At least 3:1, or as much as the system's own selection pair has, where the ring is in it.
+      const least = Math.min(3, contrast(system.HighlightText, system.Highlight));
+      expect(contrast(outline, behind), `${name}: the ring on ${behind}`).toBeGreaterThanOrEqual(
+        least,
+      );
+    }
+  },
+);
 
-test('every button variant keeps a visible edge under forced colors', async ({ page }) => {
-  await open(page);
-  const system = await systemColors(page);
-  const buttons = page.locator('[data-testid^=variant-]');
-  expect(await buttons.count()).toBeGreaterThan(7);
-  for (const button of await buttons.all()) {
-    const edge = await button.evaluate((element) => {
-      const style = getComputedStyle(element);
-      return {
-        id: element.getAttribute('data-testid'),
-        width: parseFloat(style.borderTopWidth),
-        style: style.borderTopStyle,
-        color: style.borderTopColor,
-      };
-    });
-    expect(edge.width, edge.id!).toBeGreaterThan(0);
-    expect(edge.style, edge.id!).toBe('solid');
-    expect(contrast(edge.color, system.Canvas), edge.id!).toBeGreaterThanOrEqual(3);
-  }
-});
+test(
+  'every button variant keeps a visible edge under forced colors',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await open(page);
+    const system = await systemColors(page);
+    const buttons = page.locator('[data-testid^=variant-]');
+    expect(await buttons.count()).toBeGreaterThan(7);
+    for (const button of await buttons.all()) {
+      const edge = await button.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          id: element.getAttribute('data-testid'),
+          width: parseFloat(style.borderTopWidth),
+          style: style.borderTopStyle,
+          color: style.borderTopColor,
+        };
+      });
+      expect(edge.width, edge.id!).toBeGreaterThan(0);
+      expect(edge.style, edge.id!).toBe('solid');
+      expect(contrast(edge.color, system.Canvas), edge.id!).toBeGreaterThanOrEqual(3);
+    }
+  },
+);
 
 /**
  * States that a fill or a shadow carries, which only the forced-colors rules keep visible, each with
@@ -360,26 +376,71 @@ const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
   'an invalid field part': 'dashed',
 };
 
-test('the states a fill carries show in what the forced-colors rules paint', async ({ page }) => {
-  await open(page);
-  const { Highlight } = await systemColors(page);
-  const marks = (element: Element, highlight: string) =>
-    [element, ...element.querySelectorAll('*')].flatMap((node) => {
-      const style = getComputedStyle(node);
-      return [
-        ...[style.backgroundColor, style.color, style.outlineColor, style.fill]
-          .filter((color) => color === highlight)
-          .map(() => 'highlight'),
-        ...(style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0 ? ['outline'] : []),
-        ...(style.borderTopStyle === 'dashed' ? ['dashed'] : []),
-      ];
-    });
-  const missing: string[] = [];
-  for (const [name, mark] of Object.entries(fillStates)) {
-    const [state, rest] = states[name];
-    const stateMarks = await page.locator(state).first().evaluate(marks, Highlight);
-    const restMarks = await page.locator(rest).first().evaluate(marks, Highlight);
-    if (!stateMarks.includes(mark) || restMarks.includes(mark)) missing.push(`${name}: ${mark}`);
-  }
-  expect(missing, 'States the forced-colors rules don’t mark').toEqual([]);
-});
+test(
+  'the states a fill carries show in what the forced-colors rules paint',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await open(page);
+    const { Highlight } = await systemColors(page);
+    const marks = (element: Element, highlight: string) =>
+      [element, ...element.querySelectorAll('*')].flatMap((node) => {
+        const style = getComputedStyle(node);
+        return [
+          ...[style.backgroundColor, style.color, style.outlineColor, style.fill]
+            .filter((color) => color === highlight)
+            .map(() => 'highlight'),
+          ...(style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0
+            ? ['outline']
+            : []),
+          ...(style.borderTopStyle === 'dashed' ? ['dashed'] : []),
+        ];
+      });
+    const missing: string[] = [];
+    for (const [name, mark] of Object.entries(fillStates)) {
+      const [state, rest] = states[name];
+      const stateMarks = await page.locator(state).first().evaluate(marks, Highlight);
+      const restMarks = await page.locator(rest).first().evaluate(marks, Highlight);
+      if (!stateMarks.includes(mark) || restMarks.includes(mark)) missing.push(`${name}: ${mark}`);
+    }
+    expect(missing, 'States the forced-colors rules don’t mark').toEqual([]);
+  },
+);
+
+/** The element that draws a popup's surface: its fill, edge and shadow. */
+const popupSurfaces =
+  '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-hover-card, .env-dialog-surface, .env-command-palette, .env-toast';
+
+test(
+  'every popup keeps a visible edge under forced colors, where its shadow is gone',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
+    await page.goto(`${fixtureUrl}/?fixture=theme-contrast`);
+    for (const kind of popupKinds) {
+      const popup = await openPopup(page, kind, 'standard');
+      await expect(popup).toBeVisible();
+      const edge = await popup.evaluate((element, selector) => {
+        const surface = element.closest(selector)!;
+        const style = getComputedStyle(surface);
+        // A panel at the edge of the window draws only the edge that faces the page.
+        const side =
+          ['top', 'left', 'right', 'bottom'].find(
+            (each) => parseFloat(style.getPropertyValue(`border-${each}-width`)) >= 1,
+          ) ?? 'top';
+        const read = (part: string) => style.getPropertyValue(`border-${side}-${part}`);
+        return {
+          surface: surface.className,
+          width: parseFloat(read('width')),
+          style: read('style'),
+          color: read('color'),
+          background: style.backgroundColor,
+        };
+      }, popupSurfaces);
+      expect(edge.width, `${kind} (${edge.surface}) has an edge`).toBeGreaterThanOrEqual(1);
+      expect(edge.style, `${kind} draws its edge`).toBe('solid');
+      expect(edge.color, `${kind}'s edge is painted`).not.toMatch(/rgba\(0, 0, 0, 0\)|transparent/);
+      expect(edge.color, `${kind}'s edge differs from its fill`).not.toBe(edge.background);
+      await closePopup(page, kind, popup);
+    }
+  },
+);

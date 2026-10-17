@@ -68,13 +68,14 @@ test.describe('A rail that opens on hover', () => {
   test('a press during the rest cancels it, so a quick click reaches what it started on', async ({
     page,
   }) => {
+    await page.clock.install();
     await open(page, rails, 'fixture-rails');
     const primary = page.getByRole('navigation', { name: 'Primary' });
     const projects = await box(primary.getByRole('link', { name: 'Projects' }));
     await page.mouse.move(projects.x + projects.width / 2, projects.y + projects.height / 2);
     await page.mouse.down();
     // Just past the 200 ms rest: it stayed a rail.
-    await page.waitForTimeout(300);
+    await page.clock.runFor(300);
     await expect(primary).toHaveAttribute('data-rail', '');
     await page.mouse.up();
     await expect(page).toHaveURL(/#\/projects$/);
@@ -473,21 +474,25 @@ test.describe('Sidebar.Handle', () => {
     await expect(settings).toHaveAttribute('data-state', 'expanded');
   });
 
-  test('a drag resizes it and a click without a drag collapses it', async ({ page }) => {
-    await open(page, sidebars, 'fixture-settings');
-    const settings = page.getByRole('navigation', { name: 'Settings' });
-    const handle = settings.getByRole('separator', { name: 'Resize sidebar' });
-    const edge = await box(handle);
-    const width = (await box(settings)).width;
-    await page.mouse.move(edge.x + edge.width / 2, edge.y + 50);
-    await page.mouse.down();
-    await page.mouse.move(edge.x + edge.width / 2 + 40, edge.y + 50, { steps: 4 });
-    await page.mouse.up();
-    await expect.poll(async () => (await box(settings)).width).toBeCloseTo(width + 40, 0);
-    await expect(settings).toHaveAttribute('data-state', 'expanded');
-    await handle.click();
-    await expect(settings).toHaveAttribute('data-state', 'collapsed');
-  });
+  test(
+    'a drag resizes it and a click without a drag collapses it',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await open(page, sidebars, 'fixture-settings');
+      const settings = page.getByRole('navigation', { name: 'Settings' });
+      const handle = settings.getByRole('separator', { name: 'Resize sidebar' });
+      const edge = await box(handle);
+      const width = (await box(settings)).width;
+      await page.mouse.move(edge.x + edge.width / 2, edge.y + 50);
+      await page.mouse.down();
+      await page.mouse.move(edge.x + edge.width / 2 + 40, edge.y + 50, { steps: 4 });
+      await page.mouse.up();
+      await expect.poll(async () => (await box(settings)).width).toBeCloseTo(width + 40, 0);
+      await expect(settings).toHaveAttribute('data-state', 'expanded');
+      await handle.click();
+      await expect(settings).toHaveAttribute('data-state', 'collapsed');
+    },
+  );
 
   test("on a sidebar that isn't resizable its value is only expanded or collapsed", async ({
     page,
@@ -552,27 +557,29 @@ test.describe('Sidebars without the frame', () => {
     await expect(trigger).toHaveAttribute('aria-controls', 'filters');
   });
 
-  test('an off-canvas sidebar leaves the page out of view and inert, and focus with it', async ({
-    page,
-  }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(sidebars);
-    const filters = page.getByRole('navigation', { name: 'Filters', includeHidden: true });
-    const trigger = page.getByTestId('filters-trigger');
-    await filters.getByRole('button', { name: 'Only mine' }).focus();
-    // A press that leaves focus inside, as a press doesn't focus a button in every engine.
-    await trigger.dispatchEvent('click');
-    await expect(filters).toHaveAttribute('inert', '');
-    await expect(filters).toHaveAttribute('data-state', 'collapsed');
-    expect((await box(filters)).width).toBe(0);
-    await expect(
-      filters.getByRole('button', { name: 'Only mine', includeHidden: true }),
-    ).toBeHidden();
-    await expect(trigger).toBeFocused();
-    await trigger.click();
-    await expect(filters).not.toHaveAttribute('inert');
-    await expect(filters.getByRole('button', { name: 'Only mine' })).toBeVisible();
-  });
+  test(
+    'an off-canvas sidebar leaves the page out of view and inert, and focus with it',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(sidebars);
+      const filters = page.getByRole('navigation', { name: 'Filters', includeHidden: true });
+      const trigger = page.getByTestId('filters-trigger');
+      await filters.getByRole('button', { name: 'Only mine' }).focus();
+      // A press that leaves focus inside, as a press doesn't focus a button in every engine.
+      await trigger.dispatchEvent('click');
+      await expect(filters).toHaveAttribute('inert', '');
+      await expect(filters).toHaveAttribute('data-state', 'collapsed');
+      expect((await box(filters)).width).toBe(0);
+      await expect(
+        filters.getByRole('button', { name: 'Only mine', includeHidden: true }),
+      ).toBeHidden();
+      await expect(trigger).toBeFocused();
+      await trigger.click();
+      await expect(filters).not.toHaveAttribute('inert');
+      await expect(filters.getByRole('button', { name: 'Only mine' })).toBeVisible();
+    },
+  );
 });
 
 test.describe('Several Sidebar.Content sections', () => {
@@ -618,12 +625,13 @@ test.describe('Several Sidebar.Content sections', () => {
       }
     });
 
-  test('a long section before the last scrolls too, and the footer stays in view', async ({
-    page,
-  }) => {
-    await openServerMarkup(
-      page,
-      `import {createElement as h} from 'react';
+  test(
+    'a long section before the last scrolls too, and the footer stays in view',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await openServerMarkup(
+        page,
+        `import {createElement as h} from 'react';
       import {AppShell, Sidebar} from '@envsemble/envui';
       const items = (name) => Array.from({length: 30}, (_, index) => h('p', {key: index}, name + ' ' + index));
       export const element = h(AppShell.Root, null,
@@ -632,15 +640,16 @@ test.describe('Several Sidebar.Content sections', () => {
           h(Sidebar.Content, {'data-testid': 'second'}, items('Second')),
           h(Sidebar.Footer, null, h('div', {'data-testid': 'footer'}, 'Footer'))),
         h(AppShell.Main, null, 'Main'));`,
-    );
-    const panel = await box(page.locator('.env-sidebar-panel'));
-    const footer = await box(page.getByTestId('footer'));
-    expect(footer.y + footer.height).toBeLessThanOrEqual(panel.y + panel.height + 0.5);
-    // The first section gave way once the last had none left, and scrolls its own items.
-    const first = page.getByTestId('first');
-    expect(await first.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
-      true,
-    );
-    expect((await box(first)).height).toBeGreaterThan(0);
-  });
+      );
+      const panel = await box(page.locator('.env-sidebar-panel'));
+      const footer = await box(page.getByTestId('footer'));
+      expect(footer.y + footer.height).toBeLessThanOrEqual(panel.y + panel.height + 0.5);
+      // The first section gave way once the last had none left, and scrolls its own items.
+      const first = page.getByTestId('first');
+      expect(await first.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+        true,
+      );
+      expect((await box(first)).height).toBeGreaterThan(0);
+    },
+  );
 });

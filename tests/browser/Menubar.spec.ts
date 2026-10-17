@@ -111,65 +111,69 @@ test('a disabled menubar menu does not open', async ({ page }) => {
   await expect(page.getByRole('menu', { name: 'Help' })).toHaveCount(0);
 });
 
-test('commands act on the field that had focus, and focus returns to it', async ({ page }) => {
-  const errors = collectErrors(page);
-  await page.goto(menubarFixture);
-  const note = page.getByRole('textbox', { name: 'Note' });
-  const log = page.getByTestId('menubar-log');
-  const selection = () =>
-    note.evaluate((field: HTMLTextAreaElement) => [field.selectionStart, field.selectionEnd]);
-  await note.click();
-  await note.evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(0, 0));
-  // With the pointer.
-  await trigger(page, 'Edit').click();
-  await expect(log).toHaveText('Edit opened after Note');
-  await page
-    .getByRole('menu', { name: 'Edit' })
-    .getByRole('menuitem', { name: 'Select all' })
-    .click();
-  await expect(note).toBeFocused();
-  expect(await selection()).toEqual([0, 'Quarterly report draft'.length]);
-  await expect(log).toContainText('Select all');
+test(
+  'commands act on the field that had focus, and focus returns to it',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const errors = collectErrors(page);
+    await page.goto(menubarFixture);
+    const note = page.getByRole('textbox', { name: 'Note' });
+    const log = page.getByTestId('menubar-log');
+    const selection = () =>
+      note.evaluate((field: HTMLTextAreaElement) => [field.selectionStart, field.selectionEnd]);
+    await note.click();
+    await note.evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(0, 0));
+    // With the pointer.
+    await trigger(page, 'Edit').click();
+    await expect(log).toHaveText('Edit opened after Note');
+    await page
+      .getByRole('menu', { name: 'Edit' })
+      .getByRole('menuitem', { name: 'Select all' })
+      .click();
+    await expect(note).toBeFocused();
+    expect(await selection()).toEqual([0, 'Quarterly report draft'.length]);
+    await expect(log).toContainText('Select all');
 
-  // With the keyboard: Alt and the access key, then Enter. The pointer rests away from the menus,
-  // where it cannot hover their items as they appear.
-  await page.mouse.move(1, 999);
-  await note.evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(0, 0));
-  await page.keyboard.press('Alt+KeyE');
-  const editMenu = page.getByRole('menu', { name: 'Edit' });
-  await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(editMenu).toBeHidden();
-  await expect(note).toBeFocused();
-  expect(await selection()).toEqual([0, 'Quarterly report draft'.length]);
-  // An item runs before its menu closes.
-  await expect(log).toHaveText(
-    Array(2).fill('Edit opened after Note\nSelect all\nEdit closed after Note').join('\n'),
-  );
+    // With the keyboard: Alt and the access key, then Enter. The pointer rests away from the menus,
+    // where it cannot hover their items as they appear.
+    await page.mouse.move(1, 999);
+    await note.evaluate((field: HTMLTextAreaElement) => field.setSelectionRange(0, 0));
+    await page.keyboard.press('Alt+KeyE');
+    const editMenu = page.getByRole('menu', { name: 'Edit' });
+    await expect(editMenu.getByRole('menuitem', { name: 'Select all' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(editMenu).toBeHidden();
+    await expect(note).toBeFocused();
+    expect(await selection()).toEqual([0, 'Quarterly report draft'.length]);
+    // An item runs before its menu closes.
+    await expect(log).toHaveText(
+      Array(2).fill('Edit opened after Note\nSelect all\nEdit closed after Note').join('\n'),
+    );
 
-  // A command in a submenu returns focus too.
-  await page.keyboard.press('Alt+KeyF');
-  const fileMenu = page.getByRole('menu', { name: 'File' });
-  await expect(fileMenu.getByRole('menuitem', { name: 'New note' })).toBeFocused();
-  await page.keyboard.press('ArrowDown');
-  await expect(fileMenu.getByRole('menuitem', { name: 'Open recent' })).toBeFocused();
-  await page.keyboard.press('ArrowRight');
-  const recent = page.getByRole('menu', { name: 'Open recent' });
-  await expect(recent.getByRole('menuitem', { name: 'Quarterly report' })).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(recent).toBeHidden();
-  await expect(fileMenu).toBeHidden();
-  await expect(note).toBeFocused();
-  await expect(log).toContainText('Open Quarterly report');
+    // A command in a submenu returns focus too.
+    await page.keyboard.press('Alt+KeyF');
+    const fileMenu = page.getByRole('menu', { name: 'File' });
+    await expect(fileMenu.getByRole('menuitem', { name: 'New note' })).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(fileMenu.getByRole('menuitem', { name: 'Open recent' })).toBeFocused();
+    await page.keyboard.press('ArrowRight');
+    const recent = page.getByRole('menu', { name: 'Open recent' });
+    await expect(recent.getByRole('menuitem', { name: 'Quarterly report' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(recent).toBeHidden();
+    await expect(fileMenu).toBeHidden();
+    await expect(note).toBeFocused();
+    await expect(log).toContainText('Open Quarterly report');
 
-  // Pressing into the field while a menu is open closes the menu and leaves focus in the field.
-  await trigger(page, 'Edit').click();
-  await expect(page.getByRole('menu', { name: 'Edit' })).toBeVisible();
-  await note.click();
-  await expect(page.getByRole('menu', { name: 'Edit' })).toBeHidden();
-  await expect(note).toBeFocused();
-  expect(errors).toEqual([]);
-});
+    // Pressing into the field while a menu is open closes the menu and leaves focus in the field.
+    await trigger(page, 'Edit').click();
+    await expect(page.getByRole('menu', { name: 'Edit' })).toBeVisible();
+    await note.click();
+    await expect(page.getByRole('menu', { name: 'Edit' })).toBeHidden();
+    await expect(note).toBeFocused();
+    expect(errors).toEqual([]);
+  },
+);
 
 test('a click elsewhere lets focus go when nothing had focus before the menu', async ({ page }) => {
   await page.goto(menubarFixture);
@@ -185,7 +189,7 @@ test('a click elsewhere lets focus go when nothing had focus before the menu', a
   await expect(page.getByRole('menu')).toHaveCount(0);
 });
 
-test.describe('Access keys', () => {
+test.describe('Access keys', { tag: '@engines' }, () => {
   test('Alt underlines access keys and Alt with a letter opens that menu', async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto(menubarFixture);

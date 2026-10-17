@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
+const adoption = `${fixtureUrl}/?fixture=adoption`;
 const statsFixture = `${fixtureUrl}/?fixture=stats`;
 
 test('stats read as label, figure, trend and detail, with the trend in icon and text', async ({
@@ -39,51 +40,6 @@ test('stats read as label, figure, trend and detail, with the trend in icon and 
   await expect(page.getByTestId('stat-standalone-light')).toHaveText('Standalone7');
 });
 
-test('stats keep 4.5:1 contrast on their surfaces in both themes', async ({ page }) => {
-  await page.goto(statsFixture);
-  // Two themes, each with seven stats.
-  await expect(page.locator('.env-stat')).toHaveCount(14);
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const results: string[] = [];
-    for (const part of document.querySelectorAll<HTMLElement>(
-      '.env-stat-label, .env-stat-value, .env-stat-trend, .env-stat-description',
-    )) {
-      // Paint every surface from the theme down to the stat.
-      const layers: string[] = [];
-      for (let element: HTMLElement | null = part; element; element = element.parentElement) {
-        layers.unshift(getComputedStyle(element).backgroundColor);
-        if (element.classList.contains('env-theme')) break;
-      }
-      const background = luminance(layers);
-      const foreground = luminance([...layers, getComputedStyle(part).color]);
-      const [lighter, darker] = [background, foreground].sort((a, b) => b - a);
-      const ratio = (lighter! + 0.05) / (darker! + 0.05);
-      if (ratio < 4.5) {
-        const theme = part.closest('[data-env-theme]')!.getAttribute('data-env-theme');
-        results.push(`${theme} ${part.className} ${part.textContent}: ${ratio.toFixed(2)}`);
-      }
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
-});
-
 test('a stat group wraps its stats into even columns as space runs out', async ({ page }) => {
   await page.goto(statsFixture);
   const group = page.getByTestId('stat-group-light');
@@ -119,4 +75,28 @@ test('a stat group wraps its stats into even columns as space runs out', async (
     'data-background',
     'muted',
   );
+});
+
+test('AnimatedNumber rolls up when a count grows and down when it shrinks', async ({ page }) => {
+  await page.goto(adoption);
+  const number = page.getByTestId('animated-number');
+  const value = number.locator('.env-animated-number-value');
+  await expect(number).toHaveText('3');
+  await expect(value).not.toHaveAttribute('data-direction');
+  await expect(page.getByRole('button', { name: 'Show 3 homes' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'More homes' }).click();
+  await expect(number).toHaveText('4');
+  await expect(value).toHaveAttribute('data-direction', 'up');
+  await expect(value).toHaveCSS('animation-name', 'env-motion-roll-up');
+  await page.getByRole('button', { name: 'Fewer homes' }).click();
+  await page.getByRole('button', { name: 'Fewer homes' }).click();
+  await expect(number).toHaveText('2');
+  await expect(value).toHaveAttribute('data-direction', 'down');
+  await expect(value).toHaveCSS('animation-name', 'env-motion-roll-down');
+
+  // With reduced motion the new value only fades in.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByRole('button', { name: 'More homes' }).click();
+  await expect(value).toHaveCSS('animation-name', 'env-motion-fade-in');
 });

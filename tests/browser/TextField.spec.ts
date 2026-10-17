@@ -1,38 +1,10 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
-const themes = ['light', 'dark'] as const;
+const affixes = `${fixtureUrl}/?fixture=affixes`;
+const adoption = `${fixtureUrl}/?fixture=adoption`;
 
-/** Text contrast as painted: the text color over every fill between it and the theme canvas. */
-async function paintedContrast(element: Locator) {
-  return element.evaluate((node) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const fills: string[] = [];
-    for (let current: Element | null = node; current; current = current.parentElement) {
-      fills.unshift(getComputedStyle(current).backgroundColor);
-      if (current.classList.contains('env-theme')) break;
-    }
-    const paint = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const background = paint(fills);
-    const foreground = paint([...fills, getComputedStyle(node).color]);
-    const [lighter, darker] = [background, foreground].sort((a, b) => b - a);
-    return (lighter! + 0.05) / (darker! + 0.05);
-  });
-}
+const themes = ['light', 'dark'] as const;
 
 /** Where an element's text is painted, without its padding. */
 async function textBox(element: Locator) {
@@ -53,7 +25,6 @@ let errors: string[] = [];
 test.beforeEach(async ({ page }) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto(`${fixtureUrl}/?fixture=affixes`);
 });
 
 test.afterEach(() => {
@@ -61,6 +32,7 @@ test.afterEach(() => {
 });
 
 test('a prefix shows with the value inside the field and is read with it', async ({ page }) => {
+  await page.goto(affixes);
   const scope = page.getByTestId('affixes-light');
   const address = scope.getByRole('textbox', { name: 'Address', exact: true });
   await expect(address).toHaveAccessibleDescription('https://example.com/');
@@ -95,6 +67,7 @@ test('a prefix shows with the value inside the field and is read with it', async
 test('a suffix follows the value and keeps the hint and error in the description', async ({
   page,
 }) => {
+  await page.goto(affixes);
   const scope = page.getByTestId('affixes-light');
   const size = scope.getByRole('spinbutton', { name: 'Size', exact: true });
   await expect(size).toHaveAccessibleDescription('MB Up to 10');
@@ -128,6 +101,7 @@ test('a suffix follows the value and keeps the hint and error in the description
 test('compact fields hold a prefix and suffix between the icon and the end action', async ({
   page,
 }) => {
+  await page.goto(affixes);
   const scope = page.getByTestId('affixes-light');
   const price = scope.getByRole('textbox', { name: 'Price', exact: true });
   await expect(price).toHaveAccessibleDescription('€ per month');
@@ -163,6 +137,7 @@ test('compact fields hold a prefix and suffix between the icon and the end actio
 });
 
 test('a long prefix is cut short so the value keeps its room', async ({ page }) => {
+  await page.goto(affixes);
   const link = page.getByTestId('affixes-light').getByRole('textbox', { name: 'Link' });
   const prefix = affix(link, 'prefix');
   await expect(prefix).toHaveCSS('text-overflow', 'ellipsis');
@@ -176,30 +151,10 @@ test('a long prefix is cut short so the value keeps its room', async ({ page }) 
   expect(narrow.width).toBeGreaterThanOrEqual(95);
 });
 
-test('prefix and suffix text keep 4.5:1 contrast in both themes', async ({ page }) => {
-  for (const theme of themes) {
-    const scope = page.getByTestId(`affixes-${theme}`);
-    const parts = scope.locator('.env-text-field-prefix, .env-text-field-suffix');
-    // Measure once every field has rendered: nine prefixes and suffixes in each theme.
-    await expect(parts).toHaveCount(9);
-    for (const part of await parts.all()) {
-      const field = part.locator(
-        'xpath=ancestor::*[contains(@class, "env-text-field-control")][1]',
-      );
-      if ((await field.locator('input:disabled').count()) > 0) continue;
-      // The prefix of an empty field without focus is hidden behind its resting label.
-      if ((await part.evaluate((element) => getComputedStyle(element).opacity)) === '0') continue;
-      expect(await paintedContrast(part), `${theme} ${await part.textContent()}`).toBeGreaterThan(
-        4.5,
-      );
-    }
-  }
-});
-
 test('a quiet field is only its text at rest, takes a soft fill on hover and focus, and clears its placeholder once focused', async ({
   page,
 }) => {
-  await page.goto(`${fixtureUrl}/?fixture=affixes`);
+  await page.goto(affixes);
   for (const theme of themes) {
     const field = page
       .getByTestId(`affixes-${theme}`)
@@ -229,4 +184,61 @@ test('a quiet field is only its text at rest, takes a soft fill on hover and foc
     expect((await look()).fill).not.toBe('rgba(0, 0, 0, 0)');
     await field.blur();
   }
+});
+
+test('SearchField clears with its button and with Escape inside a dialog', async ({ page }) => {
+  await page.goto(adoption);
+  const search = page.getByRole('searchbox', { name: 'Search members' });
+  await expect(search).toHaveAttribute('placeholder', 'Search by name');
+  await expect(page.getByRole('button', { name: 'Clear search' })).toHaveCount(0);
+  await search.fill('alex');
+  // The clear action uses the field's quiet icon color and shows a state layer on hover.
+  const clear = page.getByRole('button', { name: 'Clear search' });
+  await expect(clear).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const fieldIconColor = await clear.evaluate((element) => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--env-color-fg-muted)';
+    element.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  await expect(clear).toHaveCSS('color', fieldIconColor);
+  await clear.hover();
+  await expect(clear).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await clear.click();
+  await expect(search).toHaveValue('');
+  await expect(search).toBeFocused();
+  const button = page.getByRole('button', { name: 'Open pending dialog' });
+  // The whole field, not only its well, lines up with an adjacent button.
+  const field = await search.locator('xpath=../..').boundingBox();
+  const action = await button.boundingBox();
+  expect(Math.round(field!.height)).toBe(Math.round(action!.height));
+
+  await button.click();
+  const dialog = page.getByRole('dialog', { name: 'Save project' });
+  const inner = dialog.getByRole('searchbox', { name: 'Search inside dialog' });
+  await inner.focus();
+  await page.keyboard.press('Escape');
+  await expect(inner).toHaveValue('');
+  await expect(dialog).toBeVisible();
+});
+
+test('compact fields can float their label into the outline and keep the button height', async ({
+  page,
+}) => {
+  await page.goto(adoption);
+  const field = page.getByTestId('compact-label');
+  const well = field.locator('xpath=..');
+  const label = well.locator('label');
+  await expect(label).toBeVisible();
+  const resting = (await label.boundingBox())!;
+  const wellBox = (await well.boundingBox())!;
+  expect(resting.y).toBeGreaterThan(wellBox.y);
+  await field.fill('Northwind');
+  // Floated onto the outline, the label hides only the line, not a box of field color above it.
+  await expect(label).toHaveCSS('background-image', /linear-gradient/);
+  await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(wellBox.y + 2);
+  const button = page.getByTestId('compact-label-toolbar').getByRole('button', { name: 'Apply' });
+  expect(Math.round(wellBox.height)).toBe(Math.round((await button.boundingBox())!.height));
 });

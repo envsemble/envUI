@@ -53,65 +53,67 @@ test('fields associate labels, hints, and validation messages', async ({ page })
   await expect(page.locator('.env-field', { has: project })).not.toHaveAttribute('data-invalid');
 });
 
-test('native controls submit values and restore uncontrolled defaults on form reset', async ({
-  page,
-}) => {
-  const controlled = page.getByTestId('controlled-checkbox');
-  const uncontrolled = page.getByTestId('uncontrolled-checkbox');
-  await expect(controlled).toHaveAttribute('aria-checked', 'mixed');
-  await expect(controlled).toHaveJSProperty('indeterminate', true);
-  await expect(uncontrolled).toHaveJSProperty('indeterminate', true);
-  await controlled.click();
-  await expect(controlled).toBeChecked();
-  await expect(page.getByTestId('control-state')).toHaveText('true');
-  await uncontrolled.click();
-  await expect(uncontrolled).toBeChecked();
-  await expect(uncontrolled).toHaveJSProperty('indeterminate', false);
+test(
+  'native controls submit values and restore uncontrolled defaults on form reset',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const controlled = page.getByTestId('controlled-checkbox');
+    const uncontrolled = page.getByTestId('uncontrolled-checkbox');
+    await expect(controlled).toHaveAttribute('aria-checked', 'mixed');
+    await expect(controlled).toHaveJSProperty('indeterminate', true);
+    await expect(uncontrolled).toHaveJSProperty('indeterminate', true);
+    await controlled.click();
+    await expect(controlled).toBeChecked();
+    await expect(page.getByTestId('control-state')).toHaveText('true');
+    await uncontrolled.click();
+    await expect(uncontrolled).toBeChecked();
+    await expect(uncontrolled).toHaveJSProperty('indeterminate', false);
 
-  const notifications = page.getByRole('switch', { name: 'Notifications', exact: true });
-  await expect(notifications).toBeChecked();
-  await notifications.click();
-  await expect(notifications).not.toBeChecked();
-  await page.getByRole('radio', { name: /Shared/ }).check();
-  await page.getByRole('textbox', { name: 'Project name', exact: true }).fill('Changed project');
-  await page.getByRole('textbox', { name: 'Notes', exact: true }).fill('Changed notes');
-  const search = page.getByRole('searchbox', { name: 'Search projects', exact: true });
-  await search.fill('changed query');
-  await page.getByRole('button', { name: 'Submit form', exact: true }).click();
-  await expect
-    .poll(async () => JSON.parse((await page.getByTestId('form-values').textContent())!))
-    .toEqual({
-      project: 'Changed project',
-      notes: 'Changed notes',
-      query: 'changed query',
-      controlled: 'enabled',
-      uncontrolled: 'enabled',
-      visibility: 'shared',
-      plan: 'starter',
-      emptyChoice: '',
-    });
+    const notifications = page.getByRole('switch', { name: 'Notifications', exact: true });
+    await expect(notifications).toBeChecked();
+    await notifications.click();
+    await expect(notifications).not.toBeChecked();
+    await page.getByRole('radio', { name: /Shared/ }).check();
+    await page.getByRole('textbox', { name: 'Project name', exact: true }).fill('Changed project');
+    await page.getByRole('textbox', { name: 'Notes', exact: true }).fill('Changed notes');
+    const search = page.getByRole('searchbox', { name: 'Search projects', exact: true });
+    await search.fill('changed query');
+    await page.getByRole('button', { name: 'Submit form', exact: true }).click();
+    await expect
+      .poll(async () => JSON.parse((await page.getByTestId('form-values').textContent())!))
+      .toEqual({
+        project: 'Changed project',
+        notes: 'Changed notes',
+        query: 'changed query',
+        controlled: 'enabled',
+        uncontrolled: 'enabled',
+        visibility: 'shared',
+        plan: 'starter',
+        emptyChoice: '',
+      });
 
-  await page.getByRole('button', { name: 'Reset form', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Project name', exact: true })).toHaveValue(
-    'Initial project',
-  );
-  await expect(page.getByRole('textbox', { name: 'Notes', exact: true })).toHaveValue(
-    'Initial notes',
-  );
-  // SearchField renders its query itself, and follows the reset to its default query.
-  await expect(search).toHaveValue('initial query');
-  await expect(page.getByRole('button', { name: 'Clear search', exact: true })).toHaveCount(1);
-  await search.fill('');
-  await expect(page.getByRole('button', { name: 'Clear search', exact: true })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Reset form', exact: true }).click();
-  await expect(search).toHaveValue('initial query');
-  await expect(uncontrolled).toHaveJSProperty('indeterminate', true);
-  await expect(uncontrolled).not.toBeChecked();
-  await expect(controlled).toBeChecked();
-  await expect(notifications).toBeChecked();
-  await expect(page.getByRole('radio', { name: /Private/ })).toBeChecked();
-  await expect(page.getByRole('radio', { name: /Shared/ })).not.toBeChecked();
-});
+    await page.getByRole('button', { name: 'Reset form', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Project name', exact: true })).toHaveValue(
+      'Initial project',
+    );
+    await expect(page.getByRole('textbox', { name: 'Notes', exact: true })).toHaveValue(
+      'Initial notes',
+    );
+    // SearchField renders its query itself, and follows the reset to its default query.
+    await expect(search).toHaveValue('initial query');
+    await expect(page.getByRole('button', { name: 'Clear search', exact: true })).toHaveCount(1);
+    await search.fill('');
+    await expect(page.getByRole('button', { name: 'Clear search', exact: true })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Reset form', exact: true }).click();
+    await expect(search).toHaveValue('initial query');
+    await expect(uncontrolled).toHaveJSProperty('indeterminate', true);
+    await expect(uncontrolled).not.toBeChecked();
+    await expect(controlled).toBeChecked();
+    await expect(notifications).toBeChecked();
+    await expect(page.getByRole('radio', { name: /Private/ })).toBeChecked();
+    await expect(page.getByRole('radio', { name: /Shared/ })).not.toBeChecked();
+  },
+);
 
 test('a controlled mixed checkbox retains its DOM state when the owner retains mixed', async ({
   page,
@@ -125,29 +127,40 @@ test('a controlled mixed checkbox retains its DOM state when the owner retains m
   await expect(fixed).not.toBeChecked();
 });
 
-test('canceling a native form reset preserves field and selection state', async ({ page }) => {
-  await page.getByRole('checkbox', { name: 'Prevent form reset', exact: true }).check();
-  await page.getByRole('textbox', { name: 'Project name', exact: true }).fill('Preserved project');
-  const search = page.getByRole('searchbox', { name: 'Search projects', exact: true });
-  await search.fill('preserved query');
-  await page.getByTestId('uncontrolled-checkbox').click();
-  await page.getByRole('switch', { name: 'Notifications', exact: true }).uncheck();
-  await page.getByRole('radio', { name: /Shared/ }).check();
-  const plan = page.getByRole('combobox', { name: 'Plan', exact: true });
-  await plan.click();
-  await page.getByRole('option', { name: 'Team', exact: true }).click();
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Reset form', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Project name', exact: true })).toHaveValue(
-    'Preserved project',
-  );
-  await expect(page.getByTestId('uncontrolled-checkbox')).toBeChecked();
-  await expect(page.getByTestId('uncontrolled-checkbox')).toHaveJSProperty('indeterminate', false);
-  await expect(page.getByRole('switch', { name: 'Notifications', exact: true })).not.toBeChecked();
-  await expect(page.getByRole('radio', { name: /Shared/ })).toBeChecked();
-  await expect(plan).toHaveText('Team');
-  await expect(search).toHaveValue('preserved query');
-});
+test(
+  'canceling a native form reset preserves field and selection state',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.getByRole('checkbox', { name: 'Prevent form reset', exact: true }).check();
+    await page
+      .getByRole('textbox', { name: 'Project name', exact: true })
+      .fill('Preserved project');
+    const search = page.getByRole('searchbox', { name: 'Search projects', exact: true });
+    await search.fill('preserved query');
+    await page.getByTestId('uncontrolled-checkbox').click();
+    await page.getByRole('switch', { name: 'Notifications', exact: true }).uncheck();
+    await page.getByRole('radio', { name: /Shared/ }).check();
+    const plan = page.getByRole('combobox', { name: 'Plan', exact: true });
+    await plan.click();
+    await page.getByRole('option', { name: 'Team', exact: true }).click();
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Reset form', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Project name', exact: true })).toHaveValue(
+      'Preserved project',
+    );
+    await expect(page.getByTestId('uncontrolled-checkbox')).toBeChecked();
+    await expect(page.getByTestId('uncontrolled-checkbox')).toHaveJSProperty(
+      'indeterminate',
+      false,
+    );
+    await expect(
+      page.getByRole('switch', { name: 'Notifications', exact: true }),
+    ).not.toBeChecked();
+    await expect(page.getByRole('radio', { name: /Shared/ })).toBeChecked();
+    await expect(plan).toHaveText('Team');
+    await expect(search).toHaveValue('preserved query');
+  },
+);
 
 test('Select supports keyboard commit, typeahead, Escape, and native form reset', async ({
   page,
@@ -284,89 +297,33 @@ test('Select triggers are button styles, and the open list stands apart from a p
   await expect(role).toHaveText('Boreal');
 });
 
-test('a required Select participates in native constraint validation', async ({ page }) => {
-  const nativeInput = page.getByTestId('required-form').locator('input[name="requiredChoice"]');
-  await expect
-    .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valueMissing))
-    .toBe(true);
-  await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
-  await expect(page.getByTestId('required-submissions')).toHaveText('0');
-  const required = page.getByRole('combobox', { name: 'Required choice', exact: true });
-  await expect(required).toHaveAttribute('aria-required', 'true');
-  await expect(required).toBeFocused();
-  // Dismiss the native validation bubble before interacting with the custom popup: one engine
-  // consumes the first outside click while that bubble is open.
-  await page.keyboard.press('Escape');
-  await required.press('ArrowDown');
-  await expect(page.getByRole('listbox')).toBeVisible();
-  await page.getByRole('option', { name: 'Aurora', exact: true }).click();
-  await expect(nativeInput).toHaveValue('aurora');
-  await expect
-    .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valid))
-    .toBe(true);
-  await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
-  await expect(page.getByTestId('required-submissions')).toHaveText('1');
-});
-
-test('Dialog traps and restores focus and its nested Select retains the dark theme', async ({
-  page,
-}) => {
-  const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
-  await trigger.click();
-  const dialog = page.getByRole('dialog', { name: 'Dark theme dialog', exact: true });
-  await expect(dialog).toBeVisible();
-  await expect(dialog).toHaveAccessibleDescription('A nested theme retained in a portal.');
-  await expect
-    .poll(() =>
-      dialog.evaluate((element) =>
-        element.closest('[data-env-theme]')?.getAttribute('data-env-theme'),
-      ),
-    )
-    .toBe('dark');
-  const firstField = dialog.getByRole('textbox', { name: 'Dialog first field', exact: true });
-  await expect(firstField).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
-  await expect(dialog.getByRole('button', { name: 'Save dialog', exact: true })).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(firstField).toBeFocused();
-
-  const select = dialog.getByRole('combobox', { name: 'Dialog choice', exact: true });
-  await select.click();
-  const option = page.getByRole('option', { name: 'Boreal', exact: true });
-  await expect(option).toBeVisible();
-  // The open list stands apart from the dark dialog it opens over.
-  const separation = await popupSeparation(page, '.env-dialog-surface');
-  expect(separation.contrast).toBeGreaterThanOrEqual(1.08);
-  expect(separation.border).toBeGreaterThan(0);
-  await expect
-    .poll(() =>
-      option.evaluate((element) =>
-        element.closest('[data-env-theme]')?.getAttribute('data-env-theme'),
-      ),
-    )
-    .toBe('dark');
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(dialog).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(dialog).toHaveCount(0);
-  await expect(page.getByTestId('dialog-status')).toHaveText('closed');
-  await expect(trigger).toBeFocused();
-});
-
-test('Dialog provides an accessible dismissal action and controlled action closure', async ({
-  page,
-}) => {
-  const trigger = page.getByRole('button', { name: 'Open dark dialog', exact: true });
-  await trigger.click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(trigger).toBeFocused();
-  await trigger.click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Save dialog', exact: true }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(trigger).toBeFocused();
-});
+test(
+  'a required Select participates in native constraint validation',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const nativeInput = page.getByTestId('required-form').locator('input[name="requiredChoice"]');
+    await expect
+      .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valueMissing))
+      .toBe(true);
+    await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
+    await expect(page.getByTestId('required-submissions')).toHaveText('0');
+    const required = page.getByRole('combobox', { name: 'Required choice', exact: true });
+    await expect(required).toHaveAttribute('aria-required', 'true');
+    await expect(required).toBeFocused();
+    // Dismiss the native validation bubble before interacting with the custom popup: one engine
+    // consumes the first outside click while that bubble is open.
+    await page.keyboard.press('Escape');
+    await required.press('ArrowDown');
+    await expect(page.getByRole('listbox')).toBeVisible();
+    await page.getByRole('option', { name: 'Aurora', exact: true }).click();
+    await expect(nativeInput).toHaveValue('aurora');
+    await expect
+      .poll(() => nativeInput.evaluate((input: HTMLInputElement) => input.validity.valid))
+      .toBe(true);
+    await page.getByRole('button', { name: 'Submit required choice', exact: true }).click();
+    await expect(page.getByTestId('required-submissions')).toHaveText('1');
+  },
+);
 
 test('a small Select has a small trigger, and its popup has the menus anatomy with a check mark', async ({
   page,
