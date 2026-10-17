@@ -167,6 +167,33 @@ test("a code block scrolls rather than wraps: the document's styles win over Pro
   await expect(editor).toHaveCSS('position', 'relative');
 });
 
+test("ProseMirror's separator stays inline under an unlayered img reset, adding no line", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
+  await page.goto(`${fixtureUrl}?fixture=form`);
+  const editor = page
+    .getByTestId('rich-text-form')
+    .getByRole('textbox', { name: 'Rich source', exact: true });
+  // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its separator.
+  await replace(editor, '@river');
+  await page.getByRole('option', { name: referenceLabel, exact: true }).click();
+  if (/\s$/.test((await editor.locator('p').first().textContent()) ?? ''))
+    await page.keyboard.press('Backspace');
+  const paragraph = editor.locator('p').first();
+  const separator = paragraph.locator('img.ProseMirror-separator').last();
+  await expect(separator).toBeAttached();
+  const before = await paragraph.evaluate((element) => element.getBoundingClientRect().height);
+  // An application reset outside any cascade layer, as Tailwind's preflight has.
+  await page.addStyleTag({ content: 'img { display: block; height: auto; margin: 1rem; }' });
+  await expect(separator).toHaveCSS('display', 'inline');
+  await expect(separator).toHaveCSS('margin-top', '0px');
+  expect(await paragraph.evaluate((element) => element.getBoundingClientRect().height)).toBe(
+    before,
+  );
+});
+
 test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
   page,
 }) => {

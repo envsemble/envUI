@@ -71,12 +71,15 @@
 .env-rich-text-document [contenteditable='false'] [contenteditable='true'] {
   white-space: pre-wrap;
 }
+/* Tiptap's !important here is kept: inside envUI's layer, an important declaration still wins
+   over an unlayered reset such as img { display: block } (Tailwind's preflight), which would
+   otherwise turn the separator into a line of its own. */
 .env-rich-text-document img.ProseMirror-separator {
-  display: inline;
-  inline-size: 0;
-  block-size: 0;
-  margin: 0;
-  border: none;
+  display: inline !important;
+  inline-size: 0 !important;
+  block-size: 0 !important;
+  margin: 0 !important;
+  border: none !important;
 }
 .env-rich-text-document .ProseMirror-gapcursor {
   display: none;
