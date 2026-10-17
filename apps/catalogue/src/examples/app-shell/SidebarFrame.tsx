@@ -71,7 +71,7 @@ export default function SidebarFrame() {
       </Sidebar.Root>
       <AppShell.Header>{current.label}</AppShell.Header>
       <AppShell.Main>
-        <Page width="md" header={<PageHeader title={current.label} />}>
+        <Page width="md" header={<PageHeader title={current.label} headingLevel={3} />}>
           <Text emphasis="muted">
             Collapse the sidebar with the mark: it becomes a rail of icons that opens over the
             content while the pointer rests on it.

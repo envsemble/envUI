@@ -293,11 +293,20 @@ export function SidebarRegion(props: SidebarRegionProps) {
   );
 
   // Where focus goes when the sidebar hides what holds it: to the sidebar's trigger, else Main.
+  // The focused element is read as the change renders too, since some engines, such as WebKit, drop
+  // focus from content that turns inert before the layout effects run.
+  const focusedBefore = useRef<HTMLElement | null>(null);
+  if (typeof document !== 'undefined') {
+    const active = element.current?.ownerDocument.activeElement as HTMLElement | null | undefined;
+    focusedBefore.current = active && element.current?.contains(active) ? active : null;
+  }
   useLayoutEffect(() => {
     const root = element.current;
     if (!root || isMobile || !collapsed || shown) return;
     const page = root.ownerDocument;
-    const focused = page.activeElement as HTMLElement | null;
+    const active = page.activeElement as HTMLElement | null;
+    const dropped = (!active || active === page.body) && focusedBefore.current;
+    const focused = dropped ? focusedBefore.current : active;
     if (!focused || !root.contains(focused) || focused === root) return;
     const visible = (node: Element) =>
       typeof (node as HTMLElement).checkVisibility === 'function'

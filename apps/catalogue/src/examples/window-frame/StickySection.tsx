@@ -24,7 +24,8 @@ export default function StickySection() {
     <div style={frame}>
       <WindowFrame.Root>
         <WindowFrame.TitleBar>Launch plan</WindowFrame.TitleBar>
-        <WindowFrame.Content>
+        {/* The sections scroll, so the keyboard reaches them as a region of their own. */}
+        <WindowFrame.Content tabIndex={0} role="region" aria-label="Launch plan">
           {sections.map((section) => (
             <section key={section}>
               <Text render={<h3 />} variant="title" style={heading}>

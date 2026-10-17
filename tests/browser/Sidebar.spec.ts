@@ -193,15 +193,18 @@ test.describe("A phone's top bar", () => {
     await open(page, rails, 'fixture-rails');
     const header = page.getByRole('banner');
     await expect(header).toBeVisible();
-    await header.getByRole('button', { name: 'Open navigation' }).click();
+    // Opened from the keyboard, as a press doesn't focus a button in WebKit.
+    await header.getByRole('button', { name: 'Open navigation' }).focus();
+    await page.keyboard.press('Enter');
     const navigation = page.getByRole('dialog', { name: 'Primary' });
-    expect((await box(navigation)).x).toBe(0);
+    await expect.poll(async () => Math.round((await box(navigation)).x)).toBe(0);
     await page.keyboard.press('Escape');
     await expect(header.getByRole('button', { name: 'Open navigation' })).toBeFocused();
     await header.getByRole('button', { name: 'Open Directory' }).click();
     const directory = page.getByRole('dialog', { name: 'Directory' });
-    const edge = await box(directory);
-    expect(edge.x + edge.width).toBeCloseTo(390, 0);
+    await expect
+      .poll(async () => Math.round((await box(directory)).x + (await box(directory)).width))
+      .toBe(390);
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 1400, height: 844 });
     await expect(header).toBeHidden();
@@ -217,13 +220,12 @@ test.describe('Sidebar.Handle', () => {
     const handle = settings.getByRole('separator', { name: 'Resize sidebar' });
     await expect(handle).toHaveAttribute('aria-valuemin', '192');
     await expect(handle).toHaveAttribute('aria-valuemax', '512');
-    const start = Number(await handle.getAttribute('aria-valuenow'));
     await handle.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(start + 16));
-    await expect.poll(async () => (await box(settings)).width).toBeCloseTo(start + 16, 0);
     await page.keyboard.press('Home');
     await expect(handle).toHaveAttribute('aria-valuenow', '192');
+    await page.keyboard.press('ArrowRight');
+    await expect(handle).toHaveAttribute('aria-valuenow', '208');
+    await expect.poll(async () => (await box(settings)).width).toBeCloseTo(208, 0);
     await page.keyboard.press('End');
     await expect(handle).toHaveAttribute('aria-valuenow', '512');
     await expect(page.getByTestId('width-changes')).toHaveText(/,32$/);
@@ -298,7 +300,8 @@ test.describe('Sidebars without the frame', () => {
     const filters = page.getByRole('navigation', { name: 'Filters', includeHidden: true });
     const trigger = page.getByTestId('filters-trigger');
     await filters.getByRole('button', { name: 'Only mine' }).focus();
-    await trigger.click();
+    // A press that leaves focus inside, as a press doesn't focus a button in every engine.
+    await trigger.dispatchEvent('click');
     await expect(filters).toHaveAttribute('inert', '');
     await expect(filters).toHaveAttribute('data-state', 'collapsed');
     expect((await box(filters)).width).toBe(0);

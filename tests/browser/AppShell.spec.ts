@@ -19,21 +19,24 @@ const box = async (locator: Locator) => (await locator.boundingBox())!;
 test.describe('Landmarks and skip links', () => {
   test('the frame is a banner, a named navigation and a main, with skip links first', async ({
     page,
+    browserName,
   }) => {
+    // WebKit's Tab reaches only fields, as Safari's does by default; Alt+Tab reaches every control.
+    const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
     const errors = collectErrors(page);
     await page.goto(appShell);
     await expect(page.getByRole('banner')).toHaveCount(1);
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
     await expect(page.getByRole('main')).toHaveAttribute('id', 'env-app-shell-main');
     // The skip links are the first tab stops, shown as they take focus.
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tab);
     const skip = page.getByRole('link', { name: 'Skip to content' });
     await expect(skip).toBeFocused();
     expect((await box(skip)).width).toBeGreaterThan(40);
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(tab);
     await expect(page.getByRole('link', { name: 'Skip to Primary' })).toBeFocused();
     // Each moves focus to its region.
-    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press(`Shift+${tab}`);
     await page.keyboard.press('Enter');
     await expect(page.getByRole('main')).toBeFocused();
     expect(errors).toEqual([]);
@@ -52,7 +55,9 @@ test.describe('Landmarks and skip links', () => {
     await page.goto(`${appShell}&collapsible=offcanvas`);
     await page.evaluate(() => localStorage.removeItem('fixture-frame'));
     const navigation = page.getByRole('navigation', { name: 'Primary' });
-    await navigation.getByRole('button', { name: 'Collapse sidebar' }).click();
+    // From the keyboard, so focus is on the trigger inside the sidebar as it hides.
+    await navigation.getByRole('button', { name: 'Collapse sidebar' }).focus();
+    await page.keyboard.press('Enter');
     await expect(page.locator('.env-sidebar')).toHaveAttribute('inert', '');
     await expect(
       page.getByRole('link', { name: 'Skip to Primary', includeHidden: true }),
@@ -115,6 +120,7 @@ test.describe('Collapsing and persistence', () => {
 
   test('a cookie keeps the state for the server, and the client reads it before its first paint', async ({
     page,
+    browserName,
   }) => {
     await page.goto(`${appShell}&persist=cookie`);
     const sidebar = page.locator('.env-sidebar');
@@ -125,7 +131,8 @@ test.describe('Collapsing and persistence', () => {
     await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
     const cookie = (await page.context().cookies()).find((each) => each.name === 'fixture-frame');
     expect(decodeURIComponent(cookie!.value)).toBe('start.open=0');
-    expect(cookie!.sameSite).toBe('Lax');
+    // WebKit on Windows reports every cookie's SameSite as None.
+    if (browserName !== 'webkit') expect(cookie!.sameSite).toBe('Lax');
     // Read synchronously as the frame mounts: the first committed markup is already collapsed.
     await page.addInitScript(() => {
       new MutationObserver((records, observer) => {
@@ -348,7 +355,9 @@ test.describe('Below the breakpoint', () => {
     const trigger = page.getByTestId('header-trigger');
     await expect(trigger).toHaveAccessibleName('Open navigation');
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-    await trigger.click();
+    // Opened from the keyboard, as a press doesn't focus a button in WebKit.
+    await trigger.focus();
+    await page.keyboard.press('Enter');
     const drawer = page.getByRole('dialog', { name: 'Primary' });
     await expect(drawer).toBeVisible();
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -382,8 +391,10 @@ test.describe('Below the breakpoint', () => {
     await page.getByTestId('header-trigger').click();
     const drawer = page.getByRole('dialog', { name: 'Primary' });
     await expect(drawer).toBeVisible();
-    const edge = await box(drawer);
-    expect(edge.x + edge.width).toBeCloseTo(390, 0);
+    // Once it has slid in.
+    await expect
+      .poll(async () => Math.round((await box(drawer)).x + (await box(drawer)).width))
+      .toBe(390);
   });
 
   test.describe('under a coarse pointer', () => {

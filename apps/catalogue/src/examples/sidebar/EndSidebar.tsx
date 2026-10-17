@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { AppShell, DescriptionList, Page, SidebarTrigger, Text } from '@envsemble/envui';
+import { AppShell, DescriptionList, Page, Sidebar, SidebarTrigger, Text } from '@envsemble/envui';
 
 /** Stands in for the window; an application renders the frame at its root. */
 const preview = {
@@ -20,11 +20,13 @@ export default function EndSidebar() {
         </Page>
       </AppShell.Main>
       <AppShell.Aside label="Details" resizable>
-        <DescriptionList.Root>
-          <DescriptionList.Item label="Owner">Priya Shah</DescriptionList.Item>
-          <DescriptionList.Item label="Due">14 November</DescriptionList.Item>
-          <DescriptionList.Item label="Status">In review</DescriptionList.Item>
-        </DescriptionList.Root>
+        <Sidebar.Content align="stretch">
+          <DescriptionList.Root>
+            <DescriptionList.Item label="Owner">Priya Shah</DescriptionList.Item>
+            <DescriptionList.Item label="Due">14 November</DescriptionList.Item>
+            <DescriptionList.Item label="Status">In review</DescriptionList.Item>
+          </DescriptionList.Root>
+        </Sidebar.Content>
       </AppShell.Aside>
     </AppShell.Root>
   );
