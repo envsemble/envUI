@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   PanelDock,
-  PanelDockHeader,
   Surface,
   Text,
   type PanelDockMode,
@@ -38,7 +37,7 @@ export default function MaximizedPanel() {
       padding={0}
       style={{ position: 'relative', blockSize: '30rem', overflow: 'hidden' }}
     >
-      <PanelDock
+      <PanelDock.Root
         panels={panels}
         onModeChange={changeMode}
         onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
@@ -49,12 +48,12 @@ export default function MaximizedPanel() {
       >
         {(panel) => (
           <>
-            <PanelDockHeader title={panel.title} meta="Edited by Alex Morgan" />
+            <PanelDock.Header title={panel.title} meta="Edited by Alex Morgan" />
             {/* The body's inset lines up with the header's title. */}
             <Text style={{ padding: '0 1.5rem 1.5rem' }}>{notes[panel.id]}</Text>
           </>
         )}
-      </PanelDock>
+      </PanelDock.Root>
     </Surface>
   );
 }

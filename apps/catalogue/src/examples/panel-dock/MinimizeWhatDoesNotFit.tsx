@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   PanelDock,
-  PanelDockHeader,
   Surface,
   Text,
   type PanelDockMode,
@@ -37,7 +36,7 @@ export default function MinimizeWhatDoesNotFit() {
         overflow: 'hidden',
       }}
     >
-      <PanelDock
+      <PanelDock.Root
         panels={panels}
         overflow="minimize"
         onModeChange={changeMode}
@@ -49,14 +48,14 @@ export default function MinimizeWhatDoesNotFit() {
       >
         {(panel) => (
           <>
-            <PanelDockHeader title={panel.title} />
+            <PanelDock.Header title={panel.title} />
             {/* The body's inset lines up with the header's title. */}
             <Text emphasis="muted" style={{ padding: '0 1.5rem 1.5rem' }}>
               Shared with the team.
             </Text>
           </>
         )}
-      </PanelDock>
+      </PanelDock.Root>
     </Surface>
   );
 }

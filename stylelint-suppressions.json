@@ -234,7 +234,7 @@
   },
   "packages/ui/src/styles/PanelDock.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 33
+      "count": 31
     },
     "no-duplicate-selectors": {
       "count": 1

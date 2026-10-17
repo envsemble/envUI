@@ -15,6 +15,7 @@
       "forms/": "base",
       "navigation/": "base",
       "forms/internal/markdown/": "composites",
+      "navigation/panel-dock/": "shell",
       "diff/": "composites",
       "rich-text/": "composites"
     },
@@ -32,8 +33,6 @@
       "EnvUILogo.tsx": "base",
       "foundations/ThemePreference.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
-      "navigation/PanelDock.tsx": "shell",
-      "navigation/PanelDockHeader.tsx": "shell",
       "navigation/WindowFrame.tsx": "shell",
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
@@ -302,7 +301,15 @@
         "styles": ["Menu.css"]
       },
       "PanelDock": {
-        "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
+        "modules": [
+          "navigation/panel-dock/Root.tsx",
+          "navigation/panel-dock/PanelFrame.tsx",
+          "navigation/panel-dock/Header.tsx",
+          "navigation/panel-dock/PanelTab.tsx",
+          "navigation/panel-dock/dockLayout.ts",
+          "navigation/panel-dock/useEntrance.ts",
+          "navigation/internal/PanelDockContext.ts"
+        ]
       },
       "Tabs": {},
       "WindowFrame": {

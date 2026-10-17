@@ -4,7 +4,6 @@ import {
   IconButton,
   Menu,
   PanelDock,
-  PanelDockHeader,
   Stack,
   Surface,
   Text,
@@ -93,13 +92,13 @@ function DocumentWindow({
   useEffect(() => onChangedChange(changed), [changed]);
   return (
     <>
-      <PanelDockHeader
+      <PanelDock.Header
         title={document.title}
         meta={`Edited by ${document.editor}`}
         actions={
           <Menu.Root
             aria-label={`${document.title} actions`}
-            trigger={<IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />}
+            trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
           >
             <Menu.Item icon={<Share />}>Share</Menu.Item>
             <Menu.Item icon={<ContentCopy />}>Make a copy</Menu.Item>
@@ -175,7 +174,7 @@ export default function DocumentDrafts() {
           ))}
         </Stack>
       </Stack>
-      <PanelDock
+      <PanelDock.Root
         panels={panels}
         onModeChange={(id, mode) =>
           // One panel at a time is maximized; maximizing another returns the earlier one.
@@ -200,7 +199,7 @@ export default function DocumentDrafts() {
             onChangedChange={(changed) => markChanged(panel.id, changed)}
           />
         )}
-      </PanelDock>
+      </PanelDock.Root>
     </Surface>
   );
 }

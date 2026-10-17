@@ -10,7 +10,6 @@
   "interactive": [
     { "module": "actions/AvatarButton.tsx", "element": "button", "count": 1 },
     { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 },
-    { "module": "navigation/PanelDock.tsx", "element": "button", "count": 2 },
     { "module": "rich-text/Reference.tsx", "element": "a", "count": 1 },
     { "module": "rich-text/RichTextEditor.tsx", "element": "input", "count": 1 },
     { "module": "rich-text/Suggestions.tsx", "element": "role=\"listbox\"", "count": 1 }

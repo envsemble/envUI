@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   PanelDock,
-  PanelDockHeader,
   Stack,
   Surface,
   Text,
@@ -44,7 +43,7 @@ export default function NarrowRegion() {
           Messages
         </Text>
       </Stack>
-      <PanelDock
+      <PanelDock.Root
         panels={panels}
         onModeChange={changeMode}
         onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
@@ -53,12 +52,12 @@ export default function NarrowRegion() {
       >
         {(panel) => (
           <>
-            <PanelDockHeader title={panel.title} meta="Direct message" />
+            <PanelDock.Header title={panel.title} meta="Direct message" />
             {/* The body's inset lines up with the header's title. */}
             <Text style={{ padding: '0 1.5rem 1.5rem' }}>{lastMessages[panel.id]}</Text>
           </>
         )}
-      </PanelDock>
+      </PanelDock.Root>
     </Surface>
   );
 }

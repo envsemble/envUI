@@ -28,7 +28,6 @@ import {
   CalendarHeatmap,
   Combobox,
   PanelDock,
-  PanelDockHeader,
   type PanelDockPanel,
   RelativeTime,
   AvatarGroup,
@@ -224,7 +223,7 @@ export function HydrationApp() {
           footer="Hydrated composer footer"
         />
         <div style={{ position: 'relative', blockSize: '24rem' }}>
-          <PanelDock
+          <PanelDock.Root
             panels={dockPanels}
             onModeChange={(id, mode) =>
               setDockPanels((current) =>
@@ -239,11 +238,11 @@ export function HydrationApp() {
           >
             {(panel) => (
               <>
-                <PanelDockHeader title={panel.title} headingLevel={3} />
+                <PanelDock.Header title={panel.title} headingLevel={3} />
                 <TextField label={`${panel.title} draft`} />
               </>
             )}
-          </PanelDock>
+          </PanelDock.Root>
         </div>
         <Stat.Group aria-label="Hydrated stats">
           <Stat.Root

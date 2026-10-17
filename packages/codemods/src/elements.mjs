@@ -15,7 +15,7 @@ export function jsxPath(name) {
 /**
  * The literal value of an attribute, as the map's keys write it: `true` for a bare attribute or
  * `{true}`, `false` for `{false}`, a string for `"sm"`, `{'sm'}` or `` {`sm`} ``, a number's text
- * for `{2}`, and undefined for anything else, such as an expression.
+ * for `{2}`, `null` for `{null}`, and undefined for anything else, such as an expression.
  */
 export function literalKey(value) {
   if (value == null) return 'true';
@@ -35,6 +35,8 @@ export function expressionKey(node) {
     return String(node.value);
   if (node.type === 'NumericLiteral' || (node.type === 'Literal' && typeof node.value === 'number'))
     return String(node.value);
+  if (node.type === 'NullLiteral' || (node.type === 'Literal' && node.value === null))
+    return 'null';
   if (node.type === 'TemplateLiteral' && node.expressions.length === 0)
     return node.quasis[0].value.cooked;
   return undefined;

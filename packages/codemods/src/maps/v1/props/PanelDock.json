@@ -1,0 +1,17 @@
+{
+  "@envsemble/envui": {
+    "PanelDock.Header": {
+      "controls": {
+        "current": [true, false],
+        "report": "PanelDock.Header's controls is a boolean in 1.0: false leaves the window controls out. A PanelDockControls element with labels of its own is gone: drop the prop, and name the controls through EnvUIProvider's messages.panelDock (minimize, maximize, restore and close).",
+        "values": {
+          "null": {
+            "props": {
+              "controls": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

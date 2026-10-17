@@ -9,16 +9,15 @@ import {
   type KeyboardEvent,
 } from 'react';
 import {
+  EnvUIProvider,
   IconButton,
   Menu,
   PanelDock,
-  PanelDockHeader,
   Text,
   Textarea,
   Theme,
   type PanelDockMode,
   type PanelDockPanel,
-  type PanelDockProps,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -141,7 +140,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
             Page action {theme}
           </button>
         </main>
-        <PanelDock
+        <PanelDock.Root
           data-testid={`dock-region-${theme}`}
           panels={panels}
           onModeChange={changeMode}
@@ -171,7 +170,7 @@ export function PanelDockFixture({ theme }: { theme: ThemeValue }) {
               }
             />
           )}
-        </PanelDock>
+        </PanelDock.Root>
       </div>
       <div className="fixture-actions">
         <button type="button" onClick={openDocument}>
@@ -198,6 +197,7 @@ const OtherDocks = memo(function OtherDocks({ theme }: { theme: ThemeValue }) {
     <>
       <PassiveDock theme={theme} />
       <LooseDock theme={theme} />
+      {theme === 'light' && <TranslatedDock />}
       <MinimizingDock
         name="minimizing"
         theme={theme}
@@ -350,8 +350,8 @@ function MinimizingDock({
   /** A panel the application keeps open when asked to minimize it. */
   keeps?: string;
   className?: string;
-  /** Labels of the chips' buttons. */
-  labels?: Pick<PanelDockProps<PanelDockPanel>, 'showLabel'>;
+  /** Labels of the tabs' buttons. */
+  labels?: Pick<PanelDock.RootProps<PanelDockPanel>, 'showLabel'>;
   /** Milliseconds after which the application answers, in a transition; at once by default. */
   answerDelay?: number;
   /** A width the application's own state can narrow the region to, as a sidebar opening does. */
@@ -387,7 +387,7 @@ function MinimizingDock({
           id={name}
           onRender={() => frame.current?.setAttribute('data-commits', String(++commits.current))}
         >
-          <PanelDock
+          <PanelDock.Root
             {...labels}
             panels={panels}
             overflow="minimize"
@@ -420,13 +420,13 @@ function MinimizingDock({
           >
             {(panel) => (
               <>
-                <PanelDockHeader title={panel.title} />
+                <PanelDock.Header title={panel.title} />
                 <div className="fixture-dock-body">
                   <Textarea label={`Notes of ${panel.title}`} />
                 </div>
               </>
             )}
-          </PanelDock>
+          </PanelDock.Root>
         </Profiler>
       </div>
       {narrowTo !== undefined && (
@@ -439,7 +439,56 @@ function MinimizingDock({
   );
 }
 
-/** A narrow dock whose application never activates panels: its chips still show them. */
+/** A narrow dock whose application never activates panels: its tabs still show them. */
+/** The dock's and its window controls' names from EnvUIProvider's messages, in German. */
+const germanDock = {
+  panelDock: {
+    minimize: 'Minimieren',
+    maximize: 'Maximieren',
+    restore: 'Wiederherstellen',
+    close: 'Schließen',
+    hidden: 'Ausgeblendete Bereiche',
+    show: ({ label }: { label: string }) => `${label} anzeigen`,
+    closePanel: ({ label }: { label: string }) => `${label} schließen`,
+    resize: ({ label }: { label: string }) => `Größe von ${label} ändern`,
+  },
+};
+
+/**
+ * A dock whose names come from EnvUIProvider's messages, with a panel that leaves out its window
+ * controls, mounted in the panel-dock fixture.
+ */
+function TranslatedDock() {
+  const [panels, setPanels] = useState<PanelDockPanel[]>([
+    { id: 'entwurf', title: 'Entwurf', mode: 'open', active: true },
+    { id: 'notizen', title: 'Notizen', mode: 'open' },
+    { id: 'plan', title: 'Plan', mode: 'minimized' },
+  ]);
+  return (
+    <EnvUIProvider messages={germanDock}>
+      <div className="fixture-dock-frame" data-testid="translated-dock">
+        <PanelDock.Root
+          panels={panels}
+          onModeChange={(id, mode) =>
+            setPanels((current) =>
+              current.map((panel) => (panel.id === id ? { ...panel, mode } : panel)),
+            )
+          }
+          onClose={(id) => setPanels((current) => current.filter((panel) => panel.id !== id))}
+        >
+          {(panel) => (
+            <PanelDock.Header
+              title={panel.title}
+              controls={panel.id !== 'notizen'}
+              actions={<IconButton icon={<Edit />} aria-label={`${panel.title} bearbeiten`} />}
+            />
+          )}
+        </PanelDock.Root>
+      </div>
+    </EnvUIProvider>
+  );
+}
+
 function PassiveDock({ theme }: { theme: ThemeValue }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
     { id: 'first', title: `First note ${theme}`, mode: 'open', active: true },
@@ -448,7 +497,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
   return (
     <>
       <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`passive-dock-${theme}`}>
-        <PanelDock
+        <PanelDock.Root
           panels={panels}
           onModeChange={(id, mode) =>
             setPanels((current) =>
@@ -460,7 +509,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
           {(panel) => (
             // A form holds the header with the fields, as the header sticks within it.
             <form onSubmit={(event) => event.preventDefault()}>
-              <PanelDockHeader title={panel.title} />
+              <PanelDock.Header title={panel.title} />
               <div className="fixture-dock-body">
                 <Textarea label={`Text of ${panel.title}`} />
                 {Array.from({ length: 12 }, (_, index) => (
@@ -471,7 +520,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
               </div>
             </form>
           )}
-        </PanelDock>
+        </PanelDock.Root>
       </div>
       <div className="fixture-actions">
         <button
@@ -492,7 +541,7 @@ function PassiveDock({ theme }: { theme: ThemeValue }) {
 
 /**
  * A narrow dock whose application neither marks a panel active nor activates one: the newest panel
- * fills it, and a chip shows its own panel.
+ * fills it, and a tab shows its own panel.
  */
 function LooseDock({ theme }: { theme: ThemeValue }) {
   const [panels, setPanels] = useState<PanelDockPanel[]>([
@@ -502,7 +551,7 @@ function LooseDock({ theme }: { theme: ThemeValue }) {
   return (
     <>
       <div className="fixture-dock-frame fixture-dock-narrow" data-testid={`loose-dock-${theme}`}>
-        <PanelDock
+        <PanelDock.Root
           panels={panels}
           onModeChange={(id, mode) =>
             setPanels((current) =>
@@ -513,13 +562,13 @@ function LooseDock({ theme }: { theme: ThemeValue }) {
         >
           {(panel) => (
             <>
-              <PanelDockHeader title={panel.title} />
+              <PanelDock.Header title={panel.title} />
               <div className="fixture-dock-body">
                 <Textarea label={`Words of ${panel.title}`} />
               </div>
             </>
           )}
-        </PanelDock>
+        </PanelDock.Root>
       </div>
       <div className="fixture-actions">
         <button
@@ -574,21 +623,16 @@ function DocumentWindow({
   }, []);
   return (
     <>
-      <PanelDockHeader
+      <PanelDock.Header
         title={panel.title}
         meta={`Edited by Alex Morgan · ${theme}`}
         actions={
           <>
-            <IconButton
-              variant="text"
-              icon={<Edit />}
-              aria-label={`Edit ${panel.title} ${theme}`}
-            />
+            <IconButton icon={<Edit />} aria-label={`Edit ${panel.title} ${theme}`} />
             <Menu.Root
               aria-label={`${panel.title} actions ${theme}`}
               trigger={
                 <IconButton
-                  variant="text"
                   icon={<MoreVert />}
                   aria-label={`More actions for ${panel.title} ${theme}`}
                 />

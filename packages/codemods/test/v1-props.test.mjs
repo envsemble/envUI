@@ -35,6 +35,9 @@ const reports = {
   'color-picker.tsx': [
     `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
   ],
+  'panel-dock.tsx': [
+    `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,
+  ],
   'content.tsx': [`line 9: ${report('MarkdownEditor', 'className', undefined, content)}`],
   // A report-only rule leaves the prop as it is and reports every use, on every run.
   'root-styles.tsx': [
