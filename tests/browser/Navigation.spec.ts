@@ -117,15 +117,19 @@ test('an item named by its label says a count as new, and other end content as i
 }) => {
   await page.goto(`${fixtureUrl}/?fixture=navigation`);
   const scope = page.getByTestId('navigation-icons-light').getByTestId('named-end-navigation');
-  const names = await scope
-    .locator('.env-nav-list-item')
-    .evaluateAll((items) => items.map((item) => item.getAttribute('aria-label')));
-  expect(names).toEqual([
-    'Count, 3 new',
-    'Number, 7 new',
-    'Unread, 4 unread',
-    'Labs, Beta',
-    'Inbox, New',
-    'Reports, Recently updated',
-  ]);
+  // Polled, as the fixture may still be rendering after the navigation.
+  const names = () =>
+    scope
+      .locator('.env-nav-list-item')
+      .evaluateAll((items) => items.map((item) => item.getAttribute('aria-label')));
+  await expect
+    .poll(names)
+    .toEqual([
+      'Count, 3 new',
+      'Number, 7 new',
+      'Unread, 4 unread',
+      'Labs, Beta',
+      'Inbox, New',
+      'Reports, Recently updated',
+    ]);
 });
