@@ -98,6 +98,12 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
         <NavList.Item
           iconOnly
           icon={<Home />}
+          aria-label="Capped"
+          end={<CounterBadge value="99+" />}
+        />
+        <NavList.Item
+          iconOnly
+          icon={<Home />}
           aria-label="Unread"
           end={<CounterBadge value={4} aria-label="4 unread" />}
         />
