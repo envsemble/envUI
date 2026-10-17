@@ -17,6 +17,7 @@ import { tokensVitePlugin } from '../../scripts/BuildTokens.mjs';
 import { createThemeBootstrapScript } from '../../packages/ui/src/foundations/ThemeBootstrap.ts';
 import { createDisplayBootstrapScript, displayStorageKeys } from './src/theme/DisplayStorage.ts';
 import { checkoutMarker } from '../../scripts/CheckoutMarker.mjs';
+import { resetClosedConnections } from '../../scripts/ServerSockets.mjs';
 
 /**
  * The revision the catalogue's links to source files point at: the release tag when the build is
@@ -51,6 +52,8 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       // Tells the browser tests which checkout this server serves.
       checkoutMarker(),
+      // The browser tests' closed connections leave no ports behind: scripts/ServerSockets.mjs.
+      resetClosedConnections(),
       {
         // The stored theme, contrast and scale apply before the catalogue loads, so a dark theme
         // does not flash light and a compact page does not start at the comfortable size.
