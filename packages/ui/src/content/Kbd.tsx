@@ -18,7 +18,7 @@ export function Kbd({ keys, children, className, ...props }: KbdProps) {
       </kbd>
     );
   return (
-    <kbd {...props} className={classNames('env-kbd-combination', className)}>
+    <kbd {...props} className={classNames('env-kbd', className)} data-combination="">
       {keys.map((key, index) => (
         <span key={index} className="env-kbd-part">
           {index > 0 && <span className="env-kbd-separator">+</span>}
