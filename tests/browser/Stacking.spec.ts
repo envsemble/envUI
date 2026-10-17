@@ -31,7 +31,6 @@ const literals: Record<string, number> = {
   'popup-positioner': 110,
   'menu-positioner': 110,
   'popover-positioner': 110,
-  'select-positioner': 110,
   'toast-viewport': 120,
   'tooltip-positioner': 130,
   'loading-bar': 140,
