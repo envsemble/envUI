@@ -41,7 +41,7 @@ const servers = await resolveServers(
  */
 const configured = process.env.ENVUI_WORKERS;
 const workers = configured
-  ? /^d+$/.test(configured)
+  ? /^\d+$/.test(configured)
     ? Number(configured)
     : configured
   : process.env.CI
