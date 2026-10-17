@@ -7,7 +7,7 @@
 
 [![CI](https://github.com/envsemble/envUI/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/envsemble/envUI/actions/workflows/ci.yml)
 ![React 19](https://img.shields.io/badge/React-19-149eca)
-![Node.js 24+](https://img.shields.io/badge/Node.js-24%2B-417e38)
+![Node.js 22.13+ or 24+](https://img.shields.io/badge/Node.js-22.13%2B%20%7C%2024%2B-417e38)
 ![Private package](https://img.shields.io/badge/GitHub_Packages-private-6e40c9)
 
 envUI brings consistent themes, composition and interaction to React applications: from a button or a native form to dialogs, notifications and rich text. It ships as a private ESM package with TypeScript declarations, local fonts, icons and tooling for coding agents.
@@ -31,18 +31,24 @@ _Actual envUI components in the local catalogue. The preview follows your light 
 
 ## Start using envUI
 
-Requires React and React DOM 19, plus access to the private `@envsemble` GitHub Packages registry. See [setup](docs/setup.md) for registry access and the [documentation index](docs/index.md) for examples matching the installed version.
+Requires React and React DOM 19, Node.js 22.13 or a later 22 release, or Node.js 24 or newer, for the `envui` command and the lint packages, plus access to the private `@envsemble` GitHub Packages registry. See [setup](docs/setup.md) for registry access and the [documentation index](docs/index.md) for examples matching the installed version.
 
 ```sh
 npm install --save-exact @envsemble/envui@<version>
 ```
 
-Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, types and `env-*` classes to the 1.0 names and reports what needs a decision:
+Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` package moves its imports, components, props, types and `env-*` classes to the 1.0 names and reports what needs a decision. Commit first, then run the six transforms in this order, before installing 1.0:
 
 ```sh
-npx @envsemble/envui-codemods v1-names src
-npx @envsemble/envui-codemods v1-classes src
+npx @envsemble/envui-codemods@<version> v1-names src
+npx @envsemble/envui-codemods@<version> v1-app-shell src
+npx @envsemble/envui-codemods@<version> v1-structure src
+npx @envsemble/envui-codemods@<version> v1-render src
+npx @envsemble/envui-codemods@<version> v1-props src
+npx @envsemble/envui-codemods@<version> v1-classes src
 ```
+
+The [migration guide](docs/migration.md), under "Upgrade from envUI 0.x to 1.0", explains each step, what the codemods leave to you and the renamed tokens.
 
 Import the stylesheet once at your application entry point, then compose public components:
 
@@ -103,6 +109,7 @@ export function ProjectForm() {
 Coding agents get the same documentation as people, plus what helps them find a component before writing their own. [For agents](docs/agent-tooling.md) describes it all:
 
 - `npx --no envui agents` writes an index of envUI, under 8 KB, into the project's `AGENTS.md`, with the rule to search envUI before writing any UI element and to propose an addition instead of a local copy.
+- `npx --no envui -v` prints the installed envUI version. Pass `--version` after `--`, as `npx --no -- envui --version`; without it, npx prints its own version.
 - `npx --no envui mcp` serves the installed version's components, props, examples, patterns and tokens as an MCP server.
 - `manifest.json`, `llms.txt` and `llms-full.txt` hold the library as data and as text, generated from the same pages.
 

@@ -12,4 +12,4 @@ PanelDock is a namespace, `PanelDock.Root` and `PanelDock.Header`, and its words
 
 The codemods rename the exports (`v1-names`), turn `controls={null}` into `controls={false}` and report a `controls` element (`v1-props`), report `PanelDockControls` with what replaces it, and rename the classes (`v1-classes`). Rename `[data-chips]` in style sheets by hand.
 
-Migration guide: [Shell, dock, editors and code](../../docs/migration.md#shell-dock-editors-and-code).
+Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).

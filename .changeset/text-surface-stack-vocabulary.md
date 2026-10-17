@@ -13,4 +13,4 @@ Text, Skeleton, Surface and Stack take the 1.0 vocabulary, and `render` replaces
 
 Migrate with the codemods: `envui-codemods v1-structure` rewrites ActionGroup into Stack and reports a `stacked` it can't read; `v1-render` turns a literal `as` into `render` and reports an expression; `v1-props` renames `tone`, `corners` and the Text variants and maps their literal values, reporting an expression; `v1-names` renames the types and reports the removed ones; and `v1-classes` rewrites the classes and `env-symbol`.
 
-Migration guide: [Variants, tones and render](../../docs/migration.md#variants-tones-and-render).
+Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).

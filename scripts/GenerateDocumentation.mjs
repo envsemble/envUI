@@ -28,6 +28,27 @@ import { headingSlugger } from './SearchAnchors.mjs';
 import { writeSearchIndex } from './SearchIndex.mjs';
 
 export const documentationDirectory = fileURLToPath(new URL('../docs/', import.meta.url));
+
+/**
+ * Pages for people who work on envUI itself. The catalogue shows them; the package leaves them out,
+ * and its pages link to the copies on main instead.
+ */
+export const contributorPages = new Set([
+  'local-development.md',
+  'library-development.md',
+  'component-pages.md',
+  'pattern-pages.md',
+]);
+const repositoryDocumentation = 'https://github.com/envsemble/envUI/blob/main/docs/';
+
+/** A packaged page's links to contributor pages, pointed at the repository's copies on main. */
+export function linkContributorPages(markdown, path) {
+  return markdown.replace(/\]\(([^)\s#:]+\.md)(#[^)\s]*)?\)/g, (link, href, hash = '') => {
+    const target = posix.normalize(posix.join(posix.dirname(path), href));
+    return contributorPages.has(target) ? `](${repositoryDocumentation}${target}${hash})` : link;
+  });
+}
+
 export const examplesDirectory = fileURLToPath(
   new URL('../apps/catalogue/src/examples/', import.meta.url),
 );
@@ -1015,7 +1036,10 @@ export function compileDocument(document, documents, { props, examples = example
   return `${head}${title}${parts.join('\n')}`.replace(/\n*$/, '\n');
 }
 
-/** Every packaged documentation file: compiled pages, the index and the example sources. */
+/**
+ * Every packaged documentation file: compiled pages, the index and the example sources, without the
+ * contributor pages.
+ */
 export function compileDocumentation(
   directory = documentationDirectory,
   { props = readProps(directory), examples = examplesDirectory } = {},
@@ -1023,7 +1047,14 @@ export function compileDocumentation(
   const documents = readDocumentation(directory, { props, examples });
   const files = new Map();
   for (const document of documents)
-    files.set(document.path, compileDocument(document, documents, { props, examples }));
+    if (!contributorPages.has(document.path))
+      files.set(
+        document.path,
+        linkContributorPages(
+          compileDocument(document, documents, { props, examples }),
+          document.path,
+        ),
+      );
   for (const document of documents)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
@@ -1035,10 +1066,14 @@ export function compileDocumentation(
   return files;
 }
 
-/** Writes the package's docs/: compiled pages and examples, and every other file as it is. */
+/**
+ * Writes the package's docs/: compiled pages and examples, and every other file as it is but the
+ * contributor pages.
+ */
 export function packageDocumentation(outputDirectory) {
   rmSync(outputDirectory, { recursive: true, force: true });
   cpSync(documentationDirectory, outputDirectory, { recursive: true });
+  for (const path of contributorPages) rmSync(resolve(outputDirectory, path), { force: true });
   for (const [path, contents] of compileDocumentation()) {
     const file = resolve(outputDirectory, path);
     mkdirSync(dirname(file), { recursive: true });

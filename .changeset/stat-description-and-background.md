@@ -9,4 +9,4 @@ Stat.Root's `detail` is `description`, and Stat.Group's `tone` is `background`.
 
 Migrate with the codemods: `envui-codemods v1-props` renames both props and maps the values, and `v1-classes` renames the class.
 
-Migration guide: [Content and display](../../docs/migration.md#content-and-display).
+Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).

@@ -32,7 +32,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": "^22.13.0 || >=24"
   },
   "scripts": {
     "prepack": "node scripts/SyncTokens.mjs",

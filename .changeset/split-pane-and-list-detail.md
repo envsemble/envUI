@@ -9,4 +9,4 @@ New: `SplitPane` and `ListDetail`, which replace 0.6's SplitView.
 
 Migrate a SplitView with the codemods: `v1-names` and `v1-structure` turn `<SplitView start end resizeLabel storageKey>` into `<SplitPane.Root persist>` around `<SplitPane.Pane>{start}</SplitPane.Pane>`, `<SplitPane.ResizeHandle label />` and `<SplitPane.Pane>{end}</SplitPane.Pane>`, `SplitViewProps` into `SplitPane.RootProps`, and `v1-classes` renames `env-split-view` and its parts. The sizes keep their percentages, now of the whole split pane.
 
-Migration guide: [Split panes](../../docs/migration.md#split-panes).
+Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md#split-panes).

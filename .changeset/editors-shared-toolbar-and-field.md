@@ -19,4 +19,4 @@ RichTextEditor takes the field vocabulary and the field's look, in the experimen
 
 MarkdownEditor stays beta, and the `./rich-text` entry, RichText, RichTextEditor and `createRichTextExtensions`, is experimental.
 
-Migration guide: [Shell, dock, editors and code](../../docs/migration.md#shell-dock-editors-and-code).
+Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).

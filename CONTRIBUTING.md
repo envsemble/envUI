@@ -125,15 +125,96 @@ Builds run on Cloudflare with Workers Builds, so they use no GitHub Actions minu
 
 ## Releases
 
-Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). To prepare a release, run `npm run changeset:version`. It applies the pending changesets to the four published packages (`packages/ui`, `packages/codemods`, `packages/eslint-plugin` and `packages/stylelint-config`), which share one version, the dependency in `apps/catalogue/package.json`, the lockfile, the version of the [agent plugin](docs/agent-tooling.md#how-a-release-updates-the-plugin) in `plugin/` and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. Add the date to its heading and a sentence on what the release brings, as earlier releases have. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
-
-- rejects tags that are not on `main`;
-- verifies the tag matches the package version;
-- publishes the four packages privately to GitHub Packages;
-- creates a GitHub release with that version's CHANGELOG section and the matching offline HTML.
-
-Prereleases use `next`; stable releases use `latest`. The work towards 1.0 is in Changesets' prerelease mode for `next` (`.changeset/pre.json`), so each `npm run changeset:version` produces the next `1.0.0-next.N`. Breaking changes are `major` changesets, and the first prerelease needs one to start at 1.0.0. Before releasing 1.0.0, run `npx changeset pre exit`: the next `npm run changeset:version` then releases 1.0.0 with the entries of every prerelease. A later prerelease line starts with `npx changeset pre enter next`.
+Releases are cut from `main`. Each change records its changelog entry as a changeset in `.changeset/`; see [library development](docs/library-development.md). The four published packages (`packages/ui`, `packages/codemods`, `packages/eslint-plugin` and `packages/stylelint-config`) are a fixed group in Changesets and share one version. Prereleases use the `next` dist-tag; stable releases use `latest`. Breaking changes are `major` changesets.
 
 Published versions are immutable. Breaking changes require a new major version and migration notes.
 
-Grant consuming repositories package Read access for their GitHub Actions workflows. If only the HTML upload fails, recover it from the same tag without republishing the package.
+### Changelog links
+
+A changeset's entry ends up in `packages/ui/CHANGELOG.md`, on the catalogue's Changelog page, in the CHANGELOG of the npm tarball and in the GitHub release notes. A relative link resolves differently in each, so changesets link to documentation with an absolute URL to the file on `main`, such as `https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens`, never `../../docs/migration.md#tokens` or `./docs/migration.md#tokens`. The repository is private, and the changelog's readers are envsemble members who can open it. Once a released entry links to a heading in `docs/migration.md`, keep that heading's anchor.
+
+### Prepare the release commit
+
+The release commit is made on the branch that carries the release, such as `envui-1.0`, before it is merged into `dev`:
+
+1. **Leave prerelease mode, for a stable release.** The work towards 1.0 is in Changesets' prerelease mode for `next` (`.changeset/pre.json`), where each `npm run changeset:version` produces the next `1.0.0-next.N`. Run `npx changeset pre exit` first. The order matters: `npm run changeset:version` still in prerelease mode versions the packages to `1.0.0-next.0` and deletes the changesets, and a `pre exit` afterwards leaves nothing to release. If that happens, discard the result with `git restore` and `git clean` on `.changeset/`, `packages/`, `apps/catalogue/`, `plugin/` and the lockfile, rather than editing versions by hand.
+2. **Apply the changesets.** `npm run changeset:version` writes the version into the four packages, the dependency in `apps/catalogue/package.json`, the lockfile, the version of the [agent plugin](docs/agent-tooling.md#how-a-release-updates-the-plugin) in `plugin/` and the [changelog](packages/ui/CHANGELOG.md), where it adds the version above the earlier ones. It deletes the changesets it applied.
+3. **Finish the changelog section.** Add the date to its heading, as in `## 1.0.0 — 2026-10-20`, and the summary below it; see [Release notes](#release-notes).
+4. **Check it.** `GITHUB_REF_NAME=v1.0.0 node scripts/ValidateRelease.mjs` checks what the Release workflow checks before it publishes: the four packages, the catalogue's dependency and both plugin manifests carry the version, and the changelog has a section for it. With `--release-notes` it prints that section as the release notes will read.
+5. **Commit** the result as one release commit, such as `Release 1.0.0`.
+
+A later prerelease line starts with `npx changeset pre enter next`.
+
+### Release notes
+
+The GitHub release's notes are the version's changelog section, so its first paragraph, written by hand, is what most readers see:
+
+- One or two sentences on what the release brings for people who use envUI, in the style of the earlier releases: the headline components and changes, not a list.
+- For 1.0.0, say that it is the first stable release, that it breaks code written for 0.x, that `@envsemble/envui-codemods` makes most of the changes, and link the [migration guide](docs/migration.md) by its absolute URL on `main`.
+- Name no products or applications, as in changesets.
+- Leave the generated entries below as Changesets wrote them. Fix a wrong entry where it stands rather than rewriting the section.
+
+### Release through CI
+
+This is the normal path once GitHub Actions minutes allow it. Verify, review and merge `dev` into `main` through a pull request, then push a `v<version>` tag on `main`. The [Release workflow](https://github.com/envsemble/envUI/actions/workflows/release.yml) then:
+
+- rejects tags that are not on `main`;
+- verifies the tag matches the package version, and runs `npm run verify`;
+- publishes the four packages privately to GitHub Packages;
+- creates a GitHub release with that version's CHANGELOG section and the matching offline HTML.
+
+If only the HTML upload fails, recover it from the same tag without republishing the package.
+
+### Release without CI
+
+While Actions cannot run, such as when the minutes budget is spent, a maintainer releases from their machine with the same scripts. The steps are written for 1.0.0; use the version being released. Run them in Git Bash or another POSIX shell, logged in to `gh` with the `write:packages` scope (`gh auth refresh -h github.com -s write:packages` adds it).
+
+1. **Make the release commit** on the release branch, as [above](#prepare-the-release-commit).
+2. **Verify locally** with `npm run verify`, with Docker running for the visual baseline. A run with `--skip-visual` does not count.
+3. **Merge through pull requests:** the release branch into `dev` (`gh pr create --base dev --head envui-1.0`), then `dev` into `main` (`gh pr create --base main --head dev`). Merge with a merge commit, not a squash, so `main` keeps the history of `dev`. When the required checks cannot run, an organization admin merges after the local verify, with `gh pr merge --merge --admin`.
+4. **Keep the Release workflow from running.** Once Actions can run again, a tag push starts `release.yml`: it spends the minutes on a second full verify and then fails on versions that are already published. Before pushing the tag, disable it with `gh workflow disable release.yml`; enable it again with `gh workflow enable release.yml` when releases go back through CI. Stop a run that starts anyway with `gh run list --workflow release.yml` and `gh run cancel <run id>`, and never re-run a release run for a version that is already published.
+5. **Tag `main`:**
+
+   ```sh
+   git switch main && git pull --ff-only
+   git tag -a v1.0.0 -m "envUI 1.0.0"
+   git push origin v1.0.0
+   ```
+
+6. **Build and validate the tag** in a clean checkout of it:
+
+   ```sh
+   git switch --detach v1.0.0 && git status --short   # prints nothing
+   npm ci
+   npm run build                                       # packages/ui/dist and dist/envUI.html
+   export GITHUB_REF_NAME=v1.0.0
+   node scripts/ValidateRelease.mjs                    # Validated v1.0.0; stable distribution.
+   ```
+
+7. **Publish the four packages** with a temporary npmrc that holds the `gh` token for `npm.pkg.github.com`, in the Release workflow's order: the library, the codemods, then the two lint packages. None of them needs another to install, so the order only decides what is already out when a publish fails; then fix the cause and publish the rest, never one that is out.
+
+   ```sh
+   npmrc="$(mktemp)"
+   printf '@envsemble:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' "$(gh auth token)" > "$npmrc"
+   tag="$(node scripts/ValidateRelease.mjs --dist-tag)"   # latest, or next for a prerelease
+   for workspace in @envsemble/envui @envsemble/envui-codemods @envsemble/eslint-plugin-envui @envsemble/stylelint-config-envui; do
+     npm publish --workspace "$workspace" --tag "$tag" --userconfig "$npmrc" || break
+   done
+   rm "$npmrc"
+   ```
+
+   Run the loop once with `npm publish --dry-run` to see each tarball's contents first.
+
+8. **Create the GitHub release** with the changelog section and the offline catalogue:
+
+   ```sh
+   node scripts/ValidateRelease.mjs --release-notes > release-notes.md
+   gh release create v1.0.0 dist/envUI.html --verify-tag --title "envUI v1.0.0" --notes-file release-notes.md $(node scripts/ValidateRelease.mjs --release-flag)
+   rm release-notes.md
+   ```
+
+9. **Grant package access.** 1.0.0 is the first release of `@envsemble/envui-codemods`, `@envsemble/eslint-plugin-envui` and `@envsemble/stylelint-config-envui`, and a new package grants no repository access. In each one's settings, `https://github.com/orgs/envsemble/packages/npm/<name>/settings`, check that it is linked to `envsemble/envUI`, and under Manage Actions access give Read to every repository that has Read on `@envsemble/envui`. Later releases keep these settings.
+10. **Check the release.** In a consuming project, `npm view @envsemble/envui dist-tags` shows `latest: 1.0.0`, and after installing it `npx --no envui -v` prints `1.0.0`. `--version` must follow `--`, as in `npx --no -- envui --version`; `npx envui --version` prints npm's own version.
+11. **Merge `main` back into `dev`** through a pull request (`gh pr create --base dev --head main`), so `dev` has the merge commit and the next release merges cleanly.
+
+Consuming repositories need package Read access for their GitHub Actions workflows, on each of the packages they install.
