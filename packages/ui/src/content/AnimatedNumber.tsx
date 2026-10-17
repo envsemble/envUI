@@ -11,14 +11,14 @@ export interface AnimatedNumberProps extends Omit<ComponentPropsWithRef<'span'>,
    * Writes the value as text, such as a currency.
    * @default the number format of EnvUIProvider's locale, or else the browser's
    */
-  format?: (value: number) => string;
+  formatValue?: (value: number) => string;
 }
 
 /**
  * A number within text that rolls to its new value when it changes: up when it grows and down when
  * it shrinks, so a count updated by other controls is noticed. The text is always the current value.
  */
-export function AnimatedNumber({ value, format, className, ...props }: AnimatedNumberProps) {
+export function AnimatedNumber({ value, formatValue, className, ...props }: AnimatedNumberProps) {
   const number = useFormatters().number();
   // The direction is derived during render from the previous value, so the new text and its
   // movement arrive together.
@@ -31,7 +31,7 @@ export function AnimatedNumber({ value, format, className, ...props }: AnimatedN
         className="env-animated-number-value"
         data-direction={shown.direction}
       >
-        {format ? format(value) : number.format(value)}
+        {formatValue ? formatValue(value) : number.format(value)}
       </span>
     </span>
   );

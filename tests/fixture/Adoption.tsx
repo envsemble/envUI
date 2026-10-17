@@ -110,8 +110,8 @@ export function AdoptionFixture() {
           <output data-testid="menu-action">{action}</output>
           <OrganizationSwitcher
             items={[
-              { id: 'northwind', name: 'Northwind Labs', description: 'Admin' },
-              { id: 'contoso', name: 'Contoso', description: 'Member' },
+              { id: 'northwind', label: 'Northwind Labs', description: 'Admin' },
+              { id: 'contoso', label: 'Contoso', description: 'Member' },
             ]}
             value={organizationId}
             onValueChange={(id) => {
@@ -187,8 +187,8 @@ export function AdoptionFixture() {
           <EmptyState tone="danger" title="Products couldn’t load" description="Try again." />
           <EmptyState headingLevel={1} title="Nothing here yet" />
           <Meter label="Seats assigned" value={7} max={5} valueText="5 of 5" />
-          <Avatar name="Broken Picture" src="data:image/png;base64,invalid" label />
-          <Avatar name="Organization Name" fallback="initials" label />
+          <Avatar name="Broken Picture" src="data:image/png;base64,invalid" named />
+          <Avatar name="Organization Name" fallback="initials" named />
         </section>
       </LinkProvider>
     </ThemePreferenceProvider>

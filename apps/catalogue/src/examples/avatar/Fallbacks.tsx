@@ -10,10 +10,10 @@ const picture =
 export default function Fallbacks() {
   return (
     <Stack direction="row" wrap align="center" gap={4}>
-      <Avatar name="Priya Shah" src={picture} size="lg" label />
+      <Avatar name="Priya Shah" src={picture} size="lg" named />
       {/* A picture that fails to load shows the default person picture, without an error. */}
-      <Avatar name="Jordan Ellis" src="data:image/png;base64,missing" size="lg" label />
-      <Avatar name="Northwind Labs" fallback="initials" size="lg" label />
+      <Avatar name="Jordan Ellis" src="data:image/png;base64,missing" size="lg" named />
+      <Avatar name="Northwind Labs" fallback="initials" size="lg" named />
     </Stack>
   );
 }

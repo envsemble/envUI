@@ -58,11 +58,11 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 1. **Field**: the shared text field, with the floating `label`, `description` and `error` of TextField.
 2. **Leading content** (an option's `leading`): such as an Avatar or an icon, before the chosen label in a single field, in chips and in options, at the size of its slot.
-3. **Chips** (`multiple`): one per chosen option at the start of the field, with its leading content, label and a remove button; the field wraps them onto more rows.
+3. **Chips** (`multiple`): one per chosen option at the start of the field, with its start content, label and a remove button; the field wraps them onto more rows.
 4. **Clear button** (`clearable`): a ghost icon button named `clearLabel` (Clear), while there is a value to clear.
 5. **Trigger**: a chevron button at the end of the field that opens the list and turns while it is open.
 6. **Popup**: the shared raised popup, as Select's, at least as wide as the field, with the options, group headings, and a status for loading or no matches.
-7. **Option** (each entry of `items`): a rounded row with a check mark slot, leading content, the `label` and a muted `description` below it.
+7. **Option** (each entry of `items`): a rounded row with a check mark slot, `start` content, the `label` and a muted `description` below it.
 
 ## Variants and sizes
 
@@ -83,7 +83,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 - **Filtering**: by default, options whose label or description contains the typed text, ignoring case and accents in the `locale` (the browser's), show; `filter` replaces the test. With `filter={null}` the list shows `items` as given, for options the application finds itself; `loading` shows `loadingLabel` (Loading…) with a spinner and marks the list busy, and `emptyLabel` (No matches) shows when nothing matches.
 - **Highlight**: the first match is highlighted, also when options arrive after typing, so <kbd>Enter</kbd> chooses it. The arrow keys move the highlight, starting from the chosen option, and the pointer highlights the option it is on.
-- **Choosing one**: choosing an option closes the list, shows its label and leading content in the field, and calls `onValueChange` with its value and option. Focusing the field selects the label, so typing replaces it with a query; a press keeps that selection. Without `clearable`, the value can change but not be removed: emptying the text and leaving the field brings the label back.
+- **Choosing one**: choosing an option closes the list, shows its label and start content in the field, and calls `onValueChange` with its value and option. Focusing the field selects the label, so typing replaces it with a query; a press keeps that selection. Without `clearable`, the value can change but not be removed: emptying the text and leaving the field brings the label back.
 - **Clearing**: with `clearable`, the clear button, <kbd>Esc</kbd> on the closed field and emptying the text remove a single value, and the clear button removes every chip. With nothing to clear, <kbd>Esc</kbd> changes nothing and goes on, such as to close an enclosing dialog.
 - **Choosing several**: with `multiple`, choosing an option adds a chip and keeps the list open, and choosing it again removes it. <kbd>Backspace</kbd> in the empty text removes the last chip, and each chip's remove button removes it. <kbd>Esc</kbd> never removes chips.
 - **Queries**: `onInputValueChange` receives the typed text, and an empty string once the query ends: when the text is cleared, or when the field shows the chosen label again after a choice or as people leave the query, so results for an abandoned query never stay for <kbd>Enter</kbd> to choose.
@@ -104,7 +104,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 ### Do
 
-- Use leading content, such as Avatars, where it helps tell options apart.
+- Use start content, such as Avatars, where it helps tell options apart.
 - Use `clearable` where the value is optional.
 - Keep the chosen options in `items` when the field first shows a saved value from a search.
 - Give a combobox the size of the buttons beside it, and an `aria-label` where its label is hidden.
@@ -134,7 +134,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 
 - The combobox pattern: the field is a `combobox` with `aria-expanded`, `aria-controls` and the highlighted option as its active descendant, and the list is a `listbox` of `option` rows with `aria-selected`; group headings name their groups.
 - The `label` tied to the field and the trigger, and the description and error linked to the field alone, with `aria-invalid` while `error` is set, so they are announced once.
-- An option's description read as its description, not its name, and decorative check marks and leading content hidden from assistive technology.
+- An option's description read as its description, not its name, and decorative check marks and start content hidden from assistive technology.
 - The chosen options of a multiple field in its description, chips in a toolbar named after the field, and remove buttons named after each option, such as "Remove Alex Morgan".
 - A status that announces `loadingLabel` while the options load and `emptyLabel` when nothing matches, with the list marked busy meanwhile.
 - The shared focus rings, and touch-height fields, chips and options.
@@ -182,5 +182,5 @@ A multiple combobox submits one entry for each chosen topic. The application che
 
 ## Changelog
 
-- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is a CloseButton: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`.
+- **1.0.0**: `hint` is `description` and `variant="outlined"` is `variant="outline"`, which the `v1-props` codemod writes. `className` and `style` style the field's root rather than the input, which takes `ref`. Read-only chips no longer carry `aria-readonly`, which the input reports. The popup is the shared popup and the options its rows, and a chip's remove button is a CloseButton: `env-combobox-well` is `env-combobox-control`, `env-combobox-option` `env-combobox-item` and `env-combobox-check` `env-combobox-item-indicator`. The loading, empty, clear and remove labels come from EnvUIProvider's `messages`. An option's `leading` content is `start`, as on List.Item.
 - **0.6.0**: Combobox, for one option or several, with leading content, descriptions, groups, a server search, compact density and native form support.

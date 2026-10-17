@@ -48,7 +48,7 @@ AnimatedNumber shows a number inside text and rolls it to its new value when it 
 ## Anatomy
 
 1. **Container**: an inline `span` that keeps the line box of the text around it and clips the rolling value to it. The ref and other `span` props reach it.
-2. **Value** (`value`, written by `format`): the current number, in tabular figures and the type of the text around it.
+2. **Value** (`value`, written by `formatValue`): the current number, in tabular figures and the type of the text around it.
 
 ## Variants and sizes
 
@@ -59,7 +59,7 @@ AnimatedNumber shows a number inside text and rolls it to its new value when it 
 
 - **Rolling**: when `value` changes, the new value rolls in from 0.6 em below as it grows, or from above as it shrinks, and fades in, in 0.24 seconds. The first render and a render with the same value don't move.
 - **Reduced motion**: with a reduced-motion preference, the new value only fades in, in 0.16 seconds.
-- **Format**: `format` writes the value, such as a currency or a percentage; by default it is the number format of EnvUIProvider's `locale`, or else the browser's, such as 1,280.
+- **Format**: `formatValue` writes the value, such as a currency or a percentage; by default it is the number format of EnvUIProvider's `locale`, or else the browser's, such as 1,280.
 - The new value replaces the old at once in the text; only its look moves.
 
 ## Content guidelines
@@ -73,7 +73,7 @@ AnimatedNumber shows a number inside text and rolls it to its new value when it 
 ### Do
 
 - Use it where a count changes because of something people do nearby.
-- Pass a `format` that fits the value's unit and the reader's locale.
+- Pass a `formatValue` that fits the value's unit and the reader's locale.
 
 ### Don't
 
@@ -91,7 +91,7 @@ AnimatedNumber shows a number inside text and rolls it to its new value when it 
 ### You provide
 
 - An announcement where the change matters and focus is elsewhere, such as a status region around the sentence; AnimatedNumber isn't a live region.
-- A `format` that writes the number in the reader's language.
+- A `formatValue` that writes the number in the reader's language.
 
 ## Examples
 
@@ -105,7 +105,7 @@ The sentence is a status region, so the new count is announced as people change 
 
 ### A formatted value
 
-`format` writes the price as a currency; it rolls up for yearly billing and down for monthly.
+`formatValue` writes the price as a currency; it rolls up for yearly billing and down for monthly.
 
 ```tsx example=CustomFormat
 
@@ -113,5 +113,5 @@ The sentence is a status region, so the new count is announced as people change 
 
 ## Changelog
 
-- **1.0.0**: The default format follows EnvUIProvider's `locale`.
+- **1.0.0**: The default format follows EnvUIProvider's `locale`. `format` is `formatValue`, as on Slider and CalendarHeatmap.
 - **0.4.0**: AnimatedNumber: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.

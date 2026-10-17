@@ -16,10 +16,10 @@ export interface OrganizationSwitcherItem {
   /** Identifies the organization; it is the value onValueChange receives. */
   id: string;
   /** The organization's name, on the trigger while it is active and in the menu. */
-  name: string;
+  label: string;
   /**
    * A short muted note at the end of its row, such as the person's role in the organization; it
-   * is read with the name.
+   * is read with the label.
    */
   description?: string;
 }
@@ -61,8 +61,13 @@ export interface OrganizationSwitcherProps {
    * @default 'Organizations', or EnvUIProvider's messages.organizationSwitcher.label
    */
   'aria-label'?: string;
-  /** Class of the trigger button, or of the create button without organizations. */
+  /**
+   * Class of the menu popup, beside env-organization-switcher; ref and style go to the popup too.
+   * Without organizations there is no popup.
+   */
   className?: string;
+  /** Class of the trigger button, or of the create button without organizations. */
+  triggerClassName?: string;
   /** The menu popup's ref; the trigger is a Button of its own. */
   ref?: Ref<HTMLDivElement>;
   /** The menu popup's inline style. */
@@ -81,6 +86,7 @@ export function OrganizationSwitcher({
   disabled,
   'aria-label': label,
   className,
+  triggerClassName,
   ref,
   style,
 }: OrganizationSwitcherProps) {
@@ -92,7 +98,7 @@ export function OrganizationSwitcher({
       <Button
         variant="secondary"
         startIcon={<Add />}
-        className={classNames('env-organization-switcher-trigger', className)}
+        className={classNames('env-organization-switcher-trigger', triggerClassName)}
         onClick={onCreate}
         disabled={disabled}
       >
@@ -106,18 +112,18 @@ export function OrganizationSwitcher({
     <Menu.Root
       aria-label={label ?? messages.label}
       align="start"
-      className="env-organization-switcher"
+      className={classNames('env-organization-switcher', className)}
       ref={ref}
       style={style}
       trigger={
         <Button
           variant="secondary"
           endIcon={<UnfoldMore />}
-          className={classNames('env-organization-switcher-trigger', className)}
+          className={classNames('env-organization-switcher-trigger', triggerClassName)}
           disabled={disabled}
         >
           <span className="env-organization-switcher-trigger-label">
-            {current?.name ?? placeholder ?? messages.placeholder}
+            {current?.label ?? placeholder ?? messages.placeholder}
           </span>
         </Button>
       }

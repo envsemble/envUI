@@ -3,7 +3,7 @@ import { Badge, Card, Text } from '@envsemble/envui';
 export default function NeutralMetadata() {
   return (
     <Card
-      heading="Team plan"
+      title="Team plan"
       meta={<Badge>Current plan</Badge>}
       style={{ inlineSize: 'min(100%, 24rem)' }}
     >

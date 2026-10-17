@@ -9,7 +9,7 @@ const number = new Intl.NumberFormat('en');
 
 export default function PlanUsage() {
   return (
-    <Card heading="Team plan">
+    <Card title="Team plan">
       <Stack gap={5}>
         {limits.map(({ label, used, limit, unit }) => {
           const text = `${number.format(used)} of ${number.format(limit)}`;

@@ -19,8 +19,8 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 import { SidebarRailContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind', description: 'Owner' },
-  { id: 'contoso', name: 'Contoso', description: 'Member' },
+  { id: 'northwind', label: 'Northwind', description: 'Owner' },
+  { id: 'contoso', label: 'Contoso', description: 'Member' },
 ];
 
 /** The stored preference of the provider around it, for the spec to read. */

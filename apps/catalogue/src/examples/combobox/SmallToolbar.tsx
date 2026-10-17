@@ -6,16 +6,16 @@ const documents: ComboboxGroup[] = [
   {
     label: 'Recent',
     items: [
-      { value: 'quarterly-report', label: 'Quarterly report', leading: <Description /> },
-      { value: 'release-notes', label: 'Release notes', leading: <Description /> },
-      { value: 'design-review', label: 'Design review', leading: <Description /> },
+      { value: 'quarterly-report', label: 'Quarterly report', start: <Description /> },
+      { value: 'release-notes', label: 'Release notes', start: <Description /> },
+      { value: 'design-review', label: 'Design review', start: <Description /> },
     ],
   },
   {
     label: 'Folders',
     items: [
-      { value: 'research/interviews', label: 'research/interviews', leading: <Folder /> },
-      { value: 'research/surveys', label: 'research/surveys', leading: <Folder /> },
+      { value: 'research/interviews', label: 'research/interviews', start: <Folder /> },
+      { value: 'research/surveys', label: 'research/surveys', start: <Folder /> },
     ],
   },
 ];

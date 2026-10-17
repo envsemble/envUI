@@ -151,7 +151,7 @@ function ThemeSubmenu({ label, icon, ...group }: ThemeSubmenuProps) {
 export interface OrganizationSubmenuProps {
   /** Organizations the signed-in person belongs to, in display order. */
   items: readonly OrganizationSwitcherItem[];
-  /** The active organization's id, or null before one is chosen; its name shows under the row's label. */
+  /** The active organization's id, or null before one is chosen; its label shows under the row's own. */
   value: string | null;
   /** Called with the id of the organization chosen, unless it is the active one. */
   onValueChange: (value: string) => void;
@@ -195,7 +195,7 @@ function OrganizationSubmenu({
     <Menu.Submenu
       label={label ?? messages.organization}
       icon={icon ?? <Groups3 />}
-      description={current?.name}
+      description={current?.label}
     >
       <OrganizationOptions
         items={items}

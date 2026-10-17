@@ -62,7 +62,7 @@ export function LayoutFixture() {
           </Stack>
           <Card
             render={<article />}
-            heading="Shared action card"
+            title="Shared action card"
             data-testid="flush-action-card"
             actions={<Button>Continue</Button>}
           >
@@ -70,14 +70,14 @@ export function LayoutFixture() {
           </Card>
           <Card
             render={<article />}
-            heading="Quarterly report"
+            title="Quarterly report"
             meta="Updated today"
             data-testid="meta-action-card"
             actions={<Button variant="secondary">Open</Button>}
           >
             <p>Figures for the last three months.</p>
           </Card>
-          <Card heading="Design tokens" meta="12 changes" data-testid="meta-card">
+          <Card title="Design tokens" meta="12 changes" data-testid="meta-card">
             <p>Colors and spacing shared by every surface.</p>
           </Card>
           <form
@@ -115,7 +115,7 @@ export function LayoutFixture() {
           <Card
             layout="feature"
             headingLevel={2}
-            heading="Additional content"
+            title="Additional content"
             description="Supporting context"
             data-testid="feature-extra"
           >

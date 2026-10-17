@@ -39,7 +39,7 @@ function ProjectCards() {
   return (
     <div className="fixture-frame-cards" data-testid="project-cards">
       {projects.map((name) => (
-        <Card key={name} heading={name} headingLevel={3} padding={3}>
+        <Card key={name} title={name} headingLevel={3} padding={3}>
           <Text variant="body-sm">3 open documents</Text>
         </Card>
       ))}

@@ -34,7 +34,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own.
 - [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
-- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.
+- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.
 
 ## Components: Actions
 

@@ -19,8 +19,8 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 import './Frame.css';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind', description: 'Admin' },
-  { id: 'example', name: 'Example Labs', description: 'Member' },
+  { id: 'northwind', label: 'Northwind', description: 'Admin' },
+  { id: 'example', label: 'Example Labs', description: 'Member' },
 ];
 
 /** The frame while the first page loads: the same parts, with NavList.Skeleton for the items. */

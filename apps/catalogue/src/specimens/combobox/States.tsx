@@ -4,7 +4,7 @@ import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 const people: ComboboxItem[] = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Ellis'].map(
   (name) => {
     const handle = name.toLowerCase().replace(' ', '.');
-    return { value: handle, label: name, leading: <Avatar name={name} /> };
+    return { value: handle, label: name, start: <Avatar name={name} /> };
   },
 );
 

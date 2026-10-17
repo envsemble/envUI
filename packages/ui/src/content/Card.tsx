@@ -41,18 +41,18 @@ interface CardSurfaceProps {
 /** What only a content card takes; an interactive card is one link or button. */
 interface CardContentOptions {
   /**
-   * A title at the top of the card: an `h3` in the title type, or in the feature layout an `h2` in
-   * the headline type. headingLevel sets another level.
+   * The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the
+   * headline type. headingLevel sets another level.
    */
-  heading?: ReactNode;
+  title?: ReactNode;
   /**
-   * The heading's level, for the page's outline; the type stays as the layout sets it.
+   * The title's heading level, for the page's outline; the type stays as the layout sets it.
    * @default 3, or 2 in the feature layout
    */
   headingLevel?: CardHeadingLevel;
-  /** A short fact at the end of the heading row, such as when the card was updated. */
+  /** A short fact at the end of the title row, such as when the card was updated. */
   meta?: ReactNode;
-  /** A sentence under the heading, in muted text. */
+  /** A sentence under the title, in muted text. */
   description?: ReactNode;
   /**
    * A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from
@@ -67,7 +67,7 @@ interface CardContentOptions {
   actions?: ReactNode;
   /**
    * stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an
-   * icon at the start, the heading and description, and the actions at the end.
+   * icon at the start, the title and description, and the actions at the end.
    * @default 'stack'
    */
   layout?: 'stack' | 'feature';
@@ -80,10 +80,10 @@ interface CardContentOptions {
 
 type NoContentOptions = { [Key in keyof CardContentOptions]?: never };
 
-/** A content card: a div, or the element of render, with an optional heading row and actions. */
+/** A content card: a div, or the element of render, with an optional title row and actions. */
 export type CardContentProps = CardSurfaceProps &
   CardContentOptions &
-  Omit<ComponentPropsWithRef<'div'>, keyof CardSurfaceProps | 'onClick'> & {
+  Omit<ComponentPropsWithRef<'div'>, keyof CardSurfaceProps | 'title' | 'onClick'> & {
     href?: undefined;
     onClick?: undefined;
   };
@@ -112,13 +112,13 @@ export type CardButtonProps = CardSurfaceProps &
 
 /**
  * A content card (the default), a link card with href, or a button card with onClick. A link or
- * button card holds its content alone: no heading, actions or layout.
+ * button card holds its content alone: no title, actions or layout.
  */
 export type CardProps = CardContentProps | CardLinkProps | CardButtonProps;
 
 /**
  * A rounded surface that groups content about one subject: a content card with an optional
- * heading row and actions, a feature card with an icon and an action, or one link or button.
+ * title row and actions, a feature card with an icon and an action, or one link or button.
  */
 export function Card(props: CardProps) {
   if (props.href !== undefined || props.onClick !== undefined)
@@ -157,7 +157,7 @@ function InteractiveCard({
 function ContentCard({
   background = 'muted',
   padding,
-  heading,
+  title,
   headingLevel,
   meta,
   description,
@@ -174,20 +174,20 @@ function ContentCard({
   const hasActions = actions != null && actions !== false;
   const level = headingLevel ?? (feature ? 2 : 3);
   const Heading = `h${level}` as const;
-  const headingText = heading != null && (
+  const headingText = title != null && (
     <Text
       render={<Heading />}
       variant={feature ? 'headline' : 'title'}
       className="env-card-heading"
     >
-      {heading}
+      {title}
     </Text>
   );
-  // The feature layout's heading stands alone in its column unless a meta shares its row.
+  // The feature layout's title stands alone in its column unless a meta shares its row.
   const header =
     feature && meta == null
       ? headingText
-      : (heading != null || meta != null) && (
+      : (title != null || meta != null) && (
           <div className="env-card-header">
             {headingText}
             {meta != null && (

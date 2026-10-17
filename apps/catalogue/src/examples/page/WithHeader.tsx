@@ -22,7 +22,7 @@ export default function WithHeader() {
     >
       <Stack gap={3}>
         {projects.map((project) => (
-          <Card key={project.name} heading={project.name}>
+          <Card key={project.name} title={project.name}>
             <Text variant="body-sm">Owned by {project.owner}</Text>
           </Card>
         ))}

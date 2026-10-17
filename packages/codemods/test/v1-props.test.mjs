@@ -36,12 +36,19 @@ const reports = {
   ],
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
+    `line 23: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
   ],
   'color-picker.tsx': [
     `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
   ],
   'rich-text.tsx': [
     `line 9: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,
+  ],
+  // Data a prop takes, such as Combobox's items, is renamed in an array written in the prop and
+  // reported where the codemod can't read it.
+  'renames.tsx': [
+    `line 28: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
+    `line 35: OrganizationSwitcher's items has entries the codemod can't read: ${report('OrganizationSwitcher', 'items')}`,
   ],
   'panel-dock.tsx': [
     `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,

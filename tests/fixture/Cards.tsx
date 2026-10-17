@@ -11,25 +11,25 @@ export function CardsFixture() {
           key={String(withIcon)}
           data-testid={`standalone-feature-${withIcon ? 'icon' : 'plain'}`}
           icon={withIcon ? <ChevronRight /> : undefined}
-          heading="Connected workspace"
+          title="Connected workspace"
           description="Supporting details"
           actions={<Button>Open workspace</Button>}
           style={{ width: '100%' }}
         />
       ))}
       <h2>Headings and elements</h2>
-      <Card heading="Default level" description="A sentence under it." data-testid="card-h3" />
-      <Card heading="Fourth level" headingLevel={4} data-testid="card-h4" />
+      <Card title="Default level" description="A sentence under it." data-testid="card-h3" />
+      <Card title="Fourth level" headingLevel={4} data-testid="card-h4" />
       <Card
         layout="feature"
-        heading="Feature heading"
+        title="Feature heading"
         headingLevel={3}
         actions={<Button>Go</Button>}
         data-testid="feature-h3"
       />
       <Card
         render={<article />}
-        heading="An article"
+        title="An article"
         actions={<Button>Open</Button>}
         data-testid="article-card"
       />

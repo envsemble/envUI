@@ -111,6 +111,9 @@ test('validateMap reports malformed maps', () => {
   assert.match(props({}), /needs a "report"/);
   assert.match(props({ report: 'Moved.', current: ['a'] }), /report-only rule/);
   assert.match(props({ report: 'Moved.', values: {} }), /needs "values"/);
+  // The rules for the objects of an array a prop takes are checked as props are.
+  assert.equal(props({ report: 'Items.', each: { name: { to: 'label', report: 'Label.' } } }), '');
+  assert.match(props({ report: 'Items.', each: { name: { to: 'label' } } }), /each\.name needs/);
   assert.match(problems({ removed: { x: { Bar: {} } } }), /"use" hint/);
   assert.match(
     problems({ exports: { x: { A: 'B' } }, removed: { x: { A: { use: 'C' } } } }),

@@ -8,7 +8,7 @@ export default function FeatureCards() {
       <Card
         layout="feature"
         icon={<Groups />}
-        heading="Invite your team"
+        title="Invite your team"
         description="Plans, comments and files stay in one shared workspace."
         actions={<Button>Invite people</Button>}
       />
@@ -16,7 +16,7 @@ export default function FeatureCards() {
       <Card
         layout="feature"
         icon={<UploadFile />}
-        heading="Import your plans"
+        title="Import your plans"
         description="Bring in spreadsheets and documents from another tool."
         actions={<Button variant="secondary">Import</Button>}
         style={{ inlineSize: 'min(100%, 24rem)' }}

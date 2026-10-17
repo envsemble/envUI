@@ -12,6 +12,12 @@
           }
         }
       }
+    },
+    "PanelDock.Root": {
+      "showLabel": {
+        "to": "openLabel",
+        "report": "PanelDock.Root's showLabel, which names a tab's button, is openLabel in 1.0."
+      }
     }
   }
 }

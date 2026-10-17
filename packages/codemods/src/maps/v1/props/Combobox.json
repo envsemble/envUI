@@ -38,6 +38,24 @@
       },
       "style": {
         "report": "Combobox's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-combobox-input` inside the root."
+      },
+      "items": {
+        "report": "Each of Combobox's items takes its content before the label as start in 1.0, where it was leading: the codemod renames it in an array written in the prop, and TypeScript points at the others.",
+        "each": {
+          "leading": {
+            "to": "start",
+            "report": "An option's leading content is start in 1.0, as on List.Item."
+          },
+          "items": {
+            "report": "A Combobox group's items take their content before the label as start in 1.0, where it was leading: the codemod renames it in an array written in place, and TypeScript points at the others.",
+            "each": {
+              "leading": {
+                "to": "start",
+                "report": "An option's leading content is start in 1.0, as on List.Item."
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -22,6 +22,10 @@
             }
           }
         }
+      },
+      "label": {
+        "to": "named",
+        "report": "Avatar's label, which named the avatar as an image by its name, is named in 1.0."
       }
     },
     "AvatarGroup": {

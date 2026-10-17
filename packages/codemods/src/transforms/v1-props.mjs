@@ -71,6 +71,22 @@ export default function transform(file, api, options = {}) {
     return literalExpression(j, value);
   };
 
+  const properties = {
+    name: propertyName,
+    key: (node) => expressionKey(node.value),
+    // A string keeps the quotes of the property it replaces.
+    make: (name, value, old) =>
+      j.objectProperty(j.identifier(name), literalLike(value, old?.value)),
+    rename: (node, name) => {
+      node.key = j.identifier(name);
+      node.shorthand = false;
+    },
+    expression: (node) => node.value,
+    literal: literalLike,
+  };
+  // The objects in an array a prop or property takes, such as OrganizationSwitcher's items.
+  properties.properties = properties;
+
   let changed = false;
   let changedAttributes = false;
   const attributes = {
@@ -86,6 +102,7 @@ export default function transform(file, api, options = {}) {
     expression: (node) =>
       node.value?.type === 'JSXExpressionContainer' ? node.value.expression : undefined,
     literal: literalLike,
+    properties,
   };
   root.find(j.JSXOpeningElement).forEach((path) => {
     const component = componentOf(path);
@@ -101,19 +118,6 @@ export default function transform(file, api, options = {}) {
     }
   });
 
-  const properties = {
-    name: propertyName,
-    key: (node) => expressionKey(node.value),
-    // A string keeps the quotes of the property it replaces.
-    make: (name, value, old) =>
-      j.objectProperty(j.identifier(name), literalLike(value, old?.value)),
-    rename: (node, name) => {
-      node.key = j.identifier(name);
-      node.shorthand = false;
-    },
-    expression: (node) => node.value,
-    literal: literalLike,
-  };
   for (const entry of entries.values()) {
     for (const [call, { callee, method, rules }] of entry.calls) {
       // The local names of the function: imported by name, or read from a namespace import.

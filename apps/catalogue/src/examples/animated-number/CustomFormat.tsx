@@ -18,7 +18,7 @@ export default function CustomFormat() {
         ]}
       />
       <Text variant="headline">
-        <AnimatedNumber value={prices[billing]} format={(value) => euros.format(value)} />{' '}
+        <AnimatedNumber value={prices[billing]} formatValue={(value) => euros.format(value)} />{' '}
         <Text render={<span />} emphasis="muted">
           per seat, {billing === 'monthly' ? 'each month' : 'each year'}
         </Text>

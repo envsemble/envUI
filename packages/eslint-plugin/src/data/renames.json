@@ -5,12 +5,9 @@
     "@envsemble/envui": {
       "ActionCard": {
         "to": [],
-        "use": "Card with render={<article />}, heading, meta and actions; v1-structure rewrites each use."
+        "use": "Card with render={<article />}, title, meta and actions; v1-structure rewrites each use."
       },
-      "ActionCardProps": {
-        "to": [],
-        "use": "CardProps: heading for title, with meta and actions."
-      },
+      "ActionCardProps": { "to": [], "use": "CardProps, with title, meta and actions." },
       "ActionGroup": {
         "to": [],
         "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
@@ -67,11 +64,11 @@
       },
       "FeatureCard": {
         "to": [],
-        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, heading for title, description and actions for action; v1-structure rewrites each use."
+        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, title, description and actions for action; v1-structure rewrites each use."
       },
       "FeatureCardProps": {
         "to": [],
-        "use": "CardProps, with layout=\"feature\": heading for title and actions for action."
+        "use": "CardProps, with layout=\"feature\": actions for action."
       },
       "FileDropzone": { "to": ["DropZone"] },
       "FileDropzoneProps": { "to": ["DropZoneProps"] },

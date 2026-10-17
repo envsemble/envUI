@@ -1,18 +1,13 @@
 {
   "@envsemble/envui": {
     "ActionCard": {
-      "report": "ActionCard is Card in 1.0: <Card render={<article />} heading meta actions>, with its title as heading.",
+      "report": "ActionCard is Card in 1.0: <Card render={<article />} title meta actions>.",
       "cases": [
         {
           "when": {
             "actions": [null]
           },
           "element": "Card",
-          "props": {
-            "title": {
-              "to": "heading"
-            }
-          },
           "add": {
             "render": {
               "element": "article"
@@ -23,11 +18,6 @@
         {
           "when": {},
           "element": "Card",
-          "props": {
-            "title": {
-              "to": "heading"
-            }
-          },
           "add": {
             "render": {
               "element": "article"
@@ -37,15 +27,12 @@
       ]
     },
     "FeatureCard": {
-      "report": "FeatureCard is Card in 1.0: <Card layout=\"feature\" headingLevel={2} icon heading description actions>, with its title as heading and its action as actions.",
+      "report": "FeatureCard is Card in 1.0: <Card layout=\"feature\" headingLevel={2} icon title description actions>, with its action as actions.",
       "cases": [
         {
           "when": {},
           "element": "Card",
           "props": {
-            "title": {
-              "to": "heading"
-            },
             "action": {
               "to": "actions"
             }

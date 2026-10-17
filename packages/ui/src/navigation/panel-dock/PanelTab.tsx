@@ -10,7 +10,7 @@ import { useEntrance } from './useEntrance.js';
 
 interface PanelTabProps {
   panel: PanelDockPanel;
-  showLabel: (label: string) => string;
+  openLabel: (label: string) => string;
   closeLabel: (label: string) => string;
   onRestore: () => void;
   onClose: () => void;
@@ -20,7 +20,7 @@ interface PanelTabProps {
  * A panel out of sight, as a tab in the strip along the bottom, as on a taskbar: a button that
  * brings it back and a close button.
  */
-export function PanelTab({ panel, showLabel, closeLabel, onRestore, onClose }: PanelTabProps) {
+export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: PanelTabProps) {
   const descriptionId = useId();
   const tab = useRef<HTMLLIElement>(null);
   useEntrance(tab, 'tab', true);
@@ -29,7 +29,7 @@ export function PanelTab({ panel, showLabel, closeLabel, onRestore, onClose }: P
   const restore = (
     <ActionElement
       className="env-panel-dock-tab-restore"
-      aria-label={showLabel(label)}
+      aria-label={openLabel(label)}
       aria-describedby={attention ? descriptionId : undefined}
       onClick={onRestore}
     >

@@ -136,11 +136,11 @@ export interface RootProps<T extends PanelDockPanel = PanelDockPanel>
    */
   minimizedLabel?: string;
   /**
-   * Accessible name of a tab's button that shows its panel, from the tab's text, for this dock
+   * Accessible name of a tab's button that opens its panel, from the tab's text, for this dock
    * only. A function, as each tab names its own panel.
    * @default Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show
    */
-  showLabel?: (label: string) => string;
+  openLabel?: (label: string) => string;
   /**
    * Accessible name of a tab's close button, from the tab's text, for this dock only.
    * @default Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel
@@ -204,7 +204,7 @@ export function Root<T extends PanelDockPanel>({
   onStackedChange,
   overflow = 'scroll',
   minimizedLabel,
-  showLabel,
+  openLabel,
   closeLabel,
   resizeLabel,
   className,
@@ -214,7 +214,7 @@ export function Root<T extends PanelDockPanel>({
   // Words that fit a minimized panel and one a stacked dock leaves out alike.
   const messages = useMessages('panelDock', panelDockMessages);
   const tabsLabel = minimizedLabel ?? messages.hidden;
-  const nameShow = showLabel ?? ((label: string) => messages.show({ label }));
+  const nameOpen = openLabel ?? ((label: string) => messages.show({ label }));
   const nameClose = closeLabel ?? ((label: string) => messages.closePanel({ label }));
   const nameResize = resizeLabel ?? ((label: string) => messages.resize({ label }));
   const root = useRef<HTMLDivElement>(null);
@@ -744,7 +744,7 @@ export function Root<T extends PanelDockPanel>({
             <PanelTab
               key={panel.id}
               panel={panel}
-              showLabel={nameShow}
+              openLabel={nameOpen}
               closeLabel={nameClose}
               onRestore={() => restoreFromTab(panel)}
               onClose={() => close(panel.id)}

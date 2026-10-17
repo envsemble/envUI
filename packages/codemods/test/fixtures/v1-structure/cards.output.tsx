@@ -8,7 +8,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
       <Card disabled>Copy a project</Card>
       <Card
         render={<article />}
-        heading="Pricing research"
+        title="Pricing research"
         meta="Updated yesterday"
         actions={<Button>Open</Button>}>
         Interviews from twelve teams.
@@ -17,7 +17,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
         layout="feature"
         headingLevel={2}
         icon={<Groups />}
-        heading="Invite your team"
+        title="Invite your team"
         description="Plans and files in one place."
         actions={<Button>Invite people</Button>} />
       <Card onClick={start}>
@@ -26,7 +26,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
       <Card render={<article />} heading="Release notes">
         What changed this week.
       </Card>
-      <Card render={<article />} heading="Draft notes">Not shared yet.</Card>
+      <Card render={<article />} title="Draft notes">Not shared yet.</Card>
     </>
   );
 }
