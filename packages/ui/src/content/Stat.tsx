@@ -39,7 +39,7 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   value: ReactNode;
   /** A muted note below the figure, after the trend, such as the period: Last 30 days. */
-  detail?: ReactNode;
+  description?: ReactNode;
   /**
    * The change since an earlier period, such as up and +12% from last month, shown below the figure
    * as a direction icon and text in its tone.
@@ -61,14 +61,14 @@ const trendTones: Record<Trend['direction'], TrendTone> = {
 
 /**
  * A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and
- * detail. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.
+ * description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.
  */
-function Root({ label, value, detail, trend, className, ...props }: RootProps) {
+function Root({ label, value, description, trend, className, ...props }: RootProps) {
   return (
     <div {...props} className={classNames('env-stat', className)}>
       <div className="env-stat-label">{label}</div>
       <div className="env-stat-value">{value}</div>
-      {(trend != null || detail != null) && (
+      {(trend != null || description != null) && (
         <div className="env-stat-footer">
           {trend != null && (
             <span
@@ -80,7 +80,7 @@ function Root({ label, value, detail, trend, className, ...props }: RootProps) {
               <span>{trend.label}</span>
             </span>
           )}
-          {detail != null && <span className="env-stat-detail">{detail}</span>}
+          {description != null && <span className="env-stat-description">{description}</span>}
         </div>
       )}
     </div>
@@ -89,11 +89,11 @@ function Root({ label, value, detail, trend, className, ...props }: RootProps) {
 
 export interface GroupProps extends ComponentPropsWithRef<'div'> {
   /**
-   * The group's background, as for Surface: pane on the canvas, or row for a group on a pane, so
-   * its stats stand apart; canvas or alternate where those fit.
-   * @default 'pane'
+   * The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its
+   * stats stand apart; page or raised where those fit.
+   * @default 'default'
    */
-  tone?: 'pane' | 'row' | 'canvas' | 'alternate';
+  background?: SurfaceBackground;
   /**
    * The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it.
    * Without it, the inset follows the window's width, as for Surface.
@@ -103,25 +103,17 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
 }
 
 /**
- * Stats on one surface, a pane by default, in as many even columns as fit; they wrap as space runs
- * out. Use the row tone for a group on a pane. A group named with aria-label or aria-labelledby is
- * exposed as a group, so assistive technology announces the name.
+ * Stats on one surface, a pane's fill by default, in as many even columns as fit; they wrap as
+ * space runs out. Use the muted background for a group on a pane. A group named with aria-label or
+ * aria-labelledby is exposed as a group, so assistive technology announces the name.
  */
-/** The Surface background of each group tone. */
-const groupBackgrounds: Record<NonNullable<GroupProps['tone']>, SurfaceBackground> = {
-  pane: 'default',
-  row: 'muted',
-  canvas: 'page',
-  alternate: 'raised',
-};
-
-function Group({ tone = 'pane', padding, className, ...props }: GroupProps) {
+function Group({ background = 'default', padding, className, ...props }: GroupProps) {
   const labelled = props['aria-label'] !== undefined || props['aria-labelledby'] !== undefined;
   return (
     <Surface
       role={labelled ? 'group' : undefined}
       {...props}
-      background={groupBackgrounds[tone]}
+      background={background}
       padding={padding}
       className={classNames('env-stat-group', className)}
     />

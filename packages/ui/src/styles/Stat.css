@@ -1,4 +1,4 @@
-/* Key figures: a muted label, a large figure in tabular digits and a line for the trend and detail.
+/* Key figures: a muted label, a large figure in tabular digits and a line for the trend and description.
    The trend carries its tone in an icon and text, never in color alone. */
 .env-stat {
   --env-stat-tone: var(--env-color-fg-muted);
@@ -47,7 +47,7 @@
 .env-stat-trend[data-tone='neutral'] {
   --env-stat-tone: var(--env-color-fg-muted);
 }
-.env-stat-detail {
+.env-stat-description {
   color: var(--env-color-fg-muted);
 }
 /* As many even columns as fit, at least 11 rem wide, wrapping onto new rows. A narrow group, such
