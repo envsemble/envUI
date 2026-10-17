@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDirection as useBaseDirection } from '@base-ui/react/direction-provider';
 import {
   Button,
   EnvUIProvider,
@@ -85,13 +86,35 @@ function DirectedControls() {
   );
 }
 
+/** The direction Base UI's parts read where it renders. */
+function BaseDirectionProbe({ testId }: { testId: string }) {
+  return <output data-testid={testId}>{useBaseDirection()}</output>;
+}
+
 /**
  * Components whose keyboard follows the text direction, in RTL from a dir attribute and from
- * EnvUIProvider's dir, mounted with ?fixture=direction.
+ * EnvUIProvider's dir, mounted with ?fixture=direction; a region whose dir attribute changes; and
+ * what Base UI's parts read inside a toolbar.
  */
 export function DirectionFixture() {
   return (
     <>
+      {/* The test switches this region's dir while focus stays in its toolbar. */}
+      <div dir="ltr" data-testid="direction-switch">
+        <Toolbar.Root aria-label="Switching">
+          <Toolbar.Button icon={<FormatBold />} label="First" />
+          <Toolbar.Button icon={<FormatItalic />} label="Second" />
+          <Toolbar.Button icon={<FormatUnderlined />} label="Third" />
+        </Toolbar.Root>
+      </div>
+      {/* Only the toolbar's own keyboard takes its direction: the parts inside keep theirs. */}
+      <div dir="rtl" data-testid="direction-nested">
+        <BaseDirectionProbe testId="base-direction-outside" />
+        <Toolbar.Root aria-label="Nested">
+          <Toolbar.Button icon={<FormatBold />} label="Nested bold" />
+          <BaseDirectionProbe testId="base-direction-inside" />
+        </Toolbar.Root>
+      </div>
       <div dir="rtl" data-testid="direction-attribute">
         <DirectedControls />
       </div>
