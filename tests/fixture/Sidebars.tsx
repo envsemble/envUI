@@ -6,7 +6,6 @@ import {
   Button,
   EnvUIProvider,
   IconButton,
-  LinkProvider,
   List,
   Menu,
   NavList,
@@ -15,28 +14,11 @@ import {
   Sidebar,
   SidebarTrigger,
   useSidebar,
-  type LinkComponentProps,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
-
-/** Stands in for a router link: it records client navigation instead of loading a page. */
-function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
-  return (
-    <a
-      {...props}
-      href={href}
-      onClick={(event) => {
-        onClick?.(event);
-        if (event.defaultPrevented) return;
-        event.preventDefault();
-        document.body.dataset.navigatedTo = href;
-      }}
-    />
-  );
-}
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah', 'Jordan Kim', 'Robin Diaz'];
 
@@ -117,69 +99,67 @@ export function SidebarRailsFixture() {
   const peek = (query.get('peek') ?? 'hover') as 'hover' | 'hover-focus';
   const [created, setCreated] = useState('');
   const frame = (
-    <LinkProvider component={RecordingLink}>
-      <AppShell.Root scroll="main" persist="fixture-rails" className="fixture-app-shell">
-        <AppShell.SkipLinks />
-        <AppShell.Header
-          mobileOnly
-          start={
-            <>
-              <SidebarTrigger />
-              <span>Workspace</span>
-            </>
-          }
-          end={
-            <>
-              <SearchTrigger iconOnly listen={false} />
-              <SidebarTrigger side="end" />
-            </>
-          }
-        />
-        <Sidebar.Root label="Primary" collapsible="rail" dockAt="xl" peek={peek}>
-          <Sidebar.Header>
+    <AppShell.Root scroll="main" persist="fixture-rails" className="fixture-app-shell">
+      <AppShell.SkipLinks />
+      <AppShell.Header
+        mobileOnly
+        start={
+          <>
             <SidebarTrigger />
-            <span data-testid="app-name">Workspace</span>
-          </Sidebar.Header>
-          <Sidebar.Content>
-            <SearchTrigger listen={false} fullWidth />
-            <CreateMenu onCreate={setCreated} />
+            <span>Workspace</span>
+          </>
+        }
+        end={
+          <>
+            <SearchTrigger iconOnly listen={false} />
+            <SidebarTrigger side="end" />
+          </>
+        }
+      />
+      <Sidebar.Root label="Primary" collapsible="rail" dockAt="xl" peek={peek}>
+        <Sidebar.Header>
+          <SidebarTrigger />
+          <span data-testid="app-name">Workspace</span>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <SearchTrigger listen={false} fullWidth />
+          <CreateMenu onCreate={setCreated} />
+          <NavList.Root>
+            <NavList.Item href="#/" icon={<Home />} selected>
+              Home
+            </NavList.Item>
+            <NavList.Item href="#/projects" icon={<Category />}>
+              Projects
+            </NavList.Item>
+          </NavList.Root>
+          <Sidebar.Group label="Administration">
             <NavList.Root>
-              <NavList.Item href="/" icon={<Home />} selected>
-                Home
-              </NavList.Item>
-              <NavList.Item href="/projects" icon={<Category />}>
-                Projects
+              <NavList.Item href="#/settings" icon={<Settings />}>
+                Settings
               </NavList.Item>
             </NavList.Root>
-            <Sidebar.Group label="Administration">
-              <NavList.Root>
-                <NavList.Item href="/settings" icon={<Settings />}>
-                  Settings
-                </NavList.Item>
-              </NavList.Root>
-            </Sidebar.Group>
-          </Sidebar.Content>
-          <Sidebar.Footer>
-            <AccountMenu.Root name="Priya Shah" aria-label="Account">
-              <Menu.Item>Profile</Menu.Item>
-            </AccountMenu.Root>
-          </Sidebar.Footer>
-        </Sidebar.Root>
-        <AppShell.Main>
-          <p data-testid="main-content">Main content</p>
-          <output data-testid="created">{created}</output>
-          <button type="button">Page action</button>
-        </AppShell.Main>
-        <Sidebar.Root side="end" label="Directory" collapsible="rail" dockAt="xl" peek={peek}>
-          <Sidebar.Header>
-            <SidebarTrigger side="end" />
-          </Sidebar.Header>
-          <Sidebar.Content align="stretch">
-            <Directory />
-          </Sidebar.Content>
-        </Sidebar.Root>
-      </AppShell.Root>
-    </LinkProvider>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Footer>
+          <AccountMenu.Root name="Priya Shah" aria-label="Account">
+            <Menu.Item>Profile</Menu.Item>
+          </AccountMenu.Root>
+        </Sidebar.Footer>
+      </Sidebar.Root>
+      <AppShell.Main>
+        <p data-testid="main-content">Main content</p>
+        <output data-testid="created">{created}</output>
+        <button type="button">Page action</button>
+      </AppShell.Main>
+      <Sidebar.Root side="end" label="Directory" collapsible="rail" dockAt="xl" peek={peek}>
+        <Sidebar.Header>
+          <SidebarTrigger side="end" />
+        </Sidebar.Header>
+        <Sidebar.Content align="stretch">
+          <Directory />
+        </Sidebar.Content>
+      </Sidebar.Root>
+    </AppShell.Root>
   );
   if (query.get('dir') !== 'rtl') return frame;
   return (

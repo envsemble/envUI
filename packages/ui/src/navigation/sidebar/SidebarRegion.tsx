@@ -29,7 +29,7 @@ import {
   type FrameStore,
 } from '../app-shell/FrameStore.js';
 import type { SidebarSide } from '../app-shell/persistence.js';
-import { SidebarScopeContext, sidebarApi, type SidebarScope } from './useSidebar.js';
+import { SidebarScopeContext, sidebarApi, type SidebarScope } from './SidebarScope.js';
 import { usePeek } from './usePeek.js';
 import { SidebarDrawer, tabbable } from './SidebarDrawer.js';
 

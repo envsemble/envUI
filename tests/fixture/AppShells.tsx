@@ -5,7 +5,6 @@ import {
   Button,
   EnvUIProvider,
   IconButton,
-  LinkProvider,
   LoadingState,
   Menu,
   Menubar,
@@ -14,28 +13,11 @@ import {
   SidebarTrigger,
   useAppShell,
   useSidebar,
-  type LinkComponentProps,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
-
-/** Stands in for a router link: it records client navigation instead of loading a page. */
-function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
-  return (
-    <a
-      {...props}
-      href={href}
-      onClick={(event) => {
-        onClick?.(event);
-        if (event.defaultPrevented) return;
-        event.preventDefault();
-        document.body.dataset.navigatedTo = href;
-      }}
-    />
-  );
-}
 
 /** The application's mark, a letter in a circle. */
 function Mark({ letter = 'B' }: { letter?: string }) {
@@ -134,92 +116,90 @@ export function AppShellFixture() {
   const collapsible = (query.get('collapsible') ?? 'rail') as 'rail' | 'offcanvas' | 'none';
   const cookie = query.get('persist') === 'cookie';
   const frame = (
-    <LinkProvider component={RecordingLink}>
-      <AppShell.Root
-        headerSpan={query.get('span') === 'full' ? 'full' : 'main'}
-        scroll={query.get('scroll') === 'main' ? 'main' : 'document'}
-        landmarks={query.get('landmarks') !== 'off'}
-        persist={cookie ? { key: 'fixture-frame', storage: 'cookie' } : 'fixture-frame'}
-        shortcut={query.get('shortcut') ?? false}
-        loading={loading}
-        onSidebarOpenChange={(open, { side, reason }) =>
-          setChanges((current) => [...current, `${side} ${open ? 'open' : 'closed'} ${reason}`])
-        }
-        className="fixture-app-shell"
-      >
-        <AppShell.SkipLinks />
-        <Sidebar.Root label="Primary" collapsible={collapsible} resizable={query.has('resizable')}>
-          <Sidebar.Header>
-            <SidebarTrigger mark={<Mark />} />
-            <button type="button" aria-expanded="false" data-testid="context-trigger">
-              Organization
-            </button>
-          </Sidebar.Header>
-          <Sidebar.Content>
+    <AppShell.Root
+      headerSpan={query.get('span') === 'full' ? 'full' : 'main'}
+      scroll={query.get('scroll') === 'main' ? 'main' : 'document'}
+      landmarks={query.get('landmarks') !== 'off'}
+      persist={cookie ? { key: 'fixture-frame', storage: 'cookie' } : 'fixture-frame'}
+      shortcut={query.get('shortcut') ?? false}
+      loading={loading}
+      onSidebarOpenChange={(open, { side, reason }) =>
+        setChanges((current) => [...current, `${side} ${open ? 'open' : 'closed'} ${reason}`])
+      }
+      className="fixture-app-shell"
+    >
+      <AppShell.SkipLinks />
+      <Sidebar.Root label="Primary" collapsible={collapsible} resizable={query.has('resizable')}>
+        <Sidebar.Header>
+          <SidebarTrigger mark={<Mark />} />
+          <button type="button" aria-expanded="false" data-testid="context-trigger">
+            Organization
+          </button>
+        </Sidebar.Header>
+        <Sidebar.Content>
+          <NavList.Root>
+            <NavList.Item
+              href="#/"
+              icon={<Home />}
+              selected={page === 'home'}
+              onClick={() => setPage('home')}
+            >
+              Home
+            </NavList.Item>
+            <NavList.Item
+              href="#/products"
+              icon={<Category />}
+              selected={page === 'products'}
+              onClick={() => setPage('products')}
+            >
+              Products
+            </NavList.Item>
+          </NavList.Root>
+          <Sidebar.Group label="Administration">
             <NavList.Root>
-              <NavList.Item
-                href="/"
-                icon={<Home />}
-                selected={page === 'home'}
-                onClick={() => setPage('home')}
-              >
-                Home
-              </NavList.Item>
-              <NavList.Item
-                href="/products"
-                icon={<Category />}
-                selected={page === 'products'}
-                onClick={() => setPage('products')}
-              >
-                Products
+              <NavList.Item href="#/settings" icon={<Settings />}>
+                Settings
               </NavList.Item>
             </NavList.Root>
-            <Sidebar.Group label="Administration">
-              <NavList.Root>
-                <NavList.Item href="/settings" icon={<Settings />}>
-                  Settings
-                </NavList.Item>
-              </NavList.Root>
-            </Sidebar.Group>
-          </Sidebar.Content>
-          <Sidebar.Content fill>
-            <ul className="fixture-sidebar-list" data-testid="sidebar-list" aria-label="Files">
-              {Array.from({ length: 80 }, (_, index) => (
-                <li key={index}>Document {index + 1}.md</li>
-              ))}
-            </ul>
-          </Sidebar.Content>
-        </Sidebar.Root>
-        <AppShell.Header
-          start={<SidebarTrigger data-testid="header-trigger" />}
-          end={<IconButton icon={<Search />} aria-label="Search" data-testid="action" />}
-        >
-          {page === 'home' ? 'Home' : 'Products'}
-        </AppShell.Header>
-        <AppShell.Main>
-          <header className="fixture-sticky-header" data-testid="sticky-header">
-            Sticky document header
-          </header>
-          <p data-testid="shell-content">Content</p>
-          <FrameProbe />
-          <ScrollProbe />
-          <MountProbe />
-          <FirstScrollProbe />
-          <div className="fixture-actions">
-            <button type="button" onClick={() => setLoading((value) => !value)}>
-              Toggle page loading
-            </button>
-            <button type="button">Page action</button>
-          </div>
-          <output data-testid="open-changes">{changes.join(',')}</output>
-          <div className="fixture-tall-page">
-            {Array.from({ length: 60 }, (_, index) => (
-              <p key={index}>Paragraph {index + 1}</p>
+          </Sidebar.Group>
+        </Sidebar.Content>
+        <Sidebar.Content fill>
+          <ul className="fixture-sidebar-list" data-testid="sidebar-list" aria-label="Files">
+            {Array.from({ length: 80 }, (_, index) => (
+              <li key={index}>Document {index + 1}.md</li>
             ))}
-          </div>
-        </AppShell.Main>
-      </AppShell.Root>
-    </LinkProvider>
+          </ul>
+        </Sidebar.Content>
+      </Sidebar.Root>
+      <AppShell.Header
+        start={<SidebarTrigger data-testid="header-trigger" />}
+        end={<IconButton icon={<Search />} aria-label="Search" data-testid="action" />}
+      >
+        {page === 'home' ? 'Home' : 'Products'}
+      </AppShell.Header>
+      <AppShell.Main>
+        <header className="fixture-sticky-header" data-testid="sticky-header">
+          Sticky document header
+        </header>
+        <p data-testid="shell-content">Content</p>
+        <FrameProbe />
+        <ScrollProbe />
+        <MountProbe />
+        <FirstScrollProbe />
+        <div className="fixture-actions">
+          <button type="button" onClick={() => setLoading((value) => !value)}>
+            Toggle page loading
+          </button>
+          <button type="button">Page action</button>
+        </div>
+        <output data-testid="open-changes">{changes.join(',')}</output>
+        <div className="fixture-tall-page">
+          {Array.from({ length: 60 }, (_, index) => (
+            <p key={index}>Paragraph {index + 1}</p>
+          ))}
+        </div>
+      </AppShell.Main>
+    </AppShell.Root>
   );
   if (query.get('dir') !== 'rtl') return frame;
   return (
@@ -243,7 +223,7 @@ export function TwoAppShellsFixture() {
           <Sidebar.Root label="First navigation">
             <Sidebar.Content>
               <NavList.Root>
-                <NavList.Item href="/" icon={<Home />}>
+                <NavList.Item href="#/" icon={<Home />}>
                   Home
                 </NavList.Item>
               </NavList.Root>
@@ -559,13 +539,13 @@ export function LoadingFrameFixture() {
       <Sidebar.Content>
         {real ? (
           <NavList.Root>
-            <NavList.Item href="/" icon={<Home />}>
+            <NavList.Item href="#/" icon={<Home />}>
               Home
             </NavList.Item>
-            <NavList.Item href="/products" icon={<Category />}>
+            <NavList.Item href="#/products" icon={<Category />}>
               Products
             </NavList.Item>
-            <NavList.Item href="/settings" icon={<Settings />}>
+            <NavList.Item href="#/settings" icon={<Settings />}>
               Settings
             </NavList.Item>
           </NavList.Root>

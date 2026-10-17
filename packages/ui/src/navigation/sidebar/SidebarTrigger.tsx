@@ -15,7 +15,7 @@ import { useDirection } from '../../internal/useDirection.js';
 import { formatShortcut, useApplePlatform } from '../../internal/useShortcut.js';
 import { useFrameStore } from '../app-shell/FrameStore.js';
 import type { SidebarSide } from '../app-shell/persistence.js';
-import { sidebarApi, useSidebarScope } from './useSidebar.js';
+import { sidebarApi, useSidebarScope } from './SidebarScope.js';
 
 export type SidebarTriggerProps = Omit<
   IconButtonProps,

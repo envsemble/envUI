@@ -106,7 +106,7 @@ export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
 export * as AccountMenu from './navigation/AccountMenu.js';
 export * as AppShell from './navigation/app-shell/AppShell.js';
-export { useAppShell, type AppShellContextValue } from './navigation/app-shell/useAppShell.js';
+export * from './navigation/app-shell/useAppShell.js';
 export {
   readAppShellCookie,
   type AppShellState,
@@ -117,8 +117,8 @@ export {
 } from './navigation/app-shell/persistence.js';
 export type { FrameStateProps, SidebarChangeReason } from './navigation/app-shell/FrameStore.js';
 export * as Sidebar from './navigation/sidebar/Sidebar.js';
-export { SidebarTrigger, type SidebarTriggerProps } from './navigation/sidebar/SidebarTrigger.js';
-export { useSidebar, type SidebarApi } from './navigation/sidebar/useSidebar.js';
+export * from './navigation/sidebar/SidebarTrigger.js';
+export * from './navigation/sidebar/useSidebar.js';
 export * as WindowFrame from './navigation/WindowFrame.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';

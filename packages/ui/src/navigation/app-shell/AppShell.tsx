@@ -30,7 +30,7 @@ import {
   type FrameShape,
   type FrameStateProps,
 } from './FrameStore.js';
-import { AppShellContext, readFrameLength } from './useAppShell.js';
+import { AppShellContext, readFrameLength } from './FrameScroll.js';
 import { useFrameMetrics } from './useFrameMetrics.js';
 
 export interface RootProps extends FrameStateProps, Omit<ComponentPropsWithRef<'div'>, 'children'> {

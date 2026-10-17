@@ -60,7 +60,7 @@ test.describe('A rail that opens on hover', () => {
     await page.waitForTimeout(300);
     await expect(primary).toHaveAttribute('data-rail', '');
     await page.mouse.up();
-    await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/projects');
+    await expect(page).toHaveURL(/#\/projects$/);
   });
 
   test('with peek="hover", Tab into the rail leaves it a rail; with hover-focus it opens', async ({

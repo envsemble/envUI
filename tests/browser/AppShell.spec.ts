@@ -364,7 +364,7 @@ test.describe('Below the breakpoint', () => {
     await trigger.click();
     await drawer.getByRole('link', { name: 'Products' }).click();
     await expect(drawer).toBeHidden();
-    await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/products');
+    await expect(page).toHaveURL(/#\/products$/);
     await expect(page.getByRole('main')).toBeFocused();
     // Widening the window closes it; the control that had focus takes it in the inline sidebar.
     await trigger.click();

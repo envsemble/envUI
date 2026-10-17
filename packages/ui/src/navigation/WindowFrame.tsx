@@ -15,7 +15,7 @@ import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useScrollKeys } from './internal/useScrollKeys.js';
 import { TitleBarControls, titleBarClassName } from './internal/TitleBarFrame.js';
-import { AppShellContext, readFrameLength } from './app-shell/useAppShell.js';
+import { AppShellContext, readFrameLength } from './app-shell/FrameScroll.js';
 
 /** Root hands the scrolling element to the scroll keys; Content attaches it. */
 const ScrollerContext = createContext<((element: HTMLDivElement | null) => void) | null>(null);

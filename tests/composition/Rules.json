@@ -309,6 +309,7 @@
           "navigation/app-shell/FrameStore.ts",
           "navigation/app-shell/persistence.ts",
           "navigation/app-shell/useAppShell.ts",
+          "navigation/app-shell/FrameScroll.ts",
           "navigation/app-shell/useFrameMetrics.ts"
         ]
       },
@@ -319,6 +320,7 @@
           "navigation/sidebar/SidebarDrawer.tsx",
           "navigation/sidebar/SidebarTrigger.tsx",
           "navigation/sidebar/useSidebar.ts",
+          "navigation/sidebar/SidebarScope.ts",
           "navigation/sidebar/usePeek.ts"
         ]
       },

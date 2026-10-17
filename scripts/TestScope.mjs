@@ -30,7 +30,8 @@ export const overrides = {
   specSubjects: {
     'Adoption.spec.ts': ['Theme', 'ThemePreferenceProvider', 'AppShell', 'ConfirmButton'],
     // The frame's specs cover its hooks and its trigger too.
-    'AppShell.spec.ts': ['AppShell', 'Sidebar'],
+    'AppShell.spec.ts': ['AppShell', 'useAppShell', 'SidebarTrigger'],
+    'Sidebar.spec.ts': ['Sidebar', 'SidebarTrigger', 'useSidebar'],
     'ButtonCounts.spec.ts': ['CounterBadge', 'DiffStat', 'Button'],
     'Cards.spec.ts': ['components/card'],
     'ContainerSize.spec.ts': ['useContainerSize'],
@@ -90,7 +91,7 @@ export const overrides = {
    */
   planned: {
     specs: ['FrameNeeds.spec.ts'],
-    names: ['Sidebar'],
+    names: [],
   },
   /**
    * Library files that most components depend on. A change to one runs the shared set rather than
