@@ -32,6 +32,7 @@
       "MaterialSymbolState.tsx": "foundations",
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
+      "foundations/ThemeRadioGroup.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
       "navigation/PanelDockHeader.tsx": "shell",
@@ -294,7 +295,8 @@
       },
       "ThemePreference": {
         "classes": ["env-theme-toggle"],
-        "styles": ["ThemeToggle.css"]
+        "styles": ["ThemeToggle.css"],
+        "modules": ["foundations/ThemePreferenceContext.ts"]
       },
       "AppShell": {
         "classes": ["env-app", "env-app-shell"]
