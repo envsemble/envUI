@@ -6184,6 +6184,36 @@
         "dialog",
         "toast"
       ]
+    },
+    {
+      "name": "content",
+      "title": "Content guidelines",
+      "group": "Foundations",
+      "summary": "Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.",
+      "doc": "docs/foundations/content.md",
+      "aliases": [
+        "content design",
+        "writing",
+        "microcopy",
+        "UX writing",
+        "voice and tone",
+        "wording",
+        "sentence case",
+        "capitalisation",
+        "error messages",
+        "button labels",
+        "sample data"
+      ],
+      "related": [
+        "setup",
+        "relative-time",
+        "accessibility",
+        "typography",
+        "text-field",
+        "empty-state",
+        "toast",
+        "confirm-dialog"
+      ]
     }
   ],
   "patterns": [

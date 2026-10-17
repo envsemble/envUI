@@ -24,6 +24,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
+- [Content guidelines](docs/foundations/content.md): Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Components: Layout & surfaces
 

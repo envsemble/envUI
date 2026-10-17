@@ -28,6 +28,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.
 - [Icons & assets](foundations/icons.md) — Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](foundations/accessibility.md) — Keyboard access, visible focus and clear guidance across shared controls.
+- [Content guidelines](foundations/content.md) — Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Layout & surfaces
 
