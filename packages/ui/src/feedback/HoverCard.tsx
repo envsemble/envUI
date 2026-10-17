@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
 const parts = {
   Portal: BasePreviewCard.Portal,
@@ -56,8 +57,8 @@ export interface HoverCardProps
    * @default false
    */
   defaultOpen?: boolean;
-  /** Called with the new state when hover, focus or Esc opens or closes the card. */
-  onOpenChange?: (open: boolean) => void;
+  /** Called with the new state, and why, when hover, focus or Esc opens or closes the card. */
+  onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
 }
 
 function isFocusVisible(element: Element) {
@@ -92,18 +93,21 @@ export function HoverCard({
   // The card takes the text direction at its trigger.
   const triggerRef = useRef<HTMLAnchorElement>(null);
   openRef.current = open;
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
   // Base UI waits for the hover delay on focus too; keyboard focus opens the card at once.
   function openOnKeyboardFocus(event: FocusEvent<HTMLElement>) {
-    if (isFocusVisible(event.currentTarget)) setOpen(true);
+    if (isFocusVisible(event.currentTarget)) setOpen(true, 'trigger-focus');
   }
   return (
-    <BasePreviewCard.Root open={open} onOpenChange={(next) => setOpen(next)}>
+    <BasePreviewCard.Root
+      open={open}
+      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+    >
       <BasePreviewCard.Trigger
         ref={triggerRef}
         render={trigger}

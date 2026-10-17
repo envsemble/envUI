@@ -2668,7 +2668,7 @@
           "name": "initialFocus",
           "type": "DialogFocusTarget",
           "required": false,
-          "description": "The element to focus when the drawer opens, as a ref or a function of how it was opened. By default focus moves to the first focusable element inside, or to the drawer when opened by touch."
+          "description": "The element to focus when the drawer opens, as a ref or a function of how it was opened. By default focus moves to the first element inside that takes Tab, such as the close button, or to the drawer itself when opened by touch or when nothing inside takes focus."
         },
         {
           "name": "finalFocus",
@@ -3308,9 +3308,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
-          "description": "Called with the new state when hover, focus or Esc opens or closes the card."
+          "description": "Called with the new state, and why, when hover, focus or Esc opens or closes the card."
         }
       ],
       "native": [
@@ -5098,9 +5098,9 @@
         },
         {
           "name": "onOpenChange",
-          "type": "(open: boolean) => void",
+          "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
-          "description": "Receives the requested state each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close."
+          "description": "Receives the requested state, and why, each time the popover asks to open or close: from the trigger, Esc, a press outside, focus leaving it or close (`close-press`)."
         },
         {
           "name": "width",

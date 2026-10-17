@@ -146,7 +146,13 @@ Change these by hand where the codemods report them:
 - an `env-bar` selector of a Progress, which the codemods rename to `env-meter`: rename it to `env-progress`;
 - selectors on `[data-tone='error']` of Alert or a toast, which are `[data-tone='danger']`.
 
-Behaviour that changes without a rename: a danger toast is an alert as it appears and is never hidden behind the count of older notifications; a disabled control inside a Tooltip is reached by its wrapper, which carries its name and `aria-disabled`; CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
+Behaviour that changes without a rename:
+
+- A danger toast is an alert as it appears and is never hidden behind the count of older notifications; the other notices are read by a polite status beside the regions, which are named Notifications and Top notifications where they were Bottom right notifications and Top center notifications.
+- A Drawer's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the drawer that takes Tab, such as that button, as it did in the side panel.
+- `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
+- A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
+- CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
 
 ### useTheme returns the theme, its contrast and its scale
 
