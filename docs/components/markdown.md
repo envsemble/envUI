@@ -61,7 +61,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 3. **Table**: a focusable region that scrolls sideways when the table is wider than the document, named after its caption or the heading before it. Words and inline code in a cell break only where they would overflow it.
 4. **Task item**: a read-only, disabled Checkbox for each `- [ ]` or `- [x]` item.
 5. **Tabs** (MarkdownEditor with `preview`): Write and Preview.
-6. **Toolbar** (MarkdownEditor's `toolbar`): a Toolbar of connected buttons, heading, bold, italic, bulleted and numbered lists, quote, inline code, code block and link, then Undo and Redo, each named in a tooltip. RichTextEditor shares it.
+6. **Toolbar** (MarkdownEditor's `toolbar`): a Toolbar of buttons, heading, bold, italic, bulleted and numbered lists, quote, inline code, code block and link, then Undo and Redo, each named in a tooltip. RichTextEditor shares it.
 7. **Source** (MarkdownEditor): the shared Textarea, with its label, description, error, variant and sizing, where the Markdown syntax stays visible.
 
 ## Variants and sizes

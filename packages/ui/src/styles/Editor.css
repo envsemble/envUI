@@ -9,9 +9,6 @@
   padding: var(--env-space-2);
   margin: calc(-1 * var(--env-space-2));
 }
-.env-editor-toolbar > .env-button-group {
-  max-inline-size: none;
-}
 .env-editor-status:empty {
   position: absolute;
   inline-size: 0.0625rem;

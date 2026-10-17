@@ -1,7 +1,6 @@
 'use client';
 
 import type { MouseEvent, ReactNode } from 'react';
-import { ButtonGroup } from '../../actions/ButtonGroup.js';
 import * as Toolbar from '../../actions/Toolbar.js';
 import { editor as editorMessages } from '../../foundations/messages/editor.js';
 import { Redo } from '../../icons/Redo.js';
@@ -13,7 +12,7 @@ import { editorCommands, type EditorCommand } from './EditorCommands.js';
 const keepFocus = (event: MouseEvent) => event.preventDefault();
 
 /**
- * The formatting toolbar MarkdownEditor and RichTextEditor share: a Toolbar of connected buttons,
+ * The formatting toolbar MarkdownEditor and RichTextEditor share: a Toolbar of secondary buttons,
  * the commands the editor offers, then Undo and Redo and any of the editor's own buttons, which it
  * passes as Toolbar.Buttons. It scrolls sideways where it is wider than the editor.
  */
@@ -46,7 +45,7 @@ export function EditorToolbar<Command extends EditorCommand>({
   const messages = useMessages('editor', editorMessages);
   return (
     <div className="env-editor-toolbar">
-      <Toolbar.Root aria-label={label} disabled={disabled} render={<ButtonGroup />}>
+      <Toolbar.Root aria-label={label} disabled={disabled}>
         {commands.map((command) => {
           const { icon: Icon, message } = editorCommands[command];
           return (

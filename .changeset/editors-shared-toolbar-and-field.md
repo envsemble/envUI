@@ -4,7 +4,7 @@
 
 MarkdownEditor and RichTextEditor share their toolbar, their link dialog and their status, and take their words from EnvUIProvider's `messages` (`markdownEditor`, `richText`, `editor` for the formatting commands and `linkDialog`):
 
-- The toolbar is a Toolbar of connected buttons, each named in a tooltip instead of a native `title`; it keeps the selection in the editor and scrolls sideways where it doesn't fit. Its class is `env-editor-toolbar`, where it was `env-markdown-toolbar`, and the status line's is `env-editor-status`, where it was `env-markdown-editor-status`.
+- The toolbar is a Toolbar of buttons, each named in a tooltip instead of a native `title`; it keeps the selection in the editor and scrolls sideways where it doesn't fit. Its class is `env-editor-toolbar`, where it was `env-markdown-toolbar`, and the status line's is `env-editor-status`, where it was `env-markdown-editor-status`.
 - The link dialog says "Enter a valid URL." for an empty destination and "Enter a valid URL or relative path." for one the editor can't link to, before it inserts anything.
 - MarkdownEditor takes `ref` as a prop.
 

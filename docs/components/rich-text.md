@@ -67,7 +67,7 @@ The family comes from the optional `@envsemble/envui/rich-text` entry, which nee
 ## Anatomy
 
 1. **Label** (`label`): above the toolbar; it names the document.
-2. **Toolbar** (`toolbar`): the Toolbar MarkdownEditor shares, connected icon buttons named "Rich text formatting", the commands in order, then Undo, Redo and, with `onUpload`, Attach files, each named in a tooltip. It scrolls sideways where it doesn't fit.
+2. **Toolbar** (`toolbar`): the Toolbar MarkdownEditor shares, icon buttons named "Rich text formatting", the commands in order, then Undo, Redo and, with `onUpload`, Attach files, each named in a tooltip. It scrolls sideways where it doesn't fit.
 3. **Document**: the editing area, at least 10 rem tall and growing with its content, with 1 rem padding, in the field's control box: outlined, with the field border, 1 rem corners and the field background, as a text area. Task items show envUI's checkboxes beside their text.
 4. **References**: the trigger and the label, such as @Priya Shah, on the field background with 0.25 rem corners; a link or a button where they lead somewhere.
 5. **Suggestions**: a list on the popup surface under the caret while people type after a trigger, its options as rows, 12 to 24 rem wide, scrolling beyond 18 rem.

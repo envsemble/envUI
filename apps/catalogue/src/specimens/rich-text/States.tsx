@@ -8,12 +8,12 @@ export default function States() {
   return (
     <Example title="Editor states" size="collection">
       <SpecimenGrid size="card">
-        <Specimen title="Outlined">
-          <RichTextEditor label="Outlined notes" defaultValue={notes} toolbar={false} />
+        <Specimen title="Outline">
+          <RichTextEditor label="Outline notes" defaultValue={notes} toolbar={false} />
         </Specimen>
-        <Specimen title="Plain">
+        <Specimen title="Underline">
           <RichTextEditor
-            label="Plain notes"
+            label="Underline notes"
             variant="underline"
             defaultValue={notes}
             toolbar={false}
