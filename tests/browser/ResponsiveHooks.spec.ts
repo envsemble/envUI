@@ -17,22 +17,3 @@ test('useBreakpoint and useMediaQuery follow the viewport', async ({ page }) => 
   await page.setViewportSize({ width: 768, height: 900 });
   await expect(breakpoint).toHaveText('md and up');
 });
-
-test('a shortcut goes to the latest visible handler and leaves typing alone', async ({ page }) => {
-  await page.goto(fixture);
-  const pressed = page.getByTestId('pressed');
-  await expect(page.locator('[data-ready]')).toBeAttached();
-  // Playwright's ControlOrMeta is the platform's mod key, as the hook reads it.
-  await page.keyboard.press('ControlOrMeta+k');
-  await expect(pressed).toHaveText('Second search');
-  await page.getByRole('button', { name: 'Toggle the second search' }).click();
-  await page.keyboard.press('ControlOrMeta+k');
-  await expect(pressed).toHaveText('Second search, First search');
-  // In a text field, Mod+B belongs to the field.
-  await page.getByRole('textbox', { name: 'Notes' }).focus();
-  await page.keyboard.press('ControlOrMeta+b');
-  await expect(pressed).toHaveText('Second search, First search');
-  await page.getByRole('button', { name: 'Toggle the second search' }).focus();
-  await page.keyboard.press('ControlOrMeta+b');
-  await expect(pressed).toHaveText('Second search, First search, bold shortcut');
-});

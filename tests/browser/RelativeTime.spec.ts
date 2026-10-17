@@ -95,6 +95,7 @@ test('formats, languages and the time element', async ({ page }) => {
 });
 
 test('the tooltip shows the date and time on hover, in the theme of the page', async ({ page }) => {
+  await page.clock.install();
   await page.goto(fixture);
   const tooltip = page.locator('.env-tooltip');
   for (const theme of ['light', 'dark']) {
@@ -113,7 +114,7 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await expect(tooltip).toHaveCount(0);
   // Without a tooltip nothing opens; the time is never a tab stop.
   await scope.getByTestId('no-tooltip').hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
   const focusable = await scope.getByTestId('fixed').evaluate((time) => {
     time.focus();

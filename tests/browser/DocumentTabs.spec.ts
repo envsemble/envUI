@@ -228,36 +228,44 @@ test.describe('DocumentTabs', () => {
         ),
       ),
     ).toBe(true);
-    // Past the time a menu takes to mount, none has.
-    await page.waitForTimeout(300);
+    // React mounts a menu in the frame after the event; two frames on, none has.
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
     await expect(page.getByRole('menu')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 
-  test('the strip scrolls sideways and keeps the active tab in view', async ({ page }) => {
-    await page.goto(tabsFixture);
-    const strip = page.getByRole('tablist', { name: 'Open documents light' });
-    const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
-    expect(await strip.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
-    await page
-      .getByTestId('document-tabs-light')
-      .getByRole('button', {
-        name: 'Activate the last note',
-      })
-      .click();
-    await expect(strip.getByRole('tab', { name: /number 7/ })).toBeInViewport({ ratio: 0.9 });
-    const scrolled = await scrollLeft();
-    expect(scrolled).toBeGreaterThan(0);
+  test(
+    'the strip scrolls sideways and keeps the active tab in view',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(tabsFixture);
+      const strip = page.getByRole('tablist', { name: 'Open documents light' });
+      const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
+      expect(await strip.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+        true,
+      );
+      await page
+        .getByTestId('document-tabs-light')
+        .getByRole('button', {
+          name: 'Activate the last note',
+        })
+        .click();
+      await expect(strip.getByRole('tab', { name: /number 7/ })).toBeInViewport({ ratio: 0.9 });
+      const scrolled = await scrollLeft();
+      expect(scrolled).toBeGreaterThan(0);
 
-    await strip.hover();
-    await page.mouse.wheel(0, -200);
-    await expect.poll(scrollLeft).toBeLessThan(scrolled);
-    // Long labels truncate within the maximum width.
-    const width = await strip
-      .getByRole('tab', { name: /number 1\.md/ })
-      .evaluate((tab) => tab.getBoundingClientRect().width);
-    expect(width).toBeLessThanOrEqual(14 * 16 + 1);
-  });
+      await strip.hover();
+      await page.mouse.wheel(0, -200);
+      await expect.poll(scrollLeft).toBeLessThan(scrolled);
+      // Long labels truncate within the maximum width.
+      const width = await strip
+        .getByRole('tab', { name: /number 1\.md/ })
+        .evaluate((tab) => tab.getBoundingClientRect().width);
+      expect(width).toBeLessThanOrEqual(14 * 16 + 1);
+    },
+  );
 
   test('the close button shows on the active and hovered tabs in both themes', async ({ page }) => {
     await page.goto(tabsFixture);
@@ -281,30 +289,32 @@ test.describe('DocumentTabs', () => {
     }
   });
 
-  test('in right-to-left text the arrow keys and the wheel run toward the end', async ({
-    page,
-  }) => {
-    await page.goto(`${fixtureUrl}/?fixture=rtl-document-tabs`);
-    const strip = page.getByRole('tablist', { name: 'Right-to-left documents' });
-    const roadmap = strip.getByRole('tab', { name: 'Roadmap.md', exact: true });
-    const decisions = strip.getByRole('tab', { name: 'Decisions.md', exact: true });
-    await roadmap.focus();
-    // The next tab is to the left.
-    await page.keyboard.press('ArrowLeft');
-    await expect(decisions).toBeFocused();
-    await expect(decisions).toHaveAttribute('aria-selected', 'true');
-    await page.keyboard.press('ArrowRight');
-    await expect(roadmap).toBeFocused();
-    // Turning the wheel down scrolls toward the end, the left, where scrollLeft is negative.
-    const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
-    expect(await scrollLeft()).toBe(0);
-    await strip.hover();
-    await page.mouse.wheel(0, 200);
-    await expect.poll(scrollLeft).toBeLessThan(0);
-    const scrolled = await scrollLeft();
-    await page.mouse.wheel(0, -100);
-    await expect.poll(scrollLeft).toBeGreaterThan(scrolled);
-  });
+  test(
+    'in right-to-left text the arrow keys and the wheel run toward the end',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(`${fixtureUrl}/?fixture=rtl-document-tabs`);
+      const strip = page.getByRole('tablist', { name: 'Right-to-left documents' });
+      const roadmap = strip.getByRole('tab', { name: 'Roadmap.md', exact: true });
+      const decisions = strip.getByRole('tab', { name: 'Decisions.md', exact: true });
+      await roadmap.focus();
+      // The next tab is to the left.
+      await page.keyboard.press('ArrowLeft');
+      await expect(decisions).toBeFocused();
+      await expect(decisions).toHaveAttribute('aria-selected', 'true');
+      await page.keyboard.press('ArrowRight');
+      await expect(roadmap).toBeFocused();
+      // Turning the wheel down scrolls toward the end, the left, where scrollLeft is negative.
+      const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
+      expect(await scrollLeft()).toBe(0);
+      await strip.hover();
+      await page.mouse.wheel(0, 200);
+      await expect.poll(scrollLeft).toBeLessThan(0);
+      const scrolled = await scrollLeft();
+      await page.mouse.wheel(0, -100);
+      await expect.poll(scrollLeft).toBeGreaterThan(scrolled);
+    },
+  );
 
   test.describe('on a coarse pointer', () => {
     test.use({ hasTouch: true });

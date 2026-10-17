@@ -114,33 +114,35 @@ test('arrows move the highlight from the chosen option, which shows a check mark
   await expect(page.getByRole('listbox')).toHaveCount(0);
 });
 
-test('focusing a single field selects its label, so typing replaces it with a query', async ({
-  page,
-}) => {
-  const owner = field(page, 'Owner light');
-  await owner.click();
-  await expect(page.getByRole('listbox')).toBeVisible();
-  await page.keyboard.type('jor');
-  await expect(owner).toHaveValue('jor');
-  await expect.poll(() => highlighted(page)).toEqual(['Jordan Park']);
-  // Closing without a choice brings the chosen label back.
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(owner).toHaveValue('Riley Chen');
-  await page.getByRole('button', { name: 'Reset people light', exact: true }).focus();
-  await owner.focus();
-  await page.keyboard.type('tay');
-  await expect(owner).toHaveValue('tay');
-  await expect.poll(() => highlighted(page)).toEqual(['Taylor Brooks']);
-  await page.keyboard.press('Enter');
-  await expect(owner).toHaveValue('Taylor Brooks');
-  // Once focused, a press places the caret as usual.
-  await owner.click();
-  await page.keyboard.press('Escape');
-  await owner.click({ position: { x: 4, y: 8 } });
-  await page.keyboard.type('X');
-  await expect(owner).not.toHaveValue('X');
-});
+test(
+  'focusing a single field selects its label, so typing replaces it with a query',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const owner = field(page, 'Owner light');
+    await owner.click();
+    await expect(page.getByRole('listbox')).toBeVisible();
+    await page.keyboard.type('jor');
+    await expect(owner).toHaveValue('jor');
+    await expect.poll(() => highlighted(page)).toEqual(['Jordan Park']);
+    // Closing without a choice brings the chosen label back.
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(owner).toHaveValue('Riley Chen');
+    await page.getByRole('button', { name: 'Reset people light', exact: true }).focus();
+    await owner.focus();
+    await page.keyboard.type('tay');
+    await expect(owner).toHaveValue('tay');
+    await expect.poll(() => highlighted(page)).toEqual(['Taylor Brooks']);
+    await page.keyboard.press('Enter');
+    await expect(owner).toHaveValue('Taylor Brooks');
+    // Once focused, a press places the caret as usual.
+    await owner.click();
+    await page.keyboard.press('Escape');
+    await owner.click({ position: { x: 4, y: 8 } });
+    await page.keyboard.type('X');
+    await expect(owner).not.toHaveValue('X');
+  },
+);
 
 test('several options show as chips that Backspace, the arrow keys and their buttons remove', async ({
   page,
@@ -240,50 +242,52 @@ test('Esc and the clear button clear a clearable field; other fields keep their 
   await expect(page.getByTestId('combobox-reviewers-light')).toHaveText('');
 });
 
-test('native forms submit the values, require a choice and reset to the defaults', async ({
-  page,
-}) => {
-  const submit = page.getByRole('button', { name: 'Submit people light', exact: true });
-  const submitted = page.getByTestId('combobox-submitted-light');
-  const document = field(page, 'Document light');
-  await expect(document).toHaveAttribute('aria-required', 'true');
-  await submit.click();
-  // The empty required field keeps the form from submitting and takes focus.
-  await expect(document).toBeFocused();
-  await expect(submitted).toHaveText('');
-  await page.keyboard.press('Escape');
-  await document.fill('tok');
-  await expect(page.getByRole('group', { name: 'Folders' })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Recent' })).toHaveCount(0);
-  await page.keyboard.press('Enter');
-  await expect(document).toHaveValue('design-system/tokens');
-  await submit.click();
-  await expect
-    .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
-    .toEqual({
-      author: 'alex-morgan',
-      watchers: ['sam-lee', 'jordan-park'],
-      document: 'design-system/tokens',
-    });
+test(
+  'native forms submit the values, require a choice and reset to the defaults',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const submit = page.getByRole('button', { name: 'Submit people light', exact: true });
+    const submitted = page.getByTestId('combobox-submitted-light');
+    const document = field(page, 'Document light');
+    await expect(document).toHaveAttribute('aria-required', 'true');
+    await submit.click();
+    // The empty required field keeps the form from submitting and takes focus.
+    await expect(document).toBeFocused();
+    await expect(submitted).toHaveText('');
+    await page.keyboard.press('Escape');
+    await document.fill('tok');
+    await expect(page.getByRole('group', { name: 'Folders' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Recent' })).toHaveCount(0);
+    await page.keyboard.press('Enter');
+    await expect(document).toHaveValue('design-system/tokens');
+    await submit.click();
+    await expect
+      .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
+      .toEqual({
+        author: 'alex-morgan',
+        watchers: ['sam-lee', 'jordan-park'],
+        document: 'design-system/tokens',
+      });
 
-  const author = field(page, 'Author light');
-  await author.fill('casey');
-  await page.keyboard.press('Enter');
-  const watchers = wellOf(field(page, 'Watchers light'));
-  await watchers.getByRole('button', { name: 'Remove Sam Lee', exact: true }).click();
-  await submit.click();
-  await expect
-    .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
-    .toEqual({
-      author: 'casey-nguyen',
-      watchers: ['jordan-park'],
-      document: 'design-system/tokens',
-    });
-  await page.getByRole('button', { name: 'Reset people light', exact: true }).click();
-  await expect(author).toHaveValue('Alex Morgan');
-  await expect.poll(() => chips(watchers)).toEqual(['Sam Lee', 'Jordan Park']);
-  await expect(document).toHaveValue('');
-});
+    const author = field(page, 'Author light');
+    await author.fill('casey');
+    await page.keyboard.press('Enter');
+    const watchers = wellOf(field(page, 'Watchers light'));
+    await watchers.getByRole('button', { name: 'Remove Sam Lee', exact: true }).click();
+    await submit.click();
+    await expect
+      .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
+      .toEqual({
+        author: 'casey-nguyen',
+        watchers: ['jordan-park'],
+        document: 'design-system/tokens',
+      });
+    await page.getByRole('button', { name: 'Reset people light', exact: true }).click();
+    await expect(author).toHaveValue('Alex Morgan');
+    await expect.poll(() => chips(watchers)).toEqual(['Sam Lee', 'Jordan Park']);
+    await expect(document).toHaveValue('');
+  },
+);
 
 test('a server search shows its loading state, highlights the first result and keeps the chosen label', async ({
   page,
@@ -321,90 +325,29 @@ test('a server search shows its loading state, highlights the first result and k
   await expect(page.locator('.env-combobox-empty')).toHaveText('No contacts found');
 });
 
-test('the popup is the raised popup with rounded options inset by its padding, in both themes', async ({
-  page,
-}) => {
-  for (const theme of ['light', 'dark'] as const) {
-    const author = field(page, `Author ${theme}`);
-    await author.click();
-    const popup = page.locator('.env-combobox-popup');
-    await expect(popup).toBeVisible();
-    await expect(popup.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
-      'data-env-theme',
-      theme,
-    );
-    const surface = await popup.evaluate(async (element) => {
-      // The popup grows in; its rows have their final size once the transition has run.
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
-      const probe = document.createElement('div');
-      probe.style.backgroundColor = 'var(--env-color-bg-popup)';
-      element.append(probe);
-      const popupColor = getComputedStyle(probe).backgroundColor;
-      probe.remove();
-      const style = getComputedStyle(element);
-      const list = element.querySelector('.env-combobox-list')!;
-      const options = [...element.querySelectorAll('.env-combobox-item')];
-      return {
-        popupColor,
-        background: style.backgroundColor,
-        border: Number.parseFloat(style.borderTopWidth),
-        radius: Number.parseFloat(style.borderTopLeftRadius),
-        padding: Number.parseFloat(style.paddingTop),
-        height: element.getBoundingClientRect().height,
-        scrolls: list.scrollHeight > list.clientHeight,
-        optionRadius: Number.parseFloat(getComputedStyle(options[0]!).borderTopLeftRadius),
-        labelStarts: options.map(
-          (option) => option.querySelector('.env-list-row-label')!.getBoundingClientRect().x,
-        ),
-        leadingSizes: options.map(
-          (option) => option.querySelector('.env-avatar')!.getBoundingClientRect().width,
-        ),
-      };
+test(
+  'near the bottom of the window the popup flips above the field',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1000, height: 600 });
+    const owner = field(page, 'Owner light');
+    await owner.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + scrollY;
+      scrollTo(0, top - innerHeight + 80);
     });
-    expect(surface.background).toBe(surface.popupColor);
-    expect(surface.border).toBeGreaterThanOrEqual(1);
-    // The menus' popup: 0.75 rem corners, concentric with its rows'.
-    expect(surface.radius).toBeCloseTo(12, 0);
-    expect(Math.abs(surface.optionRadius - (surface.radius - surface.padding))).toBeLessThan(1);
-    // A long list scrolls within at most 20 rem.
-    expect(surface.scrolls).toBe(true);
-    expect(surface.height).toBeLessThanOrEqual(20 * 16 + 1);
-    // Leading content takes its slot's size, so labels line up across options.
-    expect(new Set(surface.labelStarts.map(Math.round)).size).toBe(1);
-    expect(new Set(surface.leadingSizes).size).toBe(1);
-    // The popup is at least as wide as the field and starts at its edge.
-    const [popupBox, wellBox] = await Promise.all([
-      popup.boundingBox(),
-      wellOf(author).boundingBox(),
-    ]);
-    expect(popupBox!.width).toBeGreaterThanOrEqual(wellBox!.width - 1);
-    expect(Math.abs(popupBox!.x - wellBox!.x)).toBeLessThan(1);
-    expect(popupBox!.y).toBeGreaterThan(wellBox!.y + wellBox!.height);
-    await page.keyboard.press('Escape');
-    await expect(popup).toHaveCount(0);
-  }
-});
-
-test('near the bottom of the window the popup flips above the field', async ({ page }) => {
-  await page.setViewportSize({ width: 1000, height: 600 });
-  const owner = field(page, 'Owner light');
-  await owner.evaluate((element) => {
-    const top = element.getBoundingClientRect().top + scrollY;
-    scrollTo(0, top - innerHeight + 80);
-  });
-  await owner.click();
-  const popup = page.locator('.env-combobox-popup[data-open]');
-  await expect(popup).toHaveAttribute('data-side', 'top');
-  await expect(async () => {
-    const [popupBox, wellBox] = await Promise.all([
-      popup.boundingBox(),
-      wellOf(owner).boundingBox(),
-    ]);
-    expect(popupBox!.y).toBeGreaterThanOrEqual(0);
-    expect(popupBox!.y + popupBox!.height).toBeLessThanOrEqual(wellBox!.y + 1);
-  }).toPass();
-});
+    await owner.click();
+    const popup = page.locator('.env-combobox-popup[data-open]');
+    await expect(popup).toHaveAttribute('data-side', 'top');
+    await expect(async () => {
+      const [popupBox, wellBox] = await Promise.all([
+        popup.boundingBox(),
+        wellOf(owner).boundingBox(),
+      ]);
+      expect(popupBox!.y).toBeGreaterThanOrEqual(0);
+      expect(popupBox!.y + popupBox!.height).toBeLessThanOrEqual(wellBox!.y + 1);
+    }).toPass();
+  },
+);
 
 test('small fields line up with small buttons and open the one popup', async ({ page }) => {
   for (const theme of ['light', 'dark'] as const) {

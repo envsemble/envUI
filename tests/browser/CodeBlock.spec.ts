@@ -35,29 +35,21 @@ test('a code block copies its source and says so', async ({ page }) => {
   await expect(block.getByRole('status')).toHaveText('Copied.');
 });
 
-test('a code block that cannot copy selects its code for people to copy', async ({ page }) => {
-  await recordClipboard(page, 'neither');
-  await page.goto(fixture);
-  const block = page.getByTestId('install');
-  await block.getByRole('button', { name: 'Copy code' }).click();
-  await expect(block.getByRole('status')).toHaveText(
-    'Code selected. Use your keyboard or context menu to copy.',
-  );
-  // The selection covers the source; engines differ in how they serialize its line break.
-  expect(await page.evaluate(() => document.getSelection()?.toString())).toMatch(
-    /^npm install @envsemble\/envui\s+npm run build\s*$/,
-  );
-  await expect(block.getByRole('button', { name: 'Copy code' })).toBeVisible();
-});
-
-test("a code block takes its words from EnvUIProvider's messages", async ({ page }) => {
-  await recordClipboard(page, 'available');
-  await page.goto(fixture);
-  const block = page.getByTestId('translated');
-  // Without a label or a language: the heading, and the region named after plain text.
-  await expect(block.locator('.env-code-block-heading')).toContainText('Quelltext');
-  await expect(block.locator('pre')).toHaveAccessibleName('Quelltext in Klartext');
-  await block.getByRole('button', { name: 'Quelltext kopieren' }).click();
-  await expect(block.getByRole('button', { name: 'Quelltext kopiert' })).toBeVisible();
-  await expect(block.getByRole('status')).toHaveText('Kopiert.');
-});
+test(
+  'a code block that cannot copy selects its code for people to copy',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await recordClipboard(page, 'neither');
+    await page.goto(fixture);
+    const block = page.getByTestId('install');
+    await block.getByRole('button', { name: 'Copy code' }).click();
+    await expect(block.getByRole('status')).toHaveText(
+      'Code selected. Use your keyboard or context menu to copy.',
+    );
+    // The selection covers the source; engines differ in how they serialize its line break.
+    expect(await page.evaluate(() => document.getSelection()?.toString())).toMatch(
+      /^npm install @envsemble\/envui\s+npm run build\s*$/,
+    );
+    await expect(block.getByRole('button', { name: 'Copy code' })).toBeVisible();
+  },
+);

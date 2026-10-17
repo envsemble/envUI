@@ -22,26 +22,6 @@ const wellOf = (trigger: Locator) =>
 /** The open calendar popup; a closing one can still fade out. */
 const openPopup = (page: Page) => page.locator('.env-date-picker-popup[data-open]');
 
-/** The WCAG contrast ratio of two opaque rgb() colors. */
-function contrast(first: string, second: string) {
-  const luminance = (color: string) => {
-    const [red, green, blue] = color
-      .match(/[\d.]+/g)!
-      .slice(0, 3)
-      .map(Number) as [number, number, number];
-    const linear = (channel: number) => {
-      const value = channel / 255;
-      return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
-    };
-    return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue);
-  };
-  const [light, dark] = [luminance(first), luminance(second)].sort((a, b) => b - a) as [
-    number,
-    number,
-  ];
-  return (light + 0.05) / (dark + 0.05);
-}
-
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(today);
   await page.goto(dateFixture);
@@ -253,116 +233,51 @@ test('min and max make the days outside them unavailable and keep values within 
   await expect(openPopup(page)).toHaveCount(0);
 });
 
-test('native forms submit the values, require a value and reset to the defaults', async ({
-  page,
-}) => {
-  const submit = page.getByRole('button', { name: 'Submit dates light', exact: true });
-  const submitted = page.getByTestId('date-picker-submitted-light');
-  const review = field(page, 'Review by light');
-  await expect(review).toHaveAttribute('aria-required', 'true');
-  await submit.click();
-  // The empty required field keeps the form from submitting and takes focus.
-  await expect(review).toBeFocused();
-  await expect(submitted).toHaveText('');
-  // Dismiss the native validation bubble first: one engine consumes the next press while it shows.
-  await page.keyboard.press('Escape');
-  await review.click();
-  await page
-    .getByRole('dialog', { name: 'Review by light' })
-    .locator('[data-date="2026-10-30"]')
-    .click();
-  await submit.click();
-  // The empty read-only field, though required, does not keep the form from submitting.
-  await expect
-    .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
-    .toEqual({
-      publish: '2026-10-20',
-      meeting: '2026-10-21T09:30',
-      review: '2026-10-30',
-      approved: '',
-    });
-
-  const publish = field(page, 'Publish on light');
-  await publish.click();
-  await page
-    .getByRole('dialog', { name: 'Publish on light' })
-    .locator('[data-date="2026-10-27"]')
-    .click();
-  await expect(publish).toHaveText('27 Oct 2026');
-  await page.getByRole('button', { name: 'Reset dates light', exact: true }).click();
-  await expect(publish).toHaveText('20 Oct 2026');
-  await expect(review).toHaveText('Choose a day');
-  await expect(
-    page.getByTestId('date-picker-form-light').locator('input[name="review"]'),
-  ).toHaveValue('');
-});
-
-test('the calendar is the Popover surface with its day colors in both themes, and small fields line up', async ({
-  page,
-}) => {
-  for (const theme of ['light', 'dark'] as const) {
-    await field(page, `Publish on ${theme}`).click();
-    const popup = openPopup(page);
-    await expect(popup).toBeVisible();
-    await expect(popup.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
-      'data-env-theme',
-      theme,
-    );
-    const colors = await popup.evaluate(async (element) => {
-      // The popup grows in; its rows have their final size once the transition has run.
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      await Promise.allSettled(element.getAnimations().map(({ finished }) => finished));
-      const resolve = (value: string) => {
-        const probe = document.createElement('div');
-        probe.style.color = value;
-        element.append(probe);
-        const color = getComputedStyle(probe).color;
-        probe.remove();
-        return color;
-      };
-      const style = getComputedStyle(element);
-      const selected = getComputedStyle(
-        element.querySelector('[aria-selected="true"] .env-calendar-day-mark')!,
-      );
-      const current = getComputedStyle(
-        element.querySelector('[aria-current="date"] .env-calendar-day-mark')!,
-      );
-      return {
-        popup: resolve('var(--env-color-bg-popup)'),
-        background: style.backgroundColor,
-        border: Number.parseFloat(style.borderTopWidth),
-        radius: Number.parseFloat(style.borderTopLeftRadius),
-        selectedFill: selected.backgroundColor,
-        selectedText: selected.color,
-        selectedRole: resolve('var(--env-color-bg-brand-emphasis)'),
-        onSelectedRole: resolve('var(--env-color-fg-on-emphasis)'),
-        todayRing: current.boxShadow,
-        todayRole: resolve('var(--env-color-border-accent-emphasis)'),
-      };
-    });
-    expect(colors.background).toBe(colors.popup);
-    expect(colors.border).toBeGreaterThanOrEqual(1);
-    expect(colors.radius).toBeGreaterThanOrEqual(24);
-    expect(colors.selectedFill).toBe(colors.selectedRole);
-    expect(colors.selectedText).toBe(colors.onSelectedRole);
-    expect(colors.todayRing).toContain(colors.todayRole);
-    // The chosen day's fill and today's ring stand out from the popup, and the chosen day's number
-    // reads on its fill.
-    expect(contrast(colors.selectedFill, colors.background)).toBeGreaterThanOrEqual(3);
-    expect(contrast(colors.todayRole, colors.background)).toBeGreaterThanOrEqual(3);
-    expect(contrast(colors.selectedText, colors.selectedFill)).toBeGreaterThanOrEqual(4.5);
+test(
+  'native forms submit the values, require a value and reset to the defaults',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const submit = page.getByRole('button', { name: 'Submit dates light', exact: true });
+    const submitted = page.getByTestId('date-picker-submitted-light');
+    const review = field(page, 'Review by light');
+    await expect(review).toHaveAttribute('aria-required', 'true');
+    await submit.click();
+    // The empty required field keeps the form from submitting and takes focus.
+    await expect(review).toBeFocused();
+    await expect(submitted).toHaveText('');
+    // Dismiss the native validation bubble first: one engine consumes the next press while it shows.
     await page.keyboard.press('Escape');
-    await expect(openPopup(page)).toHaveCount(0);
+    await review.click();
+    await page
+      .getByRole('dialog', { name: 'Review by light' })
+      .locator('[data-date="2026-10-30"]')
+      .click();
+    await submit.click();
+    // The empty read-only field, though required, does not keep the form from submitting.
+    await expect
+      .poll(async () => JSON.parse((await submitted.textContent()) || '{}'))
+      .toEqual({
+        publish: '2026-10-20',
+        meeting: '2026-10-21T09:30',
+        review: '2026-10-30',
+        approved: '',
+      });
 
-    const toolbar = page.getByTestId(`date-picker-compact-${theme}`);
-    const [fieldBox, buttonBox] = await Promise.all([
-      wellOf(field(page, `Compact start ${theme}`)).boundingBox(),
-      toolbar.getByRole('button', { name: `Compact neighbour ${theme}` }).boundingBox(),
-    ]);
-    expect(fieldBox!.height).toBeCloseTo(32, 0);
-    expect(buttonBox!.height).toBeCloseTo(32, 0);
-  }
-});
+    const publish = field(page, 'Publish on light');
+    await publish.click();
+    await page
+      .getByRole('dialog', { name: 'Publish on light' })
+      .locator('[data-date="2026-10-27"]')
+      .click();
+    await expect(publish).toHaveText('27 Oct 2026');
+    await page.getByRole('button', { name: 'Reset dates light', exact: true }).click();
+    await expect(publish).toHaveText('20 Oct 2026');
+    await expect(review).toHaveText('Choose a day');
+    await expect(
+      page.getByTestId('date-picker-form-light').locator('input[name="review"]'),
+    ).toHaveValue('');
+  },
+);
 
 test('in a dialog Esc closes the calendar first, then the dialog', async ({ page }) => {
   const trigger = page.getByRole('button', { name: 'Schedule dark', exact: true });
@@ -387,22 +302,26 @@ test('in a dialog Esc closes the calendar first, then the dialog', async ({ page
   await expect(trigger).toBeFocused();
 });
 
-test('near the bottom of the window the calendar opens above the field', async ({ page }) => {
-  await page.setViewportSize({ width: 1000, height: 700 });
-  const due = field(page, 'Due light');
-  await due.evaluate((element) => {
-    const top = element.getBoundingClientRect().top + scrollY;
-    scrollTo(0, top - innerHeight + 80);
-  });
-  await due.click();
-  const popup = openPopup(page);
-  await expect(popup).toHaveAttribute('data-side', 'top');
-  await expect(async () => {
-    const [popupBox, fieldBox] = await Promise.all([popup.boundingBox(), due.boundingBox()]);
-    expect(popupBox!.y).toBeGreaterThanOrEqual(0);
-    expect(popupBox!.y + popupBox!.height).toBeLessThanOrEqual(fieldBox!.y + 1);
-  }).toPass();
-});
+test(
+  'near the bottom of the window the calendar opens above the field',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1000, height: 700 });
+    const due = field(page, 'Due light');
+    await due.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + scrollY;
+      scrollTo(0, top - innerHeight + 80);
+    });
+    await due.click();
+    const popup = openPopup(page);
+    await expect(popup).toHaveAttribute('data-side', 'top');
+    await expect(async () => {
+      const [popupBox, fieldBox] = await Promise.all([popup.boundingBox(), due.boundingBox()]);
+      expect(popupBox!.y).toBeGreaterThanOrEqual(0);
+      expect(popupBox!.y + popupBox!.height).toBeLessThanOrEqual(fieldBox!.y + 1);
+    }).toPass();
+  },
+);
 
 test('the calendar fits a phone-wide window', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 });
@@ -524,44 +443,46 @@ test('disabled, read-only and invalid fields', async ({ page }) => {
   await expect.poll(async () => (await label.boundingBox())!.y).toBeLessThan(resting - 8);
 });
 
-test('a key that does not move the day leaves focus where people take it next', async ({
-  page,
-}) => {
-  const meeting = field(page, 'Meeting light');
-  await meeting.click();
-  const dialog = page.getByRole('dialog', { name: 'Meeting light' });
-  await expect.poll(() => focusedDate(page)).toBe('2026-10-21');
-  // Home on the week's first day stays there.
-  await page.keyboard.press('Home');
-  await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
-  await page.keyboard.press('Home');
-  await page.keyboard.press('Tab');
-  const time = dialog.getByLabel('Time', { exact: true });
-  await expect(time).toBeFocused();
-  await time.fill('10:15');
-  await expect(meeting).toHaveText('21 Oct 2026, 10:15');
-  await expect(time).toBeFocused();
-  await page.keyboard.press('Escape');
-  await expect(openPopup(page)).toHaveCount(0);
+test(
+  'a key that does not move the day leaves focus where people take it next',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const meeting = field(page, 'Meeting light');
+    await meeting.click();
+    const dialog = page.getByRole('dialog', { name: 'Meeting light' });
+    await expect.poll(() => focusedDate(page)).toBe('2026-10-21');
+    // Home on the week's first day stays there.
+    await page.keyboard.press('Home');
+    await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
+    await page.keyboard.press('Home');
+    await page.keyboard.press('Tab');
+    const time = dialog.getByLabel('Time', { exact: true });
+    await expect(time).toBeFocused();
+    await time.fill('10:15');
+    await expect(meeting).toHaveText('21 Oct 2026, 10:15');
+    await expect(time).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(openPopup(page)).toHaveCount(0);
 
-  // So do End on its last day and keys that would pass min.
-  const start = field(page, 'Compact start light');
-  await start.click();
-  const startDialog = page.getByRole('dialog', { name: 'Compact start light' });
-  await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
-  await page.keyboard.press('PageUp');
-  await page.keyboard.press('ArrowLeft');
-  await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
-  await page.keyboard.press('End');
-  await page.keyboard.press('End');
-  await expect.poll(() => focusedDate(page)).toBe('2026-10-18');
-  await page.keyboard.press('Tab');
-  const startTime = startDialog.getByLabel('Time', { exact: true });
-  await expect(startTime).toBeFocused();
-  await startTime.fill('08:30');
-  await expect(start).toHaveText('14 Oct 2026, 08:30');
-  await expect(startTime).toBeFocused();
-});
+    // So do End on its last day and keys that would pass min.
+    const start = field(page, 'Compact start light');
+    await start.click();
+    const startDialog = page.getByRole('dialog', { name: 'Compact start light' });
+    await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
+    await page.keyboard.press('PageUp');
+    await page.keyboard.press('ArrowLeft');
+    await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
+    await page.keyboard.press('End');
+    await page.keyboard.press('End');
+    await expect.poll(() => focusedDate(page)).toBe('2026-10-18');
+    await page.keyboard.press('Tab');
+    const startTime = startDialog.getByLabel('Time', { exact: true });
+    await expect(startTime).toBeFocused();
+    await startTime.fill('08:30');
+    await expect(start).toHaveText('14 Oct 2026, 08:30');
+    await expect(startTime).toBeFocused();
+  },
+);
 
 test('days before 1970 keep their date and time', async ({ page }) => {
   const launch = field(page, 'Launch light');

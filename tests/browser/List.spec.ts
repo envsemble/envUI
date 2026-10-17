@@ -87,7 +87,7 @@ test.describe('List', () => {
     await expect(order).toHaveText('Intro,Budget,Roadmap,Questions');
   });
 
-  test('drags a row by its handle with the pointer', async ({ page }) => {
+  test('drags a row by its handle with the pointer', { tag: '@engines' }, async ({ page }) => {
     await page.goto(lists);
     const list = page.getByTestId('slides');
     const order = page.getByTestId('slides-order');
@@ -131,36 +131,38 @@ test.describe('List', () => {
     await expect(handle).toHaveAttribute('aria-pressed', 'false');
   });
 
-  test('a press on a lifted row released off its handle keeps the row on its handle', async ({
-    page,
-  }) => {
-    await page.goto(lists);
-    const list = page.getByTestId('slides');
-    const intro = list.getByRole('button', { name: 'Reorder Intro' });
-    await intro.click();
-    await expect(intro).toHaveAttribute('aria-pressed', 'true');
-    // Pressed again, dragged off and released elsewhere: no click reaches the handle, and WebKit
-    // has taken focus from it as it was pressed.
-    const from = await centre(intro);
-    await page.mouse.move(from.x, from.y);
-    await page.mouse.down();
-    await page.mouse.move(from.x + 300, from.y + 200, { steps: 4 });
-    await page.mouse.up();
-    await expect(intro).toBeFocused();
-    await page.keyboard.press('Escape');
-    await expect(intro).toHaveAttribute('aria-pressed', 'false');
-    await expect(list.locator('[data-moving]')).toHaveCount(0);
+  test(
+    'a press on a lifted row released off its handle keeps the row on its handle',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(lists);
+      const list = page.getByTestId('slides');
+      const intro = list.getByRole('button', { name: 'Reorder Intro' });
+      await intro.click();
+      await expect(intro).toHaveAttribute('aria-pressed', 'true');
+      // Pressed again, dragged off and released elsewhere: no click reaches the handle, and WebKit
+      // has taken focus from it as it was pressed.
+      const from = await centre(intro);
+      await page.mouse.move(from.x, from.y);
+      await page.mouse.down();
+      await page.mouse.move(from.x + 300, from.y + 200, { steps: 4 });
+      await page.mouse.up();
+      await expect(intro).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(intro).toHaveAttribute('aria-pressed', 'false');
+      await expect(list.locator('[data-moving]')).toHaveCount(0);
 
-    // Should a row stay lifted as another handle takes its keys, that handle moves its own row.
-    await intro.click();
-    const budget = list.getByRole('button', { name: 'Reorder Budget' });
-    await budget.dispatchEvent('keydown', { key: ' ', bubbles: true });
-    await expect(intro).toHaveAttribute('aria-pressed', 'false');
-    await expect(budget).toHaveAttribute('aria-pressed', 'true');
-    await budget.dispatchEvent('keydown', { key: 'ArrowDown', bubbles: true });
-    await budget.dispatchEvent('keydown', { key: 'Enter', bubbles: true });
-    await expect(page.getByTestId('slides-order')).toHaveText('Intro,Roadmap,Questions,Budget');
-  });
+      // Should a row stay lifted as another handle takes its keys, that handle moves its own row.
+      await intro.click();
+      const budget = list.getByRole('button', { name: 'Reorder Budget' });
+      await budget.dispatchEvent('keydown', { key: ' ', bubbles: true });
+      await expect(intro).toHaveAttribute('aria-pressed', 'false');
+      await expect(budget).toHaveAttribute('aria-pressed', 'true');
+      await budget.dispatchEvent('keydown', { key: 'ArrowDown', bubbles: true });
+      await budget.dispatchEvent('keydown', { key: 'Enter', bubbles: true });
+      await expect(page.getByTestId('slides-order')).toHaveText('Intro,Roadmap,Questions,Budget');
+    },
+  );
 
   test('a press lifts and drops a row without a pointer drag, as voice control does', async ({
     page,

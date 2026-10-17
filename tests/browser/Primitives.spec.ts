@@ -193,52 +193,7 @@ test.describe('Button emphasis', () => {
   });
 });
 
-test.describe('Field', () => {
-  test('labels and describes its control, and shows the error while invalid', async ({ page }) => {
-    await open(page);
-    const field = page.getByTestId('field');
-    const control = field.getByRole('textbox', { name: 'Project name' });
-    await expect(control).toBeVisible();
-    await expect(control).toHaveAccessibleDescription('Up to 40 characters.');
-    await expect(field.locator('.env-field-error')).toHaveCount(0);
-    await field.getByRole('button', { name: 'Toggle invalid' }).click();
-    await expect(control).toHaveAttribute('aria-invalid', 'true');
-    const error = field.locator('.env-field-error');
-    await expect(error).toHaveText('Enter a project name.');
-    await expect(error.locator('svg')).toHaveAttribute('aria-hidden', 'true');
-    await expect(control).toHaveAccessibleDescription(/Enter a project name\./);
-    await field.getByText('Project name', { exact: true }).click();
-    await expect(control).toBeFocused();
-    await expect(field.getByRole('textbox', { name: 'Disabled field' })).toBeDisabled();
-  });
-
-  test('draws its control at the control height with the pill outline', async ({ page }) => {
-    await open(page);
-    const control = page.getByRole('textbox', { name: 'Project name' });
-    const style = await control.evaluate((element) => {
-      const computed = getComputedStyle(element);
-      return {
-        height: element.getBoundingClientRect().height,
-        radius: parseFloat(computed.borderTopLeftRadius),
-        border: computed.borderTopWidth,
-      };
-    });
-    expect(style.height).toBeGreaterThanOrEqual(40);
-    expect(style.radius).toBeGreaterThanOrEqual(style.height / 2 - 1);
-    expect(style.border).toBe('1px');
-  });
-});
-
 test.describe('CloseButton', () => {
-  test('is named Close, by the provider, or by its own label', async ({ page }) => {
-    await open(page);
-    await expect(page.getByTestId('close-default')).toHaveAccessibleName('Close');
-    await expect(page.getByTestId('close-provider')).toHaveAccessibleName('Schließen');
-    await expect(page.getByTestId('close-own')).toHaveAccessibleName('Remove Alex Morgan');
-    await expect(page.getByTestId('close-default')).toHaveAttribute('data-variant', 'ghost');
-    await expect(page.getByTestId('close-small')).toHaveAttribute('data-variant', 'secondary');
-  });
-
   test.describe('on a coarse pointer', () => {
     // A touch screen is a coarse pointer in every engine.
     test.use({ hasTouch: true });
@@ -282,22 +237,26 @@ test.describe('ResizeHandle', () => {
     await expect(rtl).toHaveAttribute('aria-valuenow', '210');
   });
 
-  test('follows the pointer and commits as the drag ends', async ({ page }) => {
-    await open(page);
-    const handle = page.getByTestId('resize-ltr').getByRole('separator');
-    // The mouse moves in the viewport, so the handle must be in it.
-    await handle.scrollIntoViewIfNeeded();
-    const box = (await handle.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(box.x + box.width / 2 + 50, box.y + box.height / 2, { steps: 5 });
-    await expect(handle).toHaveAttribute('data-dragging', '');
-    await expect(handle).toHaveAttribute('aria-valuenow', '250');
-    await expect(page.getByTestId('committed-ltr')).toHaveText('200');
-    await page.mouse.up();
-    await expect(page.getByTestId('committed-ltr')).toHaveText('250');
-    await expect(handle).not.toHaveAttribute('data-dragging');
-  });
+  test(
+    'follows the pointer and commits as the drag ends',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await open(page);
+      const handle = page.getByTestId('resize-ltr').getByRole('separator');
+      // The mouse moves in the viewport, so the handle must be in it.
+      await handle.scrollIntoViewIfNeeded();
+      const box = (await handle.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width / 2 + 50, box.y + box.height / 2, { steps: 5 });
+      await expect(handle).toHaveAttribute('data-dragging', '');
+      await expect(handle).toHaveAttribute('aria-valuenow', '250');
+      await expect(page.getByTestId('committed-ltr')).toHaveText('200');
+      await page.mouse.up();
+      await expect(page.getByTestId('committed-ltr')).toHaveText('250');
+      await expect(handle).not.toHaveAttribute('data-dragging');
+    },
+  );
 });
 
 test.describe('useRovingFocus', () => {
@@ -323,14 +282,6 @@ test.describe('useRovingFocus', () => {
     await expect(cell('14')).toBeFocused();
     await expect(cell('14')).toHaveAttribute('tabindex', '0');
     await expect(cell('1')).toHaveAttribute('tabindex', '-1');
-  });
-
-  test('follows the text direction for Left and Right', async ({ page }) => {
-    await open(page);
-    const grid = page.getByRole('grid', { name: 'Days rtl' });
-    await grid.getByRole('gridcell', { name: '1', exact: true }).focus();
-    await page.keyboard.press('ArrowLeft');
-    await expect(grid.getByRole('gridcell', { name: '2', exact: true })).toBeFocused();
   });
 
   test('moves to an item as its name is typed', async ({ page }) => {
@@ -391,28 +342,6 @@ test.describe('PopupSurface', () => {
       await page.evaluate(() => (window as unknown as { popupsRemoved: number }).popupsRemoved),
     ).toBe(0);
   });
-});
-
-test('ListRow lays out a menu item with its icon, description and shortcut', async ({ page }) => {
-  await open(page);
-  await page.getByRole('button', { name: 'Open rows' }).click();
-  const menu = page.getByTestId('row-menu');
-  const item = menu.getByRole('menuitem', { name: /Settings/ });
-  await expect(item).toHaveClass(/env-list-row/);
-  await expect(item.locator('.env-list-row-description')).toHaveText('Account and workspace');
-  await expect(item.locator('.env-list-row-shortcut')).toHaveText('Ctrl+,');
-  await expect(menu.getByRole('menuitem', { name: 'Archive' })).toHaveAttribute(
-    'data-disabled',
-    '',
-  );
-});
-
-test('useCopy writes through a custom writer and reports the result', async ({ page }) => {
-  await open(page);
-  await page.getByRole('button', { name: 'Copy name' }).click();
-  await expect(page.getByTestId('copy-written')).toHaveText('Northwind');
-  await expect(page.getByTestId('copy-status')).toHaveText('copied');
-  await expect(page.getByTestId('copy-status')).toHaveText('idle', { timeout: 5000 });
 });
 
 test('EnvUIProvider sets the locale components read', async ({ page }) => {

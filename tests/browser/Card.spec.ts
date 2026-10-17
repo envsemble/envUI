@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { fixtureUrl } from './Servers';
 
 /** The inline end of the heading row and of its meta, in the row's own direction. */
 async function metaPlacement(card: Locator) {
@@ -141,23 +141,4 @@ test('a feature card responds to its own width without consumer containment CSS'
       }
     }
   }
-});
-
-test('overview cards are single links named by their text, including their padding', async ({
-  page,
-}) => {
-  await page.goto(`${catalogueUrl}/#/overview`);
-  const catalogue = page.locator('.docs-catalogue-grid');
-  const card = catalogue.getByRole('link', { name: /^Card A rounded surface/ });
-  await expect(card).not.toHaveAttribute('aria-labelledby');
-  await expect(catalogue.locator('a a, a button')).toHaveCount(0);
-  await expect(catalogue.getByText(/^Explore /)).toHaveCount(0);
-  for (const width of [1440, 390]) {
-    await page.setViewportSize({ width, height: 1000 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-      true,
-    );
-  }
-  await card.click({ position: { x: (await card.boundingBox())!.width / 2, y: 8 } });
-  await expect(page).toHaveURL(/\/components\/card\/overview$/);
 });

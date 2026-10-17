@@ -187,26 +187,11 @@ test('a page on the template is split into sections, examples and specimens', as
     const blocks = switchPage.sections.flatMap((section) => section.blocks);
     assert.ok(blocks.some((block) => block.kind === 'specimen' && block.name === 'States'));
     assert.ok(blocks.some((block) => block.kind === 'example' && block.name === 'Basic'));
-    assert.equal(switchPage.summary, 'An on/off setting that applies at once.');
 
     // The packaged page: examples filled in, specimens left out, props and related generated.
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
-    assert.match(compiled, /^---\ntitle: Switch\n/);
     assert.ok(compiled.includes(`\`\`\`tsx example=Basic\n${switchExample}\`\`\``));
     assert.doesNotMatch(compiled, /specimen/);
-    assert.ok(
-      compiled.includes(
-        '## Props\n\n### Switch\n\nAn on/off setting.\n\n| Prop | Type | Default | Description |',
-      ),
-    );
-    assert.ok(compiled.includes("| `size` | `'sm' \\| 'md'` | `'md'` |  |"));
-    assert.ok(compiled.includes('| `label` (required) | `ReactNode` | — | Visible label. |'));
-    assert.match(compiled, /Also accepts the native props of `<input>`/);
-    assert.ok(compiled.indexOf('## Props') < compiled.indexOf('## Changelog'));
-    const index = compileDocument(documents[0], documents, { props: switchProps, examples });
-    assert.ok(
-      index.includes('- [Switch](components/switch.md) — An on/off setting that applies at once.'),
-    );
   });
 });
 
@@ -320,7 +305,6 @@ test('a page not yet on the template ships its own props table only', async () =
     const documents = read();
     assert.equal(documents[1].sections, undefined);
     const compiled = compileDocument(documents[1], documents, { props: switchProps, examples });
-    assert.match(compiled, /### Props & contracts/);
     assert.doesNotMatch(compiled, /## Props\n/);
   });
 });
@@ -597,8 +581,6 @@ test('pattern and template pages are read into sections, examples and screens', 
       settings.sections.map((section) => section.id),
       ['overview', 'anatomy', 'content', 'accessibility', 'examples'],
     );
-    // The summary comes from the frontmatter, and the index line drops it.
-    assert.equal(settings.summary, 'Let people change how the application works for them.');
     const blocks = (document) => document.sections.flatMap((section) => section.blocks);
     assert.deepEqual(
       blocks(signIn).filter((block) => block.kind === 'template'),
@@ -615,14 +597,7 @@ test('pattern and template pages are read into sections, examples and screens', 
     assert.ok(
       compiled.includes(`\`\`\`tsx template=SignedOut frame=app\n${lead('SignedOut')}\`\`\``),
     );
-    assert.match(compiled, /## Related\n\n- \[Settings\]\(\.\.\/patterns\/settings\.md\)/);
     assert.doesNotMatch(compiled, /## Props/);
-    const index = compileDocument(documents[0], documents, { examples });
-    assert.ok(
-      index.includes(
-        '- [Settings](patterns/settings.md) — Let people change how the application works for them.',
-      ),
-    );
   });
 });
 

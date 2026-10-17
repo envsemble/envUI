@@ -125,39 +125,43 @@ test('the zone is a button named by its visible text that opens the file picker'
   await expect(page.getByTestId('documents-light')).toHaveText('brief.pdf notes.txt');
 });
 
-test('dropped files show the drag-over state and are filtered by accept', async ({ page }) => {
-  const scope = page.getByTestId('drop-zones-light');
-  const zone = scope.getByRole('button', { name: /^Drop a logo here, or browse/ });
-  const root = scope.locator('.env-drop-zone').first();
-  const transfer = await filesTransfer(page, [
-    ['logo.webp', 'image/webp'],
-    ['notes.txt', 'text/plain'],
-    ['mark.png', 'image/png'],
-  ]);
-  await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
-  await expect(root).toHaveAttribute('data-dragging', '');
-  await expect(zone).toHaveCSS('border-top-style', 'solid');
-  await expect(zone).toHaveCSS(
-    'border-top-color',
-    await tokenColor(zone, '--env-color-border-accent-emphasis'),
-  );
-  // Moving over the label inside keeps the state until the files leave the zone.
-  const label = zone.locator('.env-drop-zone-label');
-  await label.dispatchEvent('dragenter', { dataTransfer: transfer });
-  await zone.dispatchEvent('dragleave', { dataTransfer: transfer });
-  await expect(root).toHaveAttribute('data-dragging', '');
-  await label.dispatchEvent('dragleave', { dataTransfer: transfer });
-  await expect(root).not.toHaveAttribute('data-dragging');
+test(
+  'dropped files show the drag-over state and are filtered by accept',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('drop-zones-light');
+    const zone = scope.getByRole('button', { name: /^Drop a logo here, or browse/ });
+    const root = scope.locator('.env-drop-zone').first();
+    const transfer = await filesTransfer(page, [
+      ['logo.webp', 'image/webp'],
+      ['notes.txt', 'text/plain'],
+      ['mark.png', 'image/png'],
+    ]);
+    await zone.dispatchEvent('dragenter', { dataTransfer: transfer });
+    await expect(root).toHaveAttribute('data-dragging', '');
+    await expect(zone).toHaveCSS('border-top-style', 'solid');
+    await expect(zone).toHaveCSS(
+      'border-top-color',
+      await tokenColor(zone, '--env-color-border-accent-emphasis'),
+    );
+    // Moving over the label inside keeps the state until the files leave the zone.
+    const label = zone.locator('.env-drop-zone-label');
+    await label.dispatchEvent('dragenter', { dataTransfer: transfer });
+    await zone.dispatchEvent('dragleave', { dataTransfer: transfer });
+    await expect(root).toHaveAttribute('data-dragging', '');
+    await label.dispatchEvent('dragleave', { dataTransfer: transfer });
+    await expect(root).not.toHaveAttribute('data-dragging');
 
-  await drop(zone, transfer);
-  await expect(root).not.toHaveAttribute('data-dragging');
-  // Without multiple the zone takes the first matching file and rejects the others.
-  await expect(page.getByTestId('taken-light')).toHaveText('logo.webp');
-  await expect(page.getByTestId('rejected-light')).toHaveText('notes.txt mark.png');
+    await drop(zone, transfer);
+    await expect(root).not.toHaveAttribute('data-dragging');
+    // Without multiple the zone takes the first matching file and rejects the others.
+    await expect(page.getByTestId('taken-light')).toHaveText('logo.webp');
+    await expect(page.getByTestId('rejected-light')).toHaveText('notes.txt mark.png');
 
-  await drop(scope.getByRole('button', { name: 'Attach documents' }), transfer);
-  await expect(page.getByTestId('documents-light')).toHaveText('logo.webp notes.txt mark.png');
-});
+    await drop(scope.getByRole('button', { name: 'Attach documents' }), transfer);
+    await expect(page.getByTestId('documents-light')).toHaveText('logo.webp notes.txt mark.png');
+  },
+);
 
 test('a pending zone reports that it is busy and a disabled one takes no files', async ({
   page,
@@ -181,7 +185,6 @@ test('a pending zone reports that it is busy and a disabled one takes no files',
   await expect(disabled).toBeDisabled();
   await expect(disabled).toHaveCSS('opacity', '0.48');
   await drop(scope.locator('.env-drop-zone').nth(3), transfer);
-  await page.waitForTimeout(200);
   expect(opened).toBe(false);
   await expect(page.getByTestId('unavailable-light')).toHaveText('');
 });
@@ -210,47 +213,51 @@ test('an error is linked to the zone and colors its outline in both themes', asy
   }
 });
 
-test('a named zone submits the files it took with a native form', async ({ page }) => {
-  const scope = page.getByTestId('drop-zones-light');
-  const attachments = scope.getByRole('button', { name: 'Add attachments' });
-  const submitted = page.getByTestId('files-submitted-light');
-  await drop(
-    attachments,
-    await filesTransfer(page, [
-      ['report.pdf', 'application/pdf'],
-      ['photo.png', 'image/png'],
-      ['notes.txt', 'text/plain'],
-    ]),
-  );
-  await scope.getByRole('button', { name: 'Submit files' }).click();
-  await expect(submitted).toHaveText('report.pdf notes.txt');
-
-  // Choosing the same file from disk again hands it over again; the form submits it once.
-  const summary = test.info().outputPath('summary.pdf');
-  await writeFile(summary, pixel);
-  for (const attempt of [1, 2]) {
-    const chooser = page.waitForEvent('filechooser');
-    await attachments.click();
-    await (await chooser).setFiles(summary);
-    await expect(scope.getByTestId('attached-light')).toHaveText(
-      ['report.pdf notes.txt', ...Array(attempt).fill('summary.pdf')].join(' | '),
+test(
+  'a named zone submits the files it took with a native form',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('drop-zones-light');
+    const attachments = scope.getByRole('button', { name: 'Add attachments' });
+    const submitted = page.getByTestId('files-submitted-light');
+    await drop(
+      attachments,
+      await filesTransfer(page, [
+        ['report.pdf', 'application/pdf'],
+        ['photo.png', 'image/png'],
+        ['notes.txt', 'text/plain'],
+      ]),
     );
-  }
-  await scope.getByRole('button', { name: 'Submit files' }).click();
-  await expect(submitted).toHaveText('summary.pdf');
+    await scope.getByRole('button', { name: 'Submit files' }).click();
+    await expect(submitted).toHaveText('report.pdf notes.txt');
 
-  // Files the zone rejects leave the files it holds as they were.
-  await drop(attachments, await filesTransfer(page, [['photo.png', 'image/png']]));
-  await scope.getByRole('button', { name: 'Submit files' }).click();
-  await expect(submitted).toHaveText('summary.pdf');
+    // Choosing the same file from disk again hands it over again; the form submits it once.
+    const summary = test.info().outputPath('summary.pdf');
+    await writeFile(summary, pixel);
+    for (const attempt of [1, 2]) {
+      const chooser = page.waitForEvent('filechooser');
+      await attachments.click();
+      await (await chooser).setFiles(summary);
+      await expect(scope.getByTestId('attached-light')).toHaveText(
+        ['report.pdf notes.txt', ...Array(attempt).fill('summary.pdf')].join(' | '),
+      );
+    }
+    await scope.getByRole('button', { name: 'Submit files' }).click();
+    await expect(submitted).toHaveText('summary.pdf');
 
-  await scope.getByRole('button', { name: 'Reset files' }).click();
-  await scope.getByRole('button', { name: 'Submit files' }).click();
-  await expect(submitted).toHaveText('');
-  await drop(attachments, await filesTransfer(page, [['photo.png', 'image/png']]));
-  await scope.getByRole('button', { name: 'Submit files' }).click();
-  await expect(submitted).toHaveText('');
-});
+    // Files the zone rejects leave the files it holds as they were.
+    await drop(attachments, await filesTransfer(page, [['photo.png', 'image/png']]));
+    await scope.getByRole('button', { name: 'Submit files' }).click();
+    await expect(submitted).toHaveText('summary.pdf');
+
+    await scope.getByRole('button', { name: 'Reset files' }).click();
+    await scope.getByRole('button', { name: 'Submit files' }).click();
+    await expect(submitted).toHaveText('');
+    await drop(attachments, await filesTransfer(page, [['photo.png', 'image/png']]));
+    await scope.getByRole('button', { name: 'Submit files' }).click();
+    await expect(submitted).toHaveText('');
+  },
+);
 
 test('an application shows the chosen image with replace and remove actions', async ({ page }) => {
   const scope = page.getByTestId('drop-zones-light');

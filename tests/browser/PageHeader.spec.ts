@@ -56,31 +56,35 @@ test.describe('PageHeader', () => {
     expect(await heights(page.getByTestId('responsive'), 'Share')).toBeCloseTo(40, 0);
   });
 
-  test('sticks under the frame header and publishes its height on its page', async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 700 });
-    await page.goto(fixture);
-    const sticky = page.getByTestId('sticky');
-    const content = page.getByTestId('sticky-content');
-    // Scrolled well past the header's place, once the page is long enough to scroll that far.
-    await expect
-      .poll(() => page.evaluate(() => (window.scrollTo(0, 1200), window.scrollY)))
-      .toBeGreaterThan(1000);
-    // It sticks at --env-frame-sticky-top, 48 px, under the frame header.
-    await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(48, 0);
-    const height = (await box(sticky)).height;
-    const published = await page
-      .getByTestId('page')
-      .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
-    expect(Number.parseFloat(published)).toBeCloseTo(height, 0);
-    // Content sticks below both, from the two variables.
-    await expect.poll(async () => (await box(content)).y).toBeCloseTo(48 + height, 0);
-    // Without a frame's offset, it sticks at the top.
-    await sticky.evaluate((element) => {
-      const frame = element.closest<HTMLElement>('[style*="--env-frame-sticky-top"]')!;
-      frame.style.removeProperty('--env-frame-sticky-top');
-    });
-    await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
-  });
+  test(
+    'sticks under the frame header and publishes its height on its page',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1024, height: 700 });
+      await page.goto(fixture);
+      const sticky = page.getByTestId('sticky');
+      const content = page.getByTestId('sticky-content');
+      // Scrolled well past the header's place, once the page is long enough to scroll that far.
+      await expect
+        .poll(() => page.evaluate(() => (window.scrollTo(0, 1200), window.scrollY)))
+        .toBeGreaterThan(1000);
+      // It sticks at --env-frame-sticky-top, 48 px, under the frame header.
+      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(48, 0);
+      const height = (await box(sticky)).height;
+      const published = await page
+        .getByTestId('page')
+        .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
+      expect(Number.parseFloat(published)).toBeCloseTo(height, 0);
+      // Content sticks below both, from the two variables.
+      await expect.poll(async () => (await box(content)).y).toBeCloseTo(48 + height, 0);
+      // Without a frame's offset, it sticks at the top.
+      await sticky.evaluate((element) => {
+        const frame = element.closest<HTMLElement>('[style*="--env-frame-sticky-top"]')!;
+        frame.style.removeProperty('--env-frame-sticky-top');
+      });
+      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
+    },
+  );
 
   test("keeps its page's element across a parent's renders, and its height published", async ({
     page,

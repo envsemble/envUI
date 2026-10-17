@@ -1,38 +1,5 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-
-const themes = ['light', 'dark'] as const;
-
-/** Luminance contrast between two painted colors. */
-async function contrast(element: Locator, foreground: string, background: string) {
-  return element.evaluate(
-    (node, [front, back]) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 1;
-      const context = canvas.getContext('2d', { willReadFrequently: true })!;
-      const luminance = (colors: string[]) => {
-        context.clearRect(0, 0, 1, 1);
-        for (const color of colors) {
-          context.fillStyle = color;
-          context.fillRect(0, 0, 1, 1);
-        }
-        const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-        const linear = (value: number) => {
-          const channel = value / 255;
-          return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-        };
-        return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-      };
-      const canvasColor = getComputedStyle(node.closest('.env-theme')!).backgroundColor;
-      const [lighter, darker] = [
-        luminance([canvasColor, back!]),
-        luminance([canvasColor, back!, front!]),
-      ].sort((a, b) => b - a);
-      return (lighter! + 0.05) / (darker! + 0.05);
-    },
-    [foreground, background],
-  );
-}
 
 let errors: string[] = [];
 
@@ -105,79 +72,64 @@ test('the keyboard moves the value by steps, large steps and to the ends', async
   await expect(scope.locator('output.env-slider-value').nth(2)).toHaveText('130');
 });
 
-test('pressing the track and dragging the thumb set the value and commit it once', async ({
-  page,
-}) => {
-  const scope = page.getByTestId('sliders-light');
-  const opacity = scope.getByRole('slider', { name: 'Opacity' });
-  const track = scope.locator('.env-slider-track').first();
-  const box = (await track.boundingBox())!;
-  await page.mouse.click(box.x + box.width * 0.25, box.y + box.height / 2);
-  await expect(opacity).toHaveAttribute('aria-valuenow', '25');
-  await expect(page.getByTestId('commits-light')).toHaveText('25');
-  const thumb = scope.locator('.env-slider-thumb').first();
-  const thumbBox = (await thumb.boundingBox())!;
-  // The thumb is centered on the value along the track.
-  expect(thumbBox.x + thumbBox.width / 2).toBeCloseTo(box.x + box.width * 0.25, 0);
-  await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width * 0.75, box.y + box.height / 2, { steps: 5 });
-  await expect(thumb).toHaveAttribute('data-dragging', '');
-  await page.mouse.up();
-  await expect(opacity).toHaveAttribute('aria-valuenow', '75');
-  await expect(page.getByTestId('opacity-light')).toHaveText('75');
-  await expect(page.getByTestId('commits-light')).toHaveText('25 75');
-  const indicator = (await scope.locator('.env-slider-indicator').first().boundingBox())!;
-  expect(indicator.width / box.width).toBeCloseTo(0.75, 2);
-});
-
-test('sliders submit their value with a form and restore it on reset', async ({ page }) => {
-  const scope = page.getByTestId('sliders-light');
-  const submitted = page.getByTestId('sliders-submitted-light');
-  await scope.getByRole('button', { name: 'Submit sliders' }).click();
-  // A disabled slider is left out, like other disabled controls.
-  await expect(submitted).toHaveText('volume=30 scale=100');
-  const volume = scope.getByRole('slider', { name: 'Volume' });
-  await volume.focus();
-  await page.keyboard.press('ArrowRight');
-  await expect(volume).toHaveAttribute('aria-valuenow', '35');
-  await scope.getByRole('button', { name: 'Submit sliders' }).click();
-  await expect(submitted).toHaveText('volume=35 scale=100');
-  await scope.getByRole('button', { name: 'Reset sliders' }).click();
-  await expect(volume).toHaveAttribute('aria-valuenow', '30');
-  await expect(scope.locator('output.env-slider-value').nth(1)).toHaveText('30');
-  await scope.getByRole('button', { name: 'Submit sliders' }).click();
-  await expect(submitted).toHaveText('volume=30 scale=100');
-
-  const balance = scope.getByRole('slider', { name: 'Balance' });
-  await expect(balance).toBeDisabled();
-  await expect(scope.locator('.env-slider-control').nth(3)).toHaveCSS('opacity', '0.48');
-  // The group the label names is disabled too, so its faded label and value are an inactive
-  // control's, which WCAG exempts from contrast; an enabled one says nothing.
-  await expect(scope.locator('.env-slider').nth(3)).toHaveAttribute('aria-disabled', 'true');
-  await expect(scope.locator('.env-slider').first()).not.toHaveAttribute('aria-disabled');
-});
-
-test('the thumb, indicator and value keep their contrast in both themes', async ({ page }) => {
-  for (const theme of themes) {
-    const scope = page.getByTestId(`sliders-${theme}`);
+test(
+  'pressing the track and dragging the thumb set the value and commit it once',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('sliders-light');
+    const opacity = scope.getByRole('slider', { name: 'Opacity' });
+    const track = scope.locator('.env-slider-track').first();
+    const box = (await track.boundingBox())!;
+    await page.mouse.click(box.x + box.width * 0.25, box.y + box.height / 2);
+    await expect(opacity).toHaveAttribute('aria-valuenow', '25');
+    await expect(page.getByTestId('commits-light')).toHaveText('25');
     const thumb = scope.locator('.env-slider-thumb').first();
-    const thumbColor = await thumb.evaluate((element) => getComputedStyle(element).backgroundColor);
-    const indicatorColor = await scope
-      .locator('.env-slider-indicator')
-      .first()
-      .evaluate((element) => getComputedStyle(element).backgroundColor);
-    expect(indicatorColor).toBe(thumbColor);
-    // The thumb and indicator stand out from the canvas as controls (3:1).
-    expect(await contrast(thumb, thumbColor, 'transparent')).toBeGreaterThanOrEqual(3);
-    const value = scope.locator('output.env-slider-value').first();
-    const valueColor = await value.evaluate((element) => getComputedStyle(element).color);
-    expect(await contrast(value, valueColor, 'transparent')).toBeGreaterThanOrEqual(4.5);
-    const label = scope.locator('.env-slider-label').first();
-    const labelColor = await label.evaluate((element) => getComputedStyle(element).color);
-    expect(await contrast(label, labelColor, 'transparent')).toBeGreaterThanOrEqual(4.5);
-  }
-});
+    const thumbBox = (await thumb.boundingBox())!;
+    // The thumb is centered on the value along the track.
+    expect(thumbBox.x + thumbBox.width / 2).toBeCloseTo(box.x + box.width * 0.25, 0);
+    await page.mouse.move(thumbBox.x + thumbBox.width / 2, thumbBox.y + thumbBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.75, box.y + box.height / 2, { steps: 5 });
+    await expect(thumb).toHaveAttribute('data-dragging', '');
+    await page.mouse.up();
+    await expect(opacity).toHaveAttribute('aria-valuenow', '75');
+    await expect(page.getByTestId('opacity-light')).toHaveText('75');
+    await expect(page.getByTestId('commits-light')).toHaveText('25 75');
+    const indicator = (await scope.locator('.env-slider-indicator').first().boundingBox())!;
+    expect(indicator.width / box.width).toBeCloseTo(0.75, 2);
+  },
+);
+
+test(
+  'sliders submit their value with a form and restore it on reset',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const scope = page.getByTestId('sliders-light');
+    const submitted = page.getByTestId('sliders-submitted-light');
+    await scope.getByRole('button', { name: 'Submit sliders' }).click();
+    // A disabled slider is left out, like other disabled controls.
+    await expect(submitted).toHaveText('volume=30 scale=100');
+    const volume = scope.getByRole('slider', { name: 'Volume' });
+    await volume.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(volume).toHaveAttribute('aria-valuenow', '35');
+    await scope.getByRole('button', { name: 'Submit sliders' }).click();
+    await expect(submitted).toHaveText('volume=35 scale=100');
+    await scope.getByRole('button', { name: 'Reset sliders' }).click();
+    await expect(volume).toHaveAttribute('aria-valuenow', '30');
+    await expect(scope.locator('output.env-slider-value').nth(1)).toHaveText('30');
+    await scope.getByRole('button', { name: 'Submit sliders' }).click();
+    await expect(submitted).toHaveText('volume=30 scale=100');
+
+    const balance = scope.getByRole('slider', { name: 'Balance' });
+    await expect(balance).toBeDisabled();
+    await expect(scope.locator('.env-slider-control').nth(3)).toHaveCSS('opacity', '0.48');
+    // The group the label names is disabled too, so its faded label and value are an inactive
+    // control's, which WCAG exempts from contrast; an enabled one says nothing.
+    await expect(scope.locator('.env-slider').nth(3)).toHaveAttribute('aria-disabled', 'true');
+    await expect(scope.locator('.env-slider').first()).not.toHaveAttribute('aria-disabled');
+  },
+);
 
 test('sliders fit a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });

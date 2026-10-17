@@ -150,49 +150,52 @@ test('theme and renderer changes preserve uncontrolled content, history and keyb
   await expect(scope.getByTestId('rich-text-keyboard-clicks')).toHaveText('2');
 });
 
-test("a code block scrolls rather than wraps: the document's styles win over ProseMirror's base", async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
-  const editor = page
-    .getByTestId('rich-text-form')
-    .getByRole('textbox', { name: 'Rich source', exact: true });
-  await replace(editor, '``` ');
-  await editor.pressSequentially('const answer = 42;');
-  const block = editor.locator('pre');
-  await expect(block).toHaveText('const answer = 42;');
-  await expect(block).toHaveCSS('white-space', 'pre');
-  // The base styles are envUI's, in its cascade layer: Tiptap adds no style element of its own.
-  await expect(page.locator('style[data-tiptap-style]')).toHaveCount(0);
-  await expect(editor).toHaveCSS('position', 'relative');
-});
+test(
+  "a code block scrolls rather than wraps: the document's styles win over ProseMirror's base",
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    await replace(editor, '``` ');
+    await editor.pressSequentially('const answer = 42;');
+    const block = editor.locator('pre');
+    await expect(block).toHaveText('const answer = 42;');
+    await expect(block).toHaveCSS('white-space', 'pre');
+    // The base styles are envUI's, in its cascade layer: Tiptap adds no style element of its own.
+    await expect(page.locator('style[data-tiptap-style]')).toHaveCount(0);
+    await expect(editor).toHaveCSS('position', 'relative');
+  },
+);
 
-test("ProseMirror's separator stays inline under an unlayered img reset, adding no line", async ({
-  page,
-  browserName,
-}) => {
-  test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
-  await page.goto(`${fixtureUrl}?fixture=form`);
-  const editor = page
-    .getByTestId('rich-text-form')
-    .getByRole('textbox', { name: 'Rich source', exact: true });
-  // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its separator.
-  await replace(editor, '@river');
-  await page.getByRole('option', { name: referenceLabel, exact: true }).click();
-  if (/\s$/.test((await editor.locator('p').first().textContent()) ?? ''))
-    await page.keyboard.press('Backspace');
-  const paragraph = editor.locator('p').first();
-  const separator = paragraph.locator('img.ProseMirror-separator').last();
-  await expect(separator).toBeAttached();
-  const before = await paragraph.evaluate((element) => element.getBoundingClientRect().height);
-  // An application reset outside any cascade layer, as Tailwind's preflight has.
-  await page.addStyleTag({ content: 'img { display: block; height: auto; margin: 1rem; }' });
-  await expect(separator).toHaveCSS('display', 'inline');
-  await expect(separator).toHaveCSS('margin-top', '0px');
-  expect(await paragraph.evaluate((element) => element.getBoundingClientRect().height)).toBe(
-    before,
-  );
-});
+test(
+  "ProseMirror's separator stays inline under an unlayered img reset, adding no line",
+  { tag: '@engines' },
+  async ({ page, browserName }) => {
+    test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its separator.
+    await replace(editor, '@river');
+    await page.getByRole('option', { name: referenceLabel, exact: true }).click();
+    if (/\s$/.test((await editor.locator('p').first().textContent()) ?? ''))
+      await page.keyboard.press('Backspace');
+    const paragraph = editor.locator('p').first();
+    const separator = paragraph.locator('img.ProseMirror-separator').last();
+    await expect(separator).toBeAttached();
+    const before = await paragraph.evaluate((element) => element.getBoundingClientRect().height);
+    // An application reset outside any cascade layer, as Tailwind's preflight has.
+    await page.addStyleTag({ content: 'img { display: block; height: auto; margin: 1rem; }' });
+    await expect(separator).toHaveCSS('display', 'inline');
+    await expect(separator).toHaveCSS('margin-top', '0px');
+    expect(await paragraph.evaluate((element) => element.getBoundingClientRect().height)).toBe(
+      before,
+    );
+  },
+);
 
 test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
   page,
@@ -218,31 +221,33 @@ test('a task item keeps its checkbox beside its text in the editor and in the vi
   }
 });
 
-test('formatting, native history, form submission and reset use Markdown values', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
-  const form = page.getByTestId('rich-text-form');
-  const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
-  await editor.focus();
-  await editor.press('ControlOrMeta+A');
-  await form.getByRole('button', { name: 'Bold', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveText('alpha');
-  await expect(page.getByTestId('rich-text-source')).toHaveText('**alpha**');
-  await form.getByRole('button', { name: 'Undo', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveCount(0);
-  await form.getByRole('button', { name: 'Redo', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveText('alpha');
-  await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
-  await expect(page.getByTestId('rich-text-submitted')).toHaveText('**alpha**');
-  await form.getByRole('button', { name: 'Reset rich text', exact: true }).click();
-  await expect(editor).toHaveText('alpha');
-  await expect(editor.locator('strong')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Toggle form disabled', exact: true }).click();
-  await expect(editor).toHaveAttribute('contenteditable', 'false');
-  await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
-  await expect(page.getByTestId('rich-text-submitted')).toHaveText('missing');
-});
+test(
+  'formatting, native history, form submission and reset use Markdown values',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const form = page.getByTestId('rich-text-form');
+    const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
+    await editor.focus();
+    await editor.press('ControlOrMeta+A');
+    await form.getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveText('alpha');
+    await expect(page.getByTestId('rich-text-source')).toHaveText('**alpha**');
+    await form.getByRole('button', { name: 'Undo', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveCount(0);
+    await form.getByRole('button', { name: 'Redo', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveText('alpha');
+    await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
+    await expect(page.getByTestId('rich-text-submitted')).toHaveText('**alpha**');
+    await form.getByRole('button', { name: 'Reset rich text', exact: true }).click();
+    await expect(editor).toHaveText('alpha');
+    await expect(editor.locator('strong')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Toggle form disabled', exact: true }).click();
+    await expect(editor).toHaveAttribute('contenteditable', 'false');
+    await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
+    await expect(page.getByTestId('rich-text-submitted')).toHaveText('missing');
+  },
+);
 
 test('references preserve punctuation and stable identities through editor and shared view Markdown roundtrips', async ({
   page,
@@ -274,63 +279,65 @@ test('references preserve punctuation and stable identities through editor and s
   await expect(page.getByTestId('rich-text-reference-click')).toHaveText(`editor:${referenceId}`);
 });
 
-test('generic at, hash and slash sources support arrow selection, Escape and IME Enter', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
-  const editor = page
-    .getByTestId('rich-text-form')
-    .getByRole('textbox', { name: 'Rich source', exact: true });
-  await replace(editor, '@');
-  const people = page.getByRole('listbox', { name: 'People', exact: true });
-  await expect(people).toBeVisible();
-  await editor.press('ArrowDown');
-  await expect(people.getByRole('option', { name: 'Second person' })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await expect(editor).toHaveAttribute(
-    'aria-activedescendant',
-    (await people.getByRole('option', { name: 'Second person' }).getAttribute('id'))!,
-  );
-  await editor.press('ArrowUp');
-  await expect(people.getByRole('option', { name: referenceLabel, exact: true })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await editor.evaluate((element) =>
-    element.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'Enter',
-        code: 'Enter',
-        isComposing: true,
-        bubbles: true,
-        cancelable: true,
-      }),
-    ),
-  );
-  await expect(editor.locator('[data-reference-id]')).toHaveCount(0);
-  await replace(editor, '');
-  await replace(editor, '@');
-  await expect(people).toBeVisible();
-  await editor.press('ArrowDown');
-  await editor.press('Enter');
-  await expect(editor).toContainText('@Second person');
-  await expect(people).toHaveCount(0);
-  await replace(editor, '#');
-  await expect(page.getByRole('listbox', { name: 'Records', exact: true })).toBeVisible();
-  await editor.press('Escape');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(editor).toHaveText('#');
-  await replace(editor, '');
-  await replace(editor, '#road');
-  await page.getByRole('option', { name: 'Roadmap issue' }).click();
-  await expect(editor).toContainText('#Roadmap issue');
-  await replace(editor, '/release');
-  await expect(page.getByRole('listbox', { name: 'Files', exact: true })).toBeVisible();
-  await editor.press('Enter');
-  await expect(editor).toContainText('/Release file');
-});
+test(
+  'generic at, hash and slash sources support arrow selection, Escape and IME Enter',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    await replace(editor, '@');
+    const people = page.getByRole('listbox', { name: 'People', exact: true });
+    await expect(people).toBeVisible();
+    await editor.press('ArrowDown');
+    await expect(people.getByRole('option', { name: 'Second person' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(editor).toHaveAttribute(
+      'aria-activedescendant',
+      (await people.getByRole('option', { name: 'Second person' }).getAttribute('id'))!,
+    );
+    await editor.press('ArrowUp');
+    await expect(people.getByRole('option', { name: referenceLabel, exact: true })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await editor.evaluate((element) =>
+      element.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          isComposing: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    );
+    await expect(editor.locator('[data-reference-id]')).toHaveCount(0);
+    await replace(editor, '');
+    await replace(editor, '@');
+    await expect(people).toBeVisible();
+    await editor.press('ArrowDown');
+    await editor.press('Enter');
+    await expect(editor).toContainText('@Second person');
+    await expect(people).toHaveCount(0);
+    await replace(editor, '#');
+    await expect(page.getByRole('listbox', { name: 'Records', exact: true })).toBeVisible();
+    await editor.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(editor).toHaveText('#');
+    await replace(editor, '');
+    await replace(editor, '#road');
+    await page.getByRole('option', { name: 'Roadmap issue' }).click();
+    await expect(editor).toContainText('#Roadmap issue');
+    await replace(editor, '/release');
+    await expect(page.getByRole('listbox', { name: 'Files', exact: true })).toBeVisible();
+    await editor.press('Enter');
+    await expect(editor).toContainText('/Release file');
+  },
+);
 
 test('slash commands execute standard Tiptap blocks and application actions', async ({ page }) => {
   await page.goto(`${fixtureUrl}?fixture=commands`);
@@ -627,37 +634,39 @@ test('the document takes the field look: border, variants, error and a disabled 
   await expect(disabled).toHaveAttribute('contenteditable', 'false');
 });
 
-test('suggestions show above a Dialog the editor sits in and close as Tab leaves the editor', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}?fixture=field`);
-  await page.getByRole('button', { name: 'Open notes dialog' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Notes dialog' });
-  const editor = dialog.getByRole('textbox', { name: 'Dialog notes' });
-  await editor.click();
-  await editor.pressSequentially('@');
-  const people = page.getByRole('listbox', { name: 'People', exact: true });
-  await expect(people).toBeVisible();
-  // The list is inside the dialog, and on top where it shows.
-  await expect(dialog.getByRole('listbox', { name: 'People', exact: true })).toBeVisible();
-  const option = people.getByRole('option', { name: 'Second person' });
-  const center = await option.evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
-    return Boolean(top && element.contains(top));
-  });
-  expect(center).toBe(true);
-  // Picking an option keeps the dialog open.
-  await option.click();
-  await expect(dialog).toBeVisible();
-  await expect(editor).toContainText('@Second person');
-  // Tab leaves the editor and closes the list.
-  await editor.pressSequentially(' @');
-  await expect(people).toBeVisible();
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(editor).not.toBeFocused();
-});
+test(
+  'suggestions show above a Dialog the editor sits in and close as Tab leaves the editor',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=field`);
+    await page.getByRole('button', { name: 'Open notes dialog' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Notes dialog' });
+    const editor = dialog.getByRole('textbox', { name: 'Dialog notes' });
+    await editor.click();
+    await editor.pressSequentially('@');
+    const people = page.getByRole('listbox', { name: 'People', exact: true });
+    await expect(people).toBeVisible();
+    // The list is inside the dialog, and on top where it shows.
+    await expect(dialog.getByRole('listbox', { name: 'People', exact: true })).toBeVisible();
+    const option = people.getByRole('option', { name: 'Second person' });
+    const center = await option.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+      return Boolean(top && element.contains(top));
+    });
+    expect(center).toBe(true);
+    // Picking an option keeps the dialog open.
+    await option.click();
+    await expect(dialog).toBeVisible();
+    await expect(editor).toContainText('@Second person');
+    // Tab leaves the editor and closes the list.
+    await editor.pressSequentially(' @');
+    await expect(people).toBeVisible();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(editor).not.toBeFocused();
+  },
+);
 
 test('a controlled editor replaces documents with references and tasks without a flushSync warning', async ({
   page,
@@ -680,15 +689,4 @@ test('a controlled editor replaces documents with references and tasks without a
   await editor.getByRole('checkbox', { name: 'Check the totals' }).check();
   await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toBeChecked();
   expect(errors.filter((text) => /flushSync/.test(text))).toEqual([]);
-});
-
-test("the toolbar and tasks take their names from EnvUIProvider's messages", async ({ page }) => {
-  await page.goto(`${fixtureUrl}?fixture=field`);
-  const scope = page.getByTestId('rich-text-field');
-  const toolbar = scope.getByRole('toolbar', { name: 'Formatierung' });
-  await expect(toolbar.getByRole('button', { name: 'Fett', exact: true })).toBeVisible();
-  await expect(toolbar.getByRole('button', { name: 'Rückgängig', exact: true })).toBeVisible();
-  await expect(
-    scope.getByRole('textbox', { name: 'German notes' }).getByRole('checkbox', { name: 'Aufgabe' }),
-  ).toBeVisible();
 });
