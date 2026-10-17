@@ -3,7 +3,7 @@
 // files with jscodeshift's runner. See README.md.
 import { readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { extname, join, posix, relative, resolve, sep } from 'node:path';
+import { dirname, extname, join, posix, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { loadMap } from '../src/map.mjs';
@@ -151,7 +151,12 @@ const extensions = new Set(
     .filter(Boolean),
 );
 const isIgnored = ignoreMatcher(['node_modules', 'dist', '.git', ...values['ignore-pattern']]);
-const { files, missing } = collectFiles(paths.length ? paths : ['.'], extensions, isIgnored);
+const scanned = paths.length ? paths : ['.'];
+const { files, missing } = collectFiles(scanned, extensions, isIgnored);
+// The folders scanned: v1-classes tells test files by their path below the one they were found in.
+const roots = scanned
+  .map((path) => resolve(path))
+  .map((path) => (isDirectory(path) ? path : dirname(path)));
 for (const path of missing) console.error(`Skipped ${path}, which does not exist.`);
 
 const Runner = require('jscodeshift/src/Runner.js');
@@ -170,6 +175,7 @@ const result = await Runner.run(
     printChanges: values.print,
     transform: name,
     map,
+    roots,
     verbose: 0,
   },
 );

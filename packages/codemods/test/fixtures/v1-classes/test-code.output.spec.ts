@@ -15,4 +15,13 @@ test('the frame', async ({ page }) => {
   expect(markup).toMatch(/class="env-diff-count"/);
   const label = 'the env-app-sidebar region';
   expect(markup).toContain('env-theme');
+  await cy.get('.env-tree-item').should('exist');
+  expect(markup).toMatch(/var\(--color-text-muted\)/);
+});
+
+// Exact class names outside a class context may be no class: they stay and are reported.
+test('ids and keys', async ({ page }) => {
+  await page.getByTestId('env-app-sidebar').click();
+  const ids = { 'env-tree-row': 'row' };
+  expect(page.locator('#main')).toHaveAttribute('id', 'env-notice');
 });

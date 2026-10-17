@@ -1,0 +1,3 @@
+[
+  "line 40: --color-link is declared here, but 1.0 merges --color-link and --color-fg-link into one token, --env-color-fg-link. The codemod leaves the declaration, since rewriting it would set --env-color-fg-link for every component that reads it, and renames only its uses: remove it, or set --env-color-fg-link where you mean that."
+]

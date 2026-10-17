@@ -12,7 +12,10 @@ export type TextVariant = 'display' | 'body' | 'headline' | 'title' | 'body-sm' 
 /** How strong text is: default, muted or subtle. */
 export type TextEmphasis = 'default' | 'muted' | 'subtle';
 
-export type TextProps = Omit<ComponentPropsWithRef<'p'>, 'color' | 'ref'> & {
+export type TextProps<RenderedElement extends HTMLElement = HTMLParagraphElement> = Omit<
+  ComponentPropsWithRef<'p'>,
+  'color' | 'ref'
+> & {
   /**
    * The text style: display for a page's introduction, body for running text, headline for a
    * page's heading, title for a section's, body-sm for supporting text and caption for the
@@ -32,14 +35,22 @@ export type TextProps = Omit<ComponentPropsWithRef<'p'>, 'color' | 'ref'> & {
    */
   render?: ReactElement;
   /**
-   * The rendered element, a p by default: an HTMLElement, since render can make it any element, such as a
-   * section; a ref to a paragraph, or to the element render makes, works too.
+   * The rendered element, a p by default. Its type is the element type parameter, which a ref
+   * passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with
+   * render={<section />}, type-checks, and `TextProps['ref']` is a ref to the default element, so a
+   * wrapper can forward it to one.
    */
-  ref?: Ref<HTMLElement>;
+  ref?: Ref<RenderedElement>;
 };
 
 /** Semantic native text with typography and color from the shared token scale. */
-export function Text({ variant = 'body', emphasis, render, className, ...props }: TextProps) {
+export function Text<RenderedElement extends HTMLElement = HTMLParagraphElement>({
+  variant = 'body',
+  emphasis,
+  render,
+  className,
+  ...props
+}: TextProps<RenderedElement>) {
   return renderElement('p', render, {
     ...props,
     className: classNames('env-text', className),

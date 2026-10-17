@@ -1,5 +1,5 @@
 .page-toolbar {
-  --env-control-height: var(--env-control-height-sm);
+  --control-height-small: var(--env-control-height-sm);
   min-block-size: var(--env-control-height);
   background: var(--env-color-bg-raised);
 }

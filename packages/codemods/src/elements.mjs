@@ -231,6 +231,16 @@ export function applyPropRules(items, rules, where, item, report) {
         );
         continue;
       }
+      // A removed prop with an expression beside its literals, such as
+      // `appearance={dark ? 'dark' : level}`, stays whole: emptying its literals alone would leave
+      // a prop 1.0 doesn't have, half edited.
+      if (mapped.removed && mapped.opaque) {
+        report(
+          node,
+          `${at} has a value the codemod can't move: ${rule.report ?? 'change it by hand.'}`,
+        );
+        continue;
+      }
       if (mapped.dropped) {
         items.splice(index, 1);
         index -= 1;
@@ -303,10 +313,10 @@ export function applyPropRules(items, rules, where, item, report) {
  * A 1.0 value stays; a listed value takes the value of the one prop it maps to, such as Alert's
  * `error`, which is tone `danger`; a value that maps to no prop, such as Avatar's `standard`, the
  * default, becomes `undefined`, which leaves the prop unset as dropping it does; and a renamed
- * prop's other values stay under its new name. Returns `{ name, edits, reports, opaque, dropped }`: the
+ * prop's other values stay under its new name. Returns `{ name, edits, reports, opaque, removed, dropped }`: the
  * prop's name, each literal to replace with its new value, the values' own reports, each with the
  * props whose presence on the element silences it (`unless`), whether some values are
- * expressions the codemod can't see, and whether every value leaves the prop unset, so it goes. Returns undefined where none of the values is
+ * expressions the codemod can't see, whether every literal leaves the prop unset, and whether every value does, so it goes. Returns undefined where none of the values is
  * a literal, a literal maps to several props or is one the rule doesn't know, or the values map to
  * props of different names.
  */
@@ -345,6 +355,8 @@ export function mapConditional(expression, rule, name) {
     edits,
     reports,
     opaque: values.opaque.length > 0,
+    // Every literal leaves the prop unset: a prop 1.0 removes.
+    removed: names.size === 0,
     // Every value leaves the prop unset, as `layout={wide ? 'action' : 'content'}` on a Card does.
     dropped: names.size === 0 && values.opaque.length === 0,
   };

@@ -648,7 +648,9 @@ const sortClasses = (classes) =>
  *   `{ name, within, attributes, report }`; a class reported without `within` or `attributes` is
  *   also kept by the class renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
- *   name (without `--`) that replaces it, or a `report` for a fixed color or a removed name;
+ *   name (without `--`) that replaces it, with `declaration`, the report for a declaration of a
+ *   name that shares its target and is not the target's own, or a `report` for a fixed color or a
+ *   removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
  */
 export function normalizeMap(map) {
@@ -768,9 +770,29 @@ export function normalizeMap(map) {
         }, or a custom property of your own.`,
       });
     else {
-      tokens.set(name, { to: entry.to.slice(2) });
+      tokens.set(name, { to: entry.to.slice(2), note: entry.note });
       tokenNames.add(entry.to.slice(2));
     }
+  }
+  // A declaration of an old name is rewritten only where the name is the one that becomes its
+  // target: the only one, or the target's own name before the prefix. Where several names become
+  // one token, as --control-height, --control-height-small and --icon-button-size all become
+  // --env-control-height, a declaration of another of them would set the token every component
+  // reads, so it is reported instead, with `declaration` the message.
+  const sources = new Map();
+  for (const [name, entry] of tokens)
+    if (entry.to) sources.set(entry.to, [...(sources.get(entry.to) ?? []), name]);
+  for (const [name, entry] of tokens) {
+    if (!entry.to) continue;
+    const others = sources.get(entry.to).filter((other) => other !== name);
+    if (others.length === 0 || entry.to === `env-${name}`) continue;
+    const list = [name, ...others].map((other) => `--${other}`);
+    const names = `${list.slice(0, -1).join(', ')} and ${list.at(-1)}`;
+    entry.declaration =
+      `--${name} is declared here, but 1.0 merges ${names} into one token, --${entry.to}. ` +
+      `The codemod leaves the declaration, since rewriting it would set --${entry.to} for every ` +
+      `component that reads it, and renames only its uses: remove it, or set --${entry.to} where ` +
+      `you mean that.${entry.note ? ` ${entry.note}` : ''}`;
   }
   return { entries, classes, classAttributes, classesWithin, classReports, tokens, tokenNames };
 }
