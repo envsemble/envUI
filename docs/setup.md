@@ -125,7 +125,7 @@ Each recipe below is a client module of the application's own, with its `RouterL
 
 Paths inside the application go through the router's `Link`, which takes the path, the search and the hash apart; other addresses, such as another site or `mailto:`, stay plain anchors.
 
-With a registered router, TanStack types `to` as one of the routes' paths rather than any string, and each route's search by its `validateSearch`. envUI's `href` is any string, so the recipe asserts the path's type, and the search reaches the route as strings, for its `validateSearch` to parse. TanStack doesn't check such a path when it type-checks the application; it resolves it as it navigates.
+With a registered router, TanStack types `to` as one of the routes' paths rather than any string, and each route's search by its `validateSearch`. envUI's `href` is any string, so the recipe asserts the path's type, and the search reaches the route as strings, with a key given more than once as an array of them, for its `validateSearch` to parse. TanStack doesn't check such a path when it type-checks the application; it resolves it as it navigates.
 
 ```tsx recipe
 import type { ReactNode } from 'react';
@@ -136,11 +136,17 @@ function RouterLink({ href, ...props }: LinkComponentProps) {
   if (!href.startsWith('/') || href.startsWith('//')) return <a href={href} {...props} />;
   // Any origin will do: it only splits the path, the search and the hash.
   const url = new URL(href, 'https://application.invalid');
+  // A key given more than once, such as ?tag=a&tag=b, keeps all its values.
+  const search: Record<string, string | string[]> = {};
+  for (const key of new Set(url.searchParams.keys())) {
+    const values = url.searchParams.getAll(key);
+    search[key] = values.length === 1 ? values[0]! : values;
+  }
   return (
     <Link
       {...props}
       to={url.pathname as LinkProps['to']}
-      search={Object.fromEntries(url.searchParams)}
+      search={search}
       hash={url.hash.slice(1) || undefined}
     />
   );
