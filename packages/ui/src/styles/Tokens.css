@@ -45,8 +45,8 @@
   --env-color-bg-important-strong-hover: #83319f;
   --env-color-bg-important-strong-pressed: #6d1888;
   --env-color-bg-info-strong: #2c61a6;
-  --env-color-bg-info-strong-hover: #4177be;
-  --env-color-bg-info-strong-pressed: #578dd6;
+  --env-color-bg-info-strong-hover: #376cb2;
+  --env-color-bg-info-strong-pressed: #4177be;
   --env-color-bg-inset: rgb(255 255 255 / 0.5);
   --env-color-bg-muted: #f6f8fc;
   --env-color-bg-muted-hover: #e8eaee;
@@ -80,8 +80,8 @@
   --env-color-bg-success-emphasis: #176f35;
   --env-color-bg-success-muted: rgb(23 111 53 / 0.12);
   --env-color-bg-success-strong: #236d52;
-  --env-color-bg-success-strong-hover: #3b8266;
-  --env-color-bg-success-strong-pressed: #478d71;
+  --env-color-bg-success-strong-hover: #2f775c;
+  --env-color-bg-success-strong-pressed: #3b8266;
   --env-color-bg-success-subtle: transparent;
   --env-color-bg-success-subtle-hover: rgb(23 111 53 / 0.14);
   --env-color-bg-success-subtle-pressed: rgb(23 111 53 / 0.22);
@@ -125,6 +125,9 @@
   --env-color-fg-done: #7a3fc8;
   --env-color-fg-link: #0366da;
   --env-color-fg-link-hover: #005cc8;
+  --env-color-fg-link-on-tint: #005cc8;
+  --env-color-fg-link-on-tint-hover: #0053b5;
+  --env-color-fg-link-on-tint-pressed: #004aa2;
   --env-color-fg-link-pressed: #0053b5;
   --env-color-fg-muted: #5d6166;
   --env-color-fg-muted-hover: #54575c;
@@ -277,8 +280,8 @@
   --env-color-bg-important-strong-hover: #83319f;
   --env-color-bg-important-strong-pressed: #6d1888;
   --env-color-bg-info-strong: #2c61a6;
-  --env-color-bg-info-strong-hover: #4177be;
-  --env-color-bg-info-strong-pressed: #578dd6;
+  --env-color-bg-info-strong-hover: #376cb2;
+  --env-color-bg-info-strong-pressed: #4177be;
   --env-color-bg-inset: rgb(30 31 33 / 0.5);
   --env-color-bg-muted: #343638;
   --env-color-bg-muted-hover: #424447;
@@ -312,8 +315,8 @@
   --env-color-bg-success-emphasis: #7ad197;
   --env-color-bg-success-muted: rgb(122 209 151 / 0.14);
   --env-color-bg-success-strong: #236d52;
-  --env-color-bg-success-strong-hover: #3b8266;
-  --env-color-bg-success-strong-pressed: #478d71;
+  --env-color-bg-success-strong-hover: #2f775c;
+  --env-color-bg-success-strong-pressed: #3b8266;
   --env-color-bg-success-subtle: transparent;
   --env-color-bg-success-subtle-hover: rgb(122 209 151 / 0.14);
   --env-color-bg-success-subtle-pressed: rgb(122 209 151 / 0.22);
@@ -357,6 +360,9 @@
   --env-color-fg-done: #d2b2f7;
   --env-color-fg-link: #9fc1f8;
   --env-color-fg-link-hover: #8ab3f5;
+  --env-color-fg-link-on-tint: #9fc1f8;
+  --env-color-fg-link-on-tint-hover: #b5cffb;
+  --env-color-fg-link-on-tint-pressed: #cddefc;
   --env-color-fg-link-pressed: #75a5f2;
   --env-color-fg-muted: #bdbfc3;
   --env-color-fg-muted-hover: #ccced2;
@@ -471,6 +477,9 @@
   --env-color-fg-done: #53009a;
   --env-color-fg-link: #00377c;
   --env-color-fg-link-hover: #002f6d;
+  --env-color-fg-link-on-tint: #00377c;
+  --env-color-fg-link-on-tint-hover: #002f6d;
+  --env-color-fg-link-on-tint-pressed: #00275c;
   --env-color-fg-link-pressed: #00275c;
   --env-color-fg-muted: #303234;
   --env-color-fg-muted-hover: #28292b;
@@ -581,6 +590,9 @@
     --env-color-fg-done: #53009a;
     --env-color-fg-link: #00377c;
     --env-color-fg-link-hover: #002f6d;
+    --env-color-fg-link-on-tint: #00377c;
+    --env-color-fg-link-on-tint-hover: #002f6d;
+    --env-color-fg-link-on-tint-pressed: #00275c;
     --env-color-fg-link-pressed: #00275c;
     --env-color-fg-muted: #303234;
     --env-color-fg-muted-hover: #28292b;
@@ -692,6 +704,9 @@
   --env-color-fg-done: #f1e6ff;
   --env-color-fg-link: #e0ebfd;
   --env-color-fg-link-hover: #eaf2ff;
+  --env-color-fg-link-on-tint: #e0ebfd;
+  --env-color-fg-link-on-tint-hover: #eaf2ff;
+  --env-color-fg-link-on-tint-pressed: #f4f8ff;
   --env-color-fg-link-pressed: #f4f8ff;
   --env-color-fg-muted: #e8eaee;
   --env-color-fg-muted-hover: #eff1f5;
@@ -802,6 +817,9 @@
     --env-color-fg-done: #f1e6ff;
     --env-color-fg-link: #e0ebfd;
     --env-color-fg-link-hover: #eaf2ff;
+    --env-color-fg-link-on-tint: #e0ebfd;
+    --env-color-fg-link-on-tint-hover: #eaf2ff;
+    --env-color-fg-link-on-tint-pressed: #f4f8ff;
     --env-color-fg-link-pressed: #f4f8ff;
     --env-color-fg-muted: #e8eaee;
     --env-color-fg-muted-hover: #eff1f5;

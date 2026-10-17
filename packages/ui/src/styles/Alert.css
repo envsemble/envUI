@@ -1,5 +1,10 @@
-/* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone. */
+/* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone.
+   Links and text buttons in it take the link colors for a tint, as the link blue falls below 4.5:1
+   on the tints in the light theme. */
 .env-alert {
+  --env-color-fg-link: var(--env-color-fg-link-on-tint);
+  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
   --env-alert-tone: var(--env-color-fg-accent);
   --env-alert-tint: var(--env-color-bg-accent-muted);
   --env-alert-edge: var(--env-color-border-accent-muted);

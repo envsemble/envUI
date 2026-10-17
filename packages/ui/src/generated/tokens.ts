@@ -457,24 +457,24 @@ export const tokens = {
       'dark-high-contrast': '#094285',
     },
   },
-  /** A control on the information toast under the pointer. */
+  /** A control on the information toast under the pointer. Its white label keeps 4.5:1. */
   'color.bg.info.strong.hover': {
     cssVariable: '--env-color-bg-info-strong-hover',
     type: 'color',
     values: {
-      light: '#4177be',
-      dark: '#4177be',
+      light: '#376cb2',
+      dark: '#376cb2',
       'light-high-contrast': '#003878',
       'dark-high-contrast': '#003878',
     },
   },
-  /** A control on the information toast while pressed. */
+  /** A control on the information toast while pressed. Its white label keeps 4.5:1. */
   'color.bg.info.strong.pressed': {
     cssVariable: '--env-color-bg-info-strong-pressed',
     type: 'color',
     values: {
-      light: '#578dd6',
-      dark: '#578dd6',
+      light: '#4177be',
+      dark: '#4177be',
       'light-high-contrast': '#003068',
       'dark-high-contrast': '#003068',
     },
@@ -842,24 +842,24 @@ export const tokens = {
       'dark-high-contrast': '#004e37',
     },
   },
-  /** A control on the success toast, its dismiss button, under the pointer. */
+  /** A control on the success toast, its dismiss button, under the pointer. Its white label keeps 4.5:1. */
   'color.bg.success.strong.hover': {
     cssVariable: '--env-color-bg-success-strong-hover',
     type: 'color',
     values: {
-      light: '#3b8266',
-      dark: '#3b8266',
+      light: '#2f775c',
+      dark: '#2f775c',
       'light-high-contrast': '#00432e',
       'dark-high-contrast': '#00432e',
     },
   },
-  /** A control on the success toast while pressed. Its white icon keeps 3:1. */
+  /** A control on the success toast while pressed. Its white label keeps 4.5:1. */
   'color.bg.success.strong.pressed': {
     cssVariable: '--env-color-bg-success-strong-pressed',
     type: 'color',
     values: {
-      light: '#478d71',
-      dark: '#478d71',
+      light: '#3b8266',
+      dark: '#3b8266',
       'light-high-contrast': '#003a28',
       'dark-high-contrast': '#003a28',
     },
@@ -1326,6 +1326,39 @@ export const tokens = {
       'dark-high-contrast': '#e0ebfd',
     },
   },
+  /** Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted. */
+  'color.fg.link-on-tint': {
+    cssVariable: '--env-color-fg-link-on-tint',
+    type: 'color',
+    values: {
+      light: '#005cc8',
+      dark: '#9fc1f8',
+      'light-high-contrast': '#00377c',
+      'dark-high-contrast': '#e0ebfd',
+    },
+  },
+  /** A link on a tint under the pointer. */
+  'color.fg.link-on-tint.hover': {
+    cssVariable: '--env-color-fg-link-on-tint-hover',
+    type: 'color',
+    values: {
+      light: '#0053b5',
+      dark: '#b5cffb',
+      'light-high-contrast': '#002f6d',
+      'dark-high-contrast': '#eaf2ff',
+    },
+  },
+  /** A link on a tint while pressed. */
+  'color.fg.link-on-tint.pressed': {
+    cssVariable: '--env-color-fg-link-on-tint-pressed',
+    type: 'color',
+    values: {
+      light: '#004aa2',
+      dark: '#cddefc',
+      'light-high-contrast': '#00275c',
+      'dark-high-contrast': '#f4f8ff',
+    },
+  },
   /** A link under the pointer. */
   'color.fg.link.hover': {
     cssVariable: '--env-color-fg-link-hover',
@@ -1403,7 +1436,7 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills at rest; icons and marks at 3:1 on their hover and pressed fills and on the brand’s strong fill. */
+  /** White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill. */
   'color.fg.on-strong': {
     cssVariable: '--env-color-fg-on-strong',
     type: 'color',

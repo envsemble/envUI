@@ -177,8 +177,8 @@
         },
         "strong": {
           "$root": { "$value": "{palette.teal.60}" },
-          "hover": { "$value": "{palette.teal.50}" },
-          "pressed": { "$value": "{palette.teal.45}" }
+          "hover": { "$value": "{palette.teal.55}" },
+          "pressed": { "$value": "{palette.teal.50}" }
         }
       },
       "warning": {
@@ -253,8 +253,8 @@
       "info": {
         "strong": {
           "$root": { "$value": "{palette.steel.60}" },
-          "hover": { "$value": "{palette.steel.50}" },
-          "pressed": { "$value": "{palette.steel.40}" }
+          "hover": { "$value": "{palette.steel.55}" },
+          "pressed": { "$value": "{palette.steel.50}" }
         }
       },
       "important": {
@@ -284,6 +284,11 @@
         "$root": { "$value": "{palette.blue.20}" },
         "hover": { "$value": "{palette.blue.25}" },
         "pressed": { "$value": "{palette.blue.30}" }
+      },
+      "link-on-tint": {
+        "$root": { "$value": "{palette.blue.20}" },
+        "hover": { "$value": "{palette.blue.15}" },
+        "pressed": { "$value": "{palette.blue.10}" }
       },
       "accent": { "$value": "{palette.blue.20}" },
       "on-selected": { "$value": "{palette.blue.15}" },

@@ -136,7 +136,12 @@
   position: absolute;
   inset: 0;
 }
+/* Links and text buttons in a row under the pointer or pressed take the link colors for a tint: the
+   link blue falls below 4.5:1 on the row's hover and press fills in the light theme. */
 .env-list > .env-list-item[data-interactive]:is(:hover, :has(:focus-visible)) {
+  --env-color-fg-link: var(--env-color-fg-link-on-tint);
+  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
   background: var(--env-list-item-fill-hover);
 }
 .env-list
@@ -144,6 +149,9 @@
     :has([data-row-target]:active),
     :not(:has([data-row-target])):active
   ) {
+  --env-color-fg-link: var(--env-color-fg-link-on-tint);
+  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
   background: var(--env-list-item-fill-pressed);
 }
 @media (prefers-reduced-motion: reduce) {

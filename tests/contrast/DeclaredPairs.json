@@ -1580,6 +1580,286 @@
         "high": 7
       }
     },
+    "--env-color-fg-link-on-tint on --env-color-bg-accent-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-accent-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-brand-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-brand-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-danger-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-success-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-warning-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-list-item-bg-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint on --env-color-list-item-bg-pressed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-accent-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-accent-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-brand-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-brand-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-danger-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-success-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-warning-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-hover on --env-color-list-item-bg-hover": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-accent-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-accent-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-brand-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-brand-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-danger-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-danger-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-neutral-subtle-hover over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-neutral-subtle-hover over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-success-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-success-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-warning-muted over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-bg-warning-muted over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-link-on-tint-pressed on --env-color-list-item-bg-pressed": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-link-pressed on --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -1973,17 +2253,17 @@
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-info-strong-hover": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-info-strong-pressed": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-neutral-strong": {
@@ -1994,17 +2274,17 @@
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-neutral-strong-hover": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-neutral-strong-pressed": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-success-strong": {
@@ -2015,17 +2295,17 @@
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-success-strong-hover": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-on-strong on --env-color-bg-success-strong-pressed": {
-      "kind": "non-text",
+      "kind": "text",
       "minimum": {
-        "standard": 3,
-        "high": 4.5
+        "standard": 4.5,
+        "high": 7
       }
     },
     "--env-color-fg-success on --env-color-bg-default": {

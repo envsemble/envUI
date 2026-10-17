@@ -297,12 +297,12 @@
             "$value": "{palette.teal.60}"
           },
           "hover": {
-            "$description": "A control on the success toast, its dismiss button, under the pointer.",
-            "$value": "{palette.teal.50}"
+            "$description": "A control on the success toast, its dismiss button, under the pointer. Its white label keeps 4.5:1.",
+            "$value": "{palette.teal.55}"
           },
           "pressed": {
-            "$description": "A control on the success toast while pressed. Its white icon keeps 3:1.",
-            "$value": "{palette.teal.45}"
+            "$description": "A control on the success toast while pressed. Its white label keeps 4.5:1.",
+            "$value": "{palette.teal.50}"
           }
         }
       },
@@ -413,12 +413,12 @@
             "$value": "{palette.steel.60}"
           },
           "hover": {
-            "$description": "A control on the information toast under the pointer.",
-            "$value": "{palette.steel.50}"
+            "$description": "A control on the information toast under the pointer. Its white label keeps 4.5:1.",
+            "$value": "{palette.steel.55}"
           },
           "pressed": {
-            "$description": "A control on the information toast while pressed.",
-            "$value": "{palette.steel.40}"
+            "$description": "A control on the information toast while pressed. Its white label keeps 4.5:1.",
+            "$value": "{palette.steel.50}"
           }
         }
       },
@@ -478,6 +478,20 @@
         "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.60}" },
         "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.65}" }
       },
+      "link-on-tint": {
+        "$root": {
+          "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
+          "$value": "{palette.blue.60}"
+        },
+        "hover": {
+          "$description": "A link on a tint under the pointer.",
+          "$value": "{palette.blue.65}"
+        },
+        "pressed": {
+          "$description": "A link on a tint while pressed.",
+          "$value": "{palette.blue.70}"
+        }
+      },
       "accent": {
         "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
         "$value": "{palette.blue.60}"
@@ -498,7 +512,7 @@
         "$value": "{palette.neutral.0}"
       },
       "on-strong": {
-        "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills at rest; icons and marks at 3:1 on their hover and pressed fills and on the brand’s strong fill.",
+        "$description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill.",
         "$value": "{palette.neutral.0}"
       }
     },
