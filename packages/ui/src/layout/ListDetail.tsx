@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -181,13 +182,30 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
   const detail = useRef<HTMLDivElement>(null);
   const previous = useRef({ detailShown, stacked });
 
+  // The back button goes as the layout widens: focus on it moves to the detail first, rather than
+  // falling to the page. The callback is stable, so this runs only when the button leaves.
+  const backRef = useCallback((node: HTMLButtonElement | null) => {
+    back.current = node;
+    if (!node) return;
+    return () => {
+      back.current = null;
+      const pane = detail.current;
+      if (document.activeElement !== node || !pane) return;
+      if (!pane.hasAttribute('tabindex')) pane.tabIndex = -1;
+      pane.focus();
+    };
+  }, []);
+
   // Stacked, focus follows what shows: the back button once the detail opens, the list's current
-  // row once it closes. Focus left inside a pane that the layout hides goes there too.
+  // row once it closes. Focus left inside a pane that the layout hides goes there too. Focus
+  // elsewhere on the page stays where it is.
   useLayoutEffect(() => {
     const before = previous.current;
     previous.current = { detailShown, stacked };
     if (!stacked) return;
     const active = document.activeElement;
+    const root = detail.current?.parentElement;
+    if (active && active !== document.body && !root?.contains(active)) return;
     if (detailShown && (!before.detailShown || listRef.current?.contains(active)))
       back.current?.focus();
     else if (!detailShown && (before.detailShown || detail.current?.contains(active)))
@@ -209,7 +227,7 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
       >
         {stacked && (
           <div className="env-list-detail-back">
-            <Button ref={back} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
+            <Button ref={backRef} variant="text" startIcon={<ArrowBack />} onClick={onBack}>
               {backLabel}
             </Button>
           </div>

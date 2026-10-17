@@ -118,6 +118,9 @@ export function SplitPanesFixture() {
           <Button variant="secondary" onClick={() => setListWidth('24rem')}>
             Narrow list and detail
           </Button>
+          <Button variant="secondary" onClick={() => setDetailShown(false)}>
+            Close the detail
+          </Button>
         </Stack>
         <div style={{ inlineSize: listWidth }}>
           <ListDetail.Root

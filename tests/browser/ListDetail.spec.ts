@@ -62,6 +62,32 @@ test.describe('ListDetail', () => {
     await expect(back).toBeVisible();
   });
 
+  test('stacked, moves focus only from inside it, and off the back button as it widens', async ({
+    page,
+  }) => {
+    await page.goto(fixture);
+    await page.getByRole('button', { name: 'Narrow list and detail' }).click();
+    const root = page.getByTestId('list-detail');
+    await expect(root).toHaveAttribute('data-stacked', '');
+    await root.getByRole('button', { name: 'Office move' }).focus();
+    await page.keyboard.press('Enter');
+    const back = root.getByRole('button', { name: 'All projects' });
+    await expect(back).toBeFocused();
+    // Closing the detail from outside the layout leaves focus where it is.
+    const close = page.getByRole('button', { name: 'Close the detail' });
+    await close.focus();
+    await page.keyboard.press('Enter');
+    await expect(root.getByRole('region', { name: 'Projects' })).toBeVisible();
+    await expect(close).toBeFocused();
+    // Widening while the back button has focus moves focus to the detail, not the page.
+    await root.getByRole('button', { name: 'Hiring plan' }).click();
+    await expect(back).toBeFocused();
+    await root.evaluate((element) => (element.parentElement!.style.inlineSize = '60rem'));
+    await expect(root).not.toHaveAttribute('data-stacked');
+    await expect(back).toHaveCount(0);
+    await expect(root.getByRole('region', { name: 'Hiring plan' })).toBeFocused();
+  });
+
   test('turns its back arrow in right-to-left text', async ({ page }) => {
     await page.goto(fixture);
     await page.getByRole('button', { name: 'Narrow list and detail' }).click();
