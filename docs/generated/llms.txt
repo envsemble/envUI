@@ -131,8 +131,12 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 ## Templates
 
 - [App frame with sidebar](docs/templates/app-frame.md): The application's frame, with a sidebar of destinations that collapses to a rail, search, the account menu and a phone's top bar, around the page people are on. (a whole screen)
+- [Index page](docs/templates/index-page.md): A page inside the app frame that lists every object of one kind in a table people search, filter, sort and select, with bulk actions and pages. (inside the app frame)
+- [Details page](docs/templates/details-page.md): A page inside the app frame for one object, with where it sits, its status and actions, its content in tabs and a panel of its details beside them. (inside the app frame)
 - [Settings page](docs/templates/settings-page.md): A page inside the app frame where people change their profile, notifications and appearance, and delete the workspace, with each section saved the way its settings need. (inside the app frame)
+- [Dashboard](docs/templates/dashboard-page.md): A page inside the app frame with the workspace's key figures for a period and panels of activity, storage, goals, recent documents, what's due and alerts. (inside the app frame)
 - [Sign-in page](docs/templates/sign-in-page.md): A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens. (a whole screen)
+- [Error and not-found pages](docs/templates/error-pages.md): The pages for an address with no page, an object people may not open, and an application that failed to load, each saying what happened and what to do next. (inside the app frame)
 
 ## Optional
 

@@ -45,7 +45,7 @@ related:
 
 ## Overview
 
-The frame every page of an application sits in: a sidebar at the start with the application's name, search and its destinations, the account menu at its foot, and the page in the main region. The sidebar collapses to a rail of icons, and on a phone it becomes a drawer that a top bar opens. Start from it for any application with a handful of destinations; render it once, at the application's root, around the router's outlet. The other templates on `frame: app` pages, such as the index page, are the pages that go inside it. Set up the providers at the application's root as [setup](../setup.md) says, since the template brings none.
+The frame every page of an application sits in: a sidebar at the start with the application's name, search and its destinations, the account menu at its foot, and the page in the main region. The sidebar collapses to a rail of icons, and on a phone it becomes a drawer that a top bar opens. Start from it for any application with a handful of destinations; render it once, at the application's root, around the router's outlet. The other templates on `frame: app` pages, such as the [index page](index-page.md), are the pages that go inside it. Set up the providers at the application's root as [setup](../setup.md) says, since the template brings none.
 
 ```tsx template=AppFrame
 

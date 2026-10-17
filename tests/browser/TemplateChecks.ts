@@ -305,12 +305,236 @@ const settings: TemplateCheck[] = [
   },
 ];
 
+/** Types a query that matches no project and waits for the empty state. */
+async function searchForNothing(page: Page) {
+  await page.getByRole('searchbox', { name: 'Search projects' }).fill('roadmap');
+  await expect(page.getByRole('heading', { name: 'No matching projects' })).toBeVisible();
+}
+
+const indexPage: TemplateCheck[] = [
+  {
+    name: 'search filters the projects, says how many in a status, and no results offers to clear',
+    async run(page) {
+      const status = page.getByRole('main').getByRole('status').first();
+      await expect(status).toHaveText('24 projects');
+      const search = page.getByRole('searchbox', { name: 'Search projects' });
+      await search.fill('report');
+      await expect(status).toHaveText('1 project found');
+      await expect(page.getByRole('link', { name: 'Quarterly report' })).toBeVisible();
+      await searchForNothing(page);
+      await expect(status).toHaveText('0 projects found');
+      await expect(page.getByRole('table')).toHaveCount(0);
+      await expect(page.getByText('Nothing matches “roadmap”', { exact: false })).toBeVisible();
+      await page.getByRole('main').getByRole('button', { name: 'Clear filters' }).last().click();
+      await expect(search).toBeFocused();
+      await expect(search).toHaveValue('');
+      await expect(status).toHaveText('24 projects');
+    },
+  },
+  {
+    name: 'sorting sets aria-sort, and ten projects show per page',
+    async run(page, { width }) {
+      const table = page.getByRole('table', { name: 'Projects' });
+      await expect(table.getByRole('row')).toHaveCount(11);
+      if (width < 768) {
+        // The rows stack, so a Select sorts them.
+        await page.getByRole('combobox', { name: 'Sort by' }).click();
+        await page.getByRole('option', { name: 'Name, A to Z' }).click();
+        await expect(table.getByRole('row').nth(1)).toContainText('Accessibility review');
+        return;
+      }
+      const name = page.getByRole('columnheader', { name: /Name/ });
+      const updated = page.getByRole('columnheader', { name: /Updated/ });
+      await expect(updated).toHaveAttribute('aria-sort', 'descending');
+      await expect(name).toHaveAttribute('aria-sort', 'none');
+      await name.getByRole('button').click();
+      await expect(name).toHaveAttribute('aria-sort', 'ascending');
+      await expect(updated).toHaveAttribute('aria-sort', 'none');
+      await expect(table.getByRole('row').nth(1)).toContainText('Accessibility review');
+      await page
+        .getByRole('navigation', { name: 'Project pages' })
+        .getByRole('button', { name: /Next/ })
+        .click();
+      await expect(table.getByRole('row').nth(1)).toContainText('Mobile release');
+    },
+  },
+  {
+    name: 'selecting rows shows the bulk actions; archive offers Undo, and delete asks first',
+    async run(page) {
+      const status = page.getByRole('main').getByRole('status').first();
+      await page.getByRole('checkbox', { name: 'Select Website refresh' }).check();
+      await page.getByRole('checkbox', { name: 'Select Design system' }).check();
+      await expect(status).toHaveText('2 selected');
+      await expect(page.getByRole('checkbox', { name: 'Select this page' })).toHaveAttribute(
+        'aria-checked',
+        'mixed',
+      );
+      await expect(page.getByRole('row', { name: /Website refresh/ })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+      await page.getByRole('button', { name: 'Archive 2 projects' }).click();
+      await expect(page.getByRole('heading', { name: '2 projects archived' })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Website refresh' })).toHaveCount(0);
+      await expect(status).toHaveText('22 projects');
+      await page.getByRole('button', { name: 'Undo' }).click();
+      await expect(page.getByRole('link', { name: 'Website refresh' })).toBeVisible();
+      // Delete asks, naming the count, with Cancel first; Escape keeps the projects.
+      await page.getByRole('checkbox', { name: 'Select this page' }).check();
+      await expect(status).toHaveText('10 selected');
+      const remove = page.getByRole('button', { name: 'Delete 10 projects…' });
+      await remove.click();
+      const dialog = page.getByRole('alertdialog', { name: 'Delete 10 projects?' });
+      await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(remove).toBeFocused();
+      await remove.click();
+      await dialog.getByRole('button', { name: 'Delete 10 projects' }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(status).toHaveText('14 projects');
+      await expect(page.getByRole('checkbox', { name: 'Select this page' })).toBeFocused();
+    },
+  },
+  {
+    name: 'a row’s menu button has a tooltip, and its delete names the project',
+    async run(page, { width }) {
+      const more = page.getByRole('button', { name: 'More actions for Website refresh' });
+      if (width >= 768) {
+        await more.hover();
+        await expect(page.getByRole('tooltip')).toHaveText('More actions');
+      }
+      await more.click();
+      await page.getByRole('menuitem', { name: 'Delete project…' }).click();
+      const dialog = page.getByRole('alertdialog', { name: 'Delete Website refresh?' });
+      await expect(dialog).toBeVisible();
+      await dialog.getByRole('button', { name: 'Cancel' }).click();
+      await expect(more).toBeFocused();
+    },
+  },
+];
+
+const detailsPage: TemplateCheck[] = [
+  {
+    name: 'the panel sits beside the tabs on a desktop and below them on a phone',
+    async run(page, { width }) {
+      const tabs = page.getByRole('tablist', { name: 'Project views' });
+      const panel = page.getByRole('complementary', { name: 'Details' });
+      const main = (await tabs.boundingBox())!;
+      const side = (await panel.boundingBox())!;
+      if (width >= 768) expect(side.x).toBeGreaterThan(main.x + main.width);
+      else expect(side.y).toBeGreaterThan(main.y + main.height);
+      await expect(page.getByRole('main').getByRole('link', { name: 'Projects' })).toBeVisible();
+    },
+  },
+  {
+    name: 'the tabs switch views, archive offers Undo, and delete asks first',
+    async run(page) {
+      await page.getByRole('tab', { name: 'Activity' }).click();
+      await expect(page.getByRole('heading', { name: 'Activity', level: 2 })).toBeVisible();
+      await expect(page.getByRole('list', { name: 'Activity' }).getByRole('listitem')).toHaveCount(
+        4,
+      );
+      const more = page.getByRole('button', { name: 'More actions' });
+      await more.click();
+      await page.getByRole('menuitem', { name: 'Archive' }).click();
+      await expect(page.getByRole('heading', { name: 'Website refresh archived' })).toBeVisible();
+      await expect(page.getByText('Archived', { exact: true }).first()).toBeVisible();
+      await page.getByRole('button', { name: 'Undo' }).click();
+      await expect(page.getByText('Archived', { exact: true })).toHaveCount(0);
+      await more.click();
+      await page.getByRole('menuitem', { name: 'Delete project…' }).click();
+      const dialog = page.getByRole('alertdialog', { name: 'Delete Website refresh?' });
+      await dialog.getByRole('button', { name: 'Delete project' }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(page.getByRole('main').getByRole('status').first()).toHaveText(
+        'Website refresh deleted. Going back to Projects.',
+      );
+    },
+  },
+];
+
+const dashboardPage: TemplateCheck[] = [
+  {
+    name: 'the period changes the figures, and the alerts panel says it is empty',
+    async run(page) {
+      const figures = page.getByRole('group', { name: 'Figures for the last 30 days' });
+      await expect(figures).toContainText('286');
+      await page.getByRole('combobox', { name: 'Period' }).click();
+      await page.getByRole('option', { name: 'Last 7 days' }).click();
+      await expect(page.getByRole('group', { name: 'Figures for the last 7 days' })).toContainText(
+        '64',
+      );
+      await expect(page.getByRole('region', { name: 'Alerts' })).toContainText('No alerts');
+      for (const name of ['Activity', 'Storage', 'Goals', 'Recent documents', 'Due soon'])
+        await expect(page.getByRole('region', { name })).toBeVisible();
+      await expect(page.getByRole('meter', { name: 'Storage used' })).toHaveAttribute(
+        'aria-valuetext',
+        '68 of 100 gigabytes used',
+      );
+    },
+  },
+];
+
+const notFound: TemplateCheck[] = [
+  {
+    name: 'it names the address and offers home and search',
+    async run(page) {
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found');
+      await expect(page.getByRole('main')).toContainText('/projects/website-redesign');
+      await expect(page.getByRole('link', { name: 'Go to home' })).toHaveAttribute('href', '/');
+      await expect(page.getByRole('link', { name: 'Search', exact: true })).toHaveAttribute(
+        'href',
+        '/search?q=website+redesign',
+      );
+    },
+  },
+];
+
+const noAccess: TemplateCheck[] = [
+  {
+    name: 'Request access is pending, never disabled, then a status says who will hear',
+    async run(page, { reload }) {
+      await page.clock.install();
+      await reload();
+      const request = page.getByRole('button', { name: 'Request access' });
+      await request.click();
+      await expect(request).toHaveAttribute('aria-busy', 'true');
+      await expect(request).not.toHaveAttribute('disabled');
+      await page.clock.runFor(900);
+      await expect(page.getByRole('main').getByRole('status').first()).toHaveText(
+        'Request sent. Priya Shah will get an email.',
+      );
+      await expect(request).toHaveCount(0);
+    },
+  },
+];
+
+const errorPage: TemplateCheck[] = [
+  {
+    name: 'it says what happened, offers Try again first and shows the reference',
+    async run(page, { tab }) {
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Something went wrong');
+      await page.keyboard.press(tab);
+      await expect(page.getByRole('button', { name: 'Try again' })).toBeFocused();
+      await expect(page.getByRole('main')).toContainText('NW-7F3A-2C91');
+    },
+  },
+];
+
 export const templateChecks: Record<string, TemplateCheck[]> = {
+  'index-page/IndexPage': indexPage,
+  'details-page/DetailsPage': detailsPage,
+  'dashboard-page/DashboardPage': dashboardPage,
+  'error-pages/NotFoundPage': notFound,
+  'error-pages/NoAccessPage': noAccess,
+  'error-pages/ErrorPage': errorPage,
+
   'settings-page/SettingsPage': settings,
   'app-frame/AppFrame': appFrame,
   'sign-in-page/SignInPage': signIn,
 };
 
 export const templateStates: Record<string, TemplateState[]> = {
+  'index-page/IndexPage': [{ name: 'no-results', act: searchForNothing }],
   'sign-in-page/SignInPage': [{ name: 'empty-submit', act: submitEmpty }],
 };
