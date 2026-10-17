@@ -276,8 +276,9 @@ test.describe('DocumentTabs', () => {
         const closes = strip.locator('.env-document-tabs-close');
         expect(await closes.count()).toBeGreaterThan(1);
         expect(
-          await closes.evaluateAll((buttons) =>
-            buttons.filter((button) => getComputedStyle(button).visibility !== 'visible').length,
+          await closes.evaluateAll(
+            (buttons) =>
+              buttons.filter((button) => getComputedStyle(button).visibility !== 'visible').length,
           ),
         ).toBe(0);
       });
