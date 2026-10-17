@@ -21,6 +21,11 @@ avoidWhen:
     use: AppShell
 composes:
   - AppShell
+  - Sidebar
+  - SidebarTrigger
+  - NavList
+  - Page
+  - PageHeader
   - LoadingState
   - Skeleton
   - Spinner
@@ -95,7 +100,7 @@ Choose one indicator by what is loading:
 
 ### Focus and keyboard
 
-Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading.
+Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading or to the frame's `AppShell.Main`.
 
 ### envUI provides
 
@@ -113,6 +118,14 @@ Loading never moves focus. A pending button stays where it is in the tab order, 
 - A status message when an action completes, such as "Saved".
 
 ## Examples
+
+### Page progress
+
+Choosing a page in the sidebar starts loading it: the page on screen stays, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, and focus moves to `AppShell.Main`, which takes focus without being a tab stop. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`; an application renders it at its root.
+
+```tsx example=PageProgress
+
+```
 
 ### Refresh in place
 
