@@ -819,14 +819,14 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
@@ -2037,13 +2037,13 @@
         },
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "description": ""
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The resting meaning, as Button's: neutral, or danger on a primary, outline, ghost or text button."
@@ -2286,14 +2286,15 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
@@ -2772,14 +2773,14 @@
       "props": [
         {
           "name": "variant",
-          "type": "'primary' | 'outline' | 'ghost' | 'text' | 'secondary'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
           "default": "'primary'",
           "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
@@ -3751,14 +3752,15 @@
       "props": [
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."
@@ -7423,6 +7425,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, for its meaning, such as render={<section />} or render={<footer />}, or another component to lay out as the stack without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -7539,6 +7547,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a section; a ref to a div, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -7988,6 +8002,12 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, for its meaning, such as render={<h2 />} for a heading or render={<span />} inside a line; a p by default. The text's class and attributes merge into its props."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLElement>",
+          "required": false,
+          "description": "The rendered element, a p by default: an HTMLElement, since render can make it any element, such as a section; a ref to a paragraph, or to the element render makes, works too."
         }
       ],
       "native": [
@@ -8315,14 +8335,15 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'primary' | 'outline' | 'ghost' | 'text'",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
+          "requiredWhen": "in some forms",
           "default": "'secondary'",
           "description": "The emphasis, as Button's. Without it, the button takes the variant its container gives, such as ghost in a toolbar, and else secondary."
         },
         {
           "name": "tone",
-          "type": "'neutral' | 'accent' | 'danger'",
+          "type": "'neutral' | 'danger' | 'accent'",
           "required": false,
           "default": "'neutral'",
           "description": "The meaning, as Button's: accent on a primary button only, and danger on a primary, outline, ghost or text one. A secondary button is always neutral."

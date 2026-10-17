@@ -382,11 +382,12 @@ export function extractProps() {
         }
       }
     if (elements.size) return [...elements];
-    // Only the generic attributes: the element type of the ref or of an event handler names it.
-    const probe =
-      properties.find(({ name }) => name === 'ref') ??
-      properties.find(({ name }) => name === 'onClick');
-    const text = probe ? checker.typeToString(probe.type) : '';
+    // Only the generic attributes: the element type of the ref or of an event handler names it. A
+    // ref to any HTMLElement, as Surface's, which render can make any element, names none.
+    const text = ['ref', 'onClick']
+      .map((probe) => properties.find(({ name }) => name === probe))
+      .map((probe) => (probe ? checker.typeToString(probe.type) : ''))
+      .join(' ');
     const element = Object.entries(domElements).find(([name]) =>
       new RegExp(`\\b${name}\\b`).test(text),
     );

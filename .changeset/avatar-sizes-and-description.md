@@ -10,3 +10,5 @@ Avatar, AvatarGroup and AvatarButton take the 1.0 sizes and slot words.
 - Avatar's initials take the provider's locale for their capitals.
 
 Migrate with the codemods: `envui-codemods v1-props` maps the sizes and renames `detail`, and `v1-classes` turns the size classes into attribute selectors.
+
+Migration guide: [Content and display](../../docs/migration.md#content-and-display).

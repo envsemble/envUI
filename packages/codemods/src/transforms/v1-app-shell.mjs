@@ -266,6 +266,70 @@ export default function transform(file, api, options = {}) {
     const named = partOf(node);
     return named?.component === 'NavList' && named.part !== undefined && named.part !== 'Root';
   };
+  /** Nothing, as a value a condition gives: `null`, `undefined` or `false`. */
+  const nothing = (node) =>
+    node.type === 'NullLiteral' ||
+    (node.type === 'BooleanLiteral' && !node.value) ||
+    (node.type === 'Identifier' && node.name === 'undefined');
+  /**
+   * What a child of the navigation renders: `item` for NavList items, also behind a condition
+   * (`{admin ? <NavList.Item … /> : null}`, `{admin && <NavList.Item … />}`), in a fragment or from
+   * a `map` callback; `other` for another element, such as a Tree or a NavList.Root; and `unknown`
+   * for an expression the codemod can't see into, such as `{links}`.
+   */
+  const navigationKind = (node) => {
+    if (node.type === 'JSXElement') return isNavListItem(node) ? 'item' : 'other';
+    if (node.type === 'JSXFragment' || node.type === 'JSXExpressionContainer') {
+      const kinds =
+        node.type === 'JSXFragment'
+          ? node.children.filter(meaningfulChild).map(navigationKind)
+          : [expressionKind(node.expression)];
+      return kinds.length > 0 && kinds.every((kind) => kind === 'item')
+        ? 'item'
+        : kinds.includes('unknown') || kinds.includes('item')
+          ? 'unknown'
+          : 'other';
+    }
+    return 'unknown';
+  };
+  const expressionKind = (expression) => {
+    const values = [];
+    const visit = (node) => {
+      if (node.type === 'ConditionalExpression') {
+        visit(node.consequent);
+        visit(node.alternate);
+      } else if (node.type === 'LogicalExpression') {
+        if (node.operator !== '&&') visit(node.left);
+        visit(node.right);
+      } else if (
+        node.type === 'CallExpression' &&
+        node.callee.type === 'MemberExpression' &&
+        ['map', 'flatMap'].includes(node.callee.property.name) &&
+        ['ArrowFunctionExpression', 'FunctionExpression'].includes(node.arguments[0]?.type)
+      ) {
+        const { body } = node.arguments[0];
+        const returned =
+          body.type !== 'BlockStatement'
+            ? body
+            : body.body.length === 1 && body.body[0].type === 'ReturnStatement'
+              ? body.body[0].argument
+              : undefined;
+        if (returned) visit(returned);
+        else values.push('unknown');
+      } else if (!nothing(node))
+        values.push(
+          node.type === 'JSXElement' || node.type === 'JSXFragment'
+            ? navigationKind(node)
+            : 'unknown',
+        );
+    };
+    visit(expression);
+    return values.length > 0 && values.every((kind) => kind === 'item')
+      ? 'item'
+      : values.length > 0 && values.every((kind) => kind === 'other')
+        ? 'other'
+        : 'unknown';
+  };
   /** Whether a 1.0 frame part is inside the element: AppShell's parts, a Sidebar or a trigger. */
   const hasFrameParts = (path) =>
     j(path)
@@ -431,15 +495,19 @@ export default function transform(file, api, options = {}) {
         element(partName(component, 'Sidebar.Header'), [], [trigger, ...beside]),
       );
     const navigationChildren = navigation ? childrenOf(navigation) : [];
-    // NavList items go into a NavList.Root; anything else, such as a NavList.Root or a Tree of the
-    // application's own, stays as it is.
+    // NavList items go into a NavList.Root, also behind conditions; anything else, such as a
+    // NavList.Root or a Tree of the application's own, stays as it is. Items beside other content,
+    // or an expression the codemod can't see into, stay too, and are reported.
+    const kinds = skeleton ? [] : navigationChildren.filter(meaningfulChild).map(navigationKind);
     const listChildren = skeleton
       ? [element(partName(component, 'NavList.Skeleton'), items ? [renamed(items, 'items')] : [])]
-      : !navigationChildren.some(meaningfulChild)
+      : kinds.length === 0
         ? []
-        : navigationChildren.filter(meaningfulChild).every(isNavListItem)
+        : kinds.every((kind) => kind === 'item')
           ? [element(partName(component, 'NavList.Root'), [], navigationChildren)]
           : navigationChildren;
+    if (kinds.some((kind) => kind !== 'other') && !kinds.every((kind) => kind === 'item'))
+      reporter.warn(navigation, `${where}: ${reports.navigation ?? rule.report}`);
     if (listChildren.length)
       sidebarChildren.push(element(partName(component, 'Sidebar.Content'), [], listChildren));
     if (sidebarContent)

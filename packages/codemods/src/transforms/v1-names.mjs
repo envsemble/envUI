@@ -714,6 +714,16 @@ export default function transform(file, api, options = {}) {
         }
         continue;
       }
+      // An export that a later transform rewrites, such as ActionGroup, which v1-structure turns
+      // into a Stack, or AppShellSkeleton, which v1-app-shell rewrites, is no report while every
+      // use is an element: that transform rewrites each one, or reports it.
+      const references = referencesTo(local);
+      if (
+        entry.structure.has(imported) &&
+        references.length > 0 &&
+        references.every(({ kind }) => kind === 'jsx')
+      )
+        continue;
       warn(info.specifier, `${imported} is no longer exported by ${entry.name}: ${removed.use}`);
     }
   }

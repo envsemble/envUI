@@ -1,0 +1,3 @@
+[
+  "line 22: --scale is removed in 1.0: The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."
+]

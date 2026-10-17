@@ -12,3 +12,5 @@ The first release: ESLint rules for applications built with envUI, for ESLint 10
 An application that re-exports envUI from a module of its own lists it in `settings.envui.reexportModules`: `no-html-elements` and `no-renamed-exports` then count the names imported from it as envUI's. A path, best written absolute as `path.resolve(import.meta.dirname, 'src/ui')`, names the module's file, and matches every relative import that resolves to it, with or without its extension or `/index`; a relative entry such as `./src/ui` is read from ESLint's working directory, and an entry that names no existing module is a configuration error. An alias such as `@/components/ui` matches as written. `no-renamed-exports` then says to update that module first and rename imports through it by hand, since the v1-names codemod rewrites imports from `@envsemble/envui` only.
 
 The plugin is released with `@envsemble/envui` at the same version; install the version that matches envUI.
+
+Migration guide: [Upgrade from envUI 0.x to 1.0](../../docs/migration.md#upgrade-from-envui-0x-to-10).

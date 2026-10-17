@@ -101,6 +101,8 @@ if (affected) {
       `  accessibility scan and screenshots of:\n${reasons(scope.pages)}${scope.density ? '\n    and the density specimens' : ''}`,
     );
 }
+if (scope.templates && specs.includes('Templates.spec.ts'))
+  console.log(`  template screens checked: ${scope.templates.join(', ')}`);
 for (const note of scope.notes) console.log(yellow(`  note: ${note}`));
 if (scope.unmapped.length)
   console.log(dim(`  no checks beyond lint and unit tests: ${list(scope.unmapped)}`));
@@ -115,7 +117,11 @@ if (dryRun) process.exit(0);
 
 // Tasks.
 const node = (script, ...args) => [...bin.node, script, ...args];
-const playwrightEnv = (names) => ({ ENVUI_SERVERS: serversFor(names, index).join(',') || 'none' });
+const playwrightEnv = (names) => ({
+  ENVUI_SERVERS: serversFor(names, index).join(',') || 'none',
+  // Templates.spec.ts checks only the changed templates' screens.
+  ...(scope.templates && { ENVUI_TEMPLATES: scope.templates.join(',') }),
+});
 const staticTasks = [];
 if (scope.whole.lint)
   staticTasks.push(

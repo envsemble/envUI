@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentPropsWithRef, CSSProperties, ReactElement } from 'react';
+import type { ComponentPropsWithRef, CSSProperties, ReactElement, Ref } from 'react';
 import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
 import type { SpaceStep } from './Layout.js';
@@ -47,7 +47,12 @@ export type SurfaceProps = SurfaceAppearanceProps & {
    * native props and refs. A div by default.
    */
   render?: ReactElement;
-} & Omit<ComponentPropsWithRef<'div'>, keyof SurfaceAppearanceProps>;
+  /**
+   * The rendered element, a div by default: an HTMLElement, since render can make it any element, such as a
+   * section; a ref to a div, or to the element render makes, works too.
+   */
+  ref?: Ref<HTMLElement>;
+} & Omit<ComponentPropsWithRef<'div'>, keyof SurfaceAppearanceProps | 'ref'>;
 
 /**
  * A container with a background, an inset and corners, but no layout of its own: spacing between

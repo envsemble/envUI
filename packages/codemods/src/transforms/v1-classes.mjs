@@ -18,6 +18,11 @@
 //   getElementsByClassName; `--env-*` custom properties and the tokens' names before 1.0 in
 //   `style` attributes, string property keys and style.setProperty, getPropertyValue and
 //   removeProperty; and `var(--env-*)` and `var()` of a token's name before 1.0 in any string.
+// - CSS-in-JS templates tagged css, keyframes, createGlobalStyle, injectGlobal or styled, as style
+//   sheets; selectors in test locators (locator, waitForSelector, $, $) and class names in
+//   toHaveClass and expect(el.classList) assertions.
+// - Test files: a string that is exactly one 0.x class or class selector, wherever it is; a 0.x
+//   class in a regular expression or a longer string is reported.
 // Scripts are edited in place, literal by literal, so everything else keeps its formatting.
 import { extname } from 'node:path';
 import { loadMap, renameClass } from '../map.mjs';
@@ -26,7 +31,31 @@ import { createReporter, parserFor, sourceRanges } from '../shared.mjs';
 export const parser = 'tsx';
 
 const styleSheets = new Set(['.css', '.scss', '.sass', '.less', '.pcss']);
-const selectorMethods = new Set(['querySelector', 'querySelectorAll', 'closest', 'matches']);
+/** Methods that take a selector: the DOM's, and the locators of test runners such as Playwright. */
+const selectorMethods = new Set([
+  'querySelector',
+  'querySelectorAll',
+  'closest',
+  'matches',
+  'locator',
+  'waitForSelector',
+  '$',
+  '$$',
+  '$eval',
+  '$$eval',
+]);
+/** Assertions on an element's classes, such as `expect(row).toHaveClass('env-tree-item')`. */
+const classAssertions = new Set(['toHaveClass']);
+/** Assertions on a value, which take a class where the value is `classList` or `className`. */
+const valueAssertions = new Set(['toContain', 'toBe', 'toEqual', 'toMatch']);
+/** Tags of CSS-in-JS templates: css`…`, keyframes`…`, createGlobalStyle`…` and styled.div`…`. */
+const styleTags = new Set(['css', 'keyframes', 'createGlobalStyle', 'injectGlobal', 'styled']);
+/**
+ * A test file, where plain strings that are a 0.x class are renamed too: `*.test.*`, `*.spec.*`,
+ * or a file in a `tests`, `__tests__`, `e2e`, `playwright` or `cypress` folder.
+ */
+const testFile =
+  /(?:^|[\\/])(?:__tests__|tests|e2e|playwright|cypress)[\\/]|\.(?:test|spec|e2e)\.[cm]?[jt]sx?$/i;
 const classListMethods = new Set(['add', 'remove', 'toggle', 'contains', 'replace']);
 const propertyMethods = new Set(['setProperty', 'getPropertyValue', 'removeProperty']);
 
@@ -258,6 +287,28 @@ export default function transform(file, api, options = {}) {
   );
   if (!file.source.includes('env-') && !file.source.includes('--')) return undefined;
   const reporter = createReporter(api);
+  /**
+   * What became of a 0.x class that the codemod leaves where it is, or undefined for a name that
+   * is no 0.x class: its 1.0 name, the attributes that replace a modifier, or the classReports
+   * entry's text.
+   */
+  const oldClass = (name) => {
+    const attributes = classAttributes.get(name);
+    if (attributes)
+      return `a 0.x modifier class, which the codemod leaves here: .${attributes.class} carries ${attributeSelectors(attributes.attributes)} instead in 1.0.`;
+    const reported = classReports.find(
+      (rule) =>
+        !rule.within &&
+        !rule.attributes &&
+        (name === rule.name || name.startsWith(`${rule.name}-`)),
+    );
+    if (reported)
+      return `a 0.x class, which the codemod leaves here and 1.0 has none for: ${reported.report}`;
+    const renamed = renameClass(name, classes);
+    return renamed === name
+      ? undefined
+      : `a 0.x class, which the codemod leaves here: it is ${renamed} in 1.0.`;
+  };
   /** Reports at the line of `offset` in `text`, which starts on line `first`. */
   const reportAt = (text, first) => (offset, message) =>
     reporter.warn(
@@ -337,6 +388,25 @@ export default function transform(file, api, options = {}) {
     )
       markWithin(path.get('right'), 'class');
   });
+  /** Whether a member expression is an element's classes: `x.classList` or `x.className`. */
+  const isClasses = (node) =>
+    (node?.type === 'MemberExpression' || node?.type === 'OptionalMemberExpression') &&
+    !node.computed &&
+    (node.property.name === 'classList' || node.property.name === 'className');
+  /**
+   * Whether an assertion's object asserts on an element's classes: `expect(x.classList)`, also
+   * with modifiers such as `.not`, or `expect(x.className)`.
+   */
+  const assertsClasses = (object) => {
+    let node = object;
+    while (
+      (node?.type === 'MemberExpression' || node?.type === 'OptionalMemberExpression') &&
+      !node.computed &&
+      ['not', 'resolves', 'rejects', 'soft'].includes(node.property.name)
+    )
+      node = node.object;
+    return node?.type === 'CallExpression' && isClasses(node.arguments[0]);
+  };
   const calls = (path) => {
     const { callee } = path.node;
     if (
@@ -348,7 +418,12 @@ export default function transform(file, api, options = {}) {
     const method = callee.property.name;
     const object = callee.object;
     const argument = (index) => path.get('arguments', index);
-    if (selectorMethods.has(method) && path.node.arguments[0]) markWithin(argument(0), 'selector');
+    if (classAssertions.has(method))
+      path.node.arguments.forEach((_argument, index) => markWithin(argument(index), 'class'));
+    else if (valueAssertions.has(method) && path.node.arguments[0] && assertsClasses(object))
+      markWithin(argument(0), 'class');
+    else if (selectorMethods.has(method) && path.node.arguments[0])
+      markWithin(argument(0), 'selector');
     else if (method === 'getElementsByClassName' && path.node.arguments[0])
       markWithin(argument(0), 'class');
     else if (propertyMethods.has(method) && path.node.arguments[0])
@@ -363,6 +438,54 @@ export default function transform(file, api, options = {}) {
   };
   root.find(j.CallExpression).forEach(calls);
   root.find(j.OptionalCallExpression).forEach(calls);
+  // A CSS-in-JS template is a style sheet: css`…`, styled.div`…`, styled(Button)`…`.
+  const isStyleTag = (tag) =>
+    tag.type === 'Identifier'
+      ? styleTags.has(tag.name)
+      : tag.type === 'MemberExpression'
+        ? isStyleTag(tag.object)
+        : tag.type === 'CallExpression'
+          ? isStyleTag(tag.callee)
+          : false;
+  root
+    .find(j.TaggedTemplateExpression)
+    .filter((path) => isStyleTag(path.node.tag))
+    .forEach((path) => mark(path.node.quasi, 'styles'));
+
+  // In a test file, a plain string that is one 0.x class, or one class selector, is renamed as
+  // well, wherever it is, such as `findByClass(root, 'env-app-sidebar')`. A 0.x class inside a
+  // longer string or a regular expression stays, and is reported: the codemod can't tell a
+  // class there from other text, or rewrite a pattern.
+  if (testFile.test(file.path)) {
+    const oneClass = /^\s*(\.?)(env-[a-z0-9][a-z0-9_-]*)\s*$/;
+    const literalText = (node) =>
+      node.type === 'StringLiteral'
+        ? node.value
+        : node.expressions.length === 0
+          ? node.quasis[0].value.cooked
+          : undefined;
+    const reportIn = (node, text, where) => {
+      for (const match of text.matchAll(attributeName)) {
+        const message = oldClass(match[0]);
+        if (message) reporter.warn(node, `${match[0]} in ${where}: ${message}`);
+      }
+    };
+    const inTests = (path) => {
+      const { node } = path;
+      if (modes.has(node) || path.parent.node.type === 'ImportDeclaration') return;
+      const text = literalText(node);
+      const one = text?.match(oneClass);
+      if (one && oldClass(one[2])) mark(node, one[1] ? 'selector' : 'class');
+      else if (text !== undefined) reportIn(node, text, 'a string');
+      else for (const quasi of node.quasis) reportIn(quasi, quasi.value.cooked ?? '', 'a string');
+    };
+    root.find(j.StringLiteral).forEach(inTests);
+    root.find(j.TemplateLiteral).forEach(inTests);
+    root
+      .find(j.RegExpLiteral)
+      .forEach((path) => reportIn(path.node, path.node.pattern, 'a regular expression'));
+  }
+
   // `var(--env-*)` is a custom property in any string, such as a style object's value.
   root.find(j.StringLiteral).forEach((path) => mark(path.node, 'var'));
   root.find(j.TemplateLiteral).forEach((path) => mark(path.node, 'var'));
@@ -379,7 +502,7 @@ export default function transform(file, api, options = {}) {
     }
   };
   const rewrite = (text, mode, atStart, report) =>
-    mode === 'selector'
+    mode === 'selector' || mode === 'styles'
       ? renameInStyles(
           text,
           classes,
@@ -388,7 +511,8 @@ export default function transform(file, api, options = {}) {
           tokenNames,
           report,
           classAttributes,
-          '',
+          // A template's text takes quotes; a selector string's quotes are the string's own.
+          mode === 'styles' ? "'" : '',
         )
       : mode === 'property'
         ? renameCustomProperties(text, classes, tokens, tokenNames, report)
@@ -398,8 +522,8 @@ export default function transform(file, api, options = {}) {
 
   /** Reports the classReports in a literal's renamed text: selectors, and classes in class strings. */
   const reportRemaining = (text, mode, line) => {
-    if (mode === 'selector' || mode === 'class')
-      reportClasses(text, classReports, reportAt(text, line), mode === 'selector');
+    if (mode === 'selector' || mode === 'styles' || mode === 'class')
+      reportClasses(text, classReports, reportAt(text, line), mode !== 'class');
   };
 
   // Babel gives a template's raw text with its line breaks as \n, whatever the file's are.

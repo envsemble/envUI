@@ -13,3 +13,5 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning. `var
 - The modifier classes become attributes on `.env-button`: `env-button-primary` is `[data-variant='primary'][data-tone='neutral']`, `env-button-important` `[data-variant='primary'][data-tone='accent']`, `env-button-destructive` `[data-variant='primary'][data-tone='danger']`, `env-button-secondary` `[data-variant='secondary']`, `env-button-outlined` `[data-variant='outline']`, `env-button-text` `[data-variant='text']`, `env-button-quiet` `[data-variant='ghost']` and `env-button-underlined` `[data-underline]`.
 
 Migrate with the codemods: `envui-codemods v1-props` rewrites each literal `variant` (an expression is reported), and `envui-codemods v1-classes` rewrites the classes in style sheets and selector strings with the specificity they had, and reports them in `className`, where the props set them now.
+
+Migration guide: [Variants, tones and render](../../docs/migration.md#variants-tones-and-render).

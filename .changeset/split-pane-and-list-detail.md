@@ -8,3 +8,5 @@ New: `SplitPane` and `ListDetail`, which replace 0.6's SplitView.
 - `ListDetail.Root`, `ListDetail.List` and `ListDetail.Detail` put a list beside the detail of its chosen item on SplitPane, the list's width resizable and persisted. Below `stackBelow`, 44 rem by default, they show one at a time: `detailShown` shows the detail with a back button named by `backLabel`, which calls `onBack`. Focus moves to the back button as the detail opens, and back to the list's current row, the element with `aria-current`, as it closes.
 
 Migrate a SplitView with the codemods: `v1-names` and `v1-structure` turn `<SplitView start end resizeLabel storageKey>` into `<SplitPane.Root persist>` around `<SplitPane.Pane>{start}</SplitPane.Pane>`, `<SplitPane.ResizeHandle label />` and `<SplitPane.Pane>{end}</SplitPane.Pane>`, `SplitViewProps` into `SplitPane.RootProps`, and `v1-classes` renames `env-split-view` and its parts. The sizes keep their percentages, now of the whole split pane.
+
+Migration guide: [Split panes](../../docs/migration.md#split-panes).

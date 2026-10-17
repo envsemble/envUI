@@ -9,6 +9,12 @@ const reports = {
     "line 11: Text's as is gone in 1.0: pass the element to render instead, such as render={<h2 />}.",
     "line 12: Text's as is gone in 1.0, and the element already sets render: remove it.",
   ],
+  // A ternary of element names becomes a ternary of elements; `&&`, or a name that is an
+  // expression, is reported.
+  'conditional.tsx': [
+    "line 10: Text's as is gone in 1.0: pass the element to render instead, such as render={<h2 />}.",
+    "line 11: Text's as is gone in 1.0: pass the element to render instead, such as render={<h2 />}.",
+  ],
   'spread.tsx': [
     'line 5: Text\'s as="h2" is render={<h2 />} now, and the element spreads props too: check they set neither as nor render.',
   ],

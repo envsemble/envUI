@@ -14,6 +14,7 @@ import {
   type ButtonAppearanceProps,
   type ButtonEmphasisProps,
   type ButtonTone,
+  type ButtonVariant,
 } from './Button.js';
 import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
@@ -34,7 +35,8 @@ type ConfirmButtonBaseProps = Omit<ButtonAppearanceProps, 'variant' | 'tone'> &
  * The resting emphasis, among Button's designed pairs; armed, the button is always a primary danger
  * one. Without a variant it takes its container's, such as ghost in a toolbar, and else outline, or
  * secondary for an icon-only button, like IconButton; variant="primary" tone="danger" looks armed at
- * rest too. `RestingTone` is the tones the variant it falls back to takes.
+ * rest too. `RestingTone` is the tones the variant it falls back to takes. As Button's, the pairs
+ * nest by tone, so a variant typed as a union of variants takes the tones all of them take.
  */
 type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
   | {
@@ -52,9 +54,9 @@ type ConfirmButtonEmphasisProps<RestingTone extends ButtonTone> =
        */
       tone?: RestingTone;
     }
-  | { variant: 'primary'; tone?: ButtonTone }
-  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
-  | { variant: 'secondary'; tone?: 'neutral' };
+  | { variant: ButtonVariant; tone?: 'neutral' }
+  | { variant: 'primary' | 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
+  | { variant: 'primary'; tone?: ButtonTone };
 
 export type ConfirmButtonProps = ConfirmButtonBaseProps &
   (

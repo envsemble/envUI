@@ -11,3 +11,5 @@ PanelDock is a namespace, `PanelDock.Root` and `PanelDock.Header`, and its words
 - The resize handle runs on the shared window splitter: <kbd>Page Up</kbd> and <kbd>Page Down</kbd> change the height by 64 px as <kbd>Shift</kbd> with an arrow does, and a drag that loses its pointer keeps the height it began with.
 
 The codemods rename the exports (`v1-names`), turn `controls={null}` into `controls={false}` and report a `controls` element (`v1-props`), report `PanelDockControls` with what replaces it, and rename the classes (`v1-classes`). Rename `[data-chips]` in style sheets by hand.
+
+Migration guide: [Shell, dock, editors and code](../../docs/migration.md#shell-dock-editors-and-code).

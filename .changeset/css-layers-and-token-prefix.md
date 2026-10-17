@@ -15,3 +15,5 @@ envUI's CSS moves into cascade layers, and every token takes the `--env-` prefix
 - **Motion** lives in each component's style sheet; it is unchanged, with fades always and movement only without a reduced-motion preference.
 
 To migrate, run `npx @envsemble/envui-codemods v1-classes src`: it rewrites the old custom properties in style sheets and scripts, declared or read, to their 1.0 names, the 0.7 aliases straight to the tokens that replace them, and reports `--color-white`, `--color-canvas-dark` and the removed names with what to use instead. The migration guide lists every name. The ESLint plugin and the Stylelint config suggest the prefixed tokens.
+
+Migration guide: [Cascade layers](../../docs/migration.md#cascade-layers) and [Tokens](../../docs/migration.md#tokens).

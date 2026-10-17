@@ -778,6 +778,61 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
 });
 
+test('the installed MCP server lists the templates and serves a screen from the package', async function () {
+  const messages = [
+    {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test' } },
+    },
+    { jsonrpc: '2.0', method: 'notifications/initialized' },
+    {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: { name: 'list_templates', arguments: {} },
+    },
+    {
+      jsonrpc: '2.0',
+      id: 3,
+      method: 'tools/call',
+      params: { name: 'get_template', arguments: { name: 'sign-in-page', file: 'SignInPage' } },
+    },
+  ];
+  // The server answers each line on stdin and ends when stdin closes.
+  const output = execFileSync(
+    process.execPath,
+    [join(installedDirectory, 'bin/envui.mjs'), 'mcp'],
+    {
+      cwd: consumerDirectory,
+      input: messages.map((message) => JSON.stringify(message)).join('\n') + '\n',
+      encoding: 'utf8',
+      timeout: 20000,
+    },
+  );
+  const answers = new Map(
+    output
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => JSON.parse(line))
+      .map((message) => [message.id, message]),
+  );
+  const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
+  const { templates } = value(2);
+  const signIn = templates.find((template) => template.name === 'sign-in-page');
+  assert.ok(signIn, `list_templates: ${templates.map((template) => template.name).join(', ')}`);
+  assert.equal(signIn.frame, 'none');
+  assert.deepEqual(signIn.files, ['SignInPage']);
+  const screen = value(3);
+  assert.equal(screen.template, 'sign-in-page');
+  assert.equal(
+    screen.source,
+    await readFile(join(installedDirectory, 'docs/examples/sign-in-page/SignInPage.tsx'), 'utf8'),
+  );
+  assert.match(screen.source, /export default function SignInPage\(\)/);
+});
+
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {
   assert.match(ssr.defaultIcon, /viewBox="0 -960 960 960"/);
   assert.match(ssr.defaultIcon, /aria-hidden="true"/);

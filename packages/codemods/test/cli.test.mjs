@@ -4,6 +4,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, before, test } from 'node:test';
+import { transforms } from '../src/transforms.mjs';
 import { fixturesDirectory, packageDirectory } from './helpers.mjs';
 
 const bin = join(packageDirectory, 'bin', 'envui-codemods.mjs');
@@ -130,4 +131,41 @@ test('a file that does not parse fails the run', () => {
   const result = cli('v1-names', 'src/broken.tsx');
   assert.equal(result.status, 1);
   assert.match(result.stdout, /1 errors/);
+});
+
+test('declaration files parse in every transform', () => {
+  mkdirSync(join(project, 'types'), { recursive: true });
+  writeFileSync(
+    join(project, 'types/index.d.ts'),
+    "import type { InputProps } from '@envsemble/envui';\n\nexport const field: InputProps;\nexport function render(props: InputProps): void;\n",
+  );
+  for (const transform of Object.keys(transforms)) {
+    const result = cli(transform, 'types', '--dry');
+    assert.equal(result.status, 0, `${transform}: ${result.stdout}${result.stderr}`);
+    assert.match(result.stdout, /0 errors/, transform);
+  }
+  assert.match(cli('v1-names', 'types').stdout, /1 ok/);
+  assert.match(read(join(project, 'types/index.d.ts')), /export const field: TextFieldProps;/);
+});
+
+test('the usage, the README and the migration guide run the transforms in one order', () => {
+  const order = cli('--help')
+    .stdout.match(/Run (v1-[\s\S]*?), then type-check\./)[1]
+    .match(/v1-[a-z-]+/g);
+  assert.deepEqual([...order].sort(), Object.keys(transforms).sort());
+  const readme = read(join(packageDirectory, 'README.md'));
+  const steps = readme.slice(readme.indexOf('## Recommended order'), readme.indexOf('## v1-names'));
+  assert.deepEqual(
+    steps.match(/envui-codemods (v1-[a-z-]+)/g).map((run) => run.split(' ')[1]),
+    order,
+  );
+  const guide = read(join(packageDirectory, '../../docs/migration.md'));
+  const commands = guide.slice(guide.indexOf('## Upgrade from envUI 0.x to 1.0'));
+  assert.deepEqual(
+    commands
+      .slice(0, commands.indexOf('```\n', commands.indexOf('```sh') + 5))
+      .match(/@<version> (v1-[a-z-]+) src\n/g)
+      .map((run) => run.split(' ')[1]),
+    order,
+  );
 });

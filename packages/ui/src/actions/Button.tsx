@@ -19,7 +19,9 @@ export type ButtonTone = 'neutral' | 'accent' | 'danger';
 
 /**
  * The designed pairs of variant and tone: a primary button takes any tone; outline, ghost and text
- * buttons take neutral or danger; a secondary button is neutral.
+ * buttons take neutral or danger; a secondary button is neutral. The tones nest, so the members
+ * below go from the tone every variant takes to the one only primary takes: a variant typed as a
+ * union of variants, such as `'primary' | 'secondary'`, type-checks with the tones all of them take.
  */
 export type ButtonEmphasisProps =
   | {
@@ -30,17 +32,17 @@ export type ButtonEmphasisProps =
        * tone, such as ghost in a toolbar, and else primary.
        * @default 'primary'
        */
-      variant?: 'primary';
+      variant?: ButtonVariant;
       /**
        * The meaning: neutral for most actions; accent, on a primary button only, for a rare
        * consequential action, with 0.5 rem corners; danger for an action that deletes or ends
        * something. Secondary buttons are always neutral.
        * @default 'neutral'
        */
-      tone?: ButtonTone;
+      tone?: 'neutral';
     }
-  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
-  | { variant: 'secondary'; tone?: 'neutral' };
+  | { variant?: 'primary' | 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
+  | { variant?: 'primary'; tone?: ButtonTone };
 
 /**
  * IconButton's designed pairs: as Button's, but without a variant it is a neutral secondary button,
@@ -53,7 +55,7 @@ export type IconButtonEmphasisProps =
        * such as ghost in a toolbar, and else secondary.
        * @default 'secondary'
        */
-      variant?: 'secondary';
+      variant?: ButtonVariant;
       /**
        * The meaning, as Button's: accent on a primary button only, and danger on a primary,
        * outline, ghost or text one. A secondary button is always neutral.
@@ -61,8 +63,8 @@ export type IconButtonEmphasisProps =
        */
       tone?: 'neutral';
     }
-  | { variant: 'primary'; tone?: ButtonTone }
-  | { variant: 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' };
+  | { variant: 'primary' | 'outline' | 'ghost' | 'text'; tone?: 'neutral' | 'danger' }
+  | { variant: 'primary'; tone?: ButtonTone };
 
 export type ButtonAppearanceProps = ButtonEmphasisProps & {
   /** Show an underline for the text variant; defaults to false. */
