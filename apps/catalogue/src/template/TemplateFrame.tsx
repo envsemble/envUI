@@ -18,6 +18,7 @@ import {
 } from '@envsemble/envui';
 import { documents } from '../Reference';
 import { LoadBoundary, loadModule, reloadPage } from './LoadBoundary';
+import type { FrameRequest } from './FrameAddress';
 
 /**
  * The frame route: a template's screen alone, without the catalogue around it, at
@@ -40,45 +41,6 @@ const frameThemeKey = ({ page, name, scale, dir }: FrameRequest) =>
   `envui-template-frame-theme:${page}/${name}:${scale}:${dir}`;
 /** The app frame template, which screens of `frame: app` render inside. */
 const appFrame = { page: 'app-frame', name: 'AppFrame' };
-
-export interface FrameRequest {
-  page: string;
-  name: string;
-  scale: 'comfortable' | 'compact';
-  theme: 'light' | 'dark';
-  dir: 'ltr' | 'rtl';
-}
-
-/** The screen a frame address asks for, or undefined when it asks for none. */
-export function frameRequest(search: string): FrameRequest | undefined {
-  const params = new URLSearchParams(search);
-  const frame = params.get('frame');
-  if (!frame) return undefined;
-  const [page = '', name = ''] = frame.split('/');
-  return {
-    page,
-    name,
-    scale: params.get('scale') === 'compact' ? 'compact' : 'comfortable',
-    theme: params.get('theme') === 'dark' ? 'dark' : 'light',
-    dir: params.get('dir') === 'rtl' ? 'rtl' : 'ltr',
-  };
-}
-
-/** The address of a frame, from the catalogue's address: its path or file, with the frame's query. */
-export function frameHref(
-  request: Omit<FrameRequest, 'dir'> & { dir?: FrameRequest['dir'] },
-  base = window.location.href,
-) {
-  const url = new URL(base);
-  url.hash = '';
-  url.search = new URLSearchParams({
-    frame: `${request.page}/${request.name}`,
-    scale: request.scale,
-    theme: request.theme,
-    ...(request.dir === 'rtl' && { dir: 'rtl' }),
-  }).toString();
-  return url.href;
-}
 
 /** The template block a frame shows, from the page's generated documentation. */
 function blockOf(page: string, name: string) {
