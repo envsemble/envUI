@@ -172,7 +172,7 @@ export function MessageStringsFixture() {
           </Dialog>
           {/* Forms: the clear buttons, chip removes, the resize edge, the calendar's month
               buttons, the send button and the color picker's sliders and field. */}
-          <SearchField label="Search" defaultValue="Northwind" />
+          <SearchField label="Find a customer" defaultValue="Northwind" />
           <Textarea label="Notes" />
           <Combobox
             label="Owner"
