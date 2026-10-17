@@ -17,8 +17,8 @@ import { Surface, Stack, Text } from '@envsemble/envui';
 
 export function WorkspacePane() {
   return (
-    <Surface tone="pane" padding={5} render={<Stack as="section" gap={4} />}>
-      <Text as="h2" variant="section-heading">
+    <Surface background="default" padding={5} render={<Stack render={<section />} gap={4} />}>
+      <Text render={<h2 />} variant="title">
         Workspace
       </Text>
       <Text>Shared plans and notes for the project.</Text>
@@ -31,19 +31,21 @@ export function WorkspacePane() {
 
 Wrap public components to attach product meaning. Forward native props and refs so consumers retain accessible attributes and ordinary element behavior. React 19 passes ref as a prop.
 
-ProjectSummary adds product content while Card continues to own its appearance and spacing.
+ProjectSummary adds product content while Card continues to own its appearance and spacing. It takes Card's content props, less the ones it sets itself, and spreads the rest onto Card, so `id`, `aria-*` attributes, handlers and `ref` reach the element.
 
 ```tsx
-import { Card } from '@envsemble/envui';
+import { Card, type CardContentProps } from '@envsemble/envui';
 
-interface ProjectSummaryProps {
-  id?: string;
+type ProjectSummaryProps = Omit<
+  CardContentProps,
+  'title' | 'heading' | 'description' | 'render' | 'children'
+> & {
   title: string;
   description: string;
-}
+};
 
-export function ProjectSummary({ id, title, description }: ProjectSummaryProps) {
-  return <Card render={<article />} id={id} heading={title} description={description} />;
+export function ProjectSummary({ title, description, ...props }: ProjectSummaryProps) {
+  return <Card {...props} render={<article />} heading={title} description={description} />;
 }
 ```
 
