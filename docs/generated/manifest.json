@@ -7232,7 +7232,7 @@
           "name": "content",
           "type": "ReactNode | ((target: Element | null) => ReactNode)",
           "required": true,
-          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, the menu doesn't open on that element and the browser keeps its own."
+          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, undefined, false or '', the menu doesn't open on that element and the browser keeps its own."
         },
         {
           "name": "children",
