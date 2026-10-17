@@ -22,42 +22,69 @@ export interface CopyOptions {
   write?: (text: string) => Promise<void>;
   /** How long copied or failed stays before the status returns to idle, in ms; 2000 by default. */
   resetAfter?: number;
+  /** Runs once the text is on the clipboard, with that text. */
+  onCopy?: (text: string) => void;
+  /** The class of the hidden field the selection fallback copies from; inline styles without it. */
+  fieldClassName?: string;
 }
+
+/** What a copy came to: idle before any and once resetAfter has passed, else copied or failed. */
+export type CopyStatus = 'idle' | 'copied' | 'failed';
 
 /**
  * Copies text to the clipboard, with the Clipboard API, or a custom writer, and where the API is
  * unavailable, such as on an insecure connection, by copying a selection of a hidden field beside
  * `anchor`. A promised text is written as it arrives, within the press where the browser asks for
- * it. status is copied or failed for resetAfter ms after each copy.
+ * it. status is copied or failed for resetAfter ms after each copy, and round counts the copies,
+ * so the same result twice in a row can show again; copying is true from the call until the
+ * result, and waiting while a promised text is on its way. reset returns the status to idle.
  *
  *   const { copy, status } = useCopy();
  *   <button onClick={(event) => copy(value, event.currentTarget)}>…</button>
  */
-export function useCopy({ write, resetAfter = 2000 }: CopyOptions = {}) {
-  const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const [round, setRound] = useState(0);
-  const writer = useRef(write);
+export function useCopy({ write, resetAfter = 2000, onCopy, fieldClassName }: CopyOptions = {}) {
+  const [result, setResult] = useState<{ status: Exclude<CopyStatus, 'idle'>; round: number }>();
+  const [phase, setPhase] = useState<'idle' | 'copying' | 'waiting'>('idle');
+  const latest = useRef({ write, onCopy, fieldClassName });
   useEffect(() => {
-    writer.current = write;
+    latest.current = { write, onCopy, fieldClassName };
   });
   useEffect(() => {
-    if (status === 'idle') return;
-    const timer = setTimeout(() => setStatus('idle'), resetAfter);
+    if (!result) return;
+    const timer = setTimeout(() => setResult(undefined), resetAfter);
     return () => clearTimeout(timer);
-  }, [status, round, resetAfter]);
+  }, [result, resetAfter]);
   const copy = useCallback(async (value: CopyValue, anchor: HTMLElement | null = null) => {
+    setPhase('copying');
     let copied = true;
+    let text = '';
     try {
-      await writeToClipboard(value, anchor, { write: writer.current });
+      text = await writeToClipboard(value, anchor, {
+        write: latest.current.write,
+        fieldClassName: latest.current.fieldClassName,
+        onWait: () => setPhase('waiting'),
+      });
     } catch {
       copied = false;
     }
-    setStatus(copied ? 'copied' : 'failed');
+    setPhase('idle');
     // Each copy shows its result again, also the same result twice in a row.
-    setRound((current) => current + 1);
+    setResult((current) => ({
+      status: copied ? 'copied' : 'failed',
+      round: (current?.round ?? 0) + 1,
+    }));
+    if (copied) latest.current.onCopy?.(text);
     return copied;
   }, []);
-  return { copy, status };
+  const reset = useCallback(() => setResult(undefined), []);
+  return {
+    copy,
+    status: (result?.status ?? 'idle') as CopyStatus,
+    round: result?.round ?? 0,
+    copying: phase !== 'idle',
+    waiting: phase === 'waiting',
+    reset,
+  };
 }
 
 /** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
