@@ -9955,14 +9955,14 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the count, such as Inbox, 3 new, from EnvUIProvider's messages.navList.itemCount: the content's text, or a CounterBadge's value."
+          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the content: a number, or a CounterBadge without aria-label, as a count from EnvUIProvider's messages.navList.itemCount, such as Inbox, 3 new; a CounterBadge's aria-label, such as Inbox, 4 unread, or other content's text or aria-label, such as Labs, Beta, as it is, through messages.navList.itemEnd."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds the count of its end content."
+          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds its end content, such as a count."
         },
         {
           "name": "href",

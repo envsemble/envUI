@@ -169,7 +169,7 @@ Change by hand:
 
 - the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing` and an organization's `detail`; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
-- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its count in its name now, as "Inbox, 12 new", from `messages.navList.itemCount`, so name it "Inbox";
+- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
 - a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`; the close button is out of the tab order and hidden from assistive technology, and Delete or the context menu closes a tab from the keyboard;
 - a style for the 0.7 contrast pane, `.env-contrast-row-pane`, which has no class in 1.0: style the Surface around the list;
 - a selected or icon-only NavList class in a `className` string, which `v1-classes` reports: the item sets the attributes from `selected` and `iconOnly`;

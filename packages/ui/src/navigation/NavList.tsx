@@ -18,7 +18,8 @@ import { ActionElement, type ActionElementProps } from '../internal/ActionElemen
 import { useSidebarCompact } from './internal/SidebarCompact.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { navList } from '../foundations/messages/navList.js';
+import { navList, type NavListMessages } from '../foundations/messages/navList.js';
+import { CounterBadge, type CounterBadgeProps } from '../content/CounterBadge.js';
 
 /**
  * Whether an item is one of a list's own items, which renders as its list item: true for the items
@@ -64,24 +65,50 @@ interface ItemSharedProps {
   /**
    * Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's
    * accessible name. An icon-only item shows a small accent dot instead. Where the name comes from
-   * aria-label, or from the label of an icon-only item, it adds the count, such as Inbox, 3 new,
-   * from EnvUIProvider's messages.navList.itemCount: the content's text, or a CounterBadge's value.
+   * aria-label, or from the label of an icon-only item, it adds the content: a number, or a
+   * CounterBadge without aria-label, as a count from EnvUIProvider's messages.navList.itemCount,
+   * such as Inbox, 3 new; a CounterBadge's aria-label, such as Inbox, 4 unread, or other content's
+   * text or aria-label, such as Labs, Beta, as it is, through messages.navList.itemEnd.
    */
   end?: ReactNode;
 }
 
-/** The text of end content for an icon-only item's name: its text, or a CounterBadge's value. */
+/**
+ * The text of end content for an item's name: its text, or an element's aria-label, or a
+ * CounterBadge's value.
+ */
 function endText(node: ReactNode): string {
   if (node == null || typeof node === 'boolean') return '';
   if (typeof node === 'string' || typeof node === 'number') return String(node);
   if (Array.isArray(node)) return node.map(endText).filter(Boolean).join(' ');
   if (isValidElement(node)) {
-    const props = node.props as { value?: unknown; children?: ReactNode };
+    const props = node.props as { value?: unknown; children?: ReactNode; 'aria-label'?: unknown };
+    if (typeof props['aria-label'] === 'string') return props['aria-label'];
     if (typeof props.value === 'string' || typeof props.value === 'number')
       return String(props.value);
     return endText(props.children);
   }
   return '';
+}
+
+/**
+ * The name of an item named by its label alone, with its end content: a count, from a number or a
+ * CounterBadge without aria-label, takes messages.navList.itemCount, such as Inbox, 3 new; a
+ * CounterBadge's aria-label, or any other content's text, follows the label as it is, such as
+ * Inbox, 4 unread or Labs, Beta.
+ */
+function nameWithEnd(label: string, end: ReactNode, messages: NavListMessages): string {
+  const parts = Children.toArray(end);
+  const only = parts.length === 1 ? parts[0] : undefined;
+  if (typeof only === 'number') return messages.itemCount({ label, count: String(only) });
+  if (isValidElement(only) && only.type === CounterBadge) {
+    const { value, 'aria-label': badgeLabel } = only.props as CounterBadgeProps;
+    return badgeLabel !== undefined && badgeLabel !== ''
+      ? messages.itemEnd({ label, end: badgeLabel })
+      : messages.itemCount({ label, count: String(value) });
+  }
+  const text = endText(end).trim();
+  return text === '' ? label : messages.itemEnd({ label, end: text });
 }
 
 export type ItemProps = ItemSharedProps &
@@ -98,7 +125,7 @@ export type ItemProps = ItemSharedProps &
         icon: ReactNode;
         /**
          * The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The
-         * item's name adds the count of its end content.
+         * item's name adds its end content, such as a count.
          */
         'aria-label': string;
       }
@@ -130,11 +157,10 @@ function Item(props: ItemProps) {
   const accessibleLabel =
     props['aria-label'] ?? (iconOnly && typeof children === 'string' ? children : undefined);
   // An icon-only item shows its end content as a dot, so a name it takes from its label, which
-  // leaves the end content out, says the count; so does a labelled item named by aria-label.
-  const count = accessibleLabel !== undefined && end != null ? endText(end) : '';
+  // leaves the end content out, says it; so does a labelled item named by aria-label.
   const itemName =
-    accessibleLabel !== undefined && count !== ''
-      ? messages.itemCount({ label: accessibleLabel, count })
+    accessibleLabel !== undefined && end != null
+      ? nameWithEnd(accessibleLabel, end, messages)
       : accessibleLabel;
   const iconContent = selected && selectedIcon != null ? selectedIcon : icon;
   const content = (
