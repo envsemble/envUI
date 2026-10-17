@@ -89,18 +89,43 @@ function ownName(props: TriggerProps): string | undefined {
 }
 
 /**
+ * The text an element contributes to a name, as assistive technology reads it: text hidden from
+ * it, by aria-hidden, hidden or a display or visibility that hides it, counts for nothing, while
+ * text hidden only visually counts; an image counts with its alternative text, and an element with
+ * an aria-label inside with that label.
+ */
+function nameText(node: Node, root: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? '';
+  if (!(node instanceof Element)) return '';
+  if (node.getAttribute('aria-hidden') === 'true' || node.hasAttribute('hidden')) return '';
+  const style = node.ownerDocument.defaultView?.getComputedStyle(node);
+  if (style && (style.display === 'none' || style.visibility === 'hidden')) return '';
+  if (node !== root) {
+    const label = node.getAttribute('aria-label')?.trim();
+    if (label) return ` ${label} `;
+  }
+  if (node.tagName === 'IMG') return node.getAttribute('alt') ?? '';
+  return Array.from(node.childNodes, (child) => nameText(child, root)).join('');
+}
+
+/**
  * An element's accessible name as the page has it: its aria-labelledby text, its aria-label, its
- * labels, or its text. Enough to tell whether a control is named, and by what words.
+ * labels, or its text, without text hidden from assistive technology. Enough to tell whether a
+ * control is named, and by what words.
  */
 function accessibleName(element: Element | null | undefined): string | undefined {
   if (!element) return undefined;
   const clean = (text: string | null | undefined) => text?.replace(/\s+/g, ' ').trim() || undefined;
+  const textOf = (node: Node) => nameText(node, node);
   const labelledBy = element.getAttribute('aria-labelledby');
   if (labelledBy) {
     const text = clean(
       labelledBy
         .split(/\s+/)
-        .map((id) => element.ownerDocument.getElementById(id)?.textContent ?? '')
+        .map((id) => {
+          const label = element.ownerDocument.getElementById(id);
+          return label ? textOf(label) : '';
+        })
         .join(' '),
     );
     if (text) return text;
@@ -108,9 +133,12 @@ function accessibleName(element: Element | null | undefined): string | undefined
   const label = clean(element.getAttribute('aria-label'));
   if (label) return label;
   const labels = (element as HTMLInputElement).labels;
-  if (labels?.length) return clean(Array.from(labels, (each) => each.textContent).join(' '));
-  return clean(element.textContent);
+  if (labels?.length) return clean(Array.from(labels, textOf).join(' '));
+  return clean(textOf(element));
 }
+
+/** The attributes that change a control's name or a stand-in's role and states. */
+const nameAttributes = ['aria-label', 'aria-labelledby', 'alt', 'hidden', 'aria-hidden', 'role'];
 
 const standInRoles = ['button', 'link', 'tab', 'menuitem'] as const;
 type StandInRole = (typeof standInRoles)[number];
@@ -321,25 +349,49 @@ function TooltipTrigger({
     document.addEventListener('keydown', end, { capture: true, once: true });
     return () => document.removeEventListener('keydown', end, { capture: true });
   }, [expanded]);
-  // The trigger's name, read from the page as the tooltip opens, so a control named by its
-  // content, such as a Toolbar.Button or a button with an icon and text, counts as named.
+  // The trigger's name, read from the page as the tooltip opens and followed while it is open, so a
+  // control named by its content, such as a Toolbar.Button or a button with an icon and text,
+  // counts as named, and one whose name changes with the tooltip, such as Copy becoming Copied,
+  // keeps counting as named by the tooltip's words.
   const [name, setName] = useState(() => ownName(trigger));
+  const fallbackName = ownName(trigger);
+  useLayoutEffect(() => {
+    const control = triggerRef.current;
+    if (!open || isDisabled || !control) return;
+    const read = () => setName(accessibleName(control) ?? fallbackName);
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(control, {
+      attributes: true,
+      attributeFilter: nameAttributes,
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+    return () => observer.disconnect();
+  }, [open, isDisabled, fallbackName]);
   // A disabled control's wrapper stands in for it, read once it is in the page: its name and role,
-  // and, for a button or tab, the states it carries, followed while they change.
+  // and, for a button or tab, the states it carries, followed while they change, also as the
+  // control is replaced, rather than read again on each render.
   const [stand, setStand] = useState<StandIn>({ states: {} });
   useLayoutEffect(() => {
-    if (!isDisabled) return;
-    const control = triggerRef.current?.firstElementChild;
+    const wrapper = triggerRef.current;
+    if (!isDisabled || !wrapper) return;
     const read = () => {
-      const next = readStandIn(control, ownName(trigger));
+      const next = readStandIn(wrapper.firstElementChild, fallbackName);
       setStand((current) => (sameStandIn(current, next) ? current : next));
     };
     read();
-    if (!control) return;
     const observer = new MutationObserver(read);
-    observer.observe(control, { attributes: true, attributeFilter: [...copiedStates] });
+    observer.observe(wrapper, {
+      attributes: true,
+      attributeFilter: [...copiedStates, ...nameAttributes],
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
     return () => observer.disconnect();
-  }, [isDisabled, trigger]);
+  }, [isDisabled, fallbackName]);
   // A component that doesn't pass the ref on to its element gives the tooltip nothing to open on.
   const childType = children.type;
   useLayoutEffect(() => {

@@ -42,6 +42,72 @@ test.describe('Tooltip', () => {
     await expect(remove).not.toHaveAttribute('aria-describedby');
   });
 
+  test('reads the name as assistive technology does, and follows it while open', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    // Text hidden from assistive technology is no part of the name the tooltip repeats.
+    const exportButton = page.getByRole('button', { name: 'Export', exact: true });
+    await exportButton.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Export');
+    await expect(exportButton).not.toHaveAttribute('aria-describedby');
+    await page.mouse.move(1, 1);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
+    // A name that changes with the tooltip while it is open still counts as its words.
+    const copy = page.getByRole('button', { name: 'Copy link' });
+    await copy.focus();
+    await expect(page.getByRole('tooltip')).toHaveText('Copy link');
+    await expect(copy).not.toHaveAttribute('aria-describedby');
+    await page.keyboard.press('c');
+    await expect(page.getByRole('tooltip')).toHaveText('Copied');
+    const copied = page.getByRole('button', { name: 'Copied' });
+    await expect(copied).toHaveAccessibleName('Copied');
+    await expect(copied).not.toHaveAttribute('aria-describedby');
+  });
+
+  test("a disabled control's stand-in isn't read again on each render of the page", async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    await expect(page.getByRole('button', { name: 'Pin', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    // Counts what starts watching the stand-ins of the disabled toggle and link.
+    await page.evaluate(() => {
+      const counts = { watched: 0 };
+      (window as unknown as { standIns: typeof counts }).standIns = counts;
+      const observe = MutationObserver.prototype.observe;
+      MutationObserver.prototype.observe = function (target, options) {
+        if (
+          target instanceof Element &&
+          target.closest(
+            '.env-tooltip-disabled-target:is([aria-label="Pin"], [aria-label="Billing"])',
+          )
+        )
+          counts.watched += 1;
+        return observe.call(this, target, options);
+      };
+    });
+    // Renders the whole page, the two disabled controls unchanged.
+    await page.getByRole('button', { name: 'Toggle seats' }).click();
+    await expect(page.getByRole('button', { name: 'Invite member' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Toggle seats' }).click();
+    await expect(page.getByRole('button', { name: 'Invite member' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    expect(
+      await page.evaluate(() => (window as unknown as { standIns: { watched: number } }).standIns),
+    ).toEqual({ watched: 0 });
+    // The stand-in still follows its control's state.
+    await page.getByRole('button', { name: 'Toggle pinned' }).click();
+    await expect(page.getByRole('button', { name: 'Pin', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  });
+
   test('a disabled control is one named, disabled tab stop that opens its tooltip', async ({
     page,
   }) => {

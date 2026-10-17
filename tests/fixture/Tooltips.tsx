@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
+import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
@@ -48,6 +49,7 @@ export function TooltipsFixture() {
   const [presses, setPresses] = useState(0);
   const [menuOpens, setMenuOpens] = useState(0);
   const [popoverOpens, setPopoverOpens] = useState(0);
+  const [copied, setCopied] = useState(false);
   return (
     <div className="fixture-actions fixture-section">
       <Tooltip content="Moves it out of the list" delay={0}>
@@ -67,6 +69,23 @@ export function TooltipsFixture() {
         <Button variant="secondary">
           Archive <Kbd>A</Kbd>
         </Button>
+      </Tooltip>
+      {/* Named by its text without the arrow hidden from assistive technology, which the tooltip
+          repeats. */}
+      <Tooltip content="Export" delay={0}>
+        <Button variant="secondary">
+          Export <span aria-hidden="true">↗</span>
+        </Button>
+      </Tooltip>
+      {/* Its name and tooltip turn to Copied together, with C, while the tooltip is open. */}
+      <Tooltip content={copied ? 'Copied' : 'Copy link'} delay={0}>
+        <IconButton
+          icon={<ContentCopy />}
+          aria-label={copied ? 'Copied' : 'Copy link'}
+          onKeyDown={(event) => {
+            if (event.key === 'c') setCopied(true);
+          }}
+        />
       </Tooltip>
       {/* A disabled link: its wrapper stands in as a link. */}
       <Tooltip content="Only owners open billing" delay={0}>
