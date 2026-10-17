@@ -9693,7 +9693,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm."
+          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one."
         },
         {
           "name": "confirmLabel",
