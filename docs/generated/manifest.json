@@ -6385,8 +6385,8 @@
       "examples": [
         {
           "name": "CreateProject",
-          "title": "Form layout and validation",
-          "description": "Ask for information in a form, check it, and help people fix what's wrong.",
+          "title": "Create project",
+          "description": "Use this pattern to ask for information in a form and get it right on the first submit: one column of labelled fields, the primary action after the last one, and errors that say how to fix each problem, shown when people submit or leave a field, with focus taken to where they need to act.",
           "file": "docs/examples/forms/CreateProject.tsx"
         },
         {
@@ -6478,8 +6478,8 @@
       "examples": [
         {
           "name": "ImmediateToggles",
-          "title": "Settings",
-          "description": "Let people change how the application works for them, and see each change apply.",
+          "title": "Immediate toggles",
+          "description": "Use this pattern to let people change how the application behaves for them: notifications, privacy, appearance, their profile and the rare action that can't be undone. Each setting either applies the moment people change it or waits, with the settings it depends on, for a Save button, and the two never share a section.",
           "file": "docs/examples/settings/ImmediateToggles.tsx"
         },
         {
@@ -6559,8 +6559,8 @@
       "examples": [
         {
           "name": "UndoInstead",
-          "title": "Confirmation and destructive actions",
-          "description": "Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.",
+          "title": "Undo instead",
+          "description": "Use this pattern to choose how much friction a destructive action needs. Asking \"Are you sure?\" before everything trains people to confirm without reading. Act at once when the action can be undone, ask in place when little is at stake, and keep a dialog, and a typed name, for what can't be undone or reaches other people.",
           "file": "docs/examples/destructive-actions/UndoInstead.tsx"
         },
         {
@@ -6584,7 +6584,7 @@
         {
           "name": "BulkDelete",
           "title": "Bulk delete",
-          "description": "The count of the selection is in the button, the question and the confirm button. After the delete, focus moves to the list.",
+          "description": "The count of the selection is in the button, the question and the confirm button. After the delete, the button has gone with the selection, so focus moves into the list.",
           "file": "docs/examples/destructive-actions/BulkDelete.tsx"
         }
       ]
@@ -6653,8 +6653,8 @@
       "examples": [
         {
           "name": "SaveConfirmation",
-          "title": "Notifications and feedback",
-          "description": "Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.",
+          "title": "Save confirmation",
+          "description": "Use this pattern to choose where a message goes and how loudly it speaks. A message about a field belongs on the field, a condition of the page in an Alert on the page, the outcome of an action in a toast, and a state of a row or a destination in a Badge or a count beside it. Each is announced at most once, and only what needs people interrupts them.",
           "file": "docs/examples/feedback/SaveConfirmation.tsx"
         },
         {
@@ -6819,8 +6819,8 @@
       "examples": [
         {
           "name": "FirstUse",
-          "title": "Empty states",
-          "description": "Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.",
+          "title": "First use",
+          "description": "Use this pattern when a region has nothing to show, to say why and what people can do. \"Empty\" has four causes, and each needs its own words and action: nothing exists yet, nothing matches, everything is done, or the content failed to load or isn't theirs to see. The state takes the place of the list or the table, under the toolbar that stays.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
@@ -6918,8 +6918,8 @@
       "examples": [
         {
           "name": "AdvancedOptions",
-          "title": "Progressive disclosure",
-          "description": "Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.",
+          "title": "Advanced options",
+          "description": "Use this pattern to keep a page about its main task while the rest stays within reach: advanced options behind a disclosure, the long tail of a list behind \"Show all\", the details of a row in a drawer, rare actions in a menu, and the meaning of a term in a popover. Choose the component by how deep the content goes and whether people must act on it, and never hide what a task needs.",
           "file": "docs/examples/progressive-disclosure/AdvancedOptions.tsx"
         },
         {
