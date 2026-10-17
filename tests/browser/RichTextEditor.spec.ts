@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl as fixtureServer } from './Servers';
 
@@ -309,8 +310,18 @@ test('async sources handle loading, stale resolutions, empty results, failures a
   await replace(editor, '@old');
   const old = await requestIndex(page, 'old');
   const menu = page.getByRole('listbox', { name: 'Remote references' });
+  // The status beside the list says why it has no options; only options sit in the list.
+  const status = page.locator('.env-rich-text-suggestions').getByRole('status');
+  const noOptionsIsAccessible = async () => {
+    await expect(menu.getByRole('option')).toHaveCount(0);
+    await expect(menu.getByRole('status')).toHaveCount(0);
+    const { violations } = await new AxeBuilder({ page })
+      .include('.env-rich-text-suggestions')
+      .analyze();
+    expect(violations.map(({ id, nodes }) => `${id}: ${nodes.length}`)).toEqual([]);
+  };
   await expect(menu).toHaveAttribute('aria-busy', 'true');
-  await expect(menu).toContainText('Loading suggestions');
+  await expect(status).toContainText('Loading suggestions');
   await replace(editor, '@new');
   const latest = await requestIndex(page, 'new');
   await expect
@@ -318,15 +329,18 @@ test('async sources handle loading, stale resolutions, empty results, failures a
     .toBe(true);
   await resolveRequest(page, latest, 'Latest result');
   await expect(menu.getByRole('option')).toHaveText('Latest result');
+  await expect(status).toBeEmpty();
   await resolveRequest(page, old, 'Stale result');
   await expect(menu.getByRole('option')).toHaveText('Latest result');
   await replace(editor, '@empty');
   await resolveRequest(page, await requestIndex(page, 'empty'));
-  await expect(menu).toContainText('No results');
+  await expect(status).toHaveText('No results');
+  await noOptionsIsAccessible();
   await replace(editor, '@error');
   const failed = await requestIndex(page, 'error');
   await page.evaluate((index) => window.richTextFixture.requests[index].reject(), failed);
-  await expect(menu).toContainText('Suggestions could not load');
+  await expect(status).toContainText('Suggestions could not load');
+  await noOptionsIsAccessible();
   for (const mode of ['escape', 'disabled', 'read only'] as const) {
     await editor.focus();
     await editor.press('ControlOrMeta+A');

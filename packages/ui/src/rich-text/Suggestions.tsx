@@ -126,7 +126,7 @@ function SuggestionMenu({
       getKey={getKey}
       getOptionProps={listbox.getOptionProps}
       renderItem={(item) => ({ label: item.label })}
-      empty={<span role="status">{empty}</span>}
+      empty={empty}
     />
   );
 }
