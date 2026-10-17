@@ -76,6 +76,7 @@ import { DirectionFixture } from './Direction.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
 import { AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { ListsFixture } from './Lists.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -110,6 +111,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'search-triggers': SearchTriggersFixture,
   'account-menus': AccountMenusFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
+  lists: ListsFixture,
 };
 
 export default function App() {

@@ -63,7 +63,7 @@
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
-      "content/List.tsx": "base",
+      "content/List.tsx": "composites",
       "content/Markdown.tsx": "composites",
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",

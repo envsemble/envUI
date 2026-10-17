@@ -7,6 +7,7 @@ import {
   Checkbox,
   IconButton,
   DocumentTabs,
+  List,
   Menu,
   Menubar,
   NavList,
@@ -150,6 +151,10 @@ function Page() {
           </Table.Row>
         </Table.Body>
       </Table.Root>
+      <List.Root aria-label="Slides">
+        <List.Item selected label="Current slide" data-testid="list-selected" />
+        <List.Item label="Other slide" data-testid="list-item" />
+      </List.Root>
       <Tree
         aria-label="Files"
         items={[
