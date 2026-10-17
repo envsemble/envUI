@@ -367,6 +367,8 @@ test.beforeEach(async ({ page }) => {
 
 for (const { path, title, routes: pageRoutes } of pages) {
   test(`${title} (${path}) has no new accessibility violations`, async ({ page }, testInfo) => {
+    // A page of the theme sample, or of every view, takes several scans of about 10 s each.
+    test.slow(pageRoutes.flatMap(({ themes }) => themes).length > 1);
     const scans: Scan[] = [];
     for (const { route, themes } of pageRoutes) {
       await page.goto(`${siteUrl}/#/${route}`);
