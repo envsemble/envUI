@@ -182,7 +182,10 @@ const appFrame: TemplateCheck[] = [
               .getByRole('navigation', { name: 'Primary' })
               .getByRole('button', { name: /Search/ })
           : page.getByRole('banner').getByRole('button', { name: /Search/ });
-      await trigger.click();
+      // From the keyboard, so focus is on the trigger in every engine (Safari doesn't focus a
+      // clicked button), and returns to it when the palette closes.
+      await trigger.focus();
+      await page.keyboard.press('Enter');
       const search = page.getByRole('combobox', { name: 'Search' });
       await expect(search).toBeFocused();
       await search.fill('web');

@@ -131,10 +131,14 @@ for (const { page: id, name, frame } of screensChecked)
             );
 
           // Keyboard: in the app frame, the first Tab stop is the skip link, which focuses Main.
+          // Playwright's WebKit never tabs to links, so there the skip link takes focus directly.
           if (frame === 'app') {
-            await page.keyboard.press(tab);
+            if (browserName === 'webkit')
+              await page.getByRole('link', { name: 'Skip to content' }).focus();
+            else await page.keyboard.press(tab);
             const skip = page.locator(':focus');
             await expect(skip).toHaveRole('link');
+            await expect(skip).toHaveAccessibleName('Skip to content');
             await page.keyboard.press('Enter');
             await expect(page.getByRole('main')).toBeFocused();
           }
