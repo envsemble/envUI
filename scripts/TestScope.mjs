@@ -86,17 +86,7 @@ export const overrides = {
    */
   planned: {
     specs: ['FrameNeeds.spec.ts'],
-    names: [
-      'AccountMenu',
-      'ConfirmDialog',
-      'DescriptionList',
-      'ListDetail',
-      'Page',
-      'PageHeader',
-      'SearchTrigger',
-      'Sidebar',
-      'SplitPane',
-    ],
+    names: ['DescriptionList', 'ListDetail', 'Page', 'PageHeader', 'Sidebar', 'SplitPane'],
   },
   /**
    * Library files that most components depend on. A change to one runs the shared set rather than
