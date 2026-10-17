@@ -98,8 +98,9 @@ export interface ContentProps extends ComponentPropsWithRef<'div'> {
 }
 
 /**
- * A section of the sidebar's content, such as its NavList.Root; it scrolls when it alone is taller
- * than the room left. Several stack in order.
+ * A section of the sidebar's content, such as its NavList.Root; it scrolls when it is taller than
+ * the room left. Several stack in order: those before the last keep their size and the last one
+ * shrinks and scrolls; beside a fill section, every other one keeps its size.
  */
 function Content({ fill = false, align = 'start', className, ...props }: ContentProps) {
   return (

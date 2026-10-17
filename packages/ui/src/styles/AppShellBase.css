@@ -2,11 +2,56 @@
    header. Scroll padding as tall as the header, and a little more for focus rings, keeps elements
    that take focus and anchor targets below it (WCAG 2.4.11). AppShell.Root measures its header into
    --env-frame-header-block-size on the document element; until it does, as on the first paint of a
-   server-rendered page, --env-app-shell-header-height applies. The rule has zero specificity and
+   server-rendered page, the size of the header that shows applies. The rule has zero specificity and
    sits in env.base, so scroll padding the application sets wins. */
 :where(html:has(.env-app-shell[data-scroll='document'])) {
   --env-frame-scroll-padding: calc(
-    var(--env-frame-header-block-size, var(--env-app-shell-header-height, 3.25rem)) + 0.5rem
+    var(--env-frame-header-block-size, var(--env-frame-shown-header, 0rem)) + 0.5rem
   );
   scroll-padding-block-start: var(--env-frame-scroll-padding);
+}
+/* Until the Root measures, the padding follows the header that shows: none without a header, and
+   none above the breakpoint for a phone's top bar, which shows only below it. */
+:where(html:has(.env-app-shell[data-scroll='document'] > .env-app-shell-header)) {
+  --env-frame-shown-header: var(--env-app-shell-header-height, 3.25rem);
+}
+@media (width >= 40rem) {
+  :where(
+    html:has(
+      .env-app-shell[data-scroll='document'][data-breakpoint='sm']
+        > .env-app-shell-header[data-mobile-only]
+    )
+  ) {
+    --env-frame-shown-header: 0rem;
+  }
+}
+@media (width >= 48rem) and (not ((max-height: 32rem) and (max-width: 54rem))) {
+  :where(
+    html:has(
+      .env-app-shell[data-scroll='document'][data-breakpoint='md']
+        > .env-app-shell-header[data-mobile-only]
+    )
+  ) {
+    --env-frame-shown-header: 0rem;
+  }
+}
+@media (width >= 64rem) {
+  :where(
+    html:has(
+      .env-app-shell[data-scroll='document'][data-breakpoint='lg']
+        > .env-app-shell-header[data-mobile-only]
+    )
+  ) {
+    --env-frame-shown-header: 0rem;
+  }
+}
+@media (width >= 80rem) {
+  :where(
+    html:has(
+      .env-app-shell[data-scroll='document'][data-breakpoint='xl']
+        > .env-app-shell-header[data-mobile-only]
+    )
+  ) {
+    --env-frame-shown-header: 0rem;
+  }
 }

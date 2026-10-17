@@ -5,6 +5,7 @@ import {
   Menu,
   ThemePreferenceProvider,
   ThemeRadioGroup,
+  Tooltip,
   type ThemeContrast,
   type ThemeScale,
 } from '@envsemble/envui';
@@ -128,7 +129,10 @@ export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
       align="start"
       trigger={
         iconOnly ? (
-          <IconButton variant="ghost" icon={<Tune />} aria-label="Display" title="Display" />
+          // The Tooltip passes the menu button's props and ref on to the IconButton.
+          <Tooltip content="Display">
+            <IconButton variant="ghost" icon={<Tune />} aria-label="Display" />
+          </Tooltip>
         ) : (
           <Button variant="ghost" startIcon={<Tune />}>
             Display

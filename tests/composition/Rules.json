@@ -449,6 +449,12 @@
           "classes": ["env-checkbox"],
           "properties": ["vertical-align"],
           "note": "A task list item lines its checkbox up with the item's text."
+        },
+        {
+          "stylesheet": "AppShell.css",
+          "classes": ["env-panel-dock"],
+          "properties": ["container-type"],
+          "note": "A Main that scrolls places a PanelDock directly in it across its scrollport, so the dock stays over Main's visible area while Main scrolls; Main, its own element, becomes a size container only while it holds a dock."
         }
       ]
     }

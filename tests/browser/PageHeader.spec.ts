@@ -1,5 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=page-headers`;
 
@@ -79,5 +80,42 @@ test.describe('PageHeader', () => {
       frame.style.removeProperty('--env-frame-sticky-top');
     });
     await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
+  });
+
+  test("keeps its page's element across a parent's renders, and its height published", async ({
+    page,
+  }) => {
+    const hydrate = await openServerMarkup(
+      page,
+      `import {createElement as h, useState} from 'react';
+      import {Page, PageHeader} from '@envsemble/envui';
+      // Every element the page's ref receives, null for a detach.
+      const refs = (globalThis.pageRefs = []);
+      const pageRef = (node) => { refs.push(node ? node.tagName : null); };
+      function Parent() {
+        const [count, setCount] = useState(0);
+        return h(Page, {ref: pageRef, 'data-testid': 'page',
+            header: h(PageHeader, {title: 'Renders ' + count, sticky: true})},
+          h('button', {type: 'button', onClick: () => setCount((value) => value + 1)}, 'Render'));
+      }
+      export const element = h(Parent);`,
+      { hydrate: true },
+    );
+    expect(await hydrate()).toEqual([]);
+    const refs = () => page.evaluate(() => (window as unknown as { pageRefs: unknown[] }).pageRefs);
+    expect(await refs()).toEqual(['DIV']);
+    for (let render = 1; render <= 3; render++) {
+      await page.getByRole('button', { name: 'Render' }).click();
+      await expect(page.getByRole('heading', { name: `Renders ${render}` })).toBeVisible();
+    }
+    // Never detached and attached again, as a new ref callback on each render would.
+    expect(await refs()).toEqual(['DIV']);
+    await expect
+      .poll(() =>
+        page
+          .getByTestId('page')
+          .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size')),
+      )
+      .not.toBe('');
   });
 });

@@ -574,3 +574,47 @@ test.describe('Sidebars without the frame', () => {
     await expect(filters.getByRole('button', { name: 'Only mine' })).toBeVisible();
   });
 });
+
+test.describe('Several Sidebar.Content sections', () => {
+  test.use({ viewport: { width: 1280, height: 500 } });
+
+  /** A frame whose sidebar holds a 64 px block above a long section, the middle one fill or not. */
+  const frame = (fill: boolean) =>
+    `import {createElement as h} from 'react';
+    import {AppShell, Sidebar} from '@envsemble/envui';
+    const items = Array.from({length: 60}, (_, index) => h('p', {key: index}, 'Item ' + index));
+    export const element = h(AppShell.Root, null,
+      h(Sidebar.Root, {label: 'Sections', collapsible: 'none'},
+        h(Sidebar.Content, {align: 'stretch', 'data-testid': 'search'},
+          h('div', {style: {blockSize: '64px'}, 'data-testid': 'block'})),
+        h(Sidebar.Content, {fill: ${fill}, 'data-testid': 'long'}, items),
+        ${fill ? "h(Sidebar.Content, {'data-testid': 'after'}, 'After')" : 'null'}),
+      h(AppShell.Main, null, 'Main'));`;
+
+  for (const fill of [false, true])
+    test(`those before the last keep their size; the ${fill ? 'fill' : 'last'} one scrolls`, async ({
+      page,
+    }) => {
+      await openServerMarkup(page, frame(fill));
+      expect((await box(page.getByTestId('block'))).height).toBe(64);
+      const search = page.getByTestId('search');
+      expect(await search.evaluate((element) => element.scrollHeight - element.clientHeight)).toBe(
+        0,
+      );
+      const long = page.getByTestId('long');
+      expect(
+        await long.evaluate((element) => element.scrollHeight > element.clientHeight + 100),
+      ).toBe(true);
+      const panel = await box(page.locator('.env-sidebar-panel'));
+      expect((await box(long)).y + (await box(long)).height).toBeLessThanOrEqual(
+        panel.y + panel.height + 0.5,
+      );
+      if (fill) {
+        const after = page.getByTestId('after');
+        await expect(after).toBeVisible();
+        expect(await after.evaluate((element) => element.scrollHeight - element.clientHeight)).toBe(
+          0,
+        );
+      }
+    });
+});
