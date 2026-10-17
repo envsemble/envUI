@@ -20,6 +20,7 @@ import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
 import { MenuPopup } from './internal/MenuPopup.js';
 import { useDirection } from '../internal/useDirection.js';
+import { withDisplayName } from '../internal/withDisplayName.js';
 
 /** The Base UI parts of a menubar menu's popup. */
 const menuParts = {
@@ -27,7 +28,6 @@ const menuParts = {
   Positioner: BaseMenu.Positioner,
   Popup: BaseMenu.Popup,
 };
-import { withDisplayName } from '../internal/withDisplayName.js';
 
 interface MenubarContextValue {
   /** Access keys are on, so triggers name theirs in aria-keyshortcuts. */
