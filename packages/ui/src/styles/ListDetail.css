@@ -7,3 +7,19 @@
 .env-list-detail-back .env-icon:dir(rtl) {
   transform: scaleX(-1);
 }
+/* Below stackBelow, the container query shows the list or the detail from the first paint, by
+   data-detail-shown; the script then hides the other pane. These are the rules for 44rem;
+   ListDetail writes the same for any other width. */
+@container env-split-pane (inline-size < 44rem) {
+  .env-list-detail[data-stack-below='44rem'][data-detail-shown] > .env-list-detail-list {
+    display: none;
+  }
+  .env-list-detail[data-stack-below='44rem']:not([data-detail-shown]) > .env-list-detail-detail {
+    display: none;
+  }
+  .env-list-detail[data-stack-below='44rem']
+    > .env-list-detail-list:not([hidden])
+    ~ .env-list-detail-detail:not([hidden]) {
+    border-block-start: none;
+  }
+}

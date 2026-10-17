@@ -13,9 +13,11 @@ import {
 import { Button } from '../actions/Button.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
+import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useSplitPane } from './internal/SplitPaneContext.js';
+import { defaultStackBelow, StackStyle } from './internal/StackStyle.js';
 import * as SplitPane from './SplitPane.js';
 
 export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
@@ -99,6 +101,16 @@ function focusCurrentRow(list: HTMLElement | null) {
 }
 
 /**
+ * The stacked rules for one stackBelow width, which ListDetail.css carries for 44rem: the list or the
+ * detail, by data-detail-shown, without a hairline above the detail.
+ */
+const stackRules = (width: string) =>
+  `.env-list-detail${width}[data-detail-shown]>.env-list-detail-list{display:none}` +
+  `.env-list-detail${width}:not([data-detail-shown])>.env-list-detail-detail{display:none}` +
+  `.env-list-detail${width}>.env-list-detail-list:not([hidden])~.env-list-detail-detail:not([hidden]){` +
+  'border-block-start:none}';
+
+/**
  * A list beside the detail of its chosen item, on SplitPane, with the list's width resizable. Below
  * `stackBelow` of its own width it shows one at a time: the list, or the detail with a back button,
  * which moves focus between them.
@@ -107,7 +119,7 @@ function Root({
   detailShown,
   onBack,
   backLabel,
-  stackBelow = '44rem',
+  stackBelow = defaultStackBelow,
   defaultListSize = 32,
   minListSize = 22,
   maxListSize = 50,
@@ -134,6 +146,7 @@ function Root({
         data-detail-shown={detailShown ? '' : undefined}
       >
         {children}
+        <StackStyle name="env-list-detail" stackBelow={cssLength(stackBelow)} rules={stackRules} />
       </SplitPane.Root>
     </ListDetailContext>
   );

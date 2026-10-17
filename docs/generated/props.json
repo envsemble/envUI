@@ -6927,7 +6927,7 @@
           "name": "stackBelow",
           "type": "string | number",
           "required": false,
-          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too."
+          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too. A container query stacks the server's markup before any script runs."
         },
         {
           "name": "onStackedChange",

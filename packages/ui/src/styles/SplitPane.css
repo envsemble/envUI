@@ -1,8 +1,10 @@
 /* SplitPane: two panes and the handle that resizes them. The first pane takes the root's size, the
    handle its own and the second pane the rest; each pane scrolls on its own when the split pane has
-   a size of its own. Stacked panes follow each other. */
+   a size of its own. Stacked panes follow each other. The root is a container, so the server's markup
+   stacks below stackBelow before any script measures it. */
 .env-split-pane {
   --env-split-pane-size: 50%;
+  container: env-split-pane / inline-size;
   position: relative;
   display: grid;
   min-inline-size: 0;
@@ -37,6 +39,22 @@
 }
 .env-split-pane[data-stacked] > .env-split-pane-pane:not([hidden]) ~ .env-split-pane-pane {
   border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+}
+/* Below stackBelow, the container query stacks the panes from the first paint, in the grid: each
+   takes the whole row and the handle goes. The script then sets data-stacked, as above. These are
+   the rules for 44rem; SplitPane writes the same for any other width. */
+@container env-split-pane (inline-size < 44rem) {
+  .env-split-pane[data-stack-below='44rem'] > .env-split-pane-pane {
+    grid-column: 1 / -1;
+  }
+  .env-split-pane[data-stack-below='44rem'] > .env-split-pane-handle {
+    display: none;
+  }
+  .env-split-pane[data-stack-below='44rem']
+    > .env-split-pane-pane:not([hidden])
+    ~ .env-split-pane-pane {
+    border-block-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+  }
 }
 /* The handle's resting line, under the line it shows on hover, focus and while dragging. */
 .env-split-pane-handle::before {
