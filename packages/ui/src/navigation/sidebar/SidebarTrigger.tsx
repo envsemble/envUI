@@ -147,6 +147,7 @@ export function SidebarTrigger({
       aria-controls={id}
       aria-keyshortcuts={display?.ariaKeyShortcuts}
       data-sidebar-trigger=""
+      data-keep-shown={hidden === false ? '' : undefined}
       data-state={expanded ? 'expanded' : 'collapsed'}
       data-side={side}
       data-mark={mark != null ? '' : undefined}
