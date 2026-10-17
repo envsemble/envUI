@@ -134,7 +134,7 @@
     --env-document-tabs-close-size: var(--env-control-height-touch);
     block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
   }
-  .env-document-tabs-close {
+  .env-document-tabs-item .env-document-tabs-close {
     visibility: visible;
   }
 }

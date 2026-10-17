@@ -272,7 +272,14 @@ test.describe('DocumentTabs', () => {
         expect(boxes.tabs.length).toBeGreaterThan(0);
         expect(boxes.tabs.filter((height) => height !== 44)).toEqual([]);
         expect(boxes.closes.filter(([width, height]) => width !== 44 || height !== 44)).toEqual([]);
-        await expect(strip.locator('.env-document-tabs-close').first()).toBeVisible();
+        // Every close button shows, the inactive tabs' too, not only the active tab's.
+        const closes = strip.locator('.env-document-tabs-close');
+        expect(await closes.count()).toBeGreaterThan(1);
+        expect(
+          await closes.evaluateAll((buttons) =>
+            buttons.filter((button) => getComputedStyle(button).visibility !== 'visible').length,
+          ),
+        ).toBe(0);
       });
   });
 });
