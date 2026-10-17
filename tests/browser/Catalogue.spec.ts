@@ -1219,7 +1219,10 @@ test('the catalogue frame: skip links first, a rail that persists, a drawer from
     'data-icon-only',
     '',
   );
-  await expect(sidebar.getByRole('button', { name: 'Display' })).toBeVisible();
+  const display = sidebar.getByRole('button', { name: 'Display' });
+  await expect(display).toBeVisible();
+  // Its name shows in envUI's tooltip, not the browser's.
+  await expect(display).not.toHaveAttribute('title');
   await page.reload();
   await expect(page.locator('.docs-sidebar')).toHaveAttribute('data-rail', '');
   await page.locator('.docs-sidebar').getByRole('button', { name: 'Expand sidebar' }).click();
