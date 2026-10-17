@@ -63,7 +63,8 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 - **Opening**: `trigger` opens the dialog; without one, the application opens it with `open` and `onOpenChange`, such as from a menu item. `onOpenChange` receives the new state and the `reason`: `trigger-press`, `escape-key`, `close-press` for Cancel, or `imperative-action` once the action has finished.
 - **Confirming**: the confirm button runs `onConfirm`. The dialog closes when it returns, or, when it returns a promise, once the promise resolves.
 - **Pending**: while the promise runs, the confirm button shows a spinner and reports busy, Cancel is disabled, the dialog reports `aria-busy`, and nothing dismisses it, <kbd>Esc</kbd> included.
-- **Failure**: a rejected promise, or an error thrown, keeps the dialog open and ends pending. Show what went wrong with `error`; it is announced. Clear it when the dialog closes or the action is tried again.
+- **Failure**: a rejected promise, or an error thrown, keeps the dialog open and ends pending, and goes to `reportError`, as an uncaught error would. Show what went wrong with `error`; it is announced. Clear it when the dialog closes or the action is tried again.
+- **Once per opening**: the action runs once each time the dialog opens; another press, such as the second click of a double-click, does nothing, unless the action failed.
 - **Dismissing**: <kbd>Esc</kbd> and Cancel close it; a press outside doesn't.
 - **Focus**: on opening, focus moves to the confirm button, or to Cancel for `tone="danger"`, so a hurried <kbd>Enter</kbd> doesn't delete. On closing, it returns to `finalFocus`, else the trigger, else the element that had focus when the dialog opened.
 - **Theme**: the dialog renders in a portal in the theme of the place it opens from.

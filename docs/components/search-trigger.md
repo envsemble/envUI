@@ -48,7 +48,7 @@ Here a trigger fills the width at the top of a sidebar and opens a [CommandPalet
 3. **Label** (`label`): "Search" by default; it truncates in a narrow container.
 4. **Keys** (`shortcut`): the shortcut as [Kbd](../components/kbd.md) keys at the inline end, quieter than the label.
 
-The icon-only trigger is a ghost IconButton with a [Tooltip](../components/tooltip.md) that shows the label and the keys.
+The icon-only trigger is a ghost IconButton with a [Tooltip](../components/tooltip.md) that shows the label and the keys; it doesn't also describe the button, whose name and `aria-keyshortcuts` already say them.
 
 ## Variants and sizes
 
@@ -64,9 +64,9 @@ The icon-only trigger is a ghost IconButton with a [Tooltip](../components/toolt
 
 - **Shortcut**: the trigger presses itself when its shortcut is pressed anywhere in the window, also in a text field, so `onClick` is the one place the application opens search. `shortcut={false}` shows and handles no shortcut.
 - **Keys shown**: on Apple platforms ⌘ and K, elsewhere Ctrl and K. The server and the first render show the Ctrl form, and the browser's platform replaces it after hydration, so the markup matches.
-- **One trigger per shortcut**: several triggers can listen for the same shortcut, such as one in a sidebar and one in a phone's top bar. The most recently mounted trigger that is visible takes the key, so a hidden one never does. `listen={false}` keeps a trigger from listening while it still shows the keys, for a second trigger whose search another one opens.
+- **One trigger per shortcut**: several triggers can listen for the same shortcut, such as one in a sidebar and one in a phone's top bar. The most recently mounted trigger that is visible takes the key, so a hidden one never does, nor one behind a modal dialog, such as a Dialog, a Drawer or a ConfirmDialog. `listen={false}` keeps a trigger from listening while it still shows the keys, for a second trigger whose search another one opens.
 - **Keys handled elsewhere**: a key press that something already handled, which called `preventDefault()`, such as an editor's own ⌘K for a link, is left alone. Held keys don't repeat the press.
-- **Disabled**: a disabled trigger can't be pressed, by pointer or by its shortcut.
+- **Disabled**: a disabled trigger can't be pressed, by pointer or by its shortcut, and leaves the key to the browser.
 
 ## Content guidelines
 
