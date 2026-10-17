@@ -264,6 +264,20 @@ const settings: TemplateCheck[] = [
         'aria-current',
         'location',
       );
+      // Scrolled until the appearance's top has just passed the line 40% down the window, short of
+      // the end, it is marked, though the last section shows below it.
+      await page
+        .getByRole('heading', { name: 'Appearance', level: 2 })
+        .evaluate((heading) =>
+          window.scrollBy(
+            0,
+            heading.closest('section')!.getBoundingClientRect().top - (innerHeight * 0.4 - 8),
+          ),
+        );
+      await expect(sections.getByRole('link', { name: 'Appearance' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
       // Scrolled to the end, the short last section is marked, and the navigation stays in view.
       await page
         .getByRole('heading', { name: 'Danger zone', level: 2 })

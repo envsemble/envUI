@@ -11,9 +11,22 @@ export interface MediaQueryOptions {
   defaultValue?: boolean;
 }
 
-/** The MediaQueryList of a query, or undefined outside a browser. */
+/** One MediaQueryList per query and matchMedia, which every hook reads and listens to. */
+const lists = new WeakMap<Window['matchMedia'], Map<string, MediaQueryList>>();
+
+/**
+ * The MediaQueryList of a query, or undefined outside a browser. The hooks read the same list they
+ * listen to: WebKit sends a list its change events against what it last answered, so an answer
+ * read from another list, such as a fresh one in a render between two frames, can go back without
+ * any event on the list listened to, and the hook would keep the stale answer.
+ */
 function mediaQueryList(query: string) {
-  return typeof window === 'undefined' ? undefined : window.matchMedia?.(query);
+  if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+  let byQuery = lists.get(window.matchMedia);
+  if (!byQuery) lists.set(window.matchMedia, (byQuery = new Map()));
+  let list = byQuery.get(query);
+  if (!list) byQuery.set(query, (list = window.matchMedia(query)));
+  return list;
 }
 
 /**
@@ -27,8 +40,16 @@ export function useMediaQuery(query: string, options: MediaQueryOptions = {}): b
   const subscribe = useCallback(
     (onChange: () => void) => {
       const list = mediaQueryList(query);
-      list?.addEventListener('change', onChange);
-      return () => list?.removeEventListener('change', onChange);
+      if (!list) return () => {};
+      // Resizing asks again too, for an engine that skips a change event; React re-renders only
+      // when the answer differs. React also asks again as it subscribes, so a change between the
+      // render and the subscription isn't missed.
+      list.addEventListener('change', onChange);
+      window.addEventListener('resize', onChange);
+      return () => {
+        list.removeEventListener('change', onChange);
+        window.removeEventListener('resize', onChange);
+      };
     },
     [query],
   );
