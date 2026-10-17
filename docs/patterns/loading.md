@@ -27,6 +27,7 @@ composes:
   - Button
   - Progress
   - List
+  - SegmentedControl
   - TextField
   - Stack
   - Text
@@ -43,6 +44,8 @@ related:
 ## Overview
 
 Use this pattern to tell people that something is on its way: a page, a region of one, or the result of something they did. Choose the indicator by what is loading, show it where the content will appear, and keep what people already see in place.
+
+Here each team's projects load the first time it is chosen: skeletons in the shape of the rows stand in for them, once the load has taken 200 ms.
 
 ```tsx example=SkeletonList
 
@@ -92,7 +95,7 @@ Choose one indicator by what is loading:
 
 ### Focus and keyboard
 
-Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading.
+Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading.
 
 ### envUI provides
 

@@ -109,8 +109,8 @@
       "examples": [
         {
           "name": "ProjectDetails",
-          "title": "Stack",
-          "description": "Stack lays out content in a column, or a row, with even gaps, such as a form and its actions.",
+          "title": "Project details",
+          "description": "A row of actions, such as a form's Cancel and Save, is a Stack with `direction=\"row\"`, `wrap` and `justify`; actions stacked in a narrow pane are a column of buttons with `fullWidth`. Stack adds no role or keyboard behaviour; it is layout only.",
           "file": "docs/examples/stack/ProjectDetails.tsx"
         },
         {
@@ -204,8 +204,8 @@
       "examples": [
         {
           "name": "WithHeader",
-          "title": "Page",
-          "description": "The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.",
+          "title": "With header",
+          "description": "Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a PageHeader, at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with Stack and the components.",
           "file": "docs/examples/page/WithHeader.tsx"
         },
         {
@@ -276,8 +276,8 @@
       "examples": [
         {
           "name": "WithBreadcrumbs",
-          "title": "PageHeader",
-          "description": "A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.",
+          "title": "With breadcrumbs",
+          "description": "PageHeader is the heading of a page: its title, with an optional trail above it, a description under it, something before it, such as an avatar, meta beside it, such as a status, the page's actions at the end of the row and an optional toolbar row of search and filters below. It responds to its own width, so it wraps the same way in a wide window and in a narrow pane, and it can stick to the top of the page as the page scrolls. Put it in a Page's `header`.",
           "file": "docs/examples/page-header/WithBreadcrumbs.tsx"
         },
         {
@@ -370,8 +370,8 @@
       "examples": [
         {
           "name": "ResizablePanes",
-          "title": "SplitPane",
-          "description": "Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item.",
+          "title": "Resizable panes",
+          "description": "SplitPane lays out two panes, side by side or one above the other, with a handle between them that resizes them: people drag it, or focus it and press the arrow keys, as the APG window splitter pattern describes. The size can persist, and below `stackBelow` of its own width the panes stack and the handle goes. ListDetail builds a list beside the detail of its chosen item on it, which shows one at a time when stacked.",
           "file": "docs/examples/split-pane/ResizablePanes.tsx"
         },
         {
@@ -451,8 +451,8 @@
       "examples": [
         {
           "name": "DetailPane",
-          "title": "Surface",
-          "description": "A container with a background, an inset and corners, but no layout of its own.",
+          "title": "Detail pane",
+          "description": "A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a Stack, through `render` on the same element or inside it. Card and other containers build on Surface.",
           "file": "docs/examples/surface/DetailPane.tsx"
         },
         {
@@ -544,8 +544,8 @@
       "examples": [
         {
           "name": "SettingsRows",
-          "title": "List",
-          "description": "A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.",
+          "title": "Settings rows",
+          "description": "A list is a column of connected rows on the shared row fill: the first and last rows keep large outer corners, and rows join with small inner ones. List.Root is a native `<ul>` and each List.Item an `<li>` with a title, an optional muted detail and an action at its end. A row can open what it names: with `interactive`, it reacts to hover, presses and keyboard focus like a clickable card, and the link marked `data-row-target` covers the row. A row can be the current one (`selected`), lead with an avatar or a checkbox (`start`), and, with `onReorder` on the list, be moved by its handle.",
           "file": "docs/examples/list/SettingsRows.tsx"
         },
         {
@@ -660,8 +660,8 @@
       "examples": [
         {
           "name": "ProjectSummary",
-          "title": "Card",
-          "description": "A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.",
+          "title": "Project summary",
+          "description": "- Content card (the default): any content, with an optional heading row (`heading`, `meta`), a `description` and `actions` in a strip along its bottom. - Feature card (`layout=\"feature\"`): an icon, a heading, a description and one action, which stack in a narrow card. - Link card (`href`) and button card (`onClick`): the whole card is one native link or button.",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
@@ -762,8 +762,8 @@
       "examples": [
         {
           "name": "CreateProject",
-          "title": "Button",
-          "description": "Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group.",
+          "title": "Create project",
+          "description": "- IconButton shows only an icon, named by `aria-label`; it is Button with `iconOnly`, secondary by default. - ConfirmButton names the consequence on the first press and acts on the second, for an action that cannot be undone. - CopyButton copies a value and reports the result. - ButtonGroup connects buttons into one row or column.",
           "file": "docs/examples/button/CreateProject.tsx"
         },
         {
@@ -890,8 +890,8 @@
       "examples": [
         {
           "name": "DismissTip",
-          "title": "CloseButton",
-          "description": "The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language.",
+          "title": "Dismiss tip",
+          "description": "CloseButton is an icon-only button with a cross, ghost by default, named \"Close\" in the language the EnvUIProvider sets. It closes, dismisses or removes what it sits in, such as a tip, a panel or an item in a list. Under a coarse pointer, its hit area reaches the 2.75 rem touch size, also where its container draws it smaller.",
           "file": "docs/examples/close-button/DismissTip.tsx"
         },
         {
@@ -955,8 +955,8 @@
       "examples": [
         {
           "name": "InSidebar",
-          "title": "SearchTrigger",
-          "description": "The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.",
+          "title": "In sidebar",
+          "description": "Here a trigger fills the width at the top of a sidebar and opens a CommandPalette.",
           "file": "docs/examples/search-trigger/InSidebar.tsx"
         },
         {
@@ -1031,8 +1031,8 @@
       "examples": [
         {
           "name": "FormattingToolbar",
-          "title": "Toolbar",
-          "description": "A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.",
+          "title": "Formatting toolbar",
+          "description": "`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path. The default stays in the toolbar: the buttons of a popover, menu or dialog opened from it take their own.",
           "file": "docs/examples/toolbar/FormattingToolbar.tsx"
         },
         {
@@ -1119,8 +1119,8 @@
       "examples": [
         {
           "name": "InRunningText",
-          "title": "Link",
-          "description": "A destination inside running text, underlined by default, routed by the application.",
+          "title": "In running text",
+          "description": "Link is a native `<a>` for a destination inside running text. It takes the font of the text around it, the link color and, by default, an underline, so it stands out from the words beside it. Links render through the `LinkProvider`'s link component, so the application's router handles them.",
           "file": "docs/examples/link/InRunningText.tsx"
         },
         {
@@ -1190,8 +1190,8 @@
       "examples": [
         {
           "name": "AccentColor",
-          "title": "ColorPicker",
-          "description": "A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one.",
+          "title": "Accent color",
+          "description": "ColorSwatch is a round, decorative sample of a color, such as on the button that opens a ColorPicker in a Popover.",
           "file": "docs/examples/color-picker/AccentColor.tsx"
         },
         {
@@ -1296,8 +1296,8 @@
       "examples": [
         {
           "name": "ProjectName",
-          "title": "TextField",
-          "description": "Single-line inputs, search fields and multiline textareas share labels, guidance and states.",
+          "title": "Project name",
+          "description": "- SearchField is a TextField for a query, with a search icon and, while it has a query, a clear button; <kbd>Esc</kbd> also clears. Its label is hidden by default, so it sits beside buttons with a placeholder. - Textarea takes text over several lines, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.",
           "file": "docs/examples/text-field/ProjectName.tsx"
         },
         {
@@ -1417,8 +1417,8 @@
       "examples": [
         {
           "name": "ProjectName",
-          "title": "Field",
-          "description": "The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for.",
+          "title": "Project name",
+          "description": "envUI's own fields, such as TextField and Select, have this anatomy built in; use Field for a control they don't cover.",
           "file": "docs/examples/field/ProjectName.tsx"
         },
         {
@@ -1496,8 +1496,8 @@
       "examples": [
         {
           "name": "AskAnything",
-          "title": "Composer",
-          "description": "The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.",
+          "title": "Ask anything",
+          "description": "A composer is where people write a message and send it: a multiline field on a raised surface that grows with its text, with a round send button at its end. <kbd>Enter</kbd> sends and <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. While a reply runs, the send button becomes a stop button. The application sends the text with `onSubmit`, or the field's form sends it under its `name`.",
           "file": "docs/examples/composer/AskAnything.tsx"
         },
         {
@@ -1584,8 +1584,8 @@
       "examples": [
         {
           "name": "IncludeArchived",
-          "title": "Checkbox",
-          "description": "A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.",
+          "title": "Include archived",
+          "description": "A checkbox turns one choice on or off, independently of the choices beside it. It is a native `<input type=\"checkbox\">` inside its `<label>`, so pressing the box or the label toggles it, and forms submit, validate and reset it as the platform does. A checkbox can also be mixed, for the parent of a group whose children are only partly chosen.",
           "file": "docs/examples/checkbox/IncludeArchived.tsx"
         },
         {
@@ -1665,8 +1665,8 @@
       "examples": [
         {
           "name": "NotificationSettings",
-          "title": "Switch",
-          "description": "An on/off setting that takes effect as soon as it changes.",
+          "title": "Notification settings",
+          "description": "A switch turns a setting on or off, and the change takes effect at once, as a light switch does. It is a native checkbox with the switch role, drawn as a track and a thumb with its label beside it, so focus, <kbd>Space</kbd>, pressing the label and form participation behave as the platform's.",
           "file": "docs/examples/switch/NotificationSettings.tsx"
         },
         {
@@ -1755,8 +1755,8 @@
       "examples": [
         {
           "name": "ProjectAccess",
-          "title": "Radio",
-          "description": "One choice from a few options shown together, side by side or as selectable rows.",
+          "title": "Project access",
+          "description": "- Inline (the default): radios before their labels, side by side, wrapping onto more lines when space runs out. - Rows (`orientation=\"vertical\"`): connected rows that fill the width, with each option's label and description at the start and its radio at the end, for options that need explaining.",
           "file": "docs/examples/radio/ProjectAccess.tsx"
         },
         {
@@ -1847,8 +1847,8 @@
       "examples": [
         {
           "name": "ProjectVisibility",
-          "title": "Select",
-          "description": "One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.",
+          "title": "Project visibility",
+          "description": "A select chooses one value from a list that stays collapsed until people open it. Its trigger is a pill in a Button style that shows the chosen option, with the label above it and a description and an error below, as on other fields. Select is built on Base UI's select: the list opens below the trigger, takes keyboard focus, chooses with a press or a key and returns focus to the trigger, and a hidden input takes part in native forms.",
           "file": "docs/examples/select/ProjectVisibility.tsx"
         },
         {
@@ -1947,8 +1947,8 @@
       "examples": [
         {
           "name": "WorkItems",
-          "title": "SegmentedControl",
-          "description": "One choice among a few items on a pill rail, such as views or filters of the same content.",
+          "title": "Work items",
+          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once. Its options sit side by side on a pill rail, and the chosen one takes the primary colors. SegmentedControl is built on Base UI's radio group: it is a radio group with one tab stop, and the arrow keys move between the options and choose them.",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
@@ -1965,7 +1965,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "loading"
+        ],
         "templates": []
       }
     },
@@ -2033,8 +2035,8 @@
       "examples": [
         {
           "name": "ChooseOwner",
-          "title": "Combobox",
-          "description": "A text field that filters a list of options as people type, to choose one option or, as chips, several.",
+          "title": "Choose owner",
+          "description": "A combobox is a text field with a list of options: typing filters the list, the first match is highlighted so <kbd>Enter</kbd> chooses it, and the field shows what was chosen. A single combobox shows the chosen option's label as its text; with `multiple`, chosen options are removable chips in the field. Focus stays in the field while people move through the options, as the WAI-ARIA combobox pattern describes. Combobox is built on Base UI's combobox and the shared text field.",
           "file": "docs/examples/combobox/ChooseOwner.tsx"
         },
         {
@@ -2128,8 +2130,8 @@
       "examples": [
         {
           "name": "PublishDate",
-          "title": "DatePicker",
-          "description": "A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.",
+          "title": "Publish date",
+          "description": "Calendar is the month of days the field opens, which also stands on its own within a page or a panel.",
           "file": "docs/examples/date-picker/PublishDate.tsx"
         },
         {
@@ -2222,8 +2224,8 @@
       "examples": [
         {
           "name": "LayerOpacity",
-          "title": "Slider",
-          "description": "A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.",
+          "title": "Layer opacity",
+          "description": "A slider chooses a value in a range by dragging a thumb along a track, pressing the track or with the keyboard. Its label and the current value sit above the track and a description below it. Slider is built on Base UI's slider, around a native range input, so the arrow keys, focus, form submission and reset behave as the platform's.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
@@ -2303,8 +2305,8 @@
       "examples": [
         {
           "name": "LogoUpload",
-          "title": "DropZone",
-          "description": "An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.",
+          "title": "Logo upload",
+          "description": "A drop zone takes files two ways: dropped onto it, or chosen in the file picker it opens when pressed. It filters them by `accept`, hands the ones it takes to `onDropAccepted` and the others to `onDropRejected`, and takes part in native forms with `name`. The application uploads or reads the files and shows what was chosen; the zone doesn't list them.",
           "file": "docs/examples/drop-zone/LogoUpload.tsx"
         },
         {
@@ -2405,8 +2407,8 @@
       "examples": [
         {
           "name": "SidebarNavigation",
-          "title": "NavList",
-          "description": "A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.",
+          "title": "Sidebar navigation",
+          "description": "Items also stand on their own, such as in AppShell's `navigation`, where they follow the collapsed sidebar, or as the buttons of Tabs.",
           "file": "docs/examples/nav-list/SidebarNavigation.tsx"
         },
         {
@@ -2491,8 +2493,8 @@
       "examples": [
         {
           "name": "ProjectViews",
-          "title": "Tabs",
-          "description": "Switches between panels of related content in one place, from a rail of buttons.",
+          "title": "Project views",
+          "description": "The tabs are `items`, each a `value`, a `button`, the panel's `content` and whether it is `disabled`. Tabs owns the selection, the keyboard and the panels' transitions; the application owns anything else, such as keeping the selected tab in the URL.",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
@@ -2589,8 +2591,8 @@
       "examples": [
         {
           "name": "PreviousAndNext",
-          "title": "Pager",
-          "description": "Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.",
+          "title": "Previous and next",
+          "description": "Pager.Previous and Pager.Next also stand alone, where the application places a single link itself.",
           "file": "docs/examples/pager/PreviousAndNext.tsx"
         },
         {
@@ -2688,8 +2690,8 @@
       "examples": [
         {
           "name": "ProductShell",
-          "title": "AppShell",
-          "description": "The frame of a whole application, with a topbar, a collapsible navigation sidebar and the content area, or a window title bar.",
+          "title": "Product shell",
+          "description": "AppShell will be rebuilt from composable parts; this page describes the current API.",
           "file": "docs/examples/app-shell/ProductShell.tsx"
         },
         {
@@ -2774,8 +2776,8 @@
       "examples": [
         {
           "name": "FileTree",
-          "title": "Tree",
-          "description": "A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.",
+          "title": "File tree",
+          "description": "The application owns the data. It passes the visible rows in order, flattened, each with its `depth`, and updates them when a row expands or collapses; it also owns the selection and what opening a row does. The tree owns focus, keyboard navigation, type-ahead, scrolling and an optional context menu.",
           "file": "docs/examples/tree/FileTree.tsx"
         },
         {
@@ -2857,8 +2859,8 @@
       "examples": [
         {
           "name": "OpenDocuments",
-          "title": "DocumentTabs",
-          "description": "Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.",
+          "title": "Open documents",
+          "description": "DocumentTabs is the strip of open documents above an editor: one tab per document, the active one marked, each with a close button. People switch with a click or the arrow keys, close with the button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, or from a tab's context menu, keep a preview tab with a double click, and, with `onCloseAll`, close all tabs from that menu too. The strip renders only the tabs: the application owns the open documents, the active one and its panel.",
           "file": "docs/examples/document-tabs/OpenDocuments.tsx"
         },
         {
@@ -2930,8 +2932,8 @@
       "examples": [
         {
           "name": "DocumentDrafts",
-          "title": "PanelDock",
-          "description": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.",
+          "title": "Document drafts",
+          "description": "- PanelDock.Root lays out the panels and their tabs and renders each panel's content from `children`. - PanelDock.Header is a panel's sticky header: the title and metadata, the application's actions and the window controls, Minimize, Maximize or Restore, and Close, which `controls={false}` leaves out.",
           "file": "docs/examples/panel-dock/DocumentDrafts.tsx"
         },
         {
@@ -3010,8 +3012,8 @@
       "examples": [
         {
           "name": "DocumentTrail",
-          "title": "Breadcrumbs",
-          "description": "The path from the top level to the current page, with earlier levels as links or buttons.",
+          "title": "Document trail",
+          "description": "Breadcrumbs show the path from the top level to the current page, such as a workspace, its folders and the document open in them. Earlier levels are links with `href`, through the `LinkProvider`'s link component, or buttons with `onClick` for applications without URLs; the current page is last, in the primary text color, and never a link. The trail is a navigation landmark around an ordered list, and it supplements the main navigation rather than replacing it.",
           "file": "docs/examples/breadcrumbs/DocumentTrail.tsx"
         },
         {
@@ -3085,8 +3087,8 @@
       "examples": [
         {
           "name": "PagesOfAList",
-          "title": "Pagination",
-          "description": "The range of items shown with previous and next page buttons, small enough for a toolbar.",
+          "title": "Pages of AList",
+          "description": "The application owns the page, the loading and the scroll position. Pagination reports the page a press asks for through `onPageChange`, shows a spinner on the button pressed while the page loads, announces the new range and keeps focus on the button, so people who page from the keyboard stay in place.",
           "file": "docs/examples/pagination/PagesOfAList.tsx"
         },
         {
@@ -3163,8 +3165,8 @@
       "examples": [
         {
           "name": "ThemeAndOrganizations",
-          "title": "AccountMenu",
-          "description": "The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.",
+          "title": "Theme and organizations",
+          "description": "AccountMenu is the menu of the person who is signed in. Their avatar, or a row with their avatar, name and e-mail address, opens a Menu whose header shows who is signed in, followed by the application's items. Two submenus come with it: AccountMenu.ThemeSubmenu, the theme choice, which stores itself through a ThemePreferenceProvider, and AccountMenu.OrganizationSubmenu, the switch between the person's organizations. The other items are Menu's own parts.",
           "file": "docs/examples/account-menu/ThemeAndOrganizations.tsx"
         },
         {
@@ -3246,8 +3248,8 @@
       "examples": [
         {
           "name": "EditAndPreview",
-          "title": "RichText",
-          "description": "Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only.",
+          "title": "Edit and preview",
+          "description": "- RichTextEditor edits the Markdown, with references people insert by typing a trigger such as @, optional slash commands, attachments the application uploads and links from its own picker. - RichText shows saved Markdown read-only with the editor's own schema, so it looks the same and its references work the same. It renders on a server too. - createRichTextExtensions returns the Tiptap extensions both share, for other Tiptap integrations that need the same schema.",
           "file": "docs/examples/rich-text/EditAndPreview.tsx"
         },
         {
@@ -3353,8 +3355,8 @@
       "examples": [
         {
           "name": "ProjectNote",
-          "title": "Markdown",
-          "description": "Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview.",
+          "title": "Project note",
+          "description": "MarkdownEditor writes such a string: a native textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with Markdown. Both come from `@envsemble/envui/content`.",
           "file": "docs/examples/markdown/ProjectNote.tsx"
         },
         {
@@ -3449,8 +3451,8 @@
       "examples": [
         {
           "name": "InstallSteps",
-          "title": "Code",
-          "description": "Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.",
+          "title": "Install steps",
+          "description": "- Code is inline code inside a sentence, from `@envsemble/envui/content`. - CodeBlock shows source of several lines, highlighted for its `language`, with an optional label and copy button, from `@envsemble/envui/content`. - CodeDiff shows the changes between two versions of a file, rendered by Diffs, and countDiffLines counts the lines they add and remove, from `@envsemble/envui/diff`.",
           "file": "docs/examples/code/InstallSteps.tsx"
         },
         {
@@ -3557,8 +3559,8 @@
       "examples": [
         {
           "name": "ProjectStatus",
-          "title": "Badge",
-          "description": "Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.",
+          "title": "Project status",
+          "description": "- CounterBadge shows a count, such as unread messages beside a navigation item, with a full name for assistive technology. - DiffStat shows the size of a change in one pill, such as +12 −3, with additions in the success tone and deletions in the danger tone.",
           "file": "docs/examples/badge/ProjectStatus.tsx"
         },
         {
@@ -3681,8 +3683,8 @@
       "examples": [
         {
           "name": "ProjectStatus",
-          "title": "Table",
-          "description": "Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.",
+          "title": "Project status",
+          "description": "- Table.Root renders the table and its scroll region, and holds what applies to every row: its name, density, sticky header, column widths and narrow layout. - Table.Head and Table.Body hold the header rows and the data rows. - Table.Row is a row, which can highlight on hover or be selected. - Table.HeaderCell heads a column, or a row with `scope=\"row\"`, and can sort its column. - Table.Cell is a data cell, with a `label` that names its value while rows stack.",
           "file": "docs/examples/table/ProjectStatus.tsx"
         },
         {
@@ -3797,8 +3799,8 @@
       "examples": [
         {
           "name": "Facts",
-          "title": "DescriptionList",
-          "description": "The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.",
+          "title": "Facts",
+          "description": "DescriptionList shows the facts about one thing as labels and their values: a `dl` whose items are its terms with their values. Labels are muted and line up in a column as wide as the longest; below 24 rem of the list's own width, each label moves above its value, so a list in a sidebar or on a phone needs no other layout.",
           "file": "docs/examples/description-list/Facts.tsx"
         },
         {
@@ -3877,8 +3879,8 @@
       "examples": [
         {
           "name": "ShortcutsInText",
-          "title": "Kbd",
-          "description": "Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.",
+          "title": "Shortcuts in text",
+          "description": "Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bottom edge that sits on the baseline of the text around it. With `keys` it shows keys pressed together, such as Ctrl+P, as one key cap each, joined by a plus. Kbd only shows keys; the application handles the shortcut.",
           "file": "docs/examples/kbd/ShortcutsInText.tsx"
         },
         {
@@ -3958,8 +3960,8 @@
       "examples": [
         {
           "name": "ShowResults",
-          "title": "AnimatedNumber",
-          "description": "A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.",
+          "title": "Show results",
+          "description": "AnimatedNumber shows a number inside text and rolls it to its new value when it changes: in from below when it grows and from above when it shrinks. The movement draws the eye to a count that other controls change, such as the number of results on the button that shows them. The text is always the current value, so accessible names and copied text never hold a number on its way.",
           "file": "docs/examples/animated-number/ShowResults.tsx"
         },
         {
@@ -4035,8 +4037,8 @@
       "examples": [
         {
           "name": "ReviewScore",
-          "title": "Rating",
-          "description": "A read-only rating as stars filled in half steps, named once for assistive technology.",
+          "title": "Review score",
+          "description": "A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the value in half steps. It is read-only: it displays a rating and never asks for one. The stars are one image named by the rating, so assistive technology reads it once, such as \"4.5 out of 5 stars\"; `showValue` adds the number before them for people who scan.",
           "file": "docs/examples/rating/ReviewScore.tsx"
         },
         {
@@ -4115,8 +4117,8 @@
       "examples": [
         {
           "name": "DraftSaved",
-          "title": "RelativeTime",
-          "description": "A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip.",
+          "title": "Draft saved",
+          "description": "`formatRelativeTime` returns the same text as a string, for places that take only text, such as an option label or an accessible name. It runs anywhere, also on a server.",
           "file": "docs/examples/relative-time/DraftSaved.tsx"
         },
         {
@@ -4213,8 +4215,8 @@
       "examples": [
         {
           "name": "VisibilityHelp",
-          "title": "Disclosure",
-          "description": "A one-line summary that shows and hides optional details below it, on the native details element.",
+          "title": "Visibility help",
+          "description": "A disclosure is a one-line summary that shows and hides the details below it. It is the native `<details>` element with its `<summary>`, so opening, closing, the keyboard and what assistive technology hears are the platform's. It suits guidance and settings that most people don't need; what they need to complete a task stays visible.",
           "file": "docs/examples/disclosure/VisibilityHelp.tsx"
         },
         {
@@ -4294,8 +4296,8 @@
       "examples": [
         {
           "name": "PersonWithName",
-          "title": "Avatar",
-          "description": "A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group.",
+          "title": "Person with name",
+          "description": "- AvatarButton is an avatar as a button, such as the account menu's trigger, with a halo on hover, press and while its menu is open, and the name in a tooltip. - AvatarGroup overlaps the avatars of a set of people, with a chip that counts the people it doesn't show and lists them in its tooltip.",
           "file": "docs/examples/avatar/PersonWithName.tsx"
         },
         {
@@ -4396,8 +4398,8 @@
       "examples": [
         {
           "name": "Conversation",
-          "title": "Message",
-          "description": "Conversation entries in a log: compact bubbles for your own messages, full-width content from others.",
+          "title": "Conversation",
+          "description": "MessageList is a log, so assistive technology politely announces messages as they arrive. A Composer below the list writes the next message.",
           "file": "docs/examples/message/Conversation.tsx"
         },
         {
@@ -4482,8 +4484,8 @@
       "examples": [
         {
           "name": "ProjectHealth",
-          "title": "Stat",
-          "description": "Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.",
+          "title": "Project health",
+          "description": "- Stat.Root is one figure with its `label`, an optional `trend` and an optional `description`. It has no surface of its own. - Stat.Group puts stats on one surface, a pane by default, in as many even columns as fit.",
           "file": "docs/examples/stat/ProjectHealth.tsx"
         },
         {
@@ -4563,8 +4565,8 @@
       "examples": [
         {
           "name": "Deployments",
-          "title": "CalendarHeatmap",
-          "description": "A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.",
+          "title": "Deployments",
+          "description": "A calendar heatmap shows a value for each day as a shade of one tone: weeks are columns and weekdays rows, with month names above and a legend below. Higher values stand out more in both themes. Every day is a cell named with its date and value, shown in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through. The application passes the values by day; dates are calendar days, independent of time zones.",
           "file": "docs/examples/calendar-heatmap/Deployments.tsx"
         },
         {
@@ -4648,8 +4650,8 @@
       "examples": [
         {
           "name": "FirstProject",
-          "title": "EmptyState",
-          "description": "Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action.",
+          "title": "First project",
+          "description": "An empty state takes the place of content that isn't there: it says why, such as no projects yet, no results for a search or a list that failed to load, and offers the action that resolves it. It has a decorative icon, a title as a real heading, a description and an action. Inside a card, panel or dialog it lines up with the start; in place of a page's or region's content it centres itself in the room it gets.",
           "file": "docs/examples/empty-state/FirstProject.tsx"
         },
         {
@@ -4732,8 +4734,8 @@
       "examples": [
         {
           "name": "UpdatingPanel",
-          "title": "Spinner",
-          "description": "Work of unknown length in a small area, such as a panel that is updating, as a turning arc.",
+          "title": "Updating panel",
+          "description": "For the work that follows a press, the button that started it shows a spinner itself with `pending`; see Button.",
           "file": "docs/examples/spinner/UpdatingPanel.tsx"
         },
         {
@@ -4817,8 +4819,8 @@
       "examples": [
         {
           "name": "ProjectSummary",
-          "title": "Skeleton",
-          "description": "Placeholders in the shape of content that is loading, in a LoadingState that names the region once.",
+          "title": "Project summary",
+          "description": "Put a region's skeletons in a LoadingState. It names the region once, such as Loading project, and marks it busy, while each skeleton is hidden from assistive technology.",
           "file": "docs/examples/skeleton/ProjectSummary.tsx"
         },
         {
@@ -4909,8 +4911,8 @@
       "examples": [
         {
           "name": "SaveChanges",
-          "title": "Toast",
-          "description": "Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people.",
+          "title": "Save changes",
+          "description": "Put one Toast.Provider near the root of the application. Any component inside it calls useToast for `show`, `dismiss` and `clear`; `show` takes the notification's `message`, `tone`, `action`, `placement`, `dismissible` and `duration`, and returns its id.",
           "file": "docs/examples/toast/SaveChanges.tsx"
         },
         {
@@ -5013,8 +5015,8 @@
       "examples": [
         {
           "name": "BlockedRelease",
-          "title": "Alert",
-          "description": "An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.",
+          "title": "Blocked release",
+          "description": "An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warning and danger alerts interrupt only with `announce`.",
           "file": "docs/examples/alert/BlockedRelease.tsx"
         },
         {
@@ -5114,8 +5116,8 @@
       "examples": [
         {
           "name": "ProjectDetails",
-          "title": "Dialog",
-          "description": "A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal.",
+          "title": "Project details",
+          "description": "DialogClose is a button inside a dialog or a drawer that closes it, for actions other than the built-in close button, such as Don't save or Done.",
           "file": "docs/examples/dialog/ProjectDetails.tsx"
         },
         {
@@ -5223,8 +5225,8 @@
       "examples": [
         {
           "name": "FilterPanel",
-          "title": "Drawer",
-          "description": "A full-height panel that slides in from the start or end edge of the window, for filters, details, an inspector or a phone's navigation.",
+          "title": "Filter panel",
+          "description": "Here a drawer at the end edge holds the filters of a list, and a DialogClose shows the result and closes it. Its `side` is logical: `end`, the default, is the right edge in left-to-right text and the left in right-to-left text, and `start` the other. It shares Dialog's surface, title, description and actions, and DialogClose closes it as it closes a dialog.",
           "file": "docs/examples/drawer/FilterPanel.tsx"
         },
         {
@@ -5294,8 +5296,8 @@
       "examples": [
         {
           "name": "DeleteProject",
-          "title": "ConfirmDialog",
-          "description": "An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.",
+          "title": "Delete project",
+          "description": "ConfirmDialog asks one question before an action runs: a title that asks it, a description that says what confirming does, Cancel and a confirm button that names the consequence. It is an alert dialog, built on Base UI's alert dialog with Dialog's surface, heading and actions, so it interrupts: it traps focus and a press outside doesn't close it. `onConfirm` runs the action; when it returns a promise, the dialog waits for it, pending, and closes once it resolves.",
           "file": "docs/examples/confirm-dialog/DeleteProject.tsx"
         },
         {
@@ -5370,8 +5372,8 @@
       "examples": [
         {
           "name": "GoToDocument",
-          "title": "CommandPalette",
-          "description": "A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.",
+          "title": "Go to document",
+          "description": "Open it from a SearchTrigger: the trigger shows where search is, shows its shortcut, ⌘K or Ctrl+K, and presses itself when the shortcut is pressed, so its `onClick` is the one place that opens the palette. Closing the palette returns focus to the trigger.",
           "file": "docs/examples/command-palette/GoToDocument.tsx"
         },
         {
@@ -5480,8 +5482,8 @@
       "examples": [
         {
           "name": "AccountMenu",
-          "title": "Menu",
-          "description": "Actions, destinations and the shared organization switcher, opened from a trigger or a right click.",
+          "title": "Account menu",
+          "description": "The signed-in person's menu, with a header, the theme and the organizations, is AccountMenu, built from these parts.",
           "file": "docs/examples/menu/AccountMenu.tsx"
         },
         {
@@ -5602,8 +5604,8 @@
       "examples": [
         {
           "name": "NotesMenubar",
-          "title": "Menubar",
-          "description": "A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.",
+          "title": "Notes menubar",
+          "description": "- Menubar.Root is the row, named by `aria-label`. - Menubar.Menu is one trigger and its menu, holding Menu.Item, Menu.Submenu, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem and Menu.Separator.",
           "file": "docs/examples/menubar/NotesMenubar.tsx"
         },
         {
@@ -5670,8 +5672,8 @@
       "examples": [
         {
           "name": "IconActions",
-          "title": "Tooltip",
-          "description": "A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.",
+          "title": "Icon actions",
+          "description": "While it is open, a control with a name of its own is described by the tooltip, so assistive technology reads the tooltip after the name; a tooltip that only repeats the name adds nothing. Touch screens don't show tooltips, so the control's accessible name or the page says what matters.",
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
@@ -5759,8 +5761,8 @@
       "examples": [
         {
           "name": "DocumentDetails",
-          "title": "Popover",
-          "description": "A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.",
+          "title": "Document details",
+          "description": "A popover is a floating panel that opens beside its trigger, for details people ask for or a small form that changes something nearby. It moves focus into itself as it opens, and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it, so people return to what they were doing. Popover is built on Base UI's popover; it is not modal, so the rest of the page stays usable.",
           "file": "docs/examples/popover/DocumentDetails.tsx"
         },
         {
@@ -5840,8 +5842,8 @@
       "examples": [
         {
           "name": "DocumentPreview",
-          "title": "HoverCard",
-          "description": "A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.",
+          "title": "Document preview",
+          "description": "A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. It stays open while the pointer moves onto it, so its text can be read and selected. Focus stays on the trigger, and the card is not a dialog. HoverCard is built on Base UI's preview card.",
           "file": "docs/examples/hover-card/DocumentPreview.tsx"
         },
         {
@@ -5915,8 +5917,8 @@
       "examples": [
         {
           "name": "SeatsAssigned",
-          "title": "Meter",
-          "description": "A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.",
+          "title": "Seats assigned",
+          "description": "A meter shows a measurement within a known range as a labelled bar: the seats assigned of a plan, or the storage used of a quota. It is read-only, and assistive technology reads it as a meter named by its label, with its value and range. For how much of a task is done, use Progress, which shares its look.",
           "file": "docs/examples/meter/SeatsAssigned.tsx"
         },
         {
@@ -5993,8 +5995,8 @@
       "examples": [
         {
           "name": "UploadingFile",
-          "title": "Progress",
-          "description": "How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.",
+          "title": "Uploading file",
+          "description": "Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, AppShell's `loading` shows a bar along its topbar.",
           "file": "docs/examples/progress/UploadingFile.tsx"
         },
         {
@@ -6719,6 +6721,7 @@
         "Button",
         "Progress",
         "List",
+        "SegmentedControl",
         "TextField",
         "Stack",
         "Text"
@@ -6734,8 +6737,8 @@
       "examples": [
         {
           "name": "SkeletonList",
-          "title": "Loading",
-          "description": "Show that something is loading, in the place and shape of what is coming, without implying how long it takes.",
+          "title": "Skeleton list",
+          "description": "Here each team's projects load the first time it is chosen: skeletons in the shape of the rows stand in for them, once the load has taken 200 ms.",
           "file": "docs/examples/loading/SkeletonList.tsx"
         },
         {

@@ -12,6 +12,8 @@ export default function RefreshInPlace() {
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
   const refresh = () => {
+    // The button stays enabled, so focus stays on it; a press while refreshing does nothing.
+    if (refreshing) return;
     setRefreshing(true);
     // The activity loads from a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => setRefreshing(false), 1500);
@@ -20,13 +22,13 @@ export default function RefreshInPlace() {
     <Stack gap={4}>
       <Stack direction="row" align="center" justify="between" gap={4}>
         <Stack direction="row" align="center" gap={3}>
-          <Text render={<h3 />} variant="title">
+          <Text render={<h4 />} variant="title">
             Team activity
           </Text>
           {/* The activity shown stays while it refreshes; the spinner says it is updating. */}
           {refreshing && <Spinner size="sm" label="Refreshing activity" />}
         </Stack>
-        <Button variant="secondary" size="sm" disabled={refreshing} onClick={refresh}>
+        <Button variant="secondary" size="sm" onClick={refresh}>
           Refresh
         </Button>
       </Stack>

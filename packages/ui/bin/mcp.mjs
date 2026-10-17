@@ -235,7 +235,7 @@ function exampleOwner(manifest, name) {
   const ofPage = (kind, page) => ({
     name: page.name,
     kind,
-    examples: [...(page.files ?? []), ...page.examples],
+    examples: [...(page.files ?? []), ...(page.examples ?? [])],
   });
   for (const kind of ['pattern', 'template']) {
     const found = findPage(manifest, kind, name);
@@ -390,7 +390,11 @@ export function callTool(context, name, args = {}) {
         ? intents.find((item) => item.toLowerCase() === args.intent.trim().toLowerCase())
         : undefined;
       if (args.intent?.trim() && !intent)
-        throw new ToolError(`"intent" must be one of ${intents.join(', ')}.`);
+        throw new ToolError(
+          intents.length
+            ? `"intent" must be one of ${intents.join(', ')}.`
+            : 'This version of envUI has no patterns yet, so no intents to choose from. Try search or plan.',
+        );
       const patterns = manifest.patterns.filter((page) => !intent || page.intent === intent);
       return {
         intents,
@@ -418,7 +422,7 @@ export function callTool(context, name, args = {}) {
         if (args.docs) result[markdownContent] = readPackageFile(root, page.doc);
         return result;
       }
-      const files = [...(page.files ?? []), ...page.examples];
+      const files = [...(page.files ?? []), ...(page.examples ?? [])];
       const file = fileOf(files, requireString(args, 'file'));
       if (!file)
         throw new ToolError(
@@ -426,6 +430,7 @@ export function callTool(context, name, args = {}) {
         );
       const result = {
         template: page.name,
+        ...(requested && { requested }),
         name: file.name,
         title: file.title,
         description: file.description,
