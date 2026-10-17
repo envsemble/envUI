@@ -16,12 +16,15 @@ export default function ExplainATerm() {
             side="bottom"
             align="start"
             trigger={
-              <IconButton
-                variant="text"
-                size="sm"
-                icon={<Help />}
-                aria-label="About billable hours"
-              />
+              // The Tooltip names the icon-only trigger and passes the popover's props on to it.
+              <Tooltip content="About billable hours">
+                <IconButton
+                  variant="text"
+                  size="sm"
+                  icon={<Help />}
+                  aria-label="About billable hours"
+                />
+              </Tooltip>
             }
           >
             <Text>

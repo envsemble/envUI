@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, IconButton, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, IconButton, Menu, Stack, Text, Tooltip } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Edit } from '@envsemble/envui/icons/Edit';
@@ -26,7 +26,12 @@ export default function OverflowActions() {
           </Button>
           <Menu.Root
             aria-label="Launch brief actions"
-            trigger={<IconButton variant="ghost" icon={<MoreVert />} aria-label="More actions" />}
+            trigger={
+              // The Tooltip names the icon-only trigger and passes the menu's props on to it.
+              <Tooltip content="More actions">
+                <IconButton variant="ghost" icon={<MoreVert />} aria-label="More actions" />
+              </Tooltip>
+            }
           >
             {/* The application does each item's work; the example reports it in the status. */}
             <Menu.Item icon={<FileCopy />} onClick={() => setStatus('Launch brief duplicated.')}>

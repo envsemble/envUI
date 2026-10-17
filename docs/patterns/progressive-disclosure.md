@@ -133,7 +133,7 @@ A Disclosure's summary is a button in the tab order; Enter or Space opens it, an
 
 ### You provide
 
-- A name for every icon-only trigger, and a Tooltip with the same words where envUI doesn't show one.
+- A name for every icon-only trigger, and a Tooltip with the same words where envUI doesn't show one. A Tooltip can be the `trigger` of a Menu or Popover itself: it passes their props and ref on to the button, and stays closed while the menu or popover is open.
 - `aria-expanded` and `aria-controls` on a Show all button, which shows more of a list it controls.
 - Opening a Disclosure that holds an invalid field, and moving focus to the field.
 - A heading above a stack of Disclosures that needs a place in the outline.
