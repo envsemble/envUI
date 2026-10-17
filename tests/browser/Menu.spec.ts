@@ -478,10 +478,12 @@ test.describe('ContextMenu', () => {
     await field.focus();
     await page.keyboard.press('Shift+F10');
     await expect
-      .poll(cancelled)
-      .toEqual(['contextmenu false', 'contextmenu false', 'keydown false', 'contextmenu false']);
-    // Past the time a menu takes to mount, none has.
+      .poll(async () => (await cancelled())?.slice(0, 3))
+      .toEqual(['contextmenu false', 'contextmenu false', 'keydown false']);
+    // Past the time a menu takes to mount, none has, and the contextmenu event some browsers send
+    // after Shift+F10 was not cancelled either.
     await page.waitForTimeout(300);
+    expect((await cancelled())?.filter((entry) => entry.endsWith('true'))).toEqual([]);
     await expect(page.getByRole('menu')).toHaveCount(0);
   });
 
