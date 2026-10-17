@@ -283,6 +283,8 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
     handleKeyDown(event: KeyboardEvent<HTMLElement>, row: HTMLElement, label: string) {
       const isLift = event.key === ' ' || event.key === 'Enter';
       if (isLift) event.preventDefault();
+      // A row another handle lifted, which kept it lifted as focus moved here, goes back first.
+      if (move && move.handle !== event.currentTarget) cancel(true);
       if (!move) {
         if (!isLift || event.repeat) return;
         lift(row, event.currentTarget, label);
@@ -321,6 +323,7 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
       }
       const handle = event.currentTarget;
       handle.focus({ preventScroll: true });
+      if (move && move.handle !== handle) cancel(true);
       if (!move) lift(row, handle, label);
       else if (move.mode === 'keyboard' && move.row === row) drop();
     },
@@ -336,6 +339,20 @@ function createReorder(read: () => ReorderOptions, announce: (text: string) => v
           setTimeout(() => {
             pressingLifted = false;
           });
+          // Released off the handle, the press clicks nothing, and a browser that took focus from
+          // the handle as it was pressed would leave the row lifted with no handle to hear its keys:
+          // once the release and any click have run, the lifted row's handle has focus again.
+          const current = move;
+          const released = () => {
+            window.removeEventListener('pointerup', released, true);
+            window.removeEventListener('pointercancel', released, true);
+            setTimeout(() => {
+              if (move === current && document.activeElement !== current.handle)
+                current.handle.focus({ preventScroll: true });
+            });
+          };
+          window.addEventListener('pointerup', released, true);
+          window.addEventListener('pointercancel', released, true);
         }
         return;
       }
