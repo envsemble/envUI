@@ -553,6 +553,24 @@ for (const failure of ['missing', 'aborted'] as const) {
   });
 }
 
+test("in the hosted build, a template page's previews load in the site's own frames", async ({
+  page,
+}) => {
+  // The previews are iframes of the site's frame route, ?frame=, so the site's framing headers in
+  // _headers must allow its own origin: X-Frame-Options DENY left them blank.
+  requireSite();
+  await serveSite(page);
+  await page.goto(`${siteUrl}/templates/index-page`);
+  const frames = page.locator('iframe.docs-template-frame');
+  await expect(frames.first()).toBeVisible();
+  for (const frame of await frames.all()) {
+    await frame.scrollIntoViewIfNeeded();
+    await expect(
+      page.frameLocator(`iframe[title="${await frame.getAttribute('title')}"]`).locator('main'),
+    ).toBeVisible();
+  }
+});
+
 /**
  * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
  * the overview had not loaded failing, chosen by when it is asked for rather than by

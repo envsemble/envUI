@@ -12,8 +12,8 @@ export default function WithBreadcrumbs() {
         <Breadcrumbs
           wrap={false}
           items={[
-            { label: 'Workspace', href: '#workspace' },
-            { label: 'Projects', href: '#projects' },
+            { label: 'Workspace', href: '/workspace' },
+            { label: 'Projects', href: '/projects' },
             { label: 'Northwind launch' },
           ]}
         />

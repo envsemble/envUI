@@ -86,7 +86,7 @@ body {
 .docs-page-banner-title {
   max-inline-size: 22ch;
   font-size: clamp(1.875rem, calc(1.125rem + 4cqi), 3.5rem);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
   line-height: 1.1;
   letter-spacing: -0.035em;
   text-wrap: balance;

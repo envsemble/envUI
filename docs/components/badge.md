@@ -99,7 +99,7 @@ CounterBadge is `neutral`, a quiet fill with text in the primary color, or `acce
 <!-- specimen: VariantMatrix -->
 
 - A badge is about 1.3 rem tall, with 0.0625 rem block padding, 0.5 rem inline padding and 0.25 rem between the icon and the label. It is as wide as its content, at most its container's width, and lines up with the middle of the text beside it.
-- A CounterBadge and a DiffStat are 1.25 rem tall, with 0.375 rem inline padding; a CounterBadge is at least as wide as it is tall, so a single digit shows as a circle. DiffStat keeps 0.25 rem between its two numbers.
+- A CounterBadge and a DiffStat are 1.25 rem tall, 1 rem in the compact scale (`--env-counter-badge-height`), with 0.375 rem inline padding; a CounterBadge is at least as wide as it is tall, so a single digit shows as a circle. DiffStat keeps 0.25 rem between its two numbers.
 - Tone text keeps 4.5:1 contrast on the canvas, panes and rows in both themes, also over the soft tint.
 
 ## States and behaviour

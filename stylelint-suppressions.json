@@ -2,25 +2,16 @@
   "packages/ui/src/styles/AvatarGroup.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Badge.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 17
-    },
-    "envui/font-weight-from-token": {
-      "count": 3
+      "count": 11
     }
   },
   "packages/ui/src/styles/Breadcrumbs.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Button.css": {
@@ -36,12 +27,6 @@
   "packages/ui/src/styles/Calendar.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 5
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Card.css": {
@@ -70,20 +55,11 @@
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/CommandPalette.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 9
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Composer.css": {
@@ -118,7 +94,7 @@
   },
   "packages/ui/src/styles/DocumentTabs.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
+      "count": 8
     },
     "unit-disallowed-list": {
       "count": 1
@@ -127,9 +103,6 @@
   "packages/ui/src/styles/DropZone.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
     }
   },
   "packages/ui/src/styles/TextField.css": {
@@ -145,12 +118,6 @@
   "packages/ui/src/styles/CalendarHeatmap.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Icon.css": {
@@ -161,9 +128,6 @@
   "packages/ui/src/styles/Kbd.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 8
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Markdown.css": {
@@ -174,12 +138,6 @@
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 19
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Menubar.css": {
@@ -190,9 +148,6 @@
   "packages/ui/src/styles/Message.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/NavList.css": {
@@ -242,36 +197,21 @@
   "packages/ui/src/styles/Select.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Slider.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Stat.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     }
   },
   "packages/ui/src/styles/Table.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 20
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 3
     }
   },
   "packages/ui/src/styles/Tabs.css": {
@@ -282,9 +222,6 @@
   "packages/ui/src/styles/Text.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
-    },
-    "envui/font-weight-from-token": {
-      "count": 1
     },
     "unit-disallowed-list": {
       "count": 2
@@ -308,23 +245,8 @@
       "count": 2
     }
   },
-  "apps/catalogue/src/styles/Previews.css": {
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    }
-  },
   "apps/catalogue/src/styles/Reference.css": {
     "no-duplicate-selectors": {
-      "count": 1
-    }
-  },
-  "apps/catalogue/src/styles/Shell.css": {
-    "declaration-property-value-allowed-list": {
-      "count": 1
-    }
-  },
-  "packages/ui/src/styles/Avatar.css": {
-    "envui/font-weight-from-token": {
       "count": 1
     }
   },
@@ -350,9 +272,6 @@
   },
   "packages/ui/src/styles/Meter.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 1
-    },
-    "declaration-property-value-allowed-list": {
       "count": 1
     }
   },
@@ -384,9 +303,6 @@
   "packages/ui/src/styles/Prose.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
     }
   },
   "packages/ui/src/styles/Editor.css": {

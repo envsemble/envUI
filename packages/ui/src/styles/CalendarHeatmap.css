@@ -11,7 +11,7 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   color: var(--env-color-fg-muted);
-  font: 400 0.75rem / 1 var(--env-font-family);
+  font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
 }
 .env-calendar-heatmap[data-tone='neutral'] {
   --env-calendar-heatmap-tone: var(--env-color-fg-muted);
@@ -49,7 +49,7 @@
 .env-calendar-heatmap-weekday {
   color: var(--env-color-fg-muted);
   font: inherit;
-  font-weight: 400;
+  font-weight: var(--env-font-weight-regular);
   text-align: start;
   white-space: nowrap;
 }

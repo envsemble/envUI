@@ -15,7 +15,7 @@ export default function ViewControls() {
       <Toolbar.Button icon={<ZoomOut />} label="Zoom out" shortcut="Ctrl+-" />
       <Toolbar.Button icon={<ZoomIn />} label="Zoom in" shortcut="Ctrl+=" />
       <Toolbar.Separator />
-      <Toolbar.Link href="#diagram-help" icon={<Help />} label="Diagram help" />
+      <Toolbar.Link href="/help/diagrams" icon={<Help />} label="Diagram help" />
     </Surface>
   );
 }

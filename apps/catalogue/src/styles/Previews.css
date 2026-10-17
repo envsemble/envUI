@@ -76,7 +76,7 @@
 .docs-matrix th {
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
-  font-weight: 400;
+  font-weight: var(--env-font-weight-regular);
   padding: 0.5rem 0.75rem 1rem;
   white-space: nowrap;
 }

@@ -37,6 +37,10 @@
     "$type": "dimension",
     "header-height": { "$value": { "value": 2.625, "unit": "rem" } }
   },
+  "counter-badge": {
+    "$type": "dimension",
+    "height": { "$value": { "value": 1, "unit": "rem" } }
+  },
   "title-bar": {
     "$type": "dimension",
     "height": { "$value": { "value": 2, "unit": "rem" } }

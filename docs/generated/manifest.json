@@ -17542,10 +17542,10 @@
         "id": "color.bg.info.strong.hover",
         "cssVariable": "--env-color-bg-info-strong-hover",
         "type": "color",
-        "description": "A control on the information toast under the pointer.",
+        "description": "A control on the information toast under the pointer. Its white label keeps 4.5:1.",
         "values": {
-          "light": "#4177be",
-          "dark": "#4177be",
+          "light": "#376cb2",
+          "dark": "#376cb2",
           "light-high-contrast": "#003878",
           "dark-high-contrast": "#003878"
         }
@@ -17554,10 +17554,10 @@
         "id": "color.bg.info.strong.pressed",
         "cssVariable": "--env-color-bg-info-strong-pressed",
         "type": "color",
-        "description": "A control on the information toast while pressed.",
+        "description": "A control on the information toast while pressed. Its white label keeps 4.5:1.",
         "values": {
-          "light": "#578dd6",
-          "dark": "#578dd6",
+          "light": "#4177be",
+          "dark": "#4177be",
           "light-high-contrast": "#003068",
           "dark-high-contrast": "#003068"
         }
@@ -17942,10 +17942,10 @@
         "id": "color.bg.success.strong.hover",
         "cssVariable": "--env-color-bg-success-strong-hover",
         "type": "color",
-        "description": "A control on the success toast, its dismiss button, under the pointer.",
+        "description": "A control on the success toast, its dismiss button, under the pointer. Its white label keeps 4.5:1.",
         "values": {
-          "light": "#3b8266",
-          "dark": "#3b8266",
+          "light": "#2f775c",
+          "dark": "#2f775c",
           "light-high-contrast": "#00432e",
           "dark-high-contrast": "#00432e"
         }
@@ -17954,10 +17954,10 @@
         "id": "color.bg.success.strong.pressed",
         "cssVariable": "--env-color-bg-success-strong-pressed",
         "type": "color",
-        "description": "A control on the success toast while pressed. Its white icon keeps 3:1.",
+        "description": "A control on the success toast while pressed. Its white label keeps 4.5:1.",
         "values": {
-          "light": "#478d71",
-          "dark": "#478d71",
+          "light": "#3b8266",
+          "dark": "#3b8266",
           "light-high-contrast": "#003a28",
           "dark-high-contrast": "#003a28"
         }
@@ -18452,6 +18452,42 @@
         }
       },
       {
+        "id": "color.fg.link-on-tint",
+        "cssVariable": "--env-color-fg-link-on-tint",
+        "type": "color",
+        "description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
+        "values": {
+          "light": "#005cc8",
+          "dark": "#9fc1f8",
+          "light-high-contrast": "#00377c",
+          "dark-high-contrast": "#e0ebfd"
+        }
+      },
+      {
+        "id": "color.fg.link-on-tint.hover",
+        "cssVariable": "--env-color-fg-link-on-tint-hover",
+        "type": "color",
+        "description": "A link on a tint under the pointer.",
+        "values": {
+          "light": "#0053b5",
+          "dark": "#b5cffb",
+          "light-high-contrast": "#002f6d",
+          "dark-high-contrast": "#eaf2ff"
+        }
+      },
+      {
+        "id": "color.fg.link-on-tint.pressed",
+        "cssVariable": "--env-color-fg-link-on-tint-pressed",
+        "type": "color",
+        "description": "A link on a tint while pressed.",
+        "values": {
+          "light": "#004aa2",
+          "dark": "#cddefc",
+          "light-high-contrast": "#00275c",
+          "dark-high-contrast": "#f4f8ff"
+        }
+      },
+      {
         "id": "color.fg.link.hover",
         "cssVariable": "--env-color-fg-link-hover",
         "type": "color",
@@ -18539,7 +18575,7 @@
         "id": "color.fg.on-strong",
         "cssVariable": "--env-color-fg-on-strong",
         "type": "color",
-        "description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills at rest; icons and marks at 3:1 on their hover and pressed fills and on the brand’s strong fill.",
+        "description": "White in both themes, on the strong fills: labels at 4.5:1 on the danger, important, neutral, success and information fills, at rest, hovered and pressed; marks at 3:1 on the brand’s strong fill.",
         "value": "#ffffff"
       },
       {
@@ -18674,6 +18710,14 @@
         "type": "dimension",
         "description": "The smallest a pressable target may be in either dimension, in both scales: WCAG 2.2's 24 px minimum. A control smaller than its size, such as a segment inside a small rail or an action inside a small field, keeps at least this.",
         "value": "1.5rem"
+      },
+      {
+        "id": "counter-badge.height",
+        "cssVariable": "--env-counter-badge-height",
+        "type": "dimension",
+        "description": "The height, and the least width, of a counter badge and a diff stat.",
+        "value": "1.25rem",
+        "compact": "1rem"
       },
       {
         "id": "elevation.0.border",
@@ -18818,6 +18862,24 @@
         "description": "A label inside a field at the control height, such as a combobox chip's.",
         "value": "0.8125rem",
         "compact": "0.75rem"
+      },
+      {
+        "id": "font.weight.medium",
+        "cssVariable": "--env-font-weight-medium",
+        "type": "fontWeight",
+        "value": "500"
+      },
+      {
+        "id": "font.weight.regular",
+        "cssVariable": "--env-font-weight-regular",
+        "type": "fontWeight",
+        "value": "400"
+      },
+      {
+        "id": "font.weight.semibold",
+        "cssVariable": "--env-font-weight-semibold",
+        "type": "fontWeight",
+        "value": "600"
       },
       {
         "id": "icon.size-lg",

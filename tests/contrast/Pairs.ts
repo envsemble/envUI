@@ -202,6 +202,59 @@ export const pairs: readonly ContrastPair[] = merged([
   ),
   ...text('--env-color-fg-link-hover', [page, surface, muted]),
   ...text('--env-color-fg-link-pressed', [page, surface, muted]),
+  // Where a tint lowers the link blue below 4.5:1 in the light theme, links and text buttons take
+  // the link colors for a tint: alerts and rows under the pointer or pressed point fg.link at them,
+  // and applications put them on the brand's muted tint.
+  ...text(
+    '--env-color-fg-link-on-tint',
+    [
+      [layerHover, raised],
+      [layerHover, surface],
+      rowHover,
+      rowPressed,
+      ['--env-color-bg-brand-muted', page],
+      ['--env-color-bg-brand-muted', surface],
+    ],
+    'Links and text buttons in an interactive table row under the pointer or holding focus, in a list row under the pointer or pressed, and on the brand’s muted tint',
+  ),
+  ...text(
+    '--env-color-fg-link-on-tint-hover',
+    [
+      [layerHover, raised],
+      [layerHover, surface],
+      rowHover,
+      ['--env-color-bg-brand-muted', page],
+      ['--env-color-bg-brand-muted', surface],
+    ],
+    'A link under the pointer in a row under the pointer, and on the brand’s muted tint',
+  ),
+  ...text(
+    '--env-color-fg-link-on-tint-pressed',
+    [
+      [layerHover, raised],
+      [layerHover, surface],
+      rowPressed,
+      ['--env-color-bg-brand-muted', page],
+      ['--env-color-bg-brand-muted', surface],
+    ],
+    'A pressed link in a row, and on the brand’s muted tint',
+  ),
+  ...alertTones.flatMap((tone) =>
+    [
+      '--env-color-fg-link-on-tint',
+      '--env-color-fg-link-on-tint-hover',
+      '--env-color-fg-link-on-tint-pressed',
+    ].flatMap((link) =>
+      text(
+        link,
+        [
+          [`--env-color-bg-${tone}-muted`, page],
+          [`--env-color-bg-${tone}-muted`, surface],
+        ],
+        `Links and text buttons in an alert, tone="${tone === 'danger' ? 'error' : tone}", at rest, hovered and pressed`,
+      ),
+    ),
+  ),
   ...text(
     '--env-color-fg-muted-hover',
     [page, surface],
@@ -582,7 +635,7 @@ export const pairs: readonly ContrastPair[] = merged([
     ],
     'Toasts and tooltips, and the focus ring of a toast’s dismiss button',
   ),
-  ...nonText(
+  ...text(
     '--env-color-fg-on-strong',
     [
       '--env-color-bg-neutral-strong-hover',
@@ -592,7 +645,7 @@ export const pairs: readonly ContrastPair[] = merged([
       '--env-color-bg-info-strong-hover',
       '--env-color-bg-info-strong-pressed',
     ],
-    'A toast’s dismiss icon on hover and press; the error toast’s states are the destructive button’s, measured as text above',
+    'A toast’s dismiss icon, and a label on the toast’s fill, on hover and press, held to the text minimum as the toast’s message is; the error toast’s states are the destructive button’s, measured as text above',
   ),
 
   // Content.

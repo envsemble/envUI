@@ -30,8 +30,8 @@ import { Edit } from '@envsemble/envui/icons/Edit';
 import { FileCopy } from '@envsemble/envui/icons/FileCopy';
 import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 
-/** Dates in the reader's language; pass the application's locale where it sets one. */
-const day = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeZone: 'UTC' });
+/** Dates in the screen's language, English, as its text is; pass the application's locale. */
+const day = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
 
 /**
  * One object's page inside the app frame: where it sits, its name, status and actions, then its

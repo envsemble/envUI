@@ -37,7 +37,7 @@ import { Text, Stack } from '@envsemble/envui';
 
 ## Guidelines
 
-- Use Inter at regular (400) or medium (500) weight, with 1.4 line height. The preview orders styles by emphasis.
+- Use Inter at regular (400) or medium (500) weight, with 1.4 line height; semibold (600) only for the strongest emphasis in a small space, such as today in a calendar. Take weights from `--env-font-weight-regular`, `--env-font-weight-medium` and `--env-font-weight-semibold`, not literal numbers. The preview orders styles by emphasis.
 - Choose the semantic element separately from its visual style. Use actual headings for document structure.
 - Use display for a page hero or welcome: it scales from 1.75 to 2.75 rem with the viewport and balances its lines. Use at most one display text per view.
 - Text applies the shared scale and palette. Small body text (body-sm) and captions are small and muted. In 1.0, page-heading is headline, section-heading is title, supporting is body-sm, and `tone` is `emphasis` (primary is default, quiet is subtle); `as` is `render`.

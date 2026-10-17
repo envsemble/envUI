@@ -11,7 +11,7 @@
   border-radius: 50%;
   background: var(--env-color-avatar-bg);
   color: var(--env-color-avatar-fg);
-  font: 500 calc(var(--env-avatar-size) * 0.4) / 1 var(--env-font-family);
+  font: var(--env-font-weight-medium) calc(var(--env-avatar-size) * 0.4) / 1 var(--env-font-family);
   user-select: none;
   /* Hook: a container draws a ring around its avatars with --env-avatar-ring, a box-shadow, such
      as an avatar group's ring in the color of the surface below. */
@@ -28,6 +28,12 @@
 }
 .env-avatar-fallback {
   display: contents;
+}
+/* Hook: a container that covers the end of an avatar, such as an avatar group, sets
+   --env-avatar-initials-inset-end to that width, so initials center in the part left uncovered. */
+.env-avatar:has(> .env-avatar-fallback-initials) {
+  box-sizing: border-box;
+  padding-inline-end: var(--env-avatar-initials-inset-end, 0);
 }
 .env-avatar:has(.env-avatar-fallback-person) {
   background: none;

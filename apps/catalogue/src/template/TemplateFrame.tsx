@@ -145,7 +145,9 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
   const Frame = found?.block.frame === 'app' ? screenOf(appFrame.page, appFrame.name) : undefined;
   return (
     <Theme theme={theme} scale={scale} contrast="standard" data-template-frame={`${page}/${name}`}>
-      <EnvUIProvider dir={dir}>
+      {/* The screens are written in English, so relative times and numbers are formatted in English
+          too, rather than in the reader's locale, as an application's root sets its own. */}
+      <EnvUIProvider locale="en-US" dir={dir}>
         {/* The application's root providers, which templates use and never bring: the theme
             preference (the account menu's theme submenu, a settings page's theme choice), toasts
             and the router's links. */}

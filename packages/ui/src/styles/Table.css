@@ -65,7 +65,7 @@
     var(--env-table-surface);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
   white-space: nowrap;
 }
 .env-table-region[data-sticky-header] .env-table-head .env-table-header-cell {
@@ -81,7 +81,7 @@
   background: transparent;
   color: var(--env-color-fg-default);
   font: inherit;
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
   white-space: normal;
 }
 .env-table :is(.env-table-cell, .env-table-header-cell)[data-align='end'] {
@@ -103,6 +103,14 @@
 }
 .env-table-row[data-interactive]:is(:hover, :focus-within) {
   background: var(--env-color-bg-neutral-subtle-hover);
+}
+/* Links and text buttons in an unselected row under the pointer or holding focus take the link
+   colors for a tint: the link blue falls below 4.5:1 on the hover fill over the default surface in
+   the light theme. A selected row keeps the selection's text color, below. */
+.env-table-row[data-interactive]:not([aria-selected='true']):is(:hover, :focus-within) {
+  --env-color-fg-link: var(--env-color-fg-link-on-tint);
+  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
 }
 /* Selected rows take the navigation selection, with a bar at the start of the row. Links and text
    buttons in them take the selection's text color at rest, on hover and on press, also while the row
@@ -341,7 +349,7 @@
 .env-table-region[data-stacked] .env-table-body > .env-table-row > :first-child {
   margin-block-end: var(--env-space-1);
   color: var(--env-color-fg-default);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-table-region[data-stacked] .env-table-cell[data-labelled] {
   display: grid;

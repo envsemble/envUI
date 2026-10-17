@@ -33,7 +33,7 @@
 }
 .env-message-author {
   color: var(--env-color-fg-default);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-message-meta {
   color: var(--env-color-fg-muted);

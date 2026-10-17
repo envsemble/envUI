@@ -1,9 +1,11 @@
 /* Avatar groups: overlapping avatars, later ones over earlier ones, each ringed in the color of the
    surface below so neighbours stay apart. The ring follows the envUI surface the group sits on, or
-   the canvas; --env-avatar-group-ring sets it for any other surface, such as a row. */
+   the canvas; --env-avatar-group-ring sets it for any other surface, such as a row. Each avatar
+   covers an eighth of the one before, and initials center in what it leaves, so they stay clear of
+   the next avatar and its ring. */
 .env-avatar-group {
   --env-avatar-group-size: 2rem;
-  --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 4);
+  --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 8);
   --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
   --env-avatar-group-ring-color: var(
     --env-avatar-group-ring,
@@ -32,6 +34,13 @@
 }
 .env-avatar-group > * + * {
   margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
+}
+/* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
+   through Avatar's hook. */
+.env-avatar-group > :not(:last-child) {
+  --env-avatar-initials-inset-end: calc(
+    var(--env-avatar-group-overlap) + var(--env-avatar-group-ring-width)
+  );
 }
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
 .env-avatar-group-item {
@@ -85,7 +94,8 @@
   background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
     var(--env-avatar-group-ring-color);
   color: var(--env-color-fg-default);
-  font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--env-font-family);
+  font: var(--env-font-weight-medium) max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1
+    var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: default;
@@ -103,7 +113,7 @@
     --env-avatar-group-overlap: clamp(
       0rem,
       calc(var(--env-avatar-group-size) - var(--env-control-height-touch)),
-      calc(var(--env-avatar-group-size) / 4)
+      calc(var(--env-avatar-group-size) / 8)
     );
   }
   .env-avatar-group-item {

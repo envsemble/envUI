@@ -23,7 +23,7 @@
   border-radius: 100vmax;
   background: var(--env-badge-bg, var(--env-badge-tint));
   color: var(--env-badge-fg, var(--env-badge-tone));
-  font: 500 0.75rem / 1.4 var(--env-font-family);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.4 var(--env-font-family);
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -75,13 +75,13 @@
   text-overflow: ellipsis;
 }
 
-/* Counter badges: a compact count in a rounded fill. */
+/* Counter badges: a compact count in a rounded fill, a size smaller in the compact scale. */
 .env-counter-badge {
   box-sizing: border-box;
   position: relative;
   flex: 0 0 auto;
-  min-inline-size: 1.25rem;
-  block-size: 1.25rem;
+  min-inline-size: var(--env-counter-badge-height);
+  block-size: var(--env-counter-badge-height);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -90,7 +90,7 @@
   border-radius: 100vmax;
   background: var(--env-counter-badge-bg, var(--env-color-bg-neutral-muted));
   color: var(--env-counter-badge-fg, var(--env-color-fg-default));
-  font: 500 0.75rem / 1 var(--env-font-family);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;
@@ -104,7 +104,7 @@
   box-sizing: border-box;
   position: relative;
   flex: 0 0 auto;
-  block-size: 1.25rem;
+  block-size: var(--env-counter-badge-height);
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -112,7 +112,7 @@
   border: var(--env-diff-stat-border, none);
   border-radius: 100vmax;
   background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
-  font: 500 0.75rem / 1 var(--env-font-family);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;

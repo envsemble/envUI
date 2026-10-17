@@ -20,11 +20,18 @@
       "body": { "$value": { "value": 0.9375, "unit": "rem" } },
       "heading-small": { "$value": { "value": 1, "unit": "rem" } },
       "heading": { "$value": { "value": 1.125, "unit": "rem" } }
+    },
+    "weight": {
+      "$type": "fontWeight",
+      "$description": "The font weights: regular for body text, medium for headings, labels that lead and emphasis in a row, semibold for the strongest emphasis in a small space, such as today in a calendar. The same in every scale.",
+      "regular": { "$value": 400 },
+      "medium": { "$value": 500 },
+      "semibold": { "$value": 600 }
     }
   },
   "body": {
     "$type": "fontWeight",
-    "font-weight": { "$value": 400 }
+    "font-weight": { "$value": "{font.weight.regular}" }
   },
   "type": {
     "$type": "typography",
@@ -34,7 +41,7 @@
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.heading}",
-        "fontWeight": 500,
+        "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
@@ -44,7 +51,7 @@
       "$value": {
         "fontFamily": "{font.family}",
         "fontSize": "{font.size.heading-small}",
-        "fontWeight": 500,
+        "fontWeight": "{font.weight.medium}",
         "letterSpacing": { "value": 0, "unit": "rem" },
         "lineHeight": 1.4
       }
