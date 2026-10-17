@@ -1,7 +1,7 @@
 'use client';
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
-import type { CSSProperties, Ref } from 'react';
+import { useId, type CSSProperties, type Ref } from 'react';
 import { Button } from '../actions/Button.js';
 import { Add } from '../icons/Add.js';
 import { Groups3 } from '../icons/Groups3.js';
@@ -85,6 +85,7 @@ export function OrganizationSwitcher({
   style,
 }: OrganizationSwitcherProps) {
   const messages = useMessages('organizationSwitcher', organizationSwitcher);
+  const headingId = useId();
   const createText = createLabel ?? messages.create;
   if (items.length === 0) {
     return onCreate ? (
@@ -125,9 +126,12 @@ export function OrganizationSwitcher({
         <DecorativeIcon>
           <Groups3 />
         </DecorativeIcon>
-        <span className="env-organization-switcher-heading">{heading ?? messages.heading}</span>
+        <span className="env-organization-switcher-heading" id={headingId}>
+          {heading ?? messages.heading}
+        </span>
       </div>
       <Menu.RadioGroup
+        aria-labelledby={headingId}
         className="env-organization-switcher-options"
         value={current?.id ?? null}
         onValueChange={(next) => {

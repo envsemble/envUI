@@ -317,6 +317,8 @@ test('Menu supports keyboard navigation, actions and routed destinations', async
   await expect(link).toHaveAttribute('data-router-link', '');
   await link.click();
   await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/account');
+  // Its onClick runs too, such as to record the choice.
+  await expect(page.getByTestId('menu-action')).toHaveText('Followed account settings');
   expect(errors).toEqual([]);
 });
 
@@ -486,6 +488,8 @@ test('OrganizationSwitcher switches organizations and offers creating one', asyn
   await trigger.click();
   const menu = page.getByRole('menu', { name: 'Organizations', exact: true });
   await expect(menu).toContainText('Organizations');
+  // The heading names the group of organizations.
+  await expect(menu.getByRole('group', { name: 'Organizations', exact: true })).toBeVisible();
   await expect(menu.getByRole('menuitemradio', { name: 'Northwind Labs' })).toHaveAttribute(
     'aria-checked',
     'true',

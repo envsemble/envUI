@@ -211,7 +211,11 @@ export type ItemProps = ItemSharedProps &
          * menu closes as it is followed.
          */
         href: string;
-        onClick?: never;
+        /**
+         * Runs as the destination is followed, before the menu closes, such as to record the
+         * choice; the link still navigates.
+         */
+        onClick?: () => void;
         /** Where the destination opens, such as _blank, as on a native link. */
         target?: string;
         /** The destination's relationship to the page, such as noopener, as on a native link. */
@@ -259,6 +263,7 @@ function Item({
       <BaseMenu.LinkItem
         className={itemClassName}
         closeOnClick
+        onClick={props.onClick}
         // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
@@ -421,14 +426,24 @@ export interface RadioGroupProps {
   children: ReactNode;
   /** Optional heading; the group is then labelled like Menu.Group. */
   label?: ReactNode;
+  /** Id of a heading elsewhere in the menu that names the group, in place of label. */
+  'aria-labelledby'?: string;
   /** Class of the group. */
   className?: string;
 }
 
 /** One choice among several items; the checked item shows a check mark. */
-function RadioGroup({ value, onValueChange, children, label, className }: RadioGroupProps) {
+function RadioGroup({
+  value,
+  onValueChange,
+  children,
+  label,
+  'aria-labelledby': labelledBy,
+  className,
+}: RadioGroupProps) {
   return (
     <BaseMenu.RadioGroup
+      aria-labelledby={labelledBy}
       className={classNames('env-menu-group', className)}
       value={value}
       onValueChange={(next: string) => onValueChange(next)}

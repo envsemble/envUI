@@ -9351,7 +9351,7 @@
           "name": "onClick",
           "type": "() => void",
           "required": false,
-          "description": "The action, run when the item is chosen; the menu then closes."
+          "description": "Runs as the destination is followed, before the menu closes, such as to record the choice; the link still navigates."
         },
         {
           "name": "target",
@@ -9398,6 +9398,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "Optional heading; the group is then labelled like Menu.Group."
+        },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
         },
         {
           "name": "className",
