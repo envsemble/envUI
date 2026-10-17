@@ -8,7 +8,7 @@ test.describe('Tooltip', () => {
     page,
   }) => {
     await page.goto(tooltips);
-    const archive = page.getByRole('button', { name: 'Archive' });
+    const archive = page.getByRole('button', { name: 'Archive', exact: true });
     await expect(archive).not.toHaveAttribute('aria-describedby');
     await archive.hover();
     const tooltip = page.getByRole('tooltip');
@@ -17,6 +17,14 @@ test.describe('Tooltip', () => {
     await page.mouse.move(1, 1);
     await expect(tooltip).toHaveCount(0);
     await expect(archive).not.toHaveAttribute('aria-describedby');
+
+    // A control named by mixed content counts as named, read from the page as the tooltip opens.
+    const archiveAll = page.getByRole('button', { name: 'Archive A', exact: true });
+    await archiveAll.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Moves every item out of the list');
+    await expect(archiveAll).toHaveAccessibleDescription('Moves every item out of the list');
+    await page.mouse.move(1, 1);
+    await expect(page.getByRole('tooltip')).toHaveCount(0);
 
     const remove = page.getByRole('button', { name: 'Delete' });
     await remove.hover();
@@ -39,6 +47,12 @@ test.describe('Tooltip', () => {
     await expect(invite).toHaveAccessibleDescription('No seats left');
     await page.keyboard.press('Escape');
     await expect(page.getByRole('tooltip')).toHaveCount(0);
+
+    // The wrapper takes the role of what it wraps, such as a link.
+    const billing = page.getByRole('link', { name: 'Billing' });
+    await expect(billing).toHaveCount(1);
+    await expect(billing).toHaveClass('env-tooltip-disabled-target');
+    await expect(billing).toHaveAttribute('aria-disabled', 'true');
 
     // Enabled, the control itself is the trigger again.
     await page.getByRole('button', { name: 'Toggle seats' }).click();

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, IconButton, Kbd, Popover, Text, Tooltip } from '@envsemble/envui';
+import { Button, IconButton, Kbd, Link, Popover, Text, Tooltip } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -22,6 +22,18 @@ export function TooltipsFixture() {
       <Button variant="secondary" onClick={() => setSeats((current) => !current)}>
         Toggle seats
       </Button>
+      {/* Named by mixed content, which the props alone don't give as text. */}
+      <Tooltip content="Moves every item out of the list" delay={0}>
+        <Button variant="secondary">
+          Archive <Kbd>A</Kbd>
+        </Button>
+      </Tooltip>
+      {/* A disabled link: its wrapper stands in as a link. */}
+      <Tooltip content="Only owners open billing" delay={0}>
+        <Link href="/billing" disabled>
+          Billing
+        </Link>
+      </Tooltip>
       <Tooltip
         delay={0}
         data-testid="shortcut-tooltip"

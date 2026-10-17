@@ -4,6 +4,7 @@ import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   cloneElement,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -50,12 +51,56 @@ export interface TooltipProps
   delay?: number;
 }
 
-/** The control's own accessible name, where its props give one as text. */
+/** The control's own accessible name, where its props give one as text: a first guess. */
 function ownName(props: TriggerProps): string | undefined {
   if (props['aria-label']) return props['aria-label'];
   if (typeof props.label === 'string') return props.label;
   if (typeof props.children === 'string' || typeof props.children === 'number')
     return String(props.children);
+  return undefined;
+}
+
+/**
+ * An element's accessible name as the page has it: its aria-labelledby text, its aria-label, its
+ * labels, or its text. Enough to tell whether a control is named, and by what words.
+ */
+function accessibleName(element: Element | null | undefined): string | undefined {
+  if (!element) return undefined;
+  const clean = (text: string | null | undefined) => text?.replace(/\s+/g, ' ').trim() || undefined;
+  const labelledBy = element.getAttribute('aria-labelledby');
+  if (labelledBy) {
+    const text = clean(
+      labelledBy
+        .split(/\s+/)
+        .map((id) => element.ownerDocument.getElementById(id)?.textContent ?? '')
+        .join(' '),
+    );
+    if (text) return text;
+  }
+  const label = clean(element.getAttribute('aria-label'));
+  if (label) return label;
+  const labels = (element as HTMLInputElement).labels;
+  if (labels?.length) return clean(Array.from(labels, (each) => each.textContent).join(' '));
+  return clean(element.textContent);
+}
+
+/** The role a control has: its role attribute, else its element's, for the common controls. */
+function roleOf(element: Element | null | undefined): string | undefined {
+  if (!element) return undefined;
+  const role = element.getAttribute('role');
+  if (role) return role.split(/\s+/)[0];
+  const tag = element.tagName.toLowerCase();
+  if (tag === 'button') return 'button';
+  if (tag === 'a' || tag === 'area') return 'link';
+  if (tag === 'select') return 'combobox';
+  if (tag === 'textarea') return 'textbox';
+  if (tag === 'input') {
+    const type = (element as HTMLInputElement).type;
+    if (type === 'checkbox' || type === 'radio') return type;
+    if (type === 'range') return 'slider';
+    if (['button', 'submit', 'reset', 'image'].includes(type)) return 'button';
+    return 'textbox';
+  }
   return undefined;
 }
 
@@ -77,12 +122,27 @@ export function Tooltip({
   const [open, setOpen] = useState(false);
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const name = ownName(trigger);
-  const named = name !== undefined || Boolean(trigger['aria-labelledby']);
+  // The trigger's name, read from the page as the tooltip opens, so a control named by its
+  // content, such as a Toolbar.Button or a button with an icon and text, counts as named.
+  const [name, setName] = useState(() => ownName(trigger));
+  // A disabled control's wrapper stands in for it: the control's name and role, read once it is
+  // in the page.
+  const [stand, setStand] = useState<{ name?: string; role?: string }>({});
+  useLayoutEffect(() => {
+    if (!isDisabled) return;
+    const control = triggerRef.current?.firstElementChild;
+    const next = { name: accessibleName(control) ?? ownName(trigger), role: roleOf(control) };
+    setStand((current) =>
+      current.name === next.name && current.role === next.role ? current : next,
+    );
+  }, [isDisabled, trigger]);
+  const standsIn = isDisabled && stand.name !== undefined && stand.role !== undefined;
+  const ownWords = isDisabled ? stand.name : name;
   // A control named by the same words needs no description that repeats them.
-  const describes = named && !(typeof content === 'string' && content === name);
+  const describes =
+    ownWords !== undefined && !(typeof content === 'string' && content.trim() === ownWords);
   const describedBy =
-    open && describes
+    open && describes && (!isDisabled || standsIn)
       ? [trigger['aria-describedby'], popupId].filter(Boolean).join(' ')
       : trigger['aria-describedby'];
   return (
@@ -92,7 +152,10 @@ export function Tooltip({
       <BaseTooltip.Root
         key={isDisabled ? 'disabled' : 'enabled'}
         open={open}
-        onOpenChange={(next) => setOpen(next)}
+        onOpenChange={(next) => {
+          if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
+          setOpen(next);
+        }}
       >
         <BaseTooltip.Trigger
           ref={triggerRef}
@@ -101,14 +164,14 @@ export function Tooltip({
           render={
             isDisabled ? (
               // Disabled controls receive no pointer or focus events, so the wrapper carries them.
-              // It takes the control's place for assistive technology: its name, disabled, and a
-              // tab stop only where it has a name to announce.
+              // It takes the control's place for assistive technology, with its role and name,
+              // disabled, and a tab stop, where it can read both.
               <span
                 className="env-tooltip-disabled-target"
-                role={name === undefined ? undefined : 'button'}
-                aria-label={name}
-                aria-disabled={name === undefined ? undefined : true}
-                tabIndex={name === undefined ? undefined : 0}
+                role={standsIn ? stand.role : undefined}
+                aria-label={standsIn ? stand.name : undefined}
+                aria-disabled={standsIn || undefined}
+                tabIndex={standsIn ? 0 : undefined}
               />
             ) : (
               children
@@ -116,7 +179,7 @@ export function Tooltip({
           }
         >
           {isDisabled
-            ? cloneElement(children, name === undefined ? {} : ({ 'aria-hidden': true } as object))
+            ? cloneElement(children, standsIn ? ({ 'aria-hidden': true } as object) : {})
             : undefined}
         </BaseTooltip.Trigger>
         <TooltipPopup
