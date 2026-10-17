@@ -16,6 +16,7 @@
 @import './ResizeHandle.css' layer(env.components);
 @import './ThemeToggle.css' layer(env.components);
 @import './Button.css' layer(env.components);
+@import './SearchTrigger.css' layer(env.components);
 @import './ButtonGroup.css' layer(env.components);
 @import './Toolbar.css' layer(env.components);
 @import './CopyButton.css' layer(env.components);
@@ -40,6 +41,10 @@
 @import './Pager.css' layer(env.components);
 @import './Tabs.css' layer(env.components);
 @import './Layout.css' layer(env.components);
+@import './Page.css' layer(env.components);
+@import './PageHeader.css' layer(env.components);
+@import './SplitPane.css' layer(env.components);
+@import './ListDetail.css' layer(env.components);
 @import './Checkbox.css' layer(env.components);
 @import './Switch.css' layer(env.components);
 @import './Radio.css' layer(env.components);
@@ -68,16 +73,19 @@
 @import './Rating.css' layer(env.components);
 @import './ColorSwatch.css' layer(env.components);
 @import './Menu.css' layer(env.components);
+@import './AccountMenu.css' layer(env.components);
 @import './Menubar.css' layer(env.components);
 @import './Tree.css' layer(env.components);
 @import './DocumentTabs.css' layer(env.components);
 @import './CommandPalette.css' layer(env.components);
 @import './TitleBar.css' layer(env.components);
 @import './AppShell.css' layer(env.components);
+@import './Sidebar.css' layer(env.components);
 @import './PanelDock.css' layer(env.components);
 @import './Composer.css' layer(env.components);
 @import './Message.css' layer(env.components);
 @import './Stat.css' layer(env.components);
+@import './DescriptionList.css' layer(env.components);
 @import './CalendarHeatmap.css' layer(env.components);
 @import './Motion.css' layer(env.components);
 /* envUI's own Inter. Cascade layers order style rules; a font face is no style rule, so it stays
