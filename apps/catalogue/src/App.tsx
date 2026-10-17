@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  NavList,
-  IconButton,
-  Button,
-  Stack,
+  AppShell,
   Link,
   LinkProvider,
+  NavList,
+  SearchTrigger,
+  SidebarTrigger,
+  Stack,
   ThemeToggle,
-  Drawer,
 } from '@envsemble/envui';
 import { EnvUILogo } from './brand/EnvUILogo';
-import { Menu } from '@envsemble/envui/icons/Menu';
-import { Search } from '@envsemble/envui/icons/Search';
 import {
   findReferencePage,
   findStandalonePage,
@@ -23,19 +21,20 @@ import { StandalonePageContent } from './pages/StandalonePages';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
 import { Overview } from './pages/Overview';
-import { Sidebar } from './navigation/Sidebar';
+import { DocumentationSidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
-import { homeRoute, revealSection, routeHref } from './navigation/Address';
-import { isSearchShortcut, searchKeyShortcuts } from './search/SearchShortcut';
+import { homeRoute, routeHref, revealSection } from './navigation/Address';
+import { isSearchShortcut } from './search/SearchShortcut';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
 import { DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
+/** Where the frame remembers whether the reader keeps the navigation docked or as a rail. */
+const frameStorageKey = 'envui-catalogue-frame';
+
 function Catalogue() {
   const route = useDocumentationRoute();
-  const [navigationOpen, setNavigationOpen] = useState(false);
-  const [focusContentOnClose, setFocusContentOnClose] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
@@ -53,26 +52,18 @@ function Catalogue() {
   const contentPath = page?.path ?? standalone?.path ?? root;
   const contentRoute = `${contentPath}${search ? `?${search}` : ''}`;
   useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 48rem)');
-    const closeOnDesktop = () => {
-      if (desktop.matches) {
-        setFocusContentOnClose(true);
-        setNavigationOpen(false);
-      }
-    };
-    desktop.addEventListener('change', closeOnDesktop);
-    return () => desktop.removeEventListener('change', closeOnDesktop);
-  }, []);
-  useEffect(() => {
-    // An editor that handles the keys itself, such as for a link, keeps them.
+    if (!searchOpen) return;
+    // The search triggers press themselves on ⌘K. While search is open they are behind it, so the
+    // shortcut closes it here; an editor that handles the keys itself, such as for a link, keeps
+    // them.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || !isSearchShortcut(event)) return;
       event.preventDefault();
-      setSearchOpen((open) => !open);
+      setSearchOpen(false);
     };
     addEventListener('keydown', onKeyDown);
     return () => removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [searchOpen]);
   useEffect(() => {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     // Moving between a page's views keeps focus on its tabs, where the reader is.
@@ -82,10 +73,7 @@ function Catalogue() {
     if (section) return revealSection(section);
     window.scrollTo({ top: 0 });
   }, [contentRoute, title]);
-  const openSearch = () => {
-    setNavigationOpen(false);
-    setSearchOpen(true);
-  };
+  const openSearch = () => setSearchOpen(true);
   let content: ReactNode;
   if (page) content = <ReferenceContent key={page.path} page={page} view={view} search={search} />;
   else if (standalone) content = <StandalonePageContent key={standalone.path} page={standalone} />;
@@ -97,94 +85,52 @@ function Catalogue() {
       </Stack>
     );
   return (
-    <>
-      <Button
-        variant="outline"
-        className="docs-skip"
-        href="#docs-main"
-        onClick={(e) => {
-          e.preventDefault();
-          mainElement.current?.focus();
-        }}
-      >
-        Skip to content
-      </Button>
-      <ThemeToggle className="docs-theme-toggle" />
-      <header className="docs-mobile-header">
-        <Link
-          href={routeHref(homeRoute)}
-          underline={false}
-          className="docs-mobile-brand"
-          aria-label="envUI overview"
-        >
-          <EnvUILogo />
-        </Link>
-        <Stack
-          direction="row"
-          wrap
-          align="center"
-          gap={4}
-          justify="end"
-          className="docs-mobile-actions"
-        >
-          <IconButton
-            variant="secondary"
-            icon={<Search />}
-            aria-label="Search"
-            aria-keyshortcuts={searchKeyShortcuts}
-            title="Search"
-            onClick={openSearch}
-          />
-          <Drawer
-            open={navigationOpen}
-            onOpenChange={(open) => {
-              if (open) setFocusContentOnClose(false);
-              setNavigationOpen(open);
-            }}
-            title="Documentation"
-            finalFocus={focusContentOnClose ? mainElement : undefined}
-            trigger={
-              <Button variant="secondary" startIcon={<Menu />}>
-                Open navigation
-              </Button>
-            }
-          >
-            <Sidebar
-              routePath={routePath}
-              page={page}
-              panel
-              onSearch={openSearch}
-              onNavigate={() => {
-                setFocusContentOnClose(true);
-                setNavigationOpen(false);
-              }}
-            />
-          </Drawer>
-        </Stack>
-      </header>
-      <div className="docs-shell">
-        <Sidebar routePath={routePath} page={page} onSearch={openSearch} />
-        <main id="docs-main" ref={mainElement} tabIndex={-1} className="docs-main">
-          <PageBoundary title={title} route={route}>
-            {!isOverview && !page && !standalone && <PageHeader title={title} breadcrumb="envUI" />}
-            {content}
-          </PageBoundary>
-          <PageNavigation
-            path={contentPath}
-            // The guides of Get started lead on to the guidance of the other pages, as its view does.
-            view={
-              (isOverview && overviewView === 'get-started') ||
-              standalone?.section === 'Get started'
-                ? 'usage'
-                : isOverview
-                  ? 'preview'
-                  : view
-            }
-          />
-        </main>
-      </div>
+    <AppShell.Root persist={frameStorageKey} className="docs-frame">
+      <AppShell.SkipLinks />
+      {/* A phone's top bar: the navigation's drawer, the overview, search and the theme. */}
+      <AppShell.Header
+        mobileOnly
+        className="docs-header"
+        start={
+          <>
+            <SidebarTrigger />
+            <Link
+              href={routeHref(homeRoute)}
+              underline={false}
+              className="docs-header-brand"
+              aria-label="envUI overview"
+            >
+              <EnvUILogo />
+            </Link>
+          </>
+        }
+        end={
+          <>
+            <SearchTrigger iconOnly onClick={openSearch} />
+            <ThemeToggle variant="ghost" />
+          </>
+        }
+      />
+      <DocumentationSidebar routePath={routePath} page={page} onSearch={openSearch} />
+      <AppShell.Main id="docs-main" ref={mainElement} className="docs-main">
+        <PageBoundary title={title} route={route}>
+          {!isOverview && !page && !standalone && <PageHeader title={title} breadcrumb="envUI" />}
+          {content}
+        </PageBoundary>
+        <PageNavigation
+          path={contentPath}
+          // The guides of Get started lead on to the guidance of the other pages, as its view does.
+          view={
+            (isOverview && overviewView === 'get-started') || standalone?.section === 'Get started'
+              ? 'usage'
+              : isOverview
+                ? 'preview'
+                : view
+          }
+        />
+      </AppShell.Main>
       <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
-    </>
+    </AppShell.Root>
   );
 }
 
