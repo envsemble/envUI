@@ -1,6 +1,5 @@
 ---
 '@envsemble/envui': major
-'@envsemble/envui-codemods': minor
 ---
 
 TitleBar and WindowFrame are one namespace, `WindowFrame`, with three parts:
@@ -10,4 +9,4 @@ TitleBar and WindowFrame are one namespace, `WindowFrame`, with three parts:
 - `WindowFrame.Content` holds the content below the title bar; its `ref` is the scrolling element, which 0.x's `scrollRef` gave.
 - The classes follow: `env-title-bar` is `env-window-frame-title-bar`, with its parts `-layout`, `-start`, `-center` and `-end`, and the custom properties `--env-title-bar-start` and `--env-title-bar-end` are `--env-window-frame-title-bar-start` and `-end`. `--env-title-bar-height` keeps its name.
 
-The codemods cover it: `v1-names` renames `TitleBar` to `WindowFrame.TitleBar` and `<WindowFrame>` to `<WindowFrame.Root>`; `v1-structure` makes the `titleBar` prop the first child and wraps the children in `WindowFrame.Content`, which takes `scrollRef` as its `ref`; `v1-classes` renames the classes and custom properties. `v1-structure` also learned to lift a prop into the children, wrap the children in a part and match a prop of any value, which the WindowFrame rule uses.
+The codemods cover it: `v1-names` renames `TitleBar` to `WindowFrame.TitleBar` and `<WindowFrame>` to `<WindowFrame.Root>`; `v1-structure` makes the `titleBar` prop the first child and wraps the children in `WindowFrame.Content`, which takes `scrollRef` as its `ref`; `v1-classes` renames the classes and custom properties.
