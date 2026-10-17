@@ -65,19 +65,19 @@ test.describe('Tooltip', () => {
     page,
   }) => {
     await page.goto(tooltips);
-    // No wrapper takes a role that needs a state it lacks, such as a checkbox without aria-checked.
-    const roles = await page
-      .locator('.env-tooltip-disabled-target')
-      .evaluateAll((wrappers) => wrappers.map((wrapper) => wrapper.getAttribute('role')));
-    expect(roles.length).toBeGreaterThan(0);
-    for (const role of roles) expect([null, 'button', 'link', 'tab', 'menuitem']).toContain(role);
-
     // A disabled toggle's wrapper stands in as the button, pressed, and follows its state.
     const pin = page.getByRole('button', { name: 'Pin', exact: true });
     await expect(pin).toHaveCount(1);
     await expect(pin).toHaveClass('env-tooltip-disabled-target');
     await expect(pin).toHaveAttribute('aria-disabled', 'true');
     await expect(pin).toHaveAttribute('aria-pressed', 'true');
+    // With the wrappers rendered, none takes a role that needs a state it lacks, such as a
+    // checkbox without aria-checked.
+    const roles = await page
+      .locator('.env-tooltip-disabled-target')
+      .evaluateAll((wrappers) => wrappers.map((wrapper) => wrapper.getAttribute('role')));
+    expect(roles.length).toBeGreaterThan(0);
+    for (const role of roles) expect([null, 'button', 'link', 'tab', 'menuitem']).toContain(role);
     await page.getByRole('button', { name: 'Toggle pinned' }).click();
     await expect(pin).toHaveAttribute('aria-pressed', 'false');
 
