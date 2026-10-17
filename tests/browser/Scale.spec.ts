@@ -183,11 +183,12 @@ const findTargets = `(root, selector) =>
 type Target = { element: HTMLElement; box: DOMRect };
 type FindTargets = (root: Element, selector: string) => Target[];
 
+// One test a section and scale: each opens one page, so none runs out of time on a busy engine.
 for (const scale of densityScales)
-  test(`every target in the ${scale} scale is at least 24 px, or has 24 px of room`, async ({
-    page,
-  }) => {
-    for (const section of ['sizes', 'toolbar', 'tabs', 'navigation', 'tree', 'table', 'desktop']) {
+  for (const section of ['sizes', 'toolbar', 'tabs', 'navigation', 'tree', 'table', 'desktop'])
+    test(`every target in the ${scale} scale is at least 24 px, or has 24 px of room, in ${section}`, async ({
+      page,
+    }) => {
       await openSection(page, section);
       const root = page.locator(`[data-density-scale="${scale}"]`);
       const crowded = await root.evaluate(
@@ -224,7 +225,12 @@ for (const scale of densityScales)
         [targets, findTargets] as const,
       );
       expect(crowded, `${scale} ${section}`).toEqual([]);
-    }
+    });
+
+for (const scale of densityScales)
+  test(`segments, tabs and the actions inside fields are 24 px themselves in the ${scale} scale`, async ({
+    page,
+  }) => {
     // Segments, tabs and the actions inside fields keep 24 px themselves, also in small rails and
     // fields of the compact scale.
     await openSection(page, 'sizes');
@@ -317,8 +323,14 @@ test.describe('on a coarse pointer', () => {
             .evaluate((group) => group.getBoundingClientRect().height),
         ).toBe(touchHeights[scale][size]);
       }
-      // A toolbar's rows, and a desktop view's rows of controls at their default size.
-      for (const section of ['toolbar', 'desktop']) {
+    });
+
+  // A toolbar's rows, and a desktop view's rows of controls at their default size.
+  for (const scale of densityScales)
+    for (const section of ['toolbar', 'desktop'])
+      test(`every control of a row in ${section} is the touch height in the ${scale} scale`, async ({
+        page,
+      }) => {
         await openSection(page, section);
         const rows = await page.locator(`[data-density-scale="${scale}"] .density-row`).all();
         expect(rows.length).toBeGreaterThan(0);
@@ -328,13 +340,12 @@ test.describe('on a coarse pointer', () => {
             boxes.map(({ name }) => ({ name, height: 44 })),
           );
         }
-      }
-    });
+      });
 
-  test('every hit area is at least the touch height, and as wide unless it is inside a field', async ({
-    page,
-  }) => {
-    for (const section of ['sizes', 'toolbar', 'tabs', 'tree', 'table', 'desktop', 'layouts']) {
+  for (const section of ['sizes', 'toolbar', 'tabs', 'tree', 'table', 'desktop', 'layouts'])
+    test(`every hit area is at least the touch height, and as wide unless it is inside a field, in ${section}`, async ({
+      page,
+    }) => {
       await openSection(page, section);
       const areas = await page.evaluate(
         async ([selector, source]) => {
@@ -352,8 +363,7 @@ test.describe('on a coarse pointer', () => {
         areas.filter(({ inField, width, height }) => height < 44 || (!inField && width < 44)),
         section,
       ).toEqual([]);
-    }
-  });
+    });
 
   // A frame with the trigger in the sidebar's header and with the trigger in a header across the
   // window.
@@ -443,10 +453,12 @@ test.describe('on a coarse pointer', () => {
     for (const { radius, half } of corners) expect(radius).toBe(half);
   });
 
-  test('nothing that holds controls scrolls where it has room', async ({ page }) => {
-    // Table regions, rails, groups and the dock's rows are scroll containers. The fixture gives
-    // them room, so none may scroll, also not for an action or a hit area taller than its row.
-    for (const section of ['sizes', 'toolbar', 'tabs', 'table', 'desktop', 'layouts']) {
+  for (const section of ['sizes', 'toolbar', 'tabs', 'table', 'desktop', 'layouts'])
+    test(`nothing that holds controls scrolls where it has room, in ${section}`, async ({
+      page,
+    }) => {
+      // Table regions, rails, groups and the dock's rows are scroll containers. The fixture gives
+      // them room, so none may scroll, also not for an action or a hit area taller than its row.
       await openSection(page, section);
       const scrolling = await page.evaluate(() => {
         const scrolls = (value: string) => value === 'auto' || value === 'scroll';
@@ -471,39 +483,41 @@ test.describe('on a coarse pointer', () => {
           );
       });
       expect(scrolling, section).toEqual([]);
-    }
-  });
+    });
 
-  test("on the catalogue's pages, what scrolls sideways never scrolls for its controls' height", async ({
-    page,
-  }) => {
-    // Each of these scrolls sideways when its content is wider than its room, so its other axis
-    // scrolls too: a control or a hit area taller than it would make it scroll up and down.
-    const scrollers = [
-      '.env-table-region:not([data-sticky-header])',
-      '.env-button-group',
-      '.env-tabs-list',
-      '.env-segmented-control',
-      '.env-document-tabs',
-      '.env-markdown-toolbar',
-      '.env-panel-dock-row',
-      '.env-panel-dock-strip',
-      '.env-calendar-heatmap-scroll',
-    ].join(', ');
-    const pages = documentationPages.filter(({ path }) =>
-      [
-        'button',
-        'calendar-heatmap',
-        'document-tabs',
-        'markdown',
-        'panel-dock',
-        'segmented-control',
-        'table',
-        'tabs',
-      ].some((name) => path.endsWith(`/${name}`)),
-    );
-    expect(pages).toHaveLength(8);
-    for (const { path, views } of pages) {
+  // One test a page: each loads the catalogue once, so none runs out of time on a busy engine.
+  // Each of these scrolls sideways when its content is wider than its room, so its other axis
+  // scrolls too: a control or a hit area taller than it would make it scroll up and down.
+  const scrollers = [
+    '.env-table-region:not([data-sticky-header])',
+    '.env-button-group',
+    '.env-tabs-list',
+    '.env-segmented-control',
+    '.env-document-tabs',
+    '.env-markdown-toolbar',
+    '.env-panel-dock-row',
+    '.env-panel-dock-strip',
+    '.env-calendar-heatmap-scroll',
+  ].join(', ');
+  const scrollingPages = documentationPages.filter(({ path }) =>
+    [
+      'button',
+      'calendar-heatmap',
+      'document-tabs',
+      'markdown',
+      'panel-dock',
+      'segmented-control',
+      'table',
+      'tabs',
+    ].some((name) => path.endsWith(`/${name}`)),
+  );
+  test("what scrolls sideways is checked on the catalogue's eight pages that hold it", () => {
+    expect(scrollingPages).toHaveLength(8);
+  });
+  for (const { path, views } of scrollingPages)
+    test(`on the catalogue's ${path} page, what scrolls sideways never scrolls for its controls' height`, async ({
+      page,
+    }) => {
       await page.goto(`${catalogueUrl}/#/${path}/${views[0]!.id}`);
       await page.locator('#docs-main').waitFor();
       await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
@@ -518,14 +532,15 @@ test.describe('on a coarse pointer', () => {
           ),
       );
       expect(scrolling, path).toEqual([]);
-    }
-  });
+    });
 
-  test('a press just inside a control reaches it, never its neighbour', async ({ page }) => {
-    // Each section shows both scales. layouts holds small buttons 4 px apart in layouts of the
-    // application's own (a column, a wrapping row, a grid, a reversed row, each button in a span in
-    // either direction) and a docked panel's header.
-    for (const section of ['sizes', 'toolbar', 'desktop', 'layouts']) {
+  for (const section of ['sizes', 'toolbar', 'desktop', 'layouts'])
+    test(`a press just inside a control reaches it, never its neighbour, in ${section}`, async ({
+      page,
+    }) => {
+      // Each section shows both scales. layouts holds small buttons 4 px apart in layouts of the
+      // application's own (a column, a wrapping row, a grid, a reversed row, each button in a span in
+      // either direction) and a docked panel's header.
       await openSection(page, section);
       const stolen = await page.evaluate(
         async ([selector, source]) => {
@@ -554,6 +569,5 @@ test.describe('on a coarse pointer', () => {
         ['button, a[href], [role="tab"], [role="radio"], [role="menuitem"]', findTargets] as const,
       );
       expect(stolen, section).toEqual([]);
-    }
-  });
+    });
 });

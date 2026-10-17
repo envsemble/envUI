@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const drawers = `${fixtureUrl}/?fixture=drawers`;
@@ -8,6 +8,18 @@ const holdsFocus = (page: Page, name: string) =>
   page
     .getByRole('dialog', { name })
     .evaluate((element) => element.contains(document.activeElement));
+
+/**
+ * Waits for an opened drawer's entrance to end. Base UI marks the first frame with
+ * data-starting-style, and only once it removes that do the transitions start: a busy engine can
+ * read no animations before then, and the drawer would still be sliding in.
+ */
+const slidIn = (drawer: Locator) =>
+  drawer.evaluate(async (element) => {
+    while (element.hasAttribute('data-starting-style'))
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    await Promise.all(element.getAnimations().map((animation) => animation.finished));
+  });
 
 test.describe('Drawer', () => {
   test('traps focus while open and returns it to the trigger on close', async ({
@@ -49,9 +61,7 @@ test.describe('Drawer', () => {
       await page.getByRole('button', { name: trigger }).click();
       const drawer = page.getByRole('dialog', { name });
       await expect(drawer).toBeVisible();
-      await drawer.evaluate((element) =>
-        Promise.all(element.getAnimations().map((animation) => animation.finished)),
-      );
+      await slidIn(drawer);
       return drawer;
     };
     const offset = (drawer: import('@playwright/test').Locator) =>
@@ -95,9 +105,7 @@ test.describe('Drawer', () => {
       await page.getByRole('button', { name: trigger }).click();
       const drawer = page.getByRole('dialog', { name });
       await expect(drawer).toBeVisible();
-      await drawer.evaluate((element) =>
-        Promise.all(element.getAnimations().map((animation) => animation.finished)),
-      );
+      await slidIn(drawer);
       const rest = (await drawer.boundingBox())!;
       // Press on the heading's text, away from the controls, and drag 54 px toward the edge.
       const heading = (await drawer.getByRole('heading', { name }).boundingBox())!;

@@ -83,7 +83,16 @@ export default defineConfig({
       testIgnore: /LiveDevelopment/,
       grepInvert: /@contrast/,
       workers: engineWorkers,
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        // Firefox's bounce-tracking protection, after many quick visits to one address, warns that
+        // 127.0.0.1 "has been classified as a bounce tracker" in the console of whichever test is
+        // running, which fails the specs that collect console warnings.
+        launchOptions: {
+          // 0 is MODE_DISABLED: no classification, so no warning.
+          firefoxUserPrefs: { 'privacy.bounceTrackingProtection.mode': 0 },
+        },
+      },
     },
     {
       name: 'webkit',
@@ -135,8 +144,10 @@ export default defineConfig({
         colorScheme: 'light',
         // Grayscale text everywhere. Chromium draws subpixel (LCD) text only where the content
         // sits in an opaque, uncomposited layer, so a fixed or sticky element elsewhere on the page
-        // would switch every specimen's antialiasing; the baseline records grayscale.
-        launchOptions: { args: ['--disable-lcd-text'] },
+        // would switch every specimen's antialiasing; the baseline records grayscale. Whole tiles
+        // are drawn again rather than only the changed part of one: a partial redraw's edges
+        // depend on which frames came before, so the tooltip's capture varied by a pixel run to run.
+        launchOptions: { args: ['--disable-lcd-text', '--disable-partial-raster'] },
       },
     },
   ],
