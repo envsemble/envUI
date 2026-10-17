@@ -108,6 +108,19 @@ test.describe('ConfirmDialog', () => {
     );
   });
 
+  test('kept open by the application after its action, it confirms again', async ({ page }) => {
+    await page.goto(confirmDialogs);
+    const log = page.getByTestId('confirm-log');
+    await page.getByRole('button', { name: 'Save draft' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Save the draft?' });
+    const save = dialog.getByRole('button', { name: 'Save draft' });
+    await save.click();
+    await expect(log).toHaveText('saved');
+    await expect(dialog).toBeVisible();
+    await save.click();
+    await expect(log).toHaveText('saved,saved');
+  });
+
   test('opened from a menu item, it returns focus to the menu button', async ({ page }) => {
     await page.goto(confirmDialogs);
     const menuButton = page.getByRole('button', { name: 'Project actions' });

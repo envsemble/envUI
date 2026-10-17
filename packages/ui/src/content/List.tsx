@@ -22,7 +22,9 @@ export interface RootProps extends ComponentPropsWithRef<'ul'> {
    * Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by
    * pressing it or by keyboard, and the list calls this with the row's index and the index it is
    * dropped at. The application moves the item in its own state; nothing moves until it does. The
-   * List.Item elements are the list's children, directly or in arrays and fragments.
+   * rows are the list's children, directly or in arrays and fragments: List.Item elements, or
+   * elements of a row component that passes the props it doesn't use on to its List.Item, such as
+   * `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`.
    */
   onReorder?: (from: number, to: number) => void;
 }
@@ -55,14 +57,16 @@ function Root({ density = 'md', onReorder, className, children, ...props }: Root
   );
 }
 
-/** Tells the List.Item elements among the children, and in their fragments, to show a handle. */
+/**
+ * Tells the rows among the children, and in their fragments, to show a handle: each element gets
+ * the prop, which List.Item reads and a row component passes on to its List.Item with the rest.
+ */
 function markReorderable(children: ReactNode): ReactNode {
   return Children.map(children, (child) => {
     if (!isValidElement<{ children?: ReactNode }>(child)) return child;
     if (child.type === Fragment)
       return cloneElement(child, undefined, markReorderable(child.props.children));
-    if (child.type === ItemPart) return cloneElement(child, { [reorderableProp]: true } as object);
-    return child;
+    return cloneElement(child, { [reorderableProp]: true } as object);
   });
 }
 

@@ -3,14 +3,16 @@ import { Button, ConfirmDialog, Menu, Stack, Text } from '@envsemble/envui';
 
 /**
  * Confirm dialogs, mounted with ?fixture=confirm-dialogs: a neutral one that confirms at once, a
- * danger one whose action takes a moment and can fail, one whose action resolves at once, and one
- * opened from a menu item that returns focus to the menu's button.
+ * danger one whose action takes a moment and can fail, one whose action resolves at once, one
+ * opened from a menu item that returns focus to the menu's button, and a controlled one that
+ * stays open after its action.
  */
 export function ConfirmDialogsFixture() {
   const [log, setLog] = useState<string[]>([]);
   const [fail, setFail] = useState(true);
   const [error, setError] = useState('');
   const [fromMenu, setFromMenu] = useState(false);
+  const [saving, setSaving] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const record = (entry: string) => setLog((entries) => [...entries, entry]);
   // The action waits until the spec lets it finish, so the pending state can be checked.
@@ -83,6 +85,17 @@ export function ConfirmDialogsFixture() {
       >
         <Text>Sam loses access to Northwind launch.</Text>
       </ConfirmDialog>
+      <ConfirmDialog
+        trigger={<Button variant="secondary">Save draft</Button>}
+        open={saving}
+        onOpenChange={(open, { reason }) => {
+          // Kept open after the action, so the draft can be saved again.
+          if (reason !== 'imperative-action') setSaving(open);
+        }}
+        title="Save the draft?"
+        confirmLabel="Save draft"
+        onConfirm={() => record('saved')}
+      />
       <output data-testid="confirm-log">{log.join(',')}</output>
     </Stack>
   );
