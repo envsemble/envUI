@@ -29,6 +29,7 @@ import { TreeFixture } from './TreeView.js';
 import {
   CompactTabsFixture,
   DocumentTabsFixture,
+  DocumentTabsRerenderFixture,
   FillTabsFixture,
   RtlDocumentTabsFixture,
   RtlTabsFixture,
@@ -112,6 +113,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   direction: DirectionFixture,
   'rtl-tabs': RtlTabsFixture,
   'rtl-document-tabs': RtlDocumentTabsFixture,
+  'document-tabs-rerender': DocumentTabsRerenderFixture,
   pagers: PagersFixture,
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,

@@ -1,6 +1,6 @@
 'use client';
 
-import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
 import {
   useLayoutEffect,
   useState,
@@ -125,11 +125,12 @@ function Directed({
     setRead(getComputedStyle(source).direction === 'rtl' ? 'rtl' : 'ltr');
   }, [dir, provided, anchor, trigger]);
   const direction = dir ?? provided ?? read;
-  const content = children(direction);
-  return direction ? (
-    <DirectionProvider direction={direction}>{content}</DirectionProvider>
-  ) : (
-    content
+  // The provider is always there, so the popup isn't remounted once the direction is read: a
+  // remounted popup returns focus to where it was before opening, and a menu closes as it opens.
+  // Until then it passes on the direction around it.
+  const inherited = useDirection();
+  return (
+    <DirectionProvider direction={direction ?? inherited}>{children(direction)}</DirectionProvider>
   );
 }
 
