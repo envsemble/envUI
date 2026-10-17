@@ -122,6 +122,10 @@ const signIn: TemplateCheck[] = [
       await show.click();
       await expect(show).toHaveAttribute('aria-pressed', 'true');
       await expect(password).toHaveAttribute('type', 'text');
+      // An installed clock still runs on its own, so it stops before Sign in: the answer comes only
+      // when the test runs the timer, however long the steps after take. The service's timer is
+      // not set yet, so the second skipped to stop changes nothing.
+      await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
       await button.click();
       await expect(button).toHaveAttribute('aria-busy', 'true');
       await expect(button).not.toHaveAttribute('disabled');
@@ -132,6 +136,9 @@ const signIn: TemplateCheck[] = [
       // What people entered stays.
       await expect(email).toHaveValue('alex.morgan@example.com');
       await expect(password).toHaveValue('a wrong password');
+      // Only the refusal's pending state needed the stopped clock. A running one also serves the
+      // next viewport, which loads the page again.
+      await page.clock.resume();
       await password.fill('northwind-demo');
       await button.click();
       await page.clock.runFor(1300);

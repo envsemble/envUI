@@ -94,7 +94,7 @@
   background: var(--env-color-bg-popup-pressed);
 }
 .env-select-item[data-selected] {
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 /* Highlight includes pointer interaction; only keyboard focus needs a ring. */
 .env-select-item:focus-visible {

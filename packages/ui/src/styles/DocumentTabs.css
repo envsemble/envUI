@@ -16,7 +16,8 @@
   gap: 0.125rem;
   min-inline-size: 0;
   max-inline-size: 100%;
-  block-size: 2.5rem;
+  /* As tall as a medium control: 2.5rem, and 2rem in the compact scale. */
+  block-size: var(--env-control-height-md);
   padding-inline: var(--env-space-1);
   border-block-end: 0.0625rem solid var(--env-color-border-muted);
   /* The strip takes the width it is given; its tabs never widen a grid or flex parent. */

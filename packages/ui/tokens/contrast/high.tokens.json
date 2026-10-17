@@ -137,6 +137,11 @@
         "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
         "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
       },
+      "link-on-tint": {
+        "$root": { "$value": "{contrast-high.color.fg.link}" },
+        "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
+        "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
+      },
       "accent": { "$value": "{contrast-high.color.fg.accent}" },
       "on-selected": { "$value": "{contrast-high.color.fg.on-selected}" },
       "success": { "$value": "{contrast-high.color.fg.success}" },

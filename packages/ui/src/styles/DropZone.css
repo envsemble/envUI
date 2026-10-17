@@ -50,7 +50,7 @@
   min-inline-size: 0;
 }
 .env-drop-zone-label {
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-drop-zone-description {
   color: var(--env-color-fg-muted);
@@ -110,7 +110,7 @@
 }
 .env-drop-zone[data-size='sm'] .env-drop-zone-label {
   font: var(--env-type-body-small);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-drop-zone-target,

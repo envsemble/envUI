@@ -1,12 +1,14 @@
 /**
  * The hosted catalogue from `npm run build:site`, which specs serve from dist/site/ at a made-up
- * address with page.route, through the hosted Worker script, as Cloudflare serves it: the browser
- * fetches nothing over the network, so no server, port or connection is involved.
+ * address with page.route, through the hosted Worker script and with the headers of its _headers,
+ * as Cloudflare serves it: the browser fetches nothing over the network, so no server, port or
+ * connection is involved.
  */
 import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, resolve } from 'node:path';
 import worker from '../../apps/catalogue/site/Worker.mjs';
+import { headersFor, siteHeaders } from '../../scripts/SiteHeaders.mjs';
 
 export const site = resolve('dist/site');
 export const siteUrl = 'http://envui.site.test';
@@ -64,13 +66,15 @@ export interface ServeSiteOptions {
 /**
  * Serves the hosted build to the page at siteUrl through the hosted Worker script, with an asset
  * server that answers as Cloudflare's does from dist/site: a path without a file gets index.html,
- * so path routes load, and the Worker answers a file missing under /assets/ as not found. With
- * options, chosen files fail, to test how the catalogue recovers.
+ * so path routes load, with the headers dist/site/_headers gives its path, and the Worker answers a
+ * file missing under /assets/ as not found. With options, chosen files fail, to test how the
+ * catalogue recovers.
  */
 export async function serveSite(
   page: Page,
   { failing = () => false, failure = 'missing', script = (text) => text }: ServeSiteOptions = {},
 ) {
+  const rules = siteHeaders(resolve(site, '_headers'));
   await page.route(`${siteUrl}/**`, async (route) => {
     const request = route.request();
     const gone = failing(new URL(request.url()).pathname);
@@ -81,8 +85,13 @@ export async function serveSite(
         const file = found ?? resolve(site, 'index.html');
         const body =
           extname(file) === '.js' ? script(readFileSync(file, 'utf8')) : readFileSync(file);
+        const pathname = new URL(assetRequest.url).pathname;
         return new Response(body, {
-          headers: { 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' },
+          headers: {
+            // The asset server applies _headers; the Worker's own responses under /assets/ set theirs.
+            ...(pathname.startsWith('/assets/') ? {} : headersFor(rules, pathname)),
+            'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
+          },
         });
       },
     };

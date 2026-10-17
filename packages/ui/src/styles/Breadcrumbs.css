@@ -60,7 +60,7 @@
 }
 .env-breadcrumbs-current {
   color: var(--env-color-fg-default);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-breadcrumbs-label {
   min-inline-size: 0;

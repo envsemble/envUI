@@ -20,7 +20,7 @@
 .env-slider-value {
   color: var(--env-color-fg-control);
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 /* The control is the pressable row around the track; its padding keeps the thumb inside it. */
 .env-slider-control {

@@ -38,7 +38,7 @@
   padding: 0 0 var(--env-space-1);
   overflow: hidden;
   color: var(--env-color-fg-muted);
-  font: 500 0.75rem / 1.4 var(--env-font-family);
+  font: var(--env-font-weight-medium) 0.75rem / 1.4 var(--env-font-family);
   text-align: center;
   white-space: nowrap;
 }
@@ -77,13 +77,13 @@
 }
 .env-calendar-day[aria-current='date'] > .env-calendar-day-mark {
   box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-accent-emphasis);
-  font-weight: 600;
+  font-weight: var(--env-font-weight-semibold);
 }
 .env-calendar-day[aria-selected='true'] > .env-calendar-day-mark {
   background: var(--env-color-bg-brand-emphasis);
   box-shadow: none;
   color: var(--env-color-fg-on-emphasis);
-  font-weight: 600;
+  font-weight: var(--env-font-weight-semibold);
 }
 .env-calendar-day:focus-visible > .env-calendar-day-mark {
   outline: 0.125rem solid var(--env-color-border-focus);

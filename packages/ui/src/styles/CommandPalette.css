@@ -94,7 +94,7 @@
   padding: var(--env-space-2) var(--env-space-4) var(--env-space-1);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 /* Options are ListRows; the palette gives them its taller rows, body text, wider gaps and its
    concentric corners. */

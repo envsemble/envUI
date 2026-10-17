@@ -17,7 +17,7 @@ export default function Backgrounds() {
                 </Text>
                 <Text emphasis="muted">Plans and milestones for the spring launch.</Text>
               </Card>
-              <Card background={background} href="#northwind">
+              <Card background={background} href="/projects/northwind">
                 <Text render={<span />} variant="title">
                   Open Northwind launch
                 </Text>
@@ -25,7 +25,7 @@ export default function Backgrounds() {
             </Specimen>
           ))}
           <Specimen title="Disabled link">
-            <Card href="#archive" disabled>
+            <Card href="/projects/archive" disabled>
               <Text render={<span />} variant="title">
                 Archived projects
               </Text>

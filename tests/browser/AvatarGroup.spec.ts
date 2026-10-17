@@ -216,14 +216,14 @@ test('the overflow count keeps 4.5:1 contrast in both themes', async ({ page }) 
   expect(failures).toEqual([]);
 });
 
-test('avatars overlap by a quarter, line up with small controls and keep their size', async ({
+test('avatars overlap by an eighth, line up with small controls and keep their size', async ({
   page,
 }) => {
   await page.goto(fixture);
   const scope = page.getByTestId('avatar-groups-light');
-  // Each avatar is 2 rem and covers a quarter of the one before; later ones lie on top.
+  // Each avatar is 2 rem and covers an eighth of the one before; later ones lie on top.
   const decorative = await boxes(scope.getByTestId('decorative'));
-  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 24, 48, 72]);
+  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 28, 56, 84]);
   expect(decorative.map((box) => box.width)).toEqual([32, 32, 32, 32]);
   const coveredByNext = await scope
     .getByTestId('decorative')
@@ -235,13 +235,40 @@ test('avatars overlap by a quarter, line up with small controls and keep their s
       return avatar.parentElement!.children[1]!.contains(target);
     });
   expect(coveredByNext).toBe(true);
+  // Each avatar's initials end before the next avatar and its ring begin, in both sizes.
+  for (const id of ['initials', 'initials-small']) {
+    const clearances = await scope
+      .getByTestId(id)
+      .locator('.env-avatar')
+      .evaluateAll((avatars) =>
+        avatars.slice(0, -1).flatMap((avatar) => {
+          const text = [...avatar.querySelectorAll('*'), avatar]
+            .flatMap((element) => [...element.childNodes])
+            .find((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim());
+          if (!text) return [];
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          const item = avatar.parentElement!.classList.contains('env-avatar-group')
+            ? avatar
+            : avatar.parentElement!;
+          const next = item.nextElementSibling!;
+          const ringed = next.matches('.env-avatar, .env-avatar-group-overflow')
+            ? next
+            : next.querySelector('.env-avatar')!;
+          const ring = parseFloat(getComputedStyle(ringed).boxShadow.split(' ').at(-1) ?? '0');
+          return [next.getBoundingClientRect().left - ring - range.getBoundingClientRect().right];
+        }),
+      );
+    expect(clearances.length, id).toBeGreaterThan(0);
+    for (const clearance of clearances) expect(clearance, id).toBeGreaterThanOrEqual(0);
+  }
   const small = await boxes(scope.getByTestId('preview'));
-  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 18, 36]);
+  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 21, 42]);
 
   // Right to left, the avatars run from the right.
   const rtl = await boxes(scope.getByTestId('rtl'));
   expect(rtl.map((box) => rtl[0]!.x + rtl[0]!.width - (box.x + box.width))).toEqual([
-    0, 24, 48, 72,
+    0, 28, 56, 84,
   ]);
   await expect(scope.getByTestId('rtl').locator('.env-avatar-group-overflow')).toHaveText('+2');
 
@@ -265,7 +292,7 @@ test('avatars overlap by a quarter, line up with small controls and keep their s
   const narrow = await boxes(scope.getByTestId('narrow-group'));
   expect(new Set(narrow.map((box) => box.top)).size).toBe(1);
   expect(narrow.map((box) => box.width)).toEqual([32, 32, 32, 32]);
-  expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(104, 0);
+  expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(116, 0);
 });
 
 test('on touch screens pressable avatars are touch-sized targets side by side', async ({
@@ -307,7 +334,7 @@ test('on touch screens pressable avatars are touch-sized targets side by side', 
   }
   // Decorative avatars keep their overlap.
   const decorative = await boxes(scope.getByTestId('preview'));
-  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 18, 36]);
+  expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 21, 42]);
   await scope.getByRole('button', { name: 'Sam Lee' }).first().tap();
   await expect(scope.getByTestId('pressed')).toHaveText('Sam Lee');
   await context.close();

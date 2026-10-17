@@ -3,12 +3,14 @@
 # rule matching its path, in order; "! Name" removes a header an earlier rule set.
 
 # Every page, including the archived versions and routes answered with index.html. Pages are
-# checked for changes on each load, and only the reader's browser keeps a copy.
+# checked for changes on each load, and only the reader's browser keeps a copy. Only the site may
+# frame its pages: the template pages show each screen in an iframe of the site's own frame route
+# (?frame=), so framing is same-origin rather than denied (tests/SiteHeaders.test.mjs).
 /*
   Cache-Control: private, no-cache
   X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
-  Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'; base-uri 'self'; object-src 'none'
   Referrer-Policy: strict-origin-when-cross-origin
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()

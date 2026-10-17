@@ -234,10 +234,10 @@ test('links in a selected row are underlined, so color is not all that tells the
   page,
 }) => {
   for (const theme of themes) {
-    const [selected, other] = await page
-      .getByRole('table', { name: `Selected links ${theme}` })
-      .getByRole('row')
-      .all();
+    const rows = page.getByRole('table', { name: `Selected links ${theme}` }).getByRole('row');
+    // all() reads the rows there are now, without waiting: the table may not have rendered yet.
+    await expect(rows).toHaveCount(2);
+    const [selected, other] = await rows.all();
     const decoration = (row: Locator, name: string) =>
       row
         .getByRole('link', { name, exact: true })
