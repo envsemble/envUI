@@ -103,6 +103,13 @@
    content scrolling below it, so the window controls drawn over the title bar never cover a
    scrollbar; the stable gutter keeps the layout in place as content starts or stops overflowing. */
 .env-window-frame {
+  /* The frame's published sizes: the title bar above the content, and where sticky content
+     sticks, at the top of the content, which scrolls under the bar. */
+  --env-frame-header-block-size: max(
+    calc(env(titlebar-area-height, 0px) + 0.0625rem),
+    var(--env-title-bar-height)
+  );
+  --env-frame-sticky-top: 0rem;
   position: fixed;
   inset: 0;
   display: grid;

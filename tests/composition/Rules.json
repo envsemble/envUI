@@ -34,7 +34,6 @@
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
-      "navigation/AppShell.tsx": "shell",
       "navigation/WindowFrame.tsx": "shell",
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
@@ -133,7 +132,7 @@
   },
   "planned": {
     "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
-    "modules": ["navigation/app-shell/AppShell.tsx", "navigation/sidebar/Sidebar.tsx"]
+    "modules": []
   },
   "interactive": {
     "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
@@ -301,10 +300,24 @@
         "modules": ["foundations/ThemePreferenceContext.ts"]
       },
       "AppShell": {
-        "classes": ["env-app", "env-app-shell"]
+        "classes": ["env-app-shell"],
+        "styles": ["AppShellBase.css"],
+        "modules": [
+          "navigation/app-shell/FrameStore.ts",
+          "navigation/app-shell/persistence.ts",
+          "navigation/app-shell/useAppShell.ts",
+          "navigation/app-shell/useFrameMetrics.ts"
+        ]
       },
       "Sidebar": {
-        "classes": ["env-sidebar"]
+        "classes": ["env-sidebar"],
+        "modules": [
+          "navigation/sidebar/SidebarRegion.tsx",
+          "navigation/sidebar/SidebarDrawer.tsx",
+          "navigation/sidebar/SidebarTrigger.tsx",
+          "navigation/sidebar/useSidebar.ts",
+          "navigation/sidebar/usePeek.ts"
+        ]
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},

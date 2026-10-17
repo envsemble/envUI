@@ -1,0 +1,12 @@
+/* While a frame whose document scrolls is in the document, the document scrolls under its sticky
+   header. Scroll padding as tall as the header, and a little more for focus rings, keeps elements
+   that take focus and anchor targets below it (WCAG 2.4.11). AppShell.Root measures its header into
+   --env-frame-header-block-size on the document element; until it does, as on the first paint of a
+   server-rendered page, --env-app-shell-header-height applies. The rule has zero specificity and
+   sits in env.base, so scroll padding the application sets wins. */
+:where(html:has(.env-app-shell[data-scroll='document'])) {
+  --env-frame-scroll-padding: calc(
+    var(--env-frame-header-block-size, var(--env-app-shell-header-height, 3.25rem)) + 0.5rem
+  );
+  scroll-padding-block-start: var(--env-frame-scroll-padding);
+}
