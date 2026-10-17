@@ -23,13 +23,12 @@ for (const fixture of fixtures('v1-app-shell')) {
   });
 }
 
-test('v1-app-shell keeps line endings and a byte order mark', () => {
-  const [fixture] = fixtures('v1-app-shell').filter(({ name }) => name === 'split.tsx');
-  // Tab indentation is left out: recast reprints the import list it adds to with spaces.
-  for (const [how, encode] of encodings.filter(([name]) => name !== 'tab indentation')) {
-    const result = runTransform(v1AppShell, fixture.path, encode(fixture.input));
-    assert.equal(result.output, encode(fixture.output), how);
-  }
+test('v1-app-shell keeps line endings, a byte order mark and tab indentation', () => {
+  for (const fixture of fixtures('v1-app-shell'))
+    for (const [how, encode] of encodings) {
+      const result = runTransform(v1AppShell, fixture.path, encode(fixture.input));
+      assert.equal(result.output, encode(fixture.output), `${fixture.name}, ${how}`);
+    }
 });
 
 test('v1-structure leaves the entries v1-app-shell rewrites to it', () => {

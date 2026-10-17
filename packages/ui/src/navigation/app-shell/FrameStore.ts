@@ -6,6 +6,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -74,7 +75,11 @@ export interface FrameStateProps {
    * cookie the server reads with readAppShellCookie. Peeking and the drawers are never kept.
    */
   persist?: string | PersistOptions;
-  /** The state the server read with readAppShellCookie, so hydration meets the server's markup. */
+  /**
+   * The state the server read with readAppShellCookie, so hydration meets the server's markup.
+   * Without it the frame reads its storage after hydration: a server-rendered page first shows the
+   * defaults, and a page rendered only in the browser reads it before its first paint.
+   */
   initialState?: AppShellState;
   /**
    * Below this viewport width the sidebars become drawers opened from their triggers: sm, md, lg
@@ -144,7 +149,16 @@ export interface FrameStore {
   dismissals: Record<SidebarSide, number>;
   /** Why the drawer last closed, for where focus goes. */
   closeReasons: { current: Record<SidebarSide, SidebarChangeReason | undefined> };
+  /**
+   * Registers the sidebar on a side and returns the function that takes it back. Where two register
+   * on one side the latest shows, and the earlier one returns as the latest goes.
+   */
   register(side: SidebarSide, registration: SidebarRegistration): () => void;
+  /**
+   * The id each side's sidebar takes unless it is given one, so a trigger rendered on the server
+   * controls it before the sidebar registers.
+   */
+  sideIds: Record<SidebarSide, string>;
   /** The id of AppShell.Main, for skip links and focus after navigation, and its skip link's name. */
   mainId: string;
   mainLabel: string | undefined;
@@ -163,6 +177,27 @@ export interface FrameShape {
 }
 
 export const FrameShapeContext = createContext<FrameShape | null>(null);
+
+/**
+ * True among AppShell.Root's own children, where a Sidebar.Root is one of the frame's regions.
+ * AppShell.Header, AppShell.Main and a sidebar's content are not, so a Sidebar.Root there, such as
+ * a settings page's sub-navigation, keeps a state of its own.
+ */
+export const FrameSlotContext = createContext(false);
+
+const ignore = () => {};
+
+/**
+ * The frame's shape for a sidebar state nested in it, as Sidebar.Provider and a sidebar on its own
+ * keep: landmarks as the frame renders them, but no part of its title bar.
+ */
+export function useNestedShape(): FrameShape | null {
+  const parent = useContext(FrameShapeContext);
+  return useMemo(
+    () => parent && { ...parent, titleBar: false, setHeader: ignore, setMain: ignore },
+    [parent],
+  );
+}
 
 export const FrameContext = createContext<FrameStore | null>(null);
 
@@ -205,6 +240,15 @@ function persistOptions(persist: FrameStateProps['persist']): PersistOptions | u
 function readLocal(key: string) {
   try {
     return parseStoredAppShellState(window.localStorage.getItem(key));
+  } catch {
+    return undefined;
+  }
+}
+
+function readStoredCookie(key: string) {
+  try {
+    const value = readCookie(document.cookie, key);
+    return value ? parseAppShellState(value) : undefined;
   } catch {
     return undefined;
   }
@@ -257,24 +301,21 @@ export function useFrameState(props: FrameStateProps, inShell: boolean): FrameSt
   const options = persistOptions(persist);
   const key = options?.key;
   const storage = options?.storage ?? 'local';
-  // Controlled props, then the server's state, then storage, then the defaults. A cookie is read at
-  // once on the client, so the first render meets the server's, which read the same cookie.
-  const [stored, setStored] = useState<AppShellState>(() => {
-    if (initialState) return initialState;
-    if (key && storage === 'cookie' && typeof document !== 'undefined') {
-      const value = readCookie(document.cookie, key);
-      return (value ? parseAppShellState(value) : undefined) ?? {};
-    }
-    return {};
-  });
-  // localStorage is read after hydration, so the server's markup and the first render agree.
+  // Controlled props, then the server's state, then storage, then the defaults.
+  const [stored, setStored] = useState<AppShellState>(() => initialState ?? {});
+  // Storage is read after hydration, so the server's markup and the first render agree; in a layout
+  // effect, so a page rendered only in the browser shows it from its first paint. A server-rendered
+  // page passes initialState, read with readAppShellCookie, to paint it from the start.
   useLayoutEffect(() => {
-    if (!key || storage !== 'local' || initialState) return;
-    const state = readLocal(key);
+    if (!key || initialState) return;
+    const state = storage === 'cookie' ? readStoredCookie(key) : readLocal(key);
     if (state) setStored(state);
     // The server's state is read once, as the frame mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, storage]);
+  // What a save merges into: the latest state, with a save earlier in the same event.
+  const storedRef = useRef(stored);
+  storedRef.current = stored;
 
   const [peek, setPeekState] = useState(closed);
   const [held, setHeldState] = useState(closed);
@@ -330,21 +371,24 @@ export function useFrameState(props: FrameStateProps, inShell: boolean): FrameSt
 
   const save = useCallback((side: SidebarSide, snapshot: Partial<SidebarSnapshot>) => {
     const { resolveOpen: open, resolveWidth: width, options: persisted } = latest.current;
+    const before = storedRef.current;
     const next: AppShellState = {};
     for (const each of sides) {
+      if (each !== side && !registrationsRef.current[each]) {
+        // A side without a sidebar now keeps what it stored, such as one on another page.
+        if (before[each]) next[each] = before[each];
+        continue;
+      }
       const current = { open: open(each), width: width(each) };
       const merged = each === side ? { ...current, ...snapshot } : current;
-      // A side without a sidebar and without a stored state keeps nothing.
-      if (each !== side && !registrationsRef.current[each] && !stored[each]) continue;
       next[each] =
         merged.width === undefined
           ? { open: merged.open }
           : { open: merged.open, width: merged.width };
     }
-    setStored((current) => ({ ...current, [side]: next[side] }));
+    storedRef.current = { ...before, [side]: next[side] };
+    setStored(storedRef.current);
     if (persisted) writeState(persisted, next);
-    // stored is read for the sides that kept a state before the frame mounted.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setPeek = useCallback((side: SidebarSide, value: boolean) => {
@@ -419,22 +463,36 @@ export function useFrameState(props: FrameStateProps, inShell: boolean): FrameSt
     },
     [dismiss, setHeld, setOpen, setOpenMobile],
   );
+  // Every sidebar registered on a side, latest last: the latest shows, and as it goes the one before
+  // returns, so no other region's leaving takes a side's sidebar away.
+  const stacks = useRef<Record<SidebarSide, { registration: SidebarRegistration }[]>>({
+    start: [],
+    end: [],
+  });
   const register = useCallback((side: SidebarSide, registration: SidebarRegistration) => {
-    setRegistrations((current) => {
-      const existing = current[side];
-      if (existing && existing.id !== registration.id && developing())
-        // A development-only report, as React reports an invalid prop.
-        // eslint-disable-next-line no-console
-        console.error(
-          `envUI: the ${side} side of the frame has two regions, ${existing.label} and ${registration.label}. Keep one Sidebar.Root or one AppShell.Aside per side.`,
-        );
-      return { ...current, [side]: registration };
-    });
-    return () =>
-      setRegistrations((current) =>
-        current[side]?.id === registration.id ? { ...current, [side]: undefined } : current,
+    const existing = stacks.current[side].at(-1)?.registration;
+    if (existing && existing.id !== registration.id && developing())
+      // A development-only report, as React reports an invalid prop.
+      // eslint-disable-next-line no-console
+      console.error(
+        `envUI: the ${side} side of the frame has two regions, ${existing.label} and ${registration.label}. Keep one Sidebar.Root or one AppShell.Aside per side.`,
       );
+    const entry = { registration };
+    stacks.current[side] = [...stacks.current[side], entry];
+    setRegistrations((current) => ({ ...current, [side]: registration }));
+    return () => {
+      stacks.current[side] = stacks.current[side].filter((each) => each !== entry);
+      const top = stacks.current[side].at(-1)?.registration;
+      setRegistrations((current) =>
+        current[side] === top ? current : { ...current, [side]: top },
+      );
+    };
   }, []);
+  const baseId = useId();
+  const sideIds = useMemo(
+    () => ({ start: `${baseId}-start-sidebar`, end: `${baseId}-end-sidebar` }),
+    [baseId],
+  );
 
   // Widening past the breakpoint closes the drawers; their sidebars show inline again.
   useEffect(() => {
@@ -494,6 +552,7 @@ export function useFrameState(props: FrameStateProps, inShell: boolean): FrameSt
       dismissals,
       closeReasons,
       register,
+      sideIds,
       mainId: main.id,
       mainLabel: main.label,
       setMainId,
@@ -523,6 +582,7 @@ export function useFrameState(props: FrameStateProps, inShell: boolean): FrameSt
       shortcuts.end,
       dismissals,
       main,
+      sideIds,
     ],
   );
 }

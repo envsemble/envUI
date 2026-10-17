@@ -899,3 +899,24 @@ test("the codemods' rename map and the migration guide carry the token migration
   const guide = await readFile(migrationGuideFile, 'utf8');
   for (const name of Object.keys(migration.names)) assert.ok(guide.includes(`\`${name}\``), name);
 });
+
+test('no style sheet or component reads or sets a custom property the migration map removes', async () => {
+  const migration = JSON.parse(
+    await readFile(join(library, 'src/generated/token-migration.json'), 'utf8'),
+  );
+  const removed = Object.entries(migration.names)
+    .filter(([name, entry]) => entry.kind === 'removed' && name.startsWith('--env-'))
+    .map(([name]) => name);
+  assert.ok(removed.includes('--env-sidebar-width'));
+  const files = (await readdir(join(library, 'src'), { recursive: true }))
+    .filter((file) => /\.(css|tsx?)$/.test(file) && !file.includes('generated'))
+    .map((file) => join(library, 'src', file));
+  for (const file of files) {
+    const source = await readFile(file, 'utf8');
+    for (const name of removed)
+      assert.ok(
+        !new RegExp(`${name}(?![\\w-])`).test(source),
+        `${relative(repository, file)} uses ${name}, which the migration map removes.`,
+      );
+  }
+});
