@@ -797,8 +797,12 @@ test("every export has a status, a guide's exports stable unless its statuses sa
       .map(([name]) => name),
     [],
   );
-  for (const name of ['EnvUIProvider', 'useContainerSize', 'useTheme', 'Text', 'Icon'])
+  for (const name of ['EnvUIProvider', 'useTheme', 'Text', 'Icon'])
     assert.equal(manifest.exports[name].status, 'stable', name);
+  // Hooks first released in 1.0 are beta through their pages' statuses.
+  for (const name of ['useContainerSize', 'useBreakpoint', 'breakpointQuery', 'useMediaQuery'])
+    assert.equal(manifest.exports[name].status, 'beta', name);
+  assert.equal(manifest.exports.useLocale.status, 'beta');
   const directory = mkdtempSync(join(workDirectory, 'docs-'));
   cpSync(documentationDirectory, directory, { recursive: true });
   const responsive = join(directory, 'foundations', 'responsive.md');
@@ -806,8 +810,8 @@ test("every export has a status, a guide's exports stable unless its statuses sa
     writeFileSync(
       responsive,
       readFileSync(join(documentationDirectory, 'foundations', 'responsive.md'), 'utf8').replace(
-        'aliases:\n',
-        `statuses:\n${statusLines}aliases:\n`,
+        /^statuses:.*\n(?: {2}.*\n)*/m,
+        `statuses:\n${statusLines}`,
       ),
     );
   withStatuses('  useContainerSize: beta\n');
