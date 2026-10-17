@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Link, SegmentedControl, Stack, Text, useContainerSize, useTheme } from '@envsemble/envui';
 import { ExampleCode } from './LiveExample';
-import { frameHref } from './TemplateFrame';
+import { frameHref } from './FrameAddress';
 import { templateScales, templateWidths } from './TemplateViewports';
 
 /** CSS zoom scales a frame's layout box too; where a browser lacks it, a transform scales it. */
