@@ -81,7 +81,19 @@ export default function transform(file, api, options = {}) {
   const properties = {
     name: propertyName,
     key: (node) => expressionKey(node.value),
-    make: (name, value) => j.objectProperty(j.identifier(name), literalExpression(j, value)),
+    make: (name, value, old) => {
+      // A string keeps the quotes of the property it replaces, whatever the file's JSX takes:
+      // recast prints a Literal from its raw text, and a StringLiteral in the file's quotes.
+      const raw = old?.value?.extra?.raw;
+      if (typeof value === 'string' && typeof raw === 'string' && /^['"]/.test(raw)) {
+        const quote = raw[0];
+        const escaped = value.replaceAll('\\', '\\\\').replaceAll(quote, `\\${quote}`);
+        const literal = j.literal(value);
+        literal.extra = { rawValue: value, raw: `${quote}${escaped}${quote}` };
+        return j.objectProperty(j.identifier(name), literal);
+      }
+      return j.objectProperty(j.identifier(name), literalExpression(j, value));
+    },
     rename: (node, name) => {
       node.key = j.identifier(name);
       node.shorthand = false;

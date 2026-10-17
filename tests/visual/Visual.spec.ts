@@ -79,19 +79,19 @@ interface OpenList {
 const liveExample = (page: Page, name: string) =>
   page.locator(`.docs-live-example[data-example="${name}"]`);
 
-/** Toasts of the variants example, shown in order and captured stacked, with their timers stopped. */
-function toasts(name: string, variants: string[]): OpenList {
-  const show = (page: Page, variant: string) =>
-    liveExample(page, 'Variants').getByRole('button', { name: `Show ${variant}`, exact: true });
+/** Toasts of the tones example, shown in order and captured stacked, with their timers stopped. */
+function toasts(name: string, tones: string[]): OpenList {
+  const show = (page: Page, tone: string) =>
+    liveExample(page, 'Tones').getByRole('button', { name: `Show ${tone}`, exact: true });
   return {
     name,
     route: 'components/toast/overview',
-    trigger: (page) => show(page, variants[0]),
+    trigger: (page) => show(page, tones[0]),
     open: async (page) => {
-      for (const variant of variants) await press(page, show(page, variant));
+      for (const tone of tones) await press(page, show(page, tone));
     },
     popup: (page) => page.locator('.env-toast'),
-    count: variants.length,
+    count: tones.length,
     withTrigger: false,
     pauseTimers: true,
   };
@@ -188,10 +188,10 @@ const openLists: OpenList[] = [
     popup: (page) => page.locator('.env-tooltip', { hasText: 'Refresh members' }),
     withTrigger: true,
   },
-  // The strong fills of toasts, each with its edge. Three show at once, so the error, which stays
-  // until it is dismissed, is captured on its own.
+  // The strong fills of toasts, each with its edge. Three show at once, so the danger notice, which
+  // stays until it is dismissed, is captured on its own.
   toasts('toasts', ['neutral', 'success', 'info']),
-  toasts('toast-error', ['error']),
+  toasts('toast-error', ['danger']),
 ];
 
 /**

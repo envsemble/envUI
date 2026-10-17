@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Dialog, List, Stack, Text } from '@envsemble/envui';
+import { Button, List, Stack, Text, Drawer } from '@envsemble/envui';
 
 const people = [
   { name: 'Alex Morgan', role: 'Designer', email: 'alex.morgan@example.com', team: 'Product' },
@@ -37,12 +37,11 @@ export default function InspectorPanel() {
           />
         ))}
       </List.Root>
-      <Dialog
+      <Drawer
         open={person !== undefined}
         onOpenChange={(open) => {
           if (!open) setSelected(null);
         }}
-        placement="right"
         modal={false}
         disablePointerDismissal
         finalFocus={opener}
@@ -66,7 +65,7 @@ export default function InspectorPanel() {
             </Stack>
           </Stack>
         )}
-      </Dialog>
+      </Drawer>
     </>
   );
 }

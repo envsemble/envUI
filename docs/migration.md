@@ -146,6 +146,47 @@ Change by hand:
 
 Menu.Item with `href` closes the menu as it is followed, and a disabled one renders no link. The strings of OrganizationSwitcher, DocumentTabs, Breadcrumbs, Pagination, Pager, NavList, Table and Tree come from EnvUIProvider's `messages`; their `*Label` props still override them for one component.
 
+### Overlays and feedback
+
+Status tones say `danger` where 0.x said `error`, popups and dialogs take a `width` of `md` or `lg`, and a panel at the edge of the window is a Drawer. `v1-structure` turns each literal `<Dialog placement="right">` into a Drawer, `v1-props` moves the literal values and `useToast().show({ … })` objects, and `v1-classes` the classes:
+
+| 0.x                                                                                                                            | 1.0                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| Alert and EmptyState `tone="error"`                                                                                            | `tone="danger"`                                                                                 |
+| `useToast().show({ variant })`: `neutral`, `success`, `info`, `error`                                                          | `tone`: `neutral`, `success`, `info`, `danger`                                                  |
+| `ToastVariant`                                                                                                                 | `ToastTone`                                                                                     |
+| Toast `placement` and Toast.Provider `defaultPlacement`: `bottom-right`                                                        | `bottom-end`, which is the left in right-to-left text                                           |
+| `<Dialog placement="right">`                                                                                                   | `<Drawer side="end">`, with the same title, content, actions and focus props                    |
+| Dialog `size`: `standard`, `wide`                                                                                              | `width`: `md` (the default), `lg`                                                               |
+| Popover and HoverCard `width`: `standard`, `wide`                                                                              | `md` (the default), `lg`                                                                        |
+| Spinner `size`: `small`, `standard`, `large`                                                                                   | `sm`, `md` (the default), `lg`                                                                  |
+| CommandPalette `query`, `onQueryChange`, `onSelect`, `closeOnSelect`                                                           | `inputValue`, `onInputValueChange`, `onAction`, `closeOnAction`                                 |
+| `CommandPaletteSelectOptions`                                                                                                  | `CommandPaletteActionOptions`                                                                   |
+| `CommandPaletteItem` `detail`, `trailing`                                                                                      | `description`, `end`                                                                            |
+| The manual `Toast` and `ToastProps`                                                                                            | Removed: `useToast()` inside `Toast.Provider`, and `ToastNotification`                          |
+| `env-modal-pane`                                                                                                               | `env-dialog-popup`; a Drawer's surface is `env-drawer-popup`, and both are `env-dialog-surface` |
+| `env-bar*`                                                                                                                     | `env-meter*`; a Progress's are `env-progress*`                                                  |
+| `env-empty-copy`, `env-empty-state-error`, `env-empty-state-center`                                                            | `env-empty-state-description`, `[data-tone='danger']`, `[data-align='center']`                  |
+| `env-toast-{variant}`, `env-toast-viewport-{placement}`                                                                        | `.env-toast[data-tone]`, `.env-toast-viewport[data-placement]`                                  |
+| `env-spinner-{size}`                                                                                                           | `.env-spinner[data-size]`                                                                       |
+| `env-popover-theme`, `env-popover-positioner`, `env-tooltip-theme`, `env-tooltip-positioner` on Popover, HoverCard and Tooltip | `env-popup-theme`, `env-popup-positioner`; HoverCard's surface is `env-hover-card`              |
+
+Change these by hand where the codemods report them:
+
+- a Dialog `placement` that is an expression; a `placement="right"` Dialog becomes a Drawer only when the value is a literal;
+- a `show()` argument that isn't an object literal, such as a variable holding the notification, whose `variant` becomes `tone`;
+- the fields of `CommandPaletteItem` objects, `detail` and `trailing`, which the codemods can't tell apart from other objects; the type checker reports them where the array is typed;
+- an `env-bar` selector of a Progress, which the codemods rename to `env-meter`: rename it to `env-progress`;
+- selectors on `[data-tone='error']` of Alert or a toast, which are `[data-tone='danger']`.
+
+Behaviour that changes without a rename:
+
+- A danger toast is an alert as it appears and is never hidden behind the count of older notifications; the other notices are read by a polite status beside the regions, which are named Notifications and Top notifications where they were Bottom right notifications and Top center notifications.
+- A Drawer's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the drawer that takes Tab, such as that button, as it did in the side panel.
+- `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
+- A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
+- CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
+
 ### useTheme returns the theme, its contrast and its scale
 
 `useTheme()` returns `{ theme, contrast, scale }` instead of the color scheme alone. Read the scheme as `const { theme } = useTheme()`. An application's own portal that re-themed with `<Theme theme={useTheme()}>` takes all three with `<Theme {...useTheme()}>`, so it keeps a high contrast or a `standard` opt-out and the compact scale too; `v1-names` makes that change, turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those whose value is returned or passed to a context. In JavaScript, `theme={useTheme()}` would render `data-env-theme="[object Object]"`, so in development Theme warns about a `theme` that is not `light` or `dark`.

@@ -1,4 +1,7 @@
-/* A floating panel in the raised popup colors, with the menu's corners; HoverCard shares it. */
+/* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
+   PopupSurface, which draws the same look through env-popup; the theme, positioner, surface and
+   motion rules below stay for DatePicker, which borrows env-popover until it moves onto
+   PopupSurface too. The layout and the widths are Popover's and HoverCard's own. */
 .env-popover-theme {
   display: contents;
 }
@@ -6,7 +9,8 @@
   z-index: var(--env-z-popover);
   outline: none;
 }
-.env-popover {
+.env-popover,
+.env-hover-card {
   box-sizing: border-box;
   inline-size: min(20rem, calc(100vw - 2rem));
   max-block-size: var(--available-height, 80vh);
@@ -27,7 +31,8 @@
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-.env-popover[data-width='wide'] {
+.env-popover[data-width='lg'],
+.env-hover-card[data-width='lg'] {
   inline-size: min(28rem, calc(100vw - 2rem));
 }
 .env-popover-title {

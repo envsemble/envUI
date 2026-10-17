@@ -1,0 +1,105 @@
+/* Drawer: a full-height panel at the start or end edge of the window, on the dialog surface
+   (DialogSurface). Its edges and slide follow the text direction; it takes the whole width of a
+   window too narrow to leave the page beside it, and keeps clear of the safe areas there. */
+.env-drawer-viewport {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: var(--env-z-modal);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  place-items: stretch end;
+  pointer-events: none;
+}
+.env-drawer-viewport[data-side='start'] {
+  place-items: stretch start;
+}
+.env-drawer-popup {
+  --env-drawer-width: 24rem;
+  box-sizing: border-box;
+  inline-size: min(var(--env-drawer-width), 100%);
+  block-size: 100%;
+  max-block-size: none;
+  border-block: 0;
+  padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+  outline: none;
+  /* A swipe toward the edge moves the drawer with the finger: Base UI sets the movement, and its
+     own transform while the finger is down. */
+  --env-drawer-swipe: var(--drawer-swipe-movement-x, 0rem);
+  transform: translateX(var(--env-drawer-swipe));
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-drawer-popup[data-width='lg'] {
+  --env-drawer-width: 44rem;
+}
+/* The edge it slides from has no border; the safe area of that window edge pads it. */
+.env-drawer-popup[data-side='end'] {
+  border-inline-end: 0;
+  padding-inline-end: max(var(--env-space-5), env(safe-area-inset-right));
+}
+.env-drawer-popup[data-side='start'] {
+  border-inline-start: 0;
+  padding-inline-start: max(var(--env-space-5), env(safe-area-inset-left));
+}
+.env-drawer-popup[data-side='end']:dir(rtl) {
+  padding-inline-end: max(var(--env-space-5), env(safe-area-inset-left));
+}
+.env-drawer-popup[data-side='start']:dir(rtl) {
+  padding-inline-start: max(var(--env-space-5), env(safe-area-inset-right));
+}
+/* Where a drawer would leave only a sliver of the page beside it, as on a phone, it takes the whole
+   width instead, with no border and clear of the safe areas on both sides, such as a phone's
+   rounded corners in landscape. */
+@media (max-width: 28rem) {
+  .env-drawer-popup[data-width='md'] {
+    inline-size: 100%;
+    border-inline: 0;
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+}
+@media (max-width: 48rem) {
+  .env-drawer-popup[data-width='lg'] {
+    inline-size: 100%;
+    border-inline: 0;
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+}
+
+/* Motion: the drawer fades and slides in from its edge. Movement only without a reduced-motion
+   preference, and none while a finger moves it. */
+.env-drawer-popup[data-starting-style],
+.env-drawer-popup[data-ending-style] {
+  opacity: 0;
+}
+.env-drawer-popup[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+.env-drawer-popup[data-swiping] {
+  transition: none;
+  user-select: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-drawer-popup {
+    --env-drawer-offset: 2rem;
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-drawer-popup:is([data-side='start'], [data-side='end']:dir(rtl)) {
+    --env-drawer-offset: -2rem;
+  }
+  .env-drawer-popup[data-side='start']:dir(rtl) {
+    --env-drawer-offset: 2rem;
+  }
+  .env-drawer-popup[data-starting-style],
+  .env-drawer-popup[data-ending-style] {
+    transform: translateX(calc(var(--env-drawer-swipe) + var(--env-drawer-offset)));
+  }
+  .env-drawer-popup[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
+  }
+}

@@ -117,7 +117,7 @@ export function DocumentationSearch({
       results.map((result) => ({
         id: result.id,
         label: result.title,
-        detail: result.detail,
+        description: result.detail,
         icon: icons[result.kind],
         group: groups[result.kind],
       })),
@@ -154,8 +154,8 @@ export function DocumentationSearch({
       onOpenChange={onOpenChange}
       aria-label="Search the documentation"
       placeholder="Search components, props and tokens"
-      query={query}
-      onQueryChange={setQuery}
+      inputValue={query}
+      onInputValueChange={setQuery}
       items={items}
       emptyLabel={emptyLabel}
       hints={[
@@ -163,7 +163,7 @@ export function DocumentationSearch({
         { keys: [commandKey, 'Enter'], label: 'Open in a new tab' },
         { keys: ['Esc'], label: 'Close' },
       ]}
-      onSelect={(item, { modifier }) => {
+      onAction={(item, { modifier }) => {
         const result = results.find(({ id }) => id === item.id);
         const route =
           result && routeOfDocument(result.page, { view: result.view, section: result.section });

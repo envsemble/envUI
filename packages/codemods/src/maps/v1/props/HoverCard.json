@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "HoverCard": {
+      "width": {
+        "current": ["md", "lg"],
+        "report": "HoverCard's width is md or lg in 1.0: standard is md, the default, and wide is lg.",
+        "values": {
+          "standard": {},
+          "wide": {
+            "props": {
+              "width": "lg"
+            }
+          }
+        }
+      }
+    }
+  }
+}

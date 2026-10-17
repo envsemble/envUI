@@ -17,7 +17,7 @@ const states = [
   },
   {
     title: 'Error',
-    tone: 'error',
+    tone: 'danger',
     state: {
       title: 'Projects couldn’t load',
       description: 'The server didn’t respond. Try again in a moment.',

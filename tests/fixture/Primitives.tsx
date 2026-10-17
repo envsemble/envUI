@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
@@ -64,6 +64,7 @@ function ToolbarSample() {
       {/* Disabled while busy, as an editor's toolbar is while it saves. */}
       <Toolbar.Root aria-label="Partly disabled" disabled={busy}>
         <Toolbar.Button icon={<Undo />} label="Redo" shortcut="Ctrl+K Ctrl+Z" />
+        <Toolbar.Button icon={<FormatBold />} label="Strong emphasis" shortcut="⌘B" />
         <Toolbar.Group aria-label="Group" disabled={busy}>
           <Toolbar.Button icon={<FormatItalic />} label="Clear formatting" />
         </Toolbar.Group>
@@ -88,6 +89,8 @@ function ToolbarSample() {
  */
 function EmphasisSample() {
   const undesigned = { variant: 'secondary', tone: 'danger' } as unknown as ButtonProps;
+  // Mounted on request, so its deliberate console error reaches only the test that asks for it.
+  const [showUndesigned, setShowUndesigned] = useState(false);
   return (
     <Stack gap={2} data-testid="emphasis">
       <Toolbar.Root aria-label="Emphasis">
@@ -107,10 +110,38 @@ function EmphasisSample() {
           Remove
         </ConfirmButton>
         <CopyButton value="text" aria-label="Copy text" data-testid="copy-resting" />
-        <Button {...undesigned} data-testid="undesigned">
-          Undesigned
+        <Button variant="secondary" onClick={() => setShowUndesigned(true)}>
+          Show undesigned
         </Button>
+        {showUndesigned && (
+          <Button {...undesigned} data-testid="undesigned">
+            Undesigned
+          </Button>
+        )}
       </Stack>
+    </Stack>
+  );
+}
+
+/** A toolbar whose callback ref returns a cleanup, as React 19 allows, mounted and unmounted. */
+function RefCleanupSample() {
+  const [mounted, setMounted] = useState(true);
+  const [log, setLog] = useState<string[]>([]);
+  const ref = useCallback((element: HTMLDivElement | null) => {
+    setLog((current) => [...current, element ? 'attach' : 'null']);
+    return () => setLog((current) => [...current, 'cleanup']);
+  }, []);
+  return (
+    <Stack gap={2}>
+      <button type="button" onClick={() => setMounted((current) => !current)}>
+        Toggle ref toolbar
+      </button>
+      {mounted && (
+        <Toolbar.Root aria-label="Ref toolbar" ref={ref}>
+          <Toolbar.Button icon={<FormatBold />} label="Ref quote" />
+        </Toolbar.Root>
+      )}
+      <output data-testid="ref-log">{log.join(',')}</output>
     </Stack>
   );
 }
@@ -339,6 +370,7 @@ export function PrimitivesFixture() {
     <Stack gap={6}>
       <ToolbarSample />
       <EmphasisSample />
+      <RefCleanupSample />
       <FieldSample />
       <CloseButtonSample />
       <ResizeSample dir="ltr" />

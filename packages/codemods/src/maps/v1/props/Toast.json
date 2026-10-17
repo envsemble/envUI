@@ -1,0 +1,13 @@
+{
+  "@envsemble/envui": {
+    "Toast.Provider": {
+      "defaultPlacement": {
+        "current": ["bottom-end", "top-center"],
+        "report": "Toast.Provider's defaultPlacement is bottom-end or top-center in 1.0: bottom-right is bottom-end, the default, which follows the text direction.",
+        "values": {
+          "bottom-right": {}
+        }
+      }
+    }
+  }
+}

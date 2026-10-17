@@ -1,0 +1,17 @@
+{
+  "@envsemble/envui": {
+    "Alert": {
+      "tone": {
+        "current": ["info", "success", "warning", "danger"],
+        "report": "Alert's tone is info, success, warning or danger in 1.0: error is danger.",
+        "values": {
+          "error": {
+            "props": {
+              "tone": "danger"
+            }
+          }
+        }
+      }
+    }
+  }
+}

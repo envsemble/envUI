@@ -13,7 +13,7 @@ function PublishButton() {
       attempts.current += 1;
       if (attempts.current === 1) {
         const id = toast.show({
-          variant: 'error',
+          tone: 'danger',
           message: 'Northwind launch couldn’t be published. Check your connection and try again.',
           action: {
             label: 'Try again',
@@ -24,7 +24,7 @@ function PublishButton() {
           },
         });
       } else {
-        toast.show({ variant: 'success', message: 'Northwind launch published.' });
+        toast.show({ tone: 'success', message: 'Northwind launch published.' });
       }
     }, 1200);
   };

@@ -74,15 +74,17 @@
       "feedback/Alert.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
+      "feedback/Drawer.tsx": "composites",
       "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
       "feedback/LoadingState.tsx": "base",
       "feedback/Meter.tsx": "base",
+      "feedback/Progress.tsx": "base",
       "feedback/Popover.tsx": "base",
       "feedback/Skeleton.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/Tooltip.tsx": "base",
-      "feedback/toast/Toast.tsx": "composites",
+      "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
       "feedback/toast/ToastInternals.ts": "composites",
       "feedback/toast/ToastProvider.tsx": "composites",
@@ -217,20 +219,25 @@
           "content/internal/useCodeHighlighting.ts"
         ]
       },
+      "Alert": {
+        "modules": ["feedback/internal/AlertDismiss.tsx"]
+      },
       "Dialog": {
-        "classes": ["env-modal-pane"]
+        "modules": ["feedback/internal/DialogParts.tsx"]
       },
-      "EmptyState": {
-        "classes": ["env-empty-copy"]
+      "Progress": {
+        "styles": ["Meter.css"]
       },
-      "Meter": {
-        "classes": ["env-bar"]
+      "HoverCard": {
+        "styles": ["Popover.css"]
       },
       "Tooltip": {
         "modules": ["feedback/internal/TooltipPopup.tsx"],
         "slots": ["env-tooltip-disabled-target"]
       },
       "Toast": {
+        "classes": ["env-toast"],
+        "styles": ["Toast.css"],
         "modules": [
           "feedback/toast/ToastBody.tsx",
           "feedback/toast/ToastInternals.ts",

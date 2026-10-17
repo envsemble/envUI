@@ -82,13 +82,15 @@ test('index.css imports every style sheet into a layer of env', async () => {
 });
 
 test("the library's custom properties take the --env- prefix", async () => {
-  // Base UI's positioners set these on the popup inside; envUI only reads them.
+  // Base UI's positioners set these on the popup inside, and its drawer the swipe's movement;
+  // envUI only reads them.
   const baseUi = new Set([
     '--anchor-height',
     '--anchor-width',
     '--available-height',
     '--available-width',
     '--transform-origin',
+    '--drawer-swipe-movement-x',
   ]);
   const problems = [];
   for (const file of await readdir(styles)) {

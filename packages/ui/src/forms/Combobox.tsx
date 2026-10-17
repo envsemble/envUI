@@ -547,7 +547,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 <BaseCombobox.Status className="env-combobox-status">
                   {loading ? (
                     <>
-                      <Spinner size="small" />
+                      <Spinner size="sm" />
                       {loadingLabel}
                     </>
                   ) : null}

@@ -5,7 +5,7 @@ const tones = [
   { tone: 'info', title: 'Sync paused' },
   { tone: 'success', title: 'Plan shared' },
   { tone: 'warning', title: 'Storage almost full' },
-  { tone: 'error', title: 'Search is unavailable' },
+  { tone: 'danger', title: 'Search is unavailable' },
 ] as const;
 
 /** Every tone with every part: icon, title, message, action and dismiss button. */

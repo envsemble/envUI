@@ -20,7 +20,7 @@ export default function LoadFailed() {
     );
   return (
     <EmptyState
-      tone="error"
+      tone="danger"
       title="Projects couldn’t load"
       description="The server didn’t respond. Your projects are safe; try again in a moment."
       action={

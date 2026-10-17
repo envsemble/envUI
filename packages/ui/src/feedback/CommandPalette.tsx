@@ -1,21 +1,23 @@
 'use client';
 
+import { Autocomplete as BaseAutocomplete } from '@base-ui/react/autocomplete';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import {
-  Fragment,
-  useEffect,
-  useId,
-  useLayoutEffect,
   useRef,
-  useState,
+  type ComponentPropsWithRef,
   type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { ListRow } from '../internal/ListRow.js';
+import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { commandPalette } from '../foundations/messages/commandPalette.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
 import { Kbd } from '../content/Kbd.js';
+import { DialogBackdrop } from './internal/DialogParts.js';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
@@ -24,14 +26,16 @@ export interface CommandPaletteItem {
   label: ReactNode;
   /** Plain text of the label when it is not a string, for the option's accessible name. */
   textValue?: string;
-  /** Muted text after the label, such as a folder path. */
-  detail?: ReactNode;
+  /** Muted text under the label, such as a folder path. */
+  description?: ReactNode;
   /** A decorative icon before the label. */
   icon?: ReactNode;
   /** A heading shows where the group changes between consecutive items. */
   group?: string;
   /** End content, such as a Kbd shortcut or a Badge. */
-  trailing?: ReactNode;
+  end?: ReactNode;
+  /** The option shows but can't be chosen, such as a command that doesn't apply here. */
+  disabled?: boolean;
 }
 
 /** A key hint in the footer: the keys as Kbd, then what they do. */
@@ -42,12 +46,13 @@ export interface CommandPaletteHint {
   label: ReactNode;
 }
 
-export interface CommandPaletteSelectOptions {
+export interface CommandPaletteActionOptions {
   /** Ctrl or Cmd was held, for example to open beside the current document. */
   modifier: boolean;
 }
 
-export interface CommandPaletteProps {
+export interface CommandPaletteProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue' | 'onChange'> {
   /** Whether the palette is open; the application opens it, such as from a shortcut. */
   open: boolean;
   /** Called with false when Esc, a press on the backdrop or a choice closes the palette. */
@@ -55,226 +60,223 @@ export interface CommandPaletteProps {
   /** Accessible name of the dialog, the search field and the list. */
   'aria-label': string;
   /** The text in the search field. */
-  query: string;
+  inputValue: string;
   /** Receives the text as people type. */
-  onQueryChange: (query: string) => void;
+  onInputValueChange: (inputValue: string) => void;
   /** Filtered and ranked by the application, in display order. */
   items: readonly CommandPaletteItem[];
-  /** Enter or click; Ctrl or Cmd sets modifier. */
-  onSelect: (item: CommandPaletteItem, options: CommandPaletteSelectOptions) => void;
-  /** Close after an item is selected; true by default. */
-  closeOnSelect?: boolean;
+  /** Enter or a press on an option; Ctrl or Cmd sets modifier. */
+  onAction: (item: CommandPaletteItem, options: CommandPaletteActionOptions) => void;
+  /**
+   * Close after an option is chosen.
+   * @default true
+   */
+  closeOnAction?: boolean;
   /** Shown in the empty search field, such as "Search documents by name or folder". */
   placeholder?: string;
-  /** Shown in place of the list when there are no items; No results by default. */
+  /**
+   * Shown in place of the list when there are no items, and announced.
+   * @default 'No results', or EnvUIProvider's messages.commandPalette.empty
+   */
   emptyLabel?: ReactNode;
   /** Key hints below the list, such as { keys: ['Enter'], label: 'Open' }. */
   hints?: readonly CommandPaletteHint[];
   /** Other content below the list, after the hints. */
   footer?: ReactNode;
-  /** Classes for the dialog's surface. */
-  className?: string;
 }
 
-/** Options moved by Page Up and Page Down when the list height is unknown. */
-const fallbackPage = 8;
+interface Section {
+  id: string;
+  label: string | undefined;
+  items: CommandPaletteItem[];
+}
 
 /** Consecutive items with the same group share a labelled group. */
-function groupItems(items: readonly CommandPaletteItem[]) {
-  const sections: {
-    group: string | undefined;
-    entries: { item: CommandPaletteItem; itemIndex: number }[];
-  }[] = [];
-  items.forEach((item, itemIndex) => {
+function sectionsOf(items: readonly CommandPaletteItem[]) {
+  const sections: Section[] = [];
+  for (const item of items) {
     const current = sections.at(-1);
-    if (current && current.group === item.group) current.entries.push({ item, itemIndex });
-    else sections.push({ group: item.group, entries: [{ item, itemIndex }] });
-  });
+    if (current && current.label === item.group) current.items.push(item);
+    else sections.push({ id: `section-${sections.length}`, label: item.group, items: [item] });
+  }
   return sections;
 }
 
-function optionElementId(listId: string, itemId: string) {
-  return `${listId}-option-${itemId.replace(
-    /[^A-Za-z0-9-]/g,
-    (character) => `_${character.codePointAt(0)!.toString(16)}_`,
-  )}`;
+function textOf(item: CommandPaletteItem) {
+  return item.textValue ?? (typeof item.label === 'string' ? item.label : item.id);
 }
 
 /**
  * A quick-open dialog near the top of the window: a search field over a list of options the
- * application filters and ranks. The keyboard moves the highlight while typing continues.
+ * application filters and ranks, built on Base UI's Autocomplete inside a dialog. The arrow keys
+ * move the highlight while typing continues, and the number of results is announced as it
+ * changes. className, style, ref and data attributes go to the dialog's surface.
  */
 export function CommandPalette({
   open,
   onOpenChange,
   'aria-label': label,
-  query,
-  onQueryChange,
+  inputValue,
+  onInputValueChange,
   items,
-  onSelect,
-  closeOnSelect = true,
+  onAction,
+  closeOnAction = true,
   placeholder,
-  emptyLabel = 'No results',
+  emptyLabel,
   hints,
   footer,
   className,
+  ...popupProps
 }: CommandPaletteProps) {
   const theme = useTheme();
-  const listId = `${useId().replace(/[^A-Za-z0-9-]/g, '')}-list`;
+  const locale = useLocale();
+  const messages = useMessages('commandPalette', commandPalette);
   const input = useRef<HTMLInputElement>(null);
+  const highlighted = useRef<{ item?: CommandPaletteItem; index: number }>({ index: -1 });
   const list = useRef<HTMLDivElement>(null);
-  const [highlighted, setHighlighted] = useState(0);
-  const index = items.length === 0 ? -1 : Math.min(highlighted, items.length - 1);
-  const active = index === -1 ? undefined : items[index];
+  const sections = sectionsOf(items);
+  const grouped = sections.some((section) => section.label !== undefined);
 
-  // A new query starts again from the best match.
-  useEffect(() => setHighlighted(0), [query, open]);
-
-  useLayoutEffect(() => {
-    const container = list.current;
-    if (!open || !container || !active) return;
-    const option = container.ownerDocument.getElementById(optionElementId(listId, active.id));
-    if (!option) return;
-    // Layout offsets within the list, which is the options' offset parent: unlike client
-    // rectangles, they ignore the dialog's scale while it opens.
-    const top = option.offsetTop;
-    const bottom = top + option.offsetHeight;
-    if (top < container.scrollTop) container.scrollTop = top;
-    else if (bottom > container.scrollTop + container.clientHeight)
-      container.scrollTop = bottom - container.clientHeight;
-  }, [open, active, listId]);
-
-  function select(item: CommandPaletteItem, modifier: boolean) {
-    onSelect(item, { modifier });
-    if (closeOnSelect) onOpenChange(false);
+  function act(item: CommandPaletteItem, modifier: boolean) {
+    if (item.disabled) return;
+    onAction(item, { modifier });
+    if (closeOnAction) onOpenChange(false);
   }
 
+  /** Options that fit in the list's height, for Page Up and Page Down. */
   function pageSize() {
     const container = list.current;
     const option = container?.querySelector<HTMLElement>('[role="option"]');
     return container && option
       ? Math.max(1, Math.floor(container.clientHeight / option.offsetHeight) - 1)
-      : fallbackPage;
+      : 8;
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.nativeEvent.isComposing) return;
-    const last = items.length - 1;
-    let next: number | undefined;
-    if (event.key === 'ArrowDown') next = index >= last ? 0 : index + 1;
-    else if (event.key === 'ArrowUp') next = index <= 0 ? last : index - 1;
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = last;
-    else if (event.key === 'PageDown') next = Math.min(last, index + pageSize());
-    else if (event.key === 'PageUp') next = Math.max(0, index - pageSize());
-    else if (event.key === 'Enter') {
+    const { item, index } = highlighted.current;
+    // Base UI leaves Enter with a modifier to the application: it chooses the highlighted option.
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && item) {
       event.preventDefault();
-      if (active) select(active, event.ctrlKey || event.metaKey);
+      act(item, true);
       return;
-    } else return;
-    event.preventDefault();
-    if (items.length > 0) setHighlighted(next);
+    }
+    // Page Up and Page Down move the highlight a list's height, stopping at the ends, as that many
+    // presses of the arrow keys would, so Base UI keeps the highlight and its scrolling.
+    if ((event.key === 'PageDown' || event.key === 'PageUp') && items.length > 0) {
+      event.preventDefault();
+      const down = event.key === 'PageDown';
+      const steps = Math.min(pageSize(), down ? items.length - 1 - index : index);
+      for (let step = 0; step < steps; step += 1)
+        event.currentTarget.dispatchEvent(
+          new KeyboardEvent('keydown', { key: down ? 'ArrowDown' : 'ArrowUp', bubbles: true }),
+        );
+    }
   }
+
+  const renderItem = (item: CommandPaletteItem) => (
+    <ListRow
+      key={item.id}
+      className="env-command-palette-item"
+      icon={item.icon}
+      label={item.label}
+      description={item.description}
+      end={item.end}
+      render={
+        <BaseAutocomplete.Item
+          value={item}
+          disabled={item.disabled}
+          data-item-id={item.id}
+          aria-label={item.textValue}
+          onClick={(event: MouseEvent) => act(item, event.ctrlKey || event.metaKey)}
+        />
+      }
+    />
+  );
 
   return (
     <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
       <BaseDialog.Portal>
         <Theme {...theme}>
-          <BaseDialog.Backdrop className="env-dialog-backdrop env-command-palette-backdrop" />
+          <DialogBackdrop />
           <div className="env-command-palette-positioner">
             <BaseDialog.Popup
+              {...popupProps}
               className={classNames('env-command-palette', className)}
               aria-label={label}
               initialFocus={input}
             >
-              <div className="env-command-palette-search">
-                <DecorativeIcon>
-                  <Search />
-                </DecorativeIcon>
-                <input
-                  ref={input}
-                  className="env-command-palette-input"
-                  role="combobox"
-                  aria-label={label}
-                  aria-expanded={items.length > 0}
-                  aria-controls={listId}
-                  aria-autocomplete="list"
-                  aria-activedescendant={active ? optionElementId(listId, active.id) : undefined}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  placeholder={placeholder}
-                  value={query}
-                  onChange={(event) => onQueryChange(event.currentTarget.value)}
-                  onKeyDown={onKeyDown}
-                />
-              </div>
-              <div
-                ref={list}
-                id={listId}
-                role="listbox"
-                aria-label={label}
-                className="env-command-palette-list"
-                hidden={items.length === 0}
+              <BaseAutocomplete.Root
+                open
+                inline
+                items={grouped ? sections : items}
+                filter={null}
+                autoHighlight="always"
+                keepHighlight
+                locale={locale}
+                itemToStringValue={(item: CommandPaletteItem) => textOf(item)}
+                value={inputValue}
+                onValueChange={(next, details) => {
+                  // Choosing an option acts on it; the search text stays what people typed.
+                  if (details.reason === 'item-press') return;
+                  onInputValueChange(next);
+                }}
+                onItemHighlighted={(item: CommandPaletteItem | undefined, details) => {
+                  highlighted.current = { item, index: item ? details.index : -1 };
+                }}
               >
-                {groupItems(items).map((section, sectionIndex) => {
-                  const options = section.entries.map(({ item, itemIndex }) => (
-                    <div
-                      key={item.id}
-                      id={optionElementId(listId, item.id)}
-                      role="option"
-                      aria-selected={itemIndex === index}
-                      aria-label={item.textValue}
-                      className="env-command-palette-option"
-                      data-item-id={item.id}
-                      data-highlighted={itemIndex === index ? '' : undefined}
-                      onPointerMove={() => {
-                        if (itemIndex !== index) setHighlighted(itemIndex);
-                      }}
-                      // The field keeps focus while an option is pressed.
-                      onPointerDown={(event) => event.preventDefault()}
-                      onClick={(event) => select(item, event.ctrlKey || event.metaKey)}
-                    >
-                      {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
-                      <span className="env-command-palette-label">{item.label}</span>
-                      {item.detail != null && (
-                        <>
-                          {' '}
-                          <span className="env-command-palette-detail">{item.detail}</span>
-                        </>
-                      )}
-                      {item.trailing != null && (
-                        <span className="env-command-palette-trailing">{item.trailing}</span>
-                      )}
-                    </div>
-                  ));
-                  if (section.group === undefined)
-                    return <Fragment key={`options-${sectionIndex}`}>{options}</Fragment>;
-                  const headingId = `${listId}-group-${sectionIndex}`;
-                  return (
-                    <div
-                      key={`group-${sectionIndex}`}
-                      role="group"
-                      aria-labelledby={headingId}
-                      className="env-command-palette-group"
-                    >
-                      <div
-                        id={headingId}
-                        role="presentation"
-                        className="env-command-palette-heading"
-                      >
-                        {section.group}
-                      </div>
-                      {options}
-                    </div>
-                  );
-                })}
-              </div>
-              {items.length === 0 && (
-                <div className="env-command-palette-empty" role="status">
-                  {emptyLabel}
+                <div className="env-command-palette-search">
+                  <DecorativeIcon>
+                    <Search />
+                  </DecorativeIcon>
+                  <BaseAutocomplete.Input
+                    ref={input}
+                    className="env-command-palette-input"
+                    aria-label={label}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    placeholder={placeholder}
+                    onKeyDown={onKeyDown}
+                  />
                 </div>
-              )}
+                <BaseAutocomplete.List
+                  ref={list}
+                  className="env-command-palette-list"
+                  aria-label={label}
+                  hidden={items.length === 0}
+                >
+                  {grouped
+                    ? (section: Section) =>
+                        section.label === undefined ? (
+                          <BaseAutocomplete.Group key={section.id} items={section.items}>
+                            <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
+                          </BaseAutocomplete.Group>
+                        ) : (
+                          <BaseAutocomplete.Group
+                            key={section.id}
+                            items={section.items}
+                            className="env-command-palette-group"
+                          >
+                            <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
+                              {section.label}
+                            </BaseAutocomplete.GroupLabel>
+                            <BaseAutocomplete.Collection>{renderItem}</BaseAutocomplete.Collection>
+                          </BaseAutocomplete.Group>
+                        )
+                    : renderItem}
+                </BaseAutocomplete.List>
+                {/* One polite status: the number of results as they change, read by assistive
+                    technology only, or the empty message, shown in place of the list. */}
+                <BaseAutocomplete.Status
+                  className="env-command-palette-status"
+                  data-empty={items.length === 0 || undefined}
+                >
+                  {items.length === 0
+                    ? (emptyLabel ?? messages.empty)
+                    : messages.results({ count: items.length })}
+                </BaseAutocomplete.Status>
+              </BaseAutocomplete.Root>
               {(Boolean(hints?.length) || footer != null) && (
                 <div className="env-command-palette-footer">
                   {hints?.map((hint, hintIndex) => (

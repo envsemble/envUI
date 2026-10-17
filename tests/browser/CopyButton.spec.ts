@@ -197,7 +197,7 @@ test('labels, onClick, application tooltips and themes', async ({ page }) => {
     await custom.click();
     await expect(tooltip).toHaveText('Kopiert');
     // The tooltip takes the theme of the button it belongs to.
-    await expect(page.locator(`.env-tooltip-theme:has(${shownTooltip})`)).toHaveAttribute(
+    await expect(page.locator(`.env-popup-theme:has(${shownTooltip})`)).toHaveAttribute(
       'data-env-theme',
       theme,
     );

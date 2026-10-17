@@ -88,7 +88,7 @@ export function Message({
       {status != null && (
         <div className="env-message-status">
           {status === 'sending' ? (
-            <Spinner size="small" />
+            <Spinner size="sm" />
           ) : (
             <DecorativeIcon>
               <ErrorIcon />

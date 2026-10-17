@@ -1,6 +1,15 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
+  Alert,
+  Button,
   CloseButton,
+  CommandPalette,
+  Drawer,
+  LoadingState,
+  Progress,
+  Skeleton,
+  Toast,
+  useToast,
   ConfirmButton,
   CopyButton,
   Dialog,
@@ -30,6 +39,42 @@ export const pseudoMessages = Object.fromEntries(
     ),
   ]),
 ) as EnvUIMessagesInput;
+
+/** Overlays and feedback: an alert, a loading state and bar, a drawer, notices and a palette. */
+function FeedbackStrings() {
+  const toast = useToast();
+  const [palette, setPalette] = useState(false);
+  useEffect(() => {
+    // More notices than the visible limit, so the hidden count shows too.
+    for (let index = 1; index <= 4; index++)
+      toast.show({ message: `Notice ${index}`, duration: 0 });
+    return () => toast.clear();
+  }, [toast]);
+  return (
+    <>
+      <Alert onDismiss={() => {}}>Saved on this device.</Alert>
+      <LoadingState>
+        <Skeleton />
+      </LoadingState>
+      <Progress label="Importing" value={null} />
+      <Drawer title="Filters" defaultOpen modal={false} disablePointerDismissal>
+        Filters
+      </Drawer>
+      <Button variant="secondary" onClick={() => setPalette(true)}>
+        Open palette
+      </Button>
+      <CommandPalette
+        open={palette}
+        onOpenChange={setPalette}
+        aria-label="Go to"
+        inputValue=""
+        onInputValueChange={() => {}}
+        items={[]}
+        onAction={() => {}}
+      />
+    </>
+  );
+}
 
 /** A reader of the common messages that counts its renders in data-renders, after each one. */
 const MessagesProbe = memo(function MessagesProbe() {
@@ -84,6 +129,9 @@ export function MessageStringsFixture() {
           <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>
+          <Toast.Provider>
+            <FeedbackStrings />
+          </Toast.Provider>
           <InlineMessages />
         </Stack>
       </EnvUIProvider>

@@ -1,9 +1,14 @@
-.env-bar {
+/* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
+   the value. Each emits its own classes, env-meter* and env-progress*; Progress adds the
+   indeterminate sweep and segments. */
+.env-meter,
+.env-progress {
   display: grid;
   gap: var(--env-space-2);
   min-inline-size: 0;
 }
-.env-bar-heading {
+.env-meter-heading,
+.env-progress-heading {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -11,30 +16,38 @@
   gap: var(--env-space-3);
   font: var(--env-type-body-small);
 }
-.env-bar-label {
+.env-meter-label,
+.env-progress-label {
   color: var(--env-color-fg-muted);
 }
-.env-bar-value {
+.env-meter-value,
+.env-progress-value {
   color: var(--env-color-fg-control);
   font-weight: 500;
 }
-.env-bar-track {
+.env-meter-track,
+.env-progress-track {
   block-size: 0.625rem;
   overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-neutral-muted);
 }
-.env-bar-indicator {
+.env-meter-indicator,
+.env-progress-indicator {
   block-size: 100%;
   border-radius: inherit;
   background: var(--env-color-bg-brand-emphasis);
   transition: inline-size var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-.env-bar[data-indeterminate] .env-bar-indicator {
+.env-progress[data-indeterminate] .env-progress-indicator {
   inline-size: 40%;
-  animation: env-bar-indeterminate 1.2s var(--env-motion-ease) infinite;
+  animation: env-progress-indeterminate 1.2s var(--env-motion-ease) infinite;
 }
-@keyframes env-bar-indeterminate {
+/* The sweep runs toward the end of the line, so right to left in right-to-left text. */
+.env-progress[data-indeterminate]:dir(rtl) .env-progress-indicator {
+  animation-name: env-progress-indeterminate-rtl;
+}
+@keyframes env-progress-indeterminate {
   from {
     transform: translateX(-100%);
   }
@@ -42,11 +55,40 @@
     transform: translateX(250%);
   }
 }
+@keyframes env-progress-indeterminate-rtl {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-250%);
+  }
+}
+/* Segments: equal steps with a gap between them, each filling in turn along the line. */
+.env-progress[data-segmented] .env-progress-track {
+  display: flex;
+  gap: var(--env-space-1);
+  background: none;
+}
+.env-progress-segment {
+  flex: 1 1 0;
+  border-radius: var(--env-radius-full);
+  background:
+    linear-gradient(
+      to var(--env-progress-segment-edge, right),
+      var(--env-color-bg-brand-emphasis) calc(var(--env-progress-segment-fill, 0) * 100%),
+      transparent 0
+    ),
+    var(--env-color-bg-neutral-muted);
+}
+.env-progress-segment:dir(rtl) {
+  --env-progress-segment-edge: left;
+}
 @media (prefers-reduced-motion: reduce) {
-  .env-bar-indicator {
+  .env-meter-indicator,
+  .env-progress-indicator {
     transition: none;
   }
-  .env-bar[data-indeterminate] .env-bar-indicator {
+  .env-progress[data-indeterminate] .env-progress-indicator {
     animation: none;
   }
 }
@@ -54,11 +96,24 @@
 /* Forced colors: the system paints no fills or shadows, so a bar’s track is outlined and its
    indicator takes the selection color. */
 @media (forced-colors: active) {
-  .env-bar-track {
+  .env-meter-track,
+  .env-progress-track,
+  .env-progress-segment {
     outline: 1px solid CanvasText;
     outline-offset: -1px;
   }
-  .env-bar-indicator {
+  .env-meter-indicator,
+  .env-progress-indicator {
     background-color: Highlight;
+  }
+  .env-progress-segment {
+    forced-color-adjust: none;
+    background:
+      linear-gradient(
+        to var(--env-progress-segment-edge, right),
+        Highlight calc(var(--env-progress-segment-fill, 0) * 100%),
+        transparent 0
+      ),
+      Canvas;
   }
 }

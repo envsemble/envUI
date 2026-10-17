@@ -271,12 +271,12 @@
   "overview/components": {
     "dark": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 59
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 59
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
       }
     }
   }

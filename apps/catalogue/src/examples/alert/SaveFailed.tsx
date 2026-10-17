@@ -21,7 +21,7 @@ export default function SaveFailed() {
   return (
     <Stack gap={3}>
       {status === 'failed' && (
-        <Alert tone="error" title="Couldn’t save the draft" announce onDismiss={dismiss}>
+        <Alert tone="danger" title="Couldn’t save the draft" announce onDismiss={dismiss}>
           The connection dropped while saving. Your changes are still in the editor; try again in a
           moment.
         </Alert>

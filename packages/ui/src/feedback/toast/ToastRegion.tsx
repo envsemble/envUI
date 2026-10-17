@@ -3,9 +3,12 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button } from '../../actions/Button.js';
+import { CloseButton } from '../../actions/CloseButton.js';
 import { CounterBadge } from '../../content/CounterBadge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
-import { Close } from '../../icons/Close.js';
+import { toast as toastMessages } from '../../foundations/messages/toast.js';
+import { useMessages } from '../../internal/EnvUIContext.js';
+import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './ToastInternals.js';
@@ -26,20 +29,46 @@ function animationsOf(item: HTMLElement) {
   return item.getAnimations?.() ?? [];
 }
 
+/**
+ * The notices that wait behind the count of hidden ones: the oldest beyond the visible limit. Danger
+ * notices are never among them; they take their places first.
+ */
+function limitedIds(toasts: readonly BaseToast.Root.ToastObject<ToastEntry>[], limit: number) {
+  const active = toasts.filter((toast) => toast.transitionStatus !== 'ending');
+  const dangers = active.filter((toast) => toast.data?.tone === 'danger').length;
+  let room = Math.max(limit - dangers, 0);
+  const limited = new Set<string>();
+  // Newest first, as Base UI keeps them.
+  for (const toast of active) {
+    if (toast.data?.tone === 'danger') continue;
+    if (room > 0) room -= 1;
+    else limited.add(toast.id);
+  }
+  return limited;
+}
+
 export function ToastRegion({
   placement,
   controller,
+  visibleLimit,
 }: {
   placement: ToastPlacement;
   controller: ToastController;
+  visibleLimit: number;
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
+  const messages = useMessages('toast', toastMessages);
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
-  const hiddenCount = toastStore.toasts.filter(
-    (toast) => toast.limited && toast.transitionStatus !== 'ending',
-  ).length;
+  const limited = limitedIds(toastStore.toasts, visibleLimit);
+  // A swipe toward the end of the line dismisses, so it is to the left in right-to-left text.
+  const [direction] = useDirection(viewport, toastStore.toasts.length);
+  const swipeDirection: ('down' | 'left' | 'right')[] = [
+    'down',
+    direction === 'rtl' ? 'left' : 'right',
+  ];
+  const hiddenCount = limited.size;
   useLayoutEffect(
     () =>
       controller.registerPlacementStore(placement, {
@@ -51,11 +80,13 @@ export function ToastRegion({
   useLayoutEffect(() => {
     const visibleIds = new Set(
       toastStore.toasts
-        .filter((toast) => !toast.limited && toast.transitionStatus !== 'ending')
+        .filter((toast) => !limited.has(toast.id) && toast.transitionStatus !== 'ending')
         .map((toast) => toast.id),
     );
     controller.setVisibleNotifications(placement, visibleIds);
-  }, [controller, placement, toastStore.toasts]);
+    // The limited set follows from the toasts and the limit, which the dependencies cover.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controller, placement, toastStore.toasts, visibleLimit]);
   const hiddenIds = useRef(new Set<string>());
   // While notices move, appear or leave they may reach past the stack's box for a moment. A stack
   // that fits stops scrolling then, so no scrollbar flashes and nothing shifts sideways; a stack
@@ -124,7 +155,7 @@ export function ToastRegion({
     const box = element.getBoundingClientRect();
     for (const pin of pins) {
       // Physical sides: the measurements are physical, whatever the writing direction.
-      if (placement === 'bottom-right') {
+      if (placement === 'bottom-end') {
         pin.item.style.bottom = `${box.bottom - pin.bottom}px`;
         pin.item.style.right = `${box.right - pin.right}px`;
       } else {
@@ -179,9 +210,13 @@ export function ToastRegion({
       <Theme {...theme} className="env-toast-portal-theme">
         <BaseToast.Viewport
           ref={attachViewport}
-          className={`env-toast-viewport env-toast-viewport-${placement}`}
+          className="env-toast-viewport"
+          data-placement={placement}
+          // The region announces nothing itself: a danger notice is an alert of its own, and the
+          // others are read by the status below, so no notice is read twice.
+          aria-live="off"
           aria-label={
-            placement === 'bottom-right' ? 'Bottom right notifications' : 'Top center notifications'
+            placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter
           }
           onFocusCapture={(event) => {
             // F6 focuses the viewport itself. Focus inside a toast pauses only that toast.
@@ -204,17 +239,26 @@ export function ToastRegion({
               data-toast-id="queued"
               role="status"
               value={`+${hiddenCount}`}
-              aria-label={`${hiddenCount} older notification${hiddenCount === 1 ? '' : 's'} hidden`}
+              aria-label={messages.hidden({ count: hiddenCount })}
             />
           )}
           {toastStore.toasts.map((toast) => {
             const entry = toast.data!;
+            const isLimited = limited.has(toast.id);
+            const danger = entry.tone === 'danger';
             return (
               <BaseToast.Root
                 key={toast.id}
                 toast={toast}
                 data-toast-id={toast.id}
-                className={`env-toast env-toast-${entry.variant}`}
+                className="env-toast"
+                data-tone={entry.tone}
+                swipeDirection={swipeDirection}
+                data-limited={isLimited || undefined}
+                inert={isLimited || undefined}
+                // A danger notice interrupts: it is an alert as it appears, outside any polite
+                // region, and stays readable.
+                {...(danger && { role: 'alert', 'aria-modal': undefined })}
                 onMouseEnter={() => controller.pause(toast.id, 'hover')}
                 onMouseLeave={() => controller.resume(toast.id, 'hover')}
                 onFocusCapture={(event) => {
@@ -228,7 +272,7 @@ export function ToastRegion({
                 }}
               >
                 <ToastBody
-                  variant={entry.variant}
+                  tone={entry.tone}
                   message={<BaseToast.Title className="env-toast-message" title={entry.message} />}
                   action={
                     entry.action && (
@@ -244,14 +288,14 @@ export function ToastRegion({
                   dismiss={
                     entry.dismissible !== false && (
                       <BaseToast.Close
-                        className="env-toast-dismiss"
                         aria-hidden={false}
-                        aria-label="Dismiss notification"
-                      >
-                        <span className="env-icon">
-                          <Close />
-                        </span>
-                      </BaseToast.Close>
+                        render={
+                          <CloseButton
+                            className="env-toast-dismiss"
+                            aria-label={messages.dismiss}
+                          />
+                        }
+                      />
                     )
                   }
                 />
@@ -259,6 +303,14 @@ export function ToastRegion({
             );
           })}
         </BaseToast.Viewport>
+        {/* The ordinary notices, read politely as they arrive; a danger notice is an alert. */}
+        <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">
+          {toastStore.toasts
+            .filter((toast) => toast.data?.tone !== 'danger' && toast.transitionStatus !== 'ending')
+            .map((toast) => (
+              <div key={toast.id}>{toast.data!.message}</div>
+            ))}
+        </div>
       </Theme>
     </BaseToast.Portal>
   );

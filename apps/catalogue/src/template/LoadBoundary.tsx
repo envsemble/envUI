@@ -220,7 +220,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
     if (!failure) content = this.props.children;
     else if (!(failure.error instanceof ModuleLoadError))
       content = (
-        <Alert ref={this.alert} tabIndex={-1} tone="error" title={`This ${what} failed to render`}>
+        <Alert ref={this.alert} tabIndex={-1} tone="danger" title={`This ${what} failed to render`}>
           {errorMessage(failure.error)}
         </Alert>
       );
