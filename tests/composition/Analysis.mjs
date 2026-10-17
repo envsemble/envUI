@@ -403,11 +403,12 @@ export function analyze() {
     );
 
   // Allowances that no longer allow anything, so the rules can't hide a later regression.
-  for (const [module] of dynamicRoles)
-    if (!usedAllowances.has(`dynamicRoles ${module}`))
-      problems.push(
-        `${rulesFile} interactive.dynamicRoles lists the roles of a role={…} in ${module}, which sets no role it can't read: remove it.`,
-      );
+  for (const [module, expressions] of dynamicRoles)
+    for (const expression of Object.keys(expressions))
+      if (!usedAllowances.has(`dynamicRoles ${module} ${expression}`))
+        problems.push(
+          `${rulesFile} interactive.dynamicRoles lists the roles of role={${expression}} in ${module}, which sets no such role it can't read: remove it.`,
+        );
   for (const [module, elements] of Object.entries(interactive.leafControls))
     for (const element of elements)
       if (!usedAllowances.has(`leafControls ${module} ${element}`))
@@ -453,8 +454,10 @@ export function analyze() {
 /**
  * The raw interactive elements a JSX tag can render, such as `button` or `role="button"`. A role
  * set by a condition counts with each role its branches can take. A role the source doesn't spell
- * out, such as role={role}, takes the roles listed for its module under interactive.dynamicRoles;
- * without them it is `role={…}`, a finding of its own until they are listed.
+ * out, such as role={role}, takes the roles listed for that expression, by its source text such as
+ * `role` or `stand.role`, in its module under interactive.dynamicRoles; without them it is
+ * `role={…}`, a finding of its own until they are listed. So a listing covers only that
+ * expression, not every role={…} the module may add later.
  */
 export function interactiveElements(node, { elements, roles, dynamicRoles = {} }, module, used) {
   if (!ts.isIdentifier(node.tagName)) return [];
@@ -469,10 +472,13 @@ export function interactiveElements(node, { elements, roles, dynamicRoles = {} }
   }
   const taken = roleValues(node);
   if (taken === undefined) return [];
-  if (taken.unknown) {
-    if (!dynamicRoles[module]) return ['role={…}'];
-    used?.add(`dynamicRoles ${module}`);
-    taken.roles.push(...dynamicRoles[module]);
+  for (const expression of taken.unknown) {
+    const listed = Object.hasOwn(dynamicRoles[module] ?? {}, expression)
+      ? dynamicRoles[module][expression]
+      : undefined;
+    if (!listed) return ['role={…}'];
+    used?.add(`dynamicRoles ${module} ${expression}`);
+    taken.roles.push(...listed);
   }
   return [...new Set(taken.roles)]
     .filter((role) => roles.includes(role))
@@ -481,14 +487,15 @@ export function interactiveElements(node, { elements, roles, dynamicRoles = {} }
 
 /**
  * The roles a JSX tag's role attribute can take: its literal, or the literals of a condition's
- * branches, and whether some branch is no literal. Undefined without a role attribute.
+ * branches, and the source text of the branches that are no literal. Undefined without a role
+ * attribute.
  */
 function roleValues(node) {
   const attribute = node.attributes.properties.find(
     (property) => ts.isJsxAttribute(property) && property.name.getText() === 'role',
   );
   if (attribute === undefined || attribute.initializer === undefined) return undefined;
-  const result = { roles: [], unknown: false };
+  const result = { roles: [], unknown: [] };
   const visit = (expression) => {
     if (expression === undefined) return;
     if (ts.isStringLiteral(expression) || ts.isNoSubstitutionTemplateLiteral(expression))
@@ -501,7 +508,7 @@ function roleValues(node) {
       !(ts.isIdentifier(expression) && expression.text === 'undefined') &&
       expression.kind !== ts.SyntaxKind.NullKeyword
     )
-      result.unknown = true;
+      result.unknown.push(expression.getText().replace(/\s+/g, ' '));
   };
   const { initializer } = attribute;
   visit(ts.isJsxExpression(initializer) ? initializer.expression : initializer);

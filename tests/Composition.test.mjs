@@ -125,10 +125,19 @@ test('a role set by a condition counts with each branch, and one the source hide
   assert.deepEqual(
     interactiveElements(
       hidden,
-      { ...rules, dynamicRoles: { 'Probe.tsx': ['link', 'status'] } },
+      { ...rules, dynamicRoles: { 'Probe.tsx': { 'stand.role': ['link', 'status'] } } },
       'Probe.tsx',
     ),
     ['role="link"'],
+  );
+  // A listing covers its expression only, not another role={…} in the same module.
+  assert.deepEqual(
+    interactiveElements(
+      tag('<span role={other} />'),
+      { ...rules, dynamicRoles: { 'Probe.tsx': { 'stand.role': ['link'] } } },
+      'Probe.tsx',
+    ),
+    ['role={…}'],
   );
 });
 

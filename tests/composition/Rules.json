@@ -180,10 +180,10 @@
       ]
     },
     "dynamicRoles": {
-      "$comment": "The roles a role attribute the source doesn't spell out can take, per module, such as role={role}: the check counts each, so an interactive one needs a leaf-control entry above. A role={…} in a module not listed here is a finding of its own.",
-      "feedback/Alert.tsx": ["status", "alert"],
-      "actions/ButtonGroup.tsx": ["group", "toolbar"],
-      "feedback/Tooltip.tsx": ["button", "link", "tab", "menuitem"]
+      "$comment": "The roles a role attribute the source doesn't spell out can take, per module and per expression by its source text, such as role={role}: the check counts each, so an interactive one needs a leaf-control entry above. A role={…} whose module and expression aren't listed here is a finding of its own.",
+      "feedback/Alert.tsx": { "role": ["status", "alert"] },
+      "actions/ButtonGroup.tsx": { "role": ["group", "toolbar"] },
+      "feedback/Tooltip.tsx": { "stand.role": ["button", "link", "tab", "menuitem"] }
     }
   },
   "classes": {
