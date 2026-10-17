@@ -188,6 +188,9 @@ test('readMap merges a folder of fragments, one folder per section', () => {
       '@envsemble/envui': { Text: { tone: { report: 'r', values: { a: {} } } } },
     });
     write('classes/Button.json', { 'env-a': 'env-b' });
+    // An empty fragment holds a family's place in a section before it has entries.
+    write('props/Card.json', { '@envsemble/envui': {} });
+    write('classes/Card.json', {});
     assert.deepEqual(readMap(directory), {
       version: '1.0.0',
       props: {
