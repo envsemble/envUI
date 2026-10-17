@@ -133,7 +133,6 @@
   "planned": {
     "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
     "modules": [
-      "actions/SearchTrigger.tsx",
       "content/DescriptionList.tsx",
       "feedback/ConfirmDialog.tsx",
       "layout/ListDetail.tsx",

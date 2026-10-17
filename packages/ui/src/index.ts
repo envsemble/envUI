@@ -13,6 +13,7 @@ export * from './actions/ButtonGroup.js';
 export * from './actions/AvatarButton.js';
 export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
+export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
 export * as NavList from './navigation/NavList.js';
 export * as Pager from './navigation/Pager.js';
