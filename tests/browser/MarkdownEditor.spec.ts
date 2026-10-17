@@ -188,7 +188,7 @@ for (const change of ['remove', 'replace'] as const) {
 test('the source is a tall text area with medium corners, never a pill', async ({ page }) => {
   await page.goto(fixtureUrl);
   const wells = page.locator('.env-text-field-control:has(> textarea)');
-  expect(await wells.count()).toBeGreaterThan(0);
+  await expect(wells.first()).toBeVisible();
   for (const well of await wells.all()) {
     await expect(well.locator('xpath=..')).toHaveAttribute('data-tall');
     await expect(well).toHaveCSS('border-top-left-radius', '16px');
