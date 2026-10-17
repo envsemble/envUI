@@ -152,7 +152,12 @@
           "progressive-disclosure"
         ],
         "templates": [
-          "sign-in-page"
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page",
+          "sign-in-page",
+          "error-pages"
         ]
       }
     },
@@ -227,7 +232,13 @@
           "navigation"
         ],
         "templates": [
-          "sign-in-page"
+          "app-frame",
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page",
+          "sign-in-page",
+          "error-pages"
         ]
       }
     },
@@ -316,7 +327,13 @@
           "navigation",
           "filtering"
         ],
-        "templates": []
+        "templates": [
+          "app-frame",
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -489,6 +506,9 @@
           "data-tables"
         ],
         "templates": [
+          "details-page",
+          "settings-page",
+          "dashboard-page",
           "sign-in-page"
         ]
       }
@@ -613,7 +633,11 @@
           "filtering",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "details-page",
+          "settings-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -866,7 +890,12 @@
           "progressive-disclosure"
         ],
         "templates": [
-          "sign-in-page"
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page",
+          "sign-in-page",
+          "error-pages"
         ]
       }
     },
@@ -994,7 +1023,9 @@
         "patterns": [
           "navigation"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -1167,7 +1198,12 @@
           "progressive-disclosure"
         ],
         "templates": [
-          "sign-in-page"
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page",
+          "sign-in-page",
+          "error-pages"
         ]
       }
     },
@@ -1393,6 +1429,8 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "index-page",
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -1645,6 +1683,7 @@
           "progressive-disclosure"
         ],
         "templates": [
+          "index-page",
           "sign-in-page"
         ]
       }
@@ -1731,7 +1770,9 @@
         "patterns": [
           "settings"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -1823,7 +1864,9 @@
           "settings",
           "filtering"
         ],
-        "templates": []
+        "templates": [
+          "settings-page"
+        ]
       }
     },
     {
@@ -1926,7 +1969,10 @@
           "data-tables",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -2482,7 +2528,10 @@
           "loading",
           "navigation"
         ],
-        "templates": []
+        "templates": [
+          "app-frame",
+          "settings-page"
+        ]
       }
     },
     {
@@ -2580,7 +2629,9 @@
           "navigation",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "details-page"
+        ]
       }
     },
     {
@@ -2774,7 +2825,9 @@
           "navigation"
         ],
         "templates": [
-          "sign-in-page"
+          "app-frame",
+          "sign-in-page",
+          "error-pages"
         ]
       }
     },
@@ -2885,7 +2938,10 @@
           "loading",
           "navigation"
         ],
-        "templates": []
+        "templates": [
+          "app-frame",
+          "settings-page"
+        ]
       }
     },
     {
@@ -3267,7 +3323,9 @@
         "patterns": [
           "navigation"
         ],
-        "templates": []
+        "templates": [
+          "details-page"
+        ]
       }
     },
     {
@@ -3344,7 +3402,9 @@
         "patterns": [
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page"
+        ]
       }
     },
     {
@@ -3410,7 +3470,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -3714,7 +3776,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "error-pages"
+        ]
       }
     },
     {
@@ -3848,7 +3912,12 @@
           "data-tables",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -3976,7 +4045,10 @@
           "empty-states",
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -4059,7 +4131,9 @@
           "navigation",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "details-page"
+        ]
       }
     },
     {
@@ -4394,7 +4468,11 @@
           "feedback",
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -4573,7 +4651,11 @@
         "patterns": [
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "settings-page"
+        ]
       }
     },
     {
@@ -4749,7 +4831,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -4830,7 +4914,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -4919,7 +5005,12 @@
           "filtering",
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "app-frame",
+          "index-page",
+          "dashboard-page",
+          "error-pages"
+        ]
       }
     },
     {
@@ -5196,7 +5287,11 @@
           "feedback",
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "settings-page"
+        ]
       }
     },
     {
@@ -5288,6 +5383,7 @@
           "feedback"
         ],
         "templates": [
+          "settings-page",
           "sign-in-page"
         ]
       }
@@ -5561,7 +5657,11 @@
           "destructive-actions",
           "data-tables"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "settings-page"
+        ]
       }
     },
     {
@@ -5636,7 +5736,9 @@
         "patterns": [
           "navigation"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -5799,7 +5901,11 @@
           "data-tables",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "app-frame",
+          "index-page",
+          "details-page"
+        ]
       }
     },
     {
@@ -5959,7 +6065,11 @@
           "data-tables",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "index-page",
+          "details-page",
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -6197,7 +6307,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "dashboard-page"
+        ]
       }
     },
     {
@@ -6283,7 +6395,10 @@
         "patterns": [
           "loading"
         ],
-        "templates": []
+        "templates": [
+          "details-page",
+          "dashboard-page"
+        ]
       }
     }
   ],
@@ -7523,6 +7638,383 @@
   ],
   "templates": [
     {
+      "name": "app-frame",
+      "title": "App frame with sidebar",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The application's frame, with a sidebar of destinations that collapses to a rail, search, the account menu and a phone's top bar, around the page people are on.",
+      "aliases": [
+        "app frame",
+        "application frame",
+        "app layout",
+        "sidebar layout",
+        "shell",
+        "navigation frame",
+        "main navigation"
+      ],
+      "useWhen": [
+        "An application has a handful of destinations people move between, and a page for each.",
+        "The frame needs search, the account menu and a phone layout without building them."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A screen people see before they sign in, or when the application fails to load.",
+          "see": "sign-in-page"
+        },
+        {
+          "text": "Moving between views of one object, such as its overview and its activity.",
+          "use": "Tabs"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "Sidebar",
+        "SidebarTrigger",
+        "NavList",
+        "SearchTrigger",
+        "CommandPalette",
+        "AccountMenu",
+        "Menu",
+        "Page",
+        "PageHeader",
+        "EmptyState",
+        "Text"
+      ],
+      "related": [
+        "app-shell",
+        "sidebar",
+        "nav-list",
+        "account-menu",
+        "command-palette"
+      ],
+      "doc": "docs/templates/app-frame.md",
+      "frame": "none",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "AppFrame",
+          "title": "App frame",
+          "description": "The frame every page of an application sits in: a sidebar at the start with the application's name, search and its destinations, the account menu at its foot, and the page in the main region. The sidebar collapses to a rail of icons, and on a phone it becomes a drawer that a top bar opens. Start from it for any application with a handful of destinations; render it once, at the application's root, around the router's outlet. The other templates on `frame: app` pages, such as the index page, are the pages that go inside it. Set up the providers at the application's root as setup says, since the template brings none.",
+          "file": "docs/examples/app-frame/AppFrame.tsx",
+          "frame": "none",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
+      "name": "index-page",
+      "title": "Index page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page inside the app frame that lists every object of one kind in a table people search, filter, sort and select, with bulk actions and pages.",
+      "aliases": [
+        "index page",
+        "list page",
+        "collection page",
+        "filterable table",
+        "data table page",
+        "table with filters",
+        "bulk actions"
+      ],
+      "useWhen": [
+        "People find, compare and act on many objects of one kind, such as projects or documents.",
+        "The list needs search, a filter or two, sorting and actions on several rows at once."
+      ],
+      "avoidWhen": [
+        {
+          "text": "One object's own page, with its details and activity.",
+          "see": "details-page"
+        },
+        {
+          "text": "A short list without columns to compare.",
+          "use": "List"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "Stack",
+        "SearchField",
+        "Select",
+        "Button",
+        "Text",
+        "Table",
+        "Checkbox",
+        "Link",
+        "Badge",
+        "Avatar",
+        "RelativeTime",
+        "Menu",
+        "IconButton",
+        "Tooltip",
+        "Pagination",
+        "EmptyState",
+        "ConfirmDialog",
+        "useToast",
+        "useBreakpoint",
+        "useMediaQuery"
+      ],
+      "related": [
+        "empty-states",
+        "destructive-actions",
+        "table",
+        "pagination",
+        "app-frame"
+      ],
+      "doc": "docs/templates/index-page.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "IndexPage",
+          "title": "Index page",
+          "description": "The page that lists every object of one kind, here Northwind's projects, inside the app frame: search and filters in the header's toolbar, a table people sort and select rows of, bulk actions for the selection, and pages of ten. Start from it for the top page of any collection people manage, such as projects, documents or members.",
+          "file": "docs/examples/index-page/IndexPage.tsx",
+          "frame": "app",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
+      "name": "details-page",
+      "title": "Details page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page inside the app frame for one object, with where it sits, its status and actions, its content in tabs and a panel of its details beside them.",
+      "aliases": [
+        "details page",
+        "detail page",
+        "item page",
+        "object page",
+        "project page",
+        "record page",
+        "two columns",
+        "side panel"
+      ],
+      "useWhen": [
+        "People open one object from a list to read about it, follow its activity and act on it.",
+        "The object has a few facts people check often, such as its owner and due date, beside longer content."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The list of every object of the kind, with search and filters.",
+          "see": "index-page"
+        },
+        {
+          "text": "Editing the object's fields.",
+          "see": "forms"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "Breadcrumbs",
+        "Badge",
+        "Button",
+        "Menu",
+        "IconButton",
+        "Tooltip",
+        "Stack",
+        "Surface",
+        "Text",
+        "Tabs",
+        "List",
+        "Link",
+        "Avatar",
+        "AvatarGroup",
+        "RelativeTime",
+        "DescriptionList",
+        "Progress",
+        "ConfirmDialog",
+        "useToast"
+      ],
+      "related": [
+        "index-page",
+        "destructive-actions",
+        "tabs",
+        "description-list",
+        "page-header"
+      ],
+      "doc": "docs/templates/details-page.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "DetailsPage",
+          "title": "Details page",
+          "description": "The page for one object, here the Website refresh project, inside the app frame: breadcrumbs back to its list, its name with its status and actions, then its content in tabs beside a panel of the facts people check most. The two columns sit side by side on a desktop and stack on narrower screens, the main column first. Start from it for the page people reach from an index page.",
+          "file": "docs/examples/details-page/DetailsPage.tsx",
+          "frame": "app",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
+      "name": "settings-page",
+      "title": "Settings page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page inside the app frame where people change their profile, notifications and appearance, and delete the workspace, with each section saved the way its settings need.",
+      "aliases": [
+        "settings",
+        "preferences",
+        "account settings",
+        "profile settings",
+        "notification settings",
+        "options page"
+      ],
+      "useWhen": [
+        "People change their own profile and preferences in one place.",
+        "Some settings apply at once and others wait for Save, and the page has to keep them apart."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Creating or editing one object, such as a project, in a single form.",
+          "see": "forms"
+        },
+        {
+          "text": "A single setting beside the content it changes.",
+          "use": "Switch"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "Sidebar",
+        "NavList",
+        "Stack",
+        "Surface",
+        "Text",
+        "TextField",
+        "Avatar",
+        "Badge",
+        "Button",
+        "Link",
+        "Alert",
+        "List",
+        "Switch",
+        "RadioGroup",
+        "Radio",
+        "useThemePreference",
+        "useToast",
+        "ConfirmDialog"
+      ],
+      "related": [
+        "settings",
+        "forms",
+        "destructive-actions",
+        "app-frame",
+        "sidebar"
+      ],
+      "doc": "docs/templates/settings-page.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "SettingsPage",
+          "title": "Settings page",
+          "description": "A settings page inside the app frame: the person's profile, their notifications, the theme and density, and a danger zone, as sections of one page with an \"On this page\" navigation beside them. Each section saves the way its settings need: the profile waits for Save, switches and choices apply at once, and deleting the workspace asks for its name. Start from it for a page of personal or workspace settings; it follows the settings pattern.",
+          "file": "docs/examples/settings-page/SettingsPage.tsx",
+          "frame": "app",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
+      "name": "dashboard-page",
+      "title": "Dashboard",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A page inside the app frame with the workspace's key figures for a period and panels of activity, storage, goals, recent documents, what's due and alerts.",
+      "aliases": [
+        "dashboard",
+        "overview page",
+        "home page",
+        "metrics",
+        "analytics page",
+        "reports overview",
+        "KPIs"
+      ],
+      "useWhen": [
+        "People start their day from a summary of how the work is going, then go to the details.",
+        "A handful of figures and short lists answer the questions people ask most often."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Comparing or acting on many objects of one kind.",
+          "see": "index-page"
+        },
+        {
+          "text": "One object's facts and activity.",
+          "see": "details-page"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "Select",
+        "Button",
+        "Stack",
+        "Stat",
+        "Surface",
+        "Text",
+        "CalendarHeatmap",
+        "Meter",
+        "Progress",
+        "Table",
+        "Link",
+        "RelativeTime",
+        "List",
+        "Badge",
+        "EmptyState"
+      ],
+      "related": [
+        "stat",
+        "calendar-heatmap",
+        "meter",
+        "progress",
+        "empty-states"
+      ],
+      "doc": "docs/templates/dashboard-page.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "DashboardPage",
+          "title": "Dashboard page",
+          "description": "The workspace's overview inside the app frame: four figures for the chosen period with their trends, then panels of activity, storage, goals, recent documents, what's due soon and alerts. The panels share rows and wrap, two or three to a row on a desktop and one on a phone. Start from it for an application's home page or a team's overview. envUI has no line or bar charts: the page uses figures, meters, progress bars and a calendar heatmap, and doesn't fake a chart.",
+          "file": "docs/examples/dashboard-page/DashboardPage.tsx",
+          "frame": "app",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
+    {
       "name": "sign-in-page",
       "title": "Sign-in page",
       "group": "Templates",
@@ -7560,6 +8052,7 @@
         "Text",
         "TextField",
         "IconButton",
+        "Tooltip",
         "Checkbox",
         "Button",
         "Link",
@@ -7589,6 +8082,96 @@
         }
       ],
       "examples": []
+    },
+    {
+      "name": "error-pages",
+      "title": "Error and not-found pages",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The pages for an address with no page, an object people may not open, and an application that failed to load, each saying what happened and what to do next.",
+      "aliases": [
+        "error page",
+        "not found",
+        "404",
+        "page not found",
+        "no access",
+        "forbidden",
+        "403",
+        "something went wrong",
+        "error boundary"
+      ],
+      "useWhen": [
+        "People follow a link to a page that doesn't exist or has moved.",
+        "People open an object they don't have access to.",
+        "The application, or one page of it, fails to load or render."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A list or a region of a page with nothing in it, or a search with no results.",
+          "see": "empty-states"
+        },
+        {
+          "text": "A form whose submission failed.",
+          "see": "forms"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "Page",
+        "EmptyState",
+        "Button",
+        "Link",
+        "Code",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "empty-states",
+        "empty-state",
+        "app-frame",
+        "sign-in-page"
+      ],
+      "doc": "docs/templates/error-pages.md",
+      "frame": "app",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "NotFoundPage",
+          "title": "Not found page",
+          "description": "The pages people see when what they asked for isn't there: an address with no page, an object they may not open, and an application that failed to load. Each says what happened and offers the next step. The first two show inside the app frame, so people keep its navigation; the third is a whole screen of its own, since the frame may be what failed. Start from them for the router's catch-all route, a refused request and the error boundary at the application's root.",
+          "file": "docs/examples/error-pages/NotFoundPage.tsx",
+          "frame": "app",
+          "primary": true
+        },
+        {
+          "name": "NoAccessPage",
+          "title": "No access",
+          "description": "An object people may not open, inside the frame, with a request they can send to its owner.",
+          "file": "docs/examples/error-pages/NoAccessPage.tsx",
+          "frame": "app",
+          "primary": false
+        },
+        {
+          "name": "ErrorPage",
+          "title": "Failed to load",
+          "description": "The application failed to load: a whole screen of its own, with a reference for support.",
+          "file": "docs/examples/error-pages/ErrorPage.tsx",
+          "frame": "none",
+          "primary": false
+        }
+      ],
+      "examples": [
+        {
+          "name": "ErrorBoundary",
+          "title": "Error boundary",
+          "description": "A page that fails to render shows a danger EmptyState in its place, and the frame around it keeps working.",
+          "file": "docs/examples/error-pages/ErrorBoundary.tsx"
+        }
+      ]
     }
   ],
   "exports": {
@@ -9693,7 +10276,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm."
+          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one."
         },
         {
           "name": "confirmLabel",
@@ -10957,6 +11540,7 @@
         "right to left",
         "RTL"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -11341,6 +11925,7 @@
       "native": [
         "svg"
       ],
+      "status": "stable",
       "page": "icons",
       "doc": "docs/foundations/icons.md"
     },
@@ -11470,6 +12055,7 @@
         "router link",
         "client-side navigation"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -15615,6 +16201,7 @@
       "native": [
         "p"
       ],
+      "status": "stable",
       "page": "typography",
       "doc": "docs/foundations/typography.md"
     },
@@ -15819,6 +16406,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -15878,6 +16466,7 @@
         "theme preference",
         "persisted theme"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -15974,6 +16563,7 @@
         "light and dark switch",
         "switch between light and dark"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16434,6 +17024,7 @@
       "import": "@envsemble/envui",
       "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
       "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "status": "beta",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -16463,6 +17054,7 @@
       ],
       "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and a high or standard contrast applies from the start.",
       "signature": "({ storageKey, defaultPreference, contrast, scale, }?: ThemeBootstrapOptions): string",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16498,6 +17090,7 @@
       "import": "@envsemble/envui",
       "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
       "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "status": "beta",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -16506,6 +17099,7 @@
       "import": "@envsemble/envui",
       "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
       "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
+      "status": "beta",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -16517,6 +17111,7 @@
       "aliases": [
         "current locale"
       ],
+      "status": "beta",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16525,6 +17120,7 @@
       "import": "@envsemble/envui",
       "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
       "signature": "(query: string, options?: MediaQueryOptions): boolean",
+      "status": "beta",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -16542,6 +17138,7 @@
       "import": "@envsemble/envui",
       "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.",
       "signature": "(): ThemeContextValue",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16550,6 +17147,7 @@
       "import": "@envsemble/envui",
       "description": "The theme preference from the nearest ThemePreferenceProvider.",
       "signature": "(): ThemePreferenceValue",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },

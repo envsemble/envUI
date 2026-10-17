@@ -4,6 +4,11 @@ components:
   - useBreakpoint
   - breakpointQuery
   - useContainerSize
+statuses: # Never released before 1.0, so beta until a release has used them.
+  useMediaQuery: beta
+  useBreakpoint: beta
+  breakpointQuery: beta
+  useContainerSize: beta
 aliases:
   - breakpoint
   - breakpoints

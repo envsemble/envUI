@@ -28,6 +28,7 @@ composes:
   - Text
   - TextField
   - IconButton
+  - Tooltip
   - Checkbox
   - Button
   - Link
@@ -60,7 +61,7 @@ The screen people see before the application opens: the application's name, an e
    - **Error summary** (after a refused submit with several errors): an [Alert](../components/alert.md) `tone="danger"` titled "There is a problem", its title a level-2 heading, listing each error as a [Link](../components/link.md) to its field;
    - **Refusal** (after wrong credentials): an Alert `tone="danger"` that says the email address or password is wrong, without saying which;
    - **Email address:** a [TextField](../components/text-field.md) with `type="email"` and `autoComplete="username"`;
-   - **Password:** a TextField with `autoComplete="current-password"` and, as its `endAction`, an [IconButton](../components/button.md) "Show password" that is pressed while the password shows;
+   - **Password:** a TextField with `autoComplete="current-password"` and, as its `endAction`, an [IconButton](../components/button.md) "Show password" in a [Tooltip](../components/tooltip.md) that shows its name, pressed while the password shows;
    - **Keep me signed in:** a [Checkbox](../components/checkbox.md);
    - **Sign in:** the primary [Button](../components/button.md), `type="submit"`, `fullWidth`, `pending` while the service answers;
    - **Forgot your password?:** a Link to the reset page;

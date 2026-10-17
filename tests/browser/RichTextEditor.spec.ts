@@ -150,6 +150,50 @@ test('theme and renderer changes preserve uncontrolled content, history and keyb
   await expect(scope.getByTestId('rich-text-keyboard-clicks')).toHaveText('2');
 });
 
+test("a code block scrolls rather than wraps: the document's styles win over ProseMirror's base", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=form`);
+  const editor = page
+    .getByTestId('rich-text-form')
+    .getByRole('textbox', { name: 'Rich source', exact: true });
+  await replace(editor, '``` ');
+  await editor.pressSequentially('const answer = 42;');
+  const block = editor.locator('pre');
+  await expect(block).toHaveText('const answer = 42;');
+  await expect(block).toHaveCSS('white-space', 'pre');
+  // The base styles are envUI's, in its cascade layer: Tiptap adds no style element of its own.
+  await expect(page.locator('style[data-tiptap-style]')).toHaveCount(0);
+  await expect(editor).toHaveCSS('position', 'relative');
+});
+
+test("ProseMirror's separator stays inline under an unlayered img reset, adding no line", async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
+  await page.goto(`${fixtureUrl}?fixture=form`);
+  const editor = page
+    .getByTestId('rich-text-form')
+    .getByRole('textbox', { name: 'Rich source', exact: true });
+  // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its separator.
+  await replace(editor, '@river');
+  await page.getByRole('option', { name: referenceLabel, exact: true }).click();
+  if (/\s$/.test((await editor.locator('p').first().textContent()) ?? ''))
+    await page.keyboard.press('Backspace');
+  const paragraph = editor.locator('p').first();
+  const separator = paragraph.locator('img.ProseMirror-separator').last();
+  await expect(separator).toBeAttached();
+  const before = await paragraph.evaluate((element) => element.getBoundingClientRect().height);
+  // An application reset outside any cascade layer, as Tailwind's preflight has.
+  await page.addStyleTag({ content: 'img { display: block; height: auto; margin: 1rem; }' });
+  await expect(separator).toHaveCSS('display', 'inline');
+  await expect(separator).toHaveCSS('margin-top', '0px');
+  expect(await paragraph.evaluate((element) => element.getBoundingClientRect().height)).toBe(
+    before,
+  );
+});
+
 test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
   page,
 }) => {
@@ -307,6 +351,18 @@ test('async sources handle loading, stale resolutions, empty results, failures a
   await page.goto(`${fixtureUrl}?fixture=remote`);
   const scope = page.getByTestId('rich-text-remote');
   const editor = scope.getByRole('textbox');
+  // Records the text each suggestions status has as it mounts.
+  await page.evaluate(() => {
+    const mounted: string[] = [];
+    (window as unknown as { statusesAtMount: string[] }).statusesAtMount = mounted;
+    new MutationObserver((records) => {
+      for (const record of records)
+        for (const node of record.addedNodes)
+          if (node instanceof Element)
+            for (const status of node.querySelectorAll('.env-listbox [role="status"]'))
+              mounted.push(status.textContent ?? '');
+    }).observe(document.body, { childList: true, subtree: true });
+  });
   await replace(editor, '@old');
   const old = await requestIndex(page, 'old');
   const menu = page.getByRole('listbox', { name: 'Remote references' });
@@ -322,6 +378,10 @@ test('async sources handle loading, stale resolutions, empty results, failures a
   };
   await expect(menu).toHaveAttribute('aria-busy', 'true');
   await expect(status).toContainText('Loading suggestions');
+  // The status mounted empty and took its message afterwards, so the message is announced.
+  expect(
+    await page.evaluate(() => (window as unknown as { statusesAtMount: string[] }).statusesAtMount),
+  ).toEqual(['']);
   await replace(editor, '@new');
   const latest = await requestIndex(page, 'new');
   await expect

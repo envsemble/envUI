@@ -37,7 +37,7 @@ components: # The exports the page documents; each export has exactly one page.
 - `statuses` gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's, and the manifest and `llms.txt` carry it.
 - `use` names an export. The catalogue links it to the page that documents it, and agents read it as "need this, use that".
 - List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
-- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases` and `exportAliases`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own.
+- Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases`, `exportAliases` and `statuses`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own. The exports such a page documents are `stable` in the manifest and the MCP server; `statuses` gives one another status, such as `useContainerSize: beta`.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 

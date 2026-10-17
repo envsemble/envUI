@@ -2,6 +2,7 @@ import {
   lazy,
   Suspense,
   useLayoutEffect,
+  useState,
   type ComponentType,
   type MouseEvent,
   type ReactNode,
@@ -11,6 +12,7 @@ import {
   LinkProvider,
   Text,
   Theme,
+  ThemePreferenceProvider,
   Toast,
   type LinkComponentProps,
 } from '@envsemble/envui';
@@ -28,6 +30,14 @@ const loaders = import.meta.glob<{
   default: ComponentType<{ children?: ReactNode; current?: string }>;
 }>('../examples/*/*.tsx');
 const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
+/**
+ * Where a frame's theme preference lives: a theme chosen inside a frame, such as in the app frame's
+ * account menu, applies to it until it loads again, which starts from the address's theme. Each
+ * screen, scale and direction has a key of its own, so a choice in one preview iframe leaves the
+ * page's other previews alone.
+ */
+const frameThemeKey = ({ page, name, scale, dir }: FrameRequest) =>
+  `envui-template-frame-theme:${page}/${name}:${scale}:${dir}`;
 /** The app frame template, which screens of `frame: app` render inside. */
 const appFrame = { page: 'app-frame', name: 'AppFrame' };
 
@@ -107,6 +117,7 @@ function Missing({ what }: { what: string }) {
 export function TemplateFrame({ request }: { request: FrameRequest }) {
   const { page, name, scale, theme, dir } = request;
   const found = blockOf(page, name);
+  const themeKey = frameThemeKey(request);
   useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.add('env-theme');
@@ -121,39 +132,57 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
         .filter((title, index, titles) => title && titles.indexOf(title) === index)
         .join(' · ');
   }, [theme, scale, dir, found]);
+  // Each load starts from the address's theme, not from a choice made in an earlier frame.
+  useState(() => {
+    try {
+      window.localStorage.removeItem(themeKey);
+    } catch {
+      // Storage can be blocked; the address's theme applies all the same.
+    }
+  });
   const Screen = found ? screenOf(page, name) : undefined;
   // A screen of the app frame renders inside the app frame template, once there is one.
   const Frame = found?.block.frame === 'app' ? screenOf(appFrame.page, appFrame.name) : undefined;
   return (
     <Theme theme={theme} scale={scale} contrast="standard" data-template-frame={`${page}/${name}`}>
       <EnvUIProvider dir={dir}>
-        <Toast.Provider>
-          <LinkProvider component={FrameLink}>
-            <LoadBoundary
-              what="template"
-              modules={[`src/examples/${page}/${name}.tsx`]}
-              // The frame is a page of its own: a failed file loads again with the page.
-              onRetry={() => void reloadPage([`src/examples/${page}/${name}.tsx`])}
-            >
-              <Suspense fallback={<Text role="status">Loading template…</Text>}>
-                {!Screen ? (
-                  <Missing what={`${page}/${name}`} />
-                ) : Frame ? (
-                  // The frame and the screen are looked up among module-level lazy components,
-                  // not created here.
-                  // eslint-disable-next-line react-hooks/static-components
-                  <Frame current={page}>
-                    {/* eslint-disable-next-line react-hooks/static-components */}
+        {/* The application's root providers, which templates use and never bring: the theme
+            preference (the account menu's theme submenu, a settings page's theme choice), toasts
+            and the router's links. */}
+        <ThemePreferenceProvider
+          storageKey={themeKey}
+          defaultPreference={theme}
+          scale={scale}
+          contrast="standard"
+        >
+          <Toast.Provider>
+            <LinkProvider component={FrameLink}>
+              <LoadBoundary
+                what="template"
+                modules={[`src/examples/${page}/${name}.tsx`]}
+                // The frame is a page of its own: a failed file loads again with the page.
+                onRetry={() => void reloadPage([`src/examples/${page}/${name}.tsx`])}
+              >
+                <Suspense fallback={<Text role="status">Loading template…</Text>}>
+                  {!Screen ? (
+                    <Missing what={`${page}/${name}`} />
+                  ) : Frame ? (
+                    // The frame and the screen are looked up among module-level lazy components,
+                    // not created here.
+                    // eslint-disable-next-line react-hooks/static-components
+                    <Frame current={page}>
+                      {/* eslint-disable-next-line react-hooks/static-components */}
+                      <Screen />
+                    </Frame>
+                  ) : (
+                    // eslint-disable-next-line react-hooks/static-components
                     <Screen />
-                  </Frame>
-                ) : (
-                  // eslint-disable-next-line react-hooks/static-components
-                  <Screen />
-                )}
-              </Suspense>
-            </LoadBoundary>
-          </LinkProvider>
-        </Toast.Provider>
+                  )}
+                </Suspense>
+              </LoadBoundary>
+            </LinkProvider>
+          </Toast.Provider>
+        </ThemePreferenceProvider>
       </EnvUIProvider>
     </Theme>
   );

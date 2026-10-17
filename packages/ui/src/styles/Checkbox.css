@@ -10,6 +10,8 @@
   font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
   cursor: pointer;
+  /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
+  min-block-size: var(--env-control-target-min);
 }
 .env-checkbox > span {
   min-inline-size: 0;
@@ -20,18 +22,36 @@
 .env-checkbox:has(input:disabled) > * {
   opacity: var(--env-state-disabled-opacity);
 }
+/* A checkbox without a visible label is no wider than its box: an invisible hit area centered on
+   it takes presses across the minimum target, and the touch target under a coarse pointer, while
+   the box and the layout around it stay as they are. */
+.env-checkbox:not(:has(> .env-checkbox-label)) {
+  --env-checkbox-target: var(--env-control-target-min);
+  position: relative;
+}
+.env-checkbox:not(:has(> .env-checkbox-label))::before {
+  content: '';
+  position: absolute;
+  inset-block: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+  inset-inline: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+}
 @media (pointer: coarse) {
   .env-checkbox {
     min-height: var(--env-control-height-touch);
   }
+  .env-checkbox:not(:has(> .env-checkbox-label)) {
+    --env-checkbox-target: var(--env-control-height-touch);
+  }
 }
 
-/* Checkbox geometry is distinct from radio; input retains native semantics. */
+/* Checkbox geometry is distinct from radio; input retains native semantics. The box takes the scale's
+   medium icon size and its smallest corners, so it follows the scale. */
 .env-checkbox-box {
+  --env-checkbox-size: var(--env-icon-size-md);
   position: relative;
   display: inline-flex;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: var(--env-checkbox-size);
+  height: var(--env-checkbox-size);
   flex: 0 0 auto;
 }
 .env-checkbox-input {
@@ -40,8 +60,8 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  border: 0.0625rem solid var(--env-color-fg-muted);
-  border-radius: 0.25rem;
+  border: var(--env-control-border-width) solid var(--env-color-fg-muted);
+  border-radius: var(--env-radius-xs);
   background: transparent;
   cursor: inherit;
 }
@@ -50,7 +70,11 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: 0.125rem;
+  /* Snapped to whole pixels, so the check mark sits on the pixel grid at every box size; an engine
+     without round() keeps the unsnapped padding before it. */
+  padding: calc(var(--env-checkbox-size) / 9);
+  /* stylelint-disable-next-line unit-disallowed-list -- The pixel grid is in CSS pixels. */
+  padding: round(calc(var(--env-checkbox-size) / 9), 1px);
   color: var(--env-color-fg-on-emphasis);
   pointer-events: none;
   visibility: hidden;
@@ -71,8 +95,8 @@
 .env-checkbox-input:indeterminate + .env-checkbox-indicator::before {
   content: '';
   position: absolute;
-  inset-inline: 0.25rem;
-  inset-block-start: 0.5rem;
+  inset-inline: calc(var(--env-checkbox-size) / 4.5);
+  inset-block-start: calc(50% - 0.0625rem);
   height: 0.125rem;
   background: currentColor;
 }

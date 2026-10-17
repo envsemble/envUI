@@ -583,10 +583,6 @@ test('touch screens give fields, chips and options the touch height', async ({
   browser,
   browserName,
 }) => {
-  test.skip(
-    browserName !== 'chromium',
-    "Firefox's and WebKit's emulated taps don't open the list or choose the option they aim at.",
-  );
   const page = await openOnTouchScreen(browser);
   const owner = field(page, 'Compact owner light');
   expect((await wellOf(owner).boundingBox())!.height).toBeCloseTo(44, 0);
@@ -603,8 +599,54 @@ test('touch screens give fields, chips and options the touch height', async ({
     return element.getBoundingClientRect().height;
   });
   expect(height).toBeGreaterThanOrEqual(44);
-  await option.tap();
-  await expect(owner).toHaveValue('Sam Lee');
+  // WebKit's emulated tap doesn't choose the option it aims at; a real one does.
+  if (browserName !== 'webkit') {
+    await option.tap();
+    await expect(owner).toHaveValue('Sam Lee');
+  }
+  await page.context().close();
+});
+
+test("touch screens give every chip's remove button a hit area of the touch size", async ({
+  browser,
+}) => {
+  const page = await openOnTouchScreen(browser);
+  const removes = page.locator('.env-combobox-chip-remove');
+  // Single rows, wrapped rows, and a chip under the label on the field's edge.
+  expect(await removes.count()).toBeGreaterThan(10);
+  const areas = await removes.evaluateAll(async (buttons) => {
+    const results = [];
+    for (const button of buttons) {
+      if (!button.checkVisibility()) continue;
+      button.scrollIntoView({ block: 'center' });
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      const box = button.getBoundingClientRect();
+      // How far beyond each edge, through the centre, a press still lands on the button.
+      const reach = (point: (distance: number) => [number, number]) => {
+        let distance = 0;
+        while (distance < 40) {
+          const hit = document.elementFromPoint(...point(distance + 0.5));
+          if (hit === null || !button.contains(hit)) break;
+          distance += 1;
+        }
+        return distance;
+      };
+      const x = box.x + box.width / 2;
+      const y = box.y + box.height / 2;
+      results.push({
+        name: button.getAttribute('aria-label'),
+        width: Math.round(
+          box.width + reach((d) => [box.left - d, y]) + reach((d) => [box.right + d, y]),
+        ),
+        height: Math.round(
+          box.height + reach((d) => [x, box.top - d]) + reach((d) => [x, box.bottom + d]),
+        ),
+      });
+    }
+    return results;
+  });
+  // Measured in half pixels, so a hit area of 44 px can measure 43.
+  expect(areas.filter(({ width, height }) => width < 43 || height < 43)).toEqual([]);
   await page.context().close();
 });
 

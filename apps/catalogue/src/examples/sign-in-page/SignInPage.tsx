@@ -11,6 +11,7 @@ import {
   Surface,
   Text,
   TextField,
+  Tooltip,
 } from '@envsemble/envui';
 import { Visibility } from '@envsemble/envui/icons/Visibility';
 import { VisibilityOff } from '@envsemble/envui/icons/VisibilityOff';
@@ -208,13 +209,16 @@ export default function SignInPage() {
                   onValueChange={(value) => change('password', value)}
                   onBlur={() => leave('password')}
                   endAction={
-                    // One name, pressed or not: the state says whether the password shows.
-                    <IconButton
-                      icon={showPassword ? <VisibilityOff /> : <Visibility />}
-                      aria-label="Show password"
-                      aria-pressed={showPassword}
-                      onClick={() => setShowPassword((shown) => !shown)}
-                    />
+                    // One name, pressed or not: the state says whether the password shows. The
+                    // Tooltip shows the icon's name and passes the button's props on.
+                    <Tooltip content="Show password">
+                      <IconButton
+                        icon={showPassword ? <VisibilityOff /> : <Visibility />}
+                        aria-label="Show password"
+                        aria-pressed={showPassword}
+                        onClick={() => setShowPassword((shown) => !shown)}
+                      />
+                    </Tooltip>
                   }
                 />
                 <Checkbox name="remember" label="Keep me signed in" />

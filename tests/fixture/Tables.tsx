@@ -5,6 +5,7 @@ import {
   Checkbox,
   EnvUIProvider,
   IconButton,
+  Link,
   Table,
   Text,
   Theme,
@@ -110,6 +111,46 @@ export function TablesFixture({ theme }: { theme: ThemeValue }) {
               </Table.Cell>
             </Table.Row>
           ))}
+        </Table.Body>
+      </Table.Root>
+      <Table.Root aria-label={`Selected links ${theme}`}>
+        <Table.Body>
+          <Table.Row selected>
+            <Table.Cell>Row text</Table.Cell>
+            <Table.Cell>
+              <Link href="#plain-link" underline={false}>
+                Plain link
+              </Link>
+            </Table.Cell>
+            <Table.Cell>
+              <Button variant="text" href="#text-button-link">
+                Text button link
+              </Button>
+            </Table.Cell>
+            <Table.Cell>
+              <Button variant="secondary" href="#button-link">
+                Button link
+              </Button>
+            </Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Row text</Table.Cell>
+            <Table.Cell>
+              <Link href="#plain-link" underline={false}>
+                Plain link
+              </Link>
+            </Table.Cell>
+            <Table.Cell>
+              <Button variant="text" href="#text-button-link">
+                Text button link
+              </Button>
+            </Table.Cell>
+            <Table.Cell>
+              <Button variant="secondary" href="#button-link">
+                Button link
+              </Button>
+            </Table.Cell>
+          </Table.Row>
         </Table.Body>
       </Table.Root>
       <output data-testid={`widths-${theme}`}>

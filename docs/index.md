@@ -131,4 +131,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Templates
 
+- [App frame with sidebar](templates/app-frame.md)
+- [Index page](templates/index-page.md)
+- [Details page](templates/details-page.md)
+- [Settings page](templates/settings-page.md)
+- [Dashboard](templates/dashboard-page.md)
 - [Sign-in page](templates/sign-in-page.md)
+- [Error and not-found pages](templates/error-pages.md)

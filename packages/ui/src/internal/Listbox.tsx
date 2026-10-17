@@ -1,4 +1,6 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+'use client';
+
+import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from './classNames.js';
 import { ListRow, type ListRowProps } from './ListRow.js';
 
@@ -21,7 +23,8 @@ export interface ListboxProps<Item> extends Omit<ComponentPropsWithRef<'div'>, '
  * Name it with aria-label or aria-labelledby, and give the input aria-controls with its id.
  * `className` and `style` go to the frame around the list; the other props to the list. `empty`
  * shows in a status beside the list rather than inside it, where only options may be, and the
- * status stays mounted, so a change such as from loading to no results is announced.
+ * status stays mounted, so a change such as from loading to no results is announced. It mounts
+ * empty, so its first message is announced too.
  */
 export function Listbox<Item>({
   items,
@@ -45,11 +48,26 @@ export function Listbox<Item>({
           />
         ))}
       </div>
-      {empty != null && (
-        <div role="status" className="env-listbox-empty">
-          {showEmpty ? empty : null}
-        </div>
-      )}
+      {empty != null && <ListboxStatus>{showEmpty ? empty : null}</ListboxStatus>}
+    </div>
+  );
+}
+
+/**
+ * A polite status that mounts empty and takes its message after a frame has painted it: assistive
+ * technology often misses the message of a live region that appears with it already in place.
+ */
+function ListboxStatus({ children }: { children: ReactNode }) {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    let frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => setShown(true));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return (
+    <div role="status" className="env-listbox-empty">
+      {shown ? children : null}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { Button, ConfirmDialog, Menu, Stack, Text, TextField } from '@envsemble/
  * danger one whose action takes a moment and can fail, one whose action resolves at once, one
  * opened from a menu item that returns focus to the menu's button, a controlled one that stays
  * open after its action, and one with a typed name, inside a form of the page's own, whose action
- * waits for the spec and fails the first time.
+ * waits for the spec and fails the first time, and one that holds a form of its own.
  */
 export function ConfirmDialogsFixture() {
   const [log, setLog] = useState<string[]>([]);
@@ -132,6 +132,17 @@ export function ConfirmDialogsFixture() {
           Finish the workspace action
         </Button>
       </form>
+      {/* A form of its own in the content, which nests in the dialog's: reported while developing. */}
+      <ConfirmDialog
+        trigger={<Button variant="secondary">Rename project</Button>}
+        title="Rename Northwind launch?"
+        confirmLabel="Rename project"
+        onConfirm={() => record('renamed')}
+      >
+        <form aria-label="New name">
+          <TextField label="Project name" autoComplete="off" />
+        </form>
+      </ConfirmDialog>
       <output data-testid="confirm-log">{log.join(',')}</output>
     </Stack>
   );

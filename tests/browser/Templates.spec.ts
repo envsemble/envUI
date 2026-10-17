@@ -17,7 +17,14 @@ const screens = documents.flatMap((document) =>
     ? (document.sections ?? []).flatMap((section) =>
         section.blocks.flatMap((block) =>
           block.kind === 'template'
-            ? [{ page: document.id, name: block.name, frame: block.frame }]
+            ? [
+                {
+                  page: document.id,
+                  name: block.name,
+                  // The app frame template is a whole screen that is the frame itself.
+                  frame: document.id === 'app-frame' ? 'app' : block.frame,
+                },
+              ]
             : [],
         ),
       )
@@ -102,8 +109,16 @@ for (const { page: id, name, frame } of screensChecked)
           // Landmarks: one main; the app frame's navigation, and a banner only where it shows.
           await expect(page.getByRole('main')).toHaveCount(1);
           if (frame === 'app') {
-            await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(1);
-            await expect(page.getByRole('banner')).toHaveCount(width < 768 ? 1 : 0);
+            // On a phone the navigation is a drawer the top bar's trigger opens.
+            const phone = width < 768;
+            await expect(page.getByRole('navigation', { name: 'Primary' })).toHaveCount(
+              phone ? 0 : 1,
+            );
+            await expect(page.getByRole('banner')).toHaveCount(phone ? 1 : 0);
+            if (phone)
+              await expect(
+                page.getByRole('banner').getByRole('button', { name: 'Open navigation' }),
+              ).toHaveCount(1);
           } else await expect(page.getByRole('banner')).toHaveCount(0);
 
           // Headings: one h1, and no level skipped.
@@ -116,10 +131,14 @@ for (const { page: id, name, frame } of screensChecked)
             );
 
           // Keyboard: in the app frame, the first Tab stop is the skip link, which focuses Main.
+          // Playwright's WebKit never tabs to links, so there the skip link takes focus directly.
           if (frame === 'app') {
-            await page.keyboard.press(tab);
+            if (browserName === 'webkit')
+              await page.getByRole('link', { name: 'Skip to content' }).focus();
+            else await page.keyboard.press(tab);
             const skip = page.locator(':focus');
             await expect(skip).toHaveRole('link');
+            await expect(skip).toHaveAccessibleName('Skip to content');
             await page.keyboard.press('Enter');
             await expect(page.getByRole('main')).toBeFocused();
           }
@@ -152,6 +171,9 @@ for (const { page: id, name, frame } of screensChecked)
               .evaluateAll((elements) =>
                 elements
                   .filter((element) => (element as HTMLElement).offsetParent)
+                  // A field's box is its control, around the input and its buttons.
+                  .map((element) => element.closest('.env-text-field-control') ?? element)
+                  .filter((element, index, all) => all.indexOf(element) === index)
                   .map((element) => Math.round(element.getBoundingClientRect().height)),
               );
             expect(new Set(sizes).size, 'Toolbar controls share one height').toBeLessThanOrEqual(1);

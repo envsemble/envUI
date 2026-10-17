@@ -171,7 +171,19 @@
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
       "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
-      "forms/internal/ColorPlane.tsx": ["role=\"slider\""]
+      "forms/internal/ColorPlane.tsx": ["role=\"slider\""],
+      "feedback/Tooltip.tsx": [
+        "role=\"button\"",
+        "role=\"link\"",
+        "role=\"tab\"",
+        "role=\"menuitem\""
+      ]
+    },
+    "dynamicRoles": {
+      "$comment": "The roles a role attribute the source doesn't spell out can take, per module and per expression by its source text, such as role={role}: the check counts each, so an interactive one needs a leaf-control entry above. A role={…} whose module and expression aren't listed here is a finding of its own.",
+      "feedback/Alert.tsx": { "role": ["status", "alert"] },
+      "actions/ButtonGroup.tsx": { "role": ["group", "toolbar"] },
+      "feedback/Tooltip.tsx": { "stand.role": ["button", "link", "tab", "menuitem"] }
     }
   },
   "classes": {
