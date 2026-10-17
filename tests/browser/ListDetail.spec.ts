@@ -13,7 +13,9 @@ test.describe('ListDetail', () => {
       'aria-valuenow',
       '32',
     );
-    await root.getByRole('button', { name: 'Annual report' }).click();
+    // WebKit doesn't focus a button it clicks, so the keyboard presses it.
+    await root.getByRole('button', { name: 'Annual report' }).focus();
+    await page.keyboard.press('Enter');
     await expect(root.getByRole('region', { name: 'Annual report' })).toContainText(
       'Annual report details',
     );

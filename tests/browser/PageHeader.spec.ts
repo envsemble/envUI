@@ -58,7 +58,10 @@ test.describe('PageHeader', () => {
     await page.goto(fixture);
     const sticky = page.getByTestId('sticky');
     const content = page.getByTestId('sticky-content');
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight / 2));
+    // Scrolled well past the header's place, once the page is long enough to scroll that far.
+    await expect
+      .poll(() => page.evaluate(() => (window.scrollTo(0, 1200), window.scrollY)))
+      .toBeGreaterThan(1000);
     // It sticks at --env-frame-sticky-top, 48 px, under the frame header.
     await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(48, 0);
     const height = (await box(sticky)).height;
