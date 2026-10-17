@@ -3,7 +3,11 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { createContext, type ReactNode, type RefObject } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { PopupSurface, type PopupSide } from '../../internal/PopupSurface.js';
+import {
+  PopupSurface,
+  type PopupSide,
+  type PopupSurfaceProps,
+} from '../../internal/PopupSurface.js';
 
 export type TooltipSide = PopupSide;
 
@@ -24,12 +28,21 @@ export function TooltipPopup({
   content,
   side,
   trigger,
+  anchor,
+  sideOffset = 6,
+  positionerClassName,
   popupProps,
 }: {
   content: ReactNode;
   side: TooltipSide;
   /** The trigger, whose text direction the tooltip takes as it opens. */
   trigger?: RefObject<Element | null>;
+  /** What it opens beside, where that isn't its trigger, such as one day of a calendar heatmap. */
+  anchor?: PopupSurfaceProps['anchor'];
+  /** The gap to the anchor in px; 6 by default. */
+  sideOffset?: number;
+  /** The owner's positioner class, beside env-tooltip-positioner. */
+  positionerClassName?: string;
   /** More props for the popup element: id, ref, className, style and data attributes. */
   popupProps?: Record<string, unknown>;
 }) {
@@ -39,8 +52,9 @@ export function TooltipPopup({
       parts={parts}
       side={side}
       trigger={trigger}
-      sideOffset={6}
-      positionerClassName="env-tooltip-positioner"
+      anchor={anchor}
+      sideOffset={sideOffset}
+      positionerClassName={classNames('env-tooltip-positioner', positionerClassName)}
       className={classNames('env-tooltip', className as string | undefined)}
       popupProps={{ role: 'tooltip', ...rest }}
     >

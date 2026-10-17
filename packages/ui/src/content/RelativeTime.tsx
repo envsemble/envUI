@@ -4,6 +4,7 @@ import { useCallback, useContext, useSyncExternalStore, type ComponentPropsWithR
 import { Tooltip } from '../feedback/Tooltip.js';
 import { TooltipNestingContext } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { useEnvUI } from '../internal/EnvUIContext.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { subscribeToClock } from './internal/relativeTimeClock.js';
 import {
@@ -42,13 +43,18 @@ export interface RelativeTimeProps
 export function RelativeTime({
   value,
   now,
-  locale,
+  locale: ownLocale,
   format = 'long',
-  nowLabel,
+  nowLabel: ownNowLabel,
   tooltip = true,
   className,
   ...props
 }: RelativeTimeProps) {
+  // A prop wins over the nearest EnvUIProvider's locale and messages.relativeTime.now; without
+  // either, the runtime's locale, and English's "just now" or the locale's own word.
+  const provider = useEnvUI();
+  const locale = ownLocale ?? provider.locale;
+  const nowLabel = ownNowLabel ?? (provider.messages.relativeTime?.now as string | undefined);
   const time = toTime(value);
   // An invalid now, such as from missing data, leaves the text to the clock.
   const given = now === undefined ? undefined : toTime(now);

@@ -1,5 +1,10 @@
+'use client';
+
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
+import { rating as ratingMessages } from '../foundations/messages/rating.js';
 import { Star } from '../icons/Star.js';
 
 export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
@@ -14,20 +19,19 @@ export interface RatingProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
    */
   max?: number;
   /**
-   * Shows the rating as a number before the stars, such as 4.5, in tabular digits. The number is
-   * the rounded value the stars show, and it is hidden from assistive technology, since the stars'
-   * name already says it.
+   * Shows the rating as a number before the stars, such as 4.5, in tabular digits and the locale's
+   * number format, such as 4,5 in German. The number is the rounded value the stars show, and it
+   * is hidden from assistive technology, since the stars' name already says it.
    */
   showValue?: boolean;
   /**
    * Writes the accessible name of the stars from the shown value, rounded to a half star, and the
-   * number of stars, such as for another language.
+   * number of stars. It overrides EnvUIProvider's `messages.rating.label`, which receives both as
+   * text in the locale's number format.
    * @default '{value} out of {max} stars'
    */
   formatLabel?: (value: number, max: number) => string;
 }
-
-const defaultLabel = (value: number, max: number) => `${value} out of ${max} stars`;
 
 /**
  * A read-only rating, such as a review score: stars filled to the value in half steps in the
@@ -38,22 +42,28 @@ export function Rating({
   value,
   max = 5,
   showValue = false,
-  formatLabel = defaultLabel,
+  formatLabel,
   className,
   ...props
 }: RatingProps) {
+  // formatLabel wins over the provider's messages, which win over the English default.
+  const messages = useMessages('rating', ratingMessages);
+  const number = useFormatters().number({ maximumFractionDigits: 1 });
   const count = Number.isFinite(max) && max >= 1 ? Math.round(max) : 5;
   const shown = Number.isFinite(value)
     ? Math.min(count, Math.max(0, Math.round(value * 2) / 2))
     : 0;
+  const label = formatLabel
+    ? formatLabel(shown, count)
+    : messages.label({ value: number.format(shown), max: number.format(count) });
   return (
     <span {...props} className={classNames('env-rating', className)}>
       {showValue && (
         <span className="env-rating-value" aria-hidden="true">
-          {shown}
+          {number.format(shown)}
         </span>
       )}
-      <span className="env-rating-stars" role="img" aria-label={formatLabel(shown, count)}>
+      <span className="env-rating-stars" role="img" aria-label={label}>
         {Array.from({ length: count }, (_, index) => {
           const fill = Math.min(1, Math.max(0, shown - index));
           return (
