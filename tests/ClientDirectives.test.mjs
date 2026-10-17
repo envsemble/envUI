@@ -192,7 +192,7 @@ test('a server component imports envUI and renders it on the server', () => {
       'iconOnly icon={…} aria-label="Home"',
     ],
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
-    Card: ['layout="action"', 'as="button"', 'href="/destination"'],
+    Card: ['layout="feature"', 'href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
     Alert: ['tone="danger"', 'announce'],
     Text: ['variant="headline"', 'emphasis="muted"'],

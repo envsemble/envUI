@@ -491,7 +491,6 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
-  assert.match(ssr.html, /aria-label="envsemble"/);
 });
 
 /** The index of the parenthesis that closes the group opening at index, or -1. */
@@ -1097,7 +1096,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       type AvatarGroupPerson, type AvatarGroupProps, type CopyButtonProps, type PaginationProps,
       type PaginationRange, type RelativeTimeProps } from '@envsemble/envui';
     const person: AvatarGroupPerson = { name: 'Alex Morgan', id: 7, href: '/people/alex', src: null, fallback: 'initials' };
-    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'small', total: 12, formatMore: (count) => count + ' more' };
+    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'sm', total: 12, formatMore: (count) => count + ' more' };
     const describe = (range: PaginationRange) => range.start + '–' + range.end + ' of ' + (range.total ?? 'many');
     const pagerProps: PaginationProps = { page: 1, pageSize: 10, onPageChange: (page) => { const typed: number = page; void typed; } };
     const timeProps: RelativeTimeProps = { value: new Date(), format: 'narrow', locale: ['de', 'en'], tooltip: false };

@@ -19,9 +19,6 @@
 .env-avatar-group-display {
   --ring: red;
 }
-.env-kbd-combination {
-  gap: 0;
-}
 .env-stat-detail {
   font-style: italic;
 }

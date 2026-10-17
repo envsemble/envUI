@@ -18,18 +18,9 @@
   white-space: nowrap;
   vertical-align: baseline;
 }
-/* Keys pressed together: the outer kbd holds a key cap for each, with no cap of its own. The type
-   selector ranks it above a container's rule for the key caps inside it, such as a menu's. */
-kbd.env-kbd[data-combination] {
-  min-inline-size: 0;
-  block-size: auto;
+.env-kbd-combination {
   display: inline-flex;
   align-items: baseline;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
-  color: inherit;
   font: inherit;
   white-space: nowrap;
   vertical-align: baseline;

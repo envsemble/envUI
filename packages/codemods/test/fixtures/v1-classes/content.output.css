@@ -19,9 +19,6 @@
 .env-avatar-group:where([data-size='xl']) {
   --ring: red;
 }
-.env-kbd:where([data-combination]) {
-  gap: 0;
-}
 .env-stat-description {
   font-style: italic;
 }

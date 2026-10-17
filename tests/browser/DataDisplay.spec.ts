@@ -116,13 +116,9 @@ test('a breadcrumb trail without wrap stays on one line and cuts the current pag
 test('keys render as key caps joined by plus', async ({ page }) => {
   await page.goto(dataFixture);
   const scope = page.getByTestId('data-light');
-  const combination = scope.locator('kbd.env-kbd[data-combination]');
+  const combination = scope.locator('kbd.env-kbd-combination');
   await expect(combination).toHaveText('Ctrl+P');
   await expect(combination.locator('kbd.env-kbd')).toHaveCount(2);
-  // The outer kbd holds the key caps and draws none of its own.
-  expect(await combination.evaluate((element) => getComputedStyle(element).borderTopWidth)).toBe(
-    '0px',
-  );
   await expect(scope.locator('kbd.env-kbd').filter({ hasText: 'F2' })).toBeVisible();
 });
 

@@ -171,7 +171,6 @@ The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 w
 | Stat.Group `tone`: `pane`, `row`, `canvas`, `alternate`                                                              | `background`: `default` (the default), `muted`, `page`, `raised`                                       |
 | SegmentedControl `options`, `SegmentedControlOption`                                                                 | `items`, `SegmentedControlItem`                                                                        |
 | `env-segment`, `env-segment-label`, `env-segment-count`                                                              | `env-segmented-control-item`, `-item-label`, `-item-count`                                             |
-| `env-kbd-combination`                                                                                                | `.env-kbd[data-combination]`                                                                           |
 | `BrandLogo`, `EnvUILogo` and their props types                                                                       | Removed: keep your artwork in the application, as an SVG file or a component that draws it with `Icon` |
 
 Change these by hand where the codemods report them, or where they can't see them:
