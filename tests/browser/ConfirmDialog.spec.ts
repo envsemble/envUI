@@ -43,6 +43,8 @@ test.describe('ConfirmDialog', () => {
   test('a danger confirmation starts on Cancel, is pending while its action runs and stays open when it fails', async ({
     page,
   }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(confirmDialogs);
     const trigger = page.getByRole('button', { name: 'Delete project' });
     await trigger.click();
@@ -69,6 +71,8 @@ test.describe('ConfirmDialog', () => {
     await expect(alert).toHaveText(/could not be deleted/);
     await expect(confirm).not.toHaveAttribute('aria-busy');
     await expect(cancel).toBeEnabled();
+    // The failure isn't swallowed: it's reported like an uncaught error.
+    expect(errors).toEqual(['failed']);
 
     // Trying again succeeds and closes it.
     await confirm.click();
@@ -79,6 +83,29 @@ test.describe('ConfirmDialog', () => {
     await expect(dialog).toBeHidden();
     await expect(page.getByTestId('confirm-log')).toHaveText('deleted');
     await expect(trigger).toBeFocused();
+  });
+
+  test('a double-click on the confirm button runs the action once', async ({ page }) => {
+    await page.goto(confirmDialogs);
+    const log = page.getByTestId('confirm-log');
+    // A synchronous action: the second click lands while the dialog closes.
+    await page.getByRole('button', { name: 'Archive project' }).click();
+    const archive = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
+    await archive.getByRole('button', { name: 'Archive project' }).dblclick();
+    await expect(archive).toBeHidden();
+    // An asynchronous action that succeeds at once: the second click lands after it resolves.
+    await page.getByRole('button', { name: 'Duplicate project' }).click();
+    const duplicate = page.getByRole('alertdialog', { name: 'Duplicate Northwind launch?' });
+    await duplicate.getByRole('button', { name: 'Duplicate project' }).dblclick();
+    await expect(duplicate).toBeHidden();
+    await expect(log).toHaveText('open trigger-press,archived,close imperative-action,duplicated');
+    // Opened again, it confirms again.
+    await page.getByRole('button', { name: 'Duplicate project' }).click();
+    await duplicate.getByRole('button', { name: 'Duplicate project' }).click();
+    await expect(duplicate).toBeHidden();
+    await expect(log).toHaveText(
+      'open trigger-press,archived,close imperative-action,duplicated,duplicated',
+    );
   });
 
   test('opened from a menu item, it returns focus to the menu button', async ({ page }) => {
