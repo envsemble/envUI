@@ -1122,7 +1122,7 @@ test('the pattern and template tools answer from the manifest', () => {
   assert.equal(call('get_pattern', { name: 'Loading' }).value.requested, undefined);
   assert.match(
     call('get_pattern', { name: 'Nope' }).error,
-    /no pattern "Nope". Its patterns: loading/,
+    /no pattern "Nope". Its patterns: (?:[\w-]+, )*loading\b/,
   );
   // get_example takes a pattern by its name before a component that has it as an alias.
   const examples = call('get_example', { component: 'loading' }).value;

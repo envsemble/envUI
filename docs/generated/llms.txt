@@ -24,6 +24,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
+- [Content guidelines](docs/foundations/content.md): Voice, capitalisation, action words, labels, errors, empty states, feedback and the neutral sample data.
 
 ## Components: Layout & surfaces
 
@@ -111,9 +112,21 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Meter](docs/components/meter.md): A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
 - [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
 
+## Patterns: Collect and change information
+
+- [Form layout and validation](docs/patterns/forms.md): Ask for information in a form, check it, and help people fix what's wrong.
+- [Settings](docs/patterns/settings.md): Let people change how the application works for them, and see each change apply.
+- [Confirmation and destructive actions](docs/patterns/destructive-actions.md): Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.
+
 ## Patterns: Keep people informed
 
+- [Notifications and feedback](docs/patterns/feedback.md): Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.
 - [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
+- [Empty states](docs/patterns/empty-states.md): Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
+
+## Patterns: Find and navigate
+
+- [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.
 
 ## Optional
 
