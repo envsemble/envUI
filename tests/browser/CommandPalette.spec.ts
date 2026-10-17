@@ -77,6 +77,10 @@ test.describe('CommandPalette', () => {
     await input.fill('document 1');
     await expect.poll(() => highlighted(page)).toBe('documents/Document 1.md');
     await expect(dialog.getByRole('status')).toHaveText('11 results');
+    // That status is the palette's only live region, so the count is announced once.
+    await expect(
+      dialog.locator('[aria-live], [role="status"], [role="alert"], [role="log"]'),
+    ).toHaveCount(1);
     await expect(dialog.getByRole('group', { name: 'Recently opened' })).toHaveCount(0);
     await page.keyboard.press('ArrowDown');
     await expect.poll(() => highlighted(page)).toBe('documents/Document 10.md');
