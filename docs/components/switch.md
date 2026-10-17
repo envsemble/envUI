@@ -47,12 +47,12 @@ A switch turns a setting on or off, and the change takes effect at once, as a li
 
 ## Anatomy
 
-1. **Track**: a pill 2.5 rem wide and 1.5 rem tall. Off, it is a translucent neutral fill inside a thin ring; on, it turns blue.
-2. **Thumb**: a 1 rem circle 0.25 rem inside the track, at its start while off and at its end while on.
+1. **Track**: a pill 2.5 rem wide and 1.5 rem tall, 2.125 by 1.3125 rem in the compact scale. Off, it is a translucent neutral fill inside a thin ring; on, it turns blue.
+2. **Thumb**: a circle half the small control height, 1 rem (0.8125 rem in the compact scale), 0.25 rem inside the track, at its start while off and at its end while on.
 3. **Label** (`label`): the setting's name, 0.75 rem after the track, in 0.875 rem text. It wraps beside the track when space runs out, and pressing it toggles the switch too.
 4. **Focus ring**: the shared ring, 0.125 rem outside the track, shown for keyboard focus.
 
-A switch is 1.5 rem tall, or as tall as its wrapped label, and at least 2.75 rem on touch screens. The ref and other `input` props, such as `name`, `value` and `aria-describedby`, reach the native input; `className` and `style` style the root, the label around the track and the text.
+A switch is as tall as its track, or as tall as its wrapped label, and at least 2.75 rem on touch screens. The ref and other `input` props, such as `name`, `value` and `aria-describedby`, reach the native input; `className` and `style` style the root, the label around the track and the text.
 
 ## States and behaviour
 

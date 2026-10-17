@@ -330,7 +330,7 @@
   },
   "packages/ui/src/styles/Checkbox.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 10
+      "count": 4
     }
   },
   "packages/ui/src/styles/EmptyState.css": {
@@ -373,7 +373,7 @@
   },
   "packages/ui/src/styles/Switch.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 7
+      "count": 2
     }
   },
   "packages/ui/src/styles/Tooltip.css": {

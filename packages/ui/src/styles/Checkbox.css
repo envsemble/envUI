@@ -26,12 +26,14 @@
   }
 }
 
-/* Checkbox geometry is distinct from radio; input retains native semantics. */
+/* Checkbox geometry is distinct from radio; input retains native semantics. The box takes the scale's
+   medium icon size and its smallest corners, so it follows the scale. */
 .env-checkbox-box {
+  --env-checkbox-size: var(--env-icon-size-md);
   position: relative;
   display: inline-flex;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: var(--env-checkbox-size);
+  height: var(--env-checkbox-size);
   flex: 0 0 auto;
 }
 .env-checkbox-input {
@@ -40,8 +42,8 @@
   width: 100%;
   height: 100%;
   margin: 0;
-  border: 0.0625rem solid var(--env-color-fg-muted);
-  border-radius: 0.25rem;
+  border: var(--env-control-border-width) solid var(--env-color-fg-muted);
+  border-radius: var(--env-radius-xs);
   background: transparent;
   cursor: inherit;
 }
@@ -50,7 +52,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: 0.125rem;
+  padding: calc(var(--env-checkbox-size) / 9);
   color: var(--env-color-fg-on-emphasis);
   pointer-events: none;
   visibility: hidden;
@@ -71,8 +73,8 @@
 .env-checkbox-input:indeterminate + .env-checkbox-indicator::before {
   content: '';
   position: absolute;
-  inset-inline: 0.25rem;
-  inset-block-start: 0.5rem;
+  inset-inline: calc(var(--env-checkbox-size) / 4.5);
+  inset-block-start: calc(50% - 0.0625rem);
   height: 0.125rem;
   background: currentColor;
 }

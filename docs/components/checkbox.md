@@ -52,7 +52,7 @@ A checkbox turns one choice on or off, independently of the choices beside it. I
 
 ## Anatomy
 
-1. **Box**: a 1.125 rem square with 0.25 rem corners and a hairline border; checked and mixed boxes take the checkbox fill.
+1. **Box**: a square of the medium icon size, 1.125 rem (1 rem in the compact scale), with the smallest corners and a hairline border; checked and mixed boxes take the checkbox fill.
 2. **Mark**: a check mark while checked, or a short dash while mixed, in the on-fill color.
 3. **Label** (optional, `label`): the text beside the box, 0.75 rem from it, in the small body type. The whole label toggles the checkbox.
 
