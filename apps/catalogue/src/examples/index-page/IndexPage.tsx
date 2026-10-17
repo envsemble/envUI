@@ -179,7 +179,8 @@ export default function IndexPage() {
                 value={owner}
                 onValueChange={(value) => filter(() => setOwner(value))}
               />
-              {filtered && (
+              {/* With no results, the empty state offers it instead. */}
+              {filtered && rows.length > 0 && (
                 <Button variant="text" size="sm" onClick={clearFilters}>
                   Clear filters
                 </Button>

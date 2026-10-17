@@ -62,7 +62,7 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 ## Anatomy
 
 1. **Header:** a [PageHeader](../components/page-header.md), "Projects", with a description, the primary action "Create project" and `controlSize="sm"`.
-2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md), a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set.
+2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md), a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set and some projects match.
 3. **Selection bar:** a [Checkbox](../components/checkbox.md) "Select this page", checked, unchecked or mixed; a [Text](../foundations/typography.md) with `role="status"` that counts the projects, those found or those selected; and, with a selection, "Archive 3 projects" and "Delete 3 projects…" [Button](../components/button.md)s. While the rows stack, a "Sort by" Select joins them.
 4. **Table:** a [Table](../components/table.md) with `narrowLayout="stack"`, sortable Name and Updated columns, and per row:
    - a Checkbox named "Select {project}" and a [Link](../components/link.md) to the project, the row's one destination;
@@ -74,7 +74,7 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 
 ## States and behaviour
 
-- **Filters apply at once:** each keystroke and choice filters the list, goes back to the first page and updates the count, which is read politely. "Clear filters" shows only while a filter is set.
+- **Filters apply at once:** each keystroke and choice filters the list, goes back to the first page and updates the count, which is read politely. "Clear filters" shows only while a filter is set; with no results it moves into the empty state.
 - **No results:** the toolbar stays, so people can change what they asked for; the empty state names the query and offers "Clear filters", which also returns focus to the search.
 - **Sorting:** Name and Updated sort from their headers, which report `aria-sort`; the newest first is the default. On a phone the header row is hidden, so the "Sort by" Select takes its place.
 - **Selecting:** each row has its checkbox; "Select this page" selects the rows shown and is mixed while some are. The selection outlasts filters and pages, and the count says how many are selected.
