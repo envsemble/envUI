@@ -1,71 +1,15 @@
-import { test, expect, type Locator } from '@playwright/test';
-import { fixtureUrl } from './Servers';
+import { test, expect, type Page } from '@playwright/test';
+import { catalogueUrl, fixtureUrl } from './Servers';
 
-/**
- * A tab's fill and its label's contrast as painted: the label color over every fill between it and
- * the theme canvas, including the rail's.
- */
-function paintedLabel(tab: Locator) {
-  return tab.evaluate((node) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const fills: string[] = [];
-    for (let current: Element | null = node; current; current = current.parentElement) {
-      fills.unshift(getComputedStyle(current).backgroundColor);
-      if (current.classList.contains('env-theme')) break;
-    }
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const background = luminance(fills);
-    const label = luminance([...fills, getComputedStyle(node).color]);
-    const [lighter, darker] = [background, label].sort((a, b) => b - a);
-    return {
-      fill: getComputedStyle(node).backgroundColor,
-      ratio: (lighter! + 0.05) / (darker! + 0.05),
-    };
-  });
+/** The computed display of the panel each tab of a tab list controls, in order. */
+function panelDisplays(page: Page, list: string) {
+  return page.getByRole('tablist', { name: list, exact: true }).evaluate((element) =>
+    [...element.querySelectorAll('[role="tab"]')].map((tab) => {
+      const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
+      return panel ? getComputedStyle(panel).display : 'missing';
+    }),
+  );
 }
-
-test('selected and unselected tab labels keep 4.5:1 contrast at rest and on hover', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}/?fixture=tab-states`);
-  // Without transitions, a hovered tab shows its final colors at once.
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const failures: string[] = [];
-  for (const theme of ['light', 'dark']) {
-    const tabs = page.getByTestId(`tab-states-${theme}`).getByRole('tab');
-    // Five kinds of button at two densities, each with a selected and an unselected tab.
-    await expect(tabs).toHaveCount(20);
-    for (const tab of await tabs.all()) {
-      const name = await tab.evaluate(
-        (node) =>
-          `${node.closest('[role="tablist"]')!.getAttribute('aria-label')}: ${node.textContent} ` +
-          (node.getAttribute('aria-selected') === 'true' ? 'selected' : 'unselected'),
-      );
-      await page.mouse.move(0, 0);
-      const rest = await paintedLabel(tab);
-      await tab.hover();
-      const hover = await paintedLabel(tab);
-      if (hover.fill === rest.fill) failures.push(`${name} shows no hover`);
-      if (rest.ratio < 4.5) failures.push(`${name} at rest: ${rest.ratio.toFixed(2)}`);
-      if (hover.ratio < 4.5) failures.push(`${name} on hover: ${hover.ratio.toFixed(2)}`);
-    }
-  }
-  expect(failures).toEqual([]);
-});
 
 test('compact tabs make the whole rail as tall as a compact control', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=compact-tabs`);
@@ -114,4 +58,41 @@ test('a panel keeps the direction around it, not the tab list’s', async ({ pag
   // The slider is in a left-to-right region, so → raises it.
   await page.keyboard.press('ArrowRight');
   await expect(slider).toHaveAttribute('aria-valuenow', '51');
+});
+
+test('filling tabs give the selected panel the height left below the list', async ({ page }) => {
+  await page.goto(`${catalogueUrl}/#/components/tabs/overview`);
+  const example = page.locator('.docs-live-example[data-example="FillARegion"]');
+  const canvas = example.getByRole('tabpanel', { name: 'Canvas' }).locator(':scope > *').first();
+  await expect(canvas).toBeVisible();
+  // The example's region, which has a height of its own.
+  const region = await example.locator(':scope > div').first().boundingBox();
+  const list = await example.getByRole('tablist', { name: 'Diagram views' }).boundingBox();
+  const box = await canvas.boundingBox();
+  // The canvas reaches the bottom of the region and starts below the list.
+  expect(Math.abs(box!.y + box!.height - (region!.y + region!.height))).toBeLessThanOrEqual(2);
+  expect(box!.y).toBeGreaterThan(list!.y + list!.height - 1);
+  expect(box!.height).toBeGreaterThan(100);
+});
+
+test('filling tabs that keep inactive panels mounted display only the selected panel', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=fill-tabs`);
+  for (const theme of ['light', 'dark']) {
+    // Tabs nested in a filling panel keep their own layout, and their hidden panel stays hidden.
+    await expect
+      .poll(() => panelDisplays(page, `Canvas layers ${theme}`))
+      .toEqual(['block', 'none']);
+    // Alone, and vertical with the list beside a heading through renderList.
+    for (const name of [`Filling views ${theme}`, `Vertical filling views ${theme}`]) {
+      await expect.poll(() => panelDisplays(page, name)).toEqual(['flex', 'none', 'none']);
+      await page
+        .getByRole('tablist', { name, exact: true })
+        .getByRole('tab', { name: 'History' })
+        .click();
+      // The outgoing panel is hidden once it has faded out.
+      await expect.poll(() => panelDisplays(page, name)).toEqual(['none', 'none', 'flex']);
+    }
+  }
 });

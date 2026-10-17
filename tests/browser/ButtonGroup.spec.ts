@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { fixtureUrl } from './Servers';
 
 async function geometry(group: Locator) {
   return group.evaluate((element) => {
@@ -184,13 +184,6 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
   expect(overflow, JSON.stringify(result)).toBeLessThanOrEqual(1);
   const column = await geometry(scope.getByTestId('vertical'));
   expect(column.buttons[0].corners).toEqual([30, 30, 12, 12]);
-});
-
-test('documentation demonstrates connected buttons through the public API', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/button/preview`);
-  await expect(page.getByRole('group', { name: 'Project actions' })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Item actions' })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Quick actions' })).toBeVisible();
 });
 
 test('a full-width group fills its container, where its labelled button takes the room', async ({

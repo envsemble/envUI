@@ -26,25 +26,39 @@ test('table regions are named after their heading, numbered where they share a n
   await expect(tasks.first()).toHaveClass(/env-checkbox-input/);
 });
 
-test("table regions and task checkboxes take their names from EnvUIProvider's messages", async ({
-  page,
-}) => {
-  await page.goto(fixture);
-  const german = page.getByTestId('german');
-  await expectNames(german.getByRole('region'), [
-    'Tabelle Prices',
-    'Tabelle Prices 2',
-    'Tabelle Prices 3',
-  ]);
-  await expectNames(german.getByRole('checkbox'), ['Erledigte Aufgabe', 'Offene Aufgabe']);
-});
+test(
+  'inline code in a table cell breaks only where it would overflow, not inside its word',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixture);
+    const code = page.getByTestId('narrow').locator('td code');
+    await expect(code).toHaveCSS('overflow-wrap', 'break-word');
+    // The column keeps room for the whole word, which the region scrolls to show.
+    expect(await code.evaluate((element) => element.getClientRects().length)).toBe(1);
+  },
+);
 
-test('inline code in a table cell breaks only where it would overflow, not inside its word', async ({
-  page,
-}) => {
-  await page.goto(fixture);
-  const code = page.getByTestId('narrow').locator('td code');
-  await expect(code).toHaveCSS('overflow-wrap', 'break-word');
-  // The column keeps room for the whole word, which the region scrolls to show.
-  expect(await code.evaluate((element) => element.getClientRects().length)).toBe(1);
+test('Markdown accepts component overrides and remark and rehype plugins', async ({ page }) => {
+  await page.goto(`${fixtureUrl}/?fixture=markdown-extensions`);
+  const scope = page.getByTestId('markdown-extensions');
+  await expect(scope.locator('.env-markdown')).toHaveClass(/fixture-markdown/);
+  // envUI's heading offset still applies, and the rehype plugin's id reaches the element.
+  const heading = scope.getByRole('heading', { name: 'Project plan', level: 2 });
+  await expect(heading).toHaveAttribute('id', 'project-plan');
+  // The application's override wins over envUI's components.
+  await expect(scope.locator('blockquote[data-custom-quote]')).toHaveText('A quoted decision');
+  // The remark plugin runs after envUI's own Markdown extensions, which still render tables.
+  await expect(scope.locator('em')).toHaveText('TODO');
+  await expect(scope.getByRole('table')).toBeVisible();
+  // Raw HTML stays ignored, even with a rehype plugin that would render it.
+  await expect(scope.getByText('Some inline HTML')).toBeVisible();
+  await expect(scope.locator('.env-markdown [data-raw]')).toHaveCount(0);
+  await expect(scope).not.toContainText('A block');
+  await expect(scope).not.toContainText('<span>');
+  // Keys are the one exception: <kbd> around plain text renders as Kbd, and nothing else.
+  await expect(scope.locator('.env-markdown kbd.env-kbd')).toHaveText(['Ctrl', 'P']);
+  await expect(scope.getByText(/^Press/)).toHaveText('Press Ctrl+P or F1.');
+  await expect(scope.getByText(/^Not keys/)).toHaveText('Not keys: A B');
+  await expect(scope.locator('.env-markdown [onclick], .env-markdown kbd.x')).toHaveCount(0);
+  await expect(scope.locator('.env-markdown b')).toHaveCount(0);
 });

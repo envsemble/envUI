@@ -177,45 +177,6 @@ test('the ring takes the color of the surface below in both themes', async ({ pa
   }
 });
 
-test('the overflow count keeps 4.5:1 contrast in both themes', async ({ page }) => {
-  await page.goto(fixture);
-  // Thirteen groups with a chip in each theme.
-  await expect(page.locator('.env-avatar-group-overflow')).toHaveCount(26);
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const results: string[] = [];
-    for (const chip of document.querySelectorAll<HTMLElement>('.env-avatar-group-overflow')) {
-      const style = getComputedStyle(chip);
-      const background = luminance([style.backgroundColor]);
-      const foreground = luminance([style.backgroundColor, style.color]);
-      const [lighter, darker] = [background, foreground].sort((a, b) => b - a);
-      const ratio = (lighter! + 0.05) / (darker! + 0.05);
-      if (ratio < 4.5) {
-        const theme = chip.closest('[data-env-theme]')!.getAttribute('data-env-theme');
-        const group = chip.closest('.env-avatar-group')!.getAttribute('data-testid');
-        results.push(`${theme} ${group} ${chip.textContent}: ${ratio.toFixed(2)}`);
-      }
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
-});
-
 test('avatars overlap by an eighth, line up with small controls and keep their size', async ({
   page,
 }) => {

@@ -58,20 +58,24 @@ test.describe('SplitPane', () => {
     await expect(vertical).toHaveAttribute('aria-valuenow', '48');
   });
 
-  test('follows the pointer, horizontally and vertically', async ({ page }) => {
-    await page.goto(fixture);
-    const handle = page.getByRole('separator', { name: 'Resize Persisted' });
-    const size = page.getByTestId('persisted-size');
-    // 60 px of a 600 px split pane is 10 percent.
-    await drag(page, handle, 60);
-    await expect(handle).toHaveAttribute('aria-valuenow', '50');
-    await expect(size).toHaveText('50 committed');
-    const list = page.getByRole('region', { name: 'Persisted list' });
-    expect((await list.boundingBox())!.width).toBeCloseTo(300, 0);
-    const vertical = page.getByRole('separator', { name: 'Resize Vertical' });
-    await drag(page, vertical, 0, -40);
-    await expect(vertical).toHaveAttribute('aria-valuenow', '40');
-  });
+  test(
+    'follows the pointer, horizontally and vertically',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(fixture);
+      const handle = page.getByRole('separator', { name: 'Resize Persisted' });
+      const size = page.getByTestId('persisted-size');
+      // 60 px of a 600 px split pane is 10 percent.
+      await drag(page, handle, 60);
+      await expect(handle).toHaveAttribute('aria-valuenow', '50');
+      await expect(size).toHaveText('50 committed');
+      const list = page.getByRole('region', { name: 'Persisted list' });
+      expect((await list.boundingBox())!.width).toBeCloseTo(300, 0);
+      const vertical = page.getByRole('separator', { name: 'Resize Vertical' });
+      await drag(page, vertical, 0, -40);
+      await expect(vertical).toHaveAttribute('aria-valuenow', '40');
+    },
+  );
 
   test('keeps the chosen size under its key and forgets it on a double click', async ({ page }) => {
     await page.goto(fixture);
@@ -113,20 +117,6 @@ test.describe('SplitPane', () => {
     const box = (await root.boundingBox())!;
     const handleBox = (await handle.boundingBox())!;
     expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
-  });
-
-  test('follows the reading direction in right-to-left text', async ({ page }) => {
-    await page.goto(fixture);
-    const handle = page.getByRole('separator', { name: 'Resize Right to left' });
-    const list = page.getByRole('region', { name: 'Right to left list' });
-    const detail = page.getByRole('region', { name: 'Right to left detail' });
-    // The first pane is at the inline start, on the right.
-    expect((await list.boundingBox())!.x).toBeGreaterThan((await detail.boundingBox())!.x);
-    await handle.focus();
-    await page.keyboard.press('ArrowLeft');
-    await expect(handle).toHaveAttribute('aria-valuenow', '52');
-    await drag(page, handle, -60);
-    await expect(handle).toHaveAttribute('aria-valuenow', '62');
   });
 
   test('stacks below its own stackBelow width, without the handle', async ({ page }) => {

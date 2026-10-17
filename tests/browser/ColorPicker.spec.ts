@@ -34,48 +34,50 @@ test('HEX drafts validate, normalize and recover without committing invalid colo
   }
 });
 
-test('color-area and hue controls support keyboard and pointer interaction with visible focus', async ({
-  page,
-}) => {
-  for (const theme of ['light', 'dark']) {
-    const picker = page
-      .getByTestId(`color-picker-${theme}`)
-      .getByRole('group', { name: 'Controlled color', exact: true });
-    const field = picker.getByRole('textbox');
-    const hue = picker.getByRole('slider', { name: 'Controlled color hue', exact: true });
-    await hue.focus();
-    await hue.press('ArrowRight');
-    await expect(field).not.toHaveValue('#1a73e8');
-    // The hue's range input is visually hidden; the bar it moves on shows its focus.
-    const focus = await picker.locator('.env-color-picker-hue').evaluate((element) => {
-      const style = getComputedStyle(element);
-      return { width: style.outlineWidth, color: style.outlineColor };
-    });
-    expect(parseFloat(focus.width)).toBeGreaterThan(0);
-    expect(focus.color).not.toBe('rgba(0, 0, 0, 0)');
-    const before = await field.inputValue();
-    const area = picker.getByRole('slider', {
-      name: 'Controlled color saturation and brightness',
-      exact: true,
-    });
-    await area.focus();
-    await area.press('ArrowLeft');
-    await expect(field).not.toHaveValue(before);
-    await area.click({ position: { x: 10, y: 10 } });
-    await expect(field).toHaveValue(/^#[0-9a-f]{6}$/);
-    expect(await area.getAttribute('aria-valuetext')).toContain('Saturation');
-    await expect(hue).toHaveAttribute('aria-valuetext', /^\d+ degrees$/);
-    const bounds = (await area.boundingBox())!;
-    await page.mouse.move(bounds.x + bounds.width * 0.2, bounds.y + bounds.height * 0.2);
-    await page.mouse.down();
-    await page.mouse.move(bounds.x + bounds.width * 0.4, bounds.y + bounds.height * 0.4);
-    const firstDragColor = await field.inputValue();
-    await page.mouse.move(bounds.x + bounds.width * 0.7, bounds.y + bounds.height * 0.7);
-    await expect(field).not.toHaveValue(firstDragColor);
-    await page.mouse.up();
-    await expect(area).toBeFocused();
-  }
-});
+test(
+  'color-area and hue controls support keyboard and pointer interaction with visible focus',
+  { tag: '@engines' },
+  async ({ page }) => {
+    for (const theme of ['light', 'dark']) {
+      const picker = page
+        .getByTestId(`color-picker-${theme}`)
+        .getByRole('group', { name: 'Controlled color', exact: true });
+      const field = picker.getByRole('textbox');
+      const hue = picker.getByRole('slider', { name: 'Controlled color hue', exact: true });
+      await hue.focus();
+      await hue.press('ArrowRight');
+      await expect(field).not.toHaveValue('#1a73e8');
+      // The hue's range input is visually hidden; the bar it moves on shows its focus.
+      const focus = await picker.locator('.env-color-picker-hue').evaluate((element) => {
+        const style = getComputedStyle(element);
+        return { width: style.outlineWidth, color: style.outlineColor };
+      });
+      expect(parseFloat(focus.width)).toBeGreaterThan(0);
+      expect(focus.color).not.toBe('rgba(0, 0, 0, 0)');
+      const before = await field.inputValue();
+      const area = picker.getByRole('slider', {
+        name: 'Controlled color saturation and brightness',
+        exact: true,
+      });
+      await area.focus();
+      await area.press('ArrowLeft');
+      await expect(field).not.toHaveValue(before);
+      await area.click({ position: { x: 10, y: 10 } });
+      await expect(field).toHaveValue(/^#[0-9a-f]{6}$/);
+      expect(await area.getAttribute('aria-valuetext')).toContain('Saturation');
+      await expect(hue).toHaveAttribute('aria-valuetext', /^\d+ degrees$/);
+      const bounds = (await area.boundingBox())!;
+      await page.mouse.move(bounds.x + bounds.width * 0.2, bounds.y + bounds.height * 0.2);
+      await page.mouse.down();
+      await page.mouse.move(bounds.x + bounds.width * 0.4, bounds.y + bounds.height * 0.4);
+      const firstDragColor = await field.inputValue();
+      await page.mouse.move(bounds.x + bounds.width * 0.7, bounds.y + bounds.height * 0.7);
+      await expect(field).not.toHaveValue(firstDragColor);
+      await page.mouse.up();
+      await expect(area).toBeFocused();
+    }
+  },
+);
 
 test('rejected and same-value clamped changes keep the whole controlled picker synchronized', async ({
   page,
@@ -151,79 +153,83 @@ test('disabled and read-only pickers prevent interaction and retain native field
   }
 });
 
-test('native submission and reset preserve controlled values and respect canceled resets', async ({
-  page,
-}) => {
-  for (const theme of ['light', 'dark']) {
-    const scope = page.getByTestId(`color-picker-${theme}`);
-    const controlled = scope.getByRole('textbox', { name: 'Controlled color HEX', exact: true });
-    const uncontrolled = scope.getByRole('textbox', { name: 'Uncontrolled color HEX' });
-    const external = scope.getByRole('textbox', { name: 'External color HEX' });
-    await controlled.fill('#abcdef');
-    await uncontrolled.fill('#123456');
-    await external.fill('#654321');
-    await scope.getByRole('button', { name: 'Submit colors' }).click();
-    await expect(scope.getByTestId('color-values')).toHaveText(
-      JSON.stringify({
-        controlledColor: '#abcdef',
-        uncontrolledColor: '#123456',
-        readOnlyColor: '#6750a4',
-        externalColor: '#654321',
-      }),
-    );
-    await scope.getByRole('button', { name: 'Reset colors' }).click();
-    await expect(controlled).toHaveValue('#abcdef');
-    await expect(uncontrolled).toHaveValue('#34a853');
-    await expect(external).toHaveValue('#112233');
-    await expect(scope.getByTestId('color-changes')).toHaveText('1');
-    await scope.getByRole('checkbox', { name: 'Prevent color reset' }).check();
-    await uncontrolled.fill('#12');
-    await scope.getByTestId('color-form').evaluate((form: HTMLFormElement) => form.reset());
-    await expect(uncontrolled).toHaveValue('#12');
-    await expect(uncontrolled).toHaveAttribute('aria-invalid', 'true');
-    await scope.getByRole('checkbox', { name: 'Prevent color reset' }).uncheck();
-    await uncontrolled.fill('#12');
-    await scope.getByTestId('color-form').evaluate((form: HTMLFormElement) => form.reset());
-    await expect(uncontrolled).toHaveValue('#34a853');
-    expect(await uncontrolled.evaluate((input: HTMLInputElement) => input.checkValidity())).toBe(
-      true,
-    );
-  }
-});
+test(
+  'native submission and reset preserve controlled values and respect canceled resets',
+  { tag: '@engines' },
+  async ({ page }) => {
+    for (const theme of ['light', 'dark']) {
+      const scope = page.getByTestId(`color-picker-${theme}`);
+      const controlled = scope.getByRole('textbox', { name: 'Controlled color HEX', exact: true });
+      const uncontrolled = scope.getByRole('textbox', { name: 'Uncontrolled color HEX' });
+      const external = scope.getByRole('textbox', { name: 'External color HEX' });
+      await controlled.fill('#abcdef');
+      await uncontrolled.fill('#123456');
+      await external.fill('#654321');
+      await scope.getByRole('button', { name: 'Submit colors' }).click();
+      await expect(scope.getByTestId('color-values')).toHaveText(
+        JSON.stringify({
+          controlledColor: '#abcdef',
+          uncontrolledColor: '#123456',
+          readOnlyColor: '#6750a4',
+          externalColor: '#654321',
+        }),
+      );
+      await scope.getByRole('button', { name: 'Reset colors' }).click();
+      await expect(controlled).toHaveValue('#abcdef');
+      await expect(uncontrolled).toHaveValue('#34a853');
+      await expect(external).toHaveValue('#112233');
+      await expect(scope.getByTestId('color-changes')).toHaveText('1');
+      await scope.getByRole('checkbox', { name: 'Prevent color reset' }).check();
+      await uncontrolled.fill('#12');
+      await scope.getByTestId('color-form').evaluate((form: HTMLFormElement) => form.reset());
+      await expect(uncontrolled).toHaveValue('#12');
+      await expect(uncontrolled).toHaveAttribute('aria-invalid', 'true');
+      await scope.getByRole('checkbox', { name: 'Prevent color reset' }).uncheck();
+      await uncontrolled.fill('#12');
+      await scope.getByTestId('color-form').evaluate((form: HTMLFormElement) => form.reset());
+      await expect(uncontrolled).toHaveValue('#34a853');
+      expect(await uncontrolled.evaluate((input: HTMLInputElement) => input.checkValidity())).toBe(
+        true,
+      );
+    }
+  },
+);
 
-test('a drag ends when the area loses the pointer capture without a pointerup', async ({
-  page,
-}) => {
-  const picker = page
-    .getByTestId('color-picker-light')
-    .getByRole('group', { name: 'Controlled color', exact: true });
-  const field = picker.getByRole('textbox');
-  const area = picker.getByRole('slider', {
-    name: 'Controlled color saturation and brightness',
-    exact: true,
-  });
-  await area.evaluate((element) =>
-    element.addEventListener('pointerdown', (event) => {
-      element.dataset.pointer = String(event.pointerId);
-    }),
-  );
-  const bounds = (await area.boundingBox())!;
-  const before = await field.inputValue();
-  await page.mouse.move(bounds.x + bounds.width * 0.2, bounds.y + bounds.height * 0.2);
-  await page.mouse.down();
-  await expect(field).not.toHaveValue(before);
-  const dragged = await field.inputValue();
-  await area.evaluate((element) =>
-    element.dispatchEvent(
-      new PointerEvent('lostpointercapture', {
-        pointerId: Number(element.dataset.pointer),
-        bubbles: true,
+test(
+  'a drag ends when the area loses the pointer capture without a pointerup',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const picker = page
+      .getByTestId('color-picker-light')
+      .getByRole('group', { name: 'Controlled color', exact: true });
+    const field = picker.getByRole('textbox');
+    const area = picker.getByRole('slider', {
+      name: 'Controlled color saturation and brightness',
+      exact: true,
+    });
+    await area.evaluate((element) =>
+      element.addEventListener('pointerdown', (event) => {
+        element.dataset.pointer = String(event.pointerId);
       }),
-    ),
-  );
-  await page.mouse.move(bounds.x + bounds.width * 0.7, bounds.y + bounds.height * 0.7);
-  // A move goes through before the next frame; the color stays where the drag ended.
-  await page.evaluate(() => new Promise(requestAnimationFrame));
-  await expect(field).toHaveValue(dragged);
-  await page.mouse.up();
-});
+    );
+    const bounds = (await area.boundingBox())!;
+    const before = await field.inputValue();
+    await page.mouse.move(bounds.x + bounds.width * 0.2, bounds.y + bounds.height * 0.2);
+    await page.mouse.down();
+    await expect(field).not.toHaveValue(before);
+    const dragged = await field.inputValue();
+    await area.evaluate((element) =>
+      element.dispatchEvent(
+        new PointerEvent('lostpointercapture', {
+          pointerId: Number(element.dataset.pointer),
+          bubbles: true,
+        }),
+      ),
+    );
+    await page.mouse.move(bounds.x + bounds.width * 0.7, bounds.y + bounds.height * 0.7);
+    // A move goes through before the next frame; the color stays where the drag ended.
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+    await expect(field).toHaveValue(dragged);
+    await page.mouse.up();
+  },
+);

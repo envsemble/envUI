@@ -53,51 +53,53 @@ test('inactive preview avoids rendering and highlighting work while retaining cu
   );
 });
 
-test('tab changes retain the native textarea, selection, resize, history and reset behavior', async ({
-  page,
-}) => {
-  await page.goto(fixtureUrl);
-  const form = page.getByTestId('markdown-form');
-  const source = form.getByRole('textbox', { name: 'Workload source' });
-  const original = await source.inputValue();
-  const nativeInput = await source.elementHandle();
-  await source.fill('alpha');
-  await source.evaluate((input: HTMLTextAreaElement) => input.setSelectionRange(0, 5));
-  await form.getByRole('button', { name: 'Bold', exact: true }).click();
-  await expect(source).toHaveValue('**alpha**');
-  await form.getByRole('separator', { name: 'Resize text area', exact: true }).press('ArrowDown');
-  const resizedHeight = await source.evaluate((input: HTMLTextAreaElement) => input.style.height);
-  const selectedRange = await source.evaluate((input: HTMLTextAreaElement) => [
-    input.selectionStart,
-    input.selectionEnd,
-  ]);
-  await form.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await form.getByRole('button', { name: 'Submit Markdown', exact: true }).click();
-  await expect(page.getByTestId('markdown-submitted')).toHaveText('**alpha**');
-  await form.getByRole('tab', { name: 'Write', exact: true }).click();
-  expect(
-    await nativeInput!.evaluate((input) => input === document.querySelector('[name="source"]')),
-  ).toBe(true);
-  expect(await source.evaluate((input: HTMLTextAreaElement) => input.style.height)).toBe(
-    resizedHeight,
-  );
-  expect(
-    await source.evaluate((input: HTMLTextAreaElement) => [
+test(
+  'tab changes retain the native textarea, selection, resize, history and reset behavior',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixtureUrl);
+    const form = page.getByTestId('markdown-form');
+    const source = form.getByRole('textbox', { name: 'Workload source' });
+    const original = await source.inputValue();
+    const nativeInput = await source.elementHandle();
+    await source.fill('alpha');
+    await source.evaluate((input: HTMLTextAreaElement) => input.setSelectionRange(0, 5));
+    await form.getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(source).toHaveValue('**alpha**');
+    await form.getByRole('separator', { name: 'Resize text area', exact: true }).press('ArrowDown');
+    const resizedHeight = await source.evaluate((input: HTMLTextAreaElement) => input.style.height);
+    const selectedRange = await source.evaluate((input: HTMLTextAreaElement) => [
       input.selectionStart,
       input.selectionEnd,
-    ]),
-  ).toEqual(selectedRange);
-  await form.getByRole('button', { name: 'Undo', exact: true }).click();
-  await expect(source).toHaveValue('alpha');
-  await form.getByRole('button', { name: 'Redo', exact: true }).click();
-  await expect(source).toHaveValue('**alpha**');
-  await form.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await form.getByRole('button', { name: 'Reset Markdown', exact: true }).click();
-  await expect(form.locator('.env-markdown')).toContainText('Reference 39');
-  await form.getByRole('tab', { name: 'Write', exact: true }).click();
-  await expect(source).toHaveValue(original);
-  await expect(form.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
-});
+    ]);
+    await form.getByRole('tab', { name: 'Preview', exact: true }).click();
+    await form.getByRole('button', { name: 'Submit Markdown', exact: true }).click();
+    await expect(page.getByTestId('markdown-submitted')).toHaveText('**alpha**');
+    await form.getByRole('tab', { name: 'Write', exact: true }).click();
+    expect(
+      await nativeInput!.evaluate((input) => input === document.querySelector('[name="source"]')),
+    ).toBe(true);
+    expect(await source.evaluate((input: HTMLTextAreaElement) => input.style.height)).toBe(
+      resizedHeight,
+    );
+    expect(
+      await source.evaluate((input: HTMLTextAreaElement) => [
+        input.selectionStart,
+        input.selectionEnd,
+      ]),
+    ).toEqual(selectedRange);
+    await form.getByRole('button', { name: 'Undo', exact: true }).click();
+    await expect(source).toHaveValue('alpha');
+    await form.getByRole('button', { name: 'Redo', exact: true }).click();
+    await expect(source).toHaveValue('**alpha**');
+    await form.getByRole('tab', { name: 'Preview', exact: true }).click();
+    await form.getByRole('button', { name: 'Reset Markdown', exact: true }).click();
+    await expect(form.locator('.env-markdown')).toContainText('Reference 39');
+    await form.getByRole('tab', { name: 'Write', exact: true }).click();
+    await expect(source).toHaveValue(original);
+    await expect(form.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
+  },
+);
 
 test('active preview reflects controlled replacements and preview options without stale activation', async ({
   page,

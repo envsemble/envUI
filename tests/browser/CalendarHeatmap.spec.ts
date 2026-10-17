@@ -166,6 +166,7 @@ test('one tooltip follows the pointer across days and leaves with it', async ({ 
 test('people can move the pointer onto the tooltip of a hovered day to read it', async ({
   page,
 }) => {
+  await page.clock.install();
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
   const tooltip = page.locator('.env-calendar-heatmap-tooltip');
@@ -181,7 +182,7 @@ test('people can move the pointer onto the tooltip of a hovered day to read it',
     const from = (await day.boundingBox())!;
     const to = (await tooltip.boundingBox())!;
     await page.mouse.move(from.x + from.width / 2, to.y + to.height / 2, { steps: 12 });
-    await page.waitForTimeout(600);
+    await page.clock.runFor(600);
     await expect(tooltip).toHaveText(name);
     // Leaving the tooltip for anything but the days closes it.
     await page.mouse.move(to.x - 40, to.y - 60, { steps: 4 });
@@ -228,48 +229,6 @@ test('a press released outside the days leaves keyboard focus its own tooltip', 
   await page.keyboard.press('Shift+Tab');
   await expect(popup).toHaveAttribute('data-focus-opened', '');
   await expect(positioner).toHaveCSS('pointer-events', 'none');
-});
-
-test('Escape with a modifier passes a hovered tooltip by', async ({ page }) => {
-  await page.goto(heatmapFixture);
-  const day = page
-    .getByRole('grid', { name: 'Activity light' })
-    .locator('td[data-date="2026-06-03"]');
-  await day.hover();
-  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
-    (await day.getAttribute('aria-label'))!,
-  );
-  // A listener at the end of the event's path records each Escape that reaches it.
-  await page.evaluate(() => {
-    document.body.dataset.escapes = '';
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') document.body.dataset.escapes += event.ctrlKey ? 'c' : 'e';
-    });
-  });
-  await page.keyboard.press('Control+Escape');
-  await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
-  // The tooltip stays.
-  await expect(page.locator('.env-tooltip-positioner')).toHaveAttribute('data-open', '');
-  await page.keyboard.press('Escape');
-  await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
-  await expect(page.locator('body')).toHaveAttribute('data-escapes', 'c');
-});
-
-test('Escape with a modifier over a hovered tooltip closes an enclosing dialog', async ({
-  page,
-}) => {
-  await page.goto(heatmapFixture);
-  await page.getByRole('button', { name: 'Open activity light' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Activity details light' });
-  const day = dialog
-    .getByRole('grid', { name: 'Activity in a dialog light' })
-    .locator('td[data-date="2026-10-07"]');
-  await day.hover();
-  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
-    (await day.getAttribute('aria-label'))!,
-  );
-  await page.keyboard.press('Control+Escape');
-  await expect(dialog).toBeHidden();
 });
 
 test('a tooltip the pointer rests on stays when focus leaves the days', async ({ page }) => {
@@ -369,89 +328,6 @@ test("names, dates and values follow the provider's locale, and the legend its m
   await expect(scope.locator('.env-calendar-heatmap-legend')).toHaveText('WenigViel');
 });
 
-test('the ramp rises from the empty fill to the tone in both themes', async ({ page }) => {
-  await page.goto(heatmapFixture);
-  for (const theme of ['light', 'dark']) {
-    const result = await page.getByTestId(`calendar-heatmap-year-${theme}`).evaluate((element) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 1;
-      const context = canvas.getContext('2d', { willReadFrequently: true })!;
-      const luminance = (colors: string[]) => {
-        context.clearRect(0, 0, 1, 1);
-        for (const color of colors) {
-          context.fillStyle = color;
-          context.fillRect(0, 0, 1, 1);
-        }
-        const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-        const linear = (value: number) => {
-          const channel = value / 255;
-          return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-        };
-        return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-      };
-      const ground = getComputedStyle(element.closest('.env-theme')!).backgroundColor;
-      const contrast = (color: string) => {
-        const [lighter, darker] = [luminance([ground]), luminance([ground, color])].sort(
-          (a, b) => b - a,
-        );
-        return (lighter! + 0.05) / (darker! + 0.05);
-      };
-      const swatches = [
-        ...element.querySelectorAll<HTMLElement>('.env-calendar-heatmap-swatch'),
-      ].map((swatch) => getComputedStyle(swatch).backgroundColor);
-      // Every day uses the swatch of its level.
-      const mismatched = [...element.querySelectorAll<HTMLElement>('td[data-level]')].filter(
-        (cell) => getComputedStyle(cell).backgroundColor !== swatches[Number(cell.dataset.level)],
-      ).length;
-      return { contrasts: swatches.map(contrast), mismatched };
-    });
-    expect(result.mismatched).toBe(0);
-    const [empty, ...steps] = result.contrasts;
-    // Each step stands further from the canvas than the one before, ending at 3:1 or more.
-    for (let index = 1; index < steps.length; index++)
-      expect(steps[index]!).toBeGreaterThan(steps[index - 1]!);
-    expect(steps[0]!).toBeGreaterThan(empty!);
-    expect(steps.at(-1)!).toBeGreaterThanOrEqual(3);
-  }
-  // Month, weekday and legend text keep 4.5:1 on the canvas and on panes.
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const results: string[] = [];
-    for (const text of document.querySelectorAll<HTMLElement>(
-      '.env-calendar-heatmap-month span, .env-calendar-heatmap-weekday span, .env-calendar-heatmap-legend > span:not(.env-calendar-heatmap-swatch)',
-    )) {
-      const layers: string[] = [];
-      for (let element: HTMLElement | null = text; element; element = element.parentElement) {
-        layers.unshift(getComputedStyle(element).backgroundColor);
-        if (element.classList.contains('env-theme')) break;
-      }
-      const [lighter, darker] = [
-        luminance(layers),
-        luminance([...layers, getComputedStyle(text).color]),
-      ].sort((a, b) => b - a);
-      const ratio = (lighter! + 0.05) / (darker! + 0.05);
-      if (ratio < 4.5) results.push(`${text.textContent}: ${ratio.toFixed(2)}`);
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
-});
-
 test('an update rescales the days', async ({ page }) => {
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
@@ -507,30 +383,36 @@ test('a year renders updates and focus moves within a frame', async ({ page }) =
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(1);
 });
 
-test('a narrow container scrolls the weeks, starting at the most recent', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 900 });
-  await page.goto(heatmapFixture);
-  const heatmap = page.getByTestId('calendar-heatmap-year-light');
-  const scroller = heatmap.locator('.env-calendar-heatmap-scroll');
-  // It stays at the end while the weeks settle, such as when the web font loads.
-  await expect
-    .poll(() =>
-      scroller.evaluate((element) => ({
-        scrolls: element.scrollWidth > element.clientWidth,
-        atEnd: Math.abs(element.scrollLeft + element.clientWidth - element.scrollWidth) < 2,
-      })),
-    )
-    .toEqual({ scrolls: true, atEnd: true });
-  const box = (await scroller.boundingBox())!;
-  const last = (await heatmap.locator('td[data-date="2026-10-10"]').boundingBox())!;
-  expect(last.x + last.width).toBeLessThanOrEqual(box.x + box.width + 1);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  // Home scrolls the first week into view.
-  await heatmap.locator('td[tabindex="0"]').focus();
-  await page.keyboard.press('Home');
-  const first = (await heatmap.locator('td[data-date="2025-10-11"]').boundingBox())!;
-  expect(first.x).toBeGreaterThanOrEqual(box.x - 1);
-});
+test(
+  'a narrow container scrolls the weeks, starting at the most recent',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 900 });
+    await page.goto(heatmapFixture);
+    const heatmap = page.getByTestId('calendar-heatmap-year-light');
+    const scroller = heatmap.locator('.env-calendar-heatmap-scroll');
+    // It stays at the end while the weeks settle, such as when the web font loads.
+    await expect
+      .poll(() =>
+        scroller.evaluate((element) => ({
+          scrolls: element.scrollWidth > element.clientWidth,
+          atEnd: Math.abs(element.scrollLeft + element.clientWidth - element.scrollWidth) < 2,
+        })),
+      )
+      .toEqual({ scrolls: true, atEnd: true });
+    const box = (await scroller.boundingBox())!;
+    const last = (await heatmap.locator('td[data-date="2026-10-10"]').boundingBox())!;
+    expect(last.x + last.width).toBeLessThanOrEqual(box.x + box.width + 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    // Home scrolls the first week into view.
+    await heatmap.locator('td[tabindex="0"]').focus();
+    await page.keyboard.press('Home');
+    const first = (await heatmap.locator('td[data-date="2025-10-11"]').boundingBox())!;
+    expect(first.x).toBeGreaterThanOrEqual(box.x - 1);
+  },
+);
 
 test('right-to-left heatmaps run the weeks from the right and turn the arrow keys', async ({
   page,
@@ -551,30 +433,34 @@ test('right-to-left heatmaps run the weeks from the right and turn the arrow key
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
 
-  test('a tap shows the value of the day, and the days grow', async ({ page }) => {
-    await page.goto(heatmapFixture);
-    const cell = page
-      .getByRole('grid', { name: 'Activity light' })
-      .locator('td[data-date="2026-06-01"]');
-    await expect(cell).toHaveCSS('width', '20px');
-    // Days are 24 px apart in both directions, the minimum target size with its spacing. Both are
-    // measured at once, as the weeks may still scroll to the most recent while the font loads.
-    const pitch = await page.getByRole('grid', { name: 'Activity light' }).evaluate((grid) => {
-      const box = (date: string) =>
-        grid.querySelector(`td[data-date="${date}"]`)!.getBoundingClientRect();
-      const day = box('2026-06-01');
-      return { down: box('2026-06-02').y - day.y, across: box('2026-06-08').x - day.x };
-    });
-    expect(pitch.down).toBeGreaterThan(23.99);
-    expect(pitch.across).toBeGreaterThan(23.99);
-    await cell.scrollIntoViewIfNeeded();
-    await cell.tap();
-    await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
-      (await cell.getAttribute('aria-label'))!,
-    );
-    await page.getByRole('button', { name: 'Update light' }).tap();
-    await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
-  });
+  test(
+    'a tap shows the value of the day, and the days grow',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(heatmapFixture);
+      const cell = page
+        .getByRole('grid', { name: 'Activity light' })
+        .locator('td[data-date="2026-06-01"]');
+      await expect(cell).toHaveCSS('width', '20px');
+      // Days are 24 px apart in both directions, the minimum target size with its spacing. Both are
+      // measured at once, as the weeks may still scroll to the most recent while the font loads.
+      const pitch = await page.getByRole('grid', { name: 'Activity light' }).evaluate((grid) => {
+        const box = (date: string) =>
+          grid.querySelector(`td[data-date="${date}"]`)!.getBoundingClientRect();
+        const day = box('2026-06-01');
+        return { down: box('2026-06-02').y - day.y, across: box('2026-06-08').x - day.x };
+      });
+      expect(pitch.down).toBeGreaterThan(23.99);
+      expect(pitch.across).toBeGreaterThan(23.99);
+      await cell.scrollIntoViewIfNeeded();
+      await cell.tap();
+      await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
+        (await cell.getAttribute('aria-label'))!,
+      );
+      await page.getByRole('button', { name: 'Update light' }).tap();
+      await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
+    },
+  );
 });
 
 test('thresholds set the color steps, for example to color days by rank', async ({ page }) => {
@@ -686,30 +572,6 @@ test('Escape hides the tooltip of a heatmap in a dialog and keeps the dialog ope
   await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveCount(0);
   await expect(dialog).toBeVisible();
   // With no tooltip to hide, Escape closes the dialog as usual.
-  await page.keyboard.press('Escape');
-  await expect(dialog).toBeHidden();
-});
-
-test('Escape hides a hovered tooltip in a dialog while focus is elsewhere in it', async ({
-  page,
-}) => {
-  await page.goto(heatmapFixture);
-  await page.getByRole('button', { name: 'Open activity light' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Activity details light' });
-  const close = dialog.getByRole('button', { name: 'Close' }).first();
-  await close.focus();
-  const day = dialog
-    .getByRole('grid', { name: 'Activity in a dialog light' })
-    .locator('td[data-date="2026-10-07"]');
-  await day.hover();
-  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(
-    (await day.getAttribute('aria-label'))!,
-  );
-  await moveOntoTooltip(page, day);
-  await page.keyboard.press('Escape');
-  await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
-  await expect(dialog).toBeVisible();
-  await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
 });

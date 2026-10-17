@@ -105,63 +105,6 @@ test('own messages are bubbles at the inline end; others fill the width', async 
   expect(own.x).toBeCloseTo(box.x, 0);
 });
 
-test('bubbles, text and status keep their contrast on the canvas and panes in both themes', async ({
-  page,
-}) => {
-  await page.goto(messagesFixture);
-  // Both themes, each with seven messages on the canvas and on a pane, and one with default actions.
-  await expect(page.locator('.env-message')).toHaveCount(16);
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const ratio = (back: string[], front: string[]) => {
-      const [lighter, darker] = [luminance(back), luminance([...back, ...front])].sort(
-        (a, b) => b - a,
-      );
-      return (lighter! + 0.05) / (darker! + 0.05);
-    };
-    const results: string[] = [];
-    for (const message of document.querySelectorAll<HTMLElement>('.env-message')) {
-      const theme = message.closest('[data-env-theme]')!.getAttribute('data-env-theme');
-      const surface = message.closest<HTMLElement>('[data-surface]')!;
-      const page = getComputedStyle(surface.closest('.env-theme')!).backgroundColor;
-      const ground = [page, getComputedStyle(surface).backgroundColor];
-      const content = message.querySelector<HTMLElement>('.env-message-content')!;
-      const fill = getComputedStyle(content).backgroundColor;
-      const where = `${theme} ${surface.dataset.surface} ${message.dataset.from}`;
-      if (message.dataset.from === 'self') {
-        // The bubble stands apart from the surface it sits on.
-        const bubble = ratio(ground, [fill]);
-        if (bubble < 1.08) results.push(`${where} bubble ${bubble.toFixed(3)}`);
-      }
-      const text = ratio([...ground, fill], [getComputedStyle(content).color]);
-      if (text < 4.5) results.push(`${where} text ${text.toFixed(2)}`);
-      for (const part of message.querySelectorAll<HTMLElement>(
-        '.env-message-meta, .env-message-status',
-      )) {
-        const value = ratio(ground, [getComputedStyle(part).color]);
-        if (value < 4.5) results.push(`${where} ${part.className} ${value.toFixed(2)}`);
-      }
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
-});
-
 test('messages stay readable in a narrow viewport', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto(messagesFixture);

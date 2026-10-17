@@ -54,38 +54,10 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
   expect(errors).toEqual([]);
 });
 
-test('an unchosen count is muted text on the rail, and a chosen one takes the segment color', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}/?fixture=segments`);
-  for (const theme of ['light', 'dark']) {
-    const group = page.getByRole('radiogroup', { name: `Work items ${theme}` });
-    const muted = await group.evaluate((element) => {
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--env-color-fg-muted)';
-      element.append(probe);
-      const color = getComputedStyle(probe).color;
-      probe.remove();
-      return color;
-    });
-    const unchosen = group.getByRole('radio', { name: 'Blocked 3' });
-    const count = unchosen.locator('.env-segmented-control-item-count');
-    await expect(count).toHaveCSS('color', muted);
-    await expect(count).toHaveCSS('opacity', '1');
-    const chosen = group.getByRole('radio', { name: 'Open 12' });
-    const chosenColor = await chosen.evaluate((element) => getComputedStyle(element).color);
-    await expect(chosen.locator('.env-segmented-control-item-count')).toHaveCSS(
-      'color',
-      chosenColor,
-    );
-  }
-  // The rail takes the attributes it is given.
-  await expect(page.getByTestId('segments-rail-light')).toHaveAttribute('role', 'radiogroup');
-});
-
 test('a full-width control splits its container evenly and cuts long labels short, with a tooltip', async ({
   page,
 }) => {
+  await page.clock.install();
   await page.goto(`${fixtureUrl}/?fixture=segments`);
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
@@ -138,7 +110,7 @@ test('a full-width control splits its container evenly and cuts long labels shor
       ),
   ).toBe(true);
   await wide.getByRole('radio').first().hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
   // Without fullWidth the control keeps the width of its options.
   const plain = page

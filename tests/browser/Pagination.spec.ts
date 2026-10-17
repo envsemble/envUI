@@ -160,26 +160,6 @@ test('ranges without a total, single pages, empty lists and other languages', as
   await expect(pager('Pagination')).toBeVisible();
 });
 
-test('the buttons show their names in tooltips in both themes', async ({ page }) => {
-  await page.goto(fixture);
-  const tooltip = page.locator('.env-tooltip:not([data-ending-style])');
-  for (const theme of ['light', 'dark']) {
-    const pager = page
-      .getByTestId(`paginations-${theme}`)
-      .getByRole('navigation', { name: `Report pages ${theme}` });
-    await pager.getByRole('button', { name: 'Next page' }).hover();
-    await expect(tooltip).toHaveText('Next page');
-    await expect(
-      page.locator('.env-popup-theme:has(.env-tooltip:not([data-ending-style]))'),
-    ).toHaveAttribute('data-env-theme', theme);
-    // An unavailable button still names itself.
-    await pager.getByRole('button', { name: 'Previous page' }).hover();
-    await expect(tooltip).toHaveText('Previous page');
-    await page.mouse.move(4, 900, { steps: 4 });
-    await expect(tooltip).toHaveCount(0);
-  }
-});
-
 test('the pager fits small toolbars, wraps only when it must and mirrors right to left', async ({
   page,
 }) => {

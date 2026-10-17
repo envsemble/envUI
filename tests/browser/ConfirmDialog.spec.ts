@@ -4,41 +4,43 @@ import { fixtureUrl } from './Servers';
 const confirmDialogs = `${fixtureUrl}/?fixture=confirm-dialogs`;
 
 test.describe('ConfirmDialog', () => {
-  test('is an alert dialog that focuses its confirm button, and confirms or cancels', async ({
-    page,
-  }) => {
-    await page.goto(confirmDialogs);
-    const log = page.getByTestId('confirm-log');
-    const trigger = page.getByRole('button', { name: 'Archive project' });
-    await trigger.click();
-    const dialog = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
-    await expect(dialog).toBeVisible();
-    await expect(dialog).toHaveAccessibleDescription('People can still find it under Archived.');
-    // A neutral confirmation starts on its confirm button.
-    await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
-    // A press outside doesn't dismiss an alert dialog.
-    await page.mouse.click(4, 4);
-    await expect(dialog).toBeVisible();
-    // Cancel closes it, and focus returns to the trigger.
-    await dialog.getByRole('button', { name: 'Cancel' }).click();
-    await expect(dialog).toBeHidden();
-    await expect(trigger).toBeFocused();
-    await expect(log).toHaveText('open trigger-press,close close-press');
+  test(
+    'is an alert dialog that focuses its confirm button, and confirms or cancels',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(confirmDialogs);
+      const log = page.getByTestId('confirm-log');
+      const trigger = page.getByRole('button', { name: 'Archive project' });
+      await trigger.click();
+      const dialog = page.getByRole('alertdialog', { name: 'Archive Northwind launch?' });
+      await expect(dialog).toBeVisible();
+      await expect(dialog).toHaveAccessibleDescription('People can still find it under Archived.');
+      // A neutral confirmation starts on its confirm button.
+      await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
+      // A press outside doesn't dismiss an alert dialog.
+      await page.mouse.click(4, 4);
+      await expect(dialog).toBeVisible();
+      // Cancel closes it, and focus returns to the trigger.
+      await dialog.getByRole('button', { name: 'Cancel' }).click();
+      await expect(dialog).toBeHidden();
+      await expect(trigger).toBeFocused();
+      await expect(log).toHaveText('open trigger-press,close close-press');
 
-    // Escape closes it too.
-    await trigger.click();
-    await page.keyboard.press('Escape');
-    await expect(dialog).toBeHidden();
+      // Escape closes it too.
+      await trigger.click();
+      await page.keyboard.press('Escape');
+      await expect(dialog).toBeHidden();
 
-    // Enter on the focused confirm button confirms.
-    await trigger.click();
-    await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
-    await page.keyboard.press('Enter');
-    await expect(dialog).toBeHidden();
-    await expect(log).toHaveText(
-      'open trigger-press,close close-press,open trigger-press,close escape-key,open trigger-press,archived,close imperative-action',
-    );
-  });
+      // Enter on the focused confirm button confirms.
+      await trigger.click();
+      await expect(dialog.getByRole('button', { name: 'Archive project' })).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(dialog).toBeHidden();
+      await expect(log).toHaveText(
+        'open trigger-press,close close-press,open trigger-press,close escape-key,open trigger-press,archived,close imperative-action',
+      );
+    },
+  );
 
   test('a danger confirmation starts on Cancel, is pending while its action runs and stays open when it fails', async ({
     page,
@@ -121,18 +123,22 @@ test.describe('ConfirmDialog', () => {
     await expect(log).toHaveText('saved,saved');
   });
 
-  test('opened from a menu item, it returns focus to the menu button', async ({ page }) => {
-    await page.goto(confirmDialogs);
-    const menuButton = page.getByRole('button', { name: 'Project actions' });
-    await menuButton.click();
-    await page.getByRole('menuitem', { name: 'Remove member…' }).click();
-    const dialog = page.getByRole('alertdialog', { name: 'Remove Sam Lee?' });
-    await expect(dialog).toContainText('Sam loses access to Northwind launch.');
-    await expect(dialog.getByRole('button', { name: 'Keep member' })).toBeFocused();
-    await page.keyboard.press('Escape');
-    await expect(dialog).toBeHidden();
-    await expect(menuButton).toBeFocused();
-  });
+  test(
+    'opened from a menu item, it returns focus to the menu button',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(confirmDialogs);
+      const menuButton = page.getByRole('button', { name: 'Project actions' });
+      await menuButton.click();
+      await page.getByRole('menuitem', { name: 'Remove member…' }).click();
+      const dialog = page.getByRole('alertdialog', { name: 'Remove Sam Lee?' });
+      await expect(dialog).toContainText('Sam loses access to Northwind launch.');
+      await expect(dialog.getByRole('button', { name: 'Keep member' })).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(dialog).toBeHidden();
+      await expect(menuButton).toBeFocused();
+    },
+  );
 
   test('Enter in a field confirms through the same action: pending, once, and kept open when it fails', async ({
     page,

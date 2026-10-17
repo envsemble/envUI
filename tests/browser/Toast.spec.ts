@@ -360,25 +360,29 @@ for (const motion of ['reduce', 'no-preference'] as const)
       await expect(stack).toHaveCSS('overflow-y', 'auto');
     });
 
-test('a stack taller than the window keeps scrolling while a notice leaves', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 160 });
-  await page.getByTestId('toast-queue-actions').click();
-  const stack = region(page);
-  await expect(stack.locator('.env-toast[data-starting-style]')).toHaveCount(0);
-  await expect(stack).not.toHaveAttribute('data-settling');
-  await expect
-    .poll(() => stack.evaluate((element) => element.scrollHeight > element.clientHeight))
-    .toBe(true);
-  await stack
-    .locator('.env-toast:not([data-limited])')
-    .first()
-    .getByRole('button', { name: 'Dismiss notification' })
-    .click();
-  // It stays a scroll container: no overflow switch, which would lose the scroll position.
-  await expect(stack.locator('.env-toast[data-leaving]')).toHaveCount(1);
-  await expect(stack).not.toHaveAttribute('data-settling');
-  await expect(stack).toHaveCSS('overflow-y', 'auto');
-});
+test(
+  'a stack taller than the window keeps scrolling while a notice leaves',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 160 });
+    await page.getByTestId('toast-queue-actions').click();
+    const stack = region(page);
+    await expect(stack.locator('.env-toast[data-starting-style]')).toHaveCount(0);
+    await expect(stack).not.toHaveAttribute('data-settling');
+    await expect
+      .poll(() => stack.evaluate((element) => element.scrollHeight > element.clientHeight))
+      .toBe(true);
+    await stack
+      .locator('.env-toast:not([data-limited])')
+      .first()
+      .getByRole('button', { name: 'Dismiss notification' })
+      .click();
+    // It stays a scroll container: no overflow switch, which would lose the scroll position.
+    await expect(stack.locator('.env-toast[data-leaving]')).toHaveCount(1);
+    await expect(stack).not.toHaveAttribute('data-settling');
+    await expect(stack).toHaveCSS('overflow-y', 'auto');
+  },
+);
 
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
