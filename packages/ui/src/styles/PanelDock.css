@@ -123,9 +123,9 @@
   opacity: 0;
   pointer-events: none;
 }
-/* The content scrolls within the panel; a PanelDockHeader sticks to its top. Scroll padding as tall
-   as the header, which measures itself, and a little more for focus rings, brings a control that
-   takes focus out from beneath it (WCAG 2.4.11). */
+/* The content scrolls within the panel; a PanelDock.Header sticks to its top. Scroll padding as
+   tall as the header, which measures itself, and a little more for focus rings, brings a control
+   that takes focus out from beneath it (WCAG 2.4.11). */
 .env-panel-dock-content {
   flex: 1 1 auto;
   min-block-size: 0;
