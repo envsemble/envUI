@@ -10,7 +10,7 @@ test.describe('ListDetail', () => {
     const root = page.getByTestId('list-detail');
     await expect(root.getByRole('region', { name: 'Projects' })).toBeVisible();
     await expect(root.getByRole('region', { name: 'No project' })).toBeVisible();
-    await expect(root.getByRole('separator', { name: 'Resize panes' })).toHaveAttribute(
+    await expect(root.getByRole('separator', { name: 'Resize project list' })).toHaveAttribute(
       'aria-valuenow',
       '32',
     );

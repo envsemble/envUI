@@ -78,7 +78,7 @@ ListDetail's parts:
 
 ## Content guidelines
 
-- Name the handle after what it resizes, such as "Resize document list", where a page has more than one; the default is "Resize panes".
+- Name the handle after what it resizes, such as "Resize document list", where a page has more than one; the default is "Resize panes". ListDetail takes the name as `resizeLabel`. With `unit="rem"`, the handle's value is the first pane's share, and its text gives the size in rem too.
 - Name ListDetail's back button after where it goes, such as "All projects".
 - Name the panes of a page's main layout after their content, such as "Projects", so people can jump between them.
 

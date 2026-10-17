@@ -9903,6 +9903,13 @@
           "description": "The list's largest share of the width in percent."
         },
         {
+          "name": "resizeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Resize panes', or EnvUIProvider's messages.splitPane.resize",
+          "description": "The name of the handle that resizes the list, such as Resize project list."
+        },
+        {
           "name": "persist",
           "type": "string",
           "required": false,

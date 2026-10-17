@@ -17,6 +17,7 @@ import { cssLength } from '../internal/cssLength.js';
 import { setRef } from '../internal/setRef.js';
 import { useStackedReport } from '../internal/useStackedReport.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
 import { ResizeHandle as InternalResizeHandle } from '../internal/ResizeHandle.js';
 import { splitPane } from '../foundations/messages/splitPane.js';
 import { useContainerSize } from '../foundations/useContainerSize.js';
@@ -277,6 +278,7 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
   const handle = useRef<HTMLDivElement>(null);
   const [controls, setControls] = useState<string>();
   const remPixels = useRemPixels();
+  const formatters = useFormatters();
   // The pane before the handle is the one it sizes.
   useLayoutEffect(() => {
     const previous = handle.current?.previousElementSibling;
@@ -293,6 +295,18 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
     unit === 'rem' && extent ? (rem: number) => ((rem * remPixels) / extent) * 100 : undefined;
   const fromShare = (share: number) =>
     toShare && extent ? (share * extent) / 100 / remPixels : share;
+  // In rem, the value says the size too, as the share alone would change with the window.
+  const valueText = toShare
+    ? (share: number) =>
+        messages.remValue({
+          share: formatters
+            .number({ style: 'percent', maximumFractionDigits: 0 })
+            .format(share / 100),
+          size: formatters
+            .number({ maximumFractionDigits: 1 })
+            .format(round(fromShare(share), unit)),
+        })
+    : undefined;
   return (
     <InternalResizeHandle
       {...props}
@@ -308,6 +322,7 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
       step={toShare ? toShare(1) : 2}
       largeStep={toShare ? toShare(5) : 10}
       onChange={(value, { committed }) => change(fromShare(value), committed)}
+      valueText={valueText}
       label={label ?? messages.resize}
       aria-controls={controls}
       className={classNames('env-split-pane-handle', className)}

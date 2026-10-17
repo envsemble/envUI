@@ -95,6 +95,7 @@ test.describe('SplitPane', () => {
     const size = page.getByTestId('rem-size');
     // 12 rem of a 640 px split pane is 30 percent.
     await expect(handle).toHaveAttribute('aria-valuenow', '30');
+    await expect(handle).toHaveAttribute('aria-valuetext', '30%, 12 rem');
     await handle.focus();
     await page.keyboard.press('ArrowRight');
     await expect(size).toHaveText('13 committed');
@@ -105,6 +106,13 @@ test.describe('SplitPane', () => {
     await handle.focus();
     await page.keyboard.press('End');
     await expect(size).toHaveText('20 committed');
+    // In a split pane narrower than the size, the first pane leaves room for the handle.
+    const root = page.getByTestId('rem');
+    await root.evaluate((element) => (element.style.inlineSize = '200px'));
+    await expect.poll(async () => (await list.boundingBox())!.width).toBeCloseTo(192, 0);
+    const box = (await root.boundingBox())!;
+    const handleBox = (await handle.boundingBox())!;
+    expect(handleBox.x + handleBox.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
   });
 
   test('follows the reading direction in right-to-left text', async ({ page }) => {

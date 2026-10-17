@@ -128,6 +128,7 @@ export function SplitPanesFixture() {
             detailShown={detailShown}
             onBack={() => setDetailShown(false)}
             backLabel="All projects"
+            resizeLabel="Resize project list"
             style={{ blockSize: '16rem' }}
           >
             <ListDetail.List label="Projects">

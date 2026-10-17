@@ -55,6 +55,11 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    * @default 50
    */
   maxListSize?: number;
+  /**
+   * The name of the handle that resizes the list, such as Resize project list.
+   * @default 'Resize panes', or EnvUIProvider's messages.splitPane.resize
+   */
+  resizeLabel?: string;
   /** Keeps the list's width under this localStorage key. */
   persist?: string;
   /** The list and the detail: ListDetail.List, then ListDetail.Detail. */
@@ -75,6 +80,7 @@ interface ListDetailContextValue {
   detailShown: boolean;
   onBack: () => void;
   backLabel: string;
+  resizeLabel: string | undefined;
   listRef: RefObject<HTMLDivElement | null>;
 }
 
@@ -125,14 +131,15 @@ function Root({
   minListSize = 22,
   maxListSize = 50,
   persist,
+  resizeLabel,
   className,
   children,
   ...props
 }: RootProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo(
-    () => ({ detailShown, onBack, backLabel, listRef }),
-    [detailShown, onBack, backLabel],
+    () => ({ detailShown, onBack, backLabel, resizeLabel, listRef }),
+    [detailShown, onBack, backLabel, resizeLabel],
   );
   return (
     <ListDetailContext value={context}>
@@ -176,7 +183,7 @@ function List({ label, className, ref, ...props }: ListProps) {
  * detailShown, with a back button to the list at its start.
  */
 function Detail({ label, className, children, ref, ...props }: DetailProps) {
-  const { detailShown, onBack, backLabel, listRef } = useListDetail('Detail');
+  const { detailShown, onBack, backLabel, resizeLabel, listRef } = useListDetail('Detail');
   const stacked = useSplitPane()?.stacked ?? false;
   const back = useRef<HTMLButtonElement>(null);
   const detail = useRef<HTMLDivElement>(null);
@@ -214,7 +221,7 @@ function Detail({ label, className, children, ref, ...props }: DetailProps) {
 
   return (
     <>
-      <SplitPane.ResizeHandle />
+      <SplitPane.ResizeHandle label={resizeLabel} />
       <SplitPane.Pane
         {...props}
         ref={(node) => {
