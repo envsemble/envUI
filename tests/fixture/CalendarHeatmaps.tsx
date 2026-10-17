@@ -3,6 +3,7 @@ import {
   Button,
   Dialog,
   CalendarHeatmap,
+  EnvUIProvider,
   Surface,
   Theme,
   type CalendarHeatmapDay,
@@ -80,6 +81,16 @@ export function CalendarHeatmapFixture({ theme }: { theme: ThemeValue }) {
           moreLabel="Mehr"
         />
       </Surface>
+      {/* Names, dates and values from the provider's locale, and its legend from its messages. */}
+      <EnvUIProvider locale="de-DE" messages={{ calendarHeatmap: { less: 'Wenig', more: 'Viel' } }}>
+        <CalendarHeatmap
+          aria-label={`Provided ${theme}`}
+          data={[{ date: '2026-10-06', value: 1234 }]}
+          startDate="2026-10-04"
+          endDate="2026-10-17"
+          data-testid={`calendar-heatmap-provided-${theme}`}
+        />
+      </EnvUIProvider>
       <Dialog title={`Activity details ${theme}`} trigger={<Button>Open activity {theme}</Button>}>
         <CalendarHeatmap
           aria-label={`Activity in a dialog ${theme}`}

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
+  AvatarButton,
   AvatarGroup,
   IconButton,
+  type LinkComponentProps,
   LinkProvider,
   Surface,
   Theme,
-  type LinkComponentProps,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -37,13 +38,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">
       <AvatarGroup data-testid="decorative" people={people} max={3} />
-      <AvatarGroup
-        data-testid="preview"
-        people={people.slice(0, 3)}
-        total={12}
-        max={2}
-        size="small"
-      />
+      <AvatarGroup data-testid="preview" people={people.slice(0, 3)} total={12} max={2} size="sm" />
       <AvatarGroup data-testid="named" aria-label="Report editors" people={people.slice(0, 2)} />
       <AvatarGroup
         data-testid="localized"
@@ -52,6 +47,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         formatMore={(count) => `${count} weitere`}
       />
       <AvatarGroup data-testid="empty" people={[]} />
+      <AvatarButton data-testid="avatar-button-small" name="Alex Morgan" size="sm" />
       <AvatarGroup
         data-testid="unknown-counts"
         people={people.slice(0, 2)}
@@ -85,7 +81,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         data-testid="small-pressable"
         people={people}
         max={3}
-        size="small"
+        size="sm"
         onPersonClick={(person) => setPressed(person.name)}
       />
       <output data-testid="pressed">{pressed}</output>
@@ -123,7 +119,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           max={2}
           onPersonClick={() => undefined}
         />
-        <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="small" />
+        <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="sm" />
         <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-shrink-row" data-testid="narrow">

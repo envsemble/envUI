@@ -9,7 +9,7 @@ import { ColorControls } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
-import { FeatureCardsFixture } from './FeatureCards.js';
+import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture, ShellFixture, TwoShellsFixture } from './Adoption.js';
@@ -62,6 +62,7 @@ import { DrawersFixture } from './Drawers.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
+import { DisclosuresFixture } from './Disclosures.js';
 import { DensityFixture } from './Density.js';
 import { StackingFixture } from './Stacking.js';
 import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
@@ -159,7 +160,8 @@ export default function App() {
             </>
           )}
           {includes('layout') && <LayoutFixture />}
-          {includes('feature-cards') && <FeatureCardsFixture />}
+          {includes('cards') && <CardsFixture />}
+          {includes('disclosures') && <DisclosuresFixture />}
           {includes('color-picker') && (
             <>
               <ColorPickerFixture theme="light" />

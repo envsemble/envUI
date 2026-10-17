@@ -61,7 +61,7 @@ function DirectedControls() {
         aria-label="View"
         value={view}
         onValueChange={setView}
-        options={[
+        items={[
           { value: 'list', label: 'List' },
           { value: 'board', label: 'Board' },
           { value: 'calendar', label: 'Calendar' },

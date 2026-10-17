@@ -20,6 +20,16 @@ import {
   type EnvUIMessagesInput,
 } from '@envsemble/envui';
 import { defaultMessages } from '@envsemble/envui/messages';
+// Content and display, whose strings and numbers follow the provider.
+import {
+  AvatarGroup,
+  CalendarHeatmap,
+  DiffStat,
+  Message,
+  MessageList,
+  Rating,
+  RelativeTime,
+} from '@envsemble/envui';
 // Internal: the hook envUI's components read their strings with.
 import { useMessages } from '../../packages/ui/src/internal/EnvUIContext.js';
 import { common } from '../../packages/ui/src/foundations/messages/common.js';
@@ -126,6 +136,30 @@ export function MessageStringsFixture() {
           {/* A blank name leaves it named by its copy label. */}
           <CopyButton value="Northwind" aria-label="" />
           <ThemeToggle />
+          {/* Content: a group's name and overflow, a rating's and a change's names, a message's
+              status, a heatmap's legend and a moment just passed. */}
+          {/* Only people counted in total, so the overflow chip is named by the more text alone. */}
+          <AvatarGroup people={[]} total={3} />
+          <Rating value={4.5} showValue />
+          <DiffStat additions={12} deletions={3} />
+          <MessageList aria-label="Thread">
+            <Message from="self" status="sending">
+              On its way
+            </Message>
+            <Message from="self" status="failed">
+              Not delivered
+            </Message>
+          </MessageList>
+          <CalendarHeatmap
+            aria-label="Activity"
+            data={[{ date: '2026-10-14', value: 2 }]}
+            startDate="2026-10-12"
+            endDate="2026-10-18"
+          />
+          <RelativeTime
+            value={Date.UTC(2026, 9, 14, 9, 0, 0)}
+            now={Date.UTC(2026, 9, 14, 9, 0, 10)}
+          />
           <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>

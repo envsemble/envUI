@@ -120,7 +120,7 @@ function SizeRow({ size }: { size: ControlSize }) {
         aria-label="Filter"
         value={filter}
         onValueChange={setFilter}
-        options={[
+        items={[
           { value: 'all', label: 'All' },
           { value: 'open', label: 'Open' },
         ]}
@@ -209,7 +209,7 @@ function ToolbarSection() {
               size={size}
               value={filter}
               onValueChange={setFilter}
-              options={[
+              items={[
                 { value: 'all', label: 'All' },
                 { value: 'open', label: 'Open', count: 12 },
                 { value: 'done', label: 'Done' },
@@ -476,7 +476,7 @@ function DesktopSection() {
               aria-label="Filter"
               value={filter}
               onValueChange={setFilter}
-              options={[
+              items={[
                 { value: 'all', label: 'All' },
                 { value: 'open', label: 'Open' },
               ]}

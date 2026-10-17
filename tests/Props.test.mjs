@@ -35,10 +35,10 @@ test('a default that names a private value shows the value, or nothing', () => {
   // A default that can't be shown as a value is marked built in rather than left out.
   assert.equal(props('MarkdownEditor').toolbar.default, undefined);
   assert.equal(props('MarkdownEditor').toolbar.defaultBuiltIn, true);
-  // Private names inside a value are resolved too.
+  // A default that follows the locale says so in words too.
   assert.equal(
     props('CalendarHeatmap').formatValue.default,
-    "(value: number) => new Intl.NumberFormat('en').format(value)",
+    "the number format of EnvUIProvider's locale, or else the browser's",
   );
   // No default names something a reader cannot import, other than another of its props, such as
   // Slider's defaultValue, which starts at min.

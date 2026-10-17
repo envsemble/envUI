@@ -80,7 +80,7 @@ function Page() {
         aria-label="View"
         value="board"
         onValueChange={noop}
-        options={[
+        items={[
           { value: 'board', label: 'Board' },
           { value: 'list', label: 'List' },
         ]}

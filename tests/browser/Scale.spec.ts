@@ -231,7 +231,7 @@ for (const scale of densityScales)
       .evaluate((row) =>
         [
           ...row.querySelectorAll<HTMLElement>(
-            '.env-segment, [role="tab"], .env-text-field-end .env-button',
+            '.env-segmented-control-item, [role="tab"], .env-text-field-end .env-button',
           ),
         ]
           .filter((element) => element.offsetWidth < 24 || element.offsetHeight < 24)

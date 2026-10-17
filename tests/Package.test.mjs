@@ -163,7 +163,6 @@ before(
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.Toast.Provider, null, 'Managed notifications'),
-      h(ui.BrandLogo),
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
@@ -191,7 +190,7 @@ before(
       colorPickerModule: import.meta.resolve('react-colorful'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
       font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
-      logo: import.meta.resolve('@envsemble/envui/assets/envsemble-lockup-black.svg')
+      logo: import.meta.resolve('@envsemble/envui/assets/envUI/envUI-lockup-black.svg')
     }));
   `,
     );
@@ -292,12 +291,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'NavList',
     'Pager',
     'Card',
-    'ClickableCard',
     'Stack',
-    'ActionCard',
-    'FeatureCard',
     'List',
-    'InfoChip',
     'Disclosure',
     'EmptyState',
     'Skeleton',
@@ -318,7 +313,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Toast',
     'useToast',
     'Icon',
-    'BrandLogo',
     'DropZone',
     'Alert',
     'CounterBadge',
@@ -362,7 +356,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, BrandLogo, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
       EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -392,7 +386,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
-      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
+      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
       <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
@@ -990,7 +984,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
-  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning|BrandLogo/);
+  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
     result.emittedInputs.every((path) => !path.includes('/react-colorful/')),
     'Unused color picking must stay out of basic control bundles.',

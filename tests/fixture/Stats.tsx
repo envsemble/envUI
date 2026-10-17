@@ -10,7 +10,7 @@ export function StatsFixture({ theme }: { theme: ThemeValue }) {
           label="Active projects"
           value="128"
           trend={{ direction: 'up', label: '+12% from last month' }}
-          detail="Last 30 days"
+          description="Last 30 days"
         />
         <Stat.Root
           label="Open risks"
@@ -26,20 +26,20 @@ export function StatsFixture({ theme }: { theme: ThemeValue }) {
           label="Reviews"
           value={<AnimatedNumber value={reviews} />}
           trend={{ direction: 'flat', label: 'No change' }}
-          detail="This week"
+          description="This week"
         />
       </Stat.Group>
       <Button variant="secondary" onClick={() => setReviews((count) => count + 1)}>
         Add review {theme}
       </Button>
       <Surface background="default" padding={4} data-surface="pane">
-        <Stat.Group tone="row" data-testid={`stat-row-group-${theme}`}>
+        <Stat.Group background="muted" data-testid={`stat-row-group-${theme}`}>
           <Stat.Root
             label="Deploys"
             value="24"
             trend={{ direction: 'up', label: 'Up 4', tone: 'warning' }}
           />
-          <Stat.Root label="Lead time" value="2.5 days" detail="Median" />
+          <Stat.Root label="Lead time" value="2.5 days" description="Median" />
         </Stat.Group>
       </Surface>
       <Stat.Root label="Standalone" value="7" data-testid={`stat-standalone-${theme}`} />

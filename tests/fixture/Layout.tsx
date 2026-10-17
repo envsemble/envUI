@@ -3,15 +3,12 @@ import {
   Theme,
   Card,
   Button,
-  InfoChip,
+  Badge,
   Disclosure,
   Stack,
   TextField,
   NavList,
   IconButton,
-  ActionCard,
-  ClickableCard,
-  FeatureCard,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
@@ -33,7 +30,7 @@ export function LayoutFixture() {
               <Button variant="secondary">Cancel</Button>
               <Button>Save changes</Button>
             </Stack>
-            <InfoChip>Updated today</InfoChip>
+            <Badge>Updated today</Badge>
             <Disclosure title={`Card guidance ${theme}`} open>
               <p>First detail</p>
               <p>Second detail</p>
@@ -43,7 +40,7 @@ export function LayoutFixture() {
             <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
             <NavList.Item selected>Destination</NavList.Item>
-            <InfoChip>Metadata</InfoChip>
+            <Badge>Metadata</Badge>
             <Disclosure title={`Stack guidance ${theme}`} open>
               <p>Supporting detail</p>
             </Disclosure>
@@ -63,21 +60,23 @@ export function LayoutFixture() {
             </Button>
             <IconButton icon={<ChevronRight />} aria-label={`Stacked next ${theme}`} />
           </Stack>
-          <ActionCard
-            title="Shared action card"
+          <Card
+            render={<article />}
+            heading="Shared action card"
             data-testid="flush-action-card"
             actions={<Button>Continue</Button>}
           >
             <p>Keep the action rail attached.</p>
-          </ActionCard>
-          <ActionCard
-            title="Quarterly report"
+          </Card>
+          <Card
+            render={<article />}
+            heading="Quarterly report"
             meta="Updated today"
             data-testid="meta-action-card"
             actions={<Button variant="secondary">Open</Button>}
           >
             <p>Figures for the last three months.</p>
-          </ActionCard>
+          </Card>
           <Card heading="Design tokens" meta="12 changes" data-testid="meta-card">
             <p>Colors and spacing shared by every surface.</p>
           </Card>
@@ -87,34 +86,36 @@ export function LayoutFixture() {
               throw new Error('Card submitted a form');
             }}
           >
-            <ClickableCard
+            <Card
               data-testid="clickable-action"
               onClick={() => setCardActivations((value) => value + 1)}
             >
               <span>Activate card</span>
               <span data-testid="card-activations">{cardActivations}</span>
-            </ClickableCard>
+            </Card>
           </form>
-          <ClickableCard href="#destination" data-testid="clickable-link">
+          <Card href="#destination" data-testid="clickable-link">
             Open destination
-          </ClickableCard>
-          <ClickableCard
+          </Card>
+          <Card
             disabled
             data-testid="disabled-card"
             onClick={() => setCardActivations((value) => value + 1)}
           >
             Unavailable action
-          </ClickableCard>
-          <ClickableCard
+          </Card>
+          <Card
             href="#blocked"
             disabled
             data-testid="disabled-card-link"
             onClick={() => setCardActivations((value) => value + 1)}
           >
             Unavailable destination
-          </ClickableCard>
-          <FeatureCard
-            title="Additional content"
+          </Card>
+          <Card
+            layout="feature"
+            headingLevel={2}
+            heading="Additional content"
             description="Supporting context"
             data-testid="feature-extra"
           >
@@ -129,7 +130,7 @@ export function LayoutFixture() {
               </ul>
               <p>Choose an option</p>
             </Disclosure>
-          </FeatureCard>
+          </Card>
         </Theme>
       ))}
     </>

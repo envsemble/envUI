@@ -102,6 +102,21 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
       >
         Finish reply {theme}
       </Button>
+      {/* Actions without a variant or size of their own take the message's defaults. */}
+      <MessageList aria-label={`Defaults ${theme}`}>
+        <Message
+          from="other"
+          author="Sam Lee"
+          actions={
+            <>
+              <IconButton icon={<ContentCopy />} aria-label={`Copy note ${theme}`} />
+              <Button>Reply</Button>
+            </>
+          }
+        >
+          A note with default actions.
+        </Message>
+      </MessageList>
     </Theme>
   );
 }

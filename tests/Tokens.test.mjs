@@ -311,11 +311,10 @@ const applicationHooks = [];
 /**
  * Classes that an element always carries with another component's, so a rule for the first also
  * sees what is declared for the second: Card renders its root as a Surface (`<Surface
- * render={…}>`), which adds env-surface beside env-card, and env-clickable-card when it acts.
+ * render={…}>`), which adds env-surface beside env-card.
  */
 const impliedClasses = {
   'env-card': ['env-surface'],
-  'env-clickable-card': ['env-surface'],
 };
 
 /** The token build's style sheets: what they declare is defined only through `.env-theme`. */

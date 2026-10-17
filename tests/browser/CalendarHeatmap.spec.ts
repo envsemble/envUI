@@ -3,6 +3,10 @@ import { fixtureUrl } from './Servers';
 
 const heatmapFixture = `${fixtureUrl}/?fixture=calendar-heatmap`;
 
+// British English, so the names of days read as Sat 10 Oct 2026, from Intl, with a comma after the
+// weekday in some engines.
+test.use({ locale: 'en-GB' });
+
 function collectErrors(page: Page) {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -39,13 +43,13 @@ test('a year of days is one grid with named cells and a single tab stop', async 
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
   await expect(grid.locator('td[tabindex="0"]')).toHaveAttribute(
     'aria-label',
-    'Sat 10 Oct 2026: 0',
+    /^Sat,? 10 Oct 2026: 0$/,
   );
   // Rows run by weekday: the first row holds the Sundays.
-  await expect(cells.first()).toHaveAttribute('aria-label', /^Sun 12 Oct 2025: \d+$/);
+  await expect(cells.first()).toHaveAttribute('aria-label', /^Sun,? 12 Oct 2025: \d+$/);
   await expect(grid.locator('td[data-date="2025-10-11"]')).toHaveAttribute(
     'aria-label',
-    /^Sat 11 Oct 2025: \d+$/,
+    /^Sat,? 11 Oct 2025: \d+$/,
   );
   // Month and weekday names are visual; each day names its own date.
   await expect(grid.locator('thead')).toHaveAttribute('aria-hidden', 'true');
@@ -74,40 +78,40 @@ test('arrow keys move by day and week, Home and End along the weekday, Escape hi
   const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   await page.getByRole('button', { name: 'Update light' }).focus();
   await page.keyboard.press('Shift+Tab');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
-  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
+  await expect(tooltip).toHaveText(/^Sat,? 10 Oct 2026: 0$/);
   await page.keyboard.press('ArrowLeft');
-  expect(await focusedName(page)).toMatch(/^Sat 3 Oct 2026: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 3 Oct 2026: \d+$/);
   await page.keyboard.press('ArrowUp');
-  expect(await focusedName(page)).toMatch(/^Fri 2 Oct 2026: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Fri,? 2 Oct 2026: \d+$/);
   await expect(tooltip).toHaveText((await focusedName(page))!);
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowRight');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   // The range ends here: further steps stay put.
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('ArrowDown');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   await page.keyboard.press('Home');
-  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 11 Oct 2025: \d+$/);
   await page.keyboard.press('ArrowUp');
-  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 11 Oct 2025: \d+$/);
   await page.keyboard.press('End');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   // Only the focused day is a tab stop.
   await expect(grid.locator('td[tabindex="0"]')).toHaveAttribute(
     'aria-label',
-    'Sat 10 Oct 2026: 0',
+    /^Sat,? 10 Oct 2026: 0$/,
   );
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
   await page.keyboard.press('Escape');
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   // Leaving the grid hides the value; returning shows it again.
   await page.keyboard.press('Tab');
   await expect(page.locator('.env-tooltip-positioner')).toHaveCount(0);
   await page.keyboard.press('Shift+Tab');
-  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  await expect(tooltip).toHaveText(/^Sat,? 10 Oct 2026: 0$/);
 });
 
 test('Page Up and Page Down reach the ends of the week, Ctrl+Home and Ctrl+End the range', async ({
@@ -116,26 +120,26 @@ test('Page Up and Page Down reach the ends of the week, Ctrl+Home and Ctrl+End t
   await page.goto(heatmapFixture);
   const grid = page.getByRole('grid', { name: 'Activity light' });
   await grid.locator('td[data-date="2026-10-07"]').focus();
-  expect(await focusedName(page)).toMatch(/^Wed 7 Oct 2026: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Wed,? 7 Oct 2026: \d+$/);
   // Home and End keep the weekday: the first week holds only the first day, so Home goes to the
   // Wednesday of the second week.
   await page.keyboard.press('Home');
-  expect(await focusedName(page)).toMatch(/^Wed 15 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Wed,? 15 Oct 2025: \d+$/);
   await page.keyboard.press('End');
-  expect(await focusedName(page)).toMatch(/^Wed 7 Oct 2026: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Wed,? 7 Oct 2026: \d+$/);
   await page.keyboard.press('PageUp');
-  expect(await focusedName(page)).toMatch(/^Sun 4 Oct 2026: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sun,? 4 Oct 2026: \d+$/);
   await page.keyboard.press('PageDown');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   await page.keyboard.press('Control+Home');
-  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 11 Oct 2025: \d+$/);
   // The range starts on the last day of its first week, so Page Up stays there.
   await page.keyboard.press('PageUp');
-  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 11 Oct 2025: \d+$/);
   await page.keyboard.press('PageDown');
-  expect(await focusedName(page)).toMatch(/^Sat 11 Oct 2025: \d+$/);
+  expect(await focusedName(page)).toMatch(/^Sat,? 11 Oct 2025: \d+$/);
   await page.keyboard.press('Control+End');
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
   await expect(grid.locator('td[tabindex="0"]')).toHaveCount(1);
 });
 
@@ -207,9 +211,11 @@ test('a press released outside the days leaves keyboard focus its own tooltip', 
   const grid = page.getByRole('grid', { name: 'Activity light' });
   const update = page.getByRole('button', { name: 'Update light' });
   const positioner = page.locator('.env-tooltip-positioner');
+  // The tooltip marks that focus opened it, and its positioner then takes no pointer.
+  const popup = page.locator('.env-calendar-heatmap-tooltip');
   await update.focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(positioner).toHaveAttribute('data-focus-opened', '');
+  await expect(popup).toHaveAttribute('data-focus-opened', '');
   // A press on the focused day moves no focus; it ends outside the grid.
   const day = (await grid.locator('td[tabindex="0"]').boundingBox())!;
   await page.mouse.move(day.x + day.width / 2, day.y + day.height / 2);
@@ -220,7 +226,7 @@ test('a press released outside the days leaves keyboard focus its own tooltip', 
   await page.keyboard.press('Tab');
   await expect(update).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  await expect(positioner).toHaveAttribute('data-focus-opened', '');
+  await expect(popup).toHaveAttribute('data-focus-opened', '');
   await expect(positioner).toHaveCSS('pointer-events', 'none');
 });
 
@@ -272,7 +278,7 @@ test('a tooltip the pointer rests on stays when focus leaves the days', async ({
   const tooltip = page.locator('.env-calendar-heatmap-tooltip');
   await page.getByRole('button', { name: 'Update light' }).focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  await expect(tooltip).toHaveText(/^Sat,? 10 Oct 2026: 0$/);
   const day = grid.locator('td[data-date="2026-06-03"]');
   const name = (await day.getAttribute('aria-label'))!;
   await day.hover();
@@ -326,6 +332,41 @@ test('custom labels, weeks from Monday, levels and a tone', async ({ page }) => 
     return { cell: paint(getComputedStyle(element).backgroundColor), tone };
   });
   colors.cell.forEach((channel, index) => expect(channel).toBeCloseTo(colors.tone[index]!, -0.5));
+});
+
+test("names, dates and values follow the provider's locale, and the legend its messages", async ({
+  page,
+}) => {
+  await page.goto(heatmapFixture);
+  const scope = page.getByTestId('calendar-heatmap-provided-light');
+  const grid = scope.getByRole('grid', { name: 'Provided light' });
+  const expected = await page.evaluate(() => {
+    const utc = { timeZone: 'UTC' } as const;
+    return {
+      month: new Intl.DateTimeFormat('de-DE', { month: 'short', ...utc }).format(
+        Date.UTC(2026, 9, 1),
+      ),
+      monday: new Intl.DateTimeFormat('de-DE', { weekday: 'short', ...utc }).format(
+        Date.UTC(2026, 9, 5),
+      ),
+      day: new Intl.DateTimeFormat('de-DE', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        ...utc,
+      }).format(Date.UTC(2026, 9, 6)),
+    };
+  });
+  await expect(grid.locator('.env-calendar-heatmap-month span').first()).toHaveText(expected.month);
+  await expect(grid.locator('.env-calendar-heatmap-weekday span').first()).toHaveText(
+    expected.monday,
+  );
+  await expect(grid.locator('td[data-date="2026-10-06"]')).toHaveAttribute(
+    'aria-label',
+    `${expected.day}: 1.234`,
+  );
+  await expect(scope.locator('.env-calendar-heatmap-legend')).toHaveText('WenigViel');
 });
 
 test('the ramp rises from the empty fill to the tone in both themes', async ({ page }) => {
@@ -419,7 +460,7 @@ test('an update rescales the days', async ({ page }) => {
   const before = await grid.locator('td[data-level="4"]').count();
   await page.getByRole('button', { name: 'Update light' }).click();
   await expect(last).toHaveAttribute('data-level', '4');
-  await expect(last).toHaveAttribute('aria-label', 'Sat 10 Oct 2026: 20');
+  await expect(last).toHaveAttribute('aria-label', /^Sat,? 10 Oct 2026: 20$/);
   // With a larger maximum, fewer days reach the strongest step.
   expect(await grid.locator('td[data-level="4"]').count()).toBeLessThan(before);
 });
@@ -593,7 +634,7 @@ test('a tooltip opened by focus leaves with the pointer and never blocks a press
   const update = page.getByRole('button', { name: 'Update light' });
   await update.focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(tooltip).toHaveText('Sat 10 Oct 2026: 0');
+  await expect(tooltip).toHaveText(/^Sat,? 10 Oct 2026: 0$/);
   // The tooltip takes no pointer: a press where it shows reaches what lies under it.
   await expect(positioner).toHaveCSS('pointer-events', 'none');
   const box = (await tooltip.boundingBox())!;
@@ -606,7 +647,7 @@ test('a tooltip opened by focus leaves with the pointer and never blocks a press
   await page.mouse.move(5, 5);
   await page.mouse.move(60, 40);
   await expect(positioner).toHaveCount(0);
-  expect(await focusedName(page)).toBe('Sat 10 Oct 2026: 0');
+  expect(await focusedName(page)).toMatch(/^Sat,? 10 Oct 2026: 0$/);
 
   // Hovering the days and then leaving them closes it too, also while a day has keyboard focus.
   await page.keyboard.press('ArrowLeft');

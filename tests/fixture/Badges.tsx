@@ -23,7 +23,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           data-surface={surface}
         >
           <Stack gap={2}>
-            {(['subtle', 'solid', 'outline'] as const).map((variant) => (
+            {(['soft', 'solid', 'outline'] as const).map((variant) => (
               <div key={variant} className="fixture-actions">
                 {tones.map((tone) => (
                   <Badge key={tone} tone={tone} variant={variant} data-testid="badge">

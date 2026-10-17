@@ -154,7 +154,7 @@ export function HydrationApp() {
           aria-label="Hydrated view"
           value={view}
           onValueChange={setView}
-          options={[
+          items={[
             { value: 'open', label: 'Open' },
             { value: 'done', label: 'Done' },
           ]}
@@ -250,7 +250,7 @@ export function HydrationApp() {
             label="Hydrated stat"
             value="128"
             trend={{ direction: 'up', label: '+12%' }}
-            detail="Last 30 days"
+            description="Last 30 days"
           />
         </Stat.Group>
         <DropZone

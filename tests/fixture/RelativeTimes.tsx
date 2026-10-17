@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  EnvUIProvider,
   IconButton,
   RelativeTime,
   Surface,
@@ -40,6 +41,12 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
         nowLabel="moments ago"
         value={openedAt - 5 * second}
       />
+      {/* The provider's locale and now message, which a time's own props would override. */}
+      <EnvUIProvider locale="de" messages={{ relativeTime: { now: 'gerade eben' } }}>
+        <RelativeTime data-testid="provider-german" value={openedAt - 3 * hour} />
+        <RelativeTime data-testid="provider-now" value={openedAt - 5 * second} />
+        <RelativeTime data-testid="provider-own" locale="en" value={openedAt - 3 * hour} />
+      </EnvUIProvider>
       <RelativeTime
         data-testid="fixed"
         value="2026-10-16T12:00:00Z"

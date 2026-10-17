@@ -10,9 +10,10 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`segments-${theme}`} className="fixture-section">
       <SegmentedControl
         aria-label={`Work items ${theme}`}
+        data-testid={`segments-rail-${theme}`}
         value={view}
         onValueChange={setView}
-        options={[
+        items={[
           { value: 'open', label: 'Open', count: 12 },
           { value: 'blocked', label: 'Blocked', count: 3 },
           { value: 'archived', label: 'Archived', disabled: true },
@@ -24,7 +25,7 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
         size="sm"
         value={layout}
         onValueChange={setLayout}
-        options={[
+        items={[
           { value: 'list', label: 'List', icon: <ViewList /> },
           { value: 'board', label: 'Board' },
         ]}
@@ -36,7 +37,7 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
           aria-label={`Assignments ${theme}`}
           value={assigned}
           onValueChange={setAssigned}
-          options={[
+          items={[
             { value: 'mine', label: 'Assigned to me' },
             { value: 'team', label: 'Everyone on the team' },
           ]}
@@ -48,7 +49,7 @@ export function SegmentedControlFixture({ theme }: { theme: ThemeValue }) {
           aria-label={`Scopes ${theme}`}
           value={assigned}
           onValueChange={setAssigned}
-          options={[
+          items={[
             { value: 'mine', label: 'Mine', count: 4 },
             { value: 'team', label: 'Team', count: 12 },
             { value: 'all', label: 'All' },

@@ -248,7 +248,8 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-bg-brand-emphasis', ['primary', 'tab', 'radio', 'checkbox', 'switch']],
       ['--env-color-fg-on-emphasis', ['primary', 'tab']],
       ['--env-color-bg-selected', ['navigation']],
-      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon', 'selectHint']],
+      // A neutral badge's text is muted, as InfoChip's metadata became a Badge.
+      ['--env-color-fg-muted', ['navigationIcon', 'tabIcon', 'selectHint', 'chip']],
       ['--env-color-bg-raised', ['direction']],
       ['--env-color-bg-field', ['fieldWell', 'fieldError']],
       ['--env-color-border-accent-emphasis', ['fieldWell']],
