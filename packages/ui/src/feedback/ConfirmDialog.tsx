@@ -2,6 +2,7 @@
 
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog';
 import {
+  useEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -68,8 +69,10 @@ export interface ConfirmDialogProps
   /**
    * Runs the action when the confirm button is pressed. The dialog closes when it returns, or,
    * when it returns a promise, once the promise resolves; while it runs, the confirm button is
-   * pending and nothing dismisses the dialog. A rejected promise or a thrown error keeps it open,
-   * so show what went wrong with error.
+   * pending and nothing dismisses the dialog. It runs once per opening: further presses, such as
+   * the second click of a double-click, are ignored until it fails or the dialog opens again. A
+   * rejected promise or a thrown error keeps it open and is passed to reportError, so show what
+   * went wrong with error.
    */
   onConfirm: () => void | Promise<void>;
   /** What went wrong, shown as a danger Alert above the actions and announced. */
@@ -84,6 +87,11 @@ export interface ConfirmDialogProps
 /** Whether a value is a promise or another thenable. */
 const isThenable = (value: unknown): value is PromiseLike<unknown> =>
   typeof (value as PromiseLike<unknown> | undefined)?.then === 'function';
+
+/** Reports a failed action the way an uncaught error would be, without stopping the dialog. */
+const report = (failure: unknown) => {
+  if (typeof globalThis.reportError === 'function') globalThis.reportError(failure);
+};
 
 /**
  * Asks people to confirm an action whose consequence needs a sentence, such as deleting a project:
@@ -119,20 +127,31 @@ export function ConfirmDialog({
     if (open === undefined) setOwnOpen(next);
     onOpenChange?.(next, details);
   };
+  // Set before onConfirm runs, so a second press in the same tick or during the closing animation
+  // doesn't run the action again; cleared when it fails and when the dialog opens again.
+  const running = useRef(false);
+  useEffect(() => {
+    if (isOpen) running.current = false;
+  }, [isOpen]);
   const run = async () => {
-    if (pending) return;
+    if (!isOpen || running.current) return;
+    running.current = true;
     let result: void | Promise<void>;
     try {
       result = onConfirm();
-    } catch {
+    } catch (failure) {
+      running.current = false;
+      report(failure);
       return;
     }
     if (isThenable(result)) {
       setPending(true);
       try {
         await result;
-      } catch {
+      } catch (failure) {
         // A failed action keeps the dialog open; the application shows why with error.
+        running.current = false;
+        report(failure);
         return;
       } finally {
         setPending(false);

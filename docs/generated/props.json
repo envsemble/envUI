@@ -2111,7 +2111,7 @@
           "name": "onConfirm",
           "type": "() => void | Promise<void>",
           "required": true,
-          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. A rejected promise or a thrown error keeps it open, so show what went wrong with error."
+          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
         },
         {
           "name": "error",
@@ -3867,7 +3867,7 @@
     "List.Item": {
       "kind": "component",
       "source": "packages/ui/src/content/List.tsx",
-      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle.",
+      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
       "props": [
         {
           "name": "label",
@@ -3904,7 +3904,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target`, or on the row without one."
+          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
         },
         {
           "name": "start",
@@ -3943,7 +3943,7 @@
           "name": "onReorder",
           "type": "(from: number, to: number) => void",
           "required": false,
-          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does."
+          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The List.Item elements are the list's children, directly or in arrays and fragments."
         }
       ],
       "native": [
@@ -6434,7 +6434,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible takes it. A key press that something else already handled, such as an editor's own shortcut, is left alone."
+          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
         },
         {
           "name": "iconOnly",

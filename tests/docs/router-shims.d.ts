@@ -4,9 +4,19 @@
 
 declare module '@tanstack/react-router' {
   import type { ComponentPropsWithRef, JSX } from 'react';
-  export function Link(
-    props: Omit<ComponentPropsWithRef<'a'>, 'href'> & { to: string },
-  ): JSX.Element;
+  /**
+   * With a registered router, `to` is one of the routes' paths, and a plain string is rejected, as
+   * here: these paths stand in for an application's routes.
+   */
+  type RoutePath = '/' | '/projects' | '/projects/$projectId';
+  export interface LinkProps {
+    to: RoutePath;
+    /** The search, apart from the path: an object of the route's search params. */
+    search?: Record<string, unknown> | true;
+    /** The fragment, apart from the path, without `#`. */
+    hash?: string;
+  }
+  export function Link(props: Omit<ComponentPropsWithRef<'a'>, 'href'> & LinkProps): JSX.Element;
 }
 
 declare module 'react-router' {

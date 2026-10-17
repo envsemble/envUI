@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import {
   AccountMenu,
+  AppShell,
   EnvUIProvider,
   Menu,
+  NavList,
   Stack,
   ThemePreferenceProvider,
   useThemePreference,
   type ThemePreference,
 } from '@envsemble/envui';
+import { Home } from '@envsemble/envui/icons/Home';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Settings } from '@envsemble/envui/icons/Settings';
-// Internal: the contexts a sidebar provides, expanded and showing icons only.
-import {
-  InSidebarContext,
-  SidebarCompactContext,
-} from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
+// Internal: the context of a sidebar showing icons only, without the one AppShell adds around it.
+import { SidebarCompactContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
 const organizations = [
   { id: 'northwind', name: 'Northwind', description: 'Owner' },
@@ -67,20 +67,13 @@ export function AccountMenusFixture() {
             <AccountMenu.ThemeSubmenu value={stored} onValueChange={setStored} closeOnClick />
           </AccountMenu.Root>
         </div>
-        <InSidebarContext value>
-          <div data-testid="sidebar">
-            <AccountMenu.Root name="Priya Shah" description="priya@example.com">
+        <SidebarCompactContext value>
+          <div data-testid="rail">
+            <AccountMenu.Root name="Priya Shah" aria-label="Rail account">
               <Menu.Item>Profile</Menu.Item>
             </AccountMenu.Root>
           </div>
-          <SidebarCompactContext value>
-            <div data-testid="rail">
-              <AccountMenu.Root name="Priya Shah" aria-label="Rail account">
-                <Menu.Item>Profile</Menu.Item>
-              </AccountMenu.Root>
-            </div>
-          </SidebarCompactContext>
-        </InSidebarContext>
+        </SidebarCompactContext>
         <EnvUIProvider dir="rtl">
           {/* Room at the left for the menu and its submenu, which open toward it. */}
           <div dir="rtl" data-testid="rtl" style={{ marginLeft: '30rem', width: '18rem' }}>
@@ -94,5 +87,36 @@ export function AccountMenusFixture() {
         </output>
       </Stack>
     </ThemePreferenceProvider>
+  );
+}
+
+/**
+ * An AccountMenu with the automatic trigger in an AppShell's sidebar, mounted with
+ * ?fixture=account-menu-shell: a row while the sidebar is expanded, the avatar while it shows icons
+ * only.
+ */
+export function AccountMenuShellFixture() {
+  return (
+    <AppShell
+      brand="Overview"
+      title="Overview"
+      navigationLabel="Shell navigation"
+      navigation={
+        <>
+          <NavList.Item icon={<Home />} selected>
+            Overview
+          </NavList.Item>
+          <AccountMenu.Root
+            name="Priya Shah"
+            description="priya@example.com"
+            aria-label="Shell account"
+          >
+            <Menu.Item>Profile</Menu.Item>
+          </AccountMenu.Root>
+        </>
+      }
+    >
+      <p>Page content</p>
+    </AppShell>
   );
 }

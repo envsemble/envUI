@@ -109,17 +109,32 @@ test.describe('AccountMenu', () => {
     await expect(page.getByTestId('bound-theme')).not.toHaveText(/^light/);
   });
 
-  test('its automatic trigger is a row in an expanded sidebar and the avatar elsewhere', async ({
+  test('its automatic trigger is a row in an AppShell sidebar and the avatar in its rail', async ({
+    page,
+  }) => {
+    await page.goto(`${fixtureUrl}/?fixture=account-menu-shell`);
+    const navigation = page.getByRole('navigation', { name: 'Shell navigation' });
+    const row = navigation.getByRole('button', { name: /^Priya Shah/ });
+    await expect(row).toHaveAccessibleName('Priya Shah priya@example.com');
+    await expect(row).toHaveClass(/env-account-menu-trigger/);
+    await row.click();
+    const menu = page.getByRole('menu', { name: 'Shell account' });
+    await expect(menu).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+
+    // Collapsed to icons, with the pointer and focus away from the sidebar, it is the avatar.
+    await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+    await page.mouse.move(900, 400);
+    await expect(navigation.getByRole('button', { name: 'Priya Shah' })).toHaveClass(
+      /env-avatar-button/,
+    );
+  });
+
+  test('its automatic trigger is the avatar outside a sidebar, and in a rail it opens at the inline end', async ({
     page,
   }) => {
     await page.goto(accountMenus);
-    const row = page.getByTestId('sidebar').getByRole('button');
-    await expect(row).toHaveAccessibleName('Priya Shah priya@example.com');
-    await expect(row).toHaveClass(/env-account-menu-trigger/);
-    // The row fills its container.
-    const container = (await page.getByTestId('sidebar').boundingBox())!;
-    expect((await row.boundingBox())!.width).toBeCloseTo(container.width, 0);
-
     const rail = page.getByTestId('rail').getByRole('button', { name: 'Priya Shah' });
     await expect(rail).toHaveClass(/env-avatar-button/);
     await expect(page.getByTestId('bound').getByRole('button')).toHaveClass(/env-avatar-button/);

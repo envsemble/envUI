@@ -74,8 +74,9 @@ function Root({
   ...menuProps
 }: RootProps) {
   const messages = useMessages('accountMenu', accountMenu);
-  const inSidebar = useInSidebar();
   const inRail = useSidebarCompact();
+  // A rail is a sidebar too, whether or not its sidebar says so.
+  const inSidebar = useInSidebar() || inRail;
   const row = trigger === 'row' || (trigger === 'auto' && inSidebar && !inRail);
   const control = row ? (
     <ActionElement className="env-account-menu-trigger">

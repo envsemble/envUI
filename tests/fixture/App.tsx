@@ -78,7 +78,7 @@ import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
-import { AccountMenusFixture } from './AccountMenus.js';
+import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import { ListsFixture } from './Lists.js';
 import {
@@ -118,6 +118,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'container-size': ContainerSizeFixture,
   'search-triggers': SearchTriggersFixture,
   'account-menus': AccountMenusFixture,
+  'account-menu-shell': AccountMenuShellFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
 };

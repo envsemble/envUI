@@ -3,8 +3,8 @@ import { Button, ConfirmDialog, Menu, Stack, Text } from '@envsemble/envui';
 
 /**
  * Confirm dialogs, mounted with ?fixture=confirm-dialogs: a neutral one that confirms at once, a
- * danger one whose action takes a moment and can fail, and one opened from a menu item that returns
- * focus to the menu's button.
+ * danger one whose action takes a moment and can fail, one whose action resolves at once, and one
+ * opened from a menu item that returns focus to the menu's button.
  */
 export function ConfirmDialogsFixture() {
   const [log, setLog] = useState<string[]>([]);
@@ -49,6 +49,14 @@ export function ConfirmDialogsFixture() {
             };
           })
         }
+      />
+      <ConfirmDialog
+        trigger={<Button variant="secondary">Duplicate project</Button>}
+        title="Duplicate Northwind launch?"
+        confirmLabel="Duplicate project"
+        onConfirm={async () => {
+          record('duplicated');
+        }}
       />
       <Button variant="secondary" onClick={() => settle.current?.()}>
         Finish the action

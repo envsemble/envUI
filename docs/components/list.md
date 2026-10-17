@@ -89,11 +89,12 @@ A list is a column of connected rows on the shared row fill: the first and last 
 - **Interactive rows** (`interactive`): the row darkens on hover and while keyboard focus is anywhere inside it, and further while it is pressed; a link or button in its text doesn't also shrink as it is pressed.
 - **The row target**: mark one link or button in the row's text `data-row-target`. It covers the row, so a press anywhere on the row follows it, and keyboard and screen reader users still meet one link. Give a link `draggable={false}` too, so a press that moves a little opens it instead of dragging it. The row shows a press on the target, not on its other controls.
 - **Controls above the target**: the row's other links and buttons need `position: relative` to stay above the target, and so does anything whose tooltip should show; text under the target can't be selected. The start slot, with the drag handle, stays above it on its own.
-- **Current row** (`selected`): the row takes the selected fill, and its row target, or the row itself without one, gets `aria-current="true"`. Mark one row at a time.
+- **Current row** (`selected`): the row takes the selected fill, and its row target, or the row itself without one, gets `aria-current="true"` in the server's HTML. The target is found among the elements in `label`, `description` and `children` as written, not inside other components. Mark one row at a time.
 - **Checked rows**: a checked checkbox in the start slot gives its row the selected fill, so the chosen rows stand out.
-- **Reordering** (`onReorder`): each row's handle moves it. By keyboard, <kbd>Space</kbd> or <kbd>Enter</kbd> on the handle lifts the row, <kbd>↑</kbd> and <kbd>↓</kbd> move it while the others make room, <kbd>Home</kbd> and <kbd>End</kbd> move it to either end, <kbd>Space</kbd> or <kbd>Enter</kbd> drops it, and <kbd>Esc</kbd>, <kbd>Tab</kbd> or leaving the handle puts it back. With a pointer, the row follows the handle as it is dragged, and the scroll area around the list scrolls near its edges. <kbd>Alt</kbd>+<kbd>↑</kbd> and <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target move its row one place at once.
+- **Reordering** (`onReorder`): each row's handle moves it. By keyboard, <kbd>Space</kbd> or <kbd>Enter</kbd> on the handle lifts the row, <kbd>↑</kbd> and <kbd>↓</kbd> move it while the others make room, <kbd>Home</kbd> and <kbd>End</kbd> move it to either end, <kbd>Space</kbd> or <kbd>Enter</kbd> drops it, and <kbd>Esc</kbd>, <kbd>Tab</kbd> or leaving the handle puts it back. A press of the handle that doesn't drag, such as a click, voice control's or a screen reader's, lifts the row the same way, and another drops it; while the row is lifted the handle is pressed. With a pointer, the row follows the handle as it is dragged, and the scroll area around the list scrolls near its edges. <kbd>Alt</kbd>+<kbd>↑</kbd> and <kbd>Alt</kbd>+<kbd>↓</kbd> on a row target move its row one place at once. The List.Item elements are the list's children, directly or in arrays and fragments, so each gets its handle.
 - **The move**: nothing moves in the page until the row is dropped. The list then calls `onReorder(from, to)` with the row's index and its new one, the application moves the item in its own state, and focus stays on the handle or the row target that moved it. Rows move only vertically, in either text direction.
-- **Announcements**: a polite live region announces each step with the row's label, its position and the count: picked up, moved, dropped, or put back.
+- **Announcements**: a polite live region announces each step with the row's label, its position and the count: picked up, with how to move it by keyboard or by pointer, moved, stopped at the start or the end of the list, dropped, or put back. The same announcement twice is announced twice.
+- **On the server**: List.Root and List.Item render on the server. A list without `onReorder` ships no client code; a reorderable one adds the list's keys and announcements and each row's handle.
 
 ## Content guidelines
 
@@ -124,7 +125,7 @@ A list is a column of connected rows on the shared row fill: the first and last 
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                          | Moves focus through the handles, links and controls of the rows; the rows themselves aren't focusable. |
 | <kbd>Enter</kbd>                                                         | Follows the row's link or presses its button.                                                          |
-| <kbd>Space</kbd> or <kbd>Enter</kbd> on a handle                         | Lifts the row, or drops a lifted row in its new place.                                                 |
+| <kbd>Space</kbd> or <kbd>Enter</kbd> on a handle, or a press of it       | Lifts the row, or drops a lifted row in its new place.                                                 |
 | <kbd>↑</kbd>, <kbd>↓</kbd> on a lifted row's handle                      | Moves the row up or down one place.                                                                    |
 | <kbd>Home</kbd>, <kbd>End</kbd> on a lifted row's handle                 | Moves the row to the start or the end of the list.                                                     |
 | <kbd>Esc</kbd> or <kbd>Tab</kbd> on a lifted row's handle                | Puts the row back where it was.                                                                        |
@@ -136,7 +137,8 @@ A list is a column of connected rows on the shared row fill: the first and last 
 - A row target that adds no element of its own: the row is reached and named by its one link or button.
 - The row's highlight while keyboard focus is inside an interactive row.
 - `aria-current="true"` on the current row's target.
-- Drag handles named "Reorder" and the row's label, in the provider's language, and a polite live region that announces each step of a move with the position and the count.
+- Drag handles named "Reorder" and the row's label, in the provider's language, described by how to move the row without a pointer, and pressed (`aria-pressed`) while their row is lifted.
+- A polite live region that announces each step of a move with the position and the count, and the start or the end of the list.
 - Focus kept on the handle or the row target that moved a row.
 
 ### You provide
@@ -199,6 +201,6 @@ Children follow the title and the detail, such as a Badge with the item's status
 
 ## Changelog
 
-- **1.0.0**: List.Item takes `selected` for the current row, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
+- **1.0.0**: List.Item takes `selected` for the current row, marked in the server's HTML, `start` for content before the label, such as an avatar or a checkbox, and `textValue`; List.Root takes `onReorder`, which moves rows by a drag handle, by keyboard, by a press and by pointer, with announcements. `GroupedRows` is `List.Root` and `Row` is `List.Item`, with the `env-list` and `env-list-item` classes; the page is `list`. List.Item's `title` is `label` and its `detail` is `description`. List.Root's `contrast` is gone: put the list directly in `<Surface background="muted" padding={3}>`, where its rows take the raised fill.
 - **0.5.0**: `interactive` rows, which react to hover, focus inside them and presses, and open from anywhere through a `data-row-target`.
 - **0.1.0**: GroupedRows and Row, with connected corners.

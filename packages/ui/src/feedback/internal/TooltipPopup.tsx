@@ -14,6 +14,12 @@ export type TooltipSide = PopupSide;
 /** True inside a Tooltip, so controls that show their own tooltip leave it to the outer one. */
 export const TooltipNestingContext = createContext(false);
 
+/**
+ * False around a Tooltip whose content only repeats its control's name, such as an icon-only
+ * control's name and keys that aria-keyshortcuts already announces, so it describes nothing.
+ */
+export const TooltipDescribesContext = createContext(true);
+
 const parts = {
   Portal: BaseTooltip.Portal,
   Positioner: BaseTooltip.Positioner,
