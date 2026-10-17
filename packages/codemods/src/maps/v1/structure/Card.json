@@ -45,6 +45,16 @@
       "cases": [
         {
           "when": {
+            "as": ["button"],
+            "onClick": [null]
+          },
+          "props": {
+            "as": null
+          },
+          "report": "A card with as=\"button\" is a button card only with onClick in 1.0; without it, Card renders a content card: give it the action it starts."
+        },
+        {
+          "when": {
             "as": ["button", "a", "div"]
           },
           "props": {

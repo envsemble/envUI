@@ -5,6 +5,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
   return (
     <>
       <Card as={kind}>Chosen at run time</Card>
+      <Card as="button" disabled>Copy a project</Card>
       <ActionCard title="Pricing research" meta="Updated yesterday" actions={<Button>Open</Button>}>
         Interviews from twelve teams.
       </ActionCard>

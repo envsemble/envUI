@@ -29,7 +29,7 @@ export default function StartOptions() {
             </Text>
           </Card>
         ))}
-        <Card disabled>
+        <Card disabled onClick={() => setStarted('Copy a project')}>
           <Text render={<span />} variant="title">
             Copy a project
           </Text>

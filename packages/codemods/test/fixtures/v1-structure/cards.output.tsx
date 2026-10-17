@@ -5,6 +5,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
   return (
     <>
       <Card as={kind}>Chosen at run time</Card>
+      <Card disabled>Copy a project</Card>
       <Card
         render={<article />}
         heading="Pricing research"

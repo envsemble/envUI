@@ -14,7 +14,7 @@ const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
-  'cards.tsx': [`line 7: Card: ${card.report}`],
+  'cards.tsx': [`line 7: Card: ${card.report}`, `line 8: Card: ${card.cases[0].report}`],
   'action-group.tsx': [
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
     `line 21: ActionGroup: ${actionGroup.report}`,

@@ -5,8 +5,9 @@
 // Each component's entry has `cases`, tried in order; the first whose `when` matches the element's
 // props applies:
 // - `when`: per prop, the literal values the case is for; null stands for a prop the element
-//   doesn't set. A prop of `when` whose value is an expression can't be matched, so the element
-//   stays as it is and the entry's `report` is reported.
+//   doesn't set, and `[null]` alone skips an element that sets it, whatever its value. Any other
+//   prop of `when` whose value is an expression can't be matched, so the element stays as it is
+//   and the entry's `report` is reported.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
@@ -110,6 +111,8 @@ export default function transform(file, api, options = {}) {
         if (!values.includes(null)) return false;
         continue;
       }
+      // A case for elements without the prop doesn't match one that sets it, whatever its value.
+      if (values.every((value) => value === null)) return false;
       const key = literalKey(attributes[index].value);
       if (key === undefined) return undefined;
       if (!values.some((value) => value !== null && String(value) === key)) return false;
