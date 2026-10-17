@@ -6120,7 +6120,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible takes it. A key press that something else already handled, such as an editor's own shortcut, is left alone."
+          "description": "Press the trigger when the shortcut is pressed anywhere in the window, text fields included. With several triggers listening for one shortcut, the most recently mounted one that is visible and not behind a modal dialog takes it. A disabled trigger, or a key press that something else already handled, such as an editor's own shortcut, leaves the key alone."
         },
         {
           "name": "iconOnly",

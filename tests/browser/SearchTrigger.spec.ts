@@ -92,6 +92,38 @@ test.describe('SearchTrigger', () => {
     await expect(log).toHaveText('jump,second,labelled,labelled,editor');
   });
 
+  test('leaves the key alone behind a modal dialog, and while disabled', async ({ page }) => {
+    await onOther(page);
+    await page.goto(searchTriggers);
+    const log = page.getByTestId('search-log');
+    // The page behind a modal dialog is aria-hidden, not inert: its triggers can't be reached.
+    await page.getByRole('button', { name: 'Rename file' }).click();
+    const field = page.getByRole('dialog', { name: 'Rename file' }).getByLabel('File name');
+    await field.focus();
+    await page.keyboard.press('Control+K');
+    await page.keyboard.press('Control+J');
+    await expect(field).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toBeHidden();
+    // Once it closes, they take their keys again; the log shows only these.
+    await page.keyboard.press('Control+J');
+    await expect(log).toHaveText('jump');
+    // A disabled trigger doesn't prevent the browser's default for its key.
+    const prevented = await page.evaluate(() => {
+      const event = new KeyboardEvent('keydown', {
+        key: 'K',
+        code: 'KeyK',
+        ctrlKey: true,
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      });
+      document.body.dispatchEvent(event);
+      return event.defaultPrevented;
+    });
+    expect(prevented).toBe(false);
+  });
+
   test('shows only its icon in a rail, with its name and keys in a tooltip at the inline end', async ({
     page,
   }) => {
@@ -105,6 +137,8 @@ test.describe('SearchTrigger', () => {
     await rail.focus();
     const tooltip = page.getByRole('tooltip');
     await expect(tooltip).toHaveText(/Rail search\s*Ctrl\+K/);
+    // It shows the name and keys the button already announces, so it doesn't describe it too.
+    await expect(rail).not.toHaveAttribute('aria-describedby');
     // In left-to-right text the inline end is the right.
     expect((await tooltip.boundingBox())!.x).toBeGreaterThan(box.x + box.width - 1);
     await rail.press('Enter');

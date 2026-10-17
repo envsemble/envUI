@@ -130,13 +130,17 @@ test('outside a browser the platform is not Apple', () => {
 });
 
 /** A stand-in for an element, as isEditableTarget and the registry read it. */
-function element(tagName, { type, editable = false, inEditable = false, visible = true } = {}) {
+function element(
+  tagName,
+  { type, editable = false, inEditable = false, visible = true, unreachable = false } = {},
+) {
   return {
     tagName,
     type,
     isContentEditable: editable || inEditable,
     isConnected: true,
-    closest: () => (inEditable ? {} : null),
+    closest: (selector) =>
+      (selector.includes('aria-hidden') ? unreachable : inEditable) ? {} : null,
     checkVisibility: () => visible,
   };
 }
@@ -173,9 +177,13 @@ test('the most recently registered available handler gets a combination, and onl
     hidden.current = null;
     dispatchShortcut(keydown('k', { ctrlKey: true }), false);
     assert.deepEqual(calls, ['second', 'first', 'first']);
+    // So does one behind a modal dialog, which hides the page with aria-hidden or inert.
+    hidden.current = element('BUTTON', { unreachable: true });
+    dispatchShortcut(keydown('k', { ctrlKey: true }), false);
+    assert.deepEqual(calls, ['second', 'first', 'first', 'first']);
     hidden.current = element('BUTTON');
     dispatchShortcut(keydown('k', { ctrlKey: true }), false);
-    assert.deepEqual(calls, ['second', 'first', 'first', 'third']);
+    assert.deepEqual(calls, ['second', 'first', 'first', 'first', 'third']);
   } finally {
     first();
     second();

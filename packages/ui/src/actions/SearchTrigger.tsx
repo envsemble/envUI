@@ -4,6 +4,7 @@ import { useCallback, useRef, type ComponentPropsWithRef } from 'react';
 import { Button, IconButton } from './Button.js';
 import { Kbd } from '../content/Kbd.js';
 import { Tooltip } from '../feedback/Tooltip.js';
+import { TooltipDescribesContext } from '../feedback/internal/TooltipPopup.js';
 import { Search } from '../icons/Search.js';
 import type { ControlSize } from '../foundations/Theme.js';
 import type { PopupSide } from '../internal/PopupSurface.js';
@@ -30,8 +31,8 @@ export interface SearchTriggerProps
   /**
    * Press the trigger when the shortcut is pressed anywhere in the window, text fields included.
    * With several triggers listening for one shortcut, the most recently mounted one that is visible
-   * takes it. A key press that something else already handled, such as an editor's own shortcut,
-   * is left alone.
+   * and not behind a modal dialog takes it. A disabled trigger, or a key press that something else
+   * already handled, such as an editor's own shortcut, leaves the key alone.
    * @default true
    */
   listen?: boolean;
@@ -86,38 +87,43 @@ export function SearchTrigger({
     [ref],
   );
   // Search opens from a text field too, as people expect of Mod+K; an editor that handles the key
-  // itself prevents its default, and the shortcut leaves it alone.
+  // itself prevents its default, and the shortcut leaves it alone. A disabled trigger leaves the
+  // key to the browser.
   useShortcut(listen && shortcut, () => element.current?.click(), {
     element,
     allowInEditable: true,
+    enabled: !props.disabled,
   });
   if (iconOnly)
     return (
-      <Tooltip
-        side={tooltipSide ?? (inRail ? 'inline-end' : 'bottom')}
-        content={
-          display ? (
-            <span className="env-search-trigger-tooltip">
-              {/* The tooltip describes the button, so its keys are read with the label. */}
-              {label} <Kbd keys={display.keys} />
-            </span>
-          ) : (
-            label
-          )
-        }
-      >
-        <IconButton
-          {...props}
-          ref={forward}
-          variant="ghost"
-          size={size}
-          icon={<Search />}
-          aria-label={label}
-          aria-keyshortcuts={display?.ariaKeyShortcuts}
-          className={classNames('env-search-trigger', className)}
-          data-icon-only=""
-        />
-      </Tooltip>
+      // The tooltip shows the name and keys that aria-label and aria-keyshortcuts already announce,
+      // so it doesn't describe the button too.
+      <TooltipDescribesContext value={false}>
+        <Tooltip
+          side={tooltipSide ?? (inRail ? 'inline-end' : 'bottom')}
+          content={
+            display ? (
+              <span className="env-search-trigger-tooltip">
+                {label} <Kbd keys={display.keys} />
+              </span>
+            ) : (
+              label
+            )
+          }
+        >
+          <IconButton
+            {...props}
+            ref={forward}
+            variant="ghost"
+            size={size}
+            icon={<Search />}
+            aria-label={label}
+            aria-keyshortcuts={display?.ariaKeyShortcuts}
+            className={classNames('env-search-trigger', className)}
+            data-icon-only=""
+          />
+        </Tooltip>
+      </TooltipDescribesContext>
     );
   return (
     <Button

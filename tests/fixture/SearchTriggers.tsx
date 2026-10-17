@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { Button, SearchTrigger, Stack, TextField } from '@envsemble/envui';
+import { Button, Dialog, SearchTrigger, Stack, TextField } from '@envsemble/envui';
 // Internal: the rail context a sidebar showing icons only provides.
 import { SidebarCompactContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
 /**
  * Search triggers, mounted with ?fixture=search-triggers: a labelled one that listens for Mod+K, an
  * icon-only one with its own shortcut, one that doesn't listen, a second Mod+K trigger mounted on
- * demand, a hidden one that leaves its key to a visible one, an editor that handles Mod+K itself,
- * and one in a sidebar rail. Each press is logged in order.
+ * demand, a hidden one that leaves its key to a visible one, a disabled one, an editor that handles
+ * Mod+K itself, a dialog whose field the triggers behind it leave alone, and one in a sidebar rail.
+ * Each press is logged in order.
  */
 export function SearchTriggersFixture() {
   const [log, setLog] = useState<string[]>([]);
@@ -32,7 +33,11 @@ export function SearchTriggersFixture() {
         Toggle second search
       </Button>
       {second && <SearchTrigger label="Second search" onClick={record('second')} />}
+      <SearchTrigger label="Disabled search" shortcut="mod+shift+k" disabled />
       <TextField label="Note" />
+      <Dialog title="Rename file" trigger={<Button variant="secondary">Rename file</Button>}>
+        <TextField label="File name" />
+      </Dialog>
       <textarea
         aria-label="Editor"
         onKeyDown={(event) => {
