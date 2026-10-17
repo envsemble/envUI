@@ -321,6 +321,11 @@ test('a template change checks only its screens; the app frame checks every temp
     ).templates,
     undefined,
   );
+  // A template's images scan and screenshot its page, not the shared set.
+  const images = scopeOf(
+    'tests/visual/snapshots/templates/sign-in-page/light-compact-phone-SignInPage.png',
+  );
+  assert.deepEqual([...images.pages.keys()], ['templates/sign-in-page']);
   // The real index knows each template page's frame.
   assert.equal(index.templateFrames.get('sign-in-page'), 'none');
 });

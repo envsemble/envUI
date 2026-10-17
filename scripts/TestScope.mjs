@@ -951,7 +951,9 @@ export function selectScope(paths, index) {
     }
     if (path.startsWith('tests/visual/') || path === 'scripts/VisualTests.mjs') {
       scope.visual = true;
-      const snapshot = /^tests\/visual\/snapshots\/catalogue\/([a-z0-9-]+)\//.exec(path);
+      // A page's images, in catalogue/, patterns/ or templates/ by its id.
+      const snapshot =
+        /^tests\/visual\/snapshots\/(?:catalogue|patterns|templates)\/([a-z0-9-]+)\//.exec(path);
       const snapshotPage =
         snapshot && pageOfFile(`apps/catalogue/src/examples/${snapshot[1]}/`, index.pages);
       if (snapshotPage) want(scope.pages, snapshotPage, `snapshot ${path}`);
