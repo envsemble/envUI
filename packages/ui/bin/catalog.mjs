@@ -307,6 +307,8 @@ export function summarize(manifest, kind, item) {
       import: exported[0]?.import,
       summary: item.summary,
       status: item.status,
+      // An export whose status differs from its page's, such as a beta editor on a stable page.
+      ...(item.statuses && { statuses: item.statuses }),
       doc: item.doc,
     };
   }

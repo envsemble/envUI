@@ -205,6 +205,7 @@ export function buildManifest({
       doc,
       category: frontmatter.category,
       status: frontmatter.status,
+      ...(frontmatter.statuses && { statuses: frontmatter.statuses }),
       since: frontmatter.since,
       summary: document.summary,
       aliases: frontmatter.aliases,
@@ -326,7 +327,13 @@ export function renderLlmsFull(
         byImport.set(from, [...(byImport.get(from) ?? []), name]);
       }
       head.push(
-        `Status: ${component.status}. Since: ${component.since}. ${[...byImport]
+        `Status: ${component.status}${
+          component.statuses
+            ? ` (${Object.entries(component.statuses)
+                .map(([name, status]) => `${name}: ${status}`)
+                .join(', ')})`
+            : ''
+        }. Since: ${component.since}. ${[...byImport]
           .map(([from, names]) => `\`import { ${names.join(', ')} } from '${from}'\``)
           .join('; ')}.`,
         '',

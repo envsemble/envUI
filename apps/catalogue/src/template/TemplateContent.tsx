@@ -36,6 +36,11 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
       <Badge tone={statusTones[metadata.status]}>
         {metadata.status[0].toUpperCase() + metadata.status.slice(1)}
       </Badge>
+      {Object.entries(metadata.statuses ?? {}).map(([name, status]) => (
+        <Badge key={name} tone={statusTones[status]}>
+          {name}: {status[0].toUpperCase() + status.slice(1)}
+        </Badge>
+      ))}
       <Text render={<span />} variant="caption">
         Since {metadata.since}
       </Text>

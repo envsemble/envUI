@@ -65,6 +65,8 @@ export interface DocumentationSection {
 /** A component page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
   status: 'experimental' | 'beta' | 'stable' | 'deprecated';
+  /** The status of an export that differs from the page's. */
+  statuses?: Record<string, 'experimental' | 'beta' | 'stable' | 'deprecated'>;
   since: string;
   aliases: string[];
   useWhen: string[];
