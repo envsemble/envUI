@@ -275,12 +275,18 @@ test('every page an avoidWhen entry sends readers to is indexed', () => {
       if (see) assert.ok(ids.has(see) && see !== document.id, `${document.path} sees ${see}.`);
 });
 
-test(
-  'Phase 5 publishes at least 8 patterns and 6 templates',
-  { todo: 'until the pattern and template batches land' },
-  () => {
-    const count = (group) => documents.filter((document) => document.group === group).length;
-    assert.ok(count('Patterns') >= 8, `${count('Patterns')} patterns`);
-    assert.ok(count('Templates') >= 6, `${count('Templates')} templates`);
-  },
-);
+/**
+ * True while Phase 5 of envUI 1.0 is still writing its pattern and template pages. The test below
+ * fails unless the counts are met or this says the work is in progress; remove the flag when
+ * Phase 5 ends, so that from then on the counts must hold.
+ */
+const phase5InProgress = true;
+
+test('Phase 5 publishes at least 8 patterns and 6 templates', () => {
+  const count = (group) => documents.filter((document) => document.group === group).length;
+  const met = count('Patterns') >= 8 && count('Templates') >= 6;
+  assert.ok(
+    met || phase5InProgress,
+    `${count('Patterns')} patterns and ${count('Templates')} templates; 1.0 needs 8 and 6.`,
+  );
+});

@@ -73,6 +73,8 @@ The server starts in the folder the client works in. Where a workspace installs 
 
 `plan` and `search` rank by plain term matching over names, aliases, summaries and when-to-use text; no model is involved. So `plan` proposes candidates, not an answer: each comes with the words that matched and the part it answers, to confirm with `get_component` and `get_props`, and it gives no list of imports to paste. Words it reads as content, such as quoted labels, code or capitalized names envUI has no component for, come back under `ignored`. `plan` reads each part of a description in the context of the whole: a part that a component already chosen also matches, such as the toggle of "a collapsible sidebar with a toggle", stays with it. Words such as page, screen, view and flow name structure, which templates and patterns answer. A part that nothing matches comes back under `uncovered`.
 
+A name an agent passes to `get_example` resolves in a fixed order: a pattern's or template's own name or title first, then a component by name, export or alias, then a pattern or template by alias. A name always wins over an alias, so `get_example loading` gives the Loading pattern's examples even where a component lists loading as an alias; ask for that component by its own name, such as `Spinner`. `get_pattern` and `get_template` add `requested` when they found the page by an alias, so the agent sees which page answered.
+
 ## The manifest
 
 `manifest.json` has `schemaVersion` 1. Its paths are relative to the package root.

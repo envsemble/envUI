@@ -70,6 +70,24 @@ function linkedPages(markdown, documents) {
   return ids;
 }
 
+/** A file name as words: SkeletonList is "Skeleton list". */
+const fileTitle = (name) =>
+  name
+    .replace(/(?<=[a-z\d])(?=[A-Z])/g, ' ')
+    .replace(/ [A-Z](?=[a-z])/g, (word) => word.toLowerCase());
+
+/**
+ * What the overview says of its lead example: the paragraph right before it, when the overview has
+ * one besides its opening paragraph, which describes the page.
+ */
+function leadDescription(markdown) {
+  const paragraphs = (markdown ?? '')
+    .split(/\n\s*\n/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return paragraphs.length > 1 ? plain(paragraphs.at(-1)) : '';
+}
+
 /**
  * The files a page shows of a kind, example or template, each with its title, what it shows and
  * its packaged path; a template's screen also with its frame and whether it is the page's main one.
@@ -83,10 +101,11 @@ function filesOf(document, kind) {
       const primary = section.id === 'overview';
       items.push({
         name: block.name,
-        title: block.heading,
-        description: primary
-          ? document.summary
-          : exampleDescription(before?.kind === 'markdown' ? before.markdown : ''),
+        // The lead example has no heading of its own; the page's title and summary describe the page.
+        title: primary ? fileTitle(block.name) : block.heading,
+        description: (primary ? leadDescription : exampleDescription)(
+          before?.kind === 'markdown' ? before.markdown : '',
+        ),
         file: `docs/examples/${document.id}/${block.name}.tsx`,
         ...(kind === 'template' && { frame: block.frame, primary }),
       });

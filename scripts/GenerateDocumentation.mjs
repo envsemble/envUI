@@ -72,6 +72,19 @@ export function pageKindOf(path) {
 }
 /** Page kinds that have frontmatter of their own and, once on it, the page template's sections. */
 const sectionedKinds = new Set(['component', 'pattern', 'template']);
+/** Index sections that hold one kind of page, each from its own folder. */
+const indexSectionKinds = {
+  Foundations: 'foundation',
+  Patterns: 'pattern',
+  Templates: 'template',
+};
+const kindFolders = {
+  component: 'docs/components',
+  pattern: 'docs/patterns',
+  template: 'docs/templates',
+  foundation: 'docs/foundations',
+  guide: 'the top of docs',
+};
 
 /**
  * The sections of a page on the template, in order. Props and Related are generated: Props from
@@ -490,6 +503,13 @@ function readTemplate(document, body, { examples, specimens, kind = 'component',
     if (token.type === 'code') {
       const example = (token.lang ?? '').match(examplePattern);
       const screen = example ? undefined : (token.lang ?? '').match(templatePattern);
+      // A fence that names a file but doesn't parse would otherwise show as plain code.
+      if (!example && !screen && /^tsx\s+(?:example|template)=/.test(token.lang ?? '')) {
+        problems.push(
+          `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, or \`tsx template=Name\` with an optional frame=app or frame=none`,
+        );
+        continue;
+      }
       if (example || screen) {
         const what = example ? 'example' : 'template';
         const match = example ?? screen;
@@ -676,6 +696,19 @@ export function readDocumentation(
         throw new Error(`Documentation title differs from its index entry: ${path}`);
       const markdown = body.replace(/^# [^\n]+\r?\n\s*/, '');
       const kind = pageKindOf(path);
+      // A page's folder says its kind, and the index lists each kind of page under its section.
+      const sectionKind = indexSectionKinds[group];
+      const kindSection = Object.keys(indexSectionKinds).find(
+        (section) => indexSectionKinds[section] === kind,
+      );
+      if (sectionKind ? sectionKind !== kind : kindSection)
+        throw new Error(
+          `${path} is a ${kind} page, from ${kindFolders[kind]}, but the index lists it under "## ${group}"; ${
+            kindSection
+              ? `list it under "## ${kindSection}"`
+              : `move it to ${kindFolders[sectionKind]}`
+          }.`,
+        );
       const component = kind === 'component';
       // Pattern and template pages are always on the template; a component page once it starts
       // with its Overview.

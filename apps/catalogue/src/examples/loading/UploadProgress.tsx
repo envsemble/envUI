@@ -11,7 +11,10 @@ export default function UploadProgress() {
   const [sent, setSent] = useState<number[]>();
   const timer = useRef<number>(undefined);
   useEffect(() => () => window.clearInterval(timer.current), []);
+  const done = sent?.every((value, index) => value === files[index].size);
   const upload = () => {
+    // The button stays enabled, so focus stays on it; a press while uploading does nothing.
+    if (sent !== undefined && !done) return;
     setSent(files.map(() => 0));
     // The files upload to a server, which reports what it has received; a timer stands in for it.
     timer.current = window.setInterval(() => {
@@ -25,11 +28,10 @@ export default function UploadProgress() {
       });
     }, 300);
   };
-  const done = sent?.every((value, index) => value === files[index].size);
   return (
     <Stack gap={5}>
       <Stack align="start">
-        <Button variant="secondary" disabled={sent !== undefined && !done} onClick={upload}>
+        <Button variant="secondary" onClick={upload}>
           Upload 2 files
         </Button>
       </Stack>
