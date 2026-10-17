@@ -2772,7 +2772,7 @@
       "page": "code",
       "doc": "docs/components/code.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.",
       "aliases": [
@@ -6530,7 +6530,7 @@
     "CodeBlock": {
       "kind": "component",
       "import": "@envsemble/envui/content",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string.",
+      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",

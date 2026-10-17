@@ -74,7 +74,7 @@
   overflow-wrap: anywhere;
   font: var(--env-type-body-small);
 }
-.env-code-copy-status {
+.env-code-block-copy-status {
   position: absolute;
   inline-size: 0.0625rem;
   block-size: 0.0625rem;

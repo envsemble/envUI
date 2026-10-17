@@ -22,7 +22,9 @@ import { useTheme } from '../foundations/Theme.js';
 import { LoadingState } from '../feedback/LoadingState.js';
 import { Skeleton } from '../feedback/Skeleton.js';
 import { Refresh } from '../icons/Refresh.js';
+import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
 
 export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /** The source before the change. */
@@ -143,6 +145,7 @@ export function CodeDiff({
   ...props
 }: CodeDiffProps) {
   const { theme } = useTheme();
+  const messages = useMessages('codeDiff', codeDiffMessages);
   const lang = language ?? languageOf(filename);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -206,8 +209,8 @@ export function CodeDiff({
         <EmptyState
           tone="danger"
           headingLevel={3}
-          title="Changes could not be shown"
-          description="The code highlighter did not load."
+          title={messages.failed}
+          description={messages.failedDescription}
           action={
             <Button
               variant="secondary"
@@ -217,12 +220,12 @@ export function CodeDiff({
                 setAttempt((current) => current + 1);
               }}
             >
-              Retry
+              {messages.retry}
             </Button>
           }
         />
       ) : !loaded ? (
-        <LoadingState label="Loading changes">
+        <LoadingState label={messages.loading}>
           <Skeleton width="100%" height="1rem" />
           <Skeleton width="90%" height="1rem" />
           <Skeleton width="95%" height="1rem" />

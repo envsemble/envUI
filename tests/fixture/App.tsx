@@ -21,6 +21,7 @@ import {
   ScrollKeysFixture,
 } from './WindowShell.js';
 import { WindowFrameFixture } from './WindowFrames.js';
+import { CodeBlockFixture } from './CodeBlocks.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
@@ -88,6 +89,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'full-shell': FullShellFixture,
   'full-shell-skeleton': FullShellSkeletonFixture,
   'window-frame': WindowFrameFixture,
+  'code-block': CodeBlockFixture,
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
   density: DensityFixture,

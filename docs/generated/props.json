@@ -1174,7 +1174,7 @@
     "CodeBlock": {
       "kind": "component",
       "source": "packages/ui/src/content/CodeBlock.tsx",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string.",
+      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",
