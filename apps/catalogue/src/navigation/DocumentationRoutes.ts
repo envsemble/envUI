@@ -102,11 +102,12 @@ export const siteSections = [
 export type SiteSection = (typeof siteSections)[number];
 
 /** Pages of docs/ for people who change envUI itself, rather than use it. */
-const contributingDocuments = new Set(['library-development', 'component-pages']);
+const contributingDocuments = new Set(['library-development', 'component-pages', 'pattern-pages']);
 
 /**
- * A page with one view: a guide or pattern of docs/, such as the migration guide, or a page of the
- * catalogue's own, such as the token reference. `document` is the page of docs/ it shows.
+ * A page with one view: a guide, pattern or template page of docs/, such as the migration guide, or
+ * a page of the catalogue's own, such as the token reference. `document` is the page of docs/ it
+ * shows; a pattern or template page shows every section of the page template, in order.
  */
 export interface StandalonePage {
   path: string;
@@ -117,16 +118,16 @@ export interface StandalonePage {
 }
 
 /**
- * The guides and patterns of docs/, each at a path of its section. The setup guide and the index
- * stay on the overview's Get started view.
+ * The guides, patterns and templates of docs/, each at a path of its section. The setup guide and
+ * the index stay on the overview's Get started view.
  */
 export const guidePages: StandalonePage[] = documents.flatMap((document): StandalonePage[] => {
-  if (document.group === 'Patterns')
+  if (document.group === 'Patterns' || document.group === 'Templates')
     return [
       {
-        path: `patterns/${document.id}`,
+        path: `${document.group.toLowerCase()}/${document.id}`,
         title: document.title,
-        section: 'Patterns',
+        section: document.group,
         summary: document.summary,
         document,
       },
@@ -173,6 +174,8 @@ export function findStandalonePage(path: string) {
 export const pagesOf = (section: SiteSection) =>
   standalonePages
     .filter((page) => page.section === section)
+    // The Templates overview comes before the template pages it introduces.
+    .sort((a, b) => Number(b === templatesPage) - Number(a === templatesPage))
     .map(({ path, title }) => ({ path, title, views: [] as readonly ViewOption[] }));
 
 /**

@@ -67,17 +67,35 @@ function Source({ path, name }: { path: string; name: string }) {
   );
 }
 
+/** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
+export function ExampleCode({ page, name }: { page: string; name: string }) {
+  // A retry renders the code afresh from its file loaded again.
+  const [, setAttempt] = useState(0);
+  const path = examplePath(page, name);
+  return (
+    <Disclosure title="Code" className="docs-live-example-code">
+      <LoadBoundary
+        what="code"
+        modules={[`src/examples/${page}/${name}.tsx?raw`]}
+        onRetry={() => {
+          forgetSource(path);
+          setAttempt((count) => count + 1);
+        }}
+      >
+        <Suspense fallback={<Text role="status">Loading code…</Text>}>
+          <Source path={path} name={name} />
+        </Suspense>
+      </LoadBoundary>
+    </Disclosure>
+  );
+}
+
 /** An example rendered live in the documentation's theme, with its source and a copy button. */
 export function LiveExample({ page, name, title }: { page: string; name: string; title: string }) {
   const theme = useTheme();
-  // A retry renders the example, or its code, afresh from its file loaded again, and leaves the
-  // other as it is.
+  // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
-  const retry = (forget: (path: string) => void) => () => {
-    forget(path);
-    setAttempt((count) => count + 1);
-  };
   const Example = examples.get(path);
   if (!Example || !sourceLoaders[path])
     throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
@@ -96,7 +114,10 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
         <LoadBoundary
           what="example"
           modules={[`src/examples/${page}/${name}.tsx`]}
-          onRetry={retry(forgetExample)}
+          onRetry={() => {
+            forgetExample(path);
+            setAttempt((count) => count + 1);
+          }}
         >
           <Suspense fallback={<Text role="status">Loading example…</Text>}>
             {/* The example is looked up among module-level lazy components, not created here. */}
@@ -105,17 +126,7 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
           </Suspense>
         </LoadBoundary>
       </Stack>
-      <Disclosure title="Code" className="docs-live-example-code">
-        <LoadBoundary
-          what="code"
-          modules={[`src/examples/${page}/${name}.tsx?raw`]}
-          onRetry={retry(forgetSource)}
-        >
-          <Suspense fallback={<Text role="status">Loading code…</Text>}>
-            <Source path={path} name={name} />
-          </Suspense>
-        </LoadBoundary>
-      </Disclosure>
+      <ExampleCode page={page} name={name} />
     </Stack>
   );
 }
