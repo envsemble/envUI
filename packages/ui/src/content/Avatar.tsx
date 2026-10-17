@@ -3,7 +3,7 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { useLocale } from '../internal/EnvUIContext.js';
+import { useResolvedLocale } from '../internal/useFormatters.js';
 
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -66,7 +66,7 @@ export function Avatar({
   className,
   ...props
 }: AvatarProps) {
-  const locale = useLocale();
+  const locale = useResolvedLocale();
   return (
     <BaseAvatar.Root
       {...props}
