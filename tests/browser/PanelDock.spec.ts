@@ -688,22 +688,15 @@ test.describe('PanelDock', () => {
     const light = '[data-testid="dock-region-light"]';
     // Waits until the entrances in the dock have ended, each target without its data-entering and
     // its animations, then presses a button and reads the animations the panels and tabs start, as
-    // soon as one has: a busy engine may take more than a frame to start them.
+    // soon as one has: a busy engine may take more than a frame to start them. They are read from
+    // the animationstart events rather than sampled at frames: on a busy engine one frame can take
+    // longer than a whole entrance, which then starts and ends between two samples.
     const entrances = (button: Locator) =>
       button.evaluate(async (element, dock) => {
         const targets = () => [
           ...document.querySelectorAll<HTMLElement>(`${dock} [data-panel-id]`),
         ];
         const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
-        const started = () =>
-          targets().flatMap((target) =>
-            target
-              .getAnimations()
-              .map(
-                (animation) =>
-                  `${target.tagName === 'LI' ? 'tab' : 'panel'} ${target.dataset.panelId} ${(animation as CSSAnimation).animationName} ${animation.effect!.getTiming().duration}`,
-              ),
-          );
         for (let count = 0; count < 600; count++) {
           await frame();
           if (
@@ -714,13 +707,31 @@ test.describe('PanelDock', () => {
           )
             break;
         }
-        (element as HTMLElement).click();
-        for (let count = 0; count < 60; count++) {
-          await frame();
-          const list = started();
-          if (list.length > 0) return list;
+        const started: string[] = [];
+        // The event comes before the entrance's own animationend handler, so the target's style
+        // still names the animation and its duration.
+        const record = (event: AnimationEvent) => {
+          const target = event.target as HTMLElement;
+          if (!targets().includes(target)) return;
+          const style = getComputedStyle(target);
+          const names = style.animationName.split(/,\s*/);
+          const durations = style.animationDuration.split(/,\s*/);
+          const duration = durations[Math.max(0, names.indexOf(event.animationName))];
+          started.push(
+            `${target.tagName === 'LI' ? 'tab' : 'panel'} ${target.dataset.panelId} ${event.animationName} ${Math.round(parseFloat(duration) * (duration.endsWith('ms') ? 1 : 1000))}`,
+          );
+        };
+        document.addEventListener('animationstart', record, true);
+        try {
+          (element as HTMLElement).click();
+          for (let count = 0; count < 60; count++) {
+            await frame();
+            if (started.length > 0) return started;
+          }
+          return started;
+        } finally {
+          document.removeEventListener('animationstart', record, true);
         }
-        return [];
       }, light);
     const open = page.getByRole('button', { name: 'Open document light' });
     expect(await entrances(open)).toEqual(['panel extra-1 env-panel-dock-rise 240']);
