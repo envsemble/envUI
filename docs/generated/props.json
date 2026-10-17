@@ -5338,7 +5338,7 @@
         }
       ],
       "native": [
-        "header"
+        "div"
       ],
       "entries": [
         "@envsemble/envui"

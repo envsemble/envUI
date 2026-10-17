@@ -15,7 +15,7 @@ import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { setRef } from '../internal/setRef.js';
 import { PageContext } from './Page.js';
 
-export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'header'>, 'title'> {
+export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
   /** The page's title. It wraps, balanced across its lines, and is never cut short. */
   title: ReactNode;
   /**
@@ -90,11 +90,12 @@ export function PageHeader({
   ref,
   ...props
 }: PageHeaderProps) {
-  const header = useRef<HTMLElement | null>(null);
+  const header = useRef<HTMLDivElement | null>(null);
   usePublishedHeight(header, sticky);
   const Heading = `h${headingLevel}` as const;
   return (
-    <header
+    // A div, not a header: outside main, article or section a header would be a second banner.
+    <div
       {...props}
       ref={(node) => {
         header.current = node;
@@ -130,6 +131,6 @@ export function PageHeader({
           <ControlDefaults size={controlSize}>{toolbar}</ControlDefaults>
         </div>
       )}
-    </header>
+    </div>
   );
 }

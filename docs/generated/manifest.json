@@ -11159,7 +11159,7 @@
         }
       ],
       "native": [
-        "header"
+        "div"
       ],
       "page": "page-header",
       "doc": "docs/components/page-header.md"

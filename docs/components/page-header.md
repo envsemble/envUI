@@ -67,7 +67,7 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 
 - **Wrapping**: the header is a container. Below 32 rem of its own width, the actions move under the title and description and wrap, from the inline start; the meta wraps beside the title. The title wraps, balanced across its lines, and is never cut short.
 - **No overflow menu**: the header never hides actions on its own. A page with more actions than fit on a phone puts the rest in a [Menu](../components/menu.md) as its last action.
-- **Sticky**: the header sticks at `--env-frame-sticky-top`, the offset the app frame publishes, `0` outside one, and publishes its own height on its Page as `--env-page-header-block-size` while it is mounted. Content that sticks below both reads the two: `inset-block-start: calc(var(--env-frame-sticky-top) + var(--env-page-header-block-size, 0px))`. In a box of its own that scrolls, set `--env-frame-sticky-top: 0px` on the box.
+- **Sticky**: the header sticks at `--env-frame-sticky-top`, the offset the app frame publishes, else at the app shell's `--env-app-sticky-top`, and `0` outside both, and publishes its own height on its Page as `--env-page-header-block-size` while it is mounted. Content that sticks below both reads the two: `inset-block-start: calc(var(--env-frame-sticky-top, var(--env-app-sticky-top, 0px)) + var(--env-page-header-block-size, 0px))`. In a box of its own that scrolls, set `--env-frame-sticky-top: 0px` on the box.
 
 ## Content guidelines
 
@@ -99,7 +99,7 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 
 ### envUI provides
 
-- A `header` element inside the page, which is no banner landmark there, with the title as a heading at `headingLevel`.
+- A `div`, which is no landmark wherever the header sits, so a page never gets a second banner, with the title as a heading at `headingLevel`.
 - The parts in reading order, the same as the visual order at every width, so focus never jumps back.
 - The control size for the buttons and fields in `actions` and `toolbar`.
 
