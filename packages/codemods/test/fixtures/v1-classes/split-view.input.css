@@ -12,3 +12,10 @@
 .env-split-view-pane {
   overflow: auto;
 }
+/* A class of your own inside :has() is no part of the split pane's compound selector. */
+.env-split-view:has(.mine[data-resizing]) {
+  outline: none;
+}
+.env-split-view:not([data-resizing]) > .env-split-view-divider {
+  cursor: col-resize;
+}

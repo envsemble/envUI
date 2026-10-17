@@ -73,7 +73,7 @@ Not every bar of controls is a Toolbar. A Toolbar is one tab stop that the arrow
 | A page's search, filters and primary action             | [PageHeader](../components/page-header.md)'s `toolbar`, a `<Stack direction="row" wrap justify="between">` | Fields keep their arrow keys, every control is a tab stop, the primary action ends the row |
 | A section's heading and count, with its actions         | `<Stack direction="row" wrap align="center" justify="between">` around a heading and the actions           | The actions sit at the end and wrap under the heading when there isn't room                |
 | A table's search and actions                            | A Stack row above `Table.Root`, with controls of the size that matches the table's row density             | Small controls over small rows; while the rows stack, a Select sorts them                  |
-| Actions in a window's title bar                         | The title bar's slot for actions at its end                                                                | A few quiet commands beside the window's own: ghost buttons of the small size              |
+| Actions in a window's title bar                         | `WindowFrame.TitleBar`'s `end`, its slot for actions at its end                                            | A few quiet commands beside the window's own: ghost buttons of the small size              |
 
 A page toolbar that lines up with a sidebar's header takes the frame's header height, `min-block-size: var(--env-app-shell-header-height)`.
 
