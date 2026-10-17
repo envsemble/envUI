@@ -1,12 +1,18 @@
-/** Apple keyboards name the Command key; other platforms use Ctrl for the same shortcuts. */
+/**
+ * Apple keyboards name the Command key; other platforms use Ctrl for the same shortcuts. Decided by
+ * the platform, as envUI's SearchTrigger decides, not by the user agent, which some engines set to a
+ * Mac's elsewhere.
+ */
 export const applePlatform =
-  typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent);
+  typeof navigator !== 'undefined' &&
+  /mac|iphone|ipad|ipod/i.test(
+    (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData?.platform ||
+      navigator.platform ||
+      '',
+  );
 
 /** The modifier of the search shortcut, as a key hint shows it. */
 export const commandKey = applePlatform ? '⌘' : 'Ctrl';
-
-/** The search shortcut, as aria-keyshortcuts names it: ⌘K on Apple platforms, Ctrl+K elsewhere. */
-export const searchKeyShortcuts = applePlatform ? 'Meta+K' : 'Control+K';
 
 /**
  * Whether a key press asks for search: ⌘K on Apple platforms and Ctrl+K elsewhere, so Ctrl+K stays

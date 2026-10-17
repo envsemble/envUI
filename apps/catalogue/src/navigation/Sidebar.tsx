@@ -190,8 +190,9 @@ function Footer() {
 
 /**
  * The catalogue's navigation: the wordmark and search above, the sections, and the display
- * settings below. On a wide window it docks beside the page or collapses to a rail of icons that
- * opens over the page; below 48 rem it is a drawer that the top bar's trigger opens.
+ * settings below. On a wide window it docks beside the page, at a width readers can change, or
+ * collapses to a rail of icons that opens over the page; below 48 rem it is a drawer that the top
+ * bar's trigger opens.
  */
 export function DocumentationSidebar({
   routePath,
@@ -199,7 +200,16 @@ export function DocumentationSidebar({
   onSearch,
 }: SectionsProps & { onSearch: () => void }) {
   return (
-    <Sidebar.Root label="Documentation" width={16} className="docs-sidebar">
+    // 14.4 rem is the column the catalogue had at 1280 px, the width of its screenshots; readers can
+    // widen it, and the frame remembers their width.
+    <Sidebar.Root
+      label="Documentation"
+      width={14.4}
+      resizable
+      maxWidth={24}
+      resizeLabel="Resize navigation"
+      className="docs-sidebar"
+    >
       <Header />
       <Sidebar.Content align="stretch" className="docs-sidebar-search">
         <Search onSearch={onSearch} />
