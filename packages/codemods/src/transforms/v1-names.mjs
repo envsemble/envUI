@@ -4,10 +4,13 @@
 // - Parts of a namespace (`MenuItem` becomes `Menu.Item`) drop their specifier, import the
 //   namespace once and rewrite each reference as a member access.
 // - A split (`DirectionLink`) becomes the part its literal prop value names, without that prop.
+// - A renamed element that the map's `structure` section lists under its 0.x name, such as a
+//   ClickableCard without href or onClick, is reported with the case its literal props match.
 // - Removed exports are reported with what to use instead; a removed constant with a literal
 //   value is inlined.
 // - `import * as ui` accesses and `export { … } from` re-exports are rewritten the same way.
 // Anything the transform cannot rewrite safely stays as it is and is reported with its line.
+import { matchesWhen } from '../elements.mjs';
 import { loadMap } from '../map.mjs';
 import { createScopes } from '../scope.mjs';
 import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
@@ -505,6 +508,28 @@ export default function transform(file, api, options = {}) {
     return { target, rename };
   };
 
+  /**
+   * Reports the elements of a renamed component that the map's `structure` section lists under its
+   * 0.x name, as ClickableCard: each element whose literal props match one of its cases gets that
+   * case's report, since its 1.0 form no longer shows what the old name meant.
+   */
+  function reportRenamedElements(entry, imported, local) {
+    const rule = entry.structure.get(imported);
+    if (!rule) return;
+    for (const { path, kind } of referencesTo(local)) {
+      if (kind !== 'jsx' || path.parent.node.type !== 'JSXOpeningElement') continue;
+      const { attributes } = path.parent.node;
+      if (attributes.some((node) => node.type === 'JSXSpreadAttribute')) continue;
+      for (const each of rule.cases) {
+        const result = matchesWhen(attributes, each.when);
+        if (result === false) continue;
+        const message = result === undefined ? rule.report : each.report;
+        if (message) warn(path.parent.node, `${imported}: ${message}`);
+        break;
+      }
+    }
+  }
+
   // Pass 2: plan each imported specifier.
   for (const info of specifiers) {
     const { entry, imported, local } = info;
@@ -514,6 +539,7 @@ export default function transform(file, api, options = {}) {
 
     if (rename && !rename.namespace) {
       changed = true;
+      reportRenamedElements(entry, imported, local);
       if (local !== imported) {
         edits.push(() => replaceImport(info, rename.to, local));
         continue;

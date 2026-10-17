@@ -57,6 +57,18 @@
         }
       ]
     },
+    "ClickableCard": {
+      "report": "ClickableCard is Card in 1.0, which is a link with href and a button with onClick, and a content card with neither.",
+      "cases": [
+        {
+          "when": {
+            "href": [null],
+            "onClick": [null]
+          },
+          "report": "A ClickableCard without href or onClick is a content card in 1.0, not a button: give it the onClick of the action it starts, or put a Button inside."
+        }
+      ]
+    },
     "Card": {
       "report": "Card's as is gone in 1.0: a card with onClick is a button and one with href a link, and render sets the element of a content card, such as render={<article />}. Change an as that is an expression by hand.",
       "cases": [
