@@ -73,6 +73,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
       maxLength,
       form,
       className,
+      style,
       rows = 8,
       sizing = 'fixed',
       onKeyDown,
@@ -171,7 +172,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
             {...nativeProps}
             {...metadata}
             ref={attachInput}
-            className={classNames('env-markdown-source', className)}
+            className="env-markdown-source"
             rows={rows}
             sizing={sizing}
             disabled={disabled}
@@ -225,7 +226,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
     );
     return (
       <>
-        <div className="env-markdown-editor">
+        <div className={classNames('env-markdown-editor', className)} style={style}>
           <FieldFrame
             id={metadata.id}
             label={
