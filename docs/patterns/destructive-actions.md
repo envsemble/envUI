@@ -67,7 +67,7 @@ Climb the ladder only as far as the action needs, by whether it can be undone an
 - **Undo.** The item leaves the list at once and a toast says what happened. A toast with an action stays until it is dismissed, so people have time to reach it; Undo puts the item back where it was and dismisses the toast. Keep the archived item reachable elsewhere too, such as an Archived view, since a toast can be dismissed.
 - **In place.** The first press arms the ConfirmButton: its label changes to the confirm label, such as "Remove file?". A second press runs the action. It disarms after four seconds by default, when focus leaves it and with <kbd>Esc</kbd>.
 - **Dialog.** The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. <kbd>Esc</kbd> and Cancel close it; a press outside doesn't. When `onConfirm` returns a promise, the confirm button is pending and nothing dismisses the dialog until it settles; a failure keeps it open, and `error` says what went wrong.
-- **Typed confirmation.** The confirm button stays enabled. A press with the wrong name keeps the dialog open, as a controlled dialog can by not closing when `onOpenChange` reports `imperative-action`, shows the field's error and moves focus to the field. The dialog opens with focus on Cancel, as every danger confirmation does, and ConfirmDialog has no way to start it on the field: people Tab to the field. ConfirmDialog holds no form either, so give the field an `onKeyDown` that confirms on <kbd>Enter</kbd> once the name matches.
+- **Typed confirmation.** The confirm button stays enabled. A press with the wrong name keeps the dialog open, as a controlled dialog can by not closing when `onOpenChange` reports `imperative-action`, shows the field's error and moves focus to the field. The dialog opens with focus on Cancel, as every danger confirmation does, and ConfirmDialog has no way to start it on the field: people Tab to the field. <kbd>Enter</kbd> in the field confirms through `onConfirm`, as the confirm button does: with the wrong name it shows the error, and with the right one the action runs, pending, once, and a failure keeps the dialog open.
 - **Many items.** Put the count in every label: the button "Delete 2 documents…", the question "Delete 2 documents?" and the confirm button "Delete 2 documents". Keep the count the dialog asked about while it closes.
 - **Focus after the item has gone.** A deleted row takes its buttons with it. Move focus to the neighbouring row's control, or to the list when it is empty, rather than letting it fall back to the page.
 - **Menus.** envUI has no danger tone for a menu item yet: label the item with the consequence, "Delete document…", put it last after a separator, and confirm it with a ConfirmDialog.
@@ -92,7 +92,7 @@ Climb the ladder only as far as the action needs, by whether it can be undone an
 
 - Don't confirm an action that undo can reverse.
 - Don't disable the confirm button until a typed name matches; say what to enter instead.
-- Don't put a field in a confirmation, but for a typed name; a decision that needs more is a [Dialog](../components/dialog.md).
+- Don't put a field in a confirmation, except a typed name; a decision that needs more is a [Dialog](../components/dialog.md).
 - Don't use the danger tone for actions that only look serious; keep it for what deletes or ends something.
 
 ## Accessibility
@@ -136,7 +136,7 @@ Removing an attachment is small and quick to redo, so the button asks in place: 
 
 ### Type to confirm
 
-Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field deletes once the name matches.
+Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field confirms as the button does.
 
 ```tsx example=TypeToConfirm
 

@@ -58,14 +58,7 @@ export default function TypeToConfirm() {
           description={`Enter ${project.name} to confirm.`}
           autoComplete="off"
           spellCheck={false}
-          // The dialog holds no form, so Enter in the field confirms here once the name matches,
-          // as the confirm button would.
-          onKeyDown={(event) => {
-            if (event.key !== 'Enter' || event.nativeEvent.isComposing || !matches) return;
-            event.preventDefault();
-            setDeleted(true);
-            setOpen(false);
-          }}
+          // Enter in the field confirms through onConfirm, as the confirm button does.
           value={typed}
           error={error}
           onValueChange={(value) => {

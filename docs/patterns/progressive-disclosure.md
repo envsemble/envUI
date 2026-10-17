@@ -86,7 +86,7 @@ Choose the component by where the content shows and whether people act in it:
 ## States and behaviour
 
 - **Disclosure** opens and closes in place, on the native `details` element. When a field inside it has an error, open it so the field and its message show. Several Disclosures in a stack stand in for an accordion, which envUI doesn't have yet; a shared `name` lets one open at a time, and works only on Disclosures that aren't controlled, since the browser closes the others itself. Their summaries aren't headings, so they don't appear in the page's outline: put a heading above the stack when it needs one.
-- **Show more** keeps the button after the list, where it was, with the same label, "Show all 12"; `aria-expanded` says whether the whole list shows, and a second press shows the first items again. New items appear above it, in reading order.
+- **Show more** keeps the button after the list, where it was. Its label names what a press does: "Show all 12", then "Show fewer" once the whole list shows; `aria-expanded` says the same, and a second press shows the first items again. New items appear above it, in reading order.
 - **Drawer** opens over the page, modal by default, and closes with <kbd>Esc</kbd>, its close button or a press outside. The list stays in place under it, so people continue from the row they opened.
 - **Menu** holds what doesn't fit or isn't used often. Keep the actions people take most outside it, and put a destructive item last, after a separator.
 - **Popover** opens on press, not on hover, and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it. Use it for an explanation that may hold a link.
@@ -143,7 +143,7 @@ A Disclosure's summary is a button in the tab order; Enter or Space opens it, an
 
 ### Show all
 
-The list shows its five most recent items; "Show all 12" shows the rest, and pressing it again hides them. The button keeps its place, its label and focus, and `aria-expanded` says which state it is in.
+The list shows its five most recent items; "Show all 12" shows the rest, and pressing it again hides them. The button keeps its place and focus; its label becomes "Show fewer", and `aria-expanded` says which state it is in.
 
 ```tsx example=ShowMore
 

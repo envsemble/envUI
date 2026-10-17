@@ -89,7 +89,7 @@ Avoid "OK", "Yes" and "No", "Submit" and "Click here": they make people read the
 - Make a label a short noun phrase, without a colon: "Project name", "Email address", "Due date".
 - Mark the optional fields with "(optional)" after the label, not the required ones. Most fields of a well-made form are required, so asterisks would mark nearly everything.
 - Put a format or a constraint in the description, where people read it before they type: "Lowercase letters, numbers and hyphens".
-- Use a placeholder only for an example of the value, such as "name@example.com", and never for the label or for instructions that must stay; it disappears as people type. A field needs no placeholder.
+- Use a placeholder only for an example of the value, such as "name@example.com", or, in a select with nothing chosen yet, to name the choice to make, such as "Choose a team". Never use it for the label, or for instructions about the format or anything else that must stay; it disappears as people type or choose. A field needs no placeholder.
 
 | Do                                                          | Don't                                                    |
 | ----------------------------------------------------------- | -------------------------------------------------------- |

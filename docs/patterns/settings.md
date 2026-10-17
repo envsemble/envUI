@@ -72,7 +72,7 @@ Use this pattern to let people change how the application behaves for them: noti
 
 - **A Switch applies at once.** It has no Save button: the setting changes, and is stored, the moment people switch it. A [Checkbox](../components/checkbox.md) in a form waits for Save. Never mix them in one section, or people can't tell which changes are kept.
 - **Confirm only what shows elsewhere.** A switch shows its own state, so most changes need no message. Show a toast when a change has an effect people can't see from the page, such as becoming visible in a directory.
-- **Saved sections keep edits apart.** Changes to a saved section stay in it until Save or Cancel, and mark it "Unsaved changes" meanwhile; nothing else on the page saves them. Cancel puts back what was saved, and stops a save that hasn't finished; with no edits, it changes nothing.
+- **Saved sections keep edits apart.** Changes to a saved section stay in it until Save or Cancel, and mark it "Unsaved changes" meanwhile; nothing else on the page saves them. Cancel puts back what was saved; with no edits, it changes nothing. During a save, Cancel only stops waiting: a save already sent can't be called back, so the section then shows what the server reports it saved.
 - **Appearance applies at once.** The theme comes from `useThemePreference`, whose provider stores the choice and applies it to the whole page. The scale, comfortable or compact, is one for the whole app: store it and pass it to the root provider's `scale`, never to a single page or section.
 - **When a change fails.** Put the control back as it was and say so in a toast with "Try again"; a saved section keeps its edits and shows an Alert, as a form does.
 - **Destructive settings** follow [Confirmation and destructive actions](destructive-actions.md): a dialog names the consequence, and for an action that can't be undone and reaches many people, asks for the name.
@@ -105,7 +105,7 @@ Use this pattern to let people change how the application behaves for them: noti
 
 ### Focus and keyboard
 
-Tab moves through the settings in the order they show, and Space turns a focused Switch on or off; focus stays where it is, since nothing on the page moves. Arrow keys move between the options of a RadioGroup and choose them. Save keeps focus on its button and announces the outcome in the status; Cancel keeps focus on Cancel, stops a save that is still running and, when there were edits, says they were discarded. A refused Save moves focus to the field to fix and says its error in the status too, since focus may already be in the field. The danger zone's dialog takes focus to Cancel, and focus returns to the button that opened it when the dialog closes.
+Tab moves through the settings in the order they show, and Space turns a focused Switch on or off; focus stays where it is, since nothing on the page moves. Arrow keys move between the options of a RadioGroup and choose them. Save keeps focus on its button and announces the outcome in the status; Cancel keeps focus on Cancel and, when there were edits, says they were discarded, or, during a save, that it stopped waiting for it. A refused Save moves focus to the field to fix, which reads its error; only when focus is already in the field, where focusing it again reads nothing, does the status say the error. The danger zone's dialog takes focus to Cancel, and focus returns to the button that opened it when the dialog closes.
 
 ### envUI provides
 
