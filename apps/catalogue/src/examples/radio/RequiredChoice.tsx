@@ -39,7 +39,9 @@ export default function RequiredChoice() {
             <Radio key={value} value={value} label={label} />
           ))}
         </RadioGroup>
+        {/* A field error rather than an Alert: envUI has no error message for RadioGroup yet. */}
         {error && (
+          // eslint-disable-next-line envui/no-html-elements
           <Text id={errorId} variant="body-sm" role="alert">
             {error}
           </Text>

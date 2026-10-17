@@ -1,5 +1,6 @@
 // ESLint for the library, the catalogue, tests and scripts. Formatting belongs to Prettier and
 // styles to Stylelint; this config only reports likely bugs.
+import envui from '@envsemble/eslint-plugin-envui';
 import js from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -103,5 +104,12 @@ export default defineConfig(
       'no-implied-eval': 'error',
       'no-new-func': 'error',
     },
+  },
+  {
+    // Examples and templates are the code applications and agents copy, so they follow the rules
+    // envUI asks of applications: envUI's components over raw elements, no private classes and
+    // no raw colors.
+    ...envui.configs.recommended,
+    files: ['apps/catalogue/src/examples/**/*.{ts,tsx}'],
   },
 );
