@@ -5892,14 +5892,23 @@
       "name": "loading",
       "title": "Loading",
       "group": "Patterns",
-      "summary": "Choose between the page loading bar, skeletons, spinners, pending buttons and progress.",
+      "summary": "Show that something is loading, in the place and shape of what is coming, without implying how long it takes.",
       "doc": "docs/patterns/loading.md",
+      "aliases": [
+        "loading state",
+        "loading indicator",
+        "busy state",
+        "progress",
+        "pending",
+        "placeholder"
+      ],
       "related": [
         "app-shell",
         "skeleton",
         "spinner",
         "button",
-        "progress"
+        "progress",
+        "empty-state"
       ]
     }
   ],

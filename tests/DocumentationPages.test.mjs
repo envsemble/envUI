@@ -60,6 +60,10 @@ function moduleSpecifiers(source) {
 const props = readProps();
 const documents = readDocumentation();
 const components = documents.filter((document) => document.path.startsWith('components/'));
+/** Pages with the template's sections: component, pattern and template pages. */
+const sectioned = documents.filter((document) => document.sections);
+/** Pattern and template pages, which list what they compose. */
+const compositions = documents.filter((document) => document.frontmatter?.composes);
 
 test('every public export is documented on exactly one page', () => {
   const homes = new Map();
@@ -138,10 +142,10 @@ function files(directory) {
 
 test('every example file is referenced once, by its page, and imports only public modules', () => {
   const referenced = new Map();
-  for (const document of components)
+  for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example') {
+        if (block.kind === 'example' || block.kind === 'template') {
           const key = `${document.id}/${block.name}`;
           referenced.set(key, (referenced.get(key) ?? 0) + 1);
         }
@@ -150,7 +154,7 @@ test('every example file is referenced once, by its page, and imports only publi
     assert.equal(
       referenced.get(key),
       1,
-      `examples/${key}.tsx must be in its page’s Examples once.`,
+      `examples/${key}.tsx must be on its page once, as an example or a template.`,
     );
     const source = readFileSync(path, 'utf8');
     assert.match(
@@ -195,7 +199,7 @@ test('the import check reads every way a source loads a module', () => {
 
 test('every specimen file is placed by its page', () => {
   const placed = new Set();
-  for (const document of components)
+  for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
         if (block.kind === 'specimen') placed.add(`${document.id}/${block.name}`);
@@ -205,3 +209,78 @@ test('every specimen file is placed by its page', () => {
       `specimens/${page}/${name}.tsx is not placed on its page.`,
     );
 });
+
+/** The names a source imports from envUI's entries, icons apart: `import { Button, Stack } …`. */
+function envuiImports(source) {
+  const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
+  const names = [];
+  for (const statement of file.statements) {
+    if (!ts.isImportDeclaration(statement) || statement.importClause?.isTypeOnly) continue;
+    const from = ts.isStringLiteral(statement.moduleSpecifier) && statement.moduleSpecifier.text;
+    if (!from || !/^@envsemble\/envui(?:\/(?:content|diff|rich-text))?$/.test(from)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (bindings && ts.isNamedImports(bindings))
+      for (const element of bindings.elements)
+        if (!element.isTypeOnly) names.push((element.propertyName ?? element.name).text);
+  }
+  return names;
+}
+
+test('the import reader finds the runtime names a source takes from envUI', () => {
+  assert.deepEqual(
+    envuiImports(
+      [
+        "import { Button, type ButtonProps, Stack as Column } from '@envsemble/envui';",
+        "import type { Theme } from '@envsemble/envui';",
+        "import { CodeBlock } from '@envsemble/envui/content';",
+        "import { Close } from '@envsemble/envui/icons/Close';",
+        "import { useState } from 'react';",
+      ].join('\n'),
+    ),
+    ['Button', 'Stack', 'CodeBlock'],
+  );
+});
+
+test('a pattern or template composes only exports, and every export its files import', () => {
+  for (const document of compositions) {
+    const { composes } = document.frontmatter;
+    for (const name of composes) {
+      assert.ok(
+        props.exports[name],
+        `${document.path} composes ${name}, which envUI doesn't export.`,
+      );
+      assert.ok(!name.includes('.'), `${document.path} composes ${name}; list its namespace.`);
+    }
+    for (const section of document.sections)
+      for (const block of section.blocks) {
+        if (block.kind !== 'example' && block.kind !== 'template') continue;
+        const source = readFileSync(
+          join(examplesDirectory, document.id, `${block.name}.tsx`),
+          'utf8',
+        );
+        for (const name of envuiImports(source))
+          if (props.exports[name])
+            assert.ok(
+              composes.includes(name),
+              `examples/${document.id}/${block.name}.tsx imports ${name}; add it to the composes of ${document.path}.`,
+            );
+      }
+  }
+});
+
+test('every page an avoidWhen entry sends readers to is indexed', () => {
+  const ids = new Set(documents.map(({ id }) => id));
+  for (const document of documents)
+    for (const { see } of document.frontmatter?.avoidWhen ?? [])
+      if (see) assert.ok(ids.has(see) && see !== document.id, `${document.path} sees ${see}.`);
+});
+
+test(
+  'Phase 5 publishes at least 8 patterns and 6 templates',
+  { todo: 'until the pattern and template batches land' },
+  () => {
+    const count = (group) => documents.filter((document) => document.group === group).length;
+    assert.ok(count('Patterns') >= 8, `${count('Patterns')} patterns`);
+    assert.ok(count('Templates') >= 6, `${count('Templates')} templates`);
+  },
+);

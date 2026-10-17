@@ -113,4 +113,4 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Patterns
 
-- [Loading](patterns/loading.md) — Choose between the page loading bar, skeletons, spinners, pending buttons and progress.
+- [Loading](patterns/loading.md)

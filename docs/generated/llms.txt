@@ -110,7 +110,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 ## Patterns
 
-- [Loading](docs/patterns/loading.md): Choose between the page loading bar, skeletons, spinners, pending buttons and progress.
+- [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
 
 ## Optional
 
