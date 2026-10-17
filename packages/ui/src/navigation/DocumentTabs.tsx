@@ -112,13 +112,27 @@ export function DocumentTabs({
 
   // The active tab scrolls into view within the strip, without scrolling the page.
   useLayoutEffect(() => {
-    const strip = list.current;
-    const tab = tabElement(value)?.parentElement;
-    if (!strip || !tab) return;
-    const stripBox = strip.getBoundingClientRect();
-    const tabBox = tab.getBoundingClientRect();
-    if (tabBox.left < stripBox.left) strip.scrollLeft -= stripBox.left - tabBox.left;
-    else if (tabBox.right > stripBox.right) strip.scrollLeft += tabBox.right - stripBox.right;
+    function reveal() {
+      const strip = list.current;
+      const tab = tabElement(value)?.parentElement;
+      if (!strip || !tab) return;
+      const stripBox = strip.getBoundingClientRect();
+      const tabBox = tab.getBoundingClientRect();
+      if (tabBox.left < stripBox.left) strip.scrollLeft -= stripBox.left - tabBox.left;
+      else if (tabBox.right > stripBox.right) strip.scrollLeft += tabBox.right - stripBox.right;
+    }
+    reveal();
+    // Base UI also scrolls the active tab into view, and the labels may still widen as the font
+    // loads: the whole item, close button included, is revealed again once both have settled.
+    let cancelled = false;
+    const frame = requestAnimationFrame(reveal);
+    void document.fonts?.ready.then(() => {
+      if (!cancelled) reveal();
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
   }, [value, items]);
 
   // Closing the focused tab moves focus to the tab that becomes active, however it closed: its

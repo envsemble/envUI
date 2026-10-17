@@ -5,7 +5,12 @@
   display: contents;
 }
 .env-document-tabs {
+  /* The close button's size, and the room a tab leaves for it as it scrolls into view. */
+  --env-document-tabs-close-size: 1.5rem;
   box-sizing: border-box;
+  /* The strip is the offset parent of its items, which Base UI measures to scroll the active tab
+     into view. */
+  position: relative;
   display: flex;
   align-items: stretch;
   gap: 0.125rem;
@@ -73,6 +78,8 @@
 /* The tab covers its item up to the close button, so a press anywhere on the label selects it. */
 .env-document-tabs-tab {
   box-sizing: border-box;
+  /* Scrolled into view, a tab brings its close button and the item's end padding with it. */
+  scroll-margin-inline-end: calc(var(--env-document-tabs-close-size) + var(--env-space-1));
   align-self: stretch;
   flex: 1 1 auto;
   min-inline-size: 0;
@@ -113,7 +120,7 @@
    width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
    through the control size it reads, also inside a container that gives controls a size. */
 .env-document-tabs-item .env-document-tabs-close {
-  --env-control-height: 1.5rem;
+  --env-control-height: var(--env-document-tabs-close-size);
   --env-control-icon-size: 1rem;
   visibility: hidden;
 }
@@ -124,6 +131,7 @@
    button always shows, as tall and wide as its tab. */
 @media (pointer: coarse) {
   .env-document-tabs {
+    --env-document-tabs-close-size: var(--env-control-height-touch);
     block-size: calc(var(--env-control-height-touch) + var(--env-control-border-width));
   }
   .env-document-tabs-close {
