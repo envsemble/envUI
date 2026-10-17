@@ -126,6 +126,9 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 ## Patterns: Find and navigate
 
+- [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
+- [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
+- [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 - [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.
 
 ## Templates

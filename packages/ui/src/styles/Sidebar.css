@@ -136,7 +136,7 @@
   gap: var(--env-space-2);
   border-block-end: var(--env-frame-header-divider, 0 solid transparent);
 }
-/* Sidebar.Content: scrolls when it alone is taller than the room left. */
+/* Sidebar.Content: scrolls when it is taller than the room left. */
 .env-sidebar-content {
   flex: 0 1 auto;
   min-block-size: 0;
@@ -155,6 +155,18 @@
 /* fill: the remaining height, such as for a Tree, scrolling on its own. */
 .env-sidebar-content[data-fill] {
   flex: 1 1 0;
+}
+/* Several sections share the height: those before the last keep their size, such as a search
+   field above the navigation, and the last one shrinks and scrolls. Beside a fill section that
+   shows, every other section keeps its size and the fill section takes the rest; in a rail, where
+   fill sections hide, the last of the others shrinks again. */
+.env-sidebar-content:not([data-fill]):has(~ .env-sidebar-content:not([data-fill])),
+.env-sidebar:not([data-rail])
+  .env-sidebar-content:not([data-fill]):is(
+    :has(~ .env-sidebar-content[data-fill]),
+    .env-sidebar-content[data-fill] ~ *
+  ) {
+  flex-shrink: 0;
 }
 /* Sidebar.Group: a heading in line with the items' labels, an action at its end. */
 .env-sidebar-group {

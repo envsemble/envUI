@@ -309,6 +309,33 @@ test.describe('Scroll padding', () => {
         .poll(async () => (await box(page.locator('#later-section'))).y)
         .toBeGreaterThanOrEqual(header.y + header.height);
     });
+
+    test("above the breakpoint a phone's top bar adds no scroll padding", async ({ page }) => {
+      const stylesheet = `/@fs/${resolve('packages/ui/src/styles/index.css').replaceAll('\\', '/')}?direct`;
+      const frame = (mobileOnly: boolean) =>
+        `<!doctype html><html lang="en"><head><link rel="stylesheet" href="${stylesheet}"></head><body><div class="env-theme" data-env-theme="light"><div class="env-app-shell" data-scroll="document" data-header-span="main" data-breakpoint="md"><header class="env-app-shell-header"${mobileOnly ? ' data-mobile-only' : ''}>Header</header><main class="env-app-shell-main"><div style="height: 1500px"></div><h2 id="later-section">Later section</h2><div style="height: 1500px"></div></main></div></div></body></html>`;
+      await page.route('**/server-rendered-phone-bar.html', (route) =>
+        route.fulfill({ contentType: 'text/html', body: frame(true) }),
+      );
+      await page.route('**/server-rendered-header.html', (route) =>
+        route.fulfill({ contentType: 'text/html', body: frame(false) }),
+      );
+      const html = page.locator('html');
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(`${fixtureUrl}/server-rendered-phone-bar.html#later-section`);
+      await expect(page.locator('.env-app-shell-header')).toBeHidden();
+      await expect(html).toHaveCSS('scroll-padding-top', '8px');
+      await expect
+        .poll(async () => Math.round((await box(page.locator('#later-section'))).y))
+        .toBe(8);
+      // Below the breakpoint the bar shows, and the padding makes room for it.
+      await page.setViewportSize({ width: 600, height: 800 });
+      await expect(html).toHaveCSS('scroll-padding-top', '60px');
+      // A header that always shows keeps its padding above the breakpoint.
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(`${fixtureUrl}/server-rendered-header.html`);
+      await expect(html).toHaveCSS('scroll-padding-top', '60px');
+    });
   });
 });
 

@@ -288,7 +288,10 @@ function Skeleton({ items = 3, className, ...props }: SkeletonProps) {
       {Array.from({ length: items }, (_, index) => (
         <li key={index}>
           <span className="env-nav-list-skeleton-item" data-icon-only={inRail ? '' : undefined}>
-            <Placeholder width="1.125rem" height="1.125rem" />
+            <Placeholder
+              width="var(--env-control-icon-size)"
+              height="var(--env-control-icon-size)"
+            />
             {!inRail && (
               <Placeholder width={`${4.25 + ((index * 1.5) % 2.5)}rem`} height="0.75rem" />
             )}

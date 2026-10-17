@@ -108,6 +108,7 @@ The application owns the panels: which exist, their order and mode, which one is
 ### Do
 
 - Put the dock in a positioned container with a height, such as the area below a header, beside page content that scrolls on its own.
+- In an [AppShell](../components/app-shell.md) whose Main scrolls, with `scroll="main"` or `titleBar`, put the dock directly in `AppShell.Main`: it lies over Main's visible area and stays there while Main scrolls, with no positioning of your own.
 - Keep each panel's work, such as a draft, in the panel's own state; the dock keeps it mounted.
 - Make the content beneath inert while a panel fills the region: while a panel is maximized, or while the dock stacks and a panel is not minimized.
 - Activate a panel when it opens, and keep at most one panel maximized.
@@ -146,7 +147,7 @@ The application owns the panels: which exist, their order and mode, which one is
 
 ### You provide
 
-- A positioned container with a height, and `inert` on the content beneath while a panel fills the region.
+- A positioned container with a height, or a Main that scrolls with the dock directly in it, and `inert` on the content beneath while a panel fills the region.
 - The panels: their order, modes, the active one and their heights, through the callbacks.
 - A PanelDock.Header with a title in each panel, which names it for people who see it.
 - `attention` text for a tab's dot, and a `tooltip` with the full title where labels truncate.

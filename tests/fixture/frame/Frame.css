@@ -6,10 +6,6 @@
 body:has(.fixture-frame) {
   margin: 0;
 }
-/* Main is the PanelDock's positioned container, so the dock sits over the page alone. */
-.fixture-frame-main {
-  position: relative;
-}
 /* Content tall enough to scroll the document or Main. */
 .fixture-frame-filler {
   min-block-size: 140vh;
@@ -36,13 +32,13 @@ body:has(.fixture-frame) {
   block-size: 1px;
 }
 
-/* TitleBarFrame: the search strip's field takes the room its button leaves. */
+/* The search strips: the field takes the room the buttons leave. */
 .fixture-frame-strip {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.fixture-frame-strip > :first-child {
+.fixture-frame-strip-field {
   flex: 1 1 auto;
   min-inline-size: 0;
 }
@@ -63,5 +59,4 @@ body:has(.fixture-frame) {
 .fixture-frame-window-aside {
   position: sticky;
   inset-block-start: var(--env-frame-sticky-top);
-  padding: 1rem;
 }

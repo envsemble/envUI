@@ -73,3 +73,16 @@ test('the document frame’s sticky offsets come from the frame, not from measur
   assert.match(source, /getStickyTop\(\)/);
   assert.doesNotMatch(source, /ResizeObserver|offsetHeight|clientHeight/);
 });
+
+test('the frame fixtures style their own elements, never a library part', () => {
+  // A fixture class on a library part, such as positioning AppShell.Main, would prove a need with
+  // an override. Only the frame's root carries one, fixture-frame, which the stylesheet reads to
+  // reset the body's margin and never styles itself.
+  const problems = [];
+  for (const name of sources)
+    for (const match of read(name).matchAll(/<([A-Z][\w.]*)\b[^>]*?className=["'{`]+([^"'`}]*)/g))
+      if (match[2] !== 'fixture-frame') problems.push(`${name}: ${match[1]} has ${match[2]}`);
+  assert.deepEqual(problems, []);
+  const css = styles.map(read).join('\n');
+  assert.doesNotMatch(css, /\.fixture-frame\s*[{,]/);
+});

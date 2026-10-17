@@ -165,6 +165,10 @@ export function SidebarTrigger({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
+        // A press focuses the trigger, as it does a button everywhere but WebKit, so the drawer it
+        // opens hands focus back to it on Escape rather than to what had focus before.
+        const trigger = event.currentTarget;
+        if (trigger.ownerDocument.activeElement !== trigger) trigger.focus({ preventScroll: true });
         store.toggle(side, 'trigger');
       }}
     />

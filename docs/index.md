@@ -124,6 +124,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Notifications and feedback](patterns/feedback.md)
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
+- [Navigation](patterns/navigation.md)
+- [Filtering and search](patterns/filtering.md)
+- [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)
 
 ## Templates

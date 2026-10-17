@@ -155,6 +155,18 @@ test('fixtures map to the files they mount', () => {
   assert.ok(index.specs.get('Menu.spec.ts').primary.has('Menu'));
 });
 
+test('a fixture stylesheet runs the specs of the fixtures that import it', () => {
+  // Frame.css styles the frame fixtures alone, which FrameNeeds.spec.ts opens.
+  assert.ok(
+    index.specs.get('FrameNeeds.spec.ts').fixtureFiles.has('tests/fixture/frame/Frame.css'),
+  );
+  const scope = select('tests/fixture/frame/Frame.css');
+  assert.deepEqual(fast(scope), ['FrameNeeds.spec.ts']);
+  assert.equal(scope.shared, false);
+  // It is no library stylesheet: no lint of library CSS and no stylesheet-wide specs.
+  assert.deepEqual(scope.css, []);
+});
+
 test('a component stylesheet runs the specs about that component', () => {
   const scope = select('packages/ui/src/styles/Menu.css');
   assert.ok(fast(scope).includes('Menu.spec.ts'));

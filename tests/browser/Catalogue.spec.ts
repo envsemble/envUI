@@ -344,14 +344,21 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   }
   await expect(projectName).toHaveValue('Winter release');
   const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
-  // Opened from the keyboard, as a press doesn't focus a button in WebKit; focus returns to it.
-  await navigationTrigger.focus();
-  await page.keyboard.press('Enter');
   const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
-  await expect(mobileNavigation).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(mobileNavigation).toHaveCount(0);
-  await expect(navigationTrigger).toBeFocused();
+  // Opened by a press or from the keyboard, Escape returns focus to the trigger, also in WebKit,
+  // where a press focuses no button, and with focus elsewhere before.
+  for (const by of ['press', 'keyboard'] as const) {
+    await projectName.focus();
+    if (by === 'press') await navigationTrigger.click();
+    else {
+      await navigationTrigger.focus();
+      await page.keyboard.press('Enter');
+    }
+    await expect(mobileNavigation).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(mobileNavigation).toHaveCount(0);
+    await expect(navigationTrigger, by).toBeFocused();
+  }
   await navigationTrigger.click();
   await mobileNavigation.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(mobileNavigation).toHaveCount(0);
@@ -1212,7 +1219,10 @@ test('the catalogue frame: skip links first, a rail that persists, a drawer from
     'data-icon-only',
     '',
   );
-  await expect(sidebar.getByRole('button', { name: 'Display' })).toBeVisible();
+  const display = sidebar.getByRole('button', { name: 'Display' });
+  await expect(display).toBeVisible();
+  // Its name shows in envUI's tooltip, not the browser's.
+  await expect(display).not.toHaveAttribute('title');
   await page.reload();
   await expect(page.locator('.docs-sidebar')).toHaveAttribute('data-rail', '');
   await page.locator('.docs-sidebar').getByRole('button', { name: 'Expand sidebar' }).click();
@@ -1226,4 +1236,23 @@ test('the catalogue frame: skip links first, a rail that persists, a drawer from
   await expect
     .poll(() => drawer.evaluate((element) => Math.round(element.getBoundingClientRect().left)))
     .toBe(0);
+});
+
+test('a link to a section lands it below the scroll padding, with no header above it', async ({
+  page,
+}) => {
+  // On a desktop the phone's top bar is hidden, so the document's scroll padding is the 8 px for
+  // focus rings alone, from the first reveal on, and the section stops at its scroll margin.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/#/getting-started/usage?section=local-development`);
+  const section = page.locator('#local-development');
+  await expect(section).toBeInViewport();
+  const { padding, margin } = await section.evaluate((element) => ({
+    padding: parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop),
+    margin: parseFloat(getComputedStyle(element).scrollMarginTop),
+  }));
+  expect(padding).toBe(8);
+  await expect
+    .poll(async () => Math.round((await section.boundingBox())!.y))
+    .toBe(Math.round(padding + margin));
 });
