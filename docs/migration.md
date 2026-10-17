@@ -172,6 +172,7 @@ Fields take a `description` under them and the field variants, and choice contro
 | DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |
 | RadioGroup `variant`: `inline`, `rows`                                                                        | `orientation`: `horizontal`, `vertical`                                                      |
 | Radio `detail`                                                                                                | `description`                                                                                |
+| A Combobox option's `leading`, in `items`                                                                     | `start`, as on List.Item                                                                     |
 | `env-text-input`, `env-text-field-well`, `env-form-field`, `env-field-hint`                                   | `env-text-field-input`, `env-text-field-control`, `env-field`, `env-field-description`       |
 | `env-dropdown-trigger`, `-options`, `-list`, `-option`, `-option-check` (Select)                              | `env-select-trigger`, `-popup`, `-list`, `-item`, `-item-indicator`                          |
 | `env-dropdown-options`, `env-dropdown-list` inside `env-combobox`                                             | `env-combobox-popup`, `env-combobox-list`                                                    |
@@ -186,6 +187,7 @@ Change by hand what the codemods can't see:
 - **`className` and `style` style the root.** On TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio they reach the field's or the control's root, the element with `env-field` or the label around a choice, and on MarkdownEditor its root, `env-markdown-editor`, instead of the native control. `ref` and the other native props still reach the input, textarea or trigger, so form libraries keep registering them. A style meant for the input selects it through the root's class, such as `.my-field .env-text-field-input`. `v1-props` reports each `className` and `style` on these components without changing them.
 - **`env-choice-control`** was the root of Checkbox, Switch and an inline Radio alike; it is `env-checkbox`, `env-switch` or `env-radio` now, by the control. `v1-classes` leaves it as it is, since only the markup around it tells which; rename it by hand.
 - **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`. Their accessible names change too: "Color" and "Hue" become "<label> saturation and brightness" and "<label> hue", so tests that find them by name need updating.
+- **A Combobox option's `leading`** is `start`. `v1-props` renames it in an array written in `items`, also in a group's `items`, and reports `items` it can't read, such as a variable; TypeScript points at the rest.
 - **DropZone** is named by its label and its description together, as its visible text is; a test that found it by its label alone matches the start of the name.
 
 ### Navigation and collections
@@ -196,7 +198,8 @@ Change by hand what the codemods can't see:
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `trailing` on Menu.Item and NavList.Item                                  | `end`                                                                                      |
 | OrganizationSwitcher `organizations`, `currentOrganizationId`, `onSelect` | `items`, `value`, `onValueChange`                                                          |
-| `OrganizationSwitcherOrganization` and its `detail`                       | `OrganizationSwitcherItem` and its `description`                                           |
+| `OrganizationSwitcherOrganization` and its `name` and `detail`            | `OrganizationSwitcherItem` and its `label` and `description`                               |
+| OrganizationSwitcher `className`, which styled the trigger                | `triggerClassName`; `className`, `style` and `ref` go to the menu popup, as on Menu.Root   |
 | Tree `selectedId`, `onOpen`, `TreeOpenOptions`                            | `value`, `onAction`, `TreeActionOptions`                                                   |
 | A TreeItem's `detail` and `trailing`                                      | `description` and `end`                                                                    |
 | Table.HeaderCell `onSort`                                                 | `onSortChange`, called with the order pressing asks for                                    |
@@ -213,7 +216,7 @@ Change by hand what the codemods can't see:
 
 Change by hand:
 
-- the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing` and an organization's `detail`; TypeScript reports each one;
+- the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing`, and an organization's `name` and `detail` where `v1-props` can't read the items, such as a variable, which it reports, on OrganizationSwitcher and AccountMenu.OrganizationSubmenu; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
 - the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
 - a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`, so a selector such as `.env-document-tabs-tab:hover .env-document-tabs-close`, which `v1-classes` reports, matches nothing: write `.env-document-tabs-item:hover .env-document-tabs-close`; the close button is out of the tab order and hidden from assistive technology, and Delete, Backspace or the tab's context menu closes a tab from the keyboard;
@@ -274,8 +277,9 @@ The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 w
 | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `<ClickableCard href>`, `<Card as="button" onClick>`, `<ClickableCard onClick>`                                      | `<Card href>`, `<Card onClick>`: a card with `onClick` is a native button                              |
 | `<Card as="article">`                                                                                                | `<Card render={<article />}>`                                                                          |
-| `<ActionCard title meta actions>`                                                                                    | `<Card render={<article />} heading meta actions>`                                                     |
-| `<FeatureCard icon title description action>`                                                                        | `<Card layout="feature" headingLevel={2} icon heading description actions>`                            |
+| `<ActionCard title meta actions>`                                                                                    | `<Card render={<article />} title meta actions>`                                                       |
+| `<FeatureCard icon title description action>`                                                                        | `<Card layout="feature" headingLevel={2} icon title description actions>`                              |
+| Card `heading`                                                                                                       | `title`, as on EmptyState and Dialog; `headingLevel` still sets its level                              |
 | Card `tone`: `row`, `pane`, `canvas`                                                                                 | `background`: `muted` (the default), `default`, `page`                                                 |
 | Card `layout`: `content`, `action`                                                                                   | Removed: `actions` gives the action strip; `layout` is `stack` or `feature`                            |
 | `ClickableCardProps`, `ActionCardProps`, `FeatureCardProps`                                                          | `CardProps`                                                                                            |
@@ -284,15 +288,18 @@ The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 w
 | `<InfoChip>`, `InfoChipProps`, `env-info-chip`                                                                       | `<Badge>`, a neutral soft pill; `BadgeProps`; `env-badge`                                              |
 | Badge `variant="subtle"`                                                                                             | `soft`, the default                                                                                    |
 | Avatar and AvatarGroup `size`: `small`, `standard`, `large`, `display`                                               | `sm`, `md` (the default), `lg`, `xl`; `env-avatar-{size}` is `.env-avatar[data-size]`                  |
+| Avatar `label`, which named it as an image                                                                           | `named`                                                                                                |
 | AvatarButton `size`: `small`, `standard`, `large`; `detail`                                                          | `sm`, `md`, `lg`; `description`                                                                        |
 | Stat.Root `detail`, `env-stat-detail`                                                                                | `description`, `env-stat-description`                                                                  |
 | Stat.Group `tone`: `pane`, `row`, `canvas`, `alternate`                                                              | `background`: `default` (the default), `muted`, `page`, `raised`                                       |
+| AnimatedNumber `format`                                                                                              | `formatValue`, as on Slider and CalendarHeatmap                                                        |
 | SegmentedControl `options`, `SegmentedControlOption`                                                                 | `items`, `SegmentedControlItem`                                                                        |
 | `env-segment`, `env-segment-label`, `env-segment-count`                                                              | `env-segmented-control-item`, `-item-label`, `-item-count`                                             |
 | `BrandLogo`, `EnvUILogo` and their props types                                                                       | Removed: keep your artwork in the application, as an SVG file or a component that draws it with `Icon` |
 
 Change these by hand where the codemods report them, or where they can't see them:
 
+- a native `title` on a 0.x content Card, the tooltip of its element: `title` is the card's heading in 1.0, and the native attribute is not a prop of a card, so `v1-props`, which renames `heading` to `title`, leaves it to you: move the tooltip to an element inside the card;
 - a Card `as` that is an expression; a ClickableCard without `href` or `onClick`, such as a submit button, which is a content card in 1.0: give it `onClick`, or put a Button inside;
 - a style for `env-card-content`, which 0.7 put on a card without actions and on an action card's body, and which `v1-classes` reports: style `.env-card:not([data-actions])` for the card, or `.env-card-body` for the body of a card with actions;
 - a Card with `layout="action"`, or an ActionCard, without `actions`, which the codemods report: actions alone give a 1.0 card its action strip, so pass the actions it should show;
@@ -365,6 +372,7 @@ TitleBar and WindowFrame are one namespace, and PanelDock is another; the editor
 | `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<WindowFrame.Root>{bar}<WindowFrame.Content ref={ref}>…</WindowFrame.Content></WindowFrame.Root>`                   |
 | `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                                 |
 | PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                                   |
+| PanelDock.Root `showLabel`, which names a tab's button                   | `openLabel`                                                                                                          |
 | RichTextEditor `hint`                                                    | `description`                                                                                                        |
 | RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                      |
 | `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `env-window-frame-title-bar*`, `--env-window-frame-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name |
@@ -387,7 +395,7 @@ Change by hand what the codemods report or can't see:
 - **A RichTextEditor `variant`** that is an expression, which `v1-props` reports.
 - **Code's `appearance`, Markdown's `inlineCode` and CodeBlock's `theme`**: `v1-props` deletes each literal one and reports one whose value is an expression, such as `inlineCode={inlineCode}` in a wrapper of the application's own; delete it, and the wrapper's own prop with it. envUI chooses the code theme, so code that relied on the dark look in the light theme now shows Pierre Light. `v1-classes` reports a style for `env-code-subtle`.
 
-Words that were English and fixed are messages now: CodeBlock's and CodeDiff's, Markdown's table and task names, MarkdownEditor's toolbar, tabs, preview and status, RichTextEditor's toolbar, suggestions and status, the editors' commands and link dialog, and PanelDock's window controls. Set them through EnvUIProvider's `messages`; PanelDock's `minimizedLabel`, `showLabel`, `closeLabel` and `resizeLabel` still override its own for one dock. The editors' toolbar buttons show their names in tooltips instead of native titles.
+Words that were English and fixed are messages now: CodeBlock's and CodeDiff's, Markdown's table and task names, MarkdownEditor's toolbar, tabs, preview and status, RichTextEditor's toolbar, suggestions and status, the editors' commands and link dialog, and PanelDock's window controls. Set them through EnvUIProvider's `messages`; PanelDock's `minimizedLabel`, `openLabel` (0.x's `showLabel`), `closeLabel` and `resizeLabel` still override its own for one dock. The editors' toolbar buttons show their names in tooltips instead of native titles.
 
 ### useTheme returns the theme, its contrast and its scale
 

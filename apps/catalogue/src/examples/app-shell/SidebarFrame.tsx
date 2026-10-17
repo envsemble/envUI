@@ -18,8 +18,8 @@ import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind', description: 'Admin' },
-  { id: 'example', name: 'Example Labs', description: 'Member' },
+  { id: 'northwind', label: 'Northwind', description: 'Admin' },
+  { id: 'example', label: 'Example Labs', description: 'Member' },
 ];
 const pages = [
   { id: 'home', label: 'Home', icon: <Home /> },

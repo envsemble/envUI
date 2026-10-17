@@ -45,7 +45,7 @@ components:
 
 ## Overview
 
-An avatar is a round picture of a person or an organization. Without a picture, or while it loads or after it fails, it shows the default person picture, or initials for an organization. Beside a visible name it is decorative; with `label` it is an image named after the person.
+An avatar is a round picture of a person or an organization. Without a picture, or while it loads or after it fails, it shows the default person picture, or initials for an organization. Beside a visible name it is decorative; with `named` it is an image named after the person.
 
 The family builds on it:
 
@@ -112,7 +112,7 @@ The family builds on it:
 
 ### Don't
 
-- Don't use an avatar as the only place a name appears, unless it is labelled or in a group that names everyone.
+- Don't use an avatar as the only place a name appears, unless it is named or in a group that names everyone.
 - Don't put an Avatar inside your own button; use AvatarButton, or `onPersonClick` in a group.
 - Don't use a group where people need to read every name; list them with their names.
 
@@ -129,7 +129,7 @@ The family builds on it:
 
 ### envUI provides
 
-- A decorative avatar hidden from assistive technology, or with `label` an image named by `name`.
+- A decorative avatar hidden from assistive technology, or with `named` an image named by `name`.
 - AvatarButton as a native button named by `aria-label` or `name`, with the shared focus outline.
 - An AvatarGroup named with the count and every name, as a `group`; pressable avatars as native buttons and links named after each person.
 - The overflow chip as a tab stop and an image named by the people it stands for, so the keyboard and assistive technology reach the hidden names.
@@ -137,7 +137,7 @@ The family builds on it:
 
 ### You provide
 
-- The person's name beside a decorative avatar, or `label`.
+- The person's name beside a decorative avatar, or `named`.
 - An `aria-label` on an AvatarButton that says what it opens, and the menu or action behind it.
 - `messages.avatarGroup` in the application's language, or an `aria-label` for the group.
 - `--env-avatar-group-ring` where a group sits on a fill that is not an envUI surface.
@@ -146,7 +146,7 @@ The family builds on it:
 
 ### Sizes
 
-Four sizes, from a compact row to a profile page; each is labelled here, with no name beside it.
+Four sizes, from a compact row to a profile page; each is named here, with no name beside it.
 
 ```tsx example=Sizes
 
@@ -186,7 +186,7 @@ With `onPersonClick` every avatar is a button named after the person; a person w
 
 ## Changelog
 
-- **1.0.0**: Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`.
+- **1.0.0**: Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
 - **0.2.0**: Avatar, with the default person picture or initials as fallback.

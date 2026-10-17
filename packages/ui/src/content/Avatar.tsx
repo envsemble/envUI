@@ -9,7 +9,7 @@ import { useResolvedLocale } from '../internal/useFormatters.js';
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
-  /** Person or organization name; the accessible name with label, and the initials fallback. */
+  /** Person or organization name: the accessible name of a named avatar, and the initials fallback. */
   name: string;
   /** Picture URL. The fallback shows while it loads and when it is missing or fails. */
   src?: string | null;
@@ -20,8 +20,12 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
    * @default 'md'
    */
   size?: AvatarSize;
-  /** Name the avatar as an image by `name`; leave it off when text beside it already names the person. */
-  label?: boolean;
+  /**
+   * Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive
+   * technology, for when text beside it already names the person.
+   * @default false
+   */
+  named?: boolean;
 }
 
 /** The first letters of the first and last words, or the first two letters of a single word. */
@@ -62,7 +66,7 @@ export function Avatar({
   src,
   fallback = 'person',
   size = 'md',
-  label = false,
+  named = false,
   className,
   ...props
 }: AvatarProps) {
@@ -72,9 +76,9 @@ export function Avatar({
       {...props}
       className={classNames('env-avatar', className)}
       data-size={size}
-      role={label ? 'img' : undefined}
-      aria-label={label ? name : undefined}
-      aria-hidden={label ? undefined : true}
+      role={named ? 'img' : undefined}
+      aria-label={named ? name : undefined}
+      aria-hidden={named ? undefined : true}
     >
       {src ? (
         <BaseAvatar.Image

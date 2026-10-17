@@ -4,8 +4,8 @@ import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind', description: 'Owner' },
-  { id: 'contoso', name: 'Contoso', description: 'Member' },
+  { id: 'northwind', label: 'Northwind', description: 'Owner' },
+  { id: 'contoso', label: 'Contoso', description: 'Member' },
 ];
 
 export default function ThemeAndOrganizations() {
@@ -18,7 +18,7 @@ export default function ThemeAndOrganizations() {
       <Surface padding={3}>
         <Stack direction="row" align="center" justify="between" gap={2}>
           <Text variant="title" render={<span />}>
-            {organizations.find((each) => each.id === organization)?.name}
+            {organizations.find((each) => each.id === organization)?.label}
           </Text>
           <AccountMenu.Root name="Alex Morgan" description="alex@example.com">
             <Menu.Item href="/account" icon={<ManageAccounts />}>

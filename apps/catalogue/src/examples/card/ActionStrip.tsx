@@ -4,7 +4,7 @@ export default function ActionStrip() {
   return (
     <Card
       render={<article />}
-      heading="Pricing research"
+      title="Pricing research"
       meta="Updated yesterday"
       actions={
         <>

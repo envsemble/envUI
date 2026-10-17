@@ -14,7 +14,7 @@ const people: ComboboxItem[] = [
     value: handle,
     label: name,
     description: `${handle}@example.com`,
-    leading: <Avatar name={name} />,
+    start: <Avatar name={name} />,
   };
 });
 

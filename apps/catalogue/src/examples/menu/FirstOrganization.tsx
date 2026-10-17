@@ -13,7 +13,7 @@ export default function FirstOrganization() {
         onValueChange={setCurrentId}
         // An application asks for the name first; here the new organization is Northwind Labs.
         onCreate={() => {
-          setOrganizations([{ id: 'northwind', name: 'Northwind Labs', description: 'Owner' }]);
+          setOrganizations([{ id: 'northwind', label: 'Northwind Labs', description: 'Owner' }]);
           setCurrentId('northwind');
         }}
       />

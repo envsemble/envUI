@@ -5,7 +5,7 @@ import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { Button } from '../actions/Button.js';
-import type { ButtonProps } from '../actions/Button.js';
+import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
@@ -133,7 +133,13 @@ export interface DialogProps extends Omit<ComponentPropsWithRef<'div'>, 'title' 
 }
 
 /** Button's props without href: DialogClose is always a button. */
-export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
+export type DialogCloseProps = {
+  /**
+   * The emphasis, as Button's; secondary by default, as an action beside the dialog's main one.
+   * @default 'secondary'
+   */
+  variant?: ButtonVariant;
+} & Extract<ButtonProps, { href?: undefined }>;
 
 /**
  * A button inside a Dialog or a Drawer that closes it after its own onClick, for an action other

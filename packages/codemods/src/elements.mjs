@@ -197,7 +197,10 @@ export function componentResolver({ components, namespaceImports }) {
  * literal value or undefined, `make(name, value)` a new item, `rename(node, name)` renames it, and,
  * optionally, `expression(node)` its value's expression and `literal(value, old)` a literal that
  * replaces `old` there, so that a conditional whose values are literals, such as
- * `tone={failed ? 'error' : 'info'}`, has each value mapped, as mapConditional says.
+ * `tone={failed ? 'error' : 'info'}`, has each value mapped, as mapConditional says. A rule with
+ * `each` applies its rules to the properties of each object literal in an array literal the item
+ * holds, through `item.properties`, the description of an object's properties, and reports a value
+ * it can't read, such as a variable.
  * Returns whether anything changed; `report(node, message)` receives what can't move.
  */
 export function applyPropRules(items, rules, where, item, report) {
@@ -210,6 +213,18 @@ export function applyPropRules(items, rules, where, item, report) {
     const rule = rules.get(name);
     if (!rule) continue;
     const at = `${where}'s ${name}`;
+    if (rule.each) {
+      const value = item.expression?.(node);
+      const elements = value?.type === 'ArrayExpression' ? value.elements : [];
+      const objects = elements.filter((element) => element?.type === 'ObjectExpression');
+      for (const object of objects)
+        if (applyPropRules(object.properties, rule.each, `${at} item`, item.properties, report))
+          changed = true;
+      // A variable, a call or a spread element holds items out of the codemod's sight.
+      if (value?.type !== 'ArrayExpression' || objects.length < elements.length)
+        report(node, `${at} has entries the codemod can't read: ${rule.report}`);
+      if (rule.to === undefined && Object.keys(rule.values).length === 0) continue;
+    }
     // A report-only rule: the prop stays as it is, and what changed about it is reported.
     if (rule.to === undefined && Object.keys(rule.values).length === 0) {
       report(node, rule.report);

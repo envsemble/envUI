@@ -63,7 +63,7 @@ function Templates() {
         <li key={path}>
           <Card
             actions={<Link href={routeHref(path)}>Open {title}</Link>}
-            heading={title}
+            title={title}
             headingLevel={2}
             meta={document.metadata?.frame === 'app' ? 'Inside the app frame' : 'A whole screen'}
             description={document.summary}

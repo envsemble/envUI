@@ -1,6 +1,6 @@
 ---
 title: Card
-summary: A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.
+summary: A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.
 status: stable
 since: 0.1.0
 category: Layout & surfaces
@@ -49,8 +49,8 @@ components:
 
 A card is a rounded surface that groups content about one subject, spaced 1 rem apart. One component makes every kind of card:
 
-- **Content card** (the default): any content, with an optional heading row (`heading`, `meta`), a `description` and `actions` in a strip along its bottom.
-- **Feature card** (`layout="feature"`): an icon, a heading, a description and one action, which stack in a narrow card.
+- **Content card** (the default): any content, with an optional title row (`title`, `meta`), a `description` and `actions` in a strip along its bottom.
+- **Feature card** (`layout="feature"`): an icon, a title, a description and one action, which stack in a narrow card.
 - **Link card** (`href`) and **button card** (`onClick`): the whole card is one native link or button.
 
 ```tsx example=ProjectSummary
@@ -60,12 +60,12 @@ A card is a rounded surface that groups content about one subject, spaced 1 rem 
 ## Anatomy
 
 1. **Surface** (`background`, `padding`): the fill with 1.75 rem corners and padding that grows from 1.25 to 1.5 rem with the window, or a fixed step of the spacing scale.
-2. **Header** (`heading`, `meta`): the heading, an `h3` in the title type, and `meta` in supporting text at the end of the row, 0.75 rem apart; the row wraps when it runs out of room. `headingLevel` sets another level for the page's outline.
-3. **Description** (`description`): a sentence under the heading in muted text.
+2. **Header** (`title`, `meta`): the title, an `h3` in the title type, and `meta` in supporting text at the end of the row, 0.75 rem apart; the row wraps when it runs out of room. `headingLevel` sets another level for the page's outline.
+3. **Description** (`description`): a sentence under the title in muted text.
 4. **Content** (`children`): spaced 1 rem apart; Card sets no type of its own, so compose it from Text and other components.
 5. **Footer** (`actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
 
-The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in a 2.75 rem box, the **heading**, an `h2` in the headline type, the **description** in supporting text, more content 1 rem below, and the **actions** at the end.
+The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in a 2.75 rem box, the **title**, an `h2` in the headline type, the **description** in supporting text, more content 1 rem below, and the **actions** at the end.
 
 ## Variants and sizes
 
@@ -80,7 +80,7 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 | Layout    | Use for                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
 | `stack`   | Content spaced 1 rem apart, with the actions in a strip along the bottom. The default. |
-| `feature` | A feature with an icon at the start, its heading and description, and one action.      |
+| `feature` | A feature with an icon at the start, its title and description, and one action.        |
 
 - A card fills the width its container gives it; set its width on the container or a grid.
 - Text in a plain paragraph of a card with an action strip is muted body text, at most 32 characters wide.
@@ -90,12 +90,12 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 
 - **Link and button cards**: with `href` the card is a native link through the `LinkProvider`'s link component, and with `onClick` a native button with `type="button"`. The whole card, padding included, is the target. Hover and pressed take the hover and pressed colors of its background, and keyboard focus shows a focus outline 0.125 rem outside the card.
 - **Disabled**: a disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`. Both take the shared disabled opacity.
-- **Content in link and button cards**: an interactive card takes no `heading`, `meta`, `description`, `actions` or `layout`, and its text, in the primary text color, aligns to the start. A button card can only hold phrasing content, such as spans.
+- **Content in link and button cards**: an interactive card takes no `title`, `meta`, `description`, `actions` or `layout`, and its text, in the primary text color, aligns to the start. A button card can only hold phrasing content, such as spans.
 - **Action strip**: `actions` puts the strip along the bottom of a stacked card. It has a fill of its own, the action strip color, which sets it apart from the card's body in both themes.
 
 ## Content guidelines
 
-- Give a card a short heading that names its subject, such as a project's name, and keep its text to a sentence or two.
+- Give a card a short title that names its subject, such as a project's name, and keep its text to a sentence or two.
 - Put the fact that matters most for choosing in `meta`, such as when the card was updated.
 - Name actions with verbs, and put the main one last: "Share", then "Open project".
 - Start a link card with its destination's name, so its accessible name, which is its whole text, starts with what people look for.
@@ -131,7 +131,7 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 ### envUI provides
 
 - Native `<a>` and `<button>` elements for link and button cards, named by their content, and `div` elements for content cards, or the element of `render`, such as `article`, with a `footer` for the action strip.
-- The heading as an `h3`, or an `h2` in the feature layout, at the level `headingLevel` sets.
+- The title as an `h3`, or an `h2` in the feature layout, at the level `headingLevel` sets.
 - A focus outline around link and button cards, and `aria-disabled` with no destination on a disabled link card.
 - The feature layout's icon hidden from assistive technology.
 
@@ -145,7 +145,7 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 
 ### Action strip
 
-`heading`, `meta` and `actions` make a heading row and a strip of controls along the bottom; `render` makes the card an article.
+`title`, `meta` and `actions` make a title row and a strip of controls along the bottom; `render` makes the card an article.
 
 ```tsx example=ActionStrip
 
@@ -177,7 +177,7 @@ The feature layout presents a feature with an icon and one action, and stacks th
 
 ## Changelog
 
-- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and `layout="feature"` the feature card. `tone` is `background`, `heading` takes `headingLevel`, and Card takes `description`. The page is `card`, after the component.
+- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and `layout="feature"` the feature card. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, as on EmptyState, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
 - **0.5.0**: `meta` sits at the end of the heading row, also in right-to-left text.
 - **0.2.0**: Link cards render through the application's router link, from `LinkProvider`.
 - **0.1.0**: Card for plain, interactive and action-strip cards, with ClickableCard and ActionCard as wrappers; FeatureCard.

@@ -1456,7 +1456,7 @@ test('a dock that minimizes asks for nothing while it stacks, also as it first s
   await frames(page);
   await expect(page.getByTestId('stacking-log-light')).toHaveText('');
   await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
-  // showLabel names the tabs' buttons.
+  // openLabel names the tabs' buttons.
   await expect(scope.getByRole('button', { name: 'Bring back One' })).toBeVisible();
 });
 

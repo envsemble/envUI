@@ -14,9 +14,10 @@ export function Navigation({ rows, organizations, orgId, switchTo, open, sort, c
         </NavList.Item>
       </NavList.Root>
       <OrganizationSwitcher
-        organizations={organizations}
+        organizations={[{ id: 'northwind', name: 'Northwind', detail: 'Admin' }]}
         currentOrganizationId={orgId}
         onSelect={switchTo}
+        className="org-trigger"
       />
       <Tree
         aria-label="Files"

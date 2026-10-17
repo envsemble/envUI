@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { OrganizationSwitcher, Stack, Text } from '@envsemble/envui';
 
 const organizations = [
-  { id: 'northwind', name: 'Northwind Labs', description: 'Admin' },
-  { id: 'contoso', name: 'Contoso', description: 'Member' },
-  { id: 'fabrikam', name: 'Fabrikam Research and Development', description: 'Member' },
+  { id: 'northwind', label: 'Northwind Labs', description: 'Admin' },
+  { id: 'contoso', label: 'Contoso', description: 'Member' },
+  { id: 'fabrikam', label: 'Fabrikam Research and Development', description: 'Member' },
 ];
 
 export default function SwitchOrganization() {
@@ -18,7 +18,7 @@ export default function SwitchOrganization() {
         value={currentId}
         onValueChange={(id: string) => {
           setCurrentId(id);
-          setMessage(`Switched to ${organizations.find((item) => item.id === id)?.name}`);
+          setMessage(`Switched to ${organizations.find((item) => item.id === id)?.label}`);
         }}
         onCreate={() => setMessage('Create organization chosen')}
       />

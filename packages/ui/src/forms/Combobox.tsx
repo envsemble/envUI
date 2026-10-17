@@ -46,7 +46,7 @@ export interface ComboboxItem {
   /** A muted second line, such as an e-mail address; the default filter matches it too. */
   description?: string;
   /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
-  leading?: ReactNode;
+  start?: ReactNode;
   /** The option shows but can't be chosen. */
   disabled?: boolean;
 }
@@ -299,7 +299,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       }),
     [items],
   );
-  const hasLeading = flatItems.some((item) => item.leading != null);
+  const hasStart = flatItems.some((item) => item.start != null);
   const grouped = flatItems.length > 0 && isGroup((items as readonly unknown[])[0] as Item);
 
   const matcher = BaseCombobox.useFilter({ locale, multiple: true });
@@ -314,7 +314,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     [filter, matcher],
   );
 
-  // The typed text, to show the chosen option's leading content only while the field shows its label.
+  // The typed text, to show the chosen option's start content only while the field shows its label.
   const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
   const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
@@ -402,7 +402,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const showClear = clearable && !disabled && !readOnly;
   // The clear button shows while there is a value to clear; the well keeps room for it only then.
   const clearShown = showClear && selectedValues.length > 0;
-  const showLeading = singleItem?.leading != null && inputText === singleItem.label && !isMultiple;
+  const showStart = singleItem?.start != null && inputText === singleItem.label && !isMultiple;
   const ariaLabel = inputProps['aria-label'];
   const toolbarName =
     label != null ? { 'aria-labelledby': labelId } : ariaLabel ? { 'aria-label': ariaLabel } : {};
@@ -473,9 +473,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           style={style}
           renderControlBox={renderControlBox}
         >
-          {showLeading && (
+          {showStart && (
             <span className="env-combobox-leading env-combobox-value-leading" aria-hidden="true">
-              {singleItem.leading}
+              {singleItem.start}
             </span>
           )}
           {isMultiple &&
@@ -489,9 +489,9 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   // A chip is no widget, so the field's read-only state is the input's alone.
                   render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
                 >
-                  {item?.leading != null && (
+                  {item?.start != null && (
                     <span className="env-combobox-leading" aria-hidden="true">
-                      {item.leading}
+                      {item.start}
                     </span>
                   )}
                   <span className="env-combobox-chip-label">{text}</span>
@@ -609,7 +609,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   </BaseCombobox.GroupLabel>
                   <BaseCombobox.Collection>
                     {(item: Item) => (
-                      <ComboboxOption key={item.value} item={item} leadingSlot={hasLeading} />
+                      <ComboboxOption key={item.value} item={item} startSlot={hasStart} />
                     )}
                   </BaseCombobox.Collection>
                 </BaseCombobox.Group>
@@ -617,7 +617,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                 <ComboboxOption
                   key={(entry as Item).value}
                   item={entry as Item}
-                  leadingSlot={hasLeading}
+                  startSlot={hasStart}
                 />
               )
             }
@@ -628,13 +628,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   );
 }
 
-/** An option row: a check mark slot, optional leading content, the label and its description. */
+/** An option row: a check mark slot, optional start content, the label and its description. */
 function ComboboxOption<Item extends ComboboxItem>({
   item,
-  leadingSlot,
+  startSlot,
 }: {
   item: Item;
-  leadingSlot: boolean;
+  startSlot: boolean;
 }) {
   const descriptionId = useId();
   return (
@@ -652,7 +652,7 @@ function ComboboxOption<Item extends ComboboxItem>({
           <Check />
         </BaseCombobox.ItemIndicator>
       }
-      icon={leadingSlot ? <span className="env-combobox-leading">{item.leading}</span> : undefined}
+      icon={startSlot ? <span className="env-combobox-leading">{item.start}</span> : undefined}
       label={item.label}
       description={
         item.description ? (

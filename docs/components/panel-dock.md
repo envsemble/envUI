@@ -151,7 +151,7 @@ The application owns the panels: which exist, their order and mode, which one is
 - The panels: their order, modes, the active one and their heights, through the callbacks.
 - A PanelDock.Header with a title in each panel, which names it for people who see it.
 - `attention` text for a tab's dot, and a `tooltip` with the full title where labels truncate.
-- The names in the page's language, through EnvUIProvider's `messages.panelDock`: the window controls (`minimize`, `maximize`, `restore`, `close`), the list of tabs (`hidden`), and the tabs' and resize handles' names (`show`, `closePanel`, `resize`). `minimizedLabel`, `showLabel`, `closeLabel` and `resizeLabel` override them for one dock.
+- The names in the page's language, through EnvUIProvider's `messages.panelDock`: the window controls (`minimize`, `maximize`, `restore`, `close`), the list of tabs (`hidden`), and the tabs' and resize handles' names (`show`, `closePanel`, `resize`). `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` override them for one dock.
 
 ## Examples
 
@@ -181,5 +181,5 @@ Below `stackBelow` one panel at a time fills the region, here the active convers
 
 ## Changelog
 
-- **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default.
+- **1.0.0**: One namespace, `PanelDock.Root` and `PanelDock.Header`; PanelDockControls is internal, `controls` is a boolean and the controls' names come from EnvUIProvider's `messages.panelDock`. Minimized panels are tabs, `env-panel-dock-tab` and `data-tabs`, where they were chips, and a header's application buttons are ghost by default. `showLabel`, which names a tab's button, is `openLabel`.
 - **0.6.0**: PanelDock, PanelDockHeader and PanelDockControls: open panels side by side on the bottom inline-end edge, a maximized panel filling the region and minimized panels as chips, with content that stays mounted, resizing from the top edge, `overflow="minimize"`, stacking below `stackBelow`, focus that follows the panels, and labels that localize the dock.

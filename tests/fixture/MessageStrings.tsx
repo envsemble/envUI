@@ -249,7 +249,7 @@ export function MessageStringsFixture() {
           <AccountMenu.Root name="Alex Morgan">
             <AccountMenu.ThemeSubmenu />
             <AccountMenu.OrganizationSubmenu
-              items={[{ id: 'northwind', name: 'Northwind' }]}
+              items={[{ id: 'northwind', label: 'Northwind' }]}
               value="northwind"
               onValueChange={() => {}}
             />

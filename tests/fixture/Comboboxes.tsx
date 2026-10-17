@@ -36,7 +36,7 @@ export const people: ComboboxItem[] = names.map((name) => ({
   value: slug(name),
   label: name,
   description: `${slug(name).replace('-', '.')}@example.com`,
-  leading: <Avatar name={name} size="sm" />,
+  start: <Avatar name={name} size="sm" />,
   disabled: name === 'Jamie Fox',
 }));
 
@@ -44,16 +44,16 @@ const documents: ComboboxGroup[] = [
   {
     label: 'Recent',
     items: [
-      { value: 'quarterly-report', label: 'Quarterly report', leading: <Description /> },
-      { value: 'release-notes', label: 'Release notes', leading: <Description /> },
+      { value: 'quarterly-report', label: 'Quarterly report', start: <Description /> },
+      { value: 'release-notes', label: 'Release notes', start: <Description /> },
     ],
   },
   {
     label: 'Folders',
     items: [
-      { value: 'design-system/tokens', label: 'design-system/tokens', leading: <Folder /> },
-      { value: 'design-system/icons', label: 'design-system/icons', leading: <Folder /> },
-      { value: 'research/interviews', label: 'research/interviews', leading: <Folder /> },
+      { value: 'design-system/tokens', label: 'design-system/tokens', start: <Folder /> },
+      { value: 'design-system/icons', label: 'design-system/icons', start: <Folder /> },
+      { value: 'research/interviews', label: 'research/interviews', start: <Folder /> },
     ],
   },
 ];

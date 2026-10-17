@@ -8,7 +8,7 @@ import * as Menu from '../Menu.js';
 /** One organization in OrganizationSwitcher's menu or AccountMenu's organization submenu. */
 export interface OrganizationOption {
   id: string;
-  name: string;
+  label: string;
   description?: string;
 }
 
@@ -53,7 +53,7 @@ export function OrganizationOptions({
               ) : undefined
             }
           >
-            {item.name}
+            {item.label}
           </Menu.RadioItem>
         ))}
       </Menu.RadioGroup>

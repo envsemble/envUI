@@ -648,7 +648,7 @@
       "category": "Layout & surfaces",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.",
+      "summary": "A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.",
       "aliases": [
         "tile",
         "panel",
@@ -705,13 +705,13 @@
         {
           "name": "ProjectSummary",
           "title": "Project summary",
-          "description": "- Content card (the default): any content, with an optional heading row (`heading`, `meta`), a `description` and `actions` in a strip along its bottom. - Feature card (`layout=\"feature\"`): an icon, a heading, a description and one action, which stack in a narrow card. - Link card (`href`) and button card (`onClick`): the whole card is one native link or button.",
+          "description": "- Content card (the default): any content, with an optional title row (`title`, `meta`), a `description` and `actions` in a strip along its bottom. - Feature card (`layout=\"feature\"`): an icon, a title, a description and one action, which stack in a narrow card. - Link card (`href`) and button card (`onClick`): the whole card is one native link or button.",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
           "name": "ActionStrip",
           "title": "Action strip",
-          "description": "`heading`, `meta` and `actions` make a heading row and a strip of controls along the bottom; `render` makes the card an article.",
+          "description": "`title`, `meta` and `actions` make a title row and a strip of controls along the bottom; `render` makes the card an article.",
           "file": "docs/examples/card/ActionStrip.tsx"
         },
         {
@@ -4285,7 +4285,7 @@
         {
           "name": "CustomFormat",
           "title": "A formatted value",
-          "description": "`format` writes the price as a currency; it rolls up for yearly billing and down for monthly.",
+          "description": "`formatValue` writes the price as a currency; it rolls up for yearly billing and down for monthly.",
           "file": "docs/examples/animated-number/CustomFormat.tsx"
         }
       ],
@@ -4620,7 +4620,7 @@
         {
           "name": "Sizes",
           "title": "Sizes",
-          "description": "Four sizes, from a compact row to a profile page; each is labelled here, with no name beside it.",
+          "description": "Four sizes, from a compact row to a profile page; each is named here, with no name beside it.",
           "file": "docs/examples/avatar/Sizes.tsx"
         },
         {
@@ -8149,7 +8149,7 @@
           "name": "value",
           "type": "string | null",
           "required": true,
-          "description": "The active organization's id, or null before one is chosen; its name shows under the row's label."
+          "description": "The active organization's id, or null before one is chosen; its label shows under the row's own."
         },
         {
           "name": "onValueChange",
@@ -8402,7 +8402,7 @@
           "description": "The number to show; when it changes, the new value rolls in, up as it grows, down as it shrinks."
         },
         {
-          "name": "format",
+          "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
           "default": "the number format of EnvUIProvider's locale, or else the browser's",
@@ -8715,7 +8715,7 @@
           "name": "name",
           "type": "string",
           "required": true,
-          "description": "Person or organization name; the accessible name with label, and the initials fallback."
+          "description": "Person or organization name: the accessible name of a named avatar, and the initials fallback."
         },
         {
           "name": "src",
@@ -8738,11 +8738,11 @@
           "description": "sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem, such as for a profile page."
         },
         {
-          "name": "label",
+          "name": "named",
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Name the avatar as an image by `name`; leave it off when text beside it already names the person."
+          "description": "Names the avatar as an image by `name`. Without it, the avatar is hidden from assistive technology, for when text beside it already names the person."
         }
       ],
       "native": [
@@ -9254,7 +9254,7 @@
     "Card": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A rounded surface that groups content about one subject: a content card with an optional heading row and actions, a feature card with an icon and an action, or one link or button.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, a feature card with an icon and an action, or one link or button.",
       "props": [
         {
           "name": "background",
@@ -9283,29 +9283,29 @@
           "description": ""
         },
         {
-          "name": "heading",
+          "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "A title at the top of the card: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level."
+          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
           "default": "3, or 2 in the feature layout",
-          "description": "The heading's level, for the page's outline; the type stays as the layout sets it."
+          "description": "The title's heading level, for the page's outline; the type stays as the layout sets it."
         },
         {
           "name": "meta",
           "type": "ReactNode",
           "required": false,
-          "description": "A short fact at the end of the heading row, such as when the card was updated."
+          "description": "A short fact at the end of the title row, such as when the card was updated."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A sentence under the heading, in muted text."
+          "description": "A sentence under the title, in muted text."
         },
         {
           "name": "icon",
@@ -9324,7 +9324,7 @@
           "type": "'stack' | 'feature'",
           "required": false,
           "default": "'stack'",
-          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the heading and description, and the actions at the end."
+          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the title and description, and the actions at the end."
         },
         {
           "name": "render",
@@ -10895,8 +10895,8 @@
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
           "required": false,
-          "default": "'primary'",
-          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
+          "default": "'secondary'",
+          "description": "The emphasis, as Button's; secondary by default, as an action beside the dialog's main one."
         },
         {
           "name": "tone",
@@ -13381,6 +13381,12 @@
           "name": "className",
           "type": "string",
           "required": false,
+          "description": "Class of the menu popup, beside env-organization-switcher; ref and style go to the popup too. Without organizations there is no popup."
+        },
+        {
+          "name": "triggerClassName",
+          "type": "string",
+          "required": false,
           "description": "Class of the trigger button, or of the create button without organizations."
         },
         {
@@ -13882,11 +13888,11 @@
           "description": "Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock leaves out, for this dock only."
         },
         {
-          "name": "showLabel",
+          "name": "openLabel",
           "type": "(label: string) => string",
           "required": false,
           "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show",
-          "description": "Accessible name of a tab's button that shows its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
+          "description": "Accessible name of a tab's button that opens its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
         },
         {
           "name": "closeLabel",

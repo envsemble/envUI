@@ -381,7 +381,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
     const options: SelectItem[] = [{ value: 'one', label: 'One' }];
-    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
     const theme: ThemeValue = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
@@ -1273,7 +1273,7 @@ test('the panel dock renders its panels, tabs and header on a server and types i
       onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
       overflow: 'minimize',
       minimizedLabel: 'Hidden panels',
-      showLabel: (label) => 'Show ' + label,
+      openLabel: (label) => 'Show ' + label,
       closeLabel: (label) => 'Close ' + label,
       resizeLabel: (title) => 'Resize ' + title,
     };
@@ -1284,10 +1284,10 @@ test('the panel dock renders its panels, tabs and header on a server and types i
         </PanelDock.Root>
       </EnvUIProvider>
     );
-    // @ts-expect-error A dock names its tabs' buttons with showLabel; restoreLabel is not a prop.
-    const earlierName = <PanelDock.Root {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error A dock names its tabs' buttons with openLabel; showLabel, its 0.x name, is not a prop.
+    const earlierName = <PanelDock.Root {...dockProps} showLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
     // @ts-expect-error A dock's tab labels are functions of each tab's text.
-    const plainRestore = <PanelDock.Root {...dockProps} showLabel="Show">{() => null}</PanelDock.Root>;
+    const plainRestore = <PanelDock.Root {...dockProps} openLabel="Show">{() => null}</PanelDock.Root>;
     // @ts-expect-error A dock scrolls or minimizes what does not fit.
     const unknownOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
     // @ts-expect-error A panel is open, minimized or maximized.

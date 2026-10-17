@@ -38,14 +38,14 @@ import { Card, type CardContentProps } from '@envsemble/envui';
 
 type ProjectSummaryProps = Omit<
   CardContentProps,
-  'title' | 'heading' | 'description' | 'render' | 'children'
+  'title' | 'description' | 'render' | 'children'
 > & {
   title: string;
   description: string;
 };
 
 export function ProjectSummary({ title, description, ...props }: ProjectSummaryProps) {
-  return <Card {...props} render={<article />} heading={title} description={description} />;
+  return <Card {...props} render={<article />} title={title} description={description} />;
 }
 ```
 
