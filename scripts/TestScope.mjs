@@ -34,6 +34,8 @@ export const overrides = {
     'DataDisplay.spec.ts': ['components/list', 'components/table', 'components/card'],
     'DenseContent.spec.ts': ['components/code', 'components/menu', 'components/tabs'],
     'Direction.spec.ts': ['EnvUIProvider'],
+    // The app frames the components replace hand-built layouts in.
+    'FrameNeeds.spec.ts': ['AppShell', 'Sidebar', 'WindowFrame', 'Page', 'PageHeader'],
     'Forms.spec.ts': [
       'components/text-field',
       'components/checkbox',
@@ -54,6 +56,10 @@ export const overrides = {
       'ConfirmButton',
       'CopyButton',
       'ThemeToggle',
+      'AccountMenu',
+      'ConfirmDialog',
+      'SearchTrigger',
+      'SplitPane',
     ],
     'InputAffixes.spec.ts': ['TextField', 'SearchField'],
     'Navigation.spec.ts': ['components/nav-list', 'Tooltip'],
@@ -65,13 +71,32 @@ export const overrides = {
       'components/command-palette',
     ],
     'ResponsiveHooks.spec.ts': ['useMediaQuery', 'useBreakpoint', 'foundations/responsive'],
-    'Scale.spec.ts': ['foundations/scale'],
+    // Its centre-line test lines a sidebar's rail icons up with the sidebar toggle.
+    'Scale.spec.ts': ['foundations/scale', 'AppShell', 'Sidebar'],
     'SegmentedControl.spec.ts': ['SegmentedControl'],
     'Shell.spec.ts': ['components/app-shell'],
     'Spacing.spec.ts': ['foundations/spacing', 'Stack'],
     'ThemeContrast.spec.ts': ['Theme', 'ThemePreferenceProvider'],
     'ThemePreference.spec.ts': ['Theme', 'ThemePreferenceProvider'],
     'TouchFields.spec.ts': ['components/text-field', 'Composer', 'foundations/scale'],
+  },
+  /**
+   * Specs and public names that work in progress adds. Until one exists, the overrides may name it
+   * and the selection skips it; once all exist, empty these lists.
+   */
+  planned: {
+    specs: ['FrameNeeds.spec.ts'],
+    names: [
+      'AccountMenu',
+      'ConfirmDialog',
+      'DescriptionList',
+      'ListDetail',
+      'Page',
+      'PageHeader',
+      'SearchTrigger',
+      'Sidebar',
+      'SplitPane',
+    ],
   },
   /**
    * Library files that most components depend on. A change to one runs the shared set rather than
@@ -481,7 +506,7 @@ export function buildIndex(root = repositoryRoot) {
     for (const subject of overrides.specSubjects[name] ?? []) {
       if (pages.has(subject)) primaryPages.add(subject);
       else if (publicNames.has(subject)) primary.add(subject);
-      else
+      else if (!overrides.planned.names.includes(subject))
         throw new Error(
           `overrides.specSubjects of ${name} names ${subject}, which is neither a page nor a public name`,
         );
