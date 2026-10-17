@@ -435,7 +435,12 @@ export const pairs: readonly ContrastPair[] = merged([
   ...text(
     '--env-color-fg-on-selected',
     [selected, selectedHover, selectedPressed],
-    'Selected navigation items, tabs, tree rows and Select options, and the bar at the start of a selected table row',
+    'Selected navigation items, tabs, tree rows and Select options, the bar at the start of a selected table row, and links and text buttons in a selected table row, at rest, on hover and on press',
+  ),
+  ...text(
+    '--env-color-fg-danger',
+    [selected, selectedHover, selectedPressed],
+    'Danger text buttons in a selected table row, which keep the danger color, at rest, under the pointer or holding focus, and pressed',
   ),
   ...text(
     '--env-color-fg-default',

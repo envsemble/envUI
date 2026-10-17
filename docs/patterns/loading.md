@@ -121,7 +121,7 @@ Loading never moves focus. A pending button stays where it is in the tab order, 
 
 ### Page progress
 
-Choosing a page in the sidebar starts loading it: the page on screen stays, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, and focus moves to `AppShell.Main`, which takes focus without being a tab stop. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`; an application renders it at its root.
+Choosing a page in the sidebar starts loading it: the page on screen stays, and stays selected in the sidebar, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the sidebar selects it, and focus moves to `AppShell.Main`, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`; an application renders it at its root.
 
 ```tsx example=PageProgress
 

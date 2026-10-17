@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, List, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, EmptyState, List, Menu, Stack, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Close } from '@envsemble/envui/icons/Close';
+import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const taskCount = (count: number) => (count === 1 ? '1 task' : `${count} tasks`);
 
@@ -10,8 +11,8 @@ export default function ActiveFilters() {
   const tokens = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
   const addButton = () => bar.current?.querySelector<HTMLElement>('[aria-haspopup="menu"]');
-  // A removed token takes its button with it, so focus moves to the next token, or to Add filter
-  // once none is left.
+  // A removed token takes its button with it, so focus moves to the next token, to the previous one
+  // when it was the last, or to Add filter once none is left.
   const focusNext = useRef<(() => void) | null>(null);
   useEffect(() => {
     focusNext.current?.();
@@ -20,6 +21,17 @@ export default function ActiveFilters() {
 
   const filters = applied.map((id) => available.find((filter) => filter.id === id)!);
   const shown = tasks.filter((task) => filters.every((filter) => filter.test(task)));
+  // A field takes one value at a time, so the menu offers only the fields not yet filtered.
+  const fieldOf = (id: string) => id.slice(0, id.indexOf(':'));
+  const offered = available.filter(
+    (filter) => !applied.some((id) => fieldOf(id) === fieldOf(filter.id)),
+  );
+
+  const clear = () => {
+    setApplied([]);
+    // Clear filters goes with the filters, so focus moves to Add filter.
+    focusNext.current = () => addButton()?.focus();
+  };
 
   const remove = (id: string) => {
     const index = applied.indexOf(id);
@@ -65,27 +77,19 @@ export default function ActiveFilters() {
             </Button>
           }
         >
-          {available
-            .filter((filter) => !applied.includes(filter.id))
-            .map((filter) => (
-              <Menu.Item
-                key={filter.id}
-                onClick={() => setApplied((current) => [...current, filter.id])}
-              >
-                {filter.label}
-              </Menu.Item>
-            ))}
+          {offered.map((filter) => (
+            <Menu.Item
+              key={filter.id}
+              onClick={() => setApplied((current) => [...current, filter.id])}
+            >
+              {filter.label}
+            </Menu.Item>
+          ))}
+          {/* With every field filtered, the menu says so rather than opening empty. */}
+          {offered.length === 0 && <Menu.Item disabled>Every filter is in use</Menu.Item>}
         </Menu.Root>
-        {applied.length > 1 && (
-          <Button
-            variant="text"
-            size="sm"
-            onClick={() => {
-              setApplied([]);
-              // The button goes with the filters, so focus moves to Add filter.
-              focusNext.current = () => addButton()?.focus();
-            }}
-          >
+        {applied.length > 0 && (
+          <Button variant="text" size="sm" onClick={clear}>
             Clear filters
           </Button>
         )}
@@ -93,16 +97,29 @@ export default function ActiveFilters() {
       <Text role="status" variant="body-sm" emphasis="muted">
         {taskCount(shown.length)}
       </Text>
-      <List.Root aria-label="Tasks">
-        {shown.map((task) => (
-          <List.Item
-            key={task.name}
-            label={task.name}
-            description={`${task.assignee} · ${task.open ? 'Open' : 'Done'}`}
-          />
-        ))}
-        {shown.length === 0 && <List.Item label="No tasks match these filters." />}
-      </List.Root>
+      {shown.length > 0 ? (
+        <List.Root aria-label="Tasks">
+          {shown.map((task) => (
+            <List.Item
+              key={task.name}
+              label={task.name}
+              description={`${task.assignee} · ${task.open ? 'Open' : 'Done'}`}
+            />
+          ))}
+        </List.Root>
+      ) : (
+        // The filters stay above the empty state, so people can remove one instead.
+        <EmptyState
+          icon={<SearchOff />}
+          title="No matching tasks"
+          description={`No tasks match ${filters.map((filter) => filter.label).join(' and ')}.`}
+          action={
+            <Button variant="secondary" onClick={clear}>
+              Clear filters
+            </Button>
+          }
+        />
+      )}
     </Stack>
   );
 }

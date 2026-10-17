@@ -104,8 +104,15 @@
 .env-table-row[data-interactive]:is(:hover, :focus-within) {
   background: var(--env-color-bg-neutral-subtle-hover);
 }
-/* Selected rows take the navigation selection, with a bar at the start of the row. */
+/* Selected rows take the navigation selection, with a bar at the start of the row. Links and text
+   buttons in them take the selection's text color at rest, on hover and on press, also while the row
+   is under the pointer or holds focus: the link blue falls below 4.5:1 on the selection fill in the
+   light theme. The row sets the link colors they read, so icon-only text buttons and links in rich
+   text follow too; danger text buttons keep the danger color, which holds 4.5:1 on the selection. */
 .env-table-row[aria-selected='true'] {
+  --env-color-fg-link: var(--env-color-fg-on-selected);
+  --env-color-fg-link-hover: var(--env-color-fg-on-selected);
+  --env-color-fg-link-pressed: var(--env-color-fg-on-selected);
   background: var(--env-color-bg-selected);
 }
 .env-table-row[aria-selected='true'][data-interactive]:is(:hover, :focus-within) {

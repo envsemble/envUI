@@ -155,7 +155,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ### Quick open
 
-The SearchTrigger opens a CommandPalette of pages, projects, documents and people, also with its shortcut. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.
+The SearchTrigger opens a CommandPalette of pages, projects, documents and people. In an application its shortcut opens it too; here it takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.
 
 ```tsx example=QuickOpen
 
