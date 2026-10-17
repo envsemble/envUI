@@ -64,10 +64,15 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 /* Navigation parts named after their components, and modifiers that became attributes. */
 .env-tabs-list > .env-tab:not([data-active]),
 .env-tab-panel,
-.env-document-tab:hover .env-document-tab-close,
+.env-document-tab:hover .env-document-tab-label,
 .env-breadcrumb + .env-breadcrumb .env-breadcrumb-link,
 .env-tree-row .env-tree-detail,
 .env-navigation-item.env-navigation-icon-only .env-navigation-trailing,
 .env-menu-item-trailing {
   color: inherit;
+}
+/* A tree's row height follows its rows' class; the 1.0 tokens keep their names. */
+.files .env-tree {
+  --env-tree-row-height: 2rem;
+  --env-tree-row-padding-block-sm: 0.5rem;
 }

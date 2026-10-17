@@ -1,35 +1,13 @@
 /* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
-   PopupSurface, which draws the same look through env-popup; the theme, positioner, surface and
-   motion rules below stay for DatePicker, which borrows env-popover until it moves onto
-   PopupSurface too. The layout and the widths are Popover's and HoverCard's own. */
-.env-popover-theme {
-  display: contents;
-}
-.env-popover-positioner {
-  z-index: var(--env-z-popover);
-  outline: none;
-}
+   PopupSurface, which draws the look, the positioner's layer and the motion through env-popup. The
+   layout and the widths are Popover's and HoverCard's own. */
 .env-popover,
 .env-hover-card {
-  box-sizing: border-box;
   inline-size: min(20rem, calc(100vw - 2rem));
-  max-block-size: var(--available-height, 80vh);
   display: grid;
   align-content: start;
   gap: var(--env-space-3);
   padding: var(--env-space-5);
-  overflow-y: auto;
-  border: 0.0625rem solid var(--env-elevation-2-border);
-  border-radius: var(--env-radius-surface);
-  background: var(--env-color-bg-popup);
-  box-shadow: var(--env-elevation-2-shadow);
-  color: var(--env-color-fg-default);
-  font: var(--env-type-body);
-  overflow-wrap: anywhere;
-  outline: none;
-  /* Motion: it fades in, below, and grows from the origin its positioner sets. */
-  transform-origin: var(--transform-origin, center);
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-popover[data-width='lg'],
 .env-hover-card[data-width='lg'] {
@@ -38,30 +16,4 @@
 .env-popover-title {
   margin: 0;
   font: var(--env-type-h2);
-}
-
-/* Motion: a popover fades in and grows from its trigger. Movement only without a reduced-motion
-   preference. Base UI's positioner sets the origin. */
-.env-popover[data-starting-style],
-.env-popover[data-ending-style] {
-  opacity: 0;
-}
-.env-popover[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .env-popover {
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
-  }
-  .env-popover[data-starting-style],
-  .env-popover[data-ending-style] {
-    transform: scale(0.96);
-  }
-  .env-popover[data-ending-style] {
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease-exit);
-  }
 }

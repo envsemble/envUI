@@ -41,7 +41,7 @@ components:
 
 ## Overview
 
-DocumentTabs is the strip of open documents above an editor: one tab per document, the active one marked, each with a close button. People switch with a click or the arrow keys, close with the button, a middle click or <kbd>Delete</kbd>, keep a preview tab with a double click, and, with `onCloseAll`, close one or all tabs from a context menu. The strip renders only the tabs: the application owns the open documents, the active one and its panel.
+DocumentTabs is the strip of open documents above an editor: one tab per document, the active one marked, each with a close button. People switch with a click or the arrow keys, close with the button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, or from a tab's context menu, keep a preview tab with a double click, and, with `onCloseAll`, close all tabs from that menu too. The strip renders only the tabs: the application owns the open documents, the active one and its panel.
 
 ```tsx example=OpenDocuments
 
@@ -54,7 +54,7 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 3. **Tab**: an optional `icon` and the `label`; its `title` shows as a native tooltip, the label by default.
 4. **Active indicator**: the active tab's fill and a 0.125 rem selection-blue line along its bottom edge.
 5. **Close button**: a 1.5 rem round CloseButton, a pointer's affordance with `closeLabel` as its tooltip, shown on the active tab, on hover and with keyboard focus.
-6. **Context menu** (with `onCloseAll`): a compact menu named `contextMenuLabel` (Tab actions), with the tab's close item and `closeAllLabel` (Close all tabs).
+6. **Context menu**: a compact menu named `contextMenuLabel` (Tab actions), with the tab's close item and, with `onCloseAll`, `closeAllLabel` (Close all tabs).
 
 ## Variants and sizes
 
@@ -67,9 +67,9 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 
 - **Switching**: a click, the arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> call `onValueChange` with the tab's `id`; the arrow keys wrap at the ends and follow the reading direction, EnvUIProvider's `dir` or the direction at the strip. The active tab scrolls into view within the strip when it changes.
 - **Hover and focus**: a tab takes a state layer on hover and press, and keyboard focus shows a focus outline.
-- **Closing**: the close button, a middle click (which doesn't activate the tab) and <kbd>Delete</kbd> on the focused tab call `onClose`. When the focused tab closes, however it closes, focus moves to the tab that becomes active.
+- **Closing**: the close button, a middle click (which doesn't activate the tab), <kbd>Delete</kbd> or <kbd>Backspace</kbd> on the focused tab and Close in its context menu call `onClose`. When the focused tab closes, however it closes, focus moves to the tab that becomes active.
 - **Pinning**: a double click on a tab, outside its close button, calls `onPin`, such as to keep a preview tab.
-- **Context menu**: with `onCloseAll`, a right click, a long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> on the strip opens a compact context menu with Close all tabs; on a tab, it first offers closing that tab. Close all tabs is unavailable while the strip is empty. Without `onCloseAll`, the strip keeps the browser's context menu.
+- **Context menu**: a right click, a long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> on a tab opens a compact context menu that offers closing that tab, so the keyboard can close a tab where <kbd>Delete</kbd> is missing. With `onCloseAll`, the menu also offers Close all tabs, and the strip around the tabs opens it too; Close all tabs is unavailable while the strip is empty. Without `onCloseAll`, the strip around the tabs opens no menu.
 - **Scrolling**: a strip whose tabs overflow scrolls with the wheel, touch or the keyboard, without a scrollbar; the wheel turned down scrolls toward the end, the left in right-to-left text.
 - **Application keys**: keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Ctrl</kbd>+<kbd>W</kbd> bound to `onClose`.
 
@@ -103,14 +103,14 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 | <kbd>←</kbd>, <kbd>→</kbd>                         | Moves to the previous or next tab and activates it, wrapping at the ends, in the reading direction.             |
 | <kbd>Home</kbd>, <kbd>End</kbd>                    | Moves to the first or last tab and activates it.                                                                |
 | <kbd>Enter</kbd> or <kbd>Space</kbd>               | Activates the focused tab.                                                                                      |
-| <kbd>Delete</kbd>                                  | Closes the focused tab; focus moves to the tab that becomes active.                                             |
-| <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> | With `onCloseAll`, opens the context menu for the focused tab.                                                  |
+| <kbd>Delete</kbd> or <kbd>Backspace</kbd>          | Closes the focused tab; focus moves to the tab that becomes active.                                             |
+| <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> | Opens the context menu for the focused tab.                                                                     |
 
 ### envUI provides
 
 - A `tablist` of `tab`s named by their labels, with `aria-selected` on the active tab and `aria-controls` pointing at `panelId`.
 - A roving tab stop on the active tab, focus kept on a tab as tabs close, and the active tab scrolled into view.
-- Tabs built on Base UI Tabs, each beside its close button rather than around it: the close button is hidden from assistive technology and out of the tab order, and each tab announces <kbd>Delete</kbd>, which closes it, through `aria-keyshortcuts`; the context menu closes it too.
+- Tabs built on Base UI Tabs, each beside its close button rather than around it: the close button is hidden from assistive technology and out of the tab order, and each tab announces <kbd>Delete</kbd> and <kbd>Backspace</kbd>, which close it, through `aria-keyshortcuts`; the context menu closes it too.
 - The context menu's keys and its return of focus, as ContextMenu provides them.
 - A focus outline, and touch-sized tabs with close buttons that always show on coarse pointers.
 
@@ -132,6 +132,6 @@ In a narrow pane the strip scrolls sideways, and the active tab stays in view.
 
 ## Changelog
 
-- **1.0.0**: Rebuilt on Base UI Tabs: each tab sits beside its close button, a CloseButton hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete through `aria-keyshortcuts`. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`.
+- **1.0.0**: Rebuilt on Base UI Tabs: each tab sits beside its close button, a CloseButton hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`.
 - **0.6.0**: `onCloseAll`: the strip and each tab open a compact context menu with Close all tabs, and on a tab, closing that tab; focus moves to the tab that becomes active.
 - **0.5.0**: DocumentTabs, with preview tabs, pinning and closing.

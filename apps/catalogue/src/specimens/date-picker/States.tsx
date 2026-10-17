@@ -10,7 +10,12 @@ export default function States() {
           <DatePicker label="Ends" required error="Choose a day after the start." />
         </Specimen>
         <Specimen title="Read only" caption="Shows the value; the calendar doesn't open.">
-          <DatePicker label="Created" defaultValue="2026-09-30T16:45" withTime readOnly />
+          <DatePicker
+            label="Created"
+            defaultValue="2026-09-30T16:45"
+            granularity="minute"
+            readOnly
+          />
         </Specimen>
         <Specimen title="Disabled">
           <DatePicker label="Archived on" defaultValue="2026-08-14" disabled />

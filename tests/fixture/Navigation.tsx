@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Theme, Stack, NavList, Icon, Tooltip, type ThemeValue } from '@envsemble/envui';
+import {
+  Badge,
+  CounterBadge,
+  Theme,
+  Stack,
+  NavList,
+  Icon,
+  Tooltip,
+  type ThemeValue,
+} from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -77,6 +86,30 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
             onClick={() => setSelected('settings')}
           />
         </Tooltip>
+      </Stack>
+      <Stack direction="row" wrap align="center" gap={4} data-testid="named-end-navigation">
+        <NavList.Item
+          iconOnly
+          icon={<Home />}
+          aria-label="Count"
+          end={<CounterBadge value={3} />}
+        />
+        <NavList.Item iconOnly icon={<Home />} aria-label="Number" end={7} />
+        <NavList.Item
+          iconOnly
+          icon={<Home />}
+          aria-label="Unread"
+          end={<CounterBadge value={4} aria-label="4 unread" />}
+        />
+        <NavList.Item iconOnly icon={<Home />} aria-label="Labs" end={<Badge>Beta</Badge>} />
+        <NavList.Item iconOnly icon={<Home />} aria-label="Inbox" end="New" />
+        <NavList.Item
+          icon={<Home />}
+          aria-label="Reports"
+          end={<Badge aria-label="Recently updated">Updated</Badge>}
+        >
+          Reports
+        </NavList.Item>
       </Stack>
     </Theme>
   );

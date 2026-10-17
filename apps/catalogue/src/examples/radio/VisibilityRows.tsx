@@ -7,18 +7,18 @@ export default function VisibilityRows() {
     // As wide as a form column.
     <div style={{ inlineSize: 'min(100%, 28rem)' }}>
       <RadioGroup
-        variant="rows"
+        orientation="vertical"
         label="Visibility"
         name="visibility"
         value={visibility}
         onValueChange={setVisibility}
       >
-        <Radio value="team" label="Team" detail="Everyone at Northwind can open it." />
-        <Radio value="private" label="Private" detail="Only the people you invite." />
+        <Radio value="team" label="Team" description="Everyone at Northwind can open it." />
+        <Radio value="private" label="Private" description="Only the people you invite." />
         <Radio
           value="public"
           label="Public"
-          detail="Your administrator has turned off public projects."
+          description="Your administrator has turned off public projects."
           disabled
         />
       </RadioGroup>

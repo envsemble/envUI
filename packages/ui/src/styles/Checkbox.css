@@ -1,12 +1,5 @@
-/* Selection reuses tonal controls and the grouped-row corner pattern. */
-@media (pointer: coarse) {
-  .env-choice-control {
-    min-height: var(--env-control-height-touch);
-  }
-}
-
-/* Native radio and selectable-row layout, with shared state formulas. */
-.env-choice-control {
+/* Checkbox: a native checkbox drawn as a box with a check mark, inside its label. */
+.env-checkbox {
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -14,17 +7,23 @@
   align-items: center;
   gap: var(--env-space-3);
   font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
   color: var(--env-color-fg-default);
   cursor: pointer;
 }
-.env-choice-control > span {
+.env-checkbox > span {
   min-inline-size: 0;
 }
-.env-choice-control:has(input:disabled) {
+.env-checkbox:has(input:disabled) {
   cursor: default;
 }
-.env-choice-control:has(input:disabled) > * {
+.env-checkbox:has(input:disabled) > * {
   opacity: var(--env-state-disabled-opacity);
+}
+@media (pointer: coarse) {
+  .env-checkbox {
+    min-height: var(--env-control-height-touch);
+  }
 }
 
 /* Checkbox geometry is distinct from radio; input retains native semantics. */
@@ -35,7 +34,7 @@
   height: 1.125rem;
   flex: 0 0 auto;
 }
-.env-checkbox-control {
+.env-checkbox-input {
   appearance: none;
   box-sizing: border-box;
   width: 100%;
@@ -46,7 +45,7 @@
   background: transparent;
   cursor: inherit;
 }
-.env-checkbox-mark.env-icon {
+.env-checkbox-indicator.env-icon {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -56,20 +55,20 @@
   pointer-events: none;
   visibility: hidden;
 }
-.env-checkbox-control:is(:checked, :indeterminate) {
+.env-checkbox-input:is(:checked, :indeterminate) {
   border-color: transparent;
   background: var(--env-color-bg-brand-emphasis);
 }
-.env-checkbox-control:checked + .env-checkbox-mark {
+.env-checkbox-input:checked + .env-checkbox-indicator {
   visibility: visible;
 }
-.env-checkbox-control:indeterminate + .env-checkbox-mark {
+.env-checkbox-input:indeterminate + .env-checkbox-indicator {
   visibility: visible;
 }
-.env-checkbox-control:indeterminate + .env-checkbox-mark svg {
+.env-checkbox-input:indeterminate + .env-checkbox-indicator svg {
   display: none;
 }
-.env-checkbox-control:indeterminate + .env-checkbox-mark::before {
+.env-checkbox-input:indeterminate + .env-checkbox-indicator::before {
   content: '';
   position: absolute;
   inset-inline: 0.25rem;
@@ -77,48 +76,38 @@
   height: 0.125rem;
   background: currentColor;
 }
-.env-checkbox-control:hover:not(:disabled) {
+.env-checkbox-input:hover:not(:disabled) {
   border-color: var(--env-color-fg-muted-hover);
 }
-.env-checkbox-control:active:not(:disabled) {
+.env-checkbox-input:active:not(:disabled) {
   border-color: var(--env-color-fg-muted-pressed);
 }
-.env-checkbox-control:is(:checked, :indeterminate):hover:not(:disabled) {
+.env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
   background: var(--env-color-bg-brand-emphasis-hover);
   border-color: transparent;
 }
-.env-checkbox-control:is(:checked, :indeterminate):active:not(:disabled) {
+.env-checkbox-input:is(:checked, :indeterminate):active:not(:disabled) {
   background: var(--env-color-bg-brand-emphasis-pressed);
   border-color: transparent;
 }
-.env-checkbox-control:focus-visible {
+.env-checkbox-input:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.env-checkbox-mark {
+.env-checkbox-indicator {
   box-sizing: border-box;
 }
 
-.env-choice-control:has(.env-checkbox-control) {
-  color: var(--env-color-fg-default);
-}
-.env-choice-control:has(.env-switch-control) {
-  color: var(--env-color-fg-default);
-}
-.env-choice-control:has(.env-radio-control) {
-  color: var(--env-color-fg-default);
-}
 @media (prefers-reduced-motion: no-preference) {
   .env-checkbox-box {
     transition-property: background-color, color, border-color, transform;
     transition-duration: var(--env-motion-duration-fast);
     transition-timing-function: var(--env-motion-ease);
   }
-  .env-choice-control:active:not(:has(input:disabled))
-    :is(.env-checkbox-box, .env-radio-control, .env-switch-control) {
+  .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
     transform: scale(0.9);
   }
-  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+  .env-checkbox-input:is(:checked, :indeterminate) + .env-checkbox-indicator {
     animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }
@@ -127,17 +116,17 @@
    system’s selection colors, a switch draws its track and thumb in system colors, and a chosen
    radio row is outlined; the radio itself is the system’s. */
 @media (forced-colors: active) {
-  .env-checkbox-control:is(:checked, :indeterminate) {
+  .env-checkbox-input:is(:checked, :indeterminate) {
     border-color: Highlight;
     background-color: Highlight;
   }
-  .env-checkbox-control:is(:checked, :indeterminate) + .env-checkbox-mark {
+  .env-checkbox-input:is(:checked, :indeterminate) + .env-checkbox-indicator {
     color: HighlightText;
   }
-  .env-checkbox-control:disabled {
+  .env-checkbox-input:disabled {
     border-color: GrayText;
   }
-  .env-checkbox-control:is(:checked, :indeterminate):disabled {
+  .env-checkbox-input:is(:checked, :indeterminate):disabled {
     border-color: GrayText;
     background-color: GrayText;
   }

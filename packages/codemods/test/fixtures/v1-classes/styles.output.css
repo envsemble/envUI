@@ -34,7 +34,7 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
   gap: 4px;
 }
 
-.env-date-picker-well,
+.env-date-picker-control,
 .env-drop-zone-border,
 .env-disclosure > .env-disclosure-panel,
 .env-diff-stat-additions,
@@ -64,10 +64,15 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 /* Navigation parts named after their components, and modifiers that became attributes. */
 .env-tabs-list > .env-tabs-tab:not([data-active]),
 .env-tabs-panel,
-.env-document-tabs-tab:hover .env-document-tabs-close,
+.env-document-tabs-tab:hover .env-document-tabs-tab-label,
 .env-breadcrumbs-item + .env-breadcrumbs-item .env-breadcrumbs-link,
 .env-tree-item .env-tree-description,
 .env-nav-list-item.env-nav-list-item:where([data-icon-only]) .env-nav-list-item-end,
 .env-menu-item-end {
   color: inherit;
+}
+/* A tree's row height follows its rows' class; the 1.0 tokens keep their names. */
+.files .env-tree {
+  --env-tree-item-height: 2rem;
+  --env-tree-row-padding-block-sm: 0.5rem;
 }

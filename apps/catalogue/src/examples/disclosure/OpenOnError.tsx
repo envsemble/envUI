@@ -21,7 +21,7 @@ export default function OpenOnError() {
         <Disclosure title="Advanced settings" open={advanced} onOpenChange={setAdvanced}>
           <TextField
             label="Custom domain"
-            hint="Leave empty to use the default address."
+            description="Leave empty to use the default address."
             value={domain}
             error={error}
             onChange={(event) => setDomain(event.target.value)}

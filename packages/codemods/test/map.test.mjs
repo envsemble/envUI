@@ -119,12 +119,39 @@ test('validateMap reports malformed maps', () => {
     problems({ classes: { 'env-c': 'env-d' }, classesWithin: { 'env-a': { 'env-b': 'env-c' } } }),
     /classes renames again/,
   );
+  assert.match(problems({ classReports: { 'env-a': {} } }), /needs a "report"/);
+  assert.match(
+    problems({ classes: { 'env-a': 'env-b' }, classReports: { 'env-a': { report: 'Use x.' } } }),
+    /also renamed/,
+  );
+  assert.match(
+    problems({
+      classes: { 'env-a': 'env-b' },
+      classReports: { 'env-c': { within: 'env-a', report: 'Use x.' } },
+    }),
+    /1\.0 names/,
+  );
+});
+
+test('a reported class is kept by the class renames that a shorter entry would make', () => {
+  const { classes, classReports } = loadMap();
+  assert.equal(
+    renameClass('env-organization-menu-radio-dot', classes),
+    'env-organization-menu-radio-dot',
+  );
+  assert.equal(
+    renameClass('env-organization-menu-option', classes),
+    'env-organization-switcher-option',
+  );
+  assert.ok(classReports.some((rule) => rule.within === 'env-document-tabs-tab'));
 });
 
 test('a class inside an ancestor takes its own name in the ancestor selector', () => {
   const { classesWithin } = loadMap();
   assert.deepEqual(classesWithin, [
     { ancestor: 'env-diff-count', from: 'env-counter-label', to: 'env-diff-stat-label' },
+    { ancestor: 'env-combobox', from: 'env-dropdown-options', to: 'env-combobox-popup' },
+    { ancestor: 'env-combobox', from: 'env-dropdown-list', to: 'env-combobox-list' },
   ]);
 });
 

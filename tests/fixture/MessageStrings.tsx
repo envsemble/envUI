@@ -1,8 +1,12 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
+  Calendar,
+  CloseButton,
+  ColorPicker,
+  Combobox,
+  Composer,
   Alert,
   Button,
-  CloseButton,
   CommandPalette,
   Drawer,
   LoadingState,
@@ -12,9 +16,12 @@ import {
   useToast,
   ConfirmButton,
   CopyButton,
+  DatePicker,
   Dialog,
   EnvUIProvider,
+  SearchField,
   Stack,
+  Textarea,
   ThemePreferenceProvider,
   ThemeToggle,
   type EnvUIMessagesInput,
@@ -163,6 +170,26 @@ export function MessageStringsFixture() {
           <Dialog title="Settings" defaultOpen modal={false} disablePointerDismissal>
             Content
           </Dialog>
+          {/* Forms: the clear buttons, chip removes, the resize edge, the calendar's month
+              buttons, the send button and the color picker's sliders and field. */}
+          <SearchField label="Search" defaultValue="Northwind" />
+          <Textarea label="Notes" />
+          <Combobox
+            label="Owner"
+            clearable
+            items={[{ value: 'alex', label: 'Alex Morgan' }]}
+            defaultValue="alex"
+          />
+          <Combobox
+            multiple
+            label="Reviewers"
+            items={[{ value: 'sam', label: 'Sam Lee' }]}
+            defaultValue={['sam']}
+          />
+          <DatePicker label="Due" clearable defaultValue="2026-10-14" />
+          <Calendar aria-label="Planning" defaultValue="2026-10-14" />
+          <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
+          <ColorPicker label="Accent" defaultValue="#336699" />
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>

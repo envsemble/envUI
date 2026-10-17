@@ -18,7 +18,7 @@ export default function ProjectColorForm() {
           label="Project color"
           name="color"
           defaultValue="#6b4fa3"
-          hint="Shown beside the project in lists."
+          description="Shown beside the project in lists."
         />
         <Stack direction="row" wrap align="center" gap={4}>
           <Button type="submit">Apply color</Button>

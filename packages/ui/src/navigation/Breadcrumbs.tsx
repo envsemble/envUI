@@ -73,10 +73,12 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
       {item.label}
     </span>
   );
+  // A label cut short that is no link takes keyboard focus, so the keyboard can show it in full.
+  const focusable = truncated ? 0 : undefined;
   let crumb: ReactElement;
   if (current) {
     crumb = (
-      <span className="env-breadcrumbs-current" aria-current="page">
+      <span className="env-breadcrumbs-current" aria-current="page" tabIndex={focusable}>
         {content}
       </span>
     );
@@ -91,9 +93,13 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
       </ActionElement>
     );
   } else {
-    crumb = <span className="env-breadcrumbs-text">{content}</span>;
+    crumb = (
+      <span className="env-breadcrumbs-text" tabIndex={focusable}>
+        {content}
+      </span>
+    );
   }
-  // A label cut short shows in full in a tooltip, on hover and, for a link, on keyboard focus.
+  // A label cut short shows in full in a tooltip, on hover and on keyboard focus.
   // The tooltip stays in place while the label fits, so the element and its focus are kept.
   return (
     <BaseTooltip.Root disabled={!truncated}>

@@ -8,7 +8,7 @@ export default function EditDescription() {
   return (
     <MarkdownEditor
       label="Description"
-      hint="Markdown: headings, lists, links and code."
+      description="Markdown: headings, lists, links and code."
       sizing="content"
       rows={4}
       value={description}

@@ -7,7 +7,7 @@ export default function ProjectName() {
       <TextField
         label="Project name"
         name="project"
-        hint="A name your team will know at a glance."
+        description="A name your team will know at a glance."
       />
     </Stack>
   );

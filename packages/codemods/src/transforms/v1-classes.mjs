@@ -171,6 +171,30 @@ export function renameInStyles(
   return renameTokens(renamed, tokens, report);
 }
 
+/**
+ * Reports the classes and selectors that the map's classReports list, in renamed text: a class 1.0
+ * neither keeps nor renames, in a selector or a class string, and in a selector only, a class
+ * inside another that no longer holds it.
+ */
+export function reportClasses(text, classReports, report, selectors = true) {
+  for (const rule of classReports) {
+    if (rule.within && !selectors) continue;
+    const pattern = rule.within
+      ? new RegExp(
+          String.raw`\.${rule.within}(?![\w-])[^{},;+~]*?[\s>][^{},;+~]*?\.${rule.name}(?![\w-])`,
+          'g',
+        )
+      : new RegExp(String.raw`(?<![\w-])${rule.name}(?:-[a-z0-9_-]*)?(?![\w-])`, 'g');
+    for (const match of text.matchAll(pattern))
+      if (rule.within)
+        report(
+          match.index + match[0].length - rule.name.length,
+          `.${rule.name} inside .${rule.within} matches nothing in 1.0: ${rule.report}`,
+        );
+      else report(match.index, `${match[0]} has no 1.0 class: ${rule.report}`);
+  }
+}
+
 const renameCustomProperties = (text, classes, tokens, tokenNames, report) =>
   renameTokens(
     text.replace(customProperty, (match, name, offset) =>
@@ -210,7 +234,9 @@ const renameClassTokens = (text, classes, atStart) =>
   );
 
 export default function transform(file, api, options = {}) {
-  const { classes, classAttributes, classesWithin, tokens, tokenNames } = loadMap(options.map);
+  const { classes, classAttributes, classesWithin, classReports, tokens, tokenNames } = loadMap(
+    options.map,
+  );
   if (!file.source.includes('env-') && !file.source.includes('--')) return undefined;
   const reporter = createReporter(api);
   /** Reports at the line of `offset` in `text`, which starts on line `first`. */
@@ -229,6 +255,7 @@ export default function transform(file, api, options = {}) {
       reportAt(file.source, 1),
       classAttributes,
     );
+    reportClasses(output, classReports, reportAt(output, 1));
     reporter.flush();
     return output === file.source ? file.source : output;
   }
@@ -350,6 +377,12 @@ export default function transform(file, api, options = {}) {
           ? renameVariables(text, classes, tokens, tokenNames, report)
           : (reportModifiers(text, report), renameClassTokens(text, classes, atStart));
 
+  /** Reports the classReports in a literal's renamed text: selectors, and classes in class strings. */
+  const reportRemaining = (text, mode, line) => {
+    if (mode === 'selector' || mode === 'class')
+      reportClasses(text, classReports, reportAt(text, line), mode === 'selector');
+  };
+
   // Babel gives a template's raw text with its line breaks as \n, whatever the file's are.
   const sameText = (source, raw) => source === raw || source.replace(/\r\n?/g, '\n') === raw;
 
@@ -364,6 +397,7 @@ export default function transform(file, api, options = {}) {
       if (!sameText(raw, range.node.extra.raw)) continue;
       const text = file.source.slice(start, end);
       const next = rewrite(text, mode, true, reportAt(text, node.loc.start.line));
+      reportRemaining(next, mode, node.loc.start.line);
       if (next !== text) edits.push({ start, end, text: next });
       continue;
     }
@@ -374,6 +408,7 @@ export default function transform(file, api, options = {}) {
       const text = file.source.slice(start, end);
       if (!sameText(text, range.node.value.raw)) return;
       const next = rewrite(text, mode, index === 0, reportAt(text, quasi.loc.start.line));
+      reportRemaining(next, mode, quasi.loc.start.line);
       if (next !== text) edits.push({ start, end, text: next });
     });
   }

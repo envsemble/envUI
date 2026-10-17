@@ -17,7 +17,7 @@ export default function SessionTimeout() {
       <Stack gap={5}>
         <Slider
           label="Sign out after"
-          hint="Minutes without activity, from 5 to 120."
+          description="Minutes without activity, from 5 to 120."
           name="timeout"
           min={5}
           max={120}

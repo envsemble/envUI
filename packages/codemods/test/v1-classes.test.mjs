@@ -15,7 +15,7 @@ for (const fixture of fixtures('v1-classes')) {
   test(`v1-classes: ${fixture.name}`, () => {
     const result = runTransform(v1Classes, fixture.path, fixture.input);
     assert.equal(result.output, fixture.output);
-    assert.deepEqual(result.reports, []);
+    assert.deepEqual(result.reports, fixture.reports);
   });
 
   test(`v1-classes is idempotent: ${fixture.name}`, () => {
@@ -47,7 +47,7 @@ test('renameClass renames an entry and the names that continue it with a hyphen'
 test('renameClass prefers the longest entry', () => {
   assert.equal(renameClass('env-date-time-field', classes), 'env-date-picker');
   assert.equal(renameClass('env-date-time-field-icon', classes), 'env-date-picker-icon');
-  assert.equal(renameClass('env-date-time-well', classes), 'env-date-picker-well');
+  assert.equal(renameClass('env-date-time-well', classes), 'env-date-picker-control');
   assert.equal(renameClass('env-navigation-item', classes), 'env-nav-list-item');
   assert.equal(renameClass('env-navigation-dot', classes), 'env-nav-list-item-dot');
   assert.equal(renameClass('env-direction-links', classes), 'env-pager');

@@ -111,3 +111,25 @@ test('a tooltip stays open while the pointer moves onto it', async ({ page }) =>
   await page.mouse.move(0, 0);
   await expect(tooltip).toHaveCount(0);
 });
+
+test('an item named by its label says a count as new, and other end content as it is', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=navigation`);
+  const scope = page.getByTestId('navigation-icons-light').getByTestId('named-end-navigation');
+  // Polled, as the fixture may still be rendering after the navigation.
+  const names = () =>
+    scope
+      .locator('.env-nav-list-item')
+      .evaluateAll((items) => items.map((item) => item.getAttribute('aria-label')));
+  await expect
+    .poll(names)
+    .toEqual([
+      'Count, 3 new',
+      'Number, 7 new',
+      'Unread, 4 unread',
+      'Labs, Beta',
+      'Inbox, New',
+      'Reports, Recently updated',
+    ]);
+});

@@ -112,7 +112,7 @@ function SizeRow({ size }: { size: ControlSize }) {
       />
       <TextField size={size} label="Name" defaultValue="Quarterly report" />
       <SearchField size={size} label="Search" placeholder="Search" />
-      <Select size={size} aria-label="Plan" options={plans} defaultValue="team" />
+      <Select size={size} aria-label="Plan" items={plans} defaultValue="team" />
       <Combobox size={size} label="Owner" items={owners} defaultValue="sam-lee" clearable />
       <DatePicker size={size} label="Due" />
       <SegmentedControl
@@ -166,7 +166,7 @@ function FormSection() {
       <div className="density-band">
         <Row label="TextField · Select · Button, at the control height (defaults)">
           <TextField label="Name" defaultValue="Quarterly report" />
-          <Select aria-label="Plan" options={plans} defaultValue="team" />
+          <Select aria-label="Plan" items={plans} defaultValue="team" />
           <Button variant="primary">Save</Button>
           <Button variant="outline">Cancel</Button>
         </Row>
@@ -216,7 +216,7 @@ function ToolbarSection() {
               ]}
             />
             <SearchField size={size} label="Search" placeholder="Search" />
-            <Select size={size} aria-label="Sort" options={plans} defaultValue="team" />
+            <Select size={size} aria-label="Sort" items={plans} defaultValue="team" />
             <Button size={size} variant="secondary" startIcon={<FilterList />}>
               Filter
             </Button>
@@ -471,7 +471,7 @@ function DesktopSection() {
               New report
             </Button>
             <SearchField label="Search reports" placeholder="Search reports" />
-            <Select aria-label="Owner" options={plans} defaultValue="team" />
+            <Select aria-label="Owner" items={plans} defaultValue="team" />
             <SegmentedControl
               aria-label="Filter"
               value={filter}

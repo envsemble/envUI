@@ -35,7 +35,8 @@ export * from './forms/Switch.js';
 export * from './forms/Radio.js';
 export * from './forms/Select.js';
 export * from './forms/Combobox.js';
-export * from './forms/Calendar.js';
+// calendarActiveDay stays internal: DatePicker's popup opens on the calendar's active day.
+export { Calendar, type CalendarProps, type Weekday } from './forms/Calendar.js';
 export * from './forms/DatePicker.js';
 export * from './forms/Slider.js';
 export * from './forms/DropZone.js';

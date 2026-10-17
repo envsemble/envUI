@@ -67,7 +67,7 @@
   },
   "packages/ui/src/styles/ColorPicker.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 9
+      "count": 7
     }
   },
   "packages/ui/src/styles/ColorSwatch.css": {
@@ -77,7 +77,7 @@
   },
   "packages/ui/src/styles/Combobox.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 13
+      "count": 10
     },
     "declaration-property-value-allowed-list": {
       "count": 1
@@ -237,7 +237,7 @@
   },
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 4
     }
   },
   "packages/ui/src/styles/Rating.css": {
@@ -257,12 +257,9 @@
   },
   "packages/ui/src/styles/Select.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 3
     },
     "declaration-property-value-allowed-list": {
-      "count": 1
-    },
-    "no-duplicate-selectors": {
       "count": 1
     }
   },

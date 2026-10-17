@@ -7,7 +7,7 @@ export default function PublishDate() {
     <div style={{ inlineSize: 'min(100%, 20rem)' }}>
       <DatePicker
         label="Publish on"
-        hint="The day the report goes out."
+        description="The day the report goes out."
         value={publishOn}
         onValueChange={setPublishOn}
         clearable

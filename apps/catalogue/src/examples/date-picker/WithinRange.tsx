@@ -5,7 +5,7 @@ export default function WithinRange() {
     <div style={{ inlineSize: 'min(100%, 20rem)' }}>
       <DatePicker
         label="Review by"
-        hint="Any day this quarter."
+        description="Any day this quarter."
         placeholder="Choose a day"
         min="2026-10-01"
         max="2026-12-31"

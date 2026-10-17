@@ -15,19 +15,19 @@ export default function Appearances() {
           <TextField
             label="Project name"
             defaultValue="Northwind launch"
-            hint="A name your team will know at a glance."
+            description="A name your team will know at a glance."
           />
         </Specimen>
         <Specimen title="Plain">
           <TextField
-            variant="plain"
+            variant="underline"
             label="Project name"
             defaultValue="Northwind launch"
-            hint="A name your team will know at a glance."
+            description="A name your team will know at a glance."
           />
         </Specimen>
         <Specimen title="Quiet">
-          <SearchField variant="quiet" label="Find projects" placeholder="Find projects" />
+          <SearchField variant="ghost" label="Find projects" placeholder="Find projects" />
         </Specimen>
         <Specimen title="Compact">
           <TextField
@@ -57,7 +57,7 @@ export default function Appearances() {
         </Specimen>
         <Specimen title="Plain textarea">
           <Textarea
-            variant="plain"
+            variant="underline"
             label="Notes"
             sizing="content"
             rows={3}

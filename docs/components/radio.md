@@ -1,7 +1,7 @@
 ---
 title: Radio
 summary: One choice from a few options shown together, side by side or as selectable rows.
-status: beta
+status: stable
 since: 0.1.0
 category: Forms & selection
 aliases:
@@ -15,7 +15,7 @@ aliases:
   - single choice
 useWhen:
   - People choose exactly one of two to five options, and seeing them all helps them choose, such as who can open a project.
-  - Each option needs a sentence that explains it, such as a role or a visibility (`variant="rows"`).
+  - Each option needs a sentence that explains it, such as a role or a visibility (`orientation="vertical"`).
   - A choice in a form or a dialog that takes effect when the form is saved.
 avoidWhen:
   - text: More options than fit comfortably, or options people already know, such as a country or a time zone.
@@ -49,7 +49,7 @@ A radio group offers a few options and lets people choose exactly one; choosing 
 A group comes in two looks:
 
 - **Inline** (the default): radios before their labels, side by side, wrapping onto more lines when space runs out.
-- **Rows** (`variant="rows"`): connected rows that fill the width, with each option's label and detail at the start and its radio at the end, for options that need explaining.
+- **Rows** (`orientation="vertical"`): connected rows that fill the width, with each option's label and description at the start and its radio at the end, for options that need explaining.
 
 ```tsx example=ProjectAccess
 
@@ -60,17 +60,17 @@ A group comes in two looks:
 1. **Group label** (`label` on RadioGroup): the fieldset's legend in the body text, 0.9375 rem, 1 rem above the options. It names the group.
 2. **Radio**: the native radio, 1 rem, in the control blue while chosen. It comes before its label inline, and at the end of a row.
 3. **Label** (`label` on Radio): the option's name in 0.875 rem text, 0.75 rem from the radio. Pressing it chooses the option.
-4. **Detail** (optional, `detail`): a muted line under the label in the same size, which helps people choose.
-5. **Row** (`variant="rows"`): the option's fill, which holds its label, detail and radio; the whole row chooses the option.
+4. **Description** (optional, `description`): a muted line under the label in the same size, which helps people choose.
+5. **Row** (`orientation="vertical"`): the option's fill, which holds its label, description and radio; the whole row chooses the option.
 
 ## Variants and sizes
 
-| Variant  | Use for                                                                                                             |
-| -------- | ------------------------------------------------------------------------------------------------------------------- |
-| `inline` | Short options people tell apart by their names, such as Team and Only me, in a form. The default.                   |
-| `rows`   | Options that need a sentence each to choose between, such as a role or a visibility, in a form, a dialog or a pane. |
+| Orientation  | Use for                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `horizontal` | Short options people tell apart by their names, such as Team and Only me, in a form. The default.                   |
+| `vertical`   | Options that need a sentence each to choose between, such as a role or a visibility, in a form, a dialog or a pane. |
 
-- **Inline**: options sit 2 rem apart side by side and wrap onto lines 1 rem apart.
+- **Horizontal**: options sit 2 rem apart side by side and wrap onto lines 1 rem apart.
 - **Rows**: rows fill the group's width, 0.125 rem apart, with 0.75 rem block and 1.5 rem inline padding, on the muted row fill. The group's outer corners are 1.75 rem and the corners between rows 0.5 rem, as in a [List](../components/list.md); a single row is rounded all round.
 - On touch screens every option, inline or a row, is at least 2.75 rem tall.
 
@@ -89,16 +89,16 @@ A group comes in two looks:
 
 - Name the group with a short noun phrase in sentence case, without a colon: "Access", "Export format".
 - Give options short, parallel names that start the same way where they can: "Team", "Only me", "Anyone with the link".
-- Use `detail` for the consequence that tells options apart, in one sentence: "Only the people you invite." Use it on every option of a group or on none.
+- Use `description` for the consequence that tells options apart, in one sentence: "Only the people you invite." Use it on every option of a group or on none.
 - Order options from the most common or the least permissive, and keep that order wherever the choice appears.
-- Say why an option is unavailable in its detail, or in a sentence linked to the group with `aria-describedby`.
+- Say why an option is unavailable in its description, or in a sentence linked to the group with `aria-describedby`.
 
 ## Do and don't
 
 ### Do
 
 - Show every option, and keep to about five; use [Select](../components/select.md) for more.
-- Use rows where options need explaining, and inline radios where their names are enough.
+- Use rows where options need explaining, and horizontal radios where their names are enough.
 - Choose a default where one option suits most people, and leave none chosen where people must decide.
 - Give every RadioGroup in a form a `name`, and say what is missing when a required choice isn't made.
 
@@ -106,7 +106,7 @@ A group comes in two looks:
 
 - Don't use radios for views or filters that apply as soon as they change; use [SegmentedControl](../components/segmented-control.md).
 - Don't use a single radio, or radios for a yes-or-no setting; use [Checkbox](../components/checkbox.md) or [Switch](../components/switch.md).
-- Don't put links or buttons in a label or a detail; the whole option is a label, and pressing it chooses the option.
+- Don't put links or buttons in a label or a description; the whole option is a label, and pressing it chooses the option.
 - Don't disable options without saying why.
 
 ## Accessibility
@@ -123,8 +123,8 @@ A group comes in two looks:
 ### envUI provides
 
 - A native `<fieldset>` named by its `<legend>`, and native `<input type="radio">` options that share the group's `name`, so assistive technology announces the group, each option's state and its position, such as 2 of 3.
-- A `<label>` around each radio with its label and detail, which names the option and chooses it when pressed; the detail is read as part of the name.
-- The shared focus ring around a focused row, and options at least 2.75 rem tall on coarse pointers.
+- A `<label>` around each radio with its label and description, which names the option and chooses it when pressed; the description is read as part of the name.
+- The shared focus ring on a focused radio, and around a focused row, and options at least 2.75 rem tall on coarse pointers.
 - Native disabled and required states, form submission and reset.
 
 ### You provide
@@ -138,7 +138,7 @@ A group comes in two looks:
 
 ### Selectable rows
 
-Rows suit options that need a sentence each. The disabled option says why in its detail.
+Rows suit options that need a sentence each. The disabled option says why in its description.
 
 ```tsx example=VisibilityRows
 
@@ -162,5 +162,6 @@ A disabled group keeps its choice visible, and a sentence linked with `aria-desc
 
 ## Changelog
 
+- **1.0.0**: RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`; Radio's `detail` is `description`, which the `v1-props` codemod writes. `className` and `style` style a Radio's root rather than the input, which keeps `ref` and the other native props. A focused radio shows the focus ring. The classes follow the component: `env-radio-options` is `env-radio-group` with `[data-orientation]`, `env-radio-option` and the inline label are `env-radio`, `env-radio-control` is `env-radio-input` and `env-radio-detail` `env-radio-description`.
 - **0.4.0**: Radio rows take the stronger row hover and pressed fills, settle like clickable cards while pressed, and keep 1.5 rem inline padding; radios shrink slightly while they or their labels are pressed.
 - **0.1.0**: Radio and RadioGroup, inline or as rows.

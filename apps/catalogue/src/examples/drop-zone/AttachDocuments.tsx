@@ -10,7 +10,7 @@ export default function AttachDocuments() {
         multiple
         label="Attach documents"
         description="Any file, several at once"
-        onFiles={(files) => setDocuments((current) => [...current, ...files])}
+        onDropAccepted={(files) => setDocuments((current) => [...current, ...files])}
       />
       {documents.length > 0 && (
         <List.Root aria-label="Attached documents">

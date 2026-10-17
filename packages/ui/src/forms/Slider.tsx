@@ -1,5 +1,6 @@
 'use client';
 
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Slider as BaseSlider } from '@base-ui/react/slider';
 import {
   useEffect,
@@ -12,7 +13,10 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useLocale } from '../internal/EnvUIContext.js';
+import { useDirectionScope } from '../internal/useDirection.js';
 import { FieldFrame } from './internal/FieldFrame.js';
+import { fieldMessageIds } from './internal/useFieldMetadata.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface SliderProps
@@ -26,7 +30,7 @@ export interface SliderProps
    * Lasting guidance under the track, such as what the value applies to, linked to the slider as
    * its description.
    */
-  hint?: ReactNode;
+  description?: ReactNode;
   /** The value of a controlled slider; update it from onValueChange. */
   value?: number;
   /**
@@ -43,7 +47,7 @@ export interface SliderProps
    * Receives the value once a change is complete: when the thumb is released or the track pressed,
    * and after each key. Use it for work that runs once per change, such as saving.
    */
-  onValueCommit?: (value: number) => void;
+  onValueCommitted?: (value: number) => void;
   /** The lowest value, at the start of the track. */
   min?: number;
   /** The highest value, at the end of the track. */
@@ -60,9 +64,11 @@ export interface SliderProps
   largeStep?: number;
   /**
    * The value as people read it above the track and assistive technology announces it, such as
-   * (value) => `${value}%`. Without it, the number shows as it is.
+   * (value) => `${value}%`. Without it, the number shows in the locale.
    */
   formatValue?: (value: number) => string;
+  /** The locale of the shown number: EnvUIProvider's, else the browser's. */
+  locale?: string;
   /** Dim the slider; it can't be focused or moved, and forms leave it out. */
   disabled?: boolean;
   /** Submits the value with a form under this name. */
@@ -75,29 +81,35 @@ export interface SliderProps
 
 /**
  * A value in a range, chosen by dragging a thumb along a track, pressing the track or with the
- * keyboard, with its label and current value above the track and an optional hint below.
+ * keyboard, with its label and current value above the track and an optional description below.
  */
 export function Slider({
   label,
-  hint,
+  description,
   value,
   defaultValue,
   onValueChange,
-  onValueCommit,
+  onValueCommitted,
   min = 0,
   max = 100,
   step = 1,
   largeStep = Math.max(step, Math.round((max - min) / 10 / step) * step),
   formatValue,
+  locale,
   disabled = false,
   name,
   form,
   inputRef,
   className,
+  ref,
+  onFocus,
   'aria-describedby': describedBy,
   ...props
 }: SliderProps) {
+  // The arrow keys follow the text direction: Base UI reads it from its DirectionProvider.
+  const scope = useDirectionScope(ref);
   const id = useId();
+  const providedLocale = useLocale();
   const input = useRef<HTMLInputElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? min);
   const current = value ?? uncontrolledValue;
@@ -114,59 +126,69 @@ export function Slider({
     },
     [value, defaultValue, min, form],
   );
-  const description =
-    [describedBy, hint != null ? `${id}-hint` : undefined].filter(Boolean).join(' ') || undefined;
+  const describedByIds =
+    [describedBy, description != null ? fieldMessageIds(id).description : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
   return (
-    <BaseSlider.Root
-      // The group, which the label names, is disabled with its range input, so its label and value
-      // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
-      aria-disabled={disabled || undefined}
-      {...props}
-      className={classNames('env-slider', className)}
-      value={current}
-      onValueChange={(next) => {
-        if (value === undefined) setUncontrolledValue(next);
-        onValueChange?.(next);
-      }}
-      onValueCommitted={(next) => onValueCommit?.(next)}
-      min={min}
-      max={max}
-      step={step}
-      largeStep={largeStep}
-      disabled={disabled}
-      name={name}
-      form={form}
-    >
-      <FieldFrame
-        id={id}
-        label={
-          <div className="env-slider-heading">
-            <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
-            {/* The output names the range input it shows, and stays quiet while the value moves. */}
-            <BaseSlider.Value className="env-slider-value">
-              {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
-            </BaseSlider.Value>
-          </div>
-        }
-        hint={hint}
+    <DirectionProvider direction={scope.direction}>
+      <BaseSlider.Root
+        // The group, which the label names, is disabled with its range input, so its label and value
+        // read as part of an inactive control, which WCAG exempts from contrast, as they fade with it.
+        aria-disabled={disabled || undefined}
+        {...props}
+        ref={scope.ref}
+        onFocus={(event) => {
+          scope.onFocus();
+          onFocus?.(event);
+        }}
+        className={classNames('env-slider', className)}
+        value={current}
+        onValueChange={(next) => {
+          if (value === undefined) setUncontrolledValue(next);
+          onValueChange?.(next);
+        }}
+        onValueCommitted={(next) => onValueCommitted?.(next)}
+        locale={locale ?? providedLocale}
+        min={min}
+        max={max}
+        step={step}
+        largeStep={largeStep}
+        disabled={disabled}
+        name={name}
+        form={form}
       >
-        <BaseSlider.Control className="env-slider-control">
-          <BaseSlider.Track className="env-slider-track">
-            <BaseSlider.Indicator className="env-slider-indicator" />
-            <BaseSlider.Thumb
-              className="env-slider-thumb"
-              inputRef={(node: HTMLInputElement | null) => {
-                input.current = node;
-                setRef(inputRef, node);
-              }}
-              aria-describedby={description}
-              getAriaValueText={(formatted, number) =>
-                formatValue ? formatValue(number) : formatted
-              }
-            />
-          </BaseSlider.Track>
-        </BaseSlider.Control>
-      </FieldFrame>
-    </BaseSlider.Root>
+        <FieldFrame
+          id={id}
+          label={
+            <div className="env-slider-heading">
+              <BaseSlider.Label className="env-slider-label">{label}</BaseSlider.Label>
+              {/* The output names the range input it shows, and stays quiet while the value moves. */}
+              <BaseSlider.Value className="env-slider-value">
+                {(formatted, values) => (formatValue ? formatValue(values[0]!) : formatted[0])}
+              </BaseSlider.Value>
+            </div>
+          }
+          description={description}
+        >
+          <BaseSlider.Control className="env-slider-control">
+            <BaseSlider.Track className="env-slider-track">
+              <BaseSlider.Indicator className="env-slider-indicator" />
+              <BaseSlider.Thumb
+                className="env-slider-thumb"
+                inputRef={(node: HTMLInputElement | null) => {
+                  input.current = node;
+                  setRef(inputRef, node);
+                }}
+                aria-describedby={describedByIds}
+                getAriaValueText={(formatted, number) =>
+                  formatValue ? formatValue(number) : formatted
+                }
+              />
+            </BaseSlider.Track>
+          </BaseSlider.Control>
+        </FieldFrame>
+      </BaseSlider.Root>
+    </DirectionProvider>
   );
 }

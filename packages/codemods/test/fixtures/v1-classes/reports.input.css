@@ -1,0 +1,12 @@
+/* Selectors that 1.0's markup no longer matches, which v1-classes keeps and reports. */
+.env-document-tab:hover .env-document-tab-close,
+.env-document-tab[data-active] > .env-document-tab-close {
+  visibility: visible;
+}
+.env-document-tab + .env-document-tab-close {
+  margin-inline-start: 0;
+}
+.env-menu-theme .env-organization-menu-radio,
+.env-organization-menu-option[data-checked] .env-organization-menu-radio-dot {
+  color: var(--env-color-fg-accent);
+}

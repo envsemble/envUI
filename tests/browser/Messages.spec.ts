@@ -19,7 +19,7 @@ test('no English default is left under a provider that sets every message', asyn
   const root = page.getByTestId('messages');
   await expect(root).toBeVisible();
   // ConfirmButton announces its armed state.
-  await root.getByRole('button', { name: 'Remove' }).click();
+  await root.getByRole('button', { name: 'Remove', exact: true }).click();
   await expect(root.getByRole('status').filter({ hasText: '⟦confirmButton.armed⟧' })).toHaveCount(
     1,
   );
@@ -44,6 +44,24 @@ test('no English default is left under a provider that sets every message', asyn
   expect(found).toContain('⟦common.close⟧');
   expect(found).toContain('⟦dialog.close⟧');
   expect(found).toContain('⟦themeToggle.toDark⟧');
+  for (const key of [
+    'searchField.clear',
+    'textarea.resize',
+    'textarea.resizeDescription',
+    'common.clear',
+    'combobox.remove',
+    'datePicker.clear',
+    'calendar.previousMonth',
+    'calendar.nextMonth',
+    'composer.send',
+    'colorPicker.hex',
+    'colorPicker.hexLabel',
+    'colorPicker.description',
+    'colorPicker.area',
+    'colorPicker.areaValue',
+    'colorPicker.hue',
+  ])
+    expect(found).toContain(`⟦${key}⟧`);
   for (const marked of [
     '⟦avatarGroup.label⟧',
     '⟦avatarGroup.more⟧',

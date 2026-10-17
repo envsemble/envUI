@@ -73,8 +73,8 @@ test.describe('DocumentTabs', () => {
     await expect(decisions).toBeFocused();
 
     // So does the close button, a pointer's affordance beside the tab, outside it and hidden from
-    // assistive technology: Delete and the context menu close a tab from the keyboard.
-    await expect(decisions).toHaveAttribute('aria-keyshortcuts', 'Delete');
+    // assistive technology: Delete, Backspace and the context menu close a tab from the keyboard.
+    await expect(decisions).toHaveAttribute('aria-keyshortcuts', 'Delete Backspace');
     await expect(decisions.locator('button')).toHaveCount(0);
     const closeDecisions = strip
       .locator('.env-document-tabs-item')
@@ -157,16 +157,37 @@ test.describe('DocumentTabs', () => {
     await page.keyboard.press('Escape');
     await expect(menu).toBeHidden();
 
-    // Without onCloseAll, the strip keeps the browser's own context menu.
+    // Without onCloseAll, a tab still offers Close, from the pointer and the keyboard.
     const dark = page.getByRole('tablist', { name: 'Open documents dark' });
-    const darkTab = dark.getByRole('tab', { name: 'Roadmap.md', exact: true });
-    const handled = await darkTab.evaluate(
-      (tab) =>
-        !tab.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true })),
-    );
-    expect(handled).toBe(false);
-    await darkTab.focus();
+    const darkRoadmap = dark.getByRole('tab', { name: 'Roadmap.md', exact: true });
+    const darkDecisions = dark.getByRole('tab', { name: 'Decisions.md', exact: true });
+    const darkMenu = page.getByRole('menu', { name: 'Tab actions' });
+    await darkDecisions.click({ button: 'right' });
+    await expect(darkMenu.getByRole('menuitem')).toHaveText(['Close Decisions.md']);
+    await page.keyboard.press('Escape');
+    await expect(darkMenu).toBeHidden();
+    await darkRoadmap.focus();
     await page.keyboard.press('Shift+F10');
+    await expect(darkMenu).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect.poll(() => lastLog(page, 'dark')).toBe('close plans/roadmap.md');
+    await expect(darkRoadmap).toHaveCount(0);
+    await expect(darkDecisions).toBeFocused();
+
+    // Backspace closes the focused tab too, for keyboards without a forward Delete key.
+    await page.keyboard.press('Backspace');
+    await expect.poll(() => lastLog(page, 'dark')).toBe('close plans/decisions.md');
+    await expect(darkDecisions).toHaveCount(0);
+
+    // The strip around the tabs offers no menu without onCloseAll.
+    await dark.evaluate((element) =>
+      element.dispatchEvent(
+        new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 1, clientY: 1 }),
+      ),
+    );
+    // Past the time a menu takes to mount, none has.
+    await page.waitForTimeout(300);
     await expect(page.getByRole('menu')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
@@ -272,7 +293,15 @@ test.describe('DocumentTabs', () => {
         expect(boxes.tabs.length).toBeGreaterThan(0);
         expect(boxes.tabs.filter((height) => height !== 44)).toEqual([]);
         expect(boxes.closes.filter(([width, height]) => width !== 44 || height !== 44)).toEqual([]);
-        await expect(strip.locator('.env-document-tabs-close').first()).toBeVisible();
+        // Every close button shows, the inactive tabs' too, not only the active tab's.
+        const closes = strip.locator('.env-document-tabs-close');
+        expect(await closes.count()).toBeGreaterThan(1);
+        expect(
+          await closes.evaluateAll(
+            (buttons) =>
+              buttons.filter((button) => getComputedStyle(button).visibility !== 'visible').length,
+          ),
+        ).toBe(0);
       });
   });
 });

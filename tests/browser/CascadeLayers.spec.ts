@@ -39,7 +39,7 @@ test("an application's CSS outside cascade layers overrides envUI's without !imp
 
   // A token set on a region of the application re-themes envUI's components inside it.
   expect(await background(page.getByTestId('region'))).toBe('rgb(0, 90, 90)');
-  const box = page.locator('.app-region .env-checkbox-control');
+  const box = page.locator('.app-region .env-checkbox-input');
   expect(await box.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
     'rgb(0, 90, 90)',
   );

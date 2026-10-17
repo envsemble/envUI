@@ -56,11 +56,13 @@ async function controlBoxes(row: Locator) {
   return row.evaluate((element) =>
     [
       ...element.querySelectorAll<HTMLElement>(
-        '.env-button, .env-text-field-well, .env-segmented-control, .env-tabs-list',
+        '.env-button, .env-text-field-control, .env-segmented-control, .env-tabs-list',
       ),
     ]
       // Buttons inside a field or a tab rail are its parts, not controls of the row.
-      .filter((control) => !control.parentElement?.closest('.env-text-field-well, .env-tabs-list'))
+      .filter(
+        (control) => !control.parentElement?.closest('.env-text-field-control, .env-tabs-list'),
+      )
       .map((control) => ({
         name:
           control.getAttribute('aria-label') ||
@@ -257,7 +259,7 @@ const measureHitAreas = `async (root, selector) => {
   const results = [];
   for (const element of root.querySelectorAll(selector)) {
     if (!element.checkVisibility()) continue;
-    if (element.matches('.env-link, .env-breadcrumbs-link, .env-text-input')) continue;
+    if (element.matches('.env-link, .env-breadcrumbs-link, .env-text-field-input')) continue;
     element.scrollIntoView({ block: 'center', inline: 'center' });
     await new Promise((resolve) => requestAnimationFrame(resolve));
     const box = element.getBoundingClientRect();

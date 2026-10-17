@@ -73,7 +73,7 @@
   padding-inline-start: 0;
   list-style: none;
 }
-.env-markdown .task-list-item .env-choice-control {
+.env-markdown .task-list-item .env-checkbox {
   margin-inline-end: var(--env-space-2);
   vertical-align: middle;
 }

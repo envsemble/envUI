@@ -1,6 +1,6 @@
 import type { AnyExtension, Editor } from '@tiptap/core';
 import type { ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react';
-import type { FieldProps, TextFieldAppearanceProps } from '../forms/internal/FieldFrame.js';
+import type { FieldProps } from '../forms/internal/FieldFrame.js';
 import type { MarkdownLink, MarkdownLinkRequest } from '../forms/MarkdownEditor.js';
 
 /** Application-owned identity and display data; envUI assigns no meaning to kind or id. */
@@ -115,9 +115,13 @@ export interface RichTextEditorHandle {
 }
 export interface RichTextEditorProps
   extends RichTextRenderOptions,
-    FieldProps,
-    TextFieldAppearanceProps,
+    Omit<FieldProps, 'description'>,
     Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
+  /**
+   * Lasting guidance under the editor, such as a format or a limit, linked to it as its
+   * description.
+   */
+  hint?: ReactNode;
   /**
    * The Markdown of a controlled editor; update it from onValueChange. A new value from outside,
    * such as another draft, replaces the document and keeps the caret where it can.

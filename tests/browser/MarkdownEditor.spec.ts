@@ -65,7 +65,7 @@ test('tab changes retain the native textarea, selection, resize, history and res
   await source.evaluate((input: HTMLTextAreaElement) => input.setSelectionRange(0, 5));
   await form.getByRole('button', { name: 'Bold', exact: true }).click();
   await expect(source).toHaveValue('**alpha**');
-  await form.getByRole('button', { name: 'Resize text area', exact: true }).press('ArrowDown');
+  await form.getByRole('separator', { name: 'Resize text area', exact: true }).press('ArrowDown');
   const resizedHeight = await source.evaluate((input: HTMLTextAreaElement) => input.style.height);
   const selectedRange = await source.evaluate((input: HTMLTextAreaElement) => [
     input.selectionStart,
@@ -187,7 +187,7 @@ for (const change of ['remove', 'replace'] as const) {
 
 test('the source is a tall text area with medium corners, never a pill', async ({ page }) => {
   await page.goto(fixtureUrl);
-  const wells = page.locator('.env-text-field-well:has(> textarea)');
+  const wells = page.locator('.env-text-field-control:has(> textarea)');
   expect(await wells.count()).toBeGreaterThan(0);
   for (const well of await wells.all()) {
     await expect(well.locator('xpath=..')).toHaveAttribute('data-tall');

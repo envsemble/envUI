@@ -103,7 +103,9 @@ export function AdoptionFixture() {
             }
           >
             <Menu.Header>Alex Morgan</Menu.Header>
-            <Menu.Item href="/account">Account settings</Menu.Item>
+            <Menu.Item href="/account" onClick={() => setAction('Followed account settings')}>
+              Account settings
+            </Menu.Item>
             <Menu.Separator />
             <Menu.Item icon={<Logout />} onClick={() => setAction('Signed out')}>
               Sign out

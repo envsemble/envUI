@@ -171,8 +171,7 @@
     }
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0",
-    "react-colorful": "5.8.1"
+    "@base-ui/react": "1.8.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",

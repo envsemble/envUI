@@ -126,7 +126,7 @@ function Page() {
         <Field.Label>Valid field part</Field.Label>
         <Field.Control data-testid="field-valid" />
       </Field.Root>
-      <RadioGroup variant="rows" label="Role" defaultValue="member">
+      <RadioGroup orientation="vertical" label="Role" defaultValue="member">
         <Radio value="member" label="Member" />
         <Radio value="admin" label="Admin" />
       </RadioGroup>
@@ -182,7 +182,7 @@ function Page() {
       <Select
         label="Plan type"
         defaultValue="team"
-        options={[
+        items={[
           { value: 'team', label: 'Team' },
           { value: 'solo', label: 'Solo' },
         ]}

@@ -1,7 +1,7 @@
 ---
 title: Checkbox
 summary: A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
-status: beta
+status: stable
 since: 0.1.0
 category: Forms & selection
 aliases:
@@ -67,7 +67,7 @@ A checkbox turns one choice on or off, independently of the choices beside it. I
 - **Hover, pressed and focus**: hover and press darken the border of an empty box and the fill of a checked one, with color tokens of their own, as [colors and themes](../foundations/colors.md) describes; keyboard focus shows a focus outline around the box. Without a reduced-motion preference the box shrinks slightly while it is pressed, and the mark pops in as it appears.
 - **Disabled**: the box takes the shared disabled opacity and the label the disabled text color; it cannot be focused or changed, and forms leave it out.
 - **In forms**: a checked checkbox submits its `name` with its `value` ("on" without one), and an unchecked one submits nothing. `required` asks for it to be checked. A form reset restores an uncontrolled checkbox's `defaultChecked`, also when that is mixed, and leaves a controlled one as the application holds it; a reset the application cancels changes nothing.
-- **Props**: `className`, `style`, `ref` and the other native props reach the `<input>`, not the label.
+- **Props**: `className` and `style` style the root, the label around the box and the text; `ref` and the other native props, such as `name` and `aria-describedby`, reach the native `<input>`, so a form library can register it.
 
 <!-- specimen: States -->
 
@@ -114,7 +114,7 @@ A checkbox turns one choice on or off, independently of the choices beside it. I
 - A `label`, or `aria-label` or `aria-labelledby` on a checkbox without one.
 - A name for a group of checkboxes, such as a fieldset with a legend.
 - The state of a parent, derived from its children.
-- Errors and hints where a choice is required; Checkbox has no error or hint of its own, so link them with `aria-describedby`.
+- Errors and descriptions where a choice is required; Checkbox has no error or description of its own, so link them with `aria-describedby`.
 
 ## Examples
 
@@ -136,5 +136,6 @@ Checkboxes with the same `name` submit one entry for each checked value. A field
 
 ## Changelog
 
+- **1.0.0**: `className` and `style` style the root, `env-checkbox`, rather than the input, which keeps `ref` and the other native props. The classes follow the component: `env-choice-control` is `env-checkbox`, `env-checkbox-control` `env-checkbox-input` and `env-checkbox-mark` `env-checkbox-indicator`.
 - **0.4.0**: Checkboxes shrink slightly whether the box or its label is pressed.
 - **0.1.0**: Checkbox.

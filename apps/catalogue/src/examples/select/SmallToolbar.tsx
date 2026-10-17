@@ -35,9 +35,9 @@ export default function SmallToolbar() {
         />
         <Select
           size="sm"
-          variant="outlined"
+          variant="outline"
           aria-label="Zoom"
-          options={zoomOptions}
+          items={zoomOptions}
           value={zoom}
           onValueChange={setZoom}
         />

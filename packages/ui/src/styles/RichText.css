@@ -1,7 +1,7 @@
 .env-rich-text-editor {
   min-inline-size: 0;
 }
-.env-rich-text-editor > .env-form-field {
+.env-rich-text-editor > .env-field {
   gap: var(--env-space-3);
 }
 .env-rich-text-document {

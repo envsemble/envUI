@@ -2,8 +2,8 @@
    navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
 .env-tree {
   /* The density sets the rows' block padding around their content line. */
-  --env-tree-row-padding: var(--env-tree-row-padding-block-sm);
-  --env-tree-row-height: calc(var(--env-row-content-height) + 2 * var(--env-tree-row-padding));
+  --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
+  --env-tree-item-height: calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding));
   --env-tree-indent: 0.75rem;
   --env-tree-icon-size: var(--env-control-icon-size);
   box-sizing: border-box;
@@ -20,13 +20,13 @@
   outline: none;
 }
 .env-tree[data-density='xs'] {
-  --env-tree-row-padding: var(--env-row-padding-block-xs);
+  --env-tree-item-padding: var(--env-row-padding-block-xs);
 }
 .env-tree[data-density='md'] {
-  --env-tree-row-padding: var(--env-tree-row-padding-block-md);
+  --env-tree-item-padding: var(--env-tree-row-padding-block-md);
 }
 .env-tree[data-density='lg'] {
-  --env-tree-row-padding: var(--env-tree-row-padding-block-lg);
+  --env-tree-item-padding: var(--env-tree-row-padding-block-lg);
 }
 .env-tree-rows {
   position: relative;
@@ -37,7 +37,7 @@
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
-  block-size: var(--env-tree-row-height);
+  block-size: var(--env-tree-item-height);
   display: flex;
   align-items: center;
   gap: var(--env-space-1);
@@ -132,9 +132,9 @@
 }
 @media (pointer: coarse) {
   .env-tree {
-    --env-tree-row-height: max(
+    --env-tree-item-height: max(
       var(--env-control-height-touch),
-      calc(var(--env-row-content-height) + 2 * var(--env-tree-row-padding))
+      calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding))
     );
   }
 }

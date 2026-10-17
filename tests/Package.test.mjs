@@ -150,16 +150,16 @@ before(
         h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
       h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
       h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
-      h(ui.TextField, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
+      h(ui.TextField, { name: 'title', label: 'Title', description: 'One line', defaultValue: 'Example' }),
       h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
       h(ui.RadioGroup, { name: 'mode', label: 'Mode', defaultValue: 'one' }, h(ui.Radio, { value: 'one', label: 'One' })),
-      h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
+      h(ui.Select, { name: 'choice', label: 'Choice', items: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
       h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
       h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
-      h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
+      h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', granularity: 'minute', locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.Toast.Provider, null, 'Managed notifications'),
@@ -187,7 +187,6 @@ before(
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
-      colorPickerModule: import.meta.resolve('react-colorful'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
       font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
       logo: import.meta.resolve('@envsemble/envui/assets/envUI/envUI-lockup-black.svg')
@@ -331,7 +330,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
-  assert.equal(installedManifest.dependencies['react-colorful'], '5.8.1');
+  // ColorPicker's area and hue are envUI's own, on Base UI's Slider.
+  assert.equal(installedManifest.dependencies['react-colorful'], undefined);
   // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add them.
   for (const name of [
     'shiki',
@@ -344,7 +344,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     assert.equal(installedManifest.dependencies[name], undefined);
     assert.equal(installedManifest.peerDependenciesMeta[name]?.optional, true);
   }
-  assert.match(ssr.colorPickerModule, /\/consumer\/node_modules\/react-colorful\//);
   assert.match(
     JSON.parse(await readFile(consumerRequire.resolve('react/package.json'), 'utf8')).version,
     /^19\./,
@@ -358,7 +357,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
       EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
@@ -366,7 +365,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
     const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
-    const options: SelectOption[] = [{ value: 'one', label: 'One' }];
+    const options: SelectItem[] = [{ value: 'one', label: 'One' }];
     const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
     const theme: ThemeValue = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
@@ -392,10 +391,10 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
-      <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
+      <Select items={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
       <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
       <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
-      <DatePicker label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
+      <DatePicker label="Due" granularity="minute" clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
       <Toast.Provider><NotificationAction /></Toast.Provider>
@@ -754,7 +753,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
-    /react-colorful@5\.8\.1/,
+    /@base-ui\/react@1\.8\.0/,
   );
   for (const filename of [
     'Base-UI-LICENSE.txt',
@@ -985,7 +984,7 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
   assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
-    result.emittedInputs.every((path) => !path.includes('/react-colorful/')),
+    result.emittedInputs.every((path) => !path.includes('/forms/internal/ColorPlane')),
     'Unused color picking must stay out of basic control bundles.',
   );
   assert.ok(

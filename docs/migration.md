@@ -113,6 +113,37 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning, and 
 
 In style sheets the modifier classes become attributes on the component's root class, which `v1-classes` writes with the specificity they had: `.env-button-important` is `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-text-tone-muted` `.env-text:where([data-emphasis='muted'])`, `.env-surface-row` `.env-surface:where([data-background='muted'])` and `.env-skeleton-highlight` `.env-skeleton:where([data-emphasis='default'])`. The icon wrapper `env-symbol` is `env-icon`. A button without a `variant` takes its container's, such as ghost in a Toolbar.
 
+### Fields and choice controls
+
+Fields take a `description` under them and the field variants, and choice controls the words the rest of envUI uses. `v1-props` moves each literal prop and value, `v1-names` the types and `v1-classes` the classes:
+
+| 0.x                                                                                                           | 1.0                                                                                          |
+| ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `hint` on TextField, SearchField, Textarea, Select, Combobox, DatePicker, ColorPicker, Slider, MarkdownEditor | `description`                                                                                |
+| Field `variant`: `outlined`, `plain`, `quiet` (`floating` stays)                                              | `outline`, `underline`, `ghost`                                                              |
+| Select `variant="outlined"`                                                                                   | `variant="outline"`                                                                          |
+| Select `options`, `SelectOption`                                                                              | `items`, `SelectItem`                                                                        |
+| DatePicker `withTime`                                                                                         | `granularity="minute"`; without it, `"day"`, the default                                     |
+| Slider `onValueCommit`                                                                                        | `onValueCommitted`                                                                           |
+| DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |
+| RadioGroup `variant`: `inline`, `rows`                                                                        | `orientation`: `horizontal`, `vertical`                                                      |
+| Radio `detail`                                                                                                | `description`                                                                                |
+| `env-text-input`, `env-text-field-well`, `env-form-field`, `env-field-hint`                                   | `env-text-field-input`, `env-text-field-control`, `env-field`, `env-field-description`       |
+| `env-dropdown-trigger`, `-options`, `-list`, `-option`, `-option-check` (Select)                              | `env-select-trigger`, `-popup`, `-list`, `-item`, `-item-indicator`                          |
+| `env-dropdown-options`, `env-dropdown-list` inside `env-combobox`                                             | `env-combobox-popup`, `env-combobox-list`                                                    |
+| `env-combobox-well`, `-option`, `-check`                                                                      | `env-combobox-control`, `-item`, `-item-indicator`                                           |
+| `env-date-time-well`                                                                                          | `env-date-picker-control`                                                                    |
+| `env-checkbox-control`, `env-checkbox-mark`, `env-switch-control`                                             | `env-checkbox-input`, `env-checkbox-indicator`, `env-switch-input`                           |
+| `env-radio-options`, `env-radio-control`, `env-radio-detail`                                                  | `env-radio-group`, `env-radio-input`, `env-radio-description`                                |
+| `env-radio-inline`, `env-radio-option`                                                                        | `.env-radio-group[data-orientation='horizontal']`, `.env-radio[data-orientation='vertical']` |
+
+Change by hand what the codemods can't see:
+
+- **`className` and `style` style the root.** On TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio they reach the field's or the control's root, the element with `env-field` or the label around a choice, instead of the native control. `ref` and the other native props still reach the input, textarea or trigger, so form libraries keep registering them. A style meant for the input selects it through the root's class, such as `.my-field .env-text-field-input`.
+- **`env-choice-control`** was the root of Checkbox, Switch and an inline Radio alike; it is `env-checkbox`, `env-switch` or `env-radio` now, by the control.
+- **ColorPicker** no longer uses react-colorful: its `.react-colorful` classes are gone, and the area and hue are `env-color-picker-saturation-slider` and `env-color-picker-hue`.
+- **DropZone** is named by its label and its description together, as its visible text is; a test that found it by its label alone matches the start of the name.
+
 ### Navigation and collections
 
 `v1-props`, `v1-structure` and `v1-names` make these changes; `v1-classes` renames the classes below.
@@ -131,15 +162,18 @@ In style sheets the modifier classes become attributes on the component's root c
 | `.env-document-tab`, `-label`, `-close`                                   | `.env-document-tabs-tab`, `-tab-label`, `.env-document-tabs-close`                         |
 | `.env-breadcrumb`, `.env-breadcrumb-link` and the other parts             | `.env-breadcrumbs-item`, `.env-breadcrumbs-link` and the other parts                       |
 | `.env-tree-row`, `.env-tree-detail`, `.env-tree-trailing`                 | `.env-tree-item`, `.env-tree-description`, `.env-tree-end`                                 |
+| `--env-tree-row-height`                                                   | `--env-tree-item-height`; the `--env-tree-row-padding-block-*` tokens keep their names     |
 | `.env-navigation-selected`, `.env-navigation-icon-only`                   | `.env-nav-list-item:where([data-selected])`, `.env-nav-list-item:where([data-icon-only])`  |
+| `.env-menu-theme`, the theme around a Menu's or Menubar's popup           | `.env-popup-theme`, which every popup shares                                               |
 | `.env-navigation-trailing`, `.env-menu-item-trailing`                     | `.env-nav-list-item-end`, `.env-menu-item-end`                                             |
 
 Change by hand:
 
 - the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing` and an organization's `detail`; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
-- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its count in its name now, as "Inbox, 12 new", from `messages.navList.itemCount`, so name it "Inbox";
-- a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`; the close button is out of the tab order and hidden from assistive technology, and Delete or the context menu closes a tab from the keyboard;
+- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
+- a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`, so a selector such as `.env-document-tabs-tab:hover .env-document-tabs-close`, which `v1-classes` reports, matches nothing: write `.env-document-tabs-item:hover .env-document-tabs-close`; the close button is out of the tab order and hidden from assistive technology, and Delete, Backspace or the tab's context menu closes a tab from the keyboard;
+- a style for OrganizationSwitcher's radio, `env-organization-menu-radio` and `-radio-dot`, which `v1-classes` reports and leaves: the current organization takes Menu's check, `.env-menu-item-check` and its `.env-menu-item-check-mark`;
 - a style for the 0.7 contrast pane, `.env-contrast-row-pane`, which has no class in 1.0: style the Surface around the list;
 - a selected or icon-only NavList class in a `className` string, which `v1-classes` reports: the item sets the attributes from `selected` and `iconOnly`;
 - a zero-argument `onSort` handler keeps working as `onSortChange`; take the order from its argument instead of toggling it yourself.
@@ -279,7 +313,7 @@ envUI's style sheet puts every rule in a cascade layer of `env`: `env.reset`, `e
   }
   ```
 
-- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI uses `!important` only where ColorPicker replaces the styles of react-colorful, its picker, so an `!important` in the application's style sheets outside layers doesn't override those few properties; one in a layer declared before `env`, or in a `style` attribute, does.
+- **`!important`.** An important declaration in a cascade layer beats every important declaration outside layers. envUI declares nothing `!important`, so an `!important` in the application's style sheets wins over envUI as any of its rules does.
 
 ### Tokens
 

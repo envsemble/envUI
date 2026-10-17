@@ -63,16 +63,21 @@ export default function FilterPanel() {
         }
       >
         <Stack gap={5}>
-          <RadioGroup variant="rows" label="Status" value={status} onValueChange={setStatus}>
+          <RadioGroup
+            orientation="vertical"
+            label="Status"
+            value={status}
+            onValueChange={setStatus}
+          >
             <Radio value="any" label="Any status" />
             <Radio value="active" label="Active" />
             <Radio value="paused" label="Paused" />
             <Radio value="done" label="Done" />
           </RadioGroup>
           <Select
-            variant="outlined"
+            variant="outline"
             label="Owner"
-            options={owners}
+            items={owners}
             value={owner}
             onValueChange={(value) => setOwner(value ?? 'anyone')}
           />

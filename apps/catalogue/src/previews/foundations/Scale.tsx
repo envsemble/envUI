@@ -33,7 +33,7 @@ function SizeRow({ size }: { size: ControlSize }) {
   return (
     <div className="docs-scale-row" data-size={size}>
       <TextField size={size} label="Title" defaultValue="Quarterly report" />
-      <Select size={size} aria-label="Plan" options={plans} defaultValue="team" />
+      <Select size={size} aria-label="Plan" items={plans} defaultValue="team" />
       <SegmentedControl
         size={size}
         aria-label="View"

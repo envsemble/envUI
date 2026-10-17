@@ -20,7 +20,7 @@ export default function SidebarSearch() {
     <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 16rem)' }}>
       <Stack gap={2}>
         <SearchField
-          variant="quiet"
+          variant="ghost"
           label="Find projects"
           placeholder="Find projects"
           value={query}

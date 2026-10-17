@@ -21,7 +21,7 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
           type="number"
           suffix="MB"
           defaultValue="2"
-          hint="Up to 10"
+          description="Up to 10"
         />
         <TextField
           showLabel={false}
@@ -34,8 +34,14 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
           endAction={<IconButton variant="text" icon={<ContentCopy />} aria-label="Copy price" />}
         />
         <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
-        <TextField variant="plain" label="Handle" name="handle" prefix="@" defaultValue="aurora" />
-        <SearchField variant="quiet" label="Find projects" placeholder="Find projects" />
+        <TextField
+          variant="underline"
+          label="Handle"
+          name="handle"
+          prefix="@"
+          defaultValue="aurora"
+        />
+        <SearchField variant="ghost" label="Find projects" placeholder="Find projects" />
         <TextField label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />
         <TextField
           label="Limit"

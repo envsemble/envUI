@@ -60,7 +60,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 4. **Task item**: a read-only, disabled Checkbox for each `- [ ]` or `- [x]` item.
 5. **Tabs** (MarkdownEditor with `preview`): Write and Preview.
 6. **Toolbar** (MarkdownEditor's `toolbar`): heading, bold, italic, bulleted and numbered lists, quote, inline code, code block and link buttons, then Undo and Redo.
-7. **Source** (MarkdownEditor): the shared Textarea, with its label, hint, error, variant and sizing, where the Markdown syntax stays visible.
+7. **Source** (MarkdownEditor): the shared Textarea, with its label, description, error, variant and sizing, where the Markdown syntax stays visible.
 
 ## Variants and sizes
 
@@ -69,7 +69,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 | `sizing="fixed"`   | A long document in a form: the source keeps its height, scrolls and resizes from its bottom edge. The default, 8 rows. |
 | `sizing="content"` | A short description: the source grows and shrinks with its text.                                                       |
 
-- MarkdownEditor's source takes Textarea's `variant`, `outlined` or `plain`, and its states.
+- MarkdownEditor's source takes Textarea's `variant`, `outline`, `underline` or `ghost`, and its states.
 - Markdown takes the width of its container: tables and code scroll within their own regions, and images keep their aspect ratio within the width.
 - `toolbar` chooses the formatting actions, in a fixed order; `false` hides the toolbar with its Undo and Redo.
 
@@ -124,7 +124,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 
 - Native headings, lists, quotes, tables and links, and headings at the level `headingOffset` sets.
 - Tables in focusable, scrolling regions, code blocks with CodeBlock's named source and copy button, and task items as read-only checkboxes named "Completed task" or "Incomplete task".
-- MarkdownEditor's source as a native textarea tied to its label, hint and error, a toolbar named "Markdown formatting" whose buttons are named and keep the selection, and tabs named "Markdown editor views".
+- MarkdownEditor's source as a native textarea tied to its label, description and error, a toolbar named "Markdown formatting" whose buttons are named and keep the selection, and tabs named "Markdown editor views".
 - Status messages for refused links and changes beyond `maxLength`.
 
 ### You provide
@@ -137,7 +137,7 @@ Markdown renders a Markdown string from the application in envUI's typography: h
 
 ### Write and preview
 
-MarkdownEditor with a label and a hint grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.
+MarkdownEditor with a label and a description grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.
 
 ```tsx example=EditDescription
 
@@ -169,6 +169,7 @@ MarkdownEditor with a label and a hint grows with its text; the Preview tab rend
 
 ## Changelog
 
+- **1.0.0**: MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline`, `underline` and `ghost`, which the `v1-props` codemod writes.
 - **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.
 - **0.5.0**: `components`, `remarkPlugins` and `rehypePlugins`; raw HTML is dropped before any rehype plugin runs, except keys written as `<kbd>`, which render as Kbd.
 - **0.1.0**: Markdown and MarkdownEditor.

@@ -67,6 +67,7 @@ import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
 import { DisclosuresFixture } from './Disclosures.js';
 import { DensityFixture } from './Density.js';
+import { ChoiceControlsFixture } from './ChoiceControls.js';
 import { StackingFixture } from './Stacking.js';
 import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
@@ -91,6 +92,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'scroll-keys': ScrollKeysFixture,
   'framed-shell': FramedShellFixture,
   density: DensityFixture,
+  'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
   'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,

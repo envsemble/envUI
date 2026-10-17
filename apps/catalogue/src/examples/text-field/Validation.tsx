@@ -18,7 +18,7 @@ export default function Validation() {
         label="Project handle"
         name="handle"
         prefix="example.com/"
-        hint="Used in links to the project."
+        description="Used in links to the project."
         value={handle}
         onChange={(event) => setHandle(event.target.value)}
         onBlur={() => setChecked(true)}

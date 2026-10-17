@@ -31,6 +31,9 @@ const reports = {
   'content.tsx': [
     `line 29: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
   ],
+  'form-vocabulary.tsx': [
+    `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,
+  ],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,

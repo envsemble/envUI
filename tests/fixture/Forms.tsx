@@ -36,14 +36,14 @@ export function FormsFixture() {
       >
         <TextField
           label="Project name"
-          hint="A descriptive name"
+          description="A descriptive name"
           name="project"
           defaultValue="Initial project"
           required
         />
         <Textarea
           label="Notes"
-          hint="Optional supporting details"
+          description="Optional supporting details"
           name="notes"
           defaultValue="Initial notes"
         />
@@ -79,16 +79,16 @@ export function FormsFixture() {
           name="visibility"
           defaultValue="private"
           required
-          variant="rows"
+          orientation="vertical"
         >
-          <Radio value="private" label="Private" detail="Only invited members" />
-          <Radio value="shared" label="Shared" detail="Anyone with access" />
+          <Radio value="private" label="Private" description="Only invited members" />
+          <Radio value="shared" label="Shared" description="Anyone with access" />
         </RadioGroup>
-        <Select label="Plan" name="plan" options={planOptions} defaultValue="starter" required />
+        <Select label="Plan" name="plan" items={planOptions} defaultValue="starter" required />
         <Select
           label="Empty choice"
           name="emptyChoice"
-          options={dialogOptions}
+          items={dialogOptions}
           placeholder="Choose an option"
         />
         <Checkbox
@@ -119,7 +119,7 @@ export function FormsFixture() {
         <Select
           label="Required choice"
           name="requiredChoice"
-          options={dialogOptions}
+          items={dialogOptions}
           placeholder="Choose a required option"
           required
         />
@@ -140,33 +140,29 @@ export function FormsFixture() {
           size="sm"
           label="Compact plan"
           name="compactPlan"
-          options={planOptions}
+          items={planOptions}
           defaultValue="starter"
         />
         <Select
           size="sm"
-          variant="outlined"
+          variant="outline"
           label="Compact outlined plan"
-          options={planOptions}
+          items={planOptions}
           defaultValue="team"
         />
         <Button type="submit">Submit compact form</Button>
       </form>
       <output data-testid="compact-values">{JSON.stringify(compactValues)}</output>
       <Surface padding={4} data-testid="select-pane">
-        <Select variant="outlined" label="Pane sort" options={planOptions} defaultValue="starter" />
-        <Select
-          variant="outlined"
-          label="Pane role"
-          options={dialogOptions}
-          defaultValue="aurora"
-        />
+        <Select variant="outline" label="Pane sort" items={planOptions} defaultValue="starter" />
+        <Select variant="outline" label="Pane role" items={dialogOptions} defaultValue="aurora" />
       </Surface>
       <div data-testid="growing-textareas" className="fixture-actions">
         <Textarea label="One line" sizing="content" rows={1} />
         <Textarea label="Three lines" sizing="content" rows={3} />
         <Textarea label="Default lines" sizing="content" />
         <Textarea label="Two fixed lines" rows={2} />
+        <Textarea label="Ghost notes" variant="ghost" />
       </div>
     </section>
   );

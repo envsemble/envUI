@@ -730,7 +730,7 @@
       "page": "color-picker",
       "doc": "docs/components/color-picker.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one.",
       "aliases": [
@@ -805,7 +805,7 @@
       "page": "text-field",
       "doc": "docs/components/text-field.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "Single-line inputs, search fields and multiline textareas share labels, guidance and states.",
       "aliases": [
@@ -885,13 +885,13 @@
         {
           "name": "Variants",
           "title": "Appearances",
-          "description": "Outlined fields suit forms, plain fields a title in a document or a header, and quiet fields a search at the top of a sidebar.",
+          "description": "Outline fields suit forms, underline fields a title in a document or a header, and ghost fields a search at the top of a sidebar.",
           "file": "docs/examples/text-field/Variants.tsx"
         },
         {
           "name": "Validation",
           "title": "Show an error",
-          "description": "The hint states the rule and the error says how to correct the value. Here the field is checked once people leave it, and the error goes as soon as the value fits.",
+          "description": "The description states the rule and the error says how to correct the value. Here the field is checked once people leave it, and the error goes as soon as the value fits.",
           "file": "docs/examples/text-field/Validation.tsx"
         },
         {
@@ -903,7 +903,7 @@
         {
           "name": "IconAndAction",
           "title": "Icon and end action",
-          "description": "`startIcon` adds a decorative icon at the start; `endAction` holds a control at the end, here a text IconButton that shows the password.",
+          "description": "`startIcon` adds a decorative icon at the start; `endAction` holds a control at the end, here an IconButton that shows the password, which takes the ghost look of the field.",
           "file": "docs/examples/text-field/IconAndAction.tsx"
         },
         {
@@ -921,7 +921,7 @@
         {
           "name": "SidebarSearch",
           "title": "Search a sidebar",
-          "description": "A quiet SearchField at the top of a sidebar shows only its icon and placeholder until the pointer or focus gives it a soft fill.",
+          "description": "A ghost SearchField at the top of a sidebar shows only its icon and placeholder until the pointer or focus gives it a soft fill.",
           "file": "docs/examples/text-field/SidebarSearch.tsx"
         },
         {
@@ -1010,7 +1010,7 @@
       "page": "composer",
       "doc": "docs/components/composer.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.",
       "aliases": [
@@ -1089,7 +1089,7 @@
       "page": "checkbox",
       "doc": "docs/components/checkbox.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.",
       "aliases": [
@@ -1167,7 +1167,7 @@
       "page": "switch",
       "doc": "docs/components/switch.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "An on/off setting that takes effect as soon as it changes.",
       "aliases": [
@@ -1246,7 +1246,7 @@
       "page": "radio",
       "doc": "docs/components/radio.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "One choice from a few options shown together, side by side or as selectable rows.",
       "aliases": [
@@ -1261,7 +1261,7 @@
       ],
       "useWhen": [
         "People choose exactly one of two to five options, and seeing them all helps them choose, such as who can open a project.",
-        "Each option needs a sentence that explains it, such as a role or a visibility (`variant=\"rows\"`).",
+        "Each option needs a sentence that explains it, such as a role or a visibility (`orientation=\"vertical\"`).",
         "A choice in a form or a dialog that takes effect when the form is saved."
       ],
       "avoidWhen": [
@@ -1308,7 +1308,7 @@
         {
           "name": "VisibilityRows",
           "title": "Selectable rows",
-          "description": "Rows suit options that need a sentence each. The disabled option says why in its detail.",
+          "description": "Rows suit options that need a sentence each. The disabled option says why in its description.",
           "file": "docs/examples/radio/VisibilityRows.tsx"
         },
         {
@@ -1330,9 +1330,9 @@
       "page": "select",
       "doc": "docs/components/select.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
-      "summary": "One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, hint and error.",
+      "summary": "One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.",
       "aliases": [
         "dropdown",
         "drop-down",
@@ -1387,31 +1387,31 @@
         {
           "name": "ProjectVisibility",
           "title": "Select",
-          "description": "One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, hint and error.",
+          "description": "One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.",
           "file": "docs/examples/select/ProjectVisibility.tsx"
         },
         {
           "name": "TriggerStyles",
           "title": "Trigger styles",
-          "description": "The secondary trigger fills on the page; the outlined one keeps a border on a pane, where a fill would blend in.",
+          "description": "The secondary trigger fills on the page; the outline one keeps a border on a pane, where a fill would blend in.",
           "file": "docs/examples/select/TriggerStyles.tsx"
         },
         {
           "name": "InviteMember",
           "title": "In a form",
-          "description": "The label sits above a trigger that fits its content, beside a full-width text field. The hint says what the roles mean, and `name` submits the chosen role with the form.",
+          "description": "The label sits above a trigger that fits its content, beside a full-width text field. The description says what the roles mean, and `name` submits the chosen role with the form.",
           "file": "docs/examples/select/InviteMember.tsx"
         },
         {
           "name": "SettingRows",
           "title": "In list rows",
-          "description": "A row's title names its select with `aria-label`; outlined triggers stay distinct on the row fill.",
+          "description": "A row's title names its select with `aria-label`; outline triggers stay distinct on the row fill.",
           "file": "docs/examples/select/SettingRows.tsx"
         },
         {
           "name": "SmallToolbar",
           "title": "Small, in a toolbar",
-          "description": "A small, outlined select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.",
+          "description": "A small, outline select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.",
           "file": "docs/examples/select/SmallToolbar.tsx"
         }
       ]
@@ -1499,7 +1499,7 @@
       "page": "combobox",
       "doc": "docs/components/combobox.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.6.0",
       "summary": "A text field that filters a list of options as people type, to choose one option or, as chips, several.",
       "aliases": [
@@ -1593,7 +1593,7 @@
       "page": "date-picker",
       "doc": "docs/components/date-picker.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.6.0",
       "summary": "A field that opens a calendar to choose a date, or a date and time, and the calendar on its own.",
       "aliases": [
@@ -1611,7 +1611,7 @@
       ],
       "useWhen": [
         "People choose a day, such as when a report goes out or a task is due.",
-        "People choose a day and a time, such as when a meeting starts (`withTime`).",
+        "People choose a day and a time, such as when a meeting starts (`granularity=\"minute\"`).",
         "A day is chosen within a page or a panel from a month that stays visible, such as in a planning view (Calendar)."
       ],
       "avoidWhen": [
@@ -1654,7 +1654,7 @@
         {
           "name": "MeetingTime",
           "title": "A date and a time",
-          "description": "With `withTime`, the calendar stays open for the time field; Now chooses the current date and time, and Done closes it.",
+          "description": "With `granularity=\"minute\"`, the calendar stays open for the time field; Now chooses the current date and time, and Done closes it.",
           "file": "docs/examples/date-picker/MeetingTime.tsx"
         },
         {
@@ -1688,7 +1688,7 @@
       "page": "slider",
       "doc": "docs/components/slider.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.",
       "aliases": [
@@ -1742,7 +1742,7 @@
         {
           "name": "SaveOnRelease",
           "title": "Save once a change is complete",
-          "description": "The value follows the thumb as it moves, and `onValueCommit` saves it once, when the thumb is released or after a key. A status line announces the save.",
+          "description": "The value follows the thumb as it moves, and `onValueCommitted` saves it once, when the thumb is released or after a key. A status line announces the save.",
           "file": "docs/examples/slider/SaveOnRelease.tsx"
         },
         {
@@ -1754,7 +1754,7 @@
         {
           "name": "ManagedLimit",
           "title": "A value people can't change",
-          "description": "A disabled slider keeps its value visible, and the hint says who sets it.",
+          "description": "A disabled slider keeps its value visible, and the description says who sets it.",
           "file": "docs/examples/slider/ManagedLimit.tsx"
         }
       ]
@@ -1764,7 +1764,7 @@
       "page": "drop-zone",
       "doc": "docs/components/drop-zone.md",
       "category": "Forms & selection",
-      "status": "beta",
+      "status": "stable",
       "since": "0.5.0",
       "summary": "An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.",
       "aliases": [
@@ -2745,7 +2745,7 @@
         {
           "name": "EditDescription",
           "title": "Write and preview",
-          "description": "MarkdownEditor with a label and a hint grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.",
+          "description": "MarkdownEditor with a label and a description grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.",
           "file": "docs/examples/markdown/EditDescription.tsx"
         },
         {
@@ -6110,21 +6110,21 @@
           "name": "locale",
           "type": "string",
           "required": false,
-          "description": "The locale of the month and weekday names and the day numbers; the browser's by default. The days are always Gregorian, also in a locale with a calendar of its own."
+          "description": "The locale of the month and weekday names and the day numbers: EnvUIProvider's, else the browser's. The days are always Gregorian, also in a locale with a calendar of its own."
         },
         {
           "name": "previousMonthLabel",
           "type": "string",
           "required": false,
-          "default": "'Previous month'",
-          "description": "Accessible name of the previous month button; Previous month by default."
+          "default": "'Previous month', or EnvUIProvider's messages.calendar.previousMonth",
+          "description": "Accessible name of the previous month button."
         },
         {
           "name": "nextMonthLabel",
           "type": "string",
           "required": false,
-          "default": "'Next month'",
-          "description": "Accessible name of the next month button; Next month by default."
+          "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
+          "description": "Accessible name of the next month button."
         }
       ],
       "native": [
@@ -6373,6 +6373,24 @@
       "description": "A native checkbox inside its label, checked, unchecked or mixed.",
       "props": [
         {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The native checkbox, so that a form library can register it and focus it; the other native props, such as name and required, reach it too."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The checkbox's class, on its root element, the label around the box and the text."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the root element."
+        },
+        {
           "name": "label",
           "type": "ReactNode",
           "required": false,
@@ -6563,8 +6581,26 @@
     "ColorPicker": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labeled color area, hue slider and native HEX field; the application owns the result.",
+      "description": "A labelled color area, hue slider and native HEX field; the application owns the result. The area and the hue are sliders for the keyboard and assistive technology, named in the EnvUIProvider's language.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The HEX field, so that a form library can register it and focus it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The picker's class, on its root element."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the picker's root element."
+        },
         {
           "name": "label",
           "type": "string",
@@ -6597,24 +6633,23 @@
           "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
-          "name": "hint",
-          "type": "ReactNode",
-          "required": false,
-          "default": "'Enter six hexadecimal digits, with an optional #.'",
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'floating' | 'plain' | 'quiet'",
+          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look: outlined, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "default": "'outline'",
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
@@ -6626,13 +6661,13 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         },
         {
           "name": "endAction",
           "type": "ReactNode",
           "required": false,
-          "description": "A control at the end of the field, such as a text IconButton that reveals or copies the value; name it with aria-label."
+          "description": "A control at the end of the field, such as an IconButton that reveals or copies the value; name it with aria-label. A button that sets no variant takes ghost here."
         },
         {
           "name": "showLabel",
@@ -6681,7 +6716,19 @@
           "name": "ref",
           "type": "Ref<HTMLInputElement>",
           "required": false,
-          "description": "The text input."
+          "description": "The text input, so that a form library can register it and focus it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-combobox."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element."
         },
         {
           "name": "items",
@@ -6711,20 +6758,22 @@
           "name": "loadingLabel",
           "type": "ReactNode",
           "required": false,
-          "description": "Shown in the popup while loading; Loading… by default."
+          "default": "'Loading…', or EnvUIProvider's messages.combobox.loading",
+          "description": "Shown in the popup while loading."
         },
         {
           "name": "emptyLabel",
           "type": "ReactNode",
           "required": false,
-          "description": "Shown in the popup when no option matches; No matches by default."
+          "default": "'No matches', or EnvUIProvider's messages.combobox.empty",
+          "description": "Shown in the popup when no option matches."
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'floating'",
+          "type": "'outline' | 'floating'",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look, as TextField's: outlined, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
         },
         {
           "name": "size",
@@ -6749,13 +6798,15 @@
           "name": "clearLabel",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the clear button; Clear by default."
+          "default": "'Clear', or EnvUIProvider's messages.common.clear",
+          "description": "Accessible name of the clear button."
         },
         {
           "name": "removeLabel",
           "type": "(label: string) => string",
           "required": false,
-          "description": "Accessible name of a chip's remove button; Remove followed by the label by default."
+          "default": "Remove followed by the label, or EnvUIProvider's messages.combobox.remove",
+          "description": "Accessible name of a chip's remove button, from the chip's label."
         },
         {
           "name": "open",
@@ -6779,7 +6830,7 @@
           "name": "locale",
           "type": "string",
           "required": false,
-          "description": "The locale of the default filter's matching; the browser's by default."
+          "description": "The locale of the default filter's matching: EnvUIProvider's, else the browser's."
         },
         {
           "name": "label",
@@ -6788,7 +6839,7 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
@@ -6797,7 +6848,7 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         },
         {
           "name": "multiple",
@@ -6970,15 +7021,15 @@
           "name": "sendLabel",
           "type": "string",
           "required": false,
-          "default": "'Send'",
-          "description": "Accessible name of the send button; Send by default."
+          "default": "'Send', or EnvUIProvider's messages.composer.send",
+          "description": "Accessible name of the send button."
         },
         {
           "name": "stopLabel",
           "type": "string",
           "required": false,
-          "default": "'Stop'",
-          "description": "Accessible name of the stop button; Stop by default."
+          "default": "'Stop', or EnvUIProvider's messages.composer.stop",
+          "description": "Accessible name of the stop button."
         },
         {
           "name": "minRows",
@@ -7135,7 +7186,7 @@
           "name": "content",
           "type": "ReactNode | ((target: Element | null) => ReactNode)",
           "required": true,
-          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard."
+          "description": "Menu content: Menu.Item, Menu.Group, Menu.Separator and the other menu parts. A function receives the element the menu was opened on: the deepest element under the pointer, or the focused element (its active descendant, when it has one) for the keyboard. Where it returns null, the menu doesn't open on that element."
         },
         {
           "name": "children",
@@ -7321,13 +7372,25 @@
           "name": "ref",
           "type": "Ref<HTMLButtonElement>",
           "required": false,
-          "description": "The field's button."
+          "description": "The field's button, which shows the value and opens the calendar."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-date-picker."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element."
         },
         {
           "name": "value",
           "type": "string | null",
           "required": false,
-          "description": "The value: a day as YYYY-MM-DD, or with withTime a local date and time as YYYY-MM-DDTHH:mm. null, or an empty string, for none."
+          "description": "The value: a day as YYYY-MM-DD, or with the minute granularity a local date and time as YYYY-MM-DDTHH:mm. null, or an empty string, for none."
         },
         {
           "name": "defaultValue",
@@ -7343,11 +7406,11 @@
           "description": "Receives the new value, or null once the field is cleared."
         },
         {
-          "name": "withTime",
-          "type": "boolean",
+          "name": "granularity",
+          "type": "'day' | 'minute'",
           "required": false,
-          "default": "false",
-          "description": "Choose a time as well: the value becomes YYYY-MM-DDTHH:mm."
+          "default": "'day'",
+          "description": "What the value holds: day, a date as YYYY-MM-DD, or minute, a date and a time as YYYY-MM-DDTHH:mm, chosen in a time field under the calendar."
         },
         {
           "name": "min",
@@ -7372,7 +7435,7 @@
           "name": "locale",
           "type": "string",
           "required": false,
-          "description": "The locale of the shown value and the calendar's names and numbers; the browser's by default. Dates are Gregorian, also in a locale with a calendar of its own."
+          "description": "The locale of the shown value and the calendar's names and numbers: EnvUIProvider's, else the browser's. Dates are Gregorian, also in a locale with a calendar of its own."
         },
         {
           "name": "weekStart",
@@ -7384,7 +7447,7 @@
           "name": "formatOptions",
           "type": "Intl.DateTimeFormatOptions",
           "required": false,
-          "description": "How the field shows the value: Intl.DateTimeFormat options, by default the medium date style and, with withTime, the short time style, in the Gregorian calendar unless they name another."
+          "description": "How the field shows the value: Intl.DateTimeFormat options, by default the medium date style and, with the minute granularity, the short time style, in the Gregorian calendar unless they name another."
         },
         {
           "name": "name",
@@ -7414,10 +7477,10 @@
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'floating'",
+          "type": "'outline' | 'floating'",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look, as TextField's: outlined, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
         },
         {
           "name": "size",
@@ -7462,48 +7525,50 @@
           "name": "clearLabel",
           "type": "string",
           "required": false,
-          "default": "'Clear'",
-          "description": "Accessible name of the field's clear button and text of the calendar's; Clear by default."
+          "default": "'Clear', or EnvUIProvider's messages.datePicker.clear",
+          "description": "Accessible name of the field's clear button and text of the calendar's."
         },
         {
           "name": "todayLabel",
           "type": "string",
           "required": false,
-          "default": "'Today'",
-          "description": "The calendar's shortcut to today; Today by default."
+          "default": "'Today', or EnvUIProvider's messages.datePicker.today",
+          "description": "The calendar's shortcut to today."
         },
         {
           "name": "nowLabel",
           "type": "string",
           "required": false,
-          "default": "'Now'",
-          "description": "With withTime, the calendar's shortcut to the current date and time; Now by default."
+          "default": "'Now', or EnvUIProvider's messages.datePicker.now",
+          "description": "With the minute granularity, the calendar's shortcut to the current date and time."
         },
         {
           "name": "doneLabel",
           "type": "string",
           "required": false,
-          "default": "'Done'",
-          "description": "With withTime, the button that closes the calendar; Done by default."
+          "default": "'Done', or EnvUIProvider's messages.datePicker.done",
+          "description": "With the minute granularity, the button that closes the calendar."
         },
         {
           "name": "timeLabel",
           "type": "string",
           "required": false,
-          "default": "'Time'",
-          "description": "With withTime, the label of the time field; Time by default."
+          "default": "'Time', or EnvUIProvider's messages.datePicker.time",
+          "description": "With the minute granularity, the label of the time field."
         },
         {
           "name": "previousMonthLabel",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the calendar's previous month button; Previous month by default."
+          "default": "'Previous month', or EnvUIProvider's messages.calendar.previousMonth",
+          "description": "Accessible name of the calendar's previous month button."
         },
         {
           "name": "nextMonthLabel",
           "type": "string",
           "required": false,
-          "description": "Accessible name of the calendar's next month button; Next month by default."
+          "default": "'Next month', or EnvUIProvider's messages.calendar.nextMonth",
+          "description": "Accessible name of the calendar's next month button."
         },
         {
           "name": "label",
@@ -7512,7 +7577,7 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
@@ -7521,7 +7586,7 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         }
       ],
       "native": [
@@ -7828,7 +7893,7 @@
           "name": "onClose",
           "type": "(id: string) => void",
           "required": true,
-          "description": "Called from a tab's close button, a middle click and Delete on the focused tab."
+          "description": "Called from a tab's close button, a middle click, Delete or Backspace on the focused tab, and Close in the tab's context menu."
         },
         {
           "name": "onPin",
@@ -7859,7 +7924,7 @@
           "name": "onCloseAll",
           "type": "() => void",
           "required": false,
-          "description": "Called from Close all tabs in the strip's context menu. With it, the strip and each tab open that menu on right click, long press, the Menu key and Shift+F10; a tab's menu also offers closing that tab."
+          "description": "Called from Close all tabs in the context menu. Each tab opens a context menu that closes it on right click, long press, the Menu key and Shift+F10; with onCloseAll, the menu also offers Close all tabs, and the strip around the tabs opens it too."
         },
         {
           "name": "closeAllLabel",
@@ -8037,13 +8102,13 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "What to drop or choose, such as \"Drop a logo here, or browse\"; the zone's accessible name."
+          "description": "What to drop or choose, such as \"Drop a logo here, or browse\". With the description, it names the zone, as its visible text does."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "Which files fit, such as \"PNG, JPG or WebP up to 2 MB\"."
+          "description": "Which files fit, such as \"PNG, JPG or WebP up to 2 MB\"; it is read as part of the name."
         },
         {
           "name": "icon",
@@ -8065,13 +8130,13 @@
           "description": "Take several files at once; otherwise the zone takes the first file."
         },
         {
-          "name": "onFiles",
+          "name": "onDropAccepted",
           "type": "(files: File[]) => void",
           "required": true,
           "description": "Receives the dropped or chosen files that the zone takes."
         },
         {
-          "name": "onReject",
+          "name": "onDropRejected",
           "type": "(files: File[]) => void",
           "required": false,
           "description": "Receives the files that do not match accept, and those after the first without multiple."
@@ -8897,10 +8962,16 @@
       "description": "Native Markdown source editing, shared formatting history, and optional preview.",
       "props": [
         {
-          "name": "value",
-          "type": "string",
+          "name": "label",
+          "type": "ReactNode",
           "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element, such as its width in a row."
         },
         {
           "name": "defaultValue",
@@ -8910,10 +8981,10 @@
           "description": "The source an uncontrolled editor starts with, and that a form reset restores."
         },
         {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
+          "name": "className",
+          "type": "string",
           "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
+          "description": "The field's class, on its root element, beside env-field and env-text-field."
         },
         {
           "name": "toolbar",
@@ -8921,6 +8992,51 @@
           "required": false,
           "defaultBuiltIn": true,
           "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
+        },
+        {
+          "name": "rows",
+          "type": "number",
+          "required": false,
+          "default": "8",
+          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the whole source after typing, formatting, undo or redo."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
+          "name": "variant",
+          "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
+          "required": false,
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
+        },
+        {
+          "name": "sizing",
+          "type": "'fixed' | 'content'",
+          "required": false,
+          "default": "'fixed'",
+          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
         },
         {
           "name": "preview",
@@ -8940,45 +9056,6 @@
           "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
           "required": false,
           "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
-        },
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
-        },
-        {
-          "name": "hint",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
-          "name": "rows",
-          "type": "number",
-          "required": false,
-          "default": "8",
-          "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "variant",
-          "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
-          "required": false,
-          "default": "'outlined'",
-          "description": "The field's look, as TextField's: outlined, plain or quiet. A text area is always tall, with its label resting at the top, so it has no floating variant."
-        },
-        {
-          "name": "error",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
-        },
-        {
-          "name": "sizing",
-          "type": "'fixed' | 'content'",
-          "required": false,
-          "default": "'fixed'",
-          "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
         }
       ],
       "native": [
@@ -9181,7 +9258,7 @@
           "name": "onClick",
           "type": "() => void",
           "required": false,
-          "description": "The action, run when the item is chosen; the menu then closes."
+          "description": "Runs as the destination is followed, before the menu closes, such as to record the choice; the link still navigates."
         },
         {
           "name": "target",
@@ -9228,6 +9305,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "Optional heading; the group is then labelled like Menu.Group."
+        },
+        {
+          "name": "aria-labelledby",
+          "type": "string",
+          "required": false,
+          "description": "Id of a heading elsewhere in the menu that names the group, in place of label."
         },
         {
           "name": "className",
@@ -9785,14 +9868,14 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the count, such as Inbox, 3 new, from EnvUIProvider's messages.navList.itemCount: the content's text, or a CounterBadge's value."
+          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the content: a number, or a CounterBadge without aria-label, as a count from EnvUIProvider's messages.navList.itemCount, such as Inbox, 3 new; a CounterBadge's aria-label, such as Inbox, 4 unread, or other content's text or aria-label, such as Labs, Beta, as it is, through messages.navList.itemEnd."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
           "requiredWhen": "in some forms",
-          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds the count of its end content."
+          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds its end content, such as a count."
         },
         {
           "name": "href",
@@ -10456,8 +10539,26 @@
     "Radio": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One option of a RadioGroup: a native radio input with its label, and an optional detail.",
+      "description": "One option of a RadioGroup: a native radio input with its label, and an optional description.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The native radio input, so that a form library can register it and focus it; the other native props reach it too."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The option's class, on its root element, the label around the radio and the text."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the root element."
+        },
         {
           "name": "value",
           "type": "string",
@@ -10471,7 +10572,7 @@
           "description": "The option's visible name, such as Private; pressing it chooses the option."
         },
         {
-          "name": "detail",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "A short, muted line under the label that helps people choose, such as Only the people you invite. It is part of the option's label, so it is read with its name."
@@ -10488,6 +10589,12 @@
       "import": "@envsemble/envui",
       "description": "A set of options to choose exactly one from: a native fieldset whose legend names the group, with Radio options inline or as selectable rows.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLFieldSetElement>",
+          "required": false,
+          "description": "The group's fieldset."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -10526,11 +10633,11 @@
           "description": "Require a choice before the form submits, through native constraint validation."
         },
         {
-          "name": "variant",
-          "type": "'inline' | 'rows'",
+          "name": "orientation",
+          "type": "'horizontal' | 'vertical'",
           "required": false,
-          "default": "'inline'",
-          "description": "The group's look: inline, radios before their labels side by side that wrap onto more lines; or rows, connected selectable rows that fill the width, with the label and detail at the start and the radio at the end, for options that need explaining."
+          "default": "'horizontal'",
+          "description": "How the options are laid out: horizontal, radios before their labels side by side that wrap onto more lines; or vertical, connected selectable rows that fill the width, with the label and description at the start and the radio at the end, for options that need explaining."
         },
         {
           "name": "disabled",
@@ -10687,6 +10794,12 @@
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
+          "name": "hint",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the editor, such as a format or a limit, linked to it as its description."
+        },
+        {
           "name": "value",
           "type": "string",
           "required": false,
@@ -10823,16 +10936,10 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
-        },
-        {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         }
       ],
       "native": [
@@ -10882,8 +10989,26 @@
           "name": "clearLabel",
           "type": "string",
           "required": false,
-          "default": "'Clear search'",
-          "description": "The accessible name and tooltip of the clear button, in the application's language."
+          "default": "'Clear search', or EnvUIProvider's messages.searchField.clear",
+          "description": "The accessible name and tooltip of the clear button."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element, such as its width in a row."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The native input, so that a form library can register it and focus it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-text-field."
         },
         {
           "name": "prefix",
@@ -10892,29 +11017,29 @@
           "description": "Short, non-interactive text before the value, such as the start of an address. It is not part of the value; it shows once the field has focus or a value and is read after the label."
         },
         {
-          "name": "hint",
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
+        },
+        {
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
-        },
-        {
           "name": "variant",
-          "type": "'outlined' | 'floating' | 'plain' | 'quiet'",
+          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look: outlined, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "default": "'outline'",
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         },
         {
           "name": "suffix",
@@ -10988,11 +11113,29 @@
     "Select": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One choice from a list that stays collapsed until opened: a Button-style trigger that shows the chosen option and opens a popup list, where a check mark shows the chosen option, with a label above it, a hint, an error and native form participation.",
+      "description": "One choice from a list that stays collapsed until opened: a Button trigger that shows the chosen option and opens a popup list, where a check mark shows the chosen option, with a label above it, a description, an error and native form participation.",
       "props": [
         {
-          "name": "options",
-          "type": "readonly SelectOption[]",
+          "name": "ref",
+          "type": "Ref<HTMLButtonElement>",
+          "required": false,
+          "description": "The trigger, the button that shows the chosen option and opens the list."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-select."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element."
+        },
+        {
+          "name": "items",
+          "type": "readonly SelectItem[]",
           "required": true,
           "description": "The options of the list, in order, each with a value, a label and whether it is disabled."
         },
@@ -11040,10 +11183,10 @@
         },
         {
           "name": "variant",
-          "type": "'secondary' | 'outlined'",
+          "type": "'secondary' | 'outline'",
           "required": false,
           "default": "'secondary'",
-          "description": "The trigger's Button style, to suit its surroundings: secondary, a filled pill, for the page; or outlined, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend with the surface."
+          "description": "The trigger's Button variant, to suit its surroundings: secondary, a filled pill, for the page; or outline, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend with the surface."
         },
         {
           "name": "size",
@@ -11058,7 +11201,7 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
@@ -11067,7 +11210,7 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         }
       ],
       "native": [
@@ -11111,7 +11254,7 @@
     "Slider": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional hint below.",
+      "description": "A value in a range, chosen by dragging a thumb along a track, pressing the track or with the keyboard, with its label and current value above the track and an optional description below.",
       "props": [
         {
           "name": "label",
@@ -11120,7 +11263,7 @@
           "description": "The value's name above the track, such as Opacity. It names the slider, and pressing it moves focus to the slider."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the track, such as what the value applies to, linked to the slider as its description."
@@ -11145,7 +11288,7 @@
           "description": "Receives the value while it changes, by dragging, pressing the track or with the keyboard, as often as the thumb moves."
         },
         {
-          "name": "onValueCommit",
+          "name": "onValueCommitted",
           "type": "(value: number) => void",
           "required": false,
           "description": "Receives the value once a change is complete: when the thumb is released or the track pressed, and after each key. Use it for work that runs once per change, such as saving."
@@ -11182,7 +11325,13 @@
           "name": "formatValue",
           "type": "(value: number) => string",
           "required": false,
-          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows as it is."
+          "description": "The value as people read it above the track and assistive technology announces it, such as (value) => `${value}%`. Without it, the number shows in the locale."
+        },
+        {
+          "name": "locale",
+          "type": "string",
+          "required": false,
+          "description": "The locale of the shown number: EnvUIProvider's, else the browser's."
         },
         {
           "name": "disabled",
@@ -11411,6 +11560,24 @@
       "import": "@envsemble/envui",
       "description": "An on/off setting that takes effect at once: a native checkbox with the switch role, drawn as a track and a thumb, with its label beside it.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The native checkbox with the switch role, so that a form library can register it and focus it; the other native props, such as name, reach it too."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The switch's class, on its root element, the label around the track and the text."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the root element."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -11830,8 +11997,32 @@
     "TextField": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A labelled single-line text input: a native input with a floating label, a hint and an error, at the control height in an outlined or quiet look, or taller as the floating and plain variants, with an optional start icon, end action, prefix and suffix.",
+      "description": "A labelled single-line text input: a native input with a floating label, a description and an error, at the control height in an outline or ghost look, or taller as the floating and underline variants, with an optional start icon, end action, prefix and suffix.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLInputElement>",
+          "required": false,
+          "description": "The native input, so that a form library can register it and focus it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-text-field."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element, such as its width in a row."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the value as people type, after the native onChange."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -11839,7 +12030,7 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
@@ -11848,14 +12039,14 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'floating' | 'plain' | 'quiet'",
+          "type": "'outline' | 'floating' | 'underline' | 'ghost'",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look: outlined, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; plain, as tall, with no border or fill and an underline on hover and focus; or quiet, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
+          "default": "'outline'",
+          "description": "The field's look: outline, with a thin border, at the control height; floating, an outlined field 3.5 rem tall whose label rests inside and floats into the outline, for long forms on a page; underline, as tall, with no border or fill and an underline on hover and focus; or ghost, only its text and start icon at rest, with a soft fill under the pointer and while focused and a placeholder that clears on focus, for a search at the top of a sidebar or a list."
         },
         {
           "name": "startIcon",
@@ -11867,7 +12058,7 @@
           "name": "endAction",
           "type": "ReactNode",
           "required": false,
-          "description": "A control at the end of the field, such as a text IconButton that reveals or copies the value; name it with aria-label."
+          "description": "A control at the end of the field, such as an IconButton that reveals or copies the value; name it with aria-label. A button that sets no variant takes ghost here."
         },
         {
           "name": "showLabel",
@@ -11880,7 +12071,7 @@
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
-          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and plain fields have their own height."
+          "description": "The height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another, as a table cell does. A button beside a field takes the field's size. Floating and underline fields have their own height."
         },
         {
           "name": "prefix",
@@ -11907,11 +12098,35 @@
       "description": "A labelled text area for text over several lines: a native textarea in the text field's frame, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.",
       "props": [
         {
+          "name": "ref",
+          "type": "Ref<HTMLTextAreaElement>",
+          "required": false,
+          "description": "The native text area, so that a form library can register it and focus it."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element, beside env-field and env-text-field."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element, such as its width in a row."
+        },
+        {
           "name": "variant",
           "type": "Exclude<TextFieldAppearanceProps['variant'], 'floating'>",
           "required": false,
-          "default": "'outlined'",
-          "description": "The field's look, as TextField's: outlined, plain or quiet. A text area is always tall, with its label resting at the top, so it has no floating variant."
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, underline or ghost. A text area is always tall, with its label resting at the top, so it has no floating variant."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the text as people type, after the native onChange."
         },
         {
           "name": "sizing",
@@ -11933,7 +12148,7 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
-          "name": "hint",
+          "name": "description",
           "type": "ReactNode",
           "required": false,
           "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
@@ -11942,7 +12157,7 @@
           "name": "error",
           "type": "ReactNode",
           "required": false,
-          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the hint."
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
         }
       ],
       "native": [

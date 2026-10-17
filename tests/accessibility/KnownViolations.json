@@ -23,63 +23,25 @@
       }
     }
   },
-  "components/combobox/guidelines": {
-    "dark": {
-      "aria-allowed-attr": {
-        "Combobox states :: div.env-combobox-chip": 2
-      }
-    },
-    "light": {
-      "aria-allowed-attr": {
-        "Combobox states :: div.env-combobox-chip": 2
-      }
-    }
-  },
-  "components/drop-zone/guidelines": {
+  "components/card/overview": {
     "dark": {
       "label-content-name-mismatch": {
-        "Drop zone states :: button.env-drop-zone-target": 2
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
+      }
+    },
+    "dark-hc": {
+      "label-content-name-mismatch": {
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     },
     "light": {
       "label-content-name-mismatch": {
-        "Drop zone states :: button.env-drop-zone-target": 2
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
-    }
-  },
-  "components/drop-zone/overview": {
-    "dark": {
+    },
+    "light-hc": {
       "label-content-name-mismatch": {
-        "article :: button.env-drop-zone-target": 4
-      }
-    },
-    "light": {
-      "label-content-name-mismatch": {
-        "article :: button.env-drop-zone-target": 4
-      }
-    }
-  },
-  "components/menubar/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    }
-  },
-  "components/panel-dock/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 2
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 2
+        "article :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 3
       }
     }
   },
@@ -95,51 +57,10 @@
       }
     }
   },
-  "components/text-field/guidelines": {
-    "dark": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
-    "dark-hc": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
+  "components/segmented-control/guidelines": {
     "light": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    },
-    "light-hc": {
-      "target-size": {
-        "Appearances :: button.env-textarea-resize-edge": 1,
-        "Textarea states :: button.env-textarea-resize-edge": 3
-      }
-    }
-  },
-  "components/text-field/overview": {
-    "dark": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "dark-hc": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
-      }
-    },
-    "light-hc": {
-      "target-size": {
-        "article :: button.env-textarea-resize-edge": 1
+      "color-contrast": {
+        "Sizes and states :: span.env-segment-count": 3
       }
     }
   },
@@ -236,6 +157,18 @@
         "Switches :: button.env-button.docs-swatch": 5,
         "Text & focus :: button.env-button.docs-swatch": 7,
         "Text fields :: button.env-button.docs-swatch": 8
+      }
+    }
+  },
+  "overview/components": {
+    "dark": {
+      "label-content-name-mismatch": {
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
+      }
+    },
+    "light": {
+      "label-content-name-mismatch": {
+        "main :: a.env-stack.env-card.env-card-content.env-clickable-card.env-surface": 60
       }
     }
   }

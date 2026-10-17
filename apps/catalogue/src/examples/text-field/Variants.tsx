@@ -6,9 +6,9 @@ export default function Variants() {
     // As wide as a form column.
     <Stack style={{ inlineSize: 'min(100%, 24rem)' }}>
       <TextField label="Project name" name="project" defaultValue="Northwind launch" />
-      <TextField variant="plain" label="Title" name="title" defaultValue="Quarterly report" />
+      <TextField variant="underline" label="Title" name="title" defaultValue="Quarterly report" />
       <TextField
-        variant="quiet"
+        variant="ghost"
         showLabel={false}
         label="Find projects"
         placeholder="Find projects"

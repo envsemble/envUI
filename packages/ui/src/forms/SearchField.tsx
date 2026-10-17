@@ -1,16 +1,18 @@
 'use client';
 
-import { forwardRef, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Search } from '../icons/Search.js';
 import { Close } from '../icons/Close.js';
 import { IconButton } from '../actions/Button.js';
 import { setRef } from '../internal/setRef.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { searchField as searchFieldMessages } from '../foundations/messages/searchField.js';
 import { TextField, type TextFieldProps } from './TextField.js';
 
 export interface SearchFieldProps
   extends Omit<
     TextFieldProps,
-    'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue'
+    'type' | 'startIcon' | 'endAction' | 'label' | 'value' | 'defaultValue' | 'onValueChange'
   > {
   /**
    * The field's accessible name, such as Search members. It shows as a floating label only with
@@ -32,7 +34,10 @@ export interface SearchFieldProps
    * clears it.
    */
   onValueChange?: (value: string) => void;
-  /** The accessible name and tooltip of the clear button, in the application's language. */
+  /**
+   * The accessible name and tooltip of the clear button.
+   * @default 'Clear search', or EnvUIProvider's messages.searchField.clear
+   */
   clearLabel?: string;
 }
 
@@ -40,20 +45,20 @@ export interface SearchFieldProps
  * A search input with a search icon and, while it has a query, a clear button; Esc also clears.
  * Its label is hidden by default, so it sits beside buttons with a placeholder.
  */
-export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
-  {
-    label,
-    value,
-    defaultValue = '',
-    onValueChange,
-    onChange,
-    clearLabel = 'Clear search',
-    showLabel = false,
-    disabled,
-    ...props
-  },
+export function SearchField({
   ref,
-) {
+  label,
+  value,
+  defaultValue = '',
+  onValueChange,
+  onChange,
+  clearLabel,
+  showLabel = false,
+  disabled,
+  ...props
+}: SearchFieldProps) {
+  const messages = useMessages('searchField', searchFieldMessages);
+  const clearName = clearLabel ?? messages.clear;
   const inputRef = useRef<HTMLInputElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const query = value ?? uncontrolledValue;
@@ -90,10 +95,10 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       endAction={
         query ? (
           <IconButton
-            variant="text"
+            variant="ghost"
             icon={<Close />}
-            aria-label={clearLabel}
-            title={clearLabel}
+            aria-label={clearName}
+            title={clearName}
             disabled={disabled}
             onClick={() => {
               update('');
@@ -104,4 +109,4 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       }
     />
   );
-});
+}

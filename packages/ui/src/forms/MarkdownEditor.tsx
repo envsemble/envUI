@@ -62,7 +62,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
       previewProps,
       onRequestLink,
       label,
-      hint,
+      description,
       error,
       variant,
       id: suppliedId,
@@ -83,7 +83,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
     },
     forwardedRef,
   ) {
-    const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+    const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
     const editing = useMarkdownEditing({
       value,
       defaultValue,
@@ -240,7 +240,7 @@ export const MarkdownEditor = forwardRef<HTMLTextAreaElement, MarkdownEditorProp
                 </label>
               ) : null
             }
-            hint={hint}
+            description={description}
             error={error}
           >
             {preview ? (

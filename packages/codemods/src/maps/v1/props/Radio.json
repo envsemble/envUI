@@ -1,0 +1,29 @@
+{
+  "@envsemble/envui": {
+    "RadioGroup": {
+      "variant": {
+        "to": "orientation",
+        "current": ["horizontal", "vertical"],
+        "report": "RadioGroup's variant is orientation in 1.0: inline is horizontal and rows is vertical.",
+        "values": {
+          "inline": {
+            "props": {
+              "orientation": "horizontal"
+            }
+          },
+          "rows": {
+            "props": {
+              "orientation": "vertical"
+            }
+          }
+        }
+      }
+    },
+    "Radio": {
+      "detail": {
+        "to": "description",
+        "report": "Radio's detail is description in 1.0."
+      }
+    }
+  }
+}

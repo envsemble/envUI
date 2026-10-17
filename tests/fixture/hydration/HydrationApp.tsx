@@ -99,7 +99,7 @@ export function HydrationApp() {
         <Select
           label="Hydrated select"
           defaultValue="one"
-          options={[
+          items={[
             { value: 'one', label: 'One' },
             { value: 'two', label: 'Two' },
           ]}
@@ -108,7 +108,7 @@ export function HydrationApp() {
           label="Hydrated compact select"
           size="sm"
           defaultValue="one"
-          options={[
+          items={[
             { value: 'one', label: 'One' },
             { value: 'two', label: 'Two' },
           ]}
@@ -257,7 +257,7 @@ export function HydrationApp() {
           size="sm"
           label="Hydrated files"
           description="Any file"
-          onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+          onDropAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
         <CalendarHeatmap

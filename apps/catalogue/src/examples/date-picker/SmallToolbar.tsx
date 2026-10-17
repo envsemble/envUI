@@ -15,7 +15,7 @@ export default function SmallToolbar() {
         showLabel={false}
         aria-label="Due"
         placeholder="Due"
-        withTime
+        granularity="minute"
         clearable
       />
       <Button variant="outline" size="sm">

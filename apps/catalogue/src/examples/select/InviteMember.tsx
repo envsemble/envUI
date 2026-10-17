@@ -23,11 +23,11 @@ export default function InviteMember() {
         <Stack gap={5}>
           <TextField label="E-mail address" name="email" type="email" required />
           <Select
-            variant="outlined"
+            variant="outline"
             label="Role"
             name="role"
-            hint="Admins also manage members and billing."
-            options={roleOptions}
+            description="Admins also manage members and billing."
+            items={roleOptions}
             defaultValue="editor"
           />
           <Stack gap={3} align="start">

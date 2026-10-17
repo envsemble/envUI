@@ -23,8 +23,6 @@ function Ladder() {
       <div data-layer="command-palette-positioner" className="env-command-palette-positioner" />
       <div data-layer="popup-positioner" className="env-popup-positioner" />
       <div data-layer="menu-positioner" className="env-menu-positioner" />
-      <div data-layer="popover-positioner" className="env-popover-positioner" />
-      <div data-layer="select-positioner" className="env-select-positioner" />
       <div data-layer="tooltip-positioner" className="env-tooltip-positioner" />
       <div data-layer="rich-text-suggestions" className="env-rich-text-suggestions" />
       <div data-layer="toast-viewport" className="env-toast-viewport">

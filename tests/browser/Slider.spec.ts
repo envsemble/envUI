@@ -193,14 +193,9 @@ test('sliders fit a narrow viewport', async ({ page }) => {
   expect(thumb.x + thumb.width).toBeLessThanOrEqual(control.x + control.width + 0.5);
 });
 
-test('coarse pointers get a taller control and a larger thumb', async ({
-  browser,
-  browserName,
-}) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+test('coarse pointers get a taller control and a larger thumb', async ({ browser }) => {
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 390, height: 900 },
   });
   const page = await context.newPage();
