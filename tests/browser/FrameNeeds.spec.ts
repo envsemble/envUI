@@ -3,6 +3,7 @@
 // statically that the fixtures override nothing of the frame and measure nothing.
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const rails = `${fixtureUrl}/?fixture=frame-rails`;
 const documentFrame = `${fixtureUrl}/?fixture=frame-document`;
@@ -52,8 +53,22 @@ test.describe('Need: a navigation rail that opens on hover', () => {
     await expect(primary).toHaveAttribute('data-rail', '');
     await expect(page.getByTestId('app-name')).toBeHidden();
     const before = await box(main);
+    // The page notes when the pointer last moved and when the peek began.
+    await page.evaluate(() => {
+      const times = ((window as unknown as { peekTimes: Record<string, number> }).peekTimes = {});
+      addEventListener('pointermove', () => (times.moved = performance.now()), true);
+      const sidebar = document.querySelector('nav.env-sidebar')!;
+      new MutationObserver(() => {
+        if (sidebar.hasAttribute('data-peek')) times.peek ??= performance.now();
+      }).observe(sidebar, { attributes: true, attributeFilter: ['data-peek'] });
+    });
     await page.mouse.move(30, 400);
     await expect(primary).toHaveAttribute('data-peek', '');
+    // No peek before the pointer has rested 200 ms.
+    const times = await page.evaluate(
+      () => (window as unknown as { peekTimes: Record<string, number> }).peekTimes,
+    );
+    expect(times.peek! - times.moved!).toBeGreaterThanOrEqual(195);
     await expect(page.getByTestId('app-name')).toBeVisible();
     // Over the content: Main keeps its box.
     expect(await box(main)).toEqual(before);
@@ -167,6 +182,41 @@ test.describe('Need: a navigation rail that opens on hover', () => {
       });
       await page.reload();
       await expect(page.locator('html')).toHaveAttribute('data-first-state', 'collapsed');
+    });
+
+    test('server-rendered from the cookie, the markup is collapsed and hydration keeps it', async ({
+      page,
+    }) => {
+      const hydrate = await openServerMarkup(
+        page,
+        `import {createElement as h} from 'react';
+        import {AppShell, Sidebar, readAppShellCookie} from '@envsemble/envui';
+        // As a server reads the request's Cookie header.
+        const initialState = readAppShellCookie('ssr-frame=start.open%3D0', 'ssr-frame');
+        export const element = h(AppShell.Root,
+          {persist: {key: 'ssr-frame', storage: 'cookie'}, initialState},
+          h(Sidebar.Root, {label: 'Primary'}, h(Sidebar.Content, null, 'Projects')),
+          h(AppShell.Main, null, 'Main'));`,
+        { hydrate: true },
+      );
+      await page.evaluate(() => (document.cookie = 'ssr-frame=start.open%3D0; path=/'));
+      const primary = page.getByRole('navigation', { name: 'Primary' });
+      // Before any script runs.
+      await expect(primary).toHaveAttribute('data-state', 'collapsed');
+      // Every state the sidebar takes while it hydrates.
+      await page.evaluate(() => {
+        const sidebar = document.querySelector('nav.env-sidebar')!;
+        const states = ((window as unknown as { states: string[] }).states = []);
+        new MutationObserver(() => states.push(sidebar.getAttribute('data-state') ?? '')).observe(
+          sidebar,
+          { attributes: true, attributeFilter: ['data-state'] },
+        );
+      });
+      expect(await hydrate()).toEqual([]);
+      await expect(primary).toHaveAttribute('data-state', 'collapsed');
+      expect(
+        await page.evaluate(() => (window as unknown as { states: string[] }).states),
+      ).not.toContain('expanded');
     });
   });
 });
@@ -518,9 +568,27 @@ test.describe('Need: a split header with a switcher, a loading bar and a skeleto
       header: await box(page.locator('.env-app-shell-header')),
       main: await box(page.locator('.env-app-shell-main')),
     });
+    /** Each row's box and its icon's, rounded to the pixel. */
+    const rows = (row: string, icon: string) =>
+      page.locator(row).evaluateAll(
+        (elements, iconSelector) =>
+          elements.map((element) => {
+            const round = ({ x, y, width, height }: DOMRect) =>
+              [x, y, width, height].map(Math.round);
+            return {
+              row: round(element.getBoundingClientRect()).filter((_, index) => index !== 2),
+              icon: round(element.querySelector(iconSelector)!.getBoundingClientRect()),
+            };
+          }),
+        icon,
+      );
     const frame = await boxes();
+    const items = await rows('.env-nav-list-item', '.env-icon');
+    expect(items).toHaveLength(3);
     await page.goto(`${splitFrame}&skeleton`);
     await expect(page.locator('.env-nav-list-skeleton-item').first()).toBeVisible();
     expect(await boxes()).toEqual(frame);
+    // Each placeholder row stands where its item will, as tall, with its icon in the icon's place.
+    expect(await rows('.env-nav-list-skeleton-item', ':first-child')).toEqual(items);
   });
 });
