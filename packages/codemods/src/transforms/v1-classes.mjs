@@ -21,7 +21,7 @@
 // Scripts are edited in place, literal by literal, so everything else keeps its formatting.
 import { extname } from 'node:path';
 import { loadMap, renameClass } from '../map.mjs';
-import { createReporter, parserFor } from '../shared.mjs';
+import { createReporter, parserFor, sourceRanges } from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -209,18 +209,6 @@ const renameClassTokens = (text, classes, atStart) =>
     offset === 0 && !atStart ? name : renameClass(name, classes),
   );
 
-/**
- * Offsets of the start of each line, with the line breaks Babel counts. Babel reads a byte order
- * mark as no column, so the first line starts after it.
- */
-function lineStarts(source) {
-  const starts = [source.startsWith('\uFEFF') ? 1 : 0];
-  const lineBreak = /\r\n?|\n|\u2028|\u2029/g;
-  for (let match = lineBreak.exec(source); match; match = lineBreak.exec(source))
-    starts.push(match.index + match[0].length);
-  return starts;
-}
-
 export default function transform(file, api, options = {}) {
   const { classes, classAttributes, classesWithin, tokens, tokenNames } = loadMap(options.map);
   if (!file.source.includes('env-') && !file.source.includes('--')) return undefined;
@@ -247,8 +235,9 @@ export default function transform(file, api, options = {}) {
 
   const j = api.jscodeshift.withParser(parserFor(file.path));
   const root = j(file.source);
-  const starts = lineStarts(file.source);
-  const offset = (position) => starts[position.line - 1] + position.column;
+  // Where each literal's text is: recast's lines and columns aren't offsets in the text.
+  const stringRange = sourceRanges(file, j, root, 'StringLiteral');
+  const quasiRange = sourceRanges(file, j, root, 'TemplateElement');
 
   /** How each literal is rewritten: `class` tokens, a `selector` or `property` names. */
   const modes = new Map();
@@ -367,22 +356,23 @@ export default function transform(file, api, options = {}) {
   const edits = [];
   for (const [node, mode] of modes) {
     if (node.type === 'StringLiteral') {
-      if (!node.loc || !node.extra?.raw) continue;
-      const start = offset(node.loc.start) + 1;
-      const end = offset(node.loc.end) - 1;
+      const range = stringRange(node);
+      if (!node.loc || !range?.node.extra?.raw) continue;
+      const start = range.start + 1;
+      const end = range.end - 1;
       const raw = file.source.slice(start - 1, end + 1);
-      if (!sameText(raw, node.extra.raw)) continue;
+      if (!sameText(raw, range.node.extra.raw)) continue;
       const text = file.source.slice(start, end);
       const next = rewrite(text, mode, true, reportAt(text, node.loc.start.line));
       if (next !== text) edits.push({ start, end, text: next });
       continue;
     }
     node.quasis.forEach((quasi, index) => {
-      if (!quasi.loc) return;
-      const start = offset(quasi.loc.start);
-      const end = offset(quasi.loc.end);
+      const range = quasiRange(quasi);
+      if (!quasi.loc || !range) return;
+      const { start, end } = range;
       const text = file.source.slice(start, end);
-      if (!sameText(text, quasi.value.raw)) return;
+      if (!sameText(text, range.node.value.raw)) return;
       const next = rewrite(text, mode, index === 0, reportAt(text, quasi.loc.start.line));
       if (next !== text) edits.push({ start, end, text: next });
     });

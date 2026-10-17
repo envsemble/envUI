@@ -1,5 +1,8 @@
 // Helpers shared by the transforms.
+import { createRequire } from 'node:module';
 import { extname } from 'node:path';
+
+const require = createRequire(import.meta.url);
 
 const typeScriptOnly = new Set(['.ts', '.mts', '.cts']);
 
@@ -56,5 +59,39 @@ export function createReporter(api) {
       warnings.sort((a, b) => a.line - b.line);
       for (const { line, message } of warnings.splice(0)) report(`line ${line || '?'}: ${message}`);
     },
+  };
+}
+
+/** Whether node `a` starts before node `b` in recast's lines and columns. */
+const byPosition = (a, b) =>
+  a.loc.start.line - b.loc.start.line || a.loc.start.column - b.loc.start.column;
+
+/**
+ * The exact offsets in the file's text of the nodes of one type, such as JSXAttribute, for a
+ * transform that replaces their text rather than printing the file again. Recast's positions are
+ * not offsets in the text: it parses a copy with tabs expanded, and counts U+2028 and U+2029 as line
+ * breaks. So the text is parsed again, as it is, with the same parser, and its nodes of the type are
+ * paired with recast's in the order they appear. Returns a function from a recast node to its
+ * `{ start, end }` and the `node` of that parse, whose raw text is the file's, or undefined where
+ * the two parses disagree.
+ */
+export function sourceRanges(file, j, root, type) {
+  const parser = require(`jscodeshift/parser/${parserFor(file.path)}.js`)();
+  const found = [];
+  const walk = (node) => {
+    if (Array.isArray(node)) return node.forEach(walk);
+    if (!node || typeof node !== 'object' || typeof node.type !== 'string') return;
+    if (node.type === type) found.push(node);
+    for (const [key, value] of Object.entries(node))
+      if (key !== 'loc' && key !== 'extra' && value && typeof value === 'object') walk(value);
+  };
+  walk(parser.parse(file.source).program);
+  found.sort((a, b) => a.start - b.start);
+  const ours = root.find(j[type]).nodes().sort(byPosition);
+  if (ours.length !== found.length) return () => undefined;
+  const ranges = new Map(ours.map((node, index) => [node, found[index]]));
+  return (node) => {
+    const raw = ranges.get(node);
+    return raw && { start: raw.start, end: raw.end, node: raw };
   };
 }

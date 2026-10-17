@@ -72,6 +72,21 @@ test.describe('Toolbar', () => {
     const sequence = page.locator('.env-tooltip').filter({ hasText: 'Redo' });
     await expect(sequence.locator('.env-kbd')).toHaveText(['Ctrl', 'K', 'Ctrl', 'Z']);
     await expect(page.getByRole('button', { name: 'Highlight' })).toBeDisabled();
+    // Modifier symbols written without +, as on a Mac, are keys of their own.
+    await expect(page.getByRole('button', { name: 'Strong emphasis' })).toHaveAttribute(
+      'aria-keyshortcuts',
+      'Meta+B',
+    );
+  });
+
+  test("runs its ref's cleanup rather than calling the ref with null", async ({ page }) => {
+    await open(page);
+    const log = page.getByTestId('ref-log');
+    await expect(log).toContainText('attach');
+    await page.getByRole('button', { name: 'Toggle ref toolbar' }).click();
+    await expect(page.getByRole('toolbar', { name: 'Ref toolbar' })).toHaveCount(0);
+    await expect(log).toHaveText(/,cleanup$/);
+    await expect(log).not.toContainText('null');
   });
 
   for (const [name, disabler] of [
@@ -147,6 +162,8 @@ test.describe('Button emphasis', () => {
       if (message.type() === 'error') errors.push(message.text());
     });
     await open(page);
+    expect(errors).toEqual([]);
+    await page.getByRole('button', { name: 'Show undesigned' }).click();
     await expect(page.getByTestId('undesigned')).toHaveAttribute('data-variant', 'secondary');
     await expect(page.getByTestId('undesigned')).toHaveAttribute('data-tone', 'neutral');
     expect(
