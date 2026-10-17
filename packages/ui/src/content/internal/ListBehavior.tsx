@@ -63,11 +63,13 @@ function rowOf(list: HTMLElement, element: EventTarget | null) {
   return node instanceof HTMLElement && node.tagName === 'LI' ? node : null;
 }
 
-/** A row's label, as its handle has it. */
+/** A row's label, as its handle has it, or the row's text where it has no handle. */
 const labelOf = (row: HTMLElement) =>
   row
     .querySelector(':scope > .env-list-item-start > .env-list-item-handle')
-    ?.getAttribute('data-label') ?? '';
+    ?.getAttribute('data-label') ??
+  row.textContent?.trim() ??
+  '';
 
 /**
  * List.Root with onReorder: the list, Alt+↑ and Alt+↓ on its rows' targets, the handles'
@@ -89,6 +91,31 @@ export function ReorderableList({
   const { announcement, handlers } = useReorder(element, onReorder, messages, formatNumber);
   const instructions = `${useId()}-instructions`;
   const reorder = useMemo(() => ({ handlers, instructions }), [handlers, instructions]);
+  // A row without a handle, such as one of a component that doesn't pass List.Root's props on to
+  // its List.Item, can't be moved: say so while developing. Written inline so bundlers replace
+  // process.env.NODE_ENV, as in Theme. Each list says so once.
+  const reported = useRef(false);
+  useLayoutEffect(() => {
+    let developing = false;
+    try {
+      developing = process.env.NODE_ENV !== 'production';
+    } catch {
+      // No bundler defined process.env.NODE_ENV.
+    }
+    const list = element.current;
+    if (!developing || !list || reported.current) return;
+    const bare = Array.from(list.children).filter(
+      (row) => row.tagName === 'LI' && !row.querySelector('.env-list-item-handle'),
+    ).length;
+    if (bare === 0) return;
+    reported.current = true;
+    // A development-only report, as React reports an invalid prop.
+    // eslint-disable-next-line no-console
+    console.error(
+      `envUI: ${bare} row${bare === 1 ? '' : 's'} of a List.Root with onReorder ${bare === 1 ? 'has' : 'have'} no drag handle. ` +
+        'Render each row as a List.Item, and have a row component pass the props it does not use on to its List.Item.',
+    );
+  });
   const forward = useCallback(
     (node: HTMLUListElement | null) => {
       element.current = node;

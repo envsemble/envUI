@@ -177,6 +177,40 @@ test.describe('List', () => {
     await expect(page.getByTestId('slides-order')).toHaveText('Intro,Budget,Roadmap,Questions');
   });
 
+  test('rows of a component that passes its props on to List.Item get their handles', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await page.goto(`${lists}&bare-rows`);
+    const list = page.getByTestId('wrapped-slides');
+    const handle = list.getByRole('button', { name: 'Reorder Budget' });
+    await handle.focus();
+    await page.keyboard.press('Space');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('Space');
+    await expect(page.getByTestId('wrapped-slides-order')).toHaveText(
+      'Intro,Budget,Roadmap,Questions',
+    );
+    // A component that drops them leaves its rows without handles, which development reports
+    // once, and Alt+↑ still names the row by its text.
+    const bare = page.getByTestId('bare-slides');
+    await expect(bare.getByRole('button')).toHaveCount(0);
+    await bare.getByRole('link', { name: 'Intro' }).focus();
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(page.getByTestId('bare-slides-order')).toHaveText(
+      'Roadmap,Intro,Budget,Questions',
+    );
+    await expect(page.locator('.env-list-announcer').nth(3)).toHaveText(
+      'Intro moved to position 2 of 4.',
+    );
+    expect(errors.filter((text) => text.includes('no drag handle'))).toEqual([
+      expect.stringMatching(/^envUI: 4 rows of a List\.Root with onReorder have no drag handle\./),
+    ]);
+  });
+
   test('marks the current row on its target and takes the selected fill', async ({ page }) => {
     await page.goto(lists);
     const list = page.getByTestId('slides');
