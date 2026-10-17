@@ -18,11 +18,13 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   compileDocument,
+  contributorPages,
   documentationDirectory,
   documentedExports,
   examplesDirectory,
   guideExportStatus,
   intents,
+  linkContributorPages,
   pageKindOf,
   readDocumentation,
   readProps,
@@ -230,7 +232,10 @@ export function buildManifest({
   examples = examplesDirectory,
   tokens = tokensFile,
 } = {}) {
-  const documents = readDocumentation(directory, { props, examples });
+  // The contributor pages stay in the repository, so the agent files leave them out.
+  const documents = readDocumentation(directory, { props, examples }).filter(
+    (document) => !contributorPages.has(document.path),
+  );
   const components = [];
   const pages = { guides: [], foundations: [], patterns: [], templates: [] };
   const exportPages = new Map();
@@ -324,7 +329,13 @@ export function buildManifest({
       icons: 'icon-manifest.json',
     },
     imports: {
-      entryPoints: [...new Set(Object.values(props.exports).flatMap((entry) => entry.entries))],
+      // ./messages exports the default strings, data that props.json does not list.
+      entryPoints: [
+        ...new Set([
+          ...Object.values(props.exports).flatMap((entry) => entry.entries),
+          `${packageName}/messages`,
+        ]),
+      ],
       styles: `${packageName}/styles.css`,
       icons: `${packageName}/icons/<Name>`,
     },
@@ -414,7 +425,11 @@ export function renderLlmsFull(
   ];
   for (const document of documents) {
     if (document.id === 'index') continue;
-    const compiled = compileDocument(document, documents, { props, examples });
+    if (contributorPages.has(document.path)) continue;
+    const compiled = linkContributorPages(
+      compileDocument(document, documents, { props, examples }),
+      document.path,
+    );
     const body = compiled.replace(/^---\n[\s\S]*?\n---\n\n/, '').replace(/^# [^\n]+\n+/, '');
     const component = manifest.components.find((item) => item.page === document.id);
     const head = [`<!-- docs/${document.path} -->`, '', `# ${document.title}`, ''];

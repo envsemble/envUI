@@ -9,4 +9,4 @@ Alert and EmptyState say `danger` for the status that was `error`.
 
 Migrate with the codemods: `envui-codemods v1-props` maps `tone="error"` to `tone="danger"` and reports an expression; `v1-classes` rewrites the classes.
 
-Migration guide: [Overlays and feedback](../../docs/migration.md#overlays-and-feedback).
+Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).

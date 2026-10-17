@@ -14,4 +14,4 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning. `var
 
 Migrate with the codemods: `envui-codemods v1-props` rewrites each literal `variant` (an expression is reported), and `envui-codemods v1-classes` rewrites the classes in style sheets and selector strings with the specificity they had, and reports them in `className`, where the props set them now.
 
-Migration guide: [Variants, tones and render](../../docs/migration.md#variants-tones-and-render).
+Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).

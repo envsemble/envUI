@@ -40,36 +40,43 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "envui-source": "./src/index.ts",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./rich-text": {
       "envui-source": "./src/rich-text.ts",
       "types": "./dist/rich-text.d.ts",
-      "import": "./dist/rich-text.js"
+      "import": "./dist/rich-text.js",
+      "default": "./dist/rich-text.js"
     },
     "./content": {
       "envui-source": "./src/content.ts",
       "types": "./dist/content.d.ts",
-      "import": "./dist/content.js"
+      "import": "./dist/content.js",
+      "default": "./dist/content.js"
     },
     "./diff": {
       "envui-source": "./src/diff.ts",
       "types": "./dist/diff.d.ts",
-      "import": "./dist/diff.js"
+      "import": "./dist/diff.js",
+      "default": "./dist/diff.js"
     },
     "./theme-bootstrap": {
       "envui-source": "./src/theme-bootstrap.ts",
       "types": "./dist/theme-bootstrap.d.ts",
-      "import": "./dist/theme-bootstrap.js"
+      "import": "./dist/theme-bootstrap.js",
+      "default": "./dist/theme-bootstrap.js"
     },
     "./messages": {
       "envui-source": "./src/messages.ts",
       "types": "./dist/messages.d.ts",
-      "import": "./dist/messages.js"
+      "import": "./dist/messages.js",
+      "default": "./dist/messages.js"
     },
     "./styles.css": {
       "envui-source": "./src/styles/index.css",
@@ -78,15 +85,20 @@
     "./icons": {
       "envui-source": "./src/icons/index.ts",
       "types": "./dist/icons/index.d.ts",
-      "import": "./dist/icons/index.js"
+      "import": "./dist/icons/index.js",
+      "default": "./dist/icons/index.js"
     },
     "./icons/*": {
       "envui-source": "./src/icons/*.tsx",
       "types": "./dist/icons/*.d.ts",
-      "import": "./dist/icons/*.js"
+      "import": "./dist/icons/*.js",
+      "default": "./dist/icons/*.js"
     },
     "./assets/*": "./dist/assets/*",
     "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=24"
   },
   "peerDependencies": {
     "@pierre/diffs": "^1.5.2",

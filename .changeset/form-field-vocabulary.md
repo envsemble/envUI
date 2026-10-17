@@ -20,4 +20,4 @@ Fields and choice controls take the 1.0 vocabulary, and envUI's fields are built
 
 Migrate with the codemods: `v1-props` moves the props and their literal values (an expression is reported), `v1-names` renames `SelectOption`, and `v1-classes` the classes. `v1-props` reports each `className` and `style` on these components; move one meant for the native control to a selector under the root by hand, as the migration guide shows.
 
-Migration guide: [Fields and choice controls](../../docs/migration.md#fields-and-choice-controls).
+Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).

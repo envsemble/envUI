@@ -16,7 +16,8 @@
       "@envsemble/envui/content",
       "@envsemble/envui/diff",
       "@envsemble/envui/rich-text",
-      "@envsemble/envui/theme-bootstrap"
+      "@envsemble/envui/theme-bootstrap",
+      "@envsemble/envui/messages"
     ],
     "styles": "@envsemble/envui/styles.css",
     "icons": "@envsemble/envui/icons/<Name>"
@@ -6425,8 +6426,7 @@
         "colors",
         "icons",
         "agent-tooling",
-        "index",
-        "local-development"
+        "index"
       ]
     },
     {
@@ -6438,7 +6438,6 @@
       "related": [
         "index",
         "setup",
-        "local-development",
         "scale",
         "sidebar",
         "colors"
@@ -6451,59 +6450,6 @@
       "summary": "The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.",
       "doc": "docs/agent-tooling.md",
       "related": []
-    },
-    {
-      "name": "local-development",
-      "title": "Develop envUI locally",
-      "group": "Setup and workflows",
-      "summary": "Link a checkout while co-developing a consuming application.",
-      "doc": "docs/local-development.md",
-      "related": [
-        "setup",
-        "library-development",
-        "migration"
-      ]
-    },
-    {
-      "name": "library-development",
-      "title": "Extend the shared library",
-      "group": "Setup and workflows",
-      "summary": "Public API changes, changesets, catalogue specimens and acceptance checks.",
-      "doc": "docs/library-development.md",
-      "related": [
-        "composition",
-        "scale",
-        "index",
-        "component-pages",
-        "agent-tooling"
-      ]
-    },
-    {
-      "name": "component-pages",
-      "title": "Write a component page",
-      "group": "Setup and workflows",
-      "summary": "The page template, frontmatter, generated props and example files, and how to convert a page.",
-      "doc": "docs/component-pages.md",
-      "related": [
-        "button",
-        "pattern-pages",
-        "index",
-        "text-field",
-        "library-development"
-      ]
-    },
-    {
-      "name": "pattern-pages",
-      "title": "Write a pattern or template page",
-      "group": "Setup and workflows",
-      "summary": "The frontmatter, sections and files of pattern and template pages, and the rules for template screens.",
-      "doc": "docs/pattern-pages.md",
-      "related": [
-        "component-pages",
-        "loading",
-        "index",
-        "setup"
-      ]
     }
   ],
   "foundations": [

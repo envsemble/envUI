@@ -34,7 +34,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.13.0 || >=24"
+    "node": "^22.13.0 || >=24"
   },
   "scripts": {
     "prepack": "node scripts/SyncRenames.mjs && node scripts/SyncTokens.mjs",

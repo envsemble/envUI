@@ -11,4 +11,4 @@ Dialog's side panel is a new component, Drawer, and Dialog takes `width`.
 
 Migrate with the codemods: `envui-codemods v1-structure` turns a `<Dialog placement="right">` into a `<Drawer side="end">`, with its `size` as `width`, and reports a `placement` that is an expression; `v1-props` turns Dialog's `size` into `width`; `v1-classes` renames `env-modal-pane`.
 
-Migration guide: [Overlays and feedback](../../docs/migration.md#overlays-and-feedback).
+Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).

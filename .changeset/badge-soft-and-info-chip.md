@@ -11,4 +11,4 @@ InfoChip is a Badge, and Badge's `subtle` variant is `soft`.
 
 Migrate with the codemods: `envui-codemods v1-names` renames InfoChip and InfoChipProps, `v1-props` drops `variant="subtle"`, and `v1-classes` renames `env-info-chip`.
 
-Migration guide: [Content and display](../../docs/migration.md#content-and-display).
+Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).

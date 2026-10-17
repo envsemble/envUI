@@ -11,4 +11,4 @@ SegmentedControl takes `items`, and an unchosen segment's count keeps its contra
 
 Migrate with the codemods: `envui-codemods v1-props` renames `options`, `v1-names` the type and `v1-classes` the classes.
 
-Migration guide: [Content and display](../../docs/migration.md#content-and-display).
+Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).

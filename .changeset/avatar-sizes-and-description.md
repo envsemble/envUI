@@ -11,4 +11,4 @@ Avatar, AvatarGroup and AvatarButton take the 1.0 sizes and slot words.
 
 Migrate with the codemods: `envui-codemods v1-props` maps the sizes and renames `detail`, and `v1-classes` turns the size classes into attribute selectors.
 
-Migration guide: [Content and display](../../docs/migration.md#content-and-display).
+Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
