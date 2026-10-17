@@ -101,6 +101,11 @@
     visibility: hidden;
   }
 }
+@media (prefers-reduced-motion: reduce) {
+  .env-rich-text-document .ProseMirror-gapcursor::after {
+    animation: none;
+  }
+}
 .env-rich-text-document.ProseMirror-focused .ProseMirror-gapcursor {
   display: block;
 }
