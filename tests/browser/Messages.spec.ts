@@ -78,6 +78,7 @@ test('no English default is left under a provider that sets every message', asyn
     '⟦toast.hidden⟧',
     '⟦toast.regionBottomEnd⟧',
     '⟦toast.regionTopCenter⟧',
+    '⟦splitPane.resize⟧',
   ])
     expect(found).toContain(marked);
   // CommandPalette says that nothing matches through its status.

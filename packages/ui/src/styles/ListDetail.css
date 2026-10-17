@@ -1,1 +1,9 @@
-/* ListDetail: a list beside its detail, stacked in a narrow container. */
+/* ListDetail: a list beside the detail of its chosen item, on SplitPane; stacked, one at a time. */
+.env-list-detail-back {
+  padding-block: var(--env-space-2);
+  padding-inline: var(--env-space-3);
+}
+/* The back arrow points toward the inline start, so it turns in right-to-left text. */
+.env-list-detail-back .env-icon:dir(rtl) {
+  transform: scaleX(-1);
+}

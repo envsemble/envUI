@@ -32,6 +32,8 @@ export const overrides = {
     'ButtonCounts.spec.ts': ['CounterBadge', 'DiffStat', 'Button'],
     'Cards.spec.ts': ['components/card'],
     'ContainerSize.spec.ts': ['useContainerSize'],
+    // ListDetail is built on SplitPane, and its fixture is SplitPane's.
+    'ListDetail.spec.ts': ['ListDetail', 'SplitPane'],
     'DataDisplay.spec.ts': ['components/list', 'components/table', 'components/card'],
     'DenseContent.spec.ts': ['components/code', 'components/menu', 'components/tabs'],
     'Direction.spec.ts': ['EnvUIProvider'],
@@ -87,17 +89,7 @@ export const overrides = {
    */
   planned: {
     specs: ['FrameNeeds.spec.ts'],
-    names: [
-      'AccountMenu',
-      'ConfirmDialog',
-      'DescriptionList',
-      'ListDetail',
-      'Page',
-      'PageHeader',
-      'SearchTrigger',
-      'Sidebar',
-      'SplitPane',
-    ],
+    names: ['AccountMenu', 'ConfirmDialog', 'SearchTrigger', 'Sidebar'],
   },
   /**
    * Library files that most components depend on. A change to one runs the shared set rather than

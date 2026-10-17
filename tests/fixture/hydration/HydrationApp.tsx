@@ -36,6 +36,7 @@ import {
   Pagination,
   DatePicker,
   Calendar,
+  SplitPane,
 } from '@envsemble/envui';
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
@@ -223,6 +224,11 @@ export function HydrationApp() {
           }}
           footer="Hydrated composer footer"
         />
+        <SplitPane.Root stackBelow="20rem">
+          <SplitPane.Pane label="Hydrated start">Hydrated start pane</SplitPane.Pane>
+          <SplitPane.ResizeHandle label="Hydrated split" />
+          <SplitPane.Pane>Hydrated end pane</SplitPane.Pane>
+        </SplitPane.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
           <PanelDock
             panels={dockPanels}

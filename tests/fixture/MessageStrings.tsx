@@ -20,6 +20,7 @@ import {
   Dialog,
   EnvUIProvider,
   SearchField,
+  SplitPane,
   Stack,
   Textarea,
   ThemePreferenceProvider,
@@ -190,6 +191,12 @@ export function MessageStringsFixture() {
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" />
+          {/* Layout: the handle between two panes. */}
+          <SplitPane.Root>
+            <SplitPane.Pane>Start</SplitPane.Pane>
+            <SplitPane.ResizeHandle />
+            <SplitPane.Pane>End</SplitPane.Pane>
+          </SplitPane.Root>
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>

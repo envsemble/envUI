@@ -162,7 +162,9 @@ export function searchDocuments({ documents, props, tokens }) {
   const pages = new Set(results.map(({ title }) => title));
   const setup = documents.find((document) => document.id === 'setup');
   for (const [name, entry] of Object.entries(props.exports)) {
-    if (entry.kind === 'namespace') continue;
+    // A namespace is found as the page of its name, such as Menu; one documented on another page,
+    // such as ListDetail on SplitPane's, as an export that leads to its first part's props.
+    if (entry.kind === 'namespace' && pages.has(name)) continue;
     const home = homes.get(name) ?? setup;
     // Only a page on the template has a Props view with a place for each export and prop; on
     // another page, both lead to the section that shows the export.
@@ -181,7 +183,7 @@ export function searchDocuments({ documents, props, tokens }) {
         keywords: home.title,
         owner: '',
         text: sentence(entry.description ?? ''),
-        ...own(exportSection(name)),
+        ...own(exportSection(entry.kind === 'namespace' ? (entry.parts?.[0] ?? name) : name)),
       });
     if (entry.kind !== 'component') continue;
     for (const prop of entry.props)
