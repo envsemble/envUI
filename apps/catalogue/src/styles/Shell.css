@@ -38,10 +38,6 @@ body {
 .docs-sidebar-trigger {
   margin-inline-start: auto;
 }
-/* Search keeps its row while the sections below it scroll. */
-.docs-sidebar-search {
-  flex-shrink: 0;
-}
 .docs-sidebar-version {
   flex-basis: 100%;
   padding-inline: var(--env-space-3);

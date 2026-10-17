@@ -62,7 +62,7 @@ A sidebar is a column of a frame, a landmark named by its `label`: the applicati
 ## Anatomy
 
 1. **Header** (`Sidebar.Header`): as tall as AppShell.Header, so the two line up, usually a SidebarTrigger with the application's mark and an OrganizationSwitcher; in a rail it shows only the trigger.
-2. **Content** (`Sidebar.Content`): a section that scrolls when it alone overflows, such as a NavList.Root; `fill` takes the remaining height, such as for a Tree, and hides in a rail; `align="stretch"` gives its children the full width, such as a search field.
+2. **Content** (`Sidebar.Content`): a section that scrolls when it overflows, such as a NavList.Root; `fill` takes the remaining height, such as for a Tree, and hides in a rail; `align="stretch"` gives its children the full width, such as a search field. With several sections, those before the last keep their size, such as a search field above the navigation, and the last one shrinks and scrolls; beside a `fill` section every other section keeps its size and the `fill` section takes the rest. Keep the sections that keep their size short.
 3. **Group** (`Sidebar.Group`): a `label` above related content, as a heading with `headingLevel` or naming a `group`, with an `action` at its end; in a rail the label is visually hidden and a hairline separates the groups.
 4. **Footer** (`Sidebar.Footer`): at the bottom, such as an AccountMenu, whose automatic trigger is a row in the sidebar and an avatar in its rail.
 5. **Handle** (`Sidebar.Handle`): at the inline end (the inline start at the end side), inside the sidebar; added automatically to a `resizable` sidebar without one.
