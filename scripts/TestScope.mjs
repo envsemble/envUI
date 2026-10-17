@@ -90,7 +90,7 @@ export const overrides = {
    * and the selection skips it; once all exist, empty these lists.
    */
   planned: {
-    specs: ['Templates.spec.ts'],
+    specs: [],
     names: [],
   },
   /**
@@ -385,6 +385,12 @@ export function buildIndex(root = repositoryRoot) {
   for (const section of ['foundations', 'patterns', 'templates'])
     for (const file of walk(root, `docs/${section}`, /\.md$/))
       pages.add(`${section}/${posix.basename(file, '.md')}`);
+  // Where each template page's screens render: app, inside the app frame template, or none.
+  const templateFrames = new Map();
+  for (const file of walk(root, 'docs/templates', /\.md$/)) {
+    const frame = /^frame:\s*(\S+)\s*$/m.exec(read(root, file).split(/^---\s*$/m)[1] ?? '');
+    templateFrames.set(posix.basename(file, '.md'), frame?.[1] ?? 'none');
+  }
   const publicNames = new Set([
     ...Object.keys(manifest.exports ?? {}).map((name) => name.split('.')[0]),
     ...pageOfName.keys(),
@@ -573,6 +579,7 @@ export function buildIndex(root = repositoryRoot) {
   return {
     root,
     pages,
+    templateFrames,
     pageOfName,
     namesOfPage,
     dependents,
@@ -698,6 +705,11 @@ export function selectScope(paths, index) {
     affectedSpecs: new Map(),
     pages: new Map(),
     density: false,
+    /**
+     * The template pages Templates.spec.ts is limited to (ENVUI_TEMPLATES), when only changes to
+     * those pages select it; undefined when it checks every template.
+     */
+    templates: undefined,
     a11y: false,
     visual: false,
     notes: [],
@@ -1018,6 +1030,29 @@ export function selectScope(paths, index) {
     if (spec?.needs.site) scope.build.site = true;
     if (spec?.needs.hydration) scope.build.library = true;
   }
+  // Templates.spec.ts checks only the changed templates when nothing else selected it. The app
+  // frame template frames every template of `frame: app`, so a change to it checks them all.
+  const templateSpec = overrides.templateSpecs[0];
+  const templateReasons = [
+    ...(scope.fastSpecs.get(templateSpec) ?? []),
+    ...(scope.affectedSpecs.get(templateSpec) ?? []),
+  ];
+  if (templateReasons.length && templateReasons.every((reason) => reason.startsWith('template ')))
+    scope.templates = [
+      ...new Set(
+        templateReasons.flatMap((reason) => {
+          const id = /^template templates\/([a-z0-9-]+) /.exec(reason)?.[1];
+          if (!id) return [];
+          if (id !== 'app-frame') return [id];
+          return [
+            id,
+            ...[...(index.templateFrames ?? [])]
+              .filter(([, frame]) => frame === 'app')
+              .map(([page]) => page),
+          ];
+        }),
+      ),
+    ].sort();
   if (scope.pages.size) scope.a11y = scope.visual = true;
   if (scope.density) scope.visual = true;
   return scope;

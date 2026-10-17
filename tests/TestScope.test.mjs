@@ -288,6 +288,43 @@ test('pattern and template pages, and their example files, map to their catalogu
   assert.ok(select('docs/patterns/loading.md').pages.has('patterns/loading'));
 });
 
+test('a template change checks only its screens; the app frame checks every template it frames', () => {
+  const withTemplates = {
+    ...index,
+    pages: new Set([
+      ...index.pages,
+      'templates/sign-in-page',
+      'templates/app-frame',
+      'templates/settings-page',
+    ]),
+    templateFrames: new Map([
+      ['sign-in-page', 'none'],
+      ['app-frame', 'none'],
+      ['settings-page', 'app'],
+    ]),
+  };
+  const scopeOf = (...paths) => selectScope(paths, withTemplates);
+  const signIn = scopeOf('apps/catalogue/src/examples/sign-in-page/SignInPage.tsx');
+  assert.ok(signIn.fastSpecs.has('Templates.spec.ts'));
+  assert.deepEqual(signIn.templates, ['sign-in-page']);
+  assert.deepEqual(scopeOf('docs/templates/sign-in-page.md').templates, ['sign-in-page']);
+  assert.deepEqual(scopeOf('apps/catalogue/src/examples/app-frame/AppFrame.tsx').templates, [
+    'app-frame',
+    'settings-page',
+  ]);
+  // The frame route itself checks every template.
+  assert.equal(scopeOf('apps/catalogue/src/template/TemplateFrame.tsx').templates, undefined);
+  assert.equal(
+    scopeOf(
+      'apps/catalogue/src/examples/sign-in-page/SignInPage.tsx',
+      'apps/catalogue/src/main.tsx',
+    ).templates,
+    undefined,
+  );
+  // The real index knows each template page's frame.
+  assert.equal(index.templateFrames.get('sign-in-page'), 'none');
+});
+
 test('the plugin and its marketplaces run the unit tests, no browser spec', () => {
   for (const path of [
     'plugin/.claude-plugin/plugin.json',

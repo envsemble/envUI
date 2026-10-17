@@ -148,7 +148,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -219,7 +221,9 @@
         "patterns": [
           "settings"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -473,7 +477,9 @@
           "settings",
           "empty-states"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -843,7 +849,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1136,7 +1144,9 @@
           "feedback",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1359,7 +1369,9 @@
           "empty-states",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -1607,7 +1619,9 @@
           "destructive-actions",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -2723,7 +2737,9 @@
         "patterns": [
           "loading"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -5216,7 +5232,9 @@
           "forms",
           "feedback"
         ],
-        "templates": []
+        "templates": [
+          "sign-in-page"
+        ]
       }
     },
     {
@@ -7129,7 +7147,76 @@
       ]
     }
   ],
-  "templates": [],
+  "templates": [
+    {
+      "name": "sign-in-page",
+      "title": "Sign-in page",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens.",
+      "aliases": [
+        "sign in",
+        "sign-in page",
+        "login page",
+        "log in",
+        "login form",
+        "authentication",
+        "password"
+      ],
+      "useWhen": [
+        "People sign in to the application with an email address and a password before they reach its pages.",
+        "The application also offers single sign-on through the organisation's own account service."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Asking for information once people are signed in.",
+          "see": "forms"
+        },
+        {
+          "text": "Confirming a sensitive action again inside the application.",
+          "use": "ConfirmDialog"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "Page",
+        "Stack",
+        "Surface",
+        "Text",
+        "TextField",
+        "IconButton",
+        "Checkbox",
+        "Button",
+        "Link",
+        "Alert"
+      ],
+      "related": [
+        "forms",
+        "text-field",
+        "alert",
+        "button",
+        "app-shell"
+      ],
+      "doc": "docs/templates/sign-in-page.md",
+      "frame": "none",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "SignInPage",
+          "title": "Sign in page",
+          "description": "The screen people see before the application opens: the application's name, an email address and a password, \"Keep me signed in\", the way back to a forgotten password and single sign-on. It's a whole screen of its own, outside the app frame, with one `main` landmark and the form centred in the window. Start from it for any application that signs people in with a password; set up the providers at the application's root as setup says, since the template brings none.",
+          "file": "docs/examples/sign-in-page/SignInPage.tsx",
+          "frame": "none",
+          "primary": true
+        }
+      ],
+      "examples": []
+    }
+  ],
   "exports": {
     "AccountMenu": {
       "kind": "namespace",

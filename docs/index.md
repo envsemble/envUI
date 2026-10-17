@@ -125,3 +125,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)
+
+## Templates
+
+- [Sign-in page](templates/sign-in-page.md)

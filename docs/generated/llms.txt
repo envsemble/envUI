@@ -128,6 +128,10 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 - [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.
 
+## Templates
+
+- [Sign-in page](docs/templates/sign-in-page.md): A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens. (a whole screen)
+
 ## Optional
 
 - [Full documentation](llms-full.txt): every page above in one file, with examples and props.
