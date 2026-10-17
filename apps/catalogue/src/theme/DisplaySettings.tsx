@@ -1,11 +1,11 @@
 import { createContext, use, useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Button,
+  IconButton,
   Menu,
   ThemePreferenceProvider,
-  useThemePreference,
+  ThemeRadioGroup,
   type ThemeContrast,
-  type ThemePreference,
   type ThemeScale,
 } from '@envsemble/envui';
 import { Tune } from '@envsemble/envui/icons/Tune';
@@ -13,7 +13,6 @@ import { displayStorageKeys } from './DisplayStorage';
 
 const contrasts: readonly ThemeContrast[] = ['system', 'standard', 'high'];
 const scales: readonly ThemeScale[] = ['comfortable', 'compact'];
-const preferences: readonly ThemePreference[] = ['system', 'light', 'dark'];
 
 function readStored<T extends string>(key: string, values: readonly T[], fallback: T): T {
   try {
@@ -116,9 +115,11 @@ export function useDisplaySettings() {
   return value;
 }
 
-/** The Display menu: the theme, the contrast and the scale, each stored as it is chosen. */
-export function DisplayMenu() {
-  const { preference, setPreference } = useThemePreference();
+/**
+ * The Display menu: the theme, the contrast and the scale, each stored as it is chosen. iconOnly
+ * shows its trigger as an icon, such as in the navigation's rail.
+ */
+export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale } = useDisplaySettings();
   return (
     <Menu.Root
@@ -126,26 +127,16 @@ export function DisplayMenu() {
       side="top"
       align="start"
       trigger={
-        <Button variant="ghost" startIcon={<Tune />} className="docs-display-trigger">
-          Display
-        </Button>
+        iconOnly ? (
+          <IconButton variant="ghost" icon={<Tune />} aria-label="Display" title="Display" />
+        ) : (
+          <Button variant="ghost" startIcon={<Tune />}>
+            Display
+          </Button>
+        )
       }
     >
-      <Menu.RadioGroup
-        label="Theme"
-        value={preference}
-        onValueChange={(next) => setPreference(preferences.find((value) => value === next)!)}
-      >
-        <Menu.RadioItem value="system" closeOnClick={false}>
-          System
-        </Menu.RadioItem>
-        <Menu.RadioItem value="light" closeOnClick={false}>
-          Light
-        </Menu.RadioItem>
-        <Menu.RadioItem value="dark" closeOnClick={false}>
-          Dark
-        </Menu.RadioItem>
-      </Menu.RadioGroup>
+      <ThemeRadioGroup label="Theme" />
       <Menu.Separator />
       <Menu.RadioGroup
         label="Contrast"

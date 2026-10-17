@@ -57,7 +57,12 @@ function highlighted(page: Page) {
 
 /** The search shortcut's modifier where the page runs: ⌘ on Apple platforms, Ctrl elsewhere. */
 async function shortcutKeys(page: Page) {
-  const apple = await page.evaluate(() => /Mac|iPhone|iPad/.test(navigator.userAgent));
+  // As SearchTrigger decides: by the platform, which WebKit on Windows reports as Windows although
+  // its user agent names a Mac.
+  const apple = await page.evaluate(() => {
+    const { userAgentData } = navigator as Navigator & { userAgentData?: { platform?: string } };
+    return /mac|iphone|ipad|ipod/i.test(userAgentData?.platform || navigator.platform || '');
+  });
   return apple
     ? { own: 'Meta+k', other: 'Control+k', named: 'Meta+K' }
     : { own: 'Control+k', other: 'Meta+k', named: 'Control+K' };

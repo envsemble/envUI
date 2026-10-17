@@ -1,6 +1,5 @@
-/* Applied while the visual baseline takes a screenshot. The catalogue's fixed controls would float
-   over whichever specimen is scrolled beneath them. */
-.docs-theme-toggle,
-.docs-skip {
+/* Applied while the visual baseline takes a screenshot. The catalogue's top bar sticks below 48 rem
+   and would float over whichever specimen is scrolled beneath it. */
+.docs-header {
   visibility: hidden !important;
 }

@@ -105,6 +105,21 @@ function focusOn(element: HTMLElement) {
 }
 
 /**
+ * Scrolls an element to the top of the window, below the scroll padding and its scroll margin.
+ * WebKit scrolls an element inside a size container, such as AppShell.Main, past that place, so the
+ * document's part of the scroll is corrected afterwards; elsewhere the correction is nothing.
+ */
+function scrollToTop(element: HTMLElement) {
+  element.scrollIntoView();
+  const page = document.documentElement;
+  const wanted =
+    (parseFloat(getComputedStyle(page).scrollPaddingTop) || 0) +
+    (parseFloat(getComputedStyle(element).scrollMarginTop) || 0);
+  const offset = element.getBoundingClientRect().top - wanted;
+  if (Math.abs(offset) > 1) window.scrollBy({ top: offset, behavior: 'instant' });
+}
+
+/**
  * Scrolls to the element a route names, such as a heading or a prop's row, and moves focus to it,
  * so reading and the keyboard go on from there, once it is there: a part of the page that loads on
  * its own, such as the token reference, renders it later. Returns the cleanup.
@@ -113,7 +128,7 @@ export function revealSection(id: string) {
   const reveal = (late: boolean) => {
     const element = document.getElementById(id);
     if (!element) return false;
-    element.scrollIntoView();
+    scrollToTop(element);
     // A section that renders later takes focus only from where the route left it, the page's
     // content or search closing, not from wherever the reader has moved since.
     if (!late || focusIsUnclaimed()) focusOn(element);

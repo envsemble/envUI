@@ -1,6 +1,15 @@
-import { Fragment, useId, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { version } from '@envsemble/envui/package.json';
-import { Button, Kbd, Link, NavList, Stack, Text } from '@envsemble/envui';
+import {
+  Link,
+  NavList,
+  SearchTrigger,
+  Sidebar,
+  SidebarTrigger,
+  Text,
+  ThemeToggle,
+  useSidebar,
+} from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -11,7 +20,6 @@ import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
 import { Handyman } from '@envsemble/envui/icons/Handyman';
 import { History } from '@envsemble/envui/icons/History';
-import { Search } from '@envsemble/envui/icons/Search';
 import { references, foundations, componentGroups } from '../Reference';
 import {
   changelogPage,
@@ -26,67 +34,115 @@ import {
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
 import { DisplayMenu } from '../theme/DisplaySettings';
-import { commandKey, searchKeyShortcuts } from '../search/SearchShortcut';
 
-/** The button that opens search, with its shortcut. */
-export function SearchButton({ onSearch }: { onSearch: () => void }) {
-  return (
-    <Button
-      variant="secondary"
-      className="docs-search-button"
-      startIcon={<Search />}
-      aria-keyshortcuts={searchKeyShortcuts}
-      onClick={onSearch}
-    >
-      Search
-      <Kbd keys={[commandKey, 'K']} className="docs-search-shortcut" aria-hidden="true" />
-    </Button>
-  );
+interface SectionsProps {
+  routePath: string;
+  page?: ReferencePage;
 }
 
 /**
- * The catalogue's navigation, by section: Get started, Foundations, Components, Patterns,
- * Templates, Contributing and Changelog, with search above and the display settings below.
+ * The navigation's sections, in order: Get started, Foundations, Components, Patterns, Templates,
+ * Contributing and Changelog. Each is a Sidebar.Group named by its title around a NavList.Root of
+ * its pages, so a rail and the drawer name them too.
  */
-export function Sidebar({
-  routePath,
-  page,
-  panel = false,
-  onNavigate,
-  onSearch,
-}: {
-  routePath: string;
-  page?: ReferencePage;
-  panel?: boolean;
-  onNavigate?: () => void;
-  onSearch: () => void;
-}) {
+function Sections({ routePath, page }: SectionsProps) {
   const reference = page?.reference;
-  const headingId = useId();
   const item = (path: string, title: string, icon: ReactNode) => (
     <NavList.Item key={path} href={routeHref(path)} selected={routePath === path} icon={icon}>
       {title}
     </NavList.Item>
   );
-  /** A section of the navigation: its heading, and a list of its pages named by it. */
-  const section = (title: SiteSection, children: ReactNode) => {
-    const id = `${headingId}-${title.toLowerCase().replace(/\s+/g, '-')}`;
-    return (
-      <Fragment key={title}>
-        <Text variant="title" id={id} className="docs-nav-heading">
-          {title}
-        </Text>
-        <NavList.Root aria-labelledby={id}>{children}</NavList.Root>
-      </Fragment>
-    );
-  };
+  const section = (title: SiteSection, children: ReactNode) => (
+    <Sidebar.Group key={title} label={title} className="docs-nav-section">
+      <NavList.Root>{children}</NavList.Root>
+    </Sidebar.Group>
+  );
   return (
-    <aside
-      className={panel ? 'docs-navigation-panel' : 'docs-sidebar'}
-      onClick={(event) => {
-        if ((event.target as Element).closest('a[href]')) onNavigate?.();
-      }}
-    >
+    <>
+      {section(
+        'Get started',
+        <>
+          <NavList.Item
+            href={routeHref(homeRoute)}
+            selected={routePath === 'overview/components'}
+            icon={<Home />}
+          >
+            Overview
+          </NavList.Item>
+          <NavList.Item
+            href={routeHref('overview/get-started')}
+            selected={routePath === 'overview/get-started'}
+            icon={<RocketLaunch />}
+          >
+            Install and set up
+          </NavList.Item>
+          {pagesOf('Get started').map(({ path, title }) => item(path, title, <Article />))}
+        </>,
+      )}
+      {section(
+        'Foundations',
+        <>
+          {foundations.map((foundation) => {
+            const Icon = foundationIcons[foundation.id] ?? Category;
+            return (
+              <NavList.Item
+                key={foundation.id}
+                href={pageHref(referencePages.find((entry) => entry.reference === foundation)!)}
+                selected={page?.section === 'Foundations' && reference?.id === foundation.id}
+                icon={<Icon />}
+              >
+                {foundation.title}
+              </NavList.Item>
+            );
+          })}
+          {item(tokensPage.path, tokensPage.title, <Token />)}
+        </>,
+      )}
+      {section(
+        'Components',
+        componentGroups.map((group) => (
+          <NavList.Group key={group} label={group}>
+            {references
+              .filter((component) => component.group === group)
+              .map((component) => {
+                const Icon = getComponentIcon(component.group);
+                return (
+                  <NavList.Item
+                    key={component.id}
+                    href={pageHref(referencePages.find((entry) => entry.reference === component)!)}
+                    selected={reference?.id === component.id}
+                    icon={<Icon />}
+                  >
+                    {component.title}
+                  </NavList.Item>
+                );
+              })}
+          </NavList.Group>
+        )),
+      )}
+      {section(
+        'Patterns',
+        pagesOf('Patterns').map(({ path, title }) => item(path, title, <Pattern />)),
+      )}
+      {section('Templates', item(templatesPage.path, templatesPage.title, <ViewQuilt />))}
+      {section(
+        'Contributing',
+        pagesOf('Contributing').map(({ path, title }) => item(path, title, <Handyman />)),
+      )}
+      {section('Changelog', item(changelogPage.path, changelogPage.title, <History />))}
+    </>
+  );
+}
+
+/**
+ * The navigation's top row: the envUI wordmark, which leads to the overview, and the trigger that
+ * collapses the navigation to a rail. In the drawer the drawer's own close button stands in for
+ * the trigger.
+ */
+function Header() {
+  const { isMobile } = useSidebar();
+  return (
+    <Sidebar.Header className="docs-sidebar-header">
       <Link
         href={routeHref(homeRoute)}
         underline={false}
@@ -95,90 +151,73 @@ export function Sidebar({
       >
         <EnvUILogo />
       </Link>
-      <SearchButton onSearch={onSearch} />
-      <nav aria-label="Documentation" className="docs-sidebar-navigation">
-        {section(
-          'Get started',
-          <>
-            <NavList.Item
-              href={routeHref(homeRoute)}
-              selected={routePath === 'overview/components'}
-              icon={<Home />}
-            >
-              Overview
-            </NavList.Item>
-            <NavList.Item
-              href={routeHref('overview/get-started')}
-              selected={routePath === 'overview/get-started'}
-              icon={<RocketLaunch />}
-            >
-              Install and set up
-            </NavList.Item>
-            {pagesOf('Get started').map(({ path, title }) => item(path, title, <Article />))}
-          </>,
-        )}
-        {section(
-          'Foundations',
-          <>
-            {foundations.map((foundation) => {
-              const Icon = foundationIcons[foundation.id] ?? Category;
-              return (
-                <NavList.Item
-                  key={foundation.id}
-                  href={pageHref(referencePages.find((entry) => entry.reference === foundation)!)}
-                  selected={page?.section === 'Foundations' && reference?.id === foundation.id}
-                  icon={<Icon />}
-                >
-                  {foundation.title}
-                </NavList.Item>
-              );
-            })}
-            {item(tokensPage.path, tokensPage.title, <Token />)}
-          </>,
-        )}
-        {section(
-          'Components',
-          componentGroups.map((group) => (
-            <NavList.Group key={group} label={group}>
-              {references
-                .filter((component) => component.group === group)
-                .map((component) => {
-                  const Icon = getComponentIcon(component.group);
-                  return (
-                    <NavList.Item
-                      key={component.id}
-                      href={pageHref(
-                        referencePages.find((entry) => entry.reference === component)!,
-                      )}
-                      selected={reference?.id === component.id}
-                      icon={<Icon />}
-                    >
-                      {component.title}
-                    </NavList.Item>
-                  );
-                })}
-            </NavList.Group>
-          )),
-        )}
-        {section(
-          'Patterns',
-          pagesOf('Patterns').map(({ path, title }) => item(path, title, <Pattern />)),
-        )}
-        {section('Templates', item(templatesPage.path, templatesPage.title, <ViewQuilt />))}
-        {section(
-          'Contributing',
-          pagesOf('Contributing').map(({ path, title }) => item(path, title, <Handyman />)),
-        )}
-        {section('Changelog', item(changelogPage.path, changelogPage.title, <History />))}
-      </nav>
-      <Stack gap={3} align="start" className="docs-sidebar-footer">
-        <DisplayMenu />
-        <Text variant="caption">
+      {!isMobile && <SidebarTrigger className="docs-sidebar-trigger" />}
+    </Sidebar.Header>
+  );
+}
+
+/** Search, at the top of the navigation: it closes the drawer before search opens over the page. */
+function Search({ onSearch }: { onSearch: () => void }) {
+  const { dismiss } = useSidebar();
+  return (
+    <SearchTrigger
+      fullWidth
+      onClick={() => {
+        dismiss();
+        onSearch();
+      }}
+    />
+  );
+}
+
+/** The display settings, the theme and the version; a rail shows only their icons. */
+function Footer() {
+  const { isRail } = useSidebar();
+  return (
+    <Sidebar.Footer className="docs-sidebar-footer">
+      <DisplayMenu iconOnly={isRail} />
+      <ThemeToggle variant="ghost" />
+      {!isRail && (
+        <Text variant="caption" className="docs-sidebar-version">
           envUI · {version}
           <br />
           Internal reference
         </Text>
-      </Stack>
-    </aside>
+      )}
+    </Sidebar.Footer>
+  );
+}
+
+/**
+ * The catalogue's navigation: the wordmark and search above, the sections, and the display
+ * settings below. On a wide window it docks beside the page, at a width readers can change, or
+ * collapses to a rail of icons that opens over the page; below 48 rem it is a drawer that the top
+ * bar's trigger opens.
+ */
+export function DocumentationSidebar({
+  routePath,
+  page,
+  onSearch,
+}: SectionsProps & { onSearch: () => void }) {
+  return (
+    // 14.4 rem is the column the catalogue had at 1280 px, the width of its screenshots; readers can
+    // widen it, and the frame remembers their width.
+    <Sidebar.Root
+      label="Documentation"
+      width={14.4}
+      resizable
+      maxWidth={24}
+      resizeLabel="Resize navigation"
+      className="docs-sidebar"
+    >
+      <Header />
+      <Sidebar.Content align="stretch" className="docs-sidebar-search">
+        <Search onSearch={onSearch} />
+      </Sidebar.Content>
+      <Sidebar.Content className="docs-sidebar-navigation">
+        <Sections routePath={routePath} page={page} />
+      </Sidebar.Content>
+      <Footer />
+    </Sidebar.Root>
   );
 }

@@ -90,7 +90,7 @@ export const overrides = {
    * and the selection skips it; once all exist, empty these lists.
    */
   planned: {
-    specs: ['FrameNeeds.spec.ts', 'Templates.spec.ts'],
+    specs: ['Templates.spec.ts'],
     names: [],
   },
   /**
@@ -154,8 +154,12 @@ export const overrides = {
   ],
 };
 
-/** More specs than this make a change "broad": the fast tier runs the shared set instead. */
-export const budgets = { fast: 8, affected: 16, pages: 8 };
+/**
+ * More specs than this make a change "broad": the fast tier runs the shared set instead. The
+ * affected tier's budget leaves room for the frame proof (FrameNeeds.spec.ts), which composes many
+ * components.
+ */
+export const budgets = { fast: 8, affected: 20, pages: 8 };
 
 // ---------------------------------------------------------------------------------------------
 // Changed files
@@ -429,15 +433,16 @@ export function buildIndex(root = repositoryRoot) {
     stylesheets.set(file, stylesheetModules(ownedClasses(file, classes, owners), components));
   }
 
-  // Fixtures: which files each ?fixture= name mounts, and what each file imports from envUI.
-  const fixtureFiles = walk(root, 'tests/fixture', /\.(?:tsx?|html)$/).filter(
+  // Fixtures: which files each ?fixture= name mounts, and what each file imports from envUI. A
+  // fixture's own stylesheet counts as a file it mounts.
+  const fixtureFiles = walk(root, 'tests/fixture', /\.(?:tsx?|html|css)$/).filter(
     (file) => !file.includes('/hydration/'),
   );
   const fixtureKnown = new Set(fixtureFiles);
   const fixtureImports = new Map();
   const fixtureNames = new Map();
   for (const file of fixtureFiles) {
-    if (file.endsWith('.html')) continue;
+    if (file.endsWith('.html') || file.endsWith('.css')) continue;
     const source = read(root, file);
     fixtureImports.set(
       file,

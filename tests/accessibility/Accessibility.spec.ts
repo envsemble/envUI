@@ -265,7 +265,8 @@ async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
           if (heading?.textContent?.trim()) return heading.textContent.trim();
           if (example) return 'specimen';
           const regions: [string, string][] = [
-            ['.docs-sidebar, .docs-navigation-panel', 'sidebar'],
+            ['.docs-sidebar', 'sidebar'],
+            ['.docs-header', 'top bar'],
             ['.docs-page-header, .docs-page-banner, .docs-overview-hero', 'header'],
             ['.docs-page-navigation', 'page navigation'],
             ['.docs-article', 'article'],
