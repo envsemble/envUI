@@ -4,6 +4,18 @@ import { fixtureUrl } from './Servers';
 const fixture = `${fixtureUrl}/?fixture=adoption`;
 const shellFixture = `${fixtureUrl}/?fixture=app-shell`;
 
+/**
+ * Installs the page's clock and stops it, so a timer runs only as far as the test moves it, however
+ * long the steps between take on a busy engine. An installed clock still runs on its own; pausing it
+ * is what stops it. Event timestamps, which ConfirmButton's guard against a double press reads,
+ * follow it too.
+ */
+async function stopClock(page: Page) {
+  const start = Date.now();
+  await page.clock.install({ time: start });
+  await page.clock.pauseAt(start + 1000);
+}
+
 function collectErrors(page: Page) {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -452,6 +464,8 @@ test('a pending button keeps its size and name, reports busy and ignores presses
 });
 
 test('page progress waits before appearing, then completes and leaves', async ({ page }) => {
+  // The bar's delay, 200 ms, and its finish, 400 ms, run on the stopped clock.
+  await stopClock(page);
   await page.goto(shellFixture);
   const toggle = page.getByRole('button', { name: 'Toggle page loading' });
   const bar = page.getByRole('progressbar', { name: 'Loading page' });
@@ -471,12 +485,22 @@ test('page progress waits before appearing, then completes and leaves', async ({
   // Quick work never shows the bar.
   await toggle.click();
   await toggle.click();
-  await page.waitForTimeout(400);
+  await page.clock.runFor(400);
   expect(await states()).toEqual([]);
+  // The bar sets each timer in an effect of a render React schedules on its own, which can come
+  // after the press returns, so the clock moves in steps until the bar has changed.
+  const runUntil = (count: number) =>
+    expect
+      .poll(async () => {
+        await page.clock.runFor(50);
+        return bar.count();
+      })
+      .toBe(count);
   await toggle.click();
+  await runUntil(1);
   await expect(bar).toHaveAttribute('data-state', 'running');
   await toggle.click();
-  await expect(bar).toHaveCount(0);
+  await runUntil(0);
   expect(await states()).toEqual(['running', 'finishing', 'none']);
 });
 
@@ -530,6 +554,8 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   page,
 }) => {
   const errors = collectErrors(page);
+  // The fixture's buttons disarm after 800 ms, a timer on the stopped clock.
+  await stopClock(page);
   await page.goto(fixture);
   const button = page.getByTestId('confirm-button');
   const confirmed = page.getByTestId('confirmed');
@@ -541,7 +567,7 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await expect(button).toHaveText('Remove Morgan?');
   await expect(button).toHaveAttribute('data-tone', 'danger');
   await expect(status).toHaveText('Remove Morgan? Press again to confirm.');
-  await page.waitForTimeout(450);
+  await page.clock.runFor(450);
   await button.click();
   await expect(confirmed).toHaveText('1');
   await expect(button).toHaveText('Remove');
@@ -562,7 +588,8 @@ test('ConfirmButton names the consequence and runs only on a deliberate second p
   await button.focus();
   await page.keyboard.press('Enter');
   await expect(button).toHaveText('Remove Morgan?');
-  await expect(button).toHaveText('Remove', { timeout: 3000 });
+  await page.clock.runFor(800);
+  await expect(button).toHaveText('Remove');
   await expect(confirmed).toHaveText('1');
   expect(errors).toEqual([]);
 });
@@ -571,6 +598,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   page,
 }) => {
   const errors = collectErrors(page);
+  await stopClock(page);
   await page.goto(fixture);
   const button = page.getByTestId('confirm-icon-button');
   const confirmed = page.getByTestId('confirmed');
@@ -598,7 +626,7 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
   await expect(page.locator('.env-confirm-button-status').nth(1)).toHaveText(
     'Remove Morgan? Press again to confirm.',
   );
-  await page.waitForTimeout(450);
+  await page.clock.runFor(450);
   await page.keyboard.press('Enter');
   await expect(confirmed).toHaveText('1');
   await expect(button).toHaveAccessibleName('Remove Morgan');
