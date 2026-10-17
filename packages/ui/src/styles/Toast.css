@@ -208,3 +208,14 @@
     transition-timing-function: var(--env-motion-ease-exit);
   }
 }
+
+/* The status that reads ordinary notices: out of the layout and clipped away whole. */
+.env-toast-announcer {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}

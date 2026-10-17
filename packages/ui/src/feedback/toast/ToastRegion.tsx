@@ -8,6 +8,7 @@ import { CounterBadge } from '../../content/CounterBadge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
+import { useDirection } from '../../internal/useDirection.js';
 import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './ToastInternals.js';
@@ -61,6 +62,12 @@ export function ToastRegion({
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
   const limited = limitedIds(toastStore.toasts, visibleLimit);
+  // A swipe toward the end of the line dismisses, so it is to the left in right-to-left text.
+  const [direction] = useDirection(viewport, toastStore.toasts.length);
+  const swipeDirection: ('down' | 'left' | 'right')[] = [
+    'down',
+    direction === 'rtl' ? 'left' : 'right',
+  ];
   const hiddenCount = limited.size;
   useLayoutEffect(
     () =>
@@ -205,6 +212,9 @@ export function ToastRegion({
           ref={attachViewport}
           className="env-toast-viewport"
           data-placement={placement}
+          // The region announces nothing itself: a danger notice is an alert of its own, and the
+          // others are read by the status below, so no notice is read twice.
+          aria-live="off"
           aria-label={
             placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter
           }
@@ -243,9 +253,11 @@ export function ToastRegion({
                 data-toast-id={toast.id}
                 className="env-toast"
                 data-tone={entry.tone}
+                swipeDirection={swipeDirection}
                 data-limited={isLimited || undefined}
                 inert={isLimited || undefined}
-                // A danger notice interrupts: it is an alert as it appears, and stays readable.
+                // A danger notice interrupts: it is an alert as it appears, outside any polite
+                // region, and stays readable.
                 {...(danger && { role: 'alert', 'aria-modal': undefined })}
                 onMouseEnter={() => controller.pause(toast.id, 'hover')}
                 onMouseLeave={() => controller.resume(toast.id, 'hover')}
@@ -291,6 +303,14 @@ export function ToastRegion({
             );
           })}
         </BaseToast.Viewport>
+        {/* The ordinary notices, read politely as they arrive; a danger notice is an alert. */}
+        <div className="env-toast-announcer" role="status" aria-live="polite" aria-atomic="false">
+          {toastStore.toasts
+            .filter((toast) => toast.data?.tone !== 'danger' && toast.transitionStatus !== 'ending')
+            .map((toast) => (
+              <div key={toast.id}>{toast.data!.message}</div>
+            ))}
+        </div>
       </Theme>
     </BaseToast.Portal>
   );
