@@ -31,6 +31,7 @@ export const overrides = {
     'Adoption.spec.ts': ['Theme', 'ThemePreferenceProvider', 'AppShell', 'ConfirmButton'],
     'ButtonCounts.spec.ts': ['CounterBadge', 'DiffStat', 'Button'],
     'Cards.spec.ts': ['components/card'],
+    'ContainerSize.spec.ts': ['useContainerSize'],
     'DataDisplay.spec.ts': ['components/list', 'components/table', 'components/card'],
     'DenseContent.spec.ts': ['components/code', 'components/menu', 'components/tabs'],
     'Direction.spec.ts': ['EnvUIProvider'],

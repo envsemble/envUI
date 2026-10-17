@@ -4,6 +4,7 @@ export * from './foundations/Text.js';
 export * from './foundations/Surface.js';
 export * from './foundations/breakpoints.js';
 export * from './foundations/useMediaQuery.js';
+export * from './foundations/useContainerSize.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './actions/Button.js';
 export * from './actions/CloseButton.js';

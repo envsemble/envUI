@@ -73,6 +73,7 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
+import { ContainerSizeFixture } from './ContainerSize.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -104,6 +105,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   drawers: DrawersFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
+  'container-size': ContainerSizeFixture,
 };
 
 export default function App() {
