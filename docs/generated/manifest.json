@@ -6005,9 +6005,23 @@
       "doc": "docs/component-pages.md",
       "related": [
         "button",
+        "pattern-pages",
         "index",
         "text-field",
         "library-development"
+      ]
+    },
+    {
+      "name": "pattern-pages",
+      "title": "Write a pattern or template page",
+      "group": "Setup and workflows",
+      "summary": "The frontmatter, sections and files of pattern and template pages, and the rules for template screens.",
+      "doc": "docs/pattern-pages.md",
+      "related": [
+        "component-pages",
+        "loading",
+        "index",
+        "setup"
       ]
     }
   ],
