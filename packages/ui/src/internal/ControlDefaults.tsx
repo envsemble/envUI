@@ -39,6 +39,17 @@ export function ControlDefaults({
   return <ControlDefaultsContext value={value}>{children}</ControlDefaultsContext>;
 }
 
+const noDefaults: ControlDefaultsValue = {};
+
+/**
+ * Clears the defaults of every ControlDefaults around it, for content a portal renders elsewhere:
+ * a popover or dialog opened from a toolbar or a field's end action is not inside them on the page,
+ * so its buttons take their own defaults.
+ */
+export function ResetControlDefaults({ children }: { children?: ReactNode }) {
+  return <ControlDefaultsContext value={noDefaults}>{children}</ControlDefaultsContext>;
+}
+
 /** The defaults of the nearest ControlDefaults, or none. */
 export function useControlDefaults(): ControlDefaultsValue {
   return useContext(ControlDefaultsContext);
