@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 import {
   Button,
   Checkbox,
   ConfirmDialog,
+  Link,
   Stack,
   Table,
   Text,
@@ -16,6 +17,16 @@ import { Delete } from '@envsemble/envui/icons/Delete';
 /** "1 project", "3 projects": the count belongs in every label of an action on the selection. */
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
+/** Read by assistive technology but not shown: the bar shows the count on screen. */
+const visuallyHidden: CSSProperties = {
+  position: 'absolute',
+  inlineSize: 1,
+  blockSize: 1,
+  overflow: 'hidden',
+  clipPath: 'inset(50%)',
+  whiteSpace: 'nowrap',
+};
+
 function Projects() {
   const toast = useToast();
   const [projects, setProjects] = useState(initialProjects);
@@ -25,6 +36,9 @@ function Projects() {
   const [asked, setAsked] = useState(0);
   // The bar goes with the selection, so focus moves to the header's checkbox after an action.
   const selectAll = useRef<HTMLInputElement>(null);
+  // Where focus goes as the dialog closes: back to Delete when it is cancelled, or to the header's
+  // checkbox once the projects, and the bar with them, are gone.
+  const returnFocus = useRef<HTMLElement | null>(null);
 
   const all = projects.length > 0 && selected.length === projects.length;
   const toggle = (id: string, checked: boolean) =>
@@ -54,12 +68,17 @@ function Projects() {
 
   return (
     <Stack gap={3}>
+      {/* The bar comes and goes, so a status that is always there announces the count politely
+          as it changes; the count the bar shows isn't announced a second time. */}
+      <div role="status" style={visuallyHidden}>
+        {selected.length > 0 ? `${projectCount(selected.length)} selected` : 'No projects selected'}
+      </div>
       {selected.length > 0 && (
-        // The bulk bar: the count, then the actions on the selection.
+        // The bulk bar: the count, then the actions on the selection, at the size of the rows.
         <Stack direction="row" wrap align="center" gap={3}>
-          <Text variant="body-sm">{selected.length} selected</Text>
+          <Text>{selected.length} selected</Text>
           {/* Only icon buttons, so one tab stop with the arrow keys between them. */}
-          <Toolbar.Root aria-label="Selected projects" size="sm">
+          <Toolbar.Root aria-label="Selected projects">
             <Toolbar.Button
               icon={<Archive />}
               label={`Archive ${projectCount(selected.length)}`}
@@ -68,7 +87,8 @@ function Projects() {
             <Toolbar.Button
               icon={<Delete />}
               label={`Delete ${projectCount(selected.length)}…`}
-              onClick={() => {
+              onClick={(event) => {
+                returnFocus.current = event.currentTarget;
                 setAsked(selected.length);
                 setConfirming(true);
               }}
@@ -76,7 +96,6 @@ function Projects() {
           </Toolbar.Root>
           <Button
             variant="text"
-            size="sm"
             onClick={() => {
               setSelected([]);
               selectAll.current?.focus();
@@ -116,7 +135,9 @@ function Projects() {
                   onCheckedChange={(checked) => toggle(project.id, checked)}
                 />
               </Table.Cell>
-              <Table.Cell>{project.name}</Table.Cell>
+              <Table.Cell>
+                <Link href={`/projects/${project.id}`}>{project.name}</Link>
+              </Table.Cell>
               <Table.Cell>{project.owner}</Table.Cell>
             </Table.Row>
           ))}
@@ -129,8 +150,9 @@ function Projects() {
         title={`Delete ${projectCount(asked)}?`}
         description="This deletes them with their documents and tasks for everyone. You can’t undo this."
         confirmLabel={`Delete ${projectCount(asked)}`}
-        finalFocus={selectAll}
+        finalFocus={returnFocus}
         onConfirm={() => {
+          returnFocus.current = selectAll.current;
           // The projects are deleted on a server; the application would return its promise here,
           // so the dialog waits for it.
           setProjects((current) => current.filter((project) => !selected.includes(project.id)));

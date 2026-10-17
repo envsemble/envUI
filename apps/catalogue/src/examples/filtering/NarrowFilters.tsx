@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Button,
   CounterBadge,
   DialogClose,
   Drawer,
+  EmptyState,
   List,
   Radio,
   RadioGroup,
@@ -14,6 +15,7 @@ import {
   useBreakpoint,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
+import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
@@ -24,6 +26,7 @@ export default function NarrowFilters() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('any');
   const [owner, setOwner] = useState<string | null>('anyone');
+  const search = useRef<HTMLInputElement>(null);
   const applied = (status === 'any' ? 0 : 1) + (owner === 'anyone' ? 0 : 1);
 
   const term = query.trim().toLowerCase();
@@ -37,11 +40,23 @@ export default function NarrowFilters() {
     setStatus('any');
     setOwner('anyone');
   };
+  const clearAll = () => {
+    setQuery('');
+    clear();
+    // The empty state goes with the filters, so focus returns to the search.
+    search.current?.focus();
+  };
 
   return (
     <Stack gap={4}>
       <Stack direction="row" wrap align="center" gap={3}>
-        <SearchField label="Search projects" size="sm" value={query} onValueChange={setQuery} />
+        <SearchField
+          ref={search}
+          label="Search projects"
+          size="sm"
+          value={query}
+          onValueChange={setQuery}
+        />
         {wide ? (
           <>
             <Select
@@ -82,6 +97,11 @@ export default function NarrowFilters() {
             }
           >
             <Stack gap={5}>
+              {/* The page behind the modal drawer is hidden from assistive technology, so the
+                  drawer has its own status, there as it opens, that announces the new count. */}
+              <Text role="status" variant="body-sm" emphasis="muted">
+                {projectCount(shown.length)} {shown.length === 1 ? 'matches' : 'match'}
+              </Text>
               <RadioGroup
                 orientation="vertical"
                 label="Status"
@@ -106,12 +126,29 @@ export default function NarrowFilters() {
       <Text role="status" variant="body-sm" emphasis="muted">
         {projectCount(shown.length)}
       </Text>
-      <List.Root aria-label="Projects">
-        {shown.map((project) => (
-          <List.Item key={project.name} label={project.name} description={project.owner} />
-        ))}
-        {shown.length === 0 && <List.Item label="No projects match these filters." />}
-      </List.Root>
+      {shown.length > 0 ? (
+        <List.Root aria-label="Projects">
+          {shown.map((project) => (
+            <List.Item key={project.name} label={project.name} description={project.owner} />
+          ))}
+        </List.Root>
+      ) : (
+        // The toolbar stays above the empty state, so people can change what they asked for.
+        <EmptyState
+          icon={<SearchOff />}
+          title="No matching projects"
+          description={
+            term
+              ? `No project names contain “${query.trim()}” with these filters.`
+              : 'No projects match these filters.'
+          }
+          action={
+            <Button variant="secondary" onClick={clearAll}>
+              Clear filters
+            </Button>
+          }
+        />
+      )}
     </Stack>
   );
 }

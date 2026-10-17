@@ -1,10 +1,25 @@
 import { useState } from 'react';
-import { Avatar, Badge, Link, Pagination, RelativeTime, Stack, Table } from '@envsemble/envui';
+import {
+  Avatar,
+  Badge,
+  Link,
+  Pagination,
+  RelativeTime,
+  Stack,
+  Table,
+  Text,
+} from '@envsemble/envui';
 
 type Column = 'name' | 'updated' | 'tasks';
 type Direction = 'ascending' | 'descending';
 
-const pageSize = 5;
+const pageSize = 4;
+
+const columnNames: Record<Column, string> = {
+  name: 'name',
+  updated: 'updated',
+  tasks: 'open tasks',
+};
 
 export default function SortAndPaginate() {
   const [sort, setSort] = useState<{ column: Column; direction: Direction }>({
@@ -82,7 +97,11 @@ export default function SortAndPaginate() {
           ))}
         </Table.Body>
       </Table.Root>
-      <Stack direction="row" justify="end">
+      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+        {/* The new order is announced politely; the header's arrow alone isn't read out. */}
+        <Text role="status" variant="body-sm" emphasis="muted">
+          Sorted by {columnNames[sort.column]}, {sort.direction}
+        </Text>
         <Pagination
           aria-label="Project pages"
           page={page}
@@ -143,13 +162,5 @@ const projects = [
     status: 'On track',
     tasks: 0,
     updated: '2026-02-18T10:00:00Z',
-  },
-  {
-    id: 'brand-guidelines',
-    name: 'Brand guidelines',
-    owner: 'Priya Shah',
-    status: 'On track',
-    tasks: 6,
-    updated: '2026-02-12T13:45:00Z',
   },
 ];
