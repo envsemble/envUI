@@ -140,7 +140,13 @@
       ],
       "usedIn": {
         "patterns": [
-          "loading"
+          "forms",
+          "settings",
+          "destructive-actions",
+          "feedback",
+          "loading",
+          "empty-states",
+          "progressive-disclosure"
         ],
         "templates": []
       }
@@ -210,7 +216,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings"
+        ],
         "templates": []
       }
     },
@@ -292,7 +300,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "empty-states"
+        ],
         "templates": []
       }
     },
@@ -458,7 +469,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "empty-states"
+        ],
         "templates": []
       }
     },
@@ -573,7 +587,12 @@
       ],
       "usedIn": {
         "patterns": [
-          "loading"
+          "settings",
+          "destructive-actions",
+          "feedback",
+          "loading",
+          "empty-states",
+          "progressive-disclosure"
         ],
         "templates": []
       }
@@ -816,7 +835,13 @@
       ],
       "usedIn": {
         "patterns": [
-          "loading"
+          "forms",
+          "settings",
+          "destructive-actions",
+          "feedback",
+          "loading",
+          "empty-states",
+          "progressive-disclosure"
         ],
         "templates": []
       }
@@ -1106,7 +1131,11 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms",
+          "feedback",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -1322,7 +1351,13 @@
       ],
       "usedIn": {
         "patterns": [
-          "loading"
+          "forms",
+          "settings",
+          "destructive-actions",
+          "feedback",
+          "loading",
+          "empty-states",
+          "progressive-disclosure"
         ],
         "templates": []
       }
@@ -1400,7 +1435,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms"
+        ],
         "templates": []
       }
     },
@@ -1565,7 +1602,11 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms",
+          "destructive-actions",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -1648,7 +1689,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings"
+        ],
         "templates": []
       }
     },
@@ -1736,7 +1779,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms",
+          "settings"
+        ],
         "templates": []
       }
     },
@@ -1831,7 +1877,13 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms",
+          "settings",
+          "feedback",
+          "empty-states",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -2011,7 +2063,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms"
+        ],
         "templates": []
       }
     },
@@ -2110,7 +2164,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms"
+        ],
         "templates": []
       }
     },
@@ -2373,7 +2429,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "feedback"
+        ],
         "templates": []
       }
     },
@@ -2468,7 +2527,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -3544,7 +3605,12 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "feedback",
+          "empty-states",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -3669,7 +3735,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "empty-states"
+        ],
         "templates": []
       }
     },
@@ -3747,7 +3815,11 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "feedback",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -4079,7 +4151,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "feedback"
+        ],
         "templates": []
       }
     },
@@ -4157,7 +4231,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -4596,7 +4672,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "empty-states"
+        ],
         "templates": []
       }
     },
@@ -4764,7 +4842,8 @@
       ],
       "usedIn": {
         "patterns": [
-          "loading"
+          "loading",
+          "empty-states"
         ],
         "templates": []
       }
@@ -4866,7 +4945,11 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "destructive-actions",
+          "feedback"
+        ],
         "templates": []
       }
     },
@@ -4954,7 +5037,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "forms",
+          "feedback"
+        ],
         "templates": []
       }
     },
@@ -5082,7 +5168,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -5153,7 +5241,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -5216,7 +5306,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "settings",
+          "destructive-actions"
+        ],
         "templates": []
       }
     },
@@ -5447,7 +5540,10 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "destructive-actions",
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -5598,7 +5694,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -5685,7 +5783,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -5758,7 +5858,9 @@
         }
       ],
       "usedIn": {
-        "patterns": [],
+        "patterns": [
+          "progressive-disclosure"
+        ],
         "templates": []
       }
     },
@@ -6218,6 +6320,368 @@
   ],
   "patterns": [
     {
+      "name": "forms",
+      "title": "Form layout and validation",
+      "group": "Patterns",
+      "intent": "Collect and change information",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Ask for information in a form, check it, and help people fix what's wrong.",
+      "aliases": [
+        "form",
+        "form validation",
+        "error summary",
+        "error message",
+        "required field",
+        "optional field",
+        "inline validation",
+        "submit"
+      ],
+      "useWhen": [
+        "Someone gives or changes several pieces of information at once, and submits them together.",
+        "A form refuses what people entered and they need to find and fix each problem."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A single setting that takes effect at once.",
+          "see": "settings"
+        },
+        {
+          "text": "Confirming a destructive action.",
+          "use": "ConfirmDialog"
+        },
+        {
+          "text": "Filtering a list or a table as people choose.",
+          "use": "SearchField"
+        }
+      ],
+      "composes": [
+        "Field",
+        "TextField",
+        "Textarea",
+        "Select",
+        "Combobox",
+        "RadioGroup",
+        "Radio",
+        "Checkbox",
+        "DatePicker",
+        "Button",
+        "Alert",
+        "Link",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "settings",
+        "destructive-actions",
+        "field",
+        "text-field",
+        "select",
+        "radio"
+      ],
+      "doc": "docs/patterns/forms.md",
+      "examples": [
+        {
+          "name": "CreateProject",
+          "title": "Form layout and validation",
+          "description": "Ask for information in a form, check it, and help people fix what's wrong.",
+          "file": "docs/examples/forms/CreateProject.tsx"
+        },
+        {
+          "name": "ErrorSummary",
+          "title": "Error summary",
+          "description": "Submitting with errors shows each field's error and a summary at the top, which takes focus. Each link in it moves focus to its field. envUI has no error summary component yet: this is a danger Alert with a list of Links.",
+          "file": "docs/examples/forms/ErrorSummary.tsx"
+        },
+        {
+          "name": "ValidationTiming",
+          "title": "Validation timing",
+          "description": "A field is checked when people leave it, once they have typed in it, and on submit. While people type, an error only clears, as soon as the value is right.",
+          "file": "docs/examples/forms/ValidationTiming.tsx"
+        },
+        {
+          "name": "ServerError",
+          "title": "Server error",
+          "description": "The first save fails: the fields keep their values, an Alert at the top says what happened and takes focus, and saving again succeeds.",
+          "file": "docs/examples/forms/ServerError.tsx"
+        },
+        {
+          "name": "GroupedChoices",
+          "title": "Grouped choices",
+          "description": "One choice of several is a RadioGroup. Several choices are Checkboxes in a native `fieldset` whose `legend` names them, since envUI has no checkbox group yet.",
+          "file": "docs/examples/forms/GroupedChoices.tsx"
+        }
+      ]
+    },
+    {
+      "name": "settings",
+      "title": "Settings",
+      "group": "Patterns",
+      "intent": "Collect and change information",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Let people change how the application works for them, and see each change apply.",
+      "aliases": [
+        "preferences",
+        "options",
+        "account settings",
+        "notification settings",
+        "appearance",
+        "danger zone"
+      ],
+      "useWhen": [
+        "Someone changes a preference that applies at once, such as a notification or the theme.",
+        "Someone edits a few related values that only make sense saved together, such as a profile."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Several answers given once and submitted together, such as creating something.",
+          "see": "forms"
+        },
+        {
+          "text": "A choice that filters or changes the view of the page people are on.",
+          "use": "SegmentedControl"
+        }
+      ],
+      "composes": [
+        "Page",
+        "PageHeader",
+        "NavList",
+        "Surface",
+        "Stack",
+        "Text",
+        "List",
+        "DescriptionList",
+        "Switch",
+        "Select",
+        "RadioGroup",
+        "Radio",
+        "TextField",
+        "Badge",
+        "Button",
+        "ConfirmDialog",
+        "Toast",
+        "useToast",
+        "useThemePreference"
+      ],
+      "related": [
+        "forms",
+        "destructive-actions",
+        "feedback",
+        "switch",
+        "radio",
+        "description-list"
+      ],
+      "doc": "docs/patterns/settings.md",
+      "examples": [
+        {
+          "name": "ImmediateToggles",
+          "title": "Settings",
+          "description": "Let people change how the application works for them, and see each change apply.",
+          "file": "docs/examples/settings/ImmediateToggles.tsx"
+        },
+        {
+          "name": "SaveSection",
+          "title": "Save a section",
+          "description": "A profile's fields depend on each other, so they wait for Save. The section marks its unsaved changes, and Cancel puts back what was saved.",
+          "file": "docs/examples/settings/SaveSection.tsx"
+        },
+        {
+          "name": "AppearanceChoice",
+          "title": "Appearance",
+          "description": "The theme applies the moment people choose it, through `useThemePreference`. The density sets the app's one scale.",
+          "file": "docs/examples/settings/AppearanceChoice.tsx"
+        },
+        {
+          "name": "DangerZone",
+          "title": "Danger zone",
+          "description": "Deleting the workspace can't be undone and affects everyone, so the dialog asks for its name. A confirmation with the wrong name keeps the dialog open and says what to enter.",
+          "file": "docs/examples/settings/DangerZone.tsx"
+        }
+      ]
+    },
+    {
+      "name": "destructive-actions",
+      "title": "Confirmation and destructive actions",
+      "group": "Patterns",
+      "intent": "Collect and change information",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.",
+      "aliases": [
+        "destructive action",
+        "delete confirmation",
+        "confirm delete",
+        "undo delete",
+        "are you sure",
+        "type to confirm",
+        "bulk delete"
+      ],
+      "useWhen": [
+        "People delete, remove, archive or end something.",
+        "An action affects other people or can't be undone."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A decision that needs fields or several choices, beyond a confirmation.",
+          "use": "Dialog"
+        },
+        {
+          "text": "Reporting the outcome of an action that people can't change.",
+          "see": "feedback"
+        }
+      ],
+      "composes": [
+        "Button",
+        "IconButton",
+        "ConfirmButton",
+        "ConfirmDialog",
+        "Menu",
+        "List",
+        "Checkbox",
+        "TextField",
+        "Toast",
+        "useToast",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "feedback",
+        "settings",
+        "confirm-dialog",
+        "toast",
+        "button",
+        "menu"
+      ],
+      "doc": "docs/patterns/destructive-actions.md",
+      "examples": [
+        {
+          "name": "UndoInstead",
+          "title": "Confirmation and destructive actions",
+          "description": "Let people delete, remove or archive with as little friction as is safe, and undo or confirm by what is at stake.",
+          "file": "docs/examples/destructive-actions/UndoInstead.tsx"
+        },
+        {
+          "name": "ConfirmInPlace",
+          "title": "Confirm in place",
+          "description": "Removing an attachment is small and quick to redo, so the button asks in place: the first press says \"Remove file?\", the second removes it.",
+          "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
+        },
+        {
+          "name": "ConfirmDelete",
+          "title": "Confirm from a menu",
+          "description": "\"Delete document…\" in a row's menu opens a ConfirmDialog that names the document. Cancel returns focus to the menu button; after the delete, focus moves to the next row's menu button.",
+          "file": "docs/examples/destructive-actions/ConfirmDelete.tsx"
+        },
+        {
+          "name": "TypeToConfirm",
+          "title": "Type to confirm",
+          "description": "Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error.",
+          "file": "docs/examples/destructive-actions/TypeToConfirm.tsx"
+        },
+        {
+          "name": "BulkDelete",
+          "title": "Bulk delete",
+          "description": "The count of the selection is in the button, the question and the confirm button. After the delete, focus moves to the list.",
+          "file": "docs/examples/destructive-actions/BulkDelete.tsx"
+        }
+      ]
+    },
+    {
+      "name": "feedback",
+      "title": "Notifications and feedback",
+      "group": "Patterns",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.",
+      "aliases": [
+        "notification",
+        "feedback",
+        "success message",
+        "status message",
+        "toast or alert",
+        "unread count",
+        "status badge"
+      ],
+      "useWhen": [
+        "People need to know the outcome of something they did, or of work that ran in the background.",
+        "A page, a row or a destination has a state people should notice."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A value that is wrong in a form.",
+          "see": "forms"
+        },
+        {
+          "text": "Content that is loading.",
+          "see": "loading"
+        },
+        {
+          "text": "A region with nothing to show.",
+          "see": "empty-states"
+        }
+      ],
+      "composes": [
+        "Toast",
+        "useToast",
+        "Alert",
+        "Badge",
+        "CounterBadge",
+        "NavList",
+        "List",
+        "DescriptionList",
+        "RelativeTime",
+        "Button",
+        "Link",
+        "Select",
+        "TextField",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "loading",
+        "empty-states",
+        "destructive-actions",
+        "toast",
+        "alert",
+        "badge"
+      ],
+      "doc": "docs/patterns/feedback.md",
+      "examples": [
+        {
+          "name": "SaveConfirmation",
+          "title": "Notifications and feedback",
+          "description": "Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.",
+          "file": "docs/examples/feedback/SaveConfirmation.tsx"
+        },
+        {
+          "name": "SectionAlert",
+          "title": "A condition of the page",
+          "description": "A read-only project says so in an Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do.",
+          "file": "docs/examples/feedback/SectionAlert.tsx"
+        },
+        {
+          "name": "BackgroundTask",
+          "title": "Background work",
+          "description": "The export runs while people carry on. When it ends, a toast with a \"Download\" action reaches them, and the page keeps a link to the file.",
+          "file": "docs/examples/feedback/BackgroundTask.tsx"
+        },
+        {
+          "name": "StatusInRows",
+          "title": "Status in rows",
+          "description": "Each project's status is a Badge in its row, in one tone per status, with its words carrying the meaning.",
+          "file": "docs/examples/feedback/StatusInRows.tsx"
+        },
+        {
+          "name": "UnreadCount",
+          "title": "Unread counts",
+          "description": "A CounterBadge on a navigation item says how many new items wait there; its label says what it counts.",
+          "file": "docs/examples/feedback/UnreadCount.tsx"
+        }
+      ]
+    },
+    {
       "name": "loading",
       "title": "Loading",
       "group": "Patterns",
@@ -6291,6 +6755,193 @@
           "title": "Upload progress",
           "description": "Progress measures each file and says what has been sent, in megabytes.",
           "file": "docs/examples/loading/UploadProgress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "empty-states",
+      "title": "Empty states",
+      "group": "Patterns",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.",
+      "aliases": [
+        "empty state",
+        "no results",
+        "no data",
+        "zero state",
+        "first use",
+        "nothing found",
+        "no access"
+      ],
+      "useWhen": [
+        "A list, a table or a page has nothing to show, for any reason.",
+        "A search or filters match nothing.",
+        "Content failed to load, or people may not see it."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Content that is still loading.",
+          "see": "loading"
+        },
+        {
+          "text": "Reporting that an action, such as a save, failed.",
+          "see": "feedback"
+        }
+      ],
+      "composes": [
+        "EmptyState",
+        "PageHeader",
+        "SearchField",
+        "Select",
+        "List",
+        "Table",
+        "LoadingState",
+        "Skeleton",
+        "Badge",
+        "Button",
+        "Surface",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "loading",
+        "feedback",
+        "empty-state",
+        "list",
+        "table"
+      ],
+      "doc": "docs/patterns/empty-states.md",
+      "examples": [
+        {
+          "name": "FirstUse",
+          "title": "Empty states",
+          "description": "Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.",
+          "file": "docs/examples/empty-states/FirstUse.tsx"
+        },
+        {
+          "name": "NoResults",
+          "title": "No results",
+          "description": "The search and the status filter stay above the state, which names the query, and a count says how many match. Clear filters resets both and returns focus to the search.",
+          "file": "docs/examples/empty-states/NoResults.tsx"
+        },
+        {
+          "name": "LoadFailed",
+          "title": "Load failed",
+          "description": "In place of the table, a danger state says the documents are safe and offers Try again. The heading and the page's action stay.",
+          "file": "docs/examples/empty-states/LoadFailed.tsx"
+        },
+        {
+          "name": "NoAccess",
+          "title": "No access",
+          "description": "The project exists, but not for this person: the state says who to ask, and Request access sends the request.",
+          "file": "docs/examples/empty-states/NoAccess.tsx"
+        },
+        {
+          "name": "AllDone",
+          "title": "All done",
+          "description": "When the last review is approved, the queue says so plainly, with what comes next and no action.",
+          "file": "docs/examples/empty-states/AllDone.tsx"
+        }
+      ]
+    },
+    {
+      "name": "progressive-disclosure",
+      "title": "Progressive disclosure",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.",
+      "aliases": [
+        "progressive disclosure",
+        "advanced options",
+        "show more",
+        "more actions",
+        "overflow menu",
+        "details panel",
+        "accordion",
+        "help text"
+      ],
+      "useWhen": [
+        "A page has options, details or actions that most people don't need most of the time.",
+        "A term or a value needs an explanation that would clutter the page if always shown."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Switching between views of the same content.",
+          "use": "Tabs"
+        },
+        {
+          "text": "Moving between destinations of the application.",
+          "use": "NavList"
+        },
+        {
+          "text": "Information people need to complete a task, such as a required field or an error.",
+          "see": "forms"
+        }
+      ],
+      "composes": [
+        "Disclosure",
+        "Tabs",
+        "Popover",
+        "HoverCard",
+        "Tooltip",
+        "Drawer",
+        "Dialog",
+        "Menu",
+        "Button",
+        "IconButton",
+        "Link",
+        "List",
+        "Badge",
+        "DescriptionList",
+        "Select",
+        "Checkbox",
+        "TextField",
+        "Stack",
+        "Text"
+      ],
+      "related": [
+        "forms",
+        "feedback",
+        "disclosure",
+        "popover",
+        "drawer",
+        "menu"
+      ],
+      "doc": "docs/patterns/progressive-disclosure.md",
+      "examples": [
+        {
+          "name": "AdvancedOptions",
+          "title": "Progressive disclosure",
+          "description": "Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.",
+          "file": "docs/examples/progressive-disclosure/AdvancedOptions.tsx"
+        },
+        {
+          "name": "ShowMore",
+          "title": "Show all",
+          "description": "The list shows its five most recent items; \"Show all 12\" shows the rest and becomes \"Show fewer\". The button keeps its place and focus.",
+          "file": "docs/examples/progressive-disclosure/ShowMore.tsx"
+        },
+        {
+          "name": "DetailsInDrawer",
+          "title": "Details in a drawer",
+          "description": "Each row opens its project's details in a Drawer over the list, so people keep their place; closing it returns focus to the row.",
+          "file": "docs/examples/progressive-disclosure/DetailsInDrawer.tsx"
+        },
+        {
+          "name": "OverflowActions",
+          "title": "Overflow actions",
+          "description": "Share and Edit stay visible; the actions used less often wait in a \"More actions\" menu.",
+          "file": "docs/examples/progressive-disclosure/OverflowActions.tsx"
+        },
+        {
+          "name": "ExplainATerm",
+          "title": "Explain a term",
+          "description": "A help button opens a Popover with a short definition and a link. The icon-only download button has a Tooltip that repeats its name.",
+          "file": "docs/examples/progressive-disclosure/ExplainATerm.tsx"
         }
       ]
     }

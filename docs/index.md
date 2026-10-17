@@ -116,4 +116,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Patterns
 
+- [Form layout and validation](patterns/forms.md)
+- [Settings](patterns/settings.md)
+- [Confirmation and destructive actions](patterns/destructive-actions.md)
+- [Notifications and feedback](patterns/feedback.md)
 - [Loading](patterns/loading.md)
+- [Empty states](patterns/empty-states.md)
+- [Progressive disclosure](patterns/progressive-disclosure.md)
