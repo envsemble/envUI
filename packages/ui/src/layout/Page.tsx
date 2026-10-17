@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useRef,
   type ComponentPropsWithRef,
   type ReactElement,
@@ -59,14 +60,20 @@ export function Page({
   ...props
 }: PageProps) {
   const page = useRef<HTMLElement>(null);
+  // A stable callback: a new one on each render would detach the element and attach it again,
+  // leaving page.current empty while a sticky PageHeader's layout effect publishes its height.
+  const attach = useCallback(
+    (node: HTMLElement | null) => {
+      page.current = node;
+      setRef(ref as RefObject<HTMLElement | null> | undefined, node);
+    },
+    [ref],
+  );
   return (
     <PageContext value={page}>
       {renderElement('div', render, {
         ...props,
-        ref: (node: HTMLElement | null) => {
-          page.current = node;
-          setRef(ref as RefObject<HTMLElement | null> | undefined, node);
-        },
+        ref: attach,
         className: classNames('env-page', className),
         'data-width': width,
         'data-gutter': gutter ? undefined : 'none',
