@@ -96,6 +96,7 @@ export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
+export * as AccountMenu from './navigation/AccountMenu.js';
 export * from './navigation/AppShell.js';
 export * from './navigation/TitleBar.js';
 export * from './navigation/WindowFrame.js';

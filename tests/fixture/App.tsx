@@ -74,6 +74,7 @@ import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
+import { AccountMenusFixture } from './AccountMenus.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -106,6 +107,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   tooltips: TooltipsFixture,
   meters: MetersFixture,
   'search-triggers': SearchTriggersFixture,
+  'account-menus': AccountMenusFixture,
 };
 
 export default function App() {

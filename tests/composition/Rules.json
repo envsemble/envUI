@@ -139,7 +139,6 @@
       "layout/Page.tsx",
       "layout/PageHeader.tsx",
       "layout/SplitPane.tsx",
-      "navigation/AccountMenu.tsx",
       "navigation/app-shell/AppShell.tsx",
       "navigation/sidebar/Sidebar.tsx"
     ]
