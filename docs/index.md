@@ -128,4 +128,5 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Templates
 
+- [App frame with sidebar](templates/app-frame.md)
 - [Sign-in page](templates/sign-in-page.md)

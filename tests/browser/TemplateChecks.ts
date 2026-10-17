@@ -141,7 +141,63 @@ const signIn: TemplateCheck[] = [
   },
 ];
 
+const appFrame: TemplateCheck[] = [
+  {
+    name: 'the trigger collapses the sidebar to a rail on a desktop, and opens it as a drawer on a phone',
+    async run(page, { width }) {
+      const primary = page.locator('.env-sidebar', {
+        has: page.getByRole('link', { name: 'Home' }),
+      });
+      if (width >= 768) {
+        // The sidebar is docked open, and the current destination is marked.
+        await expect(page.getByRole('link', { name: 'Home' })).toHaveAttribute(
+          'aria-current',
+          'page',
+        );
+        await page.getByRole('button', { name: 'Collapse sidebar' }).click();
+        await expect(primary).toHaveAttribute('data-rail', '');
+        // The rail keeps its destinations, by name.
+        await expect(page.getByRole('link', { name: 'Projects' })).toBeVisible();
+        await page.mouse.move(width - 10, 400);
+        await page.getByRole('button', { name: 'Expand sidebar' }).click();
+        await expect(primary).not.toHaveAttribute('data-rail', '');
+        return;
+      }
+      // On a phone the top bar's trigger opens the navigation in a drawer; a destination closes it
+      // and moves focus to Main.
+      await page.getByRole('banner').getByRole('button', { name: 'Open navigation' }).click();
+      const drawer = page.getByRole('dialog', { name: 'Primary' });
+      await expect(drawer).toBeVisible();
+      await drawer.getByRole('link', { name: 'Projects' }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(page.getByRole('main')).toBeFocused();
+    },
+  },
+  {
+    name: 'search opens the palette, which finds pages and projects',
+    async run(page, { width }) {
+      const trigger =
+        width >= 768
+          ? page
+              .getByRole('navigation', { name: 'Primary' })
+              .getByRole('button', { name: /Search/ })
+          : page.getByRole('banner').getByRole('button', { name: /Search/ });
+      await trigger.click();
+      const search = page.getByRole('combobox', { name: 'Search' });
+      await expect(search).toBeFocused();
+      await search.fill('web');
+      await expect(page.getByRole('option')).toHaveCount(1);
+      await expect(page.getByRole('option')).toContainText('Website refresh');
+      await search.fill('zzz');
+      await expect(page.getByText('No matching pages or projects')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(trigger).toBeFocused();
+    },
+  },
+];
+
 export const templateChecks: Record<string, TemplateCheck[]> = {
+  'app-frame/AppFrame': appFrame,
   'sign-in-page/SignInPage': signIn,
 };
 

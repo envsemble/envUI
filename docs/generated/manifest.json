@@ -222,6 +222,7 @@
           "settings"
         ],
         "templates": [
+          "app-frame",
           "sign-in-page"
         ]
       }
@@ -308,7 +309,9 @@
           "settings",
           "empty-states"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -976,7 +979,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -2450,7 +2455,9 @@
           "settings",
           "feedback"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -2738,6 +2745,7 @@
           "loading"
         ],
         "templates": [
+          "app-frame",
           "sign-in-page"
         ]
       }
@@ -2846,7 +2854,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -3367,7 +3377,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -4866,7 +4878,9 @@
         "patterns": [
           "empty-states"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -5576,7 +5590,9 @@
       ],
       "usedIn": {
         "patterns": [],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -5737,7 +5753,9 @@
           "destructive-actions",
           "progressive-disclosure"
         ],
-        "templates": []
+        "templates": [
+          "app-frame"
+        ]
       }
     },
     {
@@ -7148,6 +7166,75 @@
     }
   ],
   "templates": [
+    {
+      "name": "app-frame",
+      "title": "App frame with sidebar",
+      "group": "Templates",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The application's frame, with a sidebar of destinations that collapses to a rail, search, the account menu and a phone's top bar, around the page people are on.",
+      "aliases": [
+        "app frame",
+        "application frame",
+        "app layout",
+        "sidebar layout",
+        "shell",
+        "navigation frame",
+        "main navigation"
+      ],
+      "useWhen": [
+        "An application has a handful of destinations people move between, and a page for each.",
+        "The frame needs search, the account menu and a phone layout without building them."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A screen people see before they sign in, or when the application fails to load.",
+          "see": "sign-in-page"
+        },
+        {
+          "text": "Moving between views of one object, such as its overview and its activity.",
+          "use": "Tabs"
+        }
+      ],
+      "composes": [
+        "AppShell",
+        "Sidebar",
+        "SidebarTrigger",
+        "NavList",
+        "SearchTrigger",
+        "CommandPalette",
+        "AccountMenu",
+        "Menu",
+        "Page",
+        "PageHeader",
+        "EmptyState",
+        "Text"
+      ],
+      "related": [
+        "app-shell",
+        "sidebar",
+        "nav-list",
+        "account-menu",
+        "command-palette"
+      ],
+      "doc": "docs/templates/app-frame.md",
+      "frame": "none",
+      "scales": [
+        "comfortable",
+        "compact"
+      ],
+      "files": [
+        {
+          "name": "AppFrame",
+          "title": "App frame",
+          "description": "The frame every page of an application sits in: a sidebar at the start with the application's name, search and its destinations, the account menu at its foot, and the page in the main region. The sidebar collapses to a rail of icons, and on a phone it becomes a drawer that a top bar opens. Start from it for any application with a handful of destinations; render it once, at the application's root, around the router's outlet. The other templates on `frame: app` pages, such as the index page, are the pages that go inside it. Set up the providers at the application's root as setup says, since the template brings none.",
+          "file": "docs/examples/app-frame/AppFrame.tsx",
+          "frame": "none",
+          "primary": true
+        }
+      ],
+      "examples": []
+    },
     {
       "name": "sign-in-page",
       "title": "Sign-in page",
