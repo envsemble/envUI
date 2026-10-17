@@ -119,7 +119,7 @@ export default function ErrorSummary() {
           id={`${id}-team`}
           label="Team"
           name="team"
-          placeholder="No team"
+          placeholder="Choose a team"
           items={teams}
           value={values.team || null}
           error={errors.team}

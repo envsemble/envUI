@@ -61,7 +61,7 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 ## States and behaviour
 
 - **Opening**: `trigger` opens the dialog; without one, the application opens it with `open` and `onOpenChange`, such as from a menu item. `onOpenChange` receives the new state and the `reason`: `trigger-press`, `escape-key`, `close-press` for Cancel, or `imperative-action` once the action has finished.
-- **Confirming**: the confirm button runs `onConfirm`. The dialog closes when it returns, or, when it returns a promise, once the promise resolves.
+- **Confirming**: the confirm button runs `onConfirm`, and so does <kbd>Enter</kbd> in a field in the content, such as a typed name: the dialog is a form, and the confirm button its submit button. Both go through the same pending state, guard and error. Don't put a form of your own in the content. The dialog closes when it returns, or, when it returns a promise, once the promise resolves.
 - **Pending**: while the promise runs, the confirm button shows a spinner and reports busy, Cancel is disabled, the dialog reports `aria-busy`, and nothing dismisses it, <kbd>Esc</kbd> included.
 - **Failure**: a rejected promise, or an error thrown, keeps the dialog open and ends pending, and goes to `reportError`, as an uncaught error would. Show what went wrong with `error`; it is announced. Clear it when the dialog closes or the action is tried again.
 - **Once per opening**: the action runs once each time the dialog opens; another press, such as the second click of a double-click, does nothing, unless the action failed.
@@ -100,6 +100,7 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger | Opens the dialog and focuses the confirm button, or Cancel for a danger confirmation.         |
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>     | Moves between Cancel, the confirm button and any controls in the content; focus stays inside. |
 | <kbd>Enter</kbd> or <kbd>Space</kbd> on a button    | Cancels, or confirms and runs the action.                                                     |
+| <kbd>Enter</kbd> in a text field in the content     | Confirms and runs the action, as the confirm button does.                                     |
 | <kbd>Esc</kbd>                                      | Closes the dialog, unless the action is running.                                              |
 
 ### envUI provides

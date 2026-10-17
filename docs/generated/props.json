@@ -2102,7 +2102,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content between the heading and the actions, such as what else the action affects."
+          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm."
         },
         {
           "name": "confirmLabel",
@@ -2128,7 +2128,7 @@
           "name": "onConfirm",
           "type": "() => void | Promise<void>",
           "required": true,
-          "description": "Runs the action when the confirm button is pressed. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
+          "description": "Runs the action when the confirm button is pressed, or Enter is pressed in a field in the dialog. The dialog closes when it returns, or, when it returns a promise, once the promise resolves; while it runs, the confirm button is pending and nothing dismisses the dialog. It runs once per opening: further presses, such as the second click of a double-click, are ignored until it fails or the dialog opens again. A rejected promise or a thrown error keeps it open and is passed to reportError, so show what went wrong with error."
         },
         {
           "name": "error",

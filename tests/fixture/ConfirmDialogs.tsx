@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
-import { Button, ConfirmDialog, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, ConfirmDialog, Menu, Stack, Text, TextField } from '@envsemble/envui';
 
 /**
  * Confirm dialogs, mounted with ?fixture=confirm-dialogs: a neutral one that confirms at once, a
  * danger one whose action takes a moment and can fail, one whose action resolves at once, one
- * opened from a menu item that returns focus to the menu's button, and a controlled one that
- * stays open after its action.
+ * opened from a menu item that returns focus to the menu's button, a controlled one that stays
+ * open after its action, and one with a typed name, inside a form of the page's own, whose action
+ * waits for the spec and fails the first time.
  */
 export function ConfirmDialogsFixture() {
   const [log, setLog] = useState<string[]>([]);
@@ -17,6 +18,9 @@ export function ConfirmDialogsFixture() {
   const record = (entry: string) => setLog((entries) => [...entries, entry]);
   // The action waits until the spec lets it finish, so the pending state can be checked.
   const settle = useRef<(() => void) | null>(null);
+  const [typedFail, setTypedFail] = useState(true);
+  const [typedError, setTypedError] = useState('');
+  const settleTyped = useRef<(() => void) | null>(null);
   return (
     <Stack gap={4} className="fixture-section">
       <ConfirmDialog
@@ -96,6 +100,38 @@ export function ConfirmDialogsFixture() {
         confirmLabel="Save draft"
         onConfirm={() => record('saved')}
       />
+      {/* A form around it: the dialog's own submit must not reach it. */}
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          record('outer submit');
+        }}
+      >
+        <ConfirmDialog
+          trigger={<Button variant="secondary">Delete workspace</Button>}
+          tone="danger"
+          title="Delete the Acme workspace?"
+          confirmLabel="Delete workspace"
+          error={typedError || undefined}
+          onConfirm={() => {
+            record('delete workspace');
+            return new Promise<void>((resolve, reject) => {
+              settleTyped.current = () => {
+                if (typedFail) {
+                  setTypedError('The workspace could not be deleted. Try again.');
+                  setTypedFail(false);
+                  reject(new Error('failed'));
+                } else resolve();
+              };
+            });
+          }}
+        >
+          <TextField label="Workspace name" autoComplete="off" />
+        </ConfirmDialog>
+        <Button variant="secondary" onClick={() => settleTyped.current?.()}>
+          Finish the workspace action
+        </Button>
+      </form>
       <output data-testid="confirm-log">{log.join(',')}</output>
     </Stack>
   );

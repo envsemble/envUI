@@ -20,12 +20,15 @@ export default function AdvancedOptions() {
     if (fileName && !/^[\w-]+$/.test(fileName)) {
       const message = 'Use only letters, numbers, hyphens and underscores';
       setFileNameError(message);
-      // Focus may already be in the field, where focusing it again reads nothing, so the status
-      // says the error too.
-      setStatus(message);
       // An error inside the disclosure opens it, so the field and its message show.
       setAdvanced(true);
-      setRefused((count) => count + 1);
+      // Focusing the field reads its error. After Enter in the field, focus is already there and
+      // focusing it again reads nothing, so only then does the status say the error.
+      if (document.activeElement === fileNameField.current) setStatus(message);
+      else {
+        setStatus('');
+        setRefused((count) => count + 1);
+      }
       return;
     }
     setStatus(`Exported ${fileName || 'quarterly-report'}.${format}.`);
