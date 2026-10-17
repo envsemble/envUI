@@ -9,6 +9,8 @@ components:
   - ThemeToggle
   - useTheme
   - useThemePreference
+statuses: # Never released before 1.0, so beta until a release has used them.
+  useLocale: beta
 exportAliases:
   EnvUIProvider:
     - i18n
