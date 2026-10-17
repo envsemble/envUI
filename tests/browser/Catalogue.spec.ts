@@ -186,6 +186,14 @@ test('pagers center pairs and single destinations at every page width', async ({
   await page.goto(`${offline}#/components/pager/overview`);
   const groups = page.locator('.env-pager');
   await expect(groups).toHaveCount(5);
+  // The navigation's last page, read while the window is wide: below 48 rem its links live in the
+  // drawer, which renders only while open.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const finalDestination = await page
+    .locator('.docs-sidebar')
+    .getByRole('link')
+    .last()
+    .getAttribute('href');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const group of await groups.all()) {
@@ -268,11 +276,6 @@ test('pagers center pairs and single destinations at every page width', async ({
       return Math.abs((outer.left + outer.right) / 2 - (link.left + link.right) / 2);
     });
   expect(await centerError()).toBeLessThan(1);
-  const finalDestination = await page
-    .locator('.docs-sidebar')
-    .getByRole('link', { includeHidden: true })
-    .last()
-    .getAttribute('href');
   await page.evaluate((hash) => {
     location.hash = hash!;
   }, finalDestination);
@@ -341,7 +344,9 @@ test('single previews retain state when the theme changes', async ({ page }) => 
   }
   await expect(projectName).toHaveValue('Winter release');
   const navigationTrigger = page.getByRole('button', { name: 'Open navigation' });
-  await navigationTrigger.click();
+  // Opened from the keyboard, as a press doesn't focus a button in WebKit; focus returns to it.
+  await navigationTrigger.focus();
+  await page.keyboard.press('Enter');
   const mobileNavigation = page.getByRole('dialog', { name: 'Documentation', exact: true });
   await expect(mobileNavigation).toBeVisible();
   await page.keyboard.press('Escape');
@@ -776,7 +781,10 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   });
   const scrolled = await page.evaluate(() => window.scrollY);
   expect(scrolled).toBeGreaterThan(1000);
-  await page.locator('.docs-theme-toggle').evaluate((toggle: HTMLElement) => toggle.click());
+  await page
+    .locator('.docs-sidebar-footer')
+    .getByRole('button', { name: /^Switch to/ })
+    .evaluate((toggle: HTMLElement) => toggle.click());
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
   expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
@@ -1171,4 +1179,51 @@ test('highlighted code takes its high-contrast colors where the contrast is high
     span.closest('.env-theme')!.setAttribute('data-env-contrast', 'high'),
   );
   await expect.poll(async () => (await colors()).color).toBe(standard.high);
+});
+
+test('the catalogue frame: skip links first, a rail that persists, a drawer from the start', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/components/button/overview`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  // A wide window has no top bar: the navigation docks beside the page.
+  await expect(page.locator('.docs-header')).toBeHidden();
+  const sidebar = page.locator('.docs-sidebar');
+  await expect(sidebar).toHaveAttribute('data-state', 'expanded');
+  // The skip links are the first tab stops, to the content and then to the navigation.
+  expect(
+    await page.evaluate(() =>
+      Array.from(document.querySelectorAll<HTMLElement>('a[href], button'))
+        .filter((element) => element.tabIndex >= 0)
+        .slice(0, 2)
+        .map((element) => element.textContent),
+    ),
+  ).toEqual(['Skip to content', 'Skip to Documentation']);
+  const skip = page.getByRole('link', { name: 'Skip to Documentation' });
+  await skip.focus();
+  await expect(skip).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(sidebar).toBeFocused();
+  // Collapsed, the navigation is a rail of icons, and stays one after a reload.
+  await sidebar.getByRole('button', { name: 'Collapse sidebar' }).click();
+  await expect(sidebar).toHaveAttribute('data-rail', '');
+  await expect(sidebar.getByRole('button', { name: 'Search' })).toHaveAttribute(
+    'data-icon-only',
+    '',
+  );
+  await expect(sidebar.getByRole('button', { name: 'Display' })).toBeVisible();
+  await page.reload();
+  await expect(page.locator('.docs-sidebar')).toHaveAttribute('data-rail', '');
+  await page.locator('.docs-sidebar').getByRole('button', { name: 'Expand sidebar' }).click();
+  await expect(page.locator('.docs-sidebar')).toHaveAttribute('data-state', 'expanded');
+  // Below 48 rem the top bar shows, and the navigation's drawer opens from the inline start.
+  await page.setViewportSize({ width: 390, height: 800 });
+  await expect(page.locator('.docs-header')).toBeVisible();
+  await page.getByRole('button', { name: 'Open navigation' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Documentation', exact: true });
+  await expect(drawer).toBeVisible();
+  await expect
+    .poll(() => drawer.evaluate((element) => Math.round(element.getBoundingClientRect().left)))
+    .toBe(0);
 });

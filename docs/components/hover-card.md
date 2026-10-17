@@ -85,6 +85,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 - Don't put links, buttons or fields in a hover card; keyboard and touch users can't move into it.
 - Don't put information people need in a hover card alone; touch screens have no hover.
 - Don't use a hover card for a control's name; use [Tooltip](../components/tooltip.md).
+- Don't put a Tooltip around a HoverCard or give one as its `trigger`: it shows no tooltip, and says so in the console while developing, as the card opens on the same hover and focus. Put what the tooltip would say in the card.
 - Don't open a hover card from a button that does something else; use [Popover](../components/popover.md) for details people open on purpose.
 
 ## Accessibility
@@ -128,5 +129,5 @@ The `lg` card has room for an avatar beside the name and a role, and a line abou
 
 ## Changelog
 
-- **1.0.0**: `width` is `md` or `lg`; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction.
+- **1.0.0**: `width` is `md` or `lg`; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
 - **0.6.0**: HoverCard.
