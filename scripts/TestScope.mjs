@@ -44,6 +44,8 @@ export const overrides = {
     ],
     'IconButton.spec.ts': ['IconButton'],
     'MarkdownExtensions.spec.ts': ['components/markdown'],
+    // Menubar's menus are Menu's popups and items, so a change to Menu runs it too.
+    'Menubar.spec.ts': ['Menubar', 'Menu'],
     'Messages.spec.ts': [
       'EnvUIProvider',
       'CloseButton',
