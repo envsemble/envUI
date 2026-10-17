@@ -127,8 +127,24 @@ const page = render(
   ),
 );
 
+// A list that isn't reorderable is markup alone: its current rows are marked on the server.
+const list = render(
+  h(
+    ui.List.Root,
+    { 'aria-label': 'Plans' },
+    h(ui.List.Item, {
+      interactive: true,
+      selected: true,
+      label: h('a', { href: '/plans/launch', 'data-row-target': true }, 'Launch'),
+    }),
+    h(ui.List.Item, { label: 'Roadmap', selected: true }),
+    h(ui.List.Item, { label: 'Budget', start: h('span', null, 'B') }),
+  ),
+);
+
 console.log(
   JSON.stringify({
+    list,
     menuItem: isClientReference(ui.Menu.Item),
     themeBootstrapScript: typeof ui.createThemeBootstrapScript({ storageKey: 'app-theme' }),
     bootstrapEntryScript: typeof themeBootstrap.createThemeBootstrapScript(),

@@ -4,7 +4,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
@@ -18,38 +20,66 @@ import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { useFormatters } from '../../internal/useFormatters.js';
 import { useHydrated } from '../../internal/useHydrated.js';
-import { useReorder, type ReorderHandlers } from '../../internal/useReorder.js';
-import type { ItemProps, RootProps } from '../List.js';
+import { useReorder, type Announcement, type ReorderHandlers } from '../../internal/useReorder.js';
+import type { RootProps } from '../List.js';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
- * components and render these for what needs the browser, a reorderable list and its rows.
+ * components and render these islands only for a reorderable list: the list, which handles its
+ * rows' Alt+↑ and Alt+↓ and announces the moves, and each row's handle.
  */
 
-/** The reorder handlers of the nearest reorderable list, or null. */
-const ReorderContext = createContext<ReorderHandlers | null>(null);
+interface Reorder {
+  handlers: ReorderHandlers;
+  /** The id of the handles' instructions, which describe them. */
+  instructions: string;
+}
+
+/** The nearest reorderable list's handlers and instructions, or null. */
+const ReorderContext = createContext<Reorder | null>(null);
 
 /**
- * The polite live region that announces a move, in the document's body, so it adds nothing to
- * the list's container.
+ * The polite live regions that announce a move, in the document's body, so they add nothing to
+ * the list's container. Each announcement goes to the other region and empties the last one, so
+ * the same words twice, such as reaching the end of the list again, are announced again.
  */
-function Announcer({ text }: { text: string }) {
+function Announcer({ announcement }: { announcement: Announcement }) {
   const hydrated = useHydrated();
   if (!hydrated) return null;
+  const shown = announcement.count % 2;
   return createPortal(
-    <div role="status" className="env-list-announcer">
-      {text}
+    <div className="env-list-announcer">
+      <div role="status">{shown === 1 ? announcement.text : ''}</div>
+      <div role="status">{shown === 0 ? announcement.text : ''}</div>
     </div>,
     document.body,
   );
 }
 
-/** List.Root with onReorder: the list, its rows' reorder handlers and the announcements. */
+/** The row of the list that holds an element: the list's `li` child around it. */
+function rowOf(list: HTMLElement, element: EventTarget | null) {
+  let node = element instanceof Element ? element : null;
+  while (node && node.parentElement !== list) node = node.parentElement;
+  return node instanceof HTMLElement && node.tagName === 'LI' ? node : null;
+}
+
+/** A row's label, as its handle has it. */
+const labelOf = (row: HTMLElement) =>
+  row
+    .querySelector(':scope > .env-list-item-start > .env-list-item-handle')
+    ?.getAttribute('data-label') ?? '';
+
+/**
+ * List.Root with onReorder: the list, Alt+↑ and Alt+↓ on its rows' targets, the handles'
+ * instructions and the announcements.
+ */
 export function ReorderableList({
   density,
   onReorder,
   className,
   ref,
+  onKeyDown,
+  children,
   ...props
 }: RootProps & { onReorder: NonNullable<RootProps['onReorder']> }) {
   const element = useRef<HTMLUListElement | null>(null);
@@ -57,6 +87,8 @@ export function ReorderableList({
   const format = useFormatters();
   const formatNumber = useCallback((value: number) => format.number().format(value), [format]);
   const { announcement, handlers } = useReorder(element, onReorder, messages, formatNumber);
+  const instructions = `${useId()}-instructions`;
+  const reorder = useMemo(() => ({ handlers, instructions }), [handlers, instructions]);
   const forward = useCallback(
     (node: HTMLUListElement | null) => {
       element.current = node;
@@ -65,108 +97,84 @@ export function ReorderableList({
     [ref],
   );
   return (
-    <ReorderContext value={handlers}>
+    <ReorderContext value={reorder}>
       <ul
         {...props}
         ref={forward}
         data-density={density}
         data-reorderable=""
         className={classNames('env-list', 'env-connected-rows', className)}
-      />
-      <Announcer text={announcement} />
+        onKeyDown={(event: KeyboardEvent<HTMLUListElement>) => {
+          onKeyDown?.(event);
+          const list = element.current;
+          if (event.defaultPrevented || !list) return;
+          const row = rowOf(list, event.target);
+          if (row) handlers.rowKeyDown(event, row, labelOf(row));
+        }}
+      >
+        {children}
+      </ul>
+      <span id={instructions} hidden>
+        {messages.instructions}
+      </span>
+      <Announcer announcement={announcement} />
     </ReorderContext>
   );
 }
 
 /**
- * One list row: the current row's mark on its target, and in a reorderable list the drag handle
- * and Alt+↑ and Alt+↓ on the row's target.
+ * A reorderable row's drag handle: pressed, by keyboard or by a click, it lifts the row and drops
+ * it; dragged, the row follows it. Outside a reorderable list it renders nothing.
  */
-export function ListRow({
-  label,
-  description,
-  action,
-  interactive = false,
-  selected = false,
-  start,
-  textValue,
-  children,
-  className,
-  ref,
-  onKeyDown,
-  ...props
-}: ItemProps) {
+export function ListReorderHandle({ textValue }: { textValue?: string }) {
   const reorder = useContext(ReorderContext);
   const messages = useMessages('list', listMessages);
-  const row = useRef<HTMLLIElement | null>(null);
-  const content = useRef<HTMLDivElement | null>(null);
-  const forward = useCallback(
-    (node: HTMLLIElement | null) => {
-      row.current = node;
-      setRef(ref, node);
-    },
-    [ref],
-  );
-  // A label that isn't text names the handle by what it shows once it is on the page.
+  const button = useRef<HTMLButtonElement | null>(null);
+  // A label that isn't text names the handle by what it shows, followed as it changes.
   const [shownLabel, setShownLabel] = useState('');
-  const text =
-    textValue ??
-    (typeof label === 'string' || typeof label === 'number' ? String(label) : shownLabel);
   useLayoutEffect(() => {
-    if (textValue !== undefined || typeof label === 'string' || typeof label === 'number') return;
-    setShownLabel(content.current?.firstChild?.textContent?.trim() ?? '');
-  }, [textValue, label]);
-  // The current row says so on its target, which people reach and hear, or on the row itself.
-  useLayoutEffect(() => {
-    if (!selected || !row.current) return;
-    const target = row.current.querySelector<HTMLElement>('[data-row-target]') ?? row.current;
-    if (target.hasAttribute('aria-current')) return;
-    target.setAttribute('aria-current', 'true');
-    return () => target.removeAttribute('aria-current');
-  });
-  const hasStart = start != null || reorder != null;
+    if (textValue !== undefined || !reorder) return;
+    const content = button.current?.closest('li')?.querySelector(':scope > .env-list-item-content');
+    if (!content) return;
+    const read = () => setShownLabel(content.firstChild?.textContent?.trim() ?? '');
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(content, { childList: true, characterData: true, subtree: true });
+    return () => observer.disconnect();
+  }, [textValue, reorder]);
+  if (!reorder) return null;
+  const { handlers, instructions } = reorder;
+  const text = textValue ?? shownLabel;
+  const row = () => button.current?.closest('li') ?? null;
   return (
-    <li
-      {...props}
-      ref={forward}
-      className={classNames('env-list-item', 'env-connected-row', className)}
-      data-interactive={interactive ? '' : undefined}
-      data-selected={selected ? '' : undefined}
-      data-start={hasStart ? '' : undefined}
-      onKeyDown={(event: KeyboardEvent<HTMLLIElement>) => {
-        onKeyDown?.(event);
-        if (reorder && !event.defaultPrevented && row.current)
-          reorder.rowKeyDown(event, row.current, text);
+    <IconButton
+      ref={button}
+      variant="ghost"
+      size="sm"
+      icon={<DragIndicator />}
+      aria-label={messages.reorder({ label: text })}
+      aria-describedby={instructions}
+      // Whether the row is lifted; the reorder sets it as the row lifts and drops.
+      aria-pressed={false}
+      data-label={text}
+      className="env-list-item-handle"
+      onClick={(event) => {
+        const each = row();
+        if (each) handlers.handleClick(event, each, text);
       }}
-    >
-      {hasStart && (
-        <div className="env-list-item-start">
-          {reorder && (
-            <IconButton
-              variant="ghost"
-              size="sm"
-              icon={<DragIndicator />}
-              aria-label={messages.reorder({ label: text })}
-              className="env-list-item-handle"
-              onKeyDown={(event) => row.current && reorder.handleKeyDown(event, row.current, text)}
-              onBlur={reorder.handleBlur}
-              onPointerDown={(event) =>
-                row.current && reorder.handlePointerDown(event, row.current, text)
-              }
-              onPointerMove={reorder.handlePointerMove}
-              onPointerUp={reorder.handlePointerUp}
-              onPointerCancel={reorder.handlePointerCancel}
-            />
-          )}
-          {start}
-        </div>
-      )}
-      <div ref={content} className="env-list-item-content">
-        {label}
-        {description != null && <small>{description}</small>}
-        {children}
-      </div>
-      {action}
-    </li>
+      onKeyDown={(event) => {
+        const each = row();
+        if (each) handlers.handleKeyDown(event, each, text);
+      }}
+      onKeyUp={handlers.handleKeyUp}
+      onBlur={handlers.handleBlur}
+      onPointerDown={(event) => {
+        const each = row();
+        if (each) handlers.handlePointerDown(event, each, text);
+      }}
+      onPointerMove={handlers.handlePointerMove}
+      onPointerUp={handlers.handlePointerUp}
+      onPointerCancel={handlers.handlePointerCancel}
+    />
   );
 }

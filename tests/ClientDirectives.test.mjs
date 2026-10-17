@@ -227,4 +227,14 @@ test('a server component imports envUI and renders it on the server', () => {
     /"client":"internal\/ActionElement\.js#ActionElement","props":\{"pending":true/,
   );
   assert.match(page, /"element":"div","props":\{"role":"status","className":"env-alert"/);
+  // A List without onReorder ships no client module, and its current rows say so in the server's
+  // HTML: on the row target, or on the row without one.
+  const list = JSON.stringify(result.list);
+  assert.doesNotMatch(list, /"client":/);
+  assert.match(list, /"element":"a","props":\{"href":"\/plans\/launch",[^}]*"aria-current":"true"/);
+  assert.match(
+    list,
+    /"element":"li","props":\{"aria-current":"true","className":"env-list-item env-connected-row","data-selected":""/,
+  );
+  assert.equal(list.match(/"aria-current"/g)?.length, 2);
 });

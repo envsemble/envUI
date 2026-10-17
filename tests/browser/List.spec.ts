@@ -3,7 +3,7 @@ import { fixtureUrl } from './Servers';
 
 const lists = `${fixtureUrl}/?fixture=lists`;
 
-/** The live region the first reorderable list announces through. */
+/** The live regions the first reorderable list announces through, one at a time. */
 const announcer = (page: Page) => page.locator('.env-list-announcer').first();
 
 /** The centre of an element. */
@@ -19,13 +19,27 @@ test.describe('List', () => {
     const order = page.getByTestId('slides-order');
     const handle = list.getByRole('button', { name: 'Reorder Intro' });
     await expect(handle).toBeVisible();
+    // The handle says how to move its row without a pointer, and whether the row is lifted.
+    await expect(handle).toHaveAccessibleDescription(/^Press Space or Enter, or click/);
+    await expect(handle).toHaveAttribute('aria-pressed', 'false');
 
     // Space lifts the row; ↓ moves it, and the others make room; Space drops it.
     await handle.focus();
     await page.keyboard.press('Space');
     await expect(announcer(page)).toHaveText(/^Intro picked up, position 1 of 4\./);
-    await expect(announcer(page)).toHaveAttribute('role', 'status');
+    await expect(announcer(page).getByRole('status')).toHaveCount(2);
     await expect(list.getByRole('listitem').first()).toHaveAttribute('data-moving', 'keyboard');
+    await expect(handle).toHaveAttribute('aria-pressed', 'true');
+    // The start of the list stops it, and says so each time.
+    const regions = announcer(page).getByRole('status');
+    const atStart = 'Intro is at the start of the list, position 1 of 4.';
+    await page.keyboard.press('ArrowUp');
+    await expect(announcer(page)).toHaveText(atStart);
+    const first = await regions.nth(0).textContent();
+    await page.keyboard.press('ArrowUp');
+    await expect(announcer(page)).toHaveText(atStart);
+    // The repeat goes to the other region, so it is announced again.
+    await expect(regions.nth(0)).not.toHaveText(first ?? '');
     await page.keyboard.press('ArrowDown');
     await expect(announcer(page)).toHaveText('Intro moved to position 2 of 4.');
     await page.keyboard.press('ArrowDown');
@@ -37,6 +51,7 @@ test.describe('List', () => {
     await expect(announcer(page)).toHaveText('Intro dropped at position 3 of 4.');
     // Focus stays on the handle of the row that moved, and the rows are at rest.
     await expect(handle).toBeFocused();
+    await expect(handle).toHaveAttribute('aria-pressed', 'false');
     await expect(list.locator('[data-moving]')).toHaveCount(0);
     await expect(list.getByRole('listitem').nth(2)).toHaveCSS('translate', 'none');
 
@@ -63,8 +78,11 @@ test.describe('List', () => {
     await expect(link).toBeFocused();
     await page.keyboard.press('Alt+ArrowUp');
     await page.keyboard.press('Alt+ArrowUp');
-    // The first place is as far as it goes.
+    // The first place is as far as it goes, and the list says so.
     await expect(order).toHaveText('Budget,Intro,Roadmap,Questions');
+    await expect(announcer(page)).toHaveText(
+      'Budget is at the start of the list, position 1 of 4.',
+    );
     await page.keyboard.press('Alt+ArrowDown');
     await expect(order).toHaveText('Intro,Budget,Roadmap,Questions');
   });
@@ -80,6 +98,9 @@ test.describe('List', () => {
     await page.mouse.down();
     // A press that doesn't move is no drag.
     await expect(rows.nth(1)).not.toHaveAttribute('data-moving');
+    // Once it drags, the announcement says how to move it with the pointer.
+    await page.mouse.move(from.x, from.y + 6);
+    await expect(announcer(page)).toHaveText(/^Roadmap picked up, position 2 of 4\. Drag it/);
     const steps = 8;
     for (let step = 1; step <= steps; step++)
       await page.mouse.move(from.x, from.y + ((target.y + 4 - from.y) * step) / steps);
@@ -91,12 +112,38 @@ test.describe('List', () => {
     await page.mouse.up();
     await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
     await expect(announcer(page)).toHaveText('Roadmap dropped at position 4 of 4.');
+    // The click that ends the drag doesn't lift the row again.
     await expect(list.locator('[data-moving]')).toHaveCount(0);
+    await expect(list.getByRole('button', { name: 'Reorder Roadmap' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
 
-    // A press on the handle without moving changes nothing.
+    // A press on the handle without dragging lifts the row for the arrow keys; another drops it.
     const handle = list.getByRole('button', { name: 'Reorder Intro' });
     await handle.click();
-    await expect(order).toHaveText('Intro,Budget,Questions,Roadmap');
+    await expect(handle).toHaveAttribute('aria-pressed', 'true');
+    await expect(announcer(page)).toHaveText(/^Intro picked up, position 1 of 4\./);
+    await expect(handle).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await handle.click();
+    await expect(order).toHaveText('Budget,Intro,Questions,Roadmap');
+    await expect(handle).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('a press lifts and drops a row without a pointer drag, as voice control does', async ({
+    page,
+  }) => {
+    await page.goto(lists);
+    const list = page.getByTestId('slides');
+    const handle = list.getByRole('button', { name: 'Reorder Budget' });
+    // A click with no pointer events before it, as assistive technology sends one.
+    await handle.dispatchEvent('click');
+    await expect(handle).toHaveAttribute('aria-pressed', 'true');
+    await expect(handle).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await handle.dispatchEvent('click');
+    await expect(page.getByTestId('slides-order')).toHaveText('Intro,Budget,Roadmap,Questions');
   });
 
   test('marks the current row on its target and takes the selected fill', async ({ page }) => {

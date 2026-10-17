@@ -9326,7 +9326,7 @@
     "List.Item": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle.",
+      "description": "One `li` row with a label, a description and an action; the current row, content at its start, and in a reorderable list a drag handle. It renders on the server: only the handle of a reorderable row needs the browser.",
       "props": [
         {
           "name": "label",
@@ -9363,7 +9363,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target`, or on the row without one."
+          "description": "The current row, such as the one whose details show beside a list: the selected fill, and `aria-current=\"true\"` on its `data-row-target` element in the label, description or children, or on the row without one."
         },
         {
           "name": "start",
@@ -9401,7 +9401,7 @@
           "name": "onReorder",
           "type": "(from: number, to: number) => void",
           "required": false,
-          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does."
+          "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The List.Item elements are the list's children, directly or in arrays and fragments."
         }
       ],
       "native": [
