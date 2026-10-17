@@ -174,24 +174,29 @@ function ContentCard({
   const hasActions = actions != null && actions !== false;
   const level = headingLevel ?? (feature ? 2 : 3);
   const Heading = `h${level}` as const;
-  const header = (heading != null || meta != null) && (
-    <div className="env-card-header">
-      {heading != null && (
-        <Text
-          render={<Heading />}
-          variant={feature ? 'headline' : 'title'}
-          className="env-card-heading"
-        >
-          {heading}
-        </Text>
-      )}
-      {meta != null && (
-        <Text render={<span />} variant="body-sm" className="env-card-meta">
-          {meta}
-        </Text>
-      )}
-    </div>
+  const headingText = heading != null && (
+    <Text
+      render={<Heading />}
+      variant={feature ? 'headline' : 'title'}
+      className="env-card-heading"
+    >
+      {heading}
+    </Text>
   );
+  // The feature layout's heading stands alone in its column unless a meta shares its row.
+  const header =
+    feature && meta == null
+      ? headingText
+      : (heading != null || meta != null) && (
+          <div className="env-card-header">
+            {headingText}
+            {meta != null && (
+              <Text render={<span />} variant="body-sm" className="env-card-meta">
+                {meta}
+              </Text>
+            )}
+          </div>
+        );
   const descriptionText = description != null && (
     <Text
       variant={feature ? 'body-sm' : 'body'}
