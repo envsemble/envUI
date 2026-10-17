@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { FrameStore } from '../app-shell/FrameStore.js';
 import type { SidebarSide } from '../app-shell/persistence.js';
 import { isEditableTarget } from '../../internal/useShortcut.js';
 
 export interface PeekOptions {
-  /** The sidebar's element, which the pointer and focus enter. */
-  element: RefObject<HTMLElement | null>;
+  /** The sidebar's element, which the pointer and focus enter: a new one after the drawer. */
+  element: HTMLElement | null;
   side: SidebarSide;
   id: string;
   store: FrameStore;
@@ -112,7 +112,7 @@ export function usePeek({
   }, [active]);
 
   useEffect(() => {
-    const root = element.current;
+    const root = element;
     if (!root) return;
     const startRest = (event: PointerEvent) => {
       const current = latest.current;
@@ -175,6 +175,10 @@ export function usePeek({
     root.addEventListener('click', onClick);
     return () => {
       stopTimer();
+      // A removed element holds neither the pointer nor focus.
+      hover.current = false;
+      inside.current = false;
+      suppressed.current = false;
       root.removeEventListener('pointerenter', onEnter);
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerdown', onDown);
@@ -189,7 +193,7 @@ export function usePeek({
 
   // Popups freeze the state; their closing lets the pointer and focus decide again.
   useEffect(() => {
-    const root = element.current;
+    const root = element;
     if (!root || typeof MutationObserver === 'undefined') return;
     const read = () => {
       const open = root.querySelector(popupSelector(id)) !== null;
@@ -218,7 +222,7 @@ export function usePeek({
   // Escape and a press outside close a peek or a hold; never while a popup holds the state.
   const shown = store.sides[side].peek || store.sides[side].held;
   useEffect(() => {
-    const root = element.current;
+    const root = element;
     if (!shown || !root) return;
     const page = root.ownerDocument;
     const onKeyDown = (event: KeyboardEvent) => {

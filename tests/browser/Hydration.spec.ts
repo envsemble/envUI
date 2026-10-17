@@ -11,7 +11,7 @@ test('public components hydrate server output without recoverable errors', async
   // in the server's markup and after hydration alike.
   const sidebar = page.getByRole('navigation', { name: 'Hydrated sidebar' });
   await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
-  await expect(sidebar).toHaveCSS('--env-sidebar-width', '18rem');
+  await expect(sidebar).toHaveCSS('--env-sidebar-chosen-width', '18rem');
   const sidebarTrigger = page.getByTestId('hydrated-sidebar-trigger');
   await expect(sidebarTrigger).toHaveAttribute('aria-expanded', 'false');
   await sidebarTrigger.click();

@@ -44,7 +44,6 @@ export default function NoResults() {
             <SearchField
               ref={search}
               label="Search projects"
-              placeholder="Search by name"
               size="sm"
               value={query}
               onValueChange={setQuery}

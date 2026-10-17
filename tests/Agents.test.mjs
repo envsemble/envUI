@@ -1120,9 +1120,14 @@ test('the pattern and template tools answer from the manifest', () => {
     /^---\ntitle: Loading\n[\s\S]*```tsx example=SkeletonList\nimport /,
   );
   assert.equal(call('get_pattern', { name: 'Loading' }).value.requested, undefined);
-  assert.match(
+  // An unknown name lists every pattern, whatever their order.
+  const unknown = /^envUI has no pattern "Nope". Its patterns: (.+)\.$/.exec(
     call('get_pattern', { name: 'Nope' }).error,
-    /no pattern "Nope". Its patterns: (?:[\w-]+, )*loading\b/,
+  );
+  assert.ok(unknown);
+  assert.deepEqual(
+    unknown[1].split(', ').toSorted(),
+    manifest.patterns.map((pattern) => pattern.name).toSorted(),
   );
   // get_example takes a pattern by its name before a component that has it as an alias.
   const examples = call('get_example', { component: 'loading' }).value;

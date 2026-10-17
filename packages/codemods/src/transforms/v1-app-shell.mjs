@@ -34,7 +34,13 @@
 // spreads props is reported with the entry's `report`.
 import { loadMap } from '../map.mjs';
 import { componentResolver, envuiImports, literalKey } from '../elements.mjs';
-import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
+import {
+  createReporter,
+  indentsWithTabs,
+  keepByteOrderMark,
+  parserFor,
+  printOptions,
+} from '../shared.mjs';
 
 export const parser = 'tsx';
 
@@ -59,6 +65,29 @@ const legacyProps = [
   'sidebarMinWidth',
   'sidebarMaxWidth',
 ];
+
+/** Props both forms take: an element with only these and no frame parts inside is in its 0.x form. */
+const sharedProps = ['loading', 'className'];
+
+/**
+ * The output of a file indented with tabs, its new lines indented with tabs too: recast reprints a
+ * list it adds to, such as an import's, with four spaces for each level. Lines kept from the source
+ * stay as they were, so a template literal's spaces stay.
+ */
+function withTabs(source, output) {
+  if (!indentsWithTabs(source)) return output;
+  const kept = new Set(source.split(/\r?\n/));
+  return output
+    .split(/(\r?\n)/)
+    .map((line) => {
+      if (kept.has(line)) return line;
+      return line.replace(/^[\t ]+/, (indent) => {
+        const width = [...indent].reduce((sum, character) => sum + (character === '\t' ? 4 : 1), 0);
+        return '\t'.repeat(Math.floor(width / 4)) + ' '.repeat(width % 4);
+      });
+    })
+    .join('');
+}
 
 /** The JSX name for a dotted name, such as `Sidebar.Root`. */
 function jsxName(j, name) {
@@ -207,6 +236,41 @@ export default function transform(file, api, options = {}) {
     );
   }
 
+  /** The dotted name of a JSX element, such as `NavList.Item`, or undefined for a fragment. */
+  function dottedName(name) {
+    if (name.type === 'JSXIdentifier') return name.name;
+    if (name.type === 'JSXMemberExpression') {
+      const object = dottedName(name.object);
+      return object && `${object}.${name.property.name}`;
+    }
+    return undefined;
+  }
+  /** The component and part an element names through the file's imports, such as NavList and Item. */
+  function partOf(node) {
+    if (node.type !== 'JSXElement') return undefined;
+    const parts = dottedName(node.openingElement.name)?.split('.') ?? [];
+    const imported = imports.components.get(parts[0]);
+    if (imported) return { component: imported.imported, part: parts[1] };
+    if (imports.namespaceImports.has(parts[0])) return { component: parts[1], part: parts[2] };
+    return undefined;
+  }
+  /** A NavList item, group or section heading, which NavList.Root holds. */
+  const isNavListItem = (node) => {
+    const named = partOf(node);
+    return named?.component === 'NavList' && named.part !== undefined && named.part !== 'Root';
+  };
+  /** Whether a 1.0 frame part is inside the element: AppShell's parts, a Sidebar or a trigger. */
+  const hasFrameParts = (path) =>
+    j(path)
+      .find(j.JSXElement)
+      .some((each) => {
+        if (each.node === path.node) return false;
+        const named = partOf(each.node);
+        if (!named) return false;
+        if (named.component === 'AppShell') return named.part !== undefined;
+        return ['Sidebar', 'SidebarTrigger'].includes(named.component);
+      });
+
   /** Rewrites one AppShell or AppShellSkeleton element; returns whether it changed. */
   function rewrite(path, component, rule, skeleton) {
     const { node } = path;
@@ -217,7 +281,14 @@ export default function transform(file, api, options = {}) {
       reporter.warn(node, `${where}: ${rule.report}`);
       return false;
     }
-    if (!skeleton && !legacyProps.some((prop) => attributeIndex(attributes, prop) !== -1))
+    // Without a 0.x prop, an element with only props both forms take, and none of 1.0's frame
+    // parts inside, is in its 0.x form, such as `<AppShell loading>{page}</AppShell>`.
+    if (
+      !skeleton &&
+      !legacyProps.some((prop) => attributeIndex(attributes, prop) !== -1) &&
+      (!attributes.every((attribute) => sharedProps.includes(attribute.name.name)) ||
+        hasFrameParts(path))
+    )
       return false;
 
     // Where the mark and the context go follows topbar.
@@ -228,7 +299,17 @@ export default function transform(file, api, options = {}) {
     if (topbar) {
       if (topbarKey === undefined) {
         reporter.warn(topbar, `${where}: ${reports.topbar ?? rule.report}`);
-        rootAttributes.push(renamed(topbar, 'headerSpan'));
+        // topbar is split or full; headerSpan is main or full.
+        rootAttributes.push(
+          expressionAttribute(
+            'headerSpan',
+            j.conditionalExpression(
+              j.binaryExpression('===', expressionOf(topbar), j.stringLiteral('full')),
+              j.stringLiteral('full'),
+              j.stringLiteral('main'),
+            ),
+          ),
+        );
       } else if (full)
         rootAttributes.push(j.jsxAttribute(j.jsxIdentifier('headerSpan'), j.stringLiteral('full')));
     }
@@ -322,11 +403,16 @@ export default function transform(file, api, options = {}) {
       sidebarChildren.push(
         element(partName(component, 'Sidebar.Header'), [], [trigger, ...beside]),
       );
+    const navigationChildren = navigation ? childrenOf(navigation) : [];
+    // NavList items go into a NavList.Root; anything else, such as a NavList.Root or a Tree of the
+    // application's own, stays as it is.
     const listChildren = skeleton
       ? [element(partName(component, 'NavList.Skeleton'), items ? [renamed(items, 'items')] : [])]
-      : navigation && childrenOf(navigation).some(meaningfulChild)
-        ? [element(partName(component, 'NavList.Root'), [], childrenOf(navigation))]
-        : [];
+      : !navigationChildren.some(meaningfulChild)
+        ? []
+        : navigationChildren.filter(meaningfulChild).every(isNavListItem)
+          ? [element(partName(component, 'NavList.Root'), [], navigationChildren)]
+          : navigationChildren;
     if (listChildren.length)
       sidebarChildren.push(element(partName(component, 'Sidebar.Content'), [], listChildren));
     if (sidebarContent)
@@ -340,7 +426,7 @@ export default function transform(file, api, options = {}) {
     let sidebarLabel = navigationLabel && renamed(navigationLabel, 'label');
     if (!sidebarLabel) {
       sidebarLabel = j.jsxAttribute(j.jsxIdentifier('label'), j.stringLiteral('Navigation'));
-      reporter.warn(node, `${where}: ${(skeleton && reports.label) || rule.report}`);
+      reporter.warn(node, `${where}: ${reports.label ?? rule.report}`);
     }
     const sidebar = element(
       partName(component, 'Sidebar.Root'),
@@ -474,5 +560,6 @@ export default function transform(file, api, options = {}) {
 
   reporter.flush();
   if (!changed) return undefined;
-  return keepByteOrderMark(file.source, root.toSource(printOptions(file.source, 'double')));
+  const output = root.toSource(printOptions(file.source, 'double'));
+  return keepByteOrderMark(file.source, withTabs(file.source, output));
 }

@@ -28,10 +28,15 @@ export default function SaveSection() {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!draft.name.trim()) {
-      setNameError('Enter your display name');
+      const message = 'Enter your display name';
+      setNameError(message);
+      // Focus may already be in the field, where focusing it again reads nothing, so the status
+      // says the error too.
+      setStatus(message);
       nameField.current?.focus();
       return;
     }
+    setStatus('');
     setSaving(true);
     // The profile is saved on a server; a timer stands in for it here.
     timer.current = window.setTimeout(() => {
@@ -41,8 +46,16 @@ export default function SaveSection() {
     }, 1000);
   };
   const cancel = () => {
-    setDraft(saved);
+    // Cancel during a save stops it, so the edits it was saving are discarded too.
+    window.clearTimeout(timer.current);
+    setSaving(false);
     setNameError(undefined);
+    // With nothing to put back, Cancel has nothing to say.
+    if (!changed) {
+      setStatus('');
+      return;
+    }
+    setDraft(saved);
     setStatus('Changes discarded.');
   };
 

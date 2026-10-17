@@ -7,6 +7,7 @@
         "storageKey": "storageKey is persist in 1.0, which keeps both sidebars in one entry in a new format, so the remembered preference resets once.",
         "sidebarWidth": "sidebarWidth and onSidebarWidthChange are in rem in 1.0, not pixels: divide by 16, or by the root font size.",
         "minWidth": "sidebarMinWidth and sidebarMaxWidth are minWidth and maxWidth in rem in 1.0: the codemod divides the expression by 16; check it.",
+        "label": "Sidebar.Root needs a label, and the AppShell had no navigationLabel: the codemod named its sidebar Navigation; name it by its content.",
         "topbar": "topbar is an expression, so the codemod can't tell where the mark and the context go: it placed them for the split topbar (headerSpan=\"main\"); move them to AppShell.Header's start for headerSpan=\"full\"."
       }
     },
