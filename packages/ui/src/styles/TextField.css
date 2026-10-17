@@ -31,23 +31,26 @@
   transition: border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 @media (hover: hover) {
-  .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled)) {
+  .env-text-field-control:hover:not(:has(> .env-text-field-input:disabled), [data-disabled]) {
     --env-field-border-color: var(--env-field-interaction-hover);
   }
   .env-text-field-control[data-variant='underline']:hover:not(
-      :has(> .env-text-field-input:disabled)
+      :has(> .env-text-field-input:disabled),
+      [data-disabled]
     ) {
     border-block-end-color: var(--env-field-border-color);
   }
   .env-text-field-control[data-variant='underline']:hover:not(
-      :has(> .env-text-field-input:disabled)
+      :has(> .env-text-field-input:disabled),
+      [data-disabled]
     )
     > .env-textarea-resize-edge::after {
     opacity: 1;
   }
 }
 .env-text-field-control:is(:active, :has(> .env-textarea-resize-edge[data-dragging])):not(
-    :has(> .env-text-field-input:disabled)
+    :has(> .env-text-field-input:disabled),
+    [data-disabled]
   ) {
   --env-field-border-color: var(--env-field-interaction-pressed);
 }
@@ -154,7 +157,10 @@
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 @media (hover: hover) {
-  .env-text-field-control[data-variant='ghost']:hover:not(:has(> .env-text-field-input:disabled)) {
+  .env-text-field-control[data-variant='ghost']:hover:not(
+      :has(> .env-text-field-input:disabled),
+      [data-disabled]
+    ) {
     background: var(--env-color-bg-neutral-muted);
   }
 }
@@ -167,18 +173,22 @@
 .env-text-field-control[data-variant='ghost'] > .env-text-field-input:focus::placeholder {
   color: transparent;
 }
-.env-text-field-control[data-variant='ghost']:has(> .env-text-field-input[aria-invalid='true']) {
+.env-text-field-control[data-variant='ghost']:is(
+    :has(> .env-text-field-input[aria-invalid='true']),
+    [data-invalid]
+  ) {
   border-color: var(--env-field-border-color);
 }
 /* Invalid outline controls recolor their existing border; underline controls use an underline. */
-.env-text-field-control:has(> .env-text-field-input[aria-invalid='true']) {
+.env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
   --env-field-border-base: var(--env-field-error-color);
   --env-field-interaction-color: var(--env-field-error-color);
   --env-field-interaction-hover: var(--env-color-border-danger-emphasis-hover);
   --env-field-interaction-pressed: var(--env-color-border-danger-emphasis-pressed);
 }
-.env-text-field-control[data-variant='underline']:has(
-    > .env-text-field-input[aria-invalid='true']
+.env-text-field-control[data-variant='underline']:is(
+    :has(> .env-text-field-input[aria-invalid='true']),
+    [data-invalid]
   )::after {
   content: '';
   position: absolute;
@@ -190,8 +200,9 @@
   pointer-events: none;
   transition: background-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-.env-text-field-control[data-variant='underline']:has(
-    > .env-text-field-input[aria-invalid='true']
+.env-text-field-control[data-variant='underline']:is(
+    :has(> .env-text-field-input[aria-invalid='true']),
+    [data-invalid]
   ) {
   border-block-end-color: transparent;
   box-shadow: none;
@@ -200,14 +211,15 @@
 .env-text-field-control[data-variant='underline']:has(> :focus-visible)::after {
   block-size: 0.25rem;
 }
-.env-text-field-control:has(> .env-text-field-input[aria-invalid='true']) > label {
+.env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid])
+  > label {
   color: var(--env-field-error-color);
 }
-.env-text-field-control:has(> .env-text-field-input:disabled) {
+.env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
   opacity: var(--env-state-disabled-opacity);
 }
 .env-text-field-input:disabled,
-.env-text-field-control:has(> .env-text-field-input:disabled) > label {
+.env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) > label {
   cursor: default;
 }
 textarea.env-text-field-input {
@@ -490,19 +502,21 @@ textarea.env-text-field-input:disabled + .env-textarea-resize-edge {
     outline: 2px solid Highlight;
     outline-offset: 1px;
   }
-  .env-text-field-control:has(> .env-text-field-input[aria-invalid='true']) {
+  .env-text-field-control:is(:has(> .env-text-field-input[aria-invalid='true']), [data-invalid]) {
     border-style: dashed;
   }
-  .env-text-field-control[data-variant='underline']:has(
-      > .env-text-field-input[aria-invalid='true']
+  .env-text-field-control[data-variant='underline']:is(
+      :has(> .env-text-field-input[aria-invalid='true']),
+      [data-invalid]
     )::after {
     background-color: CanvasText;
   }
-  .env-text-field-control:has(> .env-text-field-input:disabled) {
+  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled]) {
     border-color: GrayText;
     color: GrayText;
   }
-  .env-text-field-control:has(> .env-text-field-input:disabled) > .env-text-field-input {
+  .env-text-field-control:is(:has(> .env-text-field-input:disabled), [data-disabled])
+    > .env-text-field-input {
     color: GrayText;
   }
 }

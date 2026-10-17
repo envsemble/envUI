@@ -8,6 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Marked, type marked } from 'marked';
 import { safeRichTextUrl } from './ReferenceAttributes.js';
 import { createReferenceExtension } from './ReferenceExtension.js';
+import { createTaskItemNodeView } from './TaskItem.js';
 import type { RichTextRenderOptions } from './Types.js';
 
 /**
@@ -28,7 +29,7 @@ export function createRichTextExtensions(
     }),
     Markdown.configure({ marked: parser as unknown as typeof marked }),
     TaskList,
-    TaskItem.configure({ nested: true }),
+    TaskItem.extend({ addNodeView: () => createTaskItemNodeView() }).configure({ nested: true }),
     TableKit,
     Image.extend({
       renderHTML({ node, HTMLAttributes }) {

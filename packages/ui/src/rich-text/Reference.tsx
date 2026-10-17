@@ -3,6 +3,7 @@
 import { createContext, useContext } from 'react';
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from '@tiptap/react';
 import { Button } from '../actions/Button.js';
+import { ActionElement } from '../internal/ActionElement.js';
 import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
 import type { RichTextReference, RichTextRenderOptions } from './Types.js';
 
@@ -35,7 +36,8 @@ export function ReferenceContent({
     );
   if (reference.href && safeRichTextUrl(reference.href))
     return (
-      <a
+      // A native link, through the LinkProvider's link component, in the reference's own look.
+      <ActionElement
         className={className}
         href={reference.href}
         data-reference-id={reference.id}
@@ -45,7 +47,7 @@ export function ReferenceContent({
         }}
       >
         {content}
-      </a>
+      </ActionElement>
     );
   if (options.onReferenceClick)
     return (

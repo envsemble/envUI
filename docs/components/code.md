@@ -1,7 +1,7 @@
 ---
 title: Code
 summary: Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.
-status: beta
+status: stable
 since: 0.1.0
 category: Content & guidance
 aliases:
@@ -82,7 +82,7 @@ Code shows source in the code theme of the app theme: the Pierre themes that Dif
 ## States and behaviour
 
 - **Highlighting**: a block renders its plain source first, also on a server, and colors it once the shared highlighter has loaded; the tokens carry both code themes, so switching the app theme recolors code without highlighting it again. In a diff, tokens also reach 4.5:1, or 7:1 under high contrast, on the lines tinted for additions and deletions, and so do the change counts on code's background. High contrast follows the nearest Theme's `contrast`, or `prefers-contrast: more` where it is `system`. Blocks above 50,000 characters, or with a line above 2,000 characters, stay plain text.
-- **Copying**: the copy button writes the original source, with its line breaks, to the clipboard, turns into a check named "Code copied" and announces "Copied." for 3 seconds. Without clipboard access it selects the source for people to copy, and announces how.
+- **Copying**: the copy button writes the original source, with its line breaks, to the clipboard, turns into a check named "Code copied" and announces "Copied." for 3 seconds. Where the Clipboard API is unavailable it copies through a selection of a hidden field, and where that fails too it selects the source for people to copy, and announces how.
 - **Focus**: the source takes keyboard focus, with a focus outline, so a block that scrolls can be scrolled from the keyboard.
 - **Diff loading**: while Diffs' highlighter loads the file's language, CodeDiff shows skeleton lines and reports `aria-busy`; if it fails, an error state with Retry replaces them.
 - **Diff contents**: `filename` names the file and chooses its language from its extension, unless `language` does. When `before` and `after` are the same, CodeDiff shows the whole file. `countDiffLines(before, after)` returns `{ additions, deletions }` for a DiffStat, and zero for both when nothing changed.
@@ -130,6 +130,7 @@ Code shows source in the code theme of the app theme: the Pierre themes that Dif
 
 - A `label` that names each block where a page has several.
 - Text around a diff that says what changed and where, since a diff is read line by line.
+- The words in the page's language, through EnvUIProvider's `messages.codeBlock` (the heading without a label, the copy button's names and announcements, and the region's name) and `messages.codeDiff` (the loading name, the error and Retry).
 
 ## Examples
 
@@ -167,6 +168,6 @@ CodeDiff shows what a draft changes in a file, and countDiffLines counts its lin
 
 ## Changelog
 
-- **1.0.0**: The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs.
+- **1.0.0**: The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`.
 - **0.7.0**: Code uses the Pierre code themes that Diffs uses, and follows the app theme; `Code`'s `appearance`, `Markdown`'s `inlineCode` and `CodeBlock`'s `theme` are removed. CodeDiff and countDiffLines, in `@envsemble/envui/diff`. The copy button is a quiet icon button.
 - **0.1.0**: Code and CodeBlock.

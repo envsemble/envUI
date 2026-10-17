@@ -18,6 +18,7 @@
       "navigation/sidebar/": "shell",
       "layout/": "composites",
       "forms/internal/markdown/": "composites",
+      "navigation/panel-dock/": "shell",
       "diff/": "composites",
       "rich-text/": "composites"
     },
@@ -34,9 +35,6 @@
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
       "navigation/AppShell.tsx": "shell",
-      "navigation/PanelDock.tsx": "shell",
-      "navigation/PanelDockHeader.tsx": "shell",
-      "navigation/TitleBar.tsx": "shell",
       "navigation/WindowFrame.tsx": "shell",
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
@@ -103,6 +101,8 @@
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
       "forms/MarkdownEditor.tsx": "composites",
+      "forms/internal/EditorToolbar.tsx": "composites",
+      "forms/internal/LinkDialog.tsx": "composites",
       "forms/Radio.tsx": "base",
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
@@ -183,7 +183,8 @@
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
-      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size."
+      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
+      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document."
     },
     "components": {
       "Button": {
@@ -276,12 +277,19 @@
         "modules": [
           "forms/internal/markdown/MarkdownFormatting.ts",
           "forms/internal/markdown/MarkdownHistory.ts",
-          "forms/internal/markdown/MarkdownLinkDialog.tsx",
           "forms/internal/markdown/MarkdownPreview.tsx",
-          "forms/internal/markdown/MarkdownToolbar.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
         "classes": ["env-markdown-source"]
+      },
+      "Editor": {
+        "modules": [
+          "forms/internal/EditorCommands.ts",
+          "forms/internal/EditorToolbar.tsx",
+          "forms/internal/EditorStatus.tsx",
+          "forms/internal/LinkDialog.tsx"
+        ],
+        "styles": ["Editor.css"]
       },
       "Layout": {
         "classes": ["env-stack"]
@@ -312,11 +320,19 @@
         "modules": ["navigation/internal/OrganizationOptions.tsx"]
       },
       "PanelDock": {
-        "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
+        "modules": [
+          "navigation/panel-dock/Root.tsx",
+          "navigation/panel-dock/PanelFrame.tsx",
+          "navigation/panel-dock/Header.tsx",
+          "navigation/panel-dock/PanelTab.tsx",
+          "navigation/panel-dock/dockLayout.ts",
+          "navigation/panel-dock/useEntrance.ts",
+          "navigation/internal/PanelDockContext.ts"
+        ]
       },
       "Tabs": {},
       "WindowFrame": {
-        "styles": ["TitleBar.css"]
+        "modules": ["navigation/internal/TitleBarFrame.tsx"]
       },
       "RichText": {
         "modules": [
@@ -325,6 +341,7 @@
           "rich-text/ReferenceAttributes.ts",
           "rich-text/ReferenceExtension.ts",
           "rich-text/Suggestions.tsx",
+          "rich-text/TaskItem.tsx",
           "rich-text/Commands.ts",
           "rich-text/Extensions.ts",
           "rich-text/Types.ts"
@@ -344,6 +361,7 @@
     "stylesheetsWithoutComponent": {
       "index.css": "Imports every stylesheet.",
       "ConnectedRows.css": "Shared connected-row corners.",
+      "Prose.css": "The prose typography Markdown and the rich-text components share.",
       "Motion.css": "The keyframes several components share.",
       "Reset.css": "The box-sizing reset inside every theme boundary."
     },
@@ -399,11 +417,6 @@
           "stylesheet": "Code.css",
           "classes": ["env-loading-state", "env-empty-state"],
           "note": "A code diff pads its loading and empty states."
-        },
-        {
-          "stylesheet": "MarkdownEditor.css",
-          "classes": ["env-button-group"],
-          "note": "The toolbar lets its button groups scroll."
         },
         {
           "stylesheet": "Composer.css",

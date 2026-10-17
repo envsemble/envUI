@@ -22,9 +22,10 @@ aliases:
   - window frame
   - TitleBar
   - WindowFrame
+  - WindowFrame.TitleBar
 useWhen:
   - An application needs its frame, with a topbar with the page's title and actions, a navigation sidebar that collapses to icons, and the page's content.
-  - An installed web app or desktop shell draws its own title bar over the window (`titleBar`, TitleBar).
+  - An installed web app or desktop shell draws its own title bar over the window (`titleBar`, WindowFrame).
   - The application's first load shows the frame before the data arrives (AppShellSkeleton).
 avoidWhen:
   - text: The destinations inside the sidebar.
@@ -46,7 +47,6 @@ components:
   - AppShell
   - AppShellSkeleton
   - useAppShell
-  - TitleBar
   - WindowFrame
 ---
 
@@ -60,7 +60,7 @@ The family:
 
 - **AppShellSkeleton** is the same frame with placeholders, for the first load.
 - **useAppShell** gives content inside the shell `closeNarrowSidebar` and `getScrollElement`.
-- **TitleBar** is the shell's title bar on its own, for a start page or a simple window, and **WindowFrame** puts it above content that scrolls below it.
+- **WindowFrame** is a window without the shell, for a start page or a simple window: `WindowFrame.Root` fills the window, `WindowFrame.TitleBar` is the title bar, also on its own, and `WindowFrame.Content` scrolls below it.
 
 AppShell will be rebuilt from composable parts; this page describes the current API.
 
@@ -100,7 +100,7 @@ AppShell will be rebuilt from composable parts; this page describes the current 
 - **Scrolling**: without `titleBar` the document scrolls, with scroll padding as tall as the topbar, so focused elements and anchors land below it; with `titleBar` the content area scrolls below the title bar, and the keyboard scrolls it as it would the document. `useAppShell().getScrollElement()` returns the element that scrolls the page's content; sticky content uses `inset-block-start: var(--env-app-sticky-top)`, and `--env-app-shell-header-height` holds the topbar's height.
 - **Title bar**: empty space drags the window, controls stay clickable, and the bar leaves room for the window controls through `env(titlebar-area-*)`; in an ordinary browser window it spans the full width.
 - **Loading frame**: AppShellSkeleton with the same `brand`, `storageKey`, `topbar`, `titleBar` and resize bounds starts in the same place, and announces its `label` (Loading).
-- **TitleBar and WindowFrame**: TitleBar lays out `start`, its centred `children` and `end`; WindowFrame fills the window with it on top and its content scrolling below, with the same keyboard scrolling as a title-bar shell.
+- **WindowFrame**: `WindowFrame.TitleBar` lays out `start`, its centred `children` and `end`, and gives the buttons inside that set no variant the ghost one, at the small height; `WindowFrame.Root` fills the window with it on top and `WindowFrame.Content` scrolling below, with the same keyboard scrolling as a title-bar shell. Content's `ref` is the element that scrolls.
 
 ## Content guidelines
 
@@ -119,7 +119,7 @@ AppShell will be rebuilt from composable parts; this page describes the current 
 ### Don't
 
 - Don't lay out the page inside the shell with fixed heights; give `sidebarContent` `block-size: 100%` and let it scroll.
-- Don't put a sticky or fixed TitleBar above a scrolling document; use WindowFrame.
+- Don't put a sticky or fixed `WindowFrame.TitleBar` above a scrolling document; put it in `WindowFrame.Root` above `WindowFrame.Content`.
 - Don't nest shells.
 
 ## Accessibility
@@ -160,7 +160,7 @@ With `topbar="full"` and `titleBar`, the topbar is one row across the window tha
 
 ### A start page window
 
-TitleBar without the shell, inside a WindowFrame whose content scrolls below it.
+A title bar without the shell: `WindowFrame.TitleBar` on top of `WindowFrame.Root`, and `WindowFrame.Content` scrolling below it.
 
 ```tsx example=StartPageWindow
 
@@ -176,7 +176,7 @@ AppShellSkeleton shows the frame with placeholders until the application's data 
 
 ## Changelog
 
-- **1.0.0**: `LoadingBar` and `useSidebarCompact` are internal: `loading` and `loadingLabel` show page progress, and `collapsed` and `onCollapsedChange` keep the sidebar's state.
+- **1.0.0**: `LoadingBar` and `useSidebarCompact` are internal: `loading` and `loadingLabel` show page progress, and `collapsed` and `onCollapsedChange` keep the sidebar's state. TitleBar and WindowFrame are one namespace, `WindowFrame.Root`, `WindowFrame.TitleBar` and `WindowFrame.Content`; buttons in a title bar that set no variant are ghost.
 - **0.5.0**: `titleBar` on AppShell and AppShellSkeleton, TitleBar and WindowFrame; `topbar="full"`, `resizable` and `sidebarContent`; a drawer sidebar on narrow windows.
 - **0.4.0**: The sidebar fits its widest content between 12 and 20 rem; `loading` shows page progress along the topbar.
 - **0.3.0**: AppShell and AppShellSkeleton.

@@ -1,31 +1,12 @@
 {
   "$comment": "Composition violations that exist today, counted per module or stylesheet. tests/Composition.test.mjs fails on a new violation, on a higher count, and on an entry that no longer matches, so this list only shrinks. Paths are relative to packages/ui/src and packages/ui/src/styles.",
-  "imports": [
-    {
-      "module": "rich-text/RichTextEditor.tsx",
-      "imports": "forms/internal/markdown/MarkdownLinkDialog.tsx",
-      "note": "RichTextEditor reuses MarkdownEditor's private link dialog; the dialog moves to shared internals."
-    }
-  ],
-  "interactive": [
-    { "module": "navigation/AppShell.tsx", "element": "button", "count": 1 },
-    { "module": "navigation/PanelDock.tsx", "element": "button", "count": 2 },
-    { "module": "rich-text/Reference.tsx", "element": "a", "count": 1 },
-    { "module": "rich-text/RichTextEditor.tsx", "element": "input", "count": 1 },
-    { "module": "rich-text/Suggestions.tsx", "element": "role=\"listbox\"", "count": 1 }
-  ],
+  "imports": [],
+  "interactive": [{ "module": "navigation/AppShell.tsx", "element": "button", "count": 1 }],
   "tsxClasses": [
-    { "module": "navigation/AppShell.tsx", "class": "env-title-bar", "count": 2 },
-    { "module": "rich-text/RichText.tsx", "class": "env-markdown", "count": 1 },
-    { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown", "count": 2 },
-    { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-editor-status", "count": 1 },
-    { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-toolbar", "count": 1 }
+    { "module": "navigation/AppShell.tsx", "class": "env-window-frame-title-bar", "count": 2 }
   ],
   "cssClasses": [
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
-    { "stylesheet": "RichText.css", "class": "env-button", "count": 1 },
-    { "stylesheet": "RichText.css", "class": "env-field", "count": 1 },
-    { "stylesheet": "TitleBar.css", "class": "env-text-field-control", "count": 1 }
+    { "stylesheet": "AppShell.css", "class": "env-window-frame-title-bar", "count": 5 }
   ]
 }

@@ -75,6 +75,8 @@ export const frontmatterSchema = {
   title: { type: 'string', required: true },
   summary: { type: 'string', required: true },
   status: { type: 'string', required: true, values: statuses },
+  /** The status of an export that differs from the page's, such as a beta editor on a stable page. */
+  statuses: { type: 'statuses' },
   since: { type: 'string', required: true, pattern: /^\d+\.\d+\.\d+$/ },
   category: { type: 'string', required: true, values: componentGroups },
   aliases: { type: 'strings', required: true, nonEmpty: true },
@@ -240,6 +242,19 @@ function validateFrontmatter(frontmatter, path, { component, template, versions 
         )
       )
         problems.push(`${key} must be a list of { text, use } entries, use naming the alternative`);
+    } else if (rule.type === 'statuses') {
+      const listed = Array.isArray(frontmatter.components) ? frontmatter.components : [];
+      if (!value || typeof value !== 'object' || Array.isArray(value))
+        problems.push(`${key} must map an export to its status`);
+      else
+        for (const [name, status] of Object.entries(value)) {
+          if (!listed.includes(name))
+            problems.push(`${key} names ${name}, which components does not list`);
+          if (!statuses.includes(status))
+            problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
+          else if (status === frontmatter.status)
+            problems.push(`${key} of ${name} repeats the page's status; leave it out`);
+        }
     }
   }
   if (component) {
@@ -847,6 +862,7 @@ export function generateDocumentation() {
       useWhen: frontmatter.useWhen ?? [],
       avoidWhen: frontmatter.avoidWhen ?? [],
       components: frontmatter.components ?? [],
+      ...(frontmatter.statuses && { statuses: frontmatter.statuses }),
     };
     if (!sections) return { ...entry, metadata };
     // The ids of the headings in each section, numbered across the page, so the catalogue opens a

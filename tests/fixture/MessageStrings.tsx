@@ -29,8 +29,10 @@ import {
   Textarea,
   ThemePreferenceProvider,
   ThemeToggle,
+  PanelDock,
   type EnvUIMessagesInput,
 } from '@envsemble/envui';
+import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
 // Content and display, whose strings and numbers follow the provider.
 import {
@@ -94,6 +96,38 @@ function FeedbackStrings() {
         items={[]}
         onAction={() => {}}
       />
+    </>
+  );
+}
+
+/** Shell, dock, editors and code: a dock with a minimized panel, code, Markdown and its editor. */
+function ShellAndEditorStrings() {
+  return (
+    <>
+      <div style={{ position: 'relative', blockSize: '24rem' }}>
+        <PanelDock.Root
+          panels={[
+            { id: 'notes', title: 'Notes', mode: 'open', active: true },
+            { id: 'budget', title: 'Budget', mode: 'minimized' },
+          ]}
+          onModeChange={() => {}}
+          onClose={() => {}}
+        >
+          {(panel) => <PanelDock.Header title={panel.title} />}
+        </PanelDock.Root>
+      </div>
+      <CodeBlock copyable>npm run build</CodeBlock>
+      <Markdown>
+        {[
+          '| Plan | Seats |',
+          '| ---- | ----- |',
+          '| Team | 5 |',
+          '',
+          '- [x] Shipped',
+          '- [ ] Pending',
+        ].join('\n')}
+      </Markdown>
+      <MarkdownEditor label="Description" defaultValue="Draft" />
     </>
   );
 }
@@ -204,6 +238,7 @@ export function MessageStringsFixture() {
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
+          <ShellAndEditorStrings />
           {/* App parts: a search trigger, a reorderable list's handle and announcements, an
               account menu with its theme and organization submenus, and a confirm dialog. */}
           <SearchTrigger listen={false} />

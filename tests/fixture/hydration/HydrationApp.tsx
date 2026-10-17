@@ -17,7 +17,7 @@ import {
   Slider,
   DropZone,
   Tree,
-  TitleBar,
+  WindowFrame,
   Menubar,
   Menu,
   Table,
@@ -28,7 +28,6 @@ import {
   CalendarHeatmap,
   Combobox,
   PanelDock,
-  PanelDockHeader,
   type PanelDockPanel,
   RelativeTime,
   AvatarGroup,
@@ -69,7 +68,7 @@ export function HydrationApp() {
   return (
     <Theme theme="dark">
       <Toast.Provider>
-        <TitleBar
+        <WindowFrame.TitleBar
           start={
             <Menubar.Root aria-label="Hydrated menubar" accessKeys>
               <Menubar.Menu label="File" accessKey="F">
@@ -82,7 +81,7 @@ export function HydrationApp() {
           }
         >
           Hydrated title
-        </TitleBar>
+        </WindowFrame.TitleBar>
         <TextField
           label="Hydrated input"
           value={name}
@@ -230,7 +229,7 @@ export function HydrationApp() {
           <SplitPane.Pane>Hydrated end pane</SplitPane.Pane>
         </SplitPane.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
-          <PanelDock
+          <PanelDock.Root
             panels={dockPanels}
             onModeChange={(id, mode) =>
               setDockPanels((current) =>
@@ -245,11 +244,11 @@ export function HydrationApp() {
           >
             {(panel) => (
               <>
-                <PanelDockHeader title={panel.title} headingLevel={3} />
+                <PanelDock.Header title={panel.title} headingLevel={3} />
                 <TextField label={`${panel.title} draft`} />
               </>
             )}
-          </PanelDock>
+          </PanelDock.Root>
         </div>
         <Stat.Group aria-label="Hydrated stats">
           <Stat.Root

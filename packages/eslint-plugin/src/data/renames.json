@@ -117,6 +117,18 @@
       "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
       "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
       "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
+      "PanelDock": { "to": ["PanelDock.Root"] },
+      "PanelDockControls": {
+        "to": [],
+        "use": "PanelDock.Header shows the window controls itself, with controls={false} to leave them out; their names, Minimize, Maximize, Restore and Close, come from EnvUIProvider's messages.panelDock."
+      },
+      "PanelDockControlsProps": {
+        "to": [],
+        "use": "PanelDock.Header shows the window controls itself; set their names through EnvUIProvider's messages.panelDock."
+      },
+      "PanelDockHeader": { "to": ["PanelDock.Header"] },
+      "PanelDockHeaderProps": { "to": ["PanelDock.HeaderProps"] },
+      "PanelDockProps": { "to": ["PanelDock.RootProps"] },
       "Row": { "to": ["List.Item"] },
       "RowProps": { "to": ["List.ItemProps"] },
       "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
@@ -155,6 +167,8 @@
         "use": "Text renders another element through render, such as render={<h2 />}."
       },
       "TextTone": { "to": ["TextEmphasis"] },
+      "TitleBar": { "to": ["WindowFrame.TitleBar"] },
+      "TitleBarProps": { "to": ["WindowFrame.TitleBarProps"] },
       "Toast": {
         "to": [],
         "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",
@@ -168,6 +182,8 @@
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
       "ToastVariant": { "to": ["ToastTone"] },
       "TreeOpenOptions": { "to": ["TreeActionOptions"] },
+      "WindowFrame": { "to": ["WindowFrame.Root"] },
+      "WindowFrameProps": { "to": ["WindowFrame.RootProps"] },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."

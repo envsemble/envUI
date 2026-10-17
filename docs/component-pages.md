@@ -11,6 +11,8 @@ A component page opens with YAML frontmatter. The build validates it and fails o
 title: TextField # The component's name; the file is its kebab case.
 summary: A labelled single-line text input with a description and an error. # One sentence.
 status: beta # experimental, beta, stable or deprecated.
+statuses: # Optional: the exports whose status differs from the page's.
+  SearchField: stable
 since: 0.1.0 # The release that added the component, under any earlier name: a released version, or the next.
 category: Forms & selection # The index group the page is listed under.
 aliases: # Words people and agents search for, including earlier names; at least one.
@@ -32,6 +34,7 @@ components: # The exports the page documents; each export has exactly one page.
 ---
 ```
 
+- `statuses` gives an export listed in `components` a status other than the page's, such as a beta editor on a page whose renderer is stable; the catalogue shows it beside the page's, and the manifest and `llms.txt` carry it.
 - `use` names an export. The catalogue links it to the page that documents it, and agents read it as "need this, use that".
 - List a family's members, such as IconButton on the button page, in `components`; the page then documents them in its sections. A namespace, such as `Menu`, covers all its parts; list the namespace, never a part such as `Menu.Item`.
 - Foundation and workflow pages may list the components they document, such as `Text` on the typography page, with only `components`, `aliases` and `exportAliases`. `exportAliases` maps an export listed in `components` to the words people search for it by, such as `ThemeToggle: [theme switcher]` on the setup page, for exports without a component page of their own.

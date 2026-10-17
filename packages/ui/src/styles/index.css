@@ -37,6 +37,7 @@
 @import './LoadingBar.css' layer(env.components);
 @import './Text.css' layer(env.components);
 @import './Code.css' layer(env.components);
+@import './Prose.css' layer(env.components);
 @import './Markdown.css' layer(env.components);
 @import './Pager.css' layer(env.components);
 @import './Tabs.css' layer(env.components);
@@ -51,6 +52,7 @@
 @import './Field.css' layer(env.components);
 @import './TextField.css' layer(env.components);
 @import './ColorPicker.css' layer(env.components);
+@import './Editor.css' layer(env.components);
 @import './MarkdownEditor.css' layer(env.components);
 @import './RichText.css' layer(env.components);
 @import './Select.css' layer(env.components);
@@ -78,7 +80,7 @@
 @import './Tree.css' layer(env.components);
 @import './DocumentTabs.css' layer(env.components);
 @import './CommandPalette.css' layer(env.components);
-@import './TitleBar.css' layer(env.components);
+@import './WindowFrame.css' layer(env.components);
 @import './AppShell.css' layer(env.components);
 @import './Sidebar.css' layer(env.components);
 @import './PanelDock.css' layer(env.components);

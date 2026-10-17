@@ -2456,11 +2456,12 @@
         "title bar",
         "window frame",
         "TitleBar",
-        "WindowFrame"
+        "WindowFrame",
+        "WindowFrame.TitleBar"
       ],
       "useWhen": [
         "An application needs its frame, with a topbar with the page's title and actions, a navigation sidebar that collapses to icons, and the page's content.",
-        "An installed web app or desktop shell draws its own title bar over the window (`titleBar`, TitleBar).",
+        "An installed web app or desktop shell draws its own title bar over the window (`titleBar`, WindowFrame).",
         "The application's first load shows the frame before the data arrives (AppShellSkeleton)."
       ],
       "avoidWhen": [
@@ -2493,8 +2494,10 @@
         "AppShell",
         "AppShellSkeleton",
         "useAppShell",
-        "TitleBar",
-        "WindowFrame"
+        "WindowFrame",
+        "WindowFrame.Root",
+        "WindowFrame.TitleBar",
+        "WindowFrame.Content"
       ],
       "examples": [
         {
@@ -2512,7 +2515,7 @@
         {
           "name": "StartPageWindow",
           "title": "A start page window",
-          "description": "TitleBar without the shell, inside a WindowFrame whose content scrolls below it.",
+          "description": "A title bar without the shell: `WindowFrame.TitleBar` on top of `WindowFrame.Root`, and `WindowFrame.Content` scrolling below it.",
           "file": "docs/examples/app-shell/StartPageWindow.tsx"
         },
         {
@@ -2675,9 +2678,9 @@
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md",
       "category": "Navigation",
-      "status": "beta",
+      "status": "stable",
       "since": "0.6.0",
-      "summary": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to chips and maximize while their content stays mounted.",
+      "summary": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.",
       "aliases": [
         "dock",
         "docked panels",
@@ -2687,6 +2690,7 @@
         "chat windows",
         "compose windows",
         "minimized panels",
+        "taskbar",
         "PanelDockHeader",
         "PanelDockControls",
         "PanelDockPanel"
@@ -2720,14 +2724,14 @@
       ],
       "exports": [
         "PanelDock",
-        "PanelDockHeader",
-        "PanelDockControls"
+        "PanelDock.Root",
+        "PanelDock.Header"
       ],
       "examples": [
         {
           "name": "DocumentDrafts",
           "title": "PanelDock",
-          "description": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to chips and maximize while their content stays mounted.",
+          "description": "Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.",
           "file": "docs/examples/panel-dock/DocumentDrafts.tsx"
         },
         {
@@ -2739,13 +2743,13 @@
         {
           "name": "MinimizeWhatDoesNotFit",
           "title": "Minimize what does not fit",
-          "description": "With `overflow=\"minimize\"` three panels that can't sit side by side at 20 rem make room: the one active longest ago waits as a chip. It comes back once the region widens.",
+          "description": "With `overflow=\"minimize\"` three panels that can't sit side by side at 20 rem make room: the one active longest ago waits as a tab. It comes back once the region widens.",
           "file": "docs/examples/panel-dock/MinimizeWhatDoesNotFit.tsx"
         },
         {
           "name": "NarrowRegion",
           "title": "Narrow region",
-          "description": "Below `stackBelow` one panel at a time fills the region, here the active conversation, and its chip shows the other.",
+          "description": "Below `stackBelow` one panel at a time fills the region, here the active conversation, and its tab shows the other.",
           "file": "docs/examples/panel-dock/NarrowRegion.tsx"
         }
       ]
@@ -2964,7 +2968,7 @@
       "page": "rich-text",
       "doc": "docs/components/rich-text.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "experimental",
       "since": "0.1.0",
       "summary": "Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only.",
       "aliases": [
@@ -3073,7 +3077,10 @@
       "page": "markdown",
       "doc": "docs/components/markdown.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
+      "statuses": {
+        "MarkdownEditor": "beta"
+      },
       "since": "0.1.0",
       "summary": "Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview.",
       "aliases": [
@@ -3161,7 +3168,7 @@
       "page": "code",
       "doc": "docs/components/code.md",
       "category": "Content & guidance",
-      "status": "beta",
+      "status": "stable",
       "since": "0.1.0",
       "summary": "Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file.",
       "aliases": [
@@ -5205,7 +5212,7 @@
       ],
       "useWhen": [
         "A document-centred application has many commands, grouped as a desktop application groups them, such as File, Edit, View and Help.",
-        "A window draws its own title bar and holds the application's menus at its start (with TitleBar or AppShell's `titleBar`)."
+        "A window draws its own title bar and holds the application's menus at its start (with WindowFrame.TitleBar or AppShell's `titleBar`)."
       ],
       "avoidWhen": [
         {
@@ -5247,7 +5254,7 @@
         {
           "name": "InTitleBar",
           "title": "In a title bar",
-          "description": "A window that draws its own title bar holds the menubar at the start of TitleBar, beside the document's name and its actions.",
+          "description": "A window that draws its own title bar holds the menubar at the start of `WindowFrame.TitleBar`, beside the document's name and its actions.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
         }
       ]
@@ -5907,6 +5914,7 @@
         "AccountMenu.ThemeSubmenu",
         "AccountMenu.OrganizationSubmenu"
       ],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -5962,6 +5970,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6051,6 +6060,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6096,6 +6106,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6159,6 +6170,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "alert",
       "doc": "docs/components/alert.md"
     },
@@ -6184,6 +6196,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "animated-number",
       "doc": "docs/components/animated-number.md"
     },
@@ -6360,6 +6373,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -6455,6 +6469,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -6500,6 +6515,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6543,6 +6559,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6600,6 +6617,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6638,6 +6656,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -6676,6 +6695,7 @@
       "native": [
         "nav"
       ],
+      "status": "stable",
       "page": "breadcrumbs",
       "doc": "docs/components/breadcrumbs.md"
     },
@@ -6771,6 +6791,7 @@
         "button",
         "a"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -6797,6 +6818,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -6866,6 +6888,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "date-picker",
       "doc": "docs/components/date-picker.md"
     },
@@ -6991,6 +7014,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "calendar-heatmap",
       "doc": "docs/components/calendar-heatmap.md"
     },
@@ -7100,6 +7124,7 @@
         "a",
         "button"
       ],
+      "status": "stable",
       "page": "card",
       "doc": "docs/components/card.md"
     },
@@ -7155,6 +7180,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "checkbox",
       "doc": "docs/components/checkbox.md"
     },
@@ -7199,6 +7225,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "close-button",
       "doc": "docs/components/close-button.md"
     },
@@ -7210,13 +7237,14 @@
       "native": [
         "code"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
     "CodeBlock": {
       "kind": "component",
       "import": "@envsemble/envui/content",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string.",
+      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",
@@ -7254,6 +7282,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -7311,6 +7340,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -7422,6 +7452,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "color-picker",
       "doc": "docs/components/color-picker.md"
     },
@@ -7440,6 +7471,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "color-picker",
       "doc": "docs/components/color-picker.md"
     },
@@ -7614,6 +7646,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "combobox",
       "doc": "docs/components/combobox.md"
     },
@@ -7700,6 +7733,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "command-palette",
       "doc": "docs/components/command-palette.md"
     },
@@ -7811,6 +7845,7 @@
       "native": [
         "textarea"
       ],
+      "status": "stable",
       "page": "composer",
       "doc": "docs/components/composer.md"
     },
@@ -7904,6 +7939,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -7997,6 +8033,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "confirm-dialog",
       "doc": "docs/components/confirm-dialog.md"
     },
@@ -8070,6 +8107,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -8158,6 +8196,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -8189,6 +8228,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -8421,6 +8461,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "date-picker",
       "doc": "docs/components/date-picker.md"
     },
@@ -8432,6 +8473,7 @@
         "DescriptionList.Root",
         "DescriptionList.Item"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8456,6 +8498,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8489,6 +8532,7 @@
       "native": [
         "dl"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8604,6 +8648,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "dialog",
       "doc": "docs/components/dialog.md"
     },
@@ -8686,6 +8731,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "dialog",
       "doc": "docs/components/dialog.md"
     },
@@ -8717,6 +8763,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -8760,6 +8807,7 @@
       "native": [
         "details"
       ],
+      "status": "stable",
       "page": "disclosure",
       "doc": "docs/components/disclosure.md"
     },
@@ -8859,6 +8907,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "document-tabs",
       "doc": "docs/components/document-tabs.md"
     },
@@ -8987,6 +9036,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "drawer",
       "doc": "docs/components/drawer.md"
     },
@@ -9093,6 +9143,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "drop-zone",
       "doc": "docs/components/drop-zone.md"
     },
@@ -9156,6 +9207,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "empty-state",
       "doc": "docs/components/empty-state.md"
     },
@@ -9214,6 +9266,7 @@
         "Field.Description",
         "Field.Error"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9266,6 +9319,7 @@
       "native": [
         "input"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9298,6 +9352,7 @@
       "native": [
         "p"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9343,6 +9398,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9383,6 +9439,7 @@
       "native": [
         "label"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9481,6 +9538,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9559,6 +9617,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "hover-card",
       "doc": "docs/components/hover-card.md"
     },
@@ -9627,6 +9686,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -9645,6 +9705,7 @@
       "native": [
         "kbd"
       ],
+      "status": "stable",
       "page": "kbd",
       "doc": "docs/components/kbd.md"
     },
@@ -9676,6 +9737,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "link",
       "doc": "docs/components/link.md"
     },
@@ -9713,6 +9775,7 @@
         "List.Root",
         "List.Item"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9775,6 +9838,7 @@
       "native": [
         "li"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9800,6 +9864,7 @@
       "native": [
         "ul"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9812,6 +9877,7 @@
         "ListDetail.List",
         "ListDetail.Detail"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9830,6 +9896,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9848,6 +9915,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9925,6 +9993,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9944,13 +10013,14 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "skeleton",
       "doc": "docs/components/skeleton.md"
     },
     "Markdown": {
       "kind": "component",
       "import": "@envsemble/envui/content",
-      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code.",
+      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.",
       "props": [
         {
           "name": "children",
@@ -10000,14 +10070,66 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "markdown",
       "doc": "docs/components/markdown.md"
     },
     "MarkdownEditor": {
       "kind": "component",
       "import": "@envsemble/envui/content",
-      "description": "Native Markdown source editing, shared formatting history, and optional preview.",
+      "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLTextAreaElement>",
+          "required": false,
+          "description": "The native text area of the source, so that a form library can register it and focus it."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "''",
+          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the whole source after typing, formatting, undo or redo."
+        },
+        {
+          "name": "toolbar",
+          "type": "readonly MarkdownCommand[] | false",
+          "required": false,
+          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
+        },
+        {
+          "name": "preview",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
+        },
+        {
+          "name": "previewProps",
+          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
+          "required": false,
+          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
+        },
+        {
+          "name": "onRequestLink",
+          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
+          "required": false,
+          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -10021,30 +10143,10 @@
           "description": "Styles of the field's root element, such as its width in a row."
         },
         {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "defaultBuiltIn": true,
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
-        },
-        {
           "name": "className",
           "type": "string",
           "required": false,
           "description": "The field's class, on its root element, beside env-field and env-text-field."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
         },
         {
           "name": "rows",
@@ -10052,12 +10154,6 @@
           "required": false,
           "default": "8",
           "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
         },
         {
           "name": "description",
@@ -10084,30 +10180,12 @@
           "required": false,
           "default": "'fixed'",
           "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
-        },
-        {
-          "name": "preview",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
-        },
-        {
-          "name": "previewProps",
-          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
-          "required": false,
-          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
-        },
-        {
-          "name": "onRequestLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
         }
       ],
       "native": [
         "textarea"
       ],
+      "status": "beta",
       "page": "markdown",
       "doc": "docs/components/markdown.md"
     },
@@ -10126,6 +10204,7 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10198,6 +10277,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10226,6 +10306,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10244,6 +10325,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10321,6 +10403,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10367,6 +10450,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10427,6 +10511,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10496,6 +10581,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10505,6 +10591,7 @@
       "description": "Separates groups of menu items.",
       "props": [],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10591,6 +10678,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10602,6 +10690,7 @@
         "Menubar.Root",
         "Menubar.Menu"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10680,6 +10769,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10718,6 +10808,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10773,6 +10864,7 @@
       "native": [
         "article"
       ],
+      "status": "stable",
       "page": "message",
       "doc": "docs/components/message.md"
     },
@@ -10792,6 +10884,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "message",
       "doc": "docs/components/message.md"
     },
@@ -10842,6 +10935,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "meter",
       "doc": "docs/components/meter.md"
     },
@@ -10854,6 +10948,7 @@
         "NavList.Item",
         "NavList.Group"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10878,6 +10973,7 @@
       "native": [
         "li"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10942,6 +11038,7 @@
         "button",
         "a"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10953,6 +11050,7 @@
       "native": [
         "ul"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -11042,6 +11140,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -11086,6 +11185,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "page",
       "doc": "docs/components/page.md"
     },
@@ -11161,6 +11261,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "page-header",
       "doc": "docs/components/page-header.md"
     },
@@ -11173,6 +11274,7 @@
         "Pager.Previous",
         "Pager.Next"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11210,6 +11312,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11247,6 +11350,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11284,6 +11388,7 @@
       "native": [
         "nav"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11382,146 +11487,23 @@
       "native": [
         "nav"
       ],
+      "status": "stable",
       "page": "pagination",
       "doc": "docs/components/pagination.md"
     },
     "PanelDock": {
-      "kind": "component",
+      "kind": "namespace",
       "import": "@envsemble/envui",
-      "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as chips. A panel's content stays mounted through every change of mode and order.",
-      "props": [
-        {
-          "name": "panels",
-          "type": "readonly T[]",
-          "required": true,
-          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and chips follow in the same order. The application owns them."
-        },
-        {
-          "name": "children",
-          "type": "(panel: T) => ReactNode",
-          "required": true,
-          "description": "Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body. The content mounts once and stays mounted until the panel closes."
-        },
-        {
-          "name": "onModeChange",
-          "type": "(id: string, mode: PanelDockMode) => void",
-          "required": true,
-          "description": "Called with the mode a panel asks for, from its window controls and its chip, and from the dock itself with overflow=\"minimize\"."
-        },
-        {
-          "name": "onClose",
-          "type": "(id: string) => void",
-          "required": true,
-          "description": "Called from a panel's close control and its chip's close button."
-        },
-        {
-          "name": "onActivate",
-          "type": "(id: string) => void",
-          "required": false,
-          "description": "Called when people press or focus inside a panel that is not active, and when its chip brings it back."
-        },
-        {
-          "name": "onHeightChange",
-          "type": "(id: string, height: number) => void",
-          "required": false,
-          "description": "Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there."
-        },
-        {
-          "name": "stackBelow",
-          "type": "string | number",
-          "required": false,
-          "default": "'40rem'",
-          "description": "A width, 40rem by default, or a number of pixels, such as 600 or \"600\": while the dock itself is narrower, one panel at a time fills it and the others wait as chips. The dock then has data-stacked."
-        },
-        {
-          "name": "onStackedChange",
-          "type": "(stacked: boolean) => void",
-          "required": false,
-          "description": "Called with true when the dock stacks and with false when its panels sit side by side."
-        },
-        {
-          "name": "overflow",
-          "type": "'scroll' | 'minimize'",
-          "required": false,
-          "default": "'scroll'",
-          "description": "What the dock does when its open panels cannot all sit side by side at their minimum widths: scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least recently active open panel, one at a time, until the rest fit, and to open it again once the region widens and it fits. It never asks for the active panel, the newest one or the one that holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the row scrolls instead."
-        },
-        {
-          "name": "minimizedLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Hidden panels'",
-          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out."
-        },
-        {
-          "name": "showLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Show and the text, such as Show Budget",
-          "description": "Accessible name of a chip's button that shows its panel, from the chip's text. A function, as each chip names its own panel; PanelDockControls takes plain strings."
-        },
-        {
-          "name": "closeLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Close and the text, such as Close Budget",
-          "description": "Accessible name of a chip's close button, from the chip's text."
-        },
-        {
-          "name": "resizeLabel",
-          "type": "(title: string) => string",
-          "required": false,
-          "default": "Resize and the title, such as Resize Quarterly report",
-          "description": "Accessible name of a panel's resize handle, from its title."
-        }
+      "description": "",
+      "parts": [
+        "PanelDock.Root",
+        "PanelDock.Header"
       ],
-      "native": [
-        "div"
-      ],
+      "status": "stable",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
-    "PanelDockControls": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Minimize, Maximize or Restore, and Close for the panel around it, as small icon buttons with tooltips. A stacked dock already fills the region, so its panels leave out Maximize.",
-      "props": [
-        {
-          "name": "minimizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Minimize'",
-          "description": "Accessible name and tooltip of the control that minimizes the panel to a chip."
-        },
-        {
-          "name": "maximizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Maximize'",
-          "description": "Accessible name and tooltip of the control that maximizes the panel to fill the region."
-        },
-        {
-          "name": "restoreLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Restore'",
-          "description": "Accessible name and tooltip of the same control on a maximized panel, which returns it."
-        },
-        {
-          "name": "closeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Close'",
-          "description": "Accessible name and tooltip of the control that closes the panel."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "page": "panel-dock",
-      "doc": "docs/components/panel-dock.md"
-    },
-    "PanelDockHeader": {
+    "PanelDock.Header": {
       "kind": "component",
       "import": "@envsemble/envui",
       "description": "The header of a docked panel. It sticks to the top of the panel while its content scrolls: the title and its metadata at the start, the application's actions and the window controls at the end, small like a title bar's.",
@@ -11542,13 +11524,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; icon-only text buttons take the window controls' quiet icon color."
+          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; buttons that set no variant take the window controls' ghost one."
         },
         {
           "name": "controls",
-          "type": "ReactNode",
+          "type": "boolean",
           "required": false,
-          "description": "The window controls: PanelDockControls inside a PanelDock by default. null leaves them out, and an element replaces them, such as PanelDockControls with translated labels."
+          "default": "true",
+          "description": "Shows the window controls, Minimize, Maximize or Restore, and Close, inside a PanelDock; false leaves them out. EnvUIProvider's messages.panelDock names them."
         },
         {
           "name": "headingLevel",
@@ -11567,6 +11550,104 @@
       "native": [
         "header"
       ],
+      "status": "stable",
+      "page": "panel-dock",
+      "doc": "docs/components/panel-dock.md"
+    },
+    "PanelDock.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as tabs. A panel's content stays mounted through every change of mode and order.",
+      "props": [
+        {
+          "name": "panels",
+          "type": "readonly T[]",
+          "required": true,
+          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and tabs follow in the same order. The application owns them."
+        },
+        {
+          "name": "children",
+          "type": "(panel: T) => ReactNode",
+          "required": true,
+          "description": "Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body. The content mounts once and stays mounted until the panel closes."
+        },
+        {
+          "name": "onModeChange",
+          "type": "(id: string, mode: PanelDockMode) => void",
+          "required": true,
+          "description": "Called with the mode a panel asks for, from its window controls and its tab, and from the dock itself with overflow=\"minimize\"."
+        },
+        {
+          "name": "onClose",
+          "type": "(id: string) => void",
+          "required": true,
+          "description": "Called from a panel's close control and its tab's close button."
+        },
+        {
+          "name": "onActivate",
+          "type": "(id: string) => void",
+          "required": false,
+          "description": "Called when people press or focus inside a panel that is not active, and when its tab brings it back."
+        },
+        {
+          "name": "onHeightChange",
+          "type": "(id: string, height: number) => void",
+          "required": false,
+          "description": "Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "default": "'40rem'",
+          "description": "A width, 40rem by default, or a number of pixels, such as 600 or \"600\": while the dock itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has data-stacked."
+        },
+        {
+          "name": "onStackedChange",
+          "type": "(stacked: boolean) => void",
+          "required": false,
+          "description": "Called with true when the dock stacks and with false when its panels sit side by side."
+        },
+        {
+          "name": "overflow",
+          "type": "'scroll' | 'minimize'",
+          "required": false,
+          "default": "'scroll'",
+          "description": "What the dock does when its open panels cannot all sit side by side at their minimum widths: scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least recently active open panel, one at a time, until the rest fit, and to open it again once the region widens and it fits. It never asks for the active panel, the newest one or the one that holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the row scrolls instead."
+        },
+        {
+          "name": "minimizedLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Hidden panels', or EnvUIProvider's messages.panelDock.hidden",
+          "description": "Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock leaves out, for this dock only."
+        },
+        {
+          "name": "showLabel",
+          "type": "(label: string) => string",
+          "required": false,
+          "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show",
+          "description": "Accessible name of a tab's button that shows its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
+        },
+        {
+          "name": "closeLabel",
+          "type": "(label: string) => string",
+          "required": false,
+          "default": "Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel",
+          "description": "Accessible name of a tab's close button, from the tab's text, for this dock only."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "(title: string) => string",
+          "required": false,
+          "default": "Resize and the title, such as Resize Quarterly report, or EnvUIProvider's messages.panelDock.resize",
+          "description": "Accessible name of a panel's resize handle, from its title, for this dock only."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "stable",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -11643,6 +11724,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "popover",
       "doc": "docs/components/popover.md"
     },
@@ -11699,6 +11781,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "progress",
       "doc": "docs/components/progress.md"
     },
@@ -11747,6 +11830,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "radio",
       "doc": "docs/components/radio.md"
     },
@@ -11816,6 +11900,7 @@
       "native": [
         "fieldset"
       ],
+      "status": "stable",
       "page": "radio",
       "doc": "docs/components/radio.md"
     },
@@ -11855,6 +11940,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "rating",
       "doc": "docs/components/rating.md"
     },
@@ -11907,6 +11993,7 @@
       "native": [
         "time"
       ],
+      "status": "stable",
       "page": "relative-time",
       "doc": "docs/components/relative-time.md"
     },
@@ -11951,6 +12038,7 @@
       "native": [
         "div"
       ],
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -11960,10 +12048,10 @@
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
-          "name": "hint",
-          "type": "ReactNode",
+          "name": "ref",
+          "type": "Ref<RichTextEditorHandle>",
           "required": false,
-          "description": "Lasting guidance under the editor, such as a format or a limit, linked to it as its description."
+          "description": "Gives the Tiptap editor, as ref.current.editor, for commands."
         },
         {
           "name": "value",
@@ -12064,10 +12152,10 @@
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'plain' | 'quiet'",
+          "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
-          "default": "'outlined'",
-          "description": "The editor's look: outlined, the document in a bordered well on the field background, or plain, without a border or fill. quiet is accepted for the shared field type, but draws as outlined."
+          "default": "'outline'",
+          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -12102,6 +12190,12 @@
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
         },
         {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
           "name": "error",
           "type": "ReactNode",
           "required": false,
@@ -12111,6 +12205,7 @@
       "native": [
         "div"
       ],
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -12217,6 +12312,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -12278,6 +12374,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "search-trigger",
       "doc": "docs/components/search-trigger.md"
     },
@@ -12334,6 +12431,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "segmented-control",
       "doc": "docs/components/segmented-control.md"
     },
@@ -12443,6 +12541,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "select",
       "doc": "docs/components/select.md"
     },
@@ -12475,6 +12574,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "skeleton",
       "doc": "docs/components/skeleton.md"
     },
@@ -12589,6 +12689,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "slider",
       "doc": "docs/components/slider.md"
     },
@@ -12614,6 +12715,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "spinner",
       "doc": "docs/components/spinner.md"
     },
@@ -12626,6 +12728,7 @@
         "SplitPane.Pane",
         "SplitPane.ResizeHandle"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12644,6 +12747,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12663,6 +12767,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12746,6 +12851,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12799,6 +12905,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "stack",
       "doc": "docs/components/stack.md"
     },
@@ -12810,6 +12917,7 @@
         "Stat.Root",
         "Stat.Group"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12836,6 +12944,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12872,6 +12981,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12911,6 +13021,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "surface",
       "doc": "docs/components/surface.md"
     },
@@ -12966,6 +13077,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "switch",
       "doc": "docs/components/switch.md"
     },
@@ -12981,6 +13093,7 @@
         "Table.HeaderCell",
         "Table.Cell"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -12992,6 +13105,7 @@
       "native": [
         "tbody"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13031,6 +13145,7 @@
       "native": [
         "td"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13042,6 +13157,7 @@
       "native": [
         "thead"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13102,6 +13218,7 @@
       "native": [
         "th"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13198,6 +13315,7 @@
       "native": [
         "table"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13223,6 +13341,7 @@
       "native": [
         "tr"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13319,6 +13438,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tabs",
       "doc": "docs/components/tabs.md"
     },
@@ -13448,6 +13568,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -13522,6 +13643,7 @@
       "native": [
         "textarea"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -13654,6 +13776,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -13708,36 +13831,6 @@
       "page": "setup",
       "doc": "docs/setup.md"
     },
-    "TitleBar": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A window title bar without the application shell, for a start page or a simple window of an installed web app or desktop shell that draws its own title bar. It looks like AppShell's title bar: empty space drags the window, it leaves room for the window controls the system draws, and controls inside are small. It is a normal block; WindowFrame puts it above content that scrolls on its own.",
-      "props": [
-        {
-          "name": "start",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline start, such as the application mark and a Menubar."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content centered in the bar, such as the document title."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline end, such as actions; the window controls follow it."
-        }
-      ],
-      "native": [
-        "header"
-      ],
-      "page": "app-shell",
-      "doc": "docs/components/app-shell.md"
-    },
     "Toast": {
       "kind": "namespace",
       "import": "@envsemble/envui",
@@ -13745,6 +13838,7 @@
       "parts": [
         "Toast.Provider"
       ],
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     },
@@ -13775,6 +13869,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     },
@@ -13789,6 +13884,7 @@
         "Toolbar.Button",
         "Toolbar.Link"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13837,6 +13933,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13867,6 +13964,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13897,6 +13995,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13953,6 +14052,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13964,6 +14064,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -14002,6 +14103,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tooltip",
       "doc": "docs/components/tooltip.md"
     },
@@ -14083,36 +14185,89 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tree",
       "doc": "docs/components/tree.md"
     },
     "WindowFrame": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "WindowFrame.Root",
+        "WindowFrame.TitleBar",
+        "WindowFrame.Content"
+      ],
+      "status": "beta",
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.Content": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A window without the application shell, such as a start page: it fills the window with the title bar on top and the content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "description": "The window's content below the title bar, which scrolls on its own. Its ref is the scrolling element, to read and restore scroll positions. Pressing it focuses it, so the keyboard scrolls it.",
       "props": [
-        {
-          "name": "titleBar",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The window's title bar at the top, typically a TitleBar."
-        },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
           "description": "The window's content, which scrolls below the title bar."
-        },
-        {
-          "name": "scrollRef",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The element that scrolls the content, to read and restore scroll positions."
         }
       ],
       "native": [
         "div"
       ],
+      "status": "beta",
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A window without the application shell, such as a start page: it fills the window with its title bar on top and its content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The window's parts: a WindowFrame.TitleBar on top, then WindowFrame.Content."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.TitleBar": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A window title bar, for an installed web app or desktop shell that draws its own title bar: empty space drags the window, it leaves room for the window controls the system draws, and the controls inside are small, with buttons that set no variant ghost. It is a normal block, on its own or at the top of WindowFrame.Root, which scrolls the content below it.",
+      "props": [
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline start, such as the application mark and a Menubar."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content centered in the bar, such as the document title."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline end, such as actions; the window controls follow it."
+        }
+      ],
+      "native": [
+        "header"
+      ],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14129,6 +14284,7 @@
       "import": "@envsemble/envui/diff",
       "description": "How many lines a change adds and removes, as a DiffStat shows them.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -14137,6 +14293,7 @@
       "import": "@envsemble/envui/rich-text",
       "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
       "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -14156,6 +14313,7 @@
       "import": "@envsemble/envui",
       "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
+      "status": "stable",
       "page": "relative-time",
       "doc": "docs/components/relative-time.md"
     },
@@ -14164,6 +14322,7 @@
       "import": "@envsemble/envui",
       "description": "Shell controls for content rendered inside AppShell.",
       "signature": "(): AppShellContextValue",
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14223,6 +14382,7 @@
       "import": "@envsemble/envui",
       "description": "Shows and dismisses notifications through the nearest Toast.Provider: show, dismiss and clear. Throws outside a provider.",
       "signature": "(): ToastManager",
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     }

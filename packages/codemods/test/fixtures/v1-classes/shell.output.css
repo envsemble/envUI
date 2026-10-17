@@ -1,0 +1,17 @@
+.app .env-window-frame-title-bar {
+  --env-window-frame-title-bar-start: 1rem;
+  block-size: var(--env-title-bar-height);
+}
+.env-window-frame-title-bar-center,
+.env-window-frame-title-bar-end {
+  gap: 4px;
+}
+.env-panel-dock-tab > .env-panel-dock-tab-close,
+.env-panel-dock-tab-label {
+  color: inherit;
+}
+.env-code-block-copy-status,
+.env-editor-toolbar,
+.env-editor-status {
+  margin: 0;
+}

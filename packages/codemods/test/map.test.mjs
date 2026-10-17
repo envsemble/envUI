@@ -136,6 +136,28 @@ test('validateMap reports malformed maps', () => {
     }),
     /1\.0 names/,
   );
+  const attributes = (rule, map = {}) =>
+    problems({ ...map, classReports: { 'env-panel-dock': rule } });
+  assert.equal(attributes({ attributes: ['data-chips'], report: 'Use data-tabs.' }), '');
+  for (const bad of [[], 'data-chips', ['[data-chips]']])
+    assert.match(attributes({ attributes: bad, report: 'Use data-tabs.' }), /attribute names/);
+  assert.match(
+    attributes({ attributes: ['data-chips'], within: 'env-x', report: 'Use data-tabs.' }),
+    /without "within"/,
+  );
+  assert.match(
+    attributes(
+      { attributes: ['data-chips'], report: 'Use data-tabs.' },
+      { classes: { 'env-panel-dock': 'env-dock' } },
+    ),
+    /1\.0 name/,
+  );
+  assert.match(problems({ classReports: { '[data-chips]': { report: 'x' } } }), /env- class/);
+  const structure = (each) =>
+    problems({ structure: { x: { Frame: { report: 'Restructure it.', cases: [each] } } } });
+  assert.equal(structure({ has: ['titleBar'], element: 'Frame.Root' }), '');
+  // Any value is `has`, which matchesWhen understands; a "*" in `when` would throw there.
+  assert.match(structure({ when: { titleBar: '*' } }), /when\.titleBar must list literals/);
 });
 
 test('a reported class is kept by the class renames that a shorter entry would make', () => {

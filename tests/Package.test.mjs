@@ -1162,7 +1162,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
   ]);
 });
 
-test('the panel dock renders its panels, chips and header on a server and types its contracts', async function () {
+test('the panel dock renders its panels, tabs and header on a server and types its contracts', async function () {
   const dock = await runConsumer(
     'DockConsumer.mjs',
     `
@@ -1175,9 +1175,9 @@ test('the panel dock renders its panels, chips and header on a server and types 
       { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
     ];
     const html = renderToString(h(ui.Theme, { theme: 'light' },
-      h(ui.PanelDock, { panels, onModeChange() {}, onClose() {} },
+      h(ui.PanelDock.Root, { panels, onModeChange() {}, onClose() {} },
         (panel) => h(Fragment, null,
-          h(ui.PanelDockHeader, { title: panel.title, meta: 'Edited today' }),
+          h(ui.PanelDock.Header, { title: panel.title, meta: 'Edited today' }),
           h('p', null, 'Body of ' + panel.title)))));
     console.log(JSON.stringify({ html }));
   `,
@@ -1189,7 +1189,7 @@ test('the panel dock renders its panels, chips and header on a server and types 
   assert.match(dock.html, /<h2 class="env-panel-dock-title">Notes<\/h2>/);
   for (const name of ['Minimize', 'Maximize', 'Close'])
     assert.match(dock.html, new RegExp(`aria-label="${name}"`));
-  // A minimized panel's content renders too, kept out of sight behind its chip.
+  // A minimized panel's content renders too, kept out of sight behind its tab.
   assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
   assert.match(dock.html, /Body of Budget/);
   assert.match(dock.html, /<ul class="env-panel-dock-strip" aria-label="Hidden panels">/);
@@ -1201,16 +1201,14 @@ test('the panel dock renders its panels, chips and header on a server and types 
   await writeFile(
     join(consumerDirectory, 'DockConsumer.tsx'),
     `
-    import { PanelDock, PanelDockControls, PanelDockHeader, type PanelDockMode, type PanelDockPanel,
-      type PanelDockProps, type PanelDockHeaderProps, type PanelDockControlsProps } from '@envsemble/envui';
+    import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
     type Document = PanelDockPanel & { body: string };
     const documents: Document[] = [
       { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
         maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
     ];
-    const headerProps: PanelDockHeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3 };
-    const controlsProps: PanelDockControlsProps = { minimizeLabel: 'Min', maximizeLabel: 'Max', restoreLabel: 'Back', closeLabel: 'Shut' };
-    const dockProps: Omit<PanelDockProps<Document>, 'children'> = {
+    const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
+    const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {
       panels: documents,
       onModeChange: (id, mode) => { const typed: PanelDockMode = mode; void id; void typed; },
       onClose: (id) => { const typed: string = id; void typed; },
@@ -1225,21 +1223,25 @@ test('the panel dock renders its panels, chips and header on a server and types 
       resizeLabel: (title) => 'Resize ' + title,
     };
     export const dock = (
-      <PanelDock {...dockProps}>
-        {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
-      </PanelDock>
+      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', close: 'Shut' } }}>
+        <PanelDock.Root {...dockProps}>
+          {(panel) => <PanelDock.Header {...headerProps} title={panel.body} controls={false} />}
+        </PanelDock.Root>
+      </EnvUIProvider>
     );
-    // @ts-expect-error A dock names its chips' buttons with showLabel; restoreLabel is PanelDockControls'.
-    const earlierName = <PanelDock {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock>;
-    // @ts-expect-error A dock's chip labels are functions of each chip's text.
-    const plainRestore = <PanelDock {...dockProps} showLabel="Show">{() => null}</PanelDock>;
+    // @ts-expect-error A dock names its tabs' buttons with showLabel; restoreLabel is not a prop.
+    const earlierName = <PanelDock.Root {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error A dock's tab labels are functions of each tab's text.
+    const plainRestore = <PanelDock.Root {...dockProps} showLabel="Show">{() => null}</PanelDock.Root>;
     // @ts-expect-error A dock scrolls or minimizes what does not fit.
-    const unknownOverflow = <PanelDock {...dockProps} overflow="hide">{() => null}</PanelDock>;
+    const unknownOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
     // @ts-expect-error A panel is open, minimized or maximized.
     const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
     // @ts-expect-error A dock asks the application to change modes and close panels.
-    const inertDock = <PanelDock panels={documents}>{() => null}</PanelDock>;
-    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock];
+    const inertDock = <PanelDock.Root panels={documents}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error The window controls are on or off; their names come from the provider's messages.
+    const ownControls = <PanelDock.Header title="Notes" controls={<span />} />;
+    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock, ownControls];
   `,
   );
   await writeFile(

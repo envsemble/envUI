@@ -36,9 +36,11 @@ test('a default that names a private value shows the value, or nothing', () => {
     "'Close {label}', or EnvUIProvider's messages.documentTabs.close",
   );
   assert.equal(props('Rating').formatLabel.default, "'{value} out of {max} stars'");
-  // A default that can't be shown as a value is marked built in rather than left out.
-  assert.equal(props('MarkdownEditor').toolbar.default, undefined);
-  assert.equal(props('MarkdownEditor').toolbar.defaultBuiltIn, true);
+  // A private list reads as the list it holds.
+  assert.equal(
+    props('MarkdownEditor').toolbar.default,
+    "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+  );
   // A default that follows the locale says so in words too.
   assert.equal(
     props('CalendarHeatmap').formatValue.default,

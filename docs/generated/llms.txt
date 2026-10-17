@@ -63,10 +63,10 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [NavList](docs/components/nav-list.md): A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.
 - [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.
-- [AppShell](docs/components/app-shell.md): The frame of a whole application, with a topbar, a collapsible navigation sidebar and the content area, or a window title bar. Also: AppShellSkeleton, useAppShell, TitleBar, WindowFrame.
+- [AppShell](docs/components/app-shell.md): The frame of a whole application, with a topbar, a collapsible navigation sidebar and the content area, or a window title bar. Also: AppShellSkeleton, useAppShell, WindowFrame.
 - [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
 - [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.
-- [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to chips and maximize while their content stays mounted. Also: PanelDockHeader, PanelDockControls.
+- [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
 - [Breadcrumbs](docs/components/breadcrumbs.md): The path from the top level to the current page, with earlier levels as links or buttons.
 - [Pagination](docs/components/pagination.md): The range of items shown with previous and next page buttons, small enough for a toolbar.
 - [AccountMenu](docs/components/account-menu.md): The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.

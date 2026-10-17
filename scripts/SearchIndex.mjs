@@ -163,7 +163,8 @@ export function searchDocuments({ documents, props, tokens }) {
   const setup = documents.find((document) => document.id === 'setup');
   for (const [name, entry] of Object.entries(props.exports)) {
     // A namespace is found as the page of its name, such as Menu; one documented on another page,
-    // such as ListDetail on SplitPane's, as an export that leads to its first part's props.
+    // such as ListDetail on SplitPane's or WindowFrame on AppShell's, as an export that leads to its
+    // first part's props.
     if (entry.kind === 'namespace' && pages.has(name)) continue;
     const home = homes.get(name) ?? setup;
     // Only a page on the template has a Props view with a place for each export and prop; on

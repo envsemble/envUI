@@ -51,7 +51,7 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
-- `v1-structure` rewrites elements whose 1.0 form is another element: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, and SplitView becomes a SplitPane, as [split panes](#split-panes) lists.
+- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, SplitView becomes a SplitPane, as [split panes](#split-panes) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
@@ -274,6 +274,35 @@ Behaviour that changes without a rename: a link card's accessible name is its te
 `size`, `defaultSize`, `minSize` and `maxSize` keep their percentages, now of the split pane's whole width; `onSizeChange` receives `{ committed }` as its second argument; `stackBelow` and `onStackedChange` are unchanged. Change by hand a SplitView that spreads props, which `v1-structure` reports. A list beside its detail that stacked with `onStackedChange` and showed one pane at a time is ListDetail now, with `detailShown`, `onBack` and `backLabel`.
 
 In style sheets, `v1-classes` renames the classes and reports what 1.0 has no counterpart for: `--env-split-view-gutter`, as the handle has a width of its own; `--env-split-view-size`, which was unitless and is `--env-split-pane-size` with its unit now, set from `size`; a pane's `[data-pane]`, as the panes have none; and the root's `[data-resizing]`, as the handle has `data-dragging` while it moves. Stacked panes have a hairline between them rather than the gutter's gap.
+
+### Shell, dock, editors and code
+
+TitleBar and WindowFrame are one namespace, and PanelDock is another; the editors take the field vocabulary. `v1-names` renames the exports, `v1-structure` rewrites WindowFrame's props into its parts, `v1-props` moves the literal props and values, and `v1-classes` renames the classes:
+
+| 0.x                                                                      | 1.0                                                                                                                  |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `<TitleBar start end>`, `TitleBarProps`                                  | `<WindowFrame.TitleBar start end>`, `WindowFrame.TitleBarProps`                                                      |
+| `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<WindowFrame.Root>{bar}<WindowFrame.Content ref={ref}>…</WindowFrame.Content></WindowFrame.Root>`                   |
+| `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                                 |
+| PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                                   |
+| RichTextEditor `hint`                                                    | `description`                                                                                                        |
+| RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                      |
+| `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `env-window-frame-title-bar*`, `--env-window-frame-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name |
+| `env-panel-dock-chip*`                                                   | `env-panel-dock-tab*`                                                                                                |
+| `env-code-copy-status`                                                   | `env-code-block-copy-status`                                                                                         |
+| `env-markdown-toolbar`, `env-markdown-editor-status`                     | `env-editor-toolbar`, `env-editor-status`                                                                            |
+
+Change by hand what the codemods report or can't see:
+
+- **PanelDockControls** is internal. Drop a `controls={<PanelDockControls …/>}`, which `v1-props` reports, and name the window controls through EnvUIProvider's `messages.panelDock` (`minimize`, `maximize`, `restore`, `close`), which also names the list of tabs and a tab's buttons.
+- **A WindowFrame element with spread props**, which `v1-structure` reports: put its title bar first among its children and its content in `WindowFrame.Content`.
+- **Buttons in a title bar or a panel header** that set no variant are ghost, at the small height in a title bar. An icon-only `variant="text"` button there took the quiet icon color from the container and shows the link color now: drop its variant.
+- **`[data-chips]`** on PanelDock's root is `[data-tabs]`, which `v1-classes` reports but doesn't rename.
+- **`env-markdown` on rich text**: RichText's root and RichTextEditor's document no longer carry it; select them by `env-prose`, their shared typography, or by `env-rich-text` and `env-rich-text-document`. Markdown keeps `env-markdown` beside `env-prose`.
+- **RichTextEditor `quiet`**, which drew as outlined, is `ghost` now, the field's quiet look: choose `outline` to keep the border.
+- **A RichTextEditor `variant`** that is an expression, which `v1-props` reports.
+
+Words that were English and fixed are messages now: CodeBlock's and CodeDiff's, Markdown's table and task names, MarkdownEditor's toolbar, tabs, preview and status, RichTextEditor's toolbar, suggestions and status, the editors' commands and link dialog, and PanelDock's window controls. Set them through EnvUIProvider's `messages`; PanelDock's `minimizedLabel`, `showLabel`, `closeLabel` and `resizeLabel` still override its own for one dock. The editors' toolbar buttons show their names in tooltips instead of native titles.
 
 ### useTheme returns the theme, its contrast and its scale
 

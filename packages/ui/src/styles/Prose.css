@@ -1,0 +1,74 @@
+/* Prose: the typography of formatted text, which Markdown, RichText and RichTextEditor's document
+   share through the env-prose class: paragraphs, headings, lists, quotes, tables, images and rules
+   in envUI's type, spaced as a document. */
+.env-prose {
+  min-inline-size: 0;
+  font: var(--env-type-body);
+  color: var(--env-color-fg-default);
+  overflow-wrap: anywhere;
+}
+.env-prose :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table, hr) {
+  margin: 0;
+}
+.env-prose > * + *,
+.env-prose :where(blockquote, li) > * + * {
+  margin-block-start: var(--env-space-4);
+}
+.env-prose > :where(h1, h2, h3, h4, h5, h6):not(:first-child) {
+  margin-block-start: var(--env-space-6);
+}
+.env-prose h1 {
+  font: var(--env-type-h1);
+}
+.env-prose :where(h2, h3, h4, h5, h6) {
+  font: var(--env-type-h2);
+}
+.env-prose p {
+  font: var(--env-type-body);
+}
+.env-prose strong {
+  font-weight: 500;
+}
+.env-prose :where(ul, ol) {
+  padding-inline-start: var(--env-space-5);
+}
+.env-prose li + li {
+  margin-block-start: var(--env-space-2);
+}
+.env-prose li > :where(ul, ol) {
+  margin-block-start: var(--env-space-2);
+}
+.env-prose blockquote {
+  padding-inline-start: var(--env-space-4);
+  border-inline-start: 0.125rem solid var(--env-color-border-muted);
+  color: var(--env-color-fg-muted);
+}
+.env-prose img {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+.env-prose hr {
+  border: 0;
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
+}
+.env-prose table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font: var(--env-type-body-small);
+  text-align: start;
+}
+/* Words in a cell break only where they would overflow it, so a column keeps room for its longest
+   word; inline code there does the same through its hook. */
+.env-prose :where(th, td) {
+  --env-code-overflow-wrap: break-word;
+  padding: var(--env-space-3) var(--env-space-4);
+  border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  overflow-wrap: break-word;
+}
+.env-prose th {
+  font-weight: 500;
+}
+.env-prose .footnotes {
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-muted);
+}

@@ -26,12 +26,12 @@
   "components/rich-text/overview": {
     "dark": {
       "target-size": {
-        "article :: div.env-markdown.env-rich-text-document input": 2
+        "article :: input.env-checkbox-input": 2
       }
     },
     "light": {
       "target-size": {
-        "article :: div.env-markdown.env-rich-text-document input": 2
+        "article :: input.env-checkbox-input": 2
       }
     }
   },

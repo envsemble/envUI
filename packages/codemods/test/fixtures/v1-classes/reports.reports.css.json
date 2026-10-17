@@ -2,5 +2,7 @@
   "line 2: .env-document-tabs-close inside .env-document-tabs-tab matches nothing in 1.0: the close button sits beside the tab, in .env-document-tabs-item, which takes the hover and data-active: write .env-document-tabs-item:hover .env-document-tabs-close.",
   "line 3: .env-document-tabs-close inside .env-document-tabs-tab matches nothing in 1.0: the close button sits beside the tab, in .env-document-tabs-item, which takes the hover and data-active: write .env-document-tabs-item:hover .env-document-tabs-close.",
   "line 9: env-organization-menu-radio has no 1.0 class: OrganizationSwitcher marks the current organization with Menu's check now: style .env-menu-item-check for the radio and .env-menu-item-check-mark for its dot.",
-  "line 10: env-organization-menu-radio-dot has no 1.0 class: OrganizationSwitcher marks the current organization with Menu's check now: style .env-menu-item-check for the radio and .env-menu-item-check-mark for its dot."
+  "line 10: env-organization-menu-radio-dot has no 1.0 class: OrganizationSwitcher marks the current organization with Menu's check now: style .env-menu-item-check for the radio and .env-menu-item-check-mark for its dot.",
+  "line 13: .env-panel-dock[data-chips] matches nothing in 1.0: PanelDock's root marks its list of tabs with data-tabs now: write .env-panel-dock[data-tabs].",
+  "line 14: .env-panel-dock[data-chips] matches nothing in 1.0: PanelDock's root marks its list of tabs with data-tabs now: write .env-panel-dock[data-tabs]."
 ]

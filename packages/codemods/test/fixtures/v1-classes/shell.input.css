@@ -1,0 +1,17 @@
+.app .env-title-bar {
+  --env-title-bar-start: 1rem;
+  block-size: var(--env-title-bar-height);
+}
+.env-title-bar-center,
+.env-title-bar-end {
+  gap: 4px;
+}
+.env-panel-dock-chip > .env-panel-dock-chip-close,
+.env-panel-dock-chip-label {
+  color: inherit;
+}
+.env-code-copy-status,
+.env-markdown-toolbar,
+.env-markdown-editor-status {
+  margin: 0;
+}

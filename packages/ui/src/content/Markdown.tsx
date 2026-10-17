@@ -12,6 +12,11 @@ import {
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import {
+  markdown as markdownMessages,
+  type MarkdownMessages,
+} from '../foundations/messages/markdown.js';
 import { Checkbox } from '../forms/Checkbox.js';
 import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
@@ -54,11 +59,11 @@ const textOf = (node: HastNode): string =>
 
 /**
  * Names each table's scrolling region after the table: its caption, or the heading it follows, as
- * "Keyboard table", numbered when a heading has several. Regions need names of their own, which
- * one shared name such as "Table" is not.
+ * "Keyboard table" (messages.tableNamed), else "Table" (messages.table), numbered where several
+ * take one name. Regions need names of their own, which one shared name such as "Table" is not.
  */
-function rehypeTableNames() {
-  return (tree: HastNode) => {
+function rehypeTableNames(messages: MarkdownMessages) {
+  return () => (tree: HastNode) => {
     let heading = '';
     const counts = new Map<string, number>();
     const visit = (node: HastNode) => {
@@ -68,9 +73,11 @@ function rehypeTableNames() {
       }
       if (node.type === 'element' && node.tagName === 'table') {
         const caption = node.children?.find((child) => child.tagName === 'caption');
-        // Localisation (the strings provider, Phase 3): "table" and "Table" here and in the region's
-        // fallback label below are English; they move to the provider with envUI's other strings.
-        const base = caption ? textOf(caption).trim() : heading ? `${heading} table` : 'Table';
+        const base = caption
+          ? textOf(caption).trim()
+          : heading
+            ? messages.tableNamed({ name: heading })
+            : messages.table;
         const count = (counts.get(base) ?? 0) + 1;
         counts.set(base, count);
         node.properties = {
@@ -135,7 +142,10 @@ type TableProps = ComponentPropsWithoutRef<'table'> & {
   'data-env-table-name'?: unknown;
 };
 
-/** CommonMark prose with tables, task lists and other extensions, in envUI typography and code. */
+/**
+ * CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The
+ * names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.
+ */
 export function Markdown({
   children,
   headingOffset = 0,
@@ -147,6 +157,7 @@ export function Markdown({
   className,
   ...props
 }: MarkdownProps) {
+  const messages = useMessages('markdown', markdownMessages);
   const components = useMemo<Components>(() => {
     const headings: Components = {};
     for (const level of [1, 2, 3, 4, 5, 6] as const) {
@@ -187,7 +198,7 @@ export function Markdown({
           className="env-markdown-table"
           tabIndex={0}
           role="region"
-          aria-label={typeof name === 'string' ? name : 'Table'}
+          aria-label={typeof name === 'string' ? name : messages.table}
         >
           <table {...tableProps} />
         </div>
@@ -196,27 +207,27 @@ export function Markdown({
         <Checkbox
           checked={Boolean(checked)}
           disabled
-          aria-label={checked ? 'Completed task' : 'Incomplete task'}
+          aria-label={checked ? messages.taskDone : messages.taskOpen}
         />
       ),
       img: ({ node: _node, src, ...imageProps }) =>
         src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
     };
-  }, [headingOffset, renderLink, codeCopyable]);
+  }, [headingOffset, renderLink, codeCopyable, messages]);
   const mergedComponents = useMemo(
     () => (componentOverrides ? { ...components, ...componentOverrides } : components),
     [components, componentOverrides],
   );
   const mergedRehypePlugins = useMemo(
-    () => [rehypeTableNames, ...(rehypePlugins ?? [])],
-    [rehypePlugins],
+    () => [rehypeTableNames(messages), ...(rehypePlugins ?? [])],
+    [rehypePlugins, messages],
   );
   const mergedRemarkPlugins = useMemo(
     () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
     [remarkPlugins],
   );
   return (
-    <div {...props} className={classNames('env-markdown', className)}>
+    <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
       <ReactMarkdown
         remarkPlugins={mergedRemarkPlugins}
         rehypePlugins={mergedRehypePlugins}

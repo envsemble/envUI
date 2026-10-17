@@ -24,7 +24,7 @@ function Ladder() {
       <div data-layer="popup-positioner" className="env-popup-positioner" />
       <div data-layer="menu-positioner" className="env-menu-positioner" />
       <div data-layer="tooltip-positioner" className="env-tooltip-positioner" />
-      <div data-layer="rich-text-suggestions" className="env-rich-text-suggestions" />
+      <div data-layer="rich-text-suggestions" className="env-rich-text-suggestions-positioner" />
       <div data-layer="toast-viewport" className="env-toast-viewport">
         <div data-layer="toast-leaving" className="env-toast" data-leaving="" />
       </div>

@@ -369,11 +369,23 @@ export function callTool(context, name, args = {}) {
 const normalizeName = (name) => String(name).toLowerCase();
 
 /** An export's props, signature or parts, as get_props returns them. */
-function propsOf({ name, kind, import: from, description, props, native, signature, parts }) {
+function propsOf({
+  name,
+  kind,
+  import: from,
+  status,
+  description,
+  props,
+  native,
+  signature,
+  parts,
+}) {
   return {
     name,
     kind,
     import: from,
+    // A beta export on a stable page, such as MarkdownEditor, says so where its props are read.
+    ...(status && { status }),
     description,
     ...(props && { props }),
     ...(native?.length && {

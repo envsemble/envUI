@@ -99,8 +99,8 @@ test('every layer takes its z-index from a stacking token, in the order it had',
     'toast-viewport': '120',
     'tooltip-positioner': '130',
   });
-  // Suggestions are a popup at the popover level. Their 100 never applied: the element is static
-  // inside the wrapper the editor positions, so the level is the only change.
+  // Suggestions are a popup at the popover level, on the positioner the editor places beside the
+  // caret. Their 100 never applied, as it was on a static element inside the positioner.
   expect(computed['rich-text-suggestions']).toBe('110');
 });
 

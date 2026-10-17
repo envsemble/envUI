@@ -1340,7 +1340,7 @@
     "CodeBlock": {
       "kind": "component",
       "source": "packages/ui/src/content/CodeBlock.tsx",
-      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string.",
+      "description": "Source display in the code theme of the app theme, with that code theme's own colors; copy always uses the original string. Its words come from EnvUIProvider's messages.codeBlock.",
       "props": [
         {
           "name": "children",
@@ -4105,7 +4105,7 @@
     "Markdown": {
       "kind": "component",
       "source": "packages/ui/src/content/Markdown.tsx",
-      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code.",
+      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.",
       "props": [
         {
           "name": "children",
@@ -4162,8 +4162,59 @@
     "MarkdownEditor": {
       "kind": "component",
       "source": "packages/ui/src/forms/MarkdownEditor.tsx",
-      "description": "Native Markdown source editing, shared formatting history, and optional preview.",
+      "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLTextAreaElement>",
+          "required": false,
+          "description": "The native text area of the source, so that a form library can register it and focus it."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "''",
+          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the whole source after typing, formatting, undo or redo."
+        },
+        {
+          "name": "toolbar",
+          "type": "readonly MarkdownCommand[] | false",
+          "required": false,
+          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
+        },
+        {
+          "name": "preview",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
+        },
+        {
+          "name": "previewProps",
+          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
+          "required": false,
+          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
+        },
+        {
+          "name": "onRequestLink",
+          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
+          "required": false,
+          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -4177,30 +4228,10 @@
           "description": "Styles of the field's root element, such as its width in a row."
         },
         {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "defaultBuiltIn": true,
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
-        },
-        {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
-        },
-        {
           "name": "className",
           "type": "string",
           "required": false,
           "description": "The field's class, on its root element, beside env-field and env-text-field."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
         },
         {
           "name": "rows",
@@ -4208,12 +4239,6 @@
           "required": false,
           "default": "8",
           "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
         },
         {
           "name": "description",
@@ -4240,25 +4265,6 @@
           "required": false,
           "default": "'fixed'",
           "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
-        },
-        {
-          "name": "preview",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
-        },
-        {
-          "name": "previewProps",
-          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
-          "required": false,
-          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
-        },
-        {
-          "name": "onRequestLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
         }
       ],
       "native": [
@@ -5571,146 +5577,20 @@
       ]
     },
     "PanelDock": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/PanelDock.tsx",
-      "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as chips. A panel's content stays mounted through every change of mode and order.",
-      "props": [
-        {
-          "name": "panels",
-          "type": "readonly T[]",
-          "required": true,
-          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and chips follow in the same order. The application owns them."
-        },
-        {
-          "name": "children",
-          "type": "(panel: T) => ReactNode",
-          "required": true,
-          "description": "Renders a panel's content from its panel, such as a PanelDockHeader above the panel's body. The content mounts once and stays mounted until the panel closes."
-        },
-        {
-          "name": "onModeChange",
-          "type": "(id: string, mode: PanelDockMode) => void",
-          "required": true,
-          "description": "Called with the mode a panel asks for, from its window controls and its chip, and from the dock itself with overflow=\"minimize\"."
-        },
-        {
-          "name": "onClose",
-          "type": "(id: string) => void",
-          "required": true,
-          "description": "Called from a panel's close control and its chip's close button."
-        },
-        {
-          "name": "onActivate",
-          "type": "(id: string) => void",
-          "required": false,
-          "description": "Called when people press or focus inside a panel that is not active, and when its chip brings it back."
-        },
-        {
-          "name": "onHeightChange",
-          "type": "(id: string, height: number) => void",
-          "required": false,
-          "description": "Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there."
-        },
-        {
-          "name": "stackBelow",
-          "type": "string | number",
-          "required": false,
-          "default": "'40rem'",
-          "description": "A width, 40rem by default, or a number of pixels, such as 600 or \"600\": while the dock itself is narrower, one panel at a time fills it and the others wait as chips. The dock then has data-stacked."
-        },
-        {
-          "name": "onStackedChange",
-          "type": "(stacked: boolean) => void",
-          "required": false,
-          "description": "Called with true when the dock stacks and with false when its panels sit side by side."
-        },
-        {
-          "name": "overflow",
-          "type": "'scroll' | 'minimize'",
-          "required": false,
-          "default": "'scroll'",
-          "description": "What the dock does when its open panels cannot all sit side by side at their minimum widths: scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least recently active open panel, one at a time, until the rest fit, and to open it again once the region widens and it fits. It never asks for the active panel, the newest one or the one that holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the row scrolls instead."
-        },
-        {
-          "name": "minimizedLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Hidden panels'",
-          "description": "Accessible name of the list of chips, which holds minimized panels and the panels a stacked dock leaves out."
-        },
-        {
-          "name": "showLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Show and the text, such as Show Budget",
-          "description": "Accessible name of a chip's button that shows its panel, from the chip's text. A function, as each chip names its own panel; PanelDockControls takes plain strings."
-        },
-        {
-          "name": "closeLabel",
-          "type": "(label: string) => string",
-          "required": false,
-          "default": "Close and the text, such as Close Budget",
-          "description": "Accessible name of a chip's close button, from the chip's text."
-        },
-        {
-          "name": "resizeLabel",
-          "type": "(title: string) => string",
-          "required": false,
-          "default": "Resize and the title, such as Resize Quarterly report",
-          "description": "Accessible name of a panel's resize handle, from its title."
-        }
-      ],
-      "native": [
-        "div"
+      "kind": "namespace",
+      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "description": "",
+      "parts": [
+        "PanelDock.Root",
+        "PanelDock.Header"
       ],
       "entries": [
         "@envsemble/envui"
       ]
     },
-    "PanelDockControls": {
+    "PanelDock.Header": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/PanelDockHeader.tsx",
-      "description": "Minimize, Maximize or Restore, and Close for the panel around it, as small icon buttons with tooltips. A stacked dock already fills the region, so its panels leave out Maximize.",
-      "props": [
-        {
-          "name": "minimizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Minimize'",
-          "description": "Accessible name and tooltip of the control that minimizes the panel to a chip."
-        },
-        {
-          "name": "maximizeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Maximize'",
-          "description": "Accessible name and tooltip of the control that maximizes the panel to fill the region."
-        },
-        {
-          "name": "restoreLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Restore'",
-          "description": "Accessible name and tooltip of the same control on a maximized panel, which returns it."
-        },
-        {
-          "name": "closeLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Close'",
-          "description": "Accessible name and tooltip of the control that closes the panel."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "PanelDockHeader": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/PanelDockHeader.tsx",
+      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
       "description": "The header of a docked panel. It sticks to the top of the panel while its content scrolls: the title and its metadata at the start, the application's actions and the window controls at the end, small like a title bar's.",
       "props": [
         {
@@ -5729,13 +5609,14 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; icon-only text buttons take the window controls' quiet icon color."
+          "description": "The application's own actions, before the window controls, such as an Edit IconButton and a Menu of more; buttons that set no variant take the window controls' ghost one."
         },
         {
           "name": "controls",
-          "type": "ReactNode",
+          "type": "boolean",
           "required": false,
-          "description": "The window controls: PanelDockControls inside a PanelDock by default. null leaves them out, and an element replaces them, such as PanelDockControls with translated labels."
+          "default": "true",
+          "description": "Shows the window controls, Minimize, Maximize or Restore, and Close, inside a PanelDock; false leaves them out. EnvUIProvider's messages.panelDock names them."
         },
         {
           "name": "headingLevel",
@@ -5753,6 +5634,103 @@
       ],
       "native": [
         "header"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "PanelDock.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/panel-dock/PanelDock.tsx",
+      "description": "Panels docked to the bottom inline-end edge of a region, beside the page, for items people work on alongside it, such as drafts and conversations: open panels side by side, one maximized panel filling the region, and minimized panels as tabs. A panel's content stays mounted through every change of mode and order.",
+      "props": [
+        {
+          "name": "panels",
+          "type": "readonly T[]",
+          "required": true,
+          "description": "The panels in order, each a PanelDockPanel: open panels sit side by side, the newest at the end, and tabs follow in the same order. The application owns them."
+        },
+        {
+          "name": "children",
+          "type": "(panel: T) => ReactNode",
+          "required": true,
+          "description": "Renders a panel's content from its panel, such as a PanelDock.Header above the panel's body. The content mounts once and stays mounted until the panel closes."
+        },
+        {
+          "name": "onModeChange",
+          "type": "(id: string, mode: PanelDockMode) => void",
+          "required": true,
+          "description": "Called with the mode a panel asks for, from its window controls and its tab, and from the dock itself with overflow=\"minimize\"."
+        },
+        {
+          "name": "onClose",
+          "type": "(id: string) => void",
+          "required": true,
+          "description": "Called from a panel's close control and its tab's close button."
+        },
+        {
+          "name": "onActivate",
+          "type": "(id: string) => void",
+          "required": false,
+          "description": "Called when people press or focus inside a panel that is not active, and when its tab brings it back."
+        },
+        {
+          "name": "onHeightChange",
+          "type": "(id: string, height: number) => void",
+          "required": false,
+          "description": "Called with a panel's new height in pixels when a drag on its top edge ends, and on each key press there."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "default": "'40rem'",
+          "description": "A width, 40rem by default, or a number of pixels, such as 600 or \"600\": while the dock itself is narrower, one panel at a time fills it and the others wait as tabs. The dock then has data-stacked."
+        },
+        {
+          "name": "onStackedChange",
+          "type": "(stacked: boolean) => void",
+          "required": false,
+          "description": "Called with true when the dock stacks and with false when its panels sit side by side."
+        },
+        {
+          "name": "overflow",
+          "type": "'scroll' | 'minimize'",
+          "required": false,
+          "default": "'scroll'",
+          "description": "What the dock does when its open panels cannot all sit side by side at their minimum widths: scroll (default) scrolls the row sideways; minimize asks onModeChange to minimize the least recently active open panel, one at a time, until the rest fit, and to open it again once the region widens and it fits. It never asks for the active panel, the newest one or the one that holds focus, so never for a panel alone in the row, and where those cannot fit by themselves the row scrolls instead."
+        },
+        {
+          "name": "minimizedLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Hidden panels', or EnvUIProvider's messages.panelDock.hidden",
+          "description": "Accessible name of the list of tabs, which holds minimized panels and the panels a stacked dock leaves out, for this dock only."
+        },
+        {
+          "name": "showLabel",
+          "type": "(label: string) => string",
+          "required": false,
+          "default": "Show and the text, such as Show Budget, or EnvUIProvider's messages.panelDock.show",
+          "description": "Accessible name of a tab's button that shows its panel, from the tab's text, for this dock only. A function, as each tab names its own panel."
+        },
+        {
+          "name": "closeLabel",
+          "type": "(label: string) => string",
+          "required": false,
+          "default": "Close and the text, such as Close Budget, or EnvUIProvider's messages.panelDock.closePanel",
+          "description": "Accessible name of a tab's close button, from the tab's text, for this dock only."
+        },
+        {
+          "name": "resizeLabel",
+          "type": "(title: string) => string",
+          "required": false,
+          "default": "Resize and the title, such as Resize Quarterly report, or EnvUIProvider's messages.panelDock.resize",
+          "description": "Accessible name of a panel's resize handle, from its title, for this dock only."
+        }
+      ],
+      "native": [
+        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6155,10 +6133,10 @@
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
-          "name": "hint",
-          "type": "ReactNode",
+          "name": "ref",
+          "type": "Ref<RichTextEditorHandle>",
           "required": false,
-          "description": "Lasting guidance under the editor, such as a format or a limit, linked to it as its description."
+          "description": "Gives the Tiptap editor, as ref.current.editor, for commands."
         },
         {
           "name": "value",
@@ -6259,10 +6237,10 @@
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'plain' | 'quiet'",
+          "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
-          "default": "'outlined'",
-          "description": "The editor's look: outlined, the document in a bordered well on the field background, or plain, without a border or fill. quiet is accepted for the shared field type, but draws as outlined."
+          "default": "'outline'",
+          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -6295,6 +6273,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
@@ -7925,37 +7909,6 @@
         "@envsemble/envui"
       ]
     },
-    "TitleBar": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/TitleBar.tsx",
-      "description": "A window title bar without the application shell, for a start page or a simple window of an installed web app or desktop shell that draws its own title bar. It looks like AppShell's title bar: empty space drags the window, it leaves room for the window controls the system draws, and controls inside are small. It is a normal block; WindowFrame puts it above content that scrolls on its own.",
-      "props": [
-        {
-          "name": "start",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline start, such as the application mark and a Menubar."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content centered in the bar, such as the document title."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline end, such as actions; the window controls follow it."
-        }
-      ],
-      "native": [
-        "header"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Toast": {
       "kind": "namespace",
       "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
@@ -8315,31 +8268,82 @@
       ]
     },
     "WindowFrame": {
+      "kind": "namespace",
+      "source": "packages/ui/src/navigation/WindowFrame.tsx",
+      "description": "",
+      "parts": [
+        "WindowFrame.Root",
+        "WindowFrame.TitleBar",
+        "WindowFrame.Content"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "WindowFrame.Content": {
       "kind": "component",
       "source": "packages/ui/src/navigation/WindowFrame.tsx",
-      "description": "A window without the application shell, such as a start page: it fills the window with the title bar on top and the content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "description": "The window's content below the title bar, which scrolls on its own. Its ref is the scrolling element, to read and restore scroll positions. Pressing it focuses it, so the keyboard scrolls it.",
       "props": [
-        {
-          "name": "titleBar",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The window's title bar at the top, typically a TitleBar."
-        },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
           "description": "The window's content, which scrolls below the title bar."
-        },
-        {
-          "name": "scrollRef",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The element that scrolls the content, to read and restore scroll positions."
         }
       ],
       "native": [
         "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "WindowFrame.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/WindowFrame.tsx",
+      "description": "A window without the application shell, such as a start page: it fills the window with its title bar on top and its content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The window's parts: a WindowFrame.TitleBar on top, then WindowFrame.Content."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "WindowFrame.TitleBar": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/WindowFrame.tsx",
+      "description": "A window title bar, for an installed web app or desktop shell that draws its own title bar: empty space drags the window, it leaves room for the window controls the system draws, and the controls inside are small, with buttons that set no variant ghost. It is a normal block, on its own or at the top of WindowFrame.Root, which scrolls the content below it.",
+      "props": [
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline start, such as the application mark and a Menubar."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content centered in the bar, such as the document title."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline end, such as actions; the window controls follow it."
+        }
+      ],
+      "native": [
+        "header"
       ],
       "entries": [
         "@envsemble/envui"

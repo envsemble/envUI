@@ -590,7 +590,7 @@ export function AppShell({
         data-topbar={full ? 'full' : undefined}
         data-title-bar={titleBar ? '' : undefined}
       >
-        <header className={classNames('env-app-topbar', titleBar && 'env-title-bar')}>
+        <header className={classNames('env-app-topbar', titleBar && 'env-window-frame-title-bar')}>
           {/* The split topbar's context area sits above the sidebar and belongs to its region; in a
               full topbar only the toggle does. */}
           <div
@@ -788,7 +788,7 @@ export function AppShellSkeleton({
         data-topbar={topbar === 'full' ? 'full' : undefined}
         data-title-bar={titleBar ? '' : undefined}
       >
-        <div className={classNames('env-app-topbar', titleBar && 'env-title-bar')}>
+        <div className={classNames('env-app-topbar', titleBar && 'env-window-frame-title-bar')}>
           <div className="env-app-topbar-context">
             <span className="env-app-sidebar-toggle">
               <span className="env-app-brand">{brand}</span>

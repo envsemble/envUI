@@ -1,11 +1,20 @@
 'use client';
 
-import { forwardRef, useEffect, useId, useImperativeHandle, useState } from 'react';
+import {
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type Ref,
+} from 'react';
 import { ReactRenderer } from '@tiptap/react';
-import type { SuggestionOptions, SuggestionProps } from '@tiptap/suggestion';
+import { exitSuggestion, type SuggestionOptions, type SuggestionProps } from '@tiptap/suggestion';
 import { PluginKey } from '@tiptap/pm/state';
-import { Button } from '../actions/Button.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { richText as richTextMessages } from '../foundations/messages/richText.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { Listbox } from '../internal/Listbox.js';
+import { useActiveDescendant } from '../internal/useRovingFocus.js';
 import type { RichTextReference, RichTextReferenceSource } from './Types.js';
 
 interface SuggestionItem {
@@ -15,21 +24,60 @@ interface SuggestionItem {
 interface MenuHandle {
   onKeyDown: (event: KeyboardEvent) => boolean;
 }
-const SuggestionMenu = forwardRef<
-  MenuHandle,
-  SuggestionProps<SuggestionItem> & { label: string; error: string }
->(function SuggestionMenu({ items, command, loading, label, error, editor }, ref) {
-  const theme = useTheme();
-  const [selected, setSelected] = useState(0);
+
+type MenuProps = SuggestionProps<SuggestionItem> & {
+  /** The list's name, such as People; the provider's Suggestions where the source names none. */
+  label: string | undefined;
+  /** Whether the source's items failed to load. */
+  failed: boolean;
+  pluginKey: PluginKey;
+  ref?: Ref<MenuHandle>;
+};
+
+/** Each option's key: its place in the list, since sources may repeat an identity. */
+const keyOf = (items: readonly SuggestionItem[]) => (item: SuggestionItem) =>
+  String(items.indexOf(item));
+
+/**
+ * The suggestions of a trigger, such as @: a listbox beside the caret whose options the editor's
+ * arrow keys move through and Enter picks, while focus stays in the document. It closes as focus
+ * leaves the editor, also with Tab. Its words come from EnvUIProvider's messages.richText.
+ */
+function SuggestionMenu({
+  items,
+  command,
+  loading,
+  label,
+  failed,
+  editor,
+  pluginKey,
+  ref,
+}: MenuProps) {
+  const messages = useMessages('richText', richTextMessages);
+  const getKey = keyOf(items);
+  // New items start at the first, in the render that shows them, so a key pressed as they arrive
+  // moves from there.
+  const [active, setActive] = useState({ items, key: items.length ? '0' : null });
+  if (active.items !== items) setActive({ items, key: items.length ? '0' : null });
+  const activeKey = active.items === items ? active.key : items.length ? '0' : null;
+  const setActiveKey = (key: string) => setActive({ items, key });
+  const listbox = useActiveDescendant({
+    items,
+    getKey,
+    activeKey,
+    onActiveKeyChange: setActiveKey,
+    onSelect: (item) => command(item),
+    loop: true,
+  });
+  const input = listbox.getInputProps();
   const id = useId();
-  useEffect(() => setSelected(0), [items]);
+  const activeDescendant = loading ? undefined : input['aria-activedescendant'];
   useEffect(() => {
     const element = editor.view.dom;
     element.setAttribute('aria-controls', id);
     element.setAttribute('aria-expanded', 'true');
     element.setAttribute('aria-autocomplete', 'list');
-    if (items[selected] && !loading)
-      element.setAttribute('aria-activedescendant', `${id}-${selected}`);
+    if (activeDescendant) element.setAttribute('aria-activedescendant', activeDescendant);
     else element.removeAttribute('aria-activedescendant');
     return () => {
       for (const name of [
@@ -40,65 +88,54 @@ const SuggestionMenu = forwardRef<
       ])
         element.removeAttribute(name);
     };
-  }, [id, selected, items, loading, editor]);
+  }, [id, activeDescendant, editor]);
   useImperativeHandle(
     ref,
     () => ({
       onKeyDown(event) {
         if (event.isComposing || event.keyCode === 229) return false;
-        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-          if (items.length)
-            setSelected(
-              (index) =>
-                (index + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length,
-            );
-          return true;
+        // Tab leaves the editor, and the list closes as focus goes.
+        if (event.key === 'Tab') {
+          exitSuggestion(editor.view, pluginKey);
+          return false;
         }
+        // Enter always belongs to the list while it shows, also while it loads.
         if (event.key === 'Enter') {
-          if (!loading && items[selected]) command(items[selected]);
+          if (!loading) input.onKeyDown(event as unknown as ReactKeyboardEvent<HTMLElement>);
           return true;
         }
-        return false;
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return false;
+        input.onKeyDown(event as unknown as ReactKeyboardEvent<HTMLElement>);
+        return true;
       },
     }),
-    [items, selected, loading, command],
+    [input, loading, editor, pluginKey],
   );
+  const empty = loading
+    ? messages.suggestionsLoading
+    : failed
+      ? messages.suggestionsFailed
+      : messages.suggestionsEmpty;
   return (
-    <Theme {...theme}>
-      <div
-        className="env-rich-text-suggestions"
-        id={id}
-        role="listbox"
-        aria-label={label}
-        aria-busy={loading}
-      >
-        {loading ? (
-          <div role="status">Loading suggestions…</div>
-        ) : error ? (
-          <div role="status">{error}</div>
-        ) : !items.length ? (
-          <div role="status">No results</div>
-        ) : (
-          items.map((item, index) => (
-            <Button
-              key={item.id}
-              role="option"
-              id={`${id}-${index}`}
-              aria-selected={index === selected}
-              variant="secondary"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => command(item)}
-            >
-              {item.label}
-            </Button>
-          ))
-        )}
-      </div>
-    </Theme>
+    <Listbox
+      id={id}
+      className="env-rich-text-suggestions"
+      aria-label={label ?? messages.suggestions}
+      aria-busy={loading}
+      items={loading || failed ? [] : items}
+      getKey={getKey}
+      getOptionProps={listbox.getOptionProps}
+      renderItem={(item) => ({ label: item.label })}
+      empty={empty}
+    />
   );
-});
+}
 
-/** Tiptap owns query matching, async cancellation/staleness, mounting, and Floating UI. */
+/**
+ * Suggestions for a trigger. Tiptap owns query matching, asynchronous cancellation and staleness,
+ * and positioning; the list mounts inside the editor's root, beside the caret and above what the
+ * editor sits in, such as a Dialog, and closes as focus leaves the editor.
+ */
 export function createSuggestionOptions<I extends SuggestionItem>(source: {
   char: string;
   label?: string;
@@ -107,42 +144,57 @@ export function createSuggestionOptions<I extends SuggestionItem>(source: {
   allowSpaces?: boolean;
   items: NonNullable<SuggestionOptions<I>['items']>;
 }): Omit<SuggestionOptions<I>, 'editor'> {
-  let error = '';
+  let failed = false;
+  const pluginKey = new PluginKey(`env-rich-text-${source.char}`);
   return {
     char: source.char,
-    pluginKey: new PluginKey(`env-rich-text-${source.char}`),
+    pluginKey,
     minQueryLength: source.minQueryLength,
     debounce: source.debounce,
     allowSpaces: source.allowSpaces,
+    // Fixed, so that a scrolling container around the editor doesn't clip the list.
+    floatingUi: { strategy: 'fixed' },
     items: async (request) => {
-      error = '';
+      failed = false;
       try {
         return await source.items(request);
       } catch {
-        if (!request.signal.aborted) error = 'Suggestions could not load. Try typing again.';
+        if (!request.signal.aborted) failed = true;
         return [];
       }
     },
     render: () => {
-      let component: ReactRenderer<MenuHandle> | null = null;
+      let component: ReactRenderer<MenuHandle, MenuProps> | null = null;
       let unmount: (() => void) | undefined;
-      const menuProps = (props: SuggestionProps<I>) => ({
-        ...props,
-        label: source.label ?? 'Suggestions',
-        error: props.loading ? '' : error,
+      const menuProps = (props: SuggestionProps<I>): MenuProps => ({
+        ...(props as unknown as SuggestionProps<SuggestionItem>),
+        label: source.label,
+        failed: props.loading ? false : failed,
+        pluginKey,
       });
       return {
         onStart: (props) => {
           component = new ReactRenderer(SuggestionMenu, {
             editor: props.editor,
             props: menuProps(props),
+            className: 'env-rich-text-suggestions-positioner',
           });
-          unmount = props.mount(component.element as HTMLElement);
+          // Inside the editor's root, so it shares the editor's theme and layer, also in a Dialog,
+          // which treats a press on it as one inside.
+          const element = component.element as HTMLElement;
+          const host = props.editor.view.dom.closest('.env-rich-text-editor');
+          (host ?? props.editor.view.dom.ownerDocument.body).append(element);
+          const release = props.mount(element);
+          unmount = () => {
+            release();
+            element.remove();
+          };
         },
         onUpdate: (props) => component?.updateProps(menuProps(props)),
         onKeyDown: ({ event }) => component?.ref?.onKeyDown(event) ?? false,
         onExit: () => {
           unmount?.();
+          unmount = undefined;
           component?.destroy();
           component = null;
         },

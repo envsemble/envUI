@@ -22,7 +22,9 @@
   background: var(--env-code-background);
   color: var(--env-code-foreground);
   font: 0.9em/1.4 var(--env-code-font-family);
-  overflow-wrap: anywhere;
+  /* A container where a column should keep room for its longest word, such as a table cell, sets
+     --env-code-overflow-wrap to break-word. */
+  overflow-wrap: var(--env-code-overflow-wrap, anywhere);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -74,7 +76,7 @@
   overflow-wrap: anywhere;
   font: var(--env-type-body-small);
 }
-.env-code-copy-status {
+.env-code-block-copy-status {
   position: absolute;
   inline-size: 0.0625rem;
   block-size: 0.0625rem;

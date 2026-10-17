@@ -11,14 +11,18 @@ interface PreviewSnapshot extends PreviewOptions {
   content: ReactNode;
 }
 
-/** Defer the first preview, then retain its mounted state without parsing inactive edits. */
+/**
+ * Defer the first preview, then retain its mounted state without parsing inactive edits. An empty
+ * source shows `empty`, such as Nothing to preview.
+ */
 export function MarkdownPreview({
   active,
   source,
   headingOffset,
   renderLink,
   codeCopyable,
-}: PreviewOptions & { active: boolean; source: string }) {
+  empty,
+}: PreviewOptions & { active: boolean; source: string; empty: string }) {
   const [snapshot, setSnapshot] = useState<PreviewSnapshot | null>(null);
   if (
     active &&
@@ -40,7 +44,7 @@ export function MarkdownPreview({
           {source}
         </Markdown>
       ) : (
-        <Text emphasis="muted">Nothing to preview.</Text>
+        <Text emphasis="muted">{empty}</Text>
       ),
     });
   }

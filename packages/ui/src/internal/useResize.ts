@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useEffect,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -40,7 +41,10 @@ export interface ResizeOptions {
   onChange: (value: number, details: { committed: boolean }) => void;
   /** The size as words, such as 240 pixels or Narrow, for assistive technology. */
   valueText?: (value: number) => string;
-  /** Leaves the size as it is and takes the handle out of the tab order. */
+  /**
+   * Leaves the size as it is and takes the handle out of the tab order; a drag in progress ends
+   * without a change, as when the handle goes while it is dragged.
+   */
   disabled?: boolean;
 }
 
@@ -60,6 +64,7 @@ export interface ResizeHandleProps {
   onPointerMove(event: ReactPointerEvent<HTMLElement>): void;
   onPointerUp(event: ReactPointerEvent<HTMLElement>): void;
   onPointerCancel(event: ReactPointerEvent<HTMLElement>): void;
+  onLostPointerCapture(event: ReactPointerEvent<HTMLElement>): void;
   onKeyDown(event: ReactKeyboardEvent<HTMLElement>): void;
 }
 
@@ -95,6 +100,12 @@ export function useResize({
   const provided = useEnvUI().dir;
   const drag = useRef<Drag | null>(null);
   const [dragging, setDragging] = useState(false);
+  // A handle disabled or taken away while dragged ends the drag there, without a new size.
+  useEffect(() => {
+    if (!disabled || !drag.current) return;
+    drag.current = null;
+    setDragging(false);
+  }, [disabled]);
 
   /** +1 where the size grows toward the end of the axis on screen, -1 where toward its start. */
   const sign = (element: Element) => {
@@ -108,13 +119,19 @@ export function useResize({
     axis === 'inline' ? event.clientX : event.clientY;
 
   const onPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
-    if (disabled || event.button !== 0) return;
+    if (disabled || event.button !== 0 || !event.isPrimary) return;
     // Dragging selects no text and leaves focus where it is.
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     const parent = event.currentTarget.parentElement;
     const extent = parent ? (axis === 'inline' ? parent.clientWidth : parent.clientHeight) : 0;
-    const perPixel = unit === '%' ? (extent > 0 ? 100 / extent : 0) : 1;
+    // Pointer movement is in screen pixels; a scaled ancestor, as in a zoomed preview, draws the
+    // layout smaller or larger than it is.
+    const box = parent?.getBoundingClientRect();
+    const drawn = box ? (axis === 'inline' ? box.width : box.height) : 0;
+    const laid = parent ? (axis === 'inline' ? parent.offsetWidth : parent.offsetHeight) : 0;
+    const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
+    const perPixel = (unit === '%' ? (extent > 0 ? 100 / extent : 0) : 1) * layoutPerScreen;
     drag.current = {
       pointerId: event.pointerId,
       start: position(event),
@@ -126,7 +143,9 @@ export function useResize({
   const onPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
     const current = drag.current;
     if (!current || current.pointerId !== event.pointerId) return;
-    change(current.startValue + (position(event) - current.start) * current.scale, false);
+    // A button released outside the window can arrive as a move without it.
+    if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) end(event);
+    else change(current.startValue + (position(event) - current.start) * current.scale, false);
   };
   const end = (event: ReactPointerEvent<HTMLElement>) => {
     const current = drag.current;
@@ -135,13 +154,15 @@ export function useResize({
     setDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
-    // A cancelled drag, such as one the browser took over for scrolling, returns to where it began.
-    if (event.type === 'pointercancel') change(current.startValue, true);
+    // A cancelled drag, such as one the browser took over for scrolling, or one whose pointer the
+    // handle lost, returns to where it began.
+    if (event.type === 'pointercancel' || event.type === 'lostpointercapture')
+      change(current.startValue, true);
     else change(current.startValue + (position(event) - current.start) * current.scale, true);
   };
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
-    if (disabled) return;
+    if (disabled || event.altKey || event.ctrlKey || event.metaKey) return;
     const amount = event.shiftKey ? largeStep : step;
     const direction = sign(event.currentTarget);
     const forward = axis === 'inline' ? 'ArrowRight' : 'ArrowDown';
@@ -176,6 +197,7 @@ export function useResize({
       onPointerMove,
       onPointerUp: end,
       onPointerCancel: end,
+      onLostPointerCapture: end,
       onKeyDown,
     },
   };

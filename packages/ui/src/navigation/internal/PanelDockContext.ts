@@ -21,5 +21,5 @@ export interface PanelDockPanelContextValue {
   scrolled: boolean;
 }
 
-/** Set around each panel's content, so PanelDockHeader and PanelDockControls act on that panel. */
+/** Set around each panel's content, so PanelDock.Header and its window controls act on that panel. */
 export const PanelDockPanelContext = createContext<PanelDockPanelContextValue | null>(null);

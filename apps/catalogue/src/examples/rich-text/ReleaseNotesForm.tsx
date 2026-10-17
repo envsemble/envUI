@@ -17,7 +17,7 @@ export default function ReleaseNotesForm() {
       <RichTextEditor
         name="notes"
         label="Release notes"
-        hint="Shown to everyone in the workspace."
+        description="Shown to everyone in the workspace."
         error={error}
         placeholder="What changed in this release?"
         toolbar={['heading', 'bold', 'italic', 'bullet-list', 'link']}

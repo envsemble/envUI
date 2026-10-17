@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Stack, Theme } from '@envsemble/envui';
+import { Button, Dialog, EnvUIProvider, Stack, Theme } from '@envsemble/envui';
 import {
   RichText,
   RichTextEditor,
@@ -244,6 +244,7 @@ export function RichTextEditingFixture() {
           <output data-testid="rich-text-upload-source">{uploadSource}</output>
         </div>
       )}
+      {includes('field') && <FieldStates />}
       {includes('themed') && (
         <Theme theme={scopedTheme} data-testid="rich-text-themed">
           <RichTextEditor
@@ -282,5 +283,56 @@ export function RichTextEditingFixture() {
         </Theme>
       )}
     </Stack>
+  );
+}
+
+/** A controlled document with a reference and a task, which the application replaces. */
+const controlledWithViews = [
+  '[reference id="person-2" label="Second%20person" mentionSuggestionChar="%40"] owns it.',
+  '',
+  '- [ ] Check the totals',
+].join('\n');
+
+/**
+ * The editor as a field: its variants, an error, a disabled editor, suggestions inside a Dialog,
+ * a controlled editor whose content the application replaces, and the provider's words, mounted
+ * with ?fixture=field.
+ */
+function FieldStates() {
+  const [open, setOpen] = useState(false);
+  const [document, setDocument] = useState(controlledWithViews);
+  return (
+    <div data-testid="rich-text-field">
+      <RichTextEditor label="Ghost notes" variant="ghost" toolbar={false} defaultValue="Ghost" />
+      <RichTextEditor label="Underlined notes" variant="underline" toolbar={false} />
+      <RichTextEditor
+        label="Invalid notes"
+        toolbar={false}
+        description="Say what changed."
+        error="Write at least a sentence."
+      />
+      <RichTextEditor label="Disabled notes" disabled defaultValue="Locked" />
+      <Button onClick={() => setOpen(true)}>Open notes dialog</Button>
+      <Dialog title="Notes dialog" open={open} onOpenChange={setOpen}>
+        <RichTextEditor label="Dialog notes" references={references} toolbar={false} />
+      </Dialog>
+      <RichTextEditor
+        label="Controlled notes"
+        value={document}
+        onValueChange={setDocument}
+        references={references}
+      />
+      <Button onClick={() => setDocument(`${controlledWithViews}\n- [x] Send it`)}>
+        Replace controlled notes
+      </Button>
+      <EnvUIProvider
+        messages={{
+          richText: { toolbar: 'Formatierung', task: 'Aufgabe' },
+          editor: { bold: 'Fett', undo: 'Rückgängig' },
+        }}
+      >
+        <RichTextEditor label="German notes" defaultValue="- [ ] " />
+      </EnvUIProvider>
+    </div>
   );
 }

@@ -492,7 +492,9 @@ function validateStructureCase(at, each) {
   const problems = [];
   for (const [prop, values] of entriesOf(each.when))
     if (!Array.isArray(values) || !values.every((value) => value === null || propValue(value)))
-      problems.push(`${at}.when.${prop} must list literals, or null for a missing prop.`);
+      problems.push(
+        `${at}.when.${prop} must list literals, or null for a missing prop; "has" matches any value.`,
+      );
   if (each.element !== undefined && !isComponentName(each.element))
     problems.push(`${at}: "element" must be a component name.`);
   for (const [prop, operation] of entriesOf(each.props))
@@ -532,6 +534,18 @@ function validateStructureCase(at, each) {
       if (!propName.test(prop) || !propValue(value))
         problems.push(`${at}.wrap.props: ${prop} must be a prop with a literal.`);
   }
+  if (each.wrapChildren !== undefined) {
+    if (!isObject(each.wrapChildren) || !isComponentName(each.wrapChildren.element))
+      problems.push(`${at}.wrapChildren needs an "element".`);
+    for (const [prop, to] of Object.entries(each.wrapChildren?.props ?? {}))
+      if (!propName.test(prop) || (to !== null && (typeof to !== 'string' || !propName.test(to))))
+        problems.push(`${at}.wrapChildren.props: ${prop} must map to a prop name or null.`);
+  }
+  if (
+    each.lift !== undefined &&
+    (!Array.isArray(each.lift) || !each.lift.every((prop) => propName.test(prop)))
+  )
+    problems.push(`${at}.lift must list prop names.`);
   for (const [child, childRule] of entriesOf(each.children)) {
     if (!isObject(childRule)) {
       problems.push(`${at}.children.${child} must be an object.`);

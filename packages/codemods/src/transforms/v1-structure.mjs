@@ -8,8 +8,9 @@
 //   doesn't set, and `[null]` alone skips an element that sets it, whatever its value. Any other
 //   prop of `when` whose value is an expression can't be matched, so the element stays as it is
 //   and the entry's `report` is reported.
-// - `has`: props the element must set, whatever their values, such as SplitView's `start` and
-//   `end`; an element without one of them is no case's.
+// - `has`: props the element must set, whatever their values, an expression included, such as
+//   SplitView's `start` and `end` or WindowFrame's `titleBar`; an element without one of them is no
+//   case's.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
@@ -24,7 +25,13 @@
 //   become two SplitPane.Panes, with its `resizeLabel` the label of a SplitPane.ResizeHandle
 //   between them. An element with children of its own stays as it is, with the entry's `report`.
 // - `wrap`: an element the result is wrapped in, with its props.
+// - `wrapChildren`: an element the element's children move into, with `props` naming the props
+//   that move from the element onto it, each under its new name (null keeps the name).
+// - `lift`: props whose values become the element's first children, in order, such as a title
+//   bar passed as an element: an element stays an element, and another value an expression. Unlike
+//   `content`, it keeps the element's own children after them.
 // - `report`: a note reported at every element the case rewrites.
+// A dotted `element`, such as `WindowFrame.Content`, is a part of a namespace the entry exports.
 // An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
 // can be chosen for it: it stays as it is and the entry's `report` is reported. So does a child
 // that spreads props where a case would add some, since it may already set them.
@@ -132,22 +139,26 @@ export default function transform(file, api, options = {}) {
     return index === -1 ? undefined : attributes.splice(index, 1)[0];
   }
 
-  /** The children an attribute's value makes: an element as it is, anything else in braces. */
+  /**
+   * An attribute's value as children: an element as it is, anything else in braces, and nothing for
+   * an empty `{}`. `lift` uses it as it is; `content` first turns a bare prop and plain words into
+   * children of their own.
+   */
+  function valueChildren(value) {
+    const expression = value.type === 'JSXExpressionContainer' ? value.expression : value;
+    if (expression.type === 'JSXEmptyExpression') return [];
+    if (expression.type === 'JSXElement' || expression.type === 'JSXFragment') return [expression];
+    return [value.type === 'JSXExpressionContainer' ? value : j.jsxExpressionContainer(value)];
+  }
+
+  /** The children a `content` item makes from an attribute: as valueChildren, words as text. */
   function childrenOf(attribute) {
     const { value } = attribute;
     if (value == null) return [j.jsxExpressionContainer(j.booleanLiteral(true))];
-    if (value.type === 'JSXElement' || value.type === 'JSXFragment') return [value];
-    if (value.type === 'JSXExpressionContainer') {
-      const { expression } = value;
-      if (expression.type === 'JSXEmptyExpression') return [];
-      if (expression.type === 'JSXElement' || expression.type === 'JSXFragment')
-        return [expression];
-      return [value];
-    }
     // Plain words stay text; anything JSX would read otherwise stays a string in braces.
     if (typeof value.value === 'string' && plainText.test(value.value))
       return [j.jsxText(value.value)];
-    return [j.jsxExpressionContainer(value)];
+    return valueChildren(value);
   }
 
   /** The elements a case's `content` makes from the element's props, which it takes off. */
@@ -322,6 +333,46 @@ export default function transform(file, api, options = {}) {
       for (const [prop, value] of Object.entries(childRule.add ?? {}))
         if (!hasAttribute(childAttributes, prop))
           childAttributes.push(jsxAttribute(j, prop, value));
+    }
+
+    if (chosen.wrapChildren || chosen.lift) {
+      const { node } = path;
+      const content = (node.children ?? []).filter(
+        (child) => !(child.type === 'JSXText' && child.value.trim() === ''),
+      );
+      let children = content.length > 0 ? node.children : [];
+      if (chosen.wrapChildren) {
+        const moved = [];
+        for (const [prop, to] of Object.entries(chosen.wrapChildren.props ?? {})) {
+          const attribute = take(attributes, prop);
+          if (!attribute) continue;
+          if (to) attribute.name = j.jsxIdentifier(to);
+          moved.push(attribute);
+        }
+        const wrapName = nameFor(component, chosen.wrapChildren.element);
+        const empty = children.length === 0;
+        children = [
+          j.jsxElement(
+            j.jsxOpeningElement(jsxName(j, wrapName), moved, empty),
+            empty ? null : j.jsxClosingElement(jsxName(j, wrapName)),
+            children,
+          ),
+        ];
+      }
+      const lifted = [];
+      for (const prop of chosen.lift ?? []) {
+        const value = take(attributes, prop)?.value;
+        if (value) lifted.push(...valueChildren(value));
+      }
+      const parts = [
+        ...lifted,
+        ...children.filter((child) => child.type !== 'JSXText' || child.value.trim() !== ''),
+      ];
+      node.children = parts.flatMap((part) => [j.jsxText('\n'), part]).concat(j.jsxText('\n'));
+      if (node.openingElement.selfClosing) {
+        node.openingElement.selfClosing = false;
+        node.closingElement = j.jsxClosingElement(node.openingElement.name);
+      }
     }
 
     if (chosen.element) {

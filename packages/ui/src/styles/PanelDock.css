@@ -1,12 +1,12 @@
 /* Panels docked to the bottom inline-end edge of a region, beside the page: open panels side by side
-   in a row, one maximized panel filling the region behind them, and minimized panels as chips in a
+   in a row, one maximized panel filling the region behind them, and minimized panels as tabs in a
    strip along the bottom. The dock fills its positioned container
    and lets presses through around its panels. State attributes come from PanelDock. */
 .env-panel-dock {
   --env-panel-dock-gap: var(--env-space-2);
   /* Room around the row and the strip for the panels' shadows. */
   --env-panel-dock-gutter: var(--env-space-5);
-  --env-panel-dock-chip-height: var(--env-control-height-sm);
+  --env-panel-dock-tab-height: var(--env-control-height-sm);
   /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
   --env-panel-dock-control: var(--env-control-height-sm);
   --env-panel-dock-strip-size: 0rem;
@@ -22,10 +22,10 @@
   overflow: clip;
   pointer-events: none;
 }
-.env-panel-dock[data-chips] {
-  --env-panel-dock-strip-size: calc(var(--env-panel-dock-chip-height) + var(--env-space-2));
+.env-panel-dock[data-tabs] {
+  --env-panel-dock-strip-size: calc(var(--env-panel-dock-tab-height) + var(--env-space-2));
 }
-/* While a panel fills the region, the dock covers what lies beneath it, also around the chips. */
+/* While a panel fills the region, the dock covers what lies beneath it, also around the tabs. */
 .env-panel-dock[data-filled] {
   background: var(--env-color-bg-page);
   pointer-events: auto;
@@ -98,7 +98,7 @@
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-/* A maximized panel, or the one panel a stacked dock shows, fills the region above the chips,
+/* A maximized panel, or the one panel a stacked dock shows, fills the region above the tabs,
    behind the open panels. */
 .env-panel-dock-panel[data-placement='fill'] {
   position: absolute;
@@ -123,9 +123,9 @@
   opacity: 0;
   pointer-events: none;
 }
-/* The content scrolls within the panel; a PanelDockHeader sticks to its top. Scroll padding as tall
-   as the header, which measures itself, and a little more for focus rings, brings a control that
-   takes focus out from beneath it (WCAG 2.4.11). */
+/* The content scrolls within the panel; a PanelDock.Header sticks to its top. Scroll padding as
+   tall as the header, which measures itself, and a little more for focus rings, brings a control
+   that takes focus out from beneath it (WCAG 2.4.11). */
 .env-panel-dock-content {
   flex: 1 1 auto;
   min-block-size: 0;
@@ -191,10 +191,6 @@
    title, rather than squeezing it. Rows stack upward, so content below the title, such as Tabs,
    comes first. */
 .env-panel-dock-header {
-  /* Icon-only text buttons take the quiet icon color, like the window controls, darkening to the
-     text color on hover and press. */
-  --env-button-text-icon-color: var(--env-color-fg-muted);
-  --env-button-text-icon-color-active: var(--env-color-fg-default);
   --env-control-height: var(--env-control-height-sm);
   position: sticky;
   inset-block-start: 0;
@@ -255,9 +251,9 @@
   box-shadow: 0 0.0625rem 0 var(--env-color-border-muted);
 }
 
-/* Minimized panels wait as chips along the bottom, at the inline end: a button that brings the
+/* Minimized panels wait as tabs along the bottom, at the inline end: a button that brings the
    panel back and a close button. The strip scrolls sideways with the wheel, touch and the keyboard;
-   a scrollbar would cover the chips. */
+   a scrollbar would cover the tabs. */
 .env-panel-dock-strip {
   position: relative;
   z-index: calc(var(--env-z-raised) + 2);
@@ -276,10 +272,10 @@
 .env-panel-dock-strip::-webkit-scrollbar {
   display: none;
 }
-.env-panel-dock-chip {
+.env-panel-dock-tab {
   flex: 0 0 auto;
   max-inline-size: 14rem;
-  block-size: var(--env-panel-dock-chip-height);
+  block-size: var(--env-panel-dock-tab-height);
   display: flex;
   align-items: center;
   border: 0.0625rem solid var(--env-elevation-2-border);
@@ -292,7 +288,7 @@
   font: var(--env-type-body-small);
   pointer-events: auto;
 }
-.env-panel-dock-chip-restore {
+.env-panel-dock-tab-restore {
   flex: 1 1 auto;
   align-self: stretch;
   min-inline-size: 0;
@@ -312,60 +308,41 @@
   outline: none;
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-panel-dock-chip-restore:hover {
+.env-panel-dock-tab-restore:hover {
   background: var(--env-color-bg-neutral-subtle-hover);
 }
-.env-panel-dock-chip-restore:active {
+.env-panel-dock-tab-restore:active {
   background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-panel-dock-chip .env-icon {
+.env-panel-dock-tab .env-icon {
   inline-size: var(--env-control-icon-size);
   block-size: var(--env-control-icon-size);
   color: var(--env-color-fg-muted);
 }
-.env-panel-dock-chip-label {
+.env-panel-dock-tab-label {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 /* The attention dot, such as for unsaved changes, follows the label. */
-.env-panel-dock-chip-attention {
+.env-panel-dock-tab-attention {
   flex: 0 0 auto;
   inline-size: 0.5rem;
   block-size: 0.5rem;
   border-radius: 50%;
   background: var(--env-color-fg-accent);
 }
-.env-panel-dock-chip-close {
-  flex: 0 0 auto;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
+/* The close button, a CloseButton, is a small circle beside the restore button; under a coarse
+   pointer it takes the touch size, as every button does. */
+.env-panel-dock-tab-close {
+  --env-control-height: 1.5rem;
   margin-inline: 0.125rem var(--env-space-1);
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--env-color-fg-muted);
-  cursor: pointer;
-  outline: none;
-  transition:
-    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
-    color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-panel-dock-chip-close:hover {
-  background: var(--env-color-bg-neutral-subtle-hover);
-  color: var(--env-color-fg-default);
-}
-.env-panel-dock-chip-close:active {
-  background: var(--env-color-bg-neutral-subtle-pressed);
-}
-.env-panel-dock-chip-close .env-icon {
+.env-panel-dock-tab-close .env-icon {
   color: inherit;
 }
-.env-panel-dock-chip-restore:focus-visible,
-.env-panel-dock-chip-close:focus-visible {
+.env-panel-dock-tab-restore:focus-visible,
+.env-panel-dock-tab-close:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
@@ -382,10 +359,10 @@
 }
 
 @media (pointer: coarse) {
-  /* Chips are rows of the strip, which grow to the touch height. */
+  /* Tabs are rows of the strip, which grow to the touch height. */
   .env-panel-dock {
-    /* A chip holds its buttons at the touch height inside its top hairline. */
-    --env-panel-dock-chip-height: calc(
+    /* A tab holds its buttons at the touch height inside its top hairline. */
+    --env-panel-dock-tab-height: calc(
       max(var(--env-control-height-sm), var(--env-control-height-touch)) +
         var(--env-control-border-width)
     );
@@ -401,28 +378,25 @@
     inset-block-start: 0.875rem;
     opacity: 1;
   }
-  .env-panel-dock-chip-close {
-    inline-size: var(--env-control-height-touch);
-    block-size: var(--env-control-height-touch);
+  .env-panel-dock-tab-close {
     margin-inline: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .env-panel-dock-header,
   .env-panel-dock-resize::after,
-  .env-panel-dock-chip-restore,
-  .env-panel-dock-chip-close {
+  .env-panel-dock-tab-restore {
     transition: none;
   }
 }
 
-/* Motion: docked panels and their chips fade in where they show; a panel that comes to fill the
+/* Motion: docked panels and their tabs fade in where they show; a panel that comes to fill the
    region fades in afresh, also from the row. Without a reduced-motion preference panels rise from
-   the bottom edge into the row, a panel grows into the region it fills, and chips rise into their
+   the bottom edge into the row, a panel grows into the region it fills, and tabs rise into their
    strip. PanelDock marks an entrance with data-entering until it ends, so a reorder, which moves
    the elements, does not play it again. */
 .env-panel-dock-panel[data-entering][data-placement='row'],
-.env-panel-dock-chip[data-entering] {
+.env-panel-dock-tab[data-entering] {
   animation: env-motion-fade-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
 }
 .env-panel-dock-panel[data-entering][data-placement='fill'] {
@@ -435,8 +409,8 @@
   .env-panel-dock-panel[data-entering][data-placement='fill'] {
     animation: env-panel-dock-grow var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
-  .env-panel-dock-chip[data-entering] {
-    animation: env-panel-dock-chip-rise var(--env-motion-duration-medium)
+  .env-panel-dock-tab[data-entering] {
+    animation: env-panel-dock-tab-rise var(--env-motion-duration-medium)
       var(--env-motion-ease-enter);
   }
 }
@@ -457,7 +431,7 @@
     transform: scale(0.98);
   }
 }
-@keyframes env-panel-dock-chip-rise {
+@keyframes env-panel-dock-tab-rise {
   from {
     opacity: 0;
     transform: translateY(0.75rem);

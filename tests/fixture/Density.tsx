@@ -15,7 +15,6 @@ import {
   NavList,
   Pagination,
   PanelDock,
-  PanelDockHeader,
   SearchField,
   SegmentedControl,
   Select,
@@ -518,23 +517,23 @@ const tightLayouts = [
 function DockedPanel() {
   return (
     <div className="density-dock-frame">
-      <PanelDock
+      <PanelDock.Root
         panels={[{ id: 'report', title: 'Quarterly report', mode: 'open', active: true }]}
         onModeChange={() => {}}
         onClose={() => {}}
       >
         {(panel) => (
-          <PanelDockHeader
+          <PanelDock.Header
             title={panel.title}
             actions={
               <>
-                <IconButton variant="text" icon={<Edit />} aria-label="Edit the report" />
-                <IconButton variant="text" icon={<MoreVert />} aria-label="More actions" />
+                <IconButton icon={<Edit />} aria-label="Edit the report" />
+                <IconButton icon={<MoreVert />} aria-label="More actions" />
               </>
             }
           />
         )}
-      </PanelDock>
+      </PanelDock.Root>
     </div>
   );
 }
