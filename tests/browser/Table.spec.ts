@@ -230,6 +230,27 @@ test('columns resize the other way in a right-to-left table', async ({ page }) =
   expect(header.width / tableWidth).toBeCloseTo(0.5, 2);
 });
 
+test('links in a selected row are underlined, so color is not all that tells them from its text', async ({
+  page,
+}) => {
+  for (const theme of themes) {
+    const [selected, other] = await page
+      .getByRole('table', { name: `Selected links ${theme}` })
+      .getByRole('row')
+      .all();
+    const decoration = (row: Locator, name: string) =>
+      row
+        .getByRole('link', { name, exact: true })
+        .evaluate((link) => getComputedStyle(link).textDecorationLine);
+    expect(await decoration(selected!, 'Plain link')).toBe('underline');
+    expect(await decoration(selected!, 'Text button link')).toBe('underline');
+    // A link styled as a button keeps its look, and rows that aren't selected are unchanged.
+    expect(await decoration(selected!, 'Button link')).toBe('none');
+    expect(await decoration(other!, 'Plain link')).toBe('none');
+    expect(await decoration(other!, 'Text button link')).toBe('none');
+  }
+});
+
 test('selected rows report aria-selected and take the selection colors in both themes', async ({
   page,
 }) => {
