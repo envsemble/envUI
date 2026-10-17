@@ -19,7 +19,7 @@ export default function TrendTones() {
         label="Monthly cost"
         value="€4,120"
         trend={{ direction: 'up', label: '+3% from last month', tone: 'warning' }}
-        detail="Of a €4,500 budget"
+        description="Of a €4,500 budget"
       />
     </Stat.Group>
   );

@@ -8,7 +8,7 @@ const people = [
   { name: 'Jordan Ellis' },
   { name: 'Taylor Kim' },
 ];
-const sizes = ['small', 'standard', 'large', 'display'] as const;
+const sizes = ['sm', 'md', 'lg', 'xl'] as const;
 
 /** Groups in each size, and on a card, where the ring takes the card's fill. */
 export default function Groups() {

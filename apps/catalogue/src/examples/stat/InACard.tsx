@@ -8,7 +8,7 @@ export default function InACard() {
         label="Open invoices"
         value="€12,800"
         trend={{ direction: 'down', label: '3 fewer than last month', tone: 'success' }}
-        detail="Due within 30 days"
+        description="Due within 30 days"
       />
     </Card>
   );

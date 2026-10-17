@@ -7,7 +7,7 @@ export default function PersonWithName() {
   return (
     <div style={person}>
       {/* The name is written beside it, so the avatar stays decorative. */}
-      <Avatar name="Alex Morgan" size="large" />
+      <Avatar name="Alex Morgan" size="lg" />
       <div>
         <Text>Alex Morgan</Text>
         <Text variant="body-sm">alex.morgan@example.com</Text>

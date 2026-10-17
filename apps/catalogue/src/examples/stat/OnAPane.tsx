@@ -9,8 +9,8 @@ export default function OnAPane() {
         Design review
       </Text>
       {/* On a pane, the row tone sets the group apart; the heading names it. */}
-      <Stat.Group tone="row" padding={4} aria-labelledby={headingId}>
-        <Stat.Root label="Comments" value="24" detail="From 6 people" />
+      <Stat.Group background="muted" padding={4} aria-labelledby={headingId}>
+        <Stat.Root label="Comments" value="24" description="From 6 people" />
         <Stat.Root label="Resolved" value="18" trend={{ direction: 'up', label: '+5 today' }} />
       </Stat.Group>
     </Surface>

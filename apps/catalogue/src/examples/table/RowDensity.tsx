@@ -27,7 +27,7 @@ export default function RowDensity() {
           size="sm"
           value={density}
           onValueChange={(value) => setDensity(densities.find((each) => each === value) ?? 'md')}
-          options={densities.map((value) => ({ value, label: value.toUpperCase() }))}
+          items={densities.map((value) => ({ value, label: value.toUpperCase() }))}
         />
       </Stack>
       <Table.Root aria-label="Reports" density={density}>

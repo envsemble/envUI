@@ -22,7 +22,6 @@ import { FormatLineSpacing } from '@envsemble/envui/icons/FormatLineSpacing';
 import { FormatSize } from '@envsemble/envui/icons/FormatSize';
 import { HourglassEmpty } from '@envsemble/envui/icons/HourglassEmpty';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Label } from '@envsemble/envui/icons/Label';
 import { Notes } from '@envsemble/envui/icons/Notes';
 import { Notifications } from '@envsemble/envui/icons/Notifications';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
@@ -116,7 +115,6 @@ const referenceIcons: Record<string, typeof Palette> = {
   markdown: Article,
   'rich-text': Article,
   code: Code,
-  chips: Label,
   disclosure: Notes,
   'empty-state': Inbox,
   spinner: HourglassEmpty,

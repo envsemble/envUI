@@ -30,7 +30,7 @@ export default function LoadThenShow() {
     <Stack gap={4}>
       <SegmentedControl
         aria-label="Project"
-        options={options}
+        items={options}
         value={chosen}
         onValueChange={choose}
       />

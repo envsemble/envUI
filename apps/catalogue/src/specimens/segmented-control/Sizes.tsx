@@ -24,7 +24,7 @@ export default function Sizes() {
             aria-label="Work items"
             value="open"
             onValueChange={ignore}
-            options={options}
+            items={options}
           />
         </Specimen>
         <Specimen title="Compact, with icons">
@@ -33,7 +33,7 @@ export default function Sizes() {
             size="sm"
             value="board"
             onValueChange={ignore}
-            options={layouts}
+            items={layouts}
           />
         </Specimen>
         <Specimen title="A disabled option">
@@ -41,7 +41,7 @@ export default function Sizes() {
             aria-label="Period"
             value="week"
             onValueChange={ignore}
-            options={[
+            items={[
               { value: 'day', label: 'Day' },
               { value: 'week', label: 'Week' },
               { value: 'quarter', label: 'Quarter', disabled: true },
@@ -53,7 +53,7 @@ export default function Sizes() {
             aria-label="Work items, unavailable"
             value="blocked"
             onValueChange={ignore}
-            options={options}
+            items={options}
             disabled
           />
         </Specimen>
@@ -63,7 +63,7 @@ export default function Sizes() {
             aria-label="Scope"
             value="team"
             onValueChange={ignore}
-            options={[
+            items={[
               { value: 'mine', label: 'Mine', count: 4 },
               { value: 'team', label: 'Team', count: 12 },
               { value: 'all', label: 'All' },

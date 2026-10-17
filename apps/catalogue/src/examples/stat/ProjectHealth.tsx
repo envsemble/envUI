@@ -11,7 +11,7 @@ export default function ProjectHealth() {
           label="Active projects"
           value={<AnimatedNumber value={projects} />}
           trend={{ direction: 'up', label: '+12% from last month' }}
-          detail="Last 30 days"
+          description="Last 30 days"
         />
         <Stat.Root
           label="Tasks done"
@@ -22,7 +22,7 @@ export default function ProjectHealth() {
           label="Lead time"
           value="2.5 days"
           trend={{ direction: 'flat', label: 'No change' }}
-          detail="Median"
+          description="Median"
         />
       </Stat.Group>
       <Stack direction="row" wrap align="center" gap={4}>

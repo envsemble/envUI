@@ -21,7 +21,7 @@ export function CompositionPreview() {
           Wrap public primitives for product content. Keep data, routing and validation in the
           application.
         </Text>
-        <Card as="article">
+        <Card render={<article />}>
           <Text render={<h3 />} variant="title">
             Sample project
           </Text>

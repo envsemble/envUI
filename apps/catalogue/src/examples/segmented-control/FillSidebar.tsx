@@ -11,7 +11,7 @@ export default function FillSidebar() {
         aria-label="Tasks"
         value={scope}
         onValueChange={setScope}
-        options={[
+        items={[
           { value: 'mine', label: 'Assigned to me' },
           { value: 'team', label: 'Everyone on the team' },
         ]}

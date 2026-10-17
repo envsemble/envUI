@@ -12,7 +12,7 @@ export default function CustomFormat() {
         aria-label="Billing"
         value={billing}
         onValueChange={(value) => setBilling(value as keyof typeof prices)}
-        options={[
+        items={[
           { value: 'monthly', label: 'Monthly' },
           { value: 'yearly', label: 'Yearly' },
         ]}

@@ -22,7 +22,7 @@ export default function WorkItems() {
           aria-label="Work items"
           value={status}
           onValueChange={setStatus}
-          options={statuses.map((option) => ({
+          items={statuses.map((option) => ({
             ...option,
             count: items.filter((item) => item.status === option.value).length,
           }))}

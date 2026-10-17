@@ -18,11 +18,7 @@ export default function OpenOnError() {
     <form onSubmit={submit} noValidate style={{ inlineSize: 'min(100%, 26rem)' }}>
       <Stack gap={4}>
         <TextField label="Site name" defaultValue="Northwind help" />
-        <Disclosure
-          title="Advanced settings"
-          open={advanced}
-          onToggle={(event) => setAdvanced(event.currentTarget.open)}
-        >
+        <Disclosure title="Advanced settings" open={advanced} onOpenChange={setAdvanced}>
           <TextField
             label="Custom domain"
             hint="Leave empty to use the default address."

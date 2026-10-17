@@ -28,7 +28,7 @@ export default function UpdatingList() {
       <Stack direction="row" wrap align="center" gap={4}>
         <SegmentedControl
           aria-label="Show tasks"
-          options={views}
+          items={views}
           value={view}
           onValueChange={choose}
         />

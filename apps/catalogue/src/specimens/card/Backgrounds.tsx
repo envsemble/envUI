@@ -1,23 +1,23 @@
 import { Card, Surface, Text } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
-const tones = ['row', 'pane', 'canvas'] as const;
+const backgrounds = ['muted', 'default', 'page'] as const;
 
-/** Content and link cards in each tone, on a pane, and a disabled link card. */
-export default function Tones() {
+/** Content and link cards on each background, on a pane, and a disabled link card. */
+export default function Backgrounds() {
   return (
-    <Example title="Tones" size="collection">
+    <Example title="Backgrounds" size="collection">
       <Surface background="default">
         <SpecimenGrid size="card">
-          {tones.map((tone) => (
-            <Specimen key={tone} title={tone}>
-              <Card tone={tone}>
+          {backgrounds.map((background) => (
+            <Specimen key={background} title={background}>
+              <Card background={background}>
                 <Text render={<h4 />} variant="title">
                   Northwind launch
                 </Text>
                 <Text emphasis="muted">Plans and milestones for the spring launch.</Text>
               </Card>
-              <Card tone={tone} href="#northwind">
+              <Card background={background} href="#northwind">
                 <Text render={<span />} variant="title">
                   Open Northwind launch
                 </Text>

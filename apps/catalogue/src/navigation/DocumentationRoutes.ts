@@ -280,6 +280,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
     .replace(/^components\/(icon-buttons|buttons)(?=\/|$)/, 'components/button')
     .replace(/^components\/badges(?=\/|$)/, 'components/badge')
+    .replace(/^components\/chips(?=\/|$)/, 'components/badge')
     .replace(/^components\/tables(?=\/|$)/, 'components/table')
     .replace(/^components\/stats(?=\/|$)/, 'components/stat')
     .replace(/^components\/toasts(?=\/|$)/, 'components/toast')
