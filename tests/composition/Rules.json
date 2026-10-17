@@ -14,6 +14,9 @@
       "feedback/": "base",
       "forms/": "base",
       "navigation/": "base",
+      "navigation/app-shell/": "shell",
+      "navigation/sidebar/": "shell",
+      "layout/": "composites",
       "forms/internal/markdown/": "composites",
       "diff/": "composites",
       "rich-text/": "composites"
@@ -41,6 +44,7 @@
       "actions/CloseButton.tsx": "composites",
       "actions/ConfirmButton.tsx": "composites",
       "actions/CopyButton.tsx": "composites",
+      "actions/SearchTrigger.tsx": "composites",
       "actions/Link.tsx": "composites",
       "actions/SegmentedControl.tsx": "base",
       "actions/Toolbar.tsx": "composites",
@@ -54,6 +58,7 @@
       "content/CodeBlock.tsx": "composites",
       "content/ColorSwatch.tsx": "base",
       "content/CounterBadge.tsx": "base",
+      "content/DescriptionList.tsx": "base",
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
       "content/Kbd.tsx": "base",
@@ -67,6 +72,7 @@
       "content/formatRelativeTime.ts": "base",
       "feedback/Alert.tsx": "composites",
       "feedback/CommandPalette.tsx": "composites",
+      "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Drawer.tsx": "composites",
       "feedback/EmptyState.tsx": "base",
@@ -102,6 +108,7 @@
       "forms/Switch.tsx": "base",
       "forms/TextField.tsx": "base",
       "forms/Textarea.tsx": "base",
+      "navigation/AccountMenu.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
       "navigation/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
@@ -120,6 +127,21 @@
       "$comment": "Modules in these directories are private to the listed modules, besides each other.",
       "forms/internal/markdown/": ["forms/MarkdownEditor.tsx"]
     }
+  },
+  "planned": {
+    "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
+    "modules": [
+      "actions/SearchTrigger.tsx",
+      "content/DescriptionList.tsx",
+      "feedback/ConfirmDialog.tsx",
+      "layout/ListDetail.tsx",
+      "layout/Page.tsx",
+      "layout/PageHeader.tsx",
+      "layout/SplitPane.tsx",
+      "navigation/AccountMenu.tsx",
+      "navigation/app-shell/AppShell.tsx",
+      "navigation/sidebar/Sidebar.tsx"
+    ]
   },
   "interactive": {
     "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
@@ -275,7 +297,10 @@
         "styles": ["ThemeToggle.css"]
       },
       "AppShell": {
-        "classes": ["env-app"]
+        "classes": ["env-app", "env-app-shell"]
+      },
+      "Sidebar": {
+        "classes": ["env-sidebar"]
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
