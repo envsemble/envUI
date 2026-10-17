@@ -346,4 +346,54 @@ test.describe('DocumentTabs', () => {
         ).toBe(0);
       });
   });
+
+  test('a parent re-rendering with new items leaves focus where it is', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto(`${fixtureUrl}/?fixture=document-tabs-rerender`);
+    const strip = page.getByRole('tablist', { name: 'Re-rendered documents' });
+    const two = strip.getByRole('tab', { name: 'two.md', exact: true });
+    const three = strip.getByRole('tab', { name: 'three.md', exact: true });
+    const renders = page.getByTestId('rerender-count');
+    const rendersPast = async (more: number) => {
+      const from = Number(await renders.textContent());
+      await expect
+        .poll(async () => Number(await renders.textContent()))
+        .toBeGreaterThan(from + more);
+    };
+    await two.click();
+    await expect(two).toBeFocused();
+
+    // Opening a menu re-renders the parent as it opens and while it stays open: the menu keeps focus.
+    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
+    const menu = page.getByRole('menu', { name: 'File' });
+    await expect(page.getByTestId('rerender-state')).toHaveText('open');
+    await expect(menu).toBeVisible();
+    await rendersPast(3);
+    await expect(menu).toBeVisible();
+    await page.keyboard.press('ArrowDown');
+    await expect(menu.getByRole('menuitem', { name: 'First action' })).toBeFocused();
+    await rendersPast(3);
+    await expect(menu).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'First action' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+
+    // Typing elsewhere re-renders the parent on each key: the input keeps focus.
+    await two.focus();
+    const draft = page.getByRole('textbox', { name: 'Draft' });
+    await draft.click();
+    await page.keyboard.type('abc');
+    await rendersPast(3);
+    await expect(draft).toBeFocused();
+    await expect(draft).toHaveValue('abc');
+
+    // Closing the focused tab still moves focus to its right neighbour.
+    await two.focus();
+    await page.keyboard.press('Delete');
+    await expect(two).toHaveCount(0);
+    await expect(three).toHaveAttribute('aria-selected', 'true');
+    await expect(three).toBeFocused();
+    expect(errors).toEqual([]);
+  });
 });

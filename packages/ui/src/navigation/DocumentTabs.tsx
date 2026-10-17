@@ -139,21 +139,23 @@ export function DocumentTabs({
   }, [value, items]);
 
   // Closing the focused tab moves focus to the tab that becomes active, however it closed: its
-  // button, Delete, the context menu, or the application's own shortcut such as Ctrl+W. Read before
-  // the update is committed, while the closing tab still holds focus. The context menu holds focus
-  // instead when the strip had it as the menu opened.
-  const focusWasInside = Boolean(list.current?.contains(list.current.ownerDocument.activeElement));
+  // button, Delete, the context menu, or the application's own shortcut such as Ctrl+W. The focused
+  // tab is read before the update is committed, while the closing tab still holds focus. Any other
+  // render, such as a parent passing a new items array, leaves focus where it is. The context menu
+  // holds focus instead when the strip had it as the menu opened.
+  const focusedTab = focusedTabId(list.current);
+  const focusedTabClosed = focusedTab !== null && !items.some((item) => item.id === focusedTab);
   const menuOpenedInside = useRef(false);
   const [closedFromMenu, setClosedFromMenu] = useState(false);
   useLayoutEffect(() => {
     if (closedFromMenu) setClosedFromMenu(false);
     else {
-      if (!focusWasInside) return;
+      if (!focusedTabClosed) return;
       const active = list.current?.ownerDocument.activeElement;
       if (active && active !== active.ownerDocument.body && active.isConnected) return;
     }
     tabElement(focusable)?.focus();
-  }, [items, focusable, focusWasInside, closedFromMenu]);
+  }, [items, focusable, focusedTabClosed, closedFromMenu]);
 
   // A vertical wheel scrolls an overflowing strip sideways, toward its end as the wheel turns down.
   // In right-to-left text the end is on the left, where scrollLeft runs from 0 down to -max.
@@ -306,5 +308,15 @@ export function DocumentTabs({
         </ContextMenu>
       </BaseTabs.Root>
     </DirectionProvider>
+  );
+}
+
+/** The id of the tab whose item holds focus within the strip, or null. */
+function focusedTabId(strip: HTMLElement | null) {
+  const active = strip?.ownerDocument.activeElement;
+  if (!strip || !active || !strip.contains(active)) return null;
+  return (
+    active.closest('.env-document-tabs-item')?.querySelector<HTMLElement>('[role="tab"]')?.dataset
+      .tabId ?? null
   );
 }
