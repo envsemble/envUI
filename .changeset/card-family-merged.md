@@ -11,3 +11,5 @@ ClickableCard, ActionCard and FeatureCard are one Card.
 - The classes are `env-card` with `data-interactive`, `data-actions` and `data-layout`, and the parts `env-card-header`, `-heading`, `-meta`, `-body`, `-footer`, `-layout`, `-icon` and `-description`.
 
 Migrate with the codemods: `envui-codemods v1-names` renames ClickableCard and its props type; `v1-structure` turns ActionCard and FeatureCard into a Card and drops or converts Card's `as`; `v1-props` moves `tone` and drops `layout="content"` and `"action"`; `v1-classes` renames the classes. An `as` that is an expression is reported.
+
+Migration guide: [Content and display](../../docs/migration.md#content-and-display).

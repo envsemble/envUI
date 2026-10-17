@@ -1,5 +1,5 @@
 {
-  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
+  "$comment": "Every custom property that envUI 0.x or 1.0’s development defined and 1.0 no longer does, with what replaces it. prefixed: names that only take the --env- prefix. renamed: names that changed beyond the prefix, to a token (replacement) or a hand-written property (cssVariable); a name of 1.0’s development has the prefix already. aliases: the 0.7 alias tokens, removed with the prefix, each to the token of its role or the value of a fixed color. removed: names with no counterpart, with the token to use instead where there is one, which does not take its place as it is, such as a color token for a state opacity; a name that one token replaces as it is goes in renamed, which the codemods rewrite. The token build turns this into src/generated/token-migration.json, the map that the codemods (v1-classes) and the migration guide read.",
   "prefixed": [
     "--body-font-weight",
     "--color-bg-accent-emphasis",
@@ -313,6 +313,58 @@
     "--env-topbar-height": {
       "replacement": "app-shell.header-height",
       "note": "The app frame's header height."
+    },
+    "--color-surface-base": {
+      "replacement": "color.bg.raised",
+      "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
+    },
+    "--color-surface-raised": {
+      "replacement": "color.bg.raised",
+      "note": "0.7 defined it, but envUI didn't read it; the raised surface is the role it named."
+    },
+    "--color-text-subtle": {
+      "replacement": "color.fg.muted",
+      "note": "A synonym of the muted text color, which envUI didn't read."
+    },
+    "--color-control-text": {
+      "replacement": "color.fg.control",
+      "note": "A synonym of the control text color, which envUI didn't read."
+    },
+    "--color-neutral-fill": {
+      "replacement": "color.bg.neutral.strong",
+      "note": "0.7 defined it, but envUI didn't read it; the neutral strong fill is the role it named."
+    },
+    "--color-border-pressed": {
+      "replacement": "color.border.muted.pressed",
+      "note": "0.7 defined it, but envUI didn't read it; the muted border's pressed state is the role it named."
+    },
+    "--color-control-blue-hover": {
+      "replacement": "color.bg.brand.strong.hover",
+      "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
+    },
+    "--color-control-blue-pressed": {
+      "replacement": "color.bg.brand.strong.pressed",
+      "note": "0.7 defined it, but envUI didn't read it; the brand's strong fill is the role it named."
+    },
+    "--color-fill-hover": {
+      "replacement": "color.bg.neutral.muted.hover",
+      "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
+    },
+    "--color-fill-pressed": {
+      "replacement": "color.bg.neutral.muted.pressed",
+      "note": "0.7 defined it, but envUI didn't read it; the neutral muted fill is the role it named."
+    },
+    "--control-height-small": {
+      "replacement": "control.height",
+      "note": "It always equalled --control-height, which every control reads now."
+    },
+    "--control-height-compact": {
+      "replacement": "control.height-sm",
+      "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
+    },
+    "--icon-button-size": {
+      "replacement": "control.height",
+      "note": "An icon button is as tall as the other controls of its size."
     }
   },
   "aliases": {
@@ -736,22 +788,6 @@
     "--env-split-view-size": {
       "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
     },
-    "--color-surface-base": { "replacement": "color.bg.raised", "note": "Unused." },
-    "--color-surface-raised": { "replacement": "color.bg.raised", "note": "Unused." },
-    "--color-text-subtle": { "replacement": "color.fg.muted", "note": "Unused synonym." },
-    "--color-control-text": { "replacement": "color.fg.control", "note": "Unused synonym." },
-    "--color-neutral-fill": { "replacement": "color.bg.neutral.strong", "note": "Unused." },
-    "--color-border-pressed": { "replacement": "color.border.muted.pressed", "note": "Unused." },
-    "--color-control-blue-hover": {
-      "replacement": "color.bg.brand.strong.hover",
-      "note": "Unused."
-    },
-    "--color-control-blue-pressed": {
-      "replacement": "color.bg.brand.strong.pressed",
-      "note": "Unused."
-    },
-    "--color-fill-hover": { "replacement": "color.bg.neutral.muted.hover", "note": "Unused." },
-    "--color-fill-pressed": { "replacement": "color.bg.neutral.muted.pressed", "note": "Unused." },
     "--state-lightness-direction": {
       "replacement": null,
       "note": "The runtime hover rule is gone: every role has hover and pressed tokens."
@@ -823,18 +859,6 @@
     "--member-identity-gap": { "replacement": null, "note": "Unused." },
     "--member-identity-name-line-height": { "replacement": null, "note": "Unused." },
     "--member-identity-name-size": { "replacement": null, "note": "Unused." },
-    "--control-height-small": {
-      "replacement": "control.height",
-      "note": "It always equalled --control-height, which every control reads now."
-    },
-    "--control-height-compact": {
-      "replacement": "control.height-sm",
-      "note": "The small control height. For a compact app or region, set scale=\"compact\" on its Theme instead."
-    },
-    "--icon-button-size": {
-      "replacement": "control.height",
-      "note": "An icon button is as tall as the other controls of its size."
-    },
     "--scale": {
       "replacement": null,
       "note": "The multiplier is gone: components read sized tokens. Set scale=\"compact\" on a Theme for the compact scale."

@@ -1,0 +1,6 @@
+[
+  "line 8: env-tree-row in a regular expression: a 0.x class, which the codemod leaves here: it is env-tree-item in 1.0.",
+  "line 11: env-empty-state-error is gone in 1.0: .env-empty-state carries [data-tone='danger'] instead, which the component's props set.",
+  "line 15: env-diff-count in a regular expression: a 0.x class, which the codemod leaves here: it is env-diff-stat in 1.0.",
+  "line 16: env-app-sidebar in a string: a 0.x class, which the codemod leaves here: it is env-sidebar in 1.0."
+]

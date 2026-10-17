@@ -42,6 +42,49 @@ export function expressionKey(node) {
   return undefined;
 }
 
+/** An expression that leaves a prop unset: `undefined` or `null`. */
+const unset = (node) =>
+  node?.type === 'NullLiteral' ||
+  (node?.type === 'Literal' && node.value === null) ||
+  (node?.type === 'Identifier' && node.name === 'undefined');
+
+/**
+ * The values a conditional or logical expression can give, for a prop whose value is one, such as
+ * `tone={failed ? 'error' : 'info'}` or `size={large && 'large'}`: `literals`, the literal values
+ * among them, each as `{ node, parent, key }` so it can be replaced; `unset`, the `undefined` and
+ * `null` among them; `opaque`, the other expressions, whose values the codemod can't see; and
+ * `ternary`, whether only ternaries give them. A ternary gives its branches, nested ones included,
+ * `a && b` gives `b` (`a` is a test, whose falsy value leaves the prop unset or invalid), and
+ * `a || b` and `a ?? b` give both. Parentheses are followed. Returns undefined for an expression
+ * that is neither a conditional nor a logical one.
+ */
+export function conditionalValues(expression) {
+  let top = expression;
+  while (top?.type === 'ParenthesizedExpression') top = top.expression;
+  if (top?.type !== 'ConditionalExpression' && top?.type !== 'LogicalExpression') return undefined;
+  const values = { literals: [], unset: [], opaque: [], ternary: true };
+  const visit = (parent, key) => {
+    let node = parent[key];
+    while (node?.type === 'ParenthesizedExpression') {
+      parent = node;
+      key = 'expression';
+      node = node.expression;
+    }
+    if (node.type === 'ConditionalExpression') {
+      visit(node, 'consequent');
+      visit(node, 'alternate');
+    } else if (node.type === 'LogicalExpression') {
+      values.ternary = false;
+      if (node.operator !== '&&') visit(node, 'left');
+      visit(node, 'right');
+    } else if (unset(node)) values.unset.push(node);
+    else if (expressionKey(node) !== undefined) values.literals.push({ node, parent, key });
+    else values.opaque.push(node);
+  };
+  visit({ top }, 'top');
+  return values;
+}
+
 /**
  * Whether a structure case's `when` matches a JSX element's attributes: true, false, or undefined
  * where a prop it tests is an expression. Per prop, `when` lists literal values, null for a prop the
@@ -151,7 +194,10 @@ export function componentResolver({ components, namespaceImports }) {
  * Applies prop rules (the map's `props` rules of one component, or the `calls` rules of one call)
  * to a list of named items, such as a JSX element's attributes or an object's properties, in
  * place. `item` describes the list: `name(node)` the item's name or undefined, `key(node)` its
- * literal value or undefined, `make(name, value)` a new item, `rename(node, name)` renames it.
+ * literal value or undefined, `make(name, value)` a new item, `rename(node, name)` renames it, and,
+ * optionally, `expression(node)` its value's expression and `literal(value, old)` a literal that
+ * replaces `old` there, so that a conditional whose values are literals, such as
+ * `tone={failed ? 'error' : 'info'}`, has each value mapped, as mapConditional says.
  * Returns whether anything changed; `report(node, message)` receives what can't move.
  */
 export function applyPropRules(items, rules, where, item, report) {
@@ -173,6 +219,42 @@ export function applyPropRules(items, rules, where, item, report) {
     // A 1.0 value, such as density="sm" on a Table, is already moved: no change, no report.
     if (key !== undefined && rule.current.has(key)) continue;
     const replacement = key === undefined ? undefined : rule.values[key];
+    const mapped =
+      key === undefined && item.expression
+        ? mapConditional(item.expression(node), rule, name)
+        : undefined;
+    if (mapped) {
+      if (mapped.name !== name && own(mapped.name)) {
+        report(
+          node,
+          `${at} is ${mapped.name} in 1.0, which the element already sets: ${rule.report}`,
+        );
+        continue;
+      }
+      if (mapped.dropped) {
+        items.splice(index, 1);
+        index -= 1;
+        changed = true;
+        for (const { message, unless } of mapped.reports)
+          if (!unless.some(own)) report(node, `${at}: ${message}`);
+        continue;
+      }
+      if (mapped.name !== name) item.rename(node, mapped.name);
+      for (const { leaf, value } of mapped.edits)
+        leaf.parent[leaf.key] = item.literal(value, leaf.node);
+      if (mapped.name !== name || mapped.edits.length > 0) changed = true;
+      for (const { message, unless } of mapped.reports)
+        if (!unless.some(own)) report(node, `${at}: ${message}`);
+      // An expression beside the literals, such as `tone ?? 'error'`, may give 0.x values too.
+      if (mapped.opaque)
+        report(
+          node,
+          mapped.name !== name
+            ? `${at} is ${mapped.name} now, with a value the codemod can't check: ${rule.report}`
+            : `${at} has a value the codemod can't move: ${rule.report ?? 'change it by hand.'}`,
+        );
+      continue;
+    }
     if (!replacement) {
       if (rule.to !== undefined) {
         // A renamed prop keeps a value that doesn't change, and an expression, under its new name.
@@ -212,4 +294,57 @@ export function applyPropRules(items, rules, where, item, report) {
     if (message && !(replacement.unless ?? []).some(own)) report(node, `${at}: ${message}`);
   }
   return changed;
+}
+
+/**
+ * How a conditional or logical value of a prop maps, its values read as conditionalValues reads
+ * them: each literal value as the rule maps it, where every value maps to one prop of the same name.
+ * A 1.0 value stays; a listed value takes the value of the one prop it maps to, such as Alert's
+ * `error`, which is tone `danger`; a value that maps to no prop, such as Avatar's `standard`, the
+ * default, becomes `undefined`, which leaves the prop unset as dropping it does; and a renamed
+ * prop's other values stay under its new name. Returns `{ name, edits, reports, opaque, dropped }`: the
+ * prop's name, each literal to replace with its new value, the values' own reports, each with the
+ * props whose presence on the element silences it (`unless`), whether some values are
+ * expressions the codemod can't see, and whether every value leaves the prop unset, so it goes. Returns undefined where none of the values is
+ * a literal, a literal maps to several props or is one the rule doesn't know, or the values map to
+ * props of different names.
+ */
+export function mapConditional(expression, rule, name) {
+  const values = expression && conditionalValues(expression);
+  if (!values || values.literals.length === 0) return undefined;
+  const names = new Set();
+  const edits = [];
+  const reports = [];
+  for (const leaf of values.literals) {
+    const key = expressionKey(leaf.node);
+    if (rule.current.has(key)) {
+      names.add(rule.to ?? name);
+      continue;
+    }
+    const replacement = Object.hasOwn(rule.values, key) ? rule.values[key] : undefined;
+    if (!replacement) {
+      if (rule.to === undefined) return undefined;
+      names.add(rule.to);
+      continue;
+    }
+    const props = Object.entries(replacement.props ?? {});
+    if (props.length > 1) return undefined;
+    if (props.length === 1) {
+      const [newName, value] = props[0];
+      names.add(newName);
+      if (String(value) !== key) edits.push({ leaf, value });
+    } else edits.push({ leaf, value: undefined });
+    const message = replacement.report ?? (replacement.reportAlways ? rule.report : undefined);
+    if (message && !reports.some((each) => each.message === message))
+      reports.push({ message, unless: replacement.unless ?? [] });
+  }
+  if (names.size > 1) return undefined;
+  return {
+    name: [...names][0] ?? rule.to ?? name,
+    edits,
+    reports,
+    opaque: values.opaque.length > 0,
+    // Every value leaves the prop unset, as `layout={wide ? 'action' : 'content'}` on a Card does.
+    dropped: names.size === 0 && values.opaque.length === 0,
+  };
 }

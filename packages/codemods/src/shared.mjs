@@ -6,11 +6,43 @@ const require = createRequire(import.meta.url);
 
 const typeScriptOnly = new Set(['.ts', '.mts', '.cts']);
 
+/** A TypeScript declaration file: .d.ts, .d.mts or .d.cts, also as `.d.css.ts` and the like. */
+const declarationFile = /\.d(?:\.[\w-]+)?\.[cm]?ts$/i;
+
+/**
+ * jscodeshift's `ts` parser in declaration mode, for declaration files, where `export const x: T;`
+ * has no initializer and a function no body.
+ */
+const declarationParser = {
+  parse(source) {
+    const babel = createRequire(require.resolve('jscodeshift/package.json'))('@babel/parser');
+    const options = require('jscodeshift/parser/tsOptions.js');
+    return babel.parse(source, {
+      ...options,
+      plugins: options.plugins.map((plugin) =>
+        plugin === 'typescript' ? ['typescript', { dts: true }] : plugin,
+      ),
+    });
+  },
+};
+
 /**
  * The parser for a file: `ts` for .ts, .mts and .cts, where `<T>value` is a type assertion rather
- * than JSX, and `tsx` for everything else (TSX, JSX and plain JavaScript).
+ * than JSX, the same in declaration mode for .d.ts, .d.mts and .d.cts, and `tsx` for everything
+ * else (TSX, JSX and plain JavaScript). jscodeshift's `withParser` takes either form.
  */
-export const parserFor = (path) => (typeScriptOnly.has(extname(path).toLowerCase()) ? 'ts' : 'tsx');
+export const parserFor = (path) =>
+  declarationFile.test(path)
+    ? declarationParser
+    : typeScriptOnly.has(extname(path).toLowerCase())
+      ? 'ts'
+      : 'tsx';
+
+/** The parser object for a file, with its `parse(source)`, as `parserFor` names it. */
+export function parserObject(path) {
+  const parser = parserFor(path);
+  return typeof parser === 'string' ? require(`jscodeshift/parser/${parser}.js`)() : parser;
+}
 
 /**
  * Whether a file indents with tabs: more of its lines start with a tab than with two or more
@@ -76,7 +108,7 @@ const byPosition = (a, b) =>
  * the two parses disagree.
  */
 export function sourceRanges(file, j, root, type) {
-  const parser = require(`jscodeshift/parser/${parserFor(file.path)}.js`)();
+  const parser = parserObject(file.path);
   const found = [];
   const walk = (node) => {
     if (Array.isArray(node)) return node.forEach(walk);
