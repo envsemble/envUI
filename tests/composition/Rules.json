@@ -99,6 +99,8 @@
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
       "forms/MarkdownEditor.tsx": "composites",
+      "forms/internal/EditorToolbar.tsx": "composites",
+      "forms/internal/LinkDialog.tsx": "composites",
       "forms/Radio.tsx": "base",
       "forms/SearchField.tsx": "composites",
       "forms/Select.tsx": "composites",
@@ -271,12 +273,19 @@
         "modules": [
           "forms/internal/markdown/MarkdownFormatting.ts",
           "forms/internal/markdown/MarkdownHistory.ts",
-          "forms/internal/markdown/MarkdownLinkDialog.tsx",
           "forms/internal/markdown/MarkdownPreview.tsx",
-          "forms/internal/markdown/MarkdownToolbar.tsx",
           "forms/internal/markdown/useMarkdownEditing.ts"
         ],
         "classes": ["env-markdown-source"]
+      },
+      "Editor": {
+        "modules": [
+          "forms/internal/EditorCommands.ts",
+          "forms/internal/EditorToolbar.tsx",
+          "forms/internal/EditorStatus.tsx",
+          "forms/internal/LinkDialog.tsx"
+        ],
+        "styles": ["Editor.css"]
       },
       "Layout": {
         "classes": ["env-stack"]
@@ -323,6 +332,7 @@
           "rich-text/ReferenceAttributes.ts",
           "rich-text/ReferenceExtension.ts",
           "rich-text/Suggestions.tsx",
+          "rich-text/TaskItem.tsx",
           "rich-text/Commands.ts",
           "rich-text/Extensions.ts",
           "rich-text/Types.ts"
@@ -400,7 +410,7 @@
           "note": "A code diff pads its loading and empty states."
         },
         {
-          "stylesheet": "MarkdownEditor.css",
+          "stylesheet": "Editor.css",
           "classes": ["env-button-group"],
           "note": "The toolbar lets its button groups scroll."
         },

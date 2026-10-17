@@ -1,6 +1,6 @@
 import type { AnyExtension, Editor } from '@tiptap/core';
-import type { ComponentPropsWithoutRef, MouseEvent, ReactNode } from 'react';
-import type { FieldProps } from '../forms/internal/FieldFrame.js';
+import type { ComponentPropsWithoutRef, MouseEvent, ReactNode, Ref } from 'react';
+import type { FieldProps, FieldVariant } from '../forms/internal/FieldFrame.js';
 import type { MarkdownLink, MarkdownLinkRequest } from '../forms/MarkdownEditor.js';
 
 /** Application-owned identity and display data; envUI assigns no meaning to kind or id. */
@@ -115,13 +115,10 @@ export interface RichTextEditorHandle {
 }
 export interface RichTextEditorProps
   extends RichTextRenderOptions,
-    Omit<FieldProps, 'description'>,
+    FieldProps,
     Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'onChange' | 'children'> {
-  /**
-   * Lasting guidance under the editor, such as a format or a limit, linked to it as its
-   * description.
-   */
-  hint?: ReactNode;
+  /** Gives the Tiptap editor, as ref.current.editor, for commands. */
+  ref?: Ref<RichTextEditorHandle>;
   /**
    * The Markdown of a controlled editor; update it from onValueChange. A new value from outside,
    * such as another draft, replaces the document and keeps the caret where it can.
@@ -191,12 +188,13 @@ export interface RichTextEditorProps
   /** Lets people choose several files at once with Attach files. */
   multiple?: boolean;
   /**
-   * The editor's look: outlined, the document in a bordered well on the field background, or
-   * plain, without a border or fill. quiet is accepted for the shared field type, but draws as
-   * outlined.
-   * @default 'outlined'
+   * The document's look, as a text area's: outline, in a bordered box on the field background;
+   * underline, without a border or fill, with an underline while it has focus; or ghost, only its
+   * text at rest, with a soft fill under the pointer and while it has focus. The document is always
+   * tall, with its label above it, so it has no floating variant.
+   * @default 'outline'
    */
-  variant?: 'outlined' | 'plain' | 'quiet';
+  variant?: Exclude<FieldVariant, 'floating'>;
 }
 export interface RichTextProps
   extends RichTextRenderOptions,

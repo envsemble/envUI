@@ -2,7 +2,7 @@
 title: RichText
 summary: Formatted text people edit as it looks, saved as Markdown with references, and shown again
   read-only.
-status: beta
+status: experimental
 since: 0.1.0
 category: Content & guidance
 aliases:
@@ -67,19 +67,22 @@ The family comes from the optional `@envsemble/envui/rich-text` entry, which nee
 ## Anatomy
 
 1. **Label** (`label`): above the toolbar; it names the document.
-2. **Toolbar** (`toolbar`): a row of icon buttons named "Rich text formatting", the commands in order, then Undo, Redo and, with `onUpload`, Attach files. It scrolls sideways where it doesn't fit.
-3. **Document**: the editing area, at least 10 rem tall and growing with its content, with 1 rem padding. Outlined, it has a 0.0625 rem border, 0.25 rem corners and the field background.
+2. **Toolbar** (`toolbar`): the Toolbar MarkdownEditor shares, connected icon buttons named "Rich text formatting", the commands in order, then Undo, Redo and, with `onUpload`, Attach files, each named in a tooltip. It scrolls sideways where it doesn't fit.
+3. **Document**: the editing area, at least 10 rem tall and growing with its content, with 1 rem padding, in the field's control box: outlined, with the field border, 1 rem corners and the field background, as a text area. Task items show envUI's checkboxes beside their text.
 4. **References**: the trigger and the label, such as @Priya Shah, on the field background with 0.25 rem corners; a link or a button where they lead somewhere.
-5. **Suggestions**: a list under the caret while people type after a trigger, 12 to 24 rem wide, scrolling beyond 18 rem.
-6. **Hint** (`hint`) and **error** (`error`): below the document, the error with its icon.
+5. **Suggestions**: a list on the popup surface under the caret while people type after a trigger, its options as rows, 12 to 24 rem wide, scrolling beyond 18 rem.
+6. **Description** (`description`) and **error** (`error`): below the document, the error with its icon.
 7. **Status**: below the document, a message about an upload or a link, such as "Uploading attachments…"; hidden while empty.
 
 The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or path fields, unless the application brings its own picker.
 
 ## Variants and sizes
 
-- **`outlined`**, the default, puts the document in a bordered well on the field background, for a form, a dialog or a pane.
-- **`plain`** drops the border and the fill, for a document that is the page's content, such as notes in a detail view.
+The document takes a text area's variants, which the field draws:
+
+- **`outline`**, the default, puts the document in a bordered box on the field background, for a form, a dialog or a pane.
+- **`underline`** drops the border and the fill, with an underline while the document has focus, for a document that is the page's content, such as notes in a detail view.
+- **`ghost`** shows only the text at rest, with a soft fill under the pointer and while it has focus, for notes in a quiet panel.
 
 | Command         | Toolbar button | Does                                                       |
 | --------------- | -------------- | ---------------------------------------------------------- |
@@ -108,21 +111,22 @@ The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or pa
 - **Markdown it keeps**: headings, bold, italic, strikethrough, inline code, code blocks, bulleted, numbered and task lists, quotes, links, images, ordinary tables and references. Raw HTML in the Markdown shows as text, on a server and in the browser alike. Syntax outside the schema, such as footnotes or merged table cells, needs an extension or the Markdown component.
 - **Typing Markdown**: Markdown typed into the document formats as it goes, such as `## ` for a heading, `- ` for a list or `**bold**`.
 - **Toolbar state**: the buttons of formatting at the caret show as pressed and report `aria-pressed`; Undo and Redo are unavailable while there is nothing to undo or redo.
-- **References**: typing a source's trigger, such as @, at the start of a line or after a space opens its suggestions, filtered by what follows. While the lookup runs, the list says "Loading suggestions…"; it says "No results" when nothing matches and "Suggestions could not load. Try typing again." when the lookup fails. Choosing an option inserts the reference and a space. A reference with `href` is a link, which the editor never follows while it is editable; without one, `onReferenceClick` makes it a button. The Markdown keeps its ID, label, kind, destination and trigger.
+- **References**: typing a source's trigger, such as @, at the start of a line or after a space opens its suggestions, filtered by what follows. While the lookup runs, the list says "Loading suggestions…"; it says "No results" when nothing matches and "Suggestions could not load. Try typing again." when the lookup fails. Choosing an option inserts the reference and a space. The list sits in the editor, above what the editor is in, such as a Dialog, and closes as focus leaves the document, also with <kbd>Tab</kbd>. A reference with `href` is a link, which the editor never follows while it is editable; without one, `onReferenceClick` makes it a button. The Markdown keeps its ID, label, kind, destination and trigger.
 - **Slash commands**: with `slashCommands`, typing / at the start of a line or after a space offers Heading, the three lists, Quote, Code block and Insert table, then the application's commands, filtered by what follows. A / reference source can't be used beside them, and two sources can't share a trigger.
-- **Links**: Insert link opens a dialog for the text and the URL, or calls `onRequestLink` for the application's own picker. A selection becomes a link to the URL; at the caret, the link's text is inserted. Only relative paths and http, https, mailto and tel URLs are accepted; another URL shows "Enter a safe URL or relative path." in the status. Clicking a link calls `onLinkClick`; the editor never follows it while editable.
+- **Links**: Insert link opens a dialog for the text and the URL, or calls `onRequestLink` for the application's own picker. A selection becomes a link to the URL; at the caret, the link's text is inserted. Only relative paths and http, https, mailto and tel URLs are accepted: the dialog says "Enter a valid URL or relative path." for another, and an application's picker that returns one gets the same message in the status. Clicking a link calls `onLinkClick`; the editor never follows it while editable.
 - **Attachments**: with `onUpload`, Attach files opens the file picker, filtered by `accept`, for one or, by default, several files. While they upload, the status says "Uploading attachments…" and the toolbar waits. Images become Markdown images with the label as their alternative text; other files become references. A failed upload shows its message in the status, and an upload that finishes after the document changed is not inserted: the status asks people to attach the files again.
 - **Read only**: `readOnly` keeps the document as it is: the toolbar is disabled and the document can't be focused, but its links and references can, and a form still submits the value.
-- **Disabled**: `disabled` makes the editor unavailable at the shared disabled opacity: it can't be edited or focused, the toolbar is disabled and a form leaves its value out. Becoming read-only or disabled closes open suggestions and cancels an upload or a link request.
-- **Invalid**: while `error` is set, the document reports `aria-invalid`, its border turns red and the message shows below it.
+- **Disabled**: `disabled` makes the editor unavailable: the document's box takes the shared disabled opacity while the label keeps the text color; it can't be edited or focused, the toolbar is disabled and a form leaves its value out. Becoming read-only or disabled closes open suggestions and cancels an upload or a link request.
+- **Invalid**: while `error` is set, the document reports `aria-invalid`, its box takes the error color, as a text field does, and the message shows below it.
 - **Form submission**: with `name`, the Markdown is submitted with the form; `form` names a form the editor sits outside of. A form's reset returns an uncontrolled editor to `defaultValue`.
 - **Theme**: the suggestions take the theme of the editor, also inside a scoped Theme.
+- **Controlled updates**: a new `value` is applied once React has committed, as the document renders its references and tasks itself, so a controlled editor raises no warning.
 - **RichText**: renders the Markdown with the same schema and envUI's own parts: links through `LinkProvider`, inline code and code blocks as Code and CodeBlock, and tasks as disabled checkboxes named by their text. Unsafe links show as text and unsafe images as their alternative text. `onReferenceClick` and `onLinkClick` receive activations; call `preventDefault` to stop the browser following them.
 - **Server rendering**: RichText renders on a server. RichTextEditor renders its field there and its document once it runs in the browser.
 
 ## Content guidelines
 
-- Name the document in the label, such as "Meeting notes" or "Release notes", and put lasting guidance in the hint.
+- Name the document in the label, such as "Meeting notes" or "Release notes", and put lasting guidance in the description.
 - Use the placeholder for what to write and how to insert what the editor offers, such as "Type @ to mention someone, or # for a topic".
 - Name each reference source after what it lists, such as People or Topics; the name is the suggestion list's accessible name.
 - Name slash commands after the block they add, such as "Meeting agenda".
@@ -171,6 +175,7 @@ The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or pa
 | <kbd>Enter</kbd> in an empty list item                                                   | Ends the list.                                                                                                                                                       |
 | A reference trigger, such as <kbd>@</kbd>, or <kbd>/</kbd> with slash commands           | Opens the suggestions, filtered by what follows.                                                                                                                     |
 | <kbd>↓</kbd>, <kbd>↑</kbd> in the suggestions                                            | Highlights the next or previous option, wrapping at the ends.                                                                                                        |
+| <kbd>Tab</kbd> in the suggestions                                                        | Closes them and moves focus on.                                                                                                                                      |
 | <kbd>Enter</kbd> in the suggestions                                                      | Inserts the highlighted option.                                                                                                                                      |
 | <kbd>Esc</kbd> in the suggestions                                                        | Closes them and keeps what was typed.                                                                                                                                |
 | <kbd>Esc</kbd> in the link dialog                                                        | Closes it and returns focus to the document.                                                                                                                         |
@@ -178,12 +183,12 @@ The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or pa
 
 ### envUI provides
 
-- The document as a `textbox` with `aria-multiline`, named by the label or `aria-label`, described by the hint and the error, and reporting `aria-invalid`, `aria-readonly` and `aria-disabled`.
-- A toolbar named "Rich text formatting" with one tab stop and arrow keys, each button named, with its name also in a native tooltip, `aria-pressed` for formatting at the caret, and unavailable buttons left out of the arrow-key order.
+- The document as a `textbox` with `aria-multiline`, named by the label or `aria-label`, described by the description and the error, and reporting `aria-invalid`, `aria-readonly` and `aria-disabled`.
+- A toolbar named "Rich text formatting" with one tab stop and arrow keys, each button named, with its name also in a tooltip, `aria-pressed` for formatting at the caret, and unavailable buttons left out of the arrow-key order.
 - Suggestions as a listbox named by the source's `label`, with `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` on the document while it is open, so screen readers announce the highlighted option; `aria-busy` and a status while it loads, finds nothing or fails.
 - A status that announces upload progress and failures and rejected links.
 - The link dialog with labelled fields, which returns focus to the document when it closes.
-- In RichText, links through `LinkProvider`, task items as disabled checkboxes named by their text, and references as links or buttons.
+- Task items as envUI checkboxes named by their text, unavailable while the editor is read-only or disabled; in RichText, links through `LinkProvider`, task items as disabled checkboxes and references as links or buttons, and in the editor, references with a destination as links through `LinkProvider`.
 - Raw HTML kept as text and unsafe URLs refused, in the editor and in RichText.
 
 ### You provide
@@ -192,7 +197,7 @@ The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or pa
 - A `label` for each reference source, which names its suggestion list.
 - Labels for image attachments that work as alternative text.
 - The lookups, uploads, permissions, navigation and saving behind references, attachments and links.
-- Wording for other languages where you need it: the toolbar's names, the link dialog and the editor's messages are in English, and no props change them yet.
+- The words in the page's language, through EnvUIProvider's `messages`: `richText` for the toolbar's and lists' names, the suggestions' states, the attach button and the status messages, `editor` for the formatting commands, also in the slash menu, and `linkDialog` for the link dialog.
 
 ## Examples
 
@@ -246,7 +251,7 @@ With `name`, the form submits the Markdown. `error` says what to fix.
 
 ## Changelog
 
-- **1.0.0**: A task item's checkbox sits beside its text in the editor, as in RichText.
+- **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined; the `v1-props` codemod writes them. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is experimental.
 - **0.5.0**: Text in the document takes the control font size, 1 rem on touch screens, so focusing it doesn't zoom the page.
 - **0.2.0**: Tiptap and marked are optional peer dependencies, installed by applications that import the rich-text entry.
 - **0.1.0**: RichTextEditor, RichText and `createRichTextExtensions` in `@envsemble/envui/rich-text`, built on Tiptap, with Markdown values, references and slash commands.

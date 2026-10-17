@@ -80,7 +80,8 @@ test('formatting toolbar uses named SVG icon buttons and stays compact at narrow
     await expect(toolbar.getByRole('button')).toHaveCount(labels.length);
     for (const label of labels) {
       const button = toolbar.getByRole('button', { name: label, exact: true });
-      await expect(button).toHaveAttribute('title', label);
+      // A tooltip shows the name, which is no native title.
+      await expect(button).not.toHaveAttribute('title');
       await expect(button.locator('svg[aria-hidden="true"] path')).not.toHaveCount(0);
     }
     const geometry = await toolbar.evaluate((root) => {
@@ -449,7 +450,7 @@ test('upload hooks insert safe images and file references, accept host cancellat
       }),
     await uploadIndex(page, 'unsafe.txt'),
   );
-  await expect(scope.locator('.env-markdown-editor-status')).toContainText('unsafe URL');
+  await expect(scope.locator('.env-editor-status')).toContainText('unsafe URL');
   await expect(scope.getByRole('link', { name: 'Unsafe', exact: true })).toHaveCount(0);
   await expect(scope.getByTestId('rich-text-upload-source')).toHaveText(source!);
 });
@@ -493,9 +494,127 @@ test('pending uploads cancel on read-only changes and refuse to insert into chan
       }),
     changed,
   );
-  await expect(scope.locator('.env-markdown-editor-status')).toContainText(
-    'document changed during upload',
-  );
+  await expect(scope.locator('.env-editor-status')).toContainText('document changed during upload');
   await expect(scope.getByRole('textbox')).toHaveText('New document');
   await expect(scope.getByRole('link')).toHaveCount(0);
+});
+
+test('the document takes the field look: border, variants, error and a disabled field with a readable label', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  const scope = page.getByTestId('rich-text-field');
+  const box = (name: string) =>
+    scope
+      .getByRole('textbox', { name, exact: true })
+      .locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]');
+  const color = (token: string) =>
+    scope.evaluate((element, value) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${value})`;
+      element.append(probe);
+      const resolved = getComputedStyle(probe).color;
+      probe.remove();
+      return resolved;
+    }, token);
+  // Outlined, the field's border is the field border, which holds 3:1 against the page.
+  const outline = scope
+    .getByRole('textbox', { name: 'Dialog notes' })
+    .or(scope.getByRole('textbox', { name: 'Controlled notes' }))
+    .first();
+  await expect(
+    outline.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]'),
+  ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
+  // Ghost draws no border or fill at rest; underline has no border either.
+  await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
+  await expect(box('Ghost notes')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(box('Underlined notes')).toHaveAttribute('data-variant', 'underline');
+  // The error makes the document invalid and its border the error color.
+  const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
+  await expect(invalid).toHaveAttribute('aria-invalid', 'true');
+  await expect(invalid).toHaveAccessibleDescription('Say what changed. Write at least a sentence.');
+  await expect(box('Invalid notes')).toHaveCSS(
+    'border-top-color',
+    await color('--env-color-fg-danger'),
+  );
+  // Disabled, the document dims, and its label keeps the text color.
+  const disabled = scope.getByRole('textbox', { name: 'Disabled notes' });
+  await expect(box('Disabled notes')).toHaveCSS('opacity', /^0\.\d+$/);
+  const label = scope.getByText('Disabled notes', { exact: true });
+  await expect(label).toHaveCSS('color', await color('--env-color-fg-default'));
+  expect(
+    await label.evaluate((element) => {
+      let opacity = 1;
+      for (let node: Element | null = element; node; node = node.parentElement)
+        opacity *= Number(getComputedStyle(node).opacity);
+      return opacity;
+    }),
+  ).toBe(1);
+  await expect(disabled).toHaveAttribute('contenteditable', 'false');
+});
+
+test('suggestions show above a Dialog the editor sits in and close as Tab leaves the editor', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  await page.getByRole('button', { name: 'Open notes dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Notes dialog' });
+  const editor = dialog.getByRole('textbox', { name: 'Dialog notes' });
+  await editor.click();
+  await editor.pressSequentially('@');
+  const people = page.getByRole('listbox', { name: 'People', exact: true });
+  await expect(people).toBeVisible();
+  // The list is inside the dialog, and on top where it shows.
+  await expect(dialog.getByRole('listbox', { name: 'People', exact: true })).toBeVisible();
+  const option = people.getByRole('option', { name: 'Second person' });
+  const center = await option.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+    return Boolean(top && element.contains(top));
+  });
+  expect(center).toBe(true);
+  // Picking an option keeps the dialog open.
+  await option.click();
+  await expect(dialog).toBeVisible();
+  await expect(editor).toContainText('@Second person');
+  // Tab leaves the editor and closes the list.
+  await editor.pressSequentially(' @');
+  await expect(people).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await expect(editor).not.toBeFocused();
+});
+
+test('a controlled editor replaces documents with references and tasks without a flushSync warning', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
+  });
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  const scope = page.getByTestId('rich-text-field');
+  const editor = scope.getByRole('textbox', { name: 'Controlled notes' });
+  await expect(editor.locator('[data-reference-id="person-2"]').first()).toBeVisible();
+  // Tasks are envUI checkboxes, named by their text.
+  await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toHaveClass(
+    /env-checkbox-input/,
+  );
+  await scope.getByRole('button', { name: 'Replace controlled notes' }).click();
+  await expect(editor.getByRole('checkbox', { name: 'Send it' })).toBeChecked();
+  // Pressing a task's checkbox checks it in the document.
+  await editor.getByRole('checkbox', { name: 'Check the totals' }).check();
+  await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toBeChecked();
+  expect(errors.filter((text) => /flushSync/.test(text))).toEqual([]);
+});
+
+test("the toolbar and tasks take their names from EnvUIProvider's messages", async ({ page }) => {
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  const scope = page.getByTestId('rich-text-field');
+  const toolbar = scope.getByRole('toolbar', { name: 'Formatierung' });
+  await expect(toolbar.getByRole('button', { name: 'Fett', exact: true })).toBeVisible();
+  await expect(toolbar.getByRole('button', { name: 'Rückgängig', exact: true })).toBeVisible();
+  await expect(
+    scope.getByRole('textbox', { name: 'German notes' }).getByRole('checkbox', { name: 'Aufgabe' }),
+  ).toBeVisible();
 });

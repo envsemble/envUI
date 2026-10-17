@@ -187,11 +187,6 @@
       "count": 1
     }
   },
-  "packages/ui/src/styles/MarkdownEditor.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/Menu.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 19
@@ -252,7 +247,7 @@
   },
   "packages/ui/src/styles/RichText.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 15
+      "count": 7
     }
   },
   "packages/ui/src/styles/SegmentedControl.css": {
@@ -407,6 +402,11 @@
       "count": 3
     },
     "declaration-property-value-allowed-list": {
+      "count": 2
+    }
+  },
+  "packages/ui/src/styles/Editor.css": {
+    "declaration-property-unit-disallowed-list": {
       "count": 2
     }
   }

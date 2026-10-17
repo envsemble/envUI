@@ -11,7 +11,9 @@ export const linkDialog = {
   text: 'Text',
   /** The URL field's label. */
   url: 'URL or path',
-  /** The error for a URL that cannot be read. */
+  /** The URL field's placeholder, an example of what it takes. */
+  urlPlaceholder: 'https://example.com or /documents/example',
+  /** The error for an empty destination. */
   invalidUrl: 'Enter a valid URL.',
   /** The error for a destination that is neither a URL nor a path. */
   invalidPath: 'Enter a valid URL or relative path.',

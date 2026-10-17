@@ -1,21 +1,33 @@
 import type { Editor } from '@tiptap/core';
-import type { RichTextCommand, RichTextSlashCommand } from './Types.js';
+import type { RichTextCommand } from './Types.js';
 
-export const richTextCommandLabels: Record<RichTextCommand, string> = {
-  heading: 'Heading',
-  bold: 'Bold',
-  italic: 'Italic',
-  strike: 'Strikethrough',
-  'bullet-list': 'Bulleted list',
-  'numbered-list': 'Numbered list',
-  'task-list': 'Task list',
-  quote: 'Quote',
-  'inline-code': 'Inline code',
-  'code-block': 'Code block',
-  link: 'Insert link',
-  table: 'Insert table',
-};
-export const defaultRichTextCommands = Object.keys(richTextCommandLabels) as RichTextCommand[];
+/** Every command of RichTextEditor's toolbar, in order. */
+export const defaultRichTextCommands: readonly RichTextCommand[] = [
+  'heading',
+  'bold',
+  'italic',
+  'strike',
+  'bullet-list',
+  'numbered-list',
+  'task-list',
+  'quote',
+  'inline-code',
+  'code-block',
+  'link',
+  'table',
+];
+
+/** The block commands the slash menu offers, in order, before the application's own. */
+export const slashCommandIds: readonly Exclude<RichTextCommand, 'link'>[] = [
+  'heading',
+  'bullet-list',
+  'numbered-list',
+  'task-list',
+  'quote',
+  'code-block',
+  'table',
+];
+
 export function runRichTextCommand(editor: Editor, command: Exclude<RichTextCommand, 'link'>) {
   const chain = editor.chain().focus();
   switch (command) {
@@ -43,21 +55,7 @@ export function runRichTextCommand(editor: Editor, command: Exclude<RichTextComm
       return chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
   }
 }
-export const defaultSlashCommands: RichTextSlashCommand[] = [
-  'heading',
-  'bullet-list',
-  'numbered-list',
-  'task-list',
-  'quote',
-  'code-block',
-  'table',
-].map((command) => ({
-  id: command,
-  label: richTextCommandLabels[command as RichTextCommand],
-  run: (editor) => {
-    runRichTextCommand(editor, command as Exclude<RichTextCommand, 'link'>);
-  },
-}));
+
 export function richTextCommandActive(editor: Editor, command: RichTextCommand) {
   const name = {
     heading: 'heading',

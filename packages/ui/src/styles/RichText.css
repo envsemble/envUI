@@ -1,38 +1,24 @@
+/* RichTextEditor: a field whose control box, the text field's, holds the document; the box draws
+   the border, the fill and the states of the field variants. RichText shows saved documents in the
+   same prose. */
 .env-rich-text-editor {
   min-inline-size: 0;
-}
-.env-rich-text-editor > .env-field {
-  gap: var(--env-space-3);
 }
 .env-rich-text-document {
   min-inline-size: 0;
   max-inline-size: 100%;
   min-block-size: 10rem;
   padding: var(--env-space-4);
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: 0.25rem;
-  background: var(--env-color-bg-field);
+  border-radius: inherit;
+  outline: none;
   /* The editing host takes the control font size: 1 rem on touch screens, where a smaller size on
      the focused element zooms the page. */
   font-size: var(--env-control-font-size);
+  caret-color: var(--env-color-border-accent-emphasis);
 }
 /* Paragraphs set their own type, so they take the size too. */
 .env-rich-text-document p {
   font-size: var(--env-control-font-size);
-}
-.env-rich-text-editor[data-variant='plain'] .env-rich-text-document {
-  border-color: transparent;
-  background: transparent;
-}
-.env-rich-text-document:focus-visible {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: 0.125rem;
-}
-.env-rich-text-document[aria-invalid='true'] {
-  border-color: var(--env-color-fg-danger);
-}
-.env-rich-text-editor[data-disabled] {
-  opacity: 0.55;
 }
 .env-rich-text-document p.is-editor-empty:first-child::before {
   color: var(--env-color-fg-muted);
@@ -55,6 +41,16 @@
 }
 .env-rich-text :where(ul[data-type='taskList'] > li > div),
 .env-rich-text-document :where(ul[data-type='taskList'] > li > div) {
+  min-inline-size: 0;
+  flex: 1;
+}
+/* The editor's task item: its checkbox beside the item's text, as in RichText. */
+.env-rich-text-task {
+  display: flex;
+  align-items: baseline;
+  gap: var(--env-space-2);
+}
+.env-rich-text-task-content {
   min-inline-size: 0;
   flex: 1;
 }
@@ -87,28 +83,21 @@
 .env-rich-text-reference:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
 }
+/* The suggestions of a trigger, such as @: a list beside the caret, above what the editor sits in,
+   on the popup surface. */
+.env-rich-text-suggestions-positioner {
+  z-index: var(--env-z-popover);
+}
 .env-rich-text-suggestions {
   box-sizing: border-box;
-  display: grid;
-  grid-auto-rows: minmax(min-content, auto);
-  align-content: start;
-  gap: var(--env-space-1);
   min-inline-size: min(12rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
   max-inline-size: min(24rem, calc(100dvw - 2 * var(--env-viewport-gutter)));
   max-block-size: min(18rem, calc(100dvh - 2 * var(--env-viewport-gutter)));
   overflow: auto;
-  padding: var(--env-space-2);
-  border: 0.0625rem solid var(--env-elevation-2-border);
-  border-radius: 0.25rem;
-  background: var(--env-color-bg-field);
+  border: var(--env-control-border-width) solid var(--env-elevation-2-border);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-popup);
   color: var(--env-color-fg-default);
   box-shadow: var(--env-elevation-2-shadow);
-  z-index: var(--env-z-popover);
-}
-.env-rich-text-suggestions .env-button {
-  justify-content: start;
-}
-.env-rich-text-suggestions [aria-selected='true'] {
-  outline: 0.125rem solid var(--env-color-border-focus);
-  outline-offset: -0.125rem;
+  font: var(--env-type-body);
 }

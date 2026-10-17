@@ -11,6 +11,7 @@ const report = (component, prop, value, entry = props) => {
   return value === undefined ? rule.report : rule.values[value].report;
 };
 const content = map.props['@envsemble/envui/content'];
+const richText = map.props['@envsemble/envui/rich-text'];
 
 /** The fixtures that run with a map of the tests' own, for sections the v1 map has no entries in. */
 const maps = { 'calls.tsx': join(packageDirectory, 'test/maps/calls.json') };
@@ -34,6 +35,9 @@ const reports = {
   ],
   'color-picker.tsx': [
     `line 8: ColorPicker's variant has a value the codemod can't move: ${report('ColorPicker', 'variant')}`,
+  ],
+  'rich-text.tsx': [
+    `line 9: RichTextEditor's variant has a value the codemod can't move: ${report('RichTextEditor', 'variant', undefined, richText)}`,
   ],
   'panel-dock.tsx': [
     `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,

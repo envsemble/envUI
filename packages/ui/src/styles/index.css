@@ -48,6 +48,7 @@
 @import './Field.css' layer(env.components);
 @import './TextField.css' layer(env.components);
 @import './ColorPicker.css' layer(env.components);
+@import './Editor.css' layer(env.components);
 @import './MarkdownEditor.css' layer(env.components);
 @import './RichText.css' layer(env.components);
 @import './Select.css' layer(env.components);

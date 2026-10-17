@@ -6,25 +6,7 @@
   gap: var(--env-space-3);
   min-inline-size: 0;
 }
-.env-markdown-toolbar {
-  min-inline-size: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  /* Let focus rings stay visible while keeping the buttons aligned with the field. */
-  padding: var(--env-space-2);
-  margin: calc(-1 * var(--env-space-2));
-}
-.env-markdown-toolbar > .env-button-group {
-  max-inline-size: none;
-}
 .env-markdown-source {
   caret-color: var(--env-color-fg-default);
   tab-size: 2;
-}
-.env-markdown-editor-status:empty {
-  position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
-  clip-path: inset(50%);
-  overflow: hidden;
 }

@@ -3727,8 +3727,59 @@
     "MarkdownEditor": {
       "kind": "component",
       "source": "packages/ui/src/forms/MarkdownEditor.tsx",
-      "description": "Native Markdown source editing, shared formatting history, and optional preview.",
+      "description": "Native Markdown source editing, shared formatting history, and optional preview. Its toolbar, views and status come from EnvUIProvider's messages: markdownEditor, editor and linkDialog.",
       "props": [
+        {
+          "name": "ref",
+          "type": "Ref<HTMLTextAreaElement>",
+          "required": false,
+          "description": "The native text area of the source, so that a form library can register it and focus it."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string",
+          "required": false,
+          "default": "''",
+          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string) => void",
+          "required": false,
+          "description": "Receives the whole source after typing, formatting, undo or redo."
+        },
+        {
+          "name": "toolbar",
+          "type": "readonly MarkdownCommand[] | false",
+          "required": false,
+          "default": "['heading', 'bold', 'italic', 'bullet-list', 'numbered-list', 'quote', 'inline-code', 'code-block', 'link']",
+          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
+        },
+        {
+          "name": "preview",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
+        },
+        {
+          "name": "previewProps",
+          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
+          "required": false,
+          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
+        },
+        {
+          "name": "onRequestLink",
+          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
+          "required": false,
+          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
+        },
         {
           "name": "label",
           "type": "ReactNode",
@@ -3742,30 +3793,10 @@
           "description": "Styles of the field's root element, such as its width in a row."
         },
         {
-          "name": "defaultValue",
-          "type": "string",
-          "required": false,
-          "default": "''",
-          "description": "The source an uncontrolled editor starts with, and that a form reset restores."
-        },
-        {
           "name": "className",
           "type": "string",
           "required": false,
           "description": "The field's class, on its root element, beside env-field and env-text-field."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "defaultBuiltIn": true,
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
-        },
-        {
-          "name": "value",
-          "type": "string",
-          "required": false,
-          "description": "The Markdown source of a controlled editor; replacing it clears the undo history."
         },
         {
           "name": "rows",
@@ -3773,12 +3804,6 @@
           "required": false,
           "default": "8",
           "description": "The lines the field shows: with fixed sizing, its height in rows, at least 7.5 rem; with content sizing, the lines it starts at and shrinks back to, also under 7.5 rem. Without rows, both start at 7.5 rem."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": false,
-          "description": "Receives the whole source after typing, formatting, undo or redo."
         },
         {
           "name": "description",
@@ -3805,25 +3830,6 @@
           "required": false,
           "default": "'fixed'",
           "description": "How the height follows the text: fixed keeps its height, scrolls and resizes from the bottom edge, by dragging it or with the arrow keys; content grows and shrinks with the text."
-        },
-        {
-          "name": "preview",
-          "type": "boolean",
-          "required": false,
-          "default": "true",
-          "description": "Show Write/Preview tabs. Preview uses the same public Markdown renderer."
-        },
-        {
-          "name": "previewProps",
-          "type": "Pick<MarkdownProps, 'headingOffset' | 'renderLink' | 'codeCopyable'>",
-          "required": false,
-          "description": "Options of the Markdown that renders the preview: headingOffset, renderLink and codeCopyable."
-        },
-        {
-          "name": "onRequestLink",
-          "type": "(request: MarkdownLinkRequest) => MarkdownLink | null | Promise<MarkdownLink | null>",
-          "required": false,
-          "description": "Optional application picker. Return null to cancel; otherwise return an ordinary link."
         }
       ],
       "native": [
@@ -5571,10 +5577,10 @@
       "description": "A labelled editor for formatted text that people edit as it looks, built on Tiptap, with a formatting toolbar, references typed with a trigger such as",
       "props": [
         {
-          "name": "hint",
-          "type": "ReactNode",
+          "name": "ref",
+          "type": "Ref<RichTextEditorHandle>",
           "required": false,
-          "description": "Lasting guidance under the editor, such as a format or a limit, linked to it as its description."
+          "description": "Gives the Tiptap editor, as ref.current.editor, for commands."
         },
         {
           "name": "value",
@@ -5675,10 +5681,10 @@
         },
         {
           "name": "variant",
-          "type": "'outlined' | 'plain' | 'quiet'",
+          "type": "Exclude<FieldVariant, 'floating'>",
           "required": false,
-          "default": "'outlined'",
-          "description": "The editor's look: outlined, the document in a bordered well on the field background, or plain, without a border or fill. quiet is accepted for the shared field type, but draws as outlined."
+          "default": "'outline'",
+          "description": "The document's look, as a text area's: outline, in a bordered box on the field background; underline, without a border or fill, with an underline while it has focus; or ghost, only its text at rest, with a soft fill under the pointer and while it has focus. The document is always tall, with its label above it, so it has no floating variant."
         },
         {
           "name": "extensions",
@@ -5711,6 +5717,12 @@
           "type": "ReactNode",
           "required": false,
           "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
         },
         {
           "name": "error",
