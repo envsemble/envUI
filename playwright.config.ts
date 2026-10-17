@@ -78,11 +78,12 @@ export default defineConfig({
   },
   // `npm run test:browser` runs the behavior projects; the gates below have their own scripts.
   projects: [
-    // The contrast gate (`npm run test:contrast`) measures computed colors once, in Chromium.
+    // Firefox and WebKit run only the tests tagged @engines, which depend on the engine; the rest,
+    // and the contrast gate (`npm run test:contrast`), run once, in Chromium.
     {
       name: 'firefox',
       testIgnore: /LiveDevelopment/,
-      grepInvert: /@contrast/,
+      grep: /@engines/,
       workers: engineWorkers,
       use: {
         ...devices['Desktop Firefox'],
@@ -98,7 +99,7 @@ export default defineConfig({
     {
       name: 'webkit',
       testIgnore: /LiveDevelopment/,
-      grepInvert: /@contrast/,
+      grep: /@engines/,
       workers: engineWorkers,
       use: { ...devices['Desktop Safari'] },
     },

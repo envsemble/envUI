@@ -170,11 +170,6 @@ function measure(
 }
 
 test.describe('contrast', { tag: '@contrast' }, () => {
-  test.skip(
-    ({ browserName }) => browserName !== 'chromium',
-    'Colors resolve the same in every engine, so one engine measures them.',
-  );
-
   // Playwright requires the fixtures object as the first parameter, even when no fixture is used.
   // eslint-disable-next-line no-empty-pattern
   test('the pair registry and its exceptions agree', ({}, testInfo) => {
