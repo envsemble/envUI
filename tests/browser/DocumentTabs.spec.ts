@@ -175,10 +175,21 @@ test.describe('DocumentTabs', () => {
     await expect(darkRoadmap).toHaveCount(0);
     await expect(darkDecisions).toBeFocused();
 
-    // Backspace closes the focused tab too, for keyboards without a forward Delete key.
-    await page.keyboard.press('Backspace');
+    // Backspace closes the focused tab too, for keyboards without a forward Delete key. A held key
+    // closes only that tab: its repeats close no more.
+    const darkTabs = await dark.getByRole('tab').count();
+    await page.keyboard.down('Backspace');
     await expect.poll(() => lastLog(page, 'dark')).toBe('close plans/decisions.md');
     await expect(darkDecisions).toHaveCount(0);
+    for (const key of ['Backspace', 'Delete']) {
+      await page.evaluate((key) => {
+        const init = { key, repeat: true, bubbles: true, cancelable: true };
+        document.activeElement!.dispatchEvent(new KeyboardEvent('keydown', init));
+      }, key);
+    }
+    await page.keyboard.up('Backspace');
+    await expect(dark.getByRole('tab')).toHaveCount(darkTabs - 1);
+    await expect.poll(() => lastLog(page, 'dark')).toBe('close plans/decisions.md');
 
     // The strip around the tabs offers no menu without onCloseAll, and leaves the browser its own:
     // neither a right click in the gap before the first tab nor a contextmenu event is cancelled.
