@@ -314,7 +314,7 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/TitleBar.css": {
+  "packages/ui/src/styles/WindowFrame.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 2
     }

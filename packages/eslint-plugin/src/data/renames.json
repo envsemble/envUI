@@ -118,6 +118,8 @@
         "use": "Text renders another element through render, such as render={<h2 />}."
       },
       "TextTone": { "to": ["TextEmphasis"] },
+      "TitleBar": { "to": ["WindowFrame.TitleBar"] },
+      "TitleBarProps": { "to": ["WindowFrame.TitleBarProps"] },
       "Toast": {
         "to": [],
         "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",
@@ -131,6 +133,8 @@
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
       "ToastVariant": { "to": ["ToastTone"] },
       "TreeOpenOptions": { "to": ["TreeActionOptions"] },
+      "WindowFrame": { "to": ["WindowFrame.Root"] },
+      "WindowFrameProps": { "to": ["WindowFrame.RootProps"] },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."

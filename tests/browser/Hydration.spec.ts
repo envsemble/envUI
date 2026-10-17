@@ -132,7 +132,7 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('tab', { name: 'Two.md' }).click();
   await expect(page.getByRole('tab', { name: 'Two.md' })).toHaveAttribute('aria-selected', 'true');
   const file = page.getByRole('menuitem', { name: 'File', exact: true });
-  await expect(page.locator('.env-title-bar')).toContainText('Hydrated title');
+  await expect(page.locator('.env-window-frame-title-bar')).toContainText('Hydrated title');
   await file.click();
   const fileMenu = page.getByRole('menu', { name: 'File' });
   await expect(fileMenu.getByRole('menuitem', { name: 'Hydrated new' })).toBeVisible();

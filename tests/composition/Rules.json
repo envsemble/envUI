@@ -34,7 +34,6 @@
       "navigation/AppShell.tsx": "shell",
       "navigation/PanelDock.tsx": "shell",
       "navigation/PanelDockHeader.tsx": "shell",
-      "navigation/TitleBar.tsx": "shell",
       "navigation/WindowFrame.tsx": "shell",
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
@@ -307,7 +306,7 @@
       },
       "Tabs": {},
       "WindowFrame": {
-        "styles": ["TitleBar.css"]
+        "modules": ["navigation/internal/TitleBarFrame.tsx"]
       },
       "RichText": {
         "modules": [

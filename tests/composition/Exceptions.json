@@ -19,7 +19,7 @@
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip", "count": 1 },
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-positioner", "count": 1 },
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-theme", "count": 1 },
-    { "module": "navigation/AppShell.tsx", "class": "env-title-bar", "count": 2 },
+    { "module": "navigation/AppShell.tsx", "class": "env-window-frame-title-bar", "count": 2 },
     { "module": "rich-text/RichText.tsx", "class": "env-markdown", "count": 1 },
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown", "count": 2 },
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-editor-status", "count": 1 },
@@ -27,14 +27,13 @@
   ],
   "cssClasses": [
     { "stylesheet": "AppShell.css", "class": "env-nav-list-item", "count": 1 },
-    { "stylesheet": "AppShell.css", "class": "env-title-bar", "count": 5 },
+    { "stylesheet": "AppShell.css", "class": "env-window-frame-title-bar", "count": 5 },
     { "stylesheet": "AvatarGroup.css", "class": "env-avatar", "count": 1 },
     { "stylesheet": "Badge.css", "class": "env-button", "count": 5 },
     { "stylesheet": "Message.css", "class": "env-button", "count": 2 },
     { "stylesheet": "Message.css", "class": "env-icon-button", "count": 2 },
     { "stylesheet": "Message.css", "class": "env-spinner", "count": 1 },
     { "stylesheet": "RichText.css", "class": "env-button", "count": 1 },
-    { "stylesheet": "RichText.css", "class": "env-field", "count": 1 },
-    { "stylesheet": "TitleBar.css", "class": "env-text-field-control", "count": 1 }
+    { "stylesheet": "RichText.css", "class": "env-field", "count": 1 }
   ]
 }

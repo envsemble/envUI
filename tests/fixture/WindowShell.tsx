@@ -8,11 +8,8 @@ import {
   Menu,
   Menubar,
   NavList,
-  TitleBar,
-  WindowFrame,
   useAppShell,
 } from '@envsemble/envui';
-import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -328,51 +325,6 @@ export function FullShellFixture() {
         ))}
       </div>
     </AppShell>
-  );
-}
-
-/**
- * A title bar without the shell, as on a start page, in a window frame whose content scrolls below
- * it, mounted with ?fixture=title-bar.
- */
-export function TitleBarFixture() {
-  const scroller = useRef<HTMLDivElement>(null);
-  return (
-    <WindowFrame
-      className="fixture-title-bar-page"
-      data-testid="window-frame"
-      scrollRef={scroller}
-      titleBar={
-        <TitleBar
-          data-testid="title-bar"
-          start={
-            <>
-              <span data-testid="title-bar-mark">B</span>
-              <NotesMenubar />
-              <IconButton variant="text" icon={<ArrowBack />} aria-label="Back" />
-            </>
-          }
-          end={
-            <>
-              <Button variant="secondary">Share</Button>
-              <IconButton icon={<Settings />} aria-label="Settings" />
-            </>
-          }
-        >
-          <span data-testid="title-bar-title">Quarterly report</span>
-        </TitleBar>
-      }
-    >
-      <div className="fixture-tall-page">
-        <p>Start page content</p>
-        <button type="button" onClick={() => scroller.current?.scrollTo(0, 200)}>
-          Restore start page scroll
-        </button>
-        {Array.from({ length: 60 }, (_, index) => (
-          <p key={index}>Recent document {index + 1}</p>
-        ))}
-      </div>
-    </WindowFrame>
   );
 }
 

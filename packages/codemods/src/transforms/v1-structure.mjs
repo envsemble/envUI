@@ -5,8 +5,9 @@
 // Each component's entry has `cases`, tried in order; the first whose `when` matches the element's
 // props applies:
 // - `when`: per prop, the literal values the case is for; null stands for a prop the element
-//   doesn't set. A prop of `when` whose value is an expression can't be matched, so the element
-//   stays as it is and the entry's `report` is reported.
+//   doesn't set, and "*" for one it sets to any value, an expression included. A prop of `when`
+//   whose value is an expression can't be matched against literals, so the element stays as it is
+//   and the entry's `report` is reported.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
@@ -15,7 +16,12 @@
 // - `children`: per component of a direct child element, props it gets (`add`, unless it sets one
 //   of `unless`) or a `report`; `*` stands for any other child, text and expressions included.
 // - `wrap`: an element the result is wrapped in, with its props.
+// - `wrapChildren`: an element the element's children move into, with `props` naming the props
+//   that move from the element onto it, each under its new name (null keeps the name).
+// - `lift`: props whose values become the element's first children, in order, such as a title
+//   bar passed as an element: an element stays an element, and another value an expression.
 // - `report`: a note reported at every element the case rewrites.
+// A dotted `element`, such as `WindowFrame.Content`, is a part of a namespace the entry exports.
 // An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
 // can be chosen for it: it stays as it is and the entry's `report` is reported. So does a child
 // that spreads props where a case would add some, since it may already set them.
@@ -91,9 +97,17 @@ export default function transform(file, api, options = {}) {
     return local;
   }
 
-  /** The JSX name of `name` from the entry the element came from. */
-  const nameFor = (component, name) =>
-    component.namespace ? `${component.namespace}.${name}` : localFor(component.entry, name);
+  /**
+   * The JSX name of `name` from the entry the element came from; a dotted name is a part of the
+   * namespace its first name exports.
+   */
+  const nameFor = (component, name) => {
+    const [head, ...parts] = name.split('.');
+    const base = component.namespace
+      ? `${component.namespace}.${head}`
+      : localFor(component.entry, head);
+    return [base, ...parts].join('.');
+  };
 
   const attributeIndex = (attributes, name) =>
     attributes.findIndex((node) => node.type === 'JSXAttribute' && node.name.name === name);
@@ -105,6 +119,10 @@ export default function transform(file, api, options = {}) {
     for (const [prop, values] of Object.entries(when ?? {})) {
       if (prop.startsWith('$')) continue;
       const index = attributeIndex(attributes, prop);
+      if (values === '*') {
+        if (index === -1) return false;
+        continue;
+      }
       if (index === -1) {
         if (!values.includes(null)) return false;
         continue;
@@ -236,6 +254,56 @@ export default function transform(file, api, options = {}) {
       for (const [prop, value] of Object.entries(childRule.add ?? {}))
         if (!hasAttribute(childAttributes, prop))
           childAttributes.push(jsxAttribute(j, prop, value));
+    }
+
+    if (chosen.wrapChildren || chosen.lift) {
+      const { node } = path;
+      const content = (node.children ?? []).filter(
+        (child) => !(child.type === 'JSXText' && child.value.trim() === ''),
+      );
+      let children = content.length > 0 ? node.children : [];
+      if (chosen.wrapChildren) {
+        const moved = [];
+        for (const [prop, to] of Object.entries(chosen.wrapChildren.props ?? {})) {
+          const index = attributeIndex(attributes, prop);
+          if (index === -1) continue;
+          const [attribute] = attributes.splice(index, 1);
+          if (to) attribute.name = j.jsxIdentifier(to);
+          moved.push(attribute);
+        }
+        const wrapName = nameFor(component, chosen.wrapChildren.element);
+        const empty = children.length === 0;
+        children = [
+          j.jsxElement(
+            j.jsxOpeningElement(jsxName(j, wrapName), moved, empty),
+            empty ? null : j.jsxClosingElement(jsxName(j, wrapName)),
+            children,
+          ),
+        ];
+      }
+      const lifted = [];
+      for (const prop of chosen.lift ?? []) {
+        const index = attributeIndex(attributes, prop);
+        if (index === -1) continue;
+        const [{ value }] = attributes.splice(index, 1);
+        if (!value) continue;
+        const expression = value.type === 'JSXExpressionContainer' ? value.expression : value;
+        if (expression.type === 'JSXEmptyExpression') continue;
+        lifted.push(
+          expression.type === 'JSXElement' || expression.type === 'JSXFragment'
+            ? expression
+            : j.jsxExpressionContainer(expression),
+        );
+      }
+      const parts = [
+        ...lifted,
+        ...children.filter((child) => child.type !== 'JSXText' || child.value.trim() !== ''),
+      ];
+      node.children = parts.flatMap((part) => [j.jsxText('\n'), part]).concat(j.jsxText('\n'));
+      if (node.openingElement.selfClosing) {
+        node.openingElement.selfClosing = false;
+        node.closingElement = j.jsxClosingElement(node.openingElement.name);
+      }
     }
 
     if (chosen.element) {

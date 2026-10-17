@@ -73,7 +73,7 @@
 @import './Tree.css' layer(env.components);
 @import './DocumentTabs.css' layer(env.components);
 @import './CommandPalette.css' layer(env.components);
-@import './TitleBar.css' layer(env.components);
+@import './WindowFrame.css' layer(env.components);
 @import './AppShell.css' layer(env.components);
 @import './PanelDock.css' layer(env.components);
 @import './Composer.css' layer(env.components);

@@ -829,46 +829,6 @@ test.describe('Title bar', () => {
     await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
   });
 
-  test('WindowFrame fills the window and scrolls its content below the title bar', async ({
-    page,
-  }) => {
-    // With motion allowed, the keyboard scrolls smoothly.
-    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
-    const content = page.getByTestId('window-frame').locator('.env-window-frame-content');
-    const viewport = page.viewportSize()!;
-    const geometry = await content.evaluate((element) => {
-      const style = getComputedStyle(element);
-      const box = element.getBoundingClientRect();
-      const root = document.scrollingElement!;
-      return {
-        top: box.top,
-        bottom: box.bottom,
-        overflowY: style.overflowY,
-        gutter: style.getPropertyValue('scrollbar-gutter'),
-        gutterSupported: CSS.supports('scrollbar-gutter', 'stable'),
-        documentOverflow: root.scrollHeight - root.clientHeight,
-        overflows: element.scrollHeight > element.clientHeight,
-      };
-    });
-    // The content runs from the title bar to the bottom of the window and scrolls; the document
-    // does not, so no scrollbar reaches under the window controls.
-    expect([geometry.top, geometry.bottom]).toEqual([40, viewport.height]);
-    expect(geometry.overflowY).toBe('auto');
-    expect(geometry.overflows).toBe(true);
-    expect(geometry.documentOverflow).toBeLessThanOrEqual(0);
-    if (geometry.gutterSupported) expect(geometry.gutter).toBe('stable');
-    // The keyboard scrolls it from a fresh window.
-    await page.keyboard.press('PageDown');
-    await expect
-      .poll(() => content.evaluate((element) => element.scrollTop))
-      .toBeGreaterThan(viewport.height / 2);
-    await page.keyboard.press('Home');
-    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(0);
-    // scrollRef is the scrolling element, for restoring scroll positions.
-    await page.getByRole('button', { name: 'Restore start page scroll' }).click();
-    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBe(200);
-  });
-
   test('a page whose document scrolls keeps its keys while it shows a title-bar frame', async ({
     page,
   }) => {
@@ -891,9 +851,9 @@ test.describe('Title bar', () => {
     // Its hairline runs below the title bar area, under the window controls too.
     // Compared without white space, which a declaration that wraps over lines keeps.
     const compact = (value: string | undefined) => value?.replace(/\s+/g, '');
-    expect(compact(await declaredValue(page, '.env-title-bar', 'block-size'))).toContain(
-      'max(calc(env(titlebar-area-height,0px)+0.0625rem)',
-    );
+    expect(
+      compact(await declaredValue(page, '.env-window-frame-title-bar', 'block-size')),
+    ).toContain('max(calc(env(titlebar-area-height,0px)+0.0625rem)');
     expect(
       compact(
         await declaredValue(
@@ -912,80 +872,6 @@ test.describe('Title bar', () => {
         .locator('.env-app-content')
         .evaluate((element) => element.getBoundingClientRect().top),
     ).toBe(48);
-    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
-    await page
-      .getByTestId('title-bar')
-      .evaluate((bar: HTMLElement) => bar.style.setProperty('--env-title-bar-height', '48px'));
-    expect((await page.getByTestId('title-bar').boundingBox())!.height).toBe(48);
-  });
-
-  test('TitleBar alone matches the shell title bar and leaves room for the window controls', async ({
-    page,
-  }) => {
-    const errors = collectErrors(page);
-    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
-    const bar = page.getByTestId('title-bar');
-    const box = (await bar.boundingBox())!;
-    const viewport = page.viewportSize()!;
-    expect([box.x, box.y, box.width, box.height]).toEqual([0, 0, viewport.width, 40]);
-    // A normal block: the application decides whether it sticks or stays fixed.
-    expect(await bar.evaluate((element) => getComputedStyle(element).position)).toBe('static');
-    const mark = (await page.getByTestId('title-bar-mark').boundingBox())!;
-    const settings = (await page.getByRole('button', { name: 'Settings' }).boundingBox())!;
-    const title = (await page.getByTestId('title-bar-title').boundingBox())!;
-    expect(mark.x).toBeCloseTo(12, 0);
-    expect(settings.x + settings.width).toBeCloseTo(viewport.width - 12, 0);
-    expect(title.x + title.width / 2).toBeCloseTo(viewport.width / 2, 0);
-    for (const control of [
-      page.getByRole('button', { name: 'Share' }),
-      page.getByRole('button', { name: 'Settings' }),
-      page.getByRole('menuitem', { name: 'File', exact: true }),
-    ])
-      expect((await control.boundingBox())!.height).toBeCloseTo(32, 0);
-    const region = await appRegion(bar);
-    if (region !== null) {
-      expect(region).toBe('drag');
-      expect(await appRegion(page.getByRole('button', { name: 'Share' }))).toBe('no-drag');
-      expect(await appRegion(page.getByRole('menuitem', { name: 'File', exact: true }))).toBe(
-        'no-drag',
-      );
-    }
-    // The height and the space beside the window controls come from the title bar area
-    // environment variables, with fallbacks for an ordinary browser window.
-    expect(await declaredValue(page, '.env-title-bar', 'block-size')).toContain(
-      'env(titlebar-area-height',
-    );
-    expect(await declaredValue(page, '.env-title-bar', 'padding-left')).toContain(
-      'env(titlebar-area-x',
-    );
-    expect(await declaredValue(page, '.env-title-bar', 'padding-right')).toContain(
-      'env(titlebar-area-width',
-    );
-    // The menubar inside opens its menus as anywhere else.
-    await page.getByRole('menuitem', { name: 'File', exact: true }).click();
-    await expect(page.getByRole('menu', { name: 'File' })).toBeVisible();
-    expect(errors).toEqual([]);
-  });
-
-  test('icon-only text buttons in a title bar take the quiet icon color', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(`${fixtureUrl}/?fixture=title-bar`);
-    const bar = page.getByTestId('title-bar');
-    const color = (token: string) =>
-      bar.evaluate((element, value) => {
-        const probe = document.createElement('span');
-        probe.style.color = `var(${value})`;
-        element.append(probe);
-        const resolved = getComputedStyle(probe).color;
-        probe.remove();
-        return resolved;
-      }, token);
-    const back = page.getByRole('button', { name: 'Back' });
-    // Like the window controls beside them, not the link blue; they darken while hovered.
-    await expect(back).toHaveCSS('color', await color('--env-color-fg-muted'));
-    expect(await color('--env-color-fg-muted')).not.toBe(await color('--env-color-fg-link'));
-    await back.hover();
-    await expect(back).toHaveCSS('color', await color('--env-color-fg-default'));
   });
 
   test('AppShellSkeleton mirrors the full title bar frame', async ({ page }) => {

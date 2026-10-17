@@ -15,7 +15,7 @@ aliases:
   - access keys
 useWhen:
   - A document-centred application has many commands, grouped as a desktop application groups them, such as File, Edit, View and Help.
-  - A window draws its own title bar and holds the application's menus at its start (with TitleBar or AppShell's `titleBar`).
+  - A window draws its own title bar and holds the application's menus at its start (with WindowFrame.TitleBar or AppShell's `titleBar`).
 avoidWhen:
   - text: A short list of actions behind one control.
     use: Menu
@@ -126,7 +126,7 @@ A menubar holds an application's commands as a desktop window does: a row of sma
 
 ### In a title bar
 
-A window that draws its own title bar holds the menubar at the start of TitleBar, beside the document's name and its actions.
+A window that draws its own title bar holds the menubar at the start of `WindowFrame.TitleBar`, beside the document's name and its actions.
 
 ```tsx example=InTitleBar
 

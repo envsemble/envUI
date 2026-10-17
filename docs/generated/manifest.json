@@ -2125,11 +2125,12 @@
         "title bar",
         "window frame",
         "TitleBar",
-        "WindowFrame"
+        "WindowFrame",
+        "WindowFrame.TitleBar"
       ],
       "useWhen": [
         "An application needs its frame, with a topbar with the page's title and actions, a navigation sidebar that collapses to icons, and the page's content.",
-        "An installed web app or desktop shell draws its own title bar over the window (`titleBar`, TitleBar).",
+        "An installed web app or desktop shell draws its own title bar over the window (`titleBar`, WindowFrame).",
         "The application's first load shows the frame before the data arrives (AppShellSkeleton)."
       ],
       "avoidWhen": [
@@ -2162,8 +2163,10 @@
         "AppShell",
         "AppShellSkeleton",
         "useAppShell",
-        "TitleBar",
-        "WindowFrame"
+        "WindowFrame",
+        "WindowFrame.Root",
+        "WindowFrame.TitleBar",
+        "WindowFrame.Content"
       ],
       "examples": [
         {
@@ -2181,7 +2184,7 @@
         {
           "name": "StartPageWindow",
           "title": "A start page window",
-          "description": "TitleBar without the shell, inside a WindowFrame whose content scrolls below it.",
+          "description": "A title bar without the shell: `WindowFrame.TitleBar` on top of `WindowFrame.Root`, and `WindowFrame.Content` scrolling below it.",
           "file": "docs/examples/app-shell/StartPageWindow.tsx"
         },
         {
@@ -4684,7 +4687,7 @@
       ],
       "useWhen": [
         "A document-centred application has many commands, grouped as a desktop application groups them, such as File, Edit, View and Help.",
-        "A window draws its own title bar and holds the application's menus at its start (with TitleBar or AppShell's `titleBar`)."
+        "A window draws its own title bar and holds the application's menus at its start (with WindowFrame.TitleBar or AppShell's `titleBar`)."
       ],
       "avoidWhen": [
         {
@@ -4726,7 +4729,7 @@
         {
           "name": "InTitleBar",
           "title": "In a title bar",
-          "description": "A window that draws its own title bar holds the menubar at the start of TitleBar, beside the document's name and its actions.",
+          "description": "A window that draws its own title bar holds the menubar at the start of `WindowFrame.TitleBar`, beside the document's name and its actions.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
         }
       ]
@@ -12403,36 +12406,6 @@
       "page": "setup",
       "doc": "docs/setup.md"
     },
-    "TitleBar": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A window title bar without the application shell, for a start page or a simple window of an installed web app or desktop shell that draws its own title bar. It looks like AppShell's title bar: empty space drags the window, it leaves room for the window controls the system draws, and controls inside are small. It is a normal block; WindowFrame puts it above content that scrolls on its own.",
-      "props": [
-        {
-          "name": "start",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline start, such as the application mark and a Menubar."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content centered in the bar, such as the document title."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the inline end, such as actions; the window controls follow it."
-        }
-      ],
-      "native": [
-        "header"
-      ],
-      "page": "app-shell",
-      "doc": "docs/components/app-shell.md"
-    },
     "Toast": {
       "kind": "namespace",
       "import": "@envsemble/envui",
@@ -12782,31 +12755,79 @@
       "doc": "docs/components/tree.md"
     },
     "WindowFrame": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "WindowFrame.Root",
+        "WindowFrame.TitleBar",
+        "WindowFrame.Content"
+      ],
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.Content": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A window without the application shell, such as a start page: it fills the window with the title bar on top and the content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "description": "The window's content below the title bar, which scrolls on its own. Its ref is the scrolling element, to read and restore scroll positions. Pressing it focuses it, so the keyboard scrolls it.",
       "props": [
-        {
-          "name": "titleBar",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The window's title bar at the top, typically a TitleBar."
-        },
         {
           "name": "children",
           "type": "ReactNode",
           "required": false,
           "description": "The window's content, which scrolls below the title bar."
-        },
-        {
-          "name": "scrollRef",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The element that scrolls the content, to read and restore scroll positions."
         }
       ],
       "native": [
         "div"
+      ],
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A window without the application shell, such as a start page: it fills the window with its title bar on top and its content scrolling below it, so the window controls drawn over the title bar never cover a scrollbar. The keyboard scrolls the content as it would the document.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The window's parts: a WindowFrame.TitleBar on top, then WindowFrame.Content."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "page": "app-shell",
+      "doc": "docs/components/app-shell.md"
+    },
+    "WindowFrame.TitleBar": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A window title bar, for an installed web app or desktop shell that draws its own title bar: empty space drags the window, it leaves room for the window controls the system draws, and the controls inside are small, with buttons that set no variant ghost. It is a normal block, on its own or at the top of WindowFrame.Root, which scrolls the content below it.",
+      "props": [
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline start, such as the application mark and a Menubar."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content centered in the bar, such as the document title."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the inline end, such as actions; the window controls follow it."
+        }
+      ],
+      "native": [
+        "header"
       ],
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"

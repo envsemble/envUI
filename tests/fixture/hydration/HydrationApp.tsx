@@ -17,7 +17,7 @@ import {
   Slider,
   DropZone,
   Tree,
-  TitleBar,
+  WindowFrame,
   Menubar,
   Menu,
   Table,
@@ -68,7 +68,7 @@ export function HydrationApp() {
   return (
     <Theme theme="dark">
       <Toast.Provider>
-        <TitleBar
+        <WindowFrame.TitleBar
           start={
             <Menubar.Root aria-label="Hydrated menubar" accessKeys>
               <Menubar.Menu label="File" accessKey="F">
@@ -81,7 +81,7 @@ export function HydrationApp() {
           }
         >
           Hydrated title
-        </TitleBar>
+        </WindowFrame.TitleBar>
         <TextField
           label="Hydrated input"
           value={name}

@@ -333,15 +333,15 @@ button.env-app-sidebar-toggle:focus-visible {
    its natural width, the title, which truncates first, and the actions at the end. Its columns do
    not follow the sidebar, so nothing in it moves while the sidebar collapses or expands. */
 .env-app-shell[data-topbar='full'] .env-app-topbar {
-  --env-title-bar-start: var(--env-sidebar-inset);
-  --env-title-bar-end: var(--env-space-4);
+  --env-window-frame-title-bar-start: var(--env-sidebar-inset);
+  --env-window-frame-title-bar-end: var(--env-space-4);
   display: flex;
   align-items: center;
   gap: var(--env-space-3);
   transition: none;
 }
 .env-app-shell[data-topbar='full']:not([data-title-bar]) .env-app-topbar {
-  padding-inline: var(--env-title-bar-start) var(--env-title-bar-end);
+  padding-inline: var(--env-window-frame-title-bar-start) var(--env-window-frame-title-bar-end);
 }
 .env-app-shell[data-topbar='full'] :is(.env-app-topbar-context, .env-app-topbar-page) {
   display: contents;
@@ -360,7 +360,7 @@ button.env-app-sidebar-toggle:focus-visible {
   margin-inline-start: auto;
 }
 .env-app-shell[data-topbar='full'][data-narrow] .env-app-topbar {
-  --env-title-bar-end: var(--env-space-3);
+  --env-window-frame-title-bar-end: var(--env-space-3);
 }
 
 /* As the window's title bar, the topbar takes the title bar height and its divider below, so the
@@ -391,23 +391,27 @@ button.env-app-sidebar-toggle:focus-visible {
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
-/* In the split topbar, the columns keep their own inner padding. */
-.env-app-topbar.env-title-bar {
-  --env-title-bar-start: 0rem;
-  --env-title-bar-end: 0rem;
+/* In the split topbar, the columns keep their own inner padding. Icon-only text buttons in the title
+   bar take the quiet icon color, as the window controls beside them, darkening to the text color on
+   hover and press. */
+.env-app-topbar.env-window-frame-title-bar {
+  --env-window-frame-title-bar-start: 0rem;
+  --env-window-frame-title-bar-end: 0rem;
+  --env-button-text-icon-color: var(--env-color-fg-muted);
+  --env-button-text-icon-color-active: var(--env-color-fg-default);
 }
-.env-app-topbar.env-title-bar .env-app-title {
+.env-app-topbar.env-window-frame-title-bar .env-app-title {
   font: var(--env-type-body-small);
 }
 /* The toggle takes the compact size and stays on the center line of the navigation icons. */
-.env-app-topbar.env-title-bar .env-app-sidebar-toggle {
+.env-app-topbar.env-window-frame-title-bar .env-app-sidebar-toggle {
   margin-inline: calc((var(--env-app-control-height) - var(--env-app-toggle-size)) / 2);
 }
-.env-app-topbar.env-title-bar .env-app-brand > :is(img, svg) {
+.env-app-topbar.env-window-frame-title-bar .env-app-brand > :is(img, svg) {
   inline-size: 1.25rem;
   max-block-size: 1.25rem;
 }
-.env-app-topbar.env-title-bar .env-app-toggle-icon {
+.env-app-topbar.env-window-frame-title-bar .env-app-toggle-icon {
   inline-size: 1rem;
   block-size: 1rem;
 }
