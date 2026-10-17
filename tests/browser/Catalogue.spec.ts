@@ -1227,3 +1227,22 @@ test('the catalogue frame: skip links first, a rail that persists, a drawer from
     .poll(() => drawer.evaluate((element) => Math.round(element.getBoundingClientRect().left)))
     .toBe(0);
 });
+
+test('a link to a section lands it below the scroll padding, with no header above it', async ({
+  page,
+}) => {
+  // On a desktop the phone's top bar is hidden, so the document's scroll padding is the 8 px for
+  // focus rings alone, from the first reveal on, and the section stops at its scroll margin.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${catalogueUrl}/#/getting-started/usage?section=local-development`);
+  const section = page.locator('#local-development');
+  await expect(section).toBeInViewport();
+  const { padding, margin } = await section.evaluate((element) => ({
+    padding: parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop),
+    margin: parseFloat(getComputedStyle(element).scrollMarginTop),
+  }));
+  expect(padding).toBe(8);
+  await expect
+    .poll(async () => Math.round((await section.boundingBox())!.y))
+    .toBe(Math.round(padding + margin));
+});
