@@ -2,7 +2,7 @@
 title: Message
 summary: 'Conversation entries in a log: compact bubbles for your own messages, full-width content
   from others.'
-status: beta
+status: stable
 since: 0.5.0
 category: Content & guidance
 aliases:
@@ -61,7 +61,7 @@ MessageList is a log, so assistive technology politely announces messages as the
 2. **Header** (optional): the **author** at weight 500 and the **meta**, such as the time, in the muted color, 0.875 rem text on one line that wraps.
 3. **Content** (`children`): for your own messages, a bubble on the neutral fill with 1 rem corners and 0.5 rem by 1 rem padding, at most three quarters of the list's width, or 16 rem in a narrow list; for others, the full width without a fill.
 4. **Status** (optional, `status`): a spinner with Sending, or an error icon with Not sent, in 0.875 rem text below the content.
-5. **Actions** (optional, `actions`): small buttons below the message, 0.25 rem apart, at the start for others' messages and at the end for your own.
+5. **Actions** (optional, `actions`): small buttons below the message, 0.25 rem apart, at the start for others' messages and at the end for your own. A Button or IconButton without a variant or size of its own is a small ghost button there.
 
 The parts of a message are 0.5 rem apart.
 
@@ -92,7 +92,7 @@ The parts of a message are 0.5 rem apart.
 - Show an `author` where it helps tell people apart, such as in a group or a comment thread; leave it out on your own messages in a conversation with one other.
 - Put the time in `meta`, such as "09:41", or a [RelativeTime](../components/relative-time.md) in a thread people come back to.
 - Keep actions to the few that matter for a message, such as Copy and Retry, and name icon actions after what they do: "Copy answer".
-- Write a status that says what happened and in the page's language with `statusLabel`, such as "Could not deliver".
+- Translate the statuses with `messages.message.sending` and `.failed` on EnvUIProvider; `statusLabel` says what happened to one message, such as "Could not deliver".
 - Render formatted answers with [Markdown](../components/markdown.md) inside a message from someone else, where they take the full width.
 
 ## Do and don't
@@ -163,5 +163,5 @@ Comments by several people read best at full width: each is `from="other"`, with
 
 ## Changelog
 
-- **1.0.0**: The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
+- **1.0.0**: Buttons in `actions` are small ghost buttons unless they set their own variant or size, and the statuses come from `messages.message`. The page is `message`, after the component, instead of `messages`. Message and MessageList can render in React Server Components.
 - **0.5.0**: Message and MessageList, with `from`, `author`, `meta`, `actions`, `status` and `statusLabel`, and `busy` on the list.

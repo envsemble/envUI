@@ -1,7 +1,7 @@
 ---
 title: Disclosure
 summary: A one-line summary that shows and hides optional details below it, on the native details element.
-status: beta
+status: stable
 since: 0.1.0
 category: Content & guidance
 aliases:
@@ -61,7 +61,7 @@ A disclosure is a one-line summary that shows and hides the details below it. It
 
 ## States and behaviour
 
-- **Open and closed**: pressing the summary opens or closes the panel; while closed, the panel is hidden from everyone, assistive technology included. `open` with `onToggle` controls it, such as to open it when a field inside has an error, and `open` alone sets how it starts.
+- **Open and closed**: pressing the summary opens or closes the panel; while closed, the panel is hidden from everyone, assistive technology included. `open` with `onOpenChange` controls it, such as to open it when a field inside has an error, and `defaultOpen` sets how it starts. `onOpenChange` receives whether it is open each time it opens or closes, also when find in page opens it.
 - **Hover, pressed and focus**: the summary darkens to the quiet label's hover and pressed colors, and keyboard focus shows a focus outline around it.
 - **One at a time**: disclosures that share a `name` open one at a time, where the browser supports it; elsewhere each opens on its own.
 - **Find in page**: where the browser supports it, finding text in a closed panel opens it.
@@ -118,7 +118,7 @@ Disclosures with the same `name` act as one group: opening an answer closes the 
 
 ### Open on an error
 
-Advanced settings stay closed until a field in them has an error; `open` and `onToggle` then open the disclosure so the error shows.
+Advanced settings stay closed until a field in them has an error; `open` and `onOpenChange` then open the disclosure so the error shows.
 
 ```tsx example=OpenOnError
 
@@ -126,5 +126,5 @@ Advanced settings stay closed until a field in them has an error; `open` and `on
 
 ## Changelog
 
-- **1.0.0**: `DisclosureNote` is `Disclosure`, and its content `env-disclosure-panel`; the page is `disclosure`.
+- **1.0.0**: Disclosure takes `open`, `defaultOpen` and `onOpenChange(open)`; a native `onToggle` still passes through. `DisclosureNote` is `Disclosure`, and its content `env-disclosure-panel`; the page is `disclosure`.
 - **0.1.0**: DisclosureNote.

@@ -1,7 +1,7 @@
 ---
 title: AnimatedNumber
 summary: A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
-status: beta
+status: stable
 since: 0.4.0
 category: Content & guidance
 aliases:
@@ -59,7 +59,7 @@ AnimatedNumber shows a number inside text and rolls it to its new value when it 
 
 - **Rolling**: when `value` changes, the new value rolls in from 0.6 em below as it grows, or from above as it shrinks, and fades in, in 0.24 seconds. The first render and a render with the same value don't move.
 - **Reduced motion**: with a reduced-motion preference, the new value only fades in, in 0.16 seconds.
-- **Format**: `format` writes the value, such as a currency or a percentage; by default it is the browser locale's number format, such as 1,280.
+- **Format**: `format` writes the value, such as a currency or a percentage; by default it is the number format of EnvUIProvider's `locale`, or else the browser's, such as 1,280.
 - The new value replaces the old at once in the text; only its look moves.
 
 ## Content guidelines
@@ -113,4 +113,5 @@ The sentence is a status region, so the new count is announced as people change 
 
 ## Changelog
 
+- **1.0.0**: The default format follows EnvUIProvider's `locale`.
 - **0.4.0**: AnimatedNumber: a count rolls up as it grows and down as it shrinks, and fades with reduced motion.

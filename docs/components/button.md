@@ -1,7 +1,7 @@
 ---
 title: Button
 summary: Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group.
-status: beta
+status: stable
 since: 0.1.0
 category: Actions
 aliases:
@@ -116,7 +116,7 @@ A ButtonGroup joins its buttons with a 0.125 rem gap; inner corners take the sha
 - **Pending**: while `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.
 - **Links**: with `href` the button is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application. A disabled link has no destination, cannot be focused or followed, and reports `aria-disabled`.
 - **ConfirmButton**: the first press arms it. It turns into a primary button in the danger tone, shows `confirmLabel` and announces it with "Press again to confirm." A second press runs `onConfirm`; a double click only arms it, since a second press within 400 ms is ignored. <kbd>Esc</kbd>, leaving the button, disabling it, starting its work and `armedDuration` (4 seconds) disarm it. An icon-only ConfirmButton is round at rest and grows when armed to show its icon with the confirm label, keeping focus.
-- **CopyButton**: a press writes the text with the asynchronous Clipboard API; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A function `value` runs at the press, and a promise keeps the button pending until it resolves. The icon turns into a check and "Copied" (or "Couldn’t copy") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.
+- **CopyButton**: a press writes the text with the asynchronous Clipboard API, or with `write`, the application's own clipboard writer, such as a desktop shell's bridge; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A `write` that rejects reports "Couldn’t copy". A function `value` runs at the press, and a promise keeps the button pending until it resolves. The icon turns into a check and "Copied" (or "Couldn’t copy") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.
 - **ButtonGroup**: horizontal buttons share a height and vertical buttons fill the group's width. Labels wrap, and a group scrolls locally if its controls cannot fit. With `fullWidth` the group fills its container: labelled buttons share the room the icon-only ones leave. Hidden buttons don't count for the end corners.
 
 <!-- specimen: InteractionStates -->
@@ -243,6 +243,14 @@ After a press the icon turns into a check, and Copied shows and is announced for
 
 ```
 
+### Your own clipboard
+
+`write` copies through the application's own clipboard, here a stand-in that takes a moment; the button shows the result as it does for the browser's.
+
+```tsx example=CustomClipboard
+
+```
+
 ### Connected buttons
 
 ButtonGroup connects related actions in a row or a column. Prefer the same variant within a group; mix variants when related actions need different emphasis.
@@ -261,7 +269,7 @@ With `fullWidth` a group fills its container: the labelled button takes the room
 
 ## Changelog
 
-- **1.0.0**: `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own.
+- **1.0.0**: `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge, CounterBadge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
 - **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
 - **0.4.0**: `pending` on Button and IconButton; ConfirmButton.

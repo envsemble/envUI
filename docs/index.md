@@ -40,7 +40,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [CloseButton](components/close-button.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
-- [SegmentedControl](components/segmented-control.md)
 
 ## Forms & selection
 
@@ -52,6 +51,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Switch](components/switch.md)
 - [Radio](components/radio.md)
 - [Select](components/select.md)
+- [SegmentedControl](components/segmented-control.md)
 - [Combobox](components/combobox.md)
 - [DatePicker](components/date-picker.md)
 - [Slider](components/slider.md)
@@ -74,7 +74,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [RichText](components/rich-text.md)
 - [Markdown](components/markdown.md)
 - [Code](components/code.md)
-- [InfoChip](components/chips.md)
 - [Badge](components/badge.md)
 - [Table](components/table.md)
 - [Kbd](components/kbd.md)

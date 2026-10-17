@@ -29,7 +29,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Stack](docs/components/stack.md): Stack lays out content in a column, or a row, with even gaps, such as a form and its actions.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own.
 - [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names.
-- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card, a card with an action strip, or one link or button. Also: ClickableCard, ActionCard, FeatureCard.
+- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a heading and actions, a feature card, or one link or button.
 
 ## Components: Actions
 
@@ -37,7 +37,6 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [CloseButton](docs/components/close-button.md): The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language.
 - [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.
 - [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application.
-- [SegmentedControl](docs/components/segmented-control.md): One choice among a few options on a pill rail, such as views or filters of the same content.
 
 ## Components: Forms & selection
 
@@ -49,6 +48,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes.
 - [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup.
 - [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, hint and error.
+- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content.
 - [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several.
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar.
 - [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
@@ -71,8 +71,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions.
 - [Markdown](docs/components/markdown.md): Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview. Also: MarkdownEditor.
 - [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines.
-- [InfoChip](docs/components/chips.md): Read-only metadata beside related content.
-- [Badge](docs/components/badge.md): Small static pills that name a state in its tone, show a count, or the size of a change. Also: CounterBadge, DiffStat.
+- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: CounterBadge, DiffStat.
 - [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
 - [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
 - [AnimatedNumber](docs/components/animated-number.md): A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.

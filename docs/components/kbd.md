@@ -1,7 +1,7 @@
 ---
 title: Kbd
 summary: Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
-status: beta
+status: stable
 since: 0.5.0
 category: Content & guidance
 aliases:
@@ -50,13 +50,14 @@ Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bo
 
 1. **Key cap** (`children`, or each entry of `keys`): a native `<kbd>` with a hairline border in the strong border color, a 0.125 rem bottom edge, 0.3125 rem corners and the neutral fill.
 2. **Separator** (with `keys`): a muted + between two keys, in the small body type.
-3. **Combination** (with `keys`): an outer `<kbd>` around the keys and their separators, which keeps them on one line.
+3. **Combination** (with `keys`): an outer `<kbd>`, `env-kbd` with `data-combination`, around the keys and their separators, which keeps them on one line.
 
 ## Variants and sizes
 
 - A key cap is 1.375 rem tall and at least 1.375 rem wide, with 0.3125 rem inline padding and a 0.75 rem label in medium weight; a longer label, such as Shift, widens it. Labels don't wrap.
 - The label sits on the baseline of the surrounding text, so keys line up in a sentence whatever glyphs they show, and a combination lines up the same way.
 - In the shortcut of a menu item, keys are 1.125 rem tall with 0.6875 rem labels in the muted text color.
+- A container whose fill the key caps don't suit sets custom properties on its own element: `--env-kbd-fg` for the label and the separator, `--env-kbd-bg` for the fill and `--env-kbd-border` for the edge. A tooltip uses them for key caps on its dark fill.
 
 ## States and behaviour
 
@@ -129,5 +130,5 @@ Apple keyboards name the Command key where others use Ctrl. Pass the keys of the
 
 ## Changelog
 
-- **1.0.0**: The page is `kbd`, after the component.
+- **1.0.0**: A combination's outer `<kbd>` is `env-kbd` with `data-combination`, in place of `env-kbd-combination`. The page is `kbd`, after the component.
 - **0.5.0**: Kbd, for a key or, with `keys`, keys pressed together; Markdown renders `<kbd>` as Kbd.

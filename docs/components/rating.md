@@ -1,7 +1,7 @@
 ---
 title: Rating
 summary: A read-only rating as stars filled in half steps, named once for assistive technology.
-status: beta
+status: stable
 since: 0.7.0
 category: Content & guidance
 aliases:
@@ -80,8 +80,8 @@ A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the
 - Say whose rating it is and how many people gave it, such as "Average of 128 reviews", next to the stars. One rating from one person needs only the person's name.
 - Show the number with `showValue` where people compare ratings or need the exact value, such as in a summary; leave it out in a list of individual reviews.
 - Keep to one scale across a page, usually five stars, so ratings compare at a glance.
-- Write the accessible name in the page's language with `formatLabel`, which receives the shown value and the number of stars. The default reads "4.5 out of 5 stars".
-- The number from `showValue` is written as 4.5 in every language. Where the language uses a decimal comma, leave `showValue` off and write the number beside the stars yourself.
+- Write the accessible name in the page's language with `messages.rating.label` on EnvUIProvider, which receives the shown value and the number of stars as text in the locale's number format. The default reads "4.5 out of 5 stars"; `formatLabel` overrides it for one rating.
+- The number from `showValue` is in the locale's number format, such as 4,5 in German.
 
 ## Do and don't
 
@@ -89,7 +89,7 @@ A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the
 
 - Use Rating to show a rating someone gave, with who gave it and how many.
 - Round your own value the same way when you show it elsewhere, such as in a sort control, so the figures agree.
-- Pass `formatLabel` when the page is not in English.
+- Set the locale and `messages.rating.label` on EnvUIProvider when the page is not in English.
 
 ### Don't
 
@@ -107,7 +107,8 @@ A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the
 
 ### envUI provides
 
-- The stars as one element with `role="img"`, named by `formatLabel`, such as "4.5 out of 5 stars", so assistive technology reads the rating once instead of each star.
+- The stars as one element with `role="img"`, named by `messages.rating.label` or `formatLabel`, such as "4.5 out of 5 stars", so assistive technology reads the rating once instead of each star.
+- The shown number and the name's numbers in the locale's number format.
 - The number from `showValue` hidden from assistive technology, since the name already says it.
 - The same rounded value in the stars, the number and the name.
 - Empty stars at least 3:1 against every surface, so the scale is visible in both themes.
@@ -115,7 +116,7 @@ A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the
 ### You provide
 
 - Text that says whose rating it is and how many people gave it, such as a reviewer's name or a count of reviews.
-- A `formatLabel` in the page's language when it is not English.
+- `messages.rating.label` in the page's language when it is not English.
 - A separate input, such as a RadioGroup, when people give a rating.
 
 ## Examples
@@ -138,7 +139,7 @@ In a list of individual reviews the stars are enough; the reviewer's name says w
 
 ### The name in another language
 
-`formatLabel` writes the accessible name, here in German with its decimal comma.
+EnvUIProvider's locale writes the number, here in German with its decimal comma, and `messages.rating.label` the accessible name.
 
 ```tsx example=TranslatedLabel
 
@@ -146,5 +147,5 @@ In a list of individual reviews the stars are enough; the reviewer's name says w
 
 ## Changelog
 
-- **1.0.0**: Empty stars take the boundary color of controls, at least 3:1 against every surface.
+- **1.0.0**: The shown number and the name follow the locale, and the name comes from `messages.rating.label`. Empty stars take the boundary color of controls, at least 3:1 against every surface.
 - **0.7.0**: Rating, with half stars, `max`, `showValue` and `formatLabel`.

@@ -1,7 +1,7 @@
 ---
 title: Avatar
 summary: A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group.
-status: beta
+status: stable
 since: 0.2.0
 category: Content & guidance
 aliases:
@@ -66,12 +66,12 @@ The family builds on it:
 
 ## Variants and sizes
 
-| Size       | Use for                                                                          |
-| ---------- | -------------------------------------------------------------------------------- |
-| `small`    | 1.5 rem, beside compact text, such as in a combobox option or a dense table row. |
-| `standard` | 2 rem, in lists, comments and toolbars. The default.                             |
-| `large`    | 3 rem, beside a name and a second line, such as an account menu's header.        |
-| `display`  | 5.5 rem, on a profile page or a sign-in screen. Not for AvatarButton.            |
+| Size | Use for                                                                          |
+| ---- | -------------------------------------------------------------------------------- |
+| `sm` | 1.5 rem, beside compact text, such as in a combobox option or a dense table row. |
+| `md` | 2 rem, in lists, comments and toolbars. The default.                             |
+| `lg` | 3 rem, beside a name and a second line, such as an account menu's header.        |
+| `xl` | 5.5 rem, on a profile page or a sign-in screen. Not for AvatarButton.            |
 
 | Fallback   | Use for                                                      |
 | ---------- | ------------------------------------------------------------ |
@@ -82,24 +82,24 @@ The family builds on it:
 
 - Initials are the first letters of the first and last words of `name`, or the first two letters of a single word, in capitals, at 0.4 of the avatar's size, and read at 5:1 on the avatar blue.
 - An AvatarButton is its avatar plus 0.25 rem of halo on every side, and at least 2.75 rem on touch screens.
-- In an AvatarGroup, each avatar lies over the one before it by a quarter of its size, and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. A standard group is as tall as a small control, 2 rem. A group never wraps or shrinks; choose `max` to fit the room.
+- In an AvatarGroup, each avatar lies over the one before it by a quarter of its size, and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. An `md` group is as tall as a small control, 2 rem. A group never wraps or shrinks; choose `max` to fit the room.
 - On touch screens, pressable avatars in a group keep at least 1.5 rem uncovered, so small ones sit side by side.
 
 ## States and behaviour
 
 - **Loading and failing**: the fallback shows while the picture loads and stays when it is missing or fails, without an error.
-- **AvatarButton**: a halo shows on hover, while pressed and while its menu is open (`aria-expanded`), and keyboard focus shows a focus outline. The tooltip, below the button, shows `name` and, on a second line, `detail`. A menu supplies its `onClick` and the menu button semantics.
+- **AvatarButton**: a halo shows on hover, while pressed and while its menu is open (`aria-expanded`), and keyboard focus shows a focus outline. The tooltip, below the button, shows `name` and, on a second line, `description`. A menu supplies its `onClick` and the menu button semantics.
 - **AvatarGroup without actions**: the avatars are decorative, and the group is named with the count and every name, such as "4 people: Alex Morgan, Sam Lee, Priya Shah, Jordan Ellis".
 - **Pressable avatars**: with `onPersonClick` each avatar is a button, and a person with `href` is a link through the `LinkProvider`; each is named after the person, with the name in a tooltip on hover and keyboard focus. The avatar under the pointer or focus comes to the front with a state layer over its picture, and shrinks slightly while pressed without a reduced-motion preference.
-- **Overflow**: `max` sets how many avatars show; the chip counts the rest of `people` and of `total`, when `people` is only a preview of more. Its tooltip lists the hidden names, then "N more" (`formatMore`) for people counted in `total` without a name. A `max` or `total` that is not a count, such as NaN, shows and counts everyone passed.
+- **Overflow**: `max` sets how many avatars show; the chip counts the rest of `people` and of `total`, when `people` is only a preview of more. Its tooltip lists the hidden names, then "N more" (`messages.avatarGroup.more`, or `formatMore`) for people counted in `total` without a name. A `max` or `total` that is not a count, such as NaN, shows and counts everyone passed.
 - **Ring**: the ring takes the fill of the envUI surface the group sits on, such as a Card, a Surface or a Dialog, and the page's color elsewhere; set `--env-avatar-group-ring` for any other fill, such as `var(--env-color-list-item-bg)` on a List row.
 - **Right-to-left**: avatars run from the right, and the chip still reads +2.
 
 ## Content guidelines
 
 - Pass the person's full name as `name`: it is the image's name, the tooltip and the source of the initials.
-- Name an AvatarButton after what it opens, such as "Open account menu", and use `detail` for what tells accounts apart, such as the e-mail address.
-- Word `formatLabel` and `formatMore` in the application's language, such as "4 personnes".
+- Name an AvatarButton after what it opens, such as "Open account menu", and use `description` for what tells accounts apart, such as the e-mail address.
+- Translate the group's name and the overflow text with `messages.avatarGroup` on EnvUIProvider, such as "4 personnes"; `formatLabel` and `formatMore` override them for one group.
 
 ## Do and don't
 
@@ -139,7 +139,7 @@ The family builds on it:
 
 - The person's name beside a decorative avatar, or `label`.
 - An `aria-label` on an AvatarButton that says what it opens, and the menu or action behind it.
-- `formatLabel` and `formatMore` in the application's language, or an `aria-label` for the group.
+- `messages.avatarGroup` in the application's language, or an `aria-label` for the group.
 - `--env-avatar-group-ring` where a group sits on a fill that is not an envUI surface.
 
 ## Examples
@@ -186,7 +186,7 @@ With `onPersonClick` every avatar is a button named after the person; a person w
 
 ## Changelog
 
-- **1.0.0**: `getInitials` is internal; Avatar shows initials with `fallback="initials"`.
+- **1.0.0**: Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
 - **0.2.0**: Avatar, with the default person picture or initials as fallback.

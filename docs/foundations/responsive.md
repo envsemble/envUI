@@ -68,7 +68,7 @@ window.matchMedia(breakpointQuery('md', 'down'));
 
 ## Container queries first
 
-envUI's components respond to the width of their container, not the window's: a component in a narrow pane of a wide window lays out as it would on a phone. FeatureCard, for one, puts its action on a row of its own in a narrow container. Do the same for a region of your own: give it `container-type: inline-size` and write `@container (width < 30rem)` rules, so it adapts wherever it is placed. Keep viewport breakpoints for decisions about the whole window.
+envUI's components respond to the width of their container, not the window's: a component in a narrow pane of a wide window lays out as it would on a phone. A Card in the feature layout, for one, puts its action on a row of its own in a narrow container. Do the same for a region of your own: give it `container-type: inline-size` and write `@container (width < 30rem)` rules, so it adapts wherever it is placed. Keep viewport breakpoints for decisions about the whole window.
 
 ## The hooks
 

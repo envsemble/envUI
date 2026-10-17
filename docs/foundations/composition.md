@@ -34,23 +34,16 @@ Wrap public components to attach product meaning. Forward native props and refs 
 ProjectSummary adds product content while Card continues to own its appearance and spacing.
 
 ```tsx
-import type { ComponentPropsWithRef } from 'react';
-import { Card, Text } from '@envsemble/envui';
+import { Card } from '@envsemble/envui';
 
-type ProjectSummaryProps = Omit<ComponentPropsWithRef<'article'>, 'title' | 'children'> & {
+interface ProjectSummaryProps {
+  id?: string;
   title: string;
   description: string;
-};
+}
 
-export function ProjectSummary({ title, description, ...props }: ProjectSummaryProps) {
-  return (
-    <Card as="article" {...props}>
-      <Text as="h3" variant="section-heading">
-        {title}
-      </Text>
-      <Text tone="muted">{description}</Text>
-    </Card>
-  );
+export function ProjectSummary({ id, title, description }: ProjectSummaryProps) {
+  return <Card render={<article />} id={id} heading={title} description={description} />;
 }
 ```
 
