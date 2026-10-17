@@ -12383,7 +12383,7 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in a focusable element that carries its name and reports it disabled, so hovering and keyboard focus still open the tooltip."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
         },
         {
           "name": "side",

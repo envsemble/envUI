@@ -7,6 +7,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type AriaAttributes,
   type ComponentPropsWithRef,
   type ReactElement,
   type ReactNode,
@@ -33,8 +34,9 @@ export interface TooltipProps
   content: ReactNode;
   /**
    * The one control it describes, such as an IconButton, which takes the trigger's props and ref.
-   * A disabled control is wrapped in a focusable element that carries its name and reports it
-   * disabled, so hovering and keyboard focus still open the tooltip.
+   * A disabled control is wrapped in an element that hovering opens the tooltip on. Around a
+   * button, link, tab or menu item, it is focusable and carries the control's name, role and state,
+   * reported disabled, so keyboard focus opens it too.
    */
   children: ReactElement<TriggerProps>;
   /**
@@ -84,25 +86,52 @@ function accessibleName(element: Element | null | undefined): string | undefined
   return clean(element.textContent);
 }
 
-/** The role a control has: its role attribute, else its element's, for the common controls. */
-function roleOf(element: Element | null | undefined): string | undefined {
+const standInRoles = ['button', 'link', 'tab', 'menuitem'] as const;
+type StandInRole = (typeof standInRoles)[number];
+const buttonTypes = ['button', 'submit', 'reset', 'image'];
+
+/**
+ * The role the wrapper of a disabled control takes in its place, or none. Only roles that require
+ * no state stand in: a checkbox, radio, switch, slider or combobox needs its checked, value or
+ * expanded state, which a stand-in would have to copy and keep in step. Those get no stand-in: the
+ * wrapper is no tab stop, and the control itself stays exposed, disabled, with its own state.
+ */
+function standInRole(element: Element | null | undefined): StandInRole | undefined {
   if (!element) return undefined;
-  const role = element.getAttribute('role');
-  if (role) return role.split(/\s+/)[0];
   const tag = element.tagName.toLowerCase();
-  if (tag === 'button') return 'button';
-  if (tag === 'a' || tag === 'area') return 'link';
-  if (tag === 'select') return 'combobox';
-  if (tag === 'textarea') return 'textbox';
-  if (tag === 'input') {
-    const type = (element as HTMLInputElement).type;
-    if (type === 'checkbox' || type === 'radio') return type;
-    if (type === 'range') return 'slider';
-    if (['button', 'submit', 'reset', 'image'].includes(type)) return 'button';
-    return 'textbox';
-  }
-  return undefined;
+  const type = (element as HTMLInputElement).type;
+  let role = element.getAttribute('role')?.split(/\s+/)[0];
+  if (!role && (tag === 'button' || (tag === 'input' && buttonTypes.includes(type))))
+    role = 'button';
+  if (!role && (tag === 'a' || tag === 'area') && element.hasAttribute('href')) role = 'link';
+  return standInRoles.find((each) => each === role);
 }
+
+/** The states a button or tab stand-in copies from its control: a toggle's, a menu trigger's. */
+const copiedStates = ['aria-pressed', 'aria-expanded', 'aria-haspopup', 'aria-selected'] as const;
+
+/** What a disabled control's wrapper takes from it: its name, role and states. */
+interface StandIn {
+  name?: string;
+  role?: StandInRole;
+  states: Partial<Record<(typeof copiedStates)[number], string>>;
+}
+
+function readStandIn(control: Element | null | undefined, fallbackName?: string): StandIn {
+  const role = standInRole(control);
+  const states: StandIn['states'] = {};
+  if (control && (role === 'button' || role === 'tab'))
+    for (const state of copiedStates) {
+      const value = control.getAttribute(state);
+      if (value !== null) states[state] = value;
+    }
+  return { name: accessibleName(control) ?? fallbackName, role, states };
+}
+
+const sameStandIn = (a: StandIn, b: StandIn) =>
+  a.name === b.name &&
+  a.role === b.role &&
+  copiedStates.every((state) => a.states[state] === b.states[state]);
 
 /**
  * A short label beside a control, shown while the pointer rests on it or it has keyboard focus,
@@ -125,16 +154,21 @@ export function Tooltip({
   // The trigger's name, read from the page as the tooltip opens, so a control named by its
   // content, such as a Toolbar.Button or a button with an icon and text, counts as named.
   const [name, setName] = useState(() => ownName(trigger));
-  // A disabled control's wrapper stands in for it: the control's name and role, read once it is
-  // in the page.
-  const [stand, setStand] = useState<{ name?: string; role?: string }>({});
+  // A disabled control's wrapper stands in for it, read once it is in the page: its name and role,
+  // and, for a button or tab, the states it carries, followed while they change.
+  const [stand, setStand] = useState<StandIn>({ states: {} });
   useLayoutEffect(() => {
     if (!isDisabled) return;
     const control = triggerRef.current?.firstElementChild;
-    const next = { name: accessibleName(control) ?? ownName(trigger), role: roleOf(control) };
-    setStand((current) =>
-      current.name === next.name && current.role === next.role ? current : next,
-    );
+    const read = () => {
+      const next = readStandIn(control, ownName(trigger));
+      setStand((current) => (sameStandIn(current, next) ? current : next));
+    };
+    read();
+    if (!control) return;
+    const observer = new MutationObserver(read);
+    observer.observe(control, { attributes: true, attributeFilter: [...copiedStates] });
+    return () => observer.disconnect();
   }, [isDisabled, trigger]);
   const standsIn = isDisabled && stand.name !== undefined && stand.role !== undefined;
   const ownWords = isDisabled ? stand.name : name;
@@ -164,14 +198,16 @@ export function Tooltip({
           render={
             isDisabled ? (
               // Disabled controls receive no pointer or focus events, so the wrapper carries them.
-              // It takes the control's place for assistive technology, with its role and name,
-              // disabled, and a tab stop, where it can read both.
+              // It takes the control's place for assistive technology, with its role, name and
+              // states, disabled, and a tab stop, where it can read them and the role needs no
+              // state it can't carry (see standInRole).
               <span
                 className="env-tooltip-disabled-target"
                 role={standsIn ? stand.role : undefined}
                 aria-label={standsIn ? stand.name : undefined}
                 aria-disabled={standsIn || undefined}
                 tabIndex={standsIn ? 0 : undefined}
+                {...((standsIn ? stand.states : {}) as AriaAttributes)}
               />
             ) : (
               children

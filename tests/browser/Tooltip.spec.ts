@@ -61,6 +61,39 @@ test.describe('Tooltip', () => {
     await expect(enabled).not.toHaveClass(/env-tooltip-disabled-target/);
   });
 
+  test('a disabled control keeps valid ARIA: a toggle keeps its state, a checkbox its own role', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    // No wrapper takes a role that needs a state it lacks, such as a checkbox without aria-checked.
+    const roles = await page
+      .locator('.env-tooltip-disabled-target')
+      .evaluateAll((wrappers) => wrappers.map((wrapper) => wrapper.getAttribute('role')));
+    expect(roles.length).toBeGreaterThan(0);
+    for (const role of roles) expect([null, 'button', 'link', 'tab', 'menuitem']).toContain(role);
+
+    // A disabled toggle's wrapper stands in as the button, pressed, and follows its state.
+    const pin = page.getByRole('button', { name: 'Pin', exact: true });
+    await expect(pin).toHaveCount(1);
+    await expect(pin).toHaveClass('env-tooltip-disabled-target');
+    await expect(pin).toHaveAttribute('aria-disabled', 'true');
+    await expect(pin).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('button', { name: 'Toggle pinned' }).click();
+    await expect(pin).toHaveAttribute('aria-pressed', 'false');
+
+    // A disabled checkbox has no stand-in: the checkbox itself stays exposed, checked and
+    // disabled, and its wrapper is no tab stop.
+    const notify = page.getByRole('checkbox', { name: 'Notify owners' });
+    await expect(notify).toHaveCount(1);
+    await expect(notify).toBeChecked();
+    await expect(notify).toBeDisabled();
+    const wrapper = page.locator('.env-tooltip-disabled-target', { has: notify });
+    await expect(wrapper).not.toHaveAttribute('role');
+    await expect(wrapper).not.toHaveAttribute('tabindex');
+    await wrapper.hover();
+    await expect(page.getByRole('tooltip')).toHaveText('Owners are always notified');
+  });
+
   test('in right-to-left text, inline-end opens tooltips and popovers to the left of the trigger', async ({
     page,
   }) => {
