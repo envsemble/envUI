@@ -286,7 +286,7 @@
         {
           "name": "OnAPane",
           "title": "Rows on a pane",
-          "description": "A list directly in a muted Surface puts the rows on a pane of their own, in the raised row fill.",
+          "description": "A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.",
           "file": "docs/examples/list/OnAPane.tsx"
         },
         {
@@ -8718,7 +8718,7 @@
     "List.Root": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A `ul` of connected rows with shared outer corners. Directly inside a muted Surface, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it.",
+      "description": "A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as `<Surface background=\"muted\" padding={3}>`, the rows take the raised fill, so they stand out from it.",
       "props": [
         {
           "name": "density",

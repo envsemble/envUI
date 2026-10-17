@@ -12,7 +12,7 @@ export interface RootProps extends ComponentPropsWithRef<'ul'> {
 }
 
 /**
- * A `ul` of connected rows with shared outer corners. Directly inside a muted Surface, such as
+ * A `ul` of connected rows with shared outer corners. In a muted Surface that holds only lists, such as
  * `<Surface background="muted" padding={3}>`, the rows take the raised fill, so they stand out
  * from it.
  */

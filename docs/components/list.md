@@ -52,7 +52,7 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 ## Anatomy
 
-1. **List** (List.Root): a `ul` of rows 0.125 rem apart. Directly in a muted Surface, such as `<Surface background="muted" padding={3}>`, the rows take the raised fill. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding.
+1. **List** (List.Root): a `ul` of rows 0.125 rem apart. In a muted Surface that holds only lists, such as `<Surface background="muted" padding={3}>`, the rows take the raised fill; in a surface with more in it, such as a card, they keep the row fill. `density` sets how tightly the rows pack, from `xs` to `lg`; it changes only their block padding.
 2. **Row** (List.Item): at `md`, the default, at least 3.5 rem tall, with 0.75 rem block and 1.5 rem inline padding, so its text stays clear of the large corners.
 3. **Label** (`label`): the row's main text, 0.875 rem in the row text color.
 4. **Description** (optional, `description`): a `small` below the label in the muted row detail color.
@@ -61,10 +61,10 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 ## Variants and sizes
 
-| Variant            | Use for                                                                                                   |
-| ------------------ | --------------------------------------------------------------------------------------------------------- |
-| Default            | Rows on the page or in a dialog, on the shared row fill.                                                  |
-| On a muted Surface | Rows directly in `<Surface background="muted">`, in the raised row fill, so they stand out from the pane. |
+| Variant                | Use for                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Default                | Rows on the page or in a dialog, on the shared row fill.                                                                 |
+| On a pane of their own | Rows in a `<Surface background="muted">` that holds only lists, in the raised row fill, so they stand out from the pane. |
 
 <!-- specimen: Corners -->
 
@@ -92,7 +92,7 @@ A list is a column of connected rows on the shared row fill: the first and last 
 
 - Name a list with `aria-label` where its heading doesn't, such as "Recent plans".
 - Make a row interactive when it opens what it names, and mark its title link `data-row-target`.
-- Put the list directly in a muted Surface when the rows sit on a pane of their own.
+- Give the rows a pane of their own with a muted Surface that holds only the list.
 
 ### Don't
 
@@ -133,7 +133,7 @@ Each title link covers its row, so a press anywhere on the row opens the plan; t
 
 ### Rows on a pane
 
-A list directly in a muted Surface puts the rows on a pane of their own, in the raised row fill.
+A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.
 
 ```tsx example=OnAPane
 
