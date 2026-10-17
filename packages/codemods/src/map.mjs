@@ -481,6 +481,31 @@ function validateStructureCase(at, each) {
   for (const [prop, value] of Object.entries(each.add ?? {}))
     if (!propName.test(prop) || !(propValue(value) || elementValue(value)))
       problems.push(`${at}.add: ${prop} must be a prop with a literal or an { "element" }.`);
+  if (
+    each.has !== undefined &&
+    (!Array.isArray(each.has) ||
+      !each.has.every((prop) => typeof prop === 'string' && propName.test(prop)))
+  )
+    problems.push(`${at}.has must list prop names.`);
+  if (each.content !== undefined) {
+    if (!Array.isArray(each.content) || each.content.length === 0)
+      problems.push(`${at}.content must list the elements it makes.`);
+    for (const [index, item] of (Array.isArray(each.content) ? each.content : []).entries()) {
+      const where = `${at}.content[${index}]`;
+      if (!isObject(item) || !isComponentName(item.element)) {
+        problems.push(`${where} needs an "element".`);
+        continue;
+      }
+      if (
+        item.children !== undefined &&
+        (typeof item.children !== 'string' || !propName.test(item.children))
+      )
+        problems.push(`${where}: "children" must name the prop whose value it takes.`);
+      for (const [to, from] of Object.entries(item.props ?? {}))
+        if (!propName.test(to) || typeof from !== 'string' || !propName.test(from))
+          problems.push(`${where}.props: ${to} must name the element's prop it takes.`);
+    }
+  }
   if (each.wrap !== undefined) {
     if (!isObject(each.wrap) || !isComponentName(each.wrap.element))
       problems.push(`${at}.wrap needs an "element".`);

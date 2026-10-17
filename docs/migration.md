@@ -51,7 +51,7 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
-- `v1-structure` rewrites elements whose 1.0 form is another element: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, and ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists.
+- `v1-structure` rewrites elements whose 1.0 form is another element: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, and SplitView becomes a SplitPane, as [split panes](#split-panes) lists.
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, class names and selector strings, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted` and `--space-4` becomes `--env-space-4`, as [tokens](#tokens) lists them. It reports a token that 1.0 removes, and a 0.7 fixed color no token replaces, with what to use instead.
@@ -256,6 +256,20 @@ Change these by hand where the codemods report them, or where they can't see the
 - `formatLabel` and `formatMore` on AvatarGroup, `formatLabel` on Rating and DiffStat, `statusLabel` on Message, `nowLabel` on RelativeTime and `lessLabel` and `moreLabel` on CalendarHeatmap that only translated the English text: set the strings once with `messages` on EnvUIProvider instead; the props still override them for one instance.
 
 Behaviour that changes without a rename: a link card's accessible name is its text; Card takes `headingLevel` and `description`; Rating's number, DiffStat's and AvatarGroup's counts, AnimatedNumber and CalendarHeatmap's months, weekdays, dates and values follow EnvUIProvider's `locale`; buttons in Message's `actions` without a variant are small ghost buttons; an unchosen segment's count is muted text at 4.5:1 instead of 80% opacity; CopyButton takes `write`, a clipboard writer of the application's own.
+
+### Split panes
+
+0.6's SplitView, which 0.7 removed, is SplitPane in 1.0, a compound component whose panes and handle are parts, and ListDetail builds a list beside its detail on it. `v1-names` and `v1-structure` rewrite it:
+
+| 0.x                                    | 1.0                                                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `<SplitView start={a} end={b} />`      | `<SplitPane.Root><SplitPane.Pane>{a}</SplitPane.Pane><SplitPane.ResizeHandle /><SplitPane.Pane>{b}</SplitPane.Pane></SplitPane.Root>` |
+| `resizeLabel`                          | `label` on `SplitPane.ResizeHandle`                                                                                                   |
+| `storageKey`                           | `persist`                                                                                                                             |
+| `SplitViewProps`                       | `SplitPane.RootProps`                                                                                                                 |
+| `.env-split-view`, `-pane`, `-divider` | `.env-split-pane`, `.env-split-pane-pane`, `.env-split-pane-handle`                                                                   |
+
+`size`, `defaultSize`, `minSize` and `maxSize` keep their percentages, now of the split pane's whole width; `onSizeChange` receives `{ committed }` as its second argument; `stackBelow` and `onStackedChange` are unchanged. Change by hand a SplitView that spreads props, which `v1-structure` reports. A list beside its detail that stacked with `onStackedChange` and showed one pane at a time is ListDetail now, with `detailShown`, `onBack` and `backLabel`.
 
 ### useTheme returns the theme, its contrast and its scale
 

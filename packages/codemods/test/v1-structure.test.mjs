@@ -8,6 +8,7 @@ const actionGroup = map.structure['@envsemble/envui'].ActionGroup;
 const listRoot = map.structure['@envsemble/envui']['List.Root'];
 const dialog = map.structure['@envsemble/envui'].Dialog;
 const card = map.structure['@envsemble/envui'].Card;
+const splitView = map.structure['@envsemble/envui']['SplitPane.Root'];
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
@@ -16,6 +17,9 @@ const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 const reports = {
   'list-contrast.tsx': [`line 6: List.Root: ${listRoot.report}`],
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
+  'split-view.tsx': [
+    `line 7: SplitPane.Root: its spread props may set what decides its 1.0 form, so it stays. ${splitView.report}`,
+  ],
   'cards.tsx': [`line 7: Card: ${card.report}`, `line 8: Card: ${card.cases[0].report}`],
   'action-group.tsx': [
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
@@ -43,7 +47,8 @@ for (const fixture of fixtures('v1-structure')) {
           report.endsWith(actionGroup.report) ||
           report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
-          report.endsWith(card.report),
+          report.endsWith(card.report) ||
+          report.endsWith(splitView.report),
       ),
     );
   });

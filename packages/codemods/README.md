@@ -107,9 +107,10 @@ Rewrites elements whose 1.0 form is another element, as the map's `structure` se
 - `<List.Root contrast>` becomes `<Surface background="muted" padding={3}><List.Root>`, and `contrast={false}` is dropped; a computed `contrast` is reported.
 - It reports an ActionGroup whose `stacked` is an expression, and a child of a stacked one that is not a Button, whose width it can't set.
 - `<ActionCard title>` becomes `<Card render={<article />} heading>`, and `<FeatureCard title action>` becomes `<Card layout="feature" headingLevel={2} heading actions>`. Card's `as="button"`, `as="a"` and `as="div"` go, since `onClick` and `href` make the button and the link, and `as="article"` becomes `render={<article />}`; an `as` that is an expression is reported.
+- `<SplitView start end resizeLabel storageKey>`, removed in 0.7, becomes `<SplitPane.Root persist>` around `<SplitPane.Pane>{start}</SplitPane.Pane>`, `<SplitPane.ResizeHandle label>` and `<SplitPane.Pane>{end}</SplitPane.Pane>`, before or after `v1-names`; its other props stay. One that spreads props or has children is reported.
 - It leaves an ActionGroup that spreads props, as in `<ActionGroup {...group}>`, and reports it: the spread may set `stacked` or `align`. A Button in a stacked one that spreads props is reported instead of getting `fullWidth`, since the spread may set `iconOnly` or `fullWidth`.
 
-Each entry is a list of cases matched on the element's literal props; a case renames the element, drops, renames or maps props, adds props to it or to its children, such as `render={<article />}`, or wraps it in another element. Later 1.0 changes add entries, not code.
+Each entry is a list of cases matched on the element's literal props; a case renames the element, drops, renames or maps props, adds props to it or to its children, such as `render={<article />}`, makes its children from its props, such as SplitView's panes, or wraps it in another element. `has` limits a case to elements that set some props, whatever their values. Later 1.0 changes add entries, not code.
 
 ## v1-classes
 

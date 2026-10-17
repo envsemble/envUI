@@ -8,6 +8,8 @@
 //   doesn't set, and `[null]` alone skips an element that sets it, whatever its value. Any other
 //   prop of `when` whose value is an expression can't be matched, so the element stays as it is
 //   and the entry's `report` is reported.
+// - `has`: props the element must set, whatever their values, such as SplitView's `start` and
+//   `end`; an element without one of them is no case's.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
@@ -16,6 +18,11 @@
 //   for an element such as render={<article />}.
 // - `children`: per component of a direct child element, props it gets (`add`, unless it sets one
 //   of `unless`) or a `report`; `*` stands for any other child, text and expressions included.
+// - `content`: the element's new children, in order, made from its props: each is an `element`
+//   that takes the value of the prop `children` names as its children, and the props `props` maps
+//   to it, new name to old; the props they take leave the element. SplitView's `start` and `end`
+//   become two SplitPane.Panes, with its `resizeLabel` the label of a SplitPane.ResizeHandle
+//   between them. An element with children of its own stays as it is, with the entry's `report`.
 // - `wrap`: an element the result is wrapped in, with its props.
 // - `report`: a note reported at every element the case rewrites.
 // An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
@@ -29,6 +36,8 @@ import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../s
 export const parser = 'tsx';
 
 const intrinsic = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
+/** Text that reads the same as a JSX child: one line, no braces, tags or entities, no edge spaces. */
+const plainText = /^[^{}<>&\s](?:[^{}<>&\n]*[^{}<>&\s])?$/;
 
 /** The JSX name for a dotted name, such as `Stack` or `ui.Stack`. */
 function jsxName(j, name) {
@@ -93,14 +102,68 @@ export default function transform(file, api, options = {}) {
     return local;
   }
 
-  /** The JSX name of `name` from the entry the element came from. */
-  const nameFor = (component, name) =>
-    component.namespace ? `${component.namespace}.${name}` : localFor(component.entry, name);
+  /**
+   * The JSX name of `name` from the entry the element came from; a part, such as SplitPane.Pane,
+   * through its namespace's import.
+   */
+  const nameFor = (component, name) => {
+    if (component.namespace) return `${component.namespace}.${name}`;
+    const [first, ...parts] = name.split('.');
+    return [localFor(component.entry, first), ...parts].join('.');
+  };
 
   const attributeIndex = (attributes, name) =>
     attributes.findIndex((node) => node.type === 'JSXAttribute' && node.name.name === name);
   const hasAttribute = (attributes, name) => attributeIndex(attributes, name) !== -1;
   const spreads = (attributes) => attributes.some((node) => node.type === 'JSXSpreadAttribute');
+  /** Whether an element has children other than whitespace. */
+  const hasChildren = (node) =>
+    (node.children ?? []).some((child) => !(child.type === 'JSXText' && child.value.trim() === ''));
+
+  /** Takes an attribute off the element and returns it, or undefined where it isn't set. */
+  function take(attributes, name) {
+    const index = attributeIndex(attributes, name);
+    return index === -1 ? undefined : attributes.splice(index, 1)[0];
+  }
+
+  /** The children an attribute's value makes: an element as it is, anything else in braces. */
+  function childrenOf(attribute) {
+    const { value } = attribute;
+    if (value == null) return [j.jsxExpressionContainer(j.booleanLiteral(true))];
+    if (value.type === 'JSXElement' || value.type === 'JSXFragment') return [value];
+    if (value.type === 'JSXExpressionContainer') {
+      const { expression } = value;
+      if (expression.type === 'JSXEmptyExpression') return [];
+      if (expression.type === 'JSXElement' || expression.type === 'JSXFragment')
+        return [expression];
+      return [value];
+    }
+    // Plain words stay text; anything JSX would read otherwise stays a string in braces.
+    if (typeof value.value === 'string' && plainText.test(value.value))
+      return [j.jsxText(value.value)];
+    return [j.jsxExpressionContainer(value)];
+  }
+
+  /** The elements a case's `content` makes from the element's props, which it takes off. */
+  function buildContent(component, attributes, content) {
+    return content.map((item) => {
+      const props = [];
+      for (const [to, from] of Object.entries(item.props ?? {})) {
+        const attribute = take(attributes, from);
+        if (!attribute) continue;
+        attribute.name = j.jsxIdentifier(to);
+        props.push(attribute);
+      }
+      const source = item.children && take(attributes, item.children);
+      const children = source ? childrenOf(source) : [];
+      const name = nameFor(component, item.element);
+      return j.jsxElement(
+        j.jsxOpeningElement(jsxName(j, name), props, children.length === 0),
+        children.length === 0 ? null : j.jsxClosingElement(jsxName(j, name)),
+        children,
+      );
+    });
+  }
 
   /** Whether a case's `when` matches the element: true, false, or undefined for an expression. */
   function matches(attributes, when) {
@@ -188,7 +251,9 @@ export default function transform(file, api, options = {}) {
     }
     let chosen;
     for (const each of rule.cases) {
-      const result = matches(attributes, each.when);
+      const result = (each.has ?? []).every((prop) => hasAttribute(attributes, prop))
+        ? matches(attributes, each.when)
+        : false;
       if (result === undefined) {
         chosen = null;
         break;
@@ -200,9 +265,18 @@ export default function transform(file, api, options = {}) {
     }
     // No case matches an element already in its 1.0 form; an undecided one is reported.
     if (chosen === undefined) continue;
-    if (chosen === null) {
+    if (chosen === null || (chosen.content && hasChildren(path.node))) {
       reporter.warn(path.node, `${where}: ${rule.report}`);
       continue;
+    }
+    if (chosen.content) {
+      const content = buildContent(component, attributes, chosen.content);
+      path.node.children = [
+        j.jsxText('\n'),
+        ...content.flatMap((child) => [child, j.jsxText('\n')]),
+      ];
+      path.node.openingElement.selfClosing = false;
+      path.node.closingElement ??= j.jsxClosingElement(path.node.openingElement.name);
     }
     const reports = applyProps(attributes, chosen.props, where);
     const added = Object.entries(chosen.add ?? {})
