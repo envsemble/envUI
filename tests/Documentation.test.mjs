@@ -258,6 +258,15 @@ test('the template rejects pages that break its contract', async () => {
     await rejects(frontmatter.replace('related: []', 'related: [switch]') + body, /itself/);
     await rejects(frontmatter.replace('aliases: [toggle]', 'aliases: []') + body, /aliases must/);
     await rejects(frontmatter.replace('since: 0.1.0', 'since: 9.9.9') + body, /since 9\.9\.9/);
+    // statuses: an export's own status, which differs from the page's and names a listed export.
+    const statuses = (lines) =>
+      frontmatter.replace('components: [Switch]', `components: [Switch]\nstatuses:${lines}`) + body;
+    await rejects(statuses(' [beta]'), /statuses must map an export to its status/);
+    await rejects(statuses('\n  Toggle: stable'), /statuses names Toggle, which components/);
+    await rejects(statuses('\n  Switch: ready'), /statuses of Switch must be one of/);
+    await rejects(statuses('\n  Switch: beta'), /statuses of Switch repeats the page's status/);
+    await writeFile(page, statuses('\n  Switch: stable'));
+    assert.deepEqual(read()[1].frontmatter.statuses, { Switch: 'stable' });
     await rejects(
       frontmatter.replace('components: [Switch]', 'components: [Switch, Menu.Item]') + body,
       /Menu\.Item, a part/,

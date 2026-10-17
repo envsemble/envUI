@@ -87,6 +87,7 @@ function exportEntry(entry, home, aliases) {
     item.native = entry.native;
   }
   if (aliases?.length) item.aliases = aliases;
+  if (home?.status) item.status = home.status;
   item.page = home?.page ?? null;
   item.doc = home?.doc ?? null;
   return item;
@@ -182,7 +183,14 @@ export function buildManifest({
     }
     const { frontmatter } = document;
     const names = documentedExports(frontmatter.components, props);
-    for (const name of names) exportPages.set(name, { page: document.id, doc });
+    // Each export takes its page's status, or its own where `statuses` sets one; a part takes its
+    // namespace's.
+    const statusOf = (name) =>
+      frontmatter.statuses?.[name] ??
+      frontmatter.statuses?.[name.split('.')[0]] ??
+      frontmatter.status;
+    for (const name of names)
+      exportPages.set(name, { page: document.id, doc, status: statusOf(name) });
     const exampleItems = [];
     for (const section of document.sections ?? []) {
       section.blocks.forEach((block, index) => {

@@ -5914,6 +5914,7 @@
         "AccountMenu.ThemeSubmenu",
         "AccountMenu.OrganizationSubmenu"
       ],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -5969,6 +5970,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6058,6 +6060,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6103,6 +6106,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "account-menu",
       "doc": "docs/components/account-menu.md"
     },
@@ -6166,6 +6170,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "alert",
       "doc": "docs/components/alert.md"
     },
@@ -6191,6 +6196,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "animated-number",
       "doc": "docs/components/animated-number.md"
     },
@@ -6367,6 +6373,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -6462,6 +6469,7 @@
         }
       ],
       "native": [],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -6507,6 +6515,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6550,6 +6559,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6607,6 +6617,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
@@ -6645,6 +6656,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -6683,6 +6695,7 @@
       "native": [
         "nav"
       ],
+      "status": "stable",
       "page": "breadcrumbs",
       "doc": "docs/components/breadcrumbs.md"
     },
@@ -6778,6 +6791,7 @@
         "button",
         "a"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -6804,6 +6818,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -6873,6 +6888,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "date-picker",
       "doc": "docs/components/date-picker.md"
     },
@@ -6998,6 +7014,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "calendar-heatmap",
       "doc": "docs/components/calendar-heatmap.md"
     },
@@ -7107,6 +7124,7 @@
         "a",
         "button"
       ],
+      "status": "stable",
       "page": "card",
       "doc": "docs/components/card.md"
     },
@@ -7162,6 +7180,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "checkbox",
       "doc": "docs/components/checkbox.md"
     },
@@ -7206,6 +7225,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "close-button",
       "doc": "docs/components/close-button.md"
     },
@@ -7217,6 +7237,7 @@
       "native": [
         "code"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -7261,6 +7282,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -7318,6 +7340,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -7429,6 +7452,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "color-picker",
       "doc": "docs/components/color-picker.md"
     },
@@ -7447,6 +7471,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "color-picker",
       "doc": "docs/components/color-picker.md"
     },
@@ -7621,6 +7646,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "combobox",
       "doc": "docs/components/combobox.md"
     },
@@ -7707,6 +7733,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "command-palette",
       "doc": "docs/components/command-palette.md"
     },
@@ -7818,6 +7845,7 @@
       "native": [
         "textarea"
       ],
+      "status": "stable",
       "page": "composer",
       "doc": "docs/components/composer.md"
     },
@@ -7911,6 +7939,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -8004,6 +8033,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "confirm-dialog",
       "doc": "docs/components/confirm-dialog.md"
     },
@@ -8077,6 +8107,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -8165,6 +8196,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -8196,6 +8228,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -8428,6 +8461,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "date-picker",
       "doc": "docs/components/date-picker.md"
     },
@@ -8439,6 +8473,7 @@
         "DescriptionList.Root",
         "DescriptionList.Item"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8463,6 +8498,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8496,6 +8532,7 @@
       "native": [
         "dl"
       ],
+      "status": "beta",
       "page": "description-list",
       "doc": "docs/components/description-list.md"
     },
@@ -8611,6 +8648,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "dialog",
       "doc": "docs/components/dialog.md"
     },
@@ -8693,6 +8731,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "dialog",
       "doc": "docs/components/dialog.md"
     },
@@ -8724,6 +8763,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
@@ -8767,6 +8807,7 @@
       "native": [
         "details"
       ],
+      "status": "stable",
       "page": "disclosure",
       "doc": "docs/components/disclosure.md"
     },
@@ -8866,6 +8907,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "document-tabs",
       "doc": "docs/components/document-tabs.md"
     },
@@ -8994,6 +9036,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "drawer",
       "doc": "docs/components/drawer.md"
     },
@@ -9100,6 +9143,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "drop-zone",
       "doc": "docs/components/drop-zone.md"
     },
@@ -9163,6 +9207,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "empty-state",
       "doc": "docs/components/empty-state.md"
     },
@@ -9221,6 +9266,7 @@
         "Field.Description",
         "Field.Error"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9273,6 +9319,7 @@
       "native": [
         "input"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9305,6 +9352,7 @@
       "native": [
         "p"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9350,6 +9398,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9390,6 +9439,7 @@
       "native": [
         "label"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9488,6 +9538,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "field",
       "doc": "docs/components/field.md"
     },
@@ -9566,6 +9617,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "hover-card",
       "doc": "docs/components/hover-card.md"
     },
@@ -9634,6 +9686,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
     },
@@ -9652,6 +9705,7 @@
       "native": [
         "kbd"
       ],
+      "status": "stable",
       "page": "kbd",
       "doc": "docs/components/kbd.md"
     },
@@ -9683,6 +9737,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "link",
       "doc": "docs/components/link.md"
     },
@@ -9720,6 +9775,7 @@
         "List.Root",
         "List.Item"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9782,6 +9838,7 @@
       "native": [
         "li"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9807,6 +9864,7 @@
       "native": [
         "ul"
       ],
+      "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
     },
@@ -9819,6 +9877,7 @@
         "ListDetail.List",
         "ListDetail.Detail"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9837,6 +9896,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9855,6 +9915,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9925,6 +9986,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -9944,6 +10006,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "skeleton",
       "doc": "docs/components/skeleton.md"
     },
@@ -10000,6 +10063,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "markdown",
       "doc": "docs/components/markdown.md"
     },
@@ -10114,6 +10178,7 @@
       "native": [
         "textarea"
       ],
+      "status": "beta",
       "page": "markdown",
       "doc": "docs/components/markdown.md"
     },
@@ -10132,6 +10197,7 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10204,6 +10270,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10232,6 +10299,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10250,6 +10318,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10327,6 +10396,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10373,6 +10443,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10433,6 +10504,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10502,6 +10574,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10511,6 +10584,7 @@
       "description": "Separates groups of menu items.",
       "props": [],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10597,6 +10671,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -10608,6 +10683,7 @@
         "Menubar.Root",
         "Menubar.Menu"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10686,6 +10762,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10724,6 +10801,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menubar",
       "doc": "docs/components/menubar.md"
     },
@@ -10779,6 +10857,7 @@
       "native": [
         "article"
       ],
+      "status": "stable",
       "page": "message",
       "doc": "docs/components/message.md"
     },
@@ -10798,6 +10877,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "message",
       "doc": "docs/components/message.md"
     },
@@ -10848,6 +10928,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "meter",
       "doc": "docs/components/meter.md"
     },
@@ -10860,6 +10941,7 @@
         "NavList.Item",
         "NavList.Group"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10884,6 +10966,7 @@
       "native": [
         "li"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10948,6 +11031,7 @@
         "button",
         "a"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -10959,6 +11043,7 @@
       "native": [
         "ul"
       ],
+      "status": "stable",
       "page": "nav-list",
       "doc": "docs/components/nav-list.md"
     },
@@ -11048,6 +11133,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -11092,6 +11178,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "page",
       "doc": "docs/components/page.md"
     },
@@ -11167,6 +11254,7 @@
       "native": [
         "header"
       ],
+      "status": "beta",
       "page": "page-header",
       "doc": "docs/components/page-header.md"
     },
@@ -11179,6 +11267,7 @@
         "Pager.Previous",
         "Pager.Next"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11216,6 +11305,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11253,6 +11343,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11290,6 +11381,7 @@
       "native": [
         "nav"
       ],
+      "status": "beta",
       "page": "pager",
       "doc": "docs/components/pager.md"
     },
@@ -11388,6 +11480,7 @@
       "native": [
         "nav"
       ],
+      "status": "stable",
       "page": "pagination",
       "doc": "docs/components/pagination.md"
     },
@@ -11399,6 +11492,7 @@
         "PanelDock.Root",
         "PanelDock.Header"
       ],
+      "status": "stable",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -11449,6 +11543,7 @@
       "native": [
         "header"
       ],
+      "status": "stable",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -11545,6 +11640,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "panel-dock",
       "doc": "docs/components/panel-dock.md"
     },
@@ -11621,6 +11717,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "popover",
       "doc": "docs/components/popover.md"
     },
@@ -11677,6 +11774,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "progress",
       "doc": "docs/components/progress.md"
     },
@@ -11725,6 +11823,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "radio",
       "doc": "docs/components/radio.md"
     },
@@ -11794,6 +11893,7 @@
       "native": [
         "fieldset"
       ],
+      "status": "stable",
       "page": "radio",
       "doc": "docs/components/radio.md"
     },
@@ -11833,6 +11933,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "rating",
       "doc": "docs/components/rating.md"
     },
@@ -11885,6 +11986,7 @@
       "native": [
         "time"
       ],
+      "status": "stable",
       "page": "relative-time",
       "doc": "docs/components/relative-time.md"
     },
@@ -11929,6 +12031,7 @@
       "native": [
         "div"
       ],
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -12095,6 +12198,7 @@
       "native": [
         "div"
       ],
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -12201,6 +12305,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -12262,6 +12367,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "search-trigger",
       "doc": "docs/components/search-trigger.md"
     },
@@ -12318,6 +12424,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "segmented-control",
       "doc": "docs/components/segmented-control.md"
     },
@@ -12427,6 +12534,7 @@
       "native": [
         "button"
       ],
+      "status": "stable",
       "page": "select",
       "doc": "docs/components/select.md"
     },
@@ -12459,6 +12567,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "skeleton",
       "doc": "docs/components/skeleton.md"
     },
@@ -12573,6 +12682,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "slider",
       "doc": "docs/components/slider.md"
     },
@@ -12598,6 +12708,7 @@
       "native": [
         "span"
       ],
+      "status": "stable",
       "page": "spinner",
       "doc": "docs/components/spinner.md"
     },
@@ -12610,6 +12721,7 @@
         "SplitPane.Pane",
         "SplitPane.ResizeHandle"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12628,6 +12740,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12647,6 +12760,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12730,6 +12844,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
@@ -12783,6 +12898,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "stack",
       "doc": "docs/components/stack.md"
     },
@@ -12794,6 +12910,7 @@
         "Stat.Root",
         "Stat.Group"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12820,6 +12937,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12856,6 +12974,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "stat",
       "doc": "docs/components/stat.md"
     },
@@ -12895,6 +13014,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "surface",
       "doc": "docs/components/surface.md"
     },
@@ -12950,6 +13070,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "switch",
       "doc": "docs/components/switch.md"
     },
@@ -12965,6 +13086,7 @@
         "Table.HeaderCell",
         "Table.Cell"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -12976,6 +13098,7 @@
       "native": [
         "tbody"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13015,6 +13138,7 @@
       "native": [
         "td"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13026,6 +13150,7 @@
       "native": [
         "thead"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13086,6 +13211,7 @@
       "native": [
         "th"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13182,6 +13308,7 @@
       "native": [
         "table"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13207,6 +13334,7 @@
       "native": [
         "tr"
       ],
+      "status": "stable",
       "page": "table",
       "doc": "docs/components/table.md"
     },
@@ -13303,6 +13431,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tabs",
       "doc": "docs/components/tabs.md"
     },
@@ -13432,6 +13561,7 @@
       "native": [
         "input"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -13506,6 +13636,7 @@
       "native": [
         "textarea"
       ],
+      "status": "stable",
       "page": "text-field",
       "doc": "docs/components/text-field.md"
     },
@@ -13638,6 +13769,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "menu",
       "doc": "docs/components/menu.md"
     },
@@ -13699,6 +13831,7 @@
       "parts": [
         "Toast.Provider"
       ],
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     },
@@ -13729,6 +13862,7 @@
         }
       ],
       "native": [],
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     },
@@ -13743,6 +13877,7 @@
         "Toolbar.Button",
         "Toolbar.Link"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13791,6 +13926,7 @@
       "native": [
         "button"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13821,6 +13957,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13851,6 +13988,7 @@
       "native": [
         "a"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13907,6 +14045,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13918,6 +14057,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "toolbar",
       "doc": "docs/components/toolbar.md"
     },
@@ -13956,6 +14096,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tooltip",
       "doc": "docs/components/tooltip.md"
     },
@@ -14037,6 +14178,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "tree",
       "doc": "docs/components/tree.md"
     },
@@ -14049,6 +14191,7 @@
         "WindowFrame.TitleBar",
         "WindowFrame.Content"
       ],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14067,6 +14210,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14085,6 +14229,7 @@
       "native": [
         "div"
       ],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14115,6 +14260,7 @@
       "native": [
         "header"
       ],
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14131,6 +14277,7 @@
       "import": "@envsemble/envui/diff",
       "description": "How many lines a change adds and removes, as a DiffStat shows them.",
       "signature": "(before: string, after: string, filename?: string): { additions: number; deletions: number; }",
+      "status": "stable",
       "page": "code",
       "doc": "docs/components/code.md"
     },
@@ -14139,6 +14286,7 @@
       "import": "@envsemble/envui/rich-text",
       "description": "The Tiptap extensions RichTextEditor and RichText share: formatting, lists and task lists, tables, safe links and images, Markdown with raw HTML kept as text, a placeholder and references. options.extensions are added after them, for other Tiptap integrations that need the same schema.",
       "signature": "(options?: RichTextRenderOptions & { placeholder?: string; }): AnyExtension[]",
+      "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
     },
@@ -14158,6 +14306,7 @@
       "import": "@envsemble/envui",
       "description": "A moment as text relative to another, by default the current time, such as \"in 2 days\", \"3 hours ago\" or \"just now\", through Intl.RelativeTimeFormat. An invalid moment gives an empty string; an invalid now is ignored, as by RelativeTime, for the current time.",
       "signature": "(value: RelativeTimeValue, options?: RelativeTimeOptions): string",
+      "status": "stable",
       "page": "relative-time",
       "doc": "docs/components/relative-time.md"
     },
@@ -14166,6 +14315,7 @@
       "import": "@envsemble/envui",
       "description": "Shell controls for content rendered inside AppShell.",
       "signature": "(): AppShellContextValue",
+      "status": "beta",
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
@@ -14225,6 +14375,7 @@
       "import": "@envsemble/envui",
       "description": "Shows and dismisses notifications through the nearest Toast.Provider: show, dismiss and clear. Throws outside a provider.",
       "signature": "(): ToastManager",
+      "status": "stable",
       "page": "toast",
       "doc": "docs/components/toast.md"
     }

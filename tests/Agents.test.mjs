@@ -616,6 +616,14 @@ test('envui mcp answers every tool over stdio from the installed files', async (
     ['Menu.Item'],
   );
   assert.ok(menuItem.exports[0].props.some((prop) => prop.name === 'href'));
+  // An export says its status, its own where the page's `statuses` sets one.
+  const markdown = await server.call('get_component', { name: 'Markdown' });
+  assert.equal(markdown.status, 'stable');
+  const statusOf = (name) => markdown.exports.find((entry) => entry.name === name).status;
+  assert.equal(statusOf('Markdown'), 'stable');
+  assert.equal(statusOf('MarkdownEditor'), 'beta');
+  const editorProps = await server.call('get_props', { name: 'MarkdownEditor' });
+  assert.equal(editorProps.exports[0].status, 'beta');
   const textField = await server.call('get_props', { name: 'text-field' });
   assert.deepEqual(
     textField.exports.map((entry) => entry.name),
