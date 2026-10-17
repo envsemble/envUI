@@ -15,8 +15,6 @@
 .env-search-trigger-shortcut {
   flex: 0 0 auto;
   margin-inline-start: auto;
-  /* The keys sit quieter than the label, as a field's hint does. */
-  --env-kbd-fg: var(--env-color-fg-muted);
 }
 /* The tooltip of the icon-only trigger: the label, then the keys. */
 .env-search-trigger-tooltip {
