@@ -137,11 +137,21 @@ test('a breadcrumb cut short shows its full label in a tooltip, on hover and key
   await page.keyboard.press('Escape');
   await expect(tooltip).toHaveCount(0);
   // The current page of a one-line trail, cut short first, shows it on hover.
-  await scope
-    .getByRole('navigation', { name: 'One-line trail' })
-    .locator('[aria-current="page"]')
-    .hover();
+  const oneLine = scope.getByRole('navigation', { name: 'One-line trail' });
+  const current = oneLine.locator('[aria-current="page"]');
+  await current.hover();
   await expect(tooltip).toHaveText('Quarterly review of the shared design tokens');
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
+  // Cut short, it is a tab stop after the links, and keyboard focus shows it in full too.
+  await expect(current).toHaveAttribute('tabindex', '0');
+  await oneLine.getByRole('link').last().focus();
+  await page.keyboard.press('Tab');
+  await expect(current).toBeFocused();
+  await expect(tooltip).toHaveText('Quarterly review of the shared design tokens');
+  await page.keyboard.press('Escape');
+  // A current page that fits takes no focus.
+  await expect(trail.locator('[aria-current="page"]')).not.toHaveAttribute('tabindex', /.*/);
 });
 
 test('keys render as key caps joined by plus', async ({ page }) => {
