@@ -11064,7 +11064,7 @@
           "type": "string",
           "required": false,
           "default": "''",
-          "description": "The query an uncontrolled field starts with."
+          "description": "The query an uncontrolled field starts with, and that a form reset restores."
         },
         {
           "name": "onValueChange",

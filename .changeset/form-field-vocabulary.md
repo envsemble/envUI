@@ -12,7 +12,7 @@ Fields and choice controls take the 1.0 vocabulary, and envUI's fields are built
 - DropZone's `onFiles` is `onDropAccepted` and `onReject` is `onDropRejected`. The zone is named by its label and description, as its visible text is, and described by its error.
 - RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`. Radio's `detail` is `description`. A focused radio shows the focus ring.
 - `className` and `style` style the root, the field or the label around a choice, on TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio, and MarkdownEditor's `env-markdown-editor`; `ref` and the other native props reach the native control. Every one takes `ref` as a prop.
-- TextField and Textarea take `onValueChange`, after the native `onChange`.
+- TextField and Textarea take `onValueChange`, after the native `onChange`. An uncontrolled SearchField returns to its `defaultValue` on a native form reset.
 - A button in a field's `endAction` takes the `ghost` variant where it sets none; the buttons of a popover or menu it opens don't. Textarea's resize edge is a focusable `separator`.
 - Combobox's read-only chips no longer carry `aria-readonly`, which the input reports.
 - The built-in strings of SearchField, Textarea, Combobox, DatePicker, Calendar, ColorPicker and Composer come from EnvUIProvider's `messages`, and Calendar, DatePicker and Slider format in its `locale`.
