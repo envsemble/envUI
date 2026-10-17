@@ -48,6 +48,7 @@ const reports = {
     `line 8: ${report('Switch', 'style')}`,
     `line 10: ${report('Radio', 'className')}`,
   ],
+  'disclosure.tsx': [`line 4: ${report('Disclosure', 'onToggle')}`],
   'fields.tsx': [
     `line 7: TextField's compact: ${report('TextField', 'compact', 'true')}`,
     `line 8: TextField's compact: ${report('TextField', 'compact', 'true')}`,
