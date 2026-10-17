@@ -326,7 +326,8 @@ const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof val
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a
  * `report` that says what replaces it, and `values` mapping its literal values to the props that
- * replace them, or `to`, the name it takes in 1.0, with `values` for the literals that change.
+ * replace them, or `to`, the name it takes in 1.0, with `values` for the literals that change. A
+ * rule with neither is report-only: the prop keeps its name and value, and every use is reported.
  */
 function validatePropRules(where, names) {
   const problems = [];
@@ -341,6 +342,12 @@ function validatePropRules(where, names) {
     if (rule.to !== undefined && (typeof rule.to !== 'string' || !propName.test(rule.to)))
       problems.push(`${at}: "to" must be a prop name.`);
     else if (rule.to === name) problems.push(`${at}: "to" renames the prop to itself.`);
+    // A rule with neither "to" nor "values" only reports: the prop stays, and its meaning changed.
+    if (rule.to === undefined && rule.values === undefined) {
+      if (rule.current !== undefined)
+        problems.push(`${at}: "current" needs "values"; a report-only rule has neither.`);
+      continue;
+    }
     if (rule.to === undefined && (!isObject(rule.values) || entriesOf(rule.values).length === 0)) {
       problems.push(`${at} needs "values" mapping its literal values to new props, or "to".`);
       continue;

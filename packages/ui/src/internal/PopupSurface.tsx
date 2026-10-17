@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { Theme, useTheme } from '../foundations/Theme.js';
 import { classNames } from './classNames.js';
+import { ResetControlDefaults } from './ControlDefaults.js';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
@@ -135,7 +136,8 @@ function Directed({
 /**
  * One implementation of envUI's floating surfaces: a Base UI popup's Portal, a Theme that carries
  * the trigger's theme, contrast and scale into the portal, the Positioner and the Popup, with the
- * shared env-popup look and the text direction at its trigger.
+ * shared env-popup look and the text direction at its trigger. The defaults a toolbar or a field
+ * gives its buttons stay outside: the popup's buttons take their own.
  *
  *   <PopupSurface parts={{ Portal: Popover.Portal, Positioner: Popover.Positioner,
  *     Popup: Popover.Popup }} trigger={triggerRef} className="env-popover" width="md">…</PopupSurface>
@@ -182,7 +184,7 @@ export function PopupSurface({
                 data-elevation={elevation}
                 data-width={width}
               >
-                {children}
+                <ResetControlDefaults>{children}</ResetControlDefaults>
               </Popup>
             </Positioner>
           </Theme>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  SearchField,
   TextField,
   Textarea,
   Checkbox,
@@ -47,6 +48,7 @@ export function FormsFixture() {
           name="notes"
           defaultValue="Initial notes"
         />
+        <SearchField label="Search projects" name="query" defaultValue="initial query" />
         <TextField
           label="Invalid sample"
           error="Please correct this value"

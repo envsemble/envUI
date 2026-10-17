@@ -84,7 +84,8 @@ Moves the props that 1.0 removed or changed, as the `props` section of the renam
 It reports, with the prop's replacement:
 
 - props that 1.0 removed without a replacement, which it drops: `density` on Surface, Menu.Root, ContextMenu and Menubar.Menu, and `size` on NavList.Item; for a compact app or region, set `scale="compact"` on its Theme;
-- a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too.
+- a value it can't read, such as `density={density}`, which stays as it is, so the type checker points at it too;
+- props whose name and value stay but whose meaning changed, which it leaves alone and reports at every use, on every run: `className` and `style` on TextField, SearchField, Textarea, MarkdownEditor, Select, Combobox, DatePicker, Checkbox, Switch and Radio style the root element in 1.0 rather than the input, textarea or trigger.
 
 - Button emphasis: `variant="important"` becomes `variant="primary" tone="accent"`, `destructive` `variant="primary" tone="danger"`, `outlined` `outline` and `quiet` `ghost`, on Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle and Pagination.
 - Renamed props, which take their new name whatever their value and map the values that changed: Text's `tone` becomes `emphasis` (`primary` is `default`, `quiet` is `subtle`) and its variants `page-heading`, `section-heading` and `supporting` become `headline`, `title` and `body-sm`; Skeleton's `tone` becomes `emphasis` (`base` is `muted`, `highlight` is `default`); Surface's `tone` becomes `background` (`pane`, `row`, `canvas` and `alternate` are `default`, `muted`, `page` and `raised`) and `corners` becomes `radius` (`surface`, `standard` and `pill` are `xl`, `sm` and `full`).

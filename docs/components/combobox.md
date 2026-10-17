@@ -133,7 +133,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 ### envUI provides
 
 - The combobox pattern: the field is a `combobox` with `aria-expanded`, `aria-controls` and the highlighted option as its active descendant, and the list is a `listbox` of `option` rows with `aria-selected`; group headings name their groups.
-- The `label` tied to the field and the trigger, and the description and error linked to it, with `aria-invalid` while `error` is set.
+- The `label` tied to the field and the trigger, and the description and error linked to the field alone, with `aria-invalid` while `error` is set, so they are announced once.
 - An option's description read as its description, not its name, and decorative check marks and leading content hidden from assistive technology.
 - The chosen options of a multiple field in its description, chips in a toolbar named after the field, and remove buttons named after each option, such as "Remove Alex Morgan".
 - A status that announces `loadingLabel` while the options load and `emptyLabel` when nothing matches, with the list marked busy meanwhile.

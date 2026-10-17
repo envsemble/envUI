@@ -169,7 +169,7 @@ MarkdownEditor with a label and a description grows with its text; the Preview t
 
 ## Changelog
 
-- **1.0.0**: MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline`, `underline` and `ghost`, which the `v1-props` codemod writes.
+- **1.0.0**: MarkdownEditor takes Textarea's `description` instead of `hint`, and its variants `outline`, `underline` and `ghost`, which the `v1-props` codemod writes. `className` and `style` style the root, `env-markdown-editor`, rather than the textarea; `ref` and the other native props still reach the textarea.
 - **0.7.0**: Code in Markdown takes the code theme of the app theme; `inlineCode` is removed.
 - **0.5.0**: `components`, `remarkPlugins` and `rehypePlugins`; raw HTML is dropped before any rehype plugin runs, except keys written as `<kbd>`, which render as Kbd.
 - **0.1.0**: Markdown and MarkdownEditor.

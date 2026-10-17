@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogSurface,
 } from './internal/DialogParts.js';
+import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
 export interface DrawerProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
@@ -210,43 +211,47 @@ export function Drawer({
       {trigger && <BaseDrawer.Trigger ref={triggerRef} render={trigger} />}
       <BaseDrawer.Portal>
         <Theme {...theme} dir={provided ?? read}>
-          {modal && <DialogBackdrop className="env-drawer-backdrop" />}
-          <BaseDrawer.Viewport className="env-drawer-viewport" data-side={side}>
-            <BaseDrawer.Popup
-              render={<DialogSurface radius="none" />}
-              {...popupProps}
-              ref={attachPopup}
-              className={classNames('env-drawer-popup', className)}
-              style={{ ...(!named && { '--env-drawer-width': width }), ...style } as CSSProperties}
-              data-side={side}
-              data-width={named ? width : 'custom'}
-              aria-label={title == null ? label : undefined}
-              aria-busy={pending || undefined}
-              initialFocus={initialFocus ?? defaultFocus}
-              finalFocus={finalFocus}
-            >
-              <DialogContent>
-                <DialogHeader
-                  title={title}
-                  description={description}
-                  close={
-                    closeButton ? (
-                      <BaseDrawer.Close
-                        render={
-                          <CloseButton
-                            aria-label={ownCloseLabel ?? messages.close}
-                            disabled={pending}
-                          />
-                        }
-                      />
-                    ) : undefined
-                  }
-                />
-                {children}
-                {actions != null && <DialogActions>{actions}</DialogActions>}
-              </DialogContent>
-            </BaseDrawer.Popup>
-          </BaseDrawer.Viewport>
+          <ResetControlDefaults>
+            {modal && <DialogBackdrop className="env-drawer-backdrop" />}
+            <BaseDrawer.Viewport className="env-drawer-viewport" data-side={side}>
+              <BaseDrawer.Popup
+                render={<DialogSurface radius="none" />}
+                {...popupProps}
+                ref={attachPopup}
+                className={classNames('env-drawer-popup', className)}
+                style={
+                  { ...(!named && { '--env-drawer-width': width }), ...style } as CSSProperties
+                }
+                data-side={side}
+                data-width={named ? width : 'custom'}
+                aria-label={title == null ? label : undefined}
+                aria-busy={pending || undefined}
+                initialFocus={initialFocus ?? defaultFocus}
+                finalFocus={finalFocus}
+              >
+                <DialogContent>
+                  <DialogHeader
+                    title={title}
+                    description={description}
+                    close={
+                      closeButton ? (
+                        <BaseDrawer.Close
+                          render={
+                            <CloseButton
+                              aria-label={ownCloseLabel ?? messages.close}
+                              disabled={pending}
+                            />
+                          }
+                        />
+                      ) : undefined
+                    }
+                  />
+                  {children}
+                  {actions != null && <DialogActions>{actions}</DialogActions>}
+                </DialogContent>
+              </BaseDrawer.Popup>
+            </BaseDrawer.Viewport>
+          </ResetControlDefaults>
         </Theme>
       </BaseDrawer.Portal>
     </BaseDrawer.Root>

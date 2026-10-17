@@ -195,3 +195,16 @@ test('the source is a tall text area with medium corners, never a pill', async (
     expect((await well.boundingBox())!.height).toBeGreaterThanOrEqual(120);
   }
 });
+
+test('className and style reach the root, and the textarea keeps its own class', async ({
+  page,
+}) => {
+  await page.goto(fixtureUrl);
+  const root = page.locator('.required-markdown-editor');
+  await expect(root).toHaveClass(/(^| )env-markdown-editor( |$)/);
+  await expect(root).toHaveCSS('max-inline-size', '640px');
+  const source = page.getByRole('textbox', { name: 'Required source' });
+  await expect(source).toHaveClass(/(^| )env-markdown-source( |$)/);
+  await expect(source).not.toHaveClass(/required-markdown-editor/);
+  expect(await source.evaluate((input) => input.style.maxInlineSize)).toBe('');
+});

@@ -9,8 +9,10 @@ import {
   EnvUIProvider,
   Field,
   IconButton,
+  Popover,
   Stack,
   Text,
+  TextField,
   Toolbar,
   useLocale,
 } from '@envsemble/envui';
@@ -105,7 +107,25 @@ function EmphasisSample() {
           Remove
         </ConfirmButton>
         <CopyButton value="text" aria-label="Copy text" data-testid="toolbar-copy" />
+        {/* A portal leaves the toolbar: the popover's buttons take their own defaults. */}
+        <Popover
+          title="Share"
+          trigger={<Button data-testid="toolbar-popover-trigger">Share</Button>}
+        >
+          <Button data-testid="toolbar-popover-button">Send link</Button>
+        </Popover>
       </Toolbar.Root>
+      <TextField
+        label="Link"
+        endAction={
+          <Popover
+            title="Link options"
+            trigger={<IconButton icon={<Settings />} aria-label="Link options" />}
+          >
+            <Button data-testid="field-popover-button">Shorten link</Button>
+          </Popover>
+        }
+      />
       <Stack direction="row" gap={2}>
         <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}} data-testid="confirm-resting">
           Remove
