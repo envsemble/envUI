@@ -26,7 +26,7 @@ export default function MasterDetail() {
               label={
                 // The current person's link carries aria-current, where Back returns focus.
                 <Link
-                  href={`#${person.id}`}
+                  href={`/people/${person.id}`}
                   underline={false}
                   data-row-target
                   draggable={false}

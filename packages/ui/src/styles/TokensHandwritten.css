@@ -4,7 +4,7 @@
 .env-theme {
   /* The theme boundary's own type and colors: styles, not tokens. */
   font-family: var(--env-font-family);
-  font-weight: 400;
+  font-weight: var(--env-body-font-weight);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

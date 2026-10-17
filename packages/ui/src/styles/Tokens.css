@@ -7,7 +7,7 @@
 .env-theme {
   color-scheme: light;
   --env-app-shell-header-height: 3.25rem;
-  --env-body-font-weight: 400;
+  --env-body-font-weight: var(--env-font-weight-regular);
   --env-breakpoint-lg: 64rem;
   --env-breakpoint-md: 48rem;
   --env-breakpoint-sm: 40rem;
@@ -150,6 +150,7 @@
   --env-control-height-touch: 2.75rem;
   --env-control-icon-size: 1rem;
   --env-control-target-min: 1.5rem;
+  --env-counter-badge-height: 1.25rem;
   --env-elevation-0-border: transparent;
   --env-elevation-0-shadow: 0 0 0 0 transparent;
   --env-elevation-1-border: var(--env-color-border-muted);
@@ -167,6 +168,9 @@
   --env-font-size-heading-small: 1rem;
   --env-font-size-label: 0.875rem;
   --env-font-size-label-small: 0.8125rem;
+  --env-font-weight-medium: 500;
+  --env-font-weight-regular: 400;
+  --env-font-weight-semibold: 600;
   --env-icon-size-lg: 1.25rem;
   --env-icon-size-md: 1.125rem;
   --env-icon-size-sm: var(--env-control-icon-size);
@@ -227,14 +231,14 @@
     var(--env-type-h1-line-height) var(--env-type-h1-font-family);
   --env-type-h1-font-family: var(--env-font-family);
   --env-type-h1-font-size: var(--env-font-size-heading);
-  --env-type-h1-font-weight: 500;
+  --env-type-h1-font-weight: var(--env-font-weight-medium);
   --env-type-h1-letter-spacing: 0rem;
   --env-type-h1-line-height: 1.4em;
   --env-type-h2: var(--env-type-h2-font-weight) var(--env-type-h2-font-size) /
     var(--env-type-h2-line-height) var(--env-type-h2-font-family);
   --env-type-h2-font-family: var(--env-font-family);
   --env-type-h2-font-size: var(--env-font-size-heading-small);
-  --env-type-h2-font-weight: 500;
+  --env-type-h2-font-weight: var(--env-font-weight-medium);
   --env-type-h2-letter-spacing: 0rem;
   --env-type-h2-line-height: 1.4em;
   --env-z-base: 0;
@@ -840,6 +844,7 @@
   --env-control-height-lg: 2.375rem;
   --env-control-height-md: 2rem;
   --env-control-height-sm: 1.625rem;
+  --env-counter-badge-height: 1rem;
   --env-field-floating-height: 2.75rem;
   --env-font-size-body: 0.8125rem;
   --env-font-size-body-small: 0.75rem;

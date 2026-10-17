@@ -311,8 +311,8 @@ const upcoming: { title: string; project: string; due: string; tone: 'warning' |
   { title: 'Test the import', project: 'Data migration', due: '2026-03-12', tone: 'neutral' },
 ];
 
-/** A due date in the reader's language, such as "Due 6 Mar" or "Due Mar 6". */
-const dueDate = new Intl.DateTimeFormat(undefined, {
+/** A due date in the screen's language, English, such as "Due Mar 6"; pass the application's locale. */
+const dueDate = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'short',
   timeZone: 'UTC',

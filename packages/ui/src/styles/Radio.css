@@ -16,7 +16,7 @@
 }
 .env-radio-group legend {
   max-inline-size: 100%;
-  margin-bottom: var(--env-space-4);
+  margin-block-end: var(--env-space-4);
   padding: 0;
 }
 .env-radio[data-orientation='vertical'] {

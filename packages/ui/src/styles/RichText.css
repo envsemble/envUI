@@ -101,6 +101,12 @@
     visibility: hidden;
   }
 }
+/* Under reduced motion the gap cursor stays lit rather than blinking. */
+@media (prefers-reduced-motion: reduce) {
+  .env-rich-text-document .ProseMirror-gapcursor::after {
+    animation: none;
+  }
+}
 .env-rich-text-document.ProseMirror-focused .ProseMirror-gapcursor {
   display: block;
 }

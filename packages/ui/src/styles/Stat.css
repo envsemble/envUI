@@ -15,7 +15,7 @@
 }
 .env-stat-value {
   color: var(--env-color-fg-default);
-  font: 500 1.75rem / 1.2 var(--env-font-family);
+  font: var(--env-font-weight-medium) 1.75rem / 1.2 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
@@ -33,7 +33,7 @@
   gap: var(--env-space-1);
   min-inline-size: 0;
   color: var(--env-stat-tone);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-stat-trend[data-tone='success'] {
   --env-stat-tone: var(--env-color-fg-success);

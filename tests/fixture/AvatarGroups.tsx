@@ -18,6 +18,13 @@ const people = [
   { id: 'jordan', name: 'Jordan Rivera' },
   { id: 'taylor', name: 'Taylor Kim' },
 ];
+/** Initials, which a group must leave readable, such as the wide M of AM. */
+const initials = [
+  { id: 'alex', name: 'Alex Morgan', fallback: 'initials' as const },
+  { id: 'sam', name: 'Sam Lee', fallback: 'initials' as const },
+  { id: 'priya', name: 'Priya Shah', fallback: 'initials' as const },
+  { id: 'jordan', name: 'Jordan Kim', fallback: 'initials' as const },
+];
 
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
   return (
@@ -39,6 +46,8 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">
       <AvatarGroup data-testid="decorative" people={people} max={3} />
       <AvatarGroup data-testid="preview" people={people.slice(0, 3)} total={12} max={2} size="sm" />
+      <AvatarGroup data-testid="initials" people={initials} max={4} />
+      <AvatarGroup data-testid="initials-small" people={initials} max={4} size="sm" />
       <AvatarGroup data-testid="named" aria-label="Report editors" people={people.slice(0, 2)} />
       <AvatarGroup
         data-testid="localized"

@@ -160,7 +160,7 @@
   }
 }
 .env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list + .env-list {
-  margin-top: var(--env-space-3);
+  margin-block-start: var(--env-space-3);
 }
 /* Forced colors: the system paints no fills or shadows, so the current or checked row takes an
    outline in the system's selection color, as a selected table row does, and a moving row one in

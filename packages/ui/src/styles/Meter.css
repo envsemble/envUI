@@ -23,7 +23,7 @@
 .env-meter-value,
 .env-progress-value {
   color: var(--env-color-fg-control);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-meter-track,
 .env-progress-track {

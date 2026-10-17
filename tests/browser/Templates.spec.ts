@@ -62,6 +62,23 @@ test('the frame route checks at least one template screen', () => {
   expect(screens.some((screen) => screen.page === 'sign-in-page')).toBe(true);
 });
 
+test.describe('in a reader’s other language', () => {
+  test.use({ locale: 'cs-CZ' });
+  test('template screens format relative times and dates in English, as their text is', async ({
+    page,
+  }) => {
+    for (const [frame, date] of [
+      ['index-page/IndexPage', / ago/],
+      ['details-page/DetailsPage', /[A-Z][a-z]{2} \d{1,2}, \d{4}/],
+    ] as const) {
+      await page.goto(`${catalogueUrl}/?${new URLSearchParams({ frame, theme: 'light' })}`);
+      const main = page.getByRole('main');
+      await expect(main).toContainText(date);
+      await expect(main).not.toContainText(/před|měsíc|týdn/);
+    }
+  });
+});
+
 /** The headings' levels in document order, from h1–h6 and role="heading" with aria-level. */
 function headingLevels(page: Page) {
   return page

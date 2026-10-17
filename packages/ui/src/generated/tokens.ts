@@ -1615,6 +1615,18 @@ export const tokens = {
       'dark-high-contrast': '1.5rem',
     },
   },
+  /** The height, and the least width, of a counter badge and a diff stat. */
+  'counter-badge.height': {
+    cssVariable: '--env-counter-badge-height',
+    type: 'dimension',
+    values: {
+      light: '1.25rem',
+      dark: '1.25rem',
+      'light-high-contrast': '1.25rem',
+      'dark-high-contrast': '1.25rem',
+    },
+    scales: { compact: '1rem' },
+  },
   'elevation.0.border': {
     cssVariable: '--env-elevation-0-border',
     type: 'color',
@@ -1796,6 +1808,36 @@ export const tokens = {
       'dark-high-contrast': '0.8125rem',
     },
     scales: { compact: '0.75rem' },
+  },
+  'font.weight.medium': {
+    cssVariable: '--env-font-weight-medium',
+    type: 'fontWeight',
+    values: {
+      light: '500',
+      dark: '500',
+      'light-high-contrast': '500',
+      'dark-high-contrast': '500',
+    },
+  },
+  'font.weight.regular': {
+    cssVariable: '--env-font-weight-regular',
+    type: 'fontWeight',
+    values: {
+      light: '400',
+      dark: '400',
+      'light-high-contrast': '400',
+      'dark-high-contrast': '400',
+    },
+  },
+  'font.weight.semibold': {
+    cssVariable: '--env-font-weight-semibold',
+    type: 'fontWeight',
+    values: {
+      light: '600',
+      dark: '600',
+      'light-high-contrast': '600',
+      'dark-high-contrast': '600',
+    },
   },
   /** A leading icon in a large row, such as a list item's. */
   'icon.size-lg': {
