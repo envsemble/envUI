@@ -37,10 +37,10 @@ export function Overlays({ items, query, setQuery, open }) {
       />
       <button
         onClick={() =>
-          toast.show({ message: 'Saved', tone: 'success', placement: "bottom-end" })
+          toast.show({ message: 'Saved', tone: 'success', placement: 'bottom-end' })
         }
       />
-      <button onClick={() => toast.show({ message: 'Failed', tone: "danger" })} />
+      <button onClick={() => toast.show({ message: 'Failed', tone: 'danger' })} />
     </Toast.Provider>
   );
 }
