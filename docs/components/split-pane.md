@@ -93,7 +93,7 @@ ListDetail's parts:
 ### Don't
 
 - Don't nest split panes more than one level; a page of many resizable regions is hard to use.
-- Don't use a split pane for the application's sidebar; AppShell's sidebar collapses and becomes a drawer.
+- Don't use a split pane for the application's sidebar; a Sidebar collapses and becomes a drawer.
 - Don't hide the only way to a pane behind the handle: a stacked layout keeps both reachable.
 
 ## Accessibility

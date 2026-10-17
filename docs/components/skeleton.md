@@ -25,7 +25,7 @@ avoidWhen:
   - text: Content that is empty or failed to load.
     use: EmptyState
   - text: The application frame before the first page loads.
-    use: AppShellSkeleton
+    use: AppShell
 related:
   - spinner
   - progress

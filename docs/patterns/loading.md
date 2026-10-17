@@ -2,7 +2,7 @@
 
 Choose by what is loading:
 
-- A whole page or route: the loading bar, through [AppShell](../components/app-shell.md)'s `loading` prop. It appears after 200 ms so quick loads never flash it, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
+- A whole page or route: the loading bar, through [AppShell.Root](../components/app-shell.md)'s `loading` prop. It appears after 200 ms so quick loads never flash it, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
 - Content whose shape is known: [skeletons in a LoadingState](../components/skeleton.md).
 - A small area, or an update to content already shown: a [Spinner](../components/spinner.md).
 - The result of an action: the `pending` state of the [Button](../components/button.md) that started it.
@@ -11,8 +11,8 @@ Choose by what is loading:
 ```tsx
 import { AppShell, Button, LoadingState, Skeleton, Spinner } from '@envsemble/envui';
 
-// Page progress: a bar along the bottom of the AppShell topbar.
-<AppShell loading={router.isLoading} {...shellProps} />;
+// Page progress: a bar along the bottom edge of the frame's header.
+<AppShell.Root loading={router.isLoading}>{frame}</AppShell.Root>;
 
 // Work in place.
 <Spinner label="Refreshing seats" />;

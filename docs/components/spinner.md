@@ -24,7 +24,7 @@ avoidWhen:
     use: Skeleton
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
-  - text: Loading a page or a route of an application, along the topbar.
+  - text: Loading a page or a route of an application, along the frame's header.
     use: AppShell
 related:
   - skeleton

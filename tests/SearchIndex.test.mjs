@@ -49,7 +49,7 @@ test('search covers every page, export, prop and token', () => {
 
 test('search finds components by alias, props and tokens by name, and pages before their parts', () => {
   assert.deepEqual(best('text box'), ['page:text-field']);
-  assert.deepEqual(best('hamburger'), ['page:app-shell']);
+  assert.deepEqual(best('hamburger'), ['page:sidebar']);
   assert.ok(best('startIcon', 5).includes('prop:Button.startIcon'));
   assert.ok(best('start icon', 5).includes('prop:Button.startIcon'));
   assert.deepEqual(best('--env-color-fg-muted'), ['token:color.fg.muted']);

@@ -9,7 +9,7 @@
         {
           "id": "collapsible-sidebar",
           "label": "collapsible sidebar and its toggle",
-          "envui": ["AppShell"]
+          "envui": ["AppShell", "Sidebar"]
         },
         {
           "id": "nav-links",

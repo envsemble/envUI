@@ -85,7 +85,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 - **Disabled rows**: `disabled` dims a row and reports `aria-disabled`; the keyboard still reaches it, but it neither opens nor expands.
 - **Context menu**: with `contextMenu` the tree opens a ContextMenu on right click, long press, <kbd>Shift</kbd>+<kbd>F10</kbd> and the <kbd>Menu</kbd> key, for the row under the pointer or the active row, or for the empty area with `null`. Right click makes its row active, and once the menu closes, focus returns to the tree.
 - **Keys for the application**: keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Alt</kbd>+<kbd>←</kbd> for going back.
-- **Size and scrolling**: the tree is as tall as its parent and scrolls itself, so give it a parent with a height, such as AppShell's `sidebarContent`. Only the rows in view, eight more on either side and the active row are in the document; a row's height is measured from the density, enlarged text and coarse pointers, also inside a dialog that scales in.
+- **Size and scrolling**: the tree is as tall as its parent and scrolls itself, so give it a parent with a height, such as a `Sidebar.Content` with `fill`. Only the rows in view, eight more on either side and the active row are in the document; a row's height is measured from the density, enlarged text and coarse pointers, also inside a dialog that scales in.
 
 ## Content guidelines
 

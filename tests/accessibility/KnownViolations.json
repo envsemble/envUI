@@ -1,28 +1,4 @@
 {
-  "components/app-shell/overview": {
-    "dark": {
-      "landmark-main-is-top-level": {
-        "article :: main.env-app-content": 2
-      },
-      "landmark-no-duplicate-main": {
-        "main :: main.docs-main": 1
-      },
-      "landmark-unique": {
-        "main :: main.docs-main": 1
-      }
-    },
-    "light": {
-      "landmark-main-is-top-level": {
-        "article :: main.env-app-content": 2
-      },
-      "landmark-no-duplicate-main": {
-        "main :: main.docs-main": 1
-      },
-      "landmark-unique": {
-        "main :: main.docs-main": 1
-      }
-    }
-  },
   "components/rich-text/overview": {
     "dark": {
       "target-size": {
