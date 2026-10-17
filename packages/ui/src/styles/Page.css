@@ -25,3 +25,7 @@
 .env-page[data-gutter='none'] {
   --env-page-gutter: 0rem;
 }
+/* The content under the page's header, the page's space below it. */
+.env-page-content {
+  margin-block-start: var(--env-space-6);
+}

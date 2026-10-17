@@ -50,7 +50,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 1. **Column**: a `div`, or the element in `render`, such as an `article`, centered with `margin-inline: auto`.
 2. **Header** (`header`): the page's PageHeader, at the top of the column.
 3. **Gutter** (`gutter`): the inline padding, from 1 rem on a phone to 2 rem on a wide window.
-4. **Content**: the page's children, under the header.
+4. **Content**: the page's children; under a header, in a block of their own 1.5 rem below it.
 
 ## Variants and sizes
 

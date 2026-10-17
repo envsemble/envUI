@@ -70,12 +70,16 @@ export function Page({
         className: classNames('env-page', className),
         'data-width': width,
         'data-gutter': gutter ? undefined : 'none',
-        children: (
-          <>
-            {header}
-            {children}
-          </>
-        ),
+        // Under a header, the content sits in a block of its own, the page's space below the header.
+        children:
+          header == null ? (
+            children
+          ) : (
+            <>
+              {header}
+              <div className="env-page-content">{children}</div>
+            </>
+          ),
       })}
     </PageContext>
   );
