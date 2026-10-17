@@ -204,7 +204,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
           attributes: {
             role: 'textbox',
             'aria-multiline': 'true',
-            class: 'env-markdown env-rich-text-document',
+            class: 'env-prose env-rich-text-document',
           },
           handleClick: (_view, _position, event) => {
             const anchor = (event.target as Element).closest<HTMLAnchorElement>('a[href]');
@@ -252,7 +252,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
           attributes: {
             role: 'textbox',
             'aria-multiline': 'true',
-            class: 'env-markdown env-rich-text-document',
+            class: 'env-prose env-rich-text-document',
             id: metadata.id,
             'aria-label': ariaLabel ?? (typeof label === 'string' ? label : ''),
             'aria-labelledby':

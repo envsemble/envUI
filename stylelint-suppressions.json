@@ -184,10 +184,7 @@
   },
   "packages/ui/src/styles/Markdown.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
-    },
-    "declaration-property-value-allowed-list": {
-      "count": 2
+      "count": 1
     }
   },
   "packages/ui/src/styles/MarkdownEditor.css": {
@@ -403,6 +400,14 @@
   "packages/ui/src/styles/Tooltip.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 4
+    }
+  },
+  "packages/ui/src/styles/Prose.css": {
+    "declaration-property-unit-disallowed-list": {
+      "count": 3
+    },
+    "declaration-property-value-allowed-list": {
+      "count": 2
     }
   }
 }

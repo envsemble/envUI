@@ -19,8 +19,6 @@
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-positioner", "count": 1 },
     { "module": "content/CalendarHeatmap.tsx", "class": "env-tooltip-theme", "count": 1 },
     { "module": "navigation/AppShell.tsx", "class": "env-window-frame-title-bar", "count": 2 },
-    { "module": "rich-text/RichText.tsx", "class": "env-markdown", "count": 1 },
-    { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown", "count": 2 },
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-editor-status", "count": 1 },
     { "module": "rich-text/RichTextEditor.tsx", "class": "env-markdown-toolbar", "count": 1 }
   ],

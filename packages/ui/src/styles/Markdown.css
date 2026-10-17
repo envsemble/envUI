@@ -1,73 +1,12 @@
-.env-markdown {
-  min-inline-size: 0;
-  font: var(--env-type-body);
-  color: var(--env-color-fg-default);
-  overflow-wrap: anywhere;
-}
-.env-markdown :where(p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote, pre, table, hr) {
-  margin: 0;
-}
-.env-markdown > * + *,
-.env-markdown :where(blockquote, li) > * + * {
-  margin-block-start: var(--env-space-4);
-}
-.env-markdown > :where(h1, h2, h3, h4, h5, h6):not(:first-child) {
-  margin-block-start: var(--env-space-6);
-}
-.env-markdown h1 {
-  font: var(--env-type-h1);
-}
-.env-markdown :where(h2, h3, h4, h5, h6) {
-  font: var(--env-type-h2);
-}
-.env-markdown p {
-  font: var(--env-type-body);
-}
-.env-markdown strong {
-  font-weight: 500;
-}
-.env-markdown :where(ul, ol) {
-  padding-inline-start: var(--env-space-5);
-}
-.env-markdown li + li {
-  margin-block-start: var(--env-space-2);
-}
-.env-markdown li > :where(ul, ol) {
-  margin-block-start: var(--env-space-2);
-}
-.env-markdown blockquote {
-  padding-inline-start: var(--env-space-4);
-  border-inline-start: 0.125rem solid var(--env-color-border-muted);
-  color: var(--env-color-fg-muted);
-}
+/* Markdown: rendered Markdown in the prose typography (Prose.css), with tables in focusable regions
+   that scroll on their own and task lists that line their checkboxes up with their text. */
 .env-markdown .env-markdown-table:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: var(--env-space-1);
 }
-.env-markdown img {
-  max-inline-size: 100%;
-  block-size: auto;
-}
-.env-markdown hr {
-  border: 0;
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
 .env-markdown-table {
   max-inline-size: 100%;
   overflow: auto;
-}
-.env-markdown table {
-  inline-size: 100%;
-  border-collapse: collapse;
-  font: var(--env-type-body-small);
-  text-align: start;
-}
-.env-markdown :where(th, td) {
-  padding: var(--env-space-3) var(--env-space-4);
-  border-block-end: 0.0625rem solid var(--env-color-border-muted);
-}
-.env-markdown th {
-  font-weight: 500;
 }
 .env-markdown .contains-task-list {
   padding-inline-start: 0;
@@ -76,8 +15,4 @@
 .env-markdown .task-list-item .env-checkbox {
   margin-inline-end: var(--env-space-2);
   vertical-align: middle;
-}
-.env-markdown .footnotes {
-  font: var(--env-type-body-small);
-  color: var(--env-color-fg-muted);
 }

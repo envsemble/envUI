@@ -37,6 +37,7 @@
 @import './LoadingBar.css' layer(env.components);
 @import './Text.css' layer(env.components);
 @import './Code.css' layer(env.components);
+@import './Prose.css' layer(env.components);
 @import './Markdown.css' layer(env.components);
 @import './Pager.css' layer(env.components);
 @import './Tabs.css' layer(env.components);

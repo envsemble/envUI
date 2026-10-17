@@ -173,7 +173,8 @@
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
-      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size."
+      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
+      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document."
     },
     "components": {
       "Button": {
@@ -341,6 +342,7 @@
     "stylesheetsWithoutComponent": {
       "index.css": "Imports every stylesheet.",
       "ConnectedRows.css": "Shared connected-row corners.",
+      "Prose.css": "The prose typography Markdown and the rich-text components share.",
       "Motion.css": "The keyframes several components share.",
       "Reset.css": "The box-sizing reset inside every theme boundary."
     },

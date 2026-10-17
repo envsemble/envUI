@@ -90,7 +90,7 @@ export function RichText({
     },
   });
   return (
-    <div {...props} className={classNames('env-markdown env-rich-text', className)}>
+    <div {...props} className={classNames('env-rich-text', 'env-prose', className)}>
       {content}
     </div>
   );

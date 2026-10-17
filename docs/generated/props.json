@@ -3670,7 +3670,7 @@
     "Markdown": {
       "kind": "component",
       "source": "packages/ui/src/content/Markdown.tsx",
-      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code.",
+      "description": "CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.",
       "props": [
         {
           "name": "children",
