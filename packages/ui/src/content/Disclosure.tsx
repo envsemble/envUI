@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import { useState, type ComponentPropsWithRef, type MouseEvent, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { Stack } from '../foundations/Layout.js';
 
@@ -22,6 +22,10 @@ export interface DisclosureProps extends Omit<ComponentPropsWithRef<'details'>, 
   /** Receives whether the details show, each time the disclosure opens or closes. */
   onOpenChange?: (open: boolean) => void;
 }
+
+// Content inside a summary that takes a click for itself, so the summary does not toggle.
+const interactive =
+  'a[href], button, input, select, textarea, label, iframe, embed, audio[controls], video[controls], [contenteditable]:not([contenteditable="false"])';
 
 /** A summary that shows and hides the details below it, on the native details element. */
 export function Disclosure({
@@ -47,15 +51,29 @@ export function Disclosure({
         // follows it, and a toggle that only echoes the open prop reports nothing.
         const next = event.currentTarget.open;
         if (next === shown) return;
-        // A controlled disclosure shows what open says: the element goes back to it, and moves
-        // only when the parent passes the open that onOpenChange asks for.
+        // A controlled disclosure shows what open says: a click asks through the summary, and a
+        // change the browser makes itself, such as find in page, goes back until the parent
+        // passes the open that onOpenChange asks for.
         if (controlled) event.currentTarget.open = shown;
         else setOwnOpen(next);
         onOpenChange?.(next);
       }}
       className={classNames('env-disclosure', className)}
     >
-      <summary>{title}</summary>
+      <summary
+        onClick={(event: MouseEvent<HTMLElement>) => {
+          // A controlled disclosure asks before it moves: the element would otherwise open for a
+          // frame before a parent that refuses the change puts it back.
+          if (!controlled || event.defaultPrevented) return;
+          const target = event.target as Element;
+          const inner = target.closest(interactive);
+          if (inner && inner !== event.currentTarget && event.currentTarget.contains(inner)) return;
+          event.preventDefault();
+          onOpenChange?.(!shown);
+        }}
+      >
+        {title}
+      </summary>
       <Stack gap={2} className="env-disclosure-panel">
         {children}
       </Stack>
