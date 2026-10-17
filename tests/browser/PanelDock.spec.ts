@@ -1640,8 +1640,11 @@ test('a panel that closes while the dock awaits its answer leaves the others ope
   page,
 }) => {
   // The page's clock stands still until the test moves it, so the application's answer, a second
-  // after the dock asks, comes only after the panel has closed, however long the steps take.
-  await page.clock.install();
+  // after the dock asks, comes only after the panel has closed, however long the steps take. An
+  // installed clock still runs on its own; pausing it is what stops it.
+  const start = Date.now();
+  await page.clock.install({ time: start });
+  await page.clock.pauseAt(start + 1000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);
   const scope = page.getByTestId('late-dock-light');
