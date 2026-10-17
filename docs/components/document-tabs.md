@@ -49,7 +49,7 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 
 ## Anatomy
 
-1. **Strip**: a `tablist` named by `aria-label`, 2.5 rem tall, that scrolls sideways when its tabs overflow.
+1. **Strip**: a `tablist` named by `aria-label`, as tall as a medium control: 2.5 rem, and 2 rem in the compact scale, that scrolls sideways when its tabs overflow.
 2. **Item**: one entry of `items`, with rounded top corners, that lays out its tab and its close button side by side, so the button isn't nested in the tab.
 3. **Tab**: an optional `icon` and the `label`; its `title` shows as a native tooltip, the label by default.
 4. **Active indicator**: the active tab's fill and a 0.125 rem selection-blue line along its bottom edge.
@@ -58,7 +58,7 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 
 ## Variants and sizes
 
-- Tabs are 2.5 rem tall, and 2.75 rem on touch screens; labels are in the small body type and end with an ellipsis beyond about 14 rem.
+- Tabs are 2.5 rem tall, 2 rem in the compact scale, and 2.75 rem on touch screens; labels are in the small body type and end with an ellipsis beyond about 14 rem.
 - A preview tab (`preview`) shows its label in italics until it is pinned.
 - The close button keeps its space while hidden, so tabs don't change width; on touch screens it always shows, as tall and wide as its tab.
 - The strip takes the width it is given and never widens its container.
