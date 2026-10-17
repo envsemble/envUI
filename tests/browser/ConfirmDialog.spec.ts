@@ -169,4 +169,22 @@ test.describe('ConfirmDialog', () => {
     await expect(dialog).toBeHidden();
     await expect(log).toHaveText('delete workspace,delete workspace');
   });
+
+  test('says while developing that a form in its content would nest in its own', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('console', (message) => {
+      if (message.type() === 'error') errors.push(message.text());
+    });
+    await page.goto(confirmDialogs);
+    // A dialog without a form of its own says nothing.
+    await page.getByRole('button', { name: 'Archive project' }).click();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Rename project' }).click();
+    await expect(page.getByRole('alertdialog', { name: 'Rename Northwind launch?' })).toBeVisible();
+    await expect
+      .poll(() => errors.filter((error) => error.startsWith('envUI: ')))
+      .toEqual([expect.stringMatching(/ConfirmDialog's children hold a <form>.*use Dialog/)]);
+  });
 });

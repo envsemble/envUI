@@ -10276,7 +10276,7 @@
           "name": "children",
           "type": "ReactNode",
           "required": false,
-          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm."
+          "description": "More content between the heading and the actions, such as what else the action affects, or the one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one."
         },
         {
           "name": "confirmLabel",
@@ -11540,6 +11540,7 @@
         "right to left",
         "RTL"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -11924,6 +11925,7 @@
       "native": [
         "svg"
       ],
+      "status": "stable",
       "page": "icons",
       "doc": "docs/foundations/icons.md"
     },
@@ -12053,6 +12055,7 @@
         "router link",
         "client-side navigation"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16198,6 +16201,7 @@
       "native": [
         "p"
       ],
+      "status": "stable",
       "page": "typography",
       "doc": "docs/foundations/typography.md"
     },
@@ -16402,6 +16406,7 @@
       "native": [
         "div"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16461,6 +16466,7 @@
         "theme preference",
         "persisted theme"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -16557,6 +16563,7 @@
         "light and dark switch",
         "switch between light and dark"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -17017,6 +17024,7 @@
       "import": "@envsemble/envui",
       "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
       "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
+      "status": "stable",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -17046,6 +17054,7 @@
       ],
       "description": "Inline script for the document head. It themes the root element before the first paint, so a saved or system dark theme does not flash light while the application loads, and a high or standard contrast applies from the start.",
       "signature": "({ storageKey, defaultPreference, contrast, scale, }?: ThemeBootstrapOptions): string",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -17081,6 +17090,7 @@
       "import": "@envsemble/envui",
       "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
       "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "status": "stable",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -17089,6 +17099,7 @@
       "import": "@envsemble/envui",
       "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
       "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
+      "status": "stable",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -17100,6 +17111,7 @@
       "aliases": [
         "current locale"
       ],
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -17108,6 +17120,7 @@
       "import": "@envsemble/envui",
       "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
       "signature": "(query: string, options?: MediaQueryOptions): boolean",
+      "status": "stable",
       "page": "responsive",
       "doc": "docs/foundations/responsive.md"
     },
@@ -17125,6 +17138,7 @@
       "import": "@envsemble/envui",
       "description": "The theme of the nearest Theme, including across React portals: its color scheme, contrast and scale. A portal of the application's own takes it with `<Theme {...useTheme()}>`. A contrast of `system` leaves the choice to the stylesheet, which reads `prefers-contrast: more`.",
       "signature": "(): ThemeContextValue",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },
@@ -17133,6 +17147,7 @@
       "import": "@envsemble/envui",
       "description": "The theme preference from the nearest ThemePreferenceProvider.",
       "signature": "(): ThemePreferenceValue",
+      "status": "stable",
       "page": "setup",
       "doc": "docs/setup.md"
     },

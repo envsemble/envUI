@@ -50,6 +50,11 @@ export const componentGroups = [
   'Feedback & overlays',
 ];
 export const statuses = ['experimental', 'beta', 'stable', 'deprecated'];
+/**
+ * The status of an export a guide or foundations page documents, such as EnvUIProvider or
+ * useContainerSize, unless the page's `statuses` gives it another.
+ */
+export const guideExportStatus = 'stable';
 /** What people are doing, in order: a pattern page's intent groups it in the catalogue and agents. */
 export const intents = [
   'Collect and change information',
@@ -147,7 +152,7 @@ export const pageSchemas = {
     frame: { type: 'string', required: true, values: frames },
   },
 };
-const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases']);
+const otherFrontmatter = new Set(['components', 'aliases', 'exportAliases', 'statuses']);
 /** A page whose slug cannot follow its title until the component it documents is merged. */
 const slugExceptions = new Set(['chips']);
 
@@ -252,7 +257,9 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
   if (!schema) {
     for (const key of Object.keys(frontmatter))
       if (!otherFrontmatter.has(key))
-        problems.push(`${key} is not allowed here; only components, aliases and exportAliases are`);
+        problems.push(
+          `${key} is not allowed here; only components, aliases, exportAliases and statuses are`,
+        );
   }
   if (!schema && 'exportAliases' in frontmatter) {
     // The names people search for an export by, for an export without a component page of its
@@ -319,8 +326,12 @@ function validateFrontmatter(frontmatter, path, { kind, template, versions }) {
             problems.push(`${key} names ${name}, which components does not list`);
           if (!statuses.includes(status))
             problems.push(`${key} of ${name} must be one of ${statuses.join(', ')}`);
-          else if (status === frontmatter.status)
-            problems.push(`${key} of ${name} repeats the page's status; leave it out`);
+          else if (status === (schema ? frontmatter.status : guideExportStatus))
+            problems.push(
+              schema
+                ? `${key} of ${name} repeats the page's status; leave it out`
+                : `${key} of ${name} repeats the default status of a guide's exports, ${guideExportStatus}; leave it out`,
+            );
         }
     }
   }

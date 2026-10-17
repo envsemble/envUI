@@ -18,7 +18,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-2);
+  /* A container sets the start, as a sidebar does to keep its rail's centre line for the icons. */
   padding: var(--env-space-1) var(--env-space-3);
+  padding-inline-start: var(--env-nav-list-item-start, var(--env-space-3));
   min-height: var(--env-nav-list-item-height);
   border: 0;
   border-radius: 100vmax;
@@ -150,6 +152,7 @@
   box-sizing: border-box;
   min-block-size: var(--env-nav-list-item-height);
   padding: var(--env-space-1) var(--env-space-3);
+  padding-inline-start: var(--env-nav-list-item-start, var(--env-space-3));
   display: inline-flex;
   align-items: center;
   gap: var(--env-space-2);

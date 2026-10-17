@@ -77,7 +77,7 @@ A combobox is a text field with a list of options: typing filters the list, the 
 - `size` sets the field's height, as on every control: `sm`, `md` or `lg` in the app's [scale](../foundations/scale.md); without it the field takes its container's control height. `showLabel={false}` hides the label in a toolbar, so a placeholder and an `aria-label` name it.
 - Leading content is 1.25 rem in options and the field, and 1.5 rem in chips and a floating field; an icon takes the control icon size.
 - Options are rows of the scale's row height, 2.25 rem or 1.75 rem in the compact scale, with 0.25 rem block and 0.5 rem inline padding; descriptions are 0.75 rem. The popup scrolls beyond 20 rem, or the room below the field.
-- On touch screens the field, chips and options grow to the touch height.
+- On touch screens the field, chips and options grow to the touch height, and each chip's remove button has a hit area of the touch size: wrapped rows of chips lie that far apart.
 
 ## States and behaviour
 

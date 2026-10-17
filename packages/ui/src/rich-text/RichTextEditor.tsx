@@ -177,6 +177,9 @@ export function RichTextEditor({
       content: value ?? storedMarkdown.current,
       contentType: 'markdown',
       immediatelyRender: false,
+      // ProseMirror's base styles come from RichText.css, in envUI's cascade layer, rather than from
+      // a style element Tiptap adds outside any layer, where they would win over the document's.
+      injectCSS: false,
       editable: !disabled && !readOnly,
       editorProps: {
         attributes: {

@@ -61,7 +61,7 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 ## States and behaviour
 
 - **Opening**: `trigger` opens the dialog; without one, the application opens it with `open` and `onOpenChange`, such as from a menu item. `onOpenChange` receives the new state and the `reason`: `trigger-press`, `escape-key`, `close-press` for Cancel, or `imperative-action` once the action has finished.
-- **Confirming**: the confirm button runs `onConfirm`, and so does <kbd>Enter</kbd> in a field in the content, such as a typed name: the dialog is a form, and the confirm button its submit button. Both go through the same pending state, guard and error. Don't put a form of your own in the content. The dialog closes when it returns, or, when it returns a promise, once the promise resolves.
+- **Confirming**: the confirm button runs `onConfirm`, and so does <kbd>Enter</kbd> in a field in the content, such as a typed name: the dialog is a form, and the confirm button its submit button. Both go through the same pending state, guard and error. Don't put a `<form>` of your own in the content: it would nest in the dialog's form, which HTML doesn't allow, and envUI says so in the console while developing. Use [Dialog](../components/dialog.md) for a real form. The dialog closes when it returns, or, when it returns a promise, once the promise resolves.
 - **Pending**: while the promise runs, the confirm button shows a spinner and reports busy, Cancel is disabled, the dialog reports `aria-busy`, and nothing dismisses it, <kbd>Esc</kbd> included.
 - **Failure**: a rejected promise, or an error thrown, keeps the dialog open and ends pending, and goes to `reportError`, as an uncaught error would. Show what went wrong with `error`; it is announced. Clear it when the dialog closes or the action is tried again.
 - **Once per opening**: the action runs once each time the dialog opens; another press, such as the second click of a double-click, does nothing, unless the action failed.
@@ -88,7 +88,7 @@ ConfirmDialog asks one question before an action runs: a title that asks it, a d
 ### Don't
 
 - Don't confirm an action people do often and can undo; act at once and offer undo in a [Toast](../components/toast.md).
-- Don't put fields or several actions in a confirmation; use [Dialog](../components/dialog.md). The exception is one field for typing the object's name before an irreversible action; see [Confirmation and destructive actions](../patterns/destructive-actions.md).
+- Don't put a form, fields or several actions in a confirmation; use [Dialog](../components/dialog.md) for real forms. The exception is one field for typing the object's name before an irreversible action; see [Confirmation and destructive actions](../patterns/destructive-actions.md).
 - Don't confirm in a dialog what [ConfirmButton](../components/button.md#confirm-in-place) can confirm in place.
 
 ## Accessibility

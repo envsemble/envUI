@@ -91,7 +91,7 @@ At the default 16 px root. Every value is a token, in rem, so it follows the rea
   }
   ```
 
-- These targets stay smaller under a coarse pointer and rely on WCAG 2.5.8's spacing exception below: a link in running text, a breadcrumb link, the remove button of a combobox chip, the avatars of an interactive AvatarGroup, which keep at least 1.5 rem of each uncovered, and a Switch's 40 px track, whose label row grows to 44 px and takes presses too.
+- These targets stay smaller under a coarse pointer and rely on WCAG 2.5.8's spacing exception below: a link in running text, a breadcrumb link, and a Switch's track, whose label row grows to 44 px and takes presses too. The remove button of a combobox chip keeps a 44 px hit area inside its field, and each avatar of an interactive AvatarGroup is a 44 px target with its picture in the middle.
 - With a mouse, every target is at least 24 px in both scales, WCAG 2.2's minimum: segments, tabs and the actions inside fields keep 24 px even in a small rail or field of the compact scale. A few targets are shorter but keep 24 px of room around them, which WCAG 2.5.8 allows as its spacing exception: a breadcrumb link, a line of text 21 px tall, and the remove button of a combobox chip.
 
 ## Guidelines

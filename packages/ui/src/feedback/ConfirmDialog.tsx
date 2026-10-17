@@ -54,7 +54,7 @@ export interface ConfirmDialogProps
   /**
    * More content between the heading and the actions, such as what else the action affects, or the
    * one field a confirmation holds, such as a typed name. The dialog is a form: Enter in a field
-   * confirms as the confirm button does, through onConfirm.
+   * confirms as the confirm button does, through onConfirm. Hold no form here; use Dialog for one.
    */
   children?: ReactNode;
   /** The confirm button's label: a verb that names the consequence, such as Delete project. */
@@ -98,6 +98,29 @@ const isThenable = (value: unknown): value is PromiseLike<unknown> =>
 const report = (failure: unknown) => {
   if (typeof globalThis.reportError === 'function') globalThis.reportError(failure);
 };
+
+/**
+ * Says while developing that the children hold a form of their own, which would nest in the
+ * dialog's form: HTML has no nested forms, so its fields would submit the dialog's. Once a page.
+ */
+let reportedNestedForm = false;
+function reportNestedForm(form: HTMLFormElement | null) {
+  let developing = false;
+  try {
+    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
+    developing = process.env.NODE_ENV !== 'production';
+  } catch {
+    // No bundler defined process.env.NODE_ENV.
+  }
+  if (!developing || reportedNestedForm || form?.querySelector('form') == null) return;
+  reportedNestedForm = true;
+  // A development-only report, as React reports an invalid prop.
+  // eslint-disable-next-line no-console
+  console.error(
+    "envUI: a ConfirmDialog's children hold a <form>, which nests inside the dialog's own form. " +
+      'ConfirmDialog confirms one action, with at most one field; use Dialog for a form of your own.',
+  );
+}
 
 /**
  * Asks people to confirm an action whose consequence needs a sentence, such as deleting a project:
@@ -209,6 +232,7 @@ export function ConfirmDialog({
                       confirm button, its submit button: pending, guarded and kept open on failure.
                       It lays out as if it weren't there. */}
                   <form
+                    ref={reportNestedForm}
                     className="env-confirm-dialog-form"
                     noValidate
                     onSubmit={(event) => {

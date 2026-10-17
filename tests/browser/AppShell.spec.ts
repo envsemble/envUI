@@ -439,6 +439,39 @@ test.describe('Below the breakpoint', () => {
   });
 });
 
+for (const touch of [false, true])
+  test.describe(touch ? 'under a coarse pointer' : 'under a fine pointer', () => {
+    test.use({ hasTouch: touch });
+
+    // A frame with the trigger in the sidebar's header and with the trigger in a header across the
+    // window.
+    for (const fixture of ['app-shell', 'full-shell'])
+      for (const scale of ['comfortable', 'compact'])
+        test(`an expanded sidebar's item icons share the trigger's centre line, in ${fixture} in the ${scale} scale`, async ({
+          page,
+        }) => {
+          await page.goto(`${fixtureUrl}/?fixture=${fixture}&scale=${scale}`);
+          await expect(page.locator('.env-app-shell')).toHaveAttribute('data-ready', '');
+          await expect(page.locator('.env-sidebar')).toHaveAttribute('data-state', 'expanded');
+          await expect(page.locator('.env-sidebar-panel')).toHaveCSS('translate', 'none');
+          const centres = await page.evaluate(() => {
+            const centre = (element: Element) => {
+              const box = element.getBoundingClientRect();
+              return box.x + box.width / 2;
+            };
+            return {
+              trigger: centre(document.querySelector('.env-sidebar-trigger')!),
+              icons: [
+                ...document.querySelectorAll('.env-sidebar .env-nav-list-item .env-icon'),
+              ].map(centre),
+            };
+          });
+          expect(centres.icons.length).toBeGreaterThan(1);
+          for (const icon of centres.icons)
+            expect(Math.abs(icon - centres.trigger)).toBeLessThanOrEqual(0.5);
+        });
+  });
+
 test('right-to-left text puts the start sidebar on the right', async ({ page }) => {
   await page.goto(`${appShell}&dir=rtl`);
   const sidebar = await box(page.locator('.env-sidebar'));

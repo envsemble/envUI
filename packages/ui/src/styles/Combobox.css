@@ -221,10 +221,19 @@
   overflow-wrap: anywhere;
 }
 
-/* Coarse pointers keep the touch height for options, and larger chips and remove buttons. */
+/* Coarse pointers keep the touch height for options, and larger chips and remove buttons. Each
+   remove button's hit area is the touch height: wrapped rows of chips lie that far apart, and the
+   hit area lies over the label on the field's edge, so a press there removes the chip. */
 @media (pointer: coarse) {
   .env-combobox .env-combobox-control {
     --env-combobox-row: 1.75rem;
+    row-gap: max(
+      var(--env-space-1),
+      calc(var(--env-control-height-touch) - var(--env-combobox-row))
+    );
+  }
+  .env-combobox-chip-remove {
+    z-index: var(--env-z-raised);
   }
   .env-combobox-popup .env-combobox-item {
     min-block-size: var(--env-control-height-touch);

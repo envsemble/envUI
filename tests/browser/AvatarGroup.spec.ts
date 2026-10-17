@@ -268,7 +268,9 @@ test('avatars overlap by a quarter, line up with small controls and keep their s
   expect((await scope.getByTestId('narrow-group').boundingBox())!.width).toBeCloseTo(104, 0);
 });
 
-test('on touch screens small pressable avatars sit side by side', async ({ browser }) => {
+test('on touch screens pressable avatars are touch-sized targets side by side', async ({
+  browser,
+}) => {
   const context = await browser.newContext({
     hasTouch: true,
     viewport: { width: 390, height: 844 },
@@ -281,11 +283,28 @@ test('on touch screens small pressable avatars sit side by side', async ({ brows
   const avatarButton = (await scope.getByTestId('avatar-button-small').boundingBox())!;
   expect(avatarButton.width).toBeGreaterThanOrEqual(44);
   expect(avatarButton.height).toBeGreaterThanOrEqual(44);
+  // Each pressable avatar is a target of the touch height, its picture and state layer in the
+  // middle, and none covers another.
   const small = await boxes(scope.getByTestId('small-pressable'));
-  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 24, 48, 72]);
-  // Standard pressable avatars keep 1.5 rem uncovered at their usual overlap.
+  expect(small.map((box) => box.x - small[0]!.x)).toEqual([0, 44, 88, 132]);
   const standard = await boxes(scope.getByTestId('pressable'));
-  expect(standard.map((box) => box.x - standard[0]!.x).slice(0, 3)).toEqual([0, 24, 48]);
+  expect(standard.map((box) => box.x - standard[0]!.x).slice(0, 4)).toEqual([0, 44, 88, 132]);
+  const targets = await scope
+    .locator('.env-avatar-group-item')
+    .evaluateAll((items) =>
+      items.map((item) => [
+        item.getBoundingClientRect().width,
+        item.getBoundingClientRect().height,
+        parseFloat(getComputedStyle(item, '::after').width),
+        item.querySelector('.env-avatar')!.getBoundingClientRect().width,
+      ]),
+    );
+  expect(targets.length).toBeGreaterThan(6);
+  for (const [width, height, layer, avatar] of targets) {
+    expect(width).toBeGreaterThanOrEqual(44);
+    expect(height).toBeGreaterThanOrEqual(44);
+    expect(layer).toBe(avatar);
+  }
   // Decorative avatars keep their overlap.
   const decorative = await boxes(scope.getByTestId('preview'));
   expect(decorative.map((box) => box.x - decorative[0]!.x)).toEqual([0, 18, 36]);

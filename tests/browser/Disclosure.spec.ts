@@ -35,3 +35,33 @@ test('a disclosure reports each change through onOpenChange, controlled or on it
   await own.getByText('Open at first', { exact: true }).click();
   await expect(own).not.toHaveAttribute('open');
 });
+
+test('a controlled disclosure whose parent refuses the change never opens, not for a frame', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=disclosures`);
+  const scope = page.getByTestId('disclosures');
+  const kept = scope.locator('details').filter({ hasText: 'Kept closed' });
+  await kept.evaluate((details) => {
+    const opened: boolean[] = [];
+    (window as unknown as { opened: boolean[] }).opened = opened;
+    new MutationObserver(() => opened.push(details.hasAttribute('open'))).observe(details, {
+      attributes: true,
+      attributeFilter: ['open'],
+    });
+    details.addEventListener('toggle', () => opened.push(details.open));
+  });
+  await kept.getByText('Kept closed', { exact: true }).click();
+  await expect(scope.getByTestId('disclosure-requests')).toHaveText('true');
+  await kept.locator('summary').press('Enter');
+  await expect(scope.getByTestId('disclosure-requests')).toHaveText('true true');
+  expect(await page.evaluate(() => (window as unknown as { opened: boolean[] }).opened)).toEqual(
+    [],
+  );
+  // The controlled disclosure still opens and closes when the parent follows the request.
+  const controlled = scope.locator('details').filter({ hasText: 'Controlled' });
+  await controlled.locator('summary').press('Enter');
+  await expect(controlled).toHaveAttribute('open', '');
+  await controlled.locator('summary').press(' ');
+  await expect(controlled).not.toHaveAttribute('open');
+});

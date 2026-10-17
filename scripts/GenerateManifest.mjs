@@ -21,6 +21,7 @@ import {
   documentationDirectory,
   documentedExports,
   examplesDirectory,
+  guideExportStatus,
   intents,
   pageKindOf,
   readDocumentation,
@@ -254,8 +255,16 @@ export function buildManifest({
         ...(document.frontmatter?.aliases && { aliases: document.frontmatter.aliases }),
         related: linkedPages(document.markdown, documents),
       });
+      // A guide's exports are stable unless its `statuses` says otherwise; a part takes its
+      // namespace's.
+      const statuses = document.frontmatter?.statuses ?? {};
       for (const name of documentedExports(document.frontmatter?.components ?? [], props))
-        if (!exportPages.has(name)) exportPages.set(name, { page: document.id, doc });
+        if (!exportPages.has(name))
+          exportPages.set(name, {
+            page: document.id,
+            doc,
+            status: statuses[name] ?? statuses[name.split('.')[0]] ?? guideExportStatus,
+          });
       for (const [name, aliases] of Object.entries(document.frontmatter?.exportAliases ?? {}))
         exportAliases.set(name, aliases);
       continue;
