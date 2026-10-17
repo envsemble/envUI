@@ -115,7 +115,11 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
     root.setAttribute('data-env-contrast', 'standard');
     root.style.colorScheme = theme;
     root.dir = dir;
-    if (found) document.title = `${found.block.heading} · ${found.document?.title}`;
+    // The screen's heading, and its page's title where that differs.
+    if (found)
+      document.title = [found.block.heading, found.document?.title]
+        .filter((title, index, titles) => title && titles.indexOf(title) === index)
+        .join(' · ');
   }, [theme, scale, dir, found]);
   const Screen = found ? screenOf(page, name) : undefined;
   // A screen of the app frame renders inside the app frame template, once there is one.
