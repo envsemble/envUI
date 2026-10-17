@@ -246,7 +246,8 @@ export function applyPropRules(items, rules, where, item, report) {
       for (const { message, unless } of mapped.reports)
         if (!unless.some(own)) report(node, `${at}: ${message}`);
       // An expression beside the literals, such as `tone ?? 'error'`, may give 0.x values too.
-      if (mapped.opaque)
+      // A renamed prop whose values all stay, such as List.Item's detail, has nothing to check.
+      if (mapped.opaque && (mapped.name === name || Object.keys(rule.values).length > 0))
         report(
           node,
           mapped.name !== name

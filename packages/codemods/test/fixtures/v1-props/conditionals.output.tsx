@@ -1,4 +1,4 @@
-import { Alert, Avatar, Button, Card, Text, useToast } from '@envsemble/envui';
+import { Alert, Avatar, Button, Card, List, Text, useToast } from '@envsemble/envui';
 
 export function Diagnostics({ failed, layout, section, expanded, tone, big, wide }) {
   const toast = useToast();
@@ -20,3 +20,7 @@ export function Diagnostics({ failed, layout, section, expanded, tone, big, wide
     </>
   );
 }
+
+export const Row = ({ detail, title, short }) => (
+  <List.Item label={short ? 'Plan' : title} description={short ? undefined : detail} />
+);
