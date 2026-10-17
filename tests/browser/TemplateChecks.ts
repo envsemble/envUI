@@ -107,13 +107,9 @@ const signIn: TemplateCheck[] = [
   {
     name: 'Sign in stays enabled and pending, and wrong credentials move focus to an unannounced Alert',
     async run(page, { reload }) {
-      // The sample's service answers after a timer, which the test runs on. An installed clock
-      // still runs on its own, so it is stopped too: the answer comes only when the test runs the
-      // timer, however long the steps before take. Nothing waits on a timer yet, so the second it
-      // skips to stop changes nothing. It runs again at the end.
+      // The sample's service answers after a timer, which the test runs on.
       await page.clock.install();
       await reload();
-      await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
       const email = page.getByRole('textbox', { name: 'Email address' });
       const password = page.getByRole('textbox', { name: 'Password' });
       const button = page.getByRole('button', { name: 'Sign in', exact: true });
@@ -126,6 +122,10 @@ const signIn: TemplateCheck[] = [
       await show.click();
       await expect(show).toHaveAttribute('aria-pressed', 'true');
       await expect(password).toHaveAttribute('type', 'text');
+      // An installed clock still runs on its own, so it stops before Sign in: the answer comes only
+      // when the test runs the timer, however long the steps after take. The service's timer is
+      // not set yet, so the second skipped to stop changes nothing.
+      await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
       await button.click();
       await expect(button).toHaveAttribute('aria-busy', 'true');
       await expect(button).not.toHaveAttribute('disabled');
@@ -136,6 +136,9 @@ const signIn: TemplateCheck[] = [
       // What people entered stays.
       await expect(email).toHaveValue('alex.morgan@example.com');
       await expect(password).toHaveValue('a wrong password');
+      // Only the refusal's pending state needed the stopped clock. A running one also serves the
+      // next viewport, which loads the page again.
+      await page.clock.resume();
       await password.fill('northwind-demo');
       await button.click();
       await page.clock.runFor(1300);
@@ -143,8 +146,6 @@ const signIn: TemplateCheck[] = [
         'Signed in as alex.morgan@example.com.',
       );
       await expect(page.getByText('Your email address or password is wrong')).toHaveCount(0);
-      // The page loads again for the next viewport, which needs a running clock.
-      await page.clock.resume();
     },
   },
 ];
