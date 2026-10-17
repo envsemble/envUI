@@ -11,7 +11,9 @@ export default function WithHeader() {
     <Page
       width="md"
       header={
+        // Level 2 under this page's own heading; a page's own header keeps the default, 1.
         <PageHeader
+          headingLevel={2}
           title="Projects"
           description="Everything your team is working on."
           actions={<Button startIcon={<Add />}>New project</Button>}

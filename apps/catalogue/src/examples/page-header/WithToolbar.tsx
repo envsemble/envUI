@@ -5,7 +5,9 @@ import { Add } from '@envsemble/envui/icons/Add';
 export default function WithToolbar() {
   const [view, setView] = useState('list');
   return (
+    // Level 2 under this page's own heading; a page's own header keeps the default, 1.
     <PageHeader
+      headingLevel={2}
       title="People"
       controlSize="sm"
       actions={<Button startIcon={<Add />}>Invite</Button>}

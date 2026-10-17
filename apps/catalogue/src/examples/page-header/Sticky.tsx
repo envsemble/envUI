@@ -19,7 +19,9 @@ export default function Sticky() {
       <Page
         width="md"
         header={
+          // Level 2 under this page's own heading; a page's own header keeps the default, 1.
           <PageHeader
+            headingLevel={2}
             sticky
             title="Annual report"
             actions={<Button variant="secondary">Download</Button>}
@@ -29,7 +31,7 @@ export default function Sticky() {
         <Stack gap={6}>
           {sections.map((section) => (
             <Stack key={section} gap={2} render={<section />}>
-              <Text variant="title" render={<h2 />}>
+              <Text variant="title" render={<h3 />}>
                 {section}
               </Text>
               <Text>
