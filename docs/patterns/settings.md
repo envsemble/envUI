@@ -72,7 +72,7 @@ Use this pattern to let people change how the application behaves for them: noti
 
 - **A Switch applies at once.** It has no Save button: the setting changes, and is stored, the moment people switch it. A [Checkbox](../components/checkbox.md) in a form waits for Save. Never mix them in one section, or people can't tell which changes are kept.
 - **Confirm only what shows elsewhere.** A switch shows its own state, so most changes need no message. Show a toast when a change has an effect people can't see from the page, such as becoming visible in a directory.
-- **Saved sections keep edits apart.** Changes to a saved section stay in it until Save or Cancel, and mark it "Unsaved changes" meanwhile; nothing else on the page saves them. Cancel puts back what was saved.
+- **Saved sections keep edits apart.** Changes to a saved section stay in it until Save or Cancel, and mark it "Unsaved changes" meanwhile; nothing else on the page saves them. Cancel puts back what was saved, and stops a save that hasn't finished; with no edits, it changes nothing.
 - **Appearance applies at once.** The theme comes from `useThemePreference`, whose provider stores the choice and applies it to the whole page. The scale, comfortable or compact, is one for the whole app: store it and pass it to the root provider's `scale`, never to a single page or section.
 - **When a change fails.** Put the control back as it was and say so in a toast with "Try again"; a saved section keeps its edits and shows an Alert, as a form does.
 - **Destructive settings** follow [Confirmation and destructive actions](destructive-actions.md): a dialog names the consequence, and for an action that can't be undone and reaches many people, asks for the name.
@@ -83,7 +83,7 @@ Use this pattern to let people change how the application behaves for them: noti
 - Name a section after what people want to do, "Email notifications", not after the data, "User preferences".
 - Label a switch with the setting in a positive form that stays the same in both states, "Show me in the directory", and describe its effect in the row's detail. Follow [Labels, descriptions and placeholders](../foundations/content.md#labels-descriptions-and-placeholders).
 - Name buttons with a verb and an object, "Save profile", "Delete workspace…", following [Buttons and actions](../foundations/content.md#buttons-and-actions).
-- Write a toast in the past tense or as the state it leaves, as [Feedback and status](../foundations/content.md#feedback-and-status) describes.
+- Write a toast as [Feedback and status](../foundations/content.md#feedback-and-status) describes: what happened, in the past tense, or, for a setting, the state the change leaves, "Other people at Northwind can now find you in the directory."
 
 ## Do and don't
 
@@ -105,7 +105,7 @@ Use this pattern to let people change how the application behaves for them: noti
 
 ### Focus and keyboard
 
-Tab moves through the settings in the order they show, and Space turns a focused Switch on or off; focus stays where it is, since nothing on the page moves. Arrow keys move between the options of a RadioGroup and choose them. Save keeps focus on its button and announces the outcome in the status; Cancel keeps focus on Cancel. A refused Save moves focus to the field to fix. The danger zone's dialog takes focus to Cancel, and focus returns to the button that opened it when the dialog closes.
+Tab moves through the settings in the order they show, and Space turns a focused Switch on or off; focus stays where it is, since nothing on the page moves. Arrow keys move between the options of a RadioGroup and choose them. Save keeps focus on its button and announces the outcome in the status; Cancel keeps focus on Cancel, stops a save that is still running and, when there were edits, says they were discarded. A refused Save moves focus to the field to fix and says its error in the status too, since focus may already be in the field. The danger zone's dialog takes focus to Cancel, and focus returns to the button that opened it when the dialog closes.
 
 ### envUI provides
 
@@ -133,7 +133,7 @@ A profile's fields depend on each other, so they wait for Save. The section mark
 
 ### Appearance
 
-The theme applies the moment people choose it, through `useThemePreference`. The density sets the app's one scale.
+The theme applies the moment people choose it, through `useThemePreference`. The density only keeps the choice in the example: the application stores it and passes it to the root provider's `scale`, the app's one scale.
 
 ```tsx example=AppearanceChoice
 

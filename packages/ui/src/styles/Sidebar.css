@@ -9,6 +9,9 @@
     var(--env-frame-control-height, var(--env-control-height)) + 2 * var(--env-sidebar-inset)
   );
   --env-sidebar-divider: var(--env-frame-divider, 0.0625rem solid var(--env-color-border-muted));
+  /* The expanded width: a chosen or given width, which Sidebar.Root sets, else the content's. Set
+     here so it never inherits a value from outside the sidebar. */
+  --env-sidebar-chosen-width: fit-content;
   /* The expanded width's bounds; Sidebar.Root sets them from minWidth and maxWidth. */
   --env-sidebar-min-width: 12rem;
   --env-sidebar-max-width: 20rem;
@@ -61,7 +64,7 @@
   position: relative;
   flex: 1 1 auto;
   block-size: 100%;
-  inline-size: var(--env-sidebar-width, fit-content);
+  inline-size: var(--env-sidebar-chosen-width, fit-content);
   min-inline-size: var(--env-sidebar-min-width);
   max-inline-size: var(--env-sidebar-max-width);
   min-block-size: 0;
@@ -113,7 +116,7 @@
   inset-block: 0;
   inset-inline-start: 0;
   z-index: var(--env-z-peek);
-  inline-size: var(--env-sidebar-width, fit-content);
+  inline-size: var(--env-sidebar-chosen-width, fit-content);
   min-inline-size: var(--env-sidebar-min-width);
   box-shadow: var(--env-elevation-2-shadow);
 }
@@ -359,7 +362,19 @@
     display: none;
   }
 }
-/* Between the breakpoint and dockAt a sidebar is collapsed: so it is before hydration too. */
+/* Between the breakpoint and dockAt a sidebar is collapsed: so it is before hydration too.
+   data-dock-at is set only where dockAt is wider than the frame's breakpoint, so one block per
+   dockAt covers every breakpoint; below the breakpoint the rules above hide it. */
+@media (width < 48rem) {
+  .env-sidebar[data-dock-at='md'][data-collapsible='rail']:not([data-ready]) > .env-sidebar-panel {
+    inline-size: var(--env-sidebar-rail-width);
+    min-inline-size: 0;
+  }
+  .env-sidebar[data-dock-at='md'][data-collapsible='offcanvas']:not([data-ready]) {
+    inline-size: 0;
+    visibility: hidden;
+  }
+}
 @media (width < 64rem) {
   .env-sidebar[data-dock-at='lg'][data-collapsible='rail']:not([data-ready]) > .env-sidebar-panel {
     inline-size: var(--env-sidebar-rail-width);

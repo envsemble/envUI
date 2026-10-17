@@ -47,9 +47,9 @@ export default function OverflowActions() {
             </Menu.Item>
             <Menu.Item
               icon={<Download />}
-              onClick={() => setStatus('Downloading launch-brief.pdf.')}
+              onClick={() => setStatus('Launch brief exported as launch-brief.pdf.')}
             >
-              Download as PDF
+              Export as PDF
             </Menu.Item>
             <Menu.Separator />
             <Menu.Item icon={<Archive />} onClick={() => setStatus('Launch brief archived.')}>

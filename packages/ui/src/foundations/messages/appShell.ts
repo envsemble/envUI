@@ -19,6 +19,12 @@ export const appShell = {
     side === 'end' ? `Open ${label}` : 'Open navigation',
   /** The sidebar resize handle's name. */
   resizeSidebar: 'Resize sidebar',
+  /** The resize handle's value: the sidebar's width in rem, such as 16 rem, in the locale's digits. */
+  sidebarWidth: ({ size }: { size: string }) => `${size} rem`,
+  /** The resize handle's value while the sidebar is collapsed. */
+  sidebarCollapsed: 'Collapsed',
+  /** The value of the handle of a sidebar that isn't resizable, while the sidebar is expanded. */
+  sidebarExpanded: 'Expanded',
   /** The skip link to the main content. */
   skipToContent: 'Skip to content',
   /** A skip link to another region, such as Skip to Directory. */

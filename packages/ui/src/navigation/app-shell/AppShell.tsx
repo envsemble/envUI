@@ -26,6 +26,7 @@ import {
   defaultMainId,
   FrameProvider,
   FrameShapeContext,
+  FrameSlotContext,
   useFrameState,
   useFrameStore,
   type FrameShape,
@@ -184,7 +185,8 @@ function Root({
             data-loading={loading ? '' : undefined}
             data-end={store.sides.end.registration?.region}
           >
-            {children}
+            {/* A Sidebar.Root among these is one of the frame's regions. */}
+            <FrameSlotContext value>{children}</FrameSlotContext>
             <LoadingBar
               active={loading}
               label={loadingLabel ?? messages.loadingPage}
@@ -320,7 +322,9 @@ function Header({
       data-mobile-only={mobileOnly ? '' : undefined}
       data-title-bar={titleBar ? '' : undefined}
     >
-      {titleBar ? <TitleBarControls>{content}</TitleBarControls> : content}
+      <FrameSlotContext value={false}>
+        {titleBar ? <TitleBarControls>{content}</TitleBarControls> : content}
+      </FrameSlotContext>
     </Element>
   );
 }
@@ -358,13 +362,16 @@ function Main({ id, skipLabel, className, ref, ...props }: MainProps) {
   );
   const Element = shape && !shape.landmarks ? 'div' : 'main';
   return (
-    <Element
-      tabIndex={-1}
-      {...props}
-      ref={attach}
-      id={mainId}
-      className={classNames('env-app-shell-main', className)}
-    />
+    // A Sidebar.Root in the page, such as a settings page's sub-navigation, keeps its own state.
+    <FrameSlotContext value={false}>
+      <Element
+        tabIndex={-1}
+        {...props}
+        ref={attach}
+        id={mainId}
+        className={classNames('env-app-shell-main', className)}
+      />
+    </FrameSlotContext>
   );
 }
 

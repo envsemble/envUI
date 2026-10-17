@@ -88,15 +88,43 @@ function CreateMenu({ onCreate }: { onCreate: (kind: string) => void }) {
 }
 
 /**
+ * A settings page's sub-navigation: a Sidebar.Root in AppShell.Main, which keeps its own state,
+ * and a button that removes it.
+ */
+function SubNavigation() {
+  const [shown, setShown] = useState(true);
+  return (
+    <div className="fixture-sidebar-row">
+      {shown && (
+        <Sidebar.Root label="Settings sections" collapsible="offcanvas">
+          <Sidebar.Content>
+            <NavList.Root>
+              <NavList.Item href="#/settings/profile" icon={<Home />}>
+                Profile
+              </NavList.Item>
+            </NavList.Root>
+          </Sidebar.Content>
+        </Sidebar.Root>
+      )}
+      <button type="button" onClick={() => setShown(false)}>
+        Remove settings sections
+      </button>
+    </div>
+  );
+}
+
+/**
  * A frame with a rail at each side that opens over the content on hover, mounted with
  * ?fixture=sidebar-rails. The start "Primary" docks from xl up: a trigger and the app's name, a
  * SearchTrigger, a Create menu, navigation, an Administration group and an AccountMenu. The end
  * "Directory" holds a search field and a list of people. Below md a phone's top bar holds the
- * triggers. ?dir=rtl mirrors it; ?peek=hover-focus opens on keyboard focus too.
+ * triggers. ?dir=rtl mirrors it; ?peek=hover-focus opens on keyboard focus too; ?subnav adds a
+ * settings page's sub-navigation in Main.
  */
 export function SidebarRailsFixture() {
   const query = new URLSearchParams(location.search);
   const peek = (query.get('peek') ?? 'hover') as 'hover' | 'hover-focus';
+  const subNavigation = query.has('subnav');
   const [created, setCreated] = useState('');
   const frame = (
     <AppShell.Root scroll="main" persist="fixture-rails" className="fixture-app-shell">
@@ -148,6 +176,7 @@ export function SidebarRailsFixture() {
       </Sidebar.Root>
       <AppShell.Main>
         <p data-testid="main-content">Main content</p>
+        {subNavigation && <SubNavigation />}
         <output data-testid="created">{created}</output>
         <button type="button">Page action</button>
       </AppShell.Main>
@@ -173,10 +202,14 @@ export function SidebarRailsFixture() {
  * Sidebars without AppShell, mounted with ?fixture=sidebars: a settings page's resizable
  * sub-navigation in a Sidebar.Provider whose trigger sits in the page's own header, with groups at
  * heading levels and an action, the Mod+B shortcut and a remembered width; and an off-canvas
- * sidebar on its own.
+ * sidebar with a handle that only collapses it. ?duplicate adds a second sidebar on the filters'
+ * side, and a button that removes it.
  */
 export function SidebarsFixture() {
   const [widths, setWidths] = useState<string[]>([]);
+  const [duplicate, setDuplicate] = useState(() =>
+    new URLSearchParams(location.search).has('duplicate'),
+  );
   return (
     <div className="fixture-sidebars">
       <Sidebar.Provider
@@ -226,11 +259,26 @@ export function SidebarsFixture() {
       <Sidebar.Provider>
         <SidebarTrigger data-testid="filters-trigger" />
         <div className="fixture-sidebar-row" data-testid="offcanvas-row">
-          <Sidebar.Root label="Filters" collapsible="offcanvas" className="fixture-filters-sidebar">
+          <Sidebar.Root
+            id="filters"
+            label="Filters"
+            collapsible="offcanvas"
+            className="fixture-filters-sidebar"
+          >
             <Sidebar.Content>
               <Button variant="secondary">Only mine</Button>
             </Sidebar.Content>
+            <Sidebar.Handle />
           </Sidebar.Root>
+          {duplicate && (
+            <Sidebar.Root id="extra-filters" label="Extra filters" collapsible="offcanvas">
+              <Sidebar.Content>
+                <button type="button" onClick={() => setDuplicate(false)}>
+                  Remove extra filters
+                </button>
+              </Sidebar.Content>
+            </Sidebar.Root>
+          )}
           <div className="fixture-sidebar-page">
             <button type="button">Results</button>
           </div>

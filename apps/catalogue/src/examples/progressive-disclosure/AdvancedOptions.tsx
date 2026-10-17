@@ -6,7 +6,8 @@ export default function AdvancedOptions() {
   const [advanced, setAdvanced] = useState(false);
   const [fileName, setFileName] = useState('');
   const [fileNameError, setFileNameError] = useState<string>();
-  const [exported, setExported] = useState('');
+  // The status under the action: the outcome, or the error when an export is refused.
+  const [status, setStatus] = useState('');
   const fileNameField = useRef<HTMLInputElement>(null);
   // Counts the refused exports; each focuses the file name once its disclosure has opened.
   const [refused, setRefused] = useState(0);
@@ -17,13 +18,17 @@ export default function AdvancedOptions() {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (fileName && !/^[\w-]+$/.test(fileName)) {
-      setFileNameError('Use only letters, numbers, hyphens and underscores');
+      const message = 'Use only letters, numbers, hyphens and underscores';
+      setFileNameError(message);
+      // Focus may already be in the field, where focusing it again reads nothing, so the status
+      // says the error too.
+      setStatus(message);
       // An error inside the disclosure opens it, so the field and its message show.
       setAdvanced(true);
       setRefused((count) => count + 1);
       return;
     }
-    setExported(`Exported ${fileName || 'quarterly-report'}.${format}.`);
+    setStatus(`Exported ${fileName || 'quarterly-report'}.${format}.`);
   };
 
   return (
@@ -53,7 +58,10 @@ export default function AdvancedOptions() {
               error={fileNameError}
               onValueChange={(value) => {
                 setFileName(value);
-                if (!value || /^[\w-]+$/.test(value)) setFileNameError(undefined);
+                if (!value || /^[\w-]+$/.test(value)) {
+                  setFileNameError(undefined);
+                  setStatus('');
+                }
               }}
             />
           </Stack>
@@ -62,7 +70,7 @@ export default function AdvancedOptions() {
           <Button type="submit">Export report</Button>
         </Stack>
         <Text role="status" emphasis="muted">
-          {exported}
+          {status}
         </Text>
       </Stack>
     </form>
@@ -72,5 +80,5 @@ export default function AdvancedOptions() {
 const formats = [
   { value: 'csv', label: 'CSV' },
   { value: 'pdf', label: 'PDF' },
-  { value: 'xlsx', label: 'Excel workbook' },
+  { value: 'xlsx', label: 'Spreadsheet (.xlsx)' },
 ];

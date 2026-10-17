@@ -87,13 +87,13 @@ Choose the surface by the message's scope, its urgency and whether people must a
 - **After an action.** A success or neutral toast closes after 5 seconds; the timer pauses while the pointer rests on it or it has keyboard focus, and while the window is in the background. A danger toast, and a toast with an action, stays until it is dismissed.
 - **Background work.** Say on the page that the work runs and that people can carry on. When it ends, a toast with the next step as its action reaches them wherever they are, and the page keeps the result too, since a toast can be dismissed.
 - **Conditions of the page.** An Alert that is there when the page loads describes it, and isn't announced. When its condition changes, change or remove the Alert. An Alert that appears because something just happened and must interrupt takes `announce`.
-- **Announce once.** One message per event: a toast or a status text, not both; a field error, not a toast too. Info and success Alerts are status messages, so changing their text is announced.
+- **Announce once.** One message per event: a toast or a status text, not both; a field error, not a toast too. Info and success Alerts are status messages, so changing their text is announced; don't also move focus to one, or it is read twice. An Alert that takes focus is a warning or danger one without `announce`, which has no role and is read once, with focus.
 - **Several at once.** Each toast placement shows three at a time by default; older ones wait behind a count of hidden notifications. Danger toasts always show.
 - **Not covered: a notification centre.** envUI has no list of past notifications yet. CounterBadge, [Popover](../components/popover.md) and [List](../components/list.md) are the parts to build one from.
 
 ## Content guidelines
 
-- Follow [Feedback and status](../foundations/content.md#feedback-and-status): a toast is a short sentence in the past tense naming what happened to what, "Invitation sent to jordan.kim@example.com."; an Alert has a title and one sentence.
+- Follow [Feedback and status](../foundations/content.md#feedback-and-status): a toast is a short sentence naming what happened to what, in the past tense, "Invitation sent to jordan.kim@example.com.", or the state a change leaves where the past tense says too little; an Alert has a title and one sentence.
 - For a failure, follow [Error messages](../foundations/content.md#error-messages): say what happened, whether work is safe, and what to do.
 - Name a status in a word or two, the same word everywhere: "On track", "At risk", "Blocked", "Done".
 - Label a count with what it counts, "12 unread", not the number alone.
@@ -142,7 +142,7 @@ Feedback doesn't move focus, with two exceptions: after a refused form or a fail
 
 ### A condition of the page
 
-A read-only project says so in an Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do.
+A read-only project says so in a warning Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do. Once the request is sent, its button goes, so focus moves to the Alert, which reads its new text once: a warning Alert without `announce` has no role, so the change isn't announced as well.
 
 ```tsx example=SectionAlert
 

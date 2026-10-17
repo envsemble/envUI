@@ -83,7 +83,7 @@ const projects = [
     name: 'Quarterly report',
     owner: 'Priya Shah',
     status: 'On track',
-    due: '6 April 2026',
+    due: '27 March 2026',
     tasks: 4,
     team: 'Priya Shah, Maria Garcia',
   },
