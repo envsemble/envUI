@@ -41,6 +41,8 @@ composes:
   - EmptyState
   - ConfirmDialog
   - useToast
+  - useBreakpoint
+  - useMediaQuery
 related:
   - empty-states
   - destructive-actions
@@ -62,8 +64,8 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 ## Anatomy
 
 1. **Header:** a [PageHeader](../components/page-header.md), "Projects", with a description, the primary action "Create project" and `controlSize="sm"`.
-2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md), a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set and some projects match.
-3. **Selection bar:** a [Checkbox](../components/checkbox.md) "Select this page", checked, unchecked or mixed; a [Text](../foundations/typography.md) with `role="status"` that counts the projects, those found or those selected; and, with a selection, "Archive 3 projects" and "Delete 3 projects…" [Button](../components/button.md)s. While the rows stack, a "Sort by" Select joins them.
+2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md) with its label shown, "Search projects", the toolbar's whole width on a phone; a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set and some projects match.
+3. **Selection bar:** a [Checkbox](../components/checkbox.md) "Select this page", checked, unchecked or mixed; a [Text](../foundations/typography.md) with `role="status"` that counts the projects, those found or those selected; and, with a selection, "Archive 3 projects" and "Delete 3 projects…" [Button](../components/button.md)s. While the rows stack, a "Sort by" Select joins them. The bar sits above the table rather than in its header row, as [Data tables](../patterns/data-tables.md) put it, because the header row hides while the rows stack, and selecting the page must work at every width.
 4. **Table:** a [Table](../components/table.md) with `narrowLayout="stack"`, sortable Name and Updated columns, and per row:
    - a Checkbox named "Select {project}" and a [Link](../components/link.md) to the project, the row's one destination;
    - the owner's [Avatar](../components/avatar.md) and name, the status as a [Badge](../components/badge.md), and the last change as [RelativeTime](../components/relative-time.md);
@@ -78,8 +80,8 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 - **No results:** the toolbar stays, so people can change what they asked for; the empty state names the query and offers "Clear filters", which also returns focus to the search.
 - **Sorting:** Name and Updated sort from their headers, which report `aria-sort`; the newest first is the default. On a phone the header row is hidden, so the "Sort by" Select takes its place.
 - **Selecting:** each row has its checkbox; "Select this page" selects the rows shown and is mixed while some are. The selection outlasts filters and pages, and the count says how many are selected.
-- **Archive:** happens at once, for one row from its menu or for the selection, with "Undo" in the toast. Focus moves to "Select this page", since the buttons that did it are gone.
-- **Delete:** asks first, naming the project or the count in the title and the button; Cancel takes focus, and the toast confirms afterwards. Focus returns to "Select this page".
+- **Archive:** happens at once, for one row from its menu or for the selection, with "Undo" in the toast. The control people used goes with it, so focus moves once the menu has closed: from a row's menu to the next row's menu button, or the one before for the last row; from the bulk buttons to "Select this page". Where no row is left, it moves to the empty state's "Clear filters", or to the search.
+- **Delete:** asks first, naming the project or the count in the title and the button; Cancel takes focus and returns it to the control that asked. After a delete the toast confirms it, and focus moves as after archiving.
 - **First use:** with no projects at all, replace the table with an EmptyState that explains projects and offers "Create project" ([Empty states](../patterns/empty-states.md)).
 - **Loading and errors:** show [Skeleton](../components/skeleton.md) rows in the table's shape while the first page loads, `pending` on Pagination while another does, and an EmptyState with `tone="danger"` and "Try again" when it fails.
 - **Widths:** on a desktop and a tablet the columns show; below 36 rem of the table's own width the rows stack, each a block with its labels, and the toolbar and the bar wrap.
@@ -95,7 +97,7 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 
 - Title the page with the plural of the object, "Projects", and name the primary action with a verb and the object, "Create project" ([Buttons and actions](../foundations/content.md#buttons-and-actions)).
 - Put the count in every label of a bulk action, "Archive 3 projects", "Delete 3 projects…", and in the dialog's title and button.
-- Toasts are short and in the past tense, "Website refresh archived", with one action at most.
+- Toasts are one short sentence in the past tense, with its full stop, "Website refresh archived.", and one action at most ([Feedback and status](../foundations/content.md#feedback-and-status)).
 - The no-results state names the query and says what to do ([Empty states](../foundations/content.md#empty-states)).
 
 ## Do and don't
@@ -130,4 +132,5 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 
 - A name for each row's checkbox and menu button that includes the project, such as "Select Website refresh".
 - The polite count that says how many are found or selected.
-- Moving focus after a bulk action removes the buttons people used: to "Select this page", here.
+- Moving focus after an action removes the control people used, once the menu or dialog has closed: to the neighbouring row's menu button, "Select this page", the empty state's action or the search, here.
+- A visible label on the search, not a placeholder that says what to type.

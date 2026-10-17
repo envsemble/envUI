@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -19,6 +19,8 @@ import {
   Table,
   Text,
   Tooltip,
+  useBreakpoint,
+  useMediaQuery,
   useToast,
   type BadgeTone,
 } from '@envsemble/envui';
@@ -69,9 +71,29 @@ export default function IndexPage() {
   const search = useRef<HTMLInputElement>(null);
   const table = useRef<HTMLTableElement>(null);
   const selectPage = useRef<HTMLInputElement>(null);
-  // After a bulk action takes its buttons away, focus goes back to the selection's start.
-  const afterAction = () => selectPage.current ?? search.current;
+  const clearAction = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  // Archiving and deleting take away the control people used: the row's menu button, or the bulk
+  // buttons and, when no row is left, "Select this page". Where focus goes instead is found once the
+  // removal has rendered: the element `find` names, else "Select this page", else the empty
+  // state's "Clear filters", else the search.
+  const focusAfter = useRef<{ find: () => HTMLElement | null; dialog: boolean } | null>(null);
+  const afterDelete = useRef<() => HTMLElement | null>(() => null);
+  useEffect(() => {
+    const pending = focusAfter.current;
+    if (!pending) return;
+    focusAfter.current = null;
+    const target = pending.find() ?? selectPage.current ?? clearAction.current ?? search.current;
+    // A closing dialog returns focus there itself.
+    if (pending.dialog) returnFocus.current = target;
+    // A closing menu returns focus to its trigger, which went with the row, as it unmounts; this
+    // runs after it.
+    else requestAnimationFrame(() => target?.focus());
+  });
+  // On a phone the search takes the toolbar's whole width.
+  const wide = useBreakpoint('sm');
+  // Under a touch screen's coarse pointer, a row's checkbox gets a touch-sized target across too.
+  const coarse = useMediaQuery('(pointer: coarse)');
 
   const term = query.trim().toLowerCase();
   const filtered = term !== '' || status !== 'all' || owner !== 'anyone';
@@ -110,19 +132,32 @@ export default function IndexPage() {
   const direction = (column: Column): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
   const sortBy = (column: Column) => (next: Direction) => setSort({ column, direction: next });
+  /** A row's menu button, found by its name. */
+  const menuButton = (project: Project | undefined) =>
+    project
+      ? (table.current?.querySelector<HTMLElement>(
+          `[aria-label="${CSS.escape(`More actions for ${project.name}`)}"]`,
+        ) ?? null)
+      : null;
+  /** The row's neighbour, whose menu button takes focus when the row goes: the next, else the one before. */
+  const neighbourOf = (project: Project) => {
+    const index = rows.indexOf(project);
+    const neighbour = rows[index + 1] ?? rows[index - 1];
+    return () => menuButton(neighbour);
+  };
   const select = (ids: string[], checked: boolean) =>
     setSelected((current) =>
       checked ? [...new Set([...current, ...ids])] : current.filter((id) => !ids.includes(id)),
     );
 
-  const archive = (targets: Project[]) => {
+  const archive = (targets: Project[], next: () => HTMLElement | null = () => null) => {
     const ids = targets.map((project) => project.id);
     // Archiving can be undone, so it happens at once, with Undo in the toast.
     setProjects((current) => current.filter((project) => !ids.includes(project.id)));
     setSelected((current) => current.filter((id) => !ids.includes(id)));
-    afterAction()?.focus();
+    focusAfter.current = { find: next, dialog: false };
     const id = toast.show({
-      message: `${targets.length === 1 ? targets[0].name : projectCount(targets.length)} archived`,
+      message: `${targets.length === 1 ? targets[0].name : projectCount(targets.length)} archived.`,
       action: {
         label: 'Undo',
         onClick: () => {
@@ -132,8 +167,14 @@ export default function IndexPage() {
       },
     });
   };
-  const askToDelete = (targets: Project[], from: HTMLElement | null) => {
+  const askToDelete = (
+    targets: Project[],
+    from: HTMLElement | null,
+    next: () => HTMLElement | null = () => null,
+  ) => {
+    // Cancel returns focus to the control that asked; a delete moves it to `next`.
     returnFocus.current = from;
+    afterDelete.current = next;
     setDeleting(targets);
     setConfirming(true);
   };
@@ -156,10 +197,14 @@ export default function IndexPage() {
           toolbar={
             // Not a Toolbar: the search keeps its arrow keys, and every control is a tab stop.
             <Stack direction="row" wrap align="center" gap={3}>
+              {/* The label shows, so people see what the field searches. */}
               <SearchField
                 ref={search}
                 label="Search projects"
+                showLabel
                 size="sm"
+                // envUI has no full-width toolbar field yet: on a phone it takes the whole row.
+                style={wide ? undefined : { inlineSize: '100%' }}
                 value={query}
                 onValueChange={(value) => filter(() => setQuery(value))}
               />
@@ -191,7 +236,9 @@ export default function IndexPage() {
       }
     >
       <Stack gap={4}>
-        {/* The selection's bar: select the page, the count, and what can be done with them. */}
+        {/* The selection's bar: select the page, the count, and what can be done with them. It sits
+            above the table, not in its header row, because the header row hides while the rows
+            stack on a narrow screen, and the bar stays at every width. */}
         <Stack direction="row" wrap align="center" justify="between" gap={3}>
           <Stack direction="row" wrap align="center" gap={4}>
             {rows.length > 0 && (
@@ -266,7 +313,7 @@ export default function IndexPage() {
             }
             action={
               filtered ? (
-                <Button variant="secondary" onClick={clearFilters}>
+                <Button ref={clearAction} variant="secondary" onClick={clearFilters}>
                   Clear filters
                 </Button>
               ) : undefined
@@ -303,6 +350,16 @@ export default function IndexPage() {
                     <Stack direction="row" align="center" gap={3}>
                       <Checkbox
                         aria-label={`Select ${project.name}`}
+                        // envUI has no touch-sized target across a lone checkbox yet: under a
+                        // coarse pointer it takes one here.
+                        style={
+                          coarse
+                            ? {
+                                minInlineSize: 'var(--env-control-height-touch)',
+                                justifyContent: 'center',
+                              }
+                            : undefined
+                        }
                         checked={selected.includes(project.id)}
                         onCheckedChange={(checked) => select([project.id], checked)}
                       />
@@ -311,7 +368,7 @@ export default function IndexPage() {
                   </Table.Cell>
                   <Table.Cell label="Owner" nowrap>
                     <Stack direction="row" align="center" gap={2}>
-                      <Avatar name={project.owner} size="sm" />
+                      <Avatar name={project.owner} size="sm" fallback="initials" />
                       {project.owner}
                     </Stack>
                   </Table.Cell>
@@ -336,7 +393,10 @@ export default function IndexPage() {
                         </Tooltip>
                       }
                     >
-                      <Menu.Item icon={<Archive />} onClick={() => archive([project])}>
+                      <Menu.Item
+                        icon={<Archive />}
+                        onClick={() => archive([project], neighbourOf(project))}
+                      >
                         Archive
                       </Menu.Item>
                       <Menu.Separator />
@@ -345,13 +405,9 @@ export default function IndexPage() {
                       <Menu.Item
                         icon={<Delete />}
                         onClick={() =>
-                          // Focus returns to the row's menu button when people cancel.
-                          askToDelete(
-                            [project],
-                            table.current?.querySelector<HTMLElement>(
-                              `[aria-label="${CSS.escape(`More actions for ${project.name}`)}"]`,
-                            ) ?? null,
-                          )
+                          // Cancel returns focus to the row's menu button; a delete moves it to the
+                          // neighbour's.
+                          askToDelete([project], menuButton(project), neighbourOf(project))
                         }
                       >
                         Delete project…
@@ -381,18 +437,18 @@ export default function IndexPage() {
             ? `Delete ${deleting[0].name}?`
             : `Delete ${projectCount(deleting.length)}?`
         }
-        description="This deletes the projects’ documents and tasks for everyone. You can’t undo this."
+        description={`This deletes the ${deleting.length === 1 ? 'project’s' : 'projects’'} documents and tasks for everyone. You can’t undo this.`}
         confirmLabel={deleteLabel}
         finalFocus={returnFocus}
         onConfirm={() => {
           // The projects are deleted on a server; return its promise here, so the dialog waits.
           const ids = deleting.map((project) => project.id);
           // The button that opened the dialog goes with the projects.
-          returnFocus.current = afterAction();
+          focusAfter.current = { find: afterDelete.current, dialog: true };
           setProjects((current) => current.filter((project) => !ids.includes(project.id)));
           setSelected((current) => current.filter((id) => !ids.includes(id)));
           toast.show({
-            message: `${deleting.length === 1 ? deleting[0].name : projectCount(deleting.length)} deleted`,
+            message: `${deleting.length === 1 ? deleting[0].name : projectCount(deleting.length)} deleted.`,
           });
         }}
       />

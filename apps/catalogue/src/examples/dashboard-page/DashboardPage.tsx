@@ -72,7 +72,6 @@ export default function DashboardPage() {
               label={figure.label}
               value={figure.value}
               trend={figure.trend}
-              description={figure.description}
             />
           ))}
         </Stat.Group>
@@ -146,7 +145,7 @@ export default function DashboardPage() {
                   key={task.title}
                   label={task.title}
                   description={task.project}
-                  action={<Badge tone={task.tone}>{task.due}</Badge>}
+                  action={<Badge tone={task.tone}>{dueLabel(task.due)}</Badge>}
                 />
               ))}
             </List.Root>
@@ -196,8 +195,12 @@ const periodLabel = (period: Period) => `last ${period} days`;
 type Figure = {
   label: string;
   value: string;
-  description?: string;
-  trend: { direction: 'up' | 'down' | 'flat'; label: string };
+  // The tone says whether the change is good news: fewer open tasks and a shorter lead time are.
+  trend: {
+    direction: 'up' | 'down' | 'flat';
+    label: string;
+    tone?: 'success' | 'danger' | 'neutral';
+  };
 };
 
 const stats: Record<Period, Figure[]> = {
@@ -205,12 +208,15 @@ const stats: Record<Period, Figure[]> = {
     { label: 'Active projects', value: '18', trend: { direction: 'flat', label: 'No change' } },
     { label: 'Tasks done', value: '64', trend: { direction: 'up', label: '+9 from last week' } },
     {
-      label: 'Lead time',
+      label: 'Median lead time',
       value: '2.1 days',
-      description: 'Median',
-      trend: { direction: 'down', label: '−0.3 days' },
+      trend: { direction: 'down', label: '−0.3 days', tone: 'success' },
     },
-    { label: 'Open tasks', value: '142', trend: { direction: 'down', label: '−11 this week' } },
+    {
+      label: 'Open tasks',
+      value: '142',
+      trend: { direction: 'down', label: '−11 this week', tone: 'success' },
+    },
   ],
   '30': [
     { label: 'Active projects', value: '18', trend: { direction: 'up', label: '+2 this month' } },
@@ -220,12 +226,15 @@ const stats: Record<Period, Figure[]> = {
       trend: { direction: 'up', label: '+12% from last month' },
     },
     {
-      label: 'Lead time',
+      label: 'Median lead time',
       value: '2.5 days',
-      description: 'Median',
       trend: { direction: 'flat', label: 'No change' },
     },
-    { label: 'Open tasks', value: '142', trend: { direction: 'up', label: '+8 this month' } },
+    {
+      label: 'Open tasks',
+      value: '142',
+      trend: { direction: 'up', label: '+8 this month', tone: 'danger' },
+    },
   ],
   '90': [
     { label: 'Active projects', value: '18', trend: { direction: 'up', label: '+5 this quarter' } },
@@ -235,12 +244,15 @@ const stats: Record<Period, Figure[]> = {
       trend: { direction: 'up', label: '+4% from last quarter' },
     },
     {
-      label: 'Lead time',
+      label: 'Median lead time',
       value: '2.8 days',
-      description: 'Median',
-      trend: { direction: 'up', label: '+0.4 days' },
+      trend: { direction: 'up', label: '+0.4 days', tone: 'danger' },
     },
-    { label: 'Open tasks', value: '142', trend: { direction: 'down', label: '−20 this quarter' } },
+    {
+      label: 'Open tasks',
+      value: '142',
+      trend: { direction: 'down', label: '−20 this quarter', tone: 'success' },
+    },
   ],
 };
 
@@ -287,17 +299,25 @@ const upcoming: { title: string; project: string; due: string; tone: 'warning' |
   {
     title: 'Design the product pages',
     project: 'Website refresh',
-    due: 'Due 6 Mar',
+    due: '2026-03-06',
     tone: 'warning',
   },
   {
     title: 'Send the draft to finance',
     project: 'Quarterly report',
-    due: 'Due 9 Mar',
+    due: '2026-03-09',
     tone: 'neutral',
   },
-  { title: 'Test the import', project: 'Data migration', due: 'Due 12 Mar', tone: 'neutral' },
+  { title: 'Test the import', project: 'Data migration', due: '2026-03-12', tone: 'neutral' },
 ];
+
+/** A due date in the reader's language, such as "Due 6 Mar" or "Due Mar 6". */
+const dueDate = new Intl.DateTimeFormat(undefined, {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+const dueLabel = (date: string) => `Due ${dueDate.format(new Date(`${date}T00:00:00Z`))}`;
 
 /** Stands in for the tasks completed each day from October to today: busier midweek. */
 function completedPerDay(): CalendarHeatmapDay[] {

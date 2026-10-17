@@ -29,13 +29,16 @@ export default function NotFoundPage() {
             <Button href="/" startIcon={<Home />}>
               Go to home
             </Button>
-            {/* The application's search page, with the last part of the address as the query. */}
-            <Button
-              variant="secondary"
-              href={`/search?${new URLSearchParams({ q: queryOf(path) })}`}
-            >
-              Search
-            </Button>
+            {/* Only where the application has a search page: it opens with the last part of the
+                address as the query. Without one, set searchPath to null and leave Search out. */}
+            {searchPath && (
+              <Button
+                variant="secondary"
+                href={`${searchPath}?${new URLSearchParams({ q: queryOf(path) })}`}
+              >
+                Search
+              </Button>
+            )}
           </Stack>
         }
       />
@@ -49,3 +52,5 @@ function queryOf(path: string) {
 }
 
 const requestedPath = '/projects/website-redesign';
+/** The application's search page, or null where it has none. */
+const searchPath: string | null = '/search';

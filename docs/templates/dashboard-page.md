@@ -59,13 +59,13 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 ## Anatomy
 
 1. **Header:** a [PageHeader](../components/page-header.md), "Dashboard", with `controlSize="sm"` and two actions: a [Select](../components/select.md) "Period", Last 7, 30 or 90 days, and an "Export" [Button](../components/button.md) link.
-2. **Figures:** a [Stat.Group](../components/stat.md) of four `Stat.Root`s, each with its label, value, `trend` and, where it needs one, a description such as Median.
+2. **Figures:** a [Stat.Group](../components/stat.md) of four `Stat.Root`s, each with its label, value and `trend`. The trend's `tone` says whether the change is good news: fewer open tasks and a shorter lead time are `success`, more open tasks and a longer lead time `danger`.
 3. **Panels:** a [Stack](../components/stack.md) row that wraps, each panel a `section` on a muted [Surface](../components/surface.md), named by its `h2`:
    - **Activity:** a [CalendarHeatmap](../components/calendar-heatmap.md) of the tasks completed each day;
    - **Storage:** a [Meter](../components/meter.md) of the space used, with a line on what takes it;
    - **Goals:** three [Progress](../components/progress.md) bars, each with its count;
    - **Recent documents:** a compact [Table](../components/table.md), `density="sm"`, with a [Link](../components/link.md) per document and [RelativeTime](../components/relative-time.md);
-   - **Due soon:** a [List](../components/list.md) of tasks with their due dates as [Badge](../components/badge.md)s;
+   - **Due soon:** a [List](../components/list.md) of tasks with their due dates as [Badge](../components/badge.md)s, formatted with `Intl.DateTimeFormat` in the reader's language;
    - **Alerts:** an [EmptyState](../components/empty-state.md), "No alerts", that says what would show there.
 
 ## States and behaviour
@@ -81,11 +81,12 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 
 - Replace `stats`, `goals`, `documents`, `upcoming` and `completedPerDay` with your service's data for the period.
 - Point "Export" and the documents' links at your routes; they're plain paths through the application's `LinkProvider` ([setup](../setup.md)).
-- Write each trend's label as a change with its period, "+12% from last month", and choose its direction by whether the number went up or down, not whether that's good.
+- Write each trend's label as a change with its period, "+12% from last month", and choose its direction by whether the number went up or down. Set its `tone` where that direction is good or bad news against the default, as for open tasks and lead time ([Stat](../components/stat.md#variants-and-sizes)).
 
 ## Content guidelines
 
-- Label figures with a noun phrase, "Tasks done", and keep the value short, with its unit: "2.5 days".
+- Label figures with a noun phrase that says what is measured, "Tasks done", "Median lead time", and keep the value short, with its unit: "2.5 days".
+- Format dates and numbers in the application, in the reader's language: "Due 6 Mar" in British English, "Due Mar 6" in American.
 - Title panels with what they show, and keep each to one question people ask.
 - An empty panel's title states the fact, "No alerts", and its description says what would appear ([Empty states](../foundations/content.md#empty-states)).
 
@@ -101,7 +102,7 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 
 - Don't draw charts from boxes and colors of your own; use the figures and bars envUI has, or a chart library styled with envUI's tokens.
 - Don't fill the page with every metric there is; a dashboard answers a few questions well.
-- Don't color a trend by whether it is good; the arrow and the label say what changed.
+- Don't leave a trend in its default tone when its direction is bad news, such as more open tasks; and don't rely on the tone alone, since the arrow and the label say what changed.
 
 ## Accessibility
 

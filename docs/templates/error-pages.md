@@ -51,16 +51,16 @@ The pages people see when what they asked for isn't there: an address with no pa
 
 ## Anatomy
 
-1. **Not found** (`NotFoundPage`, inside the frame): a [Page](../components/page.md) of `width="md"` with an [EmptyState](../components/empty-state.md) `align="center"` and `headingLevel={1}`, "Page not found", that shows the address in [Code](../components/code.md), with "Go to home" and "Search" [Button](../components/button.md) links in a [Stack](../components/stack.md).
+1. **Not found** (`NotFoundPage`, inside the frame): a [Page](../components/page.md) of `width="md"` with an [EmptyState](../components/empty-state.md) `align="center"` and `headingLevel={1}`, "Page not found", that shows the address in [Code](../components/code.md), with "Go to home" and, where the application has a search page, "Search" [Button](../components/button.md) links in a [Stack](../components/stack.md).
 2. **No access** (`NoAccessPage`, inside the frame): the same EmptyState, "You don't have access to this project", naming the owner, with a "Request access" Button, a status [Text](../foundations/typography.md) and a [Link](../components/link.md) back to the list.
 3. **Failed to load** (`ErrorPage`, a whole screen): [AppShell.Main](../components/app-shell.md) on its own, a Stack as tall as the window that centres a Page of `width="sm"`, and an EmptyState with `tone="danger"`, "Something went wrong", "Try again" and a reference in Code to quote to support.
 4. **Error boundary** (the example below): a React error boundary around the page inside AppShell.Main that shows a danger EmptyState in the page's place.
 
 ## States and behaviour
 
-- **Not found:** the router's catch-all route renders it with the path people asked for. "Search" goes to the application's search page with the path's last part as the query; "Go to home" goes home. The frame marks no destination.
-- **No access:** "Request access" is `pending` while the request is sent, then gives way to a status that says who will hear about it. Name the owner only where people may know who it is.
-- **Failed to load:** "Try again" loads the application again. The reference ties the screen to the report your error reporting made, so support can find it.
+- **Not found:** the router's catch-all route renders it with the path people asked for. Where the application has a search page, "Search" goes to it with the path's last part as the query; without one, set `searchPath` to `null` and only "Go to home" shows. "Go to home" goes home. The frame marks no destination.
+- **No access:** "Request access" is `pending` while the request is sent, then gives way to a status that says who will hear about it, and focus moves to that status, since the button people pressed is gone. Name the owner only where people may know who it is.
+- **Failed to load:** focus moves to Main as the screen mounts, so a screen reader reads the screen that replaced the application. "Try again" loads the application again. The reference ties the screen to the report your error reporting made, so support can find it.
 - **A page fails to render:** the boundary keeps the frame and replaces only the page; key it by the path, so going to another page starts again.
 - **Widths:** each message is centred in a column of at most 60 rem, 40 for the failed load, which fills the width inside the page's gutter on a phone; the buttons wrap.
 
@@ -109,7 +109,9 @@ The pages people see when what they asked for isn't there: an address with no pa
 
 - The `h1` through `headingLevel={1}` where the EmptyState is the page.
 - `document.title` for each, such as "Page not found – Northwind".
-- The status that confirms a request, and the error boundary itself.
+- The status that confirms a request, with `tabIndex={-1}`, and moving focus to it once the request is sent.
+- Focus on Main as the failed-load screen mounts: AppShell.Main has `tabIndex={-1}`, so `focus()` on its ref works, and a screen reader reads the screen that replaced the application.
+- The error boundary itself.
 
 ## Examples
 

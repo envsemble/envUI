@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { AppShell, Button, EmptyState, Page, Stack, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
@@ -9,8 +10,13 @@ import { Warning } from '@envsemble/envui/icons/Warning';
  * reference your error reporting gave the failure.
  */
 export default function ErrorPage() {
+  const main = useRef<HTMLElement>(null);
+  // It replaces the application, so focus moves to Main, which screen readers then read from.
+  useEffect(() => {
+    main.current?.focus({ preventScroll: true });
+  }, []);
   return (
-    <AppShell.Main>
+    <AppShell.Main ref={main}>
       {/* envUI has no centred full-viewport layout yet: this column centres the message. */}
       <Stack
         justify="center"

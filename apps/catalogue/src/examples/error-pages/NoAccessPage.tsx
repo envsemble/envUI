@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, EmptyState, Link, Page, Stack, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 
@@ -9,6 +9,11 @@ import { Lock } from '@envsemble/envui/icons/Lock';
 export default function NoAccessPage() {
   const [requested, setRequested] = useState(false);
   const [sending, setSending] = useState(false);
+  const confirmation = useRef<HTMLElement>(null);
+  // The button people pressed goes, so focus moves to the status that replaces it, which reads it.
+  useEffect(() => {
+    if (requested) confirmation.current?.focus();
+  }, [requested]);
   const request = () => {
     if (sending) return;
     setSending(true);
@@ -34,7 +39,7 @@ export default function NoAccessPage() {
                 Request access
               </Button>
             )}
-            <Text role="status" emphasis="muted">
+            <Text ref={confirmation} tabIndex={-1} role="status" emphasis="muted">
               {requested ? `Request sent. ${project.owner} will get an email.` : ''}
             </Text>
             <Link href="/projects">Go to projects</Link>

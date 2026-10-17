@@ -50,7 +50,7 @@ export default function DetailsPage() {
     // Archiving can be undone, so it happens at once, with Undo in the toast.
     setArchived(true);
     const shown = toast.show({
-      message: `${project.name} archived`,
+      message: `${project.name} archived.`,
       action: {
         label: 'Undo',
         onClick: () => {
@@ -145,7 +145,7 @@ export default function DetailsPage() {
             <DescriptionList.Root layout="stacked" aria-labelledby={`${id}-details`}>
               <DescriptionList.Item label="Owner">
                 <Stack direction="row" align="center" gap={2}>
-                  <Avatar name={project.owner} size="sm" />
+                  <Avatar name={project.owner} size="sm" fallback="initials" />
                   {project.owner}
                 </Stack>
               </DescriptionList.Item>
@@ -174,7 +174,10 @@ export default function DetailsPage() {
               <Text variant="body-sm" emphasis="muted" render={<h3 />}>
                 Members
               </Text>
-              <AvatarGroup people={project.members.map((name) => ({ name }))} max={4} />
+              <AvatarGroup
+                people={project.members.map((name) => ({ name, fallback: 'initials' }))}
+                max={4}
+              />
             </Stack>
           </Stack>
         </Surface>
@@ -234,7 +237,7 @@ function Activity() {
         {activity.map((event) => (
           <List.Item
             key={event.when}
-            start={<Avatar name={event.person} size="sm" />}
+            start={<Avatar name={event.person} size="sm" fallback="initials" />}
             label={`${event.person} ${event.what}`}
             description={<RelativeTime value={event.when} />}
           />

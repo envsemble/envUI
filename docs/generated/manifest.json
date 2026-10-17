@@ -6067,7 +6067,8 @@
         ],
         "templates": [
           "index-page",
-          "details-page"
+          "details-page",
+          "sign-in-page"
         ]
       }
     },
@@ -7755,7 +7756,9 @@
         "Pagination",
         "EmptyState",
         "ConfirmDialog",
-        "useToast"
+        "useToast",
+        "useBreakpoint",
+        "useMediaQuery"
       ],
       "related": [
         "empty-states",
@@ -8049,6 +8052,7 @@
         "Text",
         "TextField",
         "IconButton",
+        "Tooltip",
         "Checkbox",
         "Button",
         "Link",

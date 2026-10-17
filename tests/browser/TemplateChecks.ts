@@ -115,8 +115,10 @@ const signIn: TemplateCheck[] = [
       const button = page.getByRole('button', { name: 'Sign in', exact: true });
       await email.fill('alex.morgan@example.com');
       await password.fill('a wrong password');
-      // Show password shows it, and says so by its pressed state.
+      // Show password shows it, and says so by its pressed state; its tooltip names the icon.
       const show = page.getByRole('button', { name: 'Show password' });
+      await show.hover();
+      await expect(page.getByRole('tooltip')).toHaveText('Show password');
       await show.click();
       await expect(show).toHaveAttribute('aria-pressed', 'true');
       await expect(password).toHaveAttribute('type', 'text');
@@ -232,13 +234,72 @@ const settings: TemplateCheck[] = [
       await expect(page.getByRole('button', { name: /sidebar/ })).toHaveCount(1);
       await page.mouse.move(width - 10, 400);
       await page.getByRole('button', { name: 'Expand sidebar' }).click();
-      // A section's item moves focus to its heading and marks it.
+      // A section's item moves focus to its heading and marks it as the location in the page.
       await sections.getByRole('link', { name: 'Appearance' }).click();
       await expect(page.getByRole('heading', { name: 'Appearance', level: 2 })).toBeFocused();
       await expect(sections.getByRole('link', { name: 'Appearance' })).toHaveAttribute(
         'aria-current',
-        'page',
+        'location',
       );
+      await expect(sections.locator('[aria-current]')).toHaveCount(1);
+    },
+  },
+  {
+    name: 'the sections’ navigation hides below lg, and above it sticks and follows scrolling',
+    async run(page, { width }) {
+      const sections = page.getByRole('navigation', { name: 'Settings sections' });
+      // Hidden below the lg breakpoint, as on a tablet at 834.
+      await page.setViewportSize({ width: 834, height: 900 });
+      await expect(sections).toHaveCount(0);
+      await page.setViewportSize({ width, height: 800 });
+      if (width < 1024) return;
+      const profile = sections.getByRole('link', { name: 'Profile' });
+      await expect(profile).toHaveAttribute('aria-current', 'location');
+      const top = (await sections.boundingBox())!.y;
+      // Scrolled until the notifications' heading is near the top, the navigation marks them.
+      const notifications = page.getByRole('heading', { name: 'Notifications', level: 2 });
+      await page.mouse.move(width - 200, 400);
+      await page.mouse.wheel(0, (await notifications.boundingBox())!.y - 150);
+      await expect(sections.getByRole('link', { name: 'Notifications' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+      // Scrolled to the end, the short last section is marked, and the navigation stays in view.
+      await page
+        .getByRole('heading', { name: 'Danger zone', level: 2 })
+        .evaluate((heading) => heading.scrollIntoView({ block: 'start' }));
+      await expect(sections.getByRole('link', { name: 'Danger zone' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      );
+      await expect(profile).not.toHaveAttribute('aria-current');
+      const box = (await sections.boundingBox())!;
+      expect(box.y, 'The navigation sticks in view').toBeGreaterThanOrEqual(0);
+      expect(box.y).toBeLessThanOrEqual(top);
+      // Back at the top, the profile is marked again.
+      await page
+        .getByRole('heading', { name: 'Profile', level: 2 })
+        .evaluate((heading) => heading.scrollIntoView({ block: 'end' }));
+      await expect(profile).toHaveAttribute('aria-current', 'location');
+    },
+  },
+  {
+    name: 'the notification switches sit beside their text, and the empty status adds no line',
+    async run(page) {
+      const switches = page.getByRole('list', { name: 'Email notifications' }).getByRole('switch');
+      const boxes = await switches.evaluateAll((elements) =>
+        elements.map((element) => {
+          const box = (element.closest('.env-switch') ?? element).getBoundingClientRect();
+          return { x: Math.round(box.x), width: Math.round(box.width) };
+        }),
+      );
+      expect(new Set(boxes.map(({ x }) => x)).size, 'Every switch at one inline position').toBe(1);
+      expect(new Set(boxes.map(({ width }) => width)).size, 'Every switch one width').toBe(1);
+      // The empty status sits beside Save profile and Cancel, not on a line of its own.
+      const form = page.getByRole('form', { name: 'Profile' });
+      const save = (await form.getByRole('button', { name: 'Save profile' }).boundingBox())!;
+      const status = (await form.getByRole('status').boundingBox())!;
+      expect(status.y + status.height).toBeLessThanOrEqual(save.y + save.height + 1);
     },
   },
   {
@@ -248,7 +309,7 @@ const settings: TemplateCheck[] = [
       await expect(summary).not.toBeChecked();
       await summary.click();
       await expect(summary).toBeChecked();
-      await expect(page.getByRole('heading', { name: 'Weekly summary turned on' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Weekly summary turned on.' })).toBeVisible();
       const comments = page.getByRole('switch', { name: 'Comments' });
       await comments.click();
       await expect(comments).not.toBeChecked();
@@ -283,7 +344,7 @@ const settings: TemplateCheck[] = [
       await expect(save).toHaveAttribute('aria-busy', 'true');
       await expect(save).not.toHaveAttribute('disabled');
       await page.clock.runFor(1100);
-      await expect(page.getByRole('heading', { name: 'Profile saved' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Profile saved.' })).toBeVisible();
       await expect(page.getByText('Unsaved changes')).toHaveCount(0);
     },
   },
@@ -377,7 +438,9 @@ const indexPage: TemplateCheck[] = [
         'true',
       );
       await page.getByRole('button', { name: 'Archive 2 projects' }).click();
-      await expect(page.getByRole('heading', { name: '2 projects archived' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: '2 projects archived.' })).toBeVisible();
+      // The bulk buttons went, so focus moves to "Select this page".
+      await expect(page.getByRole('checkbox', { name: 'Select this page' })).toBeFocused();
       await expect(page.getByRole('link', { name: 'Website refresh' })).toHaveCount(0);
       await expect(status).toHaveText('22 projects');
       await page.getByRole('button', { name: 'Undo' }).click();
@@ -414,6 +477,50 @@ const indexPage: TemplateCheck[] = [
       await expect(more).toBeFocused();
     },
   },
+  {
+    name: 'archiving from a row’s menu moves focus to the next row’s menu button',
+    async run(page) {
+      const first = page.getByRole('button', { name: 'More actions for Website refresh' });
+      const second = page.getByRole('button', { name: 'More actions for Design system' });
+      await first.focus();
+      await page.keyboard.press('Enter');
+      await page.getByRole('menuitem', { name: 'Archive' }).click();
+      await expect(page.getByRole('heading', { name: 'Website refresh archived.' })).toBeVisible();
+      await expect(page.getByRole('menu')).toHaveCount(0);
+      await expect(second).toBeFocused();
+      // Deleting from a row's menu does the same.
+      await second.click();
+      await page.getByRole('menuitem', { name: 'Delete project…' }).click();
+      const dialog = page.getByRole('alertdialog', { name: 'Delete Design system?' });
+      await expect(dialog).toContainText('This deletes the project’s documents');
+      await dialog.getByRole('button', { name: 'Delete project' }).click();
+      await expect(dialog).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: 'More actions for Quarterly report' }),
+      ).toBeFocused();
+    },
+  },
+  {
+    name: 'archiving the last rows of a filtered list moves focus to the empty state’s action',
+    async run(page) {
+      const search = page.getByRole('searchbox', { name: 'Search projects' });
+      // The label shows, not only a placeholder.
+      await expect(page.getByText('Search projects', { exact: true })).toBeVisible();
+      await search.fill('report');
+      // The only row, from its menu: no row is left to take focus.
+      await page.getByRole('button', { name: 'More actions for Quarterly report' }).click();
+      await page.getByRole('menuitem', { name: 'Archive' }).click();
+      const clear = page.getByRole('main').getByRole('button', { name: 'Clear filters' });
+      await expect(page.getByRole('heading', { name: 'No matching projects' })).toBeVisible();
+      await expect(clear).toBeFocused();
+      await page.getByRole('button', { name: 'Undo' }).click();
+      // In bulk: "Select this page" goes with the rows.
+      await page.getByRole('checkbox', { name: 'Select this page' }).check();
+      await page.getByRole('button', { name: 'Archive 1 project' }).click();
+      await expect(page.getByRole('heading', { name: 'No matching projects' })).toBeVisible();
+      await expect(clear).toBeFocused();
+    },
+  },
 ];
 
 const detailsPage: TemplateCheck[] = [
@@ -440,7 +547,7 @@ const detailsPage: TemplateCheck[] = [
       const more = page.getByRole('button', { name: 'More actions' });
       await more.click();
       await page.getByRole('menuitem', { name: 'Archive' }).click();
-      await expect(page.getByRole('heading', { name: 'Website refresh archived' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Website refresh archived.' })).toBeVisible();
       await expect(page.getByText('Archived', { exact: true }).first()).toBeVisible();
       await page.getByRole('button', { name: 'Undo' }).click();
       await expect(page.getByText('Archived', { exact: true })).toHaveCount(0);
@@ -476,6 +583,33 @@ const dashboardPage: TemplateCheck[] = [
       );
     },
   },
+  {
+    name: 'a trend’s tone says whether the change is good news, and due dates come from Intl',
+    async run(page) {
+      const trend = (label: string) =>
+        page.locator('.env-stat', { hasText: label }).locator('.env-stat-trend');
+      // 30 days: more open tasks is bad news.
+      await expect(trend('Open tasks')).toHaveAttribute('data-direction', 'up');
+      await expect(trend('Open tasks')).toHaveAttribute('data-tone', 'danger');
+      await page.getByRole('combobox', { name: 'Period' }).click();
+      await page.getByRole('option', { name: 'Last 7 days' }).click();
+      // 7 days: fewer open tasks and a shorter lead time are good news.
+      await expect(trend('Open tasks')).toHaveAttribute('data-tone', 'success');
+      await expect(trend('Median lead time')).toHaveAttribute('data-direction', 'down');
+      await expect(trend('Median lead time')).toHaveAttribute('data-tone', 'success');
+      await page.getByRole('combobox', { name: 'Period' }).click();
+      await page.getByRole('option', { name: 'Last 90 days' }).click();
+      await expect(trend('Median lead time')).toHaveAttribute('data-tone', 'danger');
+      const due = await page.evaluate(() =>
+        new Intl.DateTimeFormat(undefined, {
+          day: 'numeric',
+          month: 'short',
+          timeZone: 'UTC',
+        }).format(new Date('2026-03-06T00:00:00Z')),
+      );
+      await expect(page.getByRole('region', { name: 'Due soon' })).toContainText(`Due ${due}`);
+    },
+  },
 ];
 
 const notFound: TemplateCheck[] = [
@@ -504,10 +638,11 @@ const noAccess: TemplateCheck[] = [
       await expect(request).toHaveAttribute('aria-busy', 'true');
       await expect(request).not.toHaveAttribute('disabled');
       await page.clock.runFor(900);
-      await expect(page.getByRole('main').getByRole('status').first()).toHaveText(
-        'Request sent. Priya Shah will get an email.',
-      );
+      const status = page.getByRole('main').getByRole('status').first();
+      await expect(status).toHaveText('Request sent. Priya Shah will get an email.');
       await expect(request).toHaveCount(0);
+      // The button went, so focus moves to the status that replaced it.
+      await expect(status).toBeFocused();
     },
   },
 ];
@@ -517,6 +652,8 @@ const errorPage: TemplateCheck[] = [
     name: 'it says what happened, offers Try again first and shows the reference',
     async run(page, { tab }) {
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Something went wrong');
+      // It replaced the application, so Main takes focus as it mounts.
+      await expect(page.getByRole('main')).toBeFocused();
       await page.keyboard.press(tab);
       await expect(page.getByRole('button', { name: 'Try again' })).toBeFocused();
       await expect(page.getByRole('main')).toContainText('NW-7F3A-2C91');

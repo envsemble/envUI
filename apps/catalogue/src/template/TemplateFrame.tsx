@@ -31,10 +31,13 @@ const loaders = import.meta.glob<{
 }>('../examples/*/*.tsx');
 const examplePath = (page: string, name: string) => `../examples/${page}/${name}.tsx`;
 /**
- * Where the frame's theme preference lives: a theme chosen inside a frame, such as in the app frame's
- * account menu, applies to it until it loads again, which starts from the address's theme.
+ * Where a frame's theme preference lives: a theme chosen inside a frame, such as in the app frame's
+ * account menu, applies to it until it loads again, which starts from the address's theme. Each
+ * screen, scale and direction has a key of its own, so a choice in one preview iframe leaves the
+ * page's other previews alone.
  */
-const frameThemeKey = 'envui-template-frame-theme';
+const frameThemeKey = ({ page, name, scale, dir }: FrameRequest) =>
+  `envui-template-frame-theme:${page}/${name}:${scale}:${dir}`;
 /** The app frame template, which screens of `frame: app` render inside. */
 const appFrame = { page: 'app-frame', name: 'AppFrame' };
 
@@ -114,6 +117,7 @@ function Missing({ what }: { what: string }) {
 export function TemplateFrame({ request }: { request: FrameRequest }) {
   const { page, name, scale, theme, dir } = request;
   const found = blockOf(page, name);
+  const themeKey = frameThemeKey(request);
   useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.add('env-theme');
@@ -131,7 +135,7 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
   // Each load starts from the address's theme, not from a choice made in an earlier frame.
   useState(() => {
     try {
-      window.localStorage.removeItem(frameThemeKey);
+      window.localStorage.removeItem(themeKey);
     } catch {
       // Storage can be blocked; the address's theme applies all the same.
     }
@@ -146,7 +150,7 @@ export function TemplateFrame({ request }: { request: FrameRequest }) {
             preference (the account menu's theme submenu, a settings page's theme choice), toasts
             and the router's links. */}
         <ThemePreferenceProvider
-          storageKey={frameThemeKey}
+          storageKey={themeKey}
           defaultPreference={theme}
           scale={scale}
           contrast="standard"

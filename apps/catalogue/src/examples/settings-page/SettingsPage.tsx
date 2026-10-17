@@ -37,11 +37,56 @@ export default function SettingsPage() {
   const heading = (section: SectionId) => (element: HTMLElement | null) => {
     if (element) headings.current.set(section, element);
   };
+  // While a chosen section scrolls into view, scrolling doesn't change the selection.
+  const chosenAt = useRef(0);
   const go = (section: SectionId) => {
     setChosen(section);
+    chosenAt.current = performance.now();
     // The section's heading takes focus, so reading and the keyboard continue from there.
     headings.current.get(section)?.focus();
   };
+  // The selection follows scrolling: the current section is the last whose top has passed into the
+  // top 40% of the window, or the last section once the page has scrolled to show all of it, since
+  // a short last section can't reach that far.
+  useEffect(() => {
+    const crossing = new Set<string>();
+    let atEnd = false;
+    const update = () => {
+      if (performance.now() - chosenAt.current < 500) return;
+      const scrolled = !crossing.has(`${id}-${sections[0].id}`);
+      const current =
+        atEnd && scrolled
+          ? sections[sections.length - 1]
+          : [...sections].reverse().find((section) => crossing.has(`${id}-${section.id}`));
+      if (current) setChosen(current.id);
+    };
+    const bands = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries)
+          if (entry.isIntersecting) crossing.add(entry.target.id);
+          else crossing.delete(entry.target.id);
+        update();
+      },
+      { rootMargin: '0px 0px -60% 0px' },
+    );
+    const ends = new IntersectionObserver(
+      ([entry]) => {
+        atEnd = entry.isIntersecting;
+        update();
+      },
+      { threshold: 1 },
+    );
+    for (const section of sections) {
+      const element = document.getElementById(`${id}-${section.id}`);
+      if (element) bands.observe(element);
+    }
+    const last = document.getElementById(`${id}-${sections[sections.length - 1].id}`);
+    if (last) ends.observe(last);
+    return () => {
+      bands.disconnect();
+      ends.disconnect();
+    };
+  }, [id]);
 
   return (
     <Page
@@ -50,33 +95,46 @@ export default function SettingsPage() {
         <PageHeader title="Settings" description="Your profile and how Northwind works for you." />
       }
     >
-      {/* envUI has no responsive columns yet: the navigation and the sections share a row and wrap
-          when the sections would be narrower than 30 rem. */}
-      <Stack direction="row" wrap align="start" gap={8}>
+      {/* envUI has no responsive columns yet: the navigation and the sections share a row. */}
+      <Stack direction="row" align="start" gap={8}>
         {/* A sidebar of the page's own, inside Main: it keeps its own state and leaves the frame's
-            sidebar, skip links and shortcut alone. On a phone it hides, and the sections follow
-            each other. */}
-        <Sidebar.Root label="Settings sections" collapsible="none" mobile="none">
-          <Sidebar.Content>
-            <NavList.Root>
-              {sections.map((section) => (
-                <NavList.Item
-                  key={section.id}
-                  href={`#${id}-${section.id}`}
-                  selected={chosen === section.id}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    go(section.id);
-                  }}
-                >
-                  {section.title}
-                </NavList.Item>
-              ))}
-            </NavList.Root>
-          </Sidebar.Content>
-        </Sidebar.Root>
+            sidebar, skip links and shortcut alone. Its provider hides it below the lg breakpoint,
+            where the sections follow each other; above it, it sticks below the frame's sticky
+            header as the sections scroll. */}
+        <Sidebar.Provider breakpoint="lg">
+          <Sidebar.Root
+            label="Settings sections"
+            collapsible="none"
+            mobile="none"
+            // envUI has no sticky page sidebar yet: it sticks below the frame's sticky offset.
+            style={{
+              position: 'sticky',
+              insetBlockStart: 'calc(var(--env-frame-sticky-top, 0rem) + var(--env-space-6))',
+            }}
+          >
+            <Sidebar.Content>
+              <NavList.Root>
+                {sections.map((section) => (
+                  <NavList.Item
+                    key={section.id}
+                    href={`#${id}-${section.id}`}
+                    selected={chosen === section.id}
+                    // Links within the page: the current one is a location, not a page.
+                    aria-current={chosen === section.id ? 'location' : undefined}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      go(section.id);
+                    }}
+                  >
+                    {section.title}
+                  </NavList.Item>
+                ))}
+              </NavList.Root>
+            </Sidebar.Content>
+          </Sidebar.Root>
+        </Sidebar.Provider>
         {/* envUI has no responsive columns yet: the sections take the rest of the row. */}
-        <Stack gap={8} style={{ flex: '1 1 30rem', minInlineSize: 0 }}>
+        <Stack gap={8} style={{ flex: '1 1 0', minInlineSize: 0 }}>
           <Section id={`${id}-profile`} title="Profile" headingRef={heading('profile')}>
             <ProfileForm />
           </Section>
@@ -195,7 +253,7 @@ function ProfileForm() {
     timer.current = window.setTimeout(() => {
       setSaving(false);
       setSaved(draft);
-      toast.show({ message: 'Profile saved' });
+      toast.show({ message: 'Profile saved.' });
     }, 1000);
   };
 
@@ -239,7 +297,7 @@ function ProfileForm() {
           </Alert>
         )}
         <Stack direction="row" align="center" gap={3}>
-          <Avatar name={saved.name} size="lg" />
+          <Avatar name={saved.name} size="lg" fallback="initials" />
           {changed && <Badge tone="warning">Unsaved changes</Badge>}
         </Stack>
         <TextField
@@ -265,7 +323,7 @@ function ProfileForm() {
           error={errors.email}
           onValueChange={(value) => edit('email', value)}
         />
-        <Stack direction="row" wrap gap={3}>
+        <Stack direction="row" wrap align="center" gap={3}>
           {/* Never disabled: Save says what is wrong, and pending ignores presses while saving. */}
           <Button type="submit" pending={saving}>
             Save profile
@@ -273,10 +331,11 @@ function ProfileForm() {
           <Button variant="secondary" onClick={cancel}>
             Cancel
           </Button>
+          {/* Beside the buttons, so while it is empty it adds no line below them. */}
+          <Text role="status" emphasis="muted">
+            {status}
+          </Text>
         </Stack>
-        <Text role="status" emphasis="muted">
-          {status}
-        </Text>
       </Stack>
     </Surface>
   );
@@ -296,7 +355,7 @@ function Notifications() {
     setValues((current) => ({ ...current, [setting]: on }));
     if (setting === 'summary')
       toast.show({
-        message: on ? 'Weekly summary turned on' : 'Weekly summary turned off',
+        message: on ? 'Weekly summary turned on.' : 'Weekly summary turned off.',
       });
   };
   return (
@@ -304,6 +363,9 @@ function Notifications() {
       {notificationSettings.map((setting) => (
         <List.Item
           key={setting.id}
+          // envUI has no List row that keeps its action beside the text yet: the row doesn't wrap,
+          // so the switch stays beside its text at every width, and the text wraps.
+          style={{ flexWrap: 'nowrap' }}
           label={<span id={`${id}-${setting.id}-title`}>{setting.title}</span>}
           description={<span id={`${id}-${setting.id}-detail`}>{setting.detail}</span>}
           action={
@@ -313,6 +375,9 @@ function Notifications() {
               aria-describedby={`${id}-${setting.id}-detail`}
               checked={values[setting.id]}
               onCheckedChange={(on) => change(setting.id, on)}
+              // envUI has no List row that keeps its action beside the text yet: nor does the
+              // switch shrink.
+              style={{ flexShrink: 0 }}
             />
           }
         />
@@ -326,6 +391,7 @@ function Appearance() {
   // The application's ThemePreferenceProvider stores the theme and applies it to every page.
   const { preference, setPreference } = useThemePreference();
   // One scale for the whole application: store it and pass it to the root provider's `scale`.
+  // This sample only keeps the choice.
   const [scale, setScale] = useState<'comfortable' | 'compact'>('comfortable');
   return (
     <Stack gap={6}>
