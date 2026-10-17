@@ -137,7 +137,7 @@ test('a menu, a notice and a tooltip open over a modal dialog', async ({ page })
 
   // A notice shown from the dialog stacks over it.
   await dialog.getByRole('button', { name: 'Show a notice' }).click();
-  const notice = page.getByText('Saved over the dialog');
+  const notice = page.locator('.env-toast-message', { hasText: 'Saved over the dialog' });
   await expect(notice).toBeVisible();
   const toastLayer = page.locator('.env-toast-viewport').filter({ has: notice });
   expect(await inRootContext(toastLayer)).toBe(true);
