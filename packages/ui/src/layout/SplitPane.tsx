@@ -123,14 +123,23 @@ function writeStoredSize(key: string, size: number | undefined) {
 }
 
 /**
- * The stacked rules for one stackBelow width, which SplitPane.css carries for 44rem: the panes
- * take the whole row, one above the other with a hairline between, and the handle goes.
+ * The stacked rules for one stackBelow width, which SplitPane.css carries for 44rem and for
+ * data-stacked: the panes take the whole row, in rows of their own before the root's, one above the
+ * other with a hairline between, and the handle goes. A vertical split pane keeps its rows.
  */
-const stackRules = (width: string) =>
-  `.env-split-pane${width}>.env-split-pane-pane{grid-column:1/-1}` +
-  `.env-split-pane${width}>.env-split-pane-handle{display:none}` +
-  `.env-split-pane${width}>.env-split-pane-pane:not([hidden])~.env-split-pane-pane{` +
-  'border-block-start:var(--env-control-border-width) solid var(--env-color-border-muted)}';
+const stackRules = (width: string) => {
+  const root = `.env-split-pane${width}`;
+  const horizontal = `${root}[data-orientation="horizontal"]>.env-split-pane-pane`;
+  return (
+    `${root}>.env-split-pane-pane{grid-column:1/-1}` +
+    `${horizontal}{grid-row:-4/-3;min-block-size:auto;overflow:visible}` +
+    `${horizontal}~.env-split-pane-pane{grid-row:-3/-2}` +
+    `${root}[data-orientation="vertical"]>.env-split-pane-pane~.env-split-pane-pane{grid-row:3}` +
+    `${root}>.env-split-pane-handle{display:none}` +
+    `${root}>.env-split-pane-pane:not([hidden])~.env-split-pane-pane{` +
+    'border-block-start:var(--env-control-border-width) solid var(--env-color-border-muted)}'
+  );
+};
 
 /** Sizes are kept to a tenth of a percent, or a hundredth of a rem. */
 const round = (value: number, unit: SizeUnit) =>
@@ -316,8 +325,8 @@ function ResizeHandle({ label, className, onDoubleClick, ref, ...props }: Resize
       }}
       axis={axis}
       unit="%"
-      value={toShare ? toShare(size) : size}
-      min={toShare ? toShare(min) : min}
+      value={toShare ? Math.min(100, toShare(size)) : size}
+      min={toShare ? Math.min(100, toShare(min)) : min}
       max={toShare ? Math.min(100, toShare(max)) : max}
       step={toShare ? toShare(1) : 2}
       largeStep={toShare ? toShare(5) : 10}

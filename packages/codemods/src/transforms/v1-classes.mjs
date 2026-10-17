@@ -180,13 +180,22 @@ export function reportClasses(text, classReports, report, selectors = true) {
   for (const rule of classReports) {
     if ((rule.within || rule.attributes) && !selectors) continue;
     if (rule.attributes) {
-      // The attribute in the same compound selector as the class, such as .env-x:not(:hover)[data-y].
+      // The attribute in the same compound selector as the class, such as .env-x:not(:hover)[data-y],
+      // or negated there, as .env-x:not([data-y]). A whole pseudo-class's parentheses, or another
+      // attribute, is skipped, so a class inside :has() or :is() is no part of the compound.
       const attributes = new RegExp(
-        String.raw`\.${rule.name}(?![\w-])[^{},;\s+~>]*?\[\s*(${rule.attributes.join('|')})(?![\w-])`,
+        String.raw`\.${rule.name}(?![\w-])(?:[^{},;\s+~>()[\]]|\([^(){}]*\)|\[[^\]{}]*\])*?` +
+          String.raw`(:not\(\s*)?\[\s*(${rule.attributes.join('|')})(?![\w-])`,
         'g',
       );
       for (const match of text.matchAll(attributes))
-        report(match.index, `.${rule.name}[${match[1]}] matches nothing in 1.0: ${rule.report}`);
+        report(
+          match.index,
+          match[1]
+            ? `.${rule.name} has no ${match[2]} in 1.0, so .${rule.name}:not([${match[2]}]) now ` +
+                `matches every .${rule.name}: ${rule.report}`
+            : `.${rule.name}[${match[2]}] matches nothing in 1.0: ${rule.report}`,
+        );
       continue;
     }
     const pattern = rule.within

@@ -98,6 +98,33 @@ test.describe('ListDetail', () => {
     await expect(icon).toHaveCSS('transform', 'matrix(-1, 0, 0, 1, 0, 0)');
   });
 
+  for (const dir of ['ltr', 'rtl']) {
+    test(`stacked in ${dir} text, keeps the detail in place as it hydrates`, async ({ page }) => {
+      await page.setViewportSize({ width: 800, height: 600 });
+      const hydrate = await openServerMarkup(
+        page,
+        `import {createElement as h} from 'react';
+        import {ListDetail} from '@envsemble/envui';
+        export const element = h('div', {dir: '${dir}', style: {inlineSize: '24rem'}},
+          h(ListDetail.Root, {'data-testid': 'root', detailShown: true, onBack() {}, backLabel: 'Back'},
+            h(ListDetail.List, {label: 'List'}, 'List'),
+            h(ListDetail.Detail, {label: 'Detail'}, h('p', {'data-testid': 'content'}, 'Detail'))));`,
+        { hydrate: true },
+      );
+      const back = page.getByRole('button', { name: 'Back' });
+      const content = page.getByTestId('content');
+      await expect(content).toBeVisible();
+      const before = (await content.boundingBox())!;
+      const backBefore = await back.isVisible();
+      expect(await hydrate()).toEqual([]);
+      await expect(page.getByTestId('root')).toHaveAttribute('data-stacked', '');
+      expect(await content.boundingBox()).toEqual(before);
+      // The server's markup has the back button already.
+      expect(backBefore).toBe(true);
+      await expect(back).toBeVisible();
+    });
+  }
+
   test.describe('server-rendered', () => {
     test.use({ javaScriptEnabled: false });
 
