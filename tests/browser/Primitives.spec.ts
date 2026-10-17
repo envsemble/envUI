@@ -370,6 +370,26 @@ test.describe('PopupSurface', () => {
     await expect(popup).toBeVisible();
     expect(await popup.evaluate((element) => getComputedStyle(element).direction)).toBe('rtl');
   });
+
+  test('mounts its popup once as it reads the direction', async ({ page }) => {
+    await open(page);
+    // A popup remounted after opening returns focus to where it was, and a menu closes as it opens.
+    await page.evaluate(() => {
+      const record = window as unknown as { popupsRemoved: number };
+      record.popupsRemoved = 0;
+      new MutationObserver((mutations) => {
+        for (const mutation of mutations)
+          for (const node of mutation.removedNodes)
+            if (node instanceof Element && node.querySelector('[data-testid="popup-ltr"]'))
+              record.popupsRemoved += 1;
+      }).observe(document.body, { childList: true, subtree: true });
+    });
+    await page.getByRole('button', { name: 'Open ltr' }).click();
+    await expect(page.getByTestId('popup-ltr')).toBeVisible();
+    expect(
+      await page.evaluate(() => (window as unknown as { popupsRemoved: number }).popupsRemoved),
+    ).toBe(0);
+  });
 });
 
 test('ListRow lays out a menu item with its icon, description and shortcut', async ({ page }) => {
