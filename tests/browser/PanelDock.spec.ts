@@ -647,12 +647,10 @@ test.describe('PanelDock', () => {
 
   test('coarse pointers get a taller resize band, touch-sized tabs and controls', async ({
     browser,
-    browserName,
   }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+    // A touch screen is a coarse pointer in every engine.
     const context = await browser.newContext({
       hasTouch: true,
-      isMobile: true,
       viewport: { width: 1024, height: 900 },
     });
     const page = await context.newPage();
