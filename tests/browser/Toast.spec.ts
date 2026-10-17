@@ -5,6 +5,13 @@ test.beforeEach(async ({ page }) => {
   await page.clock.install();
   await page.goto(`${fixtureUrl}/?fixture=toast`);
 });
+/**
+ * Stops the page's clock, which install leaves running, so a notice's timer runs only as far as the
+ * test moves it, however long its steps take on a busy engine. No notice shows yet, so the second
+ * it skips to stop changes nothing. A notice's exit runs on frames: resume the clock to see it go.
+ */
+const stopClock = async (page: import('@playwright/test').Page) =>
+  page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
 const region = (page: import('@playwright/test').Page, placement = 'bottom-end') =>
   page.locator(`.env-toast-viewport[data-placement="${placement}"]`);
 const notice = (page: import('@playwright/test').Page, message: string, placement = 'bottom-end') =>
@@ -115,6 +122,7 @@ test('in right-to-left text the bottom-end stack sits at the left and the top st
 test('visible timers pause for focus and hover together and resume after both leave', async ({
   page,
 }) => {
+  await stopClock(page);
   await page.getByTestId('toast-short').click();
   const toast = notice(page, 'Short notice');
   const close = toast.getByRole('button', { name: 'Dismiss notification' });
@@ -128,20 +136,24 @@ test('visible timers pause for focus and hover together and resume after both le
   await expect(close).toBeFocused();
   await page.getByTestId('toast-clear').focus();
   await page.clock.fastForward(500);
+  await page.clock.resume();
   await expect(toast).toHaveCount(0);
 });
 
 test('ordinary notices expire after the default five seconds', async ({ page }) => {
+  await stopClock(page);
   await page.getByTestId('toast-neutral').click();
   await expect(notice(page, 'Neutral notice')).toHaveCount(1);
   await page.mouse.move(1, 1);
   await page.clock.fastForward(4_000);
   await expect(notice(page, 'Neutral notice')).toHaveCount(1);
   await page.clock.fastForward(1_100);
+  await page.clock.resume();
   await expect(notice(page, 'Neutral notice')).toHaveCount(0);
 });
 
 test('viewport focus pauses existing and newly displayed timers', async ({ page }) => {
+  await stopClock(page);
   await page.getByTestId('toast-short').click();
   await page.keyboard.press('F6');
   await expect(region(page)).toBeFocused();
@@ -152,6 +164,7 @@ test('viewport focus pauses existing and newly displayed timers', async ({ page 
   await expect(notice(page, 'Short notice')).toHaveCount(2);
   await page.getByTestId('toast-clear').focus();
   await page.clock.fastForward(500);
+  await page.clock.resume();
   await expect(notice(page, 'Short notice')).toHaveCount(0);
 });
 
