@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, type ComponentType } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
@@ -13,7 +13,6 @@ import {
   Text,
   Toolbar,
   useLocale,
-  type ButtonProps,
 } from '@envsemble/envui';
 import { FormatBold } from '@envsemble/envui/icons/FormatBold';
 import { FormatItalic } from '@envsemble/envui/icons/FormatItalic';
@@ -88,7 +87,9 @@ function ToolbarSample() {
  * which only code past the types can ask for.
  */
 function EmphasisSample() {
-  const undesigned = { variant: 'secondary', tone: 'danger' } as unknown as ButtonProps;
+  // Past the types on purpose: the undesigned pair the runtime check must catch.
+  const undesigned = { variant: 'secondary', tone: 'danger' };
+  const LooseButton = Button as unknown as ComponentType<Record<string, unknown>>;
   // Mounted on request, so its deliberate console error reaches only the test that asks for it.
   const [showUndesigned, setShowUndesigned] = useState(false);
   return (
@@ -114,9 +115,9 @@ function EmphasisSample() {
           Show undesigned
         </Button>
         {showUndesigned && (
-          <Button {...undesigned} data-testid="undesigned">
+          <LooseButton {...undesigned} data-testid="undesigned">
             Undesigned
-          </Button>
+          </LooseButton>
         )}
       </Stack>
     </Stack>

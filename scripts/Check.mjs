@@ -162,6 +162,7 @@ if (scope.typecheck)
     ['ui', 'packages/ui/tsconfig.json'],
     ['catalogue', 'apps/catalogue/tsconfig.json'],
     ['types', 'tests/types/tsconfig.json'],
+    ['fixture', 'tests/fixture/tsconfig.json'],
   ])
     staticTasks.push(
       task(`tsc ${name}`, [
