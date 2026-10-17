@@ -23,6 +23,7 @@ export const Content = ({ size }: { size: 'small' | 'large' }) => (
       Summary
     </Card>
     <Card tone="row">Plain</Card>
+    <Card layout="action">No actions yet</Card>
     <Stat.Root label="Projects" value="128" detail="Last 30 days" />
     <Stat.Group tone="row" />
     <SegmentedControl aria-label="Views" options={views} value="open" onValueChange={() => {}} />

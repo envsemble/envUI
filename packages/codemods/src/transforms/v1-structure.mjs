@@ -23,7 +23,13 @@
 // that spreads props where a case would add some, since it may already set them.
 // Elements are matched by their import from @envsemble/envui, as v1-props matches them.
 import { loadMap } from '../map.mjs';
-import { componentResolver, envuiImports, jsxAttribute, literalKey } from '../elements.mjs';
+import {
+  componentResolver,
+  envuiImports,
+  jsxAttribute,
+  literalKey,
+  matchesWhen,
+} from '../elements.mjs';
 import { createReporter, keepByteOrderMark, parserFor, printOptions } from '../shared.mjs';
 
 export const parser = 'tsx';
@@ -102,24 +108,6 @@ export default function transform(file, api, options = {}) {
   const hasAttribute = (attributes, name) => attributeIndex(attributes, name) !== -1;
   const spreads = (attributes) => attributes.some((node) => node.type === 'JSXSpreadAttribute');
 
-  /** Whether a case's `when` matches the element: true, false, or undefined for an expression. */
-  function matches(attributes, when) {
-    for (const [prop, values] of Object.entries(when ?? {})) {
-      if (prop.startsWith('$')) continue;
-      const index = attributeIndex(attributes, prop);
-      if (index === -1) {
-        if (!values.includes(null)) return false;
-        continue;
-      }
-      // A case for elements without the prop doesn't match one that sets it, whatever its value.
-      if (values.every((value) => value === null)) return false;
-      const key = literalKey(attributes[index].value);
-      if (key === undefined) return undefined;
-      if (!values.some((value) => value !== null && String(value) === key)) return false;
-    }
-    return true;
-  }
-
   /** Applies a case's prop operations to the attributes; returns the reports it leaves. */
   function applyProps(attributes, operations, where) {
     const reports = [];
@@ -188,7 +176,7 @@ export default function transform(file, api, options = {}) {
     }
     let chosen;
     for (const each of rule.cases) {
-      const result = matches(attributes, each.when);
+      const result = matchesWhen(attributes, each.when);
       if (result === undefined) {
         chosen = null;
         break;

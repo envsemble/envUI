@@ -4,6 +4,23 @@
       "report": "ActionCard is Card in 1.0: <Card render={<article />} heading meta actions>, with its title as heading.",
       "cases": [
         {
+          "when": {
+            "actions": [null]
+          },
+          "element": "Card",
+          "props": {
+            "title": {
+              "to": "heading"
+            }
+          },
+          "add": {
+            "render": {
+              "element": "article"
+            }
+          },
+          "report": "An ActionCard without actions has no action strip in 1.0, where actions alone give a card one: pass the actions it should show, or keep it a content card."
+        },
+        {
           "when": {},
           "element": "Card",
           "props": {
@@ -37,6 +54,18 @@
             "layout": "feature",
             "headingLevel": 2
           }
+        }
+      ]
+    },
+    "ClickableCard": {
+      "report": "ClickableCard is Card in 1.0, which is a link with href and a button with onClick, and a content card with neither.",
+      "cases": [
+        {
+          "when": {
+            "href": [null],
+            "onClick": [null]
+          },
+          "report": "A ClickableCard without href or onClick is a content card in 1.0, not a button: give it the onClick of the action it starts, or put a Button inside."
         }
       ]
     },

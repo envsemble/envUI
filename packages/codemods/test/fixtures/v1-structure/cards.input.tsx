@@ -21,6 +21,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
       <Card as="article" heading="Release notes">
         What changed this week.
       </Card>
+      <ActionCard title="Draft notes">Not shared yet.</ActionCard>
     </>
   );
 }

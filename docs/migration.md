@@ -249,9 +249,11 @@ The Card family is one Card, InfoChip is a Badge, sizes and slots take the 1.0 w
 Change these by hand where the codemods report them, or where they can't see them:
 
 - a Card `as` that is an expression; a ClickableCard without `href` or `onClick`, such as a submit button, which is a content card in 1.0: give it `onClick`, or put a Button inside;
+- a style for `env-card-content`, which 0.7 put on a card without actions and on an action card's body, and which `v1-classes` reports: style `.env-card:not([data-actions])` for the card, or `.env-card-body` for the body of a card with actions;
+- a Card with `layout="action"`, or an ActionCard, without `actions`, which the codemods report: actions alone give a 1.0 card its action strip, so pass the actions it should show;
 - a Card `tone`, Stat.Group `tone`, Badge `variant` or Avatar `size` whose value is an expression, which takes its new name and may need its values mapped;
 - a link or button card named with `aria-label` or `aria-labelledby` that leaves out part of its visible text: let its content name it;
-- a native `onToggle` on Disclosure that reads the open state: use `onOpenChange(open)`, with `open` or `defaultOpen`;
+- a native `onToggle` on Disclosure, which `v1-props` reports: use `onOpenChange(open)`, with `open` or `defaultOpen`;
 - `BrandLogo` and `EnvUILogo`, which the codemod reports and leaves in place;
 - `formatLabel` and `formatMore` on AvatarGroup, `formatLabel` on Rating and DiffStat, `statusLabel` on Message, `nowLabel` on RelativeTime and `lessLabel` and `moreLabel` on CalendarHeatmap that only translated the English text: set the strings once with `messages` on EnvUIProvider instead; the props still override them for one instance.
 

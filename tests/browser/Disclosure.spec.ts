@@ -20,6 +20,15 @@ test('a disclosure reports each change through onOpenChange, controlled or on it
   await expect(controlled).toHaveAttribute('open', '');
   await expect(controlled.getByText('Controlled details')).toBeVisible();
   await expect(changes).toHaveText('true false');
+  // A parent that ignores onOpenChange keeps a controlled disclosure as open says.
+  const kept = scope.locator('details').filter({ hasText: 'Kept closed' });
+  await kept.getByText('Kept closed', { exact: true }).click();
+  await expect(scope.getByTestId('disclosure-requests')).toHaveText('true');
+  await expect(kept).not.toHaveAttribute('open');
+  await expect(kept.getByText('Details kept closed')).toBeHidden();
+  await kept.getByText('Kept closed', { exact: true }).click();
+  await expect(scope.getByTestId('disclosure-requests')).toHaveText('true true');
+  await expect(kept).not.toHaveAttribute('open');
   // defaultOpen sets how a disclosure that keeps its own state starts.
   const own = scope.locator('details').filter({ hasText: 'Open at first' });
   await expect(own.getByText('Details shown at first')).toBeVisible();

@@ -26,6 +26,7 @@ export function Cards({ kind, start }: { kind: 'div' | 'article'; start: () => v
       <Card render={<article />} heading="Release notes">
         What changed this week.
       </Card>
+      <Card render={<article />} heading="Draft notes">Not shared yet.</Card>
     </>
   );
 }

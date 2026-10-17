@@ -61,7 +61,7 @@ A disclosure is a one-line summary that shows and hides the details below it. It
 
 ## States and behaviour
 
-- **Open and closed**: pressing the summary opens or closes the panel; while closed, the panel is hidden from everyone, assistive technology included. `open` with `onOpenChange` controls it, such as to open it when a field inside has an error, and `defaultOpen` sets how it starts. `onOpenChange` receives whether it is open each time it opens or closes, also when find in page opens it.
+- **Open and closed**: pressing the summary opens or closes the panel; while closed, the panel is hidden from everyone, assistive technology included. `open` with `onOpenChange` controls it, such as to open it when a field inside has an error: it shows what `open` says until the parent passes the value `onOpenChange` asks for, and `defaultOpen` sets how it starts. `onOpenChange` receives whether it is open each time it opens or closes, also when find in page opens it.
 - **Hover, pressed and focus**: the summary darkens to the quiet label's hover and pressed colors, and keyboard focus shows a focus outline around it.
 - **One at a time**: disclosures that share a `name` open one at a time, where the browser supports it; elsewhere each opens on its own.
 - **Find in page**: where the browser supports it, finding text in a closed panel opens it.

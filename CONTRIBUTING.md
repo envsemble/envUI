@@ -74,7 +74,7 @@ packages/ui/         The publishable @envsemble/envui package
 packages/codemods/   @envsemble/envui-codemods: upgrades code from 0.x to 1.0
 packages/eslint-plugin/      @envsemble/eslint-plugin-envui: lint rules for apps
 packages/stylelint-config/   @envsemble/stylelint-config-envui: style rules for apps
-assets/brand/        Original envUI and envsemble artwork
+assets/brand/        Original envUI artwork, used by the catalogue only
 assets/readme/       Light/dark captures of the catalogue for the README
 scripts/             Builds, asset generation, local watching and release validation
 tests/               Package contract tests, browser specs and React fixtures

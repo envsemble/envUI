@@ -1,0 +1,4 @@
+[
+  "line 2: env-card-content has no 1.0 class: 0.7 put env-card-content on a card without actions and on an action card's body, and 1.0 has no class for either: style .env-card:not([data-actions]) for the card, or .env-card-body for the body of a card with actions.",
+  "line 5: env-card-content has no 1.0 class: 0.7 put env-card-content on a card without actions and on an action card's body, and 1.0 has no class for either: style .env-card:not([data-actions]) for the card, or .env-card-body for the body of a card with actions."
+]
