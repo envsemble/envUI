@@ -267,7 +267,8 @@ test.describe('Tooltip', () => {
     await page.getByRole('button', { name: 'More actions' }).focus();
     await page.keyboard.press('Tab');
     await expect(filters).toBeFocused();
-    await expect(tooltip).toHaveText('Show only some items');
+    // The More actions tooltip may still be fading out.
+    await expect(page.getByRole('tooltip', { name: 'Show only some items' })).toBeVisible();
     await page.keyboard.press('Enter');
     await expect(popover).toBeVisible();
     await expect(tooltip).toHaveCount(0);

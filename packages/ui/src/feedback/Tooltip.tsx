@@ -8,7 +8,6 @@ import {
   isValidElement,
   useCallback,
   useContext,
-  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -302,19 +301,21 @@ function TooltipTrigger({
   if (open && expanded) setOpen(false);
   // Once the popup closes, such as on Esc, focus returns to the control: that focus opens no
   // tooltip, which would take a second Esc. The next key press or pointer entry ends the wait, so
-  // focus from the keyboard opens it again.
-  const [wasExpanded, setWasExpanded] = useState(expanded);
-  const [returning, setReturning] = useState(false);
-  if (wasExpanded !== expanded) {
-    setWasExpanded(expanded);
-    if (!expanded) setReturning(true);
-  }
-  useEffect(() => {
-    if (!returning) return;
-    const end = () => setReturning(false);
-    document.addEventListener('keydown', end, true);
-    return () => document.removeEventListener('keydown', end, true);
-  }, [returning]);
+  // focus from the keyboard opens it again. A ref, as the key press that moves focus comes before
+  // any render.
+  const returning = useRef(false);
+  const wasExpanded = useRef(expanded);
+  useLayoutEffect(() => {
+    const closed = wasExpanded.current && !expanded;
+    wasExpanded.current = expanded;
+    if (!closed) return;
+    returning.current = true;
+    const end = () => {
+      returning.current = false;
+    };
+    document.addEventListener('keydown', end, { capture: true, once: true });
+    return () => document.removeEventListener('keydown', end, { capture: true });
+  }, [expanded]);
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
   // The trigger's name, read from the page as the tooltip opens, so a control named by its
@@ -365,9 +366,9 @@ function TooltipTrigger({
         open={open}
         onOpenChange={(next, details) => {
           if (next && expanded) return;
-          if (next && returning) {
+          if (next && returning.current) {
             if (details.reason === 'trigger-focus') return;
-            setReturning(false);
+            returning.current = false;
           }
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
           setOpen(next);
