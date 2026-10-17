@@ -72,6 +72,11 @@
   --env-list-item-fill-hover: var(--env-color-bg-selected-hover);
   --env-list-item-fill-pressed: var(--env-color-bg-selected-pressed);
 }
+/* The current row's target, a link or button that names the row, reads in the row's text color
+   on the selected fill, where a link's color would lose its contrast. */
+.env-list > .env-list-item[data-selected][data-interactive] [data-row-target] {
+  color: inherit;
+}
 /* A moving row is raised above the others, which make room for it. */
 .env-list[data-reordering] > .env-list-item {
   position: relative;
