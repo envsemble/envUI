@@ -17747,6 +17747,16 @@
         "note": "The height of the app frame's header or title bar, which the frame sets on the document."
       },
       {
+        "cssVariable": "--env-split-view-gutter",
+        "removed": true,
+        "note": "SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap."
+      },
+      {
+        "cssVariable": "--env-split-view-size",
+        "removed": true,
+        "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
+      },
+      {
         "cssVariable": "--env-topbar-height",
         "use": "--env-app-shell-header-height",
         "type": "dimension",

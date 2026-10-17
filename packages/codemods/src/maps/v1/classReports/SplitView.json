@@ -1,0 +1,10 @@
+{
+  "env-split-pane-pane": {
+    "attributes": ["data-pane"],
+    "report": "SplitPane's panes have no data-pane: give each SplitPane.Pane a className of your own, or select the first as .env-split-pane > .env-split-pane-pane:first-child."
+  },
+  "env-split-pane": {
+    "attributes": ["data-resizing"],
+    "report": "SplitPane sets no data-resizing while dragging: the handle has data-dragging, so write .env-split-pane:has(> .env-split-pane-handle[data-dragging])."
+  }
+}

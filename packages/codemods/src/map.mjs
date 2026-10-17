@@ -262,7 +262,19 @@ export function validateMap(map) {
       problems.push(`${where} needs a "report" that says what to use instead.`);
       continue;
     }
-    if (rule.within !== undefined) {
+    if (rule.attributes !== undefined) {
+      if (
+        rule.within !== undefined ||
+        !Array.isArray(rule.attributes) ||
+        rule.attributes.length === 0 ||
+        !rule.attributes.every((attribute) => /^[a-z][a-z0-9-]*$/.test(attribute))
+      )
+        problems.push(`${where}: "attributes" must be attribute names, without "within".`);
+      else if (renameClass(name, sorted) !== name)
+        problems.push(
+          `${where}: name its class by its 1.0 name, which it reports after the renames.`,
+        );
+    } else if (rule.within !== undefined) {
       if (typeof rule.within !== 'string' || !className.test(rule.within))
         problems.push(`${where}: "within" must be an env- class name.`);
       else if (
@@ -605,8 +617,8 @@ const sortClasses = (classes) =>
  * - `classesWithin`: class renames that apply inside an ancestor's selector, as
  *   `{ ancestor, from, to }`;
  * - `classReports`: classes and selectors that v1-classes leaves and reports, as
- *   `{ name, within, report }`; a class reported without `within` is also kept by the class
- *   renames, so a shorter entry that it continues does not rename it;
+ *   `{ name, within, attributes, report }`; a class reported without `within` or `attributes` is
+ *   also kept by the class renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
  *   name (without `--`) that replaces it, or a `report` for a fixed color or a removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
@@ -691,11 +703,14 @@ export function normalizeMap(map) {
   const classReports = entriesOf(map.classReports).map(([name, rule]) => ({
     name,
     within: rule.within,
+    attributes: rule.attributes,
     report: rule.report,
   }));
   const classes = sortClasses([
     ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
-    ...classReports.filter((rule) => !rule.within).map(({ name }) => ({ from: name, to: name })),
+    ...classReports
+      .filter((rule) => !rule.within && !rule.attributes)
+      .map(({ name }) => ({ from: name, to: name })),
   ]);
   const classAttributes = new Map(
     entriesOf(map.classAttributes).map(([from, rule]) => [

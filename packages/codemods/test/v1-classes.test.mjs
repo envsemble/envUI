@@ -63,10 +63,10 @@ test('renameClass leaves names that already continue the new name', () => {
 
 test('v1-classes renames every class entry in style sheets and class names', () => {
   for (const [from, to] of entries) {
-    const css = `.${from}, .${from}-part, [class~='${from}'] { --${from}-size: var(--${from}); }\n`;
+    const css = `.${from}, .${from}-part, [class~='${from}'] { --${from}-part: var(--${from}); }\n`;
     assert.equal(
       runTransform(v1Classes, 'styles.css', css).output,
-      `.${to}, .${to}-part, [class~='${to}'] { --${to}-size: var(--${to}); }\n`,
+      `.${to}, .${to}-part, [class~='${to}'] { --${to}-part: var(--${to}); }\n`,
       from,
     );
     const tsx = `export const element = <div className="${from} ${from}-part" />;\n`;
