@@ -18,7 +18,7 @@
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { mkdirSync, readFileSync, rmdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { serveSite, siteBuilt, siteUrl } from '../browser/HostedSite';
 import {
@@ -137,8 +137,9 @@ function sortKeys<T>(value: T): T {
 }
 
 /**
- * Workers rewrite their own pages; a directory lock keeps the read-modify-write atomic. Lock.setup.ts
- * removes a lock that a stopped update left behind before the scans start.
+ * Workers rewrite their own pages; a directory lock keeps the read-modify-write atomic. A rewrite
+ * holds it for milliseconds, so a lock older than a minute is one a stopped update left behind, and
+ * is removed.
  */
 function updateExceptions(change: (violations: Violations) => void) {
   const lock = `${exceptionsFile}.lock`;
@@ -149,7 +150,9 @@ function updateExceptions(change: (violations: Violations) => void) {
       break;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST' || attempt > 500) throw error;
-      Atomics.wait(wait, 0, 0, 20);
+      if (Date.now() - (statSync(lock, { throwIfNoEntry: false })?.mtimeMs ?? Date.now()) > 60_000)
+        rmSync(lock, { recursive: true, force: true });
+      else Atomics.wait(wait, 0, 0, 20);
     }
   }
   try {
