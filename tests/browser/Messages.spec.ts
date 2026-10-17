@@ -103,6 +103,13 @@ test('the app parts take their names, labels and announcements from the provider
   await expect(page.locator('.env-list-announcer')).toHaveText('⟦list.moved⟧');
   await page.keyboard.press('Escape');
   await expect(page.locator('.env-list-announcer')).toHaveText('⟦list.cancelled⟧');
+  // The confirm dialog's cancel button.
+  await root.getByRole('button', { name: 'Open confirm' }).click();
+  await expect(
+    page.getByRole('alertdialog').getByRole('button', { name: '⟦confirmDialog.cancel⟧' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('alertdialog')).toBeHidden();
   // The account menu, its submenus and the theme choices.
   await root.getByRole('button', { name: 'Alex Morgan' }).click();
   const account = page.getByRole('menu', { name: '⟦accountMenu.label⟧' });
@@ -114,11 +121,6 @@ test('the app parts take their names, labels and announcements from the provider
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   await expect(account).toBeHidden();
-  // The confirm dialog's cancel button.
-  await root.getByRole('button', { name: 'Open confirm' }).click();
-  await expect(
-    page.getByRole('alertdialog').getByRole('button', { name: '⟦confirmDialog.cancel⟧' }),
-  ).toBeVisible();
 });
 
 test('messages written inline keep the context while they stay the same', async ({ page }) => {
