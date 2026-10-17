@@ -125,11 +125,11 @@ test.describe('PanelDock', () => {
     expect(filled.width).toBeCloseTo(filledRegion.width, 0);
     expect(filled.y + filled.height).toBeCloseTo((await box(dock.chips)).y, 0);
     // A maximized panel has no resize handle, and its toggle restores it.
-    await expect(report.getByRole('separator')).toHaveCount(0);
+    await expect(report.getByRole('separator', { name: 'Resize Quarterly report' })).toHaveCount(0);
     await report.getByRole('button', { name: 'Restore', exact: true }).click();
     await expect(report).toHaveAttribute('data-mode', 'open');
     await expect(dock.root).not.toHaveAttribute('data-filled');
-    await expect(report.getByRole('separator')).toHaveCount(1);
+    await expect(report.getByRole('separator', { name: 'Resize Quarterly report' })).toHaveCount(1);
 
     // A chip brings its panel back to the row and activates it.
     await dock.chips.getByRole('button', { name: 'Show Meeting notes' }).click();
@@ -429,7 +429,7 @@ test.describe('PanelDock', () => {
     // A sheet already fills the region: no Maximize, and no resize handle.
     await expect(notes.getByRole('button', { name: 'Maximize' })).toHaveCount(0);
     await expect(notes.getByRole('button', { name: 'Minimize' })).toBeVisible();
-    await expect(notes.getByRole('separator')).toHaveCount(0);
+    await expect(notes.getByRole('separator', { name: 'Resize Meeting notes' })).toHaveCount(0);
     // While a panel covers the region, the page beneath takes no presses.
     const action = await box(page.getByRole('button', { name: 'Page action light' }));
     expect(
@@ -640,7 +640,7 @@ test.describe('PanelDock', () => {
     await expect(dock.row).toHaveAttribute('data-overflowing', 'true');
     await expect.poll(async () => Math.round((await box(latest)).x - rootBox.x)).toBe(24);
     // Resizing is unchanged: up still grows the panel.
-    const handle = dock.panel('report').getByRole('separator');
+    const handle = dock.panel('report').getByRole('separator', { name: 'Resize Quarterly report' });
     const height = Number(await handle.getAttribute('aria-valuenow'));
     await handle.focus();
     await page.keyboard.press('ArrowDown');
