@@ -17,6 +17,11 @@
   --env-sidebar-max-width: 20rem;
   --env-sidebar-hairline: 0.0625rem;
   --env-sidebar-handle-touch-size: 1.5rem;
+  /* Expanded, a navigation item's icon keeps the rail's centre line, which the trigger keeps too,
+     so the icons stay in place as the sidebar collapses to a rail. */
+  --env-nav-list-item-start: calc(
+    var(--env-sidebar-rail-width) / 2 - var(--env-sidebar-inset) - var(--env-control-icon-size) / 2
+  );
   /* Where a panel collapsed off canvas slides: toward the sidebar's own edge of the window. */
   --env-sidebar-out: -100%;
   position: relative;
