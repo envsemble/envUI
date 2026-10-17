@@ -25,6 +25,7 @@ export const mapSections = [
   'classes',
   'classAttributes',
   'classesWithin',
+  'classReports',
   'docs',
   'tokens',
 ];
@@ -45,6 +46,7 @@ const sectionDepth = {
   classes: 1,
   classAttributes: 1,
   classesWithin: 1,
+  classReports: 1,
   docs: 1,
   tokens: 1,
 };
@@ -251,6 +253,27 @@ export function validateMap(map) {
           `classesWithin.${ancestor}: ${from} becomes ${to}, which classes renames again to ${renameClass(to, sorted)}.`,
         );
     }
+  }
+  for (const [name, rule] of entriesOf(map.classReports)) {
+    const where = `classReports.${name}`;
+    if (!className.test(name) || name.endsWith('-'))
+      problems.push(`classReports: ${name} is not an env- class name.`);
+    if (!isObject(rule) || typeof rule.report !== 'string' || rule.report.trim() === '') {
+      problems.push(`${where} needs a "report" that says what to use instead.`);
+      continue;
+    }
+    if (rule.within !== undefined) {
+      if (typeof rule.within !== 'string' || !className.test(rule.within))
+        problems.push(`${where}: "within" must be an env- class name.`);
+      else if (
+        renameClass(rule.within, sorted) !== rule.within ||
+        renameClass(name, sorted) !== name
+      )
+        problems.push(
+          `${where}: name its classes by their 1.0 names, which it reports after the renames.`,
+        );
+    } else if (Object.hasOwn(map.classes ?? {}, name))
+      problems.push(`${where}: ${name} is also renamed in classes.`);
   }
   for (const [from, to] of entriesOf(map.docs)) {
     if (!slug.test(from) || typeof to !== 'string' || !slug.test(to))
@@ -535,6 +558,9 @@ const sortClasses = (classes) =>
  * - `classes`: class renames, longest old name first;
  * - `classesWithin`: class renames that apply inside an ancestor's selector, as
  *   `{ ancestor, from, to }`;
+ * - `classReports`: classes and selectors that v1-classes leaves and reports, as
+ *   `{ name, within, report }`; a class reported without `within` is also kept by the class
+ *   renames, so a shorter entry that it continues does not rename it;
  * - `tokens`: each custom property before 1.0, without its `--`, to its entry: `to` the 1.0
  *   name (without `--`) that replaces it, or a `report` for a fixed color or a removed name;
  * - `tokenNames`: the 1.0 names the tokens become, without `--`, which class renames leave alone.
@@ -616,7 +642,15 @@ export function normalizeMap(map) {
     const entry = entryFor(name);
     for (const [component, rule] of entriesOf(components)) entry.structure.set(component, rule);
   }
-  const classes = sortClasses(entriesOf(map.classes).map(([from, to]) => ({ from, to })));
+  const classReports = entriesOf(map.classReports).map(([name, rule]) => ({
+    name,
+    within: rule.within,
+    report: rule.report,
+  }));
+  const classes = sortClasses([
+    ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
+    ...classReports.filter((rule) => !rule.within).map(({ name }) => ({ from: name, to: name })),
+  ]);
   const classAttributes = new Map(
     entriesOf(map.classAttributes).map(([from, rule]) => [
       from,
@@ -649,7 +683,7 @@ export function normalizeMap(map) {
       tokenNames.add(entry.to.slice(2));
     }
   }
-  return { entries, classes, classAttributes, classesWithin, tokens, tokenNames };
+  return { entries, classes, classAttributes, classesWithin, classReports, tokens, tokenNames };
 }
 
 const cache = new Map();

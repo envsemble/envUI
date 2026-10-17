@@ -15,7 +15,7 @@ for (const fixture of fixtures('v1-classes')) {
   test(`v1-classes: ${fixture.name}`, () => {
     const result = runTransform(v1Classes, fixture.path, fixture.input);
     assert.equal(result.output, fixture.output);
-    assert.deepEqual(result.reports, []);
+    assert.deepEqual(result.reports, fixture.reports);
   });
 
   test(`v1-classes is idempotent: ${fixture.name}`, () => {

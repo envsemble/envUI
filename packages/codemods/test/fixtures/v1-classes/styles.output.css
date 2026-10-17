@@ -64,7 +64,7 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 /* Navigation parts named after their components, and modifiers that became attributes. */
 .env-tabs-list > .env-tabs-tab:not([data-active]),
 .env-tabs-panel,
-.env-document-tabs-tab:hover .env-document-tabs-close,
+.env-document-tabs-tab:hover .env-document-tabs-tab-label,
 .env-breadcrumbs-item + .env-breadcrumbs-item .env-breadcrumbs-link,
 .env-tree-item .env-tree-description,
 .env-nav-list-item.env-nav-list-item:where([data-icon-only]) .env-nav-list-item-end,

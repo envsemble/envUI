@@ -1,6 +1,6 @@
 // Shared by the codemod tests: runs transforms in process as jscodeshift's worker does, and reads
 // the input and output fixture pairs.
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -45,7 +45,12 @@ export const encodings = [
   ['tab indentation', tabs],
 ];
 
-/** The fixture pairs of a transform: `<case>.input.<ext>` with `<case>.output.<ext>`. */
+const reportsOf = (file) => (existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : []);
+
+/**
+ * The fixture pairs of a transform: `<case>.input.<ext>` with `<case>.output.<ext>`, and the
+ * reports it expects, in `<case>.reports.<ext>.json`, or none.
+ */
 export function fixtures(transform) {
   const directory = join(fixturesDirectory, transform);
   return readdirSync(directory)
@@ -56,5 +61,7 @@ export function fixtures(transform) {
       path: join(directory, file),
       input: readFileSync(join(directory, file), 'utf8'),
       output: readFileSync(join(directory, file.replace('.input.', '.output.')), 'utf8'),
+      // What the transform reports for the input, where a fixture expects reports.
+      reports: reportsOf(join(directory, `${file.replace('.input.', '.reports.')}.json`)),
     }));
 }

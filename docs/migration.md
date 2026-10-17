@@ -164,6 +164,7 @@ Change by hand what the codemods can't see:
 | `.env-tree-row`, `.env-tree-detail`, `.env-tree-trailing`                 | `.env-tree-item`, `.env-tree-description`, `.env-tree-end`                                 |
 | `--env-tree-row-height`                                                   | `--env-tree-item-height`; the `--env-tree-row-padding-block-*` tokens keep their names     |
 | `.env-navigation-selected`, `.env-navigation-icon-only`                   | `.env-nav-list-item:where([data-selected])`, `.env-nav-list-item:where([data-icon-only])`  |
+| `.env-menu-theme`, the theme around a Menu's or Menubar's popup           | `.env-popup-theme`, which every popup shares                                               |
 | `.env-navigation-trailing`, `.env-menu-item-trailing`                     | `.env-nav-list-item-end`, `.env-menu-item-end`                                             |
 
 Change by hand:
@@ -171,7 +172,8 @@ Change by hand:
 - the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing` and an organization's `detail`; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
 - the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
-- a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`; the close button is out of the tab order and hidden from assistive technology, and Delete or the context menu closes a tab from the keyboard;
+- a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`, so a selector such as `.env-document-tabs-tab:hover .env-document-tabs-close`, which `v1-classes` reports, matches nothing: write `.env-document-tabs-item:hover .env-document-tabs-close`; the close button is out of the tab order and hidden from assistive technology, and Delete or the context menu closes a tab from the keyboard;
+- a style for OrganizationSwitcher's radio, `env-organization-menu-radio` and `-radio-dot`, which `v1-classes` reports and leaves: the current organization takes Menu's check, `.env-menu-item-check` and its `.env-menu-item-check-mark`;
 - a style for the 0.7 contrast pane, `.env-contrast-row-pane`, which has no class in 1.0: style the Surface around the list;
 - a selected or icon-only NavList class in a `className` string, which `v1-classes` reports: the item sets the attributes from `selected` and `iconOnly`;
 - a zero-argument `onSort` handler keeps working as `onSortChange`; take the order from its argument instead of toggling it yourself.
