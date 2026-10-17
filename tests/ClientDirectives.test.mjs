@@ -242,3 +242,52 @@ test('a server component imports envUI and renders it on the server', () => {
   );
   assert.equal(list.match(/"aria-current"/g)?.length, 2);
 });
+
+/**
+ * A client component's element type as React's RSC client gives it, where a server component
+ * wrote the element: a lazy wrapper around the chunk that loads its module, which reading throws
+ * while the chunk is pending (react-server-dom's createLazyChunkWrapper and readChunk). Built by
+ * hand, as the repository has no RSC client to round-trip through.
+ */
+function clientReferenceType(value, status = 'fulfilled') {
+  const chunk = { status, value, reason: new Error('failed'), then() {} };
+  return {
+    $$typeof: Symbol.for('react.lazy'),
+    _payload: chunk,
+    _init(payload) {
+      if (payload.status === 'fulfilled') return payload.value;
+      throw payload.status === 'pending' ? payload : payload.reason;
+    },
+  };
+}
+
+test('a Tooltip a server component writes around a Menu.Root describes its trigger', async () => {
+  const { createElement: h } = await import('react');
+  const { renderToString } = await import('react-dom/server');
+  const ui = await import('@envsemble/envui');
+  const { isTriggerOwner, isTooltip } = await import(
+    new URL('../packages/ui/dist/internal/triggerOwner.js', import.meta.url).href
+  );
+  const trigger = h('button', { type: 'button', 'aria-label': 'Sort' });
+  // The tooltip moves onto the menu's trigger, which Base UI's tooltip trigger marks.
+  const markup = renderToString(
+    h(
+      ui.Tooltip,
+      { content: 'Sort rows' },
+      h(clientReferenceType(ui.Menu.Root), { trigger, label: 'Sort' }, h(ui.Menu.Item, null, 'A')),
+    ),
+  );
+  assert.match(markup, /^<button [^>]*aria-haspopup="menu"[^>]*data-base-ui-tooltip-trigger=""/);
+  // A loaded wrapper reads as its component; one pending or failed, by its element trigger.
+  for (const status of ['fulfilled', 'pending', 'rejected']) {
+    assert.equal(isTriggerOwner(clientReferenceType(ui.Menu.Root, status), { trigger }), true);
+    assert.equal(
+      isTriggerOwner(clientReferenceType(ui.Menu.Root, status), {}),
+      status === 'fulfilled',
+    );
+  }
+  assert.equal(isTriggerOwner(clientReferenceType(ui.Button), { trigger }), false);
+  assert.equal(isTooltip(clientReferenceType(ui.Tooltip)), true);
+  assert.equal(isTooltip(clientReferenceType(ui.Tooltip, 'pending')), false);
+  assert.equal(isTooltip(clientReferenceType(ui.Button)), false);
+});

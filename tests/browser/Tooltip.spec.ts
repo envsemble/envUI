@@ -208,7 +208,8 @@ test.describe('Tooltip', () => {
     await page.getByRole('button', { name: 'Filters' }).focus();
     await page.keyboard.press('Shift+Tab');
     await expect(more).toBeFocused();
-    await expect(tooltip).toHaveText('More actions');
+    // The Filters tooltip may still be fading out.
+    await expect(page.getByRole('tooltip', { name: 'More actions' })).toBeVisible();
     await page.keyboard.press('Enter');
     await expect(menu).toBeVisible();
     await expect(page.getByRole('menuitem', { name: 'Rename' })).toBeFocused();
@@ -275,6 +276,24 @@ test.describe('Tooltip', () => {
     await page.keyboard.press('Escape');
     await expect(popover).toHaveCount(0);
     await expect(filters).toBeFocused();
+  });
+
+  test('once a click outside closes the popover and moves focus away, focus on its trigger opens the tooltip', async ({
+    page,
+  }) => {
+    await page.goto(tooltips);
+    const filters = page.getByRole('button', { name: 'Filters' });
+    const archive = page.getByRole('button', { name: 'Archive', exact: true });
+    await filters.click();
+    await expect(page.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+    await archive.click();
+    await expect(page.getByRole('dialog', { name: 'Filters' })).toHaveCount(0);
+    // WebKit doesn't focus a button it clicks, and returns focus to the trigger instead.
+    await archive.evaluate((element) => element.focus());
+    await page.mouse.move(1, 1);
+    // Focus from code, as an application gives it, rather than the popover's returning focus.
+    await filters.evaluate((element) => element.focus({ focusVisible: true } as FocusOptions));
+    await expect(page.getByRole('tooltip', { name: 'Show only some items' })).toBeVisible();
   });
 
   test('around a HoverCard, or as its trigger, shows no tooltip but the card', async ({ page }) => {

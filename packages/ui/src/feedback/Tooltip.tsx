@@ -233,7 +233,7 @@ export function Tooltip(props: TooltipProps) {
   // Around an envUI component that takes its control as trigger, such as Menu.Root or Popover,
   // the tooltip goes to that control, where the component's own props, ref and popup stay its own.
   const owner = children.props;
-  if (isTriggerOwner(children.type) && isValidElement(owner.trigger))
+  if (isTriggerOwner(children.type, owner) && isValidElement(owner.trigger))
     return cloneElement(children, {
       trigger: <Tooltip {...props}>{owner.trigger as ReactElement<TriggerProps>}</Tooltip>,
     });
@@ -299,15 +299,20 @@ function TooltipTrigger({
   const popupId = `${useId()}-tooltip`;
   const [open, setOpen] = useState(false);
   if (open && expanded) setOpen(false);
+  // The tooltip takes the text direction at its trigger, the control or its wrapper.
+  const triggerRef = useRef<HTMLButtonElement>(null);
   // Once the popup closes, such as on Esc, focus returns to the control: that focus opens no
   // tooltip, which would take a second Esc. The next key press or pointer entry ends the wait, so
-  // focus from the keyboard opens it again. A ref, as the key press that moves focus comes before
-  // any render.
+  // focus from the keyboard opens it again, as does focus that comes from elsewhere in the page,
+  // such as after a click outside moved it away. A ref, as the key press that moves focus comes
+  // before any render.
   const returning = useRef(false);
   const wasExpanded = useRef(expanded);
+  const popupIdRef = useRef<string | null>(null);
   useLayoutEffect(() => {
     const closed = wasExpanded.current && !expanded;
     wasExpanded.current = expanded;
+    if (expanded) popupIdRef.current = triggerRef.current?.getAttribute('aria-controls') ?? null;
     if (!closed) return;
     returning.current = true;
     const end = () => {
@@ -316,8 +321,6 @@ function TooltipTrigger({
     document.addEventListener('keydown', end, { capture: true, once: true });
     return () => document.removeEventListener('keydown', end, { capture: true });
   }, [expanded]);
-  // The tooltip takes the text direction at its trigger, the control or its wrapper.
-  const triggerRef = useRef<HTMLButtonElement>(null);
   // The trigger's name, read from the page as the tooltip opens, so a control named by its
   // content, such as a Toolbar.Button or a button with an icon and text, counts as named.
   const [name, setName] = useState(() => ownName(trigger));
@@ -367,7 +370,11 @@ function TooltipTrigger({
         onOpenChange={(next, details) => {
           if (next && expanded) return;
           if (next && returning.current) {
-            if (details.reason === 'trigger-focus') return;
+            if (
+              details.reason === 'trigger-focus' &&
+              returnsFrom(popupIdRef.current, details.event)
+            )
+              return;
             returning.current = false;
           }
           if (next && !isDisabled) setName(accessibleName(triggerRef.current) ?? ownName(trigger));
@@ -412,4 +419,14 @@ function TooltipTrigger({
       </BaseTooltip.Root>
     </TooltipNestingContext>
   );
+}
+
+/**
+ * Whether focus came to the control back from its popup: from the popup, or from nowhere, as the
+ * popup is gone by the time its focus returns. Focus from elsewhere in the page is no return.
+ */
+function returnsFrom(popupId: string | null, event: Event) {
+  const from = (event as FocusEvent).relatedTarget;
+  if (!(from instanceof Node) || !from.isConnected) return true;
+  return popupId !== null && Boolean(document.getElementById(popupId)?.contains(from));
 }
