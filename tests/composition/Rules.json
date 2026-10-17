@@ -134,7 +134,6 @@
     "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
     "modules": [
       "content/DescriptionList.tsx",
-      "feedback/ConfirmDialog.tsx",
       "layout/ListDetail.tsx",
       "layout/Page.tsx",
       "layout/PageHeader.tsx",
@@ -228,7 +227,7 @@
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
       "Dialog": {
-        "modules": ["feedback/internal/DialogParts.tsx"]
+        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"]
       },
       "Progress": {
         "styles": ["Meter.css"]

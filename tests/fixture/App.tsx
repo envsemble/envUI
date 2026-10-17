@@ -75,6 +75,7 @@ import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
 import { AccountMenusFixture } from './AccountMenus.js';
+import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -108,6 +109,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   meters: MetersFixture,
   'search-triggers': SearchTriggersFixture,
   'account-menus': AccountMenusFixture,
+  'confirm-dialogs': ConfirmDialogsFixture,
 };
 
 export default function App() {
