@@ -5,7 +5,7 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
-import { useMessages } from '../internal/EnvUIContext.js';
+import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
 import { pager } from '../foundations/messages/pager.js';
 
 export interface LinkProps extends Omit<ComponentPropsWithRef<'a'>, 'children'> {
@@ -42,7 +42,9 @@ function PagerLink({
   ...props
 }: LinkProps & { direction: 'previous' | 'next' }) {
   const LinkComponent = useLinkComponent();
-  const messages = useMessages('pager', pager);
+  // The one caption a link shows, read without merging the namespace, so a part alone stays small.
+  const caption =
+    (useEnvUI().messages.pager?.[direction] as string | undefined) ?? pager[direction];
   const isPrevious = direction === 'previous';
   const symbol = icon != null ? <DecorativeIcon>{icon}</DecorativeIcon> : null;
 
@@ -56,9 +58,7 @@ function PagerLink({
     >
       {isPrevious && symbol}
       <span className="env-pager-link-copy">
-        <span className="env-pager-link-label">
-          {isPrevious ? messages.previous : messages.next}
-        </span>
+        <span className="env-pager-link-label">{caption}</span>
         <span className="env-pager-link-title">{children}</span>
       </span>
       {!isPrevious && symbol}

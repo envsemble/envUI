@@ -121,15 +121,18 @@ test('a breadcrumb cut short shows its full label in a tooltip, on hover and key
   const tooltip = page.locator('.env-tooltip');
   const long = 'A folder whose name runs well past the room that one level of a trail takes';
   const trail = scope.getByRole('navigation', { name: 'Long level trail' });
+  // Keyboard focus, which WebKit gives links only through focus(): a key press first makes the
+  // focus that follows keyboard focus (:focus-visible) in every engine.
+  const keyboardFocus = async (name: string) => {
+    await page.keyboard.press('Shift');
+    await trail.getByRole('link', { name }).focus();
+    await expect(trail.getByRole('link', { name })).toBeFocused();
+  };
   // A level that fits shows no tooltip.
-  await trail.getByRole('link', { name: 'Workspace' }).focus();
-  await page.keyboard.press('Shift+Tab');
-  await page.keyboard.press('Tab');
-  await expect(trail.getByRole('link', { name: 'Workspace' })).toBeFocused();
+  await keyboardFocus('Workspace');
   await expect(tooltip).toHaveCount(0);
   // The link's name is its whole label; the tooltip shows it as keyboard focus reaches it.
-  await page.keyboard.press('Tab');
-  await expect(trail.getByRole('link', { name: long })).toBeFocused();
+  await keyboardFocus(long);
   await expect(tooltip).toHaveText(long);
   await page.keyboard.press('Escape');
   await expect(tooltip).toHaveCount(0);
