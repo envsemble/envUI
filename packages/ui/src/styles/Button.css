@@ -8,6 +8,11 @@
     background-color var(--env-motion-duration-fast) var(--env-motion-ease),
     color var(--env-motion-duration-fast) var(--env-motion-ease),
     border-color var(--env-motion-duration-fast) var(--env-motion-ease);
+  /* Badges inside take the button's text color as an outlined pill (Badge.css's hooks; the
+     counter badge and diff stat hooks are further down). */
+  --env-badge-fg: currentColor;
+  --env-badge-bg: transparent;
+  --env-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
   /* The height the button draws at: the control height, or more under a coarse pointer. */
   --env-button-height: var(--env-control-height);
   /* Its icons take the control icon size. */
@@ -132,6 +137,17 @@
   transition-property: background-color, color;
   transition-duration: var(--env-motion-duration-fast);
   transition-timing-function: var(--env-motion-ease);
+}
+
+/* A container that lines a text icon button's icon up with its own edge, rather than the button's
+   round hit area, such as a message's actions, sets --env-button-text-icon-edge-start and
+   --env-button-text-icon-edge-end on its own element: the margin of a first child at the start and
+   of a last child at the end, usually negative. */
+.env-button:where([data-variant='text']).env-icon-button:first-child {
+  margin-inline-start: var(--env-button-text-icon-edge-start, 0);
+}
+.env-button:where([data-variant='text']).env-icon-button:last-child {
+  margin-inline-end: var(--env-button-text-icon-edge-end, 0);
 }
 
 .env-button:where([data-variant='text']).env-icon-button:hover:not(:disabled):not(
@@ -408,6 +424,27 @@
   .env-avatar-button:active:not(:disabled) {
     transform: scale(0.97);
   }
+}
+
+/* Badges in a button, such as a tab with a count, through Badge.css's hooks. A badge takes the
+   button's text color as an outlined pill. A counter badge or diff stat keeps its own filled pill,
+   except on the solid primary fills, neutral and accent, where that pill can't keep its contrast:
+   there it is an outlined pill in the text color too. The outline is the label color at 55%, which
+   only the button knows; the contrast gate measures it on each fill as a derived color
+   (tests/contrast/Pairs.ts). The hooks every button sets for its badges are in its first rule. */
+.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) {
+  --env-counter-badge-fg: currentColor;
+  --env-counter-badge-bg: transparent;
+  --env-counter-badge-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+  --env-diff-stat-fg: currentColor;
+  --env-diff-stat-bg: transparent;
+  --env-diff-stat-border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
+}
+/* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
+   back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
+   and its tones keep their 4.5:1 contrast in both themes. */
+.env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) {
+  --env-diff-stat-bg: var(--env-color-bg-inset);
 }
 
 /* Forced colors: the system paints no fills or shadows, so every button takes the system's button

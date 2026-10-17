@@ -1,6 +1,11 @@
 /* Badges: small pills that name a state in its tone. The tone's text color keeps 4.5:1 on the page,
    panes and rows, also over its tint; a solid badge puts fg-on-emphasis on the tone's emphasis fill,
-   and an outlined one draws the tone's edge. */
+   and an outlined one draws the tone's edge.
+   In a control, such as a tab with a count, the control sets hooks on its own element:
+   --env-badge-fg, --env-badge-bg and --env-badge-border (a border shorthand) for every badge inside
+   it, whatever its tone and variant; --env-counter-badge-fg, -bg and -border for a counter badge;
+   and --env-diff-stat-fg, -bg and -border for a diff stat, whose two tones then take that one
+   color. Button sets them (Button.css). */
 .env-badge {
   --env-badge-tone: var(--env-color-fg-muted);
   --env-badge-tint: var(--env-color-bg-neutral-muted);
@@ -14,10 +19,10 @@
   align-items: center;
   gap: var(--env-space-1);
   padding: 0.0625rem var(--env-space-2);
-  border: 0.0625rem solid transparent;
+  border: var(--env-badge-border, 0.0625rem solid transparent);
   border-radius: 100vmax;
-  background: var(--env-badge-tint);
-  color: var(--env-badge-tone);
+  background: var(--env-badge-bg, var(--env-badge-tint));
+  color: var(--env-badge-fg, var(--env-badge-tone));
   font: 500 0.75rem / 1.4 var(--env-font-family);
   white-space: nowrap;
   vertical-align: middle;
@@ -53,12 +58,12 @@
   --env-badge-edge: var(--env-color-border-done);
 }
 .env-badge[data-variant='solid'] {
-  background: var(--env-badge-fill);
-  color: var(--env-color-fg-on-emphasis);
+  background: var(--env-badge-bg, var(--env-badge-fill));
+  color: var(--env-badge-fg, var(--env-color-fg-on-emphasis));
 }
 .env-badge[data-variant='outline'] {
-  border-color: var(--env-badge-edge);
-  background: transparent;
+  border: var(--env-badge-border, 0.0625rem solid var(--env-badge-edge));
+  background: var(--env-badge-bg, transparent);
 }
 .env-badge .env-icon {
   inline-size: 0.875rem;
@@ -81,17 +86,18 @@
   align-items: center;
   justify-content: center;
   padding-inline: 0.375rem;
+  border: var(--env-counter-badge-border, none);
   border-radius: 100vmax;
-  background: var(--env-color-bg-neutral-muted);
-  color: var(--env-color-fg-default);
+  background: var(--env-counter-badge-bg, var(--env-color-bg-neutral-muted));
+  color: var(--env-counter-badge-fg, var(--env-color-fg-default));
   font: 500 0.75rem / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;
 }
 .env-counter-badge[data-tone='accent'] {
-  background: var(--env-color-bg-accent-emphasis);
-  color: var(--env-color-fg-on-emphasis);
+  background: var(--env-counter-badge-bg, var(--env-color-bg-accent-emphasis));
+  color: var(--env-counter-badge-fg, var(--env-color-fg-on-emphasis));
 }
 /* A change as one counter-sized pill: additions in the success tone, deletions in the danger tone. */
 .env-diff-stat {
@@ -103,18 +109,19 @@
   align-items: center;
   gap: 0.25rem;
   padding-inline: 0.375rem;
+  border: var(--env-diff-stat-border, none);
   border-radius: 100vmax;
-  background: var(--env-color-bg-neutral-muted);
+  background: var(--env-diff-stat-bg, var(--env-color-bg-neutral-muted));
   font: 500 0.75rem / 1 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   vertical-align: middle;
 }
 .env-diff-stat-additions {
-  color: var(--env-color-fg-success);
+  color: var(--env-diff-stat-fg, var(--env-color-fg-success));
 }
 .env-diff-stat-deletions {
-  color: var(--env-color-fg-danger);
+  color: var(--env-diff-stat-fg, var(--env-color-fg-danger));
 }
 .env-counter-badge-label,
 .env-diff-stat-label {
@@ -125,27 +132,4 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-/* In a button, such as a tab, a counter badge or diff stat keeps its own filled pill. On the solid primary fills, neutral
-   and accent, where that pill can't keep its contrast, it takes the button's text color as an
-   outlined pill instead, as a badge does in every button, in both themes. The outline is the label
-   color at 55%, which only the button knows, so it is mixed here; the contrast gate measures it on
-   each fill as a derived color (tests/contrast/Pairs.ts). */
-.env-button .env-badge[data-tone],
-.env-button:is([data-variant='primary']:where(:not([data-tone='danger'])))
-  .env-counter-badge[data-tone],
-.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat {
-  border: 0.0625rem solid color-mix(in srgb, currentColor 55%, transparent);
-  background: transparent;
-  color: inherit;
-}
-.env-button:is([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat > * {
-  color: inherit;
-}
-/* On a button's own fill, which already adds up with a tab rail's, a diff stat's pill leans halfway
-   back toward the canvas instead of adding another fill. It looks about as it does on the canvas,
-   and its tones keep their 4.5:1 contrast in both themes. */
-.env-button:not([data-variant='primary']:where(:not([data-tone='danger']))) .env-diff-stat {
-  background: var(--env-color-bg-inset);
 }

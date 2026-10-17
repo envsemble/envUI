@@ -5,9 +5,22 @@ import { plural } from './plural.js';
  * overrides any of them.
  */
 export const diffStat = {
-  /** Names the counts, such as 12 added lines and 3 removed lines. */
-  label: ({ additions, deletions }: { additions: number; deletions: number }) =>
-    `${additions} added ${plural(additions, 'line', 'lines')} and ${deletions} removed ${plural(deletions, 'line', 'lines')}`,
+  /**
+   * Names the counts, such as 12 added lines and 3 removed lines; `added` and `removed` are the
+   * counts in the locale's digits.
+   */
+  label: ({
+    additions,
+    deletions,
+    added,
+    removed,
+  }: {
+    additions: number;
+    deletions: number;
+    added: string;
+    removed: string;
+  }) =>
+    `${added} added ${plural(additions, 'line', 'lines')} and ${removed} removed ${plural(deletions, 'line', 'lines')}`,
 };
 
 export type DiffStatMessages = typeof diffStat;
