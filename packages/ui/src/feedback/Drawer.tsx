@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { CloseButton } from '../actions/CloseButton.js';
 import { classNames } from '../internal/classNames.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
@@ -257,3 +258,5 @@ export function Drawer({
     </BaseDrawer.Root>
   );
 }
+
+markTriggerOwner(Drawer);

@@ -21,6 +21,7 @@ import { useLinkComponent } from '../internal/LinkContext.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 
 /** The Base UI parts every menu's popup is made of. */
@@ -555,7 +556,9 @@ function CheckboxItem({
 
 // Each part is named for React DevTools by a pure call, so a bundler drops the parts an
 // application leaves unused.
-const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Menu.Root');
+const RootPart = /* @__PURE__ */ markTriggerOwner(
+  /* @__PURE__ */ withDisplayName(Root, 'Menu.Root'),
+);
 const HeaderPart = /* @__PURE__ */ withDisplayName(Header, 'Menu.Header');
 const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'Menu.Item');
 const SeparatorPart = /* @__PURE__ */ withDisplayName(Separator, 'Menu.Separator');

@@ -219,7 +219,7 @@ Behaviour that changes without a rename:
 - A Drawer's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the drawer that takes Tab, such as that button, as it did in the side panel.
 - `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
 - A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
-- A Tooltip passes its native props and `ref` on to its control, where 0.x dropped them, so it can be the `trigger` of a Menu.Root or Popover, and goes to their trigger when it wraps one. It stays closed while the control's menu or popover is open. `popupClassName` adds a class to the tooltip's popup.
+- A Tooltip passes its native props and `ref` on to its control, so it can be the `trigger` of a Menu.Root, Popover, Dialog, Drawer or ConfirmDialog, and goes to their trigger when it wraps one. Untyped 0.x code that gave a Tooltip `className`, `style`, data attributes or handlers had them dropped; in 1.0 they reach the control, so remove them or move a popup class to `popupClassName`, which adds a class to the tooltip's popup. It stays closed while the control's menu or popover is open. Around a HoverCard, or as its trigger, it shows no tooltip.
 - CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
 
 ### Content and display

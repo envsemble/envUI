@@ -3,6 +3,7 @@
 import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { Button } from '../actions/Button.js';
 import type { ButtonProps } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -220,3 +221,5 @@ export function Dialog({
     </BaseDialog.Root>
   );
 }
+
+markTriggerOwner(Dialog);

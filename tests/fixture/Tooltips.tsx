@@ -1,5 +1,15 @@
-import { useState } from 'react';
-import { Button, IconButton, Kbd, Link, Menu, Popover, Text, Tooltip } from '@envsemble/envui';
+import { useState, type ComponentPropsWithRef, type ReactElement } from 'react';
+import {
+  Button,
+  HoverCard,
+  IconButton,
+  Kbd,
+  Link,
+  Menu,
+  Popover,
+  Text,
+  Tooltip,
+} from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -8,10 +18,29 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { Pin } from '@envsemble/envui/icons/Pin';
 import { Save } from '@envsemble/envui/icons/Save';
 
+/** A control of the application's own with a `trigger` prop, which a Tooltip doesn't move onto. */
+function BadgeButton({
+  trigger,
+  ...props
+}: ComponentPropsWithRef<'button'> & { trigger: ReactElement }) {
+  return (
+    <button type="button" {...props}>
+      {trigger}
+    </button>
+  );
+}
+
+/** A control that doesn't pass the ref on to its element. */
+function RefLessButton() {
+  return <button type="button">Ref-less</button>;
+}
+
 /**
  * Tooltips that describe a named control, repeat a name, wait on disabled controls, a toggle and a
- * checkbox among them, hold a Kbd, and name or describe the icon-only trigger of a menu and a
- * popover.
+ * checkbox among them, hold a Kbd, name or describe the icon-only trigger of a menu and a popover,
+ * and describe a control of the application's own with a `trigger` prop. With ?warnings, the
+ * ones that show nothing and say so while developing: around a HoverCard or as its trigger, and
+ * children a Tooltip can't take.
  */
 export function TooltipsFixture() {
   const [seats, setSeats] = useState(false);
@@ -112,6 +141,40 @@ export function TooltipsFixture() {
           {`${presses} presses, ${menuOpens} menu opens, ${popoverOpens} popover opens`}
         </Text>
       </section>
+      {/* Only envUI's trigger-taking components pass the tooltip on to their trigger. */}
+      <Tooltip content="Shows the badge" delay={0}>
+        <BadgeButton trigger={<span>Badge</span>} aria-label="Badge button" />
+      </Tooltip>
+      {new URLSearchParams(window.location.search).has('warnings') && (
+        <>
+          {/* Around a HoverCard, or as its trigger, a Tooltip shows nothing: the card opens instead. */}
+          <Tooltip content="Profile tooltip" delay={0}>
+            <HoverCard delay={0} trigger={<Link href="#ada">Ada Lovelace</Link>}>
+              <Text>Ada card</Text>
+            </HoverCard>
+          </Tooltip>
+          <HoverCard
+            delay={0}
+            trigger={
+              <Tooltip content="Profile tooltip" delay={0}>
+                <Link href="#alan">Alan Turing</Link>
+              </Tooltip>
+            }
+          >
+            <Text>Alan card</Text>
+          </HoverCard>
+          {/* @ts-expect-error: text, which can't take the trigger's props. */}
+          <Tooltip content="On text">Plain text</Tooltip>
+          <Tooltip content="On a fragment">
+            <>
+              <button type="button">In a fragment</button>
+            </>
+          </Tooltip>
+          <Tooltip content="On a ref-less control">
+            <RefLessButton />
+          </Tooltip>
+        </>
+      )}
     </div>
   );
 }

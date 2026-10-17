@@ -15747,7 +15747,7 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a component that takes its control as `trigger`, such as Menu.Root or Popover, the tooltip describes that control. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Drawer or ConfirmDialog, the tooltip describes their `trigger`; around a HoverCard, it shows nothing. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too. One element: text, a Fragment or a component that doesn't pass the ref on to its element gets no tooltip, and says so while developing."
         },
         {
           "name": "ref",
