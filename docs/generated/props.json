@@ -2262,6 +2262,77 @@
         "@envsemble/envui"
       ]
     },
+    "DescriptionList": {
+      "kind": "namespace",
+      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "description": "",
+      "parts": [
+        "DescriptionList.Root",
+        "DescriptionList.Item"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "DescriptionList.Item": {
+      "kind": "component",
+      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "description": "One term and its value: a `div` around a `dt` and a `dd`.",
+      "props": [
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The term, such as Owner or Created."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The value: text, a link, a Badge, or a control in a list with `controls`."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "DescriptionList.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/content/DescriptionList.tsx",
+      "description": "A list of labelled values, the facts about one thing, such as a project's owner, status and dates: a `dl` whose items are its terms with their values.",
+      "props": [
+        {
+          "name": "layout",
+          "type": "'inline' | 'stacked' | 'auto'",
+          "required": false,
+          "default": "'auto'",
+          "description": "Where each label sits: inline, beside its value, in a column as wide as the longest label; stacked, above its value; auto, inline, stacked below 24 rem of the list's own width."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'sm'",
+          "description": "The text size: sm, the smaller body text, for facts beside other content, such as in a sidebar or a card; md, body text, for a page of details."
+        },
+        {
+          "name": "controls",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The values hold controls, such as a Select or a Switch: each row is at least as tall as a small control, and its label sits on the control's first line."
+        }
+      ],
+      "native": [
+        "dl"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Dialog": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Dialog.tsx",
@@ -3558,6 +3629,128 @@
         "@envsemble/envui"
       ]
     },
+    "ListDetail": {
+      "kind": "namespace",
+      "source": "packages/ui/src/layout/ListDetail.tsx",
+      "description": "",
+      "parts": [
+        "ListDetail.Root",
+        "ListDetail.List",
+        "ListDetail.Detail"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "ListDetail.Detail": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/ListDetail.tsx",
+      "description": "The detail pane, after the handle that resizes the list. Stacked, it shows only while detailShown, with a back button to the list at its start.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the detail's region, such as the chosen item's name."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "ListDetail.List": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/ListDetail.tsx",
+      "description": "The list pane, a region named by its label. Stacked, it hides while the detail shows.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true,
+          "description": "Names the list's region, such as Projects."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "ListDetail.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/ListDetail.tsx",
+      "description": "A list beside the detail of its chosen item, on SplitPane, with the list's width resizable. Below `stackBelow` of its own width it shows one at a time: the list, or the detail with a back button, which moves focus between them.",
+      "props": [
+        {
+          "name": "detailShown",
+          "type": "boolean",
+          "required": true,
+          "description": "Whether the detail is what people are looking at, such as after choosing an item. A stacked layout shows the detail instead of the list while it is true; side by side, both show."
+        },
+        {
+          "name": "onBack",
+          "type": "() => void",
+          "required": true,
+          "description": "Called by the back button of a stacked detail; set detailShown to false in it."
+        },
+        {
+          "name": "backLabel",
+          "type": "string",
+          "required": true,
+          "description": "The back button's label, which names where it goes, such as All projects. It depends on the content, so there is no default."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "default": "'44rem'",
+          "description": "A width, such as '44rem', or a number of pixels: while the layout itself is narrower, it shows the list or the detail, one at a time."
+        },
+        {
+          "name": "defaultListSize",
+          "type": "number",
+          "required": false,
+          "default": "32",
+          "description": "The list's share of the width in percent until people resize it."
+        },
+        {
+          "name": "minListSize",
+          "type": "number",
+          "required": false,
+          "default": "22",
+          "description": "The list's smallest share of the width in percent."
+        },
+        {
+          "name": "maxListSize",
+          "type": "number",
+          "required": false,
+          "default": "50",
+          "description": "The list's largest share of the width in percent."
+        },
+        {
+          "name": "persist",
+          "type": "string",
+          "required": false,
+          "description": "Keeps the list's width under this localStorage key."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The list and the detail: ListDetail.List, then ListDetail.Detail."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "LoadingState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/LoadingState.tsx",
@@ -3653,6 +3846,13 @@
           "description": "Styles of the field's root element, such as its width in a row."
         },
         {
+          "name": "toolbar",
+          "type": "readonly MarkdownCommand[] | false",
+          "required": false,
+          "defaultBuiltIn": true,
+          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
+        },
+        {
           "name": "defaultValue",
           "type": "string",
           "required": false,
@@ -3664,13 +3864,6 @@
           "type": "string",
           "required": false,
           "description": "The field's class, on its root element, beside env-field and env-text-field."
-        },
-        {
-          "name": "toolbar",
-          "type": "readonly MarkdownCommand[] | false",
-          "required": false,
-          "defaultBuiltIn": true,
-          "description": "Formatting actions; false hides the toolbar. Undo/redo accompany a visible toolbar."
         },
         {
           "name": "value",
@@ -4694,6 +4887,127 @@
       ],
       "native": [
         "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Page": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/Page.tsx",
+      "description": "The column a page's content sits in: centered, as wide as `width` at most, with the page gutter at its edges and the page's header at its top. It adds no landmark; put it in AppShell.Main, or the application's own main.",
+      "props": [
+        {
+          "name": "width",
+          "type": "'sm' | 'md' | 'lg' | 'full'",
+          "required": false,
+          "default": "'lg'",
+          "description": "How wide the content may grow: sm (40 rem) for a form or a settings page, md (60 rem) for a document or a detail page, lg (76 rem) for a dashboard or a list, full for content that uses the whole width, such as a board. The column is centered in the space it has."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's heading, usually a PageHeader, at the top of the same column."
+        },
+        {
+          "name": "gutter",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Pads the column at its inline edges with the page gutter, which grows from 1 to 2 rem with the viewport. False leaves the edges to the content, such as a page that is one full-bleed table."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<article />}; a div by default. The page's class and attributes merge into its props."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's content, under its header."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "PageHeader": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/PageHeader.tsx",
+      "description": "The heading of a page: its title with an optional trail above it, a description, leading content, meta beside the title, actions at the end and a toolbar row under it. It responds to its own width, and can stick to the top of the page as it scrolls.",
+      "props": [
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The page's title. It wraps, balanced across its lines, and is never cut short."
+        },
+        {
+          "name": "headingLevel",
+          "type": "1 | 2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "1",
+          "description": "The title's heading level: 1 for the page's own heading, a lower level for a header inside a pane or a section that sits under another heading. It looks the same at every level."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A sentence under the title, in the smaller muted text, such as what the page is for."
+        },
+        {
+          "name": "breadcrumbs",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The trail to the page, usually Breadcrumbs with wrap={false}, above the title."
+        },
+        {
+          "name": "start",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Before the title: an Avatar, an icon or a back IconButton."
+        },
+        {
+          "name": "meta",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Beside the title, wrapping with it: Badges, such as a status, or a count."
+        },
+        {
+          "name": "actions",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The page's actions, at the end of the title row: its primary action last. Below 32 rem of the header's own width they move under the title and wrap."
+        },
+        {
+          "name": "toolbar",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A second row under the title: search, filters and view switches, laid out with `<Stack direction=\"row\" wrap justify=\"between\">`; see Toolbar's layouts."
+        },
+        {
+          "name": "sticky",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keeps the header in view at the top of the page as it scrolls, at `--env-frame-sticky-top`, under the app frame's header. Its height is published on its Page as `--env-page-header-block-size`, so content can stick below both."
+        },
+        {
+          "name": "controlSize",
+          "type": "'sm' | 'md'",
+          "required": false,
+          "default": "'md'",
+          "description": "The size of the buttons and icon buttons in `actions` and `toolbar` that set none: sm for a dense page, such as one in a small window, or md. Give fields in the toolbar the same `size`."
+        }
+      ],
+      "native": [
+        "header"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6113,6 +6427,142 @@
         "@envsemble/envui"
       ]
     },
+    "SplitPane": {
+      "kind": "namespace",
+      "source": "packages/ui/src/layout/SplitPane.tsx",
+      "description": "",
+      "parts": [
+        "SplitPane.Root",
+        "SplitPane.Pane",
+        "SplitPane.ResizeHandle"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "SplitPane.Pane": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/SplitPane.tsx",
+      "description": "One of the two panes. It scrolls on its own when the split pane has a size of its own.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "description": "Names the pane, which makes it a region landmark that people can jump to, such as Documents. Name the panes of a page's main layout; leave small panes unnamed."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "SplitPane.ResizeHandle": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/SplitPane.tsx",
+      "description": "The handle between the panes: a focusable separator that the pointer drags and the arrow keys move, which names the first pane in aria-controls. A double click returns it to the default size. A stacked split pane has none.",
+      "props": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "default": "'Resize panes', or EnvUIProvider's messages.splitPane.resize",
+          "description": "The handle's name, which says what it resizes, such as Resize document list."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "SplitPane.Root": {
+      "kind": "component",
+      "source": "packages/ui/src/layout/SplitPane.tsx",
+      "description": "Two panes and a handle between them that resizes them, by pointer and keyboard (the APG window splitter). Below `stackBelow` of its own width the panes stack and the handle goes.",
+      "props": [
+        {
+          "name": "orientation",
+          "type": "'horizontal' | 'vertical'",
+          "required": false,
+          "default": "'horizontal'",
+          "description": "How the panes sit: horizontal, side by side with the first at the inline start, or vertical, one above the other. A vertical split pane needs a height of its own."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "required": false,
+          "description": "The first pane's size in `unit`, for a controlled split pane."
+        },
+        {
+          "name": "defaultSize",
+          "type": "number",
+          "required": false,
+          "default": "50",
+          "description": "The first pane's size in `unit` until people choose one, or one is stored under `persist`."
+        },
+        {
+          "name": "onSizeChange",
+          "type": "(size: number, details: { committed: boolean }) => void",
+          "required": false,
+          "description": "Receives each new size of the first pane, in `unit`: while dragging with committed false, and with committed true as a drag ends, a key moves the handle or a double click resets it."
+        },
+        {
+          "name": "minSize",
+          "type": "number",
+          "required": false,
+          "default": "20",
+          "description": "The first pane's smallest size, in `unit`."
+        },
+        {
+          "name": "maxSize",
+          "type": "number",
+          "required": false,
+          "default": "80",
+          "description": "The first pane's largest size, in `unit`."
+        },
+        {
+          "name": "unit",
+          "type": "'%' | 'rem'",
+          "required": false,
+          "default": "'%'",
+          "description": "The unit of the sizes: %, a share of the split pane's width (height when vertical), or rem, a length that follows the reader's text size, such as a list that keeps its width as the window grows."
+        },
+        {
+          "name": "persist",
+          "type": "string",
+          "required": false,
+          "description": "Keeps the size people choose under this localStorage key, for an uncontrolled split pane; a double click on the handle forgets it. It is read after the first render, so server markup and hydration agree."
+        },
+        {
+          "name": "stackBelow",
+          "type": "string | number",
+          "required": false,
+          "description": "A width, such as '44rem', or a number of pixels: while the split pane itself is narrower, its panes stack, the first above the second, the handle goes and the root has data-stacked. It follows the split pane's own width, not the window's, so a split pane in a narrow column stacks too."
+        },
+        {
+          "name": "onStackedChange",
+          "type": "(stacked: boolean) => void",
+          "required": false,
+          "description": "Receives true when the panes stack and false when they sit side by side again."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": "The panes and the handle between them: Pane, ResizeHandle, Pane."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Stack": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
@@ -7518,6 +7968,15 @@
       "source": "packages/ui/src/foundations/useMediaQuery.ts",
       "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
       "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useContainerSize": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/useContainerSize.ts",
+      "description": "The size of an element, kept up to date as it changes: its inline and block size in CSS pixels, along its writing mode, from a ResizeObserver. It is undefined on the server and until the element is measured, which happens before the browser paints it; an element that stops being rendered, such as one in a hidden tab panel, keeps its last size until it shows again. Pass a ref object, read once the element mounts, or the element itself, such as one kept in state by a callback ref. Prefer a container query (`@container`) where only styles change. const panel = useRef<HTMLDivElement>(null); const size = useContainerSize(panel); const narrow = size !== undefined && size.inlineSize < 640;",
+      "signature": "<T extends Element>(target: RefObject<T | null> | T | null, options?: ContainerSizeOptions): ContainerSize | undefined",
       "entries": [
         "@envsemble/envui"
       ]
