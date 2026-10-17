@@ -117,6 +117,7 @@
       "navigation/Menubar.tsx": "base",
       "navigation/NavList.tsx": "base",
       "navigation/OrganizationSwitcher.tsx": "composites",
+      "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tabs.tsx": "composites",
@@ -311,7 +312,8 @@
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
       "OrganizationSwitcher": {
-        "styles": ["Menu.css"]
+        "styles": ["Menu.css"],
+        "modules": ["navigation/internal/OrganizationOptions.tsx"]
       },
       "PanelDock": {
         "modules": ["navigation/PanelDockHeader.tsx", "navigation/internal/PanelDockContext.ts"]
