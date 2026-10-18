@@ -125,7 +125,7 @@ Documentation ships under `node_modules/@envsemble/envui/docs/`, with examples a
 
 ## Versions and license
 
-Published versions are immutable; breaking changes come in a new major version with migration notes. Prereleases are published under the `next` dist-tag and stable releases under `latest`. The [changelog](packages/ui/CHANGELOG.md) describes each release.
+Published versions are immutable; breaking changes come in a new major version with migration notes. Prereleases are published under their own name as the dist-tag, such as `prerelease` for `1.0.0-prerelease.0` (`npm install @envsemble/envui@prerelease`), and stable releases under `latest`. The [changelog](packages/ui/CHANGELOG.md) describes each release.
 
 envUI is proprietary and distributed privately. Bundled third-party assets and dependencies retain their [notices](packages/ui/THIRD_PARTY_NOTICES.md) and [licenses](packages/ui/licenses/).
 

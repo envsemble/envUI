@@ -7,11 +7,12 @@ This file is for agents working on envUI itself. It stays in the repository and 
 | Tier     | Command                  | When                                                                                       | Time (24 threads)                     |
 | -------- | ------------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------- |
 | Fast     | `npm run check`          | After each change, while you work                                                          | Under a minute for a component change |
-| Affected | `npm run check:affected` | Before committing a branch or merging it into the integration branch                       | A few minutes for a component change  |
-| Full     | `npm run verify`         | Before a release (tagging, publishing), before merging into `dev` or `main`, or when asked | About 20 min (30 before the tiers)    |
+| Affected | `npm run check:affected` | Before pushing a branch or marking its pull request ready                                  | A few minutes for a component change  |
+| Full     | `npm run verify`         | When asked, or to reproduce a failure of the Verify workflow on a pull request into `main` | About 20 min (30 before the tiers)    |
 
 - **The fast tier** checks what the branch changed since its merge-base with `origin/envui-1.0` (else `origin/dev`; `--base <ref>` or `ENVUI_BASE` picks another), with uncommitted and untracked files: ESLint, Stylelint and Prettier on the changed files, incremental `tsc`, the generated-file checks the change touches, the unit tests that need no build, and the related browser specs in Chromium. It prints what it selected and why; `-- --dry-run` prints only that.
 - **The affected tier** adds the related specs' `@engines` tests in Firefox and WebKit, the builds the change needs with the unit tests on them, and live development when the catalogue changed. The accessibility scan and the screenshots run in the full tier.
+- **CI** checks every ready pull request: one `CI` job for pull requests into `dev`, and the full `npm run verify` as the Verify workflow for pull requests into `main`, the releases. Don't change `.github/workflows`, start or re-run runs, or change the required checks without asking.
 - **The full tier** runs everything. Don't run it, or `npm run test:browser`, `test:a11y` or `test:visual`, as a routine step: they take minutes, and the tiers above answer for a change.
 - A token, theme or other shared change runs the contrast gate and a small shared set of specs, not everything; the selection says so. Leave the rest to the full tier.
 - A spec runs when the component it is named after changes (`scripts/TestScope.mjs`). When a file's name doesn't name its spec, add it to `aliases` there instead of running everything.
