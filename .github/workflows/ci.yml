@@ -1,165 +1,121 @@
 name: CI
+# One job for pull requests into dev and main once they are ready for review, on the Linux runner
+# the envsemble organization variable CI_LINUX_RUNNER names. Pull requests into main are the
+# releases: the full `npm run verify` runs for them in its own workflow (verify.yml), so this job
+# only scans them with Betterleaks. Merging one publishes its version (release.yml).
 on:
-  # CI runs only for main (pull requests into it and pushes to it) while Actions minutes are
-  # limited; changes reach dev after a local `npm run verify`. To run CI on dev again, add dev back
-  # to both branch lists.
-  #
-  # There is no paths-ignore: Markdown is package content. The README, docs and skills ship in the
-  # package and render in the catalogue, and Prettier, the product-name and documentation tests and
-  # the catalogue's browser specs all read them, so a docs-only change can still break CI.
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
-    # ready_for_review runs CI once a draft is marked ready; drafts themselves are skipped below.
+    branches: [dev, main]
     types: [opened, synchronize, reopened, ready_for_review]
 permissions:
   contents: read
+  # The first step lists the pull request's files.
+  pull-requests: read
+defaults:
+  run:
+    shell: bash
+# A new push cancels the run for the pull request's older head.
 concurrency:
-  group: envui-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
-  checks:
-    name: Checks
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  ci:
+    name: CI
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          # The whole history: Betterleaks scans it, and the contrast gate reads the base's
+          # snapshot from the merge commit's first parent.
+          fetch-depth: 0
           persist-credentials: false
+      # The checks run for pull requests into dev. Most of envUI's Markdown is package content:
+      # the README, docs/, the changesets and the skills ship in the package and render in the
+      # catalogue, and the tests read them. Only the contributors' own guides are documentation, so a
+      # pull request that changes only those runs Betterleaks alone. If listing the files fails, the
+      # checks run.
+      - name: Choose the checks
+        id: changes
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+          DOCUMENTATION: ^(CONTRIBUTING\.md|AGENTS\.md|CLAUDE\.md)$
+        run: |
+          if [ "$BASE" = main ]; then
+            echo checks=false >> "$GITHUB_OUTPUT"
+            echo "::notice title=Release pull request::The Verify workflow runs every check; this job scans with Betterleaks."
+            exit 0
+          fi
+          # A renamed file counts by its old path too.
+          files=$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$NUMBER/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)')
+          if grep -qvE "$DOCUMENTATION" <<<"$files"; then
+            echo checks=true >> "$GITHUB_OUTPUT"
+          else
+            echo checks=false >> "$GITHUB_OUTPUT"
+            echo "::notice title=Documentation only::The checks are skipped; Betterleaks still runs."
+          fi
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        if: ${{ steps.changes.outputs.checks != 'false' }}
         with:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Check generated icons
-        run: npm run icons:check
-      - name: Check generated tokens
-        run: npm run tokens:check
-      - name: Check generated props
-        run: npm run docs:check
-      - name: Lint scripts and components
-        run: npm run lint
-      - name: Lint styles
-        run: npm run lint:css
-      - name: Check formatting
-        run: npm run format:check
-      - name: Check TypeScript
-        run: npm run typecheck
-      - name: Build package and offline catalogue
-        run: npm run build
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+      - name: Check generated icons, tokens and documentation
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+        run: npm run icons:check && npm run tokens:check && npm run docs:check
+      - name: Lint scripts, components and styles
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+        run: npm run lint && npm run lint:css
+      - name: Check formatting and TypeScript
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+        run: npm run format:check && npm run typecheck
+      - name: Build the package, the offline catalogue and the hosted catalogue
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+        run: npm run build && npm run build:site
       - name: Test package contracts
+        if: ${{ steps.changes.outputs.checks != 'false' }}
         run: npm test
-      - name: Save offline catalogue
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: envui-reference
-          path: dist/envUI.html
-          if-no-files-found: error
-  browser:
-    # Chromium only; Firefox and WebKit run in `npm run verify` before every release.
-    name: Browser (Chromium)
-    needs: checks
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          # Two levels of history: the commit and its parents, one of which the contrast gate
-          # compares with (below).
-          fetch-depth: 2
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
       - name: Read the Playwright version
         id: playwright
+        if: ${{ steps.changes.outputs.checks != 'false' }}
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
       - name: Restore Chromium
         id: chromium
+        if: ${{ steps.changes.outputs.checks != 'false' }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-chromium-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - name: Install Chromium
-        if: steps.chromium.outputs.cache-hit != 'true'
+        if: ${{ steps.changes.outputs.checks != 'false' && steps.chromium.outputs.cache-hit != 'true' }}
         run: npx playwright install --with-deps chromium
       - name: Install Chromium's system libraries
-        if: steps.chromium.outputs.cache-hit == 'true'
+        if: ${{ steps.changes.outputs.checks != 'false' && steps.chromium.outputs.cache-hit == 'true' }}
         run: npx playwright install-deps chromium
-      # The catalogue specs open the offline catalogue that the checks job built.
-      - name: Fetch offline catalogue
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: envui-reference
-          path: dist
       # The contrast gate also compares tests/contrast/DeclaredPairs.json with the base's copy
-      # (tests/contrast/Snapshot.ts). A pull request's checkout is its merge commit, whose first
-      # parent is the tip of the branch it merges into. A push's base is the commit it moved main
-      # from, which the checkout holds when the push added one commit, as a merge or squash does; a
-      # push that brought several commits, a force-push and a push that creates the branch skip the
-      # comparison, which the pull request into main already made. A base from before the snapshot
-      # existed is skipped too, and the gate then compares with the checkout's snapshot alone.
-      - name: Find the contrast gate's base commit
-        id: contrast-base
-        env:
-          EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
-          FORCED: ${{ github.event.forced }}
-        run: |
-          if [ "$EVENT" = pull_request ]; then
-            if ! git rev-parse --verify --quiet 'HEAD^2' >/dev/null; then
-              echo "::error::The checkout isn't the pull request's merge commit, so it doesn't show the base the pull request merges into."
-              exit 1
-            fi
-            base=$(git rev-parse 'HEAD^1')
-          elif [ "$FORCED" = true ]; then
-            echo "::notice::A force-push has no base, so the contrast gate compares with the checkout's snapshot alone."
-            exit 0
-          elif [ -z "${BEFORE//0/}" ]; then
-            echo "::notice::A push that creates the branch has no base, so the contrast gate compares with the checkout's snapshot alone."
-            exit 0
-          elif ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
-            echo "::notice::The push brought several commits, so the checkout lacks $BEFORE, which it moved main from; the contrast gate compares with the checkout's snapshot alone, as the pull request into main compared with its base."
-            exit 0
-          else
-            base=$BEFORE
-          fi
-          if git cat-file -e "$base:tests/contrast/DeclaredPairs.json" 2>/dev/null; then
-            echo "Comparing the contrast snapshot with $base."
-            echo "sha=$base" >> "$GITHUB_OUTPUT"
-          else
-            echo "::notice::The base, $base, predates tests/contrast/DeclaredPairs.json, so the contrast gate compares with the checkout's snapshot alone."
-          fi
-      # The hosted catalogue's specs need its build, which takes seconds and no network; without
-      # it they fail here rather than skip.
-      - name: Build hosted catalogue
-        run: npm run build:site
-      - name: Test browser behavior
-        env:
-          ENVUI_CONTRAST_BASE: ${{ steps.contrast-base.outputs.sha }}
-        run: npx playwright test --project=chromium
-      - name: Save browser results and failure diagnostics
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      # (tests/contrast/Snapshot.ts): the checkout is the pull request's merge commit, whose first
+      # parent is the tip of the branch it merges into.
+      - name: Test browser behavior in Chromium
+        if: ${{ steps.changes.outputs.checks != 'false' }}
+        run: ENVUI_CONTRAST_BASE="$(git rev-parse 'HEAD^1')" npx playwright test --project=chromium
+      # Only a failure keeps anything: its traces and screenshots, for the organization's artifact
+      # retention. A refused upload never fails the job.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ failure() }}
+        continue-on-error: true
         with:
-          name: browser-results
+          name: browser-failure-${{ github.sha }}
           path: test-results
           if-no-files-found: ignore
-  betterleaks:
-    name: Betterleaks
-    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Install Betterleaks
+      # Also after a failed check, so one run reports both.
+      - name: Scan the history with Betterleaks
+        if: ${{ !cancelled() }}
         env:
           BETTERLEAKS_VERSION: '1.8.1'
           BETTERLEAKS_SHA256: 'efa407244e1ea8e35f582b8a42becdeac08bdead04f68eb752adda722d583c2a'
