@@ -19,15 +19,17 @@ permissions:
 defaults:
   run:
     shell: bash
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
 jobs:
   release:
     name: Release
     if: ${{ github.event.pull_request.merged }}
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 20
+    # One release at a time, in order; a pull request closed without merging starts no job here,
+    # so it can't cancel a release waiting for its turn.
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
     env:
       SHA: ${{ github.event.pull_request.merge_commit_sha }}
       GH_TOKEN: ${{ github.token }}
@@ -36,27 +38,35 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           persist-credentials: false
-      # A version with a published release is done; a draft left by a failed run is finished.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@envsemble'
+      # A version with a published release is done; a draft left by a failed run is finished. Any
+      # error other than a missing release stops the job rather than guessing. RELEASE_TAG names the
+      # tag for ValidateRelease, as GITHUB_REF_NAME can't be changed.
       - name: Choose the version
         id: version
         run: |
           version=$(node -p "require('./packages/ui/package.json').version")
           tag="v$version"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "GITHUB_REF_NAME=$tag" >> "$GITHUB_ENV"
-          if draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null) && [ "$draft" = false ]; then
-            echo release=false >> "$GITHUB_OUTPUT"
-            echo "::notice title=Nothing to release::$tag is already released."
-          else
+          echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
+          if draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>"$RUNNER_TEMP/view.err"); then
+            if [ "$draft" = false ]; then
+              echo release=false >> "$GITHUB_OUTPUT"
+              echo "::notice title=Nothing to release::$tag is already released."
+            else
+              echo release=true >> "$GITHUB_OUTPUT"
+            fi
+          elif grep -qi 'release not found' "$RUNNER_TEMP/view.err"; then
             echo release=true >> "$GITHUB_OUTPUT"
+          else
+            cat "$RUNNER_TEMP/view.err"
+            exit 1
           fi
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        if: ${{ steps.version.outputs.release == 'true' }}
-        with:
-          node-version: 24
-          cache: npm
-          registry-url: https://npm.pkg.github.com
-          scope: '@envsemble'
       # The packages, the catalogue's dependency and the plugin manifests carry the version, and the
       # CHANGELOG has a section for it.
       - name: Validate the release
@@ -73,7 +83,10 @@ jobs:
         env:
           TAG: ${{ steps.version.outputs.tag }}
         run: |
-          gh release delete "$TAG" --yes 2>/dev/null || true
+          # Only a draft, left by an earlier attempt, is replaced; a published release never is.
+          if [ "$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null)" = true ]; then
+            gh release delete "$TAG" --yes
+          fi
           gh release create "$TAG" dist/envUI.html --draft --target "$SHA" --title "envUI $TAG" \
             --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/ValidateRelease.mjs --release-flag)
       # The library first, then the codemods and the lint packages, as in CONTRIBUTING. A version
@@ -84,12 +97,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{ github.token }}
         run: |
           dist_tag="$(node scripts/ValidateRelease.mjs --dist-tag)"
-          version="${GITHUB_REF_NAME#v}"
+          version="${RELEASE_TAG#v}"
           for workspace in @envsemble/envui @envsemble/envui-codemods @envsemble/eslint-plugin-envui @envsemble/stylelint-config-envui; do
-            if npm view "$workspace@$version" version >/dev/null 2>&1; then
+            # Only a version the registry doesn't know is published; any other error stops the job.
+            if npm view "$workspace@$version" version >/dev/null 2>"$RUNNER_TEMP/view.err"; then
               echo "$workspace@$version is already published."
-            else
+            elif grep -qE 'E404|404 Not Found|is not in this registry' "$RUNNER_TEMP/view.err"; then
               npm publish --workspace "$workspace" --tag "$dist_tag"
+            else
+              cat "$RUNNER_TEMP/view.err"
+              exit 1
             fi
           done
       - name: Publish the release

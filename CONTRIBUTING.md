@@ -59,7 +59,7 @@ Build outputs are `packages/ui/dist/`, `dist/envUI.html` and, from `npm run buil
 
 CI follows the envsemble organization's practice: it runs for pull requests only, once they are ready for review, on the Linux runner the organization variable `CI_LINUX_RUNNER` names. Drafts run nothing, a new push cancels the older run, and every job has a time limit.
 
-- **Pull requests into `dev`** run one `CI` job: the generated-file checks, lint, formatting, types, the builds, the unit tests and the browser specs in Chromium, then a Betterleaks scan of the history. A pull request that changes only `CONTRIBUTING.md`, `AGENTS.md` or `CLAUDE.md` runs the scan alone. The rest of the Markdown is package content and runs the checks.
+- **Pull requests into `dev`** run one `CI` job: the generated-file checks, lint, formatting, types, the builds, the unit tests and the browser specs in Chromium, then a Betterleaks scan of the history. Every change runs the checks: envUI's Markdown is package content that ships and renders in the catalogue, and Prettier and the tests read the contributors' guides too.
 - **Pull requests into `main`** are the releases. The Verify workflow runs the full `npm run verify` for them, and the `CI` job runs only the scan, so nothing runs twice. `main` requires `CI` and `Verify`, `dev` requires `CI`.
 - **Merging a pull request into `main`** publishes its version when it isn't released yet; see [Releases](#releases).
 - **Artifacts** come only from failures: the browser traces and screenshots, kept for the organization's retention. An upload that fails never fails the job.

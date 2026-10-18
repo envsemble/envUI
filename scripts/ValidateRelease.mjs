@@ -8,7 +8,9 @@ const codemodsPackage = JSON.parse(
 const cataloguePackage = JSON.parse(
   await readFile(new URL('../apps/catalogue/package.json', import.meta.url), 'utf8'),
 );
-const tag = process.env.GITHUB_REF_NAME;
+// The release tag: RELEASE_TAG where a workflow names it, as GitHub sets GITHUB_REF_NAME to the
+// event's ref, else GITHUB_REF_NAME on a tag push or by hand.
+const tag = process.env.RELEASE_TAG ?? process.env.GITHUB_REF_NAME;
 if (tag !== `v${libraryPackage.version}`)
   throw new Error(`Tag ${tag} must match @envsemble/envui v${libraryPackage.version}.`);
 if (codemodsPackage.version !== libraryPackage.version)

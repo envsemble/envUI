@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 90
     env:
-      # Two browser workers on a two-core runner; the default is half the cores.
+      # Two browser workers on a two-core runner; Playwright would take three where CI is set.
       ENVUI_WORKERS: '2'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -54,7 +54,15 @@ jobs:
         if: ${{ steps.browsers.outputs.cache-hit == 'true' }}
         run: npx playwright install-deps chromium firefox webkit
       - name: Verify everything
-        run: ENVUI_CONTRAST_BASE="$(git rev-parse 'HEAD^1')" npm run verify
+        run: |
+          # Only a base that has the snapshot: until it reaches dev and main, the gate compares with
+          # the checkout's snapshot alone.
+          if git cat-file -e 'HEAD^1:tests/contrast/DeclaredPairs.json' 2>/dev/null; then
+            export ENVUI_CONTRAST_BASE="$(git rev-parse 'HEAD^1')"
+          else
+            echo "::notice::The base predates tests/contrast/DeclaredPairs.json, so the contrast gate compares with the checkout's snapshot alone."
+          fi
+          npm run verify
       # Only a failure keeps anything: its traces, screenshots and visual diffs, for the
       # organization's artifact retention. A refused upload never fails the job.
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
