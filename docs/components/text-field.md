@@ -36,6 +36,10 @@ avoidWhen:
     use: Combobox
   - text: A date, or a date and time.
     use: DatePicker
+  - text: A time of day.
+    use: TimePicker
+  - text: A month of a year.
+    use: MonthPicker
   - text: A message in a conversation, sent with Enter.
     use: Composer
   - text: Formatted text, such as headings, lists and links.

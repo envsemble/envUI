@@ -190,6 +190,18 @@
       "use": [{ "component": "DatePicker" }]
     },
     {
+      "id": "input[type=time]",
+      "element": "input",
+      "attributes": { "type": ["time"] },
+      "use": [{ "component": "TimePicker" }]
+    },
+    {
+      "id": "input[type=month]",
+      "element": "input",
+      "attributes": { "type": ["month"] },
+      "use": [{ "component": "MonthPicker" }]
+    },
+    {
       "id": "input[type=file]",
       "element": "input",
       "attributes": { "type": ["file"] },
@@ -218,7 +230,7 @@
       "id": "input[type=text]",
       "element": "input",
       "attributes": {
-        "type": [null, "text", "email", "password", "tel", "url", "number", "time", "month", "week"]
+        "type": [null, "text", "email", "password", "tel", "url", "number", "week"]
       },
       "use": [{ "component": "TextField" }],
       "note": "TextField takes the same type."
@@ -227,7 +239,7 @@
       "id": "input",
       "element": "input",
       "use": [{ "component": "TextField" }],
-      "note": "For other types envUI has Checkbox, Radio, Slider, DatePicker, DropZone, ColorPicker and SearchField."
+      "note": "For other types envUI has Checkbox, Radio, Slider, DatePicker, TimePicker, MonthPicker, DropZone, ColorPicker and SearchField."
     },
     {
       "id": "select",

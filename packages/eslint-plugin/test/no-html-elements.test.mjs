@@ -112,7 +112,7 @@ ruleTester.run('no-html-elements', rule, {
       code: '<input type={kind} />',
       errors: [
         uses('TextField', 'a raw <input type={…}>', {
-          note: 'For other types envUI has Checkbox, Radio, Slider, DatePicker, DropZone, ColorPicker and SearchField.',
+          note: 'For other types envUI has Checkbox, Radio, Slider, DatePicker, TimePicker, MonthPicker, DropZone, ColorPicker and SearchField.',
         }),
       ],
     },
@@ -120,7 +120,7 @@ ruleTester.run('no-html-elements', rule, {
       code: '<input {...field} />',
       errors: [
         uses('TextField', 'a raw <input>', {
-          note: 'For other types envUI has Checkbox, Radio, Slider, DatePicker, DropZone, ColorPicker and SearchField.',
+          note: 'For other types envUI has Checkbox, Radio, Slider, DatePicker, TimePicker, MonthPicker, DropZone, ColorPicker and SearchField.',
         }),
       ],
     },
@@ -152,6 +152,8 @@ ruleTester.run('no-html-elements', rule, {
       code: '<input type="datetime-local" />',
       errors: [uses('DatePicker', 'a raw <input type="datetime-local">')],
     },
+    { code: '<input type="time" />', errors: [uses('TimePicker', 'a raw <input type="time">')] },
+    { code: '<input type="month" />', errors: [uses('MonthPicker', 'a raw <input type="month">')] },
     { code: '<input type="file" />', errors: [uses('DropZone', 'a raw <input type="file">')] },
     { code: '<input type="color" />', errors: [uses('ColorPicker', 'a raw <input type="color">')] },
     {

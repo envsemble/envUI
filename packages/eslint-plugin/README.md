@@ -110,53 +110,55 @@ Options:
 
 The mapping table:
 
-| Entry                    | Reports                                                                                                             | Use instead                                                         |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `[role=button]`          | `role="button"`                                                                                                     | `Button`, or `IconButton` for an icon-only button                   |
-| `[role=link]`            | `role="link"`                                                                                                       | `Link`                                                              |
-| `[role=checkbox]`        | `role="checkbox"`                                                                                                   | `Checkbox`                                                          |
-| `[role=switch]`          | `role="switch"`                                                                                                     | `Switch`                                                            |
-| `[role=radio]`           | `role="radio"`                                                                                                      | `Radio` in a `RadioGroup`                                           |
-| `[role=radiogroup]`      | `role="radiogroup"`                                                                                                 | `RadioGroup` with a `Radio` for each option                         |
-| `[role=slider]`          | `role="slider"`                                                                                                     | `Slider`                                                            |
-| `[role=textbox]`         | `role="textbox"`                                                                                                    | `TextField`, or `Textarea` for text on several lines                |
-| `[role=searchbox]`       | `role="searchbox"`                                                                                                  | `SearchField`                                                       |
-| `[role=combobox]`        | `role="combobox"`                                                                                                   | `Combobox`, or `Select` when people pick without typing             |
-| `[role=listbox]`         | `role="listbox"`                                                                                                    | `Select`, or `Combobox` when typing filters the options             |
-| `[role=menu]`            | `role="menu"`                                                                                                       | `Menu.Root`                                                         |
-| `[role=menubar]`         | `role="menubar"`                                                                                                    | `Menubar.Root`                                                      |
-| `[role=dialog]`          | `role="dialog"`                                                                                                     | `Dialog`                                                            |
-| `[role=alertdialog]`     | `role="alertdialog"`                                                                                                | `Dialog`                                                            |
-| `[role=tablist]`         | `role="tablist"`                                                                                                    | `Tabs`                                                              |
-| `[role=tree]`            | `role="tree"`                                                                                                       | `Tree`                                                              |
-| `[role=tooltip]`         | `role="tooltip"`                                                                                                    | `Tooltip`                                                           |
-| `[role=progressbar]`     | `role="progressbar"`                                                                                                | `Progress`                                                          |
-| `[role=meter]`           | `role="meter"`                                                                                                      | `Meter`                                                             |
-| `[role=alert]`           | `role="alert"`                                                                                                      | `Alert`                                                             |
-| `[role=table]`           | `role="table"`                                                                                                      | `Table.Root`                                                        |
-| `button`                 | `<button>`                                                                                                          | `Button`, or `IconButton` for an icon-only button                   |
-| `input[type=hidden]`     | nothing: hidden inputs pass                                                                                         |                                                                     |
-| `input[type=checkbox]`   | `<input type="checkbox">`                                                                                           | `Checkbox`, or `Switch` for a setting that applies at once          |
-| `input[type=radio]`      | `<input type="radio">`                                                                                              | `Radio` in a `RadioGroup`                                           |
-| `input[type=range]`      | `<input type="range">`                                                                                              | `Slider`                                                            |
-| `input[type=date]`       | `<input type="date">`, `type="datetime-local"`                                                                      | `DatePicker`                                                        |
-| `input[type=file]`       | `<input type="file">`                                                                                               | `DropZone`                                                          |
-| `input[type=color]`      | `<input type="color">`                                                                                              | `ColorPicker`                                                       |
-| `input[type=search]`     | `<input type="search">`                                                                                             | `SearchField`                                                       |
-| `input[type=submit]`     | `<input>` of type `submit`, `reset`, `button` or `image`                                                            | `Button`                                                            |
-| `input[type=text]`       | `<input>` without a type, or of type `text`, `email`, `password`, `tel`, `url`, `number`, `time`, `month` or `week` | `TextField`, which takes the same type                              |
-| `input`                  | any other `<input>`, such as one whose type is computed                                                             | `TextField`, or the field for its type                              |
-| `select`                 | `<select>`                                                                                                          | `Select`, or `Combobox` when typing filters the options             |
-| `textarea`               | `<textarea>`                                                                                                        | `Textarea`, or `Composer` for writing a chat message                |
-| `dialog`                 | `<dialog>`                                                                                                          | `Dialog`                                                            |
-| `table`                  | `<table>`                                                                                                           | `Table.Root`                                                        |
-| `details`                | `<details>`                                                                                                         | `Disclosure`                                                        |
-| `progress`               | `<progress>`                                                                                                        | `Progress`                                                          |
-| `meter`                  | `<meter>`                                                                                                           | `Meter`                                                             |
-| `kbd`                    | `<kbd>`                                                                                                             | `Kbd`                                                               |
-| `a[onClick]:not([href])` | `<a onClick>` without an `href`, or with `href=""`, `"#"` or `"javascript:…"`                                       | `Button`                                                            |
-| `a[href]`                | `<a href>`                                                                                                          | `Link`, or `Button` with `href` for a link that looks like a button |
-| `[onClick][tabIndex]`    | any other element that handles clicks and takes focus, such as `<div onClick tabIndex={0}>`                         | `Button`, or `IconButton` for an icon-only button                   |
+| Entry                    | Reports                                                                                            | Use instead                                                         |
+| ------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `[role=button]`          | `role="button"`                                                                                    | `Button`, or `IconButton` for an icon-only button                   |
+| `[role=link]`            | `role="link"`                                                                                      | `Link`                                                              |
+| `[role=checkbox]`        | `role="checkbox"`                                                                                  | `Checkbox`                                                          |
+| `[role=switch]`          | `role="switch"`                                                                                    | `Switch`                                                            |
+| `[role=radio]`           | `role="radio"`                                                                                     | `Radio` in a `RadioGroup`                                           |
+| `[role=radiogroup]`      | `role="radiogroup"`                                                                                | `RadioGroup` with a `Radio` for each option                         |
+| `[role=slider]`          | `role="slider"`                                                                                    | `Slider`                                                            |
+| `[role=textbox]`         | `role="textbox"`                                                                                   | `TextField`, or `Textarea` for text on several lines                |
+| `[role=searchbox]`       | `role="searchbox"`                                                                                 | `SearchField`                                                       |
+| `[role=combobox]`        | `role="combobox"`                                                                                  | `Combobox`, or `Select` when people pick without typing             |
+| `[role=listbox]`         | `role="listbox"`                                                                                   | `Select`, or `Combobox` when typing filters the options             |
+| `[role=menu]`            | `role="menu"`                                                                                      | `Menu.Root`                                                         |
+| `[role=menubar]`         | `role="menubar"`                                                                                   | `Menubar.Root`                                                      |
+| `[role=dialog]`          | `role="dialog"`                                                                                    | `Dialog`                                                            |
+| `[role=alertdialog]`     | `role="alertdialog"`                                                                               | `Dialog`                                                            |
+| `[role=tablist]`         | `role="tablist"`                                                                                   | `Tabs`                                                              |
+| `[role=tree]`            | `role="tree"`                                                                                      | `Tree`                                                              |
+| `[role=tooltip]`         | `role="tooltip"`                                                                                   | `Tooltip`                                                           |
+| `[role=progressbar]`     | `role="progressbar"`                                                                               | `Progress`                                                          |
+| `[role=meter]`           | `role="meter"`                                                                                     | `Meter`                                                             |
+| `[role=alert]`           | `role="alert"`                                                                                     | `Alert`                                                             |
+| `[role=table]`           | `role="table"`                                                                                     | `Table.Root`                                                        |
+| `button`                 | `<button>`                                                                                         | `Button`, or `IconButton` for an icon-only button                   |
+| `input[type=hidden]`     | nothing: hidden inputs pass                                                                        |                                                                     |
+| `input[type=checkbox]`   | `<input type="checkbox">`                                                                          | `Checkbox`, or `Switch` for a setting that applies at once          |
+| `input[type=radio]`      | `<input type="radio">`                                                                             | `Radio` in a `RadioGroup`                                           |
+| `input[type=range]`      | `<input type="range">`                                                                             | `Slider`                                                            |
+| `input[type=date]`       | `<input type="date">`, `type="datetime-local"`                                                     | `DatePicker`                                                        |
+| `input[type=time]`       | `<input type="time">`                                                                              | `TimePicker`                                                        |
+| `input[type=month]`      | `<input type="month">`                                                                             | `MonthPicker`                                                       |
+| `input[type=file]`       | `<input type="file">`                                                                              | `DropZone`                                                          |
+| `input[type=color]`      | `<input type="color">`                                                                             | `ColorPicker`                                                       |
+| `input[type=search]`     | `<input type="search">`                                                                            | `SearchField`                                                       |
+| `input[type=submit]`     | `<input>` of type `submit`, `reset`, `button` or `image`                                           | `Button`                                                            |
+| `input[type=text]`       | `<input>` without a type, or of type `text`, `email`, `password`, `tel`, `url`, `number` or `week` | `TextField`, which takes the same type                              |
+| `input`                  | any other `<input>`, such as one whose type is computed                                            | `TextField`, or the field for its type                              |
+| `select`                 | `<select>`                                                                                         | `Select`, or `Combobox` when typing filters the options             |
+| `textarea`               | `<textarea>`                                                                                       | `Textarea`, or `Composer` for writing a chat message                |
+| `dialog`                 | `<dialog>`                                                                                         | `Dialog`                                                            |
+| `table`                  | `<table>`                                                                                          | `Table.Root`                                                        |
+| `details`                | `<details>`                                                                                        | `Disclosure`                                                        |
+| `progress`               | `<progress>`                                                                                       | `Progress`                                                          |
+| `meter`                  | `<meter>`                                                                                          | `Meter`                                                             |
+| `kbd`                    | `<kbd>`                                                                                            | `Kbd`                                                               |
+| `a[onClick]:not([href])` | `<a onClick>` without an `href`, or with `href=""`, `"#"` or `"javascript:…"`                      | `Button`                                                            |
+| `a[href]`                | `<a href>`                                                                                         | `Link`, or `Button` with `href` for a link that looks like a button |
+| `[onClick][tabIndex]`    | any other element that handles clicks and takes focus, such as `<div onClick tabIndex={0}>`        | `Button`, or `IconButton` for an icon-only button                   |
 
 Item roles (`menuitem`, `option`, `tab`, `row`) are not reported on their own: their container's role is. A `<div onClick>` that cannot take focus is left to accessibility linting, which reports it with the fix that suits it.
 
