@@ -58,6 +58,7 @@ after(async () => {
 test('the package ships the plugin, its data and its documentation, and nothing else', () => {
   const files = packed.files.map(({ path }) => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(files, [
+    'CHANGELOG.md',
     'README.md',
     'index.d.ts',
     'package.json',

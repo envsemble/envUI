@@ -42,7 +42,9 @@ const notes = releaseNotes(
   libraryPackage.version,
 );
 if (process.argv.includes('--release-notes')) process.stdout.write(notes);
-else if (process.argv.includes('--dist-tag')) console.log(prerelease ? 'next' : 'latest');
+// A prerelease goes out under its own name, such as prerelease for 1.0.0-prerelease.0.
+else if (process.argv.includes('--dist-tag'))
+  console.log(prerelease ? libraryPackage.version.split('-')[1].split('.')[0] : 'latest');
 else if (process.argv.includes('--release-flag')) console.log(prerelease ? '--prerelease' : '');
 else console.log(`Validated ${tag}; ${prerelease ? 'prerelease' : 'stable'} distribution.`);
 

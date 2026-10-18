@@ -58,6 +58,7 @@ after(async () => {
 test('the package ships the config, its plugin, its token names and its documentation, and nothing else', () => {
   const files = packed.files.map(({ path }) => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(files, [
+    'CHANGELOG.md',
     'README.md',
     'data/tokens.json',
     'index.js',

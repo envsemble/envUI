@@ -208,11 +208,12 @@ const compareVersions = (a, b) => {
  * The versions a page's `since` may name: each stable version the library's changelog lists, and
  * the version its changesets lead to. That is the newest stable version raised by the largest bump
  * of a pending changeset, counting the packages that share envUI's version (the `fixed` group of
- * .changeset/config.json). In prerelease mode (.changeset/pre.json) it is the version the
- * prereleases lead to, such as 1.0.0 for 1.0.0-next.3: the version before the prereleases, from
- * the mode's initialVersions, raised by the largest bump of every changeset since, released in a
- * prerelease or not, as Changesets computes it. Prerelease headings such as `## 1.0.0-next.0` are
- * not versions a page can name. Undefined outside the repository, where the check is skipped.
+ * .changeset/config.json). In prerelease mode (.changeset/pre.json, with the changesets it applied
+ * in .changeset/pre/) it is the version the prereleases lead to, such as 1.0.0 for
+ * 1.0.0-prerelease.3: the version before the prereleases, from the mode's initialVersions or the
+ * newest stable version, raised by the largest bump of every changeset since, released in a
+ * prerelease or not, as Changesets computes it. Prerelease headings such as
+ * `## 1.0.0-prerelease.0` are not versions a page can name. Undefined outside the repository, where the check is skipped.
  */
 export function libraryVersions({
   changelog = changelogFile,
@@ -232,16 +233,25 @@ export function libraryVersions({
     library,
   ];
   const pre = readJson('pre.json');
-  const bumps = existsSync(changesets)
-    ? readdirSync(changesets)
-        .filter((name) => name.endsWith('.md') && name !== 'README.md')
-        .flatMap((name) => {
-          const source = readFileSync(resolve(changesets, name), 'utf8');
-          const header = source.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
-          return [...header.matchAll(/^['"]?([^'"\s:]+)['"]?:\s*(major|minor|patch)\s*$/gm)]
-            .filter(([, name]) => group.includes(name))
-            .map(([, , bump]) => bump);
-        })
+  // Changesets 3 keeps the changesets that prereleases applied in .changeset/pre/ until the mode
+  // ends; they count toward the version the prereleases lead to.
+  const directories = [changesets];
+  if (pre?.mode === 'pre') directories.push(resolve(changesets, 'pre'));
+  const files = directories.flatMap((directory) =>
+    existsSync(directory)
+      ? readdirSync(directory)
+          .filter((name) => name.endsWith('.md') && name !== 'README.md')
+          .map((name) => resolve(directory, name))
+      : [],
+  );
+  const bumps = files.length
+    ? files.flatMap((file) => {
+        const source = readFileSync(file, 'utf8');
+        const header = source.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
+        return [...header.matchAll(/^['"]?([^'"\s:]+)['"]?:\s*(major|minor|patch)\s*$/gm)]
+          .filter(([, name]) => group.includes(name))
+          .map(([, , bump]) => bump);
+      })
     : [];
   const largest = bumps.sort((a, b) => bumpOrder.indexOf(b) - bumpOrder.indexOf(a))[0];
   const base =

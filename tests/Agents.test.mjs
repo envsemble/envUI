@@ -363,10 +363,10 @@ test('npx always runs envui with --no, in the docs, skills and what the bin prin
   const withoutNo = /\bnpx\s+(?:(?!--no\b)\S+\s+)*envui\b/;
   const texts = [
     ['README.md', readFileSync(join(repository, 'README.md'), 'utf8')],
-    [
-      '.changeset/agent-tooling.md',
-      readFileSync(join(repository, '.changeset/agent-tooling.md'), 'utf8'),
-    ],
+    // A prerelease moves the changesets it applied into .changeset/pre/ until the mode ends.
+    ...['.changeset/agent-tooling.md', '.changeset/pre/agent-tooling.md']
+      .filter((path) => existsSync(join(repository, path)))
+      .map((path) => [path, readFileSync(join(repository, path), 'utf8')]),
     ['docs/generated/llms.txt', readFileSync(join(repository, 'docs/generated/llms.txt'), 'utf8')],
     ['index', renderIndex(manifest)],
     [
