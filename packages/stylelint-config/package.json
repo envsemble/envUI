@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/stylelint-config-envui",
-  "version": "0.7.0",
+  "version": "1.0.0-prerelease.0",
   "description": "Stylelint config that keeps application styles on envUI's tokens and off envUI's private markup",
   "homepage": "https://github.com/envsemble/envUI/tree/main/packages/stylelint-config#readme",
   "bugs": {

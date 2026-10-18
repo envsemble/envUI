@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui",
-  "version": "0.7.0",
+  "version": "1.0.0-prerelease.0",
   "description": "envUI: the internal envsemble React component library",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {

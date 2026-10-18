@@ -1,6 +1,6 @@
 {
   "name": "envui",
-  "version": "0.7.0",
+  "version": "1.0.0-prerelease.0",
   "description": "envUI for coding agents: the envui-use, envui-migrate and envui-contribute skills, and the envui MCP server, which answers from the envUI the project has installed.",
   "author": { "name": "envsemble" },
   "homepage": "https://github.com/envsemble/envUI",

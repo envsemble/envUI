@@ -1,6 +1,6 @@
 {
   "name": "@envsemble/envui-codemods",
-  "version": "0.7.0",
+  "version": "1.0.0-prerelease.0",
   "description": "Codemods that upgrade an application from envUI 0.x to envUI 1.0",
   "homepage": "https://github.com/envsemble/envUI#readme",
   "bugs": {
