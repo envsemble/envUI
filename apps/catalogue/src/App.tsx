@@ -20,6 +20,8 @@ import { ReferenceContent } from './pages/ReferenceContent';
 import { StandalonePageContent } from './pages/StandalonePages';
 import { PageBoundary } from './layout/PageBoundary';
 import { PageHeader } from './layout/PageHeader';
+import { PageFooter } from './layout/PageFooter';
+import { PageChangelog } from './template/TemplateContent';
 import { Overview } from './pages/Overview';
 import { DocumentationSidebar } from './navigation/Sidebar';
 import { PageNavigation } from './navigation/PageNavigation';
@@ -128,6 +130,12 @@ function Catalogue() {
                 : view
           }
         />
+        {page ? (
+          <PageChangelog document={page.reference} view={view} />
+        ) : (
+          standalone?.document && <PageChangelog document={standalone.document} />
+        )}
+        <PageFooter />
       </AppShell.Main>
       <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </AppShell.Root>

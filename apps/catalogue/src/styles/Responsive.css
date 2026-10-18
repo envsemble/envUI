@@ -19,7 +19,8 @@
   .docs-header,
   .docs-sidebar,
   .docs-page-controls,
-  .docs-page-navigation {
+  .docs-page-navigation,
+  .docs-footer {
     display: none;
   }
   .docs-frame {

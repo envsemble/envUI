@@ -71,10 +71,13 @@
   width: 1.125rem;
   height: 1.125rem;
 }
+/* The action keeps its label on one line and the message wraps instead; only a label longer than
+   half the toast wraps. */
 .env-toast .env-toast-action {
-  flex: 0 1 auto;
-  min-inline-size: 0;
+  flex: 0 0 auto;
+  max-inline-size: 50%;
   white-space: normal;
+  overflow-wrap: break-word;
 }
 /* The dismiss button is a CloseButton on the notice's strong fill: the fill's text color, with the
    fill's own hover and press steps. Toast.css comes after Button.css, so at equal specificity

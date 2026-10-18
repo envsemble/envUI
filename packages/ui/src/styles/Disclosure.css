@@ -15,7 +15,9 @@
   gap: 0.5rem;
   list-style: none;
   white-space: normal;
-  overflow-wrap: anywhere;
+  /* Not anywhere: Firefox sizes the fit-content summary from its min-content width, which anywhere
+     shrinks to one letter, and a one-word title such as Code would break. */
+  overflow-wrap: break-word;
   cursor: pointer;
   width: fit-content;
   max-width: 100%;

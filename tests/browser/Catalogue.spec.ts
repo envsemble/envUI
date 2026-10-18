@@ -5,6 +5,7 @@ import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { readMap } from '../../packages/codemods/src/map.mjs';
+import { documentedVersion } from '../../scripts/GenerateDocumentation.mjs';
 import {
   references,
   foundations as foundationReferences,
@@ -162,7 +163,9 @@ test('offline reference loads every view without network or script errors', asyn
   });
   await page.goto(`${offline}#/overview`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
-  await expect(page.locator('.docs-sidebar-footer')).toContainText(`envUI · ${version}`);
+  await expect(page.locator('.docs-sidebar-footer')).toContainText(
+    `envUI · ${documentedVersion()}`,
+  );
   // Every view of every page: Preview and Usage, or the views of a page on the template.
   for (const { path, views } of referencePages) {
     for (const view of views) {

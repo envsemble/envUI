@@ -155,7 +155,7 @@ function Related({ reference }: { reference: Document }) {
   );
 }
 
-/** Sections in the template's order, with Related before the changelog. */
+/** Sections in the template's order, then Related; the changelog follows the page navigation. */
 function Sections({
   reference,
   sections,
@@ -163,16 +163,14 @@ function Sections({
   reference: Document;
   sections: DocumentationSection[];
 }) {
-  const changelog = sections.find((section) => section.id === 'changelog');
   return (
     <Stack gap={8} className="docs-article docs-template">
       {sections
-        .filter((section) => section !== changelog)
+        .filter((section) => section.id !== 'changelog')
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
       {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
-      {changelog && <Section reference={reference} section={changelog} />}
     </Stack>
   );
 }
@@ -198,4 +196,18 @@ export function TemplateContent({ page, view }: { page: ReferencePage; view: Ref
 /** A pattern or template page, which has one view: every section in the template's order. */
 export function SingleViewContent({ document }: { document: Document }) {
   return <Sections reference={document} sections={document.sections ?? []} />;
+}
+
+/**
+ * A page's changelog, below the page navigation in smaller, quieter type than the guidance: on a
+ * page with views it shows with the view that holds it, on a page with one view always.
+ */
+export function PageChangelog({ document, view }: { document: Document; view?: ReferenceView }) {
+  const changelog = document.sections?.find((section) => section.id === 'changelog');
+  if (!changelog || (view && sectionViews[changelog.id] !== view)) return null;
+  return (
+    <div className="docs-article docs-template docs-changelog">
+      <Section reference={document} section={changelog} />
+    </div>
+  );
 }

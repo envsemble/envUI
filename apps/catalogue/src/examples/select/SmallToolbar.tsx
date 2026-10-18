@@ -23,7 +23,12 @@ export default function SmallToolbar() {
         aria-label="Diagram"
         render={<Stack direction="row" wrap align="center" gap={4} />}
       >
-        <Text render={<span />} variant="body-sm">
+        {/* The label starts clear of the rounded end, as the buttons' own padding does. */}
+        <Text
+          render={<span />}
+          variant="body-sm"
+          style={{ paddingInlineStart: 'var(--env-space-3)' }}
+        >
           Northwind launch plan
         </Text>
         <IconButton

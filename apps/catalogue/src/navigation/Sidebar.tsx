@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { version } from '@envsemble/envui/package.json';
+import { documentedVersion as version } from '../generated/Documentation';
 import {
   Link,
   NavList,
