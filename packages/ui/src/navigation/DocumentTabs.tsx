@@ -133,17 +133,20 @@ export function DocumentTabs({
       const strip = list.current;
       const tab = tabElement(value)?.parentElement;
       if (!strip || !tab) return;
-      // The tab clears the fade at the edge it comes in from, so none of it is faded; at the
-      // strip's ends, where there is no fade, scrollLeft stops at its limit.
+      // The tab clears the fade at the edge it comes in from, so none of it is faded. Only an edge
+      // with more to scroll past it has a fade: at the strip's ends there is no room to leave.
       const rem = parseFloat(getComputedStyle(strip.ownerDocument.documentElement).fontSize);
       const fade = parseFloat(getComputedStyle(strip).getPropertyValue('--env-document-tabs-fade'));
       const room = Number.isFinite(fade) ? fade * rem : 0;
+      const beyond = scrollBeyond(strip);
       const stripBox = strip.getBoundingClientRect();
       const tabBox = tab.getBoundingClientRect();
-      if (tabBox.left < stripBox.left + room)
-        strip.scrollLeft -= stripBox.left + room - tabBox.left;
-      else if (tabBox.right > stripBox.right - room)
-        strip.scrollLeft += tabBox.right - (stripBox.right - room);
+      const roomLeft = beyond.left ? room : 0;
+      const roomRight = beyond.right ? room : 0;
+      if (tabBox.left < stripBox.left + roomLeft)
+        strip.scrollLeft -= stripBox.left + roomLeft - tabBox.left;
+      else if (tabBox.right > stripBox.right - roomRight)
+        strip.scrollLeft += tabBox.right - (stripBox.right - roomRight);
     }
     reveal();
     // Base UI also scrolls the active tab into view, and the labels may still widen as the font
@@ -206,11 +209,7 @@ export function DocumentTabs({
     const strip = list.current;
     if (!strip) return;
     const update = () => {
-      const max = strip.scrollWidth - strip.clientWidth;
-      const scrolled = strip.scrollLeft;
-      const rtl = getComputedStyle(strip).direction === 'rtl';
-      const left = max > 0.5 && (rtl ? scrolled > -max + 0.5 : scrolled > 0.5);
-      const right = max > 0.5 && (rtl ? scrolled < -0.5 : scrolled < max - 0.5);
+      const { left, right } = scrollBeyond(strip);
       setFades((current) =>
         current.left === left && current.right === right ? current : { left, right },
       );
@@ -506,6 +505,20 @@ export function DocumentTabs({
       </BaseTabs.Root>
     </DirectionProvider>
   );
+}
+
+/**
+ * Whether the strip has tabs past its left and right edges to scroll to. In right-to-left text
+ * scrollLeft runs from 0 down to -max. Less than 1.5 px doesn't count: subpixel rounding can leave a
+ * pixel of scroll range, past even the start, that hides nothing.
+ */
+function scrollBeyond(strip: HTMLElement) {
+  const max = strip.scrollWidth - strip.clientWidth;
+  const scrolled = strip.scrollLeft;
+  const rtl = getComputedStyle(strip).direction === 'rtl';
+  const leftOver = rtl ? max + scrolled : scrolled;
+  const rightOver = rtl ? -scrolled : max - scrolled;
+  return { left: max > 1.5 && leftOver > 1.5, right: max > 1.5 && rightOver > 1.5 };
 }
 
 /** The id of the tab whose item holds focus within the strip, or null. */
