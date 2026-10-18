@@ -306,7 +306,9 @@ test.describe('DocumentTabs', () => {
       await expect(roadmap).toBeFocused();
       // Turning the wheel down scrolls toward the end, the left, where scrollLeft is negative.
       const scrollLeft = () => strip.evaluate((element) => element.scrollLeft);
-      expect(await scrollLeft()).toBe(0);
+      // Back on the first tab, the strip scrolls home, clear of the fade at its edge, on the next
+      // frame; a slower machine may read it before then.
+      await expect.poll(scrollLeft).toBe(0);
       await strip.hover();
       await page.mouse.wheel(0, 200);
       await expect.poll(scrollLeft).toBeLessThan(0);
