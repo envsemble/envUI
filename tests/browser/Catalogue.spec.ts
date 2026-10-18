@@ -163,9 +163,7 @@ test('offline reference loads every view without network or script errors', asyn
   });
   await page.goto(`${offline}#/overview`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('envUI');
-  await expect(page.locator('.docs-sidebar-footer')).toContainText(
-    `envUI · ${documentedVersion()}`,
-  );
+  await expect(page.locator('.docs-footer')).toContainText(`envUI ${documentedVersion()}`);
   // Every view of every page: Preview and Usage, or the views of a page on the template.
   for (const { path, views } of referencePages) {
     for (const view of views) {
@@ -471,7 +469,7 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   const scrolled = await page.evaluate(() => window.scrollY);
   expect(scrolled).toBeGreaterThan(1000);
   await page
-    .locator('.docs-sidebar-footer')
+    .locator('.docs-page-controls')
     .getByRole('button', { name: /^Switch to/ })
     .evaluate((toggle: HTMLElement) => toggle.click());
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');

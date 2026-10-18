@@ -118,15 +118,16 @@ export function useDisplaySettings() {
 
 /**
  * The Display menu: the theme, the contrast and the scale, each stored as it is chosen. iconOnly
- * shows its trigger as an icon, such as in the navigation's rail.
+ * shows its trigger as an icon, such as in a phone's top bar. It opens below its trigger, at the
+ * top of the page.
  */
 export function DisplayMenu({ iconOnly = false }: { iconOnly?: boolean }) {
   const { contrast, setContrast, scale, setScale } = useDisplaySettings();
   return (
     <Menu.Root
       aria-label="Display"
-      side="top"
-      align="start"
+      side="bottom"
+      align="end"
       trigger={
         iconOnly ? (
           // The Tooltip passes the menu button's props and ref on to the IconButton.

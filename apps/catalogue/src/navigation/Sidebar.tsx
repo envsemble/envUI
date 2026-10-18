@@ -1,13 +1,10 @@
 import type { ReactNode } from 'react';
-import { documentedVersion as version } from '../generated/Documentation';
 import {
   Link,
   NavList,
   SearchTrigger,
   Sidebar,
   SidebarTrigger,
-  Text,
-  ThemeToggle,
   useSidebar,
 } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
@@ -33,7 +30,6 @@ import {
 } from './DocumentationRoutes';
 import { homeRoute, routeHref } from './Address';
 import { foundationIcons, getComponentIcon } from './TopicIcons';
-import { DisplayMenu } from '../theme/DisplaySettings';
 
 /**
  * The pattern pages under one heading per intent, what people are doing, in the order of the index,
@@ -158,14 +154,15 @@ function Sections({ routePath, page }: SectionsProps) {
 }
 
 /**
- * The navigation's top row: the envUI wordmark, which leads to the overview, and the trigger that
- * collapses the navigation to a rail. In the drawer the drawer's own close button stands in for
+ * The navigation's top row: the trigger that collapses the navigation to a rail, which stays in
+ * place as the rail peeks open, then the envUI wordmark, which leads to the overview. In the drawer the drawer's own close button stands in for
  * the trigger.
  */
 function Header() {
   const { isMobile } = useSidebar();
   return (
     <Sidebar.Header className="docs-sidebar-header">
+      {!isMobile && <SidebarTrigger className="docs-sidebar-trigger" />}
       <Link
         href={routeHref(homeRoute)}
         underline={false}
@@ -174,7 +171,6 @@ function Header() {
       >
         <EnvUILogo />
       </Link>
-      {!isMobile && <SidebarTrigger className="docs-sidebar-trigger" />}
     </Sidebar.Header>
   );
 }
@@ -193,27 +189,8 @@ function Search({ onSearch }: { onSearch: () => void }) {
   );
 }
 
-/** The display settings, the theme and the version; a rail shows only their icons. */
-function Footer() {
-  const { isRail } = useSidebar();
-  return (
-    <Sidebar.Footer className="docs-sidebar-footer">
-      <DisplayMenu iconOnly={isRail} />
-      <ThemeToggle variant="ghost" />
-      {!isRail && (
-        <Text variant="caption" className="docs-sidebar-version">
-          envUI · {version}
-          <br />
-          Internal reference
-        </Text>
-      )}
-    </Sidebar.Footer>
-  );
-}
-
 /**
- * The catalogue's navigation: the wordmark and search above, the sections, and the display
- * settings below. On a wide window it docks beside the page, at a width readers can change, or
+ * The catalogue's navigation: the wordmark and search above, then the sections. On a wide window it docks beside the page, at a width readers can change, or
  * collapses to a rail of icons that opens over the page; below 48 rem it is a drawer that the top
  * bar's trigger opens.
  */
@@ -240,7 +217,6 @@ export function DocumentationSidebar({
       <Sidebar.Content className="docs-sidebar-navigation">
         <Sections routePath={routePath} page={page} />
       </Sidebar.Content>
-      <Footer />
     </Sidebar.Root>
   );
 }

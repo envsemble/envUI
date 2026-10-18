@@ -7,7 +7,7 @@ export function PageFooter() {
   return (
     <footer className="docs-footer">
       <Stack direction="row" wrap justify="between" align="center" gap={4}>
-        <Text variant="caption">envUI {version} · Internal reference</Text>
+        <Text variant="caption">envUI {version}</Text>
         <Stack render={<nav aria-label="Footer" />} direction="row" wrap gap={5}>
           <Text variant="caption">
             <Link href={routeHref('changelog')}>Changelog</Link>

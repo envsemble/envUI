@@ -34,13 +34,11 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The trigger that collapses the navigation sits at the header's end, beside the wordmark. */
-.docs-sidebar-trigger {
-  margin-inline-start: auto;
-}
-.docs-sidebar-version {
-  flex-basis: 100%;
-  padding-inline: var(--env-space-3);
+/* The trigger that collapses the navigation starts the header, on the icons' centre line, so it
+   stays where it is as the navigation collapses to a rail or peeks out of one; a rail shows only
+   the trigger. */
+.docs-sidebar[data-rail] .docs-brand-link {
+  display: none;
 }
 .docs-main {
   display: flex;
@@ -120,10 +118,28 @@ body {
     --env-surface-radius: var(--env-radius-surface);
   }
 }
+/* The display settings and the theme stay in the top right corner of the window as the page
+   scrolls, beside the content column rather than in it. The row that holds them sticks to the
+   window's top and is no taller than nothing, so they take no space above the page. */
 .docs-page-controls {
-  margin-inline-start: auto;
-  flex-shrink: 0;
-  max-inline-size: 100%;
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
+  block-size: 0;
+}
+.docs-page-controls-bar {
+  position: absolute;
+  inset-block-start: var(--env-space-3);
+  inset-inline-end: var(--env-space-4);
+  display: flex;
+  gap: var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-page);
+}
+@media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
+  .docs-page-controls {
+    display: none;
+  }
 }
 .docs-page-navigation {
   padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);

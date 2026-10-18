@@ -29,7 +29,7 @@ import { RouterLink } from './navigation/RouterLink';
 import { homeRoute, routeHref, revealSection } from './navigation/Address';
 import { isSearchShortcut } from './search/SearchShortcut';
 import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocumentationRoute';
-import { DisplaySettingsProvider } from './theme/DisplaySettings';
+import { DisplayMenu, DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
 /** Where the frame remembers whether the reader keeps the navigation docked or as a rail. */
@@ -89,7 +89,7 @@ function Catalogue() {
   return (
     <AppShell.Root persist={frameStorageKey} className="docs-frame">
       <AppShell.SkipLinks />
-      {/* A phone's top bar: the navigation's drawer, the overview, search and the theme. */}
+      {/* A phone's top bar: the navigation's drawer, the overview, search, display and theme. */}
       <AppShell.Header
         mobileOnly
         className="docs-header"
@@ -109,12 +109,21 @@ function Catalogue() {
         end={
           <>
             <SearchTrigger iconOnly onClick={openSearch} />
+            <DisplayMenu iconOnly />
             <ThemeToggle variant="ghost" />
           </>
         }
       />
       <DocumentationSidebar routePath={routePath} page={page} onSearch={openSearch} />
       <AppShell.Main id="docs-main" ref={mainElement} className="docs-main">
+        {/* The display settings and the theme, at the page's top right as it scrolls; a phone's
+            top bar holds them instead. */}
+        <div className="docs-page-controls">
+          <div className="docs-page-controls-bar">
+            <DisplayMenu />
+            <ThemeToggle variant="ghost" />
+          </div>
+        </div>
         <PageBoundary title={title} route={route}>
           {!isOverview && !page && !standalone && <PageHeader title={title} breadcrumb="envUI" />}
           {content}

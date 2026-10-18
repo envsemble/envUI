@@ -251,9 +251,12 @@ export interface GroupProps extends Omit<ComponentPropsWithRef<'li'>, 'children'
 /** Related items under a small heading, as an item of NavList.Root with a list of its own. */
 function Group({ label, children, className, ...props }: GroupProps) {
   const labelId = useId();
+  // In a sidebar rail the label is visually hidden, as the rail's group headings are; it still
+  // names the group's list.
+  const inRail = useSidebarRail();
   return (
     <li {...props} className={classNames('env-nav-list-group', className)}>
-      <span className="env-nav-list-group-label" id={labelId}>
+      <span className="env-nav-list-group-label" id={labelId} data-rail={inRail ? '' : undefined}>
         {label}
       </span>
       <ul className="env-nav-list-group-list" aria-labelledby={labelId}>

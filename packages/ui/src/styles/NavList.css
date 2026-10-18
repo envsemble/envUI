@@ -145,6 +145,16 @@
   font: var(--env-type-body-small);
   overflow-wrap: anywhere;
 }
+/* In a sidebar rail, which shows only icons, the label is visually hidden. */
+.env-nav-list-group-label[data-rail] {
+  position: absolute;
+  inline-size: var(--env-control-border-width);
+  block-size: var(--env-control-border-width);
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 /* NavList.Skeleton: placeholders as tall as the items they stand for, the icon where an item's
    icon sits; only the icon in a rail, in the circle an icon-only item takes. */
 .env-nav-list-skeleton-item {
