@@ -658,7 +658,16 @@ export const pairs: readonly ContrastPair[] = merged([
     'Chips',
   ),
   ...text('--env-color-fg-default', [[fill, field]], 'Combobox chips'),
-  ...text('--env-color-avatar-fg', ['--env-color-avatar-bg'], 'Avatar initials'),
+  ...text(
+    '--env-color-avatar-fg',
+    [
+      '--env-color-avatar-bg',
+      ...['teal', 'green', 'amber', 'red', 'violet', 'purple', 'slate'].map(
+        (hue) => `--env-color-avatar-bg-${hue}`,
+      ),
+    ],
+    'Avatar initials on every hue',
+  ),
   ...text(
     '--env-color-fg-default',
     ['--env-color-bg-raised-hover', '--env-color-bg-raised-pressed'],

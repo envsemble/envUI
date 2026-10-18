@@ -8,6 +8,55 @@
         "high": 7
       }
     },
+    "--env-color-avatar-fg on --env-color-avatar-bg-amber": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-green": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-purple": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-red": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-slate": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-teal": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-avatar-fg on --env-color-avatar-bg-violet": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-bg-brand-emphasis on --env-color-bg-default": {
       "kind": "non-text",
       "minimum": {

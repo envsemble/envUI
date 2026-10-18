@@ -715,20 +715,57 @@
       }
     },
     "avatar": {
-      "$description": "Component tokens of avatars without an image: fixed blues of the palette, which no role names.",
+      "$description": "Component tokens of avatars without an image: a solid fill in one of eight hues, which the avatar takes from its name, with white initials or a white figure.",
       "bg": {
-        "$description": "The fill of an avatar that shows initials or the default figure.",
-        "$value": "{palette.blue.20}",
-        "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        "$root": {
+          "$description": "The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue=\"blue\".",
+          "$value": "{palette.blue.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "teal": {
+          "$description": "The teal fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.teal.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "green": {
+          "$description": "The green fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.green.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "amber": {
+          "$description": "The amber fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.amber.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "red": {
+          "$description": "The red fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.red.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "violet": {
+          "$description": "The violet fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.violet.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "purple": {
+          "$description": "The purple fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.purple.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        },
+        "slate": {
+          "$description": "The slate fill, one of the hues an avatar takes from its name.",
+          "$value": "{palette.slate.60}",
+          "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
+        }
       },
       "figure": {
-        "$description": "The default figure of an avatar without a name or an image.",
-        "$value": "{palette.blue.45}",
+        "$description": "The default figure of an avatar without an image, on any of its fills.",
+        "$value": "{palette.neutral.0}",
         "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
       },
       "fg": {
-        "$description": "The initials of an avatar, at least 4.5:1 on its fill, and 7:1 at high contrast.",
-        "$value": "{palette.blue.70}",
+        "$description": "The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast.",
+        "$value": "{palette.neutral.0}",
         "$extensions": { "com.envsemble.envui": { "component": "Avatars" } }
       }
     }

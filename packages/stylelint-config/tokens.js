@@ -19,7 +19,10 @@ const roleOfProperty = [
  * share (`--env-color-fg-`) and its default token, or undefined when envUI has no such tokens.
  */
 function colorFamily(role) {
-  const names = (tokens.color ?? []).filter((name) => name.includes(`-${role}-`));
+  // The role follows the color group directly, as in --env-color-bg-; a component's own colors,
+  // such as --env-color-avatar-bg-teal, belong to the component rather than the family.
+  const family = new RegExp(`^--[a-z]+-color-${role}-`);
+  const names = (tokens.color ?? []).filter((name) => family.test(name));
   if (names.length === 0) return undefined;
   const prefix = names[0].slice(0, names[0].indexOf(`-${role}-`) + role.length + 2);
   return { prefix, example: names.find((name) => name === `${prefix}default`) ?? names[0] };

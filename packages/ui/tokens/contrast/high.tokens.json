@@ -197,7 +197,18 @@
       "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } },
       "done": { "$value": "{contrast-high.color.border.done}" }
     },
-    "avatar": { "fg": { "$value": "{palette.blue.92}" } }
+    "avatar": {
+      "bg": {
+        "$root": { "$value": "{palette.blue.70}" },
+        "teal": { "$value": "{palette.teal.70}" },
+        "green": { "$value": "{palette.green.70}" },
+        "amber": { "$value": "{palette.amber.70}" },
+        "red": { "$value": "{palette.red.70}" },
+        "violet": { "$value": "{palette.violet.70}" },
+        "purple": { "$value": "{palette.purple.70}" },
+        "slate": { "$value": "{palette.slate.70}" }
+      }
+    }
   },
   "elevation": {
     "1": { "border": { "$type": "color", "$value": "{color.border.default}" } },

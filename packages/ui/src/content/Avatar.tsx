@@ -8,6 +8,38 @@ import { useResolvedLocale } from '../internal/useFormatters.js';
 /** An avatar's size: sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
+/** The fills an avatar without a picture takes, each a solid hue under white initials or figure. */
+export const avatarHues = [
+  'blue',
+  'teal',
+  'green',
+  'amber',
+  'red',
+  'violet',
+  'purple',
+  'slate',
+] as const;
+
+/** One of the fills of an avatar without a picture. */
+export type AvatarHue = (typeof avatarHues)[number];
+
+/**
+ * The hue a name gives an avatar: the same name always gives the same hue, on every page and in
+ * every session, and different names spread across the hues. Letter case and surrounding spaces do
+ * not count.
+ */
+export function avatarHue(name: string): AvatarHue {
+  // FNV-1a over the name's UTF-16 code units: fast, stable and spread well for short strings.
+  let hash = 0x811c9dc5;
+  for (const char of name.trim().toLowerCase()) {
+    for (let index = 0; index < char.length; index += 1) {
+      hash ^= char.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+  }
+  return avatarHues[(hash >>> 0) % avatarHues.length];
+}
+
 export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
   /** Person or organization name: the accessible name of a named avatar, and the initials fallback. */
   name: string;
@@ -15,6 +47,11 @@ export interface AvatarProps extends Omit<ComponentPropsWithRef<'span'>, 'childr
   src?: string | null;
   /** Shown without a picture: the default person picture, or initials (for example, for an organization). */
   fallback?: 'person' | 'initials';
+  /**
+   * The fill behind the initials or the person picture. Without it, the name chooses one, the same
+   * for the same name everywhere; set it for an organization with a color of its own.
+   */
+  hue?: AvatarHue;
   /**
    * sm 1.5 rem, md 2 rem, lg 3 rem or xl 5.5 rem, such as for a profile page.
    * @default 'md'
@@ -65,6 +102,7 @@ export function Avatar({
   name,
   src,
   fallback = 'person',
+  hue,
   size = 'md',
   named = false,
   className,
@@ -76,6 +114,7 @@ export function Avatar({
       {...props}
       className={classNames('env-avatar', className)}
       data-size={size}
+      data-hue={hue ?? avatarHue(name)}
       role={named ? 'img' : undefined}
       aria-label={named ? name : undefined}
       aria-hidden={named ? undefined : true}

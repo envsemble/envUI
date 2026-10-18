@@ -12,9 +12,16 @@
   --env-breakpoint-md: 48rem;
   --env-breakpoint-sm: 40rem;
   --env-breakpoint-xl: 80rem;
-  --env-color-avatar-bg: #9fc1f8;
-  --env-color-avatar-fg: #004aa2;
-  --env-color-avatar-figure: #347eea;
+  --env-color-avatar-bg: #005cc8;
+  --env-color-avatar-bg-amber: #8a5504;
+  --env-color-avatar-bg-green: #176f35;
+  --env-color-avatar-bg-purple: #8e3caa;
+  --env-color-avatar-bg-red: #b72b20;
+  --env-color-avatar-bg-slate: #4e627e;
+  --env-color-avatar-bg-teal: #236d52;
+  --env-color-avatar-bg-violet: #7a3fc8;
+  --env-color-avatar-fg: #ffffff;
+  --env-color-avatar-figure: #ffffff;
   --env-color-bg-accent-emphasis: #005cc8;
   --env-color-bg-accent-muted: rgb(0 92 200 / 0.12);
   --env-color-bg-accent-subtle: transparent;
@@ -385,7 +392,14 @@
 }
 
 .env-theme[data-env-contrast='high'] {
-  --env-color-avatar-fg: #001d49;
+  --env-color-avatar-bg: #004aa2;
+  --env-color-avatar-bg-amber: #704300;
+  --env-color-avatar-bg-green: #005a25;
+  --env-color-avatar-bg-purple: #782594;
+  --env-color-avatar-bg-red: #9f0300;
+  --env-color-avatar-bg-slate: #3c4e69;
+  --env-color-avatar-bg-teal: #03593f;
+  --env-color-avatar-bg-violet: #6725b4;
   --env-color-bg-accent-emphasis: #00377c;
   --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -498,7 +512,14 @@
 }
 @media (prefers-contrast: more) {
   .env-theme:not([data-env-contrast='standard']) {
-    --env-color-avatar-fg: #001d49;
+    --env-color-avatar-bg: #004aa2;
+    --env-color-avatar-bg-amber: #704300;
+    --env-color-avatar-bg-green: #005a25;
+    --env-color-avatar-bg-purple: #782594;
+    --env-color-avatar-bg-red: #9f0300;
+    --env-color-avatar-bg-slate: #3c4e69;
+    --env-color-avatar-bg-teal: #03593f;
+    --env-color-avatar-bg-violet: #6725b4;
     --env-color-bg-accent-emphasis: #00377c;
     --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -612,7 +633,14 @@
 }
 
 .env-theme[data-env-theme='dark'][data-env-contrast='high'] {
-  --env-color-avatar-fg: #001d49;
+  --env-color-avatar-bg: #004aa2;
+  --env-color-avatar-bg-amber: #704300;
+  --env-color-avatar-bg-green: #005a25;
+  --env-color-avatar-bg-purple: #782594;
+  --env-color-avatar-bg-red: #9f0300;
+  --env-color-avatar-bg-slate: #3c4e69;
+  --env-color-avatar-bg-teal: #03593f;
+  --env-color-avatar-bg-violet: #6725b4;
   --env-color-bg-accent-emphasis: #cddefc;
   --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);
@@ -725,7 +753,14 @@
 }
 @media (prefers-contrast: more) {
   .env-theme[data-env-theme='dark']:not([data-env-contrast='standard']) {
-    --env-color-avatar-fg: #001d49;
+    --env-color-avatar-bg: #004aa2;
+    --env-color-avatar-bg-amber: #704300;
+    --env-color-avatar-bg-green: #005a25;
+    --env-color-avatar-bg-purple: #782594;
+    --env-color-avatar-bg-red: #9f0300;
+    --env-color-avatar-bg-slate: #3c4e69;
+    --env-color-avatar-bg-teal: #03593f;
+    --env-color-avatar-bg-violet: #6725b4;
     --env-color-bg-accent-emphasis: #cddefc;
     --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);

@@ -9,13 +9,52 @@
   block-size: var(--env-avatar-size);
   overflow: hidden;
   border-radius: 50%;
-  background: var(--env-color-avatar-bg);
+  /* The solid fill of the avatar's hue, from data-hue, behind white initials or figure. */
+  --env-avatar-fill: var(--env-color-avatar-bg);
+  background: var(--env-avatar-fill);
   color: var(--env-color-avatar-fg);
-  font: var(--env-font-weight-medium) calc(var(--env-avatar-size) * 0.4) / 1 var(--env-font-family);
+  font: var(--env-font-weight-semibold) calc(var(--env-avatar-size) * 0.38) / 1
+    var(--env-font-family);
+  letter-spacing: 0.01em;
   user-select: none;
   /* Hook: a container draws a ring around its avatars with --env-avatar-ring, a box-shadow, such
      as an avatar group's ring in the color of the surface below. */
   box-shadow: var(--env-avatar-ring, none);
+}
+.env-avatar[data-hue='teal'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-teal);
+}
+.env-avatar[data-hue='green'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-green);
+}
+.env-avatar[data-hue='amber'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-amber);
+}
+.env-avatar[data-hue='red'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-red);
+}
+.env-avatar[data-hue='violet'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-violet);
+}
+.env-avatar[data-hue='purple'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-purple);
+}
+.env-avatar[data-hue='slate'] {
+  --env-avatar-fill: var(--env-color-avatar-bg-slate);
+}
+/* A hairline just inside the edge, over the fill or the picture, so a white figure or a light
+   photo keeps its circle on a page of the same color. */
+.env-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: var(--env-z-raised);
+  border-radius: inherit;
+  /* The media edge drawn twice, about 10%, so it holds the circle at a glance and stays quiet. */
+  box-shadow:
+    inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media),
+    inset 0 0 0 var(--env-control-border-width) var(--env-color-border-media);
+  pointer-events: none;
 }
 .env-avatar[data-size='sm'] {
   --env-avatar-size: 1.5rem;
@@ -44,7 +83,7 @@
   block-size: 100%;
 }
 .env-avatar-person-background {
-  fill: var(--env-color-avatar-bg);
+  fill: var(--env-avatar-fill);
 }
 .env-avatar-person-figure {
   fill: var(--env-color-avatar-figure);

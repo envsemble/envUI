@@ -39,13 +39,14 @@ components:
   - Avatar
   - AvatarButton
   - AvatarGroup
+  - avatarHue
 ---
 
 # Avatar
 
 ## Overview
 
-An avatar is a round picture of a person or an organization. Without a picture, or while it loads or after it fails, it shows the default person picture, or initials for an organization. Beside a visible name it is decorative; with `named` it is an image named after the person.
+An avatar is a round picture of a person or an organization. Without a picture it shows the default person picture, or initials for an organization, on a solid color that its name chooses. Beside a visible name it is decorative; with `named` it is an image named after the person.
 
 The family builds on it:
 
@@ -59,12 +60,14 @@ The family builds on it:
 ## Anatomy
 
 1. **Picture** (`src`): the image, cut to a circle and covering it, loaded without a referrer.
-2. **Fallback** (`fallback`): the default person picture, a blue figure on the avatar blue, or the initials of `name` in medium weight on the same blue.
+2. **Fallback** (`fallback`): the default person picture, a white figure, or the initials of `name` in white, on the solid color of the avatar's hue.
 3. **Halo** (AvatarButton): a round state layer 0.25 rem around the avatar.
 4. **Ring** (AvatarGroup): a ring in the color of the surface below each avatar, which keeps overlapping avatars apart.
 5. **Overflow chip** (AvatarGroup with `max` or `total`): the count of people not shown, such as +2, in a pill.
 
 ## Variants and sizes
+
+### Sizes
 
 | Size | Use for                                                                          |
 | ---- | -------------------------------------------------------------------------------- |
@@ -73,14 +76,26 @@ The family builds on it:
 | `lg` | 3 rem, beside a name and a second line, such as an account menu's header.        |
 | `xl` | 5.5 rem, on a profile page or a sign-in screen. Not for AvatarButton.            |
 
+### Fallbacks
+
 | Fallback   | Use for                                                      |
 | ---------- | ------------------------------------------------------------ |
 | `person`   | People. The default.                                         |
 | `initials` | Organizations, teams and other things that are not a person. |
 
+### Colors
+
+An avatar without a picture takes one of eight solid colors: blue, teal, green, amber, red, violet, purple or slate. Its `name` chooses the color, so a person or an organization has the same color on every page and in every session, and a list of people spreads across the colors. `hue` sets the color instead, such as an organization's own. The colors only tell people apart; they mean nothing else.
+
+<!-- specimen: Hues -->
+
+### Groups
+
 <!-- specimen: Groups -->
 
-- Initials are the first letters of the first and last words of `name`, or the first two letters of a single word, in capitals, at 0.4 of the avatar's size, and read at 5:1 on the avatar blue.
+### Measurements
+
+- Initials are the first letters of the first and last words of `name`, or the first two letters of a single word, in capitals, semibold at 0.38 of the avatar's size. They are white, at least 4.5:1 on every color, and 7:1 at high contrast, where the colors are a grade darker.
 - An AvatarButton is its avatar plus 0.25 rem of halo on every side, and at least 2.75 rem on touch screens.
 - In an AvatarGroup, each avatar lies over the one before it by an eighth of its size, and initials center in the part it leaves uncovered, so they stay clear; and the ring is an eighth of a rem, or a sixteenth of the size for larger avatars. An `md` group is as tall as a small control, 2 rem. A group never wraps or shrinks; choose `max` to fit the room.
 - On touch screens, each pressable avatar in a group is a target of at least 2.75 rem with its picture in the middle, and keeps that much uncovered, so smaller ones sit apart and larger ones overlap less.
@@ -97,7 +112,7 @@ The family builds on it:
 
 ## Content guidelines
 
-- Pass the person's full name as `name`: it is the image's name, the tooltip and the source of the initials.
+- Pass the person's full name as `name`: it is the image's name, the tooltip, the source of the initials and what chooses the color. Pass the same name everywhere, so the color stays the same.
 - Name an AvatarButton after what it opens, such as "Open account menu", and use `description` for what tells accounts apart, such as the e-mail address.
 - Translate the group's name and the overflow text with `messages.avatarGroup` on EnvUIProvider, such as "4 personnes"; `formatLabel` and `formatMore` override them for one group.
 
@@ -107,6 +122,7 @@ The family builds on it:
 
 - Write the person's name beside an avatar wherever there is room; the avatar then stays decorative.
 - Use the default person picture for people and initials for organizations.
+- Let the name choose the color; set `hue` only for an organization with a color of its own.
 - Use AvatarButton for the account menu's trigger, and give it an `aria-label` that says what it opens.
 - Choose `max` so a group fits its place without wrapping.
 
@@ -114,6 +130,7 @@ The family builds on it:
 
 - Don't use an avatar as the only place a name appears, unless it is named or in a group that names everyone.
 - Don't put an Avatar inside your own button; use AvatarButton, or `onPersonClick` in a group.
+- Don't give an avatar's color a meaning, such as a status or a role; use a Badge.
 - Don't use a group where people need to read every name; list them with their names.
 
 ## Accessibility
@@ -144,6 +161,14 @@ The family builds on it:
 
 ## Examples
 
+### Colors
+
+The eight colors of an avatar without a picture, with initials and with the default person picture; each holds white at 4.5:1 or more.
+
+```tsx example=Colors
+
+```
+
 ### Sizes
 
 Four sizes, from a compact row to a profile page; each is named here, with no name beside it.
@@ -157,6 +182,22 @@ Four sizes, from a compact row to a profile page; each is named here, with no na
 A picture covers the circle. One that fails to load shows the default person picture, and an organization shows its initials.
 
 ```tsx example=Fallbacks
+
+```
+
+### Colors from names
+
+Each name chooses its color, the same wherever the name appears.
+
+```tsx example=ColorsFromNames
+
+```
+
+### An organization's own color
+
+`hue` sets the color, such as an organization's own, instead of the one its name would choose.
+
+```tsx example=OwnColor
 
 ```
 
@@ -186,7 +227,7 @@ With `onPersonClick` every avatar is a button named after the person; a person w
 
 ## Changelog
 
-- **1.0.0**: Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
+- **1.0.0**: An avatar without a picture takes a solid color that its name chooses, one of eight, with white initials or a white figure; `hue` sets the color, and `avatarHue` returns the one a name chooses. Initials are semibold. Sizes are `sm`, `md`, `lg` and `xl` (were `small`, `standard`, `large` and `display`), set as `data-size` rather than the `env-avatar-{size}` classes. AvatarButton's `detail` is `description`, and it takes the touch height on touch screens. AvatarGroup's strings come from `messages.avatarGroup`, with the counts in the locale's digits, and it rings its avatars through the `--env-avatar-ring` hook. `getInitials` is internal; Avatar shows initials with `fallback="initials"`. Avatar's `label`, which named it as an image, is `named`.
 - **0.6.0**: AvatarGroup.
 - **0.4.0**: AvatarButton; initials use the avatar blue of the default person picture.
 - **0.2.0**: Avatar, with the default person picture or initials as fallback.

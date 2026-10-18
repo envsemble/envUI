@@ -94,37 +94,114 @@ export const tokens = {
       'dark-high-contrast': '80rem',
     },
   },
-  /** The fill of an avatar that shows initials or the default figure. */
+  /** The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
     type: 'color',
     values: {
-      light: '#9fc1f8',
-      dark: '#9fc1f8',
-      'light-high-contrast': '#9fc1f8',
-      'dark-high-contrast': '#9fc1f8',
+      light: '#005cc8',
+      dark: '#005cc8',
+      'light-high-contrast': '#004aa2',
+      'dark-high-contrast': '#004aa2',
     },
   },
-  /** The initials of an avatar, at least 4.5:1 on its fill, and 7:1 at high contrast. */
+  /** The amber fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.amber': {
+    cssVariable: '--env-color-avatar-bg-amber',
+    type: 'color',
+    values: {
+      light: '#8a5504',
+      dark: '#8a5504',
+      'light-high-contrast': '#704300',
+      'dark-high-contrast': '#704300',
+    },
+  },
+  /** The green fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.green': {
+    cssVariable: '--env-color-avatar-bg-green',
+    type: 'color',
+    values: {
+      light: '#176f35',
+      dark: '#176f35',
+      'light-high-contrast': '#005a25',
+      'dark-high-contrast': '#005a25',
+    },
+  },
+  /** The purple fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.purple': {
+    cssVariable: '--env-color-avatar-bg-purple',
+    type: 'color',
+    values: {
+      light: '#8e3caa',
+      dark: '#8e3caa',
+      'light-high-contrast': '#782594',
+      'dark-high-contrast': '#782594',
+    },
+  },
+  /** The red fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.red': {
+    cssVariable: '--env-color-avatar-bg-red',
+    type: 'color',
+    values: {
+      light: '#b72b20',
+      dark: '#b72b20',
+      'light-high-contrast': '#9f0300',
+      'dark-high-contrast': '#9f0300',
+    },
+  },
+  /** The slate fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.slate': {
+    cssVariable: '--env-color-avatar-bg-slate',
+    type: 'color',
+    values: {
+      light: '#4e627e',
+      dark: '#4e627e',
+      'light-high-contrast': '#3c4e69',
+      'dark-high-contrast': '#3c4e69',
+    },
+  },
+  /** The teal fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.teal': {
+    cssVariable: '--env-color-avatar-bg-teal',
+    type: 'color',
+    values: {
+      light: '#236d52',
+      dark: '#236d52',
+      'light-high-contrast': '#03593f',
+      'dark-high-contrast': '#03593f',
+    },
+  },
+  /** The violet fill, one of the hues an avatar takes from its name. */
+  'color.avatar.bg.violet': {
+    cssVariable: '--env-color-avatar-bg-violet',
+    type: 'color',
+    values: {
+      light: '#7a3fc8',
+      dark: '#7a3fc8',
+      'light-high-contrast': '#6725b4',
+      'dark-high-contrast': '#6725b4',
+    },
+  },
+  /** The initials of an avatar, at least 4.5:1 on every fill, and 7:1 at high contrast. */
   'color.avatar.fg': {
     cssVariable: '--env-color-avatar-fg',
     type: 'color',
     values: {
-      light: '#004aa2',
-      dark: '#004aa2',
-      'light-high-contrast': '#001d49',
-      'dark-high-contrast': '#001d49',
+      light: '#ffffff',
+      dark: '#ffffff',
+      'light-high-contrast': '#ffffff',
+      'dark-high-contrast': '#ffffff',
     },
   },
-  /** The default figure of an avatar without a name or an image. */
+  /** The default figure of an avatar without an image, on any of its fills. */
   'color.avatar.figure': {
     cssVariable: '--env-color-avatar-figure',
     type: 'color',
     values: {
-      light: '#347eea',
-      dark: '#347eea',
-      'light-high-contrast': '#347eea',
-      'dark-high-contrast': '#347eea',
+      light: '#ffffff',
+      dark: '#ffffff',
+      'light-high-contrast': '#ffffff',
+      'dark-high-contrast': '#ffffff',
     },
   },
   /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
