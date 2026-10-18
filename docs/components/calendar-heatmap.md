@@ -137,11 +137,11 @@ A calendar heatmap shows a value for each day as a shade of one tone: weeks are 
 
 ```
 
-### In another language
+### The application's own strings
 
-EnvUIProvider's locale names the months, weekdays and dates in German, and its messages translate the legend; weeks start on Monday.
+EnvUIProvider's messages write the legend in the application's words, in the reader's language, and its locale names the months, weekdays and dates; `weekStart={1}` starts the weeks on Monday.
 
-```tsx example=Localized
+```tsx example=ApplicationStrings
 
 ```
 

@@ -138,11 +138,11 @@ A list read in batches shows the items on the page; `hasNextPage` says when the 
 
 ```
 
-### In another language
+### The application's own strings
 
-EnvUIProvider's `messages.pagination` localizes every pager inside it and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` localize one pager. `lang` tells assistive technology the language.
+EnvUIProvider's `messages.pagination` sets the strings of every pager inside it, in the reader's language, and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` set them for one pager. A pager in a language other than the page's takes `lang`, so assistive technology reads it in that language.
 
-```tsx example=AnotherLanguage
+```tsx example=ApplicationStrings
 
 ```
 

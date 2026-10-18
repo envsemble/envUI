@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   AppShell,
+  EnvUIProvider,
   Link,
   LinkProvider,
   NavList,
@@ -151,16 +152,21 @@ function Catalogue() {
   );
 }
 
+/** The page's language, from index.html's lang, which every example's dates and numbers follow. */
+const pageLocale = (typeof document === 'undefined' ? '' : document.documentElement.lang) || 'en';
+
 /**
- * The catalogue, in the reader's stored theme, contrast and scale. Its links open its pages without
- * loading it again, where routes live in the address's path.
+ * The catalogue, in the page's language and the reader's stored theme, contrast and scale. Its
+ * links open its pages without loading it again, where routes live in the address's path.
  */
 export default function App() {
   return (
-    <DisplaySettingsProvider className="docs-app">
-      <LinkProvider component={RouterLink}>
-        <Catalogue />
-      </LinkProvider>
-    </DisplaySettingsProvider>
+    <EnvUIProvider locale={pageLocale}>
+      <DisplaySettingsProvider className="docs-app">
+        <LinkProvider component={RouterLink}>
+          <Catalogue />
+        </LinkProvider>
+      </DisplaySettingsProvider>
+    </EnvUIProvider>
   );
 }

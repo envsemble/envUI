@@ -137,11 +137,11 @@ In a list of individual reviews the stars are enough; the reviewer's name says w
 
 ```
 
-### The name in another language
+### The application's own name
 
-EnvUIProvider's locale writes the number, here in German with its decimal comma, and `messages.rating.label` the accessible name.
+`messages.rating.label` on EnvUIProvider writes the accessible name, in the reader's language; the provider's locale writes the number, such as 4,5 with a decimal comma in German.
 
-```tsx example=TranslatedLabel
+```tsx example=ApplicationLabel
 
 ```
 

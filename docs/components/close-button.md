@@ -99,11 +99,11 @@ Beside others like it, each button names what it removes.
 
 ```
 
-### Translated name
+### The application's own name
 
-An EnvUIProvider's `messages` name every CloseButton inside it.
+An EnvUIProvider's `messages` name every CloseButton inside it, in the reader's language.
 
-```tsx example=TranslatedLabel
+```tsx example=ApplicationLabel
 
 ```
 

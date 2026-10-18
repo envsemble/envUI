@@ -131,14 +131,6 @@ Past moments read "ago" and coming ones "in"; the unit grows with the distance, 
 
 ```
 
-### Other languages
-
-`locale` writes the text, and the date in the tooltip, in another language.
-
-```tsx example=Languages
-
-```
-
 ### The exact date nearby
 
 Where the date shows beside it, the relative time needs no tooltip.
