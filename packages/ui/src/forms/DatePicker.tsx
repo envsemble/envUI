@@ -1,37 +1,29 @@
 'use client';
 
-import { Popover as BasePopover } from '@base-ui/react/popover';
 import {
-  useEffect,
+  useId,
   useMemo,
-  useRef,
   useState,
   type ButtonHTMLAttributes,
   type CSSProperties,
-  type KeyboardEvent,
   type Ref,
 } from 'react';
-import { setRef } from '../internal/setRef.js';
-import { useHydrated } from '../internal/useHydrated.js';
-import { useDirection } from '../internal/useDirection.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
-import { PopupSurface } from '../internal/PopupSurface.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
-import { Button, IconButton } from '../actions/Button.js';
+import { Button } from '../actions/Button.js';
 import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
-import { Close } from '../icons/Close.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
-import { TextField } from './TextField.js';
-import { FieldFrame, type FieldControlBoxProps, type FieldProps } from './internal/FieldFrame.js';
+import { type FieldProps } from './internal/FieldFrame.js';
+import { PickerField, usePickerOpen } from './internal/PickerField.js';
+import { TimeList } from './internal/TimeList.js';
 import {
   clampDay,
   dateFormat,
   formatDateTime,
   formatDay,
-  formatTime,
   fromMoment,
   momentOf,
   now,
@@ -41,8 +33,6 @@ import {
   toUtcDate,
   type Weekday,
 } from './internal/CalendarDays.js';
-import { subscribeFormReset } from './internal/subscribeFormReset.js';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
 
 export interface DatePickerProps
   extends Omit<
@@ -67,7 +57,7 @@ export interface DatePickerProps
   onValueChange?: (value: string | null) => void;
   /**
    * What the value holds: day, a date as YYYY-MM-DD, or minute, a date and a time as
-   * YYYY-MM-DDTHH:mm, chosen in a time field under the calendar.
+   * YYYY-MM-DDTHH:mm, chosen in a list of times beside the calendar.
    * @default 'day'
    */
   granularity?: 'day' | 'minute';
@@ -77,6 +67,12 @@ export interface DatePickerProps
   max?: string;
   /** The time a newly chosen day starts with, as HH:mm; 00:00 by default. */
   defaultTime?: string;
+  /**
+   * With the minute granularity, the minutes between the times the list offers, from 1 to 60. A
+   * value between them still shows in the list, in its place.
+   * @default 15
+   */
+  minuteStep?: number;
   /**
    * The locale of the shown value and the calendar's names and numbers: EnvUIProvider's, else the
    * browser's. Dates are Gregorian, also in a locale with a calendar of its own.
@@ -139,12 +135,7 @@ export interface DatePickerProps
    */
   nowLabel?: string;
   /**
-   * With the minute granularity, the button that closes the calendar.
-   * @default 'Done', or EnvUIProvider's messages.datePicker.done
-   */
-  doneLabel?: string;
-  /**
-   * With the minute granularity, the label of the time field.
+   * With the minute granularity, the heading and accessible name of the list of times.
    * @default 'Time', or EnvUIProvider's messages.datePicker.time
    */
   timeLabel?: string;
@@ -183,19 +174,11 @@ function boundMoment(value: string | undefined, edge: 'start' | 'end') {
   return momentOf(day, edge === 'start' ? 0 : minutesPerDay - 1);
 }
 
-function remPixels(element: Element | null) {
-  if (!element) return 16;
-  return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-}
-
-const popupParts = {
-  Portal: BasePopover.Portal,
-  Positioner: BasePopover.Positioner,
-  Popup: BasePopover.Popup,
-};
-
-function ignoreChange() {
-  // The visually hidden input only carries the value for native forms.
+/** A bound's time of day where it falls on the given day, for the list of times. */
+function boundMinutes(moment: number | undefined, day: number) {
+  if (moment === undefined) return undefined;
+  const bound = fromMoment(moment);
+  return bound.day === day ? bound.minutes : undefined;
 }
 
 /**
@@ -203,26 +186,19 @@ function ignoreChange() {
  * calendar to choose it, with keyboard access following the WAI-ARIA date picker.
  */
 export function DatePicker({
-  ref,
   value,
   defaultValue = null,
   onValueChange,
   granularity = 'day',
   min,
   max,
-  defaultTime = '00:00',
+  defaultTime,
+  minuteStep,
   locale,
   weekStart,
   formatOptions,
-  name,
-  form,
-  required = false,
   disabled = false,
   readOnly = false,
-  placeholder,
-  variant = 'outline',
-  size,
-  showLabel,
   clearable = false,
   open: controlledOpen,
   defaultOpen = false,
@@ -230,44 +206,22 @@ export function DatePicker({
   clearLabel,
   todayLabel,
   nowLabel,
-  doneLabel,
   timeLabel,
   previousMonthLabel,
   nextMonthLabel,
-  label,
-  description,
-  error,
-  id: suppliedId,
-  className,
-  style,
-  'aria-describedby': describedBy,
-  'aria-invalid': invalid,
-  'aria-label': ariaLabel,
-  'aria-labelledby': labelledBy,
-  onKeyDown,
-  ...triggerProps
+  ...fieldProps
 }: DatePickerProps) {
   const withTime = granularity === 'minute';
   const messages = useMessages('datePicker', datePickerMessages);
-  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
-  const { id } = metadata;
-  const labelId = `${id}-label`;
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const nativeRef = useRef<HTMLInputElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
-  // Whether the calendar was open when a press on the label began, which closes it.
-  const labelPressOpen = useRef(false);
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
-  // Read as the calendar opens, which takes the field's direction into its portal.
-  const [direction] = useDirection(triggerRef, open);
+  const timeHeadingId = useId();
+  const [open, setOpen] = usePickerOpen({
+    open: controlledOpen,
+    defaultOpen,
+    onOpenChange,
+    disabled,
+    readOnly,
+  });
   const defaultMinutes = parseTime(defaultTime) ?? 0;
-  // The field and its popup take the application's own aria-labelledby, else the label, else the
-  // aria-label.
-  const accessibleName = {
-    'aria-labelledby': labelledBy ?? (label != null ? labelId : undefined),
-    'aria-label': labelledBy == null && label == null ? ariaLabel : undefined,
-  };
 
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const current = parseValue(
@@ -280,8 +234,6 @@ export function DatePicker({
       ? formatDateTime(current.day, current.minutes)
       : formatDay(current.day)
     : '';
-  // The time field shows what is typed until it loses focus, then the value it was kept within.
-  const [timeDraft, setTimeDraft] = useState<string | null>(null);
 
   const minMoment = boundMoment(min, 'start');
   const maxMoment = boundMoment(max, 'end');
@@ -290,7 +242,6 @@ export function DatePicker({
 
   // On the server, and while its output hydrates, a field without a locale shows the value as every
   // browser shows it, then in the reader's language.
-  const hydrated = useHydrated();
   const shownLocale = useResolvedLocale(locale);
   const formatOptionsKey = JSON.stringify(formatOptions ?? null);
   const formatter = useMemo(
@@ -304,25 +255,6 @@ export function DatePicker({
     [shownLocale, withTime, formatOptionsKey],
   );
   const display = current ? formatter.format(toUtcDate(current.day, current.minutes)) : '';
-
-  useEffect(
-    function subscribeToFormReset() {
-      const input = nativeRef.current;
-      const ownerForm = input?.form;
-      if (!input || !ownerForm) return;
-      return subscribeFormReset(ownerForm, function applyReset() {
-        if (value === undefined) setUncontrolledValue(defaultValue);
-      });
-    },
-    [value, defaultValue, form],
-  );
-
-  function setOpen(next: boolean) {
-    if (next && (disabled || readOnly)) return;
-    if (!next) setTimeDraft(null);
-    if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
-  }
 
   function commit(next: DateTimeValue | null) {
     let result: string | null = null;
@@ -349,17 +281,12 @@ export function DatePicker({
     if (!withTime) setOpen(false);
   }
 
-  function changeTime(text: string) {
-    setTimeDraft(text);
-    const minutes = parseTime(text);
-    if (minutes === undefined) return;
-    commit({ day: current?.day ?? clampDay(now().day, minDay, maxDay), minutes });
-  }
+  // Without a value, a chosen time goes with today, kept within min and max.
+  const timeDay = current?.day ?? clampDay(now().day, minDay, maxDay);
 
   function chooseNow() {
     const moment = now();
     commit(withTime ? moment : { day: moment.day, minutes: 0 });
-    setTimeDraft(null);
     if (!withTime) setOpen(false);
   }
 
@@ -368,192 +295,87 @@ export function DatePicker({
     setOpen(false);
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    onKeyDown?.(event);
-    if (event.defaultPrevented || disabled || readOnly) return;
-    if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && !open) {
-      event.preventDefault();
-      setOpen(true);
-    } else if (clearable && serialized && (event.key === 'Backspace' || event.key === 'Delete')) {
-      event.preventDefault();
-      commit(null);
-    }
-  }
-
   const reference = now();
   const nowAvailable = withTime
     ? (minMoment === undefined || momentOf(reference.day, reference.minutes) >= minMoment) &&
       (maxMoment === undefined || momentOf(reference.day, reference.minutes) <= maxMoment)
     : (minDay === undefined || reference.day >= minDay) &&
       (maxDay === undefined || reference.day <= maxDay);
-  const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
-  const labelFloats = Boolean(serialized) || open;
 
-  function renderControlBox(boxProps: FieldControlBoxProps) {
-    return (
-      <div
-        {...boxProps}
-        className={`${boxProps.className} env-date-picker-control`}
-        data-label-floating={labelFloats || undefined}
-        data-actions={showClear ? '2' : '1'}
-      />
-    );
-  }
+  const calendar = (
+    <Calendar
+      value={current ? formatDay(current.day) : null}
+      onValueChange={chooseDay}
+      min={minDay === undefined ? undefined : formatDay(minDay)}
+      max={maxDay === undefined ? undefined : formatDay(maxDay)}
+      weekStart={weekStart}
+      locale={locale}
+      previousMonthLabel={previousMonthLabel}
+      nextMonthLabel={nextMonthLabel}
+    />
+  );
 
   return (
-    <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
-      <FieldFrame
-        id={id}
-        label={
-          label != null ? (
-            <label
-              htmlFor={id}
-              id={labelId}
-              onPointerDown={() => {
-                labelPressOpen.current = open;
-              }}
-              onClick={(event) => {
-                // A press on the label closes the open calendar, as a press outside it does;
-                // the click that follows would open it again, as it opens a closed one.
-                if (!labelPressOpen.current) return;
-                labelPressOpen.current = false;
-                event.preventDefault();
-                triggerRef.current?.focus();
-              }}
-            >
-              {label}
-            </label>
-          ) : null
-        }
-        description={description}
-        error={error}
-        floatingLabel
-        variant={variant}
-        size={size}
-        showLabel={showLabel}
-        className={className ? `env-date-picker ${className}` : 'env-date-picker'}
-        style={style}
-        renderControlBox={renderControlBox}
-      >
-        <BasePopover.Trigger
-          {...triggerProps}
-          ref={(node: HTMLButtonElement | null) => {
-            triggerRef.current = node;
-            setRef(ref, node);
-          }}
-          id={id}
-          role="combobox"
-          {...accessibleName}
-          aria-describedby={metadata['aria-describedby']}
-          aria-invalid={metadata['aria-invalid']}
-          aria-required={required || undefined}
-          aria-readonly={readOnly || undefined}
-          disabled={disabled}
-          className="env-text-field-input env-date-picker-trigger"
-          onKeyDown={handleKeyDown}
-        >
-          {display ? (
-            // As in RelativeTime: should the browser format the hydrated value differently from
-            // the server, the server's text stays until hydration ends, then the browser's
-            // replaces it, without a mismatch error.
-            <span className="env-date-picker-value" suppressHydrationWarning>
-              {hydrated ? display : [display]}
-            </span>
-          ) : (
-            <span className="env-date-picker-placeholder">{placeholder}</span>
-          )}
-        </BasePopover.Trigger>
-        <span className="env-text-field-end env-date-picker-end">
-          {showClear && (
-            <IconButton
-              variant="ghost"
-              icon={<Close />}
-              aria-label={clearLabel ?? messages.clear}
-              title={clearLabel ?? messages.clear}
-              className="env-date-picker-clear"
-              onClick={() => {
-                commit(null);
-                triggerRef.current?.focus();
-              }}
+    <PickerField
+      {...fieldProps}
+      serialized={serialized}
+      display={display}
+      icon={withTime ? <CalendarClock /> : <CalendarMonth />}
+      rootClassName="env-date-picker"
+      initialFocus={calendarActiveDay}
+      clearLabel={clearLabel ?? messages.clear}
+      onClear={() => commit(null)}
+      onFormReset={() => {
+        if (value === undefined) setUncontrolledValue(defaultValue);
+      }}
+      open={open}
+      setOpen={setOpen}
+      disabled={disabled}
+      readOnly={readOnly}
+      clearable={clearable}
+    >
+      {withTime ? (
+        // The times stand beside the days, as tall as the calendar; the chosen day's share of min
+        // and max limits them.
+        <div className="env-date-picker-panes">
+          {calendar}
+          <div className="env-date-picker-time">
+            <div className="env-date-picker-time-heading" id={timeHeadingId}>
+              {timeLabel ?? messages.time}
+            </div>
+            <TimeList
+              aria-labelledby={timeHeadingId}
+              value={current?.minutes}
+              onValueChange={(minutes) => commit({ day: timeDay, minutes })}
+              minuteStep={minuteStep}
+              start={defaultTime === undefined ? undefined : defaultMinutes}
+              min={boundMinutes(minMoment, timeDay)}
+              max={boundMinutes(maxMoment, timeDay)}
+              locale={locale}
             />
-          )}
-          <span className="env-icon env-date-picker-icon" aria-hidden="true">
-            {withTime ? <CalendarClock /> : <CalendarMonth />}
-          </span>
-        </span>
-        <input
-          ref={nativeRef}
-          className="env-date-picker-native"
-          name={name}
-          form={form}
-          value={serialized}
-          required={required}
-          disabled={disabled}
-          // Like a read-only input, a read-only field is not validated, so an empty required one
-          // never keeps its form from submitting.
-          readOnly={readOnly}
-          tabIndex={-1}
-          aria-hidden="true"
-          autoComplete="off"
-          onChange={ignoreChange}
-          // The browser focuses an invalid required field on submit; the field takes it instead.
-          onFocus={() => triggerRef.current?.focus()}
-        />
-      </FieldFrame>
-      <PopupSurface
-        parts={popupParts}
-        side="bottom"
-        align="start"
-        sideOffset={() => remPixels(triggerRef.current) * 0.25}
-        // The portal leaves the field's text direction behind; the calendar keeps it.
-        dir={direction}
-        className="env-date-picker-popup"
-        popupProps={{ ref: popupRef, ...accessibleName }}
-        initialFocus={() => calendarActiveDay(popupRef.current) ?? true}
-      >
-        <Calendar
-          value={current ? formatDay(current.day) : null}
-          onValueChange={chooseDay}
-          min={minDay === undefined ? undefined : formatDay(minDay)}
-          max={maxDay === undefined ? undefined : formatDay(maxDay)}
-          weekStart={weekStart}
-          locale={locale}
-          previousMonthLabel={previousMonthLabel}
-          nextMonthLabel={nextMonthLabel}
-        />
-        {withTime && (
-          <TextField
-            type="time"
-            label={timeLabel ?? messages.time}
-            value={timeDraft ?? (current ? formatTime(current.minutes) : '')}
-            onChange={(event) => changeTime(event.currentTarget.value)}
-            onBlur={() => setTimeDraft(null)}
-          />
-        )}
-        <div className="env-date-picker-actions">
-          <Button
-            variant="text"
-            aria-disabled={!nowAvailable || undefined}
-            onClick={() => {
-              if (nowAvailable) chooseNow();
-            }}
-          >
-            {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
-          </Button>
-          <span className="env-date-picker-actions-end">
-            {clearable && serialized && (
-              <Button variant="text" onClick={clear}>
-                {clearLabel ?? messages.clear}
-              </Button>
-            )}
-            {withTime && (
-              <Button variant="secondary" onClick={() => setOpen(false)}>
-                {doneLabel ?? messages.done}
-              </Button>
-            )}
-          </span>
+          </div>
         </div>
-      </PopupSurface>
-    </BasePopover.Root>
+      ) : (
+        calendar
+      )}
+      <div className="env-date-picker-actions">
+        <Button
+          variant="text"
+          aria-disabled={!nowAvailable || undefined}
+          onClick={() => {
+            if (nowAvailable) chooseNow();
+          }}
+        >
+          {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
+        </Button>
+        <span className="env-date-picker-actions-end">
+          {clearable && serialized && (
+            <Button variant="text" onClick={clear}>
+              {clearLabel ?? messages.clear}
+            </Button>
+          )}
+        </span>
+      </div>
+    </PickerField>
   );
 }

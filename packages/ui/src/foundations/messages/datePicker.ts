@@ -9,8 +9,6 @@ export const datePicker = {
   today: 'Today',
   /** Picks the current time. */
   now: 'Now',
-  /** Closes the calendar. */
-  done: 'Done',
   /** Names the time field. */
   time: 'Time',
 };

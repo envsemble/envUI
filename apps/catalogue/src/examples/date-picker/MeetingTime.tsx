@@ -9,6 +9,7 @@ export default function MeetingTime() {
         label="Meeting"
         granularity="minute"
         defaultTime="09:00"
+        minuteStep={30}
         value={meeting}
         onValueChange={setMeeting}
         clearable

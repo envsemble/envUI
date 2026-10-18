@@ -51,6 +51,8 @@ test('no English default is left under a provider that sets every message', asyn
     'common.clear',
     'combobox.remove',
     'datePicker.clear',
+    'timePicker.clear',
+    'monthPicker.clear',
     'calendar.previousMonth',
     'calendar.nextMonth',
     'composer.send',

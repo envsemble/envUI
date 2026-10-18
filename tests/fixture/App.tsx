@@ -64,6 +64,8 @@ import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
 import { DatePickerFixture } from './DatePickers.js';
+import { TimePickersFixture } from './TimePickers.js';
+import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
 import { DrawersFixture } from './Drawers.js';
@@ -130,6 +132,8 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'account-menu-shell': AccountMenuShellFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
+  'time-pickers': TimePickersFixture,
+  'month-pickers': MonthPickersFixture,
 };
 
 export default function App() {

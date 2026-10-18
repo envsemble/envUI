@@ -61,6 +61,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [SegmentedControl](components/segmented-control.md)
 - [Combobox](components/combobox.md)
 - [DatePicker](components/date-picker.md)
+- [TimePicker](components/time-picker.md)
+- [MonthPicker](components/month-picker.md)
 - [Slider](components/slider.md)
 - [DropZone](components/drop-zone.md)
 

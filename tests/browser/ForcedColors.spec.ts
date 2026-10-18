@@ -59,6 +59,22 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-calendar-day[aria-current=date]',
     '.env-calendar-day:has-text("20")',
   ],
+  'the chosen hour': [
+    '[data-part=hour] .env-time-list-row[data-centred]',
+    '[data-part=hour] .env-time-list-row[data-value="10"]',
+  ],
+  'an unavailable hour': [
+    '[data-part=hour] .env-time-list-row[data-value="7"]',
+    '[data-part=hour] .env-time-list-row[data-value="10"]',
+  ],
+  'the chosen month': [
+    '.env-month-picker-month[aria-selected=true]',
+    '.env-month-picker-month[data-month="2026-05"]',
+  ],
+  'an unavailable month': [
+    '.env-month-picker-month[data-month="2026-01"]',
+    '.env-month-picker-month[data-month="2026-05"]',
+  ],
   'the active document tab': [
     '.env-document-tabs-item:has-text("Active")',
     '.env-document-tabs-item:has-text("Other")',
@@ -169,6 +185,8 @@ test(
       '.env-nav-list-item[data-selected]',
       "[role=treeitem][aria-selected='true']",
       '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
+      '[data-part=hour] .env-time-list-row[data-centred]',
+      '.env-month-picker-month[aria-selected=true] > .env-month-picker-month-mark',
       '.env-checkbox:has-text("Checked") >> nth=0 >> .env-checkbox-input',
       '.env-switch:has-text("On") >> .env-switch-input',
     ])

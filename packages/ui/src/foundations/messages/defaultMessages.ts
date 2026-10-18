@@ -25,6 +25,7 @@ import { list } from './list.js';
 import { markdown } from './markdown.js';
 import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
+import { monthPicker } from './monthPicker.js';
 import { navList } from './navList.js';
 import { organizationSwitcher } from './organizationSwitcher.js';
 import { pager } from './pager.js';
@@ -38,6 +39,7 @@ import { searchTrigger } from './searchTrigger.js';
 import { splitPane } from './splitPane.js';
 import { table } from './table.js';
 import { textarea } from './textarea.js';
+import { timePicker } from './timePicker.js';
 import { themeToggle } from './themeToggle.js';
 import { toast } from './toast.js';
 import { tree } from './tree.js';
@@ -76,6 +78,7 @@ export const defaultMessages = {
   markdown,
   markdownEditor,
   message,
+  monthPicker,
   navList,
   organizationSwitcher,
   pager,
@@ -89,6 +92,7 @@ export const defaultMessages = {
   splitPane,
   table,
   textarea,
+  timePicker,
   themeToggle,
   toast,
   tree,

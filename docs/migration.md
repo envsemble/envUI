@@ -168,6 +168,7 @@ Fields take a `description` under them and the field variants, and choice contro
 | Select `variant="outlined"`                                                                                   | `variant="outline"`                                                                          |
 | Select `options`, `SelectOption`                                                                              | `items`, `SelectItem`                                                                        |
 | DatePicker `withTime`                                                                                         | `granularity="minute"`; without it, `"day"`, the default                                     |
+| DatePicker `doneLabel`, `messages.datePicker.done`                                                            | Removed: the calendar has no Done button and closes as a date-only one does                  |
 | Slider `onValueCommit`                                                                                        | `onValueCommitted`                                                                           |
 | DropZone `onFiles`, `onReject`                                                                                | `onDropAccepted`, `onDropRejected`                                                           |
 | RadioGroup `variant`: `inline`, `rows`                                                                        | `orientation`: `horizontal`, `vertical`                                                      |

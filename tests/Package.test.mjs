@@ -264,6 +264,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Select',
     'Combobox',
     'DatePicker',
+    'TimePicker',
+    'MonthPicker',
     'Calendar',
     'Dialog',
     'DialogClose',

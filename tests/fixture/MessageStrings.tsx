@@ -21,6 +21,8 @@ import {
   ConfirmButton,
   CopyButton,
   DatePicker,
+  TimePicker,
+  MonthPicker,
   Dialog,
   EnvUIProvider,
   SearchField,
@@ -226,6 +228,8 @@ export function MessageStringsFixture() {
             defaultValue={['sam']}
           />
           <DatePicker label="Due" clearable defaultValue="2026-10-14" />
+          <TimePicker label="Starts" clearable defaultValue="09:30" />
+          <MonthPicker label="Period" clearable defaultValue="2026-10" />
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" />

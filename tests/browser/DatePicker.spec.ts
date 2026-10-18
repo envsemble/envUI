@@ -17,6 +17,19 @@ function collectErrors(page: Page) {
 const field = (page: Page, name: string) => page.getByRole('combobox', { name, exact: true });
 const focusedDate = (page: Page) =>
   page.evaluate(() => (document.activeElement as HTMLElement | null)?.dataset.date ?? null);
+/** The focused wheel of a time, as its part and value, such as hour:9. */
+const focusedEntry = (page: Page) =>
+  page.evaluate(() => {
+    const wheel = document.activeElement as HTMLElement | null;
+    return wheel?.getAttribute('role') === 'spinbutton'
+      ? `${wheel.dataset.part}:${wheel.dataset.value}`
+      : null;
+  });
+/** The hours or minutes wheel of a popup's time. */
+const timeWheel = (scope: Locator, name: 'Hours' | 'Minutes') =>
+  scope
+    .getByRole('group', { name: 'Time', exact: true })
+    .getByRole('spinbutton', { name, exact: true });
 const wellOf = (trigger: Locator) =>
   trigger.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]');
 /** The open calendar popup; a closing one can still fade out. */
@@ -163,24 +176,50 @@ test('month buttons, a pressed day, Today and the clear button change the value'
   await expect(due).toHaveText('');
 });
 
-test('with a time the calendar stays open for the time field, Now and Done', async ({ page }) => {
+test('with a time the calendar stays open beside the time wheels, with Now and Clear', async ({
+  page,
+}) => {
   const meeting = field(page, 'Meeting light');
   await expect(meeting).toHaveText('21 Oct 2026, 09:30');
   await meeting.click();
   const dialog = page.getByRole('dialog', { name: 'Meeting light' });
   await expect(dialog).toBeVisible();
-  const time = dialog.getByLabel('Time', { exact: true });
-  await expect(time).toHaveValue('09:30');
+  const time = dialog.getByRole('group', { name: 'Time', exact: true });
+  await expect(timeWheel(dialog, 'Hours')).toHaveAttribute('aria-valuenow', '9');
+  await expect(timeWheel(dialog, 'Minutes')).toHaveAttribute('aria-valuenow', '30');
+  // The columns stand beside the calendar, as tall as it, and as tall as each other.
+  const calendar = dialog.locator('.env-calendar');
+  await expect(async () => {
+    const [calendarBox, columnBox] = await Promise.all([
+      calendar.boundingBox(),
+      dialog.locator('.env-date-picker-time').boundingBox(),
+    ]);
+    expect(columnBox!.x).toBeGreaterThan(calendarBox!.x + calendarBox!.width - 1);
+    expect(Math.abs(columnBox!.height - calendarBox!.height)).toBeLessThan(1);
+    const heights = await time
+      .getByRole('spinbutton')
+      .evaluateAll((wheels) => wheels.map((wheel) => wheel.getBoundingClientRect().height));
+    expect(new Set(heights).size).toBe(1);
+  }).toPass();
   await dialog.locator('[data-date="2026-10-23"]').click();
   await expect(dialog).toBeVisible();
   await expect(meeting).toHaveText('23 Oct 2026, 09:30');
-  await time.fill('14:45');
+  // Turning a wheel commits the time at once, and the calendar stays open.
+  await timeWheel(dialog, 'Hours').focus();
+  await page.keyboard.type('14');
+  await expect(meeting).toHaveText('23 Oct 2026, 14:30');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowDown');
   await expect(meeting).toHaveText('23 Oct 2026, 14:45');
+  await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Now', exact: true }).click();
   await expect(meeting).toHaveText('14 Oct 2026, 10:00');
   await expect(dialog.locator('[data-date="2026-10-14"]')).toHaveAttribute('aria-selected', 'true');
-  await expect(time).toHaveValue('10:00');
-  await dialog.getByRole('button', { name: 'Done', exact: true }).click();
+  await expect(timeWheel(dialog, 'Hours')).toHaveAttribute('aria-valuenow', '10');
+  await expect(timeWheel(dialog, 'Minutes')).toHaveAttribute('aria-valuenow', '0');
+  // Now and Clear are the popup's only buttons, as with a date alone.
+  await expect(dialog.getByRole('button', { name: 'Done' })).toHaveCount(0);
+  await page.keyboard.press('Escape');
   await expect(openPopup(page)).toHaveCount(0);
   await expect(meeting).toBeFocused();
 
@@ -190,7 +229,9 @@ test('with a time the calendar stays open for the time field, Now and Done', asy
   await expect(openPopup(page)).toHaveCount(0);
   await expect(meeting).toHaveText('');
   await meeting.click();
-  await expect(dialog.getByLabel('Time', { exact: true })).toHaveValue('');
+  // Without a value, the wheels show the default time.
+  await expect(timeWheel(dialog, 'Hours')).toHaveAttribute('aria-valuenow', '9');
+  await expect(time.getByRole('spinbutton')).toHaveCount(2);
   await dialog.locator('[data-date="2026-10-22"]').click();
   await expect(meeting).toHaveText('22 Oct 2026, 09:00');
   await page.keyboard.press('Escape');
@@ -223,12 +264,20 @@ test('min and max make the days outside them unavailable and keep values within 
   await dialog.locator('[data-date="2026-11-15"]').click();
   await expect(review).toHaveText('15 Nov 2026');
 
-  // With a time, a day's default time is kept within min.
+  // With a time, a day's default time is kept within min, and on min's day the earlier times are
+  // unavailable.
   const start = field(page, 'Compact start light');
   await start.click();
   await expect.poll(() => focusedDate(page)).toBe('2026-10-14');
   await page.keyboard.press('Enter');
   await expect(start).toHaveText('14 Oct 2026, 08:00');
+  const startDialog = page.getByRole('dialog', { name: 'Compact start light' });
+  const hourRow = (hour: number) =>
+    timeWheel(startDialog, 'Hours').locator(`[data-value="${hour}"]`).first();
+  await expect(hourRow(7)).toHaveAttribute('data-disabled');
+  await expect(hourRow(8)).not.toHaveAttribute('data-disabled');
+  await startDialog.locator('[data-date="2026-10-15"]').click();
+  await expect(hourRow(7)).not.toHaveAttribute('data-disabled');
   await page.keyboard.press('Escape');
   await expect(openPopup(page)).toHaveCount(0);
 });
@@ -455,12 +504,13 @@ test(
     await page.keyboard.press('Home');
     await expect.poll(() => focusedDate(page)).toBe('2026-10-19');
     await page.keyboard.press('Home');
+    // Tab moves on to the hours wheel, one tab stop, whose keys choose another hour.
     await page.keyboard.press('Tab');
-    const time = dialog.getByLabel('Time', { exact: true });
-    await expect(time).toBeFocused();
-    await time.fill('10:15');
-    await expect(meeting).toHaveText('21 Oct 2026, 10:15');
-    await expect(time).toBeFocused();
+    await expect.poll(() => focusedEntry(page)).toBe('hour:9');
+    await page.keyboard.press('ArrowDown');
+    await expect(meeting).toHaveText('21 Oct 2026, 10:30');
+    await expect.poll(() => focusedEntry(page)).toBe('hour:10');
+    await expect(dialog).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(openPopup(page)).toHaveCount(0);
 
@@ -476,11 +526,16 @@ test(
     await page.keyboard.press('End');
     await expect.poll(() => focusedDate(page)).toBe('2026-10-18');
     await page.keyboard.press('Tab');
-    const startTime = startDialog.getByLabel('Time', { exact: true });
-    await expect(startTime).toBeFocused();
-    await startTime.fill('08:30');
+    // Without a value, the wheels start at the clock's time; digits name an hour or a minute.
+    await expect.poll(() => focusedEntry(page)).toBe('hour:10');
+    await page.keyboard.type('08');
+    await expect.poll(() => focusedEntry(page)).toBe('hour:8');
+    await expect(start).toHaveText('14 Oct 2026, 08:00');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.type('3');
+    await expect.poll(() => focusedEntry(page)).toBe('minute:30');
     await expect(start).toHaveText('14 Oct 2026, 08:30');
-    await expect(startTime).toBeFocused();
+    await expect(startDialog).toBeVisible();
   },
 );
 
@@ -499,7 +554,10 @@ test('days before 1970 keep their date and time', async ({ page }) => {
   await dialog.locator('[data-date="1969-12-22"]').click();
   await expect(output).toHaveText('1969-12-22T09:30');
   await expect(launch).toHaveText('22 Dec 1969, 09:30');
-  await dialog.getByLabel('Time', { exact: true }).fill('23:45');
+  await timeWheel(dialog, 'Hours').focus();
+  await page.keyboard.press('End');
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('End');
   await expect(output).toHaveText('1969-12-22T23:45');
   // The months on either side of 1970 follow each other as any others do.
   await dialog.locator('[data-date="1969-12-22"]').focus();

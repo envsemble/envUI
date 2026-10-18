@@ -611,6 +611,12 @@
           "description": "Shown without a picture: the default person picture, or initials (for example, for an organization)."
         },
         {
+          "name": "hue",
+          "type": "AvatarHue",
+          "required": false,
+          "description": "The fill behind the initials or the person picture. Without it, the name chooses one, the same for the same name everywhere; set it for an organization with a color of its own."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg' | 'xl'",
           "required": false,
@@ -2393,7 +2399,7 @@
           "type": "'day' | 'minute'",
           "required": false,
           "default": "'day'",
-          "description": "What the value holds: day, a date as YYYY-MM-DD, or minute, a date and a time as YYYY-MM-DDTHH:mm, chosen in a time field under the calendar."
+          "description": "What the value holds: day, a date as YYYY-MM-DD, or minute, a date and a time as YYYY-MM-DDTHH:mm, chosen in a list of times beside the calendar."
         },
         {
           "name": "min",
@@ -2411,8 +2417,14 @@
           "name": "defaultTime",
           "type": "string",
           "required": false,
-          "default": "'00:00'",
           "description": "The time a newly chosen day starts with, as HH:mm; 00:00 by default."
+        },
+        {
+          "name": "minuteStep",
+          "type": "number",
+          "required": false,
+          "default": "15",
+          "description": "With the minute granularity, the minutes between the times the list offers, from 1 to 60. A value between them still shows in the list, in its place."
         },
         {
           "name": "locale",
@@ -2442,7 +2454,6 @@
           "name": "required",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
         },
         {
@@ -2526,18 +2537,11 @@
           "description": "With the minute granularity, the calendar's shortcut to the current date and time."
         },
         {
-          "name": "doneLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Done', or EnvUIProvider's messages.datePicker.done",
-          "description": "With the minute granularity, the button that closes the calendar."
-        },
-        {
           "name": "timeLabel",
           "type": "string",
           "required": false,
           "default": "'Time', or EnvUIProvider's messages.datePicker.time",
-          "description": "With the minute granularity, the label of the time field."
+          "description": "With the minute granularity, the heading and accessible name of the list of times."
         },
         {
           "name": "previousMonthLabel",
@@ -2959,6 +2963,18 @@
           "type": "(id: string) => void",
           "required": false,
           "description": "Called when a tab is double-clicked, typically to keep a preview tab open."
+        },
+        {
+          "name": "onReorder",
+          "type": "(ids: string[]) => void",
+          "required": false,
+          "description": "Called with every tab's id in the new order when a tab is dragged to another place with a mouse or pen, or moved with Move left or Move right in its context menu, which also reach the keyboard and touch. Without it, the tabs keep their order."
+        },
+        {
+          "name": "end",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content after the tabs, outside the strip that scrolls and on its hairline, such as a button that closes every tab or opens a new one."
         },
         {
           "name": "aria-label",
@@ -5038,6 +5054,197 @@
       ],
       "native": [
         "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "MonthPicker": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/MonthPicker.tsx",
+      "description": "A field for a month of a year that shows the value in the reader's locale and opens a year of months to choose it from, with keyboard access like Calendar's.",
+      "props": [
+        {
+          "name": "value",
+          "type": "string | null",
+          "required": false,
+          "description": "The value: a month as YYYY-MM. null, or an empty string, for none."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string | null",
+          "required": false,
+          "default": "null",
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string | null) => void",
+          "required": false,
+          "description": "Receives the new value as YYYY-MM, or null once the field is cleared."
+        },
+        {
+          "name": "min",
+          "type": "string",
+          "required": false,
+          "description": "The earliest month, as YYYY-MM; earlier months are unavailable."
+        },
+        {
+          "name": "max",
+          "type": "string",
+          "required": false,
+          "description": "The latest month, as YYYY-MM; later months are unavailable."
+        },
+        {
+          "name": "locale",
+          "type": "string",
+          "required": false,
+          "description": "The locale of the shown value and the month names: EnvUIProvider's, else the browser's. Months are Gregorian, also in a locale with a calendar of its own."
+        },
+        {
+          "name": "formatOptions",
+          "type": "Intl.DateTimeFormatOptions",
+          "required": false,
+          "description": "How the field shows the value: Intl.DateTimeFormat options, by default the long month and the year, in the Gregorian calendar unless they name another."
+        },
+        {
+          "name": "clearLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Clear', or EnvUIProvider's messages.monthPicker.clear",
+          "description": "Accessible name of the field's clear button and text of the popup's."
+        },
+        {
+          "name": "thisMonthLabel",
+          "type": "string",
+          "required": false,
+          "default": "'This month', or EnvUIProvider's messages.monthPicker.thisMonth",
+          "description": "The popup's shortcut to the current month."
+        },
+        {
+          "name": "previousYearLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Previous year', or EnvUIProvider's messages.monthPicker.previousYear",
+          "description": "Accessible name of the popup's previous year button."
+        },
+        {
+          "name": "nextYearLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Next year', or EnvUIProvider's messages.monthPicker.nextYear",
+          "description": "Accessible name of the popup's next year button."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLButtonElement>",
+          "required": false,
+          "description": "The field's button, which shows the value and opens the popup."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The name the value is submitted under with a form."
+        },
+        {
+          "name": "required",
+          "type": "boolean",
+          "required": false,
+          "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The value can be read and focused but not changed."
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "required": false,
+          "description": "Shown while the field is empty and its label floats or is hidden."
+        },
+        {
+          "name": "variant",
+          "type": "'outline' | 'floating'",
+          "required": false,
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the label inside the field, where it floats into the outline while the field has a value, focus or its popup open. Set false for a field whose purpose is clear without it."
+        },
+        {
+          "name": "clearable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "A clear button in the field and in the popup removes the value."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the popup is open; with `onOpenChange` it controls it."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether an uncontrolled popup starts open; closed by default."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Called with the new state when the popup opens or closes."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
+        }
+      ],
+      "native": [
+        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -8374,6 +8581,190 @@
         "@envsemble/envui"
       ]
     },
+    "TimePicker": {
+      "kind": "component",
+      "source": "packages/ui/src/forms/TimePicker.tsx",
+      "description": "A field for a time of day that shows the value in the reader's locale and opens wheels of its hours, minutes every `minuteStep` and, on a 12-hour clock, the day's halves to choose it.",
+      "props": [
+        {
+          "name": "value",
+          "type": "string | null",
+          "required": false,
+          "description": "The value: a time of day as HH:mm on the 24-hour clock. null, or an empty string, for none."
+        },
+        {
+          "name": "defaultValue",
+          "type": "string | null",
+          "required": false,
+          "default": "null",
+          "description": "The value an uncontrolled field starts with, and that a form reset restores; none by default."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string | null) => void",
+          "required": false,
+          "description": "Receives the new value as HH:mm, or null once the field is cleared."
+        },
+        {
+          "name": "min",
+          "type": "string",
+          "required": false,
+          "description": "The earliest time, as HH:mm; earlier times are unavailable."
+        },
+        {
+          "name": "max",
+          "type": "string",
+          "required": false,
+          "description": "The latest time, as HH:mm; later times are unavailable."
+        },
+        {
+          "name": "minuteStep",
+          "type": "number",
+          "required": false,
+          "default": "15",
+          "description": "The minutes between the times the list offers, from 1 to 60. A value between them still shows in the list, in its place."
+        },
+        {
+          "name": "locale",
+          "type": "string",
+          "required": false,
+          "description": "The locale of the shown value and the list's times, with its own 12- or 24-hour clock: EnvUIProvider's, else the browser's."
+        },
+        {
+          "name": "formatOptions",
+          "type": "Intl.DateTimeFormatOptions",
+          "required": false,
+          "description": "How the field shows the value: Intl.DateTimeFormat options, by default the short time style."
+        },
+        {
+          "name": "clearLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Clear', or EnvUIProvider's messages.timePicker.clear",
+          "description": "Accessible name of the field's clear button and text of the popup's."
+        },
+        {
+          "name": "nowLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Now', or EnvUIProvider's messages.timePicker.now",
+          "description": "The popup's shortcut to the current time."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<HTMLButtonElement>",
+          "required": false,
+          "description": "The field's button, which shows the value and opens the popup."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "description": "The field's class, on its root element."
+        },
+        {
+          "name": "style",
+          "type": "CSSProperties",
+          "required": false,
+          "description": "Styles of the field's root element."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "The name the value is submitted under with a form."
+        },
+        {
+          "name": "required",
+          "type": "boolean",
+          "required": false,
+          "description": "A value is needed: an empty field keeps its form from submitting and takes focus."
+        },
+        {
+          "name": "readOnly",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "The value can be read and focused but not changed."
+        },
+        {
+          "name": "placeholder",
+          "type": "string",
+          "required": false,
+          "description": "Shown while the field is empty and its label floats or is hidden."
+        },
+        {
+          "name": "variant",
+          "type": "'outline' | 'floating'",
+          "required": false,
+          "default": "'outline'",
+          "description": "The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall with room for its label, for long forms on a page."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The field's height, as on every control: sm, md or lg in the current scale. Without it, the field takes the control height of its container, md unless the container sets another."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "true",
+          "description": "Show the label inside the field, where it floats into the outline while the field has a value, focus or its popup open. Set false for a field whose purpose is clear without it."
+        },
+        {
+          "name": "clearable",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "A clear button in the field and in the popup removes the value."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "description": "Whether the popup is open; with `onOpenChange` it controls it."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether an uncontrolled popup starts open; closed by default."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Called with the new state when the popup opens or closes."
+        },
+        {
+          "name": "label",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The field's visible name, such as Project name; it also names the control for assistive technology."
+        },
+        {
+          "name": "description",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Lasting guidance under the field, such as a format or a limit, linked to the control as its description."
+        },
+        {
+          "name": "error",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A message under the field that says how to correct the value. While it is set, the control is invalid (aria-invalid) and the message joins its description, after the description."
+        }
+      ],
+      "native": [
+        "button"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Toast": {
       "kind": "namespace",
       "source": "packages/ui/src/feedback/toast/ToastProvider.tsx",
@@ -8822,6 +9213,15 @@
       "native": [
         "header"
       ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "avatarHue": {
+      "kind": "function",
+      "source": "packages/ui/src/content/Avatar.tsx",
+      "description": "The hue a name gives an avatar: the same name always gives the same hue, on every page and in every session, and different names spread across the hues. Letter case and surrounding spaces do not count.",
+      "signature": "(name: string): AvatarHue",
       "entries": [
         "@envsemble/envui"
       ]

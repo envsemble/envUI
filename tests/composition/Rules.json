@@ -97,6 +97,10 @@
       "forms/Combobox.tsx": "composites",
       "forms/Composer.tsx": "composites",
       "forms/DatePicker.tsx": "composites",
+      "forms/TimePicker.tsx": "composites",
+      "forms/MonthPicker.tsx": "composites",
+      "forms/internal/PickerField.tsx": "composites",
+      "forms/internal/MonthGrid.tsx": "composites",
       "forms/DropZone.tsx": "composites",
       "forms/Field.tsx": "base",
       "forms/MarkdownEditor.tsx": "composites",
@@ -168,6 +172,7 @@
       "actions/SegmentedControl.tsx": ["button"],
       "navigation/Tree.tsx": ["role=\"tree\"", "role=\"treeitem\""],
       "forms/Calendar.tsx": ["role=\"grid\""],
+      "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
       "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
       "internal/FileInput.tsx": ["input"],
       "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
@@ -383,6 +388,15 @@
       },
       "ColorPicker": {
         "modules": ["forms/internal/ColorPlane.tsx"]
+      },
+      "DatePicker": {
+        "modules": [
+          "forms/internal/PickerField.tsx",
+          "forms/internal/TimeList.tsx",
+          "forms/internal/MonthGrid.tsx",
+          "forms/TimePicker.tsx",
+          "forms/MonthPicker.tsx"
+        ]
       }
     },
     "stylesheetsWithoutComponent": {

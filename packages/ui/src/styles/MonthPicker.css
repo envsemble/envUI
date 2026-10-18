@@ -1,0 +1,118 @@
+/* Month field: DatePicker's field and popup, whose popup holds a year of months in rows of three, as
+   wide as a calendar. As the calendar's days, this month has a ring, the chosen month a solid fill,
+   and unavailable months are faded. Coarse pointers get touch-tall months. */
+.env-month-picker-year {
+  --env-month-picker-row: var(--env-control-height-md);
+  display: grid;
+  gap: var(--env-space-2);
+  inline-size: calc(7 * var(--env-control-height-md));
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-small);
+}
+.env-month-picker-header {
+  /* The year buttons are as tall as a month. */
+  --env-control-height: var(--env-month-picker-row);
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-1);
+}
+.env-month-picker-heading {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  text-align: center;
+  font: var(--env-type-h2);
+  overflow-wrap: anywhere;
+}
+/* The year buttons point back and forward in the reading direction. */
+.env-month-picker-header .env-icon:dir(rtl) {
+  transform: scaleX(-1);
+}
+.env-month-picker-grid {
+  inline-size: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.env-month-picker-month {
+  block-size: calc(var(--env-month-picker-row) + var(--env-space-2));
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.env-month-picker-month-mark {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  inline-size: calc(100% - var(--env-space-2));
+  block-size: var(--env-month-picker-row);
+  margin-inline: auto;
+  padding-inline: var(--env-space-1);
+  border-radius: var(--env-radius-full);
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-month-picker-month:hover:not([aria-disabled='true'], [aria-selected='true'])
+  > .env-month-picker-month-mark {
+  background: var(--env-color-bg-neutral-subtle-hover);
+}
+.env-month-picker-month:active:not([aria-disabled='true'], [aria-selected='true'])
+  > .env-month-picker-month-mark {
+  background: var(--env-color-bg-neutral-subtle-pressed);
+}
+.env-month-picker-month[aria-current='date'] > .env-month-picker-month-mark {
+  box-shadow: inset 0 0 0 1px var(--env-color-border-accent-emphasis);
+  font-weight: var(--env-font-weight-semibold);
+}
+.env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
+  background: var(--env-color-bg-brand-emphasis);
+  box-shadow: none;
+  color: var(--env-color-fg-on-emphasis);
+  font-weight: var(--env-font-weight-semibold);
+}
+.env-month-picker-month:focus-visible > .env-month-picker-month-mark {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 1px;
+}
+.env-month-picker-month[aria-disabled='true'] {
+  cursor: default;
+}
+.env-month-picker-month[aria-disabled='true'] > .env-month-picker-month-mark {
+  opacity: var(--env-state-disabled-opacity);
+}
+@media (pointer: coarse) {
+  .env-month-picker-year {
+    --env-month-picker-row: var(--env-control-height-touch);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-month-picker-month-mark {
+    transition: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the chosen month takes the system's
+   selection colors, this month is outlined, and unavailable months take the disabled color. */
+@media (forced-colors: active) {
+  .env-month-picker-month[aria-current='date']:not(:focus-visible) > .env-month-picker-month-mark {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+  }
+  .env-month-picker-month[aria-selected='true'] > .env-month-picker-month-mark {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-month-picker-month[aria-selected='true']:focus-visible > .env-month-picker-month-mark {
+    outline-color: CanvasText;
+  }
+  .env-month-picker-month[aria-disabled='true'] {
+    color: GrayText;
+  }
+}

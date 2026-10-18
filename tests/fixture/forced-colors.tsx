@@ -30,6 +30,9 @@ import {
 } from '@envsemble/envui';
 import { Close } from '@envsemble/envui/icons/Close';
 import '@envsemble/envui/styles.css';
+// Internal: the lists of times and months the pickers open, shown here without their popups.
+import { TimeList } from '../../packages/ui/src/forms/internal/TimeList.js';
+import { MonthGrid } from '../../packages/ui/src/forms/internal/MonthGrid.js';
 
 const noop = () => {};
 
@@ -166,6 +169,16 @@ function Page() {
         onExpandedChange={noop}
       />
       <Calendar defaultValue="2026-10-14" />
+      <TimeList aria-label="Times" value={9 * 60 + 30} onValueChange={noop} min={8 * 60} />
+      <MonthGrid
+        value={2026 * 12 + 9}
+        onChoose={noop}
+        min={2026 * 12 + 1}
+        max={undefined}
+        locale="en-GB"
+        previousYearLabel="Previous year"
+        nextYearLabel="Next year"
+      />
       <Pagination page={2} pageSize={10} total={50} onPageChange={noop} />
       <DocumentTabs
         aria-label="Documents"

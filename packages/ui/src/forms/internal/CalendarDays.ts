@@ -112,6 +112,74 @@ export function clampDay(day: number, min: number | undefined, max: number | und
   return day;
 }
 
+/** A time list's step in whole minutes, from 1 to 60; 15 without one. */
+export function minuteStepOf(step: number | undefined) {
+  if (step === undefined || !Number.isFinite(step)) return 15;
+  return Math.min(60, Math.max(1, Math.round(step)));
+}
+
+/**
+ * The minutes a time list's minute column offers: every step from 0 through the hour, with a
+ * chosen minute that falls between steps in its place among them.
+ */
+export function minuteSteps(step: number, selected?: number) {
+  const minutes: number[] = [];
+  for (let minute = 0; minute < 60; minute += step) minutes.push(minute);
+  if (selected !== undefined && selected >= 0 && selected < 60 && selected % step) {
+    minutes.splice(Math.ceil(selected / step), 0, selected);
+  }
+  return minutes;
+}
+
+/** A time of day moved to the nearest step of its hour, on into the next hour from its last step. */
+export function roundToStep(minutes: number, step: number) {
+  const [hour, minute] = [Math.floor(minutes / 60), minutes % 60];
+  const rounded = Math.round(minute / step) * step;
+  return rounded >= 60 ? ((hour + 1) % 24) * 60 : hour * 60 + rounded;
+}
+
+/**
+ * The first of a column's entries whose typed forms start with the typed text and that can be
+ * chosen, or -1.
+ */
+export function matchTyped(
+  typed: string,
+  entries: readonly { keys: readonly string[]; disabled?: boolean }[],
+) {
+  return entries.findIndex(
+    (entry) => !entry.disabled && entry.keys.some((key) => key.startsWith(typed)),
+  );
+}
+
+/** A YYYY-MM month as months since January of year 0, or undefined for an empty or impossible one. */
+export function parseMonth(value: string | null | undefined) {
+  const match = value ? /^(\d{4})-(\d{2})$/.exec(value) : null;
+  if (!match) return undefined;
+  const [year, month] = [Number(match[1]), Number(match[2]) - 1];
+  return month >= 0 && month < 12 ? year * 12 + month : undefined;
+}
+
+export function formatMonth(month: number) {
+  const year = Math.floor(month / 12);
+  return `${String(year).padStart(4, '0')}-${String(month - year * 12 + 1).padStart(2, '0')}`;
+}
+
+/** The month a day is in, counted as parseMonth counts. */
+export function monthOfDay(day: number) {
+  const { year, month } = dayParts(day);
+  return year * 12 + month;
+}
+
+/** The first day of a month counted as parseMonth counts. */
+export function monthFirstDay(month: number) {
+  const year = Math.floor(month / 12);
+  return utcDay(year, month - year * 12, 1);
+}
+
+export function clampMonth(month: number, min: number | undefined, max: number | undefined) {
+  return clampDay(month, min, max);
+}
+
 /** Intl formatting of a day or a wall-clock moment: always in UTC, the zone the counts are in. */
 export function toUtcDate(day: number, minutes = 0) {
   return new Date(day * dayMilliseconds + minutes * 60_000);

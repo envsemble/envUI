@@ -53,6 +53,8 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content.
 - [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several.
 - [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar.
+- [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock.
+- [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period.
 - [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
 - [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.
 
@@ -84,7 +86,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Rating](docs/components/rating.md): A read-only rating as stars filled in half steps, named once for assistive technology.
 - [RelativeTime](docs/components/relative-time.md): A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip. Also: formatRelativeTime.
 - [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element.
-- [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup.
+- [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue.
 - [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList.
 - [Stat](docs/components/stat.md): Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.
 - [CalendarHeatmap](docs/components/calendar-heatmap.md): A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.

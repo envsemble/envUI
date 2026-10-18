@@ -53,6 +53,7 @@ import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
+import { DateRange } from '@envsemble/envui/icons/DateRange';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
 import { ViewSidebar } from '@envsemble/envui/icons/ViewSidebar';
@@ -101,6 +102,8 @@ const referenceIcons: Record<string, typeof Palette> = {
   select: ArrowDropDownCircle,
   combobox: ManageSearch,
   'date-picker': CalendarMonth,
+  'time-picker': Schedule,
+  'month-picker': DateRange,
   slider: Tune,
   'drop-zone': CloudUpload,
   'color-picker': Palette,
