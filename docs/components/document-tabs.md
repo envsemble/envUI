@@ -54,7 +54,8 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 3. **Tab**: an optional `icon` and the `label`; its `title` shows as a native tooltip, the label by default.
 4. **Active indicator**: the active tab's fill and a 0.125 rem selection-blue line along its bottom edge.
 5. **Close button**: a 1.5 rem round CloseButton, a pointer's affordance with `closeLabel` as its tooltip, shown on the active tab, on hover and with keyboard focus.
-6. **Context menu**: a compact menu named `contextMenuLabel` (Tab actions), with the tab's close item and, with `onCloseAll`, `closeAllLabel` (Close all tabs).
+6. **Context menu**: a compact menu named `contextMenuLabel` (Tab actions), with the tab's close item, with `onReorder` Move left and Move right, and with `onCloseAll` `closeAllLabel` (Close all tabs).
+7. **End** (`end`): the application's own content after the tabs, outside the strip that scrolls and on its hairline, such as a button that closes every tab.
 
 ## Variants and sizes
 
@@ -69,6 +70,8 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 - **Hover and focus**: a tab takes a state layer on hover and press, and keyboard focus shows a focus outline.
 - **Closing**: the close button, a middle click (which doesn't activate the tab), <kbd>Delete</kbd> or <kbd>Backspace</kbd> on the focused tab and Close in its context menu call `onClose`. When the focused tab closes, however it closes, focus moves to the tab that becomes active.
 - **Pinning**: a double click on a tab, outside its close button, calls `onPin`, such as to keep a preview tab.
+- **Overflow**: tabs that run past an edge of the strip fade out toward it over 2.5 rem, so the strip shows there is more; the fade goes once the strip is scrolled to that end.
+- **Reordering**: with `onReorder`, a tab dragged with a mouse or pen, once it has moved 4 px, dims in place while a copy of it follows the pointer, and a line marks the gap between tabs nearest the pointer, where it will land, also the gaps on either side of the tab itself, which leave it in place; near an edge the strip scrolls with it. Letting go moves it there; <kbd>Esc</kbd> cancels, and the release that ends a drag selects nothing more. Touch scrolls the strip instead; on touch and with the keyboard, Move left and Move right in the tab's context menu move it one place, in the direction they say on screen, also in right-to-left text. `onReorder` receives every tab's id in the new order.
 - **Context menu**: a right click, a long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> on a tab opens a compact context menu that offers closing that tab, so the keyboard can close a tab where <kbd>Delete</kbd> is missing. With `onCloseAll`, the menu also offers Close all tabs, and the strip around the tabs opens it too; Close all tabs is unavailable while the strip is empty. Without `onCloseAll`, the strip around the tabs opens no menu.
 - **Scrolling**: a strip whose tabs overflow scrolls with the wheel, touch or the keyboard, without a scrollbar; the wheel turned down scrolls toward the end, the left in right-to-left text.
 - **Application keys**: keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Ctrl</kbd>+<kbd>W</kbd> bound to `onClose`.
@@ -124,14 +127,22 @@ DocumentTabs is the strip of open documents above an editor: one tab per documen
 
 ### Many open documents
 
-In a narrow pane the strip scrolls sideways, and the active tab stays in view.
+In a narrow pane the strip scrolls sideways, the active tab stays in view, and tabs fade at an edge they run past. Drag a tab to reorder it: a line shows where it will land, and near an edge the strip scrolls with it.
 
 ```tsx example=ManyTabs
 
 ```
 
+### Buttons after the tabs
+
+`end` puts the application's own content after the tabs, outside the strip that scrolls and on its hairline, such as a button that opens a new document and one that closes them all.
+
+```tsx example=CloseAllButton
+
+```
+
 ## Changelog
 
-- **1.0.0**: Rebuilt on Base UI Tabs: each tab sits beside its close button, a CloseButton hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`.
+- **1.0.0**: `onReorder`: a tab dragged with a mouse or pen shows where it will land and moves there when let go, and each tab's context menu offers Move left and Move right. `end` holds content after the tabs, such as a button that closes them all. Tabs that run past an edge fade out toward it. Rebuilt on Base UI Tabs: each tab sits beside its close button, a CloseButton hidden from assistive technology, instead of around it, which fixes the nested-interactive control, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`. Each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs. The arrow keys and the wheel follow the text direction. Strings come from `messages.documentTabs`, and the strip takes `ref` and `style`. Classes: `env-document-tabs-item` lays out each tab, and `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`.
 - **0.6.0**: `onCloseAll`: the strip and each tab open a compact context menu with Close all tabs, and on a tab, closing that tab; focus moves to the tab that becomes active.
 - **0.5.0**: DocumentTabs, with preview tabs, pinning and closing.

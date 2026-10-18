@@ -19,13 +19,17 @@ export default function ManyTabs() {
   );
   const [value, setValue] = useState<string | null>('pricing');
   return (
-    // A narrow pane: the strip scrolls sideways with the wheel, touch or the arrow keys.
+    // A narrow pane: the strip scrolls sideways with the wheel, touch or the arrow keys, and the
+    // tabs fade at an edge they run past. Drag a tab near an edge to carry it further.
     <div style={{ inlineSize: 'min(100%, 28rem)' }}>
       <DocumentTabs
         aria-label="Northwind documents"
         items={tabs}
         value={value}
         onValueChange={setValue}
+        onReorder={(ids) =>
+          setTabs((current) => ids.map((id) => current.find((tab) => tab.id === id)!))
+        }
         onClose={(id) => {
           const index = tabs.findIndex((tab) => tab.id === id);
           const remaining = tabs.filter((tab) => tab.id !== id);

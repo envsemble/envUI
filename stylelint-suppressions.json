@@ -94,7 +94,7 @@
   },
   "packages/ui/src/styles/DocumentTabs.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 8
+      "count": 7
     },
     "unit-disallowed-list": {
       "count": 1

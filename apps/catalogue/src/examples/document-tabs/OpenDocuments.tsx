@@ -34,6 +34,10 @@ export default function OpenDocuments() {
         panelId="open-document"
         onValueChange={setValue}
         onClose={close}
+        // Drag a tab, or use Move left and Move right in its context menu, to put it elsewhere.
+        onReorder={(ids) =>
+          setTabs((current) => ids.map((id) => current.find((tab) => tab.id === id)!))
+        }
         onCloseAll={() => {
           setTabs([]);
           setValue(null);

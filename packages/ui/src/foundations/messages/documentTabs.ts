@@ -7,6 +7,10 @@ export const documentTabs = {
   close: ({ label }: { label: string }) => `Close ${label}`,
   /** Closes every tab. */
   closeAll: 'Close all tabs',
+  /** Moves a tab one place to the left, in its context menu. */
+  moveLeft: 'Move left',
+  /** Moves a tab one place to the right, in its context menu. */
+  moveRight: 'Move right',
   /** Names a tab's menu of actions. */
   actions: 'Tab actions',
 };
