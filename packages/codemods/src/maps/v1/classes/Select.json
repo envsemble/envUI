@@ -1,0 +1,9 @@
+{
+  "env-dropdown-trigger": "env-select-trigger",
+  "env-dropdown-options": "env-select-popup",
+  "env-dropdown-list": "env-select-list",
+  "env-dropdown-option": "env-select-item",
+  "env-dropdown-option-check": "env-select-item-indicator",
+  "env-dropdown-control": "env-select",
+  "env-select-positioner": "env-popup-positioner"
+}

@@ -20,7 +20,7 @@ function ColorSwatch({
   value?: MeasuredColor;
   label: string;
 }) {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const { setValue } = usePaletteCustomization();
   return (
     <Dialog
@@ -34,9 +34,8 @@ function ColorSwatch({
           aria-label={`Pick ${label.toLowerCase()} color`}
           title="Choose a color"
           style={{
-            background: `var(--color-${token})`,
-            color:
-              (value?.lightness ?? 50) > 55 ? 'var(--color-canvas-dark)' : 'var(--color-white)',
+            background: `var(${colorVariable(token)})`,
+            color: (value?.lightness ?? 50) > 55 ? 'var(--docs-ink-dark)' : 'var(--docs-ink-light)',
           }}
         >
           <code>{value?.css ?? ''}</code>
@@ -53,7 +52,7 @@ function ColorSwatch({
 }
 
 function ColorPalette() {
-  const theme = useTheme();
+  const { theme } = useTheme();
   const { palettes } = usePaletteCustomization();
   const paletteElement = useRef<HTMLDivElement>(null);
   const [colorValues, setColorValues] = useState<Record<string, MeasuredColor>>({});
@@ -67,16 +66,18 @@ function ColorPalette() {
     colorGroups.forEach(([, tokens]) =>
       tokens.forEach(([token]) => {
         const probe = document.createElement('span');
-        probe.style.color = `var(--color-${token})`;
+        probe.style.color = `var(${colorVariable(token)})`;
         probe.hidden = true;
         paletteElement.current!.append(probe);
-        context.clearRect(0, 0, 1, 1);
+        // Translucent colors, such as the neutral fill, are measured as painted on the page.
+        context.fillStyle = computedStyle.getPropertyValue('--env-color-bg-page');
+        context.fillRect(0, 0, 1, 1);
         context.fillStyle = getComputedStyle(probe).color;
         context.fillRect(0, 0, 1, 1);
         const rgb = [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
         probe.remove();
         measuredColors[token] = {
-          css: computedStyle.getPropertyValue(`--color-${token}`).trim(),
+          css: computedStyle.getPropertyValue(colorVariable(token)).trim(),
           hex: '#' + rgb.map((channel) => channel.toString(16).padStart(2, '0')).join(''),
           lightness: ((Math.max(...rgb) + Math.min(...rgb)) / 255) * 50,
         };
@@ -85,26 +86,24 @@ function ColorPalette() {
     setColorValues(measuredColors);
   }, [theme, palettes]);
   return (
-    <Stack ref={paletteElement} gap={9} className="docs-palette">
+    // Each group is an Example, so the visual baseline captures it; their margins space them.
+    <Stack ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
-        <Stack as="section" key={group}>
-          <Text as="h2" variant="page-heading">
-            {group}
-          </Text>
+        <Example key={group} title={group} size="collection">
           <Stack gap={0}>
             {tokens.map(([token, label]) => (
-              <div className="docs-palette-row" key={token}>
+              <div className="docs-palette-row" key={label}>
                 <div className="docs-palette-label">
-                  <Text as="span" variant="supporting">
+                  <Text render={<span />} variant="body-sm">
                     {label}
                   </Text>
-                  <code>--color-{token}</code>
+                  <code>{colorVariable(token)}</code>
                 </div>
                 <ColorSwatch token={token} label={label} value={colorValues[token]} />
               </div>
             ))}
           </Stack>
-        </Stack>
+        </Example>
       ))}
     </Stack>
   );
@@ -112,39 +111,36 @@ function ColorPalette() {
 
 function InteractionColors() {
   const states = [
-    { label: 'Default', token: '--color-primary-action', shift: null },
-    { label: 'Hover', token: '--color-primary-action-hover', shift: '--state-hover-shift' },
-    { label: 'Pressed', token: '--color-primary-action-pressed', shift: '--state-pressed-shift' },
-    { label: 'Disabled', token: '--color-primary-action', shift: null },
+    { label: 'Default', token: '--env-color-bg-brand-emphasis' },
+    { label: 'Hover', token: '--env-color-bg-brand-emphasis-hover' },
+    { label: 'Pressed', token: '--env-color-bg-brand-emphasis-pressed' },
+    { label: 'Disabled', token: '--env-color-bg-brand-emphasis' },
   ];
 
   return (
     <Example title="Derived interaction colors" size="collection">
-      <Text tone="muted">
-        Below 50% HSL lightness, add lightness; otherwise subtract it. Clamp to 0–100%.
+      <Text emphasis="muted">
+        Hover and pressed are derived when the tokens are built: other grades of the same hue, each
+        a token of its own, so the contrast gate checks the label on every state.
       </Text>
       <SpecimenGrid size="compact">
-        {states.map(({ label, token, shift }) => (
+        {states.map(({ label, token }) => (
           <Specimen key={label} title={label}>
             <div
               className="docs-color-state"
               aria-hidden="true"
               style={{
                 background: `var(${token})`,
-                opacity: label === 'Disabled' ? 'var(--state-disabled-opacity)' : undefined,
+                opacity: label === 'Disabled' ? 'var(--env-state-disabled-opacity)' : undefined,
               }}
             />
             <Text variant="caption">
-              {shift ? (
+              {label === 'Disabled' ? (
                 <>
-                  <TokenValue token={shift} /> point shift
-                </>
-              ) : label === 'Disabled' ? (
-                <>
-                  <TokenValue token="--state-disabled-opacity" /> opacity
+                  <TokenValue token="--env-state-disabled-opacity" /> opacity
                 </>
               ) : (
-                'Primary action base color'
+                <code>{token}</code>
               )}
             </Text>
           </Specimen>

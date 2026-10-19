@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { createElement, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Stack } from '../foundations/Layout.js';
@@ -6,15 +6,22 @@ import { Text } from '../foundations/Text.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
 export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
+  /** What is missing or what happened, such as "No projects yet"; a heading of `headingLevel`. */
   title: ReactNode;
+  /** Why, and what people can do, in a sentence or two of muted text under the title. */
   description?: ReactNode;
+  /** A decorative icon above the text; an error state shows the error icon without it. */
   icon?: ReactNode;
+  /** The action that resolves the state, such as a Button that creates the first item. */
   action?: ReactNode;
+  /** More content under the description, such as a short list of next steps. */
+  children?: ReactNode;
   /**
-   * Error states replace content that failed to load: they show the error icon by default and
-   * are announced as an alert. Pair them with a retry action.
+   * neutral for a state with nothing to show yet; danger for content that failed to load, which
+   * shows the error icon by default and is announced as an alert. Pair it with a retry action.
+   * @default 'neutral'
    */
-  tone?: 'neutral' | 'error';
+  tone?: 'neutral' | 'danger';
   /** The title's heading level in the page outline; 4 by default. The appearance stays the same. */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /**
@@ -25,6 +32,10 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   align?: 'start' | 'center';
 }
 
+/**
+ * What a region shows when it has nothing to show: no items yet, no matches, or content that failed
+ * to load. A title, a description, an optional icon and the action that resolves the state.
+ */
 export function EmptyState({
   title,
   description,
@@ -37,24 +48,21 @@ export function EmptyState({
   children,
   ...props
 }: EmptyStateProps) {
-  const stateIcon = icon ?? (tone === 'error' ? <ErrorIcon /> : null);
+  const stateIcon = icon ?? (tone === 'danger' ? <ErrorIcon /> : null);
   return (
     <div
-      role={tone === 'error' ? 'alert' : undefined}
+      role={tone === 'danger' ? 'alert' : undefined}
       {...props}
-      className={classNames(
-        'env-empty-state',
-        tone === 'error' && 'env-empty-state-error',
-        align === 'center' && 'env-empty-state-center',
-        className,
-      )}
+      className={classNames('env-empty-state', className)}
+      data-tone={tone}
+      data-align={align}
     >
       {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
-      <Stack gap={2} className="env-empty-copy">
-        <Text as={`h${headingLevel}`} variant="section-heading">
+      <Stack gap={2} className="env-empty-state-description">
+        <Text render={createElement(`h${headingLevel}`)} variant="title">
           {title}
         </Text>
-        {description != null && <Text variant="supporting">{description}</Text>}
+        {description != null && <Text variant="body-sm">{description}</Text>}
         {children}
       </Stack>
       {action}

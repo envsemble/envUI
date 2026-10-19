@@ -1,31 +1,37 @@
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type ComponentPropsWithRef,
-  type CSSProperties,
-} from 'react';
+'use client';
+
+import { Fragment, useEffect, useRef, type ComponentPropsWithRef } from 'react';
 import { IconButton } from '../actions/Button.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { Check } from '../icons/Check.js';
 import { useTheme } from '../foundations/Theme.js';
+import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useCopy } from '../internal/useCopy.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
 import { useCodeHighlighting } from './internal/useCodeHighlighting.js';
-import type { CodeTokenStyle } from './internal/CodeHighlighting.js';
+import { tokenStyle } from './internal/codeTokenStyle.js';
 
 export interface CodeBlockProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  /** The source, as one string; it is shown, highlighted and copied as it is. */
   children: string;
+  /**
+   * The language to highlight: js, jsx, ts, tsx, java, json, html, xml, css, sql, sh, bash, yaml,
+   * md or ini, or their full names. Other values, and none, leave the source plain text.
+   */
   language?: string;
+  /** Names the block in its heading and for assistive technology, such as a file name. */
   label?: string;
+  /** Shows a copy button in the heading that copies the source; false by default. */
   copyable?: boolean;
+  /** Wraps long lines instead of scrolling them; false by default. */
   wrap?: boolean;
 }
 
 /**
  * Source display in the code theme of the app theme, with that code theme's own colors; copy always
- * uses the original string.
+ * uses the original string. Its words come from EnvUIProvider's messages.codeBlock.
  */
 export function CodeBlock({
   children: source,
@@ -37,32 +43,24 @@ export function CodeBlock({
   style,
   ...props
 }: CodeBlockProps) {
-  const theme = useTheme();
+  const { theme } = useTheme();
+  const messages = useMessages('codeBlock', codeBlockMessages);
   const tokens = useCodeHighlighting(source, language);
-  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'unavailable'>('idle');
+  // Copied or failed shows for three seconds; where the clipboard fails, the code is selected for
+  // people to copy themselves.
+  const { copy, status, reset } = useCopy({ resetAfter: 3_000 });
   const preRef = useRef<HTMLPreElement>(null);
-  useEffect(() => {
-    if (copyStatus === 'idle') return;
-    const timeout = setTimeout(() => setCopyStatus('idle'), 3_000);
-    return () => clearTimeout(timeout);
-  }, [copyStatus]);
-  useEffect(() => setCopyStatus('idle'), [source]);
+  useEffect(() => reset(), [source, reset]);
 
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(source);
-      setCopyStatus('copied');
-    } catch {
-      const pre = preRef.current;
-      if (pre) {
-        const range = pre.ownerDocument.createRange();
-        range.selectNodeContents(pre);
-        const selection = pre.ownerDocument.getSelection();
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-      }
-      setCopyStatus('unavailable');
-    }
+  async function copySource(button: HTMLElement) {
+    if (await copy(source, button)) return;
+    const pre = preRef.current;
+    if (!pre) return;
+    const range = pre.ownerDocument.createRange();
+    range.selectNodeContents(pre);
+    const selection = pre.ownerDocument.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
   }
   const lineEndings = source.match(/\r\n|\r|\n/g) ?? [];
   return (
@@ -74,24 +72,28 @@ export function CodeBlock({
     >
       {(label || copyable) && (
         <div className="env-code-block-heading">
-          <span>{label ?? language ?? 'Code'}</span>
+          <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton
-              variant="quiet"
-              icon={copyStatus === 'copied' ? <Check /> : <ContentCopy />}
-              aria-label={copyStatus === 'copied' ? 'Code copied' : 'Copy code'}
-              onClick={copy}
+              variant="ghost"
+              icon={status === 'copied' ? <Check /> : <ContentCopy />}
+              aria-label={status === 'copied' ? messages.copied : messages.copy}
+              onClick={(event) => void copySource(event.currentTarget)}
             />
           )}
         </div>
       )}
-      <pre ref={preRef} tabIndex={0} aria-label={label ?? `${language ?? 'Plain text'} code`}>
+      <pre
+        ref={preRef}
+        tabIndex={0}
+        aria-label={label ?? messages.label({ language: language ?? messages.plainText })}
+      >
         <code>
           {tokens
             ? tokens.map((line, index) => (
                 <Fragment key={index}>
                   {line.map((token, tokenIndex) => (
-                    <span key={tokenIndex} style={tokenStyle(token[theme])}>
+                    <span key={tokenIndex} style={tokenStyle(token[theme], token[`${theme}High`])}>
                       {token.content}
                     </span>
                   ))}
@@ -102,26 +104,14 @@ export function CodeBlock({
         </code>
       </pre>
       {copyable && (
-        <span className="env-code-copy-status" role="status">
-          {copyStatus === 'copied'
-            ? 'Copied.'
-            : copyStatus === 'unavailable'
-              ? 'Code selected. Use your keyboard or context menu to copy.'
+        <span className="env-code-block-copy-status" role="status">
+          {status === 'copied'
+            ? messages.copiedStatus
+            : status === 'failed'
+              ? messages.selected
               : ''}
         </span>
       )}
     </div>
   );
-}
-
-function tokenStyle({ color, fontStyle = 0 }: CodeTokenStyle): CSSProperties {
-  return {
-    color,
-    fontStyle: fontStyle & 1 ? 'italic' : undefined,
-    fontWeight: fontStyle & 2 ? 700 : undefined,
-    textDecoration:
-      [fontStyle & 4 ? 'underline' : '', fontStyle & 8 ? 'line-through' : '']
-        .filter(Boolean)
-        .join(' ') || undefined,
-  };
 }

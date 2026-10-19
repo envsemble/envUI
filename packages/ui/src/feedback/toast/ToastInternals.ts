@@ -1,9 +1,9 @@
 import type { Toast as BaseToast } from '@base-ui/react/toast';
-import type { ToastNotification, ToastPlacement, ToastVariant } from './ToastTypes.js';
+import type { ToastNotification, ToastPlacement, ToastTone } from './ToastTypes.js';
 
 export type ToastEntry = ToastNotification & {
   id: string;
-  variant: ToastVariant;
+  tone: ToastTone;
   placement: ToastPlacement;
 };
 export type ToastDelivery = Pick<
@@ -18,4 +18,4 @@ export type ToastTimer = {
   pauseReasons: Set<string>;
 };
 
-export const toastPlacements: readonly ToastPlacement[] = ['bottom-right', 'top-center'];
+export const toastPlacements: readonly ToastPlacement[] = ['bottom-end', 'top-center'];

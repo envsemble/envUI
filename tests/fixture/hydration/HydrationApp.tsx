@@ -1,50 +1,55 @@
 import { useState } from 'react';
 import {
   Theme,
-  Input,
+  TextField,
   ColorPicker,
   Checkbox,
   Select,
   Dialog,
   Button,
-  ToastProvider,
+  Toast,
   useToast,
   Badge,
   Breadcrumbs,
   DocumentTabs,
-  Notice,
+  Alert,
   SegmentedControl,
   Slider,
-  FileDropzone,
+  DropZone,
   Tree,
-  TitleBar,
+  WindowFrame,
   Menubar,
-  MenubarMenu,
-  MenuItem,
-  MenuSubmenu,
+  Menu,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
   Composer,
   Message,
   MessageList,
   Stat,
-  StatGroup,
-  Heatmap,
+  CalendarHeatmap,
   Combobox,
   PanelDock,
-  PanelDockHeader,
   type PanelDockPanel,
   RelativeTime,
   AvatarGroup,
   CopyButton,
   Pagination,
-  DateTimeField,
+  DatePicker,
   Calendar,
+  SplitPane,
+  Sidebar,
+  SidebarTrigger,
+  NavList,
+  readAppShellCookie,
 } from '@envsemble/envui';
+
+/**
+ * The frame state a server reads from the request's cookie, here a fixed Cookie header, so the
+ * server and the browser render the same collapsed sidebar with its chosen width.
+ */
+const frameState = readAppShellCookie(
+  'theme=dark; hydrated-frame=start.open%3D0%26start.width%3D18',
+  'hydrated-frame',
+);
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
   id: `doc-${index}`,
@@ -75,27 +80,27 @@ export function HydrationApp() {
   const [page, setPage] = useState(1);
   return (
     <Theme theme="dark">
-      <ToastProvider>
-        <TitleBar
+      <Toast.Provider>
+        <WindowFrame.TitleBar
           start={
-            <Menubar aria-label="Hydrated menubar" accessKeys>
-              <MenubarMenu label="File" accessKey="F">
-                <MenuItem shortcut="Ctrl+N">Hydrated new</MenuItem>
-                <MenuSubmenu label="Hydrated recent">
-                  <MenuItem>Hydrated report</MenuItem>
-                </MenuSubmenu>
-              </MenubarMenu>
-            </Menubar>
+            <Menubar.Root aria-label="Hydrated menubar" accessKeys>
+              <Menubar.Menu label="File" accessKey="F">
+                <Menu.Item shortcut="Ctrl+N">Hydrated new</Menu.Item>
+                <Menu.Submenu label="Hydrated recent">
+                  <Menu.Item>Hydrated report</Menu.Item>
+                </Menu.Submenu>
+              </Menubar.Menu>
+            </Menubar.Root>
           }
         >
           Hydrated title
-        </TitleBar>
-        <Input
+        </WindowFrame.TitleBar>
+        <TextField
           label="Hydrated input"
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <Input label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
+        <TextField label="Hydrated amount" prefix="€" suffix="per month" defaultValue="12" />
         <Checkbox label="Hydrated choice" checked={checked} onCheckedChange={setChecked} />
         <Slider
           label="Hydrated level"
@@ -107,16 +112,16 @@ export function HydrationApp() {
         <Select
           label="Hydrated select"
           defaultValue="one"
-          options={[
+          items={[
             { value: 'one', label: 'One' },
             { value: 'two', label: 'Two' },
           ]}
         />
         <Select
           label="Hydrated compact select"
-          density="compact"
+          size="sm"
           defaultValue="one"
-          options={[
+          items={[
             { value: 'one', label: 'One' },
             { value: 'two', label: 'Two' },
           ]}
@@ -131,7 +136,7 @@ export function HydrationApp() {
           ]}
           defaultValue={['one']}
         />
-        <DateTimeField
+        <DatePicker
           label="Hydrated date"
           name="date"
           defaultValue="2026-03-09"
@@ -146,7 +151,7 @@ export function HydrationApp() {
         />
         {/* Without a locale, the server and the browser each have their own language, time zone
             and today, as they can in production. */}
-        <DateTimeField label="Hydrated local date" defaultValue="2026-03-17" />
+        <DatePicker label="Hydrated local date" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated local calendar" defaultValue="2026-03-17" />
         <Calendar aria-label="Hydrated today" />
         {/* The server renders in March 2026, at its first month; the browser in a later one. */}
@@ -156,13 +161,13 @@ export function HydrationApp() {
         </Dialog>
         <NotificationTrigger />
         <Breadcrumbs items={[{ label: 'Workspace', href: '/' }, { label: 'Hydrated page' }]} />
-        <Notice title="Hydrated notice banner">Server-rendered notice</Notice>
+        <Alert title="Hydrated alert banner">Server-rendered alert</Alert>
         <Badge tone="done">Hydrated badge</Badge>
         <SegmentedControl
           aria-label="Hydrated view"
           value={view}
           onValueChange={setView}
-          options={[
+          items={[
             { value: 'open', label: 'Open' },
             { value: 'done', label: 'Done' },
           ]}
@@ -182,39 +187,39 @@ export function HydrationApp() {
           <Tree
             aria-label="Hydrated tree"
             items={treeItems}
-            selectedId={selected}
-            onOpen={(item) => setSelected(item.id)}
+            value={selected}
+            onAction={(item) => setSelected(item.id)}
             onExpandedChange={() => undefined}
           />
         </div>
-        <Table
+        <Table.Root
           aria-label="Hydrated table"
           narrowLayout="stack"
           resizableColumns
           defaultColumnWidths={[60, 40]}
         >
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell
                 sortDirection={sortDirection}
-                onSort={() =>
+                onSortChange={() =>
                   setSortDirection((current) =>
                     current === 'ascending' ? 'descending' : 'ascending',
                   )
                 }
               >
                 Hydrated name
-              </TableHeaderCell>
-              <TableHeaderCell>Hydrated owner</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow selected>
-              <TableCell>Quarterly report</TableCell>
-              <TableCell label="Owner">Aurora</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+              </Table.HeaderCell>
+              <Table.HeaderCell>Hydrated owner</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            <Table.Row selected>
+              <Table.Cell>Quarterly report</Table.Cell>
+              <Table.Cell label="Owner">Aurora</Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        </Table.Root>
         <MessageList aria-label="Hydrated conversation">
           <Message from="other" author="Aurora" meta="09:41">
             Hydrated answer
@@ -231,8 +236,13 @@ export function HydrationApp() {
           }}
           footer="Hydrated composer footer"
         />
+        <SplitPane.Root stackBelow="20rem">
+          <SplitPane.Pane label="Hydrated start">Hydrated start pane</SplitPane.Pane>
+          <SplitPane.ResizeHandle label="Hydrated split" />
+          <SplitPane.Pane>Hydrated end pane</SplitPane.Pane>
+        </SplitPane.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
-          <PanelDock
+          <PanelDock.Root
             panels={dockPanels}
             onModeChange={(id, mode) =>
               setDockPanels((current) =>
@@ -247,28 +257,28 @@ export function HydrationApp() {
           >
             {(panel) => (
               <>
-                <PanelDockHeader title={panel.title} headingLevel={3} />
-                <Input label={`${panel.title} draft`} />
+                <PanelDock.Header title={panel.title} headingLevel={3} />
+                <TextField label={`${panel.title} draft`} />
               </>
             )}
-          </PanelDock>
+          </PanelDock.Root>
         </div>
-        <StatGroup aria-label="Hydrated stats">
-          <Stat
+        <Stat.Group aria-label="Hydrated stats">
+          <Stat.Root
             label="Hydrated stat"
             value="128"
             trend={{ direction: 'up', label: '+12%' }}
-            detail="Last 30 days"
+            description="Last 30 days"
           />
-        </StatGroup>
-        <FileDropzone
-          compact
+        </Stat.Group>
+        <DropZone
+          size="sm"
           label="Hydrated files"
           description="Any file"
-          onFiles={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
+          onDropAccepted={(chosen) => setFiles(chosen.map((file) => file.name).join(' '))}
         />
         <p>{files}</p>
-        <Heatmap
+        <CalendarHeatmap
           aria-label="Hydrated activity"
           data={[
             { date: '2026-03-02', value: 3 },
@@ -302,8 +312,21 @@ export function HydrationApp() {
           total={30}
           onPageChange={setPage}
         />
+        <Sidebar.Provider
+          persist={{ key: 'hydrated-frame', storage: 'cookie' }}
+          initialState={frameState}
+        >
+          <SidebarTrigger data-testid="hydrated-sidebar-trigger" />
+          <Sidebar.Root label="Hydrated sidebar" resizable>
+            <Sidebar.Content>
+              <NavList.Root>
+                <NavList.Item href="#hydrated-home">Hydrated home</NavList.Item>
+              </NavList.Root>
+            </Sidebar.Content>
+          </Sidebar.Root>
+        </Sidebar.Provider>
         <output>{name}</output>
-      </ToastProvider>
+      </Toast.Provider>
     </Theme>
   );
 }

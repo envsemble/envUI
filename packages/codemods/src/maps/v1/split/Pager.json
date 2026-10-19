@@ -1,0 +1,11 @@
+{
+  "@envsemble/envui": {
+    "DirectionLink": {
+      "prop": "direction",
+      "values": {
+        "previous": "Pager.Previous",
+        "next": "Pager.Next"
+      }
+    }
+  }
+}

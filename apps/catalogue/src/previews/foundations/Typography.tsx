@@ -4,12 +4,12 @@ import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
 const textVariants = [
-  ['Display', 'display', '--color-text-primary', '1.75–2.75 rem · 500'],
-  ['Page heading', 'page-heading', '--color-text-primary', '1.125 rem · 500'],
-  ['Section heading', 'section-heading', '--color-text-primary', '1 rem · 500'],
-  ['Body text', 'body', '--color-text-primary', '0.9375 rem · 400'],
-  ['Supporting text', 'supporting', '--color-text-muted', '0.875 rem · 400'],
-  ['Caption', 'caption', '--color-text-quiet', '0.875 rem · 400'],
+  ['Display', 'display', '--env-color-fg-default', '1.75–2.75 rem · 500'],
+  ['Headline', 'headline', '--env-color-fg-default', '1.125 rem · 500'],
+  ['Title', 'title', '--env-color-fg-default', '1 rem · 500'],
+  ['Body text', 'body', '--env-color-fg-default', '0.9375 rem · 400'],
+  ['Small body', 'body-sm', '--env-color-fg-muted', '0.875 rem · 400'],
+  ['Caption', 'caption', '--env-color-fg-muted', '0.875 rem · 400'],
 ] as const;
 
 function TextSpecimen({ sample, children }: { sample: ReactNode; children: ReactNode }) {
@@ -37,10 +37,10 @@ export function TypographyPreview() {
               key={variant}
               sample={<Text variant={variant}>The quick brown fox jumps over the lazy dog.</Text>}
             >
-              <Text as="span" variant="caption">
+              <Text render={<span />} variant="caption">
                 {title} · {meta}
               </Text>
-              <Text as="span" variant="caption">
+              <Text render={<span />} variant="caption">
                 <code>
                   <TokenValue token={color} />
                 </code>
@@ -57,22 +57,22 @@ export function TypographyPreview() {
         <ol className="docs-type-list">
           <TextSpecimen
             sample={
-              <Text as="h3" variant="page-heading">
+              <Text render={<h3 />} variant="headline">
                 Project overview
               </Text>
             }
           >
-            <Text as="span" variant="caption">
+            <Text render={<span />} variant="caption">
               Page emphasis · semantic heading
             </Text>
           </TextSpecimen>
-          <TextSpecimen sample={<Text tone="muted">Shared project context.</Text>}>
-            <Text as="span" variant="caption">
+          <TextSpecimen sample={<Text emphasis="muted">Shared project context.</Text>}>
+            <Text render={<span />} variant="caption">
               Body size · supporting color
             </Text>
           </TextSpecimen>
-          <TextSpecimen sample={<Text tone="quiet">Updated today.</Text>}>
-            <Text as="span" variant="caption">
+          <TextSpecimen sample={<Text emphasis="subtle">Updated today.</Text>}>
+            <Text render={<span />} variant="caption">
               Body size · quiet color
             </Text>
           </TextSpecimen>
@@ -80,13 +80,13 @@ export function TypographyPreview() {
             sample={
               <Text>
                 Project status:{' '}
-                <Text as="span" tone="muted">
+                <Text render={<span />} emphasis="muted">
                   Draft
                 </Text>
               </Text>
             }
           >
-            <Text as="span" variant="caption">
+            <Text render={<span />} variant="caption">
               Inline supporting text
             </Text>
           </TextSpecimen>

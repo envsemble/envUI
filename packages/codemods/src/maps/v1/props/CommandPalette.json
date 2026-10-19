@@ -1,0 +1,22 @@
+{
+  "@envsemble/envui": {
+    "CommandPalette": {
+      "query": {
+        "to": "inputValue",
+        "report": "CommandPalette's query is inputValue in 1.0."
+      },
+      "onQueryChange": {
+        "to": "onInputValueChange",
+        "report": "CommandPalette's onQueryChange is onInputValueChange in 1.0."
+      },
+      "onSelect": {
+        "to": "onAction",
+        "report": "CommandPalette's onSelect is onAction in 1.0, with the same arguments."
+      },
+      "closeOnSelect": {
+        "to": "closeOnAction",
+        "report": "CommandPalette's closeOnSelect is closeOnAction in 1.0."
+      }
+    }
+  }
+}

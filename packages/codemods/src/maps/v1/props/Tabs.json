@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "Tabs": {
+      "size": {
+        "current": ["sm", "md", "lg"],
+        "report": "Tabs' size is the rail's control size in 1.0: sm (as compact was), md or lg (the default, as standard was).",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {}
+        }
+      }
+    }
+  }
+}

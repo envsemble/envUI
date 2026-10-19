@@ -1,0 +1,6 @@
+{
+  "env-document-tabs-close": {
+    "within": "env-document-tabs-tab",
+    "report": "the close button sits beside the tab, in .env-document-tabs-item, which takes the hover and data-active: write .env-document-tabs-item:hover .env-document-tabs-close."
+  }
+}

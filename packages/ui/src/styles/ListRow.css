@@ -1,0 +1,93 @@
+/* A row of a popup list (ListRow): an indicator, an icon, a label over its description, and content
+   or a shortcut at the end, on the element of the list's own item. Its states come from Base UI's
+   data-highlighted, data-selected and data-disabled. */
+.env-list-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  min-block-size: var(--env-row-height);
+  padding: var(--env-space-1) var(--env-space-2);
+  border-radius: var(--env-radius-sm);
+  background: transparent;
+  color: var(--env-color-fg-default);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-list-row:is([data-highlighted], [data-popup-open]) {
+  background: var(--env-color-bg-popup-hover);
+}
+.env-list-row:is([data-disabled], [aria-disabled='true']) {
+  opacity: var(--env-state-disabled-opacity);
+  cursor: default;
+}
+/* The indicator keeps its slot whether or not the row is chosen, so the labels align. The icon's
+   slot takes the hook --env-list-row-icon-size, which an owner whose rows lead with larger content,
+   such as avatars, sets on its own element. */
+.env-list-row-indicator,
+.env-list-row-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  inline-size: var(--env-control-icon-size);
+  block-size: var(--env-control-icon-size);
+  --env-icon-size: var(--env-control-icon-size);
+}
+.env-list-row-indicator {
+  color: var(--env-color-bg-brand-emphasis);
+}
+.env-list-row-icon {
+  inline-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+  block-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+  --env-icon-size: var(--env-list-row-icon-size, var(--env-control-icon-size));
+  color: var(--env-color-fg-muted);
+}
+.env-list-row-text {
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  display: grid;
+}
+.env-list-row-label {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+.env-list-row-description {
+  min-inline-size: 0;
+  color: var(--env-color-fg-muted);
+  font: var(--env-body-font-weight) var(--env-font-size-caption) / 1.4 var(--env-font-family);
+  overflow-wrap: anywhere;
+}
+.env-list-row-end,
+.env-list-row-shortcut {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-1);
+}
+.env-list-row-shortcut {
+  margin-inline-start: var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  white-space: nowrap;
+}
+
+/* Forced colors: the system paints no fills, so a highlighted row takes the selection colors and a
+   disabled one the disabled color. */
+@media (forced-colors: active) {
+  .env-list-row:is([data-highlighted], [data-popup-open]) {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-list-row:is([data-highlighted], [data-popup-open]) :where(*) {
+    color: inherit;
+  }
+  .env-list-row[data-disabled] {
+    color: GrayText;
+  }
+}

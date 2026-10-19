@@ -1,0 +1,20 @@
+# Response headers of the hosted catalogue. scripts/FinalizeSite.mjs copies this file into
+# dist/site, and the Worker in wrangler.jsonc applies it. A response collects the headers of every
+# rule matching its path, in order; "! Name" removes a header an earlier rule set.
+
+# Every page, including the archived versions and routes answered with index.html. Pages are
+# checked for changes on each load, and only the reader's browser keeps a copy. Only the site may
+# frame its pages: the template pages show each screen in an iframe of the site's own frame route
+# (?frame=), so framing is same-origin rather than denied (tests/SiteHeaders.test.mjs).
+/*
+  Cache-Control: private, no-cache
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'; base-uri 'self'; object-src 'none'
+  Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000
+
+# /assets/ runs the Worker first (run_worker_first in wrangler.jsonc), which sets the year-long
+# caching of Vite's hashed files there; the rules here may not reach a response the Worker returns.

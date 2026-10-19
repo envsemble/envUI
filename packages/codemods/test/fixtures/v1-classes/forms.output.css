@@ -1,0 +1,23 @@
+.env-field > .env-field-description,
+.env-text-field-control > .env-text-field-input {
+  color: inherit;
+}
+.env-select-trigger .env-select-item-indicator,
+.env-select-popup .env-select-item {
+  gap: 4px;
+}
+.env-combobox .env-combobox-popup,
+.env-combobox-control .env-list-row-label {
+  padding: 0;
+}
+.env-date-picker-control,
+.env-checkbox-input + .env-checkbox-indicator,
+.env-switch-input,
+.env-radio-group .env-radio-input,
+.env-radio-description {
+  margin: 0;
+}
+.env-radio-group.env-radio-group:where([data-orientation='horizontal']),
+.env-radio:where([data-orientation='vertical']):hover {
+  outline: none;
+}

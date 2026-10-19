@@ -1,74 +1,80 @@
 /* A virtualized tree: the tree scrolls itself and positions its rendered rows by index. Rows follow
    navigation colors: transparent at rest, a state layer on hover and the navigation selection. */
 .env-tree {
-  --env-tree-row-height: 1.75rem;
+  /* The density sets the rows' block padding around their content line. */
+  --env-tree-item-padding: var(--env-tree-row-padding-block-sm);
+  --env-tree-item-height: calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding));
   --env-tree-indent: 0.75rem;
-  --env-tree-icon-size: 1rem;
+  --env-tree-icon-size: var(--env-control-icon-size);
   box-sizing: border-box;
   position: relative;
   block-size: 100%;
   min-block-size: 0;
   min-inline-size: 0;
-  padding-inline: var(--space-2);
+  padding-inline: var(--env-space-2);
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  color: var(--color-navigation-text);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-control);
+  font: var(--env-body-font-weight) var(--env-font-size-label) / 1.4 var(--env-font-family);
   outline: none;
 }
-.env-tree[data-density='standard'] {
-  --env-tree-row-height: 2.25rem;
-  --env-tree-icon-size: 1.125rem;
-  font: var(--type-body);
+.env-tree[data-density='xs'] {
+  --env-tree-item-padding: var(--env-row-padding-block-xs);
+}
+.env-tree[data-density='md'] {
+  --env-tree-item-padding: var(--env-tree-row-padding-block-md);
+}
+.env-tree[data-density='lg'] {
+  --env-tree-item-padding: var(--env-tree-row-padding-block-lg);
 }
 .env-tree-rows {
   position: relative;
   min-inline-size: 0;
 }
-.env-tree-row {
+.env-tree-item {
   box-sizing: border-box;
   position: absolute;
   inset-block-start: 0;
   inset-inline: 0;
-  block-size: var(--env-tree-row-height);
+  block-size: var(--env-tree-item-height);
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  padding-inline: calc(var(--space-1) + var(--env-tree-depth, 0) * var(--env-tree-indent))
-    var(--space-2);
-  border-radius: var(--radius-standard);
+  gap: var(--env-space-1);
+  padding-inline: calc(var(--env-space-1) + var(--env-tree-depth, 0) * var(--env-tree-indent))
+    var(--env-space-2);
+  border-radius: var(--env-radius-sm);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-tree-row:hover {
-  background: var(--color-state-layer-hover);
+.env-tree-item:hover {
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
-.env-tree-row:active {
-  background: var(--color-state-layer-pressed);
+.env-tree-item:active {
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-tree-row[aria-selected='true'] {
-  background: var(--color-navigation-selected);
-  color: var(--color-on-navigation-selected);
+.env-tree-item[aria-selected='true'] {
+  background: var(--env-color-bg-selected);
+  color: var(--env-color-fg-on-selected);
 }
-.env-tree-row[aria-selected='true']:hover {
-  background: var(--color-row-selected-hover);
+.env-tree-item[aria-selected='true']:hover {
+  background: var(--env-color-bg-selected-hover);
 }
-.env-tree-row[aria-selected='true']:active {
-  background: var(--color-row-selected-pressed);
+.env-tree-item[aria-selected='true']:active {
+  background: var(--env-color-bg-selected-pressed);
 }
 /* The active row shows the focus ring only while the tree has keyboard focus. */
-.env-tree[data-focus-visible]:focus .env-tree-row[data-active] {
-  outline: 0.125rem solid var(--color-focus-ring);
+.env-tree[data-focus-visible]:focus .env-tree-item[data-active] {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
 }
-.env-tree-row[aria-disabled='true'] {
-  opacity: var(--state-disabled-opacity);
+.env-tree-item[aria-disabled='true'] {
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
-.env-tree-row[aria-disabled='true']:is(:hover, :active) {
+.env-tree-item[aria-disabled='true']:is(:hover, :active) {
   background: transparent;
 }
 .env-tree-chevron {
@@ -77,28 +83,28 @@
   flex: 0 0 auto;
   display: grid;
   place-items: center;
-  color: var(--color-navigation-icon);
+  color: var(--env-color-fg-muted);
 }
-.env-tree-chevron .env-symbol {
+.env-tree-chevron .env-icon {
   inline-size: 100%;
   block-size: 100%;
-  transition: transform var(--motion-duration-fast) var(--motion-ease);
+  transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-tree-chevron:dir(rtl) .env-symbol {
+.env-tree-chevron:dir(rtl) .env-icon {
   transform: scaleX(-1);
 }
-.env-tree-chevron[data-expanded] .env-symbol {
+.env-tree-chevron[data-expanded] .env-icon {
   transform: rotate(90deg);
 }
-.env-tree-chevron[data-expanded]:dir(rtl) .env-symbol {
+.env-tree-chevron[data-expanded]:dir(rtl) .env-icon {
   transform: scaleX(-1) rotate(90deg);
 }
 .env-tree .env-tree-icon {
   inline-size: var(--env-tree-icon-size);
   block-size: var(--env-tree-icon-size);
-  color: var(--color-navigation-icon);
+  color: var(--env-color-fg-muted);
 }
-.env-tree-row[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
+.env-tree-item[aria-selected='true'] :is(.env-tree-icon, .env-tree-chevron) {
   color: inherit;
 }
 .env-tree-label {
@@ -108,30 +114,49 @@
   text-overflow: ellipsis;
 }
 /* The detail gives way to the label when space runs out. */
-.env-tree-detail {
+.env-tree-description {
   min-inline-size: 0;
   flex: 0 1000 auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
-.env-tree-trailing {
+.env-tree-end {
   flex: 0 0 auto;
   margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  padding-inline-start: var(--space-2);
+  gap: var(--env-space-1);
+  padding-inline-start: var(--env-space-2);
 }
 @media (pointer: coarse) {
   .env-tree {
-    --env-tree-row-height: var(--control-height-touch);
+    --env-tree-item-height: max(
+      var(--env-control-height-touch),
+      calc(var(--env-row-content-height) + 2 * var(--env-tree-item-padding))
+    );
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-tree-row,
-  .env-tree-chevron .env-symbol {
+  .env-tree-item,
+  .env-tree-chevron .env-icon {
     transition: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the selected row takes the system’s
+   selection colors. */
+@media (forced-colors: active) {
+  .env-tree-item[aria-selected='true'] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-tree-item[aria-selected='true'] :where(*) {
+    color: inherit;
+  }
+  .env-tree[data-focus-visible]:focus .env-tree-item[aria-selected='true'][data-active] {
+    outline-color: HighlightText;
   }
 }

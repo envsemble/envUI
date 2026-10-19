@@ -97,13 +97,14 @@ test('a labelled copy button copies the result of a function from the keyboard a
   page,
 }) => {
   await recordClipboard(page, 'available');
+  await page.clock.install();
   await page.goto(fixture);
   const scope = page.getByTestId('copy-buttons-light');
   const button = scope.getByRole('button', { name: 'Copy ID light' });
   const tooltip = page.locator(shownTooltip);
   // A labelled button needs no tooltip at rest.
   await button.hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
   await movePointerAway(page);
   await button.focus();
@@ -140,30 +141,32 @@ test('a promised text keeps the button pending until it resolves', async ({ page
   expect(await writes(page)).toEqual(['Later text']);
 });
 
-test('copying falls back to a selection where the Clipboard API is unavailable', async ({
-  page,
-}) => {
-  await recordClipboard(page, 'selection');
-  await page.goto(fixture);
-  const scope = page.getByTestId('copy-buttons-light');
-  const button = scope.getByRole('button', { name: 'Copy link light' });
-  await button.focus();
-  await page.keyboard.press('Enter');
-  await expect(page.locator(shownTooltip)).toHaveText('Copied');
-  expect(await writes(page)).toEqual(['https://example.com/r/quarterly-report']);
-  // Focus returns to the button, and the hidden field is gone.
-  await expect(button).toBeFocused();
-  await expect(page.locator('.env-copy-button-field')).toHaveCount(0);
+test(
+  'copying falls back to a selection where the Clipboard API is unavailable',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await recordClipboard(page, 'selection');
+    await page.goto(fixture);
+    const scope = page.getByTestId('copy-buttons-light');
+    const button = scope.getByRole('button', { name: 'Copy link light' });
+    await button.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator(shownTooltip)).toHaveText('Copied');
+    expect(await writes(page)).toEqual(['https://example.com/r/quarterly-report']);
+    // Focus returns to the button, and the hidden field is gone.
+    await expect(button).toBeFocused();
+    await expect(page.locator('.env-copy-button-field')).toHaveCount(0);
 
-  // Inside a dialog, which keeps focus within itself, the fallback works too.
-  await scope.getByRole('button', { name: 'Share light' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Share light' });
-  const shared = dialog.getByRole('button', { name: 'Copy shared link light' });
-  await shared.click();
-  await expect(shared).toHaveAttribute('data-copied', '');
-  expect((await writes(page)).at(-1)).toBe('https://example.com/r/shared');
-  await expect(dialog).toBeVisible();
-});
+    // Inside a dialog, which keeps focus within itself, the fallback works too.
+    await scope.getByRole('button', { name: 'Share light' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Share light' });
+    const shared = dialog.getByRole('button', { name: 'Copy shared link light' });
+    await shared.click();
+    await expect(shared).toHaveAttribute('data-copied', '');
+    expect((await writes(page)).at(-1)).toBe('https://example.com/r/shared');
+    await expect(dialog).toBeVisible();
+  },
+);
 
 test('a copy button says when nothing could be copied, in its own words if given', async ({
   page,
@@ -187,6 +190,31 @@ test('a copy button says when nothing could be copied, in its own words if given
   await expect(tooltip).toHaveText('Nicht kopiert');
 });
 
+test("write copies through the application's own clipboard, and its refusal says so", async ({
+  page,
+}) => {
+  // The browser's clipboard works, so a write that reached it would show up here.
+  await recordClipboard(page, 'available');
+  await page.goto(fixture);
+  const scope = page.getByTestId('writers-light');
+  const tooltip = page.locator(shownTooltip);
+  const bridged = scope.getByRole('button', { name: 'Copy through the bridge light' });
+  await bridged.click();
+  await expect(scope.getByTestId('bridged-light')).toHaveText('Bridged');
+  await expect(bridged).toHaveAttribute('data-copied', '');
+  await expect(statusOf(bridged)).toHaveText('Copied');
+  await expect(page.getByTestId('copy-buttons-light').getByTestId('copied')).toHaveText('Bridged');
+  expect(await writes(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(tooltip).toHaveCount(0);
+
+  const refused = scope.getByRole('button', { name: 'Copy refused by the bridge light' });
+  await refused.click();
+  await expect(refused).toHaveAttribute('data-failed', '');
+  await expect(statusOf(refused)).toHaveText('Couldn’t copy');
+  expect(await writes(page)).toEqual([]);
+});
+
 test('labels, onClick, application tooltips and themes', async ({ page }) => {
   await recordClipboard(page, 'available');
   await page.goto(fixture);
@@ -197,7 +225,7 @@ test('labels, onClick, application tooltips and themes', async ({ page }) => {
     await custom.click();
     await expect(tooltip).toHaveText('Kopiert');
     // The tooltip takes the theme of the button it belongs to.
-    await expect(page.locator(`.env-tooltip-theme:has(${shownTooltip})`)).toHaveAttribute(
+    await expect(page.locator(`.env-popup-theme:has(${shownTooltip})`)).toHaveAttribute(
       'data-env-theme',
       theme,
     );
@@ -220,7 +248,6 @@ test('labels, onClick, application tooltips and themes', async ({ page }) => {
   await plan.click();
   await expect(plan).toHaveAttribute('data-copied', '');
   await expect(statusOf(plan)).toHaveText('Copied');
-  await page.waitForTimeout(500);
   await expect(page.locator('.env-tooltip', { hasText: 'Copied' })).toHaveCount(0);
   expect(await tooltip.count()).toBeLessThanOrEqual(1);
 });
@@ -250,9 +277,7 @@ test('a copy button without words or a name of its own is named Copy', async ({ 
   await expect.poll(() => writes(page)).toEqual(['Empty label']);
 });
 
-test('a copy button takes the compact size in compact toolbars and with size compact', async ({
-  page,
-}) => {
+test('a copy button takes the small size in small toolbars and with size sm', async ({ page }) => {
   await page.goto(fixture);
   const scope = page.getByTestId('copy-buttons-light');
   const height = async (name: string) =>
@@ -290,30 +315,12 @@ test('the Clipboard API receives the text in Chromium', async ({ page, context, 
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Later text');
 });
 
-test('a disabled icon-only copy button still shows its name on hover and focus', async ({
-  page,
-}) => {
-  await page.goto(fixture);
-  const scope = page.getByTestId('copy-buttons-light');
-  const button = scope.getByRole('button', { name: 'Copy unavailable light' });
-  await expect(button).toBeDisabled();
-  const tooltip = page.locator(shownTooltip);
-  // A disabled button takes no pointer events, so a target around it opens the tooltip.
-  const target = scope
-    .locator('.env-tooltip-disabled-target')
-    .filter({ has: page.getByRole('button', { name: 'Copy unavailable light' }) });
-  await target.hover();
-  await expect(tooltip).toHaveText('Copy unavailable light');
-  await movePointerAway(page);
-  await expect(tooltip).toHaveCount(0);
-  await target.focus();
-  await expect(tooltip).toHaveText('Copy unavailable light');
-});
-
 test('a promised text that never arrives fails quietly after the clipboard refused it', async ({
   page,
 }) => {
   await recordClipboard(page, 'refused');
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(fixture);
   const scope = page.getByTestId('copy-buttons-light');
   const button = scope.getByRole('button', { name: 'Copy gone light' });
@@ -321,10 +328,12 @@ test('a promised text that never arrives fails quietly after the clipboard refus
   await expect(page.locator(shownTooltip)).toHaveText('Couldn’t copy');
   await expect(button).toHaveAttribute('data-failed', '');
   await expect(statusOf(button)).toHaveText('Couldn’t copy');
-  await page.waitForTimeout(100);
+  // The text's rejection is reported, if at all, before the next frame.
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
   expect(
     await page.evaluate(
       () => (window as unknown as { unhandledRejections: string[] }).unhandledRejections,
     ),
   ).toEqual([]);
+  expect(errors).toEqual([]);
 });

@@ -1,0 +1,10 @@
+{
+  "@envsemble/envui": {
+    "Stat": "Stat.Root",
+    "StatProps": "Stat.RootProps",
+    "StatGroup": "Stat.Group",
+    "StatGroupProps": "Stat.GroupProps",
+    "StatTrend": "Stat.Trend",
+    "StatTrendTone": "Stat.TrendTone"
+  }
+}

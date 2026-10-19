@@ -1,0 +1,7 @@
+[
+  "line 3: --env-split-view-size is removed in 1.0: SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead.",
+  "line 4: --env-split-view-gutter is removed in 1.0: SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap.",
+  "line 6: .env-split-pane-pane[data-pane] matches nothing in 1.0: SplitPane's panes have no data-pane: give each SplitPane.Pane a className of your own, or select the first as .env-split-pane > .env-split-pane-pane:first-child.",
+  "line 9: .env-split-pane[data-resizing] matches nothing in 1.0: SplitPane sets no data-resizing while dragging: the handle has data-dragging, so write .env-split-pane:has(> .env-split-pane-handle[data-dragging]).",
+  "line 19: .env-split-pane has no data-resizing in 1.0, so .env-split-pane:not([data-resizing]) now matches every .env-split-pane: SplitPane sets no data-resizing while dragging: the handle has data-dragging, so write .env-split-pane:has(> .env-split-pane-handle[data-dragging])."
+]

@@ -58,11 +58,11 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
         probe.remove();
         return color;
       }, value);
-    const icon = await resolve(toggle, 'var(--color-icon)');
-    const text = await resolve(toggle, 'var(--color-text-primary)');
-    const hover = await resolve(toggle, 'var(--color-state-layer-hover)');
-    const pressed = await resolve(toggle, 'var(--color-state-layer-pressed)');
-    const ring = await resolve(toggle, 'var(--color-focus-ring)');
+    const icon = await resolve(toggle, 'var(--env-color-fg-muted)');
+    const text = await resolve(toggle, 'var(--env-color-fg-default)');
+    const hover = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-hover)');
+    const pressed = await resolve(toggle, 'var(--env-color-bg-neutral-subtle-pressed)');
+    const ring = await resolve(toggle, 'var(--env-color-border-focus)');
     // At rest: the icon, or the label, in the icon color, without a fill or a border.
     for (const button of [toggle, labelled, pane]) {
       await expect(button).toHaveCSS('color', icon);
@@ -71,7 +71,7 @@ test('quiet buttons take the icon color, a state layer and the focus ring in bot
     }
     expect((await toggle.boundingBox())!.width).toBeCloseTo(40, 0);
     // The label reads at 4.5:1 on the canvas and on the pane.
-    const canvas = await resolve(toggle, 'var(--color-canvas)');
+    const canvas = await resolve(toggle, 'var(--env-color-bg-page)');
     const paneFill = await scope
       .getByTestId(`quiet-pane-${theme}`)
       .evaluate((element) => getComputedStyle(element).backgroundColor);

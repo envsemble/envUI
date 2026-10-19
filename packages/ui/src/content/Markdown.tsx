@@ -1,3 +1,7 @@
+'use client';
+// @client-module react-markdown imports useEffect and useState, which React's server build lacks,
+// so Markdown cannot be a server component even without its own useMemo.
+
 import {
   createElement,
   useMemo,
@@ -8,6 +12,11 @@ import {
 import ReactMarkdown, { type Components, type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import {
+  markdown as markdownMessages,
+  type MarkdownMessages,
+} from '../foundations/messages/markdown.js';
 import { Checkbox } from '../forms/Checkbox.js';
 import { Link } from '../actions/Link.js';
 import { Code } from './Code.js';
@@ -18,11 +27,13 @@ export interface MarkdownLinkProps extends ComponentPropsWithoutRef<'a'> {
   href: string;
 }
 export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+  /** The Markdown string to render. */
   children: string;
   /** Add to the document's heading levels; levels are capped at h6. */
   headingOffset?: 0 | 1 | 2 | 3 | 4 | 5;
   /** Receives safe hrefs and native anchor props. Retain a real anchor destination. */
   renderLink?: (props: MarkdownLinkProps) => ReactNode;
+  /** Gives each code block a copy button; false by default. */
   codeCopyable?: boolean;
   /**
    * react-markdown component overrides, merged over envUI's own; the application's win. Native
@@ -33,6 +44,52 @@ export interface MarkdownProps extends Omit<ComponentPropsWithRef<'div'>, 'child
   remarkPlugins?: Options['remarkPlugins'];
   /** rehype plugins, such as heading ids; envUI adds none of its own. */
   rehypePlugins?: Options['rehypePlugins'];
+}
+
+interface HastNode {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+}
+
+const textOf = (node: HastNode): string =>
+  node.type === 'text' ? (node.value ?? '') : (node.children ?? []).map(textOf).join('');
+
+/**
+ * Names each table's scrolling region after the table: its caption, or the heading it follows, as
+ * "Keyboard table" (messages.tableNamed), else "Table" (messages.table), numbered where several
+ * take one name. Regions need names of their own, which one shared name such as "Table" is not.
+ */
+function rehypeTableNames(messages: MarkdownMessages) {
+  return () => (tree: HastNode) => {
+    let heading = '';
+    const counts = new Map<string, number>();
+    const visit = (node: HastNode) => {
+      if (node.type === 'element' && /^h[1-6]$/.test(node.tagName ?? '')) {
+        heading = textOf(node).trim();
+        return;
+      }
+      if (node.type === 'element' && node.tagName === 'table') {
+        const caption = node.children?.find((child) => child.tagName === 'caption');
+        const base = caption
+          ? textOf(caption).trim()
+          : heading
+            ? messages.tableNamed({ name: heading })
+            : messages.table;
+        const count = (counts.get(base) ?? 0) + 1;
+        counts.set(base, count);
+        node.properties = {
+          ...node.properties,
+          dataEnvTableName: count > 1 ? `${base} ${count}` : base,
+        };
+        return;
+      }
+      node.children?.forEach(visit);
+    };
+    visit(tree);
+  };
 }
 
 interface MarkdownNode {
@@ -80,7 +137,15 @@ function remarkDropHtml() {
 
 const markdownPlugins = [remarkGfm];
 
-/** CommonMark prose with tables, task lists and other extensions, in envUI typography and code. */
+type TableProps = ComponentPropsWithoutRef<'table'> & {
+  node?: unknown;
+  'data-env-table-name'?: unknown;
+};
+
+/**
+ * CommonMark prose with tables, task lists and other extensions, in envUI typography and code. The
+ * names of its table regions and task checkboxes come from EnvUIProvider's messages.markdown.
+ */
 export function Markdown({
   children,
   headingOffset = 0,
@@ -92,6 +157,7 @@ export function Markdown({
   className,
   ...props
 }: MarkdownProps) {
+  const messages = useMessages('markdown', markdownMessages);
   const components = useMemo<Components>(() => {
     const headings: Components = {};
     for (const level of [1, 2, 3, 4, 5, 6] as const) {
@@ -127,8 +193,13 @@ export function Markdown({
           </CodeBlock>
         );
       },
-      table: ({ node: _node, ...tableProps }) => (
-        <div className="env-markdown-table" tabIndex={0} role="region" aria-label="Table">
+      table: ({ node: _node, 'data-env-table-name': name, ...tableProps }: TableProps) => (
+        <div
+          className="env-markdown-table"
+          tabIndex={0}
+          role="region"
+          aria-label={typeof name === 'string' ? name : messages.table}
+        >
           <table {...tableProps} />
         </div>
       ),
@@ -136,26 +207,30 @@ export function Markdown({
         <Checkbox
           checked={Boolean(checked)}
           disabled
-          aria-label={checked ? 'Completed task' : 'Incomplete task'}
+          aria-label={checked ? messages.taskDone : messages.taskOpen}
         />
       ),
       img: ({ node: _node, src, ...imageProps }) =>
         src ? <img {...imageProps} src={src} loading="lazy" /> : <span>{imageProps.alt}</span>,
     };
-  }, [headingOffset, renderLink, codeCopyable]);
+  }, [headingOffset, renderLink, codeCopyable, messages]);
   const mergedComponents = useMemo(
     () => (componentOverrides ? { ...components, ...componentOverrides } : components),
     [components, componentOverrides],
+  );
+  const mergedRehypePlugins = useMemo(
+    () => [rehypeTableNames(messages), ...(rehypePlugins ?? [])],
+    [rehypePlugins, messages],
   );
   const mergedRemarkPlugins = useMemo(
     () => [...markdownPlugins, ...(remarkPlugins ?? []), remarkDropHtml],
     [remarkPlugins],
   );
   return (
-    <div {...props} className={classNames('env-markdown', className)}>
+    <div {...props} className={classNames('env-markdown', 'env-prose', className)}>
       <ReactMarkdown
         remarkPlugins={mergedRemarkPlugins}
-        rehypePlugins={rehypePlugins}
+        rehypePlugins={mergedRehypePlugins}
         components={mergedComponents}
         skipHtml
       >

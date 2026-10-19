@@ -1,236 +1,270 @@
-# Menus
+---
+title: Menu
+summary: Actions, destinations and the shared organization switcher, opened from a trigger or a right click.
+status: stable
+since: 0.3.0
+category: Feedback & overlays
+aliases:
+  - dropdown menu
+  - context menu
+  - right-click menu
+  - action menu
+  - overflow menu
+  - more actions
+  - kebab menu
+  - submenu
+  - MenuItem
+  - OrganizationMenu
+  - organization switcher
+  - theme menu
+  - theme choice
+useWhen:
+  - A short list of actions behind one control, such as a row's or a toolbar's More actions.
+  - A few destinations that share a trigger, such as the account pages behind the avatar.
+  - Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.
+  - Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).
+  - Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher).
+avoidWhen:
+  - text: The signed-in person's menu, with its header and theme submenu.
+    use: AccountMenu
+  - text: Choosing a value for a form field.
+    use: Select
+  - text: An application menubar, such as File, Edit and View.
+    use: Menubar
+  - text: Searching for and running one of many commands.
+    use: CommandPalette
+  - text: An application's navigation, such as the pages in a sidebar.
+    use: NavList
+  - text: Content people work in beside a trigger, such as a small form or a color picker.
+    use: Popover
+  - text: Switching between views of the same content.
+    use: Tabs
+  - text: One or two actions that fit beside the content they act on.
+    use: Button
+related:
+  - menubar
+  - command-palette
+  - select
+  - popover
+  - nav-list
+  - tree
+  - kbd
+  - tooltip
+  - avatar
+  - app-shell
+components:
+  - Menu
+  - ContextMenu
+  - OrganizationSwitcher
+  - ThemeRadioGroup
+---
 
-## React usage
+# Menu
 
-```tsx
-import { AvatarButton, Menu, MenuHeader, MenuItem, MenuSeparator, Text } from '@envsemble/envui';
-import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
-import { Logout } from '@envsemble/envui/icons/Logout';
+## Overview
 
-<Menu
-  aria-label="Account"
-  trigger={
-    <AvatarButton
-      name="Alex Morgan"
-      detail="alex@example.com"
-      src={pictureUrl}
-      aria-label="Open account menu"
-    />
-  }
->
-  <MenuHeader>
-    <Text>Alex Morgan</Text>
-  </MenuHeader>
-  <MenuItem href="/account" icon={<ManageAccounts />}>
-    Account settings
-  </MenuItem>
-  <MenuSeparator />
-  <MenuItem icon={<Logout />} onClick={signOut}>
-    Sign out
-  </MenuItem>
-</Menu>;
+A menu is a short list of actions and destinations that opens from a trigger, such as a button or an avatar. Menu.Root takes the trigger and the menu's parts; keyboard and focus follow the menu button pattern, and the menu closes once an action is chosen.
+
+Its parts build every menu:
+
+- **Menu.Item** is an action with `onClick`, or a destination with `href`, which can take an `onClick` too.
+- **Menu.Header** holds context that is not an item, such as the signed-in account.
+- **Menu.Group** and **Menu.Separator** split the items into sets, with or without a heading.
+- **Menu.RadioGroup** with **Menu.RadioItem** chooses one option; **Menu.CheckboxItem** turns one on or off.
+- **Menu.Submenu** is a row that opens a nested menu beside it.
+
+The family shares the parts and their look:
+
+- **ContextMenu** opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>, with the element it was opened on.
+- **OrganizationSwitcher** shows the active organization in the application shell's context area and switches between the person's organizations.
+- **ThemeRadioGroup** is the theme choice, System, Light and Dark, as radio items in any menu, such as a View menu or a display menu.
+
+The signed-in person's menu, with a header, the theme and the organizations, is [AccountMenu](../components/account-menu.md), built from these parts.
+
+```tsx example=AccountMenu
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                     | Contract                                                           |
-| ------------------------ | ------------------------------------------------------------------ |
-| trigger                  | The opening control; it receives the menu button semantics and ref |
-| aria-label               | Required accessible name of the menu                               |
-| side / align             | Placement relative to the trigger; bottom and end by default       |
-| open / onOpenChange      | Optional controlled visibility                                     |
-| MenuHeader               | Non-interactive context, such as the signed-in account             |
-| MenuItem href            | A destination, rendered through the LinkProvider link              |
-| MenuItem onClick         | An action; the menu closes after it runs                           |
-| MenuItem icon / disabled | Optional leading icon and unavailable state                        |
-| MenuSeparator            | Splits items into groups; each group keeps large outer corners     |
-| density                  | compact: the desktop dropdown for dense surfaces; see below        |
+1. **Trigger** (`trigger`): the control that opens the menu, such as a Button, an IconButton or an AvatarButton. It takes the menu button semantics and shows the open state; an AvatarButton shows its halo while the menu is open.
+2. **Popup**: the pane that holds the rows, 0.5 rem from the trigger, named by `aria-label`.
+3. **Header** (optional, Menu.Header): context at the top that is not an item, such as an avatar with the account's name and e-mail address.
+4. **Item** (Menu.Item): one row with an optional leading `icon`, the label, an optional muted `description` below the label, optional `end` content such as a CounterBadge, and an optional `shortcut` hint as keys at the end.
+5. **Check mark** (Menu.RadioItem and Menu.CheckboxItem): a slot before the label that shows a check mark while the item is checked, so labels line up whether checked or not.
+6. **Group heading** (`label` of Menu.Group and Menu.RadioGroup): a small muted heading above related rows, which also names the group; a Menu.RadioGroup can take `aria-labelledby` instead, for a heading of its own elsewhere in the menu.
+7. **Separator** (Menu.Separator): a hairline between sets of rows.
+8. **Submenu row** (Menu.Submenu): an item with a chevron at its end, which points to the side its submenu opens on.
 
-### Groups, choices and shortcuts
+OrganizationSwitcher composes the same pane: its trigger is a secondary Button with the active organization's name and up and down arrows, and its menu has a header with a groups icon and the Organizations heading, one Menu.RadioItem per organization in `items`, with a radio dot, its `label` and a muted `description` at the end, and the create action as a pill below them.
 
-```tsx
-import {
-  Button,
-  Menu,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-} from '@envsemble/envui';
-import { Search } from '@envsemble/envui/icons/Search';
+## Variants and sizes
 
-<Menu aria-label="View options" trigger={<Button variant="secondary">View options</Button>}>
-  <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-    <MenuRadioItem value="name">Name</MenuRadioItem>
-    <MenuRadioItem value="date" description="Most recently changed first">
-      Date changed
-    </MenuRadioItem>
-  </MenuRadioGroup>
-  <MenuGroup label="Display">
-    <MenuCheckboxItem checked={showArchived} onCheckedChange={setShowArchived}>
-      Show archived plans
-    </MenuCheckboxItem>
-    <MenuItem icon={<Search />} shortcut="Ctrl+P" onClick={openQuickOpen}>
-      Quick open
-    </MenuItem>
-  </MenuGroup>
-</Menu>;
+Menus have one anatomy, which Select's and Combobox's popups share, and follow the app's [scale](../foundations/scale.md).
+
+- The popup is as wide as its content, between 12 and 22 rem, on the raised popup fill with a hairline border, 0.25 rem padding and 0.75 rem corners. Rows are as tall as the scale's row height, 2.25 rem, or 1.75 rem in the compact scale, with 0.5 rem corners, 0.875 rem labels and 1 rem icons, and fill only while highlighted; descriptions are 0.75 rem and wrap, which grows their row. Shortcuts are small muted keys, separators are hairlines in the popup border color and group headings are 0.75 rem. Labels line up across rows: once a row has a check mark or an icon, the others keep its place.
+- On coarse pointers, rows are at least 2.75 rem tall.
+- A menu taller than the room beside its trigger scrolls. A submenu takes the theme and the scale of its menu.
+- OrganizationSwitcher composes the same popup, with a header and radio rows. A long organization name truncates with an ellipsis in the trigger and wraps in the menu; the trigger is as wide as its name, up to its container's width.
+
+## States and behaviour
+
+- **Opening and closing**: Menu.Root opens below its trigger, lined up with the trigger's end, by default; `side` and `align` change that, and it flips to the other side where the window has no room. It fades in and, without a reduced-motion preference, grows from its trigger. It closes when an action or a radio item is chosen, with <kbd>Esc</kbd> and with a press outside it; a checkbox item keeps it open, so several options can change. `open`, `defaultOpen` and `onOpenChange` control it.
+- **Focus**: opened with the keyboard, the menu highlights its first item; opened with the pointer, the menu itself takes focus, and <kbd>↓</kbd> highlights the first item. The pointer highlights the items it moves over. Once the menu closes, focus returns to the trigger.
+- **Hover, focus and disabled**: a highlighted row takes the popup hover fill, `--env-color-bg-popup-hover`, a color token of its own as [colors and themes](../foundations/colors.md) describes, and the keyboard also shows the focus ring. A disabled item is dimmed with the shared disabled opacity and reports `aria-disabled`; the arrow keys still reach it, but a disabled action, choice or submenu row does nothing when chosen.
+- **Choices**: a checked radio or checkbox item shows a check mark and a medium-weight label. Menu.RadioGroup reports the chosen item's `value` through `onValueChange`, and Menu.CheckboxItem its new state through `onCheckedChange`; set `closeOnClick` to change whether choosing closes the menu.
+- **Destinations**: with `href` an item is a native link, rendered through the `LinkProvider`'s link component so routing stays with the application, and the menu closes as it is followed; `target` and `rel` work as on any link, and `onClick` runs as it is followed, such as to record the choice. A disabled destination renders no link, so nothing follows it.
+- **Shortcuts**: `shortcut` shows a hint such as Ctrl+Shift+P as keys and sets `aria-keyshortcuts`, such as Control+Shift+P; arrows are announced by their key names, such as ArrowLeft, and the plus key as Plus. A sequence, such as Ctrl+K Ctrl+S, shows its keys without the attribute. The menu does not bind the keys; the application handles them.
+- **Submenus**: a submenu opens beside its row when the pointer rests on the row for 100 ms, and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, with its first item highlighted. <kbd>←</kbd> and <kbd>Esc</kbd> close only the submenu and return focus to its row; choosing an item closes every menu. It opens at the inline end, just clear of its menu, lines its first row up with its row and flips to the other side near the edge of the window. The row stays highlighted while its submenu is open; a disabled row does not open it. `onOpenChange` reports it opening, for example to load its items.
+- **Popup and direction**: every menu's popup is the shared popup surface, in the theme, scale and text direction of its trigger, so a submenu opens toward the inline end in right-to-left text too. `ref`, `style` and data attributes on Menu.Root, Menu.Submenu, ContextMenu and Menubar.Menu reach the popup; the trigger is the element you pass.
+- **ContextMenu**: it opens at the pointer on right click and on a long press of 500 ms, and below the start of the focused element with the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>; near the edge of the window it shifts to stay visible. A function `content` receives the element it opened on: the deepest element under the pointer, or the focused element, or its active descendant for a widget such as Tree; where it returns `null`, the menu doesn't open on that element. The menu is modal: it takes focus and keeps it until it closes, <kbd>↓</kbd> highlights its first item, and once it closes, focus returns to where it was. `disabled` keeps the browser's own context menu, and `open` with `anchorPoint` opens it at a point in the viewport, for example from another control.
+- **ThemeRadioGroup**: inside a ThemePreferenceProvider it checks the stored preference and stores a choice, which the provider applies at once; `value` and `onValueChange` connect it to a theme the application stores itself. Its labels come from the provider's `messages.themeToggle`. The menu stays open after a choice, so people see the theme change; `closeOnClick` closes it. Give it a `label`, or `aria-labelledby`, where other items share its menu, and none inside a submenu, which its row names.
+- **OrganizationSwitcher**: the trigger shows the active organization's `label`, or `placeholder` while there is none. Organizations are radio items with the active one, `value`, checked: choosing another calls `onValueChange` with its id, and choosing the active one again only closes the menu. The application switches organizations and shows the progress; `disabled` keeps the menu closed meanwhile. With `onCreate`, the create action ends the menu; without organizations, it is the only control, a secondary button, and without `onCreate` either, nothing renders. As on Menu.Root, `className`, `style` and `ref` go to the popup; `triggerClassName` styles the trigger, or the create button without organizations.
+
+## Content guidelines
+
+- Start an action with a verb, such as "Rename" or "Sign out", and name a destination after the page, such as "Account settings". Use sentence case and no ending punctuation.
+- Keep labels short; the menu is a pane of list rows. Use one icon per item at most, and give either most items of a set an icon or none.
+- Use `description` for a short fact that helps choose, such as what a sort order does or why an item is unavailable.
+- Name a group's heading with a short noun phrase, such as "Sort by" or "Show", and a submenu row after the set it opens, such as "Open recent" or "Theme"; the chevron shows that it opens more.
+- Write shortcut hints as the keys read on the keyboard, joined with +, such as Ctrl+Shift+P; write arrows as ←, →, ↑ and ↓, such as Alt+←, and separate the chords of a sequence with a space.
+- Name a menu after what it acts on, such as "Document actions" or "Account", and an icon-only trigger after the menu it opens, such as "More actions for Budget".
+- Use an organization's `description` for a short fact that matters before switching, such as the person's role there.
+
+## Do and don't
+
+### Do
+
+- Put the most frequent actions first, and split long menus into sets with separators or groups.
+- Keep submenus shallow, one level in most menus, for related choices such as recent documents or a theme.
+- Offer the actions of a context menu in a visible control too, such as a row's More actions button, for people who cannot right-click.
+- Use OrganizationSwitcher for the active organization, and compose the account menu from AvatarButton, Menu.Header and items; build every other menu from the parts.
+
+### Don't
+
+- Don't use a menu to choose a value in a form; use [Select](../components/select.md).
+- Don't put frequent commands in a submenu, or nest submenus deeply.
+- Don't put fields or other controls inside a menu; use [Popover](../components/popover.md) for a small form.
+- Don't show a shortcut the application doesn't handle.
+- Don't make a context menu the only way to reach an action.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                          | Action                                                                                                                                                        |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                              | Moves focus to and from the trigger. In an open menu, closes it and moves focus past the trigger or back to it; a context menu keeps focus.                   |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger                          | Opens the menu with its first item highlighted.                                                                                                               |
+| <kbd>↓</kbd> or <kbd>↑</kbd> on the trigger                                  | Opens the menu with its first or last item highlighted.                                                                                                       |
+| <kbd>↓</kbd>, <kbd>↑</kbd>                                                   | Highlights the next or previous item, wrapping around at the ends.                                                                                            |
+| <kbd>Home</kbd>, <kbd>End</kbd>                                              | Highlights the first or last item.                                                                                                                            |
+| A letter or digit                                                            | Highlights the next item whose label starts with the characters typed.                                                                                        |
+| <kbd>Enter</kbd> or <kbd>Space</kbd>                                         | Chooses the highlighted item: runs an action and closes the menu, follows a destination, checks a radio item and closes the menu, or toggles a checkbox item. |
+| <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd> on a submenu row          | Opens the submenu with its first item highlighted.                                                                                                            |
+| <kbd>←</kbd> or <kbd>Esc</kbd> in a submenu                                  | Closes the submenu and returns focus to its row.                                                                                                              |
+| <kbd>Esc</kbd>                                                               | Closes the menu and returns focus to the trigger.                                                                                                             |
+| <kbd>Shift</kbd>+<kbd>F10</kbd> or <kbd>Menu</kbd> in a ContextMenu's region | Opens the context menu below the focused element; <kbd>↓</kbd> highlights its first item, and once it closes, focus returns to that element.                  |
+
+### envUI provides
+
+- The menu button pattern: `aria-haspopup` and `aria-expanded` on the trigger, a `menu` named by `aria-label` instead of by its trigger, and `menuitem`, `menuitemradio` and `menuitemcheckbox` rows with `aria-checked`.
+- Groups named by their heading and separators with the separator role; submenu rows with `aria-haspopup` and a submenu named by its row's label.
+- Descriptions announced as the item's description rather than its name, and shortcuts as `aria-keyshortcuts`, with the visible keys hidden.
+- Decorative icons, check marks and chevrons hidden from assistive technology.
+- Focus that moves into the menu as it opens, roves between its items and returns to the trigger, a submenu's row or the context menu's element as it closes.
+- `aria-disabled` on disabled items.
+- The context menu keys, <kbd>Menu</kbd> and <kbd>Shift</kbd>+<kbd>F10</kbd>, and the active descendant as the target of a widget that has one.
+- The shared focus ring and 2.75 rem rows on coarse pointers.
+- An organization's description, and any item's end content, as a separate word of its item's name, such as "Contoso Member".
+- English defaults for OrganizationSwitcher's heading, create action, placeholder and name, which EnvUIProvider's `messages.organizationSwitcher` replaces.
+
+### You provide
+
+- An `aria-label` for every Menu.Root and ContextMenu, and for an icon-only trigger.
+- A visible control for every action of a context menu.
+- Focus for after an action removes the menu's trigger, as a row's Delete does: move it to the neighbouring row's trigger, or to the list when it is empty, so it doesn't fall back to the page.
+- The keys behind every shortcut hint, and the routing behind `href`, through `LinkProvider`.
+- An `aria-label` on end content that a number alone doesn't explain, such as "3 unresolved" on a CounterBadge, since end content is part of the item's name.
+- The switch between organizations, with its progress, and the strings in the application's language through EnvUIProvider's `messages`, or `heading`, `createLabel`, `placeholder` and `aria-label` for one switcher.
+
+## Examples
+
+### Actions with icons and shortcuts
+
+An icon-only trigger opens actions with icons, shortcut hints, a count and a disabled item whose description says why. Choosing an action runs `onClick` and closes the menu.
+
+```tsx example=IconsAndShortcuts
+
 ```
 
-| Name                                       | Contract                                                                                                       |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| MenuItem description                       | A second, muted line; announced as the item’s description                                                      |
-| MenuItem shortcut                          | Key hint at the end, such as <kbd>Ctrl</kbd>+<kbd>P</kbd>, also exposed as aria-keyshortcuts; the app binds it |
-| MenuItem trailing                          | End content such as a Badge or Counter                                                                         |
-| MenuGroup label                            | A labelled group with a small heading; its rows keep large outer corners                                       |
-| MenuRadioGroup value / onValueChange       | One checked choice among its MenuRadioItems; optional label like MenuGroup                                     |
-| MenuRadioItem value / description / icon   | A choice with a check mark while checked; closeOnClick is true by default                                      |
-| MenuCheckboxItem checked / onCheckedChange | An on/off option with a check mark; the menu stays open unless closeOnClick is set                             |
+### Destinations
 
-### Compact menus and submenus
+Items with `href` are links through the `LinkProvider`. `target` and `rel` open one in a new tab, and its description says so.
 
-```tsx
-import {
-  Button,
-  Menu,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuSubmenu,
-} from '@envsemble/envui';
-import { History } from '@envsemble/envui/icons/History';
+```tsx example=Destinations
 
-<Menu
-  aria-label="Document"
-  density="compact"
-  align="start"
-  trigger={<Button variant="secondary">Document</Button>}
->
-  <MenuItem shortcut="Ctrl+N" onClick={createDocument}>
-    New document
-  </MenuItem>
-  <MenuSubmenu
-    label="Open recent"
-    icon={<History />}
-    onOpenChange={(open) => {
-      if (open) loadRecentDocuments();
-    }}
-  >
-    {recentDocuments.map((document) => (
-      <MenuItem key={document.id} onClick={() => openDocument(document.id)}>
-        {document.name}
-      </MenuItem>
-    ))}
-    <MenuSeparator />
-    <MenuItem onClick={clearRecentDocuments}>Clear recent</MenuItem>
-  </MenuSubmenu>
-  <MenuSeparator />
-  <MenuSubmenu label="Theme">
-    <MenuRadioGroup value={theme} onValueChange={setTheme}>
-      <MenuRadioItem value="light">Light</MenuRadioItem>
-      <MenuRadioItem value="dark">Dark</MenuRadioItem>
-      <MenuRadioItem value="system">System</MenuRadioItem>
-    </MenuRadioGroup>
-  </MenuSubmenu>
-</Menu>;
 ```
 
-| Name                                          | Contract                                                                                                                                  |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| density="compact"                             | The desktop dropdown: the raised popup of Popover and Select with 1.75 rem rows, 16 px icons, shortcuts as small muted keys and hairlines |
-| MenuSubmenu label / icon / description        | The row that opens the submenu, with a chevron at its end                                                                                 |
-| MenuSubmenu children                          | The submenu's items: any menu part, including further submenus                                                                            |
-| MenuSubmenu disabled                          | The row stays in place but cannot open its submenu                                                                                        |
-| MenuSubmenu open / defaultOpen / onOpenChange | Optional control; onOpenChange can load the items as the submenu opens                                                                    |
-| MenuSubmenu aria-label / className            | Name of the submenu, the label by default when it is text, and the class of its popup                                                     |
+### Groups and separators
+
+Menu.Group puts related items under a small heading; Menu.Separator splits sets without one. Each set keeps the large outer corners.
+
+```tsx example=GroupsAndSeparators
+
+```
+
+### Radio and checkbox items
+
+A radio item checks one choice and closes the menu; checkbox items toggle and keep it open, so several options can change.
+
+```tsx example=Choices
+
+```
+
+### Submenus
+
+A submenu opens beside its row on hover, or with <kbd>→</kbd>, and choosing an item in it closes every menu.
+
+```tsx example=Submenus
+
+```
+
+### A file menu
+
+A desktop file menu with shortcuts, a submenu and a group of choices. Labels line up whether a row has an icon, a check mark or neither.
+
+```tsx example=FileMenu
+
+```
 
 ### Context menu
 
-```tsx
-import { ContextMenu, MenuItem, MenuSeparator } from '@envsemble/envui';
+ContextMenu offers actions for the row under the pointer, or for the focused row with <kbd>Shift</kbd>+<kbd>F10</kbd>, and New document on the empty space. Each row's More actions button offers the same actions.
 
-<ContextMenu
-  aria-label="Document actions"
-  content={(target) => {
-    const id = target?.closest<HTMLElement>('[data-document-id]')?.dataset.documentId;
-    return id ? (
-      <>
-        <MenuItem shortcut="F2" onClick={() => rename(id)}>
-          Rename
-        </MenuItem>
-        <MenuSeparator />
-        <MenuItem onClick={() => remove(id)}>Delete</MenuItem>
-      </>
-    ) : (
-      <MenuItem onClick={createDocument}>New document</MenuItem>
-    );
-  }}
->
-  <ul className="document-list">{rows}</ul>
-</ContextMenu>;
+```tsx example=ContextMenuForRows
+
 ```
 
-| Name                              | Contract                                                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| children                          | One element that becomes the region; it receives the handlers and ref                                            |
-| content                           | Menu parts, or a function of the target: the deepest element under the pointer, or the focused element           |
-| aria-label                        | Required accessible name of the menu                                                                             |
-| disabled                          | Keep the browser’s own context menu                                                                              |
-| open / onOpenChange / anchorPoint | Controlled visibility; anchorPoint `{ x, y }` in viewport pixels opens the menu there, for example from a button |
+### Organization switcher
 
-### Organization menu
+The shared switcher fits the context area of the application shell's sidebar. The active organization is checked, each one shows the person's role, and the create action ends the menu.
 
-Every product shows the active organization in the application shell's context area with the same menu. Its trigger is a secondary Button with the organization name and up and down arrows; long names truncate.
+```tsx example=SwitchOrganization
 
-```tsx
-import { AppShell, OrganizationMenu } from '@envsemble/envui';
-
-<AppShell
-  context={
-    <OrganizationMenu
-      organizations={organizations}
-      currentOrganizationId={activeOrganization?.id ?? null}
-      onSelect={(organizationId) => switchOrganization(organizationId)}
-      onCreate={openCreateOrganizationDialog}
-    />
-  }
-  {...shellProps}
-/>;
 ```
 
-| Name                  | Contract                                                                                                               |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| organizations         | The person's organizations as `{ id, name, detail? }`, in display order; detail is a short muted note such as the role |
-| currentOrganizationId | The active organization, or null; the trigger then shows the placeholder                                               |
-| onSelect              | Called with another organization's id; the application switches and shows progress                                     |
-| onCreate              | Optional; adds the create action, which is the only control without any organization                                   |
-| heading / createLabel | Menu heading (Organizations) and create label (Create organization)                                                    |
-| placeholder           | Trigger text without an active organization (Choose organization)                                                      |
-| disabled              | Prevents opening, for example while a switch is in progress                                                            |
+### Before the first organization
 
-## Guidelines
+Without organizations, the switcher is only the create action, which here creates the first one.
 
-- Use a menu for a short list of actions or destinations behind one trigger. Use Select to choose a value and Tabs to switch views.
-- envUI provides two menus: OrganizationMenu, and the account menu composed from AvatarButton, MenuHeader and items. Every other menu is the application's own, built from MenuItem, MenuGroup, MenuRadioGroup, MenuCheckboxItem, MenuSubmenu and MenuSeparator, in standard or compact density.
-- Use compact density in dense desktop interfaces, such as a menubar, a compact tree's context menu or a toolbar. The popup is as wide as its content, between 12 and 22 rem, and descriptions wrap. Labels line up across rows: once a row has a check mark or an icon, the others keep its place. On coarse pointers, rows keep the touch height.
-- A submenu opens beside its row on hover, after a short delay, and with <kbd>→</kbd>, <kbd>Enter</kbd> or <kbd>Space</kbd>, with focus on its first item; <kbd>←</kbd> and <kbd>Esc</kbd> close it and return to the row. It opens at the inline end, lines its first row up with the row that opened it and flips to the other side near the edge of the window. It takes the density and theme of its menu, and the row stays highlighted while it is open.
-- Keep submenus shallow, one level in most menus, for groups of related choices such as recent documents or a theme. Frequent commands belong in the menu itself.
-- A context menu opens on right click and long press at the pointer, and with the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd> below the focused element. For a widget with aria-activedescendant, such as Tree, the target is its active descendant. Focus returns to where it was when the menu closes.
-- A context menu supplements visible controls: offer the same actions elsewhere, for people who cannot right click.
-- Shortcut hints show as Kbd keys and describe keys the application already handles; the menu does not bind them. Write arrows as ←, →, ↑ and ↓, such as Alt+←; aria-keyshortcuts names them ArrowLeft, ArrowRight, ArrowUp and ArrowDown.
-- <kbd>↑</kbd> and <kbd>↓</kbd> move between items, typing jumps to a matching item, <kbd>Enter</kbd> or <kbd>Space</kbd> activates, and <kbd>Esc</kbd> closes and returns focus to the trigger.
-- The menu is a pane of grouped rows. Keep labels short; one icon per item at most.
-- Organizations are radio items: the active one is checked, and choosing it again does nothing.
-- Use an organization's detail for a short fact that matters before switching, such as the person's role there.
+```tsx example=FirstOrganization
 
-TypeScript declarations provide the complete public API.
+```
 
-## Related topics
+## Changelog
 
-- [Menubar](../components/menubar.md)
-- [Navigation items](../components/navigation.md)
-- [Tooltips](../components/tooltip.md)
-- [Avatars](../components/avatar.md)
-- [Application shell](../components/app-shell.md)
+- **1.0.0**: ThemeRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu` is `OrganizationSwitcher`, with the `env-organization-switcher-*` classes. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup. OrganizationSwitcher takes `items`, `value` and `onValueChange` (were `organizations`, `currentOrganizationId` and `onSelect`), its items are `OrganizationSwitcherItem`s with a `label` and a `description` (were `name` and `detail`), `className` styles its popup, as `ref` and `style` do, and `triggerClassName` its trigger, its rows are Menu.RadioItems in a group its heading names, and its strings come from `messages.organizationSwitcher`.
+- **0.5.0**: ContextMenu; `description`, `shortcut` and `trailing` on items; MenuGroup, MenuRadioGroup, MenuRadioItem and MenuCheckboxItem; `density="compact"` on Menu and ContextMenu; MenuSubmenu.
+- **0.4.0**: OrganizationMenu's `detail` for each organization, and its trigger is a secondary Button with up and down arrows. Menu items keep 1.5 rem inline padding, and hover and press shift 6 and 10 points of lightness.
+- **0.3.0**: Menu, MenuHeader, MenuItem for actions and destinations, MenuSeparator, and OrganizationMenu; menus grow from their trigger.

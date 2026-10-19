@@ -1,16 +1,25 @@
+'use client';
+
 import { useMemo } from 'react';
 import { MarkdownManager } from '@tiptap/markdown';
 import { renderToReactElement } from '@tiptap/static-renderer/pm/react';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { richText as richTextMessages } from '../foundations/messages/richText.js';
 import { Link } from '../actions/Link.js';
 import { Code } from '../content/Code.js';
 import { CodeBlock } from '../content/CodeBlock.js';
 import { Checkbox } from '../forms/Checkbox.js';
 import { createRichTextExtensions } from './Extensions.js';
-import { ReferenceContent, referenceFromAttributes, safeRichTextUrl } from './Reference.js';
+import { ReferenceContent } from './Reference.js';
+import { referenceFromAttributes, safeRichTextUrl } from './ReferenceAttributes.js';
 import type { RichTextProps } from './Types.js';
 
-/** Static, SSR-capable view using exactly the editor's Tiptap schema and Markdown parser. */
+/**
+ * Saved rich text, read-only: Markdown rendered with the editor's own schema and parser, so it
+ * shows what RichTextEditor wrote, references included, with envUI's links, code and checkboxes.
+ * It renders on the server too.
+ */
 export function RichText({
   children,
   extensions,
@@ -20,6 +29,7 @@ export function RichText({
   className,
   ...props
 }: RichTextProps) {
+  const messages = useMessages('richText', richTextMessages);
   const schema = useMemo(() => createRichTextExtensions({ extensions }), [extensions]);
   const manager = useMemo(
     () =>
@@ -48,7 +58,7 @@ export function RichText({
             <Checkbox
               checked={Boolean(node.attrs.checked)}
               disabled
-              aria-label={node.textContent || 'Task'}
+              aria-label={node.textContent || messages.task}
             />
             <div>{content}</div>
           </li>
@@ -83,7 +93,7 @@ export function RichText({
     },
   });
   return (
-    <div {...props} className={classNames('env-markdown env-rich-text', className)}>
+    <div {...props} className={classNames('env-rich-text', 'env-prose', className)}>
       {content}
     </div>
   );

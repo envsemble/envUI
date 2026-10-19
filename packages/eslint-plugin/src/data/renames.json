@@ -1,0 +1,214 @@
+{
+  "$comment": "Names that envUI 0.7 exported and 1.0 does not, by entry point. Each entry's `to` lists what replaces it in 1.0: one name, alternatives, or nothing for a name that became internal, whose `use` says what to do instead. A split (DirectionLink) also has the `prop` whose `values` choose the part. A name that becomes the Root part of its own namespace (Menu -> Menu.Root) stays importable, and so does a removed name that 1.0 reuses as a namespace (`namespace`: the manual Toast; 1.0's Toast holds Toast.Provider); only rendering them as components is reported. scripts/SyncRenames.mjs rewrites this file from the codemods' rename map (packages/codemods/src/maps/v1) whenever that map exists, before every pack; source says where the entries came from.",
+  "source": "packages/codemods/src/maps/v1",
+  "modules": {
+    "@envsemble/envui": {
+      "ActionCard": {
+        "to": [],
+        "use": "Card with render={<article />}, title, meta and actions; v1-structure rewrites each use."
+      },
+      "ActionCardProps": { "to": [], "use": "CardProps, with title, meta and actions." },
+      "ActionGroup": {
+        "to": [],
+        "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
+      },
+      "ActionGroupProps": {
+        "to": [],
+        "use": "StackProps, with direction, wrap, align, justify and gap."
+      },
+      "AppShell": { "to": ["AppShell.Root"] },
+      "AppShellProps": { "to": ["AppShell.RootProps"] },
+      "AppShellSkeleton": {
+        "to": [],
+        "use": "Render the frame's own parts as its loading state, with NavList.Skeleton in Sidebar.Content, inside a LoadingState; the v1-app-shell codemod rewrites it."
+      },
+      "AppShellSkeletonProps": {
+        "to": [],
+        "use": "AppShellSkeleton is gone: the frame's own parts, with NavList.Skeleton, are its loading state."
+      },
+      "BrandLogo": {
+        "to": [],
+        "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+      },
+      "BrandLogoProps": {
+        "to": [],
+        "use": "IconProps, for an application component that draws its artwork with Icon."
+      },
+      "ClickableCard": { "to": ["Card"] },
+      "ClickableCardProps": { "to": ["CardProps"] },
+      "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
+      "Counter": { "to": ["CounterBadge"] },
+      "CounterProps": { "to": ["CounterBadgeProps"] },
+      "DateTimeField": { "to": ["DatePicker"] },
+      "DateTimeFieldProps": { "to": ["DatePickerProps"] },
+      "DiffCount": { "to": ["DiffStat"] },
+      "DiffCountProps": { "to": ["DiffStatProps"] },
+      "DirectionLink": {
+        "to": ["Pager.Previous", "Pager.Next"],
+        "prop": "direction",
+        "values": { "previous": "Pager.Previous", "next": "Pager.Next" }
+      },
+      "DirectionLinkProps": { "to": ["Pager.LinkProps"] },
+      "DirectionLinks": { "to": ["Pager.Root"] },
+      "DirectionLinksDestination": { "to": ["Pager.LinkProps"] },
+      "DirectionLinksProps": { "to": ["Pager.RootProps"] },
+      "DisclosureNote": { "to": ["Disclosure"] },
+      "DisclosureNoteProps": { "to": ["DisclosureProps"] },
+      "EnvUILogo": {
+        "to": [],
+        "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+      },
+      "EnvUILogoProps": {
+        "to": [],
+        "use": "IconProps, for an application component that draws its artwork with Icon."
+      },
+      "FeatureCard": {
+        "to": [],
+        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, title, description and actions for action; v1-structure rewrites each use."
+      },
+      "FeatureCardProps": {
+        "to": [],
+        "use": "CardProps, with layout=\"feature\": actions for action."
+      },
+      "FileDropzone": { "to": ["DropZone"] },
+      "FileDropzoneProps": { "to": ["DropZoneProps"] },
+      "GroupedRows": { "to": ["List.Root"] },
+      "GroupedRowsProps": { "to": ["List.RootProps"] },
+      "Heatmap": { "to": ["CalendarHeatmap"] },
+      "HeatmapCell": { "to": ["CalendarHeatmapCell"] },
+      "HeatmapDay": { "to": ["CalendarHeatmapDay"] },
+      "HeatmapProps": { "to": ["CalendarHeatmapProps"] },
+      "InfoChip": { "to": ["Badge"] },
+      "InfoChipProps": { "to": ["BadgeProps"] },
+      "Input": { "to": ["TextField"] },
+      "InputProps": { "to": ["TextFieldProps"] },
+      "LoadingBar": {
+        "to": [],
+        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+      },
+      "LoadingBarProps": {
+        "to": [],
+        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+      },
+      "Menu": { "to": ["Menu.Root"] },
+      "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
+      "MenuCheckboxItemProps": { "to": ["Menu.CheckboxItemProps"] },
+      "MenuDensity": {
+        "to": [],
+        "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+      },
+      "MenuGroup": { "to": ["Menu.Group"] },
+      "MenuGroupProps": { "to": ["Menu.GroupProps"] },
+      "MenuHeader": { "to": ["Menu.Header"] },
+      "MenuHeaderProps": { "to": ["Menu.HeaderProps"] },
+      "MenuItem": { "to": ["Menu.Item"] },
+      "MenuItemProps": { "to": ["Menu.ItemProps"] },
+      "MenuProps": { "to": ["Menu.RootProps"] },
+      "MenuRadioGroup": { "to": ["Menu.RadioGroup"] },
+      "MenuRadioGroupProps": { "to": ["Menu.RadioGroupProps"] },
+      "MenuRadioItem": { "to": ["Menu.RadioItem"] },
+      "MenuRadioItemProps": { "to": ["Menu.RadioItemProps"] },
+      "MenuSeparator": { "to": ["Menu.Separator"] },
+      "MenuSubmenu": { "to": ["Menu.Submenu"] },
+      "MenuSubmenuProps": { "to": ["Menu.SubmenuProps"] },
+      "Menubar": { "to": ["Menubar.Root"] },
+      "MenubarMenu": { "to": ["Menubar.Menu"] },
+      "MenubarMenuOpenChangeDetails": { "to": ["Menubar.MenuOpenChangeDetails"] },
+      "MenubarMenuProps": { "to": ["Menubar.MenuProps"] },
+      "MenubarProps": { "to": ["Menubar.RootProps"] },
+      "NavigationItem": { "to": ["NavList.Item"] },
+      "NavigationItemProps": { "to": ["NavList.ItemProps"] },
+      "Notice": { "to": ["Alert"] },
+      "NoticeProps": { "to": ["AlertProps"] },
+      "NoticeTone": { "to": ["AlertTone"] },
+      "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
+      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
+      "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
+      "PanelDock": { "to": ["PanelDock.Root"] },
+      "PanelDockControls": {
+        "to": [],
+        "use": "PanelDock.Header shows the window controls itself, with controls={false} to leave them out; their names, Minimize, Maximize, Restore and Close, come from EnvUIProvider's messages.panelDock."
+      },
+      "PanelDockControlsProps": {
+        "to": [],
+        "use": "PanelDock.Header shows the window controls itself; set their names through EnvUIProvider's messages.panelDock."
+      },
+      "PanelDockHeader": { "to": ["PanelDock.Header"] },
+      "PanelDockHeaderProps": { "to": ["PanelDock.HeaderProps"] },
+      "PanelDockProps": { "to": ["PanelDock.RootProps"] },
+      "Row": { "to": ["List.Item"] },
+      "RowProps": { "to": ["List.ItemProps"] },
+      "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
+      "SelectOption": { "to": ["SelectItem"] },
+      "StackElement": {
+        "to": [],
+        "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
+      },
+      "Stat": { "to": ["Stat.Root"] },
+      "StatGroup": { "to": ["Stat.Group"] },
+      "StatGroupProps": { "to": ["Stat.GroupProps"] },
+      "StatProps": { "to": ["Stat.RootProps"] },
+      "StatTrend": { "to": ["Stat.Trend"] },
+      "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "SurfaceCorners": { "to": ["SurfaceRadius"] },
+      "SurfaceDensity": {
+        "to": [],
+        "use": "Surface's density is gone in 1.0: give the controls inside a ControlSize with their size prop, or set a ThemeScale with scale on a Theme around the region."
+      },
+      "SurfaceTone": { "to": ["SurfaceBackground"] },
+      "Table": { "to": ["Table.Root"] },
+      "TableBody": { "to": ["Table.Body"] },
+      "TableBodyProps": { "to": ["Table.BodyProps"] },
+      "TableCell": { "to": ["Table.Cell"] },
+      "TableCellProps": { "to": ["Table.CellProps"] },
+      "TableHead": { "to": ["Table.Head"] },
+      "TableHeadProps": { "to": ["Table.HeadProps"] },
+      "TableHeaderCell": { "to": ["Table.HeaderCell"] },
+      "TableHeaderCellProps": { "to": ["Table.HeaderCellProps"] },
+      "TableProps": { "to": ["Table.RootProps"] },
+      "TableRow": { "to": ["Table.Row"] },
+      "TableRowProps": { "to": ["Table.RowProps"] },
+      "TableSortDirection": { "to": ["Table.SortDirection"] },
+      "TextElement": {
+        "to": [],
+        "use": "Text renders another element through render, such as render={<h2 />}."
+      },
+      "TextTone": { "to": ["TextEmphasis"] },
+      "TitleBar": { "to": ["WindowFrame.TitleBar"] },
+      "TitleBarProps": { "to": ["WindowFrame.TitleBarProps"] },
+      "Toast": {
+        "to": [],
+        "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",
+        "namespace": true
+      },
+      "ToastProps": {
+        "to": [],
+        "use": "Describe a notification with ToastNotification, the argument of useToast().show()."
+      },
+      "ToastProvider": { "to": ["Toast.Provider"] },
+      "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
+      "ToastVariant": { "to": ["ToastTone"] },
+      "TreeOpenOptions": { "to": ["TreeActionOptions"] },
+      "WindowFrame": { "to": ["WindowFrame.Root"] },
+      "WindowFrameProps": { "to": ["WindowFrame.RootProps"] },
+      "getInitials": {
+        "to": [],
+        "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."
+      },
+      "useLinkComponent": {
+        "to": [],
+        "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+      },
+      "useSidebarCompact": {
+        "to": [],
+        "use": "useSidebar().isRail says whether the sidebar shows icons only; AppShell.Root's sidebarOpen and onSidebarOpenChange keep its state."
+      }
+    },
+    "@envsemble/envui/theme-bootstrap": {
+      "defaultThemeStorageKey": {
+        "to": [],
+        "use": "The default storage key is the string \"env-theme\"; pass the same storageKey to createThemeBootstrapScript and ThemePreferenceProvider to change it."
+      }
+    }
+  }
+}

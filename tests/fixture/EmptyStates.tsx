@@ -18,7 +18,7 @@ export function EmptyStatesFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <EmptyState
         align="center"
-        tone="error"
+        tone="danger"
         data-testid={`empty-error-${theme}`}
         title={`Submissions unavailable ${theme}`}
         description="Try again."

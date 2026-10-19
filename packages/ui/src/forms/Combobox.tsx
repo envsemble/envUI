@@ -1,3 +1,5 @@
+'use client';
+
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import {
@@ -8,14 +10,20 @@ import {
   useRef,
   useState,
   type ComponentPropsWithoutRef,
+  type CSSProperties,
   type ReactNode,
   type Ref,
 } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { setRef } from '../internal/setRef.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { Surface } from '../foundations/Surface.js';
+import { useDirection } from '../internal/useDirection.js';
+import { useLocale, useMessages } from '../internal/EnvUIContext.js';
+import { PopupSurface } from '../internal/PopupSurface.js';
+import { ListRow } from '../internal/ListRow.js';
+import { type ControlSize } from '../foundations/Theme.js';
+import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
+import { common as commonMessages } from '../foundations/messages/common.js';
+import { IconButton } from '../actions/Button.js';
+import { CloseButton } from '../actions/CloseButton.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
@@ -23,12 +31,11 @@ import { Close } from '../icons/Close.js';
 import {
   FieldFrame,
   isLabelShown,
+  type FieldControlBoxProps,
   type FieldProps,
-  type FieldWellProps,
 } from './internal/FieldFrame.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import { useTextDirection } from './internal/useTextDirection.js';
 
 /** One option of a Combobox. */
 export interface ComboboxItem {
@@ -39,13 +46,16 @@ export interface ComboboxItem {
   /** A muted second line, such as an e-mail address; the default filter matches it too. */
   description?: string;
   /** Content before the label, such as an Avatar or an icon; it takes the size of its slot. */
-  leading?: ReactNode;
+  start?: ReactNode;
+  /** The option shows but can't be chosen. */
   disabled?: boolean;
 }
 
 /** Options under a heading, which also names the group for assistive technology. */
 export interface ComboboxGroup<Item extends ComboboxItem = ComboboxItem> {
+  /** The group's heading. */
   label: string;
+  /** The options under the heading, in display order. */
   items: readonly Item[];
 }
 
@@ -61,7 +71,12 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
       'value' | 'defaultValue' | 'onChange' | 'type' | 'children' | 'multiple' | 'list' | 'size'
     >,
     FieldProps {
+  /** The text input, so that a form library can register it and focus it. */
   ref?: Ref<HTMLInputElement>;
+  /** The field's class, on its root element, beside env-field and env-combobox. */
+  className?: string;
+  /** Styles of the field's root element. */
+  style?: CSSProperties;
   /** The options, or groups of options under headings, in display order. */
   items: readonly Item[] | readonly ComboboxGroup<Item>[];
   /**
@@ -73,31 +88,54 @@ interface ComboboxSharedProps<Item extends ComboboxItem>
   onInputValueChange?: (query: string) => void;
   /** The options are loading: the popup shows loadingLabel instead of emptyLabel. */
   loading?: boolean;
-  /** Shown in the popup while loading; Loading… by default. */
+  /**
+   * Shown in the popup while loading.
+   * @default 'Loading…', or EnvUIProvider's messages.combobox.loading
+   */
   loadingLabel?: ReactNode;
-  /** Shown in the popup when no option matches; No matches by default. */
+  /**
+   * Shown in the popup when no option matches.
+   * @default 'No matches', or EnvUIProvider's messages.combobox.empty
+   */
   emptyLabel?: ReactNode;
   /**
-   * standard (default) is the text field of forms; compact takes the compact control height, like
-   * a compact Select, and the compact menu's popup.
+   * The field's look, as TextField's: outline, at the control height, or floating, 3.5 rem tall
+   * with room for its label, for long forms on a page.
+   * @default 'outline'
    */
-  density?: 'standard' | 'compact';
+  variant?: 'outline' | 'floating';
+  /**
+   * The field's height, as on every control: sm, md or lg in the current scale. Without it, the
+   * field takes the control height of its container, md unless the container sets another. The
+   * popup's rows take the row height of the scale.
+   */
+  size?: ControlSize;
   /**
    * Show the label inside the field, where it floats into the outline while the field has focus or
-   * a value. Defaults to true, and to false for compact fields, which can use a placeholder instead.
+   * a value. Set false for a field whose purpose is clear without it; a placeholder then gives the
+   * visible guidance.
+   * @default true
    */
   showLabel?: boolean;
   /** A clear button removes the value while there is one; Esc on the closed field clears it too. */
   clearable?: boolean;
-  /** Accessible name of the clear button; Clear by default. */
+  /**
+   * Accessible name of the clear button.
+   * @default 'Clear', or EnvUIProvider's messages.common.clear
+   */
   clearLabel?: string;
-  /** Accessible name of a chip's remove button; Remove followed by the label by default. */
+  /**
+   * Accessible name of a chip's remove button, from the chip's label.
+   * @default Remove followed by the label, or EnvUIProvider's messages.combobox.remove
+   */
   removeLabel?: (label: string) => string;
+  /** Whether the list is open; with `onOpenChange` it controls the popup. */
   open?: boolean;
+  /** Whether an uncontrolled list starts open; closed by default. */
   defaultOpen?: boolean;
   /** Called as the popup opens and closes, such as to load the options as it opens. */
   onOpenChange?: (open: boolean) => void;
-  /** The locale of the default filter's matching; the browser's by default. */
+  /** The locale of the default filter's matching: EnvUIProvider's, else the browser's. */
   locale?: string;
 }
 
@@ -105,6 +143,7 @@ interface ComboboxSingleProps<Item extends ComboboxItem> {
   multiple?: false;
   /** The chosen option's value, or null for none. */
   value?: string | null;
+  /** The value an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: string | null;
   /** Receives the chosen value and its option, or null twice once the field is cleared. */
   onValueChange?: (value: string | null, item: Item | null) => void;
@@ -115,6 +154,7 @@ interface ComboboxMultipleProps<Item extends ComboboxItem> {
   multiple: true;
   /** The chosen values, in the order they were chosen. */
   value?: readonly string[];
+  /** The values an uncontrolled field starts with, and that a form reset restores; none by default. */
   defaultValue?: readonly string[];
   /** Receives the chosen values and their options. */
   onValueChange?: (value: string[], items: Item[]) => void;
@@ -127,10 +167,6 @@ type ChangeDetails = BaseCombobox.Root.ChangeEventDetails;
 
 /** Changes of the typed text that people make, rather than the field filling in a chosen label. */
 const typedChanges = new Set(['input-change', 'input-clear', 'clear-press', 'escape-key']);
-
-function defaultRemoveLabel(label: string) {
-  return `Remove ${label}`;
-}
 
 /** A chosen value the field never saw among the options stands for itself, as its chip shows. */
 function standIn<Item extends ComboboxItem>(value: string) {
@@ -157,6 +193,12 @@ function remPixels(element: Element | null) {
   return Number.parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
 }
 
+const popupParts = {
+  Portal: BaseCombobox.Portal,
+  Positioner: BaseCombobox.Positioner,
+  Popup: BaseCombobox.Popup,
+};
+
 /**
  * A text field that filters a list of options as people type, for choosing one option or several.
  * Chosen options show as removable chips; keyboard, focus and announcements follow the WAI-ARIA
@@ -169,19 +211,20 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     filter,
     onInputValueChange,
     loading = false,
-    loadingLabel = 'Loading…',
-    emptyLabel = 'No matches',
-    density = 'standard',
+    loadingLabel,
+    emptyLabel,
+    variant = 'outline',
+    size,
     showLabel,
     clearable = false,
-    clearLabel = 'Clear',
-    removeLabel = defaultRemoveLabel,
+    clearLabel,
+    removeLabel,
     open,
     defaultOpen,
     onOpenChange,
-    locale,
+    locale: ownLocale,
     label,
-    hint,
+    description,
     error,
     name,
     form,
@@ -191,6 +234,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     placeholder,
     id: suppliedId,
     className,
+    style,
     'aria-describedby': describedBy,
     'aria-invalid': invalid,
     multiple,
@@ -200,12 +244,16 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     ...inputProps
   } = props;
   const isMultiple = multiple === true;
-  const compact = density === 'compact';
-  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
+  const messages = useMessages('combobox', comboboxMessages);
+  const common = useMessages('common', commonMessages);
+  const providedLocale = useLocale();
+  const locale = ownLocale ?? providedLocale;
+  const clearName = clearLabel ?? common.clear;
+  const removeName = removeLabel ?? ((text: string) => messages.remove({ label: text }));
+  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
   const labelId = `${id}-label`;
   const selectionId = `${id}-selection`;
-  const theme = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
   const nativeRef = useRef<HTMLInputElement>(null);
   const pressFocus = useRef(false);
@@ -251,7 +299,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
       }),
     [items],
   );
-  const hasLeading = flatItems.some((item) => item.leading != null);
+  const hasStart = flatItems.some((item) => item.start != null);
   const grouped = flatItems.length > 0 && isGroup((items as readonly unknown[])[0] as Item);
 
   const matcher = BaseCombobox.useFilter({ locale, multiple: true });
@@ -266,14 +314,14 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
     [filter, matcher],
   );
 
-  // The typed text, to show the chosen option's leading content only while the field shows its label.
+  // The typed text, to show the chosen option's start content only while the field shows its label.
   const singleItem = isMultiple || selection == null ? undefined : known.get(selection as string);
   const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const popupOpen = open ?? uncontrolledOpen;
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
-  const [direction, readDirection] = useTextDirection(inputRef, popupOpen);
+  const [direction, readDirection] = useDirection(inputRef, popupOpen);
 
   function changeOpen(next: boolean) {
     if (open === undefined) setUncontrolledOpen(next);
@@ -342,27 +390,27 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   }
 
   function popupOffset() {
-    return remPixels(inputRef.current) * (compact ? 0.25 : 0.5);
+    return remPixels(inputRef.current) * 0.25;
   }
 
   const hasChips = isMultiple && selectedValues.length > 0;
-  const labelShown = label != null && isLabelShown({ compact, showLabel });
+  const labelShown = label != null && isLabelShown({ showLabel });
   // A floating label needs a blank placeholder to detect the empty state; chips fill the field.
   const fieldPlaceholder = hasChips ? undefined : labelShown ? placeholder || ' ' : placeholder;
-  const description =
+  const describedByIds =
     [hasChips && selectionId, metadata['aria-describedby']].filter(Boolean).join(' ') || undefined;
   const showClear = clearable && !disabled && !readOnly;
   // The clear button shows while there is a value to clear; the well keeps room for it only then.
   const clearShown = showClear && selectedValues.length > 0;
-  const showLeading = singleItem?.leading != null && inputText === singleItem.label && !isMultiple;
+  const showStart = singleItem?.start != null && inputText === singleItem.label && !isMultiple;
   const ariaLabel = inputProps['aria-label'];
   const toolbarName =
     label != null ? { 'aria-labelledby': labelId } : ariaLabel ? { 'aria-label': ariaLabel } : {};
 
-  function renderWell(wellProps: FieldWellProps) {
+  function renderControlBox(boxProps: FieldControlBoxProps) {
     const props = {
-      ...wellProps,
-      className: classNames(wellProps.className, 'env-combobox-well'),
+      ...boxProps,
+      className: `${boxProps.className} env-combobox-control`,
       'data-actions': clearShown ? '2' : '1',
     };
     if (!isMultiple) return <BaseCombobox.InputGroup {...props} />;
@@ -415,17 +463,19 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               </label>
             ) : null
           }
-          hint={hint}
+          description={description}
           error={error}
           floatingLabel
-          compact={compact}
+          variant={variant}
+          size={size}
           showLabel={showLabel}
-          className="env-combobox"
-          renderWell={renderWell}
+          className={className ? `env-combobox ${className}` : 'env-combobox'}
+          style={style}
+          renderControlBox={renderControlBox}
         >
-          {showLeading && (
+          {showStart && (
             <span className="env-combobox-leading env-combobox-value-leading" aria-hidden="true">
-              {singleItem.leading}
+              {singleItem.start}
             </span>
           )}
           {isMultiple &&
@@ -433,20 +483,23 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               const item = known.get(selected);
               const text = labelOf(selected);
               return (
-                <BaseCombobox.Chip key={selected} className="env-combobox-chip">
-                  {item?.leading != null && (
+                <BaseCombobox.Chip
+                  key={selected}
+                  className="env-combobox-chip"
+                  // A chip is no widget, so the field's read-only state is the input's alone.
+                  render={({ 'aria-readonly': _readOnly, ...chipProps }) => <div {...chipProps} />}
+                >
+                  {item?.start != null && (
                     <span className="env-combobox-leading" aria-hidden="true">
-                      {item.leading}
+                      {item.start}
                     </span>
                   )}
                   <span className="env-combobox-chip-label">{text}</span>
                   {!disabled && !readOnly && (
                     <BaseCombobox.ChipRemove
                       className="env-combobox-chip-remove"
-                      aria-label={removeLabel(text)}
-                    >
-                      <Close />
-                    </BaseCombobox.ChipRemove>
+                      render={<CloseButton aria-label={removeName(text)} />}
+                    />
                   )}
                 </BaseCombobox.Chip>
               );
@@ -474,31 +527,46 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
               pressFocus.current = false;
             }}
             aria-invalid={metadata['aria-invalid']}
-            aria-describedby={description}
+            aria-describedby={describedByIds}
             placeholder={fieldPlaceholder}
-            className={classNames('env-text-input', 'env-combobox-input', className)}
+            className="env-text-field-input env-combobox-input"
           />
           {/* The well reserves room for its actions, which stay at its end. */}
           <span className="env-text-field-end env-combobox-end">
             {showClear && (
               <BaseCombobox.Clear
-                className="env-button env-button-text env-icon-button env-combobox-clear"
-                aria-label={clearLabel}
-                title={clearLabel}
-              >
-                <DecorativeIcon>
-                  <Close />
-                </DecorativeIcon>
-              </BaseCombobox.Clear>
+                className="env-combobox-clear"
+                render={
+                  <IconButton
+                    variant="ghost"
+                    icon={<Close />}
+                    aria-label={clearName}
+                    title={clearName}
+                  />
+                }
+              />
             )}
             <BaseCombobox.Trigger
-              className="env-button env-button-text env-icon-button env-combobox-trigger"
-              {...(label != null ? { 'aria-labelledby': labelId } : { 'aria-label': ariaLabel })}
-            >
-              <DecorativeIcon>
-                <ChevronRight />
-              </DecorativeIcon>
-            </BaseCombobox.Trigger>
+              className="env-combobox-trigger"
+              // The field's label names the trigger; without one, the field's aria-label does.
+              {...(label != null ? { 'aria-labelledby': labelId } : {})}
+              // Base UI's Field gives it the field's description and error, which the input
+              // already announces; the chevron leaves them out.
+              render={({
+                'aria-describedby': _describedBy,
+                'aria-invalid': _invalid,
+                ...triggerProps
+              }) => (
+                <IconButton
+                  {...triggerProps}
+                  variant="ghost"
+                  icon={<ChevronRight />}
+                  {...({ 'aria-label': label != null ? undefined : ariaLabel } as {
+                    'aria-label': string;
+                  })}
+                />
+              )}
+            />
           </span>
         </FieldFrame>
         {hasChips && (
@@ -507,105 +575,93 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
             {selectedValues.map(labelOf).join(', ')}
           </span>
         )}
-        <BaseCombobox.Portal>
-          <Theme theme={theme}>
-            <BaseCombobox.Positioner
-              className="env-select-positioner"
-              side="bottom"
-              align="start"
-              sideOffset={popupOffset}
-              collisionPadding={8}
-            >
-              <BaseCombobox.Popup
-                className="env-dropdown-options env-combobox-popup"
-                render={<Surface padding={compact ? 1 : 2} density={density} />}
-              >
-                <BaseCombobox.Status className="env-combobox-status">
-                  {loading ? (
-                    <>
-                      <Spinner size="small" />
-                      {loadingLabel}
-                    </>
-                  ) : null}
-                </BaseCombobox.Status>
-                <BaseCombobox.Empty className="env-combobox-empty">
-                  {loading ? null : emptyLabel}
-                </BaseCombobox.Empty>
-                {/* The options are busy while they load, not the popup, whose status announces
-                    the loading label meanwhile. */}
-                <BaseCombobox.List
-                  className="env-dropdown-list env-combobox-list"
-                  aria-busy={loading || undefined}
+        <PopupSurface
+          parts={popupParts}
+          side="bottom"
+          align="start"
+          sideOffset={popupOffset}
+          dir={direction}
+          className="env-combobox-popup"
+        >
+          <BaseCombobox.Status className="env-combobox-status">
+            {loading ? (
+              <>
+                <Spinner size="sm" />
+                {loadingLabel ?? messages.loading}
+              </>
+            ) : null}
+          </BaseCombobox.Status>
+          <BaseCombobox.Empty className="env-combobox-empty">
+            {loading ? null : (emptyLabel ?? messages.empty)}
+          </BaseCombobox.Empty>
+          {/* The options are busy while they load, not the popup, whose status announces
+              the loading label meanwhile. */}
+          <BaseCombobox.List className="env-combobox-list" aria-busy={loading || undefined}>
+            {(entry: Item | ComboboxGroup<Item>) =>
+              grouped && isGroup(entry) ? (
+                <BaseCombobox.Group
+                  key={entry.label}
+                  items={entry.items as Item[]}
+                  className="env-combobox-group"
                 >
-                  {(entry: Item | ComboboxGroup<Item>) =>
-                    grouped && isGroup(entry) ? (
-                      <BaseCombobox.Group
-                        key={entry.label}
-                        items={entry.items as Item[]}
-                        className="env-combobox-group"
-                      >
-                        <BaseCombobox.GroupLabel className="env-combobox-group-label">
-                          {entry.label}
-                        </BaseCombobox.GroupLabel>
-                        <BaseCombobox.Collection>
-                          {(item: Item) => (
-                            <ComboboxOption key={item.value} item={item} leadingSlot={hasLeading} />
-                          )}
-                        </BaseCombobox.Collection>
-                      </BaseCombobox.Group>
-                    ) : (
-                      <ComboboxOption
-                        key={(entry as Item).value}
-                        item={entry as Item}
-                        leadingSlot={hasLeading}
-                      />
-                    )
-                  }
-                </BaseCombobox.List>
-              </BaseCombobox.Popup>
-            </BaseCombobox.Positioner>
-          </Theme>
-        </BaseCombobox.Portal>
+                  <BaseCombobox.GroupLabel className="env-combobox-group-label">
+                    {entry.label}
+                  </BaseCombobox.GroupLabel>
+                  <BaseCombobox.Collection>
+                    {(item: Item) => (
+                      <ComboboxOption key={item.value} item={item} startSlot={hasStart} />
+                    )}
+                  </BaseCombobox.Collection>
+                </BaseCombobox.Group>
+              ) : (
+                <ComboboxOption
+                  key={(entry as Item).value}
+                  item={entry as Item}
+                  startSlot={hasStart}
+                />
+              )
+            }
+          </BaseCombobox.List>
+        </PopupSurface>
       </BaseCombobox.Root>
     </DirectionProvider>
   );
 }
 
-/** An option row: a check mark slot, optional leading content, the label and its description. */
+/** An option row: a check mark slot, optional start content, the label and its description. */
 function ComboboxOption<Item extends ComboboxItem>({
   item,
-  leadingSlot,
+  startSlot,
 }: {
   item: Item;
-  leadingSlot: boolean;
+  startSlot: boolean;
 }) {
   const descriptionId = useId();
   return (
-    <BaseCombobox.Item
-      value={item.value}
-      disabled={item.disabled}
-      className="env-combobox-option"
-      aria-describedby={item.description ? descriptionId : undefined}
-    >
-      <span className="env-combobox-check" aria-hidden="true">
-        <BaseCombobox.ItemIndicator className="env-symbol">
+    <ListRow
+      render={
+        <BaseCombobox.Item
+          value={item.value}
+          disabled={item.disabled}
+          aria-describedby={item.description ? descriptionId : undefined}
+        />
+      }
+      className="env-combobox-item"
+      indicator={
+        <BaseCombobox.ItemIndicator className="env-icon env-combobox-item-indicator">
           <Check />
         </BaseCombobox.ItemIndicator>
-      </span>
-      {leadingSlot && (
-        <span className="env-combobox-leading" aria-hidden="true">
-          {item.leading}
-        </span>
-      )}
-      <span className="env-combobox-option-text">
-        <span className="env-combobox-option-label">{item.label}</span>
-        {item.description ? (
+      }
+      icon={startSlot ? <span className="env-combobox-leading">{item.start}</span> : undefined}
+      label={item.label}
+      description={
+        item.description ? (
           // Announced through aria-describedby rather than as part of the option's name.
-          <span className="env-combobox-option-description" id={descriptionId} aria-hidden="true">
+          <span id={descriptionId} aria-hidden="true">
             {item.description}
           </span>
-        ) : null}
-      </span>
-    </BaseCombobox.Item>
+        ) : undefined
+      }
+    />
   );
 }

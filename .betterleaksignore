@@ -1,0 +1,3 @@
+# Exact historical false positives; anything else Betterleaks finds still fails CI.
+# The sign-in template's sample password, which its example accepts to show a sign-in.
+3456bc5c37fb2152c5f81734ff3b367fc35a5fe6:apps/catalogue/src/examples/sign-in-page/SignInPage.tsx:generic-password:258

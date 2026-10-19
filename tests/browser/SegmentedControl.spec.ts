@@ -13,11 +13,17 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
     const done = group.getByRole('radio', { name: 'Done 40' });
     await expect(open).toHaveAttribute('aria-checked', 'true');
     await expect(group.getByRole('radio', { name: 'Archived' })).toBeDisabled();
+    // Counts take the locale's number format.
+    await expect(
+      page
+        .getByRole('radiogroup', { name: `Counts in German ${theme}` })
+        .getByRole('radio', { name: 'Alle 1.200' }),
+    ).toBeVisible();
 
     // The chosen segment takes the primary action colors.
     const fill = await open.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-primary-action)';
+      probe.style.backgroundColor = 'var(--env-color-bg-brand-emphasis)';
       element.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
@@ -51,6 +57,7 @@ test('segmented controls choose one option with the pointer and arrow keys', asy
 test('a full-width control splits its container evenly and cuts long labels short, with a tooltip', async ({
   page,
 }) => {
+  await page.clock.install();
   await page.goto(`${fixtureUrl}/?fixture=segments`);
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
@@ -70,7 +77,7 @@ test('a full-width control splits its container evenly and cuts long labels shor
   );
   expect(Math.abs(first!.width - second!.width)).toBeLessThan(1);
   // Labels too long for their half end in an ellipsis; the options keep their whole names.
-  const label = segments.first().locator('.env-segment-label');
+  const label = segments.first().locator('.env-segmented-control-item-label');
   await expect(label).toHaveCSS('text-overflow', 'ellipsis');
   expect(await label.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
   await expect(segments.first()).toHaveAccessibleName('Assigned to me');
@@ -97,13 +104,13 @@ test('a full-width control splits its container evenly and cuts long labels shor
   expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1);
   expect(
     await wide
-      .locator('.env-segment-label')
+      .locator('.env-segmented-control-item-label')
       .evaluateAll((labels) =>
         labels.every((element) => element.scrollWidth <= element.clientWidth),
       ),
   ).toBe(true);
   await wide.getByRole('radio').first().hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
   // Without fullWidth the control keeps the width of its options.
   const plain = page
@@ -114,12 +121,9 @@ test('a full-width control splits its container evenly and cuts long labels shor
 
 test('on touch screens a full-width label too long for its share wraps, as no tooltip shows', async ({
   browser,
-  browserName,
 }) => {
-  test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
   const context = await browser.newContext({
     hasTouch: true,
-    isMobile: true,
     viewport: { width: 1024, height: 900 },
   });
   const page = await context.newPage();
@@ -128,7 +132,7 @@ test('on touch screens a full-width label too long for its share wraps, as no to
   const narrow = page.getByTestId('segments-narrow-light');
   const control = narrow.getByRole('radiogroup', { name: 'Assignments light' });
   const segments = control.getByRole('radio');
-  const label = segments.nth(1).locator('.env-segment-label');
+  const label = segments.nth(1).locator('.env-segmented-control-item-label');
   // The label shows whole, on two lines, and the options still share the rail evenly.
   await expect(label).not.toHaveCSS('text-overflow', 'ellipsis');
   expect(await label.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);

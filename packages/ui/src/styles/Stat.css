@@ -1,21 +1,21 @@
-/* Key figures: a muted label, a large figure in tabular digits and a line for the trend and detail.
+/* Key figures: a muted label, a large figure in tabular digits and a line for the trend and description.
    The trend carries its tone in an icon and text, never in color alone. */
 .env-stat {
-  --env-stat-tone: var(--color-tone-neutral);
+  --env-stat-tone: var(--env-color-fg-muted);
   display: grid;
   align-content: start;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   min-inline-size: 0;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
   overflow-wrap: anywhere;
 }
 .env-stat-label {
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-stat-value {
-  color: var(--color-text-primary);
-  font: 500 1.75rem / 1.2 var(--font-family);
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-medium) 1.75rem / 1.2 var(--env-font-family);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
@@ -23,44 +23,44 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  column-gap: var(--space-3);
-  row-gap: var(--space-1);
-  font: var(--type-body-small);
+  column-gap: var(--env-space-3);
+  row-gap: var(--env-space-1);
+  font: var(--env-type-body-small);
 }
 .env-stat-trend {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   min-inline-size: 0;
   color: var(--env-stat-tone);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 .env-stat-trend[data-tone='success'] {
-  --env-stat-tone: var(--color-tone-success);
+  --env-stat-tone: var(--env-color-fg-success);
 }
 .env-stat-trend[data-tone='warning'] {
-  --env-stat-tone: var(--color-tone-warning);
+  --env-stat-tone: var(--env-color-fg-warning);
 }
 .env-stat-trend[data-tone='danger'] {
-  --env-stat-tone: var(--color-tone-danger);
+  --env-stat-tone: var(--env-color-fg-danger);
 }
 .env-stat-trend[data-tone='neutral'] {
-  --env-stat-tone: var(--color-tone-neutral);
+  --env-stat-tone: var(--env-color-fg-muted);
 }
-.env-stat-detail {
-  color: var(--color-text-muted);
+.env-stat-description {
+  color: var(--env-color-fg-muted);
 }
 /* As many even columns as fit, at least 11 rem wide, wrapping onto new rows. A narrow group, such
    as on a phone, keeps two columns down to 6.5 rem each with a smaller gap before it stacks, and
    its figures shrink with their column so they stay on one line. */
 .env-stat-group {
-  --env-stat-group-gap: clamp(var(--space-4), 5%, var(--space-6));
+  --env-stat-group-gap: clamp(var(--env-space-4), 5%, var(--env-space-6));
   display: grid;
   grid-template-columns: repeat(
     auto-fit,
     minmax(min(100%, 11rem, max(6.5rem, (100% - var(--env-stat-group-gap)) / 2)), 1fr)
   );
-  gap: var(--space-5) var(--env-stat-group-gap);
+  gap: var(--env-space-5) var(--env-stat-group-gap);
   min-inline-size: 0;
 }
 .env-stat-group > .env-stat {

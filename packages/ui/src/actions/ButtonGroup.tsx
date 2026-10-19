@@ -2,6 +2,7 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 export interface ButtonGroupProps extends ComponentPropsWithRef<'div'> {
+  /** A row of buttons, or a column in which every button is as wide as the group. */
   orientation?: 'horizontal' | 'vertical';
   /**
    * Fill the container's width, such as a sidebar's: in a row, labelled buttons share the room the

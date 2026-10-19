@@ -1,0 +1,135 @@
+/* A calendar of daily values: weeks as columns, weekdays as rows. Each step mixes the tone into the
+   canvas, so higher values stand out more in both themes; empty days use the translucent fill. */
+.env-calendar-heatmap {
+  --env-calendar-heatmap-tone: var(--env-color-fg-accent);
+  --env-calendar-heatmap-cell: 0.75rem;
+  --env-calendar-heatmap-gap: 0.1875rem;
+  /* As wide as its weeks, so the legend ends with them, and never wider than its container. */
+  inline-size: fit-content;
+  display: grid;
+  gap: var(--env-space-2);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  color: var(--env-color-fg-muted);
+  font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
+}
+.env-calendar-heatmap[data-tone='neutral'] {
+  --env-calendar-heatmap-tone: var(--env-color-fg-muted);
+}
+.env-calendar-heatmap[data-tone='success'] {
+  --env-calendar-heatmap-tone: var(--env-color-fg-success);
+}
+.env-calendar-heatmap[data-tone='warning'] {
+  --env-calendar-heatmap-tone: var(--env-color-fg-warning);
+}
+.env-calendar-heatmap[data-tone='danger'] {
+  --env-calendar-heatmap-tone: var(--env-color-fg-danger);
+}
+.env-calendar-heatmap[data-tone='done'] {
+  --env-calendar-heatmap-tone: var(--env-color-fg-done);
+}
+/* Narrow containers scroll the weeks sideways inside the heatmap. */
+.env-calendar-heatmap-scroll {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.env-calendar-heatmap-grid {
+  border-collapse: separate;
+  border-spacing: var(--env-calendar-heatmap-gap);
+  font: inherit;
+  outline: none;
+}
+.env-calendar-heatmap-grid :is(th, td) {
+  padding: 0;
+}
+.env-calendar-heatmap-month,
+.env-calendar-heatmap-weekday {
+  color: var(--env-color-fg-muted);
+  font: inherit;
+  font-weight: var(--env-font-weight-regular);
+  text-align: start;
+  white-space: nowrap;
+}
+/* A month name may run on above the following weeks; it never widens its own week. */
+.env-calendar-heatmap-month > span {
+  display: block;
+  inline-size: 0;
+  padding-block-end: var(--env-space-1);
+}
+.env-calendar-heatmap-weekday {
+  padding-inline-end: var(--env-space-1);
+  line-height: var(--env-calendar-heatmap-cell);
+}
+.env-calendar-heatmap-day,
+.env-calendar-heatmap-pad {
+  inline-size: var(--env-calendar-heatmap-cell);
+  min-inline-size: var(--env-calendar-heatmap-cell);
+  block-size: var(--env-calendar-heatmap-cell);
+}
+.env-calendar-heatmap-day,
+.env-calendar-heatmap-swatch {
+  border-radius: 0.125rem;
+  background: var(--env-color-bg-neutral-muted);
+}
+.env-calendar-heatmap-day:not([data-level='0']),
+.env-calendar-heatmap-swatch:not([data-level='0']) {
+  background: color-mix(
+    in srgb,
+    var(--env-calendar-heatmap-tone) var(--env-calendar-heatmap-mix),
+    var(--env-color-bg-page)
+  );
+}
+.env-calendar-heatmap-day:focus {
+  outline: none;
+}
+@media (hover: hover) {
+  .env-calendar-heatmap-day:hover {
+    outline: 0.0625rem solid var(--env-color-fg-muted);
+    outline-offset: 0.0625rem;
+  }
+}
+.env-calendar-heatmap-day:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.0625rem;
+}
+.env-calendar-heatmap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--env-calendar-heatmap-gap);
+  justify-self: end;
+}
+.env-calendar-heatmap-legend > :first-child {
+  margin-inline-end: var(--env-space-1);
+}
+.env-calendar-heatmap-legend > :last-child {
+  margin-inline-start: var(--env-space-1);
+}
+.env-calendar-heatmap-swatch {
+  inline-size: var(--env-calendar-heatmap-cell);
+  block-size: var(--env-calendar-heatmap-cell);
+}
+/* On touch screens the days are 1.25 rem and 24 px apart, so each meets the minimum target size
+   through its spacing (WCAG 2.5.8); a year scrolls sideways in a narrow container. */
+@media (pointer: coarse) {
+  .env-calendar-heatmap {
+    --env-calendar-heatmap-cell: 1.25rem;
+    --env-calendar-heatmap-gap: 0.25rem;
+  }
+}
+/* A tooltip opened by hovering a day takes the pointer, so people can move onto it to read or
+   magnify it (WCAG 1.4.13). One opened by keyboard focus, or closing, takes none, so it never blocks
+   a press on what lies under it, such as a control above the latest weeks. */
+.env-calendar-heatmap-tooltip-positioner:is(:has(> [data-focus-opened]), [data-closed]) {
+  pointer-events: none;
+}
+
+/* Forced colors: a day's shade is its data, as an image's colors are, so the system keeps it. */
+@media (forced-colors: active) {
+  .env-calendar-heatmap-day {
+    forced-color-adjust: none;
+  }
+}

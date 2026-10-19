@@ -53,51 +53,53 @@ test('inactive preview avoids rendering and highlighting work while retaining cu
   );
 });
 
-test('tab changes retain the native textarea, selection, resize, history and reset behavior', async ({
-  page,
-}) => {
-  await page.goto(fixtureUrl);
-  const form = page.getByTestId('markdown-form');
-  const source = form.getByRole('textbox', { name: 'Workload source' });
-  const original = await source.inputValue();
-  const nativeInput = await source.elementHandle();
-  await source.fill('alpha');
-  await source.evaluate((input: HTMLTextAreaElement) => input.setSelectionRange(0, 5));
-  await form.getByRole('button', { name: 'Bold', exact: true }).click();
-  await expect(source).toHaveValue('**alpha**');
-  await form.getByRole('button', { name: 'Resize text area', exact: true }).press('ArrowDown');
-  const resizedHeight = await source.evaluate((input: HTMLTextAreaElement) => input.style.height);
-  const selectedRange = await source.evaluate((input: HTMLTextAreaElement) => [
-    input.selectionStart,
-    input.selectionEnd,
-  ]);
-  await form.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await form.getByRole('button', { name: 'Submit Markdown', exact: true }).click();
-  await expect(page.getByTestId('markdown-submitted')).toHaveText('**alpha**');
-  await form.getByRole('tab', { name: 'Write', exact: true }).click();
-  expect(
-    await nativeInput!.evaluate((input) => input === document.querySelector('[name="source"]')),
-  ).toBe(true);
-  expect(await source.evaluate((input: HTMLTextAreaElement) => input.style.height)).toBe(
-    resizedHeight,
-  );
-  expect(
-    await source.evaluate((input: HTMLTextAreaElement) => [
+test(
+  'tab changes retain the native textarea, selection, resize, history and reset behavior',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(fixtureUrl);
+    const form = page.getByTestId('markdown-form');
+    const source = form.getByRole('textbox', { name: 'Workload source' });
+    const original = await source.inputValue();
+    const nativeInput = await source.elementHandle();
+    await source.fill('alpha');
+    await source.evaluate((input: HTMLTextAreaElement) => input.setSelectionRange(0, 5));
+    await form.getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(source).toHaveValue('**alpha**');
+    await form.getByRole('separator', { name: 'Resize text area', exact: true }).press('ArrowDown');
+    const resizedHeight = await source.evaluate((input: HTMLTextAreaElement) => input.style.height);
+    const selectedRange = await source.evaluate((input: HTMLTextAreaElement) => [
       input.selectionStart,
       input.selectionEnd,
-    ]),
-  ).toEqual(selectedRange);
-  await form.getByRole('button', { name: 'Undo', exact: true }).click();
-  await expect(source).toHaveValue('alpha');
-  await form.getByRole('button', { name: 'Redo', exact: true }).click();
-  await expect(source).toHaveValue('**alpha**');
-  await form.getByRole('tab', { name: 'Preview', exact: true }).click();
-  await form.getByRole('button', { name: 'Reset Markdown', exact: true }).click();
-  await expect(form.locator('.env-markdown')).toContainText('Reference 39');
-  await form.getByRole('tab', { name: 'Write', exact: true }).click();
-  await expect(source).toHaveValue(original);
-  await expect(form.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
-});
+    ]);
+    await form.getByRole('tab', { name: 'Preview', exact: true }).click();
+    await form.getByRole('button', { name: 'Submit Markdown', exact: true }).click();
+    await expect(page.getByTestId('markdown-submitted')).toHaveText('**alpha**');
+    await form.getByRole('tab', { name: 'Write', exact: true }).click();
+    expect(
+      await nativeInput!.evaluate((input) => input === document.querySelector('[name="source"]')),
+    ).toBe(true);
+    expect(await source.evaluate((input: HTMLTextAreaElement) => input.style.height)).toBe(
+      resizedHeight,
+    );
+    expect(
+      await source.evaluate((input: HTMLTextAreaElement) => [
+        input.selectionStart,
+        input.selectionEnd,
+      ]),
+    ).toEqual(selectedRange);
+    await form.getByRole('button', { name: 'Undo', exact: true }).click();
+    await expect(source).toHaveValue('alpha');
+    await form.getByRole('button', { name: 'Redo', exact: true }).click();
+    await expect(source).toHaveValue('**alpha**');
+    await form.getByRole('tab', { name: 'Preview', exact: true }).click();
+    await form.getByRole('button', { name: 'Reset Markdown', exact: true }).click();
+    await expect(form.locator('.env-markdown')).toContainText('Reference 39');
+    await form.getByRole('tab', { name: 'Write', exact: true }).click();
+    await expect(source).toHaveValue(original);
+    await expect(form.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
+  },
+);
 
 test('active preview reflects controlled replacements and preview options without stale activation', async ({
   page,
@@ -156,7 +158,7 @@ for (const change of ['remove', 'replace'] as const) {
         body: `window.delayedHighlighting = { sources: [], loaded: true };
           export async function highlightCode(source) {
             window.delayedHighlighting.sources.push(source);
-            return source.split(/\\r\\n|\\r|\\n/).map(content => [{content, light: {}, dark: {}}]);
+            return source.split(/\\r\\n|\\r|\\n/).map(content => [{content, light: {}, dark: {}, lightHigh: {}, darkHigh: {}}]);
           }`,
       });
     });
@@ -184,3 +186,27 @@ for (const change of ['remove', 'replace'] as const) {
     if (change === 'replace') await expect(scope.locator('code')).toHaveText('const latest = 2;');
   });
 }
+
+test('the source is a tall text area with medium corners, never a pill', async ({ page }) => {
+  await page.goto(fixtureUrl);
+  const wells = page.locator('.env-text-field-control:has(> textarea)');
+  await expect(wells.first()).toBeVisible();
+  for (const well of await wells.all()) {
+    await expect(well.locator('xpath=..')).toHaveAttribute('data-tall');
+    await expect(well).toHaveCSS('border-top-left-radius', '16px');
+    expect((await well.boundingBox())!.height).toBeGreaterThanOrEqual(120);
+  }
+});
+
+test('className and style reach the root, and the textarea keeps its own class', async ({
+  page,
+}) => {
+  await page.goto(fixtureUrl);
+  const root = page.locator('.required-markdown-editor');
+  await expect(root).toHaveClass(/(^| )env-markdown-editor( |$)/);
+  await expect(root).toHaveCSS('max-inline-size', '640px');
+  const source = page.getByRole('textbox', { name: 'Required source' });
+  await expect(source).toHaveClass(/(^| )env-markdown-source( |$)/);
+  await expect(source).not.toHaveClass(/required-markdown-editor/);
+  expect(await source.evaluate((input) => input.style.maxInlineSize)).toBe('');
+});

@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl as fixtureServer } from './Servers';
 
@@ -80,7 +81,8 @@ test('formatting toolbar uses named SVG icon buttons and stays compact at narrow
     await expect(toolbar.getByRole('button')).toHaveCount(labels.length);
     for (const label of labels) {
       const button = toolbar.getByRole('button', { name: label, exact: true });
-      await expect(button).toHaveAttribute('title', label);
+      // A tooltip shows the name, which is no native title.
+      await expect(button).not.toHaveAttribute('title');
       await expect(button.locator('svg[aria-hidden="true"] path')).not.toHaveCount(0);
     }
     const geometry = await toolbar.evaluate((root) => {
@@ -148,31 +150,104 @@ test('theme and renderer changes preserve uncontrolled content, history and keyb
   await expect(scope.getByTestId('rich-text-keyboard-clicks')).toHaveText('2');
 });
 
-test('formatting, native history, form submission and reset use Markdown values', async ({
+test(
+  "a code block scrolls rather than wraps: the document's styles win over ProseMirror's base",
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    await replace(editor, '``` ');
+    await editor.pressSequentially('const answer = 42;');
+    const block = editor.locator('pre');
+    await expect(block).toHaveText('const answer = 42;');
+    await expect(block).toHaveCSS('white-space', 'pre');
+    // The base styles are envUI's, in its cascade layer: Tiptap adds no style element of its own.
+    await expect(page.locator('style[data-tiptap-style]')).toHaveCount(0);
+    await expect(editor).toHaveCSS('position', 'relative');
+  },
+);
+
+test(
+  "ProseMirror's separator stays inline under an unlayered img reset, adding no line",
+  { tag: '@engines' },
+  async ({ page, browserName }) => {
+    test.skip(browserName === 'firefox', 'ProseMirror adds the separator in Chromium and WebKit');
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    // A reference, which isn't editable, that ends the paragraph makes ProseMirror add its separator.
+    await replace(editor, '@river');
+    await page.getByRole('option', { name: referenceLabel, exact: true }).click();
+    if (/\s$/.test((await editor.locator('p').first().textContent()) ?? ''))
+      await page.keyboard.press('Backspace');
+    const paragraph = editor.locator('p').first();
+    const separator = paragraph.locator('img.ProseMirror-separator').last();
+    await expect(separator).toBeAttached();
+    const before = await paragraph.evaluate((element) => element.getBoundingClientRect().height);
+    // An application reset outside any cascade layer, as Tailwind's preflight has.
+    await page.addStyleTag({ content: 'img { display: block; height: auto; margin: 1rem; }' });
+    await expect(separator).toHaveCSS('display', 'inline');
+    await expect(separator).toHaveCSS('margin-top', '0px');
+    expect(await paragraph.evaluate((element) => element.getBoundingClientRect().height)).toBe(
+      before,
+    );
+  },
+);
+
+test('a task item keeps its checkbox beside its text in the editor and in the view', async ({
   page,
 }) => {
   await page.goto(`${fixtureUrl}?fixture=form`);
-  const form = page.getByTestId('rich-text-form');
-  const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
-  await editor.focus();
-  await editor.press('ControlOrMeta+A');
-  await form.getByRole('button', { name: 'Bold', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveText('alpha');
-  await expect(page.getByTestId('rich-text-source')).toHaveText('**alpha**');
-  await form.getByRole('button', { name: 'Undo', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveCount(0);
-  await form.getByRole('button', { name: 'Redo', exact: true }).click();
-  await expect(editor.locator('strong')).toHaveText('alpha');
-  await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
-  await expect(page.getByTestId('rich-text-submitted')).toHaveText('**alpha**');
-  await form.getByRole('button', { name: 'Reset rich text', exact: true }).click();
-  await expect(editor).toHaveText('alpha');
-  await expect(editor.locator('strong')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Toggle form disabled', exact: true }).click();
-  await expect(editor).toHaveAttribute('contenteditable', 'false');
-  await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
-  await expect(page.getByTestId('rich-text-submitted')).toHaveText('missing');
+  const editor = page
+    .getByTestId('rich-text-form')
+    .getByRole('textbox', { name: 'Rich source', exact: true });
+  await replace(editor, '[ ] Review the outline');
+  await expect(page.getByTestId('rich-text-source')).toHaveText('- [ ] Review the outline');
+  for (const item of [
+    editor.locator('ul[data-type="taskList"] > li'),
+    page.getByTestId('rich-text-preview').locator('ul[data-type="taskList"] > li'),
+  ]) {
+    const [checkbox, text] = await Promise.all([
+      item.getByRole('checkbox').boundingBox(),
+      item.getByText('Review the outline', { exact: true }).boundingBox(),
+    ]);
+    expect(text!.x).toBeGreaterThan(checkbox!.x + checkbox!.width);
+    expect(
+      Math.abs(text!.y + text!.height / 2 - (checkbox!.y + checkbox!.height / 2)),
+    ).toBeLessThan(8);
+  }
 });
+
+test(
+  'formatting, native history, form submission and reset use Markdown values',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const form = page.getByTestId('rich-text-form');
+    const editor = form.getByRole('textbox', { name: 'Rich source', exact: true });
+    await editor.focus();
+    await editor.press('ControlOrMeta+A');
+    await form.getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveText('alpha');
+    await expect(page.getByTestId('rich-text-source')).toHaveText('**alpha**');
+    await form.getByRole('button', { name: 'Undo', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveCount(0);
+    await form.getByRole('button', { name: 'Redo', exact: true }).click();
+    await expect(editor.locator('strong')).toHaveText('alpha');
+    await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
+    await expect(page.getByTestId('rich-text-submitted')).toHaveText('**alpha**');
+    await form.getByRole('button', { name: 'Reset rich text', exact: true }).click();
+    await expect(editor).toHaveText('alpha');
+    await expect(editor.locator('strong')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Toggle form disabled', exact: true }).click();
+    await expect(editor).toHaveAttribute('contenteditable', 'false');
+    await form.getByRole('button', { name: 'Submit rich text', exact: true }).click();
+    await expect(page.getByTestId('rich-text-submitted')).toHaveText('missing');
+  },
+);
 
 test('references preserve punctuation and stable identities through editor and shared view Markdown roundtrips', async ({
   page,
@@ -204,63 +279,65 @@ test('references preserve punctuation and stable identities through editor and s
   await expect(page.getByTestId('rich-text-reference-click')).toHaveText(`editor:${referenceId}`);
 });
 
-test('generic at, hash and slash sources support arrow selection, Escape and IME Enter', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}?fixture=form`);
-  const editor = page
-    .getByTestId('rich-text-form')
-    .getByRole('textbox', { name: 'Rich source', exact: true });
-  await replace(editor, '@');
-  const people = page.getByRole('listbox', { name: 'People', exact: true });
-  await expect(people).toBeVisible();
-  await editor.press('ArrowDown');
-  await expect(people.getByRole('option', { name: 'Second person' })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await expect(editor).toHaveAttribute(
-    'aria-activedescendant',
-    (await people.getByRole('option', { name: 'Second person' }).getAttribute('id'))!,
-  );
-  await editor.press('ArrowUp');
-  await expect(people.getByRole('option', { name: referenceLabel, exact: true })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await editor.evaluate((element) =>
-    element.dispatchEvent(
-      new KeyboardEvent('keydown', {
-        key: 'Enter',
-        code: 'Enter',
-        isComposing: true,
-        bubbles: true,
-        cancelable: true,
-      }),
-    ),
-  );
-  await expect(editor.locator('[data-reference-id]')).toHaveCount(0);
-  await replace(editor, '');
-  await replace(editor, '@');
-  await expect(people).toBeVisible();
-  await editor.press('ArrowDown');
-  await editor.press('Enter');
-  await expect(editor).toContainText('@Second person');
-  await expect(people).toHaveCount(0);
-  await replace(editor, '#');
-  await expect(page.getByRole('listbox', { name: 'Records', exact: true })).toBeVisible();
-  await editor.press('Escape');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(editor).toHaveText('#');
-  await replace(editor, '');
-  await replace(editor, '#road');
-  await page.getByRole('option', { name: 'Roadmap issue' }).click();
-  await expect(editor).toContainText('#Roadmap issue');
-  await replace(editor, '/release');
-  await expect(page.getByRole('listbox', { name: 'Files', exact: true })).toBeVisible();
-  await editor.press('Enter');
-  await expect(editor).toContainText('/Release file');
-});
+test(
+  'generic at, hash and slash sources support arrow selection, Escape and IME Enter',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=form`);
+    const editor = page
+      .getByTestId('rich-text-form')
+      .getByRole('textbox', { name: 'Rich source', exact: true });
+    await replace(editor, '@');
+    const people = page.getByRole('listbox', { name: 'People', exact: true });
+    await expect(people).toBeVisible();
+    await editor.press('ArrowDown');
+    await expect(people.getByRole('option', { name: 'Second person' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await expect(editor).toHaveAttribute(
+      'aria-activedescendant',
+      (await people.getByRole('option', { name: 'Second person' }).getAttribute('id'))!,
+    );
+    await editor.press('ArrowUp');
+    await expect(people.getByRole('option', { name: referenceLabel, exact: true })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    await editor.evaluate((element) =>
+      element.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Enter',
+          code: 'Enter',
+          isComposing: true,
+          bubbles: true,
+          cancelable: true,
+        }),
+      ),
+    );
+    await expect(editor.locator('[data-reference-id]')).toHaveCount(0);
+    await replace(editor, '');
+    await replace(editor, '@');
+    await expect(people).toBeVisible();
+    await editor.press('ArrowDown');
+    await editor.press('Enter');
+    await expect(editor).toContainText('@Second person');
+    await expect(people).toHaveCount(0);
+    await replace(editor, '#');
+    await expect(page.getByRole('listbox', { name: 'Records', exact: true })).toBeVisible();
+    await editor.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(editor).toHaveText('#');
+    await replace(editor, '');
+    await replace(editor, '#road');
+    await page.getByRole('option', { name: 'Roadmap issue' }).click();
+    await expect(editor).toContainText('#Roadmap issue');
+    await replace(editor, '/release');
+    await expect(page.getByRole('listbox', { name: 'Files', exact: true })).toBeVisible();
+    await editor.press('Enter');
+    await expect(editor).toContainText('/Release file');
+  },
+);
 
 test('slash commands execute standard Tiptap blocks and application actions', async ({ page }) => {
   await page.goto(`${fixtureUrl}?fixture=commands`);
@@ -281,11 +358,37 @@ test('async sources handle loading, stale resolutions, empty results, failures a
   await page.goto(`${fixtureUrl}?fixture=remote`);
   const scope = page.getByTestId('rich-text-remote');
   const editor = scope.getByRole('textbox');
+  // Records the text each suggestions status has as it mounts.
+  await page.evaluate(() => {
+    const mounted: string[] = [];
+    (window as unknown as { statusesAtMount: string[] }).statusesAtMount = mounted;
+    new MutationObserver((records) => {
+      for (const record of records)
+        for (const node of record.addedNodes)
+          if (node instanceof Element)
+            for (const status of node.querySelectorAll('.env-listbox [role="status"]'))
+              mounted.push(status.textContent ?? '');
+    }).observe(document.body, { childList: true, subtree: true });
+  });
   await replace(editor, '@old');
   const old = await requestIndex(page, 'old');
   const menu = page.getByRole('listbox', { name: 'Remote references' });
+  // The status beside the list says why it has no options; only options sit in the list.
+  const status = page.locator('.env-rich-text-suggestions').getByRole('status');
+  const noOptionsIsAccessible = async () => {
+    await expect(menu.getByRole('option')).toHaveCount(0);
+    await expect(menu.getByRole('status')).toHaveCount(0);
+    const { violations } = await new AxeBuilder({ page })
+      .include('.env-rich-text-suggestions')
+      .analyze();
+    expect(violations.map(({ id, nodes }) => `${id}: ${nodes.length}`)).toEqual([]);
+  };
   await expect(menu).toHaveAttribute('aria-busy', 'true');
-  await expect(menu).toContainText('Loading suggestions');
+  await expect(status).toContainText('Loading suggestions');
+  // The status mounted empty and took its message afterwards, so the message is announced.
+  expect(
+    await page.evaluate(() => (window as unknown as { statusesAtMount: string[] }).statusesAtMount),
+  ).toEqual(['']);
   await replace(editor, '@new');
   const latest = await requestIndex(page, 'new');
   await expect
@@ -293,15 +396,18 @@ test('async sources handle loading, stale resolutions, empty results, failures a
     .toBe(true);
   await resolveRequest(page, latest, 'Latest result');
   await expect(menu.getByRole('option')).toHaveText('Latest result');
+  await expect(status).toBeEmpty();
   await resolveRequest(page, old, 'Stale result');
   await expect(menu.getByRole('option')).toHaveText('Latest result');
   await replace(editor, '@empty');
   await resolveRequest(page, await requestIndex(page, 'empty'));
-  await expect(menu).toContainText('No results');
+  await expect(status).toHaveText('No results');
+  await noOptionsIsAccessible();
   await replace(editor, '@error');
   const failed = await requestIndex(page, 'error');
   await page.evaluate((index) => window.richTextFixture.requests[index].reject(), failed);
-  await expect(menu).toContainText('Suggestions could not load');
+  await expect(status).toContainText('Suggestions could not load');
+  await noOptionsIsAccessible();
   for (const mode of ['escape', 'disabled', 'read only'] as const) {
     await editor.focus();
     await editor.press('ControlOrMeta+A');
@@ -425,7 +531,7 @@ test('upload hooks insert safe images and file references, accept host cancellat
       }),
     await uploadIndex(page, 'unsafe.txt'),
   );
-  await expect(scope.locator('.env-markdown-editor-status')).toContainText('unsafe URL');
+  await expect(scope.locator('.env-editor-status')).toContainText('unsafe URL');
   await expect(scope.getByRole('link', { name: 'Unsafe', exact: true })).toHaveCount(0);
   await expect(scope.getByTestId('rich-text-upload-source')).toHaveText(source!);
 });
@@ -469,9 +575,118 @@ test('pending uploads cancel on read-only changes and refuse to insert into chan
       }),
     changed,
   );
-  await expect(scope.locator('.env-markdown-editor-status')).toContainText(
-    'document changed during upload',
-  );
+  await expect(scope.locator('.env-editor-status')).toContainText('document changed during upload');
   await expect(scope.getByRole('textbox')).toHaveText('New document');
   await expect(scope.getByRole('link')).toHaveCount(0);
+});
+
+test('the document takes the field look: border, variants, error and a disabled field with a readable label', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  const scope = page.getByTestId('rich-text-field');
+  const box = (name: string) =>
+    scope
+      .getByRole('textbox', { name, exact: true })
+      .locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]');
+  const color = (token: string) =>
+    scope.evaluate((element, value) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${value})`;
+      element.append(probe);
+      const resolved = getComputedStyle(probe).color;
+      probe.remove();
+      return resolved;
+    }, token);
+  // Outlined, the field's border is the field border, which holds 3:1 against the page.
+  const outline = scope
+    .getByRole('textbox', { name: 'Dialog notes' })
+    .or(scope.getByRole('textbox', { name: 'Controlled notes' }))
+    .first();
+  await expect(
+    outline.locator('xpath=ancestor::*[contains(@class, "env-text-field-control")][1]'),
+  ).toHaveCSS('border-top-color', await color('--env-color-border-default'));
+  // Ghost draws no border or fill at rest; underline has no border either.
+  await expect(box('Ghost notes')).toHaveAttribute('data-variant', 'ghost');
+  await expect(box('Ghost notes')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(box('Underlined notes')).toHaveAttribute('data-variant', 'underline');
+  // The error makes the document invalid and its border the error color.
+  const invalid = scope.getByRole('textbox', { name: 'Invalid notes' });
+  await expect(invalid).toHaveAttribute('aria-invalid', 'true');
+  await expect(invalid).toHaveAccessibleDescription('Say what changed. Write at least a sentence.');
+  await expect(box('Invalid notes')).toHaveCSS(
+    'border-top-color',
+    await color('--env-color-fg-danger'),
+  );
+  // Disabled, the document dims, and its label keeps the text color.
+  const disabled = scope.getByRole('textbox', { name: 'Disabled notes' });
+  await expect(box('Disabled notes')).toHaveCSS('opacity', /^0\.\d+$/);
+  const label = scope.getByText('Disabled notes', { exact: true });
+  await expect(label).toHaveCSS('color', await color('--env-color-fg-default'));
+  expect(
+    await label.evaluate((element) => {
+      let opacity = 1;
+      for (let node: Element | null = element; node; node = node.parentElement)
+        opacity *= Number(getComputedStyle(node).opacity);
+      return opacity;
+    }),
+  ).toBe(1);
+  await expect(disabled).toHaveAttribute('contenteditable', 'false');
+});
+
+test(
+  'suggestions show above a Dialog the editor sits in and close as Tab leaves the editor',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}?fixture=field`);
+    await page.getByRole('button', { name: 'Open notes dialog' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Notes dialog' });
+    const editor = dialog.getByRole('textbox', { name: 'Dialog notes' });
+    await editor.click();
+    await editor.pressSequentially('@');
+    const people = page.getByRole('listbox', { name: 'People', exact: true });
+    await expect(people).toBeVisible();
+    // The list is inside the dialog, and on top where it shows.
+    await expect(dialog.getByRole('listbox', { name: 'People', exact: true })).toBeVisible();
+    const option = people.getByRole('option', { name: 'Second person' });
+    const center = await option.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+      return Boolean(top && element.contains(top));
+    });
+    expect(center).toBe(true);
+    // Picking an option keeps the dialog open.
+    await option.click();
+    await expect(dialog).toBeVisible();
+    await expect(editor).toContainText('@Second person');
+    // Tab leaves the editor and closes the list.
+    await editor.pressSequentially(' @');
+    await expect(people).toBeVisible();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(editor).not.toBeFocused();
+  },
+);
+
+test('a controlled editor replaces documents with references and tasks without a flushSync warning', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error' || message.type() === 'warning') errors.push(message.text());
+  });
+  await page.goto(`${fixtureUrl}?fixture=field`);
+  const scope = page.getByTestId('rich-text-field');
+  const editor = scope.getByRole('textbox', { name: 'Controlled notes' });
+  await expect(editor.locator('[data-reference-id="person-2"]').first()).toBeVisible();
+  // Tasks are envUI checkboxes, named by their text.
+  await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toHaveClass(
+    /env-checkbox-input/,
+  );
+  await scope.getByRole('button', { name: 'Replace controlled notes' }).click();
+  await expect(editor.getByRole('checkbox', { name: 'Send it' })).toBeChecked();
+  // Pressing a task's checkbox checks it in the document.
+  await editor.getByRole('checkbox', { name: 'Check the totals' }).check();
+  await expect(editor.getByRole('checkbox', { name: 'Check the totals' })).toBeChecked();
+  expect(errors.filter((text) => /flushSync/.test(text))).toEqual([]);
 });

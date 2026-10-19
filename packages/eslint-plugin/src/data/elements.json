@@ -1,0 +1,297 @@
+{
+  "$comment": "What envui/no-html-elements reports, and the envUI component it names instead. A widget role is checked first, on any JSX element, and an element that already is one of the suggested components passes, as does an envUI component listed in owners: one that renders that role itself, so that a role on it refines its own, as Popover renders a dialog and Menu.Submenu a menu. An imported element counts by the name its envUI entry point exports it under, and an element that nothing imports by its written name. A role on any other component hand-rolls the widget and is reported. Then the elements, in order: the first entry whose element and attributes match decides, and an entry whose use is null lets the element pass. An attribute condition is true (present), false (absent), or a list of static values compared case-insensitively, where null stands for an absent attribute and a trailing * matches a prefix. A condition on absence is not met while the element spreads props, which may supply the attribute. use lists the component to render and its alternatives; import overrides the bindings to import, which default to the namespaces of the use components. id names an entry in the rule's allow option.",
+  "roles": [
+    {
+      "id": "[role=button]",
+      "role": "button",
+      "owners": ["Button", "IconButton", "AvatarButton", "ConfirmButton", "CopyButton"],
+      "use": [
+        { "component": "Button" },
+        { "component": "IconButton", "when": "for an icon-only button" }
+      ]
+    },
+    {
+      "id": "[role=link]",
+      "role": "link",
+      "owners": ["Link", "NavList.Item", "Pager.Previous", "Pager.Next"],
+      "use": [{ "component": "Link" }]
+    },
+    {
+      "id": "[role=checkbox]",
+      "role": "checkbox",
+      "owners": ["Checkbox"],
+      "use": [{ "component": "Checkbox" }]
+    },
+    {
+      "id": "[role=switch]",
+      "role": "switch",
+      "owners": ["Switch"],
+      "use": [{ "component": "Switch" }]
+    },
+    {
+      "id": "[role=radio]",
+      "role": "radio",
+      "owners": ["Radio"],
+      "use": [{ "component": "Radio" }],
+      "import": ["Radio", "RadioGroup"],
+      "note": "Put the radios in a RadioGroup."
+    },
+    {
+      "id": "[role=radiogroup]",
+      "role": "radiogroup",
+      "owners": ["RadioGroup"],
+      "use": [{ "component": "RadioGroup" }],
+      "import": ["Radio", "RadioGroup"],
+      "note": "Give it a Radio for each option."
+    },
+    {
+      "id": "[role=slider]",
+      "role": "slider",
+      "owners": ["Slider"],
+      "use": [{ "component": "Slider" }]
+    },
+    {
+      "id": "[role=textbox]",
+      "role": "textbox",
+      "owners": ["TextField", "Textarea", "Composer", "MarkdownEditor", "RichTextEditor"],
+      "use": [
+        { "component": "TextField" },
+        { "component": "Textarea", "when": "for text on several lines" }
+      ]
+    },
+    {
+      "id": "[role=searchbox]",
+      "role": "searchbox",
+      "owners": ["SearchField"],
+      "use": [{ "component": "SearchField" }]
+    },
+    {
+      "id": "[role=combobox]",
+      "role": "combobox",
+      "owners": ["Combobox", "Select", "DatePicker"],
+      "use": [
+        { "component": "Combobox" },
+        { "component": "Select", "when": "when people pick without typing" }
+      ]
+    },
+    {
+      "id": "[role=listbox]",
+      "role": "listbox",
+      "owners": ["Select", "Combobox"],
+      "use": [
+        { "component": "Select" },
+        { "component": "Combobox", "when": "when typing filters the options" }
+      ]
+    },
+    {
+      "id": "[role=menu]",
+      "role": "menu",
+      "owners": ["Menu.Root", "Menu.Submenu", "ContextMenu", "Menubar.Menu"],
+      "use": [{ "component": "Menu.Root" }]
+    },
+    {
+      "id": "[role=menubar]",
+      "role": "menubar",
+      "owners": ["Menubar.Root"],
+      "use": [{ "component": "Menubar.Root" }]
+    },
+    {
+      "id": "[role=dialog]",
+      "role": "dialog",
+      "owners": ["Dialog", "Popover", "CommandPalette"],
+      "use": [{ "component": "Dialog" }]
+    },
+    {
+      "id": "[role=alertdialog]",
+      "role": "alertdialog",
+      "owners": ["Dialog"],
+      "use": [{ "component": "Dialog" }]
+    },
+    {
+      "id": "[role=tablist]",
+      "role": "tablist",
+      "owners": ["Tabs", "DocumentTabs"],
+      "use": [{ "component": "Tabs" }]
+    },
+    { "id": "[role=tree]", "role": "tree", "owners": ["Tree"], "use": [{ "component": "Tree" }] },
+    {
+      "id": "[role=tooltip]",
+      "role": "tooltip",
+      "owners": ["Tooltip"],
+      "use": [{ "component": "Tooltip" }]
+    },
+    {
+      "id": "[role=progressbar]",
+      "role": "progressbar",
+      "owners": ["Progress", "Spinner"],
+      "use": [{ "component": "Progress" }]
+    },
+    {
+      "id": "[role=meter]",
+      "role": "meter",
+      "owners": ["Meter"],
+      "use": [{ "component": "Meter" }]
+    },
+    {
+      "id": "[role=alert]",
+      "role": "alert",
+      "owners": ["Alert"],
+      "use": [{ "component": "Alert" }]
+    },
+    {
+      "id": "[role=table]",
+      "role": "table",
+      "owners": ["Table.Root"],
+      "use": [{ "component": "Table.Root" }]
+    }
+  ],
+  "elements": [
+    {
+      "id": "button",
+      "element": "button",
+      "use": [
+        { "component": "Button" },
+        { "component": "IconButton", "when": "for an icon-only button" }
+      ]
+    },
+    {
+      "id": "input[type=hidden]",
+      "element": "input",
+      "attributes": { "type": ["hidden"] },
+      "use": null
+    },
+    {
+      "id": "input[type=checkbox]",
+      "element": "input",
+      "attributes": { "type": ["checkbox"] },
+      "use": [
+        { "component": "Checkbox" },
+        { "component": "Switch", "when": "for a setting that applies at once" }
+      ]
+    },
+    {
+      "id": "input[type=radio]",
+      "element": "input",
+      "attributes": { "type": ["radio"] },
+      "use": [{ "component": "Radio" }],
+      "import": ["Radio", "RadioGroup"],
+      "note": "Put the radios in a RadioGroup."
+    },
+    {
+      "id": "input[type=range]",
+      "element": "input",
+      "attributes": { "type": ["range"] },
+      "use": [{ "component": "Slider" }]
+    },
+    {
+      "id": "input[type=date]",
+      "element": "input",
+      "attributes": { "type": ["date", "datetime-local"] },
+      "use": [{ "component": "DatePicker" }]
+    },
+    {
+      "id": "input[type=time]",
+      "element": "input",
+      "attributes": { "type": ["time"] },
+      "use": [{ "component": "TimePicker" }]
+    },
+    {
+      "id": "input[type=month]",
+      "element": "input",
+      "attributes": { "type": ["month"] },
+      "use": [{ "component": "MonthPicker" }]
+    },
+    {
+      "id": "input[type=file]",
+      "element": "input",
+      "attributes": { "type": ["file"] },
+      "use": [{ "component": "DropZone" }]
+    },
+    {
+      "id": "input[type=color]",
+      "element": "input",
+      "attributes": { "type": ["color"] },
+      "use": [{ "component": "ColorPicker" }]
+    },
+    {
+      "id": "input[type=search]",
+      "element": "input",
+      "attributes": { "type": ["search"] },
+      "use": [{ "component": "SearchField" }]
+    },
+    {
+      "id": "input[type=submit]",
+      "element": "input",
+      "attributes": { "type": ["submit", "reset", "button", "image"] },
+      "use": [{ "component": "Button" }],
+      "note": "Button takes type=\"submit\" and type=\"reset\"."
+    },
+    {
+      "id": "input[type=text]",
+      "element": "input",
+      "attributes": {
+        "type": [null, "text", "email", "password", "tel", "url", "number", "week"]
+      },
+      "use": [{ "component": "TextField" }],
+      "note": "TextField takes the same type."
+    },
+    {
+      "id": "input",
+      "element": "input",
+      "use": [{ "component": "TextField" }],
+      "note": "For other types envUI has Checkbox, Radio, Slider, DatePicker, TimePicker, MonthPicker, DropZone, ColorPicker and SearchField."
+    },
+    {
+      "id": "select",
+      "element": "select",
+      "use": [
+        { "component": "Select" },
+        { "component": "Combobox", "when": "when typing filters the options" }
+      ]
+    },
+    {
+      "id": "textarea",
+      "element": "textarea",
+      "use": [
+        { "component": "Textarea" },
+        { "component": "Composer", "when": "for writing a chat message" }
+      ]
+    },
+    { "id": "dialog", "element": "dialog", "use": [{ "component": "Dialog" }] },
+    { "id": "table", "element": "table", "use": [{ "component": "Table.Root" }] },
+    { "id": "details", "element": "details", "use": [{ "component": "Disclosure" }] },
+    { "id": "progress", "element": "progress", "use": [{ "component": "Progress" }] },
+    { "id": "meter", "element": "meter", "use": [{ "component": "Meter" }] },
+    { "id": "kbd", "element": "kbd", "use": [{ "component": "Kbd" }] },
+    {
+      "id": "a[onClick]:not([href])",
+      "element": "a",
+      "attributes": { "href": [null, "", "#", "javascript:*"], "onClick": true },
+      "describe": "an <a> without a destination",
+      "use": [{ "component": "Button" }],
+      "note": "An action is a button; give Button an href only when it navigates."
+    },
+    {
+      "id": "a[href]",
+      "element": "a",
+      "attributes": { "href": true },
+      "describe": "a raw <a href>",
+      "use": [
+        { "component": "Link" },
+        { "component": "Button", "when": "with href, for a link that looks like a button" }
+      ],
+      "note": "Both follow the router adapter set by LinkProvider."
+    },
+    {
+      "id": "[onClick][tabIndex]",
+      "element": "*",
+      "except": ["a", "button", "input", "select", "textarea", "summary", "label", "option"],
+      "attributes": { "onClick": true, "tabIndex": true },
+      "describe": "a focusable <{tag}> that handles clicks",
+      "use": [
+        { "component": "Button" },
+        { "component": "IconButton", "when": "for an icon-only button" }
+      ]
+    }
+  ]
+}

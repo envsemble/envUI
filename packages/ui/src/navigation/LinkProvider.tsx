@@ -1,19 +1,15 @@
-import {
-  createContext,
-  useContext,
-  type ComponentPropsWithRef,
-  type ComponentType,
-  type ReactNode,
-} from 'react';
+'use client';
 
-/** Props envUI passes to the application's link: native anchor attributes with a string href. */
-export type LinkComponentProps = ComponentPropsWithRef<'a'> & { href: string };
+// @client-module It provides the link context, which React reads only in client modules.
 
-const LinkComponentContext = createContext<ComponentType<LinkComponentProps> | 'a'>('a');
+import type { ComponentType, ReactNode } from 'react';
+import { LinkComponentContext, type LinkComponentProps } from '../internal/LinkContext.js';
+
+export type { LinkComponentProps };
 
 export interface LinkProviderProps {
   /**
-   * Renders every envUI destination (Button, Link, NavigationItem, Card, DirectionLink and menu
+   * Renders every envUI destination (Button, Link, NavList.Item, Card, Pager links and menu
    * links with href). It must render an anchor and forward native props and ref, for example a
    * router's link that navigates on the client.
    */
@@ -24,9 +20,4 @@ export interface LinkProviderProps {
 /** Connects envUI links to the application's router without a router dependency in envUI. */
 export function LinkProvider({ component, children }: LinkProviderProps) {
   return <LinkComponentContext value={component}>{children}</LinkComponentContext>;
-}
-
-/** The anchor component for envUI destinations: the provider's link or a native anchor. */
-export function useLinkComponent() {
-  return useContext(LinkComponentContext);
 }

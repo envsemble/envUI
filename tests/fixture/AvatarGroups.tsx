@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
+  AvatarButton,
   AvatarGroup,
   IconButton,
+  type LinkComponentProps,
   LinkProvider,
   Surface,
   Theme,
-  type LinkComponentProps,
   type ThemeValue,
 } from '@envsemble/envui';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -16,6 +17,13 @@ const people = [
   { id: 'priya', name: 'Priya Shah' },
   { id: 'jordan', name: 'Jordan Rivera' },
   { id: 'taylor', name: 'Taylor Kim' },
+];
+/** Initials, which a group must leave readable, such as the wide M of AM. */
+const initials = [
+  { id: 'alex', name: 'Alex Morgan', fallback: 'initials' as const },
+  { id: 'sam', name: 'Sam Lee', fallback: 'initials' as const },
+  { id: 'priya', name: 'Priya Shah', fallback: 'initials' as const },
+  { id: 'jordan', name: 'Jordan Kim', fallback: 'initials' as const },
 ];
 
 function RecordingLink({ href, onClick, ...props }: LinkComponentProps) {
@@ -37,13 +45,9 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`avatar-groups-${theme}`} className="fixture-section">
       <AvatarGroup data-testid="decorative" people={people} max={3} />
-      <AvatarGroup
-        data-testid="preview"
-        people={people.slice(0, 3)}
-        total={12}
-        max={2}
-        size="small"
-      />
+      <AvatarGroup data-testid="preview" people={people.slice(0, 3)} total={12} max={2} size="sm" />
+      <AvatarGroup data-testid="initials" people={initials} max={4} />
+      <AvatarGroup data-testid="initials-small" people={initials} max={4} size="sm" />
       <AvatarGroup data-testid="named" aria-label="Report editors" people={people.slice(0, 2)} />
       <AvatarGroup
         data-testid="localized"
@@ -52,6 +56,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         formatMore={(count) => `${count} weitere`}
       />
       <AvatarGroup data-testid="empty" people={[]} />
+      <AvatarButton data-testid="avatar-button-small" name="Alex Morgan" size="sm" />
       <AvatarGroup
         data-testid="unknown-counts"
         people={people.slice(0, 2)}
@@ -85,7 +90,7 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         data-testid="small-pressable"
         people={people}
         max={3}
-        size="small"
+        size="sm"
         onPersonClick={(person) => setPressed(person.name)}
       />
       <output data-testid="pressed">{pressed}</output>
@@ -96,19 +101,23 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
         />
       </LinkProvider>
       {(['pane', 'row'] as const).map((tone) => (
-        <Surface key={tone} tone={tone} padding={4} data-surface={tone}>
+        <Surface
+          key={tone}
+          background={tone === 'row' ? 'muted' : 'default'}
+          padding={4}
+          data-surface={tone}
+        >
           <AvatarGroup data-testid={`on-${tone}`} people={people} max={3} />
         </Surface>
       ))}
       <div className="fixture-avatar-surface" data-surface="custom">
         <AvatarGroup data-testid="on-custom" people={people} max={3} />
       </div>
-      {/* A compact toolbar: 2 rem controls beside a standard and a small group. */}
+      {/* A small toolbar: 2 rem controls beside a standard and a small group. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
-        density="compact"
+        radius="sm"
         className="fixture-toolbar"
         data-testid="toolbar"
       >
@@ -119,8 +128,8 @@ export function AvatarGroupsFixture({ theme }: { theme: ThemeValue }) {
           max={2}
           onPersonClick={() => undefined}
         />
-        <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="small" />
-        <IconButton icon={<Settings />} aria-label="Report settings" />
+        <AvatarGroup data-testid="toolbar-small" people={people} max={2} size="sm" />
+        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <div className="fixture-shrink-row" data-testid="narrow">
         <span className="fixture-shrink-label">A long title that needs more room</span>

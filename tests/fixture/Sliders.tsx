@@ -9,10 +9,10 @@ export function SlidersFixture({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`sliders-${theme}`} className="fixture-section">
       <Slider
         label="Opacity"
-        hint="Applies to the selected layer"
+        description="Applies to the selected layer"
         value={opacity}
         onValueChange={setOpacity}
-        onValueCommit={(value) => setCommits((current) => [...current, value])}
+        onValueCommitted={(value) => setCommits((current) => [...current, value])}
         formatValue={(value) => `${value}%`}
       />
       <output data-testid={`opacity-${theme}`}>{opacity}</output>

@@ -1,0 +1,19 @@
+/* Modifier classes become the attributes their root class carries, with the same specificity. */
+.env-button-important {
+  border-radius: 0;
+}
+.app-toolbar .env-button.env-button-quiet:hover {
+  color: red;
+}
+.env-button:is(.env-button-primary, .env-button-destructive) .app-count,
+.app-panel > .env-button:not(.env-button-text) {
+  margin: 0;
+}
+.env-button-text.env-button-underlined,
+.env-text.env-text-tone-muted,
+.env-surface-alternate.env-surface-corners-pill {
+  outline: 0;
+}
+.app-card .env-symbol {
+  width: 2rem;
+}

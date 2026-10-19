@@ -1,0 +1,31 @@
+{
+  "@envsemble/envui/rich-text": {
+    "RichTextEditor": {
+      "hint": {
+        "to": "description",
+        "report": "RichTextEditor's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "underline", "ghost"],
+        "report": "RichTextEditor's variant is outline, underline or ghost in 1.0, the field variants: outlined is outline, plain is underline, and quiet, which drew as outlined, is ghost now.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          },
+          "plain": {
+            "props": {
+              "variant": "underline"
+            }
+          },
+          "quiet": {
+            "props": {
+              "variant": "ghost"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useId, useMemo, useRef } from 'react';
 import {
   toastPlacements,
@@ -60,7 +62,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         const delivery = placementStores.current.get(entry.placement);
         if (!delivery) return true;
         const durationMs =
-          entry.duration ?? (entry.variant === 'error' || entry.action ? Infinity : 5000);
+          entry.duration ?? (entry.tone === 'danger' || entry.action ? Infinity : 5000);
         if (durationMs > 0 && Number.isFinite(durationMs)) {
           dismissalTimers.current.set(entry.id, {
             durationMs,
@@ -76,9 +78,11 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         delivery.add({
           id: entry.id,
           title: entry.message,
-          type: entry.variant,
+          type: entry.tone,
           data: entry,
-          priority: entry.variant === 'error' ? 'high' : 'low',
+          // Danger notifications announce themselves as alerts (ToastRegion), so Base UI's
+          // high-priority copy, which hides the notification until the region has focus, is unused.
+          priority: 'low',
           timeout: 0,
           onClose() {
             notifications.current.delete(entry.id);
@@ -119,7 +123,7 @@ export function useToastController(defaultPlacement: ToastPlacement) {
         ...notification,
         id,
         placement,
-        variant: notification.variant ?? 'neutral',
+        tone: notification.tone ?? 'neutral',
       };
       notifications.current.set(id, entry);
       pendingNotifications.current.push(entry);
@@ -147,14 +151,18 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     function setViewportFocused(placement: ToastPlacement, focused: boolean) {
       if (focused) focusedViewports.current.add(placement);
       else focusedViewports.current.delete(placement);
-      for (const entry of notifications.current.values())
-        if (entry.placement === placement)
-          focused ? pause(entry.id, 'viewport') : resume(entry.id, 'viewport');
+      for (const entry of notifications.current.values()) {
+        if (entry.placement !== placement) continue;
+        if (focused) pause(entry.id, 'viewport');
+        else resume(entry.id, 'viewport');
+      }
     }
     function setWindowPaused(isPaused: boolean) {
       isWindowPaused.current = isPaused;
-      for (const id of dismissalTimers.current.keys())
-        isPaused ? pause(id, 'window') : resume(id, 'window');
+      for (const id of dismissalTimers.current.keys()) {
+        if (isPaused) pause(id, 'window');
+        else resume(id, 'window');
+      }
     }
     return {
       manager: { show, dismiss, clear },
@@ -169,6 +177,10 @@ export function useToastController(defaultPlacement: ToastPlacement) {
     };
   }, [notificationIdPrefix]);
   useEffect(() => {
+    // The refs hold the same collections for the controller's lifetime.
+    const entries = notifications.current;
+    const viewports = focusedViewports.current;
+    const timers = dismissalTimers.current;
     isMounted.current = true;
     controller.deliverPendingNotifications();
     const blur = () => controller.setWindowPaused(true);
@@ -184,9 +196,9 @@ export function useToastController(defaultPlacement: ToastPlacement) {
       document.removeEventListener('visibilitychange', focus);
       controller.manager.clear();
       pendingNotifications.current = [];
-      notifications.current.clear();
-      focusedViewports.current.clear();
-      for (const id of dismissalTimers.current.keys()) controller.cancelTimer(id);
+      entries.clear();
+      viewports.clear();
+      for (const id of timers.keys()) controller.cancelTimer(id);
     };
   }, [controller]);
 

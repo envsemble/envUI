@@ -1,12 +1,500 @@
 # Changelog
 
+## 1.0.0-prerelease.0 — 2026-10-18
+
+The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.0.0 follows after further changes. It brings contrast-safe themes built from design tokens, established component names, AppShell and its parts, page templates, new pickers for times and months, and documentation and tooling for people and agents alike. It breaks code written for 0.x: `@envsemble/envui-codemods` makes most of the changes, and the [migration guide](https://github.com/envsemble/envUI/blob/main/docs/migration.md) covers the rest.
+
+### Major Changes
+
+- Alert and EmptyState say `danger` for the status that was `error`.
+  - Alert's `tone` is `info`, `success`, `warning` or `danger`, and `AlertTone` follows. Its dismiss button is a CloseButton, named Dismiss through `messages.alert.dismiss`, and Alert stays a server component.
+  - EmptyState's `tone` is `neutral` or `danger`. Its modifier classes are attributes: `env-empty-state-error` is `[data-tone='danger']` and `env-empty-state-center` is `[data-align='center']`; `env-empty-copy` is `env-empty-state-description`.
+
+  Migrate with the codemods: `envui-codemods v1-props` maps `tone="error"` to `tone="danger"` and reports an expression; `v1-classes` rewrites the classes.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- AnimatedNumber's `format`, the function that writes its value, is `formatValue`, as on Slider and CalendarHeatmap.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `format` to `formatValue`.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- AppShell is made of parts: `AppShell.Root` lays out `AppShell.SkipLinks`, `AppShell.Header`, `AppShell.Main`, an `AppShell.Aside` and the sidebars in a grid that follows the text direction, and keeps the sidebars' state per side. The sidebars are `Sidebar.Root` with `Sidebar.Header`, `Content`, `Group`, `Footer` and `Handle`, opened and closed by `SidebarTrigger` and read with `useSidebar`; `Sidebar.Provider` gives a sidebar the same state without the frame. A sidebar collapses to a rail of icons (`collapsible="rail"`) or out of view (`offcanvas`), its rail opens over the content on hover and focus (`peek`), it docks from `dockAt` up, resizes with its handle, and below the frame's breakpoint (48 rem by default, 40 rem before) its content opens in a drawer from its side. Expanding and collapsing never remount its content.
+
+  `persist` keeps both sidebars' docked preference and width (in rem) in localStorage, or in a cookie that the server reads with `readAppShellCookie` for `initialState`, so a server-rendered frame paints as it was left. `shortcut="mod+b"` toggles a sidebar; it is off by default. The frame publishes `--env-frame-header-block-size` and `--env-frame-sticky-top`, which replace `--env-app-topbar-block-size` and `--env-app-sticky-top`, and `useAppShell().getStickyTop()` reads the second; WindowFrame.Root publishes the same, and `useAppShell` works inside it. `titleBar` makes the header the window's title bar, on WindowFrame's title bar internals, with Main scrolling below it. `closeNarrowSidebar` is `useSidebar().dismiss()`. AppShellSkeleton is removed: the frame's parts with the new `NavList.Skeleton` inside a LoadingState are its loading state. Under a coarse pointer the trigger is 44 px and the rail grows with it.
+
+  Migration guide: [The app frame](https://github.com/envsemble/envUI/blob/main/docs/migration.md#the-app-frame).
+
+- An app scale: `Theme` and `ThemePreferenceProvider` take `scale`, `comfortable` (the default, today's sizes) or `compact`, about 0.8 of them with type one step smaller, for desktop productivity apps. Left out, a Theme takes the scale of the Theme around it. Theme writes it to `data-env-scale` on every boundary, nested ones and those around popups included, and `useTheme()` returns `{ theme, contrast, scale }`. `createThemeBootstrapScript({ scale: 'compact' })` puts the compact scale on the root before the first paint. Outside any Theme, a `ThemePreferenceProvider` without a `scale` or a `contrast` gives its boundary the scale and contrast the page set on the root, so the application matches the page and other libraries' portals; one that unmounts, or whose `applyToDocument` turns false, removes the scale and contrast it wrote on the root, unless the page wrote over them or another provider holds them. Use one scale per app or window, and another only on a Theme around a whole region.
+
+  Every size is a token, with a value per scale: `--env-control-height-xs`, `-sm`, `-md` and `-lg`, `--env-row-height`, the row densities' `--env-row-padding-block-*`, `--env-control-gap`, `--env-font-size-caption` and `--env-font-size-label`, `--env-icon-size-sm`, `-md` and `-lg`, `--env-radius-lg`, `--env-field-floating-height`, `--env-row-content-height` and a tree row's paddings, `--env-tree-row-padding-block-sm`, `-md` and `-lg`, are new, and the spacing, type, corner, top bar and title bar tokens take their compact values in the compact scale. Icons keep a 1 rem floor, and borders and focus rings keep their widths. The type roles `--env-type-h1`, `--env-type-h2`, `--env-type-body` and `--env-type-body-small` are tokens now, with a custom property for each part, such as `--env-type-body-font-size`.
+
+  Removed custom properties: `--control-height-small` and `--icon-button-size`, which `--env-control-height` replaces, `--control-height-compact`, which `--env-control-height-sm` replaces, and the `--scale` multiplier, which components no longer read. `--env-control-height` is the height of a control that sets no size; a container can set it to another control height for what it holds, as table cells do with `--env-control-height-sm`.
+
+  Under a coarse pointer, `@media (pointer: coarse)`, controls grow to at least 2.75 rem in either scale: buttons and icon buttons, tall and wide, fields, Select, the rails of SegmentedControl and Tabs, ButtonGroup, Pagination, menubar triggers, AppShell's sidebar toggle and collapsed sidebar, a toast's dismiss button, AvatarButton, sortable table headers, and the close buttons of PanelDock chips and DocumentTabs. The control tokens keep their values; an application's own control takes `max(var(--env-control-height), var(--env-control-height-touch))` under the same query. A link in running text, a breadcrumb link, a combobox chip's remove button, an interactive AvatarGroup's avatars and a Switch's track stay smaller and rely on WCAG 2.5.8's spacing exception. The controls of a row still match, and a control's own box is its hit area, so a press always reaches the control it lands on, whatever the layout around it. Segments, tabs and the actions inside fields take presses across their control's height, within it. Rows, navigation items and table rows with an action grow to at least 2.75 rem too, and the top bar and the title bar to 3.25 rem.
+
+  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md#scale-and-density).
+
+- Avatar's `label`, a boolean that named the avatar as an image by its `name`, is `named`, as every other `label` is text. Without it, an avatar is still decorative.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `label` to `named`, whatever its value.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Avatar, AvatarGroup and AvatarButton take the 1.0 sizes and slot words.
+  - `size` is `sm`, `md` (the default), `lg` or `xl` on Avatar and AvatarGroup, and `sm`, `md` or `lg` on AvatarButton, for `small`, `standard`, `large` and `display`; the sizes are `data-size` attributes instead of the `env-avatar-{size}` and `env-avatar-group-{size}` classes.
+  - AvatarButton's `detail` is `description`. It renders through envUI's action element and takes `ref`.
+  - AvatarGroup's strings come from `messages.avatarGroup`, whose `more` and `label` receive the count in the locale's digits as `number`; `formatMore` and `formatLabel` still override them. It rings its avatars through Avatar's new `--env-avatar-ring` hook.
+  - Avatar's initials take the provider's locale for their capitals.
+
+  Migrate with the codemods: `envui-codemods v1-props` maps the sizes and renames `detail`, and `v1-classes` turns the size classes into attribute selectors.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- InfoChip is a Badge, and Badge's `subtle` variant is `soft`.
+  - `<InfoChip>` is `<Badge>`, a neutral soft pill: it is slightly larger, at medium weight, fully rounded and on one line. Its page joins Badge's, which shows neutral metadata, and the search finds Badge by chip, info chip, tag and metadata.
+  - `variant="subtle"`, the default, is `soft`.
+  - A badge, counter badge or diff stat inside a control takes its colors from custom properties the control sets on its own element: `--env-badge-fg`, `-bg` and `-border` (a border shorthand), `--env-counter-badge-*` and `--env-diff-stat-*`. Button sets them, as it styled the badges inside it before.
+  - DiffStat writes its numbers in the locale, and its name comes from `messages.diffStat.label`, which receives the counts as numbers and in the locale's digits; `formatLabel` still overrides it.
+
+  Migrate with the codemods: `envui-codemods v1-names` renames InfoChip and InfoChipProps, `v1-props` drops `variant="subtle"`, and `v1-classes` renames `env-info-chip`.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Buttons take a `variant` for their emphasis and a `tone` for their meaning. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, the default, `accent` or `danger`, in the designed pairs: a primary button takes any tone, outline, ghost and text buttons take neutral or danger, and a secondary button is neutral. This applies to Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle and Pagination.
+  - `variant="important"` is `variant="primary" tone="accent"`, with the same square corners and fill.
+  - `variant="destructive"` is `variant="primary" tone="danger"`.
+  - `variant="outlined"` is `variant="outline"`, and `variant="quiet"` is `variant="ghost"`.
+  - New: outline, ghost and text buttons in the danger tone, which take the danger color; `fullWidth`, which makes a labelled button as wide as its container; and `ButtonTone` and `ButtonEmphasisProps`.
+  - A button without a `variant` takes the one its container gives, such as `ghost` inside a Toolbar, where that variant has the button's tone (a `tone="accent"` Button stays primary), and else primary; IconButton and CopyButton secondary, ConfirmButton outline (secondary when icon-only).
+  - Only the designed pairs type-check, also on IconButton, ConfirmButton and CopyButton, which add `IconButtonEmphasisProps`. A pair outside them, which only code past the types can ask for, renders neutral, and a development build reports it.
+  - The modifier classes become attributes on `.env-button`: `env-button-primary` is `[data-variant='primary'][data-tone='neutral']`, `env-button-important` `[data-variant='primary'][data-tone='accent']`, `env-button-destructive` `[data-variant='primary'][data-tone='danger']`, `env-button-secondary` `[data-variant='secondary']`, `env-button-outlined` `[data-variant='outline']`, `env-button-text` `[data-variant='text']`, `env-button-quiet` `[data-variant='ghost']` and `env-button-underlined` `[data-underline]`.
+
+  Migrate with the codemods: `envui-codemods v1-props` rewrites each literal `variant` (an expression is reported), and `envui-codemods v1-classes` rewrites the classes in style sheets and selector strings with the specificity they had, and reports them in `className`, where the props set them now.
+
+  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).
+
+- ClickableCard, ActionCard and FeatureCard are one Card.
+  - A card with `href` is a link and one with `onClick` a native button; `as` is gone, and `render` sets the element of a content card, such as `render={<article />}`.
+  - A content card takes `title`, `meta`, `description` and `actions`, which puts its controls in a strip along the bottom; `headingLevel` sets the title's level, `h3` by default. `layout="feature"` is FeatureCard: an icon, an `h2` heading in the headline type, a description and the actions at the end, which stack in a card narrower than 38 rem. `layout`'s `content` and `action` values are gone.
+  - `tone` is `background`: `row` is `muted`, the default, `pane` is `default` and `canvas` is `page`.
+  - A link card's accessible name is its text: the components overview names its cards by their content, which removes the overview's label-content-name-mismatch entries.
+  - The classes are `env-card` with `data-interactive`, `data-actions` and `data-layout`, and the parts `env-card-header`, `-heading`, `-meta`, `-body`, `-footer`, `-layout`, `-icon` and `-description`.
+
+  Migrate with the codemods: `envui-codemods v1-names` renames ClickableCard and its props type; `v1-structure` turns ActionCard and FeatureCard into a Card and drops or converts Card's `as`; `v1-props` moves `tone` and drops `layout="content"` and `"action"`; `v1-classes` renames the classes. An `as` that is an expression is reported.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Card takes its heading as `title`, as Alert, EmptyState and Dialog do, where it was `heading`; `headingLevel` still sets its level. The native `title` attribute is no longer a prop of a card.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `heading` to `title`, and `v1-structure` keeps ActionCard's and FeatureCard's `title` as it is. Move a native `title` tooltip of a 0.x content card to an element inside it.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- CodeBlock and CodeDiff take their words from EnvUIProvider's `messages.codeBlock` and `messages.codeDiff`: the heading of a block without a label or language, the copy button's names and announcements, the name of the code region, and CodeDiff's loading name, error, its description and Retry. CodeBlock copies as CopyButton does: where the Clipboard API is unavailable it copies a selection of a hidden field, and only where that fails too does it select the code for people to copy. Its visually hidden status is `env-code-block-copy-status`, where it was `env-code-copy-status`; `v1-classes` renames it.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+- ColorPicker's color area and hue are envUI's own, the hue on Base UI's Slider, and the package no longer depends on react-colorful. The look stays; the `.react-colorful` classes are gone, and envUI's style sheet declares nothing `!important`. The area and the hue are named after the picker's label, such as "Accent color saturation and brightness" and "Accent color hue", by EnvUIProvider's `messages.colorPicker.area` and `.hue`, functions of `{ label }`; the area's value comes from `.areaValue`, and the hue's is in degrees, both in the provider's locale; the area moves by 1 % per arrow key and 10 % with Shift, and the hue by one degree, or 18 with Shift. `ref` reaches the HEX field.
+
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+
+- A Combobox option takes its content before the label, such as an Avatar, as `start`, as List.Item does, where it was `leading`.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `leading` to `start` in an array written in `items`, also in a group's `items`, and reports items it can't read, such as a variable; TypeScript points at the rest.
+
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+
+- CommandPalette is built on Base UI's autocomplete and announces its results.
+  - `query`, `onQueryChange`, `onSelect` and `closeOnSelect` are `inputValue`, `onInputValueChange`, `onAction` and `closeOnAction`; `CommandPaletteSelectOptions` is `CommandPaletteActionOptions`.
+  - An item's `detail` and `trailing` are `description` and `end`, and an item can be `disabled`. Options are list rows, with the description under the label.
+  - A polite status announces the number of results as they change (`messages.commandPalette.results`) and says the empty message when nothing matches.
+  - `className`, `style`, `ref` and data attributes reach the palette's surface.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames the props and `v1-names` the type. Rename the items' `detail` and `trailing` by hand; the type checker reports them where the array is typed.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- Control sizes and row density replace the `density`, `compact` and size-as-density props. The `v1-props` codemod moves what it can and reports the rest.
+  - **`size="sm" | "md" | "lg"`** on Button, IconButton, CopyButton, TextField, SearchField, Select, Combobox, DatePicker, SegmentedControl and Pagination: every control of a size has the same height in a scale, 2, 2.5 and 3 rem in the comfortable one. Without a size, a control takes the control height of its container, `md` by default. Tabs' `size` is its rail's: `lg`, the default, keeps today's rail, and `sm` replaces `compact`. TextField no longer takes the native `size` attribute.
+  - **Row `density="xs" | "sm" | "md" | "lg"`** on Table.Root (default `md`), Tree (default `sm`) and the new one on List.Root (default `md`): it changes only the rows' block padding, never their text, icons or corners. Table's `compact` is `sm`, Tree's `compact` is `sm` and its `standard` is `md`. Compact tables no longer make their text smaller, and Tree's `md` keeps the text and icons of `sm`.
+  - **Removed:** `density` on Select, Combobox, DatePicker, Surface, Menu.Root, ContextMenu and Menubar.Menu; `compact` on TextField and SearchField; `size` on NavList.Item; the `standard` and `compact` sizes of Tabs, SegmentedControl, Pagination and CopyButton, which are `md` or `lg` and `sm`. DropZone's `compact` is `size="sm"`. For a compact app or region, set `scale="compact"` on its Theme; for a small control, set `size="sm"`.
+  - **Rows match:** buttons, icon buttons and fields in table cells take the small control height at every density, so a row with an action is no taller than it needs to be. Title bars, panel headers, message actions and the date picker's popup hold small controls.
+
+  Migration guide: [Scale and density](https://github.com/envsemble/envUI/blob/main/docs/migration.md#scale-and-density).
+
+- envUI's CSS moves into cascade layers, and every token takes the `--env-` prefix.
+  - **Cascade layers.** Every rule of `styles.css` is in a layer of `env`: `env.reset`, `env.tokens`, `env.base`, `env.components` and `env.utilities`, in that order. An application's CSS outside cascade layers overrides envUI's whatever its specificity, so selectors and `!important` that only out-weighed envUI's rules can go. An application puts its resets and element styles in a layer before `env` and its own layers after it, declared once, such as `@layer reset, env, app;`: an element rule outside layers would restyle envUI's components too. The font face stays outside layers.
+  - **The `--env-` prefix.** Every token is a custom property with the prefix: `--space-4` is `--env-space-4` and `--color-fg-muted` is `--env-color-fg-muted`, in Tokens.css, the token reference, the manifest and the MCP server. The application hooks take it too: `--env-line-height-body`, `--env-avatar-group-ring` and the pill corner `--env-radius-full`.
+  - **The 0.7 aliases are removed.** `--color-text-muted`, `--color-row`, `--color-checkbox` and the other 0.7 names that were aliases of the semantic roles are gone; use the role that replaces each. The list item's per-theme fill and the avatar's fixed blues are component tokens now: `--env-color-list-item-bg` with `-hover` and `-pressed`, and `--env-color-avatar-bg`, `-fg` and `-figure`. `--md-sys-shape-corner-*` is retired for one radius scale, `--env-radius-{none|xs|sm|md|lg|xl|full}`, with `--env-radius-surface` and the row radii as its roles; `--radius-standard` is `--env-radius-sm` and `--radius-large` `--env-radius-lg`.
+  - **Consistent color names.** A tone's edges grow from `border-{tone}-muted`, an alert's faint edge, through `border-{tone}`, an outlined badge's translucent edge, to the solid `border-accent-emphasis` and `border-danger-emphasis`, the edges of a focused and an invalid field, which were `border-accent` and `border-danger`. `border-translucent` is `border-media` and `bg-page-muted` is `bg-inset`, named for their roles, and the tones' state layers gain a resting `bg-{tone}-subtle`.
+  - **Forced colors.** Under `forced-colors: active`, such as the system's contrast themes, selected, chosen, current, highlighted, checked, focused, invalid and unavailable states take system colors where a fill or shadow carried them, so they stay visible, and swatches, the color picker and calendar heatmaps keep their colors.
+  - **Motion** lives in each component's style sheet; it is unchanged, with fades always and movement only without a reduced-motion preference.
+
+  To migrate, run `npx @envsemble/envui-codemods v1-classes src`: it rewrites the old custom properties in style sheets and scripts, declared or read, to their 1.0 names, the 0.7 aliases straight to the tokens that replace them, and reports `--color-white`, `--color-canvas-dark` and the removed names with what to use instead. The migration guide lists every name. The ESLint plugin and the Stylelint config suggest the prefixed tokens.
+
+  Migration guide: [Cascade layers](https://github.com/envsemble/envUI/blob/main/docs/migration.md#cascade-layers) and [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+
+- Dialog's side panel is a new component, Drawer, and Dialog takes `width`.
+  - Drawer is a full-height panel at the `start` or `end` edge of the window (`side`, default `end`), which follows the text direction: it slides in from its edge, and closes with a swipe toward it on a touch screen. It takes Dialog's `title`, `description`, `actions`, `trigger`, `modal`, `disablePointerDismissal`, `pending`, `initialFocus` and `finalFocus`, and adds `aria-label` for a drawer without a visible title, `closeButton`, and `width`: `md` (24 rem, the default), `lg` (44 rem) or any CSS length. Its close button is a CloseButton. Opened by keyboard or mouse, focus starts on the first element inside that takes Tab; opened by touch, or with nothing inside that takes focus, on the drawer itself, so a field inside doesn't open the on-screen keyboard.
+  - Dialog's `placement` is `center` or `top`; `placement="right"` is `<Drawer side="end">`. Dialog's `size` is `width`: `standard` is `md`, the default, and `wide` is `lg`.
+  - `onOpenChange` of Dialog and Drawer receives the reason as its second argument, such as `escape-key` or `close-press`; `initialFocus` and `finalFocus` also take a function of the interaction. Dialog and DialogClose take `ref` as a prop.
+  - The dialog's surface class `env-modal-pane` is `env-dialog-popup`; a drawer's is `env-drawer-popup`, and both carry `env-dialog-surface`.
+
+  Migrate with the codemods: `envui-codemods v1-structure` turns a `<Dialog placement="right">` into a `<Drawer side="end">`, with its `size` as `width`, and reports a `placement` that is an expression; `v1-props` turns Dialog's `size` into `width`; `v1-classes` renames `env-modal-pane`.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- MarkdownEditor and RichTextEditor share their toolbar, their link dialog and their status, and take their words from EnvUIProvider's `messages` (`markdownEditor`, `richText`, `editor` for the formatting commands and `linkDialog`):
+  - The toolbar is a Toolbar of buttons, each named in a tooltip instead of a native `title`; it keeps the selection in the editor and scrolls sideways where it doesn't fit. Its class is `env-editor-toolbar`, where it was `env-markdown-toolbar`, and the status line's is `env-editor-status`, where it was `env-markdown-editor-status`.
+  - The link dialog says "Enter a valid URL." for an empty destination and "Enter a valid URL or relative path." for one the editor can't link to, before it inserts anything.
+  - MarkdownEditor takes `ref` as a prop.
+
+  RichTextEditor takes the field vocabulary and the field's look, in the experimental `./rich-text` entry:
+  - `hint` is `description`, and `variant` is `outline` (the default), `underline` or `ghost`, as on a text area: `outlined` is `outline`, `plain` is `underline`, and `quiet`, which drew as outlined, is `ghost`. The `v1-props` codemod writes both.
+  - The document sits in the field's control box, with the field border, its invalid and disabled states and the variants; a disabled editor dims the box and keeps its label at the text color. RichTextEditor takes `ref` as a prop.
+  - Task items in the editor are envUI checkboxes beside their text, named by it.
+  - Suggestions are the rows of a listbox in the editor, so they show above a Dialog the editor sits in, and they close as focus leaves the document, also with Tab.
+  - A controlled editor applies a new `value` after React's commit, so replacing a document with references or tasks raises no `flushSync` warning.
+  - References with a destination are links through `LinkProvider`.
+
+  MarkdownEditor stays beta, and the `./rich-text` entry, RichText, RichTextEditor and `createRichTextExtensions`, is experimental.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+- Fields and popups have one anatomy each, at the sizes of the app's scale:
+  - **Fields take the control height.** TextField, SearchField, Combobox and DatePicker are pills as tall as a button of their size, whose label rests inside and floats into the outline without adding height, so they line up with buttons. The 3.5 rem field whose label floats above the value is the opt-in `variant="floating"`, for a long form on a page; plain fields and text areas keep that height. `showLabel` defaults to true, and SearchField's to false, as before; `showLabel={false}` hides a label and leaves the placeholder as the visible guidance.
+  - **Menus and the popups of Select and Combobox** share the raised popup of 0.7's compact menu: small corners, a hairline edge and rows of the scale's row height, 2.25 rem, or 1.75 rem compact, with 0.875 rem labels, which highlight on hover and keyboard focus. A check mark and a medium-weight label show a select's chosen option, in place of the selection fill. OrganizationSwitcher composes the same popup.
+  - **Menubar triggers** are as tall as a small control, and menus no longer have their own density.
+
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+
+- Fields and choice controls take the 1.0 vocabulary, and envUI's fields are built from Field's parts:
+  - `hint` is `description` on TextField, SearchField, Textarea, Select, Combobox, DatePicker, ColorPicker, Slider and MarkdownEditor.
+  - The field variants are `outline`, `floating`, `underline` and `ghost`: `outlined` is `outline`, `plain` is `underline` and `quiet` is `ghost`. Select's trigger is `secondary` or `outline`.
+  - Select takes `items`, of `SelectItem`, instead of `options` and `SelectOption`.
+  - DatePicker's `withTime` is `granularity`, `"day"` (the default) or `"minute"`.
+  - Slider's `onValueCommit` is `onValueCommitted`, as Base UI names it.
+  - DropZone's `onFiles` is `onDropAccepted` and `onReject` is `onDropRejected`. The zone is named by its label and description, as its visible text is, and described by its error.
+  - RadioGroup's `variant` is `orientation`: `inline` is `horizontal` and `rows` is `vertical`. Radio's `detail` is `description`. A focused radio shows the focus ring.
+  - `className` and `style` style the root, the field or the label around a choice, on TextField, SearchField, Textarea, Select, Combobox, DatePicker, Checkbox, Switch and Radio, and MarkdownEditor's `env-markdown-editor`; `ref` and the other native props reach the native control. Every one takes `ref` as a prop.
+  - TextField and Textarea take `onValueChange`, after the native `onChange`. An uncontrolled SearchField returns to its `defaultValue` on a native form reset.
+  - A button in a field's `endAction` takes the `ghost` variant where it sets none; the buttons of a popover or menu it opens don't. Textarea's resize edge is a focusable `separator`.
+  - Combobox's read-only chips no longer carry `aria-readonly`, which the input reports.
+  - The built-in strings of SearchField, Textarea, Combobox, DatePicker, Calendar, ColorPicker and Composer come from EnvUIProvider's `messages`, and Calendar, DatePicker and Slider format in its `locale`.
+  - Select's and Combobox's popups are the shared popup with its rows, and the classes follow the components: `env-text-input` is `env-text-field-input`, `env-text-field-well` `env-text-field-control`, `env-form-field` `env-field`, `env-field-hint` `env-field-description`; `env-dropdown-trigger`, `-options`, `-list`, `-option` and `-option-check` are `env-select-trigger`, `-popup`, `-list`, `-item` and `-item-indicator` (`env-combobox-popup` and `env-combobox-list` inside a combobox); `env-combobox-well`, `-option` and `-check` are `env-combobox-control`, `-item` and `-item-indicator`; `env-date-time-well` is `env-date-picker-control`; `env-checkbox-control` and `-mark` are `env-checkbox-input` and `-indicator`; `env-switch-control` is `env-switch-input`; `env-radio-options`, `-control` and `-detail` are `env-radio-group`, `env-radio-input` and `env-radio-description`; `env-choice-control` is `env-checkbox`, `env-switch` or `env-radio`.
+
+  Migrate with the codemods: `v1-props` moves the props and their literal values (an expression is reported), `v1-names` renames `SelectOption`, and `v1-classes` the classes. `v1-props` reports each `className` and `style` on these components; move one meant for the native control to a selector under the root by hand, as the migration guide shows.
+
+  Migration guide: [Fields and choice controls](https://github.com/envsemble/envUI/blob/main/docs/migration.md#fields-and-choice-controls).
+
+- Markdown names its table regions and task checkboxes from EnvUIProvider's `messages.markdown`: a table is named after its caption, else the heading before it (`tableNamed`, "Prices table"), else `table` ("Table"), numbered where several share a name. Words in a table cell, inline code included, break only where they would overflow the cell, so a column keeps room for its longest word and the table's region scrolls instead; `Code` takes the hook `--env-code-overflow-wrap` for this.
+
+  The prose typography that Markdown, RichText and RichTextEditor's document share is the `env-prose` class: Markdown's root is `env-markdown env-prose`, and RichText's root and the editor's document no longer carry `env-markdown`. Select them by `env-prose`, or by their own `env-rich-text` and `env-rich-text-document`.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+- Message's actions are small ghost buttons by default, and its statuses come from messages.
+  - A Button or IconButton in `actions` without a variant or size of its own is a small ghost button; one that sets them keeps them. A text IconButton at the edge still lines its icon up with the message, now through Button's `--env-button-text-icon-edge-start` and `-end` hooks.
+  - The statuses are `messages.message.sending` and `.failed`; `statusLabel` still overrides them for one message. Message stays a server component and renders its status text in a client leaf.
+  - The spinner of a sending message takes its color through Spinner's `--env-spinner-color` hook.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Components, compound parts, classes and documentation pages take the established names envUI keeps for 1.0. Nothing is exported under an old name. `npx @envsemble/envui-codemods v1-names src` and `v1-classes src` rewrite most of an application; the rename map in that package lists every change.
+  - Renamed components and their props types: `Input` is `TextField`, `DateTimeField` is `DatePicker`, `FileDropzone` is `DropZone`, `DisclosureNote` is `Disclosure`, `Notice` is `Alert` (with `AlertTone`), `Counter` is `CounterBadge`, `DiffCount` is `DiffStat`, `Heatmap` is `CalendarHeatmap` (with `CalendarHeatmapDay` and `CalendarHeatmapCell`) and `OrganizationMenu` is `OrganizationSwitcher` (with `OrganizationSwitcherOrganization`). Their props, behavior and look are unchanged.
+  - Compound parts are members of ES module namespaces, as in Base UI, and each part's `displayName` is its qualified name, such as `Menu.Item`. Import the namespace and use its parts: `import { Menu } from '@envsemble/envui'`, then `<Menu.Root trigger={…}>` with `<Menu.Item>`. Their props types live in the namespace too, such as `Menu.ItemProps`.
+    - `Menu` is `Menu.Root`, and `MenuItem`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem`, `MenuSeparator`, `MenuHeader` and `MenuSubmenu` are `Menu.Item`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem`, `Menu.Separator`, `Menu.Header` and `Menu.Submenu`; `MenuDensity` is `Menu.Density`. `ContextMenu` stays a flat export.
+    - `Menubar` is `Menubar.Root` and `MenubarMenu` is `Menubar.Menu`, with `Menubar.MenuOpenChangeDetails`.
+    - `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell` and `TableCell` are `Table.Root`, `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell` and `Table.Cell`; `TableSortDirection` is `Table.SortDirection`.
+    - `Stat` is `Stat.Root` and `StatGroup` is `Stat.Group`, with `Stat.Trend` and `Stat.TrendTone`.
+    - `GroupedRows` is `List.Root` and `Row` is `List.Item`.
+    - `NavigationItem` is `NavList.Item`. New: `NavList.Root`, a plain labelled list of items, and `NavList.Group`, related items under a small heading; items inside them render as list items.
+    - `DirectionLinks` is `Pager.Root`, and `DirectionLink` is `Pager.Previous` or `Pager.Next`, which no longer take `direction`. `Pager.Root` also accepts the two parts as children. `DirectionLinkProps` and `DirectionLinksDestination` are `Pager.LinkProps`.
+    - `ToastProvider` is `Toast.Provider`; `useToast` and the notification types stay flat.
+  - No longer exported: the manual `Toast` component and `ToastProps` (show notifications with `useToast()` inside `Toast.Provider`); `LoadingBar` (AppShell's `loading` and `loadingLabel` show page progress, and `Progress` shows a task's); `getInitials` (`Avatar` shows initials with `fallback="initials"`); `useLinkComponent` (envUI's links use the `LinkProvider` component); `useSidebarCompact`; and `defaultThemeStorageKey` from `./theme-bootstrap`, whose value is the string `"env-theme"`.
+  - Class names follow the components: `env-date-time-*` is `env-date-picker-*`, `env-file-dropzone-*` is `env-drop-zone-*`, `env-disclosure-note` is `env-disclosure` and its content `env-disclosure-panel`, `env-notice-*` is `env-alert-*`, `env-counter-*` is `env-counter-badge-*`, `env-diff-count-*` is `env-diff-stat-*`, `env-heatmap-*` is `env-calendar-heatmap-*`, `env-organization-menu-*` and `env-organization-trigger-*` are `env-organization-switcher-*`, `env-grouped-rows` is `env-list`, `env-row` is `env-list-item`, `env-contrast-row-pane` is `env-list-surface`, `env-navigation-*` is `env-nav-list-item-*`, and `env-direction-link(s)` is `env-pager` and `env-pager-link-*`. Component custom properties follow the same names, such as `--env-alert-tone`. Styles that select envUI's classes need the new names.
+  - Documentation pages move to the new names: `text-field`, `date-picker`, `drop-zone`, `disclosure`, `alert`, `calendar-heatmap`, `list`, `nav-list` and `pager`. The offline catalogue redirects the old routes.
+
+  Migration guide: [Renamed components, parts and pages](https://github.com/envsemble/envUI/blob/main/docs/migration.md#renamed-components-parts-and-pages).
+
+- Menus, navigation and collections take the 1.0 vocabulary, and several of their bugs are fixed.
+  - Menu: `Menu.Item`'s `trailing` is `end`. An item with `href` closes the menu as it is followed and runs its `onClick`, if any, such as for analytics, and a disabled one renders no link, so nothing follows it. Every menu's popup, Menu.Root's, Menu.Submenu's, ContextMenu's and Menubar.Menu's, is the shared popup surface in the theme, scale and text direction of its trigger; Menu.RadioGroup takes `aria-labelledby`, which OrganizationSwitcher points at its heading; Menu.Root takes `side="inline-start"` and `"inline-end"`, and these parts pass `ref`, `style` and data attributes to the popup.
+  - OrganizationSwitcher: `organizations`, `currentOrganizationId` and `onSelect` are `items`, `value` and `onValueChange`; `OrganizationSwitcherOrganization` is `OrganizationSwitcherItem`, whose `detail` is `description`. Its rows are Menu.RadioItems, and its strings come from `messages.organizationSwitcher`.
+  - NavList.Item: `trailing` is `end`. An icon-only item, or one named by `aria-label`, says its end content in its name: a number, or a CounterBadge without `aria-label`, as a count, such as "Inbox, 12 new", from `messages.navList.itemCount`, and a CounterBadge's `aria-label` or other content's text as it is, such as "Inbox, 12 unread" or "Labs, Beta", from `messages.navList.itemEnd`; the dot alone was hidden from assistive technology. `env-nav-list-item-selected` and `-icon-only` are `[data-selected]` and `[data-icon-only]`.
+  - Tabs pass the text direction to their list, so the arrow keys follow it in right-to-left text, while the panels keep the direction around them. `env-tab` and `env-tab-panel` are `env-tabs-tab` and `env-tabs-panel`.
+  - DocumentTabs is rebuilt on Base UI Tabs: each tab sits beside its close button instead of around it, a CloseButton out of the tab order and hidden from assistive technology, and announces Delete and Backspace, which close it, through `aria-keyshortcuts`; each tab opens a context menu with Close, also without `onCloseAll`, which adds Close all tabs and the strip's own menu. A ContextMenu `content` function that returns `null` leaves the menu closed on that element. The arrow keys and the wheel follow the text direction; strings come from `messages.documentTabs`; the strip takes `ref` and `style`. `env-document-tab`, `-label` and `-close` are `env-document-tabs-tab`, `-tab-label` and `env-document-tabs-close`, and a new `env-document-tabs-item` holds each tab and its close button.
+  - Breadcrumbs: a label cut short shows in full in a tooltip on hover and keyboard focus, and a plain level or the current page cut short takes keyboard focus for it; the name comes from `messages.breadcrumbs`; the `nav` takes native props. `env-breadcrumb` and `env-breadcrumb-*` are `env-breadcrumbs-item` and `env-breadcrumbs-*`.
+  - Pagination formats its range in the locale and takes its strings from `messages.pagination`. Pager takes its labels from `messages.pager`, and its children render between the `previous` and `next` props' links.
+  - Tree: `selectedId` and `onOpen` are `value` and `onAction`, `TreeOpenOptions` is `TreeActionOptions`, and a TreeItem's `detail` and `trailing` are `description` and `end`; it takes `ref` and `style`. `env-tree-row`, `-detail` and `-trailing` are `env-tree-item`, `-description` and `-end`, and the row height's custom property, `--env-tree-row-height`, is `--env-tree-item-height`; the `--env-tree-row-padding-block-*` tokens keep their names.
+  - Table: `Table.HeaderCell`'s `onSort` is `onSortChange`, called with the order pressing asks for. A table named by `aria-labelledby` names its scroll region too. The sort and resize words come from `messages.table`.
+  - List: `List.Item`'s `title` and `detail` are `label` and `description`. `List.Root`'s `contrast` is gone: a list in `<Surface background="muted" padding={3}>` of its own takes the raised row fill.
+  - Kbd reads `--env-kbd-size`, `-padding-inline`, `-radius`, `-fg`, `-font-size`, `--env-kbd-separator-padding-inline` and `-font`, which a container sets to show smaller keys.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `trailing`, OrganizationSwitcher's, Tree's, Table.HeaderCell's and List.Item's props; `v1-structure` wraps a `contrast` List.Root in a muted Surface and reports a computed one; `v1-names` renames `OrganizationSwitcherOrganization` and `TreeOpenOptions`; and `v1-classes` renames the classes, `env-menu-theme` to `env-popup-theme` among them, and turns NavList's modifiers into attributes; it reports OrganizationSwitcher's `env-organization-menu-radio` and `-radio-dot`, whose radio is Menu's `.env-menu-item-check` and `-check-mark` now, and a selector that puts `.env-document-tabs-close` inside `.env-document-tabs-tab`, its sibling now. By hand: the `detail` and `trailing` fields of Tree and OrganizationSwitcher data, which TypeScript reports, and the count in an icon-only NavList.Item's `aria-label`, which the item now adds itself. The ESLint plugin reports the renamed types.
+
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+
+- envUI ships no logos: BrandLogo and EnvUILogo, with their props types, are gone, and so is the brand artwork among the package's assets: the envUI lockups and favicons under `@envsemble/envui/assets/envUI/` and the envsemble lockup. The package README no longer shows a logo.
+
+  Keep your artwork in the application, as an SVG file or a component that draws it with `Icon`, which follows the text color. The codemods report each use (`envui-codemods v1-names`), and the ESLint plugin's `no-renamed-exports` reports the imports.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- OrganizationSwitcher passes `className` to its menu popup, as Menu.Root, AccountMenu and ContextMenu do, and names each organization with `label`, as every other item does.
+  - `className` goes to the popup, beside `env-organization-switcher`, with `style` and `ref`; the new `triggerClassName` styles the trigger, or the create button without organizations, which `className` styled before.
+  - An `OrganizationSwitcherItem`'s `name` is `label`, also in AccountMenu.OrganizationSubmenu's `items`.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `className` to `triggerClassName`, and an organization's `name` to `label`, and 0.x's `detail` to `description`, in an array written in `items` or 0.x's `organizations`; it reports items it can't read, such as a variable.
+
+  Migration guide: [Navigation and collections](https://github.com/envsemble/envUI/blob/main/docs/migration.md#navigation-and-collections).
+
+- Colors now come from a primitive palette with contrast built in, through semantic color tokens, and every theme passes the contrast gate with no exceptions, including two new high-contrast themes.
+  - **Palette.** Ten hues (neutral, blue, slate, steel, green, teal, amber, red, violet, purple) seeded from the previous colors, on one grade scale from 0 (white) to 100 (black). Each grade is a band of WCAG luminance, so colors 40, 50 and 70 grades apart have at least 3:1, 4.5:1 and 7:1, in any hue. The palette is internal.
+  - **Semantic tokens.** `--env-color-{bg|fg|border}-{role}-{emphasis}[-{state}]`, for example `--env-color-bg-default`, `--env-color-fg-muted`, `--env-color-border-default` and `--env-color-bg-brand-emphasis-hover`. Hover and pressed colors are tokens of their own instead of a runtime lightness shift. The 0.7 names, such as `--color-text-muted`, are replaced by these roles; the synonyms of muted text (quiet, icon, field label, hint, placeholder, row detail) now share one value.
+  - **High contrast.** Set `contrast="high"` on a Theme, or let the system's `prefers-contrast: more` apply it, for text at 7:1 and boundaries, indicators and focus rings at 4.5:1. The translucent tone colors, such as the edges of outlined badges and alerts, an alert dismiss button's hover and the slider halo, follow the high-contrast tone too. `contrast="standard"` keeps the standard colors.
+  - **Elevation.** `--env-elevation-{0…3}-shadow` and `--env-elevation-{0…3}-border`. Every popup takes a shadow and a hairline edge: menus, Select lists, popovers, tooltips and toasts at level 2, so they stand out from a page of their own color, dialogs and the command palette at level 3. Tooltips and toasts take an edge that follows their fill, `--env-color-border-{neutral|success|info|danger}-strong`: in light the fill a step darker, so a dark tooltip or toast on a light page has no light halo, and in dark the popup edge. The edge is the boundary in high contrast and under forced colors.
+  - **Selection and states.** The selection can't be mistaken for another item at rest or under the pointer in any theme: a blue tint in light, a blue-gray in dark. Navigation items hover in the blue-gray again in light, deeper than the selection as in 0.7, and in a gray at high contrast; destructive buttons lighten on hover, and success toasts are teal again. In dark, checked checkboxes, switches, sliders, meters and spinners take the soft blue of the radio with dark marks. Disabled choice controls and sliders fade with their labels, and a disabled Slider marks its group `aria-disabled`, so its label and value read as part of the inactive control. Solid badges and counters take `--env-color-bg-{tone}-emphasis`, and the composer takes the field boundary.
+  - **Contrast fixes.** Links reach 4.5:1 on panes and rows. Outlined fields and buttons, and the track of a switch that is off, get a 3:1 boundary. Dark checkboxes, switches, sliders and meters reach 3:1 on every surface, with marks at 4.5:1. Pressed and hover states keep their labels at 4.5:1. The empty stars of a Rating reach 3:1. A focus ring inside a solid fill gains an inner ring in the label color.
+
+  Removed custom properties: the runtime state rule (`--state-lightness-threshold`, `--state-hover-shift`, `--state-pressed-shift`, `--state-surface-hover-shift`, `--state-surface-pressed-shift`, `--state-lightness-direction` and the `--state-*-lightness` values), the state opacities that are color tokens now (`--state-layer-hover-opacity`, `--state-layer-pressed-opacity`, `--state-fill-hover-opacity`, `--state-fill-pressed-opacity`, `--state-tone-subtle-opacity`, `--state-fill-opacity`, `--state-dialog-overlay-opacity`), and the unused `--color-surface-base`, `--color-surface-raised`, `--color-text-subtle`, `--color-control-text`, `--color-neutral-fill`, `--color-border-pressed`, `--color-control-blue-hover`, `--color-control-blue-pressed`, `--color-fill-hover`, `--color-fill-pressed`, `--state-card-strip-weight`, `--state-selected-base-weight` and `--member-identity-*`. The 1.0 migration lists the replacement of each, where there is one.
+
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+
+- PanelDock is a namespace, `PanelDock.Root` and `PanelDock.Header`, and its words come from EnvUIProvider's `messages.panelDock`:
+  - `PanelDock` is `PanelDock.Root` and `PanelDockHeader` is `PanelDock.Header`, with `PanelDock.RootProps` and `PanelDock.HeaderProps`; `PanelDockPanel` and `PanelDockMode` keep their names.
+  - PanelDockControls is internal. `PanelDock.Header`'s `controls` is a boolean, `true` by default, and `false` leaves the window controls out, where `null` did. Their names, Minimize, Maximize, Restore and Close, come from `messages.panelDock`, which also names the list of tabs, a tab's buttons and the resize handle; the dock's `minimizedLabel`, `openLabel`, `closeLabel` and `resizeLabel` still override those for one dock.
+  - Buttons in a header's `actions` that set no variant are `ghost`, as the window controls are, in place of the icon color hook for icon-only text buttons: an icon-only `variant="text"` button there shows the link color now, so drop its variant.
+  - Minimized panels are tabs, as on a taskbar: `env-panel-dock-chip*` is `env-panel-dock-tab*`, and the dock's `data-chips` is `data-tabs`. A tab's close button is a CloseButton.
+  - The resize handle runs on the shared window splitter: <kbd>Page Up</kbd> and <kbd>Page Down</kbd> change the height by 64 px as <kbd>Shift</kbd> with an arrow does, and a drag that loses its pointer keeps the height it began with.
+
+  The codemods rename the exports (`v1-names`), turn `controls={null}` into `controls={false}` and report a `controls` element (`v1-props`), report `PanelDockControls` with what replaces it, and rename the classes (`v1-classes`). Rename `[data-chips]` in style sheets by hand.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+- PanelDock.Root's `showLabel`, the function that names a tab's button, is `openLabel`, as SidebarTrigger's `openLabel` names the button that opens a sidebar; a field's `showLabel` stays a boolean.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `showLabel` to `openLabel` on PanelDock.Root.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+- Popover, HoverCard and Tooltip open on the shared popup surface.
+  - Popover's and HoverCard's `width` is `md`, the default, or `lg`, where it was `standard` or `wide`. Popover's `side` takes `inline-start` and `inline-end`, and the `onOpenChange` of Popover and HoverCard receives the reason as its second argument (`PopoverOpenChangeReason`).
+  - `className`, `style`, `ref` and data attributes of Popover and HoverCard reach their popup, and Tooltip's `popupClassName` its popup; each popup takes the text direction of its trigger. Their theme and positioner classes are `env-popup-theme` and `env-popup-positioner`, and HoverCard's surface is `env-hover-card`.
+  - A Tooltip describes a control with a name of its own while it is open (`aria-describedby` to its `role="tooltip"` popup). Around a disabled button, link, tab or menu item, its wrapper is a tab stop where it can read the control's name, and takes its role and name with `aria-disabled`, and a button's or tab's pressed, expanded, popup and selected state. A disabled checkbox, radio, switch, slider or select keeps its own role and state, with no stand-in. A Kbd in a tooltip takes light key caps.
+
+  Migrate with the codemods: `envui-codemods v1-props` maps `width` and reports an expression.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- SegmentedControl takes `items`, and an unchosen segment's count keeps its contrast.
+  - `options` is `items`, and `SegmentedControlOption` is `SegmentedControlItem`.
+  - The segments' classes are `env-segmented-control-item`, `-item-label` and `-item-count`, for `env-segment`, `env-segment-label` and `env-segment-count`.
+  - An unchosen segment's count is muted text, at 4.5:1 on the rail, rather than 80% of the label's color, which measured about 3.6:1.
+  - SegmentedControl takes `ref`, `style`, `id` and the other attributes of its rail. Its page is listed under Forms & selection.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames `options`, `v1-names` the type and `v1-classes` the classes.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Spinner, Meter and Progress take the 1.0 sizes and classes, and read their values right.
+  - Spinner's `size` is `sm`, `md` (the default) or `lg`, set as `data-size` where the class `env-spinner-{size}` was. Its drawing is hidden from assistive technology also when it has a label.
+  - Meter and Progress emit their own classes, `env-meter*` and `env-progress*`, where both emitted `env-bar*`, and take `className`, `style`, `ref` and data attributes on their root. Without `aria-valuetext` the formatted value stays, in the provider's locale; an indeterminate Progress is read as Loading, and its sweep runs toward the end of the line in right-to-left text.
+  - New: Progress `segments`, which splits the track into steps that fill in turn.
+  - LoadingState's name defaults to `messages.common.loading`.
+
+  Migrate with the codemods: `envui-codemods v1-props` maps Spinner's `size`; `v1-classes` renames `env-bar` to `env-meter` and the Spinner size classes; rename a Progress's `env-bar` selectors to `env-progress` by hand.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- New: `SplitPane` and `ListDetail`, which replace 0.6's SplitView.
+  - `SplitPane.Root` lays out two `SplitPane.Pane`s, side by side or one above the other (`orientation`), with a `SplitPane.ResizeHandle` between them: an APG window splitter that the pointer drags and the arrow keys move, in the text direction, and a double click resets. The first pane's `size`, `defaultSize`, `minSize` and `maxSize` are in `unit`, `%` of the split pane or `rem`; `onSizeChange` receives each size with `{ committed }`, and `persist` keeps it in localStorage, read after the first render. Below `stackBelow` of its own width the panes stack and the handle goes (`onStackedChange`, `data-stacked`). A Pane with `label` is a named region; the handle's name comes from `label` or `messages.splitPane.resize`.
+  - `ListDetail.Root`, `ListDetail.List` and `ListDetail.Detail` put a list beside the detail of its chosen item on SplitPane, the list's width resizable and persisted. Below `stackBelow`, 44 rem by default, they show one at a time: `detailShown` shows the detail with a back button named by `backLabel`, which calls `onBack`. Focus moves to the back button as the detail opens, and back to the list's current row, the element with `aria-current`, as it closes.
+
+  Migrate a SplitView with the codemods: `v1-names` and `v1-structure` turn `<SplitView start end resizeLabel storageKey>` into `<SplitPane.Root persist>` around `<SplitPane.Pane>{start}</SplitPane.Pane>`, `<SplitPane.ResizeHandle label />` and `<SplitPane.Pane>{end}</SplitPane.Pane>`, `SplitViewProps` into `SplitPane.RootProps`, and `v1-classes` renames `env-split-view` and its parts. The sizes keep their percentages, now of the whole split pane.
+
+  Migration guide: [Split panes](https://github.com/envsemble/envUI/blob/main/docs/migration.md#split-panes).
+
+- Stacking tokens: `--env-z-base` (0), `--env-z-raised` (1), `--env-z-sticky` (20), `--env-z-peek` (30), `--env-z-overlay` (90), `--env-z-modal` (100), `--env-z-popover` (110), `--env-z-toast` (120) and `--env-z-tooltip` (130), one z-index scale for envUI's components and the application's own layers. Every component takes its z-index from them, in the order it had: a tooltip stays above a toast, a toast above a menu, and a menu, a select list or a popover opened inside a dialog above the dialog. A dialog and the command palette sit at `modal`, over their scrim at `overlay`. Give an application's layers a token, with `calc()` for a step between two, such as `calc(var(--env-z-sticky) + 1)`.
+
+  Breakpoint tokens: `--env-breakpoint-sm` (40 rem), `-md` (48 rem), `-lg` (64 rem) and `-xl` (80 rem), the viewport widths where a page's layout may change. CSS can't read a custom property inside `@media`, so style sheets write the value itself; components respond to their container's width instead.
+
+  `--env-topbar-height` is `--env-app-shell-header-height`, with the same values: 3.25 rem, 2.625 rem in the compact scale, and 3.25 rem under a coarse pointer. `v1-classes` rewrites it, and the names the app frame's sticky offsets had before 1.0, `--topbar-height`, `--app-sticky-top`, `--env-app-sticky-top` and `--env-app-topbar-block-size`, to the 1.0 frame's `--env-app-shell-header-height`, `--env-frame-sticky-top` and `--env-frame-header-block-size`.
+
+  Migration guide: [Tokens](https://github.com/envsemble/envUI/blob/main/docs/migration.md#tokens).
+
+- Stat.Root's `detail` is `description`, and Stat.Group's `tone` is `background`.
+  - `detail` is `description`, and its class `env-stat-detail` is `env-stat-description`.
+  - Stat.Group's `tone` is `background`, as Surface's: `pane` is `default`, the default, `row` is `muted`, `canvas` is `page` and `alternate` is `raised`.
+
+  Migrate with the codemods: `envui-codemods v1-props` renames both props and maps the values, and `v1-classes` renames the class.
+
+  Migration guide: [Content and display](https://github.com/envsemble/envUI/blob/main/docs/migration.md#content-and-display).
+
+- Text, Skeleton, Surface and Stack take the 1.0 vocabulary, and `render` replaces `as`.
+  - Text: `tone` is `emphasis`, `default`, `muted` or `subtle` (`primary` is `default`, `quiet` is `subtle`). The variants `page-heading`, `section-heading` and `supporting` are `headline`, `title` and `body-sm`. `as="h2"` is `render={<h2 />}`. `TextTone` is `TextEmphasis`, and `TextElement` is gone. The classes `env-text-{variant}` and `env-text-tone-{tone}` are `[data-variant]` and `[data-emphasis]` on `.env-text`.
+  - Skeleton: `tone` is `emphasis`: `base` is `muted`, the default, and `highlight` is `default`; `env-skeleton-highlight` is `[data-emphasis='default']`.
+  - Surface: `tone` is `background`, `default`, `muted`, `page` or `raised` (`pane`, `row`, `canvas` and `alternate` before), and `corners` is `radius`, named after the radius tokens: `xl`, `sm`, `full` or `none` (`surface`, `standard`, `pill` and `none` before). `as` is `render`. `SurfaceTone` is `SurfaceBackground` and `SurfaceCorners` `SurfaceRadius`. The classes `env-surface-{tone}` and `env-surface-corners-{corners}` are `[data-background]` and `[data-radius]`.
+  - Stack lays out rows too: `direction="row"`, `wrap` and `justify` (`start`, `center`, `end` or `between`). `as` is `render`, and `StackElement` is gone.
+  - ActionGroup is gone. A row of actions is `<Stack direction="row" wrap align="center" gap={4}>`, with `justify="end"` for `align="end"`, and a stacked group `<Stack gap={2}>` with `fullWidth` on each labelled Button.
+  - The icon wrapper's class `env-symbol` is `env-icon`, sized by the custom property `--env-icon-size`, which a container such as a button sets.
+
+  Migrate with the codemods: `envui-codemods v1-structure` rewrites ActionGroup into Stack and reports a `stacked` it can't read; `v1-render` turns a literal `as` into `render` and reports an expression; `v1-props` renames `tone`, `corners` and the Text variants and maps their literal values, reporting an expression; `v1-names` renames the types and reports the removed ones; and `v1-classes` rewrites the classes and `env-symbol`.
+
+  Migration guide: [Variants, tones and render](https://github.com/envsemble/envUI/blob/main/docs/migration.md#variants-tones-and-render).
+
+- `Theme` and `ThemePreferenceProvider` take a `contrast`: `high` for the high-contrast colors, `standard` to keep the standard ones even when the system asks for more contrast, or `system` to follow `prefers-contrast: more`. Left out, a Theme takes the contrast of the Theme around it, and `system` outside any. Nested Themes and envUI's popups, such as menus, Select lists, tooltips, toasts and dialogs, keep the contrast of the boundary they open from, as they keep its color scheme. With `applyToDocument`, the provider writes the contrast on the document root too, marked with `data-env-contrast-source` and the value written, such as `envui:high`, and removes from it only a contrast so marked that the page has not written over, so a provider mounted in place of another, such as one keyed by the signed-in user, removes its predecessor's contrast. One provider per document applies to it: any other passes `applyToDocument={false}`, and development reports two that both apply. `createThemeBootstrapScript` takes the same `contrast`, so a fixed high or standard contrast is on the root before the first paint. The script marks what it writes the same way, and the provider treats that contrast as its own once the application starts: its contrast replaces it, and at `system` it removes it, so a contrast the application stores as a user setting does not stay at the script's value after a reload.
+
+  `useTheme()` returns `{ theme, contrast }` instead of the color scheme alone: read the scheme as `const { theme } = useTheme()`, and re-theme an application's own portal with `<Theme {...useTheme()}>`, which the `v1-names` codemod writes for `<Theme theme={useTheme()}>`; it turns other calls into `useTheme().theme` unless the file already reads them as `{ theme, contrast }`, and reports those that are returned or passed to a context. In development, where the bundler defines `process.env.NODE_ENV`, Theme reports a `theme` that is not `light` or `dark`; a production build leaves the report out, and without a bundler it stays silent. Its `contrast` wins over a `data-env-contrast` attribute passed to it; without the prop, such an attribute sets the contrast for the boundary and everything in it.
+
+  Migration guide: [useTheme returns the theme, its contrast and its scale](https://github.com/envsemble/envUI/blob/main/docs/migration.md#usetheme-returns-the-theme-its-contrast-and-its-scale).
+
+- Toast takes the 1.0 vocabulary and reads in every language and direction.
+  - A notification's `variant` is `tone`: `neutral`, `success`, `info` or `danger`, where `error` was. `ToastVariant` is `ToastTone`.
+  - The `bottom-right` placement is `bottom-end`, the default, which is the left edge in right-to-left text and keeps clear of that side's safe area; the `top-center` stack is centred in either direction.
+  - A danger notification is an alert as it appears, read once and outside any polite region, readable without moving focus to its region first, and never waits behind the count of older notifications: it takes its place first. The other notifications are read by a polite status beside the regions, and a swipe toward the end of the line dismisses one, to the left in right-to-left text.
+  - The region names, now Notifications and Top notifications, the hidden count and the dismiss button's name come from `EnvUIProvider`'s `messages.toast`. The dismiss button is a CloseButton.
+  - The manual `Toast` component and `ToastProps` are deleted.
+  - Classes: `env-toast-{variant}` is `.env-toast[data-tone]`, and `env-toast-viewport-{placement}` is `.env-toast-viewport[data-placement]`.
+
+  Migrate with the codemods: `envui-codemods v1-props` moves `variant` and `placement` in `useToast().show({ … })` object literals and `defaultPlacement` on Toast.Provider, and reports an argument it can't read; `v1-names` renames `ToastVariant`; `v1-classes` rewrites the classes.
+
+  Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).
+
+- TitleBar and WindowFrame are one namespace, `WindowFrame`, with three parts:
+  - `WindowFrame.Root` fills the window and scrolls `WindowFrame.Content` with the keyboard as it would the document; the title bar is its first child instead of its `titleBar` prop.
+  - `WindowFrame.TitleBar` is 0.x's TitleBar, with the same `start`, centred `children` and `end`, also on its own. Buttons inside that set no variant are `ghost` and take the small height, as the window controls beside them; a button's own `variant` still wins, so an icon-only `variant="text"` button shows the link color now: drop the variant.
+  - `WindowFrame.Content` holds the content below the title bar; its `ref` is the scrolling element, which 0.x's `scrollRef` gave.
+  - The classes follow: `env-title-bar` is `env-window-frame-title-bar`, with its parts `-layout`, `-start`, `-center` and `-end`, and the custom properties `--env-title-bar-start` and `--env-title-bar-end` are `--env-window-frame-title-bar-start` and `-end`. `--env-title-bar-height` keeps its name.
+
+  The codemods cover it: `v1-names` renames `TitleBar` to `WindowFrame.TitleBar` and `<WindowFrame>` to `<WindowFrame.Root>`; `v1-structure` makes the `titleBar` prop the first child and wraps the children in `WindowFrame.Content`, which takes `scrollRef` as its `ref`; `v1-classes` renames the classes and custom properties.
+
+  Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
+
+### Minor Changes
+
+- AccountMenu and ThemeRadioGroup.
+  - `AccountMenu.Root` is the signed-in person's menu: their avatar, or a row with the avatar, `name` and `description` (`trigger="row"`, or `auto`, a row in an expanded sidebar and the avatar elsewhere), opens a Menu with a header that shows who is signed in, then its children. It is named "Account" from `messages.accountMenu.label`.
+  - `AccountMenu.ThemeSubmenu` holds the theme choice, and `AccountMenu.OrganizationSubmenu` switches between the person's organizations with OrganizationSwitcher's rows, the active one named under its row. OrganizationSwitcher stays a component of its own.
+  - `ThemeRadioGroup` is the theme choice, System, Light and Dark, as radio items for any Menu. Inside a ThemePreferenceProvider it checks and stores the provider's preference; `value` and `onValueChange` connect it to a theme the application stores itself. The menu stays open after a choice unless `closeOnClick`. Its labels come from the new `messages.themeToggle.system`, `light` and `dark`.
+
+- The skills and the MCP server install together as one agent plugin, `envui@envui`, from the envUI repository, which is its private plugin marketplace. The plugin's server runs from the project's installed envUI, and each release raises the plugin's version with the package's. For agents, `docs/agent-tooling.md`, gives the install commands.
+- Tooling for coding agents, all generated from the documentation and describing the installed version:
+  - `npx --no envui agents` writes a compressed index of envUI, under 8 KB, into the project's `AGENTS.md` between `<!-- BEGIN envui -->` and `<!-- END envui -->`: the rule to search envUI before writing any UI element and to propose an envUI addition instead of a local copy, where the installed docs are, and every component page with its exports and aliases. It keeps the rest of the file and creates it when missing; `--check` fails in CI when the index is missing or outdated, and `--file` writes to another file.
+  - `npx --no envui mcp` is an MCP server over stdio with the tools `search`, `list_components`, `get_component`, `get_props`, `get_example`, `list_patterns`, `list_templates`, `get_tokens` and `plan`, which proposes candidate components, patterns and tokens for a description of a screen, each with the words that matched, to confirm with `get_component`. Any MCP client registers it in the project as `node node_modules/@envsemble/envui/bin/envui.mjs mcp`. It needs nothing beyond Node, so envUI gains no dependency.
+  - The package root has `manifest.json`, every component with its summary, aliases, when to use it and what instead, exports, import paths, props and examples, plus the other pages and the tokens; `llms.txt`, the index of the documentation; and `llms-full.txt`, every page in one file for tools that index it.
+  - The skills are rewritten around these: `envui-use` and `envui-migrate` look every element up first, and the new `envui-contribute` covers adding what envUI lacks upstream.
+
+  The documentation's new For agents page, `docs/agent-tooling.md`, describes them.
+
+- An `Avatar` without a picture takes a solid color that its `name` chooses, one of eight (blue, teal, green, amber, red, violet, purple and slate), with white initials or a white figure, so a person or an organization keeps the same color everywhere. `hue` sets the color instead, such as an organization's own, and `avatarHue(name)` returns the one a name chooses; the fills are the `--env-color-avatar-bg-{hue}` tokens, a grade darker at high contrast. Initials are semibold at 0.38 of the avatar's size, and every avatar has a hairline just inside its edge, so a white figure or a light photo keeps its circle on a page of the same color.
+- A Button `variant` typed as a union of variants, such as `variant={pressed ? 'primary' : 'secondary'}` or a prop typed `'primary' | 'secondary'`, type-checks with the tones every variant in it takes, on Button, IconButton, ConfirmButton, CopyButton and the buttons built on them; a pair outside the designed ones, such as a secondary danger button, still fails. Surface, Stack and Text take a ref to the element `render` makes: their ref's element is a type parameter that the ref sets, so `useRef<HTMLElement>(null)` with `render={<section />}` and `useRef<HTMLDivElement>(null)` with `render={<div />}` on Text type-check. `SurfaceProps`, `StackProps` and `TextProps` take the element too, `SurfaceProps<HTMLElement>`, and without it their `ref` stays a ref to the default element, a div or a paragraph, so a wrapper that forwards it to that element still type-checks.
+- ConfirmDialog, an alert dialog that asks people to confirm an action whose consequence needs a sentence: a `title` that asks the question, a `description`, Cancel (`cancelLabel`, from `messages.confirmDialog.cancel`) and a confirm button named by `confirmLabel`. `tone="danger"` makes the confirm button a danger one and starts focus on Cancel; a neutral confirmation starts on the confirm button. `onConfirm` runs the action: when it returns a promise, the confirm button is pending and nothing dismisses the dialog until it resolves, and a rejection keeps the dialog open, with `error` shown as an announced danger Alert. It opens from `trigger`, or from `open` and `onOpenChange`, and `finalFocus` returns focus to the control that opened it, such as a menu's button.
+- Content components follow EnvUIProvider's locale and messages.
+  - Rating shows its number in the locale's format, such as 4,5 in German, and names its stars with `messages.rating.label`, which receives the value and the scale as text in the locale's digits; `formatLabel` still overrides it.
+  - RelativeTime takes the provider's `locale` and `messages.relativeTime.now`; its own `locale` and `nowLabel` still win.
+  - AnimatedNumber's default format is the provider's locale's number format.
+  - CalendarHeatmap names its months, weekdays and days and writes its values in the locale, from `Intl`, and its legend comes from `messages.calendarHeatmap`; its label and format props still override them. Its tooltip is the shared tooltip popup.
+  - SegmentedControl writes its counts in the locale's number format, AvatarGroup separates the names in its label as the locale lists them, and Avatar's initials take the locale's capitals, from the provider's locale or, without one, the runtime's.
+  - Rating, DiffStat, AvatarGroup and Disclosure are client components.
+
+- CopyButton takes `write`, a clipboard writer of the application's own, such as a desktop shell's bridge, used instead of the browser's Clipboard API; a promise that rejects shows and announces "Couldn’t copy". CopyButton copies through the shared copy logic that CodeBlock will use too.
+- New: `DescriptionList`, the facts about one thing as labels and their values. `DescriptionList.Root` is a `dl` with `layout` `auto` (labels beside their values, above them below 24 rem of the list's own width, the default), `inline` or `stacked`, `size` `sm` (the default) or `md`, and `controls` for values that are small controls. Each `DescriptionList.Item` is a `div` around its `label` as the `dt` and its children as the `dd`.
+- Disclosure takes `defaultOpen` and `onOpenChange(open)`, which receives whether it is open each time it opens or closes, also when find in page opens it. `open` with `onOpenChange` controls it: it shows what `open` says, also when the parent leaves `open` as it is; a native `onToggle` still passes through.
+- `DocumentTabs` gains three things:
+  - `onReorder`: a tab dragged with a mouse or pen dims in place while a copy of it follows the pointer and a line marks the gap it will drop into; letting go moves it there and <kbd>Esc</kbd> cancels. Each tab's context menu offers Move left and Move right (`messages.documentTabs.moveLeft` and `moveRight`), which the keyboard and touch reach too.
+  - `end`: content after the tabs, outside the strip that scrolls and on its hairline, such as a button that opens a document or closes them all. The hairline and height move from the strip to the new `env-document-tabs-bar` around it.
+  - Tabs that run past an edge of the strip fade out toward it, and the active tab scrolls clear of the fade.
+
+- List rows can be the current one, lead with content and be put in order.
+  - `List.Item` takes `selected`, the current row of a list beside its details, in the selected fill with `aria-current="true"` on its row target; `start`, content before the label, such as an Avatar, an icon or a Checkbox, whose checked state gives its row the selected fill; and `textValue`, the row's label as text where `label` isn't one.
+  - `List.Root` takes `onReorder(from, to)`, which gives each row a drag handle. Space or Enter on the handle lifts the row, the arrow keys, Home and End move it while the other rows make room, Space or Enter drops it and Escape puts it back; Alt+↑ and Alt+↓ on a row target move its row at once; and the handle drags the row with a pointer, scrolling the scroll area near its edges. Each step is announced from a polite live region with the row's position and the count, from the new `messages.list` strings, and focus stays on the control that moved the row. Nothing moves until the row is dropped, when the application moves the item in its own state.
+
+- New: `Page` and `PageHeader`, the page column and its heading.
+  - `Page` is the column a page's content sits in, centered at `width` `sm` (40 rem), `md` (60 rem), `lg` (76 rem, the default) or `full`, with the page gutter at its inline edges (`gutter`, from 1 to 2 rem with the viewport) and its `header` at the top. It adds no landmark, and takes `render` for its element, such as `render={<article />}`. The widths are `--env-page-width-sm`, `-md` and `-lg` on `.env-page`.
+  - `PageHeader` holds a page's `title`, at `headingLevel` 1 unless set, with `breadcrumbs` above it, `description` under it, `start` before it, `meta` beside it, `actions` at the end of its row and a `toolbar` row below. It responds to its own width: below 32 rem the actions move under the title and wrap. `controlSize` gives its buttons the `md` or `sm` size. `sticky` keeps it at the top of the page, at `--env-frame-sticky-top`, and publishes its height on its Page as `--env-page-header-block-size`, so content can stick below both.
+
+- Pattern and template pages, and the tools that serve them to agents:
+  - Pattern pages (`docs/patterns/`) and template pages (`docs/templates/`) follow the page template, with frontmatter of their own: a pattern's `intent`, the exports a page `composes`, a template's `frame` (inside the app frame, or a whole screen) and `see` in `avoidWhen` for a page to read instead. A template's screens are source in `docs/examples/<template>/<Name>.tsx`, to copy into the application and edit; they are not exports. The loading pattern moves to the new format, with live examples.
+  - `manifest.json` lists patterns with their intent, status, `composes` and examples, templates with their frame, scales and screen files, the `intents`, and each component's `usedIn`, the patterns and templates that compose it. `llms.txt` lists patterns by intent.
+  - The MCP server gains `get_pattern` and `get_template`, which returns a screen's source with where it renders. `list_patterns` takes an `intent`, `get_example` takes a pattern or template, search matches their situations and what they compose, and `plan` points at a template that matches.
+  - The `npx --no envui agents` index says where template sources are, once there are templates.
+
+- New: `EnvUIProvider`, `Toolbar`, `Field` and `CloseButton`.
+  - `EnvUIProvider` sets the `locale` envUI formats in, overrides of its built-in English strings through `messages`, per namespace, and the text direction for keyboard and placement logic through `dir`. envUI works without it. `useLocale()` returns the provider's locale, and `@envsemble/envui/messages` exports `defaultMessages`, every namespace and key with its English default. ConfirmButton, CopyButton, Dialog's close button and ThemeToggle read their strings from it; ThemeToggle takes an `aria-label` of its own too.
+  - `Toolbar.Root`, `Toolbar.Group`, `Toolbar.Separator`, `Toolbar.Button` and `Toolbar.Link`: a row or column of controls for one subject, one tab stop moved through with the arrow keys, on Base UI's Toolbar. Its buttons are icon-only, named by their label in a tooltip with their shortcut, and take `pressed` for a toggle; buttons inside take the ghost variant, though not those of a popover, menu or dialog opened from it.
+  - `Field.Root`, `Field.Label`, `Field.Control`, `Field.Description` and `Field.Error`: the parts of a labelled field for a control envUI has no field for, on Base UI's Field, with the outlined control look.
+  - `CloseButton`: the ghost icon button that closes, dismisses or removes what it sits in, named Close in the provider's language, with a touch-size hit area under a coarse pointer.
+
+- `breakpoints` (`{ sm: '40rem', md: '48rem', lg: '64rem', xl: '80rem' }`, the breakpoint tokens' values) and `breakpointQuery(breakpoint, 'up' | 'down')`, which returns the media query from a breakpoint up, such as `(width >= 48rem)`, or below it. `useMediaQuery(query, { defaultValue })` tells whether the viewport matches a media query and follows its changes, and `useBreakpoint(breakpoint, { defaultValue })` whether the viewport is at least as wide as a breakpoint. On the server and while hydrating, both return `defaultValue` (false), so hydration meets the server's markup; the browser's answer follows. A new foundations page, Responsive layout & stacking, documents them, when to use container queries instead, and the stacking tokens.
+- SearchTrigger, the button that opens search or a command palette. It reads like a search field, with the search icon, its `label` ("Search" by default, from `messages.searchTrigger.label`) and the shortcut's keys at the end, or shows only its icon with the label and keys in a tooltip (`iconOnly`, automatic in a sidebar showing icons only). Its `shortcut`, `mod+k` by default, is ⌘K on Apple platforms and Ctrl+K elsewhere: the trigger shows it, announces it with `aria-keyshortcuts` and presses itself when it is pressed anywhere in the window, so `onClick` is the one place the application opens search. With several triggers for one shortcut, the most recently mounted visible one takes it; `listen={false}` keeps a trigger from listening, and a key something else already handled, such as an editor's own, is left alone.
+- envUI works with React Server Components. Every module that keeps state, runs effects, reads context or uses Base UI, and every icon that follows a selection's fill, starts with `'use client'`; the entry points carry no directive. A server component imports from `@envsemble/envui` as before: `Menu.Item` and the other client parts arrive as client references, markup-only components such as `Card`, `Badge`, `Text`, `Button` and `Alert` render on the server, including `Button` and `IconButton` while `pending`, and `createThemeBootstrapScript`, `formatRelativeTime`, `countDiffLines` and `createRichTextExtensions` run there. The setup guide says what runs where.
+  - `NavList.Item` renders its `<li>` only as an item of `NavList.Root` or `NavList.Group`, also through the application's components, and no longer inside the application's own `<li>` or inside another item; the list styles select only the lists' own items.
+  - The package no longer ships `dist/generated`, the internal token module that no export reached.
+
+- TimePicker and MonthPicker, and time wheels in DatePicker.
+  - `TimePicker` is a field for a time of day. Its value is `HH:mm` on the 24-hour clock, and it opens wheels side by side: Hours, Minutes every `minuteStep` minutes (15 by default, from 1 to 60) and, where the locale uses a 12-hour clock, AM/PM, in the order the locale writes a time. Each wheel's middle row is its value, on its own solid fill, so the time reads as one line; hours and minutes loop endlessly, and the rows above and below are smaller and dimmer. Scrolling a wheel snaps a row to the middle and chooses it as it comes to rest, pressing a row turns it there, and each choice sets the whole time at once. `min` and `max` make the values outside them unavailable, and a minute between the steps still shows in its place. Each wheel is a spinbutton: the arrow keys step by one, wrapping around, Page Up and Page Down by five, Home and End to its ends, digits to an hour or minute and A or P to a day period, and Left and Right move between the wheels. Now and, with `clearable`, Clear sit under the wheels as on DatePicker. Its strings, the wheels' names among them, come from the new `messages.timePicker`.
+  - `MonthPicker` is a field for a month. Its value is `YYYY-MM`, shown as the month and year in the locale (`formatOptions` changes it), and it opens a year of months in four rows of three, with previous and next year buttons, this month marked and This month as a shortcut. `min` and `max` make the months outside them unavailable. The arrow keys move by month and row, on into the next or previous year, Home and End to the row's ends, Page Up and Page Down by year, and Enter or Space chooses. Its strings come from the new `messages.monthPicker`.
+  - Both share DatePicker's field: the floating label, description and error, `variant`, `size`, `clearable`, `placeholder`, `required`, `name` and `form` with form reset, `readOnly`, `disabled`, controlled or uncontrolled `value` and `open`, and `locale`.
+  - `DatePicker` with `granularity="minute"` shows TimePicker's wheels beside the calendar, under the heading `timeLabel`, in place of the time field under the calendar; on a narrow window they stack under the calendar. Turning a wheel sets the time at once, within `min` and `max`, whose values outside them are unavailable on their days. The new `minuteStep` sets the minutes between the minute wheel's rows. The calendar no longer has a Done button: like a date-only one it closes with Esc, a press outside or the field, so `doneLabel` and `messages.datePicker.done` are gone; remove them.
+
+- A Tooltip can name or describe the icon-only trigger of a menu or popover.
+  - Tooltip passes its native props and `ref` on to its control, as a Menu.Root's, Popover's, Dialog's, Drawer's or ConfirmDialog's `trigger` gives them: the press handler, `aria-haspopup`, `aria-expanded`, `aria-controls` and the ref reach the button. Wrapped around one of those five, the Tooltip goes to their `trigger`; around any other component it describes that component.
+  - While the control's menu or popover is open, the tooltip stays closed, so Esc closes the menu or popover first. When it closes and focus returns to the control, the tooltip stays closed until the pointer enters the control or a key is pressed, so one Esc is enough.
+  - Around a HoverCard, or as its `trigger`, a Tooltip shows no tooltip, and says so while developing.
+  - A Tooltip whose child is text, a Fragment or a component that doesn't pass the ref on says so while developing, where it crashed or showed nothing.
+  - `popupClassName` adds a class to the tooltip's popup, which no longer takes the Tooltip's `className`, `style`, `ref` or data attributes: they go to the control, whose own `id` wins over the Tooltip's.
+
+- New: `useContainerSize(target, { box })`, an element's inline and block size in CSS pixels along its writing mode, kept up to date by a ResizeObserver: its content box, or its border box. It is measured before the element paints, is undefined on the server, and keeps the last size while the element isn't rendered. Prefer a container query where only styles change.
+
+### Patch Changes
+
+- Checkbox and Switch follow the scale: the checkbox's box takes the medium icon size and the smallest corners, 1 rem in the compact scale, and the switch's thumb is half the small control height, so its track is 2.125 by 1.3125 rem in the compact scale. The comfortable sizes are unchanged. Their label rows are at least the 24 px minimum target in both scales, and a Checkbox without a visible label takes presses across a 24 px hit area, 44 px under a coarse pointer, with its box and layout unchanged. The check mark's padding snaps to whole pixels.
+- Fixes found while documenting the components on the page template:
+  - A `Disclosure`'s panel is indented at the inline start, so in right-to-left text it sits under the summary's chevron instead of on the left.
+
+- ConfirmDialog: Enter in a field in its content, such as a typed name, now confirms through `onConfirm` as the confirm button does, with the same pending state, run-once guard and error. The dialog's content and actions sit in a form whose submit button is the confirm button; the form lays out as if it weren't there and its submit doesn't reach a form around the dialog.
+- ConfirmDialog says in the console while developing when its children hold a `<form>`, which would nest in the dialog's own form. Its page says to use Dialog for a real form.
+- The arrow keys of SegmentedControl, Tabs, Menubar and the Markdown and rich text editors' toolbars follow the text direction in a right-to-left region without an `EnvUIProvider` `dir`, as Toolbar's do: each reads the direction at its element, from `dir` attributes and CSS, and tells Base UI. Before, they ran left to right there.
+- A controlled Disclosure no longer shows its details for a frame when the parent refuses the change: a click or key on the summary asks through `onOpenChange` and leaves the element as `open` says. An uncontrolled Disclosure keeps the native behaviour, and a link or button inside the summary still takes its own click.
+- Labels no longer break mid-word in Firefox:
+  - A `Disclosure`'s summary keeps a one-word title such as Code on one line; long words still wrap when the summary is narrower than they are.
+  - A `Toast`'s action keeps its label on one line and the message wraps beside it; only a label longer than half the toast wraps.
+
+  A `NavList` in a `Sidebar` rail hides its group labels, as the rail hides its own group headings, instead of squeezing them into the rail letter by letter.
+
+- A font-weight scale, compact counters and document tabs, and smaller fixes.
+  - The new `--env-font-weight-regular`, `--env-font-weight-medium` and `--env-font-weight-semibold` tokens (400, 500 and 600) are the font weights. The body and heading type roles and every component take their weights from them.
+  - Counter badges and diff stats are a size smaller in the compact scale, 1 rem rather than 1.25 rem, from the new `--env-counter-badge-height` token, and badges, counters and diff stats take the caption size of the scale. The DocumentTabs strip is as tall as a medium control, 2 rem in the compact scale rather than 2.5 rem.
+  - In an AvatarGroup, each avatar covers an eighth of the one before rather than a quarter, and initials center in the part of the circle the next avatar leaves uncovered, so they stay readable.
+  - The gap cursor of RichText no longer blinks under reduced motion.
+  - Card, List and RadioGroup lay out with logical properties where they still used physical ones.
+
+- The exports documented on guide and foundations pages, such as EnvUIProvider, useTheme and useContainerSize, have a status in the manifest and the MCP server: `stable`, unless the page's new `statuses` frontmatter gives one another.
+- Links keep 4.5:1 on tints, and toast labels on their hover and press fills.
+  - The new `--env-color-fg-link-on-tint` tokens, with `-hover` and `-pressed`, are the link colors for a tint, where `--env-color-fg-link` falls below 4.5:1 in the light theme: alerts, list rows under the pointer or pressed and unselected interactive table rows under the pointer or holding focus point the link tokens at them, so links and text buttons there stay readable. Links an application puts on `--env-color-bg-brand-muted` take them too.
+  - The hover and pressed fills of success and information toasts are a grade darker, so white text on them keeps 4.5:1, as on the toast itself.
+
+- The status beside RichText's suggestions mounts empty and takes its message a frame later, so assistive technology announces the first message, such as "Loading suggestions", too.
+- `useMediaQuery` and `useBreakpoint`, and with them a sidebar provider's breakpoint, no longer keep a stale answer in WebKit when the window crosses a breakpoint and comes straight back, as an iPad rotating to portrait and back to landscape does. The hook read each answer from a new MediaQueryList but listened to another one; a render between two frames read the new answer, and WebKit, which sends change events against what a list last answered, sent none as the window went back, so a sidebar its provider hid below the breakpoint stayed hidden. The hooks now read and listen to one list per query, and ask again on resize.
+- Highlighted code is readable in both app themes and under high contrast. Code blocks and code diffs keep the Pierre code themes, but each token color below 4.5:1 on code's background, or below 7:1 where the nearest Theme's contrast is high (or `system` while `prefers-contrast: more`), takes the closest color of the same hue that reaches it, with as much of its chroma as the color space allows: in the light theme the oranges, yellows, greens and cyans are darker, and in the dark theme the grey of comments and JSX text is lighter. Tokens that had different colors keep visibly different ones. Code diffs also keep their tokens readable on the lines they tint for additions and deletions, and their change counts on code's background. The colors are computed when code first loads, from whichever version of `@pierre/theme` is installed.
+- RichTextEditor's code blocks keep their lines and scroll sideways, as the document's style says: the editor no longer has Tiptap add ProseMirror's base styles in a style element outside any cascade layer, where they won; envUI's style sheet holds them in its layer, so an application's CSS overrides them too.
+- `RichTextEditor` shows a task item's checkbox beside its text, as `RichText` does, instead of on a line of its own above it.
+- In an expanded Sidebar, navigation items place their icons on the rail's centre line, which SidebarTrigger keeps too, so the icons line up with the trigger in the compact scale and under a coarse pointer, and stay in place as the sidebar collapses to a rail.
+- A `Switch` that is on keeps its thumb inside the track in right-to-left text, at the track's end on the left.
+- In a selected Table row, a link that looks like a link, a Link without its underline or a text button that is a link, is underlined: it shares the selection's text color with the row's own text, so color alone no longer tells them apart. Links styled as buttons keep their look.
+- Links and text buttons in a selected table row take the selection's text color, `--env-color-fg-on-selected`, at rest, on hover and on press, also while the row is under the pointer or holds focus. The link blue measured 4.33:1 on the selection fill in the light theme, and 4.06:1 on the hovered one. The row sets the link colors to it, so icon-only text buttons and links in rich text follow; danger text buttons keep the danger color.
+- Tooltip reads its control's name as assistive technology does, without text hidden from it, such as an `aria-hidden` arrow, and follows the name while the tooltip is open, so a control whose name and tooltip turn to "Copied" together isn't described by words that repeat its name. A disabled control's stand-in follows its control through a mutation observer instead of reading it again on every render. A hidden label that `aria-labelledby` references directly still names the control.
+- Under a coarse pointer, every pressable avatar in an AvatarGroup is a target of at least the touch height, its picture and state layer in the middle, and keeps that much uncovered, so smaller avatars sit apart. A Combobox chip's remove button keeps a hit area of the touch size also on a wrapped row of chips, which now lie that far apart, and under the label on the field's edge.
+
 ## 0.7.0 — 2026-10-15
 
 Code in the Pierre themes that Diffs (diffs.com) uses, and code diffs rendered by Diffs; centred empty states, compact tabs, diff counts, ratings and color swatches; the soft blue primary action in the dark theme. Split views are gone.
 
 ### Breaking changes
 
-- `SplitView` is removed, with its divider. Lay out a list beside its detail with an application grid and a `Surface` pane for the detail, as Console's submissions do; follow the region's width with a `ResizeObserver` where the layout changes, such as to open the detail in a `Dialog` on narrow screens.
+- `SplitView` is removed, with its divider. Lay out a list beside its detail with an application grid and a `Surface` pane for the detail; follow the region's width with a `ResizeObserver` where the layout changes, such as to open the detail in a `Dialog` on narrow screens.
 - `Code`'s `appearance` and `Markdown`'s `inlineCode` are removed, with the subtle inline code; `CodeBlock`'s `theme` is removed. Code always takes the code theme of the app theme. Migration: delete the props.
 - The content entry's optional peer `@shikijs/themes` is replaced by `@pierre/theme` (2.x): install `@pierre/theme` and remove `@shikijs/themes`.
 

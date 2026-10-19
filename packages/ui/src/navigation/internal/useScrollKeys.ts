@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 
 /** Roles of widgets that handle the scrolling keys themselves. */

@@ -12,15 +12,15 @@ export function SpacingPreview() {
         <Stack gap={3}>
           {[0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4].map((size, i) => (
             <div className="docs-measure" key={size}>
-              <code>--space-{i + 1}</code>
+              <code>--env-space-{i + 1}</code>
               <span>{size} rem</span>
-              <div className="docs-spacing-bar" style={{ width: `var(--space-${i + 1})` }} />
+              <div className="docs-spacing-bar" style={{ width: `var(--env-space-${i + 1})` }} />
             </div>
           ))}
         </Stack>
       </Example>
       <Example title="Responsive sizing">
-        <Text tone="muted">
+        <Text emphasis="muted">
           Use relative units and let content wrap. The library increases touch targets to at least
           2.75 rem for coarse pointers.
         </Text>

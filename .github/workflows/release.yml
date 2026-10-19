@@ -1,58 +1,119 @@
 name: Release
+# Merging a pull request into main publishes its version when that version isn't released yet: the
+# Verify workflow already ran every check on the pull request, so this job only validates, builds
+# and publishes. It creates a draft GitHub Release with the version's CHANGELOG section and the
+# offline catalogue, publishes the four packages under the version's dist-tag (latest, or the
+# prerelease's name, such as prerelease), then publishes the release, which creates its tag on the
+# merge commit. A failed run leaves the draft; re-running it publishes only what is still missing.
+# It runs once per merge, on the Linux runner the envsemble organization variable CI_LINUX_RUNNER
+# names.
 on:
-  push:
-    tags: ['v*']
+  pull_request:
+    branches: [main]
+    types: [closed]
 permissions:
-  contents: read
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: false
+  # Creates and publishes the release and its tag.
+  contents: write
+  # Publishes the packages to GitHub Packages.
+  packages: write
+defaults:
+  run:
+    shell: bash
 jobs:
-  validate:
-    name: Validate release
-    runs-on: ubuntu-latest
+  release:
+    name: Release
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: ${{ vars.CI_LINUX_RUNNER }}
     timeout-minutes: 20
+    # One release at a time. The group names whether the pull request merged, so a pull request
+    # closed without merging never queues among the releases or cancels one waiting its turn.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.merged }}
+      cancel-in-progress: false
+    env:
+      SHA: ${{ github.event.pull_request.merge_commit_sha }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Require the tag on main
-        run: git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "::error::Release tags must point to a commit on main."; exit 1; }
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24
-      - run: node scripts/ValidateRelease.mjs
-      - run: node scripts/ValidateRelease.mjs --release-notes
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
-      - run: npm run verify
-  publish:
-    name: Publish package and offline catalogue
-    needs: validate
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
-      packages: write
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
+          cache: npm
           registry-url: https://npm.pkg.github.com
           scope: '@envsemble'
-      - run: npm ci
-      - run: npm run build
-      - name: Publish immutable package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm publish --workspace @envsemble/envui --tag "$(node scripts/ValidateRelease.mjs --dist-tag)"
-      - name: Create matching release download
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # A version with a published release is done; a draft left by a failed run is finished. Any
+      # error other than a missing release stops the job rather than guessing. RELEASE_TAG names the
+      # tag for ValidateRelease, as GITHUB_REF_NAME can't be changed.
+      - name: Choose the version
+        id: version
         run: |
+          version=$(node -p "require('./packages/ui/package.json').version")
+          tag="v$version"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
+          if draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>"$RUNNER_TEMP/view.err"); then
+            if [ "$draft" = false ]; then
+              echo release=false >> "$GITHUB_OUTPUT"
+              echo "::notice title=Nothing to release::$tag is already released."
+            else
+              echo release=true >> "$GITHUB_OUTPUT"
+              echo draft=true >> "$GITHUB_OUTPUT"
+            fi
+          elif grep -qi 'release not found' "$RUNNER_TEMP/view.err"; then
+            echo release=true >> "$GITHUB_OUTPUT"
+          else
+            cat "$RUNNER_TEMP/view.err"
+            exit 1
+          fi
+      # The packages, the catalogue's dependency and the plugin manifests carry the version, and the
+      # CHANGELOG has a section for it.
+      - name: Validate the release
+        if: ${{ steps.version.outputs.release == 'true' }}
+        run: |
+          node scripts/ValidateRelease.mjs
           node scripts/ValidateRelease.mjs --release-notes > "$RUNNER_TEMP/release-notes.md"
-          gh release create "$GITHUB_REF_NAME" dist/envUI.html --verify-tag --title "envUI $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/ValidateRelease.mjs --release-flag)
+      - run: npm ci
+        if: ${{ steps.version.outputs.release == 'true' }}
+      - run: npm run build
+        if: ${{ steps.version.outputs.release == 'true' }}
+      - name: Draft the release
+        if: ${{ steps.version.outputs.release == 'true' }}
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          DRAFT: ${{ steps.version.outputs.draft }}
+        run: |
+          # Only a draft, left by an earlier attempt and found above, is replaced; a published
+          # release never is.
+          if [ "$DRAFT" = true ]; then
+            gh release delete "$TAG" --yes
+          fi
+          gh release create "$TAG" dist/envUI.html --draft --target "$SHA" --title "envUI $TAG" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" $(node scripts/ValidateRelease.mjs --release-flag)
+      # The library first, then the codemods and the lint packages, as in CONTRIBUTING. A version
+      # already on the registry, from an earlier attempt, is left as it is.
+      - name: Publish the packages
+        if: ${{ steps.version.outputs.release == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        run: |
+          dist_tag="$(node scripts/ValidateRelease.mjs --dist-tag)"
+          version="${RELEASE_TAG#v}"
+          for workspace in @envsemble/envui @envsemble/envui-codemods @envsemble/eslint-plugin-envui @envsemble/stylelint-config-envui; do
+            # Only a version the registry doesn't know is published; any other error stops the job.
+            if npm view "$workspace@$version" version >/dev/null 2>"$RUNNER_TEMP/view.err"; then
+              echo "$workspace@$version is already published."
+            elif grep -qE 'E404|404 Not Found|is not in this registry' "$RUNNER_TEMP/view.err"; then
+              npm publish --workspace "$workspace" --tag "$dist_tag"
+            else
+              cat "$RUNNER_TEMP/view.err"
+              exit 1
+            fi
+          done
+      - name: Publish the release
+        if: ${{ steps.version.outputs.release == 'true' }}
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: gh release edit "$TAG" --draft=false

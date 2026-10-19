@@ -1,0 +1,17 @@
+{
+  "@envsemble/envui": {
+    "Table": "Table.Root",
+    "TableProps": "Table.RootProps",
+    "TableHead": "Table.Head",
+    "TableHeadProps": "Table.HeadProps",
+    "TableBody": "Table.Body",
+    "TableBodyProps": "Table.BodyProps",
+    "TableRow": "Table.Row",
+    "TableRowProps": "Table.RowProps",
+    "TableHeaderCell": "Table.HeaderCell",
+    "TableHeaderCellProps": "Table.HeaderCellProps",
+    "TableCell": "Table.Cell",
+    "TableCellProps": "Table.CellProps",
+    "TableSortDirection": "Table.SortDirection"
+  }
+}

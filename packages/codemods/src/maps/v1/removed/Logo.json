@@ -1,0 +1,16 @@
+{
+  "@envsemble/envui": {
+    "BrandLogo": {
+      "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+    },
+    "BrandLogoProps": {
+      "use": "IconProps, for an application component that draws its artwork with Icon."
+    },
+    "EnvUILogo": {
+      "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
+    },
+    "EnvUILogoProps": {
+      "use": "IconProps, for an application component that draws its artwork with Icon."
+    }
+  }
+}

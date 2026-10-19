@@ -1,0 +1,18 @@
+/* The parts MarkdownEditor and RichTextEditor share: the formatting toolbar, which scrolls sideways
+   where it is wider than the editor, and the status line under the field, out of sight while it
+   is empty. */
+.env-editor-toolbar {
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  /* Let focus rings stay visible while keeping the buttons aligned with the field. */
+  padding: var(--env-space-2);
+  margin: calc(-1 * var(--env-space-2));
+}
+.env-editor-status:empty {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  clip-path: inset(50%);
+  overflow: hidden;
+}

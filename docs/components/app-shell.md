@@ -1,164 +1,189 @@
-# Application shell
+---
+title: AppShell
+summary: The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes.
+status: beta
+since: 0.3.0
+category: Navigation
+aliases:
+  - AppFrame
+  - app frame
+  - frame
+  - layout
+  - app layout
+  - shell
+  - topbar
+  - header
+  - app bar
+  - skip link
+  - title bar
+  - window controls overlay
+  - skip to content
+  - AppShellSkeleton
+  - loading frame
+useWhen:
+  - An application needs its frame, with a header with the page's title and actions, sidebars that collapse, and the page's content.
+  - Content needs to stick below the frame's header, or to know which element scrolls (useAppShell).
+  - The application's first load shows the frame before the data arrives.
+  - An installed web app or desktop shell with sidebars draws its own title bar over the window (`titleBar`).
+avoidWhen:
+  - text: The sidebar's own parts, its trigger and its state.
+    use: Sidebar
+  - text: A window without sidebars, such as a start page, that draws its own title bar.
+    use: WindowFrame
+  - text: The column a page's content sits in.
+    use: Page
+  - text: Items people keep open beside the page, such as drafts.
+    use: PanelDock
+related:
+  - sidebar
+  - window-frame
+  - page
+  - page-header
+  - nav-list
+  - account-menu
+components:
+  - AppShell
+  - useAppShell
+  - readAppShellCookie
+---
 
-## React usage
+# AppShell
 
-```tsx
-import { AppShell, NavigationItem, ThemeToggle } from '@envsemble/envui';
-import { Home } from '@envsemble/envui/icons/Home';
-import { Category } from '@envsemble/envui/icons/Category';
+## Overview
 
-<AppShell
-  brand={<img src={markUrl} alt="" />}
-  context={<OrganizationSwitcher />}
-  title="Products"
-  actions={
-    <>
-      <ThemeToggle />
-      <AccountMenu />
-    </>
-  }
-  navigationLabel="Main navigation"
-  navigation={
-    <>
-      <NavigationItem href="/" icon={<Home />} selected={page === 'home'}>
-        Home
-      </NavigationItem>
-      <NavigationItem href="/products" icon={<Category />} selected={page === 'products'}>
-        Products
-      </NavigationItem>
-    </>
-  }
-  storageKey="app-sidebar-collapsed"
->
-  <Page />
-</AppShell>;
+AppShell is the frame of an application, made of parts: `AppShell.Root` lays out a header, a [Sidebar](../components/sidebar.md) at the start and another at the end, the main content and an aside in a grid that follows the text direction. The Root keeps the sidebars' state, remembers it, and below its breakpoint turns the sidebars into drawers their triggers open. The application owns what goes inside: routing, the selected destination and the page.
+
+- **AppShell.Root**: the grid, the sidebars' state (`persist`, `breakpoint`, `shortcut`, `sidebarOpen`), how the frame scrolls and how its header spans.
+- **AppShell.SkipLinks**: links before everything else that move focus past the frame.
+- **AppShell.Header**: the banner, one row with start content, the title and actions.
+- **AppShell.Main**: the page's `main` landmark.
+- **AppShell.Aside**: a region beside Main for the page's supplementary content, such as an inspector.
+- **useAppShell**: the element that scrolls and where sticky content sticks, inside AppShell.Root or WindowFrame.Root.
+- **readAppShellCookie**: reads the remembered state on the server, so the first paint is already right.
+
+```tsx example=SidebarFrame
+
 ```
 
-### Props & contracts
+## Anatomy
 
-| Name                                             | Contract                                                                                                         |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| brand                                            | Mark in the sidebar toggle; the toggle icon replaces it while the sidebar area is hovered                        |
-| context                                          | Optional content beside the toggle, such as an organization switcher; in the split topbar hidden while compact   |
-| title / actions                                  | Current page name and topbar actions at the end                                                                  |
-| navigation / navigationLabel                     | NavigationItem elements and the accessible name of the sidebar                                                   |
-| storageKey                                       | Persist the collapsed preference and the sidebar width (measured, or chosen while resizable) in localStorage     |
-| loading / loadingLabel                           | Show a LoadingBar along the topbar's bottom edge, for example while the next page loads                          |
-| defaultCollapsed / collapsed / onCollapsedChange | Uncontrolled or controlled collapsed preference on wide viewports                                                |
-| dividers                                         | Separator lines between topbar, sidebar and content; true by default                                             |
-| expandLabel / collapseLabel                      | Accessible names of the toggle                                                                                   |
-| useAppShell().closeNarrowSidebar                 | Close the overlay sidebar from content                                                                           |
-| useAppShell().getScrollElement                   | The element that scrolls the page content: the content area with titleBar, else the document's scrolling element |
-| --app-sticky-top                                 | Where page content sticks: the topbar height while the document scrolls, 0 in a title-bar shell's content area   |
-| AppShellSkeleton                                 | The same frame with placeholders for the first load; pass the same storageKey and brand                          |
-| sidebarContent                                   | The application's own content below the navigation; hidden while compact                                         |
-| resizable                                        | The sidebar edge becomes a resize handle for the expanded width                                                  |
-| sidebarWidth / onSidebarWidthChange              | Controlled width in pixels; uncontrolled widths persist under storageKey                                         |
-| sidebarMinWidth / sidebarMaxWidth                | Resize bounds in pixels; 12 rem and 32 rem by default                                                            |
-| resizeLabel                                      | Accessible name of the handle; Resize sidebar by default                                                         |
-| AppShellSkeleton resizable                       | With the same storageKey and bounds, the loading frame starts at the chosen width                                |
-| topbar                                           | split (default): the context above the sidebar, beside the page part; full: one row across the window            |
-| titleBar                                         | The topbar is the window's title bar in apps that draw their own; meant for the full topbar                      |
-| AppShellSkeleton topbar / titleBar               | Match the AppShell the loading frame precedes                                                                    |
+1. **Skip links** (`AppShell.SkipLinks`): Skip to content, then Skip to each sidebar in reach.
+2. **Sidebar** (`Sidebar.Root`): at the start, and optionally at the end, with its header, content, footer and handle.
+3. **Header** (`AppShell.Header`): `start`, such as a SidebarTrigger and the mark; the title (children), which truncates first; and `end`, the actions.
+4. **Loading bar** (`loading`): page progress along the header's bottom edge, across the frame, named by `loadingLabel` (Loading page).
+5. **Main** (`AppShell.Main`): the page, usually a [Page](../components/page.md); no padding of its own.
+6. **Aside** (`AppShell.Aside`): at the end, below the header, named by `label`.
 
-### A full-width topbar as the window title bar
+## Variants and sizes
 
-```tsx
-import { AppShell, Menubar, MenubarMenu, MenuItem, Select } from '@envsemble/envui';
+| Prop                  | Values                           | Use for                                                                                                                                                 |
+| --------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `headerSpan`          | `main` (default)                 | The sidebars run the full height and the header sits beside them; a sidebar's header lines up with it, with one hairline.                               |
+|                       | `full`                           | The header runs across the window and the sidebars sit below it, such as for a menubar and a picker beside the trigger.                                 |
+| `scroll`              | `document` (default)             | The document scrolls under a sticky header; the sidebars stick.                                                                                         |
+|                       | `main`                           | The frame fills its container (`100dvh`, or `--env-app-shell-block-size`) and Main scrolls, with the keyboard scrolling it as the document.             |
+| `breakpoint`          | `sm`, `md` (default), `lg`, `xl` | Below 40, 48, 64 or 80 rem the sidebars are drawers; `md` also covers short landscape windows (32 rem tall and 54 rem wide).                            |
+| `titleBar`            | `true`                           | The header is the window's title bar, in an app that draws its own (the Window Controls Overlay); Main scrolls below it. Meant for `headerSpan="full"`. |
+| `header` `mobileOnly` | `true`                           | A phone's top bar: the header shows only below the breakpoint, with the triggers that open the drawers.                                                 |
 
-<AppShell
-  topbar="full"
-  titleBar
-  brand={<img src={markUrl} alt="" />}
-  context={
-    <>
-      <Menubar aria-label="Application menu" accessKeys>
-        <MenubarMenu label="File" accessKey="F">
-          <MenuItem shortcut="Ctrl+N" onClick={createDocument}>
-            New document
-          </MenuItem>
-        </MenubarMenu>
-      </Menubar>
-      <Select
-        aria-label="Workspace"
-        density="compact"
-        options={workspaces}
-        value={workspace}
-        onValueChange={openWorkspace}
-      />
-    </>
-  }
-  title={document.title}
-  actions={<AccountMenu />}
-  navigationLabel="Workspace navigation"
-  navigation={navigationItems}
->
-  <DocumentPage />
-</AppShell>;
+- The header is `--env-app-shell-header-height` tall (3.25 rem; 2.625 rem in the compact scale; 3.25 rem under a coarse pointer, where its controls grow to 2.75 rem). It never wraps, which is what lets the frame publish its size from CSS.
+- `dividers` (true) draws hairlines between the header, the sidebars and the content. `landmarks={false}` renders the parts without landmark roles, for a preview of a frame inside another page.
+- AppShell.Aside resizes between `minWidth` (16 rem) and `maxWidth` (40 rem) with `resizable`. A frame has an end Sidebar.Root or an AppShell.Aside, not both.
+
+## States and behaviour
+
+- **Frame variables**: the Root publishes `--env-frame-header-block-size`, the header's size (0 without one), and `--env-frame-sticky-top`, where sticky content sticks: the header's size while the document scrolls, `0px` where Main scrolls under it. Sticky content uses `inset-block-start: var(--env-frame-sticky-top)`; a full-height region uses `calc(100dvh - var(--env-frame-header-block-size))`. While the document scrolls the Root also writes the measured header size on `<html>`, for content portaled out of the frame and for the document's scroll padding, which keeps focused elements and anchor targets below the header, from the first paint of a server-rendered page on, where it follows the header that shows: none above the breakpoint for a phone's top bar (`mobileOnly`); the application's own scroll padding wins.
+- **A dock over Main**: where Main scrolls, a [PanelDock](../components/panel-dock.md) placed directly in `AppShell.Main` lies over Main's visible area, below the header and beside the sidebars, and stays put while Main scrolls; it takes no room in Main's flow. Main is then a size container as well as an inline-size one.
+- **useAppShell**: `getScrollElement()` returns Main where it scrolls, else the document's scrolling element; `getStickyTop()` returns `--env-frame-sticky-top` in pixels, to scroll an element into view below the header without measuring it; `scroll` says which.
+- **Persistence**: `persist="app.frame"` keeps each sidebar's docked preference and chosen width (in rem) in localStorage, read after hydration. `persist={{ key, storage: 'cookie' }}` keeps them in a cookie the server reads with `readAppShellCookie(cookieHeader, key)`, passed as `initialState`, so the server's markup and the first paint agree. Without `initialState` the frame reads either storage after hydration, so hydration never mismatches: a page rendered only in the browser reads it before its first paint, and a server-rendered one shows the defaults until then, so pass `initialState` there. Controlled props come first, then `initialState`, then storage, then `defaultSidebarOpen` and `defaultSidebarWidth`. Peeks, holds and drawers are never kept.
+- **Shortcut**: `shortcut="mod+b"` (⌘B on Apple platforms, Ctrl+B elsewhere) toggles the start sidebar, or its drawer below the breakpoint; it is off by default, as Mod+B is Bold in editors, and it leaves text fields and editors alone. Per side: `shortcut={{ start: 'mod+b', end: 'mod+shift+b' }}`.
+- **Below the breakpoint**: the sidebars render nothing inline, even before hydration, and their content opens in a drawer from their side; the header's title hides.
+- **Title bar**: with `titleBar` the header takes the height of the title bar area the window reports, and at least `--env-title-bar-height` (2.5 rem, 2 rem in the compact scale); empty space drags the window, its controls stay clickable and are small, with buttons that set no variant ghost, and it leaves room for the window controls through `env(titlebar-area-*)`, as [WindowFrame](../components/window-frame.md)'s title bar does. A trigger in it keeps the centre line of a rail's icons below it, and beside a title bar a sidebar's header drags the window too. The frame scrolls Main, so `--env-frame-sticky-top` is `0px`.
+- **Loading**: `loading` shows page progress along the header's bottom edge after a short delay, then completes.
+- **Loading frame**: the same parts, with [NavList.Skeleton](../components/nav-list.md) in `Sidebar.Content` and the same `persist`, stand in for the frame on the first load inside a [LoadingState](../components/skeleton.md).
+- **Motion**: the sidebars' widths animate after the first frame and never under a reduced-motion preference.
+
+## Content guidelines
+
+- Keep the header's title to the current page's name; it truncates first and hides on phones.
+- Name each sidebar by its content, such as Main navigation or Directory; the name is its landmark's, its drawer's and its skip link's.
+- Translate the strings through EnvUIProvider's `messages.appShell` where the interface is not in English.
+
+## Do and don't
+
+### Do
+
+- Render AppShell.Root once, at the root of the application, with a `LinkProvider` so navigation stays on the client.
+- Put AppShell.SkipLinks first, and a Page with a PageHeader in Main.
+- Use `storage: 'cookie'` and `readAppShellCookie` in a server-rendered application, so a collapsed sidebar doesn't flash open.
+- Read `--env-frame-sticky-top` or `getStickyTop()` rather than measuring the header.
+
+### Don't
+
+- Don't set `--env-frame-*` yourself or restyle the frame's classes; the frame sets them from its parts.
+- Don't nest frames, or put both an end Sidebar.Root and an AppShell.Aside in one.
+- Don't give Main padding; Page has it.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                                                                                                     | Action                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd> from the top of the page                                                                                 | Shows the skip links, the first tab stops; <kbd>Enter</kbd> moves focus to the region.                  |
+| The shortcut, such as <kbd>Ctrl</kbd>+<kbd>B</kbd>                                                                      | Toggles the sidebar, or opens and closes its drawer, where the frame sets one.                          |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> | With `scroll="main"` or `titleBar`, scroll Main as they would the document, unless a control uses them. |
+
+The sidebars' keys are on the [Sidebar](../components/sidebar.md) page.
+
+### envUI provides
+
+- A `header` (banner), a `nav` or `aside` per sidebar named by its `label`, a `main` and an `aside` for AppShell.Aside, with skip links to each region in reach.
+- Scroll padding that keeps focused elements below a sticky header, and Main as the focus target after a navigation in a drawer.
+- A loading bar named by `loadingLabel`, and a frame that renders the remembered state on the server without a flash.
+
+### You provide
+
+- The sidebars' labels, the page's heading inside Main, and the destinations and the selected one.
+- The labels in the application's language.
+
+## Examples
+
+### A header across the window
+
+With `headerSpan="full"` the header runs across the window with the trigger at its start, in line with a rail below it; this sidebar collapses off canvas.
+
+```tsx example=HeaderAcross
+
 ```
 
-### A title bar without the shell
+### A title bar
 
-```tsx
-import { Button, Menubar, TitleBar, WindowFrame } from '@envsemble/envui';
+With `titleBar` and `headerSpan="full"`, the header is the window's title bar: the trigger and a menubar at its start, the title and an action, all small, and the page scrolling below it.
 
-<WindowFrame
-  scrollRef={startPageScroller}
-  titleBar={
-    <TitleBar
-      start={
-        <>
-          <img src={markUrl} alt="" />
-          <Menubar aria-label="Application menu">{menus}</Menubar>
-        </>
-      }
-      end={<Button variant="secondary">Share</Button>}
-    >
-      Quarterly report
-    </TitleBar>
-  }
->
-  <StartPage />
-</WindowFrame>;
+```tsx example=TitleBarFrame
+
 ```
 
-| Name                     | Contract                                                                                         |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| TitleBar start           | Content at the inline start, such as the application mark and a Menubar                          |
-| TitleBar children        | Content centered in the window, such as the document title; it truncates when space runs short   |
-| TitleBar end             | Content at the inline end, such as actions; the window controls follow it                        |
-| TitleBar native props    | className, style, aria attributes and other header attributes                                    |
-| WindowFrame titleBar     | The title bar at the top of the window, typically a TitleBar                                     |
-| WindowFrame children     | The window's content, which scrolls below the title bar                                          |
-| WindowFrame scrollRef    | The element that scrolls the content, to read and restore scroll positions                       |
-| WindowFrame native props | className, style, ref and other div attributes of the frame                                      |
-| --title-bar-height       | 2.5 rem, 3 rem on coarse pointers: a title bar's least height, and its height outside an overlay |
+### Two sidebars
 
-## Guidelines
+A start and an end sidebar, each with its own trigger, state and rail; content adapts to the rail with `useSidebar('end').isRail`.
 
-- Expanded, the sidebar fits its widest content between 12 and 20 rem: the navigation or the context beside the toggle, or with the full topbar the navigation or the sidebar content. AppShell measures it while labels show; with storageKey, AppShellSkeleton starts at the same width.
-- Collapsed, the sidebar is one control plus its insets wide, so the toggle and the navigation icons share a center line. NavigationItems inside a collapsed sidebar show only their icons and use their text as accessible name and as a tooltip at their inline end on hover and keyboard focus.
-- A collapsed sidebar expands over the content while the pointer is over the sidebar or the area above it, while it holds keyboard focus, and while a popup opened from it, such as an organization switcher, is open. After the toggle collapses it, it stays compact until the pointer leaves. Collapsing it in any way, including an application shortcut or the collapsed prop, compacts it even while it holds focus or the pointer, which expands it again after leaving; focus in the sidebar content, which the compact sidebar hides, is released.
-- On narrow viewports (40 rem wide, or 54 rem wide and 32 rem tall) the sidebar opens over the content from the toggle and closes after navigation, on <kbd>Esc</kbd> and on the backdrop. It opens as a drawer at least 20 rem wide, or the window less 3 rem, so sidebar content such as a list of recent documents has room. The page title is hidden there.
-- AppShell is the frame: topbar, sidebar and content area. The application owns what goes inside them: routing, the selected destination, the page layout and any content below the navigation. Use LinkProvider so navigation stays on the client.
-- sidebarContent sits below the navigation, which keeps its natural height and scrolls only when it alone overflows. The content fills the remaining height, so give it block-size: 100% and its own scrolling. It shows while the sidebar is expanded, including hover expansion, and hides while compact.
-- With resizable, drag the sidebar’s inline-end edge or focus it: <kbd>←</kbd> and <kbd>→</kbd> change the width by 16 px, 48 px with <kbd>Shift</kbd>, and <kbd>Home</kbd> and <kbd>End</kbd> reach the bounds. The topbar’s context column follows. Until someone resizes it, the sidebar starts at the measured width; the chosen width then replaces it and is kept across reloads. A cancelled drag keeps the width it began with. A collapsed or narrow sidebar has no handle.
-- Without titleBar the document scrolls; with titleBar the content area scrolls below the title bar. While an AppShell without titleBar is in the document, a style rule gives the document scroll padding as tall as the topbar and 0.5 rem more, so an element that takes keyboard focus, or an anchor target such as the one in the address on load, lands below the topbar instead of under it. AppShell measures its topbar, the tallest one that shows with several shells, into --env-app-topbar-block-size on the document element, 0 px while every shell is hidden; until then, as on the first paint of a server-rendered page, --topbar-height of the document root, or 3.25 rem, applies. The rule has zero specificity and sits in the envui-document cascade layer, so scroll padding the application sets wins when it is unlayered, or in a layer declared after envui-document. A layer's place is fixed where its name first appears: an application that declares its layers before envUI's style sheet loads, such as @layer base, utilities;, names envui-document first, as in @layer envui-document, base, utilities;. Content that sticks uses position: sticky; inset-block-start: var(--app-sticky-top), which is the topbar height while the document scrolls and 0 in a title-bar shell's content area. useAppShell().getScrollElement() returns the element that scrolls the page content: read and restore scroll positions on it. When it is document.scrollingElement, the document scrolls and its scroll events fire at the window, so listen there; otherwise listen on the element. Without titleBar it returns the scrolling element of the shell's own document. In a title-bar shell it returns null until the content area is attached. The function changes once the shell is attached, so an effect that depends on it runs again: with the content area in a title-bar shell, and with the frame's scrolling element where the shell is rendered into a frame. Every copy of the function returns the current element, so one kept in a ref or by a listener registered once keeps working. --topbar-height is the topbar's height, for content that fills the rest of the window.
-- By default the topbar is split: the context sits above the sidebar, as wide as the sidebar, and a divider separates it from the page title and actions. With topbar="full", the topbar is one row across the window instead: the toggle, the context at its natural width, the title, which truncates first, and the actions at the end. It does not follow the sidebar, so nothing in it moves while the sidebar collapses, and the context stays visible while the sidebar is compact. In a narrow window the context keeps the room it needs, as the actions stay at the end; only when even that runs out does it shrink. Use it when the context holds more than an organization switcher, such as a menubar and a context picker.
-- titleBar makes the topbar the window's title bar, in installed web apps and desktop shells that draw their own title bar while the system draws the window controls over the page (the Window Controls Overlay). Such a window reports the part of its top edge that the controls leave free through the environment variables env(titlebar-area-x), env(titlebar-area-y), env(titlebar-area-width) and env(titlebar-area-height). The title bar takes that height and its hairline below, so the hairline runs under the controls too, at least --title-bar-height, and leaves room beside the controls, on whichever side they are, in addition to its own padding. In an ordinary browser window the variables are undefined, so the bar is --title-bar-height tall and spans the full width.
-- Once the page is zoomed in, the window reports a smaller height in CSS pixels while its controls keep their size, so the bar never gets shorter than --title-bar-height (2.5 rem), which holds its compact controls. An application whose overlay is taller sets --title-bar-height to match it. Where the desktop shell lets the application choose the overlay's height, the application keeps it in step with the page zoom; the controls then fill the bar above its hairline.
-- A title-bar shell fills the window, and its content area scrolls below the title bar instead of the document, so the window controls drawn over the title bar never cover a scrollbar. A stable scrollbar gutter keeps the layout in place as content starts or stops overflowing. As the document no longer scrolls, the keyboard scrolls the content area as it would the document: <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd> and <kbd>Shift</kbd>+<kbd>Space</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd> and <kbd>↓</kbd>. With focus in the content area, as after a click in the page, the browser scrolls it. The shell scrolls it for keys from the document and from controls outside it that leave the key alone, such as a sidebar item after it was chosen or a link with <kbd>Space</kbd>; as in the browser, quick presses add up and a held key keeps scrolling. Fields, widgets that use the keys, such as menus and trees, media controls, web components and other elements that hold focus out of sight, such as a field in a closed shadow root, and anything that scrolls itself keep their keys, and so does a document that still scrolls. With focus on the document, the browser scrolls the area the pointer last pressed in, if that area scrolls. The shell hears the keys on the window, after the page's elements and its document: a handler there that calls preventDefault keeps its key, as does a window listener added before the shell mounts. A window listener added later hears the key after the shell. Inside the content, position: fixed still places an element against the window: a full-window view, such as a canvas shown on its own, is a fixed element with a z-index of 30 or more, which covers the topbar and the sidebar. Draggable regions ignore stacking, though: where such a view covers the title bar, presses there still drag the window. Keep the view below the bar, from inset-block-start: var(--topbar-height), or give it app-region: no-drag.
-- The application turns the overlay on, for example with display_override and window-controls-overlay in a web app manifest, or with its desktop shell's option for a hidden title bar with overlaid window controls. envUI only reads the variables.
-- Empty space in a title bar drags the window (app-region: drag) and its text cannot be selected. Buttons, links, fields, menubars, menu items and other focusable elements stay clickable (app-region: no-drag); give any other interactive element in the bar app-region: no-drag too.
-- Controls in a title bar take the compact control height, as in a compact Surface, and the toggle shrinks to match while keeping the navigation icons' center line. Icon-only text buttons, such as back and forward arrows, take the quiet icon color of the window controls beside them instead of the link blue. --topbar-height follows the title bar's height, so the sidebar and the content area line up with it.
-- TitleBar is the same title bar without the shell, for a start page or a simple window: content at the start, centered and at the end. It is a normal block. Put it in a WindowFrame, which fills the window with the title bar on top and the content scrolling below it, with a stable gutter and the same keyboard scrolling as a title-bar shell. Avoid a sticky or fixed TitleBar above a scrolling document: the document's scrollbar would run under the window controls.
+```tsx example=TwoSidebars
 
-TypeScript declarations provide the complete public API.
+```
 
-## Related topics
+### The first load
 
-- [Navigation items](../components/navigation.md)
-- [Menus](../components/menu.md)
-- [Menubar](../components/menubar.md)
-- [Colors & themes](../foundations/colors.md)
-- [Install the private package](../setup.md)
+The same parts with NavList.Skeleton and the same `persist` key stand in for the frame in a LoadingState until the application's data arrives.
+
+```tsx example=LoadingFrame
+
+```
+
+## Changelog
+
+- **1.0.0**: AppShell is made of parts: `AppShell.Root`, `SkipLinks`, `Header`, `Main` and `Aside`, with [Sidebar](../components/sidebar.md), SidebarTrigger and useSidebar for the sidebars, per side. AppShellSkeleton is gone: the same parts with NavList.Skeleton make the loading frame. The frame publishes `--env-frame-header-block-size` and `--env-frame-sticky-top`, which replace `--env-app-topbar-block-size` and `--env-app-sticky-top`; `useAppShell().getStickyTop()` reads the second, and `closeNarrowSidebar` is `useSidebar().dismiss()`. Persistence keeps both sides in one entry, in localStorage or a cookie that `readAppShellCookie` reads on the server. The phone breakpoint moves from 40 to 48 rem. WindowFrame has a page of its own.
+- **0.5.0**: `titleBar` on AppShell and AppShellSkeleton, TitleBar and WindowFrame; `topbar="full"`, `resizable` and `sidebarContent`; a drawer sidebar on narrow windows.
+- **0.4.0**: The sidebar fits its widest content between 12 and 20 rem; `loading` shows page progress along the topbar.
+- **0.3.0**: AppShell and AppShellSkeleton.

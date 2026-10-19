@@ -3,7 +3,7 @@
 .env-message-list {
   display: grid;
   align-content: start;
-  gap: var(--space-5);
+  gap: var(--env-space-5);
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
@@ -11,11 +11,11 @@
 .env-message {
   display: grid;
   justify-items: start;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
   min-inline-size: 0;
   margin: 0;
-  color: var(--color-text-primary);
-  font: var(--type-body);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
 }
 .env-message[data-from='self'] {
   justify-items: end;
@@ -28,15 +28,15 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: var(--space-2);
-  font: var(--type-body-small);
+  column-gap: var(--env-space-2);
+  font: var(--env-type-body-small);
 }
 .env-message-author {
-  color: var(--color-text-primary);
-  font-weight: 500;
+  color: var(--env-color-fg-default);
+  font-weight: var(--env-font-weight-medium);
 }
 .env-message-meta {
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
 }
 .env-message[data-from='other'] > .env-message-content {
   inline-size: 100%;
@@ -44,16 +44,16 @@
 /* The bubble takes the row tone on the canvas; as a translucent fill it stays distinct on panes. */
 .env-message[data-from='self'] > .env-message-content {
   max-inline-size: min(100%, max(75%, 16rem));
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--md-sys-shape-corner-large);
-  background: var(--color-fill);
+  padding: var(--env-space-2) var(--env-space-4);
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-bg-neutral-muted);
 }
 /* Plain text keeps the line breaks it was written with. */
 .env-message-content[data-text] {
   white-space: pre-wrap;
 }
 .env-message[data-from='self'][data-status='failed'] > .env-message-content {
-  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--color-tone-danger) 55%, transparent);
+  box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-danger);
 }
 .env-message-content > :first-child {
   margin-block-start: 0;
@@ -62,40 +62,43 @@
   margin-block-end: 0;
 }
 .env-message-status {
+  /* The spinner takes the status's color, through its hook. */
+  --env-spinner-color: currentColor;
   display: flex;
   align-items: center;
-  gap: var(--space-1);
-  color: var(--color-text-muted);
-  font: var(--type-body-small);
-}
-.env-message-status .env-spinner {
-  color: currentColor;
+  gap: var(--env-space-1);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
 }
 .env-message[data-status='failed'] .env-message-status {
-  color: var(--color-tone-danger);
+  color: var(--env-color-fg-danger);
 }
-/* Actions are compact text and icon buttons; on coarse pointers they still take the touch size. */
+/* Actions are small text and icon buttons; on coarse pointers they grow to the touch height. */
 .env-message-actions {
-  --control-height-small: var(--control-height-compact);
-  --control-height: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
+  --env-control-height: var(--env-control-height-sm);
+  /* The height the actions draw at, which a coarse pointer raises to the touch height. */
+  --env-message-action-height: var(--env-control-height);
   justify-self: stretch;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
 }
+/* A text icon action at the edge lines its icon up with the message, not its round hit area,
+   through Button's edge hooks. */
 .env-message[data-from='self'] > .env-message-actions {
+  --env-button-text-icon-edge-end: calc(
+    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+  );
   justify-content: flex-end;
 }
-/* A text icon action at the edge lines its icon up with the message, not its round hit area. */
-.env-message[data-from='other']
-  > .env-message-actions
-  > .env-button-text.env-icon-button:first-child {
-  margin-inline-start: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
+.env-message[data-from='other'] > .env-message-actions {
+  --env-button-text-icon-edge-start: calc(
+    (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
+  );
 }
-.env-message[data-from='self']
-  > .env-message-actions
-  > .env-button-text.env-icon-button:last-child {
-  margin-inline-end: calc((var(--control-icon-size) - var(--icon-button-size)) / 2);
+@media (pointer: coarse) {
+  .env-message-actions {
+    --env-message-action-height: max(var(--env-control-height), var(--env-control-height-touch));
+  }
 }

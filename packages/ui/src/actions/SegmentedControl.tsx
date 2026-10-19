@@ -1,69 +1,116 @@
+'use client';
+
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Radio } from '@base-ui/react/radio';
 import { RadioGroup } from '@base-ui/react/radio-group';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { useDirectionScope } from '../internal/useDirection.js';
+import { useFormatters } from '../internal/useFormatters.js';
 
-export interface SegmentedControlOption {
+/** One item of a SegmentedControl. */
+export interface SegmentedControlItem {
+  /** The value onValueChange reports when this item is chosen. */
   value: string;
+  /** The item's short visible name, such as Open or Board; it names the item. */
   label: ReactNode;
-  /** A small muted number after the label, such as the items in a view. */
+  /**
+   * A small muted number after the label, such as the items in a view, in the locale's number
+   * format; it is read as part of the item's name, such as Open 12.
+   */
   count?: number;
+  /** A decorative icon before the label, at the control icon size of 1 rem. */
   icon?: ReactNode;
+  /** Show the item but don't let people choose it; the arrow keys skip it. */
   disabled?: boolean;
 }
 
-export interface SegmentedControlProps {
-  /** Two to five options. */
-  options: readonly SegmentedControlOption[];
+export interface SegmentedControlProps
+  extends Omit<
+    ComponentPropsWithRef<'div'>,
+    'children' | 'onChange' | 'defaultValue' | 'dir' | 'aria-label'
+  > {
+  /** The items, two to five, in the order they show. */
+  items: readonly SegmentedControlItem[];
+  /** The chosen item's value. The control is always controlled: update it from onValueChange. */
   value: string;
+  /** Receives the value of the item people choose, by pressing it or with the arrow keys. */
   onValueChange: (value: string) => void;
-  /** Accessible name of the group. */
+  /** The group's accessible name, such as Work items; the control has no visible label. */
   'aria-label': string;
-  /** standard (default) matches buttons; compact matches compact fields and toolbars. */
-  size?: 'standard' | 'compact';
   /**
-   * Fill the available width, split evenly between the options; a label too long for its share is
+   * The rail's height, as on every control: sm, md or lg in the current scale, so it lines up with
+   * buttons and fields of the same size. Without it, the rail takes the control height of its
+   * container, md unless the container sets another.
+   */
+  size?: ControlSize;
+  /**
+   * Fill the available width, split evenly between the items; a label too long for its share is
    * cut short with an ellipsis and shows whole in a tooltip. Without it the control is as wide as
-   * its options, and scrolls in a container too narrow for them.
+   * its items, and scrolls in a container too narrow for them.
    */
   fullWidth?: boolean;
+  /** Disable every item; the control can't be focused or changed. */
   disabled?: boolean;
-  className?: string;
 }
 
-/** One choice among a few options on a pill rail; the chosen segment takes the primary colors. */
+/**
+ * One choice among a few items on a pill rail, such as views or filters of the same content; the
+ * chosen item takes the primary colors. A radio group, with one tab stop and arrow keys.
+ */
 export function SegmentedControl({
-  options,
+  items,
   value,
   onValueChange,
   'aria-label': label,
-  size = 'standard',
+  size,
   fullWidth = false,
   disabled = false,
   className,
+  ref,
+  onFocus,
+  ...props
 }: SegmentedControlProps) {
+  // The arrow keys follow the text direction, which Base UI only knows from its own provider.
+  const scope = useDirectionScope<HTMLDivElement>(ref);
   return (
-    <RadioGroup
-      value={value}
-      onValueChange={(next) => onValueChange(next as string)}
-      disabled={disabled}
-      aria-label={label}
-      className={classNames('env-segmented-control', className)}
-      data-size={size}
-      data-full-width={fullWidth || undefined}
-    >
-      {options.map((option) => (
-        <Segment key={option.value} option={option} fullWidth={fullWidth} />
-      ))}
-    </RadioGroup>
+    <DirectionProvider direction={scope.direction}>
+      <RadioGroup
+        {...props}
+        ref={scope.ref}
+        onFocus={(event) => {
+          scope.onFocus();
+          onFocus?.(event);
+        }}
+        value={value}
+        onValueChange={(next) => onValueChange(next as string)}
+        disabled={disabled}
+        aria-label={label}
+        className={classNames('env-segmented-control', className)}
+        data-size={size}
+        data-full-width={fullWidth || undefined}
+      >
+        {items.map((item) => (
+          <Segment key={item.value} item={item} fullWidth={fullWidth} />
+        ))}
+      </RadioGroup>
+    </DirectionProvider>
   );
 }
 
-function Segment({ option, fullWidth }: { option: SegmentedControlOption; fullWidth: boolean }) {
+function Segment({ item, fullWidth }: { item: SegmentedControlItem; fullWidth: boolean }) {
   const labelRef = useRef<HTMLSpanElement>(null);
+  const formatters = useFormatters();
   // Whether a full-width segment cuts its label short, which its tooltip then shows whole.
   const [cut, setCut] = useState(false);
   useLayoutEffect(() => {
@@ -81,20 +128,22 @@ function Segment({ option, fullWidth }: { option: SegmentedControlOption; fullWi
   }, [fullWidth]);
   const segment = (
     <Radio.Root
-      value={option.value}
-      disabled={option.disabled}
+      value={item.value}
+      disabled={item.disabled}
       nativeButton
       render={<button type="button" />}
-      className="env-segment"
+      className="env-segmented-control-item"
     >
-      {option.icon != null && <DecorativeIcon>{option.icon}</DecorativeIcon>}
-      <span ref={labelRef} className="env-segment-label">
-        {option.label}
+      {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
+      <span ref={labelRef} className="env-segmented-control-item-label">
+        {item.label}
       </span>
-      {option.count !== undefined && (
+      {item.count !== undefined && (
         <>
           {' '}
-          <span className="env-segment-count">{option.count}</span>
+          <span className="env-segmented-control-item-count">
+            {formatters.number().format(item.count)}
+          </span>
         </>
       )}
     </Radio.Root>
@@ -103,7 +152,7 @@ function Segment({ option, fullWidth }: { option: SegmentedControlOption; fullWi
   return (
     <BaseTooltip.Root disabled={!cut}>
       <BaseTooltip.Trigger delay={400} render={segment} />
-      {cut && <TooltipPopup content={option.label} side="top" />}
+      {cut && <TooltipPopup content={item.label} side="top" />}
     </BaseTooltip.Root>
   );
 }

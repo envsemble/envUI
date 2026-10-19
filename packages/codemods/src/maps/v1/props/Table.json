@@ -1,0 +1,24 @@
+{
+  "@envsemble/envui": {
+    "Table.Root": {
+      "density": {
+        "current": ["xs", "sm", "md", "lg"],
+        "report": "Table's density is a row density in 1.0: xs, sm (as compact was), md (the default, as standard was) or lg.",
+        "values": {
+          "compact": {
+            "props": {
+              "density": "sm"
+            }
+          },
+          "standard": {}
+        }
+      }
+    },
+    "Table.HeaderCell": {
+      "onSort": {
+        "to": "onSortChange",
+        "report": "Table.HeaderCell's onSort is onSortChange in 1.0, called with the order pressing asks for: descending while the column is sorted ascending, else ascending. A handler without arguments keeps working."
+      }
+    }
+  }
+}

@@ -1,0 +1,157 @@
+/* Checkbox: a native checkbox drawn as a box with a check mark, inside its label. */
+.env-checkbox {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-3);
+  font: var(--env-type-body-small);
+  font-size: var(--env-font-size-body-small);
+  color: var(--env-color-fg-default);
+  cursor: pointer;
+  /* The row is at least the 24 px minimum target in both scales, with the box as drawn. */
+  min-block-size: var(--env-control-target-min);
+}
+.env-checkbox > span {
+  min-inline-size: 0;
+}
+.env-checkbox:has(input:disabled) {
+  cursor: default;
+}
+.env-checkbox:has(input:disabled) > * {
+  opacity: var(--env-state-disabled-opacity);
+}
+/* A checkbox without a visible label is no wider than its box: an invisible hit area centered on
+   it takes presses across the minimum target, and the touch target under a coarse pointer, while
+   the box and the layout around it stay as they are. */
+.env-checkbox:not(:has(> .env-checkbox-label)) {
+  --env-checkbox-target: var(--env-control-target-min);
+  position: relative;
+}
+.env-checkbox:not(:has(> .env-checkbox-label))::before {
+  content: '';
+  position: absolute;
+  inset-block: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+  inset-inline: min(0%, calc((100% - var(--env-checkbox-target)) / 2));
+}
+@media (pointer: coarse) {
+  .env-checkbox {
+    min-height: var(--env-control-height-touch);
+  }
+  .env-checkbox:not(:has(> .env-checkbox-label)) {
+    --env-checkbox-target: var(--env-control-height-touch);
+  }
+}
+
+/* Checkbox geometry is distinct from radio; input retains native semantics. The box takes the scale's
+   medium icon size and its smallest corners, so it follows the scale. */
+.env-checkbox-box {
+  --env-checkbox-size: var(--env-icon-size-md);
+  position: relative;
+  display: inline-flex;
+  width: var(--env-checkbox-size);
+  height: var(--env-checkbox-size);
+  flex: 0 0 auto;
+}
+.env-checkbox-input {
+  appearance: none;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: var(--env-control-border-width) solid var(--env-color-fg-muted);
+  border-radius: var(--env-radius-xs);
+  background: transparent;
+  cursor: inherit;
+}
+.env-checkbox-indicator.env-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Snapped to whole pixels, so the check mark sits on the pixel grid at every box size; an engine
+     without round() keeps the unsnapped padding before it. */
+  padding: calc(var(--env-checkbox-size) / 9);
+  /* stylelint-disable-next-line unit-disallowed-list -- The pixel grid is in CSS pixels. */
+  padding: round(calc(var(--env-checkbox-size) / 9), 1px);
+  color: var(--env-color-fg-on-emphasis);
+  pointer-events: none;
+  visibility: hidden;
+}
+.env-checkbox-input:is(:checked, :indeterminate) {
+  border-color: transparent;
+  background: var(--env-color-bg-brand-emphasis);
+}
+.env-checkbox-input:checked + .env-checkbox-indicator {
+  visibility: visible;
+}
+.env-checkbox-input:indeterminate + .env-checkbox-indicator {
+  visibility: visible;
+}
+.env-checkbox-input:indeterminate + .env-checkbox-indicator svg {
+  display: none;
+}
+.env-checkbox-input:indeterminate + .env-checkbox-indicator::before {
+  content: '';
+  position: absolute;
+  inset-inline: calc(var(--env-checkbox-size) / 4.5);
+  inset-block-start: calc(50% - 0.0625rem);
+  height: 0.125rem;
+  background: currentColor;
+}
+.env-checkbox-input:hover:not(:disabled) {
+  border-color: var(--env-color-fg-muted-hover);
+}
+.env-checkbox-input:active:not(:disabled) {
+  border-color: var(--env-color-fg-muted-pressed);
+}
+.env-checkbox-input:is(:checked, :indeterminate):hover:not(:disabled) {
+  background: var(--env-color-bg-brand-emphasis-hover);
+  border-color: transparent;
+}
+.env-checkbox-input:is(:checked, :indeterminate):active:not(:disabled) {
+  background: var(--env-color-bg-brand-emphasis-pressed);
+  border-color: transparent;
+}
+.env-checkbox-input:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: 0.125rem;
+}
+.env-checkbox-indicator {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .env-checkbox-box {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-checkbox:active:not(:has(input:disabled)) .env-checkbox-box {
+    transform: scale(0.9);
+  }
+  .env-checkbox-input:is(:checked, :indeterminate) + .env-checkbox-indicator {
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so checked boxes and switches take the
+   system’s selection colors, a switch draws its track and thumb in system colors, and a chosen
+   radio row is outlined; the radio itself is the system’s. */
+@media (forced-colors: active) {
+  .env-checkbox-input:is(:checked, :indeterminate) {
+    border-color: Highlight;
+    background-color: Highlight;
+  }
+  .env-checkbox-input:is(:checked, :indeterminate) + .env-checkbox-indicator {
+    color: HighlightText;
+  }
+  .env-checkbox-input:disabled {
+    border-color: GrayText;
+  }
+  .env-checkbox-input:is(:checked, :indeterminate):disabled {
+    border-color: GrayText;
+    background-color: GrayText;
+  }
+}

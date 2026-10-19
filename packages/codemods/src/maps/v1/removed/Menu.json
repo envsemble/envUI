@@ -1,0 +1,7 @@
+{
+  "@envsemble/envui": {
+    "MenuDensity": {
+      "use": "Menus have one anatomy in 1.0, and density is gone: the app's scale sizes them, so use ThemeScale for a scale and drop the density."
+    }
+  }
+}

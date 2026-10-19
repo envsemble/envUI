@@ -1,0 +1,23 @@
+{
+  "@envsemble/envui": {
+    "Spinner": {
+      "size": {
+        "current": ["sm", "md", "lg"],
+        "report": "Spinner's size is sm, md or lg in 1.0: small is sm, standard is md, the default, and large is lg.",
+        "values": {
+          "small": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {},
+          "large": {
+            "props": {
+              "size": "lg"
+            }
+          }
+        }
+      }
+    }
+  }
+}

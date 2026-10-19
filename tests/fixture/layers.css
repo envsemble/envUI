@@ -1,0 +1,15 @@
+/* An application's own style sheet, outside cascade layers, loaded after envUI's. Each rule has
+   less specificity than envUI's rule for the same element and state, and still wins. */
+.app-cta {
+  background-color: rgb(102 51 153);
+}
+.app-quiet-link {
+  color: rgb(0 100 0);
+}
+/* A region that re-themes envUI through a token. */
+.app-region {
+  --env-color-bg-brand-emphasis: rgb(0 90 90);
+}
+p {
+  margin-block: 0.75rem;
+}

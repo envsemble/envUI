@@ -6,10 +6,15 @@ const opened = new Date('2026-10-14T09:00:00Z').getTime();
 
 test.use({ locale: 'en-US', timezoneId: 'UTC' });
 
+// Every test runs on a fake clock from the same moment, so no text depends on how long a page
+// takes to load.
+test.beforeEach(async ({ page }) => {
+  await page.clock.install({ time: opened });
+});
+
 test('relative times read naturally for past and coming moments and keep up with the clock', async ({
   page,
 }) => {
-  await page.clock.install({ time: opened });
   await page.goto(fixture);
   const scope = page.getByTestId('relative-times-light');
   await expect(scope.getByTestId('hours-ago')).toBeVisible();
@@ -52,7 +57,6 @@ test('relative times read naturally for past and coming moments and keep up with
 });
 
 test('a time follows a new value with the shared clock', async ({ page }) => {
-  await page.clock.install({ time: opened });
   await page.goto(fixture);
   const scope = page.getByTestId('relative-times-light');
   const saved = scope.getByTestId('saved');
@@ -69,11 +73,17 @@ test('a time follows a new value with the shared clock', async ({ page }) => {
 test('formats, languages and the time element', async ({ page }) => {
   await page.goto(fixture);
   const scope = page.getByTestId('relative-times-light');
+  await expect(scope.getByTestId('hours-ago')).toBeVisible();
+  await page.clock.pauseAt(opened + 10_000);
   await expect(scope.getByTestId('short')).toHaveText('3 hr. ago');
   await expect(scope.getByTestId('narrow')).toHaveText('in 2d');
   await expect(scope.getByTestId('german')).toHaveText('vor 3 Stunden');
   await expect(scope.getByTestId('german-now')).toHaveText('jetzt');
   await expect(scope.getByTestId('labelled-now')).toHaveText('moments ago');
+  // EnvUIProvider's locale and now message; a time's own locale wins.
+  await expect(scope.getByTestId('provider-german')).toHaveText('vor 3 Stunden');
+  await expect(scope.getByTestId('provider-now')).toHaveText('gerade eben');
+  await expect(scope.getByTestId('provider-own')).toHaveText('3 hours ago');
   await expect(scope.getByTestId('formatted')).toHaveText('in 3 hr.');
   // The element carries the exact moment; an invalid moment renders nothing.
   const fixed = scope.getByTestId('fixed');
@@ -85,13 +95,14 @@ test('formats, languages and the time element', async ({ page }) => {
 });
 
 test('the tooltip shows the date and time on hover, in the theme of the page', async ({ page }) => {
+  await page.clock.install();
   await page.goto(fixture);
   const tooltip = page.locator('.env-tooltip');
   for (const theme of ['light', 'dark']) {
     const scope = page.getByTestId(`relative-times-${theme}`);
     await scope.getByTestId('fixed').hover();
     await expect(tooltip).toHaveText('Oct 16, 2026, 12:00 PM');
-    await expect(page.locator('.env-tooltip-theme')).toHaveAttribute('data-env-theme', theme);
+    await expect(page.locator('.env-popup-theme')).toHaveAttribute('data-env-theme', theme);
     await page.keyboard.press('Escape');
     await expect(tooltip).toHaveCount(0);
     await page.mouse.move(0, 0);
@@ -103,7 +114,7 @@ test('the tooltip shows the date and time on hover, in the theme of the page', a
   await expect(tooltip).toHaveCount(0);
   // Without a tooltip nothing opens; the time is never a tab stop.
   await scope.getByTestId('no-tooltip').hover();
-  await page.waitForTimeout(600);
+  await page.clock.runFor(600);
   await expect(tooltip).toHaveCount(0);
   const focusable = await scope.getByTestId('fixed').evaluate((time) => {
     time.focus();

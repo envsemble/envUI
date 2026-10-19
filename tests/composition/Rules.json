@@ -1,0 +1,488 @@
+{
+  "$comment": "The architecture tests/Composition.test.mjs enforces. Paths are relative to packages/ui/src; stylesheets are relative to packages/ui/src/styles.",
+  "layers": {
+    "$comment": "Imports go down this list or stay in their layer. A module's layer is its exact entry under modules, else the longest matching entry under directories. Every component module is listed: base for a control that renders no other component, composites for one that does, so a base control cannot import a composite.",
+    "order": ["internal", "foundations", "base", "composites", "shell", "entries"],
+    "directories": {
+      "internal/": "internal",
+      "foundations/": "foundations",
+      "foundations/messages/": "internal",
+      "icons/": "foundations",
+      "generated/": "foundations",
+      "actions/": "base",
+      "content/": "base",
+      "feedback/": "base",
+      "forms/": "base",
+      "navigation/": "base",
+      "navigation/app-shell/": "shell",
+      "navigation/sidebar/": "shell",
+      "layout/": "composites",
+      "forms/internal/markdown/": "composites",
+      "navigation/panel-dock/": "shell",
+      "diff/": "composites",
+      "rich-text/": "composites"
+    },
+    "modules": {
+      "index.ts": "entries",
+      "content.ts": "entries",
+      "diff.ts": "entries",
+      "rich-text.ts": "entries",
+      "theme-bootstrap.ts": "entries",
+      "icons/index.ts": "entries",
+      "Icon.tsx": "foundations",
+      "MaterialSymbolState.tsx": "foundations",
+      "navigation/LinkProvider.tsx": "foundations",
+      "foundations/ThemePreference.tsx": "composites",
+      "foundations/ThemeRadioGroup.tsx": "composites",
+      "navigation/WindowFrame.tsx": "shell",
+      "navigation/internal/PanelDockContext.ts": "shell",
+      "actions/AvatarButton.tsx": "composites",
+      "actions/Button.tsx": "composites",
+      "actions/ButtonGroup.tsx": "base",
+      "actions/CloseButton.tsx": "composites",
+      "actions/ConfirmButton.tsx": "composites",
+      "actions/CopyButton.tsx": "composites",
+      "actions/SearchTrigger.tsx": "composites",
+      "actions/Link.tsx": "composites",
+      "actions/SegmentedControl.tsx": "base",
+      "actions/Toolbar.tsx": "composites",
+      "content/AnimatedNumber.tsx": "base",
+      "content/Avatar.tsx": "base",
+      "content/AvatarGroup.tsx": "composites",
+      "content/Badge.tsx": "base",
+      "content/CalendarHeatmap.tsx": "composites",
+      "content/Card.tsx": "base",
+      "content/Code.tsx": "base",
+      "content/CodeBlock.tsx": "composites",
+      "content/ColorSwatch.tsx": "base",
+      "content/CounterBadge.tsx": "base",
+      "content/DescriptionList.tsx": "base",
+      "content/DiffStat.tsx": "base",
+      "content/Disclosure.tsx": "base",
+      "content/Kbd.tsx": "base",
+      "content/List.tsx": "composites",
+      "content/internal/ListBehavior.tsx": "composites",
+      "content/Markdown.tsx": "composites",
+      "content/Message.tsx": "composites",
+      "content/Rating.tsx": "base",
+      "content/RelativeTime.tsx": "composites",
+      "content/Stat.tsx": "base",
+      "content/Table.tsx": "base",
+      "content/formatRelativeTime.ts": "base",
+      "feedback/Alert.tsx": "composites",
+      "feedback/CommandPalette.tsx": "composites",
+      "feedback/ConfirmDialog.tsx": "composites",
+      "feedback/Dialog.tsx": "composites",
+      "feedback/Drawer.tsx": "composites",
+      "feedback/EmptyState.tsx": "base",
+      "feedback/HoverCard.tsx": "base",
+      "feedback/LoadingState.tsx": "base",
+      "feedback/Meter.tsx": "base",
+      "feedback/Progress.tsx": "base",
+      "feedback/Popover.tsx": "base",
+      "feedback/Skeleton.tsx": "base",
+      "feedback/Spinner.tsx": "base",
+      "feedback/Tooltip.tsx": "base",
+      "feedback/internal/AlertDismiss.tsx": "composites",
+      "feedback/toast/ToastBody.tsx": "composites",
+      "feedback/toast/ToastInternals.ts": "composites",
+      "feedback/toast/ToastProvider.tsx": "composites",
+      "feedback/toast/ToastRegion.tsx": "composites",
+      "feedback/toast/ToastTypes.ts": "composites",
+      "feedback/toast/useToast.ts": "composites",
+      "feedback/toast/useToastController.ts": "composites",
+      "forms/Calendar.tsx": "composites",
+      "forms/Checkbox.tsx": "base",
+      "forms/ColorPicker.tsx": "composites",
+      "forms/Combobox.tsx": "composites",
+      "forms/Composer.tsx": "composites",
+      "forms/DatePicker.tsx": "composites",
+      "forms/TimePicker.tsx": "composites",
+      "forms/MonthPicker.tsx": "composites",
+      "forms/internal/PickerField.tsx": "composites",
+      "forms/internal/MonthGrid.tsx": "composites",
+      "forms/DropZone.tsx": "composites",
+      "forms/Field.tsx": "base",
+      "forms/MarkdownEditor.tsx": "composites",
+      "forms/internal/EditorToolbar.tsx": "composites",
+      "forms/internal/LinkDialog.tsx": "composites",
+      "forms/Radio.tsx": "base",
+      "forms/SearchField.tsx": "composites",
+      "forms/Select.tsx": "composites",
+      "forms/Slider.tsx": "base",
+      "forms/Switch.tsx": "base",
+      "forms/TextField.tsx": "base",
+      "forms/Textarea.tsx": "base",
+      "navigation/AccountMenu.tsx": "composites",
+      "navigation/Breadcrumbs.tsx": "composites",
+      "navigation/ContextMenu.tsx": "base",
+      "navigation/DocumentTabs.tsx": "composites",
+      "navigation/Menu.tsx": "composites",
+      "navigation/Menubar.tsx": "base",
+      "navigation/NavList.tsx": "base",
+      "navigation/OrganizationSwitcher.tsx": "composites",
+      "navigation/internal/OrganizationOptions.tsx": "composites",
+      "navigation/Pager.tsx": "base",
+      "navigation/Pagination.tsx": "composites",
+      "navigation/Tabs.tsx": "composites",
+      "navigation/Tree.tsx": "composites",
+      "internal/PopupSurface.tsx": "foundations",
+      "messages.ts": "entries"
+    },
+    "private": {
+      "$comment": "Modules in these directories are private to the listed modules, besides each other.",
+      "forms/internal/markdown/": ["forms/MarkdownEditor.tsx"]
+    }
+  },
+  "planned": {
+    "$comment": "Modules the rules above already name but that don't exist yet, so that work adding them in parallel needs no edit here. A planned module counts as present: it gives its directory a module and its component its stylesheet of the same name, and its component's classes may go unused until it exists. Once every planned module exists, empty this list.",
+    "modules": []
+  },
+  "interactive": {
+    "$comment": "Raw interactive HTML. An <input type=\"hidden\"> and an element that is both aria-hidden and out of the tab order are not interactive. Widget roles count as interactive too; Tree, Calendar and CalendarHeatmap implement patterns no Base UI part covers, so they are the leaf controls for theirs.",
+    "elements": ["button", "a", "input", "textarea", "select"],
+    "roles": [
+      "button",
+      "link",
+      "checkbox",
+      "radio",
+      "switch",
+      "slider",
+      "combobox",
+      "listbox",
+      "option",
+      "menu",
+      "menuitem",
+      "menuitemcheckbox",
+      "menuitemradio",
+      "tab",
+      "tablist",
+      "tree",
+      "treeitem",
+      "grid",
+      "gridcell"
+    ],
+    "leafControls": {
+      "internal/ActionElement.tsx": ["a", "button"],
+      "forms/TextField.tsx": ["input"],
+      "forms/internal/TextareaControl.tsx": ["textarea"],
+      "forms/Checkbox.tsx": ["input"],
+      "forms/Radio.tsx": ["input"],
+      "forms/Switch.tsx": ["input"],
+      "actions/SegmentedControl.tsx": ["button"],
+      "navigation/Tree.tsx": ["role=\"tree\"", "role=\"treeitem\""],
+      "forms/Calendar.tsx": ["role=\"grid\""],
+      "forms/internal/MonthGrid.tsx": ["role=\"grid\""],
+      "content/CalendarHeatmap.tsx": ["role=\"grid\"", "role=\"gridcell\""],
+      "internal/FileInput.tsx": ["input"],
+      "internal/Listbox.tsx": ["role=\"listbox\"", "role=\"option\""],
+      "forms/internal/ColorPlane.tsx": ["role=\"slider\""],
+      "feedback/Tooltip.tsx": [
+        "role=\"button\"",
+        "role=\"link\"",
+        "role=\"tab\"",
+        "role=\"menuitem\""
+      ]
+    },
+    "dynamicRoles": {
+      "$comment": "The roles a role attribute the source doesn't spell out can take, per module and per expression by its source text, such as role={role}: the check counts each, so an interactive one needs a leaf-control entry above. A role={…} whose module and expression aren't listed here is a finding of its own.",
+      "feedback/Alert.tsx": { "role": ["status", "alert"] },
+      "actions/ButtonGroup.tsx": { "role": ["group", "toolbar"] },
+      "feedback/Tooltip.tsx": { "stand.role": ["button", "link", "tab", "menuitem"] }
+    }
+  },
+  "classes": {
+    "$comment": "Every module is a component named after its file, owning the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
+    "shared": {
+      "env-theme": "The theme boundary, which every popup and provider sets.",
+      "env-text": "The text style helper.",
+      "env-surface": "The surface helper, which components render through Surface.",
+      "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
+      "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
+      "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
+      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document."
+    },
+    "components": {
+      "Button": {
+        "classes": ["env-icon-button"]
+      },
+      "AvatarButton": {
+        "styles": ["Button.css"]
+      },
+      "ConfirmButton": {
+        "styles": ["Button.css"]
+      },
+      "Link": {
+        "styles": ["Button.css"]
+      },
+      "AnimatedNumber": {
+        "styles": ["Text.css"]
+      },
+      "Badge": {
+        "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"]
+      },
+      "Code": {
+        "modules": [
+          "content/CodeBlock.tsx",
+          "diff/CodeDiff.tsx",
+          "diff/countDiffLines.ts",
+          "content/internal/CodeThemes.ts",
+          "content/internal/CodeDiffTints.ts",
+          "content/internal/ReadableColors.ts",
+          "content/internal/CodeHighlighting.ts",
+          "content/internal/useCodeHighlighting.ts"
+        ]
+      },
+      "Alert": {
+        "modules": ["feedback/internal/AlertDismiss.tsx"]
+      },
+      "SplitPane": {
+        "modules": ["layout/internal/StackStyle.tsx"]
+      },
+      "List": {
+        "modules": ["content/internal/ListBehavior.tsx"]
+      },
+      "Dialog": {
+        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"]
+      },
+      "Progress": {
+        "styles": ["Meter.css"]
+      },
+      "HoverCard": {
+        "styles": ["Popover.css"]
+      },
+      "Tooltip": {
+        "modules": ["feedback/internal/TooltipPopup.tsx"],
+        "slots": ["env-tooltip-disabled-target"]
+      },
+      "Toast": {
+        "classes": ["env-toast"],
+        "styles": ["Toast.css"],
+        "modules": [
+          "feedback/toast/ToastBody.tsx",
+          "feedback/toast/ToastInternals.ts",
+          "feedback/toast/ToastProvider.tsx",
+          "feedback/toast/ToastRegion.tsx",
+          "feedback/toast/ToastTypes.ts",
+          "feedback/toast/useToast.ts",
+          "feedback/toast/useToastController.ts"
+        ]
+      },
+      "ChoiceControl": {
+        "modules": [
+          "forms/Checkbox.tsx",
+          "forms/Radio.tsx",
+          "forms/Switch.tsx",
+          "forms/internal/useCheckedInput.ts"
+        ],
+        "styles": ["Checkbox.css", "Switch.css", "Radio.css"]
+      },
+      "Field": {
+        "modules": [
+          "forms/internal/FieldFrame.tsx",
+          "forms/TextField.tsx",
+          "forms/Textarea.tsx",
+          "forms/internal/TextareaControl.tsx",
+          "forms/internal/TextareaResizeEdge.tsx"
+        ],
+        "classes": ["env-text-field"],
+        "styles": ["TextField.css"],
+        "slots": ["env-text-field-input", "env-text-field-start", "env-text-field-end"]
+      },
+      "MarkdownEditor": {
+        "modules": [
+          "forms/internal/markdown/MarkdownFormatting.ts",
+          "forms/internal/markdown/MarkdownHistory.ts",
+          "forms/internal/markdown/MarkdownPreview.tsx",
+          "forms/internal/markdown/useMarkdownEditing.ts"
+        ],
+        "classes": ["env-markdown-source"]
+      },
+      "Editor": {
+        "modules": [
+          "forms/internal/EditorCommands.ts",
+          "forms/internal/EditorToolbar.tsx",
+          "forms/internal/EditorStatus.tsx",
+          "forms/internal/LinkDialog.tsx"
+        ],
+        "styles": ["Editor.css"]
+      },
+      "Layout": {
+        "classes": ["env-stack"]
+      },
+      "Theme": {
+        "modules": ["foundations/ThemeBootstrap.ts"],
+        "styles": ["Tokens.css", "TokensHandwritten.css"]
+      },
+      "ThemePreference": {
+        "classes": ["env-theme-toggle"],
+        "styles": ["ThemeToggle.css"],
+        "modules": ["foundations/ThemePreferenceContext.ts"]
+      },
+      "AppShell": {
+        "classes": ["env-app-shell"],
+        "styles": ["AppShellBase.css"],
+        "modules": [
+          "navigation/app-shell/FrameStore.ts",
+          "navigation/app-shell/persistence.ts",
+          "navigation/app-shell/useAppShell.ts",
+          "navigation/app-shell/FrameScroll.ts",
+          "navigation/app-shell/useFrameMetrics.ts"
+        ]
+      },
+      "Sidebar": {
+        "classes": ["env-sidebar"],
+        "modules": [
+          "navigation/sidebar/SidebarRegion.tsx",
+          "navigation/sidebar/SidebarDrawer.tsx",
+          "navigation/sidebar/SidebarTrigger.tsx",
+          "navigation/sidebar/useSidebar.ts",
+          "navigation/sidebar/SidebarScope.ts",
+          "navigation/sidebar/usePeek.ts"
+        ]
+      },
+      "Breadcrumbs": {},
+      "DocumentTabs": {},
+      "NavList": {},
+      "Menu": {
+        "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
+      },
+      "OrganizationSwitcher": {
+        "styles": ["Menu.css"],
+        "modules": ["navigation/internal/OrganizationOptions.tsx"]
+      },
+      "PanelDock": {
+        "modules": [
+          "navigation/panel-dock/Root.tsx",
+          "navigation/panel-dock/PanelFrame.tsx",
+          "navigation/panel-dock/Header.tsx",
+          "navigation/panel-dock/PanelTab.tsx",
+          "navigation/panel-dock/dockLayout.ts",
+          "navigation/panel-dock/useEntrance.ts",
+          "navigation/internal/PanelDockContext.ts"
+        ]
+      },
+      "Tabs": {},
+      "WindowFrame": {
+        "modules": ["navigation/internal/TitleBarFrame.tsx"]
+      },
+      "RichText": {
+        "modules": [
+          "rich-text/RichTextEditor.tsx",
+          "rich-text/Reference.tsx",
+          "rich-text/ReferenceAttributes.ts",
+          "rich-text/ReferenceExtension.ts",
+          "rich-text/Suggestions.tsx",
+          "rich-text/TaskItem.tsx",
+          "rich-text/Commands.ts",
+          "rich-text/Extensions.ts",
+          "rich-text/Types.ts"
+        ]
+      },
+      "PopupSurface": {
+        "classes": ["env-popup"],
+        "styles": ["Popup.css"]
+      },
+      "CloseButton": {
+        "styles": ["Button.css"]
+      },
+      "ColorPicker": {
+        "modules": ["forms/internal/ColorPlane.tsx"]
+      },
+      "DatePicker": {
+        "modules": [
+          "forms/internal/PickerField.tsx",
+          "forms/internal/TimeList.tsx",
+          "forms/internal/MonthGrid.tsx",
+          "forms/TimePicker.tsx",
+          "forms/MonthPicker.tsx"
+        ]
+      }
+    },
+    "stylesheetsWithoutComponent": {
+      "index.css": "Imports every stylesheet.",
+      "ConnectedRows.css": "Shared connected-row corners.",
+      "Prose.css": "The prose typography Markdown and the rich-text components share.",
+      "Motion.css": "The keyframes several components share.",
+      "Reset.css": "The box-sizing reset inside every theme boundary."
+    },
+    "childRules": {
+      "$comment": "A container may lay out a child that belongs to another component: place, size and space it, never restyle it. Each rule lets one stylesheet's selectors name a child's classes, as long as they declare only layoutProperties and the rule's own properties.",
+      "layoutProperties": [
+        "display",
+        "position",
+        "inset",
+        "inset-*",
+        "top",
+        "right",
+        "bottom",
+        "left",
+        "margin",
+        "margin-*",
+        "padding",
+        "padding-*",
+        "inline-size",
+        "block-size",
+        "min-inline-size",
+        "max-inline-size",
+        "min-block-size",
+        "max-block-size",
+        "width",
+        "height",
+        "min-width",
+        "max-width",
+        "min-height",
+        "max-height",
+        "flex",
+        "flex-*",
+        "grid-*",
+        "order",
+        "align-self",
+        "justify-self",
+        "place-self"
+      ],
+      "rules": [
+        {
+          "stylesheet": "ButtonGroup.css",
+          "classes": ["env-button", "env-icon-button"],
+          "properties": ["border-radius", "border-*-radius", "outline-offset"],
+          "note": "ButtonGroup joins its buttons into one control: it sizes them, squares their inner corners and insets their focus rings."
+        },
+        {
+          "stylesheet": "TextField.css",
+          "classes": ["env-icon-button"],
+          "properties": ["content"],
+          "note": "Under a coarse pointer a field's end actions keep their size, and an empty pseudo-element reaches their hit area to the touch height within the field."
+        },
+        {
+          "stylesheet": "Code.css",
+          "classes": ["env-loading-state", "env-empty-state"],
+          "note": "A code diff pads its loading and empty states."
+        },
+        {
+          "stylesheet": "Composer.css",
+          "classes": ["env-icon-button"],
+          "note": "A leading icon button lines its icon up with the composer's inset."
+        },
+        {
+          "stylesheet": "Combobox.css",
+          "classes": ["env-avatar"],
+          "properties": ["--env-avatar-size"],
+          "note": "An avatar in a combobox's leading slot takes the slot's size."
+        },
+        {
+          "stylesheet": "Markdown.css",
+          "classes": ["env-checkbox"],
+          "properties": ["vertical-align"],
+          "note": "A task list item lines its checkbox up with the item's text."
+        },
+        {
+          "stylesheet": "AppShell.css",
+          "classes": ["env-panel-dock"],
+          "properties": ["container-type"],
+          "note": "A Main that scrolls places a PanelDock directly in it across its scrollport, so the dock stays over Main's visible area while Main scrolls; Main, its own element, becomes a size container only while it holds a dock."
+        }
+      ]
+    }
+  }
+}

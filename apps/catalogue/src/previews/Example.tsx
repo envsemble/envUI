@@ -21,20 +21,20 @@ export function Example({
 }) {
   return (
     <Stack
-      as="section"
+      render={<section />}
       gap={gap}
       data-size={size}
       className={['docs-example', className].filter(Boolean).join(' ')}
     >
       {title && actions ? (
         <div className="docs-example-heading">
-          <Text as="h2" variant="page-heading">
+          <Text render={<h2 />} variant="headline">
             {title}
           </Text>
           {actions}
         </div>
       ) : title ? (
-        <Text as="h2" variant="page-heading">
+        <Text render={<h2 />} variant="headline">
           {title}
         </Text>
       ) : null}
@@ -73,8 +73,8 @@ export function Specimen({
   caption?: ReactNode;
 }) {
   return (
-    <Stack as="section" gap={3} className="docs-specimen">
-      <Text as="h3" variant="section-heading">
+    <Stack render={<section />} gap={3} className="docs-specimen">
+      <Text render={<h3 />} variant="title">
         {title}
       </Text>
       {children}

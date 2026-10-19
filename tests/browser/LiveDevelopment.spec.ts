@@ -9,25 +9,24 @@ test('public component, stylesheet, new export and Markdown documentation update
   const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
-  const preview = resolve('apps/catalogue/src/previews/Forms.tsx');
-  const documentation = resolve('docs/components/fields.md');
+  const example = resolve('apps/catalogue/src/examples/text-field/Variants.tsx');
+  const documentation = resolve('docs/components/text-field.md');
   const newComponent = resolve('packages/ui/src/LiveAcceptance.tsx');
-  const paths = [buttonSource, stylesheet, index, preview, documentation];
+  const paths = [buttonSource, stylesheet, index, example, documentation];
   const originals = await Promise.all(paths.map((path) => readFile(path, 'utf8')));
   const version = await readFile('packages/ui/package.json', 'utf8');
   try {
-    await page.goto(`${catalogueUrl}/#/components/fields/preview`);
+    await page.goto(`${catalogueUrl}/#/components/text-field/overview`);
     await page.evaluate(() => {
       (window as unknown as { liveProof: string }).liveProof = 'same-document';
     });
-    await page
-      .locator('.docs-preview')
-      .first()
-      .locator('.docs-example')
-      .first()
+    // The overview's first example holds a draft that hot updates must keep.
+    const projectName = page
+      .getByRole('group', { name: 'TextField example', exact: true })
       .getByRole('textbox', { name: 'Project name', exact: true })
-      .and(page.locator('[name="project"]'))
-      .fill('Preserved draft');
+      .and(page.locator('[name="project"]'));
+    await projectName.fill('Preserved draft');
+    const overviewTab = page.getByRole('tab', { name: 'Overview', exact: true });
     await writeFile(
       buttonSource,
       originals[0].replace(
@@ -35,24 +34,10 @@ test('public component, stylesheet, new export and Markdown documentation update
         '<ActionElement$1{...props} data-env-live="updated"',
       ),
     );
-    await expect(page.getByRole('tab', { name: 'Preview', exact: true })).toHaveAttribute(
-      'data-env-live',
-      'updated',
-    );
+    await expect(overviewTab).toHaveAttribute('data-env-live', 'updated');
     await writeFile(stylesheet, `${originals[1]}\n.env-button { padding-inline-start: 1.5rem; }\n`);
-    await expect(page.getByRole('tab', { name: 'Preview', exact: true })).toHaveCSS(
-      'padding-left',
-      '24px',
-    );
-    await expect(
-      page
-        .locator('.docs-preview')
-        .last()
-        .locator('.docs-example')
-        .first()
-        .getByRole('textbox', { name: 'Project name', exact: true })
-        .and(page.locator('[name="project"]')),
-    ).toHaveValue('Preserved draft');
+    await expect(overviewTab).toHaveCSS('padding-left', '24px');
+    await expect(projectName).toHaveValue('Preserved draft');
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',
     );
@@ -65,16 +50,27 @@ test('public component, stylesheet, new export and Markdown documentation update
       index,
       `${originals[2]}\nexport { LiveAcceptance } from './LiveAcceptance.js';\n`,
     );
-    await writeFile(
-      preview,
+    // An example file uses the new export as an application would.
+    const editedExample =
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
-        originals[3].replace('<InputExamples />', '<LiveAcceptance /><InputExamples />'),
+      originals[3].replace(/(<Stack[^>]*>)/, '$1<LiveAcceptance />');
+    expect(editedExample).toContain('<LiveAcceptance />');
+    await writeFile(example, editedExample);
+    await expect(
+      page
+        .getByRole('group', { name: 'Appearances example', exact: true })
+        .getByTestId('live-new-component'),
+    ).toHaveText('New shared component');
+    // A guideline added to the Markdown shows in its view.
+    const editedDocumentation = originals[4].replace(
+      /## Content guidelines\r?\n/,
+      '$&\nLive documentation acceptance.\n',
     );
-    await expect(page.getByTestId('live-new-component')).toHaveText('New shared component');
-    await writeFile(documentation, `${originals[4]}\nLive documentation acceptance.\n`);
+    expect(editedDocumentation).toContain('Live documentation acceptance.');
+    await writeFile(documentation, editedDocumentation);
     await page
       .locator('.docs-page-header')
-      .getByRole('tab', { name: 'Usage', exact: true })
+      .getByRole('tab', { name: 'Guidelines', exact: true })
       .click();
     await expect(page.getByText('Live documentation acceptance.', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(

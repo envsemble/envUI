@@ -1,0 +1,5 @@
+{
+  "env-organization-menu-radio": {
+    "report": "OrganizationSwitcher marks the current organization with Menu's check now: style .env-menu-item-check for the radio and .env-menu-item-check-mark for its dot."
+  }
+}

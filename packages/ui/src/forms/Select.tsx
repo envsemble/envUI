@@ -1,19 +1,33 @@
-import { forwardRef, useEffect, useRef, useState } from 'react';
-import { useFieldMetadata } from './internal/useFieldMetadata.js';
-import type { ButtonHTMLAttributes } from 'react';
+'use client';
+
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ButtonHTMLAttributes,
+  type ComponentProps,
+  type CSSProperties,
+  type Ref,
+} from 'react';
 import { Select as BaseSelect } from '@base-ui/react/select';
-import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
-import { Surface } from '../foundations/Surface.js';
+import { useFieldMetadata } from './internal/useFieldMetadata.js';
+import { type ControlSize } from '../foundations/Theme.js';
+import { Button } from '../actions/Button.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Check } from '../icons/Check.js';
 import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
+import { PopupSurface } from '../internal/PopupSurface.js';
+import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
-export interface SelectOption {
+/** One option of a Select. */
+export interface SelectItem {
+  /** The value the select reports and a form submits when this option is chosen. */
   value: string;
+  /** The option's name in the list and, once chosen, on the trigger; typing it jumps to the option. */
   label: string;
+  /** Show the option but don't let people choose it; the keyboard can still highlight it. */
   disabled?: boolean;
 }
 export interface SelectProps
@@ -22,56 +36,94 @@ export interface SelectProps
       'value' | 'defaultValue' | 'onChange' | 'children' | 'name' | 'type'
     >,
     FieldProps {
-  options: readonly SelectOption[];
+  /** The trigger, the button that shows the chosen option and opens the list. */
+  ref?: Ref<HTMLButtonElement>;
+  /** The field's class, on its root element, beside env-field and env-select. */
+  className?: string;
+  /** Styles of the field's root element. */
+  style?: CSSProperties;
+  /** The options of the list, in order, each with a value, a label and whether it is disabled. */
+  items: readonly SelectItem[];
+  /**
+   * The chosen option's value in a controlled select, or null for none, which shows the
+   * placeholder; update it from onValueChange.
+   */
   value?: string | null;
+  /**
+   * The chosen option's value an uncontrolled select starts with; a native form reset returns to it.
+   * Without it, nothing is chosen and the trigger shows the placeholder.
+   */
   defaultValue?: string | null;
+  /** Receives the value of the option people choose. */
   onValueChange?: (value: string | null) => void;
+  /** Submits the chosen option's value with a form under this name, through a hidden input. */
   name?: string;
+  /**
+   * Require a choice before the form submits: the browser refuses the form and moves focus to the
+   * trigger while nothing is chosen.
+   */
   required?: boolean;
+  /** What the trigger shows while nothing is chosen, such as Choose an owner. */
   placeholder?: string;
+  /** A hint for the browser's autofill, such as country, set on the hidden input. */
   autoComplete?: string;
   /**
-   * The trigger's Button style, to suit its surroundings: secondary (default) for the page canvas,
-   * outlined for panes, dialogs, rows and toolbars.
+   * The trigger's Button variant, to suit its surroundings: secondary, a filled pill, for the page;
+   * or outline, a bordered pill, for panes, dialogs, rows and toolbars, where a fill would blend
+   * with the surface.
+   * @default 'secondary'
    */
-  variant?: 'secondary' | 'outlined';
+  variant?: 'secondary' | 'outline';
   /**
-   * compact suits dense desktop surfaces: a compact trigger and the compact menu's popup, where a
-   * check mark shows the selected option.
+   * The trigger's height, as on every control: sm, md or lg in the current scale. Without it, the
+   * trigger takes the control height of its container, md unless the container sets another. The
+   * popup's rows take the row height of the scale.
    */
-  density?: 'standard' | 'compact';
+  size?: ControlSize;
 }
 
-/** A single selection with native form participation and a themed popup. */
-export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
-  {
-    options,
-    value,
-    defaultValue,
-    onValueChange,
-    name,
-    required,
-    disabled,
-    label,
-    hint,
-    error,
-    'aria-describedby': describedBy,
-    'aria-invalid': invalid,
-    placeholder,
-    autoComplete,
-    variant = 'secondary',
-    density = 'standard',
-    form,
-    id: suppliedId,
-    className,
-    ...triggerProps
-  },
+/** Select's positioner, which opens the list below the trigger rather than over it. */
+function SelectPositioner(props: ComponentProps<typeof BaseSelect.Positioner>) {
+  return <BaseSelect.Positioner {...props} alignItemWithTrigger={false} />;
+}
+
+const popupParts = {
+  Portal: BaseSelect.Portal,
+  Positioner: SelectPositioner,
+  Popup: BaseSelect.Popup,
+};
+
+/**
+ * One choice from a list that stays collapsed until opened: a Button trigger that shows the chosen
+ * option and opens a popup list, where a check mark shows the chosen option, with a label above it,
+ * a description, an error and native form participation.
+ */
+export function Select({
   ref,
-) {
-  const metadata = useFieldMetadata(suppliedId, hint, error, describedBy, invalid);
-  const compact = density === 'compact';
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+  name,
+  required,
+  disabled,
+  label,
+  description,
+  error,
+  'aria-describedby': describedBy,
+  'aria-invalid': invalid,
+  placeholder,
+  autoComplete,
+  variant = 'secondary',
+  size,
+  form,
+  id: suppliedId,
+  className,
+  style,
+  ...triggerProps
+}: SelectProps) {
+  const metadata = useFieldMetadata(suppliedId, description, error, describedBy, invalid);
   const { id } = metadata;
-  const theme = useTheme();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
@@ -102,7 +154,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   }
   return (
     <BaseSelect.Root<string>
-      items={options}
+      items={items}
       value={selectedValue}
       onValueChange={handleValueChange}
       name={name}
@@ -116,69 +168,60 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       <FieldFrame
         id={id}
         label={label != null ? <BaseSelect.Label>{label}</BaseSelect.Label> : null}
-        hint={hint}
+        description={description}
         error={error}
+        className="env-select"
+        style={style}
       >
         <BaseSelect.Trigger
           {...triggerProps}
           {...metadata}
-          ref={(node) => {
+          ref={(node: HTMLButtonElement | null) => {
             triggerRef.current = node;
             setRef(ref, node);
           }}
-          data-variant={variant}
-          data-density={compact ? 'compact' : undefined}
-          className={classNames(
-            'env-button',
-            variant === 'outlined' ? 'env-button-outlined' : 'env-button-secondary',
-            'env-dropdown-trigger',
-            className,
-          )}
+          className="env-select-trigger"
+          render={
+            variant === 'outline' ? (
+              <Button variant="outline" size={size} />
+            ) : (
+              <Button variant="secondary" size={size} />
+            )
+          }
         >
           <BaseSelect.Value placeholder={placeholder} />
-          <BaseSelect.Icon className="env-symbol">
+          <BaseSelect.Icon className="env-icon env-select-icon">
             <ChevronRight />
           </BaseSelect.Icon>
         </BaseSelect.Trigger>
-        <BaseSelect.Portal>
-          <Theme theme={theme}>
-            <BaseSelect.Positioner
-              className="env-select-positioner"
-              alignItemWithTrigger={false}
-              side="bottom"
-              align="start"
-              sideOffset={getPopupOffset}
-            >
-              <BaseSelect.Popup
-                className="env-dropdown-options"
-                render={<Surface padding={compact ? 1 : 2} density={density} />}
-              >
-                <BaseSelect.List className="env-dropdown-list">
-                  {options.map((option) => (
-                    <BaseSelect.Item
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                      disabled={option.disabled}
-                      className="env-dropdown-option"
-                    >
-                      {compact && (
-                        // A check mark shows the selected option; the slot keeps labels aligned.
-                        <span className="env-dropdown-option-check" aria-hidden="true">
-                          <BaseSelect.ItemIndicator className="env-symbol">
-                            <Check />
-                          </BaseSelect.ItemIndicator>
-                        </span>
-                      )}
-                      <BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
-                    </BaseSelect.Item>
-                  ))}
-                </BaseSelect.List>
-              </BaseSelect.Popup>
-            </BaseSelect.Positioner>
-          </Theme>
-        </BaseSelect.Portal>
+        <PopupSurface
+          parts={popupParts}
+          side="bottom"
+          align="start"
+          sideOffset={getPopupOffset}
+          trigger={triggerRef}
+          className="env-select-popup"
+        >
+          <BaseSelect.List className="env-select-list">
+            {items.map((item) => (
+              <ListRow
+                key={item.value}
+                render={
+                  <BaseSelect.Item value={item.value} label={item.label} disabled={item.disabled} />
+                }
+                className="env-select-item"
+                // A check mark shows the selected option; the slot keeps the labels aligned.
+                indicator={
+                  <BaseSelect.ItemIndicator className="env-icon env-select-item-indicator">
+                    <Check />
+                  </BaseSelect.ItemIndicator>
+                }
+                label={<BaseSelect.ItemText>{item.label}</BaseSelect.ItemText>}
+              />
+            ))}
+          </BaseSelect.List>
+        </PopupSurface>
       </FieldFrame>
     </BaseSelect.Root>
   );
-});
+}

@@ -1,0 +1,105 @@
+/* Alerts: an inline banner tinted with its tone. Text stays primary; the icon carries the tone.
+   Links and text buttons in it take the link colors for a tint, as the link blue falls below 4.5:1
+   on the tints in the light theme. */
+.env-alert {
+  --env-color-fg-link: var(--env-color-fg-link-on-tint);
+  --env-color-fg-link-hover: var(--env-color-fg-link-on-tint-hover);
+  --env-color-fg-link-pressed: var(--env-color-fg-link-on-tint-pressed);
+  --env-alert-tone: var(--env-color-fg-accent);
+  --env-alert-tint: var(--env-color-bg-accent-muted);
+  --env-alert-edge: var(--env-color-border-accent-muted);
+  --env-alert-hover: var(--env-color-bg-accent-subtle-hover);
+  --env-alert-pressed: var(--env-color-bg-accent-subtle-pressed);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--env-space-3);
+  padding: var(--env-space-4);
+  border: 0.0625rem solid var(--env-alert-edge);
+  border-radius: var(--env-radius-lg);
+  background: var(--env-alert-tint);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
+  overflow-wrap: anywhere;
+}
+.env-alert[data-tone='success'] {
+  --env-alert-tone: var(--env-color-fg-success);
+  --env-alert-tint: var(--env-color-bg-success-muted);
+  --env-alert-edge: var(--env-color-border-success-muted);
+  --env-alert-hover: var(--env-color-bg-success-subtle-hover);
+  --env-alert-pressed: var(--env-color-bg-success-subtle-pressed);
+}
+.env-alert[data-tone='warning'] {
+  --env-alert-tone: var(--env-color-fg-warning);
+  --env-alert-tint: var(--env-color-bg-warning-muted);
+  --env-alert-edge: var(--env-color-border-warning-muted);
+  --env-alert-hover: var(--env-color-bg-warning-subtle-hover);
+  --env-alert-pressed: var(--env-color-bg-warning-subtle-pressed);
+}
+.env-alert[data-tone='danger'] {
+  --env-alert-tone: var(--env-color-fg-danger);
+  --env-alert-tint: var(--env-color-bg-danger-muted);
+  --env-alert-edge: var(--env-color-border-danger-muted);
+  --env-alert-hover: var(--env-color-bg-danger-subtle-hover);
+  --env-alert-pressed: var(--env-color-bg-danger-subtle-pressed);
+}
+.env-alert-icon {
+  grid-column: 1;
+  display: grid;
+  place-items: center;
+  block-size: 1.4em;
+  color: var(--env-alert-tone);
+}
+.env-alert-icon .env-icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+.env-alert-content {
+  grid-column: 2;
+  min-inline-size: 0;
+  display: grid;
+  gap: var(--env-space-1);
+}
+.env-alert-title {
+  font: var(--env-type-h2);
+}
+.env-alert-message {
+  color: var(--env-color-fg-default);
+}
+.env-alert-action {
+  margin-block-start: var(--env-space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-2);
+}
+/* The dismiss button is a small CloseButton circle in the alert's tone, centered on the first line.
+   Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
+   Button.css, so at equal specificity the tone wins over the ghost colors. */
+.env-alert-dismiss {
+  /* The small button's height, which grows to the touch height under a coarse pointer, as the
+     button itself does. */
+  --env-alert-dismiss-height: var(--env-control-height-sm);
+  grid-column: 3;
+  margin-block: calc(
+    (1.4 * var(--env-font-size-heading-small) - var(--env-alert-dismiss-height)) / 2
+  );
+  margin-inline-end: calc(-1 * var(--env-space-2));
+  border-radius: 50%;
+  color: var(--env-alert-tone);
+}
+@media (pointer: coarse) {
+  .env-alert-dismiss {
+    --env-alert-dismiss-height: max(var(--env-control-height-sm), var(--env-control-height-touch));
+  }
+}
+/* Hover and press tint the circle with the tone instead of the ghost button's neutral layer. */
+.env-alert-dismiss:hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-alert-hover);
+  color: var(--env-alert-tone);
+}
+.env-alert-dismiss:active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-alert-pressed);
+  color: var(--env-alert-tone);
+}

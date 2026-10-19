@@ -2,33 +2,40 @@ import {
   Theme,
   Button,
   IconButton,
-  NavigationItem,
+  NavList,
   Stack,
   Surface,
   Card,
-  GroupedRows,
-  Row,
+  List,
   Tabs,
   Link,
-  DirectionLink,
-  Input,
+  Pager,
+  TextField,
   Select,
   RadioGroup,
   Radio,
   Checkbox,
   Switch,
-  InfoChip,
+  Badge,
   Skeleton,
-  Toast,
   type ThemeValue,
-  type ButtonVariant,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Home } from '@envsemble/envui/icons/Home';
 import { planOptions } from './SelectOptions.js';
 
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
+
 export function ColorControls({ theme }: { theme: ThemeValue }) {
-  const variants: readonly ButtonVariant[] = [
+  const variants: readonly (keyof typeof emphasis)[] = [
     'primary',
     'secondary',
     'outlined',
@@ -39,7 +46,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
     <Theme theme={theme} data-testid={`color-controls-${theme}`} className="fixture-section">
       <h2>{theme} interactive colors</h2>
       {variants.map((variant) => (
-        <Button key={variant} variant={variant} data-testid={`${theme}-button-${variant}`}>
+        <Button key={variant} {...emphasis[variant]} data-testid={`${theme}-button-${variant}`}>
           {theme} {variant}
         </Button>
       ))}
@@ -48,30 +55,32 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         aria-label={`${theme} chevron`}
         data-testid={`${theme}-icon-button`}
       />
-      <NavigationItem icon={<Home />} data-testid={`${theme}-navigation`}>
+      <NavList.Item icon={<Home />} data-testid={`${theme}-navigation`}>
         {theme} navigation
-      </NavigationItem>
-      <NavigationItem selected data-testid={`${theme}-navigation-selected`}>
+      </NavList.Item>
+      <NavList.Item selected data-testid={`${theme}-navigation-selected`}>
         {theme} selected navigation
-      </NavigationItem>
+      </NavList.Item>
       <Stack gap={3}>
-        <Surface tone="row" data-testid={`${theme}-color-surface`}>
+        <Surface background="muted" data-testid={`${theme}-color-surface`}>
           Surface
         </Surface>
         <Surface data-testid={`${theme}-color-pane`}>Pane</Surface>
         <Card data-testid={`${theme}-color-card`}>Card</Card>
-        <Card tone="pane" data-testid={`${theme}-color-pane-card`}>
+        <Card background="default" data-testid={`${theme}-color-pane-card`}>
           Pane card
         </Card>
-        <Card tone="canvas" data-testid={`${theme}-color-canvas-card`}>
+        <Card background="page" data-testid={`${theme}-color-canvas-card`}>
           Canvas card
         </Card>
-        <GroupedRows>
-          <Row title="Row" data-testid={`${theme}-color-row`} />
-        </GroupedRows>
-        <GroupedRows contrast data-testid={`${theme}-color-contrast-rows`}>
-          <Row title="Contrast row" />
-        </GroupedRows>
+        <List.Root>
+          <List.Item label="Row" data-testid={`${theme}-color-row`} />
+        </List.Root>
+        <Surface background="muted" padding={3}>
+          <List.Root data-testid={`${theme}-color-contrast-rows`}>
+            <List.Item label="Contrast row" />
+          </List.Root>
+        </Surface>
         <Tabs
           aria-label={`${theme} color isolation tabs`}
           data-testid={`${theme}-color-tabs`}
@@ -93,9 +102,9 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
             {
               value: 'navigation',
               button: (
-                <NavigationItem icon={<Home />} data-testid={`${theme}-tab-navigation`}>
+                <NavList.Item icon={<Home />} data-testid={`${theme}-tab-navigation`}>
                   Third tab
-                </NavigationItem>
+                </NavList.Item>
               ),
               content: 'Third panel',
             },
@@ -113,30 +122,30 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         <Button variant="text" data-testid={`${theme}-color-text-button`}>
           Text button
         </Button>
-        <DirectionLink direction="next" href="#" data-testid={`${theme}-color-direction`}>
+        <Pager.Next href="#" data-testid={`${theme}-color-direction`}>
           Next page
-        </DirectionLink>
-        <Input label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
-        <Input
+        </Pager.Next>
+        <TextField label={`${theme} isolated field`} data-testid={`${theme}-color-field`} />
+        <TextField
           label={`${theme} isolated error`}
           error="Validation error"
           data-testid={`${theme}-color-error-field`}
         />
         <Select
           label={`${theme} isolated select`}
-          hint="Select hint"
-          options={planOptions}
+          description="Select hint"
+          items={planOptions}
           defaultValue="starter"
           data-testid={`${theme}-color-select`}
         />
         <Select
           label={`${theme} isolated select error`}
           error="Select validation error"
-          options={planOptions}
+          items={planOptions}
           defaultValue="starter"
           data-testid={`${theme}-color-select-error`}
         />
-        <RadioGroup variant="rows" data-testid={`${theme}-color-radio-row`}>
+        <RadioGroup orientation="vertical" data-testid={`${theme}-color-radio-row`}>
           <Radio
             value="sample"
             label={`${theme} isolated radio`}
@@ -153,15 +162,8 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
           defaultChecked
           data-testid={`${theme}-color-switch`}
         />
-        <InfoChip data-testid={`${theme}-color-chip`}>Info</InfoChip>
+        <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
         <Skeleton data-testid={`${theme}-color-skeleton`} />
-        <Toast
-          variant="error"
-          message="Error preview"
-          action={{ label: 'Toast action', onClick: () => {} }}
-          announce={false}
-          data-testid={`${theme}-color-error-toast`}
-        />
       </Stack>
     </Theme>
   );

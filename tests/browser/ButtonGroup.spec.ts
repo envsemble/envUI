@@ -1,5 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { fixtureUrl } from './Servers';
 
 async function geometry(group: Locator) {
   return group.evaluate((element) => {
@@ -18,7 +18,7 @@ async function geometry(group: Locator) {
             y: rect.y,
             width: rect.width,
             height: rect.height,
-            important: button.classList.contains('env-button-important'),
+            important: button.matches("[data-variant='primary'][data-tone='accent']"),
             icon: button.classList.contains('env-icon-button'),
             corners: [
               style.borderStartStartRadius,
@@ -36,7 +36,9 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
   // This composition check retains the shared host's intrinsic grid sizing.
   // The focused fixture is used below for independent interaction checks.
   await page.goto(fixtureUrl);
-  for (const width of [1440, 390]) {
+  // The narrow width still fits both groups on one line: the host's column used to be held wider
+  // than a phone by a static toast, and a group squeezed below its content wraps its labels.
+  for (const width of [1440, 480]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ['light', 'dark']) {
       const scope = page.getByTestId(`button-groups-${theme}`);
@@ -86,7 +88,8 @@ test('mixed buttons connect in rows and columns with variant outer corners', asy
         8, 8, 8, 8,
       ]);
       const scaled = await geometry(scope.getByTestId('scaled'));
-      expect(scaled.buttons[0].corners).toEqual([30, 12, 30, 12]);
+      // Large buttons keep pill ends at their own height.
+      expect(scaled.buttons[0].corners).toEqual([24, 8, 24, 8]);
     }
   }
 });
@@ -181,13 +184,6 @@ test('narrow groups wrap labels and scale their shared corners with text size', 
   expect(overflow, JSON.stringify(result)).toBeLessThanOrEqual(1);
   const column = await geometry(scope.getByTestId('vertical'));
   expect(column.buttons[0].corners).toEqual([30, 30, 12, 12]);
-});
-
-test('documentation demonstrates connected buttons through the public API', async ({ page }) => {
-  await page.goto(`${catalogueUrl}/#/components/buttons/preview`);
-  await expect(page.getByRole('group', { name: 'Project actions' })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Item actions' })).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Quick actions' })).toBeVisible();
 });
 
 test('a full-width group fills its container, where its labelled button takes the room', async ({

@@ -1,9 +1,28 @@
-import type { MouseEvent, ReactNode } from 'react';
+'use client';
+
+import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import { classNames } from '../internal/classNames.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
-import { useLinkComponent } from './LinkProvider.js';
+import { ActionElement } from '../internal/ActionElement.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { breadcrumbs } from '../foundations/messages/breadcrumbs.js';
+import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 
 export interface BreadcrumbItem {
+  /**
+   * The level's name, such as a folder's title. Beyond 20 rem it ends with an ellipsis, and a
+   * tooltip shows it in full on hover and keyboard focus.
+   */
   label: ReactNode;
   /** A destination, rendered through the LinkProvider link. */
   href?: string;
@@ -11,7 +30,7 @@ export interface BreadcrumbItem {
   onClick?: (event: MouseEvent<HTMLElement>) => void;
 }
 
-export interface BreadcrumbsProps {
+export interface BreadcrumbsProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /** From the top level to the current page, which is last. */
   items: readonly BreadcrumbItem[];
   /**
@@ -20,60 +39,107 @@ export interface BreadcrumbsProps {
    * their width.
    */
   wrap?: boolean;
-  /** Accessible name of the navigation; Breadcrumb by default. */
+  /**
+   * Accessible name of the navigation landmark; name each trail where a page has several.
+   * @default 'Breadcrumb', or EnvUIProvider's messages.breadcrumbs.label
+   */
   'aria-label'?: string;
+  /** Classes for the `nav` element. */
   className?: string;
+}
+
+/** Whether the text in an element is cut short with an ellipsis, followed as its size changes. */
+function useTruncated(element: RefObject<HTMLElement | null>) {
+  const [truncated, setTruncated] = useState(false);
+  useLayoutEffect(() => {
+    const node = element.current;
+    if (!node) return;
+    const measure = () => setTruncated(node.scrollWidth > node.clientWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [element]);
+  return truncated;
+}
+
+/** One level: a link, a button, plain text or the current page, with its full label on hover. */
+function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
+  const label = useRef<HTMLSpanElement>(null);
+  const truncated = useTruncated(label);
+  const [focused, setFocused] = useState(false);
+  const content = (
+    <span className="env-breadcrumbs-label" ref={label}>
+      {item.label}
+    </span>
+  );
+  // A label cut short that is no link takes keyboard focus, so the keyboard can show it in full. It
+  // leaves the tab order only once it has lost focus: a label that comes to fit while focused, as
+  // the window widens, keeps focus instead of dropping it to the page.
+  const focusable = {
+    tabIndex: truncated || focused ? 0 : undefined,
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
+  };
+  let crumb: ReactElement;
+  if (current) {
+    crumb = (
+      <span className="env-breadcrumbs-current" aria-current="page" {...focusable}>
+        {content}
+      </span>
+    );
+  } else if (item.href !== undefined || item.onClick) {
+    crumb = (
+      <ActionElement
+        {...(item.href !== undefined ? { href: item.href } : {})}
+        className="env-breadcrumbs-link"
+        onClick={item.onClick}
+      >
+        {content}
+      </ActionElement>
+    );
+  } else {
+    crumb = (
+      <span className="env-breadcrumbs-text" {...focusable}>
+        {content}
+      </span>
+    );
+  }
+  // A label cut short shows in full in a tooltip, on hover and on keyboard focus.
+  // The tooltip stays in place while the label fits, so the element and its focus are kept.
+  return (
+    <BaseTooltip.Root disabled={!truncated}>
+      <BaseTooltip.Trigger delay={400} render={crumb} />
+      {truncated && <TooltipPopup content={item.label} side="bottom" />}
+    </BaseTooltip.Root>
+  );
 }
 
 /** The path from the top level to the current page; earlier levels are links. */
 export function Breadcrumbs({
   items,
   wrap = true,
-  'aria-label': label = 'Breadcrumb',
+  'aria-label': label,
   className,
+  ...props
 }: BreadcrumbsProps) {
-  const LinkComponent = useLinkComponent();
+  const messages = useMessages('breadcrumbs', breadcrumbs);
   return (
     <nav
-      aria-label={label}
+      {...props}
+      aria-label={label ?? messages.label}
       className={classNames('env-breadcrumbs', className)}
       data-nowrap={wrap ? undefined : ''}
     >
       <ol className="env-breadcrumbs-list">
         {items.map((item, index) => {
           const current = index === items.length - 1;
-          const content = <span className="env-breadcrumb-label">{item.label}</span>;
-          let crumb: ReactNode;
-          if (current) {
-            crumb = (
-              <span className="env-breadcrumb-current" aria-current="page">
-                {content}
-              </span>
-            );
-          } else if (item.href !== undefined) {
-            crumb = (
-              <LinkComponent
-                href={item.href}
-                className="env-breadcrumb-link"
-                onClick={item.onClick}
-              >
-                {content}
-              </LinkComponent>
-            );
-          } else if (item.onClick) {
-            crumb = (
-              <button type="button" className="env-breadcrumb-link" onClick={item.onClick}>
-                {content}
-              </button>
-            );
-          } else {
-            crumb = <span className="env-breadcrumb-text">{content}</span>;
-          }
           return (
-            <li key={index} className="env-breadcrumb">
-              {crumb}
+            <li key={index} className="env-breadcrumbs-item">
+              <Crumb item={item} current={current} />
               {!current && (
-                <span className="env-symbol env-breadcrumb-separator" aria-hidden="true">
+                <span className="env-icon env-breadcrumbs-separator" aria-hidden="true">
                   <ChevronRight />
                 </span>
               )}

@@ -1,0 +1,24 @@
+{
+  "@envsemble/envui": {
+    "AppShell.Root": {
+      "transform": "v1-app-shell",
+      "report": "AppShell is made of parts in 1.0: AppShell.Root around AppShell.SkipLinks, a Sidebar.Root with the navigation, an AppShell.Header with the title and actions and an AppShell.Main with the page; move the props of one that spreads props by hand, as the migration guide's app frame section shows.",
+      "reports": {
+        "storageKey": "storageKey is persist in 1.0, which keeps both sidebars in one entry in a new format, so the remembered preference resets once.",
+        "sidebarWidth": "sidebarWidth and onSidebarWidthChange are in rem in 1.0, not pixels: divide by 16, or by the root font size.",
+        "minWidth": "sidebarMinWidth and sidebarMaxWidth are minWidth and maxWidth in rem in 1.0: the codemod divides the expression by 16; check it.",
+        "label": "Sidebar.Root needs a label, and the AppShell had no navigationLabel: the codemod named its sidebar Navigation; name it by its content.",
+        "ambiguous": "AppShell.Root has none of the props only 0.x's AppShell took, so the codemod can't tell a 0.x AppShell that v1-names renamed from a 1.0 one, and left it as it is: if it is 0.x's, put its page in AppShell.Main and add AppShell.SkipLinks and AppShell.Header, as the migration guide's app frame section shows.",
+        "navigation": "The navigation is an expression the codemod can't see into, or holds NavList items beside other content, so it stays in Sidebar.Content as it is: put its NavList items in a NavList.Root, which renders their list.",
+        "topbar": "topbar is an expression, so the codemod can't tell where the mark and the context go: it placed them for the split topbar (headerSpan=\"main\"); move them to AppShell.Header's start for headerSpan=\"full\"."
+      }
+    },
+    "AppShellSkeleton": {
+      "transform": "v1-app-shell",
+      "report": "AppShellSkeleton is gone in 1.0: render the frame's parts with NavList.Skeleton in Sidebar.Content inside a LoadingState; move the props of one that spreads props by hand.",
+      "reports": {
+        "label": "Sidebar.Root needs a label; the codemod named the skeleton's sidebar Navigation: use the real sidebar's label."
+      }
+    }
+  }
+}

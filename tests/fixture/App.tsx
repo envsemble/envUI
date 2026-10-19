@@ -1,33 +1,40 @@
 import type { ReactNode } from 'react';
-import { Theme, ToastProvider } from '@envsemble/envui';
+import { Theme, Toast } from '@envsemble/envui';
 import '@envsemble/envui/styles.css';
 import './Fixture.css';
 import { FormsFixture } from './Forms.js';
 import { DialogFixture } from './Dialog.js';
-import { ToastTriggers, ManualToastFixture, StrictToastFixture } from './Toasts.js';
+import { ToastTriggers, StrictToastFixture } from './Toasts.js';
 import { ColorControls } from './Colors.js';
 import { NavigationFixture } from './Navigation.js';
 import { ButtonGroupsFixture } from './ButtonGroups.js';
 import { LayoutFixture } from './Layout.js';
-import { FeatureCardsFixture } from './FeatureCards.js';
+import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
-import { AdoptionFixture, ShellFixture, TwoShellsFixture } from './Adoption.js';
-import { ResizableShellFixture } from './ResizableShell.js';
+import { AdoptionFixture } from './Adoption.js';
 import {
-  FramedShellFixture,
+  AppShellFixture,
+  FramedAppShellFixture,
   FullShellFixture,
-  FullShellSkeletonFixture,
+  LoadingFrameFixture,
   ScrollKeysFixture,
-  TitleBarFixture,
-} from './WindowShell.js';
+  TwoAppShellsFixture,
+} from './AppShells.js';
+import { SidebarRailsFixture, SidebarsFixture } from './Sidebars.js';
+import { WindowFrameFixture } from './WindowFrames.js';
+import { CodeBlockFixture } from './CodeBlocks.js';
+import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
 import { MenubarFixture } from './Menubars.js';
 import { TreeFixture } from './TreeView.js';
 import {
   CompactTabsFixture,
   DocumentTabsFixture,
+  DocumentTabsRerenderFixture,
   FillTabsFixture,
+  RtlDocumentTabsFixture,
+  RtlTabsFixture,
   TabStatesFixture,
 } from './Tabs.js';
 import { CommandPaletteFixture } from './Palette.js';
@@ -36,40 +43,97 @@ import { BadgesFixture } from './Badges.js';
 import {
   DialogVariantsFixture,
   HoverCardFixture,
-  NoticesFixture,
+  AlertsFixture,
   PopoverFixture,
 } from './Overlays.js';
 import { DataDisplayFixture } from './DataDisplay.js';
 import { TablesFixture } from './Tables.js';
+import { PagersFixture } from './Pagers.js';
 import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
 import { StatsFixture } from './Stats.js';
-import { DropzonesFixture } from './Dropzones.js';
+import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
-import { HeatmapFixture } from './Heatmaps.js';
+import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
 import { ComboboxFixture } from './Comboboxes.js';
 import { PanelDockFixture } from './PanelDocks.js';
 import { AvatarGroupsFixture } from './AvatarGroups.js';
 import { RelativeTimesFixture } from './RelativeTimes.js';
 import { CopyButtonsFixture } from './CopyButtons.js';
 import { PaginationsFixture } from './Paginations.js';
-import { DateTimeFieldFixture } from './DateTimeFields.js';
+import { DatePickerFixture } from './DatePickers.js';
+import { TimePickersFixture } from './TimePickers.js';
+import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
 import { EmptyStatesFixture } from './EmptyStates.js';
+import { DrawersFixture } from './Drawers.js';
+import { TooltipsFixture } from './Tooltips.js';
+import { MetersFixture } from './Meters.js';
 import { RatingsFixture } from './Ratings.js';
+import { DisclosuresFixture } from './Disclosures.js';
+import { DensityFixture } from './Density.js';
+import { ChoiceControlsFixture } from './ChoiceControls.js';
+import { StackingFixture } from './Stacking.js';
+import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
+import { PrimitivesFixture } from './Primitives.js';
+import { MessageStringsFixture } from './MessageStrings.js';
+import { DirectionFixture } from './Direction.js';
+import { SplitPanesFixture } from './SplitPanes.js';
+import { PageHeadersFixture } from './PageHeaders.js';
+import { DescriptionListsFixture } from './DescriptionLists.js';
+import { ContainerSizeFixture } from './ContainerSize.js';
+import { SearchTriggersFixture } from './SearchTriggers.js';
+import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
+import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { ListsFixture } from './Lists.js';
+import {
+  ThemeContrastFixture,
+  ThemeContrastNestedFixture,
+  ThemeReleaseFixture,
+  ThemeContrastProviderFixture,
+  ThemeContrastRemountFixture,
+} from './ThemeContrasts.js';
 
-/** Fixtures that fill the viewport are only mounted on their own. */
+/** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
-  shell: ShellFixture,
-  'two-shells': TwoShellsFixture,
-  'resizable-shell': ResizableShellFixture,
+  'app-shell': AppShellFixture,
+  'two-app-shells': TwoAppShellsFixture,
+  'framed-app-shell': FramedAppShellFixture,
   'full-shell': FullShellFixture,
-  'full-shell-skeleton': FullShellSkeletonFixture,
-  'title-bar': TitleBarFixture,
+  'loading-frame': LoadingFrameFixture,
+  'sidebar-rails': SidebarRailsFixture,
+  sidebars: SidebarsFixture,
+  'window-frame': WindowFrameFixture,
+  'code-block': CodeBlockFixture,
+  'markdown-tables': MarkdownFixture,
   'scroll-keys': ScrollKeysFixture,
-  'framed-shell': FramedShellFixture,
+  density: DensityFixture,
+  'choice-controls': ChoiceControlsFixture,
+  stacking: StackingFixture,
+  'responsive-hooks': ResponsiveHooksFixture,
+  primitives: PrimitivesFixture,
+  'message-strings': MessageStringsFixture,
+  direction: DirectionFixture,
+  'rtl-tabs': RtlTabsFixture,
+  'rtl-document-tabs': RtlDocumentTabsFixture,
+  'document-tabs-rerender': DocumentTabsRerenderFixture,
+  pagers: PagersFixture,
+  drawers: DrawersFixture,
+  tooltips: TooltipsFixture,
+  meters: MetersFixture,
+  'split-panes': SplitPanesFixture,
+  'page-headers': PageHeadersFixture,
+  'description-lists': DescriptionListsFixture,
+  'container-size': ContainerSizeFixture,
+  'search-triggers': SearchTriggersFixture,
+  'account-menus': AccountMenusFixture,
+  'account-menu-shell': AccountMenuShellFixture,
+  'confirm-dialogs': ConfirmDialogsFixture,
+  lists: ListsFixture,
+  'time-pickers': TimePickersFixture,
+  'month-pickers': MonthPickersFixture,
 };
 
 export default function App() {
@@ -80,17 +144,26 @@ export default function App() {
   // Root theming changes the host document, so adoption mounts on its own, at the top of the page
   // like an application's provider.
   if (fixture === 'adoption') return <AdoptionFixture />;
+  // The contrast boundaries test the default outside any Theme, and the provider themes the root.
+  if (fixture === 'theme-contrast') return <ThemeContrastFixture />;
+  if (fixture === 'theme-contrast-provider') return <ThemeContrastProviderFixture />;
+  if (fixture === 'theme-contrast-remount') return <ThemeContrastRemountFixture />;
+  if (fixture === 'theme-contrast-nested') return <ThemeContrastNestedFixture />;
+  if (fixture === 'theme-release') return <ThemeReleaseFixture />;
   const Standalone = fixture === null ? undefined : standaloneFixtures[fixture];
+  // ?scale=compact puts the fixture in the compact scale, unless its own Themes set a scale.
+  const scale =
+    new URLSearchParams(location.search).get('scale') === 'compact' ? 'compact' : undefined;
   if (Standalone)
     return (
-      <Theme theme="light">
+      <Theme theme="light" scale={scale}>
         <Standalone />
       </Theme>
     );
   return (
     <>
       <p data-testid="host-marker">Host document marker</p>
-      <Theme theme="light">
+      <Theme theme="light" scale={scale}>
         <main className="fixture-main">
           {includes('forms') && (
             <>
@@ -100,10 +173,9 @@ export default function App() {
           )}
           {includes('toast') && (
             <>
-              <ToastProvider>
+              <Toast.Provider>
                 <ToastTriggers />
-              </ToastProvider>
-              <ManualToastFixture />
+              </Toast.Provider>
               <StrictToastFixture />
             </>
           )}
@@ -126,7 +198,8 @@ export default function App() {
             </>
           )}
           {includes('layout') && <LayoutFixture />}
-          {includes('feature-cards') && <FeatureCardsFixture />}
+          {includes('cards') && <CardsFixture />}
+          {includes('disclosures') && <DisclosuresFixture />}
           {includes('color-picker') && (
             <>
               <ColorPickerFixture theme="light" />
@@ -177,10 +250,10 @@ export default function App() {
               <BadgesFixture theme="dark" />
             </>
           )}
-          {includes('notices') && (
+          {includes('alerts') && (
             <>
-              <NoticesFixture theme="light" />
-              <NoticesFixture theme="dark" />
+              <AlertsFixture theme="light" />
+              <AlertsFixture theme="dark" />
             </>
           )}
           {includes('dialog-variants') && <DialogVariantsFixture />}
@@ -238,16 +311,16 @@ export default function App() {
               <StatsFixture theme="dark" />
             </>
           )}
-          {includes('dropzones') && (
+          {includes('drop-zones') && (
             <>
-              <DropzonesFixture theme="light" />
-              <DropzonesFixture theme="dark" />
+              <DropZonesFixture theme="light" />
+              <DropZonesFixture theme="dark" />
             </>
           )}
-          {includes('heatmap') && (
+          {includes('calendar-heatmap') && (
             <>
-              <HeatmapFixture theme="light" />
-              <HeatmapFixture theme="dark" />
+              <CalendarHeatmapFixture theme="light" />
+              <CalendarHeatmapFixture theme="dark" />
             </>
           )}
           {includes('panel-dock') && (
@@ -292,10 +365,10 @@ export default function App() {
               <PaginationsFixture theme="dark" />
             </>
           )}
-          {includes('date-time') && (
+          {includes('date-picker') && (
             <>
-              <DateTimeFieldFixture theme="light" />
-              <DateTimeFieldFixture theme="dark" />
+              <DatePickerFixture theme="light" />
+              <DatePickerFixture theme="dark" />
             </>
           )}
           {includes('quiet-buttons') && (

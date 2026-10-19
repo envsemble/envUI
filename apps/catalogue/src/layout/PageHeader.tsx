@@ -6,6 +6,7 @@ export function PageHeader({
   title,
   breadcrumb,
   description,
+  meta,
   symbol,
   children,
   actions,
@@ -13,13 +14,15 @@ export function PageHeader({
   title: string;
   breadcrumb?: string;
   description?: string;
+  /** Facts about the page under its description, such as a component's status. */
+  meta?: ReactNode;
   symbol?: ReactNode;
   children?: ReactNode;
   actions?: ReactNode;
 }) {
   return (
     <header className="docs-page-header">
-      <Card tone="pane" padding={6} className="docs-page-banner">
+      <Card background="default" padding={6} className="docs-page-banner">
         {symbol && (
           <span className="docs-page-banner-symbol" aria-hidden="true">
             {symbol}
@@ -29,14 +32,15 @@ export function PageHeader({
           <div className="docs-page-banner-heading">
             <Stack gap={3} align="center">
               {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
-              <Text as="h1" variant="page-heading" className="docs-page-banner-title">
+              <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
                 {title}
               </Text>
               {description && (
-                <Text tone="muted" className="docs-page-banner-description">
+                <Text emphasis="muted" className="docs-page-banner-description">
                   {description}
                 </Text>
               )}
+              {meta}
             </Stack>
             {actions}
           </div>

@@ -1,13 +1,23 @@
 .env-tabs {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   min-inline-size: 0;
 }
+/* The whole rail is as tall as a control of its size, like a segmented control, and its tabs fill
+   it inside its padding, which gives way where a tab would be shorter than the smallest target. */
 .env-tabs-list {
+  --env-tabs-rail: var(--env-control-height-lg);
+  /* The height the rail draws at: its size's, or the touch height under a coarse pointer. */
+  --env-tabs-height: var(--env-tabs-rail);
+  --env-tabs-inset: min(
+    var(--env-space-1),
+    calc((var(--env-tabs-height) - var(--env-control-target-min)) / 2)
+  );
+  --env-control-height: calc(var(--env-tabs-height) - 2 * var(--env-tabs-inset));
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   inline-size: fit-content;
   max-inline-size: 100%;
   min-inline-size: 0;
@@ -17,48 +27,75 @@
 }
 /* The rail is a translucent fill, so it stands out from the canvas, panes and rows alike. */
 .env-tabs-list.env-surface {
-  --env-surface-color: var(--color-fill);
+  --env-surface-color: var(--env-color-bg-neutral-muted);
+  --env-surface-padding: var(--env-tabs-inset);
 }
-/* Compact: the whole rail is as tall as a compact control, like a compact segmented control. Coarse
-   pointers keep the touch height, which the compact height takes there. */
-.env-tabs-list[data-size='compact'] {
-  --control-height-small: calc(var(--control-height-compact) - 2 * var(--space-1));
-  --control-height: calc(var(--control-height-compact) - 2 * var(--space-1));
-  --icon-button-size: calc(var(--control-height-compact) - 2 * var(--space-1));
+/* Under a coarse pointer the rail grows to the touch height, like every control of its row, and
+   each tab's hit area covers the rail's padding above and below it, so it is as tall as the rail and
+   nothing reaches out of the rail, which scrolls, and it is at least as wide. A vertical rail's tabs
+   grow themselves instead. */
+@media (pointer: coarse) {
+  .env-tabs-list {
+    --env-tabs-height: max(var(--env-tabs-rail), var(--env-control-height-touch));
+  }
+  .env-tabs-list:not([data-orientation='vertical']) {
+    --env-touch-height: 0rem;
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab {
+    position: relative;
+    min-inline-size: var(--env-control-height-touch);
+  }
+  .env-tabs-list:not([data-orientation='vertical']) > .env-tabs-tab::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--env-tabs-inset));
+    inset-inline: 0;
+  }
 }
-.env-tabs-list[data-size='compact'] > .env-tab {
+.env-tabs-list[data-size='sm'] {
+  --env-tabs-rail: var(--env-control-height-sm);
+}
+.env-tabs-list[data-size='md'] {
+  --env-tabs-rail: var(--env-control-height-md);
+}
+.env-tabs-list[data-size='sm'] > .env-tabs-tab {
   padding-block: 0;
 }
 .env-tabs-list[data-orientation='vertical'] {
   flex-direction: column;
   align-items: stretch;
-  --env-surface-radius: var(--radius-surface);
+  --env-surface-radius: var(--env-radius-surface);
 }
-.env-tabs-list > .env-tab {
+.env-tabs-list > .env-tabs-tab {
   flex-shrink: 0;
   white-space: normal;
   overflow-wrap: anywhere;
   transition:
-    background-color var(--motion-duration-medium) var(--motion-ease),
-    color var(--motion-duration-medium) var(--motion-ease),
-    border-color var(--motion-duration-medium) var(--motion-ease);
+    background-color var(--env-motion-duration-medium) var(--env-motion-ease),
+    color var(--env-motion-duration-medium) var(--env-motion-ease),
+    border-color var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 /* Only the active tab uses its variant's fill and interaction colors. */
-.env-tabs-list > .env-tab:not([data-active]),
-.env-tabs-list > .env-tab:not([data-active]):is(:hover, :active) {
+.env-tabs-list > .env-tabs-tab:not([data-active]),
+.env-tabs-list > .env-tabs-tab:not([data-active]):is(:hover, :active) {
   background: transparent;
   border-color: transparent;
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
 }
-.env-tabs-list > .env-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-hover);
+.env-tabs-list > .env-tabs-tab:not([data-active]):hover:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
-.env-tabs-list > .env-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
-  background: var(--color-state-layer-pressed);
+.env-tabs-list
+  > .env-tabs-tab:not([data-active]):active:not(:disabled):not([aria-disabled='true']) {
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
-.env-tabs-list > .env-tab:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+.env-tabs-list > .env-tabs-tab:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: -0.125rem;
+}
+/* The active tab's ring is inset, so on a solid fill Button adds its inner ring in the label color. */
+.env-tabs-list > .env-tabs-tab[data-active] {
+  --env-button-focus-inner-ring: 0.25rem;
 }
 .env-tabs-panels {
   position: relative;
@@ -76,46 +113,63 @@
 }
 /* Only the Tabs' own shown panels become columns: hidden panels, which keepMounted leaves in place,
    stay hidden, and Tabs nested in a panel keep their layout. :where() keeps the rule's specificity. */
-.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tab-panel:not([hidden])) {
+.env-tabs[data-fill] > .env-tabs-panels > :where(.env-tabs-panel:not([hidden])) {
   display: flex;
   flex-direction: column;
   min-block-size: 0;
 }
-.env-tab-panel {
+.env-tabs-panel {
   grid-area: 1 / 1;
   min-inline-size: 0;
   opacity: 1;
   transition:
-    opacity var(--motion-duration-medium) var(--motion-ease),
-    transform var(--motion-duration-medium) var(--motion-ease);
+    opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+    transform var(--env-motion-duration-medium) var(--env-motion-ease);
 }
-.env-tab-panel[hidden] {
+.env-tabs-panel[hidden] {
   display: none;
 }
-.env-tab-panel[data-starting-style] {
+.env-tabs-panel[data-starting-style] {
   opacity: 0;
-  transform: translateY(var(--space-1));
+  transform: translateY(var(--env-space-1));
 }
 /* The outgoing panel fades out of flow, so content after the tabs settles when the tab changes
    instead of jumping when the fade ends. */
-.env-tab-panel[data-ending-style] {
+.env-tabs-panel[data-ending-style] {
   position: absolute;
   inset-inline: 0;
   inset-block-start: 0;
   opacity: 0;
-  transform: translateY(calc(-1 * var(--space-1)));
+  transform: translateY(calc(-1 * var(--env-space-1)));
   pointer-events: none;
 }
-.env-tab-panel:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+.env-tabs-panel:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-tabs-list > .env-tab,
-  .env-tab-panel {
+  .env-tabs-list > .env-tabs-tab,
+  .env-tabs-panel {
     transition: none;
   }
-  .env-tab-panel:is([data-starting-style], [data-ending-style]) {
+  .env-tabs-panel:is([data-starting-style], [data-ending-style]) {
     transform: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the selected tab takes the system’s
+   selection colors. */
+@media (forced-colors: active) {
+  .env-tabs-list > .env-tabs-tab[data-active] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-tabs-list > .env-tabs-tab[data-active] :where(*) {
+    color: inherit;
+  }
+  .env-tabs-list > .env-tabs-tab[data-active]:focus-visible,
+  .env-tabs-list > .env-tabs-tab[data-active] :focus-visible {
+    outline-color: HighlightText;
   }
 }

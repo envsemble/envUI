@@ -1,8 +1,10 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
+import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
 
 export type MessageStatus = 'sending' | 'failed';
 
@@ -12,16 +14,36 @@ export interface MessageProps extends Omit<ComponentPropsWithRef<'article'>, 'ch
    * anyone else, such as an assistant or another participant, full-width content without a bubble.
    */
   from: 'self' | 'other';
-  /** Who wrote the message, shown above it. */
+  /**
+   * Who wrote the message, such as a name, shown above it at weight 500. Leave it out where the
+   * conversation makes it clear, such as on your own messages in a conversation with one person.
+   */
   author?: ReactNode;
-  /** Supporting facts beside the author, such as the time. */
+  /** Supporting facts beside the author, in the muted color, such as the time or a RelativeTime. */
   meta?: ReactNode;
-  /** Small actions below the message, such as copy or retry. */
+  /**
+   * Small actions below the message, such as Copy or Retry: buttons without a variant or size of
+   * their own are ghost buttons at the small control height, with the touch height on touch
+   * screens; at the inline end for your own messages. A text IconButton at the edge lines its icon
+   * up with the message. false and null count as absent.
+   */
   actions?: ReactNode;
-  /** A message on its way, or one that could not be sent; shown with an icon and text. */
+  /**
+   * A message on its way, sending, with a spinner and Sending; or one that could not be sent,
+   * failed, with an error icon and Not sent in the danger tone and, on your own message, a red
+   * outline around the bubble. Without it the message is sent.
+   */
   status?: MessageStatus;
-  /** Text of the status: Sending or Not sent by default. */
+  /**
+   * The text beside the status icon, such as "Could not deliver". It overrides EnvUIProvider's
+   * `messages.message.sending` and `.failed`.
+   * @default 'Sending' or 'Not sent'
+   */
   statusLabel?: string;
+  /**
+   * The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the
+   * width of a message from someone else.
+   */
   children: ReactNode;
 }
 
@@ -30,12 +52,11 @@ function present(node: ReactNode) {
   return node != null && node !== false;
 }
 
-const statusLabels: Record<MessageStatus, string> = {
-  sending: 'Sending',
-  failed: 'Not sent',
-};
-
-/** One entry of a conversation, such as a chat message or a comment. */
+/**
+ * One entry of a conversation, such as a chat message or a comment, as an article: a compact
+ * bubble at the inline end for your own messages, full-width content for others', with an
+ * optional author, meta, status and actions.
+ */
 export function Message({
   from,
   author,
@@ -66,16 +87,22 @@ export function Message({
       {status != null && (
         <div className="env-message-status">
           {status === 'sending' ? (
-            <Spinner size="small" />
+            <Spinner size="sm" />
           ) : (
             <DecorativeIcon>
               <ErrorIcon />
             </DecorativeIcon>
           )}
-          <span>{statusLabel ?? statusLabels[status]}</span>
+          <MessageStatusLabel status={status} label={statusLabel} />
         </div>
       )}
-      {present(actions) && <div className="env-message-actions">{actions}</div>}
+      {present(actions) && (
+        <div className="env-message-actions">
+          <ControlDefaults variant="ghost" size="sm">
+            {actions}
+          </ControlDefaults>
+        </div>
+      )}
     </article>
   );
 }

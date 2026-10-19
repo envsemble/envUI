@@ -2,7 +2,10 @@ import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
 
 export interface KbdProps extends ComponentPropsWithRef<'kbd'> {
-  /** A key combination, such as ['Ctrl', 'P']; rendered as keys joined by +. */
+  /**
+   * Keys pressed together, such as ['Ctrl', 'P']: one key cap each, joined by +, inside an outer
+   * `<kbd>`. Without it, the children are one key.
+   */
   keys?: readonly string[];
 }
 

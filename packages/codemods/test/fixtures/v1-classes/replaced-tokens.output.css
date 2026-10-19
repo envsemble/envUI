@@ -1,0 +1,15 @@
+.page-toolbar {
+  --control-height-small: var(--env-control-height-sm);
+  min-block-size: var(--env-control-height);
+  background: var(--env-color-bg-raised);
+}
+
+.search-field:hover {
+  background: var(--env-color-bg-neutral-muted-hover);
+  color: var(--env-color-fg-muted);
+}
+
+.scrim {
+  opacity: var(--state-dialog-overlay-opacity);
+  transform: scale(var(--scale));
+}

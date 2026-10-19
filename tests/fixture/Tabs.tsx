@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
-  Counter,
+  CounterBadge,
   DocumentTabs,
-  NavigationItem,
+  EnvUIProvider,
+  Menu,
+  Menubar,
+  Slider,
+  NavList,
   Surface,
   Tabs,
   Text,
@@ -65,7 +69,7 @@ export function DocumentTabsFixture({ theme }: { theme: ThemeValue }) {
             );
             record(`pin ${id}`);
           }}
-          // The dark strip leaves onCloseAll out, so it keeps the browser's own context menu.
+          // The dark strip leaves onCloseAll out: only its tabs offer a menu, with Close alone.
           onCloseAll={
             theme === 'light'
               ? () => {
@@ -134,7 +138,7 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
           className="fixture-fill-tabs"
           renderList={(list) => (
             <div className="fixture-tabs-heading">
-              <Text as="h3" variant="section-heading">
+              <Text render={<h3 />} variant="title">
                 Views
               </Text>
               {list}
@@ -147,40 +151,43 @@ export function FillTabsFixture({ theme }: { theme: ThemeValue }) {
   );
 }
 
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
 const tabStateVariants = ['primary', 'secondary', 'outlined', 'important', 'navigation'] as const;
 
 /**
- * Tabs built from each kind of button used as a tab, at both densities on the canvas: the first tab
- * is selected and the second is not.
+ * Tabs built from each kind of button used as a tab, in both scales on the canvas: the first tab is
+ * selected and the second is not.
  */
 export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`tab-states-${theme}`} className="fixture-section">
-      {(['standard', 'compact'] as const).map((density) => (
-        <Surface
-          key={density}
-          tone="canvas"
-          density={density}
-          padding={0}
-          className="fixture-tab-states"
-        >
+      {(['comfortable', 'compact'] as const).map((scale) => (
+        <Theme key={scale} theme={theme} scale={scale} className="fixture-tab-states">
           {tabStateVariants.map((variant) => (
             <Tabs
               key={variant}
-              aria-label={`${variant} tabs, ${density} ${theme}`}
+              aria-label={`${variant} tabs, ${scale} ${theme}`}
               items={['Summary', 'Details'].map((label) => ({
                 value: label.toLowerCase(),
                 button:
                   variant === 'navigation' ? (
-                    <NavigationItem>{label}</NavigationItem>
+                    <NavList.Item>{label}</NavList.Item>
                   ) : (
-                    <Button variant={variant}>{label}</Button>
+                    <Button {...emphasis[variant]}>{label}</Button>
                   ),
                 content: null,
               }))}
             />
           ))}
-        </Surface>
+        </Theme>
       ))}
     </Theme>
   );
@@ -191,22 +198,23 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
   return (
     <Theme theme={theme} data-testid={`compact-tabs-${theme}`} className="fixture-section">
       <Surface
-        tone="canvas"
-        density="compact"
+        background="page"
         padding={0}
         className="fixture-actions"
         style={{ alignItems: 'center' }}
       >
-        <Button data-testid={`compact-control-${theme}`}>Compact control</Button>
+        <Button size="sm" data-testid={`compact-control-${theme}`}>
+          Compact control
+        </Button>
         <Tabs
-          size="compact"
+          size="sm"
           aria-label={`Form sections ${theme}`}
           items={[
             {
               value: 'submissions',
               button: (
                 <Button variant="secondary">
-                  Submissions <Counter value={24} />
+                  Submissions <CounterBadge value={24} />
                 </Button>
               ),
               content: null,
@@ -216,5 +224,102 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
         />
       </Surface>
     </Theme>
+  );
+}
+
+const directionItems = ['One', 'Two', 'Three'].map((label) => ({
+  value: label.toLowerCase(),
+  button: <Button variant="secondary">{label}</Button>,
+  content: <p>{label} panel</p>,
+}));
+
+/**
+ * Tabs in right-to-left text, from a dir attribute and from EnvUIProvider's dir, mounted with
+ * ?fixture=rtl-tabs.
+ */
+export function RtlTabsFixture() {
+  return (
+    <>
+      <div dir="rtl">
+        <Tabs aria-label="Right-to-left tabs" items={directionItems} />
+      </div>
+      <EnvUIProvider dir="rtl">
+        <Tabs aria-label="Provider tabs" items={directionItems} />
+      </EnvUIProvider>
+      {/* A left-to-right region in a panel of right-to-left tabs keeps its own direction. */}
+      <div dir="rtl">
+        <Tabs
+          aria-label="Tabs around a slider"
+          items={[
+            {
+              value: 'volume',
+              button: <Button variant="secondary">Volume</Button>,
+              content: (
+                <div dir="ltr">
+                  <Slider label="Volume" defaultValue={50} />
+                </div>
+              ),
+            },
+          ]}
+        />
+      </div>
+    </>
+  );
+}
+
+/** An overflowing DocumentTabs strip in right-to-left text, mounted with ?fixture=rtl-document-tabs. */
+export function RtlDocumentTabsFixture() {
+  const [value, setValue] = useState<string | null>(initialTabs[0]!.id);
+  return (
+    <div dir="rtl" style={{ inlineSize: '30rem' }}>
+      <DocumentTabs
+        aria-label="Right-to-left documents"
+        items={initialTabs}
+        value={value}
+        onValueChange={setValue}
+        onClose={() => undefined}
+      />
+    </div>
+  );
+}
+
+/**
+ * A parent that re-renders DocumentTabs with a new inline items array as its menu opens, as its
+ * input changes and on a timer, mounted with ?fixture=document-tabs-rerender.
+ */
+export function DocumentTabsRerenderFixture() {
+  const [tabs, setTabs] = useState(['one', 'two', 'three']);
+  const [value, setValue] = useState<string | null>('one');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [renders, setRenders] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setRenders((count) => count + 1), 50);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div>
+      <DocumentTabs
+        aria-label="Re-rendered documents"
+        items={tabs.map((id) => ({ id, label: `${id}.md` }))}
+        value={value}
+        onValueChange={setValue}
+        onClose={(id) => {
+          const index = tabs.indexOf(id);
+          const remaining = tabs.filter((tab) => tab !== id);
+          setTabs(remaining);
+          if (id === value) setValue(remaining[Math.min(index, remaining.length - 1)] ?? null);
+        }}
+      />
+      <Menubar.Root aria-label="Rerender menubar">
+        <Menubar.Menu label="File" onOpenChange={setMenuOpen}>
+          <Menu.Item>First action</Menu.Item>
+          <Menu.Item>Second action</Menu.Item>
+        </Menubar.Menu>
+      </Menubar.Root>
+      <input aria-label="Draft" value={draft} onChange={(event) => setDraft(event.target.value)} />
+      <output data-testid="rerender-state">{menuOpen ? 'open' : 'closed'}</output>
+      <output data-testid="rerender-count">{renders}</output>
+    </div>
   );
 }

@@ -1,0 +1,20 @@
+{
+  "env-spinner-small": {
+    "class": "env-spinner",
+    "attributes": {
+      "data-size": "sm"
+    }
+  },
+  "env-spinner-standard": {
+    "class": "env-spinner",
+    "attributes": {
+      "data-size": "md"
+    }
+  },
+  "env-spinner-large": {
+    "class": "env-spinner",
+    "attributes": {
+      "data-size": "lg"
+    }
+  }
+}

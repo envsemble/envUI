@@ -1,0 +1,126 @@
+/* A window title bar, for installed web apps and desktop shells that draw their own title bar while
+   the system draws the window controls over the page (the Window Controls Overlay).
+   WindowFrame.TitleBar carries these rules, and so does another frame's header that is the window's
+   title bar, through the same class.
+   The title bar area environment variables describe the part of the window's top edge that the
+   window controls leave free; the bar takes its height, and its hairline below, so the hairline
+   runs under the window controls too, and leaves room on either side. Outside such a window the
+   variables are undefined, and the bar falls back to --env-title-bar-height across the full width.
+   Empty space drags the window, controls inside stay clickable, and they take the small control
+   height. Buttons that set no variant are ghost (WindowFrame.TitleBar gives them the default). */
+.env-window-frame-title-bar {
+  --env-control-height: var(--env-control-height-sm);
+  /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
+  --env-window-frame-title-bar-start: var(--env-space-3);
+  --env-window-frame-title-bar-end: var(--env-space-3);
+  --env-window-frame-title-bar-left: var(--env-window-frame-title-bar-start);
+  --env-window-frame-title-bar-right: var(--env-window-frame-title-bar-end);
+  box-sizing: border-box;
+  /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
+  block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--env-title-bar-height));
+  padding-left: calc(env(titlebar-area-x, 0px) + var(--env-window-frame-title-bar-left));
+  padding-right: calc(
+    100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
+      var(--env-window-frame-title-bar-right)
+  );
+  -webkit-app-region: drag;
+  app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-window-frame-title-bar:dir(rtl) {
+  --env-window-frame-title-bar-left: var(--env-window-frame-title-bar-end);
+  --env-window-frame-title-bar-right: var(--env-window-frame-title-bar-start);
+}
+/* Controls, and the box around a text field's input, whose label and padding take presses too. */
+.env-window-frame-title-bar
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    summary,
+    iframe,
+    [role='button'],
+    [role='link'],
+    [role='menubar'],
+    [role='menuitem'],
+    [role='combobox'],
+    [role='tablist'],
+    [role='tab'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='slider'],
+    [role='textbox'],
+    [role='searchbox'],
+    [tabindex],
+    [contenteditable],
+    :has(> input, > textarea)
+  ) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.env-window-frame-title-bar :is(input, textarea, [contenteditable]) {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* WindowFrame.TitleBar: start, center and end sections on the canvas, with a hairline below like the
+   shell's top bar. The center content stays centered in the window while the sides leave room for
+   it. */
+.env-window-frame-title-bar-layout {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+  align-items: center;
+  column-gap: var(--env-space-3);
+  border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body-small);
+}
+.env-window-frame-title-bar-start,
+.env-window-frame-title-bar-end {
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+.env-window-frame-title-bar-end {
+  justify-content: flex-end;
+}
+.env-window-frame-title-bar-center {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* WindowFrame.Root: a window without the shell fills the window, with the title bar on top and the
+   content scrolling below it, so the window controls drawn over the title bar never cover a
+   scrollbar; the stable gutter keeps the layout in place as content starts or stops overflowing. */
+.env-window-frame {
+  /* The frame's published sizes: the title bar above the content, and where sticky content
+     sticks, at the top of the content, which scrolls under the bar. */
+  --env-frame-header-block-size: max(
+    calc(env(titlebar-area-height, 0px) + 0.0625rem),
+    var(--env-title-bar-height)
+  );
+  --env-frame-sticky-top: 0rem;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+.env-window-frame-content {
+  min-block-size: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  outline: none;
+}

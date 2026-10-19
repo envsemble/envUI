@@ -1,0 +1,82 @@
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+import { classNames } from '../internal/classNames.js';
+import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { AlertDismiss } from './internal/AlertDismiss.js';
+import { CheckCircle } from '../icons/CheckCircle.js';
+import { Error as ErrorIcon } from '../icons/Error.js';
+import { Info } from '../icons/Info.js';
+import { Warning } from '../icons/Warning.js';
+
+/** What an alert means: info, success, warning or danger. */
+export type AlertTone = 'info' | 'success' | 'warning' | 'danger';
+
+export interface AlertProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+  /**
+   * What the message means: info, success, warning or danger, for an error or a failure. Sets the
+   * tint, the border and the icon; info and success alerts are also status messages.
+   * @default 'info'
+   */
+  tone?: AlertTone;
+  /** A short heading for the message, such as "Sync paused", above the message. */
+  title?: ReactNode;
+  /** The message: what it means and what people can do. */
+  children?: ReactNode;
+  /** Replaces the tone's icon; false shows none. */
+  icon?: ReactNode | false;
+  /** An action below the message, such as a Button or Link. */
+  action?: ReactNode;
+  /** Shows a dismiss button that calls it; the application removes the alert. */
+  onDismiss?: () => void;
+  /**
+   * Accessible name of the dismiss button, also shown as its tooltip.
+   * @default 'Dismiss', or EnvUIProvider's messages.alert.dismiss
+   */
+  dismissLabel?: string;
+  /**
+   * The alert appeared because of something that just happened and should interrupt: warning and
+   * danger alerts take the alert role. Info and success alerts are always polite status messages.
+   */
+  announce?: boolean;
+}
+
+const toneIcons: Record<AlertTone, ReactNode> = {
+  info: <Info />,
+  success: <CheckCircle />,
+  warning: <Warning />,
+  danger: <ErrorIcon />,
+};
+
+/**
+ * An inline banner for a page- or section-level message, in its tone. It stays a server component:
+ * its dismiss button is a CloseButton, a client leaf named in the provider's language.
+ */
+export function Alert({
+  tone = 'info',
+  title,
+  children,
+  icon,
+  action,
+  onDismiss,
+  dismissLabel,
+  announce = false,
+  className,
+  ...props
+}: AlertProps) {
+  const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
+  const symbol = icon === undefined ? toneIcons[tone] : icon;
+  return (
+    <div {...props} role={role} className={classNames('env-alert', className)} data-tone={tone}>
+      {symbol !== false && symbol != null && (
+        <span className="env-alert-icon">
+          <DecorativeIcon>{symbol}</DecorativeIcon>
+        </span>
+      )}
+      <div className="env-alert-content">
+        {title != null && <div className="env-alert-title">{title}</div>}
+        {children != null && <div className="env-alert-message">{children}</div>}
+        {action != null && <div className="env-alert-action">{action}</div>}
+      </div>
+      {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
+    </div>
+  );
+}

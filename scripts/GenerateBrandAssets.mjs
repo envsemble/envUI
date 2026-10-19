@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 
-/** Preserve the supplied artwork while making its monochrome paint theme-aware. */
+/**
+ * Preserve the supplied artwork while making its monochrome paint theme-aware. The lockup is the
+ * catalogue's own: envUI ships no logos.
+ */
 export async function generateBrandAssets() {
   const [black, white] = await Promise.all(
     ['black', 'white'].map((color) =>
@@ -27,11 +30,11 @@ export async function generateBrandAssets() {
     throw new Error('envUI black and white lockups must share the same geometry.');
   const [, , width, height] = artwork.viewBox.split(/\s+/).map(Number);
   const output = `// Generated from assets/brand/envUI by scripts/GenerateBrandAssets.mjs.
-import { Icon, type IconProps } from './Icon.js';
+import { Icon, type IconProps } from '@envsemble/envui';
 
 export type EnvUILogoProps = IconProps;
 
-/** Official envUI lockup; inherits its containing theme's text color. */
+/** The catalogue's envUI lockup; inherits its containing theme's text color. */
 export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   return (
     <Icon
@@ -50,7 +53,7 @@ export function EnvUILogo({ label = 'envUI', ...props }: EnvUILogoProps) {
   );
 }
 `;
-  const target = resolve(root, 'packages/ui/src/EnvUILogo.tsx');
+  const target = resolve(root, 'apps/catalogue/src/brand/EnvUILogo.tsx');
   let existing;
   try {
     existing = await readFile(target, 'utf8');
