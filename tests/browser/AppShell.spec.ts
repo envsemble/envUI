@@ -732,8 +732,10 @@ test.describe('Main scroll', { tag: '@engines' }, () => {
       page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur()),
     );
     // Engines step by different amounts, so a single press only comes close to the browser's own.
-    for (const name of ['page', 'line'] as const)
-      expect(Math.abs(emulated[name] - native[name])).toBeLessThanOrEqual(native[name] / 3);
+    // An arrow key varies most: the shell steps 40px, as Chromium does, where WebKit on Linux
+    // steps 67px.
+    expect(Math.abs(emulated.page - native.page)).toBeLessThanOrEqual(native.page / 3);
+    expect(Math.abs(emulated.line - native.line)).toBeLessThanOrEqual(native.line / 2);
     // Counted in single presses, quick presses add up and held keys repeat as in the browser.
     for (const [name, unit] of [
       ['quickPages', 'page'],
