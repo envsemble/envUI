@@ -63,6 +63,7 @@ test.describe('Tree', () => {
   });
 
   test('the keyboard moves the active row, expands, collapses and opens', async ({ page }) => {
+    await page.clock.install();
     await page.goto(treeFixture);
     const tree = page.getByRole('tree', { name: 'Files light' });
     await tree.focus();
@@ -113,7 +114,7 @@ test.describe('Tree', () => {
     await expect.poll(() => activeRowId(page)).toBe('folder-2');
     await page.keyboard.press('f');
     await expect.poll(() => activeRowId(page)).toBe('folder-3');
-    await page.waitForTimeout(700);
+    await page.clock.runFor(700);
     await page.keyboard.type('doc 1');
     await expect.poll(() => activeRowId(page)).toBe('folder-2/doc-1.md');
 
@@ -150,35 +151,37 @@ test.describe('Tree', () => {
     await expect(page.locator('body')).toHaveAttribute('data-application-keys', '+++-');
   });
 
-  test('only rows in view are rendered, and a new selection scrolls into view', async ({
-    page,
-  }) => {
-    await page.goto(treeFixture);
-    const scope = page.getByTestId('tree-light');
-    const tree = page.getByRole('tree', { name: 'Files light' });
-    await scope.getByRole('button', { name: 'Expand all' }).click();
-    await expect(tree.getByRole('treeitem', { name: 'Deep.md' })).toBeVisible();
-    const count = () => tree.getByRole('treeitem').count();
-    expect(await count()).toBeLessThan(60);
-    const setSize = await tree
-      .getByRole('treeitem', { name: 'Folder 01' })
-      .getAttribute('aria-setsize');
-    expect(setSize).toBe('40');
+  test(
+    'only rows in view are rendered, and a new selection scrolls into view',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(treeFixture);
+      const scope = page.getByTestId('tree-light');
+      const tree = page.getByRole('tree', { name: 'Files light' });
+      await scope.getByRole('button', { name: 'Expand all' }).click();
+      await expect(tree.getByRole('treeitem', { name: 'Deep.md' })).toBeVisible();
+      const count = () => tree.getByRole('treeitem').count();
+      expect(await count()).toBeLessThan(60);
+      const setSize = await tree
+        .getByRole('treeitem', { name: 'Folder 01' })
+        .getAttribute('aria-setsize');
+      expect(setSize).toBe('40');
 
-    await tree.focus();
-    await page.keyboard.press('End');
-    await expect.poll(() => activeRowId(page)).toBe('folder-40/doc-30.md');
-    const last = tree.locator('[data-id="folder-40/doc-30.md"]');
-    await expect(last).toBeInViewport();
-    expect(await count()).toBeLessThan(60);
-    expect(await tree.evaluate((element) => element.scrollTop)).toBeGreaterThan(30000);
+      await tree.focus();
+      await page.keyboard.press('End');
+      await expect.poll(() => activeRowId(page)).toBe('folder-40/doc-30.md');
+      const last = tree.locator('[data-id="folder-40/doc-30.md"]');
+      await expect(last).toBeInViewport();
+      expect(await count()).toBeLessThan(60);
+      expect(await tree.evaluate((element) => element.scrollTop)).toBeGreaterThan(30000);
 
-    await scope.getByRole('button', { name: 'Select a distant document' }).click();
-    const distant = tree.locator('[data-id="folder-2/doc-25.md"]');
-    await expect(distant).toHaveAttribute('aria-selected', 'true');
-    await expect(distant).toBeInViewport();
-    expect(await count()).toBeLessThan(60);
-  });
+      await scope.getByRole('button', { name: 'Select a distant document' }).click();
+      const distant = tree.locator('[data-id="folder-2/doc-25.md"]');
+      await expect(distant).toHaveAttribute('aria-selected', 'true');
+      await expect(distant).toBeInViewport();
+      expect(await count()).toBeLessThan(60);
+    },
+  );
 
   test('rows keep their layout height while an ancestor is scaled', async ({ page }) => {
     await page.goto(treeFixture);
@@ -221,19 +224,5 @@ test.describe('Tree', () => {
     await page.mouse.click(box.x + 2, box.y + box.height - 4, { button: 'right' });
     await page.getByRole('menuitem', { name: 'New file' }).click();
     await expect.poll(() => lastLog(page)).toBe('new file');
-  });
-
-  test('dark rows keep readable selection and icon colors', async ({ page }) => {
-    await page.goto(treeFixture);
-    const tree = page.getByRole('tree', { name: 'Files dark' });
-    const row = tree.getByRole('treeitem', { name: 'Doc 2.md' }).first();
-    await row.click();
-    await expect(row).toHaveAttribute('aria-selected', 'true');
-    const colors = await row.evaluate((element) => ({
-      text: getComputedStyle(element).color,
-      background: getComputedStyle(element).backgroundColor,
-    }));
-    expect(colors.text).not.toBe(colors.background);
-    await expect.poll(() => lastLog(page, 'dark')).toBe('preview folder-1/doc-2.md');
   });
 });

@@ -1,5 +1,5 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { catalogueUrl, fixtureUrl } from './Servers';
+import { fixtureUrl } from './Servers';
 
 const dockFixture = `${fixtureUrl}/?fixture=panel-dock`;
 
@@ -30,7 +30,7 @@ function dockOf(page: Page, theme = 'light') {
     root,
     frame: page.getByTestId(`dock-frame-${theme}`),
     panel: (id: string) => root.locator(`section[data-panel-id="${id}"]`),
-    chips: root.getByRole('list', { name: 'Hidden panels' }),
+    tabs: root.getByRole('list', { name: 'Hidden panels' }),
     row: root.locator(':scope > .env-panel-dock-row'),
   };
 }
@@ -51,7 +51,7 @@ async function tabTo(page: Page, target: Locator, presses = 4) {
 }
 
 test.describe('PanelDock', () => {
-  test('panels open side by side, minimize to chips, maximize, restore and close', async ({
+  test('panels open side by side, minimize to tabs, maximize, restore and close', async ({
     page,
   }) => {
     const errors = collectErrors(page);
@@ -69,7 +69,7 @@ test.describe('PanelDock', () => {
     expect(await report.evaluate((element) => getComputedStyle(element).zIndex)).toBe('1');
 
     // The dock fills its positioned frame; open panels sit side by side at its inline end, standing
-    // on the strip of chips along the bottom.
+    // on the strip of tabs along the bottom.
     const frameBox = await dock.frame.evaluate((element) =>
       element.getBoundingClientRect().toJSON(),
     );
@@ -79,24 +79,24 @@ test.describe('PanelDock', () => {
     expect(rootBox.height).toBeCloseTo(frameBox.height - 2, 0);
     const reportBox = await box(report);
     const notesBox = await box(notes);
-    const stripBox = await box(dock.chips);
+    const stripBox = await box(dock.tabs);
     expect(notesBox.x - (reportBox.x + reportBox.width)).toBeCloseTo(8, 0);
     expect(rootBox.x + rootBox.width - (notesBox.x + notesBox.width)).toBeCloseTo(24, 0);
     expect(reportBox.y + reportBox.height).toBeCloseTo(stripBox.y, 0);
     expect(notesBox.y + notesBox.height).toBeCloseTo(stripBox.y, 0);
     expect(stripBox.y + stripBox.height).toBeCloseTo(rootBox.y + rootBox.height, 0);
 
-    // A minimized panel is a chip with its label, an attention dot described for assistive
+    // A minimized panel is a tab with its label, an attention dot described for assistive
     // technology, a tooltip and a close button.
-    await expect(dock.chips.getByRole('listitem')).toHaveCount(1);
-    const budget = dock.chips.getByRole('button', { name: 'Show Budget', exact: true });
+    await expect(dock.tabs.getByRole('listitem')).toHaveCount(1);
+    const budget = dock.tabs.getByRole('button', { name: 'Show Budget', exact: true });
     await expect(budget).toHaveText('Budget');
     await expect(budget).toHaveAccessibleDescription('Unsaved changes');
-    await expect(dock.chips.locator('li[data-panel-id="budget"]')).toHaveAttribute(
+    await expect(dock.tabs.locator('li[data-panel-id="budget"]')).toHaveAttribute(
       'data-attention',
       'true',
     );
-    await expect(dock.chips.getByRole('button', { name: 'Close Budget' })).toBeVisible();
+    await expect(dock.tabs.getByRole('button', { name: 'Close Budget' })).toBeVisible();
     await budget.hover();
     await expect(page.locator('.env-tooltip')).toHaveText('Budget for the second half');
     await expect(dock.panel('budget')).toBeHidden();
@@ -109,7 +109,7 @@ test.describe('PanelDock', () => {
     await expect.poll(() => lastLog(page)).toBe('mode notes minimized');
     await expect(dock.panel('notes')).toBeHidden();
     await expect(dock.panel('notes')).toHaveAttribute('data-mode', 'minimized');
-    await expect(dock.chips.getByRole('button')).toHaveText(['Meeting notes', '', 'Budget', '']);
+    await expect(dock.tabs.getByRole('button')).toHaveText(['Meeting notes', '', 'Budget', '']);
     // The open panel left moves to the inline end.
     const alone = await box(report);
     const region = await box(dock.root);
@@ -123,16 +123,16 @@ test.describe('PanelDock', () => {
     expect(filled.x).toBeCloseTo(filledRegion.x, 0);
     expect(filled.y).toBeCloseTo(filledRegion.y, 0);
     expect(filled.width).toBeCloseTo(filledRegion.width, 0);
-    expect(filled.y + filled.height).toBeCloseTo((await box(dock.chips)).y, 0);
+    expect(filled.y + filled.height).toBeCloseTo((await box(dock.tabs)).y, 0);
     // A maximized panel has no resize handle, and its toggle restores it.
-    await expect(report.getByRole('separator')).toHaveCount(0);
+    await expect(report.getByRole('separator', { name: 'Resize Quarterly report' })).toHaveCount(0);
     await report.getByRole('button', { name: 'Restore', exact: true }).click();
     await expect(report).toHaveAttribute('data-mode', 'open');
     await expect(dock.root).not.toHaveAttribute('data-filled');
-    await expect(report.getByRole('separator')).toHaveCount(1);
+    await expect(report.getByRole('separator', { name: 'Resize Quarterly report' })).toHaveCount(1);
 
-    // A chip brings its panel back to the row and activates it.
-    await dock.chips.getByRole('button', { name: 'Show Meeting notes' }).click();
+    // A tab brings its panel back to the row and activates it.
+    await dock.tabs.getByRole('button', { name: 'Show Meeting notes' }).click();
     await expect(notes).toBeVisible();
     await expect(notes).toHaveAttribute('data-mode', 'open');
     expect((await logOf(page)).slice(-2)).toEqual(['mode notes open', 'activate notes']);
@@ -144,10 +144,10 @@ test.describe('PanelDock', () => {
     await notes.getByRole('button', { name: 'Close', exact: true }).click();
     await expect.poll(() => logOf(page)).toContain('close notes');
     await expect(dock.panel('notes')).toHaveCount(0);
-    await dock.chips.getByRole('button', { name: 'Close Budget' }).click();
+    await dock.tabs.getByRole('button', { name: 'Close Budget' }).click();
     await expect.poll(() => logOf(page)).toContain('close budget');
-    await expect(dock.chips).toHaveCount(0);
-    await expect(dock.root).not.toHaveAttribute('data-chips');
+    await expect(dock.tabs).toHaveCount(0);
+    await expect(dock.root).not.toHaveAttribute('data-tabs');
 
     // The page beneath stays usable around the panels.
     await page.getByRole('button', { name: 'Page action light' }).click();
@@ -155,187 +155,193 @@ test.describe('PanelDock', () => {
     expect(errors).toEqual([]);
   });
 
-  test('content keeps its draft, focus and scroll positions through modes and reorders', async ({
-    page,
-  }) => {
-    const errors = collectErrors(page);
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(dockFixture);
-    const dock = dockOf(page);
-    const report = dock.panel('report');
-    const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
-    const content = report.locator(':scope > .env-panel-dock-content');
-    const list = report.getByRole('list', { name: 'Sections of Quarterly report light' });
-    const mounts = page.getByTestId('dock-mounts-light');
-    const scrolls = async () => [
-      await content.evaluate((element) => element.scrollTop),
-      await list.evaluate((element) => element.scrollTop),
-    ];
-    await expect(mounts).toHaveText('report:1 notes:1 budget:1');
-    await draft.fill('Unsent changes');
-    // Focus inside a panel activates it.
-    await expect(report).toHaveAttribute('data-active', 'true');
-    await content.evaluate((element) => (element.scrollTop = 120));
-    await list.evaluate((element) => (element.scrollTop = 60));
+  test(
+    'content keeps its draft, focus and scroll positions through modes and reorders',
+    { tag: '@engines' },
+    async ({ page }) => {
+      const errors = collectErrors(page);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(dockFixture);
+      const dock = dockOf(page);
+      const report = dock.panel('report');
+      const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
+      const content = report.locator(':scope > .env-panel-dock-content');
+      const list = report.getByRole('list', { name: 'Sections of Quarterly report light' });
+      const mounts = page.getByTestId('dock-mounts-light');
+      const scrolls = async () => [
+        await content.evaluate((element) => element.scrollTop),
+        await list.evaluate((element) => element.scrollTop),
+      ];
+      await expect(mounts).toHaveText('report:1 notes:1 budget:1');
+      await draft.fill('Unsent changes');
+      // Focus inside a panel activates it.
+      await expect(report).toHaveAttribute('data-active', 'true');
+      await content.evaluate((element) => (element.scrollTop = 120));
+      await list.evaluate((element) => (element.scrollTop = 60));
 
-    // The application's shortcuts change the mode while focus stays in the draft.
-    await page.keyboard.press('Alt+KeyX');
-    await expect(report).toHaveAttribute('data-mode', 'maximized');
-    await expect(draft).toBeFocused();
-    await expect(draft).toHaveValue('Unsent changes');
-    expect(await scrolls()).toEqual([120, 60]);
-    await page.keyboard.press('Alt+KeyO');
-    await expect(report).toHaveAttribute('data-mode', 'open');
-    await expect(draft).toBeFocused();
-    expect(await scrolls()).toEqual([120, 60]);
+      // The application's shortcuts change the mode while focus stays in the draft.
+      await page.keyboard.press('Alt+KeyX');
+      await expect(report).toHaveAttribute('data-mode', 'maximized');
+      await expect(draft).toBeFocused();
+      await expect(draft).toHaveValue('Unsent changes');
+      expect(await scrolls()).toEqual([120, 60]);
+      await page.keyboard.press('Alt+KeyO');
+      await expect(report).toHaveAttribute('data-mode', 'open');
+      await expect(draft).toBeFocused();
+      expect(await scrolls()).toEqual([120, 60]);
 
-    // Minimizing hands focus to the chip; the chip brings the panel back to the draft.
-    await page.keyboard.press('Alt+KeyM');
-    const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-    await expect(chip).toBeFocused();
-    await expect(report).toBeHidden();
-    await page.keyboard.press('Enter');
-    await expect(report).toBeVisible();
-    await expect(draft).toBeFocused();
-    await expect(draft).toHaveValue('Unsent changes');
-    expect(await scrolls()).toEqual([120, 60]);
+      // Minimizing hands focus to the tab; the tab brings the panel back to the draft.
+      await page.keyboard.press('Alt+KeyM');
+      const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+      await expect(tab).toBeFocused();
+      await expect(report).toBeHidden();
+      await page.keyboard.press('Enter');
+      await expect(report).toBeVisible();
+      await expect(draft).toBeFocused();
+      await expect(draft).toHaveValue('Unsent changes');
+      expect(await scrolls()).toEqual([120, 60]);
 
-    // Focus in a menu the panel opened moves to the chip too when the panel is minimized; the menu
-    // closes with Escape, and focus returns to the menu's trigger with the panel.
-    const more = report.getByRole('button', { name: 'More actions for Quarterly report light' });
-    await more.focus();
-    await page.keyboard.press('Enter');
-    await expect(page.getByRole('menuitem', { name: 'Share' })).toBeFocused();
-    await page.keyboard.press('Alt+KeyM');
-    await expect(chip).toBeFocused();
-    await page.keyboard.press('Escape');
-    await expect(page.getByRole('menu')).toHaveCount(0);
-    await expect(chip).toBeFocused();
-    await page.keyboard.press('Enter');
-    await expect(report).toBeVisible();
-    await expect(more).toBeFocused();
-    await draft.focus();
+      // Focus in a menu the panel opened moves to the tab too when the panel is minimized; the menu
+      // closes with Escape, and focus returns to the menu's trigger with the panel.
+      const more = report.getByRole('button', { name: 'More actions for Quarterly report light' });
+      await more.focus();
+      await page.keyboard.press('Enter');
+      await expect(page.getByRole('menuitem', { name: 'Share' })).toBeFocused();
+      await page.keyboard.press('Alt+KeyM');
+      await expect(tab).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(page.getByRole('menu')).toHaveCount(0);
+      await expect(tab).toBeFocused();
+      await page.keyboard.press('Enter');
+      await expect(report).toBeVisible();
+      await expect(more).toBeFocused();
+      await draft.focus();
 
-    // Reordering moves panels without losing focus, the draft or the scroll positions, also in a
-    // panel without focus. The focused draft is in view, so the browser need not reveal it.
-    const notesContent = dock.panel('notes').locator(':scope > .env-panel-dock-content');
-    await notesContent.evaluate((element) => (element.scrollTop = 150));
-    await content.evaluate((element) => (element.scrollTop = 0));
-    const order = () =>
-      dock.row.evaluate((row) =>
-        [...row.querySelectorAll(':scope > section')].map(
-          (section) => (section as HTMLElement).dataset.panelId,
-        ),
+      // Reordering moves panels without losing focus, the draft or the scroll positions, also in a
+      // panel without focus. The focused draft is in view, so the browser need not reveal it.
+      const notesContent = dock.panel('notes').locator(':scope > .env-panel-dock-content');
+      await notesContent.evaluate((element) => (element.scrollTop = 150));
+      await content.evaluate((element) => (element.scrollTop = 0));
+      const order = () =>
+        dock.row.evaluate((row) =>
+          [...row.querySelectorAll(':scope > section')].map(
+            (section) => (section as HTMLElement).dataset.panelId,
+          ),
+        );
+      expect(await order()).toEqual(['report', 'notes', 'budget']);
+      await page.keyboard.press('Alt+KeyR');
+      await expect.poll(order).toEqual(['budget', 'notes', 'report']);
+      await expect(draft).toBeFocused();
+      expect(await scrolls()).toEqual([0, 60]);
+      expect(await notesContent.evaluate((element) => element.scrollTop)).toBe(150);
+      await page.keyboard.type(' and more');
+      await expect(draft).toHaveValue('Unsent changes and more');
+
+      // Maximized and minimized from the window controls, it is the same content.
+      await report.getByRole('button', { name: 'Maximize' }).click();
+      await report.getByRole('button', { name: 'Minimize' }).click();
+      await dock.tabs.getByRole('button', { name: 'Show Quarterly report' }).click();
+      await expect(report).toHaveAttribute('data-mode', 'open');
+      await expect(draft).toHaveValue('Unsent changes and more');
+      await expect(draft).toBeFocused();
+      await expect(mounts).toHaveText('report:1 notes:1 budget:1');
+      expect(errors).toEqual([]);
+    },
+  );
+
+  test(
+    'the top edge resizes a panel with the pointer and the keyboard',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto(dockFixture);
+      const dock = dockOf(page);
+      const report = dock.panel('report');
+      const handle = report.getByRole('separator', { name: 'Resize Quarterly report' });
+      await expect(handle).toHaveAttribute('aria-orientation', 'horizontal');
+      await expect(handle).toHaveAttribute('tabindex', '0');
+      await expect(handle).toHaveAttribute('aria-controls', (await report.getAttribute('id'))!);
+      // Without a height of its own, a panel takes 85% of the room above the tabs.
+      const room = Number(await handle.getAttribute('aria-valuemax'));
+      const start = Number(await handle.getAttribute('aria-valuenow'));
+      expect(start).toBe(Math.round(room * 0.85));
+      expect(Number(await handle.getAttribute('aria-valuemin'))).toBe(240);
+      // The height reads as a share of that room.
+      await expect(handle).toHaveAttribute('aria-valuetext', '85%');
+      expect((await box(report)).height).toBeCloseTo(start, 0);
+
+      // Dragging reports the new height once, when the drag ends.
+      const edge = await box(handle);
+      await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2 + 100, { steps: 5 });
+      await expect(report).toHaveAttribute('data-resizing', 'true');
+      await expect.poll(async () => Math.round((await box(report)).height)).toBe(start - 100);
+      expect(await lastLog(page)).not.toMatch(/^height/);
+      await page.mouse.up();
+      await expect(report).not.toHaveAttribute('data-resizing');
+      await expect.poll(() => lastLog(page)).toBe(`height report ${start - 100}`);
+      await expect(handle).toHaveAttribute('aria-valuenow', String(start - 100));
+
+      // The arrow keys move by 16 px, 64 with Shift; Home and End reach the bounds.
+      await handle.focus();
+      await page.keyboard.press('ArrowUp');
+      await expect(handle).toHaveAttribute('aria-valuenow', String(start - 84));
+      await page.keyboard.press('Shift+ArrowUp');
+      await expect(handle).toHaveAttribute('aria-valuenow', String(start - 20));
+      await page.keyboard.press('ArrowDown');
+      await expect(handle).toHaveAttribute('aria-valuenow', String(start - 36));
+      await expect.poll(() => lastLog(page)).toBe(`height report ${start - 36}`);
+      await page.keyboard.press('Home');
+      await expect(handle).toHaveAttribute('aria-valuenow', '240');
+      await expect(handle).toHaveAttribute('aria-valuetext', `${Math.round((240 / room) * 100)}%`);
+      expect((await box(report)).height).toBeCloseTo(240, 0);
+      await page.keyboard.press('End');
+      await expect(handle).toHaveAttribute('aria-valuenow', String(room));
+      expect((await box(report)).height).toBeCloseTo(room, 0);
+      // Keys with Alt, Ctrl or ⌘ are the application's.
+      await page.keyboard.press('Control+ArrowDown');
+      await expect(handle).toHaveAttribute('aria-valuenow', String(room));
+
+      // Dragging past a bound stops at it.
+      const top = await box(handle);
+      await page.mouse.move(top.x + top.width / 2, top.y + top.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(top.x + top.width / 2, top.y - 200, { steps: 4 });
+      await page.mouse.up();
+      await expect(handle).toHaveAttribute('aria-valuenow', String(room));
+
+      // A shorter region holds the panel within its room without changing the chosen height.
+      const entries = (await logOf(page)).length;
+      await dock.frame.evaluate((element) => (element.style.blockSize = '30rem'));
+      // The room is the dock's height above the tabs, less the gutter for shadows.
+      const shorter = await dock.root.evaluate(
+        (element) =>
+          element.clientHeight -
+          element.querySelector<HTMLElement>('.env-panel-dock-strip')!.offsetHeight -
+          24,
       );
-    expect(await order()).toEqual(['report', 'notes', 'budget']);
-    await page.keyboard.press('Alt+KeyR');
-    await expect.poll(order).toEqual(['budget', 'notes', 'report']);
-    await expect(draft).toBeFocused();
-    expect(await scrolls()).toEqual([0, 60]);
-    expect(await notesContent.evaluate((element) => element.scrollTop)).toBe(150);
-    await page.keyboard.type(' and more');
-    await expect(draft).toHaveValue('Unsent changes and more');
+      expect(shorter).toBeLessThan(room);
+      await expect(handle).toHaveAttribute('aria-valuemax', String(shorter));
+      await expect(handle).toHaveAttribute('aria-valuenow', String(shorter));
+      expect((await box(report)).height).toBeCloseTo(shorter, 0);
+      expect((await logOf(page)).length).toBe(entries);
+      await dock.frame.evaluate((element) => (element.style.blockSize = ''));
+      await expect(handle).toHaveAttribute('aria-valuenow', String(room));
 
-    // Maximized and minimized from the window controls, it is the same content.
-    await report.getByRole('button', { name: 'Maximize' }).click();
-    await report.getByRole('button', { name: 'Minimize' }).click();
-    await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
-    await expect(report).toHaveAttribute('data-mode', 'open');
-    await expect(draft).toHaveValue('Unsent changes and more');
-    await expect(draft).toBeFocused();
-    await expect(mounts).toHaveText('report:1 notes:1 budget:1');
-    expect(errors).toEqual([]);
-  });
-
-  test('the top edge resizes a panel with the pointer and the keyboard', async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(dockFixture);
-    const dock = dockOf(page);
-    const report = dock.panel('report');
-    const handle = report.getByRole('separator', { name: 'Resize Quarterly report' });
-    await expect(handle).toHaveAttribute('aria-orientation', 'horizontal');
-    await expect(handle).toHaveAttribute('tabindex', '0');
-    await expect(handle).toHaveAttribute('aria-controls', (await report.getAttribute('id'))!);
-    // Without a height of its own, a panel takes 85% of the room above the chips.
-    const room = Number(await handle.getAttribute('aria-valuemax'));
-    const start = Number(await handle.getAttribute('aria-valuenow'));
-    expect(start).toBe(Math.round(room * 0.85));
-    expect(Number(await handle.getAttribute('aria-valuemin'))).toBe(240);
-    // The height reads as a share of that room.
-    await expect(handle).toHaveAttribute('aria-valuetext', '85%');
-    expect((await box(report)).height).toBeCloseTo(start, 0);
-
-    // Dragging reports the new height once, when the drag ends.
-    const edge = await box(handle);
-    await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(edge.x + edge.width / 2, edge.y + edge.height / 2 + 100, { steps: 5 });
-    await expect(report).toHaveAttribute('data-resizing', 'true');
-    await expect.poll(async () => Math.round((await box(report)).height)).toBe(start - 100);
-    expect(await lastLog(page)).not.toMatch(/^height/);
-    await page.mouse.up();
-    await expect(report).not.toHaveAttribute('data-resizing');
-    await expect.poll(() => lastLog(page)).toBe(`height report ${start - 100}`);
-    await expect(handle).toHaveAttribute('aria-valuenow', String(start - 100));
-
-    // The arrow keys move by 16 px, 64 with Shift; Home and End reach the bounds.
-    await handle.focus();
-    await page.keyboard.press('ArrowUp');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(start - 84));
-    await page.keyboard.press('Shift+ArrowUp');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(start - 20));
-    await page.keyboard.press('ArrowDown');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(start - 36));
-    await expect.poll(() => lastLog(page)).toBe(`height report ${start - 36}`);
-    await page.keyboard.press('Home');
-    await expect(handle).toHaveAttribute('aria-valuenow', '240');
-    await expect(handle).toHaveAttribute('aria-valuetext', `${Math.round((240 / room) * 100)}%`);
-    expect((await box(report)).height).toBeCloseTo(240, 0);
-    await page.keyboard.press('End');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(room));
-    expect((await box(report)).height).toBeCloseTo(room, 0);
-    // Keys with Alt, Ctrl or ⌘ are the application's.
-    await page.keyboard.press('Control+ArrowDown');
-    await expect(handle).toHaveAttribute('aria-valuenow', String(room));
-
-    // Dragging past a bound stops at it.
-    const top = await box(handle);
-    await page.mouse.move(top.x + top.width / 2, top.y + top.height / 2);
-    await page.mouse.down();
-    await page.mouse.move(top.x + top.width / 2, top.y - 200, { steps: 4 });
-    await page.mouse.up();
-    await expect(handle).toHaveAttribute('aria-valuenow', String(room));
-
-    // A shorter region holds the panel within its room without changing the chosen height.
-    const entries = (await logOf(page)).length;
-    await dock.frame.evaluate((element) => (element.style.blockSize = '30rem'));
-    // The room is the dock's height above the chips, less the gutter for shadows.
-    const shorter = await dock.root.evaluate(
-      (element) =>
-        element.clientHeight -
-        element.querySelector<HTMLElement>('.env-panel-dock-strip')!.offsetHeight -
-        24,
-    );
-    expect(shorter).toBeLessThan(room);
-    await expect(handle).toHaveAttribute('aria-valuemax', String(shorter));
-    await expect(handle).toHaveAttribute('aria-valuenow', String(shorter));
-    expect((await box(report)).height).toBeCloseTo(shorter, 0);
-    expect((await logOf(page)).length).toBe(entries);
-    await dock.frame.evaluate((element) => (element.style.blockSize = ''));
-    await expect(handle).toHaveAttribute('aria-valuenow', String(room));
-
-    // A panel's own bounds hold its height: its default 85% stops at its maxHeight.
-    const notesHandle = dock
-      .panel('notes')
-      .getByRole('separator', { name: 'Resize Meeting notes' });
-    await expect(notesHandle).toHaveAttribute('aria-valuemin', '200');
-    await expect(notesHandle).toHaveAttribute('aria-valuemax', '400');
-    await expect(notesHandle).toHaveAttribute('aria-valuenow', '400');
-    await notesHandle.focus();
-    await page.keyboard.press('Home');
-    await expect(notesHandle).toHaveAttribute('aria-valuenow', '200');
-    expect((await box(dock.panel('notes'))).height).toBeCloseTo(200, 0);
-  });
+      // A panel's own bounds hold its height: its default 85% stops at its maxHeight.
+      const notesHandle = dock
+        .panel('notes')
+        .getByRole('separator', { name: 'Resize Meeting notes' });
+      await expect(notesHandle).toHaveAttribute('aria-valuemin', '200');
+      await expect(notesHandle).toHaveAttribute('aria-valuemax', '400');
+      await expect(notesHandle).toHaveAttribute('aria-valuenow', '400');
+      await notesHandle.focus();
+      await page.keyboard.press('Home');
+      await expect(notesHandle).toHaveAttribute('aria-valuenow', '200');
+      expect((await box(dock.panel('notes'))).height).toBeCloseTo(200, 0);
+    },
+  );
 
   test('open panels share the row down to their minimum width, then the row scrolls', async ({
     page,
@@ -413,23 +419,23 @@ test.describe('PanelDock', () => {
     await dock.frame.evaluate((element) => (element.style.inlineSize = '24rem'));
     await expect(dock.root).toHaveAttribute('data-stacked', 'true');
     await expect.poll(() => logOf(page)).toEqual(['stacked true']);
-    // The active panel fills the region above the chips; the other open panel waits as a chip.
+    // The active panel fills the region above the tabs; the other open panel waits as a tab.
     const rootBox = await box(dock.root);
     const sheet = await box(notes);
     expect(sheet.x).toBeCloseTo(rootBox.x, 0);
     expect(sheet.y).toBeCloseTo(rootBox.y, 0);
     expect(sheet.width).toBeCloseTo(rootBox.width, 0);
-    expect(sheet.y + sheet.height).toBeCloseTo((await box(dock.chips)).y, 0);
+    expect(sheet.y + sheet.height).toBeCloseTo((await box(dock.tabs)).y, 0);
     await expect(report).toBeHidden();
     await expect(report).toHaveAttribute('data-mode', 'open');
-    await expect(dock.chips.getByRole('button', { name: /^Show/ })).toHaveText([
+    await expect(dock.tabs.getByRole('button', { name: /^Show/ })).toHaveText([
       'Quarterly report',
       'Budget',
     ]);
     // A sheet already fills the region: no Maximize, and no resize handle.
     await expect(notes.getByRole('button', { name: 'Maximize' })).toHaveCount(0);
     await expect(notes.getByRole('button', { name: 'Minimize' })).toBeVisible();
-    await expect(notes.getByRole('separator')).toHaveCount(0);
+    await expect(notes.getByRole('separator', { name: /^Resize Meeting notes/ })).toHaveCount(0);
     // While a panel covers the region, the page beneath takes no presses.
     const action = await box(page.getByRole('button', { name: 'Page action light' }));
     expect(
@@ -439,8 +445,8 @@ test.describe('PanelDock', () => {
       ),
     ).toBe(true);
 
-    // Another panel's chip brings it across the region and focus into it.
-    await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
+    // Another panel's tab brings it across the region and focus into it.
+    await dock.tabs.getByRole('button', { name: 'Show Quarterly report' }).click();
     await expect(report).toBeVisible();
     await expect(notes).toBeHidden();
     await expect.poll(() => lastLog(page)).toBe('activate report');
@@ -450,23 +456,21 @@ test.describe('PanelDock', () => {
     // Minimizing the shown panel shows the one before it.
     await report.getByRole('button', { name: 'Minimize' }).click();
     await expect(notes).toBeVisible();
-    await expect(dock.chips.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
+    await expect(dock.tabs.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
 
-    // A newly opened panel takes the region; chips that overflow their strip scroll sideways with a
+    // A newly opened panel takes the region; tabs that overflow their strip scroll sideways with a
     // vertical wheel.
     await page.getByRole('button', { name: 'Open document light' }).click();
     await page.getByRole('button', { name: 'Open document light' }).click();
     await expect(dock.root.getByRole('region', { name: 'Release checklist 2' })).toBeVisible();
     await expect
-      .poll(() => dock.chips.evaluate((element) => element.scrollWidth > element.clientWidth))
+      .poll(() => dock.tabs.evaluate((element) => element.scrollWidth > element.clientWidth))
       .toBe(true);
-    const chip = await box(dock.chips.getByRole('listitem').first());
-    await page.mouse.move(chip.x + chip.width / 2, chip.y + chip.height / 2);
+    const tab = await box(dock.tabs.getByRole('listitem').first());
+    await page.mouse.move(tab.x + tab.width / 2, tab.y + tab.height / 2);
     await page.mouse.wheel(0, 120);
-    await expect
-      .poll(() => dock.chips.evaluate((element) => element.scrollLeft))
-      .toBeGreaterThan(0);
-    await dock.chips.getByRole('button', { name: 'Close Roadmap 1' }).click();
+    await expect.poll(() => dock.tabs.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    await dock.tabs.getByRole('button', { name: 'Close Roadmap 1' }).click();
     await dock.root
       .getByRole('region', { name: 'Release checklist 2' })
       .getByRole('button', { name: 'Close', exact: true })
@@ -513,19 +517,19 @@ test.describe('PanelDock', () => {
     await tabTo(page, report.getByRole('button', { name: 'Close', exact: true }), 1);
     await tabTo(page, report.getByRole('textbox', { name: 'Draft of Quarterly report light' }), 2);
 
-    // Enter on Minimize hands focus to the chip; Enter there brings the panel back.
+    // Enter on Minimize hands focus to the tab; Enter there brings the panel back.
     await page.keyboard.press('Shift+Tab');
     await expect(report.getByRole('button', { name: 'Close', exact: true })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(minimize).toBeFocused();
     await page.keyboard.press('Enter');
-    const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-    await expect(chip).toBeFocused();
-    await expect(chip).toHaveCSS('outline-style', 'solid');
-    // The chip's close button follows it.
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    await expect(tab).toBeFocused();
+    await expect(tab).toHaveCSS('outline-style', 'solid');
+    // The tab's close button follows it.
     await page.keyboard.press('Tab');
-    await expect(dock.chips.getByRole('button', { name: 'Close Quarterly report' })).toBeFocused();
+    await expect(dock.tabs.getByRole('button', { name: 'Close Quarterly report' })).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Space');
     await expect(report).toBeVisible();
@@ -534,11 +538,11 @@ test.describe('PanelDock', () => {
       report.getByRole('textbox', { name: 'Draft of Quarterly report light' }),
     ).toBeFocused();
 
-    // Closing a chip moves focus to the chip in its place.
-    await dock.chips.getByRole('button', { name: 'Close Budget' }).focus();
+    // Closing a tab moves focus to the tab in its place.
+    await dock.tabs.getByRole('button', { name: 'Close Budget' }).focus();
     await page.keyboard.press('Enter');
     await expect.poll(() => lastLog(page)).toBe('close budget');
-    await expect(dock.chips).toHaveCount(0);
+    await expect(dock.tabs).toHaveCount(0);
     // Closing the focused panel moves focus to the panel that remains, which becomes active.
     await report.getByRole('button', { name: 'Close', exact: true }).focus();
     await page.keyboard.press('Enter');
@@ -552,71 +556,6 @@ test.describe('PanelDock', () => {
     expect(errors).toEqual([]);
   });
 
-  test('panels take the dialog surface and chips the popup surface in both themes', async ({
-    page,
-  }) => {
-    await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.goto(dockFixture);
-    const backgrounds = new Set<string>();
-    for (const theme of ['light', 'dark']) {
-      const dock = dockOf(page, theme);
-      const panel = dock.panel('report');
-      const tokens = await panel.evaluate((element) => {
-        const probe = document.createElement('span');
-        element.append(probe);
-        const resolve = (value: string) => {
-          probe.style.color = value;
-          return getComputedStyle(probe).color;
-        };
-        const result = {
-          dialog: resolve('var(--color-dialog)'),
-          border: resolve('var(--color-popup-border)'),
-          popup: resolve('var(--color-popup)'),
-          text: resolve('var(--color-text-primary)'),
-          muted: resolve('var(--color-text-muted)'),
-          icon: resolve('var(--color-icon)'),
-          canvas: resolve('var(--color-canvas)'),
-        };
-        probe.remove();
-        return result;
-      });
-      const style = (locator: Locator, property: string) =>
-        locator.evaluate(
-          (element, name) => getComputedStyle(element).getPropertyValue(name),
-          property,
-        );
-      expect(await style(panel, 'background-color')).toBe(tokens.dialog);
-      expect(await style(panel, 'border-top-color')).toBe(tokens.border);
-      expect(await style(panel, 'border-top-width')).toBe('1px');
-      expect(await style(panel, 'border-bottom-width')).toBe('0px');
-      expect(await style(panel, 'border-top-left-radius')).toBe('28px');
-      expect(await style(panel, 'border-bottom-left-radius')).toBe('0px');
-      expect(await style(panel, 'box-shadow')).not.toBe('none');
-      const header = panel.locator('.env-panel-dock-header');
-      expect(await style(header, 'background-color')).toBe(tokens.dialog);
-      expect(await style(header, 'position')).toBe('sticky');
-      expect(await style(panel.getByRole('heading', { level: 2 }), 'color')).toBe(tokens.text);
-      expect(await style(panel.getByText(`Edited by Alex Morgan · ${theme}`), 'color')).toBe(
-        tokens.muted,
-      );
-      const minimize = panel.getByRole('button', { name: 'Minimize' });
-      expect(await style(minimize, 'color')).toBe(tokens.icon);
-      expect((await box(minimize)).height).toBeCloseTo(32, 0);
-      const chip = dock.chips.getByRole('listitem');
-      expect(await style(chip, 'background-color')).toBe(tokens.popup);
-      expect(await style(chip, 'border-top-color')).toBe(tokens.border);
-      expect(await style(dock.chips.getByRole('button', { name: 'Show Budget' }), 'color')).toBe(
-        tokens.text,
-      );
-      // A filling panel covers the page with the canvas around the chips.
-      await panel.getByRole('button', { name: 'Maximize' }).click();
-      await expect(dock.root).toHaveCSS('background-color', tokens.canvas);
-      await panel.getByRole('button', { name: 'Restore', exact: true }).click();
-      backgrounds.add(tokens.dialog);
-    }
-    expect(backgrounds.size).toBe(2);
-  });
-
   test('a right-to-left dock mirrors to its inline end', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(dockFixture);
@@ -625,10 +564,10 @@ test.describe('PanelDock', () => {
     const rootBox = await box(dock.root);
     const report = await box(dock.panel('report'));
     const notes = await box(dock.panel('notes'));
-    const chip = await box(dock.chips.getByRole('listitem'));
+    const tab = await box(dock.tabs.getByRole('listitem'));
     expect(notes.x + notes.width).toBeLessThanOrEqual(report.x);
     expect(notes.x - rootBox.x).toBeCloseTo(24, 0);
-    expect(chip.x - rootBox.x).toBeCloseTo(24, 0);
+    expect(tab.x - rootBox.x).toBeCloseTo(24, 0);
     // The header's title keeps the wider padding at its start, on the right.
     const header = dock.panel('report').locator('.env-panel-dock-header');
     await expect(header).toHaveCSS('padding-right', '24px');
@@ -640,21 +579,19 @@ test.describe('PanelDock', () => {
     await expect(dock.row).toHaveAttribute('data-overflowing', 'true');
     await expect.poll(async () => Math.round((await box(latest)).x - rootBox.x)).toBe(24);
     // Resizing is unchanged: up still grows the panel.
-    const handle = dock.panel('report').getByRole('separator');
+    const handle = dock.panel('report').getByRole('separator', { name: 'Resize Quarterly report' });
     const height = Number(await handle.getAttribute('aria-valuenow'));
     await handle.focus();
     await page.keyboard.press('ArrowDown');
     await expect(handle).toHaveAttribute('aria-valuenow', String(height - 16));
   });
 
-  test('coarse pointers get a taller resize band and touch-sized controls', async ({
+  test('coarse pointers get a taller resize band, touch-sized tabs and controls', async ({
     browser,
-    browserName,
   }) => {
-    test.skip(browserName !== 'chromium', 'Only one engine emulates touch with a coarse pointer.');
+    // A touch screen is a coarse pointer in every engine.
     const context = await browser.newContext({
       hasTouch: true,
-      isMobile: true,
       viewport: { width: 1024, height: 900 },
     });
     const page = await context.newPage();
@@ -667,12 +604,21 @@ test.describe('PanelDock', () => {
     expect(await handle.evaluate((element) => getComputedStyle(element, '::after').opacity)).toBe(
       '1',
     );
-    await expect(report.getByRole('button', { name: 'Minimize' })).toHaveCSS('height', '44px');
-    await expect(dock.chips.getByRole('listitem')).toHaveCSS('height', '44px');
-    await expect(dock.chips.getByRole('button', { name: 'Close Budget' })).toHaveCSS(
-      'width',
-      '32px',
-    );
+    // The header's small controls grow to the touch height, as every button does, so a press on
+    // one never reaches the next.
+    const minimize = report.getByRole('button', { name: 'Minimize' });
+    await expect(minimize).toHaveCSS('height', '44px');
+    await expect(minimize).toHaveCSS('width', '44px');
+    // A tab holds its buttons at the touch height inside its top hairline.
+    await expect(dock.tabs.getByRole('listitem')).toHaveCSS('height', '45px');
+    for (const name of ['Show Budget', 'Close Budget']) {
+      const button = dock.tabs.getByRole('button', { name, exact: true });
+      await expect
+        .poll(() => button.evaluate((element) => element.getBoundingClientRect().height))
+        .toBe(44);
+    }
+    const close = dock.tabs.getByRole('button', { name: 'Close Budget' });
+    await expect(close).toHaveCSS('width', '44px');
     await context.close();
   });
 
@@ -681,31 +627,52 @@ test.describe('PanelDock', () => {
     const dock = dockOf(page);
     const report = dock.panel('report');
     const light = '[data-testid="dock-region-light"]';
-    // Waits for the entrances running in the dock to end, then presses a button and reads, in the
-    // next frame, the animations each panel and chip started.
+    // Waits until the entrances in the dock have ended, each target without its data-entering and
+    // its animations, then presses a button and reads the animations the panels and tabs start, as
+    // soon as one has: a busy engine may take more than a frame to start them. They are read from
+    // the animationstart events rather than sampled at frames: on a busy engine one frame can take
+    // longer than a whole entrance, which then starts and ends between two samples.
     const entrances = (button: Locator) =>
       button.evaluate(async (element, dock) => {
         const targets = () => [
           ...document.querySelectorAll<HTMLElement>(`${dock} [data-panel-id]`),
         ];
         const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
-        await frame();
-        await frame();
-        await Promise.allSettled(
-          targets().flatMap((target) => target.getAnimations().map(({ finished }) => finished)),
-        );
-        // Animations settle their promises before they send their end events.
-        await frame();
-        (element as HTMLElement).click();
-        await frame();
-        return targets().flatMap((target) =>
-          target
-            .getAnimations()
-            .map(
-              (animation) =>
-                `${target.tagName === 'LI' ? 'chip' : 'panel'} ${target.dataset.panelId} ${(animation as CSSAnimation).animationName} ${animation.effect!.getTiming().duration}`,
-            ),
-        );
+        for (let count = 0; count < 600; count++) {
+          await frame();
+          if (
+            targets().every(
+              (target) =>
+                !target.hasAttribute('data-entering') && target.getAnimations().length === 0,
+            )
+          )
+            break;
+        }
+        const started: string[] = [];
+        // The event comes before the entrance's own animationend handler, so the target's style
+        // still names the animation and its duration.
+        const record = (event: AnimationEvent) => {
+          const target = event.target as HTMLElement;
+          if (!targets().includes(target)) return;
+          const style = getComputedStyle(target);
+          const names = style.animationName.split(/,\s*/);
+          const durations = style.animationDuration.split(/,\s*/);
+          const duration = durations[Math.max(0, names.indexOf(event.animationName))];
+          started.push(
+            `${target.tagName === 'LI' ? 'tab' : 'panel'} ${target.dataset.panelId} ${event.animationName} ${Math.round(parseFloat(duration) * (duration.endsWith('ms') ? 1 : 1000))}`,
+          );
+        };
+        document.addEventListener('animationstart', record, true);
+        try {
+          (element as HTMLElement).click();
+          for (let count = 0; count < 60; count++) {
+            await frame();
+            if (started.length > 0) return started;
+          }
+          return started;
+        } finally {
+          document.removeEventListener('animationstart', record, true);
+        }
       }, light);
     const open = page.getByRole('button', { name: 'Open document light' });
     expect(await entrances(open)).toEqual(['panel extra-1 env-panel-dock-rise 240']);
@@ -713,13 +680,14 @@ test.describe('PanelDock', () => {
       'panel report env-panel-dock-grow 240',
     ]);
     expect(await entrances(report.getByRole('button', { name: 'Minimize' }))).toEqual([
-      'chip report env-panel-dock-chip-rise 160',
+      'tab report env-panel-dock-tab-rise 160',
     ]);
     // A panel brought back starts its entrance again.
     expect(
-      await entrances(dock.chips.getByRole('button', { name: 'Show Quarterly report' })),
+      await entrances(dock.tabs.getByRole('button', { name: 'Show Quarterly report' })),
     ).toEqual(['panel report env-panel-dock-rise 240']);
-    // A reorder moves the panels and chips without their entrances.
+    // A reorder moves the panels and tabs without their entrances: none has started two frames on,
+    // which a reorder renders in, as it is committed at once.
     const reorder = await report
       .getByRole('textbox', { name: /^Draft of/ })
       .evaluate(async (field, dock) => {
@@ -727,16 +695,20 @@ test.describe('PanelDock', () => {
           ...document.querySelectorAll<HTMLElement>(`${dock} [data-panel-id]`),
         ];
         const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
-        await frame();
-        await frame();
-        await Promise.allSettled(
-          targets().flatMap((target) => target.getAnimations().map(({ finished }) => finished)),
-        );
-        // Animations settle their promises before they send their end events.
-        await frame();
+        for (let count = 0; count < 600; count++) {
+          await frame();
+          if (
+            targets().every(
+              (target) =>
+                !target.hasAttribute('data-entering') && target.getAnimations().length === 0,
+            )
+          )
+            break;
+        }
         field.dispatchEvent(
           new KeyboardEvent('keydown', { key: 'r', code: 'KeyR', altKey: true, bubbles: true }),
         );
+        await frame();
         await frame();
         return targets().flatMap((target) =>
           target.getAnimations().map((animation) => (animation as CSSAnimation).animationName),
@@ -759,81 +731,9 @@ test.describe('PanelDock', () => {
       'panel report env-panel-dock-fade-in 160',
     ]);
     expect(await entrances(report.getByRole('button', { name: 'Minimize' }))).toEqual([
-      'chip report env-motion-fade-in 160',
+      'tab report env-motion-fade-in 160',
     ]);
   });
-});
-
-test('the catalogue shows open, minimized and maximized panels whose drafts survive', async ({
-  page,
-}) => {
-  const errors = collectErrors(page);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(`${catalogueUrl}/#/components/panel-dock/preview`);
-  const examples = page.locator('.docs-preview .docs-example');
-  const docked = examples.filter({ has: page.getByRole('heading', { name: 'Docked panels' }) });
-  const maximized = examples.filter({
-    has: page.getByRole('heading', { name: 'Maximized panel' }),
-  });
-  const report = docked.getByRole('region', { name: 'Quarterly report' });
-  await expect(report).toHaveAttribute('data-mode', 'open');
-  await expect(docked.getByRole('region', { name: 'Meeting notes' })).toHaveAttribute(
-    'data-mode',
-    'open',
-  );
-  await expect(docked.getByRole('button', { name: 'Show Budget' })).toHaveAccessibleDescription(
-    'Unsaved changes',
-  );
-  await expect(maximized.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
-    'data-mode',
-    'maximized',
-  );
-  await expect(maximized.getByRole('region', { name: 'Meeting notes' })).toHaveAttribute(
-    'data-mode',
-    'open',
-  );
-
-  // A draft survives minimizing, maximizing and restoring its panel, and a theme change.
-  const draft = report.getByRole('textbox', { name: 'Draft' });
-  await draft.fill('Ask for the regional numbers.');
-  await report.getByRole('button', { name: 'Minimize' }).click();
-  const chip = docked.getByRole('button', { name: 'Show Quarterly report' });
-  await expect(chip).toHaveAccessibleDescription('Unsaved changes');
-  await chip.click();
-  await report.getByRole('button', { name: 'Maximize' }).click();
-  await expect(report).toHaveAttribute('data-mode', 'maximized');
-  await report.getByRole('button', { name: 'Restore', exact: true }).click();
-  await expect(report).toHaveAttribute('data-mode', 'open');
-  await expect(draft).toHaveValue('Ask for the regional numbers.');
-  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
-  await expect(draft).toHaveValue('Ask for the regional numbers.');
-
-  // A dock that minimizes what does not fit shows its least recently active panel as a chip.
-  const minimizing = examples.filter({
-    has: page.getByRole('heading', { name: 'Minimize what does not fit' }),
-  });
-  await expect(minimizing.getByRole('button', { name: 'Show Quarterly report' })).toBeVisible();
-  await expect(minimizing.getByRole('region', { name: 'Roadmap' })).toHaveAttribute(
-    'data-placement',
-    'row',
-  );
-  await expect(minimizing.locator('.env-panel-dock-row')).not.toHaveAttribute('data-overflowing');
-  // As the region widens, the panel comes back.
-  await page.setViewportSize({ width: 1800, height: 900 });
-  await minimizing
-    .locator('.docs-dock-frame')
-    .evaluate((element) => (element.style.inlineSize = '80rem'));
-  await expect(minimizing.getByRole('region', { name: 'Quarterly report' })).toHaveAttribute(
-    'data-placement',
-    'row',
-  );
-  await expect(minimizing.getByRole('button', { name: 'Show Quarterly report' })).toHaveCount(0);
-
-  // A narrow region stacks the dock.
-  await docked.getByRole('button', { name: 'Narrow region' }).click();
-  await expect(docked.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
-  await expect(draft).toHaveValue('Ask for the regional numbers.');
-  expect(errors).toEqual([]);
 });
 
 test('a drag ends when the application maximizes its panel or the dock stacks meanwhile', async ({
@@ -895,11 +795,11 @@ test('focus outside the dock stays there when the application hides a panel', as
   await page.keyboard.press('Alt+KeyM');
   await expect(report).toHaveAttribute('data-mode', 'minimized');
   await expect(action).toBeFocused();
-  // Focus in the panel still moves to its chip.
-  await dock.chips.getByRole('button', { name: 'Show Quarterly report' }).click();
+  // Focus in the panel still moves to its tab.
+  await dock.tabs.getByRole('button', { name: 'Show Quarterly report' }).click();
   await report.getByRole('textbox', { name: 'Draft of Quarterly report light' }).focus();
   await page.keyboard.press('Alt+KeyM');
-  await expect(dock.chips.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
+  await expect(dock.tabs.getByRole('button', { name: 'Show Quarterly report' })).toBeFocused();
 });
 
 test('focus stays in a panel whose focused edge or Maximize control goes with a new layout', async ({
@@ -929,180 +829,196 @@ test('focus stays in a panel whose focused edge or Maximize control goes with a 
   await expect.poll(holdsFocus).toBe(true);
 });
 
-test('a control that takes focus beneath the sticky header comes out below it', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(dockFixture);
-  const report = dockOf(page).panel('report');
-  const content = report.locator(':scope > .env-panel-dock-content');
-  const header = report.locator('.env-panel-dock-header');
-  const tip = report.getByRole('button', { name: 'Dismiss tip of Quarterly report light' });
-  // The content scrolls until the tip lies entirely beneath the header.
-  await content.evaluate((element) => {
-    const header = element.querySelector('.env-panel-dock-header')!.getBoundingClientRect();
-    const tip = [...element.querySelectorAll('button')]
-      .find((button) => button.textContent?.startsWith('Dismiss tip'))!
-      .getBoundingClientRect();
-    element.scrollTop += tip.top - (header.top + (header.height - tip.height) / 2);
-  });
-  const [headerBefore, tipBefore] = await Promise.all([box(header), box(tip)]);
-  expect(tipBefore.y).toBeGreaterThanOrEqual(headerBefore.y);
-  expect(tipBefore.y + tipBefore.height).toBeLessThanOrEqual(headerBefore.y + headerBefore.height);
-  await tip.focus();
-  const [headerBox, tipBox] = await Promise.all([box(header), box(tip)]);
-  expect(tipBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height);
-});
+test(
+  'a control that takes focus beneath the sticky header comes out below it',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(dockFixture);
+    const report = dockOf(page).panel('report');
+    const content = report.locator(':scope > .env-panel-dock-content');
+    const header = report.locator('.env-panel-dock-header');
+    const tip = report.getByRole('button', { name: 'Dismiss tip of Quarterly report light' });
+    // The content scrolls until the tip lies entirely beneath the header.
+    await content.evaluate((element) => {
+      const header = element.querySelector('.env-panel-dock-header')!.getBoundingClientRect();
+      const tip = [...element.querySelectorAll('button')]
+        .find((button) => button.textContent?.startsWith('Dismiss tip'))!
+        .getBoundingClientRect();
+      element.scrollTop += tip.top - (header.top + (header.height - tip.height) / 2);
+    });
+    const [headerBefore, tipBefore] = await Promise.all([box(header), box(tip)]);
+    expect(tipBefore.y).toBeGreaterThanOrEqual(headerBefore.y);
+    expect(tipBefore.y + tipBefore.height).toBeLessThanOrEqual(
+      headerBefore.y + headerBefore.height,
+    );
+    await tip.focus();
+    const [headerBox, tipBox] = await Promise.all([box(header), box(tip)]);
+    expect(tipBox.y).toBeGreaterThanOrEqual(headerBox.y + headerBox.height);
+  },
+);
 
-test('a panel brought back shows the element its focus returns to', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(dockFixture);
-  const dock = dockOf(page);
-  const report = dock.panel('report');
-  const content = report.locator(':scope > .env-panel-dock-content');
-  const header = report.locator('.env-panel-dock-header');
-  const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
-  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-  // The content scrolls on, leaving the focused draft out of sight.
-  await draft.focus();
-  await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  const pageTop = await page.evaluate(() => window.scrollY);
-  await page.keyboard.press('Enter');
-  await expect(draft).toBeFocused();
-  // Where the draft then shows in the window, the page stays.
-  expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
-  const [contentBox, headerBox, draftBox] = await Promise.all([
-    box(content),
-    box(header),
-    box(draft),
-  ]);
-  expect(draftBox.y + draftBox.height).toBeGreaterThan(headerBox.y + headerBox.height);
-  expect(draftBox.y).toBeLessThan(contentBox.y + contentBox.height);
+test(
+  'a panel brought back shows the element its focus returns to',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(dockFixture);
+    const dock = dockOf(page);
+    const report = dock.panel('report');
+    const content = report.locator(':scope > .env-panel-dock-content');
+    const header = report.locator('.env-panel-dock-header');
+    const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    // The content scrolls on, leaving the focused draft out of sight.
+    await draft.focus();
+    await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    const pageTop = await page.evaluate(() => window.scrollY);
+    await page.keyboard.press('Enter');
+    await expect(draft).toBeFocused();
+    // Where the draft then shows in the window, the page stays.
+    expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
+    const [contentBox, headerBox, draftBox] = await Promise.all([
+      box(content),
+      box(header),
+      box(draft),
+    ]);
+    expect(draftBox.y + draftBox.height).toBeGreaterThan(headerBox.y + headerBox.height);
+    expect(draftBox.y).toBeLessThan(contentBox.y + contentBox.height);
 
-  // Where some of it shows, the scroll position people left stays.
-  await content.evaluate((element) => (element.scrollTop = 100));
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(draft).toBeFocused();
-  expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
-});
+    // Where some of it shows, the scroll position people left stays.
+    await content.evaluate((element) => (element.scrollTop = 100));
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(draft).toBeFocused();
+    expect(await content.evaluate((element) => element.scrollTop)).toBe(100);
+  },
+);
 
-test('a panel brought back scrolls the page only to an element its focus returns to outside the window', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 1440, height: 300 });
-  await page.goto(dockFixture);
-  const dock = dockOf(page);
-  const report = dock.panel('report');
-  const content = report.locator(':scope > .env-panel-dock-content');
-  const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
-  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-  await draft.focus();
-  await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  // The window shows only the bottom of the dock, below where the draft comes back.
-  await dock.frame.evaluate((element) =>
-    window.scrollTo(0, element.getBoundingClientRect().bottom + window.scrollY - innerHeight),
-  );
-  const pageTop = await page.evaluate(() => window.scrollY);
-  await page.keyboard.press('Enter');
-  await expect(draft).toBeFocused();
-  // The content scrolls to the draft, and the page as little as shows it: the part of the draft
-  // below the sticky header comes out at the window's top. WebKit may already have scrolled the
-  // hidden content to the draft's caret, which leaves the field's top edge beneath the header.
-  await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeLessThan(200);
-  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(pageTop);
-  const shownTop = await content.evaluate(
-    (element, field) =>
-      Math.max(
-        field!.getBoundingClientRect().top,
-        element.getBoundingClientRect().top +
-          (parseFloat(getComputedStyle(element).scrollPaddingTop) || 0),
-      ),
-    await draft.elementHandle(),
-  );
-  expect(Math.abs(shownTop)).toBeLessThan(2);
-});
+test(
+  'a panel brought back scrolls the page only to an element its focus returns to outside the window',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1440, height: 300 });
+    await page.goto(dockFixture);
+    const dock = dockOf(page);
+    const report = dock.panel('report');
+    const content = report.locator(':scope > .env-panel-dock-content');
+    const draft = report.getByRole('textbox', { name: 'Draft of Quarterly report light' });
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    await draft.focus();
+    await content.evaluate((element) => (element.scrollTop = element.scrollHeight));
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    // The window shows only the bottom of the dock, below where the draft comes back.
+    await dock.frame.evaluate((element) =>
+      window.scrollTo(0, element.getBoundingClientRect().bottom + window.scrollY - innerHeight),
+    );
+    const pageTop = await page.evaluate(() => window.scrollY);
+    await page.keyboard.press('Enter');
+    await expect(draft).toBeFocused();
+    // The content scrolls to the draft, and the page as little as shows it: the part of the draft
+    // below the sticky header comes out at the window's top. WebKit may already have scrolled the
+    // hidden content to the draft's caret, which leaves the field's top edge beneath the header.
+    await expect.poll(() => content.evaluate((element) => element.scrollTop)).toBeLessThan(200);
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(pageTop);
+    const shownTop = await content.evaluate(
+      (element, field) =>
+        Math.max(
+          field!.getBoundingClientRect().top,
+          element.getBoundingClientRect().top +
+            (parseFloat(getComputedStyle(element).scrollPaddingTop) || 0),
+        ),
+      await draft.elementHandle(),
+    );
+    expect(Math.abs(shownTop)).toBeLessThan(2);
+  },
+);
 
-test('a chip that takes focus scrolls the page only where the window leaves it out', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(dockFixture);
-  const dock = dockOf(page);
-  const draft = dock
-    .panel('report')
-    .getByRole('textbox', { name: 'Draft of Quarterly report light' });
-  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-  // Some of the chip shows in the window, so the page stays as the panel minimizes.
-  await draft.focus();
-  const pageTop = await page.evaluate(() => window.scrollY);
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
-  // Out of the window entirely, the chip comes into view at its bottom edge.
-  await page.keyboard.press('Enter');
-  await expect(draft).toBeFocused();
-  await page.setViewportSize({ width: 1280, height: 560 });
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  const chipBox = await box(chip);
-  expect(Math.abs(chipBox.y + chipBox.height - 560)).toBeLessThan(2);
-});
+test(
+  'a tab that takes focus scrolls the page only where the window leaves it out',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(dockFixture);
+    const dock = dockOf(page);
+    const draft = dock
+      .panel('report')
+      .getByRole('textbox', { name: 'Draft of Quarterly report light' });
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    // Some of the tab shows in the window, so the page stays as the panel minimizes.
+    await draft.focus();
+    const pageTop = await page.evaluate(() => window.scrollY);
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    expect(await page.evaluate(() => window.scrollY)).toBe(pageTop);
+    // Out of the window entirely, the tab comes into view at its bottom edge.
+    await page.keyboard.press('Enter');
+    await expect(draft).toBeFocused();
+    await page.setViewportSize({ width: 1280, height: 560 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    const tabBox = await box(tab);
+    expect(Math.abs(tabBox.y + tabBox.height - 560)).toBeLessThan(2);
+  },
+);
 
-test('a panel brought back reveals the element its focus returns to inside a scrolling list', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(dockFixture);
-  const dock = dockOf(page);
-  const report = dock.panel('report');
-  const content = report.locator(':scope > .env-panel-dock-content');
-  const chat = report.getByRole('list', { name: 'Chat about Quarterly report light' });
-  const quote = chat.getByRole('button', { name: 'Quote message 1 of Quarterly report light' });
-  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-  // The chat scrolls on within the content, leaving the focused button out of sight.
-  await quote.focus();
-  await chat.evaluate((element) => (element.scrollTop = element.scrollHeight));
-  const contentTop = await content.evaluate((element) => element.scrollTop);
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(quote).toBeFocused();
-  // The chat scrolls back to the button; the content around it stays where it was.
-  const [chatBox, quoteBox] = await Promise.all([box(chat), box(quote)]);
-  expect(quoteBox.y).toBeGreaterThanOrEqual(chatBox.y - 1);
-  expect(quoteBox.y + quoteBox.height).toBeLessThanOrEqual(chatBox.y + chatBox.height + 1);
-  expect(await content.evaluate((element) => element.scrollTop)).toBe(contentTop);
-});
+test(
+  'a panel brought back reveals the element its focus returns to inside a scrolling list',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(dockFixture);
+    const dock = dockOf(page);
+    const report = dock.panel('report');
+    const content = report.locator(':scope > .env-panel-dock-content');
+    const chat = report.getByRole('list', { name: 'Chat about Quarterly report light' });
+    const quote = chat.getByRole('button', { name: 'Quote message 1 of Quarterly report light' });
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    // The chat scrolls on within the content, leaving the focused button out of sight.
+    await quote.focus();
+    await chat.evaluate((element) => (element.scrollTop = element.scrollHeight));
+    const contentTop = await content.evaluate((element) => element.scrollTop);
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(quote).toBeFocused();
+    // The chat scrolls back to the button; the content around it stays where it was.
+    const [chatBox, quoteBox] = await Promise.all([box(chat), box(quote)]);
+    expect(quoteBox.y).toBeGreaterThanOrEqual(chatBox.y - 1);
+    expect(quoteBox.y + quoteBox.height).toBeLessThanOrEqual(chatBox.y + chatBox.height + 1);
+    expect(await content.evaluate((element) => element.scrollTop)).toBe(contentTop);
+  },
+);
 
-test('a panel brought back reveals the element its focus returns to beside the view', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto(dockFixture);
-  const dock = dockOf(page);
-  const report = dock.panel('report');
-  const tags = report.getByRole('group', { name: 'Tags of Quarterly report light' });
-  const first = tags.getByRole('button', { name: 'Finance tag of Quarterly report light' });
-  const chip = dock.chips.getByRole('button', { name: 'Show Quarterly report' });
-  // The row of tags scrolls sideways, leaving the focused tag out of sight.
-  await first.focus();
-  await tags.evaluate((element) => (element.scrollLeft = element.scrollWidth));
-  await page.keyboard.press('Alt+KeyM');
-  await expect(chip).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(first).toBeFocused();
-  const [tagsBox, firstBox] = await Promise.all([box(tags), box(first)]);
-  expect(firstBox.x).toBeGreaterThanOrEqual(tagsBox.x - 1);
-  expect(firstBox.x + firstBox.width).toBeLessThanOrEqual(tagsBox.x + tagsBox.width + 1);
-});
+test(
+  'a panel brought back reveals the element its focus returns to beside the view',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(dockFixture);
+    const dock = dockOf(page);
+    const report = dock.panel('report');
+    const tags = report.getByRole('group', { name: 'Tags of Quarterly report light' });
+    const first = tags.getByRole('button', { name: 'Finance tag of Quarterly report light' });
+    const tab = dock.tabs.getByRole('button', { name: 'Show Quarterly report' });
+    // The row of tags scrolls sideways, leaving the focused tag out of sight.
+    await first.focus();
+    await tags.evaluate((element) => (element.scrollLeft = element.scrollWidth));
+    await page.keyboard.press('Alt+KeyM');
+    await expect(tab).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(first).toBeFocused();
+    const [tagsBox, firstBox] = await Promise.all([box(tags), box(first)]);
+    expect(firstBox.x).toBeGreaterThanOrEqual(tagsBox.x - 1);
+    expect(firstBox.x + firstBox.width).toBeLessThanOrEqual(tagsBox.x + tagsBox.width + 1);
+  },
+);
 
 test('open panels leave the controls of a maximized one in view after the dock stacks and widens', async ({
   page,
@@ -1112,7 +1028,7 @@ test('open panels leave the controls of a maximized one in view after the dock s
   const dock = dockOf(page);
   const report = dock.panel('report');
   const notes = dock.panel('notes');
-  // The room of an open panel is the dock's height above the chips, below the row's padding.
+  // The room of an open panel is the dock's height above the tabs, below the row's padding.
   const room = () =>
     dock.root.evaluate((element) => {
       const row = element.querySelector<HTMLElement>(':scope > .env-panel-dock-row')!;
@@ -1201,7 +1117,7 @@ test('a hairline sets apart a header that a form in the content holds', async ({
   await expect(header).toHaveCSS('box-shadow', 'none');
 });
 
-test('a stacked dock shows the panel of a chip pressed, also without onActivate', async ({
+test('a stacked dock shows the panel of a tab pressed, also without onActivate', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1224,7 +1140,7 @@ test('a stacked dock shows the panel of a chip pressed, also without onActivate'
   await expect(second).toBeHidden();
 });
 
-test('a panel that opens shows in place of the panel a chip showed, also beside an active one', async ({
+test('a panel that opens shows in place of the panel a tab showed, also beside an active one', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1255,7 +1171,7 @@ test('a dock that minimizes rather than scrolls asks to minimize its least recen
       ),
     );
   // Three panels do not fit side by side at their minimum widths: the least recently active one
-  // that is not active waits as a chip, and the others share the row without scrolling it.
+  // that is not active waits as a tab, and the others share the row without scrolling it.
   await expect.poll(inRow).toEqual(['review', 'retro']);
   await expect(log).toHaveText('plan minimized');
   await expect(row).not.toHaveAttribute('data-overflowing');
@@ -1322,7 +1238,7 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
     const header = panel.locator('.env-panel-dock-header');
     const border = await panel.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--color-popup-border)';
+      probe.style.color = 'var(--env-elevation-2-border)';
       element.append(probe);
       const color = getComputedStyle(probe).color;
       probe.remove();
@@ -1343,7 +1259,7 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
   await expect(header).toHaveCSS('transition-duration', '0s');
 });
 
-test('a panel that opens fills a stacked dock, also after a chip showed another', async ({
+test('a panel that opens fills a stacked dock, also after a tab showed another', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1351,7 +1267,7 @@ test('a panel that opens fills a stacked dock, also after a chip showed another'
   const loose = page.getByTestId('loose-dock-light');
   const panel = (id: string) => loose.locator(`section[data-panel-id="${id}"]`);
   await expect(loose.locator('.env-panel-dock')).toHaveAttribute('data-stacked', 'true');
-  // Without an active panel, the newest fills the dock; a chip shows its own panel instead.
+  // Without an active panel, the newest fills the dock; a tab shows its own panel instead.
   await expect(panel('why')).toBeVisible();
   await loose.getByRole('button', { name: 'Show Ex light' }).click();
   await expect(panel('ex')).toBeVisible();
@@ -1364,7 +1280,7 @@ test('a panel that opens fills a stacked dock, also after a chip showed another'
   await expect(loose.getByRole('button', { name: 'Show Ex light' })).toBeVisible();
 });
 
-test('a chip pressed while panels sit side by side leaves the newest to fill the dock once it stacks', async ({
+test('a tab pressed while panels sit side by side leaves the newest to fill the dock once it stacks', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -1374,7 +1290,7 @@ test('a chip pressed while panels sit side by side leaves the newest to fill the
   const panel = (id: string) => loose.locator(`section[data-panel-id="${id}"]`);
   await loose.evaluate((element) => (element.style.inlineSize = '60rem'));
   await expect(dock).not.toHaveAttribute('data-stacked');
-  // Ex comes back from its chip, then people work in Why.
+  // Ex comes back from its tab, then people work in Why.
   await panel('ex').getByRole('button', { name: 'Minimize' }).click();
   await loose.getByRole('button', { name: 'Show Ex light' }).click();
   await expect(panel('ex')).toHaveAttribute('data-placement', 'row');
@@ -1422,7 +1338,7 @@ test('a dock that minimizes asks for nothing while it stacks, also as it first s
   await frames(page);
   await expect(page.getByTestId('stacking-log-light')).toHaveText('');
   await expect(scope.locator('section[data-panel-id="three"]')).toBeVisible();
-  // showLabel names the chips' buttons.
+  // openLabel names the tabs' buttons.
   await expect(scope.getByRole('button', { name: 'Bring back One' })).toBeVisible();
 });
 
@@ -1499,13 +1415,13 @@ test('a dock that minimizes leaves a panel the application opens again until the
   // then leaves the row to scroll.
   const once = 'p0 minimized,p0 reopened,p1 minimized,p1 reopened';
   await expect(log).toHaveText(once);
-  await page.waitForTimeout(1000);
+  await frames(page, 10);
   await expect(log).toHaveText(once);
   expect(await ids()).toEqual(['p0', 'p1', 'p2']);
   // Once the region changes size, the dock asks again, once for each.
   await scope.evaluate((element) => (element.style.inlineSize = '50rem'));
   await expect(log).toHaveText(`${once},${once}`);
-  await page.waitForTimeout(1000);
+  await frames(page, 10);
   await expect(log).toHaveText(`${once},${once}`);
 });
 
@@ -1526,28 +1442,6 @@ test('a dock that minimizes keeps the panel that holds focus', async ({ page }) 
   await expect.poll(ids).toEqual(['draft', 'note-2']);
   await expect(field).toBeFocused();
   await expect(field).toHaveValue('Hello');
-});
-
-test('a dock that minimizes renders at most once a frame as it resizes', async ({ page }) => {
-  await page.goto(dockFixture);
-  const scope = page.getByTestId('minimizing-dock-light');
-  await expect.poll(rowOf(scope).ids).toEqual(['review', 'retro']);
-  // Resized every frame, without a panel to minimize or open, the dock renders once a frame.
-  const result = await scope.evaluate(async (frame) => {
-    const commits = () => Number(frame.dataset.commits);
-    const next = () => new Promise((resolve) => requestAnimationFrame(resolve));
-    await next();
-    const before = commits();
-    for (let count = 1; count <= 30; count++) {
-      frame.style.inlineSize = `${50 + (count % 4) / 2}rem`;
-      await next();
-    }
-    await next();
-    await next();
-    return commits() - before;
-  });
-  expect(result).toBeGreaterThan(0);
-  expect(result).toBeLessThanOrEqual(32);
 });
 
 test('a dock that minimizes asks for the next panel when the application keeps one open', async ({
@@ -1580,7 +1474,7 @@ test('a dock that minimizes never alternates between minimizing and opening a pa
   const log = page.getByTestId('wider-log-light');
   const { ids } = rowOf(scope);
   // Open panels take 420 px at the least, minimized ones less: the panel minimized to make room
-  // stays a chip, as it would not fit at its width while open.
+  // stays a tab, as it would not fit at its width while open.
   await expect.poll(ids).toEqual(['p1']);
   await frames(page);
   await expect(log).toHaveText('p0 minimized');
@@ -1597,6 +1491,7 @@ test('a dock that minimizes waits for an answer that comes later, as in a transi
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.install();
   await page.goto(dockFixture);
   const scope = page.getByTestId('late-dock-light');
   const log = page.getByTestId('late-log-light');
@@ -1604,7 +1499,7 @@ test('a dock that minimizes waits for an answer that comes later, as in a transi
   // The application answers a second later: the dock asks for nothing else meanwhile, and one
   // panel makes room.
   await expect.poll(ids).toEqual(['p1', 'p2']);
-  await page.waitForTimeout(500);
+  await page.clock.runFor(500);
   await expect(log).toHaveText('p0 minimized');
   expect(await ids()).toEqual(['p1', 'p2']);
   // With room for it again, the panel comes back, also with an answer that comes later.
@@ -1616,6 +1511,12 @@ test('a dock that minimizes waits for an answer that comes later, as in a transi
 test('a panel that closes while the dock awaits its answer leaves the others open', async ({
   page,
 }) => {
+  // The page's clock stands still until the test moves it, so the application's answer, a second
+  // after the dock asks, comes only after the panel has closed, however long the steps take. An
+  // installed clock still runs on its own; pausing it is what stops it.
+  const start = Date.now();
+  await page.clock.install({ time: start });
+  await page.clock.pauseAt(start + 1000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(dockFixture);
   const scope = page.getByTestId('late-dock-light');
@@ -1626,7 +1527,11 @@ test('a panel that closes while the dock awaits its answer leaves the others ope
   await expect(log).toHaveText('p0 minimized');
   await first.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(first).toHaveCount(0);
-  await page.waitForTimeout(1500);
+  // The answer comes and renders the dock again; it asks for nothing else.
+  const commits = () => scope.evaluate((frame) => Number(frame.dataset.commits));
+  const before = await commits();
+  await page.clock.runFor(1500);
+  await expect.poll(commits).toBeGreaterThan(before);
   await expect(log).toHaveText('p0 minimized');
   expect(await ids()).toEqual(['p1', 'p2']);
 });
@@ -1651,7 +1556,7 @@ test('panels a dock minimized come back as the region widens, and those people m
   await expect.poll(ids).toEqual(['retro']);
   await frames(page);
   await expect(log).toHaveText('plan minimized,review minimized');
-  // A wider region does, while the panel people minimized stays a chip, also where it would fit.
+  // A wider region does, while the panel people minimized stays a tab, also where it would fit.
   await scope.evaluate((element) => (element.style.inlineSize = '80rem'));
   await expect.poll(ids).toEqual(['plan', 'retro']);
   await frames(page);
@@ -1665,4 +1570,34 @@ test('panels a dock minimized come back as the region widens, and those people m
     'plan minimized,review minimized,plan open,review open,plan minimized',
   );
   await expect(row).not.toHaveAttribute('data-overflowing');
+});
+
+test('the dock and its window controls take their names from EnvUIProvider, and a header can leave the controls out', async ({
+  page,
+}) => {
+  await page.goto(dockFixture);
+  const scope = page.getByTestId('translated-dock');
+  const entwurf = scope.locator('section[data-panel-id="entwurf"]');
+  const notizen = scope.locator('section[data-panel-id="notizen"]');
+  for (const name of ['Minimieren', 'Maximieren', 'Schließen'])
+    await expect(entwurf.getByRole('button', { name, exact: true })).toBeVisible();
+  await expect(entwurf.getByRole('separator', { name: 'Größe von Entwurf ändern' })).toBeVisible();
+  const tabs = scope.getByRole('list', { name: 'Ausgeblendete Bereiche' });
+  await expect(tabs.getByRole('button', { name: 'Plan anzeigen' })).toBeVisible();
+  await expect(tabs.getByRole('button', { name: 'Plan schließen' })).toBeVisible();
+  // controls={false} leaves the window controls out and keeps the application's actions.
+  await expect(notizen.getByRole('button', { name: 'Minimieren' })).toHaveCount(0);
+  await expect(notizen.getByRole('button', { name: 'Notizen bearbeiten' })).toBeVisible();
+  // The application's actions and the window controls are ghost buttons; the tab's close button is
+  // a CloseButton.
+  for (const button of [
+    entwurf.getByRole('button', { name: 'Entwurf bearbeiten' }),
+    entwurf.getByRole('button', { name: 'Minimieren' }),
+    entwurf.getByRole('button', { name: 'Schließen', exact: true }),
+    tabs.getByRole('button', { name: 'Plan schließen' }),
+  ])
+    await expect(button).toHaveAttribute('data-variant', 'ghost');
+  // Maximize reads Restore in the provider's words once the panel fills the region.
+  await entwurf.getByRole('button', { name: 'Maximieren' }).click();
+  await expect(entwurf.getByRole('button', { name: 'Wiederherstellen' })).toBeVisible();
 });

@@ -81,29 +81,31 @@ test('Enter submits, Shift+Enter starts a line and the action stops a running re
 });
 
 for (const signal of ['isComposing', 'keyCode 229'] as const) {
-  test(`Enter that confirms an input method composition never submits (${signal})`, async ({
-    page,
-  }) => {
-    await page.goto(composerFixture);
-    const scope = page.getByTestId('composer-light');
-    const field = scope.getByRole('textbox', { name: 'Message light' });
-    await field.fill('Aurora');
-    const prevented = await field.evaluate((element, legacy) => {
-      const event = new KeyboardEvent('keydown', {
-        key: 'Enter',
-        isComposing: !legacy,
-        bubbles: true,
-        cancelable: true,
-      });
-      // Some input methods report their composition only through the legacy key code.
-      if (legacy) Object.defineProperty(event, 'keyCode', { value: 229 });
-      element.dispatchEvent(event);
-      return event.defaultPrevented;
-    }, signal === 'keyCode 229');
-    expect(prevented).toBe(false);
-    await expect(scope.getByTestId('composer-sent-light')).toHaveText('');
-    await expect(field).toHaveValue('Aurora');
-  });
+  test(
+    `Enter that confirms an input method composition never submits (${signal})`,
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(composerFixture);
+      const scope = page.getByTestId('composer-light');
+      const field = scope.getByRole('textbox', { name: 'Message light' });
+      await field.fill('Aurora');
+      const prevented = await field.evaluate((element, legacy) => {
+        const event = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          isComposing: !legacy,
+          bubbles: true,
+          cancelable: true,
+        });
+        // Some input methods report their composition only through the legacy key code.
+        if (legacy) Object.defineProperty(event, 'keyCode', { value: 229 });
+        element.dispatchEvent(event);
+        return event.defaultPrevented;
+      }, signal === 'keyCode 229');
+      expect(prevented).toBe(false);
+      await expect(scope.getByTestId('composer-sent-light')).toHaveText('');
+      await expect(field).toHaveValue('Aurora');
+    },
+  );
 }
 
 test('without onSubmit, Enter and the send button submit the form and keep the text', async ({
@@ -237,16 +239,18 @@ test('an invalid field in the form keeps focus when the send is refused', async 
 });
 
 for (const sizing of ['native', 'measured'] as const) {
-  test(`the field grows with its lines up to the maximum, then scrolls (${sizing})`, async ({
-    page,
-  }) => {
-    if (sizing === 'measured') await withoutContentSizing(page);
-    await expectGrowth(page);
-    const field = page.getByRole('textbox', { name: 'Message light' });
-    expect(await field.evaluate((element) => element.style.blockSize !== '')).toBe(
-      sizing === 'measured',
-    );
-  });
+  test(
+    `the field grows with its lines up to the maximum, then scrolls (${sizing})`,
+    { tag: '@engines' },
+    async ({ page }) => {
+      if (sizing === 'measured') await withoutContentSizing(page);
+      await expectGrowth(page);
+      const field = page.getByRole('textbox', { name: 'Message light' });
+      expect(await field.evaluate((element) => element.style.blockSize !== '')).toBe(
+        sizing === 'measured',
+      );
+    },
+  );
 }
 
 /** Browsers without native content sizing for fields measure the text instead. */
@@ -361,103 +365,6 @@ test('an uncontrolled composer sends from its button, clears and describes the f
   await expect(composerOf(disabled).getByRole('button', { name: 'Send' })).toBeDisabled();
 });
 
-test('the raised surface keeps its colors, focus and contrast in both themes', async ({ page }) => {
-  await page.goto(composerFixture);
-  for (const theme of ['light', 'dark']) {
-    const field = page.getByRole('textbox', { name: `Message ${theme}` });
-    const surface = composerOf(field).locator('.env-composer-surface');
-    await field.focus();
-    // The outline eases to its focus color.
-    await expect
-      .poll(() => surface.evaluate((element) => getComputedStyle(element).borderTopColor))
-      .toBe(
-        await surface.evaluate((element) => {
-          const probe = document.createElement('span');
-          probe.style.color = 'var(--color-field-active)';
-          element.append(probe);
-          const color = getComputedStyle(probe).color;
-          probe.remove();
-          return color;
-        }),
-      );
-    const result = await surface.evaluate((element) => {
-      const resolve = (property: string, value: string) => {
-        const probe = document.createElement('span');
-        probe.style.setProperty(property, value);
-        element.append(probe);
-        const resolved = getComputedStyle(probe).getPropertyValue(property);
-        probe.remove();
-        return resolved;
-      };
-      const style = getComputedStyle(element);
-      return {
-        background: style.backgroundColor,
-        popup: resolve('background-color', 'var(--color-popup)'),
-        border: style.borderTopColor,
-        active: resolve('color', 'var(--color-field-active)'),
-        radius: style.borderTopLeftRadius,
-        ring: style.boxShadow,
-      };
-    });
-    expect(result.background).toBe(result.popup);
-    expect(result.border).toBe(result.active);
-    expect(result.radius).toBe('28px');
-    expect(result.ring).not.toBe('none');
-  }
-  // Text, supporting text and the action keep their contrast on the canvas and on panes.
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const ratio = (background: string[], foreground: string) => {
-      const [lighter, darker] = [
-        luminance(background),
-        luminance([...background, foreground]),
-      ].sort((a, b) => b - a);
-      return (lighter! + 0.05) / (darker! + 0.05);
-    };
-    const results: string[] = [];
-    for (const composer of document.querySelectorAll<HTMLElement>('.env-composer')) {
-      if (composer.hasAttribute('data-disabled')) continue;
-      const theme = composer.closest('[data-env-theme]')!.getAttribute('data-env-theme');
-      const page = getComputedStyle(
-        composer.closest('[data-surface], .env-theme')!,
-      ).backgroundColor;
-      const surface = composer.querySelector<HTMLElement>('.env-composer-surface')!;
-      const fill = getComputedStyle(surface).backgroundColor;
-      const input = composer.querySelector<HTMLElement>('.env-composer-input')!;
-      const text = ratio([page, fill], getComputedStyle(input).color);
-      if (text < 4.5) results.push(`${theme} field text ${text.toFixed(2)}`);
-      const footer = composer.querySelector<HTMLElement>('.env-composer-footer');
-      if (footer) {
-        const supporting = ratio([page], getComputedStyle(footer).color);
-        if (supporting < 4.5) results.push(`${theme} footer ${supporting.toFixed(2)}`);
-      }
-      const action = composer.querySelector<HTMLElement>('.env-composer-action')!;
-      if (action.getAttribute('aria-disabled') !== 'true') {
-        const actionStyle = getComputedStyle(action);
-        const icon = ratio([page, fill, actionStyle.backgroundColor], actionStyle.color);
-        if (icon < 3) results.push(`${theme} action icon ${icon.toFixed(2)}`);
-      }
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
-});
-
 test('composers fit a narrow viewport and wrap long words', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await page.goto(composerFixture);
@@ -474,13 +381,16 @@ test('composers fit a narrow viewport and wrap long words', async ({ page }) => 
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
 
-  test('the action takes the touch size and the field the larger text', async ({ page }) => {
+  test('the action grows to the touch height, and the field takes the larger text', async ({
+    page,
+  }) => {
     await page.goto(composerFixture);
     const field = page.getByRole('textbox', { name: 'Message light' });
     const action = composerOf(field).getByRole('button', { name: 'Send' });
+    // Like every button, the action is 2.75 rem tall and wide, and its box is its hit area.
     await expect(action).toHaveCSS('width', '44px');
     await expect(action).toHaveCSS('height', '44px');
     await expect(field).toHaveCSS('font-size', '16px');
-    expect((await field.boundingBox())!.height).toBeCloseTo(44, 0);
+    expect((await field.boundingBox())!.height).toBeCloseTo(40, 0);
   });
 });

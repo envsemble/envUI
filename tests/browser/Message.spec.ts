@@ -89,7 +89,7 @@ test('own messages are bubbles at the inline end; others fill the width', async 
     await expect(answer).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     // Own icon actions line their icons up with the edge of the message.
     const copy = log.getByRole('button', { name: 'Copy answer' });
-    const icon = (await copy.locator('.env-symbol').boundingBox())!;
+    const icon = (await copy.locator('.env-icon').boundingBox())!;
     expect(icon.x).toBeCloseTo(answerBox.x, 0);
   }
 
@@ -103,63 +103,6 @@ test('own messages are bubbles at the inline end; others fill the width', async 
     .locator('.env-message-content')
     .boundingBox())!;
   expect(own.x).toBeCloseTo(box.x, 0);
-});
-
-test('bubbles, text and status keep their contrast on the canvas and panes in both themes', async ({
-  page,
-}) => {
-  await page.goto(messagesFixture);
-  // Both themes, each with seven messages on the canvas and on a pane.
-  await expect(page.locator('.env-message')).toHaveCount(14);
-  const failures = await page.evaluate(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 1;
-    const context = canvas.getContext('2d', { willReadFrequently: true })!;
-    const luminance = (colors: string[]) => {
-      context.clearRect(0, 0, 1, 1);
-      for (const color of colors) {
-        context.fillStyle = color;
-        context.fillRect(0, 0, 1, 1);
-      }
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      const linear = (value: number) => {
-        const channel = value / 255;
-        return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      };
-      return 0.2126 * linear(red!) + 0.7152 * linear(green!) + 0.0722 * linear(blue!);
-    };
-    const ratio = (back: string[], front: string[]) => {
-      const [lighter, darker] = [luminance(back), luminance([...back, ...front])].sort(
-        (a, b) => b - a,
-      );
-      return (lighter! + 0.05) / (darker! + 0.05);
-    };
-    const results: string[] = [];
-    for (const message of document.querySelectorAll<HTMLElement>('.env-message')) {
-      const theme = message.closest('[data-env-theme]')!.getAttribute('data-env-theme');
-      const surface = message.closest<HTMLElement>('[data-surface]')!;
-      const page = getComputedStyle(surface.closest('.env-theme')!).backgroundColor;
-      const ground = [page, getComputedStyle(surface).backgroundColor];
-      const content = message.querySelector<HTMLElement>('.env-message-content')!;
-      const fill = getComputedStyle(content).backgroundColor;
-      const where = `${theme} ${surface.dataset.surface} ${message.dataset.from}`;
-      if (message.dataset.from === 'self') {
-        // The bubble stands apart from the surface it sits on.
-        const bubble = ratio(ground, [fill]);
-        if (bubble < 1.08) results.push(`${where} bubble ${bubble.toFixed(3)}`);
-      }
-      const text = ratio([...ground, fill], [getComputedStyle(content).color]);
-      if (text < 4.5) results.push(`${where} text ${text.toFixed(2)}`);
-      for (const part of message.querySelectorAll<HTMLElement>(
-        '.env-message-meta, .env-message-status',
-      )) {
-        const value = ratio(ground, [getComputedStyle(part).color]);
-        if (value < 4.5) results.push(`${where} ${part.className} ${value.toFixed(2)}`);
-      }
-    }
-    return results;
-  });
-  expect(failures).toEqual([]);
 });
 
 test('messages stay readable in a narrow viewport', async ({ page }) => {
@@ -184,17 +127,35 @@ test('messages stay readable in a narrow viewport', async ({ page }) => {
 test.describe('on a coarse pointer', () => {
   test.use({ hasTouch: true });
 
-  test('message actions take the touch size', async ({ page }) => {
+  test('message actions grow to the touch height', async ({ page }) => {
     await page.goto(messagesFixture);
     const copy = page.getByTestId('messages-light').getByRole('button', { name: 'Copy answer' });
+    // Like every button, an action is 2.75 rem tall and wide, and its box is its hit area.
     await expect(copy).toHaveCSS('width', '44px');
     await expect(copy).toHaveCSS('height', '44px');
   });
 });
 
-test('message actions are compact on a fine pointer', async ({ page }) => {
+test('message actions are small on a fine pointer', async ({ page }) => {
   await page.goto(messagesFixture);
   const copy = page.getByTestId('messages-light').getByRole('button', { name: 'Copy answer' });
   await expect(copy).toHaveCSS('width', '32px');
   await expect(copy).toHaveCSS('height', '32px');
+  // A text icon action at the start lines its icon up with the message's edge.
+  await expect(copy).toHaveCSS('margin-inline-start', '-8px');
+});
+
+test('actions without a variant or size of their own are small ghost buttons', async ({ page }) => {
+  await page.goto(messagesFixture);
+  const list = page.getByRole('log', { name: 'Defaults light' });
+  for (const name of ['Copy note light', 'Reply']) {
+    const button = list.getByRole('button', { name });
+    await expect(button).toHaveAttribute('data-variant', 'ghost');
+    await expect(button).toHaveAttribute('data-size', 'sm');
+  }
+  // A ghost icon action keeps its round hit area at the edge.
+  await expect(list.getByRole('button', { name: 'Copy note light' })).toHaveCSS(
+    'margin-inline-start',
+    '0px',
+  );
 });

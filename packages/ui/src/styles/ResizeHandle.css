@@ -1,0 +1,62 @@
+/* ResizeHandle: a window splitter's handle. The owner places it on the edge it moves; a line shows
+   on hover, after a moment, at once on keyboard focus and while dragging. */
+.env-resize-handle {
+  position: relative;
+  flex: 0 0 auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
+}
+.env-resize-handle[data-axis='inline'] {
+  inline-size: var(--env-space-2);
+  cursor: col-resize;
+}
+.env-resize-handle[data-axis='block'] {
+  block-size: var(--env-space-2);
+  cursor: row-resize;
+}
+.env-resize-handle[aria-disabled='true'] {
+  cursor: default;
+}
+.env-resize-handle::after {
+  content: '';
+  position: absolute;
+  background: transparent;
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-resize-handle[data-axis='inline']::after {
+  inset-block: 0;
+  inset-inline-start: calc(50% - var(--env-control-border-width));
+  inline-size: calc(2 * var(--env-control-border-width));
+}
+.env-resize-handle[data-axis='block']::after {
+  inset-inline: 0;
+  inset-block-start: calc(50% - var(--env-control-border-width));
+  block-size: calc(2 * var(--env-control-border-width));
+}
+.env-resize-handle:not([aria-disabled='true']):hover::after {
+  background: var(--env-color-border-muted-hover);
+  transition-delay: var(--env-motion-duration-medium);
+}
+.env-resize-handle:focus-visible::after,
+.env-resize-handle[data-dragging]::after {
+  background: var(--env-color-border-focus);
+  transition-delay: 0s;
+}
+/* Under a coarse pointer the handle's hit area reaches the touch size across its line. */
+@media (pointer: coarse) {
+  .env-resize-handle[data-axis='inline'] {
+    inline-size: var(--env-control-height-touch);
+  }
+  .env-resize-handle[data-axis='block'] {
+    block-size: var(--env-control-height-touch);
+  }
+}
+/* Forced colors: the line takes the system's colors. */
+@media (forced-colors: active) {
+  .env-resize-handle:focus-visible::after,
+  .env-resize-handle[data-dragging]::after {
+    background: Highlight;
+  }
+}

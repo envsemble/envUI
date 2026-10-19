@@ -1,0 +1,3 @@
+[
+  "line 7: AppShell.Root: The navigation is an expression the codemod can't see into, or holds NavList items beside other content, so it stays in Sidebar.Content as it is: put its NavList items in a NavList.Root, which renders their list."
+]

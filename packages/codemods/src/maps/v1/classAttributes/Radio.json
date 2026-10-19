@@ -1,0 +1,14 @@
+{
+  "env-radio-inline": {
+    "class": "env-radio-group",
+    "attributes": {
+      "data-orientation": "horizontal"
+    }
+  },
+  "env-radio-option": {
+    "class": "env-radio",
+    "attributes": {
+      "data-orientation": "vertical"
+    }
+  }
+}

@@ -1,18 +1,5 @@
 import { useState } from 'react';
-import {
-  Button,
-  ContextMenu,
-  Menu,
-  MenuCheckboxItem,
-  MenuGroup,
-  MenuItem,
-  MenuRadioGroup,
-  MenuRadioItem,
-  MenuSeparator,
-  MenuSubmenu,
-  Theme,
-  type ThemeValue,
-} from '@envsemble/envui';
+import { Button, ContextMenu, Menu, Theme, type ThemeValue } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Add } from '@envsemble/envui/icons/Add';
@@ -33,25 +20,34 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
       <ContextMenu
         aria-label="Document actions"
         content={(target) => {
+          // A field keeps the browser's menu: content that renders nothing, false from a condition
+          // or an empty string, offers none.
+          const field = target?.closest('[data-no-menu]');
+          if (field) {
+            const editable = field.getAttribute('data-no-menu') === 'editable';
+            return field instanceof HTMLInputElement
+              ? editable && <Menu.Item onClick={() => setLog('Edit note')}>Edit note</Menu.Item>
+              : '';
+          }
           const name = target?.closest<HTMLElement>('[data-document]')?.dataset.document;
           return name ? (
             <>
-              <MenuItem icon={<Edit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
+              <Menu.Item icon={<Edit />} shortcut="F2" onClick={() => setLog(`Rename ${name}`)}>
                 Rename {name}
-              </MenuItem>
-              <MenuItem
+              </Menu.Item>
+              <Menu.Item
                 description="Opens beside the current document"
                 onClick={() => setLog(`Open ${name} to the side`)}
               >
                 Open to the side
-              </MenuItem>
-              <MenuSeparator />
-              <MenuItem icon={<Delete />} onClick={() => setLog(`Delete ${name}`)}>
+              </Menu.Item>
+              <Menu.Separator />
+              <Menu.Item icon={<Delete />} onClick={() => setLog(`Delete ${name}`)}>
                 Delete
-              </MenuItem>
+              </Menu.Item>
             </>
           ) : (
-            <MenuItem onClick={() => setLog('New document')}>New document</MenuItem>
+            <Menu.Item onClick={() => setLog('New document')}>New document</Menu.Item>
           );
         }}
       >
@@ -62,119 +58,127 @@ export function MenusFixture({ theme }: { theme: ThemeValue }) {
             </button>
           ))}
           <p>Empty space</p>
+          <input aria-label={`Note ${theme}`} data-no-menu="" defaultValue="Draft" />
+          <span data-no-menu="">Plain text</span>
         </div>
       </ContextMenu>
-      <Menu aria-label="View options" trigger={<Button variant="secondary">View options</Button>}>
-        <MenuRadioGroup label="Sort by" value={sort} onValueChange={setSort}>
-          <MenuRadioItem value="name">Name</MenuRadioItem>
-          <MenuRadioItem value="date" description="Most recently changed first">
+      <Menu.Root
+        aria-label="View options"
+        trigger={<Button variant="secondary">View options</Button>}
+      >
+        <Menu.RadioGroup label="Sort by" value={sort} onValueChange={setSort}>
+          <Menu.RadioItem value="name">Name</Menu.RadioItem>
+          <Menu.RadioItem value="date" description="Most recently changed first">
             Date
-          </MenuRadioItem>
-        </MenuRadioGroup>
-        <MenuGroup label="Display">
-          <MenuCheckboxItem checked={hidden} onCheckedChange={setHidden}>
+          </Menu.RadioItem>
+        </Menu.RadioGroup>
+        <Menu.Group label="Display">
+          <Menu.CheckboxItem checked={hidden} onCheckedChange={setHidden}>
             Show hidden files
-          </MenuCheckboxItem>
-          <MenuItem shortcut="Ctrl+Shift+P" onClick={() => setLog('Command palette')}>
+          </Menu.CheckboxItem>
+          <Menu.Item shortcut="Ctrl+Shift+P" onClick={() => setLog('Command palette')}>
             Command palette
-          </MenuItem>
-          <MenuItem shortcut="Ctrl + +" onClick={() => setLog('Zoom in')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Ctrl + +" onClick={() => setLog('Zoom in')}>
             Zoom in
-          </MenuItem>
-          <MenuItem shortcut="Alt+←" onClick={() => setLog('Back')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Alt+←" onClick={() => setLog('Back')}>
             Back
-          </MenuItem>
-          <MenuItem shortcut="Ctrl+K Ctrl+S" onClick={() => setLog('Keyboard shortcuts')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Ctrl+K Ctrl+S" onClick={() => setLog('Keyboard shortcuts')}>
             Keyboard shortcuts
-          </MenuItem>
-          <MenuItem shortcut="Ctrl+Shift++ Ctrl+K" onClick={() => setLog('Zoom sequence')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Ctrl+Shift++ Ctrl+K" onClick={() => setLog('Zoom sequence')}>
             Zoom sequence
-          </MenuItem>
-        </MenuGroup>
-        <MenuSubmenu label="More views">
-          <MenuItem onClick={() => setLog('Split right')}>Split right</MenuItem>
-        </MenuSubmenu>
-      </Menu>
-      <Menu
+          </Menu.Item>
+        </Menu.Group>
+        <Menu.Submenu label="More views">
+          <Menu.Item onClick={() => setLog('Split right')}>Split right</Menu.Item>
+        </Menu.Submenu>
+      </Menu.Root>
+      <Menu.Root
         aria-label="Compact options"
-        density="compact"
         align="start"
         trigger={<Button variant="secondary">Compact options</Button>}
       >
-        <MenuGroup label="Document">
-          <MenuItem icon={<Add />} shortcut="Ctrl+Shift+N" onClick={() => setLog('New window')}>
+        <Menu.Group label="Document">
+          <Menu.Item icon={<Add />} shortcut="Ctrl+Shift+N" onClick={() => setLog('New window')}>
             New window
-          </MenuItem>
-          <MenuItem shortcut="Ctrl+S" onClick={() => setLog('Save')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Ctrl+S" onClick={() => setLog('Save')}>
             Save
-          </MenuItem>
-        </MenuGroup>
-        <MenuSubmenu
+          </Menu.Item>
+        </Menu.Group>
+        <Menu.Submenu
           label="Open recent"
           icon={<History />}
           onOpenChange={(open) => {
             if (open) setRecentLoads((count) => count + 1);
           }}
         >
-          <MenuItem onClick={() => setLog('Open Quarterly report')}>Quarterly report</MenuItem>
-          <MenuItem onClick={() => setLog('Open Meeting notes')}>Meeting notes</MenuItem>
-          <MenuSubmenu label="More documents">
-            <MenuItem onClick={() => setLog('Open Budget')}>Budget</MenuItem>
-            <MenuItem onClick={() => setLog('Open Roadmap')}>Roadmap</MenuItem>
-          </MenuSubmenu>
-          <MenuSeparator />
-          <MenuItem onClick={() => setLog('Clear recent')}>Clear recent</MenuItem>
-        </MenuSubmenu>
-        <MenuSubmenu label="Unavailable documents" disabled>
-          <MenuItem onClick={() => setLog('Unavailable')}>Nothing here</MenuItem>
-        </MenuSubmenu>
-        <MenuSeparator />
-        <MenuCheckboxItem checked={wrap} onCheckedChange={setWrap}>
+          <Menu.Item onClick={() => setLog('Open Quarterly report')}>Quarterly report</Menu.Item>
+          <Menu.Item onClick={() => setLog('Open Meeting notes')}>Meeting notes</Menu.Item>
+          <Menu.Submenu label="More documents">
+            <Menu.Item onClick={() => setLog('Open Budget')}>Budget</Menu.Item>
+            <Menu.Item onClick={() => setLog('Open Roadmap')}>Roadmap</Menu.Item>
+          </Menu.Submenu>
+          <Menu.Separator />
+          <Menu.Item onClick={() => setLog('Clear recent')}>Clear recent</Menu.Item>
+        </Menu.Submenu>
+        <Menu.Submenu label="Unavailable documents" disabled>
+          <Menu.Item onClick={() => setLog('Unavailable')}>Nothing here</Menu.Item>
+        </Menu.Submenu>
+        <Menu.Separator />
+        <Menu.CheckboxItem checked={wrap} onCheckedChange={setWrap}>
           Word wrap
-        </MenuCheckboxItem>
-        <MenuSubmenu label="Appearance">
-          <MenuRadioGroup value={appearance} onValueChange={setAppearance}>
-            <MenuRadioItem value="light">Light</MenuRadioItem>
-            <MenuRadioItem value="dark">Dark</MenuRadioItem>
-            <MenuRadioItem value="system">System</MenuRadioItem>
-          </MenuRadioGroup>
-        </MenuSubmenu>
-        <MenuItem
+        </Menu.CheckboxItem>
+        <Menu.Submenu label="Appearance">
+          <Menu.RadioGroup value={appearance} onValueChange={setAppearance}>
+            <Menu.RadioItem value="light">Light</Menu.RadioItem>
+            <Menu.RadioItem value="dark">Dark</Menu.RadioItem>
+            <Menu.RadioItem value="system">System</Menu.RadioItem>
+          </Menu.RadioGroup>
+        </Menu.Submenu>
+        <Menu.Item
           description="Opens beside the current document"
           onClick={() => setLog('Open to the side')}
         >
           Open to the side
-        </MenuItem>
-      </Menu>
-      <ContextMenu
-        aria-label="Programmatic actions"
-        open={programmatic !== null}
-        onOpenChange={(open) => {
-          if (!open) setProgrammatic(null);
-        }}
-        anchorPoint={programmatic ?? undefined}
-        density="compact"
-        content={
-          <>
-            <MenuItem onClick={() => setLog('Programmatic action')}>Programmatic action</MenuItem>
-            <MenuSubmenu label="Share">
-              <MenuItem onClick={() => setLog('Copy link')}>Copy link</MenuItem>
-            </MenuSubmenu>
-          </>
-        }
-      >
-        <div className="fixture-context-area">
-          <Button
-            variant="secondary"
-            onClick={(event) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              setProgrammatic({ x: rect.left, y: rect.bottom + 4 });
-            }}
-          >
-            Open at the button
-          </Button>
-        </div>
-      </ContextMenu>
+        </Menu.Item>
+      </Menu.Root>
+      {/* A compact region: its context menu and submenus open at the compact scale. */}
+      <Theme theme={theme} scale="compact" data-testid={`compact-region-${theme}`}>
+        <ContextMenu
+          aria-label="Programmatic actions"
+          open={programmatic !== null}
+          onOpenChange={(open) => {
+            if (!open) setProgrammatic(null);
+          }}
+          anchorPoint={programmatic ?? undefined}
+          content={
+            <>
+              <Menu.Item onClick={() => setLog('Programmatic action')}>
+                Programmatic action
+              </Menu.Item>
+              <Menu.Submenu label="Share">
+                <Menu.Item onClick={() => setLog('Copy link')}>Copy link</Menu.Item>
+              </Menu.Submenu>
+            </>
+          }
+        >
+          <div className="fixture-context-area">
+            <Button
+              variant="secondary"
+              onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                setProgrammatic({ x: rect.left, y: rect.bottom + 4 });
+              }}
+            >
+              Open at the button
+            </Button>
+          </div>
+        </ContextMenu>
+      </Theme>
       <output data-testid={`menu-log-${theme}`}>{log}</output>
       <output data-testid={`menu-state-${theme}`}>
         {sort} {hidden ? 'hidden shown' : 'hidden concealed'}

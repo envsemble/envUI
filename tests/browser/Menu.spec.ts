@@ -1,6 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
+const adoption = `${fixtureUrl}/?fixture=adoption`;
 const menusFixture = `${fixtureUrl}/?fixture=menus`;
 
 function collectErrors(page: Page) {
@@ -64,120 +65,33 @@ async function popupSurface(menu: Locator) {
   });
 }
 
-test.describe('Compact menus', () => {
-  for (const theme of ['light', 'dark']) {
-    test(`a compact menu is a raised popup with 28 px rows in the ${theme} theme`, async ({
-      page,
-      browserName,
-    }) => {
-      const errors = collectErrors(page);
-      await page.goto(menusFixture);
-      await page
-        .getByTestId(`menus-${theme}`)
-        .getByRole('button', { name: 'Compact options' })
-        .click();
-      const menu = page.getByRole('menu', { name: 'Compact options' });
-      await expect(menu).toBeVisible();
-      await expect(menu).toHaveAttribute('data-density', 'compact');
-      await settled(menu);
-      // The popup takes the raised popup surface, like Popover and Select, with small corners.
-      const [popup, border] = await tokenColors(menu, ['--color-popup', '--color-popup-border']);
-      const surface = await popupSurface(menu);
-      expect(surface.background).toBe(popup);
-      expect(surface.borderColor).toBe(border);
-      expect(surface.borderWidth).toBeGreaterThanOrEqual(1);
-      expect(surface.radius).toBeCloseTo(12, 0);
-      expect(surface.padding).toBeCloseTo(4, 0);
-
-      const rows = ['New window', 'Save'].map((name) => menu.getByRole('menuitem', { name }));
-      rows.push(menu.getByRole('menuitemcheckbox', { name: 'Word wrap' }));
-      for (const row of rows) {
-        const box = (await row.boundingBox())!;
-        expect(box.height).toBeGreaterThanOrEqual(27.5);
-        expect(box.height).toBeLessThanOrEqual(28.5);
-        expect(await row.evaluate((element) => getComputedStyle(element).borderTopLeftRadius)).toBe(
-          '8px',
-        );
-      }
-      // Labels line up whether a row has an icon, a check mark slot or neither.
-      const labelStarts = await Promise.all(
-        rows.map(async (row) => (await row.locator('.env-menu-item-label').boundingBox())!.x),
-      );
-      for (const start of labelStarts) expect(start).toBeCloseTo(labelStarts[0]!, 0);
-      // Shortcuts are small muted keys at the end of the row.
-      for (const row of rows.slice(0, 2)) {
-        const rowBox = (await row.boundingBox())!;
-        const keys = row.locator('.env-menu-item-shortcut');
-        const keysBox = (await keys.boundingBox())!;
-        expect(rowBox.x + rowBox.width - (keysBox.x + keysBox.width)).toBeCloseTo(8, 0);
-        for (const key of await row.locator('kbd.env-kbd').all())
-          expect((await key.boundingBox())!.height).toBeLessThanOrEqual(19);
-      }
-      const [muted] = await tokenColors(menu, ['--color-text-muted']);
-      expect(
-        await rows[0]!
-          .locator('kbd.env-kbd')
-          .first()
-          .evaluate((key) => getComputedStyle(key).color),
-      ).toBe(muted);
-      const groupLabel = menu.getByText('Document', { exact: true });
-      expect(await groupLabel.evaluate((label) => getComputedStyle(label).color)).toBe(muted);
-      expect(
-        await groupLabel.evaluate((label) => Number.parseFloat(getComputedStyle(label).fontSize)),
-      ).toBeLessThan(14);
-      // A hairline separator in the popup border color.
-      const separator = menu.getByRole('separator');
-      expect((await separator.boundingBox())!.height).toBeCloseTo(1, 0);
-      expect(await separator.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe(
-        border,
-      );
-      // A description wraps below the label and grows its row.
-      const described = menu.getByRole('menuitem', { name: 'Open to the side' });
-      await expect(described).toHaveAccessibleDescription('Opens beside the current document');
-      expect((await described.boundingBox())!.height).toBeGreaterThan(28.5);
-
-      // Hover and keyboard highlight fill the row. In one engine Base UI ignores pointer moves
-      // without movement, which is all its automated pointer reports; there the keyboard is checked.
-      if (browserName !== 'webkit') {
-        await rows[1]!.hover();
-        await expect(rows[1]!).toHaveAttribute('data-highlighted', '');
-        expect(
-          await rows[1]!.evaluate((element) => getComputedStyle(element).backgroundColor),
-        ).not.toBe(popup);
-      } else {
-        await page.keyboard.press('ArrowDown');
-        await page.keyboard.press('ArrowDown');
-        await expect(rows[1]!).toHaveAttribute('data-highlighted', '');
-      }
-      const recent = menu.getByRole('menuitem', { name: 'Open recent' });
-      await page.keyboard.press('ArrowDown');
-      await expect(recent).toHaveAttribute('data-highlighted', '');
-      expect(
-        await recent.evaluate((element) => getComputedStyle(element).backgroundColor),
-      ).not.toBe(popup);
-      // Submenu rows line up with the others too.
-      for (const row of [recent, menu.getByRole('menuitem', { name: 'Appearance' })])
-        expect((await row.locator('.env-menu-item-label').boundingBox())!.x).toBeCloseTo(
-          labelStarts[0]!,
-          0,
-        );
-      await page.keyboard.press('Escape');
-      await expect(menu).toBeHidden();
-      expect(errors).toEqual([]);
-    });
-  }
-
-  test('a standard menu keeps its pane and tall rows', async ({ page }) => {
+test.describe('Menus', () => {
+  test('every menu has the same anatomy, and a compact region gives it 28 px rows', async ({
+    page,
+  }) => {
     await page.goto(menusFixture);
     await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
-    await expect(menu).not.toHaveAttribute('data-density');
     await settled(menu);
-    const [pane] = await tokenColors(menu, ['--color-pane']);
-    expect((await popupSurface(menu)).background).toBe(pane);
+    const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
+    expect((await popupSurface(menu)).background).toBe(popup);
     const row = (await menu.getByRole('menuitemradio', { name: 'Name' }).boundingBox())!;
-    expect(row.height).toBeGreaterThanOrEqual(47);
+    expect(row.height).toBeCloseTo(36, 0);
+    await page.keyboard.press('Escape');
+    await page
+      .getByTestId('menus-light')
+      .getByRole('button', { name: 'Open at the button' })
+      .click();
+    const actions = page.getByRole('menu', { name: 'Programmatic actions' });
+    await expect(actions).toBeVisible();
+    await settled(actions);
+    const surface = await popupSurface(actions);
+    expect(surface.radius).toBeCloseTo(10, 0);
+    const action = (await actions
+      .getByRole('menuitem', { name: 'Programmatic action' })
+      .boundingBox())!;
+    expect(action.height).toBeCloseTo(28, 0);
   });
 });
 
@@ -191,7 +105,7 @@ test.describe('Submenus', () => {
     return menu;
   }
 
-  test('a submenu opens beside its row on hover, in the density of its menu', async ({ page }) => {
+  test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
     const errors = collectErrors(page);
     const menu = await openCompactOptions(page);
     const recent = menu.getByRole('menuitem', { name: 'Open recent' });
@@ -199,7 +113,6 @@ test.describe('Submenus', () => {
     await recent.hover();
     const submenu = page.getByRole('menu', { name: 'Open recent' });
     await expect(submenu).toBeVisible();
-    await expect(submenu).toHaveAttribute('data-density', 'compact');
     await expect(recent).toHaveAttribute('data-popup-open', '');
     await settled(submenu);
     // It opens at the inline end, just clear of the menu, with its first row beside the trigger row.
@@ -212,9 +125,9 @@ test.describe('Submenus', () => {
     expect(submenuBox!.x).toBeGreaterThanOrEqual(menuBox!.x + menuBox!.width);
     expect(submenuBox!.x).toBeLessThanOrEqual(menuBox!.x + menuBox!.width + 4);
     expect(Math.abs(firstBox!.y - rowBox!.y)).toBeLessThanOrEqual(1.5);
-    expect(firstBox!.height).toBeCloseTo(28, 0);
+    expect(firstBox!.height).toBeCloseTo(36, 0);
     // The submenu row stays highlighted while its submenu is open.
-    const [popup] = await tokenColors(menu, ['--color-popup']);
+    const [popup] = await tokenColors(menu, ['--env-color-bg-popup']);
     expect(await recent.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(
       popup,
     );
@@ -223,7 +136,6 @@ test.describe('Submenus', () => {
     await submenu.getByRole('menuitem', { name: 'More documents' }).hover();
     const nested = page.getByRole('menu', { name: 'More documents' });
     await expect(nested).toBeVisible();
-    await expect(nested).toHaveAttribute('data-density', 'compact');
     await settled(nested);
     const nestedBox = (await nested.boundingBox())!;
     const submenuEdge = (await submenu.boundingBox())!;
@@ -238,7 +150,7 @@ test.describe('Submenus', () => {
     expect(errors).toEqual([]);
   });
 
-  test('the keyboard opens and closes submenus', async ({ page }) => {
+  test('the keyboard opens and closes submenus', { tag: '@engines' }, async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto(menusFixture);
     const trigger = page
@@ -293,31 +205,38 @@ test.describe('Submenus', () => {
     expect(errors).toEqual([]);
   });
 
-  test('near the edge of the window a submenu opens on the other side', async ({ page }) => {
-    await page.goto(menusFixture);
-    // The light section's controls move to the inline end of the window.
-    await page.addStyleTag({
-      content:
-        '.fixture-main { max-width: none; } [data-testid="menus-light"] { justify-items: end; }',
-    });
-    await page.getByTestId('menus-light').getByRole('button', { name: 'Compact options' }).click();
-    const menu = page.getByRole('menu', { name: 'Compact options' });
-    await expect(menu).toBeVisible();
-    await settled(menu);
-    await focusItem(menu, menu.getByRole('menuitem', { name: 'Open recent' }));
-    await page.keyboard.press('ArrowRight');
-    const submenu = page.getByRole('menu', { name: 'Open recent' });
-    await expect(submenu).toBeVisible();
-    await settled(submenu);
-    await expect(submenu).toHaveAttribute('data-side', 'inline-start');
-    const [menuBox, submenuBox] = [(await menu.boundingBox())!, (await submenu.boundingBox())!];
-    expect(submenuBox.x + submenuBox.width).toBeLessThanOrEqual(menuBox.x);
-    expect(submenuBox.x).toBeGreaterThanOrEqual(0);
-  });
+  test(
+    'near the edge of the window a submenu opens on the other side',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(menusFixture);
+      // The light section's controls move to the inline end of the window.
+      await page.addStyleTag({
+        content:
+          '.fixture-main { max-width: none; } [data-testid="menus-light"] { justify-items: end; }',
+      });
+      await page
+        .getByTestId('menus-light')
+        .getByRole('button', { name: 'Compact options' })
+        .click();
+      const menu = page.getByRole('menu', { name: 'Compact options' });
+      await expect(menu).toBeVisible();
+      await settled(menu);
+      await focusItem(menu, menu.getByRole('menuitem', { name: 'Open recent' }));
+      await page.keyboard.press('ArrowRight');
+      const submenu = page.getByRole('menu', { name: 'Open recent' });
+      await expect(submenu).toBeVisible();
+      await settled(submenu);
+      await expect(submenu).toHaveAttribute('data-side', 'inline-start');
+      const [menuBox, submenuBox] = [(await menu.boundingBox())!, (await submenu.boundingBox())!];
+      expect(submenuBox.x + submenuBox.width).toBeLessThanOrEqual(menuBox.x);
+      expect(submenuBox.x).toBeGreaterThanOrEqual(0);
+    },
+  );
 
-  test('submenus follow the density and theme of their menu', async ({ page }) => {
+  test('submenus follow the scale and theme of their menu', async ({ page }) => {
     await page.goto(menusFixture);
-    // A standard menu opens a standard submenu.
+    // A dark menu opens a dark submenu.
     await page.getByTestId('menus-dark').getByRole('button', { name: 'View options' }).click();
     const menu = page.getByRole('menu', { name: 'View options' });
     await expect(menu).toBeVisible();
@@ -325,7 +244,6 @@ test.describe('Submenus', () => {
     await page.keyboard.press('ArrowRight');
     const submenu = page.getByRole('menu', { name: 'More views' });
     await expect(submenu).toBeVisible();
-    await expect(submenu).not.toHaveAttribute('data-density');
     await expect(submenu.locator('xpath=ancestor::*[@data-env-theme][1]')).toHaveAttribute(
       'data-env-theme',
       'dark',
@@ -335,17 +253,23 @@ test.describe('Submenus', () => {
     await expect(menu).toBeHidden();
     await expect(page.getByTestId('menu-log-dark')).toHaveText('Split right');
 
-    // A compact context menu opens compact submenus.
+    // A context menu in a compact region opens compact submenus.
     await page
       .getByTestId('menus-light')
       .getByRole('button', { name: 'Open at the button' })
       .click();
     const actions = page.getByRole('menu', { name: 'Programmatic actions' });
-    await expect(actions).toHaveAttribute('data-density', 'compact');
+    await expect(actions.locator('xpath=ancestor::*[@data-env-scale][1]')).toHaveAttribute(
+      'data-env-scale',
+      'compact',
+    );
     await focusItem(actions, actions.getByRole('menuitem', { name: 'Share' }));
     await page.keyboard.press('ArrowRight');
     const share = page.getByRole('menu', { name: 'Share' });
-    await expect(share).toHaveAttribute('data-density', 'compact');
+    await expect(share.locator('xpath=ancestor::*[@data-env-scale][1]')).toHaveAttribute(
+      'data-env-scale',
+      'compact',
+    );
     await share.getByRole('menuitem', { name: 'Copy link' }).click();
     await expect(actions).toBeHidden();
     await expect(page.getByTestId('menu-log-light')).toHaveText('Copy link');
@@ -396,39 +320,84 @@ test.describe('ContextMenu', () => {
     });
   }
 
-  test('the keyboard opens the menu at the focused element and activates items', async ({
-    page,
-  }) => {
-    await page.goto(menusFixture);
-    const area = page.getByTestId('context-area-light');
-    const row = area.getByRole('button', { name: 'Gamma' });
-    // The open menu is modal, so the row is measured first.
-    await row.scrollIntoViewIfNeeded();
-    const rowBox = (await row.boundingBox())!;
-    await row.focus();
-    await page.keyboard.press('Shift+F10');
-    const menu = page.getByRole('menu', { name: 'Document actions' });
-    await expect(menu).toBeVisible();
-    const menuBox = (await menu.boundingBox())!;
-    expect(menuBox.y).toBeGreaterThanOrEqual(rowBox.y + rowBox.height - 1);
-    expect(menuBox.y).toBeLessThan(rowBox.y + rowBox.height + 24);
-    await page.keyboard.press('ArrowDown');
-    await expect(menu.getByRole('menuitem', { name: 'Rename Gamma' })).toHaveAttribute(
-      'data-highlighted',
-      '',
-    );
-    await page.keyboard.press('Enter');
-    await expect(menu).toBeHidden();
-    await expect(page.getByTestId('menu-log-light')).toHaveText('Rename Gamma');
-    await expect(row).toBeFocused();
+  test(
+    'the keyboard opens the menu at the focused element and activates items',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(menusFixture);
+      const area = page.getByTestId('context-area-light');
+      const row = area.getByRole('button', { name: 'Gamma' });
+      // The open menu is modal, so the row is measured first.
+      await row.scrollIntoViewIfNeeded();
+      const rowBox = (await row.boundingBox())!;
+      await row.focus();
+      await page.keyboard.press('Shift+F10');
+      const menu = page.getByRole('menu', { name: 'Document actions' });
+      await expect(menu).toBeVisible();
+      const menuBox = (await menu.boundingBox())!;
+      expect(menuBox.y).toBeGreaterThanOrEqual(rowBox.y + rowBox.height - 1);
+      expect(menuBox.y).toBeLessThan(rowBox.y + rowBox.height + 24);
+      await page.keyboard.press('ArrowDown');
+      await expect(menu.getByRole('menuitem', { name: 'Rename Gamma' })).toHaveAttribute(
+        'data-highlighted',
+        '',
+      );
+      await page.keyboard.press('Enter');
+      await expect(menu).toBeHidden();
+      await expect(page.getByTestId('menu-log-light')).toHaveText('Rename Gamma');
+      await expect(row).toBeFocused();
 
-    await page.keyboard.press('ContextMenu');
-    await expect(menu).toBeVisible();
-    await expect(menu.getByRole('menuitem', { name: 'Rename Gamma' })).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(menu).toBeHidden();
-    await expect(row).toBeFocused();
-  });
+      await page.keyboard.press('ContextMenu');
+      await expect(menu).toBeVisible();
+      await expect(menu.getByRole('menuitem', { name: 'Rename Gamma' })).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(menu).toBeHidden();
+      await expect(row).toBeFocused();
+    },
+  );
+
+  test(
+    'content that renders nothing leaves the browser its own context menu',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(menusFixture);
+      const area = page.getByTestId('context-area-light');
+      const field = area.getByRole('textbox', { name: 'Note light' });
+      const text = area.getByText('Plain text');
+      await page.evaluate(() => {
+        // Records, after every listener, whether each contextmenu or ContextMenu-key event was cancelled.
+        const log: string[] = [];
+        (window as Window & { cancelled?: string[] }).cancelled = log;
+        for (const type of ['contextmenu', 'keydown']) {
+          window.addEventListener(
+            type,
+            (event) => {
+              if (type === 'keydown' && (event as KeyboardEvent).key !== 'F10') return;
+              setTimeout(() => log.push(`${type} ${event.defaultPrevented}`));
+            },
+            { capture: true },
+          );
+        }
+      });
+      const cancelled = () =>
+        page.evaluate(() => (window as Window & { cancelled?: string[] }).cancelled);
+      // The field's content is false, as from editable && <Menu.Item>; the text's is ''.
+      await field.click({ button: 'right' });
+      await text.click({ button: 'right' });
+      await field.focus();
+      await page.keyboard.press('Shift+F10');
+      await expect
+        .poll(async () => (await cancelled())?.slice(0, 3))
+        .toEqual(['contextmenu false', 'contextmenu false', 'keydown false']);
+      // Two frames on, past the frame a menu would mount in, none has, and the contextmenu event some browsers send
+      // after Shift+F10 was not cancelled either.
+      await page.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+      );
+      expect((await cancelled())?.filter((entry) => entry.endsWith('true'))).toEqual([]);
+      await expect(page.getByRole('menu')).toHaveCount(0);
+    },
+  );
 
   test('a controlled context menu opens at a supplied point', async ({ page }) => {
     await page.goto(menusFixture);
@@ -500,4 +469,32 @@ test('menu groups, radio and checkbox items keep their choice', async ({ page })
   await expect(plusSequence.locator('kbd.env-kbd')).toHaveText(['Ctrl', 'Shift', '+', 'Ctrl', 'K']);
   await page.keyboard.press('Escape');
   await expect(menu).toBeHidden();
+});
+
+test('Menu supports keyboard navigation, actions and routed destinations', async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.goto(adoption);
+  const trigger = page.getByRole('button', { name: 'Open account menu' });
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  const menu = page.getByRole('menu', { name: 'Account', exact: true });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem')).toHaveCount(2);
+  // Opening from the keyboard highlights the first item.
+  await expect(menu.getByRole('menuitem', { name: 'Account settings' })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(menu.getByRole('menuitem', { name: 'Sign out' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('menu-action')).toHaveText('Signed out');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  const link = page.getByRole('menuitem', { name: 'Account settings' });
+  await expect(link).toHaveAttribute('data-router-link', '');
+  await link.click();
+  await expect(page.locator('body')).toHaveAttribute('data-navigated-to', '/account');
+  // Its onClick runs too, such as to record the choice.
+  await expect(page.getByTestId('menu-action')).toHaveText('Followed account settings');
+  expect(errors).toEqual([]);
 });

@@ -1,0 +1,19 @@
+.env-app-shell-header {
+  block-size: var(--env-app-shell-header-height);
+}
+.workspace .env-app-shell-main > .page {
+  padding-block-start: var(--env-frame-header-block-size);
+}
+.env-app-shell[data-compact] .env-sidebar {
+  inline-size: var(--env-sidebar-collapsed-width);
+}
+.env-sidebar-trigger .env-sidebar-trigger-mark svg {
+  inline-size: 1.25rem;
+}
+.env-app-context,
+.env-app-sidebar-backdrop {
+  opacity: 0.9;
+}
+.sticky-toolbar {
+  inset-block-start: var(--env-frame-sticky-top);
+}

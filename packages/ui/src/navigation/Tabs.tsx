@@ -1,17 +1,30 @@
+'use client';
+
+import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { NavigationItem, type NavigationItemProps } from './NavigationItem.js';
+import { useDirectionScope } from '../internal/useDirection.js';
+import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
 
 export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
   value: string;
-  /** Button, IconButton, button-based NavigationItem, or a compatible native button component. */
+  /**
+   * The tab's control: a Button, an IconButton, a NavList.Item without href, or a component that
+   * forwards native button props and its ref. It keeps its own look; a link is not allowed.
+   */
   button: ReactElement<ComponentPropsWithRef<'button'>>;
+  /** The panel's content, shown while the tab is selected. */
   content: ReactNode;
+  /**
+   * The tab cannot be selected; it is dimmed and reports aria-disabled, and the arrow keys still
+   * reach it. A disabled button does the same.
+   */
   disabled?: boolean;
 }
 
@@ -20,31 +33,59 @@ export interface TabsProps
     ComponentPropsWithRef<'div'>,
     'children' | 'defaultValue' | 'onChange' | 'aria-label'
   > {
+  /** The tabs in order, each with its value, button and panel content. */
   items: readonly TabsItem[];
-  /** Accessible name of the tab list. */
+  /** The tab list's accessible name, such as Project views. */
   'aria-label': string;
+  /** The selected tab's value, for controlled tabs; update it from onValueChange. */
   value?: string | null;
+  /**
+   * The tab that uncontrolled tabs start on.
+   * @default the first enabled item's value
+   */
   defaultValue?: string | null;
+  /** Receives the value of the tab people select, by pressing it or from the keyboard. */
   onValueChange?: (value: string | null) => void;
-  /** Automatic selection on arrow-key focus; manual requires Enter or Space. */
+  /**
+   * automatic selects a tab as the arrow keys move focus to it; manual only moves focus, and Enter
+   * or Space selects, for panels that take a moment to show.
+   * @default 'automatic'
+   */
   activation?: 'automatic' | 'manual';
+  /**
+   * horizontal puts the tabs in a row, moved through with the left and right arrow keys; vertical
+   * in a column, with the up and down arrow keys. The panels stay below the list either way.
+   * @default 'horizontal'
+   */
   orientation?: 'horizontal' | 'vertical';
-  /** Preserve local panel state while inactive. Hidden panels are inert. */
+  /**
+   * Keep the panels of unselected tabs mounted and hidden, so their state, such as a draft or a
+   * scroll position, survives switching; otherwise a panel unmounts once it has faded out.
+   * @default false
+   */
   keepMounted?: boolean;
-  /** Wrap the supplied list in a custom layout, such as a Card with a heading. Render it once. */
+  /**
+   * Places the tab list in a layout of your own, such as beside a heading: it receives the list and
+   * returns what to render in its place, with the list in it once. The panels stay below.
+   */
   renderList?: (list: ReactElement) => ReactNode;
+  /** A class for the tab list, the rail that holds the tabs. */
   listClassName?: string;
+  /** A class for every panel. */
   panelClassName?: string;
   /**
-   * The selected panel takes the height left below the list; give the Tabs a height (for example as
-   * a flex child). For content that fills a region, such as a canvas.
+   * The selected panel takes the height left below the list, for content that fills a region,
+   * such as a canvas; give the tabs a height, for example as a flex child.
+   * @default false
    */
   fill?: boolean;
   /**
-   * standard (default) matches buttons; compact makes the whole rail as tall as a compact control,
-   * for toolbars and bars, like a compact `SegmentedControl`.
+   * The rail's height, as on every control: sm, md or lg in the current scale. The tabs inside are
+   * a little shorter. lg gives tabs as tall as md buttons; sm suits a toolbar or a bar, beside a
+   * SegmentedControl or buttons of size sm.
+   * @default 'lg'
    */
-  size?: 'standard' | 'compact';
+  size?: ControlSize;
 }
 
 function isDisabled(item: TabsItem) {
@@ -62,7 +103,7 @@ function TabButton({
   disabled: boolean;
 }) {
   if (button.type === 'a' || ('href' in button.props && button.props.href != null)) {
-    throw new Error('Tabs items must render buttons. Use NavigationItem without href.');
+    throw new Error('Tabs items must render buttons. Use NavList.Item without href.');
   }
   const tabButton = cloneElement(button, {
     type: 'button',
@@ -74,8 +115,8 @@ function TabButton({
     'aria-controls': props['aria-controls'],
   });
   const render =
-    button.type === NavigationItem
-      ? cloneElement(tabButton as ReactElement<NavigationItemProps>, {
+    button.type === NavList.Item
+      ? cloneElement(tabButton as ReactElement<NavList.ItemProps>, {
           selected: active,
           'aria-current': false,
         })
@@ -85,7 +126,11 @@ function TabButton({
   return <NavigationIconState selected={active}>{element}</NavigationIconState>;
 }
 
-/** Linked tab panels; supplied buttons retain their own colors, geometry and behavior. */
+/**
+ * Switches between panels of related content in one place: a rail of the buttons you supply, each
+ * a tab linked to its panel, with selection from the keyboard and panels that fade as they change.
+ * The selected tab keeps its button's own look; the others are quiet on the rail.
+ */
 export function Tabs({
   items,
   'aria-label': label,
@@ -100,42 +145,55 @@ export function Tabs({
   listClassName,
   panelClassName,
   fill = false,
-  size = 'standard',
+  size = 'lg',
+  ref,
+  onFocus,
   ...props
 }: TabsProps) {
+  // A horizontal tab list's arrow keys follow the text direction, which Base UI only knows from
+  // its own provider. Only the list reads it: the panels keep the direction around the tabs, so a
+  // slider or a popup in a panel of another direction follows its own.
+  const scope = useDirectionScope(ref);
   const initialValue =
     defaultValue === undefined
       ? (items.find((item) => !isDisabled(item))?.value ?? null)
       : defaultValue;
   const list = (
-    <BaseTabs.List
-      render={<Surface tone="row" padding={1} corners="pill" />}
-      aria-label={label}
-      data-size={size === 'compact' ? 'compact' : undefined}
-      className={classNames('env-tabs-list', listClassName)}
-      activateOnFocus={activation === 'automatic'}
-    >
-      {items.map((item) => (
-        <BaseTabs.Tab
-          key={item.value}
-          value={item.value}
-          disabled={isDisabled(item)}
-          className="env-tab"
-          render={(tabProps, state) => (
-            <TabButton
-              {...tabProps}
-              button={item.button}
-              active={state.active}
-              disabled={state.disabled}
-            />
-          )}
-        />
-      ))}
-    </BaseTabs.List>
+    <DirectionProvider direction={scope.direction}>
+      <BaseTabs.List
+        render={<Surface background="muted" radius="full" />}
+        aria-label={label}
+        data-size={size}
+        className={classNames('env-tabs-list', listClassName)}
+        activateOnFocus={activation === 'automatic'}
+      >
+        {items.map((item) => (
+          <BaseTabs.Tab
+            key={item.value}
+            value={item.value}
+            disabled={isDisabled(item)}
+            className="env-tabs-tab"
+            render={(tabProps, state) => (
+              <TabButton
+                {...tabProps}
+                button={item.button}
+                active={state.active}
+                disabled={state.disabled}
+              />
+            )}
+          />
+        ))}
+      </BaseTabs.List>
+    </DirectionProvider>
   );
   return (
     <BaseTabs.Root
       {...props}
+      ref={scope.ref}
+      onFocus={(event) => {
+        scope.onFocus();
+        onFocus?.(event);
+      }}
       className={classNames('env-tabs', className)}
       data-fill={fill ? '' : undefined}
       value={value}
@@ -150,7 +208,7 @@ export function Tabs({
             key={item.value}
             value={item.value}
             keepMounted={keepMounted}
-            className={classNames('env-tab-panel', panelClassName)}
+            className={classNames('env-tabs-panel', panelClassName)}
           >
             {item.content}
           </BaseTabs.Panel>

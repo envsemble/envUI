@@ -7,6 +7,15 @@ test('public components hydrate server output without recoverable errors', async
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(pathToFileURL(resolve('.cache/Hydration.html')).href);
   await expect(page.getByRole('textbox', { name: 'Hydrated input' })).toHaveValue('Server value');
+  // The sidebar's state came from the cookie the server read: collapsed, with its width in rem,
+  // in the server's markup and after hydration alike.
+  const sidebar = page.getByRole('navigation', { name: 'Hydrated sidebar' });
+  await expect(sidebar).toHaveAttribute('data-state', 'collapsed');
+  await expect(sidebar).toHaveCSS('--env-sidebar-chosen-width', '18rem');
+  const sidebarTrigger = page.getByTestId('hydrated-sidebar-trigger');
+  await expect(sidebarTrigger).toHaveAttribute('aria-expanded', 'false');
+  await sidebarTrigger.click();
+  await expect(sidebar).toHaveAttribute('data-state', 'expanded');
   await page.getByRole('textbox', { name: 'Hydrated input' }).fill('Client value');
   await expect(page.locator('output:not(.env-slider-value)')).toHaveText('Client value');
   // The newer components come before the notice below, which leaves after five seconds.
@@ -84,6 +93,16 @@ test('public components hydrate server output without recoverable errors', async
   await expect(conversation.getByRole('article')).toHaveCount(2);
   await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
+  // The server renders the split pane side by side; the client measures it and moves its handle.
+  const split = page.getByRole('separator', { name: 'Hydrated split' });
+  await expect(split).toHaveAttribute('aria-valuenow', '50');
+  await expect(split).toHaveAttribute(
+    'aria-controls',
+    (await page.getByRole('region', { name: 'Hydrated start' }).getAttribute('id'))!,
+  );
+  await split.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(split).toHaveAttribute('aria-valuenow', '52');
   // The server renders the dock's panels and chips; the client then measures and resizes them.
   const docked = page.getByRole('region', { name: 'Hydrated notes' });
   await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
@@ -104,11 +123,27 @@ test('public components hydrate server output without recoverable errors', async
   );
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
-  const peak = activity.getByRole('gridcell', { name: 'Mon 9 Mar 2026: 1,200' });
+  // Without a locale, the server writes the days in en-GB and the browser, once hydrated, in its
+  // own: the names are built with the heatmap's Intl options in the browser's locale.
+  const [peakName, nextName] = await page.evaluate(() => {
+    const date = new Intl.DateTimeFormat(undefined, {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
+    const number = new Intl.NumberFormat();
+    return [
+      `${date.format(Date.UTC(2026, 2, 9))}: ${number.format(1200)}`,
+      `${date.format(Date.UTC(2026, 2, 16))}: ${number.format(7)}`,
+    ];
+  });
+  const peak = activity.getByRole('gridcell', { name: peakName, exact: true });
   await peak.focus();
   await page.keyboard.press('ArrowRight');
-  await expect(activity.getByRole('gridcell', { name: 'Mon 16 Mar 2026: 7' })).toBeFocused();
-  await expect(page.locator('.env-heatmap-tooltip')).toHaveText('Mon 16 Mar 2026: 7');
+  await expect(activity.getByRole('gridcell', { name: nextName, exact: true })).toBeFocused();
+  await expect(page.locator('.env-calendar-heatmap-tooltip')).toHaveText(nextName);
   const color = page.getByRole('textbox', { name: 'Hydrated color HEX' });
   await expect(color).toHaveValue('#1a73e8');
   await color.fill('ABCDEF');
@@ -132,7 +167,7 @@ test('public components hydrate server output without recoverable errors', async
   await page.getByRole('tab', { name: 'Two.md' }).click();
   await expect(page.getByRole('tab', { name: 'Two.md' })).toHaveAttribute('aria-selected', 'true');
   const file = page.getByRole('menuitem', { name: 'File', exact: true });
-  await expect(page.locator('.env-title-bar')).toContainText('Hydrated title');
+  await expect(page.locator('.env-window-frame-title-bar')).toContainText('Hydrated title');
   await file.click();
   const fileMenu = page.getByRole('menu', { name: 'File' });
   await expect(fileMenu.getByRole('menuitem', { name: 'Hydrated new' })).toBeVisible();

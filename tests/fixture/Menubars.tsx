@@ -1,12 +1,5 @@
 import { useRef, useState } from 'react';
-import {
-  MenuCheckboxItem,
-  MenuItem,
-  MenuSeparator,
-  MenuSubmenu,
-  Menubar,
-  MenubarMenu,
-} from '@envsemble/envui';
+import { Menu, Menubar } from '@envsemble/envui';
 
 /** A short description of an element for the log: its accessible name or tag. */
 function describe(element: Element | null) {
@@ -23,21 +16,21 @@ export function MenubarFixture() {
   const record = (entry: string) => setLog((current) => [...current, entry]);
   return (
     <section className="fixture-section" data-testid="menubar-fixture">
-      <Menubar aria-label="Application menu" accessKeys>
-        <MenubarMenu label="File" accessKey="F">
-          <MenuItem shortcut="Ctrl+N" onClick={() => record('New note')}>
+      <Menubar.Root aria-label="Application menu" accessKeys>
+        <Menubar.Menu label="File" accessKey="F">
+          <Menu.Item shortcut="Ctrl+N" onClick={() => record('New note')}>
             New note
-          </MenuItem>
-          <MenuSubmenu label="Open recent">
-            <MenuItem onClick={() => record('Open Quarterly report')}>Quarterly report</MenuItem>
-            <MenuItem onClick={() => record('Open Meeting notes')}>Meeting notes</MenuItem>
-          </MenuSubmenu>
-          <MenuSeparator />
-          <MenuItem shortcut="Ctrl+Q" onClick={() => record('Exit')}>
+          </Menu.Item>
+          <Menu.Submenu label="Open recent">
+            <Menu.Item onClick={() => record('Open Quarterly report')}>Quarterly report</Menu.Item>
+            <Menu.Item onClick={() => record('Open Meeting notes')}>Meeting notes</Menu.Item>
+          </Menu.Submenu>
+          <Menu.Separator />
+          <Menu.Item shortcut="Ctrl+Q" onClick={() => record('Exit')}>
             Exit
-          </MenuItem>
-        </MenubarMenu>
-        <MenubarMenu
+          </Menu.Item>
+        </Menubar.Menu>
+        <Menubar.Menu
           label="Edit"
           accessKey="E"
           onOpenChange={(open, { previousFocus }) => {
@@ -45,7 +38,7 @@ export function MenubarFixture() {
             record(`Edit ${open ? 'opened' : 'closed'} after ${describe(previousFocus)}`);
           }}
         >
-          <MenuItem
+          <Menu.Item
             shortcut="Ctrl+A"
             onClick={() => {
               const field = editTarget.current;
@@ -54,20 +47,20 @@ export function MenubarFixture() {
             }}
           >
             Select all
-          </MenuItem>
-          <MenuItem shortcut="Ctrl+C" onClick={() => record('Copy')}>
+          </Menu.Item>
+          <Menu.Item shortcut="Ctrl+C" onClick={() => record('Copy')}>
             Copy
-          </MenuItem>
-        </MenubarMenu>
-        <MenubarMenu label="View" accessKey="V" open={viewOpen} onOpenChange={setViewOpen}>
-          <MenuCheckboxItem checked={wrap} onCheckedChange={setWrap}>
+          </Menu.Item>
+        </Menubar.Menu>
+        <Menubar.Menu label="View" accessKey="V" open={viewOpen} onOpenChange={setViewOpen}>
+          <Menu.CheckboxItem checked={wrap} onCheckedChange={setWrap}>
             Word wrap
-          </MenuCheckboxItem>
-        </MenubarMenu>
-        <MenubarMenu label="Help" accessKey="H" disabled>
-          <MenuItem onClick={() => record('About')}>About</MenuItem>
-        </MenubarMenu>
-      </Menubar>
+          </Menu.CheckboxItem>
+        </Menubar.Menu>
+        <Menubar.Menu label="Help" accessKey="H" disabled>
+          <Menu.Item onClick={() => record('About')}>About</Menu.Item>
+        </Menubar.Menu>
+      </Menubar.Root>
       <textarea
         aria-label="Note"
         defaultValue="Quarterly report draft"

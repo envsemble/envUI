@@ -1,28 +1,43 @@
-import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { HexColorPicker } from 'react-colorful';
+'use client';
+
+import { useEffect, useId, useRef, useState, type CSSProperties, type Ref } from 'react';
 import { Stack } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
+import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
-import { Input, type InputProps } from './Input.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
+import { TextField, type TextFieldProps } from './TextField.js';
+import { ColorPlane, hexToHsv, hsvToHex, type Hsv } from './internal/ColorPlane.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
 export interface ColorPickerProps
   extends Omit<
-    InputProps,
+    TextFieldProps,
     | 'label'
     | 'type'
     | 'value'
     | 'defaultValue'
     | 'onChange'
+    | 'onValueChange'
     | 'children'
     | 'placeholder'
     | 'maxLength'
     | 'pattern'
+    | 'ref'
   > {
+  /** The HEX field, so that a form library can register it and focus it. */
+  ref?: Ref<HTMLInputElement>;
+  /** The picker's class, on its root element. */
+  className?: string;
+  /** Styles of the picker's root element. */
+  style?: CSSProperties;
+  /** The color's name above the picker; it names the group and, with "HEX", the field. */
   label: string;
   /** An opaque six-digit HEX color, with an optional # prefix. */
   value?: string;
+  /** The color an uncontrolled picker starts at, and that a form reset restores; #000000 by default. */
   defaultValue?: string;
   /** Receives valid colors normalized to lowercase #rrggbb. */
   onValueChange?: (value: string) => void;
@@ -32,34 +47,38 @@ function normalizeHex(value: string) {
   return /^#?[0-9a-f]{6}$/i.test(value) ? `#${value.replace(/^#/, '').toLowerCase()}` : null;
 }
 
-const invalidHexMessage = 'Use six hexadecimal digits (0–9, A–F).';
-
-/** A labeled color area, hue slider and native HEX field; the application owns the result. */
-export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(function ColorPicker(
-  {
-    label,
-    value,
-    defaultValue = '#000000',
-    onValueChange,
-    disabled = false,
-    readOnly = false,
-    hint = 'Enter six hexadecimal digits, with an optional #.',
-    error,
-    id: suppliedId,
-    className,
-    style,
-    onBlur,
-    form,
-    ...inputProps
-  },
+/**
+ * A labelled color area, hue slider and native HEX field; the application owns the result. The
+ * area and the hue are sliders for the keyboard and assistive technology, named after the label in
+ * the EnvUIProvider's language, such as Accent color saturation and brightness and Accent color hue.
+ */
+export function ColorPicker({
   ref,
-) {
+  label,
+  value,
+  defaultValue = '#000000',
+  onValueChange,
+  disabled = false,
+  readOnly = false,
+  description,
+  error,
+  id: suppliedId,
+  className,
+  style,
+  onBlur,
+  form,
+  ...inputProps
+}: ColorPickerProps) {
+  const messages = useMessages('colorPicker', colorPickerMessages);
+  const format = useFormatters();
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
   const initialColor = normalizeHex(defaultValue) ?? '#000000';
   const [uncontrolledColor, setUncontrolledColor] = useState(initialColor);
   const color = normalizeHex(value ?? uncontrolledColor) ?? '#000000';
-  const [pickerColor, setPickerColor] = useState(color);
+  // The area and the hue keep their own hue and saturation where the color alone loses them, as on
+  // a gray; they follow the color whenever it is another.
+  const [hsv, setHsv] = useState<Hsv>(() => hexToHsv(color));
   const [draft, setDraft] = useState(color);
   const [status, setStatus] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -70,15 +89,16 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
     setStatus('');
   }, [color]);
 
-  // Give the interaction control a real prop transition when a consumer rejects a candidate.
-  // Accepted updates keep the same slider instance, focus and active pointer gesture.
+  // A color the application rejects or replaces takes the area and the hue back with it.
   useEffect(() => {
-    if (pickerColor !== color) setPickerColor(color);
-  }, [color, pickerColor]);
+    if (hsvToHex(hsv) === color) return;
+    const next = hexToHsv(color);
+    if (next.h !== hsv.h || next.s !== hsv.s || next.v !== hsv.v) setHsv(next);
+  }, [color, hsv]);
 
   useEffect(() => {
-    inputRef.current?.setCustomValidity(valid ? '' : invalidHexMessage);
-  }, [valid]);
+    inputRef.current?.setCustomValidity(valid ? '' : messages.invalid);
+  }, [valid, messages.invalid]);
 
   useEffect(() => {
     const input = inputRef.current;
@@ -93,16 +113,24 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
     });
   }, [value, color, initialColor, form]);
 
-  function commit(next: string, fromPicker = false) {
+  function commit(next: string) {
     if (disabled || readOnly) return;
     const normalized = normalizeHex(next);
     if (!normalized) return;
-    if (fromPicker) setPickerColor(normalized);
     if (value === undefined) setUncontrolledColor(normalized);
     setDraft(value === undefined ? normalized : color);
     setStatus('');
     if (normalized !== color) onValueChange?.(normalized);
   }
+
+  const percent = format.number({ style: 'percent', maximumFractionDigits: 0 });
+  const degrees = format.number({
+    style: 'unit',
+    unit: 'degree',
+    unitDisplay: 'long',
+    maximumFractionDigits: 0,
+  });
+  const inactive = disabled || readOnly;
 
   return (
     <Stack
@@ -114,32 +142,45 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
       style={style}
       data-disabled={disabled || undefined}
     >
-      <Text as="span" variant="supporting" id={`${id}-label`}>
+      <Text render={<span />} variant="body-sm" id={`${id}-label`}>
         {label}
       </Text>
       <div
         className="env-color-picker-area"
-        inert={disabled || readOnly || undefined}
-        aria-hidden={disabled || readOnly || undefined}
+        inert={inactive || undefined}
+        aria-hidden={inactive || undefined}
       >
-        <HexColorPicker
-          key={disabled || readOnly ? 'inactive' : 'active'}
-          color={pickerColor}
-          onChange={(next) => commit(next, true)}
+        <ColorPlane
+          hsv={hsv}
+          locale={format.locale}
+          onChange={(next) => {
+            if (inactive) return;
+            setHsv(next);
+            commit(hsvToHex(next));
+          }}
+          areaLabel={messages.area({ label })}
+          areaValueText={({ s, v }) =>
+            messages.areaValue({
+              saturation: percent.format(s / 100),
+              brightness: percent.format(v / 100),
+            })
+          }
+          hueLabel={messages.hue({ label })}
+          hueValueText={(hue) => degrees.format(hue)}
         />
       </div>
-      <Input
+      <TextField
         {...inputProps}
         ref={(input) => {
           inputRef.current = input;
           setRef(ref, input);
         }}
         id={id}
-        label="HEX"
-        aria-label={inputProps['aria-label'] ?? `${label} HEX`}
+        label={messages.hex}
+        aria-label={inputProps['aria-label'] ?? messages.hexLabel({ label })}
         value={draft}
-        hint={valid ? hint : undefined}
-        error={error ?? (!valid ? invalidHexMessage : undefined)}
+        description={valid ? (description ?? messages.description) : undefined}
+        error={error ?? (!valid ? messages.invalid : undefined)}
         type="text"
         maxLength={7}
         pattern="#?[0-9a-fA-F]{6}"
@@ -152,12 +193,12 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
           const next = event.currentTarget.value;
           setDraft(next);
           if (normalizeHex(next)) commit(next);
-          else setStatus(invalidHexMessage);
+          else setStatus(messages.invalid);
         }}
         onBlur={(event) => {
           if (!valid) {
             setDraft(color);
-            setStatus('Invalid color discarded. The previous color has been restored.');
+            setStatus(messages.restored);
           }
           onBlur?.(event);
         }}
@@ -167,4 +208,4 @@ export const ColorPicker = forwardRef<HTMLInputElement, ColorPickerProps>(functi
       </span>
     </Stack>
   );
-});
+}

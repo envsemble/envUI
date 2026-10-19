@@ -30,7 +30,14 @@ function scheduleRebuild() {
   debounceTimer = setTimeout(rebuildLibrary, 150);
 }
 
-for (const directory of ['../packages/ui/src/', '../.agents/skills/', '../docs/', '../assets/']) {
+for (const directory of [
+  '../packages/ui/src/',
+  '../packages/ui/tokens/',
+  '../.agents/skills/',
+  '../docs/',
+  '../apps/catalogue/src/examples/',
+  '../assets/',
+]) {
   watch(new URL(directory, import.meta.url), { recursive: true }, scheduleRebuild);
 }
 watch(new URL('../README.md', import.meta.url), scheduleRebuild);

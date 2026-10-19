@@ -2,32 +2,32 @@ import type { ReactNode } from 'react';
 import { CheckCircle } from '../../icons/CheckCircle.js';
 import { Info } from '../../icons/Info.js';
 import { Warning } from '../../icons/Warning.js';
-import type { ToastVariant } from './ToastTypes.js';
+import type { ToastTone } from './ToastTypes.js';
 
-function StatusIcon({ variant }: { variant: ToastVariant }) {
-  if (variant === 'neutral') return null;
-  const StatusSymbol = variant === 'success' ? CheckCircle : variant === 'info' ? Info : Warning;
+function StatusIcon({ tone }: { tone: ToastTone }) {
+  if (tone === 'neutral') return null;
+  const StatusSymbol = tone === 'success' ? CheckCircle : tone === 'info' ? Info : Warning;
   return (
-    <span className="env-symbol env-toast-status-icon">
+    <span className="env-icon env-toast-status-icon">
       <StatusSymbol />
     </span>
   );
 }
 
 export function ToastBody({
-  variant,
+  tone,
   message,
   action,
   dismiss,
 }: {
-  variant: ToastVariant;
+  tone: ToastTone;
   message: ReactNode;
   action?: ReactNode;
   dismiss?: ReactNode;
 }) {
   return (
     <>
-      <StatusIcon variant={variant} />
+      <StatusIcon tone={tone} />
       {message}
       {action}
       {dismiss}

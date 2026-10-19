@@ -1,7 +1,7 @@
 import {
   Badge,
-  Counter,
-  NavigationItem,
+  CounterBadge,
+  NavList,
   Stack,
   Surface,
   Theme,
@@ -18,12 +18,12 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
       {(['canvas', 'pane', 'row'] as const).map((surface) => (
         <Surface
           key={surface}
-          tone={surface === 'canvas' ? 'canvas' : surface}
+          background={surface === 'canvas' ? 'page' : surface === 'row' ? 'muted' : 'default'}
           padding={4}
           data-surface={surface}
         >
           <Stack gap={2}>
-            {(['subtle', 'solid', 'outline'] as const).map((variant) => (
+            {(['soft', 'solid', 'outline'] as const).map((variant) => (
               <div key={variant} className="fixture-actions">
                 {tones.map((tone) => (
                   <Badge key={tone} tone={tone} variant={variant} data-testid="badge">
@@ -37,7 +37,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
                 <span
                   key={tone}
                   data-testid="tone-text"
-                  style={{ color: `var(--color-tone-${tone})` }}
+                  style={{ color: `var(--env-color-fg-${tone === 'neutral' ? 'muted' : tone})` }}
                 >
                   {tone}
                 </span>
@@ -46,20 +46,15 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           </Stack>
         </Surface>
       ))}
-      <NavigationItem
+      <NavList.Item
         icon={<Inbox />}
-        trailing={<Counter value={12} aria-label="12 unread" tone="accent" />}
+        end={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
       >
         Inbox
-      </NavigationItem>
-      <NavigationItem
-        icon={<Inbox />}
-        iconOnly
-        aria-label="Inbox with unread"
-        trailing={<Counter value={12} />}
-      >
+      </NavList.Item>
+      <NavList.Item icon={<Inbox />} iconOnly aria-label="Inbox" end={<CounterBadge value={12} />}>
         Inbox
-      </NavigationItem>
+      </NavList.Item>
     </Theme>
   );
 }

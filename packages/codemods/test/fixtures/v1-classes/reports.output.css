@@ -1,0 +1,16 @@
+/* Selectors that 1.0's markup no longer matches, which v1-classes keeps and reports. */
+.env-document-tabs-tab:hover .env-document-tabs-close,
+.env-document-tabs-tab[data-active] > .env-document-tabs-close {
+  visibility: visible;
+}
+.env-document-tabs-tab + .env-document-tabs-close {
+  margin-inline-start: 0;
+}
+.env-popup-theme .env-organization-menu-radio,
+.env-organization-switcher-option[data-checked] .env-organization-menu-radio-dot {
+  color: var(--env-color-fg-accent);
+}
+.env-panel-dock[data-chips] .env-panel-dock-tab,
+.env-panel-dock:not([data-maximized])[data-chips] {
+  gap: 0;
+}

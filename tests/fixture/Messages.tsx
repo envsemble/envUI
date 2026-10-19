@@ -73,7 +73,7 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
       </div>
       <output data-testid={`messages-copied-${theme}`}>{copied}</output>
       <output data-testid={`messages-retried-${theme}`}>{retried}</output>
-      <Surface tone="pane" padding={4} data-surface="pane">
+      <Surface background="default" padding={4} data-surface="pane">
         <MessageList aria-label={`Pane conversation ${theme}`} busy={replying}>
           <Message from="self">On a pane</Message>
           <Message from="other" author="Aurora">
@@ -102,6 +102,23 @@ export function MessagesFixture({ theme }: { theme: ThemeValue }) {
       >
         Finish reply {theme}
       </Button>
+      {/* Actions without a variant or size of their own take the message's defaults. */}
+      <div data-surface="canvas">
+        <MessageList aria-label={`Defaults ${theme}`}>
+          <Message
+            from="other"
+            author="Sam Lee"
+            actions={
+              <>
+                <IconButton icon={<ContentCopy />} aria-label={`Copy note ${theme}`} />
+                <Button>Reply</Button>
+              </>
+            }
+          >
+            A note with default actions.
+          </Message>
+        </MessageList>
+      </div>
     </Theme>
   );
 }

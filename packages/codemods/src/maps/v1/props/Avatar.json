@@ -1,0 +1,79 @@
+{
+  "@envsemble/envui": {
+    "Avatar": {
+      "size": {
+        "current": ["sm", "md", "lg", "xl"],
+        "report": "Avatar's size is sm, md (the default), lg or xl in 1.0: small is sm, standard md, large lg and display xl.",
+        "values": {
+          "small": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {},
+          "large": {
+            "props": {
+              "size": "lg"
+            }
+          },
+          "display": {
+            "props": {
+              "size": "xl"
+            }
+          }
+        }
+      },
+      "label": {
+        "to": "named",
+        "report": "Avatar's label, which named the avatar as an image by its name, is named in 1.0."
+      }
+    },
+    "AvatarGroup": {
+      "size": {
+        "current": ["sm", "md", "lg", "xl"],
+        "report": "AvatarGroup's size is sm, md (the default), lg or xl in 1.0: small is sm, standard md, large lg and display xl.",
+        "values": {
+          "small": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {},
+          "large": {
+            "props": {
+              "size": "lg"
+            }
+          },
+          "display": {
+            "props": {
+              "size": "xl"
+            }
+          }
+        }
+      }
+    },
+    "AvatarButton": {
+      "size": {
+        "current": ["sm", "md", "lg"],
+        "report": "AvatarButton's size is sm, md (the default) or lg in 1.0: small is sm, standard md and large lg.",
+        "values": {
+          "small": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {},
+          "large": {
+            "props": {
+              "size": "lg"
+            }
+          }
+        }
+      },
+      "detail": {
+        "to": "description",
+        "report": "AvatarButton's detail is description in 1.0."
+      }
+    }
+  }
+}

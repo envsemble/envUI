@@ -1,0 +1,6 @@
+{
+  "env-panel-dock": {
+    "attributes": ["data-chips"],
+    "report": "PanelDock's root marks its list of tabs with data-tabs now: write .env-panel-dock[data-tabs]."
+  }
+}

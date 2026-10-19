@@ -1,0 +1,26 @@
+{
+  "@envsemble/envui": {
+    "Tree": {
+      "density": {
+        "current": ["xs", "sm", "md", "lg"],
+        "report": "Tree's density is a row density in 1.0: xs, sm (the default, as compact was) or md (as standard was) or lg.",
+        "values": {
+          "compact": {},
+          "standard": {
+            "props": {
+              "density": "md"
+            }
+          }
+        }
+      },
+      "selectedId": {
+        "to": "value",
+        "report": "Tree's selectedId is value in 1.0."
+      },
+      "onOpen": {
+        "to": "onAction",
+        "report": "Tree's onOpen is onAction in 1.0, with the same item and { preview }; a TreeItem's detail is description and its trailing is end, which the codemod can't see in the data, so TypeScript points at them."
+      }
+    }
+  }
+}

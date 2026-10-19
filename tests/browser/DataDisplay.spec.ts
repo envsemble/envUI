@@ -3,6 +3,24 @@ import { fixtureUrl } from './Servers';
 
 const dataFixture = `${fixtureUrl}/?fixture=data-display`;
 
+/**
+ * Waits two frames, so a state change has started its transitions, and then until the element's
+ * own transitions have finished: what it shows then is where it settles.
+ */
+async function settled(element: Locator) {
+  await element.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect
+    .poll(() =>
+      element.evaluate(
+        (node) =>
+          node.getAnimations().filter((animation) => animation.playState === 'running').length,
+      ),
+    )
+    .toBe(0);
+}
+
 /** How a breadcrumb trail is laid out: its height in lines, which labels are cut short, and what
  * extends past the navigation's box or clips the crumbs. */
 function trailLayout(navigation: Locator) {
@@ -15,7 +33,7 @@ function trailLayout(navigation: Locator) {
       lines:
         list.getBoundingClientRect().height /
         Math.max(...items.map((item) => item.getBoundingClientRect().height)),
-      truncated: [...nav.querySelectorAll('.env-breadcrumb-label')].map(
+      truncated: [...nav.querySelectorAll('.env-breadcrumbs-label')].map(
         (label) => label.scrollWidth > label.clientWidth,
       ),
       outside: [...nav.querySelectorAll('*')]
@@ -40,8 +58,8 @@ test('breadcrumbs link earlier levels and mark the current page', async ({ page 
   await expect(navigation.locator('[aria-current="page"]')).toHaveText('Roadmap.md');
   await expect(navigation.getByRole('link', { name: 'Roadmap.md' })).toHaveCount(0);
   // Separators are decorative.
-  await expect(navigation.locator('.env-breadcrumb-separator')).toHaveCount(3);
-  await expect(navigation.locator('.env-breadcrumb-separator').first()).toHaveAttribute(
+  await expect(navigation.locator('.env-breadcrumbs-separator')).toHaveCount(3);
+  await expect(navigation.locator('.env-breadcrumbs-separator').first()).toHaveAttribute(
     'aria-hidden',
     'true',
   );
@@ -50,6 +68,35 @@ test('breadcrumbs link earlier levels and mark the current page', async ({ page 
   await navigation.getByRole('button', { name: 'Plans' }).click();
   await expect(scope.getByTestId('breadcrumb-result-light')).toHaveText('Plans');
   await expect(navigation.getByText('Search')).toHaveCSS('cursor', 'auto');
+});
+
+test('a focused breadcrumb label that comes to fit keeps focus until it loses it', async ({
+  page,
+}) => {
+  await page.goto(dataFixture);
+  const bar = page.getByTestId('breadcrumb-bar-light');
+  const current = bar.locator('[aria-current="page"]');
+  await expect(current).toHaveAttribute('tabindex', '0');
+  await current.focus();
+  // The bar widens, as with the window, until the label fits.
+  await bar.evaluate((element) => (element.style.inlineSize = '60rem'));
+  await expect
+    .poll(() =>
+      current
+        .locator('.env-breadcrumbs-label')
+        .evaluate((label) => label.scrollWidth > label.clientWidth),
+    )
+    .toBe(false);
+  // The browser moves focus off an element that can no longer take it at its next rendering
+  // update, so the check waits past two frames.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  );
+  await expect(current).toBeFocused();
+  await expect(current).toHaveAttribute('tabindex', '0');
+  // Once focus moves on, the label leaves the tab order.
+  await bar.getByRole('button', { name: 'More actions' }).focus();
+  await expect(current).not.toHaveAttribute('tabindex');
 });
 
 test('a narrow breadcrumb trail wraps by default', async ({ page }) => {
@@ -95,6 +142,47 @@ test('a breadcrumb trail without wrap stays on one line and cuts the current pag
   }
 });
 
+test('a breadcrumb cut short shows its full label in a tooltip, on hover and keyboard focus', async ({
+  page,
+}) => {
+  await page.goto(dataFixture);
+  const scope = page.getByTestId('data-light');
+  const tooltip = page.locator('.env-tooltip');
+  const long = 'A folder whose name runs well past the room that one level of a trail takes';
+  const trail = scope.getByRole('navigation', { name: 'Long level trail' });
+  // Keyboard focus, which WebKit gives links only through focus(): a key press first makes the
+  // focus that follows keyboard focus (:focus-visible) in every engine.
+  const keyboardFocus = async (name: string) => {
+    await page.keyboard.press('Shift');
+    await trail.getByRole('link', { name }).focus();
+    await expect(trail.getByRole('link', { name })).toBeFocused();
+  };
+  // A level that fits shows no tooltip.
+  await keyboardFocus('Workspace');
+  await expect(tooltip).toHaveCount(0);
+  // The link's name is its whole label; the tooltip shows it as keyboard focus reaches it.
+  await keyboardFocus(long);
+  await expect(tooltip).toHaveText(long);
+  await page.keyboard.press('Escape');
+  await expect(tooltip).toHaveCount(0);
+  // The current page of a one-line trail, cut short first, shows it on hover.
+  const oneLine = scope.getByRole('navigation', { name: 'One-line trail' });
+  const current = oneLine.locator('[aria-current="page"]');
+  await current.hover();
+  await expect(tooltip).toHaveText('Quarterly review of the shared design tokens');
+  await page.mouse.move(0, 0);
+  await expect(tooltip).toHaveCount(0);
+  // Cut short, it is a tab stop after the links, and keyboard focus shows it in full too.
+  await expect(current).toHaveAttribute('tabindex', '0');
+  await oneLine.getByRole('link').last().focus();
+  await page.keyboard.press('Tab');
+  await expect(current).toBeFocused();
+  await expect(tooltip).toHaveText('Quarterly review of the shared design tokens');
+  await page.keyboard.press('Escape');
+  // A current page that fits takes no focus.
+  await expect(trail.locator('[aria-current="page"]')).not.toHaveAttribute('tabindex', /.*/);
+});
+
 test('keys render as key caps joined by plus', async ({ page }) => {
   await page.goto(dataFixture);
   const scope = page.getByTestId('data-light');
@@ -120,12 +208,12 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     expect(await fill(plain)).toBe(rest);
     await expect(open).toHaveCSS('position', 'relative');
     await plain.hover();
-    await page.waitForTimeout(300);
+    await settled(plain);
     expect(await fill(plain)).toBe(rest);
     // The row reacts to the pointer anywhere on it, and to keyboard focus inside it.
     await open.hover({ position: { x: 8, y: 8 } });
     await expect.poll(() => fill(open)).not.toBe(rest);
-    await page.waitForTimeout(300);
+    await settled(open);
     const hovered = await fill(open);
     await page.mouse.move(0, 0);
     await expect.poll(() => fill(open)).toBe(rest);
@@ -140,7 +228,7 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     const box = (await open.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height - 6);
     await page.mouse.down();
-    await page.waitForTimeout(300);
+    await settled(open);
     const pressed = await fill(open);
     expect(pressed).not.toBe(hovered);
     await page.mouse.up();
@@ -150,7 +238,7 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
     const actionBox = (await action.boundingBox())!;
     await page.mouse.move(actionBox.x + actionBox.width / 2, actionBox.y + actionBox.height / 2);
     await page.mouse.down();
-    await page.waitForTimeout(300);
+    await settled(open);
     expect(await fill(open)).toBe(hovered);
     await page.mouse.up();
     await expect(page.getByTestId(`row-result-${theme}`)).toHaveText('more actions');
@@ -167,66 +255,72 @@ test('interactive rows react to hover, presses and focus, and open from anywhere
   }
 });
 
-test('tables scroll sideways in a focusable region and keep a sticky header', async ({ page }) => {
-  await page.goto(dataFixture);
-  for (const theme of ['light', 'dark']) {
-    const table = page.getByRole('table', { name: `Plans ${theme}` });
-    await expect(table).toBeVisible();
-    const region = page.getByRole('region', { name: `Plans ${theme}` });
-    await expect(region).toHaveAttribute('tabindex', '0');
-    expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
-      true,
-    );
-    await expect(table.getByRole('columnheader', { name: 'Decisions' })).toHaveCSS(
-      'text-align',
-      'end',
-    );
-    await expect(table.getByRole('cell', { name: '7', exact: true }).first()).toHaveCSS(
-      'font-variant-numeric',
-      'tabular-nums',
-    );
+test(
+  'tables scroll sideways in a focusable region and keep a sticky header',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(dataFixture);
+    for (const theme of ['light', 'dark']) {
+      const table = page.getByRole('table', { name: `Plans ${theme}` });
+      await expect(table).toBeVisible();
+      const region = page.getByRole('region', { name: `Plans ${theme}` });
+      await expect(region).toHaveAttribute('tabindex', '0');
+      expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+        true,
+      );
+      await expect(table.getByRole('columnheader', { name: 'Decisions' })).toHaveCSS(
+        'text-align',
+        'end',
+      );
+      await expect(table.getByRole('cell', { name: '7', exact: true }).first()).toHaveCSS(
+        'font-variant-numeric',
+        'tabular-nums',
+      );
 
-    const header = table.getByRole('columnheader', { name: 'Plan' });
-    await region.evaluate((element) => (element.scrollTop = 400));
-    // The caption scrolls away; the header row stays at the top of the region.
-    const top = await region.evaluate(
-      (element) => element.getBoundingClientRect().top + element.clientTop,
-    );
-    await expect.poll(async () => (await header.boundingBox())!.y).toBeCloseTo(top, 0);
-    // The opaque header covers the rows scrolled beneath it.
-    const background = await header.evaluate(
-      (element) => getComputedStyle(element).backgroundImage,
-    );
-    expect(background).toContain('gradient');
-  }
-  const compact = page.getByRole('table', { name: 'Compact light' });
-  await expect(compact.getByRole('rowheader', { name: 'Total' })).toBeVisible();
-});
+      const header = table.getByRole('columnheader', { name: 'Plan' });
+      await region.evaluate((element) => (element.scrollTop = 400));
+      // The caption scrolls away; the header row stays at the top of the region.
+      const top = await region.evaluate(
+        (element) => element.getBoundingClientRect().top + element.clientTop,
+      );
+      await expect.poll(async () => (await header.boundingBox())!.y).toBeCloseTo(top, 0);
+      // The opaque header covers the rows scrolled beneath it.
+      const background = await header.evaluate(
+        (element) => getComputedStyle(element).backgroundImage,
+      );
+      expect(background).toContain('gradient');
+    }
+    const compact = page.getByRole('table', { name: 'Compact light' });
+    await expect(compact.getByRole('rowheader', { name: 'Total' })).toBeVisible();
+  },
+);
 
-test('wheeling over a table with a sticky header scrolls the page when the table cannot scroll further', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 900, height: 500 });
-  await page.goto(dataFixture);
-  const region = page.getByRole('region', { name: 'Plans light' });
-  const pageTop = () => page.evaluate(() => document.scrollingElement!.scrollTop);
-  const wheelOver = async (deltaY: number) => {
-    const box = (await region.boundingBox())!;
-    await page.mouse.move(box.x + box.width / 2, Math.min(Math.max(box.y, 0) + 40, 460));
-    const before = await pageTop();
-    await page.mouse.wheel(0, deltaY);
-    await expect.poll(async () => Math.sign((await pageTop()) - before)).toBe(Math.sign(deltaY));
-  };
-  // At its start, the region hands an upward wheel on to the page.
-  await region.scrollIntoViewIfNeeded();
-  await page.evaluate(() => window.scrollBy(0, 200));
-  await region.evaluate((element) => (element.scrollTop = 0));
-  await wheelOver(-150);
-  // Without a height, the region has nothing to scroll: the wheel moves the page at once.
-  await region.evaluate((element) => (element.style.maxBlockSize = 'none'));
-  expect(await region.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
-    false,
-  );
-  await region.scrollIntoViewIfNeeded();
-  await wheelOver(300);
-});
+test(
+  'wheeling over a table with a sticky header scrolls the page when the table cannot scroll further',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 500 });
+    await page.goto(dataFixture);
+    const region = page.getByRole('region', { name: 'Plans light' });
+    const pageTop = () => page.evaluate(() => document.scrollingElement!.scrollTop);
+    const wheelOver = async (deltaY: number) => {
+      const box = (await region.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, Math.min(Math.max(box.y, 0) + 40, 460));
+      const before = await pageTop();
+      await page.mouse.wheel(0, deltaY);
+      await expect.poll(async () => Math.sign((await pageTop()) - before)).toBe(Math.sign(deltaY));
+    };
+    // At its start, the region hands an upward wheel on to the page.
+    await region.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, 200));
+    await region.evaluate((element) => (element.scrollTop = 0));
+    await wheelOver(-150);
+    // Without a height, the region has nothing to scroll: the wheel moves the page at once.
+    await region.evaluate((element) => (element.style.maxBlockSize = 'none'));
+    expect(await region.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+      false,
+    );
+    await region.scrollIntoViewIfNeeded();
+    await wheelOver(300);
+  },
+);

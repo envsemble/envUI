@@ -2,7 +2,7 @@
    indicator and thumb take the control blue; the rest of the track is the translucent fill. */
 .env-slider {
   --env-slider-thumb-size: 1.25rem;
-  --env-slider-halo: color-mix(in srgb, var(--color-control-blue) 16%, transparent);
+  --env-slider-halo: var(--env-color-bg-brand-muted);
   min-inline-size: 0;
 }
 .env-slider-heading {
@@ -10,7 +10,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
+  gap: var(--env-space-1) var(--env-space-3);
   min-inline-size: 0;
 }
 .env-slider-label {
@@ -18,16 +18,16 @@
   cursor: default;
 }
 .env-slider-value {
-  color: var(--color-text-strong);
+  color: var(--env-color-fg-control);
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
 }
 /* The control is the pressable row around the track; its padding keeps the thumb inside it. */
 .env-slider-control {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  block-size: calc(var(--env-slider-thumb-size) + var(--space-2));
+  block-size: calc(var(--env-slider-thumb-size) + var(--env-space-2));
   padding-inline: calc(var(--env-slider-thumb-size) / 2);
   cursor: pointer;
   touch-action: none;
@@ -35,20 +35,20 @@
 .env-slider-track {
   flex: 1 1 auto;
   block-size: 0.375rem;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--color-fill);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
 }
 .env-slider-indicator {
   border-radius: inherit;
-  background: var(--color-control-blue);
+  background: var(--env-color-bg-brand-emphasis);
 }
 .env-slider-thumb {
   box-sizing: border-box;
   inline-size: var(--env-slider-thumb-size);
   block-size: var(--env-slider-thumb-size);
   border-radius: 50%;
-  background: var(--color-control-blue);
-  transition: box-shadow var(--motion-duration-fast) var(--motion-ease);
+  background: var(--env-color-bg-brand-emphasis);
+  transition: box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 /* A halo in the control blue shows the thumb under the pointer and while it is dragged. */
 .env-slider-control:hover .env-slider-thumb,
@@ -56,14 +56,15 @@
   box-shadow: 0 0 0 0.375rem var(--env-slider-halo);
 }
 .env-slider-thumb:has(:focus-visible) {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-value) {
-  color: var(--color-disabled-text);
+/* The heading fades with the track, at the opacity of every disabled control; the group says it is
+   disabled (aria-disabled), so the faded label and value read as part of an inactive control. */
+.env-slider[data-disabled] :is(.env-slider-heading, .env-slider-control) {
+  opacity: var(--env-state-disabled-opacity);
 }
 .env-slider[data-disabled] .env-slider-control {
-  opacity: var(--state-disabled-opacity);
   cursor: default;
 }
 .env-slider[data-disabled] .env-slider-thumb {
@@ -75,17 +76,32 @@
     --env-slider-thumb-size: 1.5rem;
   }
   .env-slider-control {
-    block-size: var(--control-height-touch);
+    block-size: var(--env-control-height-touch);
   }
   .env-slider-thumb::before {
     content: '';
     position: absolute;
-    inset: calc((var(--control-height-touch) - var(--env-slider-thumb-size)) / -2);
+    inset: calc((var(--env-control-height-touch) - var(--env-slider-thumb-size)) / -2);
     border-radius: 50%;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .env-slider-thumb {
     transition: none;
+  }
+}
+
+/* Forced colors: the system paints no fills or shadows, so the track is drawn in the text color,
+   and the indicator and thumb in the selection color. */
+@media (forced-colors: active) {
+  .env-slider-track {
+    background-color: CanvasText;
+  }
+  .env-slider-indicator,
+  .env-slider-thumb {
+    background-color: Highlight;
+  }
+  .env-slider[data-disabled] :is(.env-slider-indicator, .env-slider-thumb) {
+    background-color: GrayText;
   }
 }

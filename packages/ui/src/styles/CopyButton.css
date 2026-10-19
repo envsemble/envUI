@@ -1,10 +1,4 @@
-/* CopyButton: a Button that copies text. compact gives it the compact control height outside a
-   compact surface, which still grows for touch. */
-.env-copy-button[data-size='compact'] {
-  --control-height-small: var(--control-height-compact);
-  --icon-button-size: var(--control-height-compact);
-}
-/* The result is announced from a visually hidden status beside the button; the fallback copies
+/* CopyButton: a Button that copies text, at a Button's sizes. The result is announced from a visually hidden status beside the button; the fallback copies
    from a hidden field there for a moment. */
 .env-copy-button-status,
 .env-copy-button-field {
@@ -26,7 +20,7 @@
   pointer-events: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .env-copy-button[data-copied] .env-symbol > svg {
-    animation: env-motion-pop-in var(--motion-duration-medium) var(--motion-ease-enter);
+  .env-copy-button[data-copied] .env-icon > svg {
+    animation: env-motion-pop-in var(--env-motion-duration-medium) var(--env-motion-ease-enter);
   }
 }

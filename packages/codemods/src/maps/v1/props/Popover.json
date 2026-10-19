@@ -1,0 +1,18 @@
+{
+  "@envsemble/envui": {
+    "Popover": {
+      "width": {
+        "current": ["md", "lg"],
+        "report": "Popover's width is md or lg in 1.0: standard is md, the default, and wide is lg.",
+        "values": {
+          "standard": {},
+          "wide": {
+            "props": {
+              "width": "lg"
+            }
+          }
+        }
+      }
+    }
+  }
+}

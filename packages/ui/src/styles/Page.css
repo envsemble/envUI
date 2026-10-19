@@ -1,0 +1,31 @@
+/* Page: the page column, its widths and its gutter. The column is centered and grows to its width;
+   the gutter pads its inline edges, growing from 1 to 2 rem with the viewport. */
+.env-page {
+  --env-page-width-sm: 40rem;
+  --env-page-width-md: 60rem;
+  --env-page-width-lg: 76rem;
+  --env-page-gutter: clamp(var(--env-space-4), 4vw, var(--env-space-6));
+  --env-page-width: var(--env-page-width-lg);
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: calc(var(--env-page-width) + 2 * var(--env-page-gutter));
+  margin-inline: auto;
+  padding-inline: var(--env-page-gutter);
+  padding-block: var(--env-space-6) var(--env-space-8);
+}
+.env-page[data-width='sm'] {
+  --env-page-width: var(--env-page-width-sm);
+}
+.env-page[data-width='md'] {
+  --env-page-width: var(--env-page-width-md);
+}
+.env-page[data-width='full'] {
+  max-inline-size: none;
+}
+.env-page[data-gutter='none'] {
+  --env-page-gutter: 0rem;
+}
+/* The content under the page's header, the page's space below it. */
+.env-page-content {
+  margin-block-start: var(--env-space-6);
+}

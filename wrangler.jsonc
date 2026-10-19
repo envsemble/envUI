@@ -1,0 +1,28 @@
+// The hosted catalogue: a Worker that serves the static build in dist/site from
+// `npm run build:site`. Page loads and files outside /assets/ are served without running the
+// script; it answers /assets/ and requests that match no file. CONTRIBUTING.md's Hosting section
+// describes deployment.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "envui",
+  "main": "./apps/catalogue/site/Worker.mjs",
+  // From 2025-04-01, page loads of unknown paths get index.html without running the script.
+  "compatibility_date": "2026-10-12",
+  "assets": {
+    "directory": "./dist/site",
+    "binding": "ASSETS",
+    // A path without a file answers with index.html, so routes can live in the URL path.
+    "not_found_handling": "single-page-application",
+    // /v0.7 redirects to /v0.7/, which serves v0.7/index.html.
+    "html_handling": "auto-trailing-slash",
+    // The script answers /assets/ first, so a missing hashed file is not found even when a browser
+    // opens it as a page, rather than index.html cached for a year under its name.
+    "run_worker_first": ["/assets/*"],
+  },
+  // The workers.dev address and the Preview URLs of branches stay off until Cloudflare Access
+  // protects them; the deploy steps in CONTRIBUTING.md turn them on after that.
+  "workers_dev": false,
+  "preview_urls": false,
+  // `npm run site:dev -- --port <port>` chooses another port.
+  "dev": { "ip": "127.0.0.1", "port": 8771 },
+}

@@ -1,0 +1,5 @@
+{
+  "@envsemble/envui": {
+    "TreeOpenOptions": "TreeActionOptions"
+  }
+}

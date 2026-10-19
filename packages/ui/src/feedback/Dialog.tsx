@@ -1,81 +1,186 @@
-import { forwardRef } from 'react';
-import type { HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
+'use client';
+
+import type { ComponentPropsWithRef, ReactElement, ReactNode, RefObject } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import { classNames } from '../internal/classNames.js';
-import { Button, IconButton } from '../actions/Button.js';
-import type { ButtonProps } from '../actions/Button.js';
-import { Close } from '../icons/Close.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
+import { Button } from '../actions/Button.js';
+import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { dialog } from '../foundations/messages/dialog.js';
 import { Theme, useTheme } from '../foundations/Theme.js';
-import { Stack, ActionGroup } from '../foundations/Layout.js';
-import { Surface } from '../foundations/Surface.js';
+import {
+  DialogActions,
+  DialogBackdrop,
+  DialogContent,
+  DialogHeader,
+  DialogSurface,
+} from './internal/DialogParts.js';
+import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
-export interface DialogProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
+/**
+ * Why a dialog or a drawer asks to open or close: its trigger, Escape, a press outside, focus
+ * leaving a non-modal one, a close button, a swipe (drawers) or the application.
+ */
+export type DialogOpenChangeReason =
+  | 'trigger-press'
+  | 'outside-press'
+  | 'escape-key'
+  | 'close-press'
+  | 'focus-out'
+  | 'close-watcher'
+  | 'imperative-action'
+  | 'swipe'
+  | 'none';
+
+/** What onOpenChange receives beside the requested state. */
+export interface DialogOpenChangeDetails {
+  /** Why the dialog asks to open or close. */
+  reason: DialogOpenChangeReason;
+}
+
+/** Where focus goes as a dialog opens or closes: an element's ref, or a function of how it was opened. */
+export type DialogFocusTarget =
+  | boolean
+  | RefObject<HTMLElement | null>
+  | ((
+      interaction: 'mouse' | 'touch' | 'pen' | 'keyboard' | '',
+    ) => HTMLElement | boolean | void | null);
+
+export interface DialogProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+  /** Whether the dialog is open, for a dialog the application controls with onOpenChange. */
   open?: boolean;
+  /**
+   * Whether a dialog the application doesn't control is open on the first render.
+   * @default false
+   */
   defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  /**
+   * Called with the requested state, and why, when the dialog asks to open or close: from the
+   * trigger, Escape, an outside press, the close button or a DialogClose. Not called for a
+   * dismissal that pending blocks.
+   */
+  onOpenChange?: (open: boolean, details: DialogOpenChangeDetails) => void;
+  /**
+   * The element that opens the dialog, such as a Button. It reports the dialog it opens, and focus
+   * returns to it on close. Omit it for a dialog the application opens with open.
+   */
   trigger?: ReactElement;
+  /** The dialog's heading and accessible name, such as “Delete project?”. */
   title: ReactNode;
+  /**
+   * Muted text under the title that describes the dialog to assistive technology too, such as what
+   * its action changes.
+   */
   description?: ReactNode;
+  /** The content between the heading and the actions, such as text, fields or a list. */
   children?: ReactNode;
+  /**
+   * The dialog's own actions, after the built-in close button, with the primary action last. They
+   * close the dialog only where they are DialogClose or set open to false.
+   */
   actions?: ReactNode;
+  /**
+   * The label of the built-in close button that starts the actions, such as Cancel.
+   * @default 'Close', or EnvUIProvider's messages.dialog.close
+   */
   closeLabel?: string;
   /**
-   * Centered modal, a modal near the top of the window for search-like tasks, or a full-height panel
-   * at the right edge, which takes the whole width of a narrow window such as a phone's.
+   * center for a modal in the middle of the window; top for a modal near the top of the window for
+   * search-like tasks, so results grow downward without moving the field. For a panel at an edge
+   * of the window, use Drawer.
+   * @default 'center'
    */
-  placement?: 'center' | 'top' | 'right';
+  placement?: 'center' | 'top';
   /**
-   * standard (default, about 28 rem, 24 rem for a panel) or wide (about 44 rem) for content-heavy
-   * dialogs and panels.
+   * md, 28 rem wide, or lg, 44 rem, for content-heavy dialogs such as tables, comparisons and
+   * longer forms. Both narrow to fit the window.
+   * @default 'md'
    */
-  size?: 'standard' | 'wide';
-  /** Non-modal panels allow interaction with the surrounding page. */
+  width?: 'md' | 'lg';
+  /**
+   * true traps focus in the dialog over a backdrop, hides the page from assistive technology,
+   * blocks presses on it and locks its scroll. false leaves the page usable beside the dialog; it
+   * then closes when focus or a press goes outside it, unless disablePointerDismissal.
+   * @default true
+   */
   modal?: boolean;
-  /** Keep a non-modal inspector open while interacting with its source content. */
-  disablePointerDismissal?: boolean;
-  initialFocus?: RefObject<HTMLElement | null>;
-  finalFocus?: RefObject<HTMLElement | null>;
   /**
-   * Work started from the dialog is in progress. Escape, outside presses and the built-in close
-   * button cannot dismiss it until pending returns to false.
+   * Keep the dialog open on presses outside it, and a non-modal dialog also when focus moves
+   * outside. Escape and the close buttons still close it.
+   * @default false
+   */
+  disablePointerDismissal?: boolean;
+  /**
+   * The element to focus when the dialog opens, as a ref or a function of how it was opened. By
+   * default focus moves to the first focusable element inside, such as the first field, or to the
+   * dialog itself when opened by touch.
+   */
+  initialFocus?: DialogFocusTarget;
+  /**
+   * The element to focus when the dialog closes, such as the row that opened it. By default focus
+   * returns to the trigger, or to the element that had focus when the dialog opened.
+   */
+  finalFocus?: DialogFocusTarget;
+  /**
+   * Work started from the dialog is in progress. Escape, outside presses and the close buttons
+   * cannot dismiss it until pending returns to false. The built-in close button is disabled and
+   * the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too.
+   * Set pending on the action that started the work as well.
+   * @default false
    */
   pending?: boolean;
 }
-export type DialogCloseProps = Extract<ButtonProps, { href?: undefined }>;
 
-/** Use within Dialog when additional actions should dismiss it. */
-export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(function DialogClose(
-  { variant = 'secondary', ...props },
-  ref,
-) {
-  return <BaseDialog.Close ref={ref} render={<Button {...props} variant={variant} />} />;
-});
+/** Button's props without href: DialogClose is always a button. */
+export type DialogCloseProps = {
+  /**
+   * The emphasis, as Button's; secondary by default, as an action beside the dialog's main one.
+   * @default 'secondary'
+   */
+  variant?: ButtonVariant;
+} & Extract<ButtonProps, { href?: undefined }>;
 
-/** Dialog and inspector shell; Base UI owns dismissal and modal-aware focus behavior. */
-export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
-  {
-    open,
-    defaultOpen,
-    onOpenChange,
-    trigger,
-    title,
-    description,
-    children,
-    actions,
-    closeLabel = 'Close',
-    placement = 'center',
-    size = 'standard',
-    modal = true,
-    disablePointerDismissal = false,
-    initialFocus,
-    finalFocus,
-    pending = false,
-    className,
-    ...popupProps
-  },
-  ref,
-) {
+/**
+ * A button inside a Dialog or a Drawer that closes it after its own onClick, for an action other
+ * than the built-in close button, such as Don't save or Done. It takes Button's props and is
+ * secondary by default.
+ */
+export function DialogClose({ variant = 'secondary', ref, ...props }: DialogCloseProps) {
+  return (
+    <BaseDialog.Close ref={ref} render={<Button {...({ ...props, variant } as ButtonProps)} />} />
+  );
+}
+
+/**
+ * A focused task over the page: a centered modal, or a modal near the top of the window. It has a
+ * title, an optional description, content and actions that start with a built-in close button.
+ * Base UI's dialog owns focus, Escape and outside presses. className, style, ref and data
+ * attributes go to the dialog's surface.
+ */
+export function Dialog({
+  open,
+  defaultOpen,
+  onOpenChange,
+  trigger,
+  title,
+  description,
+  children,
+  actions,
+  closeLabel: ownCloseLabel,
+  placement = 'center',
+  width = 'md',
+  modal = true,
+  disablePointerDismissal = false,
+  initialFocus,
+  finalFocus,
+  pending = false,
+  className,
+  ...popupProps
+}: DialogProps) {
   const theme = useTheme();
+  const messages = useMessages('dialog', dialog);
+  const closeLabel = ownCloseLabel ?? messages.close;
   return (
     <BaseDialog.Root
       open={open}
@@ -85,65 +190,42 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(function Dialog(
           eventDetails.cancel();
           return;
         }
-        onOpenChange?.(next);
+        onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
       modal={modal}
       disablePointerDismissal={disablePointerDismissal}
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal>
-        <Theme theme={theme}>
-          {modal && <BaseDialog.Backdrop className="env-dialog-backdrop" />}
-          <div className="env-dialog-positioner" data-placement={placement}>
-            <BaseDialog.Popup
-              render={
-                <Surface
-                  tone="pane"
-                  padding={5}
-                  corners={placement === 'right' ? 'none' : 'surface'}
-                />
-              }
-              {...popupProps}
-              ref={ref}
-              className={classNames('env-modal-pane', className)}
-              data-placement={placement}
-              data-size={size}
-              aria-busy={pending || undefined}
-              initialFocus={initialFocus}
-              finalFocus={finalFocus}
-            >
-              <Stack gap={5} className="env-dialog-content">
-                <div className="env-dialog-header">
-                  <div className="env-dialog-heading">
-                    <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
-                    {placement === 'right' && (
-                      <BaseDialog.Close
-                        render={
-                          <IconButton icon={<Close />} aria-label={closeLabel} disabled={pending} />
-                        }
-                      />
-                    )}
-                  </div>
-                  {description != null && (
-                    <BaseDialog.Description className="env-dialog-description">
-                      {description}
-                    </BaseDialog.Description>
-                  )}
-                </div>
-                {children}
-                {(placement !== 'right' || actions != null) && (
-                  <ActionGroup align="end" className="env-dialog-actions">
-                    {placement !== 'right' && (
-                      <DialogClose disabled={pending}>{closeLabel}</DialogClose>
-                    )}
+        <Theme {...theme}>
+          <ResetControlDefaults>
+            {modal && <DialogBackdrop />}
+            <div className="env-dialog-positioner" data-placement={placement}>
+              <BaseDialog.Popup
+                render={<DialogSurface radius="xl" />}
+                {...popupProps}
+                className={classNames('env-dialog-popup', className)}
+                data-placement={placement}
+                data-width={width}
+                aria-busy={pending || undefined}
+                initialFocus={initialFocus}
+                finalFocus={finalFocus}
+              >
+                <DialogContent>
+                  <DialogHeader title={title} description={description} />
+                  {children}
+                  <DialogActions>
+                    <DialogClose disabled={pending}>{closeLabel}</DialogClose>
                     {actions}
-                  </ActionGroup>
-                )}
-              </Stack>
-            </BaseDialog.Popup>
-          </div>
+                  </DialogActions>
+                </DialogContent>
+              </BaseDialog.Popup>
+            </div>
+          </ResetControlDefaults>
         </Theme>
       </BaseDialog.Portal>
     </BaseDialog.Root>
   );
-});
+}
+
+markTriggerOwner(Dialog);

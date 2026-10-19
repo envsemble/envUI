@@ -1,3 +1,5 @@
+'use client';
+
 import {
   useEffect,
   useId,
@@ -16,7 +18,10 @@ import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { Stop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
 import { setRef } from '../internal/setRef.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { composer as composerMessages } from '../foundations/messages/composer.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
+import { TextareaControl } from './internal/TextareaControl.js';
 
 interface ComposerOptions {
   /** The message text of a controlled composer. */
@@ -46,9 +51,15 @@ interface ComposerOptions {
   running?: boolean;
   /** Called by the stop button while running; it stays available when the field is disabled. */
   onStop?: () => void;
-  /** Accessible name of the send button; Send by default. */
+  /**
+   * Accessible name of the send button.
+   * @default 'Send', or EnvUIProvider's messages.composer.send
+   */
   sendLabel?: string;
-  /** Accessible name of the stop button; Stop by default. */
+  /**
+   * Accessible name of the stop button.
+   * @default 'Stop', or EnvUIProvider's messages.composer.stop
+   */
   stopLabel?: string;
   /** Lines the field shows while empty; 1 by default. */
   minRows?: number;
@@ -62,7 +73,12 @@ interface ComposerOptions {
 
 /** The field needs a name: aria-label without a visible label, or aria-labelledby. */
 type ComposerName =
-  | { 'aria-label': string; 'aria-labelledby'?: string }
+  | {
+      /** Names the field, which has no visible label, such as "Message"; this or aria-labelledby. */
+      'aria-label': string;
+      /** The id of visible text that names the field; this or aria-label. */
+      'aria-labelledby'?: string;
+    }
   | { 'aria-label'?: string; 'aria-labelledby': string };
 
 export type ComposerProps = ComposerOptions &
@@ -120,8 +136,8 @@ export function Composer({
   pending = false,
   running = false,
   onStop,
-  sendLabel = 'Send',
-  stopLabel = 'Stop',
+  sendLabel,
+  stopLabel,
   minRows = 1,
   maxRows = 8,
   start,
@@ -138,6 +154,7 @@ export function Composer({
   'aria-describedby': describedBy,
   ...props
 }: ComposerProps) {
+  const messages = useMessages('composer', composerMessages);
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
   const footerId = `${id}-footer`;
@@ -152,8 +169,10 @@ export function Composer({
   // only an enclosing form reports its status.
   const { pending: formPending } = useFormStatus();
   const busy = pending || formPending;
-  // Whether the field belongs to a form, known once it is in the document.
+  // Whether the field belongs to a form, known once it is in the document. Read after every render:
+  // the owning form is found in the document, not in props.
   const [inForm, setInForm] = useState(form !== undefined);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     setInForm(Boolean(inputRef.current?.form));
   });
@@ -202,7 +221,7 @@ export function Composer({
   // The action stays focusable while unavailable, so focus is never lost when it changes between
   // send and stop. A disabled composer disables sending; stopping stays available while running.
   const unavailable = running ? !onStop : blank || busy || !canSend;
-  const actionLabel = running ? stopLabel : sendLabel;
+  const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
     <div
@@ -227,7 +246,8 @@ export function Composer({
           inputRef.current?.focus();
         }}
       >
-        <textarea
+        <TextareaControl
+          bare
           {...props}
           ref={(node) => {
             inputRef.current = node;

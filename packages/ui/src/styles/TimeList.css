@@ -1,0 +1,93 @@
+/* Time list: a time of day on wheels side by side, hours, minutes and on a 12-hour clock the day's
+   halves, in the popups of DatePicker and TimePicker. Each wheel shows an odd number of rows and
+   snaps a row to its middle. The middle rows, side by side, read as one line: each has the solid
+   fill of a chosen calendar day and the regular body type, while the rows above and below are
+   smaller, dimmer and fade towards the edges. Coarse pointers get touch-tall rows. */
+.env-time-list {
+  --env-time-list-row: var(--env-control-height-md);
+  --env-time-list-rows: 5;
+  display: grid;
+  grid-auto-columns: minmax(max-content, 1fr);
+  grid-auto-flow: column;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+.env-time-list-column {
+  position: relative;
+  block-size: calc(var(--env-time-list-rows) * var(--env-time-list-row));
+  min-inline-size: calc(1.5 * var(--env-time-list-row));
+  /* Room for the focus ring around the middle row, which sits outside its fill. */
+  padding-inline: var(--env-space-1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  outline: none;
+  mask-image: linear-gradient(transparent, currentcolor 30%, currentcolor 70%, transparent);
+}
+.env-time-list-column::-webkit-scrollbar {
+  display: none;
+}
+/* The day periods don't loop: room above and below lets either reach the middle. */
+.env-time-list-column:not([data-loop]) {
+  padding-block: calc((var(--env-time-list-rows) - 1) / 2 * var(--env-time-list-row));
+}
+.env-time-list-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--env-time-list-row);
+  padding-inline: var(--env-space-2);
+  border-radius: var(--env-radius-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  scroll-snap-align: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-time-list-row[data-centred] {
+  background: var(--env-color-bg-brand-emphasis);
+  color: var(--env-color-fg-on-emphasis);
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-semibold);
+}
+/* The focus ring goes round the wheel's value, in the middle, where the edges' fade doesn't reach. */
+.env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: 1px;
+}
+.env-time-list-row[data-disabled] {
+  opacity: var(--env-state-disabled-opacity);
+  cursor: default;
+}
+@media (pointer: coarse) {
+  .env-time-list {
+    --env-time-list-row: var(--env-control-height-touch);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .env-time-list-row {
+    transition: none;
+  }
+}
+
+/* Forced colors: the system paints no fills, so each wheel's value takes the system's selection
+   colors and unavailable rows the disabled color. */
+@media (forced-colors: active) {
+  .env-time-list-row[data-centred] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-time-list-column:focus-visible > .env-time-list-row[data-centred] {
+    outline-color: CanvasText;
+  }
+  .env-time-list-row[data-disabled] {
+    color: GrayText;
+  }
+}

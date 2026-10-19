@@ -1,0 +1,22 @@
+{
+  "@envsemble/envui": {
+    "Skeleton": {
+      "tone": {
+        "to": "emphasis",
+        "report": "Skeleton's tone is emphasis in 1.0: base is muted, the default, and highlight is default.",
+        "values": {
+          "base": {
+            "props": {
+              "emphasis": "muted"
+            }
+          },
+          "highlight": {
+            "props": {
+              "emphasis": "default"
+            }
+          }
+        }
+      }
+    }
+  }
+}

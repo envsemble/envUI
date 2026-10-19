@@ -1,0 +1,224 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "High contrast: points each role that changes at its high-contrast value in the current scheme, and moves checked controls to the emphasis fill.",
+  "color": {
+    "$type": "color",
+    "bg": {
+      "selected": {
+        "$root": { "$value": "{contrast-high.color.bg.selected}" },
+        "hover": { "$value": "{contrast-high.color.bg.selected.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.selected.pressed}" }
+      },
+      "navigation": {
+        "hover": { "$value": "{contrast-high.color.bg.navigation.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.navigation.pressed}" }
+      },
+      "page": {
+        "hover": { "$value": "{contrast-high.color.bg.page.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.page.pressed}" }
+      },
+      "default": {
+        "hover": { "$value": "{contrast-high.color.bg.default.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.default.pressed}" }
+      },
+      "muted": {
+        "hover": { "$value": "{contrast-high.color.bg.muted.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.muted.pressed}" }
+      },
+      "raised": {
+        "hover": { "$value": "{contrast-high.color.bg.raised.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.raised.pressed}" }
+      },
+      "popup": {
+        "$root": { "$value": "{contrast-high.color.bg.popup}" },
+        "hover": { "$value": "{contrast-high.color.bg.popup.hover}" },
+        "pressed": { "$value": "{contrast-high.color.bg.popup.pressed}" }
+      },
+      "neutral": {
+        "muted": {
+          "$root": { "$value": "{contrast-high.color.bg.neutral.muted}" },
+          "hover": { "$value": "{contrast-high.color.bg.neutral.muted.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.neutral.muted.pressed}" }
+        },
+        "emphasis": { "$value": "{contrast-high.color.bg.neutral.emphasis}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.neutral.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.neutral.subtle.pressed}" }
+        },
+        "strong": {
+          "hover": { "$value": "{contrast-high.color.bg.neutral.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.neutral.strong.pressed}" }
+        }
+      },
+      "brand": {
+        "emphasis": {
+          "$root": { "$value": "{contrast-high.color.bg.brand.emphasis}" },
+          "hover": { "$value": "{contrast-high.color.bg.brand.emphasis.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.brand.emphasis.pressed}" }
+        },
+        "strong": {
+          "$root": { "$value": "{contrast-high.color.bg.brand.strong}" },
+          "hover": { "$value": "{contrast-high.color.bg.brand.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.brand.strong.pressed}" }
+        },
+        "muted": { "$value": "{contrast-high.color.bg.brand.muted}" }
+      },
+      "accent": {
+        "emphasis": { "$value": "{contrast-high.color.bg.accent.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.bg.accent.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.accent.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.accent.subtle.pressed}" }
+        }
+      },
+      "success": {
+        "emphasis": { "$value": "{contrast-high.color.bg.success.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.bg.success.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.success.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.success.subtle.pressed}" }
+        },
+        "strong": {
+          "$root": { "$value": "{contrast-high.color.bg.success.strong}" },
+          "hover": { "$value": "{contrast-high.color.bg.success.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.success.strong.pressed}" }
+        }
+      },
+      "warning": {
+        "emphasis": { "$value": "{contrast-high.color.bg.warning.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.bg.warning.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.warning.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.warning.subtle.pressed}" }
+        }
+      },
+      "danger": {
+        "emphasis": { "$value": "{contrast-high.color.bg.danger.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.bg.danger.muted}" },
+        "subtle": {
+          "hover": { "$value": "{contrast-high.color.bg.danger.subtle.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.danger.subtle.pressed}" }
+        },
+        "strong": {
+          "$root": { "$value": "{contrast-high.color.bg.danger.strong}" },
+          "hover": { "$value": "{contrast-high.color.bg.danger.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.danger.strong.pressed}" }
+        }
+      },
+      "done": {
+        "emphasis": { "$value": "{contrast-high.color.bg.done.emphasis}" },
+        "muted": { "$value": "{contrast-high.color.bg.done.muted}" }
+      },
+      "info": {
+        "strong": {
+          "$root": { "$value": "{contrast-high.color.bg.info.strong}" },
+          "hover": { "$value": "{contrast-high.color.bg.info.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.info.strong.pressed}" }
+        }
+      },
+      "important": {
+        "strong": {
+          "$root": { "$value": "{contrast-high.color.bg.important.strong}" },
+          "hover": { "$value": "{contrast-high.color.bg.important.strong.hover}" },
+          "pressed": { "$value": "{contrast-high.color.bg.important.strong.pressed}" }
+        }
+      }
+    },
+    "fg": {
+      "default": { "$value": "{contrast-high.color.fg.default}" },
+      "muted": {
+        "$root": { "$value": "{contrast-high.color.fg.muted}" },
+        "hover": { "$value": "{contrast-high.color.fg.muted.hover}" },
+        "pressed": { "$value": "{contrast-high.color.fg.muted.pressed}" }
+      },
+      "control": { "$value": "{contrast-high.color.fg.control}" },
+      "link": {
+        "$root": { "$value": "{contrast-high.color.fg.link}" },
+        "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
+        "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
+      },
+      "link-on-tint": {
+        "$root": { "$value": "{contrast-high.color.fg.link}" },
+        "hover": { "$value": "{contrast-high.color.fg.link.hover}" },
+        "pressed": { "$value": "{contrast-high.color.fg.link.pressed}" }
+      },
+      "accent": { "$value": "{contrast-high.color.fg.accent}" },
+      "on-selected": { "$value": "{contrast-high.color.fg.on-selected}" },
+      "success": { "$value": "{contrast-high.color.fg.success}" },
+      "warning": { "$value": "{contrast-high.color.fg.warning}" },
+      "danger": { "$value": "{contrast-high.color.fg.danger}" },
+      "done": { "$value": "{contrast-high.color.fg.done}" },
+      "on-emphasis": { "$value": "{contrast-high.color.fg.on-emphasis}" }
+    },
+    "border": {
+      "default": {
+        "$root": { "$value": "{contrast-high.color.border.default}" },
+        "hover": { "$value": "{contrast-high.color.border.default.hover}" },
+        "pressed": { "$value": "{contrast-high.color.border.default.pressed}" }
+      },
+      "muted": {
+        "$root": { "$value": "{contrast-high.color.border.muted}" },
+        "hover": { "$value": "{contrast-high.color.border.muted.hover}" },
+        "pressed": { "$value": "{contrast-high.color.border.muted.pressed}" }
+      },
+      "accent": {
+        "$root": { "$value": "{contrast-high.color.border.accent}" },
+        "muted": { "$value": "{contrast-high.color.border.accent.muted}" },
+        "emphasis": {
+          "$root": { "$value": "{contrast-high.color.border.accent.emphasis}" },
+          "hover": { "$value": "{contrast-high.color.border.accent.emphasis.hover}" },
+          "pressed": { "$value": "{contrast-high.color.border.accent.emphasis.pressed}" }
+        }
+      },
+      "danger": {
+        "$root": { "$value": "{contrast-high.color.border.danger}" },
+        "muted": { "$value": "{contrast-high.color.border.danger.muted}" },
+        "strong": { "$value": "{contrast-high.color.border.danger.strong}" },
+        "emphasis": {
+          "$root": { "$value": "{contrast-high.color.border.danger.emphasis}" },
+          "hover": { "$value": "{contrast-high.color.border.danger.emphasis.hover}" },
+          "pressed": { "$value": "{contrast-high.color.border.danger.emphasis.pressed}" }
+        }
+      },
+      "neutral": {
+        "$root": { "$value": "{contrast-high.color.border.neutral}" },
+        "strong": { "$value": "{contrast-high.color.border.neutral.strong}" }
+      },
+      "success": {
+        "$root": { "$value": "{contrast-high.color.border.success}" },
+        "muted": { "$value": "{contrast-high.color.border.success.muted}" },
+        "strong": { "$value": "{contrast-high.color.border.success.strong}" }
+      },
+      "warning": {
+        "$root": { "$value": "{contrast-high.color.border.warning}" },
+        "muted": { "$value": "{contrast-high.color.border.warning.muted}" }
+      },
+      "focus": { "$value": "{contrast-high.color.border.focus}" },
+      "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } },
+      "done": { "$value": "{contrast-high.color.border.done}" }
+    },
+    "avatar": {
+      "bg": {
+        "$root": { "$value": "{palette.blue.70}" },
+        "teal": { "$value": "{palette.teal.70}" },
+        "green": { "$value": "{palette.green.70}" },
+        "amber": { "$value": "{palette.amber.70}" },
+        "red": { "$value": "{palette.red.70}" },
+        "violet": { "$value": "{palette.violet.70}" },
+        "purple": { "$value": "{palette.purple.70}" },
+        "slate": { "$value": "{palette.slate.70}" }
+      }
+    }
+  },
+  "elevation": {
+    "1": { "border": { "$type": "color", "$value": "{color.border.default}" } },
+    "2": { "border": { "$type": "color", "$value": "{color.border.default}" } },
+    "3": {
+      "border": {
+        "$type": "color",
+        "$description": "Dialogs float over the scrim, so their edge keeps 4.5:1 against the scrim over the page.",
+        "$value": "{contrast-high.color.border.scrim}"
+      }
+    }
+  }
+}

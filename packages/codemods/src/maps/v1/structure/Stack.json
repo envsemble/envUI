@@ -1,0 +1,57 @@
+{
+  "@envsemble/envui": {
+    "ActionGroup": {
+      "report": "ActionGroup is gone in 1.0: lay a row of actions out with <Stack direction=\"row\" wrap align=\"center\" gap={4}>, with justify for its alignment, and a stacked group with <Stack gap={2}> and fullWidth on each labelled Button.",
+      "cases": [
+        {
+          "when": {
+            "stacked": [true]
+          },
+          "element": "Stack",
+          "props": {
+            "stacked": null,
+            "align": null,
+            "as": "render"
+          },
+          "add": {
+            "gap": 2
+          },
+          "children": {
+            "Button": {
+              "unless": ["iconOnly", "fullWidth"],
+              "add": {
+                "fullWidth": true
+              }
+            },
+            "IconButton": {},
+            "*": {
+              "report": "a stacked ActionGroup stretched its labelled buttons: give each fullWidth, or this child the width it should take."
+            }
+          }
+        },
+        {
+          "when": {
+            "stacked": [false, null]
+          },
+          "element": "Stack",
+          "props": {
+            "stacked": null,
+            "align": {
+              "to": "justify",
+              "values": {
+                "start": null
+              }
+            },
+            "as": "render"
+          },
+          "add": {
+            "direction": "row",
+            "wrap": true,
+            "align": "center",
+            "gap": 4
+          }
+        }
+      ]
+    }
+  }
+}

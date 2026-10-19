@@ -1,0 +1,7 @@
+{
+  "@envsemble/envui": {
+    "getInitials": {
+      "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."
+    }
+  }
+}

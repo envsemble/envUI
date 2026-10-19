@@ -1,22 +1,23 @@
-import { createContext, useContext } from 'react';
+'use client';
+
 import { Toast as BaseToast } from '@base-ui/react/toast';
+import { withDisplayName } from '../../internal/withDisplayName.js';
 import { ToastRegion } from './ToastRegion.js';
 import { useToastController } from './useToastController.js';
 import { toastPlacements } from './ToastInternals.js';
-import type { ToastManager, ToastProviderProps } from './ToastTypes.js';
+import type { ToastProviderProps } from './ToastTypes.js';
+import { ToastManagerContext } from './useToast.js';
 
-const ManagerContext = createContext<ToastManager | null>(null);
+export type { ToastProviderProps as ProviderProps } from './ToastTypes.js';
 
-export function useToast(): ToastManager {
-  const manager = useContext(ManagerContext);
-  if (!manager)
-    throw new Error('useToast must be used inside ToastProvider. Manual Toast needs no provider.');
-  return manager;
-}
-
-export function ToastProvider({
+/**
+ * Hosts the notifications that useToast shows: brief feedback at the edge of the window, announced
+ * and dismissed after a few seconds or by people. Put one near the root of the application; it
+ * renders a region for each placement in a portal, in the theme of the place it is rendered.
+ */
+function Provider({
   children,
-  defaultPlacement = 'bottom-right',
+  defaultPlacement = 'bottom-end',
   visibleLimit = 3,
 }: ToastProviderProps) {
   if (!Number.isInteger(visibleLimit) || visibleLimit < 1)
@@ -37,13 +38,18 @@ function ManagedToastRegions({
 }: Required<ToastProviderProps>) {
   const controller = useToastController(defaultPlacement);
   return (
-    <ManagerContext value={controller.manager}>
+    <ToastManagerContext value={controller.manager}>
       {children}
       {toastPlacements.map((placement) => (
-        <BaseToast.Provider key={placement} timeout={0} limit={visibleLimit}>
-          <ToastRegion placement={placement} controller={controller} />
+        <BaseToast.Provider key={placement} timeout={0} limit={Number.MAX_SAFE_INTEGER}>
+          <ToastRegion placement={placement} controller={controller} visibleLimit={visibleLimit} />
         </BaseToast.Provider>
       ))}
-    </ManagerContext>
+    </ToastManagerContext>
   );
 }
+
+// Each part is named for React DevTools by a pure call, so a bundler drops the parts an
+// application leaves unused.
+const ProviderPart = /* @__PURE__ */ withDisplayName(Provider, 'Toast.Provider');
+export { ProviderPart as Provider };

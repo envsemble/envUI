@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Button,
+  EnvUIProvider,
   IconButton,
   RelativeTime,
   Surface,
@@ -40,6 +41,12 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
         nowLabel="moments ago"
         value={openedAt - 5 * second}
       />
+      {/* The provider's locale and now message, which a time's own props would override. */}
+      <EnvUIProvider locale="de" messages={{ relativeTime: { now: 'gerade eben' } }}>
+        <RelativeTime data-testid="provider-german" value={openedAt - 3 * hour} />
+        <RelativeTime data-testid="provider-now" value={openedAt - 5 * second} />
+        <RelativeTime data-testid="provider-own" locale="en" value={openedAt - 3 * hour} />
+      </EnvUIProvider>
       <RelativeTime
         data-testid="fixed"
         value="2026-10-16T12:00:00Z"
@@ -70,18 +77,17 @@ export function RelativeTimesFixture({ theme }: { theme: ThemeValue }) {
       <Button variant="secondary" onClick={() => setSavedAt(Date.now())}>
         Save draft {theme}
       </Button>
-      {/* A compact toolbar: the time sits on the center line of 2 rem controls. */}
+      {/* A small toolbar: the time sits on the center line of 2 rem controls. */}
       <Surface
-        tone="row"
+        background="muted"
         padding={2}
-        corners="standard"
-        density="compact"
+        radius="sm"
         className="fixture-toolbar"
         data-testid="toolbar"
       >
         <span className="fixture-shrink-label">Quarterly report</span>
         <RelativeTime data-testid="toolbar-time" format="narrow" value={openedAt - 3 * hour} />
-        <IconButton icon={<Settings />} aria-label="Report settings" />
+        <IconButton size="sm" icon={<Settings />} aria-label="Report settings" />
       </Surface>
       <p className="fixture-narrow-time" data-testid="narrow-frame">
         Updated <RelativeTime data-testid="narrow-time" value={openedAt - 3 * hour} />

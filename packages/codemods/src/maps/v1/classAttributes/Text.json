@@ -1,0 +1,56 @@
+{
+  "env-text-display": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "display"
+    }
+  },
+  "env-text-body": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "body"
+    }
+  },
+  "env-text-page-heading": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "headline"
+    }
+  },
+  "env-text-section-heading": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "title"
+    }
+  },
+  "env-text-supporting": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "body-sm"
+    }
+  },
+  "env-text-caption": {
+    "class": "env-text",
+    "attributes": {
+      "data-variant": "caption"
+    }
+  },
+  "env-text-tone-primary": {
+    "class": "env-text",
+    "attributes": {
+      "data-emphasis": "default"
+    }
+  },
+  "env-text-tone-muted": {
+    "class": "env-text",
+    "attributes": {
+      "data-emphasis": "muted"
+    }
+  },
+  "env-text-tone-quiet": {
+    "class": "env-text",
+    "attributes": {
+      "data-emphasis": "subtle"
+    }
+  }
+}

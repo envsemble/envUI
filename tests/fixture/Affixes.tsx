@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconButton, Input, SearchField, Theme, type ThemeValue } from '@envsemble/envui';
+import { IconButton, TextField, SearchField, Theme, type ThemeValue } from '@envsemble/envui';
 import { ContentCopy } from '@envsemble/envui/icons/ContentCopy';
 import { Sell } from '@envsemble/envui/icons/Sell';
 
@@ -14,17 +14,17 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
           setSubmitted([...data].map(([name, value]) => `${name}=${String(value)}`).join(' '));
         }}
       >
-        <Input label="Address" name="slug" prefix="https://example.com/" />
-        <Input
+        <TextField label="Address" name="slug" prefix="https://example.com/" />
+        <TextField
           label="Size"
           name="size"
           type="number"
           suffix="MB"
           defaultValue="2"
-          hint="Up to 10"
+          description="Up to 10"
         />
-        <Input
-          compact
+        <TextField
+          showLabel={false}
           label="Price"
           name="price"
           placeholder="0.00"
@@ -33,13 +33,25 @@ export function AffixesFixture({ theme }: { theme: ThemeValue }) {
           startIcon={<Sell />}
           endAction={<IconButton variant="text" icon={<ContentCopy />} aria-label="Copy price" />}
         />
-        <Input compact showLabel label="Share" name="share" suffix="%" defaultValue="40" />
-        <Input variant="plain" label="Handle" name="handle" prefix="@" defaultValue="aurora" />
-        <SearchField variant="quiet" label="Find projects" placeholder="Find projects" />
-        <Input label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />
-        <Input label="Limit" name="limit" suffix="items" defaultValue="0" error="Use 1 or more." />
+        <TextField showLabel label="Share" name="share" suffix="%" defaultValue="40" />
+        <TextField
+          variant="underline"
+          label="Handle"
+          name="handle"
+          prefix="@"
+          defaultValue="aurora"
+        />
+        <SearchField variant="ghost" label="Find projects" placeholder="Find projects" />
+        <TextField label="Quota" name="quota" suffix="GB" defaultValue="12" disabled />
+        <TextField
+          label="Limit"
+          name="limit"
+          suffix="items"
+          defaultValue="0"
+          error="Use 1 or more."
+        />
         <div className="fixture-narrow-field">
-          <Input
+          <TextField
             label="Link"
             name="link"
             prefix="https://workspace.example.com/projects/design-system/"

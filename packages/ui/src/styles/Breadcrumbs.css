@@ -6,69 +6,71 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
   margin: 0;
   padding: 0;
   list-style: none;
-  font: var(--type-body-small);
+  font: var(--env-type-body-small);
 }
-.env-breadcrumb {
+.env-breadcrumbs-item {
   min-inline-size: 0;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--env-space-1);
 }
 /* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
    width. Nothing clips the list, so focus outlines stay whole. */
 .env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list {
   flex-wrap: nowrap;
 }
-.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumb:not(:last-child) {
+.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumbs-item:not(:last-child) {
   flex-shrink: 0;
 }
-.env-breadcrumb-link,
-.env-breadcrumb-text,
-.env-breadcrumb-current {
+.env-breadcrumbs-link,
+.env-breadcrumbs-text,
+.env-breadcrumbs-current {
   min-inline-size: 0;
   max-inline-size: 20rem;
   display: inline-flex;
-  padding: 0.125rem var(--space-1);
-  border-radius: var(--radius-standard);
+  padding: 0.125rem var(--env-space-1);
+  border-radius: var(--env-radius-sm);
 }
-.env-breadcrumb-link {
+.env-breadcrumbs-link {
   border: 0;
   background: transparent;
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
   font: inherit;
   text-decoration: none;
   cursor: pointer;
-  transition: color var(--motion-duration-fast) var(--motion-ease);
+  transition: color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-breadcrumb-link:hover {
-  color: var(--color-text-primary);
+.env-breadcrumbs-link:hover {
+  color: var(--env-color-fg-default);
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
-.env-breadcrumb-link:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+.env-breadcrumbs-link:focus-visible,
+.env-breadcrumbs-text:focus-visible,
+.env-breadcrumbs-current:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0;
 }
-.env-breadcrumb-text {
-  color: var(--color-text-muted);
+.env-breadcrumbs-text {
+  color: var(--env-color-fg-muted);
 }
-.env-breadcrumb-current {
-  color: var(--color-text-primary);
-  font-weight: 500;
+.env-breadcrumbs-current {
+  color: var(--env-color-fg-default);
+  font-weight: var(--env-font-weight-medium);
 }
-.env-breadcrumb-label {
+.env-breadcrumbs-label {
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.env-breadcrumb-separator {
-  color: var(--color-text-muted);
+.env-breadcrumbs-separator {
+  color: var(--env-color-fg-muted);
 }
-.env-breadcrumb-separator:dir(rtl) {
+.env-breadcrumbs-separator:dir(rtl) {
   transform: scaleX(-1);
 }

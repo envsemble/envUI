@@ -1,0 +1,67 @@
+/* Pages on the documentation template: status in the banner, live examples and their source. */
+.docs-page-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--env-space-4);
+}
+
+/* An example sits on the page background inside a hairline frame, as it would in an application. */
+.docs-live-example {
+  padding: var(--env-space-6);
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-surface);
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+/* Specimens inside an article share its gutter instead of adding their own. */
+.docs-article .docs-preview {
+  padding: 0;
+}
+
+.docs-related-list {
+  display: grid;
+  gap: var(--env-space-3);
+  margin: 0;
+  padding-inline-start: var(--env-space-6);
+}
+
+/* Props tables wrap code between words, so a column is never narrower than its longest word. */
+.docs-prop-code {
+  overflow-wrap: break-word;
+}
+
+/* The same for code in the guidance tables of a page on the template. */
+.docs-template .env-markdown-table code {
+  overflow-wrap: break-word;
+}
+
+/* A template's screen: frames of the frame route, each a nominal viewport scaled to the column. */
+.docs-template-frame-box {
+  min-inline-size: 0;
+}
+
+.docs-template-frame-viewport {
+  overflow: hidden;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-page);
+}
+
+.docs-template-frame {
+  display: block;
+  border: 0;
+  transform-origin: 0 0;
+}
+
+/* The Templates overview: one card per template. */
+.docs-template-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--env-space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

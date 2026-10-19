@@ -1,24 +1,31 @@
 /* Avatar groups: overlapping avatars, later ones over earlier ones, each ringed in the color of the
    surface below so neighbours stay apart. The ring follows the envUI surface the group sits on, or
-   the canvas; --avatar-group-ring sets it for any other surface, such as a row. */
+   the canvas; --env-avatar-group-ring sets it for any other surface, such as a row. Each avatar
+   covers an eighth of the one before, and initials center in what it leaves, so they stay clear of
+   the next avatar and its ring. */
 .env-avatar-group {
   --env-avatar-group-size: 2rem;
-  --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 4);
+  --env-avatar-group-overlap: calc(var(--env-avatar-group-size) / 8);
   --env-avatar-group-ring-width: max(0.125rem, calc(var(--env-avatar-group-size) / 16));
-  --env-avatar-group-ring: var(--avatar-group-ring, var(--env-surface-color, var(--color-canvas)));
+  --env-avatar-group-ring-color: var(
+    --env-avatar-group-ring,
+    var(--env-surface-color, var(--env-color-bg-page))
+  );
+  /* Each avatar's ring, through Avatar's hook. */
+  --env-avatar-ring: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring-color);
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   vertical-align: middle;
 }
-.env-avatar-group-small {
+.env-avatar-group[data-size='sm'] {
   --env-avatar-group-size: 1.5rem;
 }
-.env-avatar-group-large {
+.env-avatar-group[data-size='lg'] {
   --env-avatar-group-size: 3rem;
 }
-.env-avatar-group-display {
+.env-avatar-group[data-size='xl'] {
   --env-avatar-group-size: 5.5rem;
 }
 .env-avatar-group > * {
@@ -28,11 +35,13 @@
 .env-avatar-group > * + * {
   margin-inline-start: calc(-1 * var(--env-avatar-group-overlap));
 }
-.env-avatar-group .env-avatar,
-.env-avatar-group-overflow {
-  box-shadow: 0 0 0 var(--env-avatar-group-ring-width) var(--env-avatar-group-ring);
+/* Initials center in the part of the circle that the next avatar and its ring leave uncovered,
+   through Avatar's hook. */
+.env-avatar-group > :not(:last-child) {
+  --env-avatar-initials-inset-end: calc(
+    var(--env-avatar-group-overlap) + var(--env-avatar-group-ring-width)
+  );
 }
-
 /* A pressable avatar: a button or link the size of the picture, with a state layer over it. */
 .env-avatar-group-item {
   display: inline-flex;
@@ -51,22 +60,22 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-avatar-group-item:hover::after {
-  background: var(--color-state-layer-hover);
+  background: var(--env-color-bg-neutral-subtle-hover);
 }
 .env-avatar-group-item:active::after {
-  background: var(--color-state-layer-pressed);
+  background: var(--env-color-bg-neutral-subtle-pressed);
 }
 /* The avatar under the pointer or keyboard focus comes in front of its neighbours. */
 .env-avatar-group
   > :is(.env-avatar-group-item, .env-avatar-group-overflow):is(:hover, :focus-visible) {
-  z-index: 1;
+  z-index: var(--env-z-raised);
 }
 .env-avatar-group-item:focus-visible,
 .env-avatar-group-overflow:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: var(--env-avatar-group-ring-width);
 }
 
@@ -74,19 +83,19 @@
    avatar it overlaps stays hidden. A larger count grows it into a pill. */
 .env-avatar-group-overflow {
   box-sizing: border-box;
+  box-shadow: var(--env-avatar-ring);
   display: inline-grid;
   place-items: center;
   min-inline-size: var(--env-avatar-group-size);
   block-size: var(--env-avatar-group-size);
   padding-inline: calc(var(--env-avatar-group-size) / 6);
   border-radius: 100vmax;
-  background: color-mix(
-    in srgb,
-    var(--color-state-layer) var(--state-fill-opacity),
-    var(--env-avatar-group-ring)
-  );
-  color: var(--color-text-primary);
-  font: 500 max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1 var(--font-family);
+  /* The neutral fill over the ring color: opaque, since the count overlaps the avatars. */
+  background: linear-gradient(var(--env-color-bg-neutral-muted), var(--env-color-bg-neutral-muted))
+    var(--env-avatar-group-ring-color);
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-medium) max(0.6875rem, calc(var(--env-avatar-group-size) * 0.4)) / 1
+    var(--env-font-family);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: default;
@@ -96,20 +105,30 @@
   display: grid;
 }
 
-/* On touch screens each pressable avatar keeps at least 1.5 rem uncovered, so small ones sit side
-   by side. */
+/* On touch screens each pressable avatar is a target of at least the touch height, its picture in
+   the middle, and keeps that much uncovered: smaller avatars sit apart, larger ones overlap less.
+   The state layer stays the picture's circle. */
 @media (pointer: coarse) {
   .env-avatar-group[data-interactive] {
     --env-avatar-group-overlap: clamp(
       0rem,
-      calc(var(--env-avatar-group-size) - 1.5rem),
-      calc(var(--env-avatar-group-size) / 4)
+      calc(var(--env-avatar-group-size) - var(--env-control-height-touch)),
+      calc(var(--env-avatar-group-size) / 8)
     );
+  }
+  .env-avatar-group-item {
+    justify-content: center;
+    align-items: center;
+    min-inline-size: var(--env-control-height-touch);
+    min-block-size: var(--env-control-height-touch);
+  }
+  .env-avatar-group-item::after {
+    inset: calc((100% - var(--env-avatar-group-size)) / 2);
   }
 }
 @media (prefers-reduced-motion: no-preference) {
   .env-avatar-group-item {
-    transition: transform var(--motion-duration-fast) var(--motion-ease);
+    transition: transform var(--env-motion-duration-fast) var(--env-motion-ease);
   }
   .env-avatar-group-item:active {
     transform: scale(0.97);

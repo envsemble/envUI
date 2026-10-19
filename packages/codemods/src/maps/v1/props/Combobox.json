@@ -1,0 +1,62 @@
+{
+  "@envsemble/envui": {
+    "Combobox": {
+      "density": {
+        "report": "Combobox's density is gone: fields take the control height by default, size=\"sm\" gives the small one and variant=\"floating\" the tall one. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm",
+              "showLabel": false
+            }
+          },
+          "standard": {
+            "props": {
+              "variant": "floating"
+            },
+            "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      },
+      "hint": {
+        "to": "description",
+        "report": "Combobox's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "floating"],
+        "report": "Combobox's variant is outline or floating in 1.0: outlined is outline.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          }
+        }
+      },
+      "className": {
+        "report": "Combobox's className now goes to the root element, not the input: check styles that targeted the input, which `.env-combobox-input` inside the root selects."
+      },
+      "style": {
+        "report": "Combobox's style now goes to the root element, not the input: move declarations meant for the input to a rule for `.env-combobox-input` inside the root."
+      },
+      "items": {
+        "report": "Each of Combobox's items takes its content before the label as start in 1.0, where it was leading: the codemod renames it in an array written in the prop, and TypeScript points at the others.",
+        "each": {
+          "leading": {
+            "to": "start",
+            "report": "An option's leading content is start in 1.0, as on List.Item."
+          },
+          "items": {
+            "report": "A Combobox group's items take their content before the label as start in 1.0, where it was leading: the codemod renames it in an array written in place, and TypeScript points at the others.",
+            "each": {
+              "leading": {
+                "to": "start",
+                "report": "An option's leading content is start in 1.0, as on List.Item."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

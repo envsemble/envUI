@@ -1,0 +1,6 @@
+{
+  "@envsemble/envui": {
+    "ClickableCard": "Card",
+    "ClickableCardProps": "CardProps"
+  }
+}

@@ -3,41 +3,42 @@ import {
   Button,
   Dialog,
   HoverCard,
-  Input,
+  TextField,
   Link,
-  Notice,
+  Alert,
   Popover,
   Stack,
   Text,
   Theme,
   type ThemeValue,
+  Drawer,
 } from '@envsemble/envui';
 
-export function NoticesFixture({ theme }: { theme: ThemeValue }) {
+export function AlertsFixture({ theme }: { theme: ThemeValue }) {
   const [dismissed, setDismissed] = useState(false);
   const [failed, setFailed] = useState(false);
   return (
-    <Theme theme={theme} data-testid={`notices-${theme}`} className="fixture-section">
-      <Notice title="Sync paused">Changes are saved on this device.</Notice>
-      <Notice tone="success">The plan was published.</Notice>
-      <Notice tone="warning" title="Blocked" action={<Link href="#blockers">Show blockers</Link>}>
+    <Theme theme={theme} data-testid={`alerts-${theme}`} className="fixture-section">
+      <Alert title="Sync paused">Changes are saved on this device.</Alert>
+      <Alert tone="success">The plan was published.</Alert>
+      <Alert tone="warning" title="Blocked" action={<Link href="#blockers">Show blockers</Link>}>
         Two decisions are waiting for review.
-      </Notice>
+      </Alert>
       {!dismissed && (
-        <Notice tone="error" title="Could not load the index" onDismiss={() => setDismissed(true)}>
+        <Alert tone="danger" title="Could not load the index" onDismiss={() => setDismissed(true)}>
           The search service did not respond.
-        </Notice>
+        </Alert>
       )}
-      <Notice tone="info" icon={false}>
+      <Alert tone="info" icon={false}>
         No icon here.
-      </Notice>
+      </Alert>
       <Button variant="secondary" onClick={() => setFailed(true)}>
         Fail the save {theme}
       </Button>
       {failed && (
-        <Notice tone="error" announce title="Save failed">
+        <Alert tone="danger" announce title="Save failed">
           Try again in a moment.
-        </Notice>
+        </Alert>
       )}
     </Theme>
   );
@@ -56,12 +57,12 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
         </Popover>
         <Popover
           aria-label={`Rename ${theme}`}
-          width="wide"
+          width="lg"
           trigger={<Button variant="secondary">Rename {theme}</Button>}
         >
           {(close) => (
             <Stack gap={3}>
-              <Input label="Name" name="name" defaultValue="Roadmap.md" />
+              <TextField label="Name" name="name" defaultValue="Roadmap.md" />
               <Button
                 onClick={() => {
                   setSaved('Renamed');
@@ -85,7 +86,7 @@ export function DialogVariantsFixture() {
       <div className="fixture-actions">
         <Dialog
           title="Wide details"
-          size="wide"
+          width="lg"
           trigger={<Button variant="secondary">Open wide dialog</Button>}
         >
           <Text>Content-heavy dialogs use the wide size.</Text>
@@ -95,23 +96,23 @@ export function DialogVariantsFixture() {
           placement="top"
           trigger={<Button variant="secondary">Open top dialog</Button>}
         >
-          <Input label="Search" name="search" />
+          <TextField label="Search" name="search" />
         </Dialog>
-        <Dialog
+        <Drawer
+          side="end"
           title="Report details"
-          placement="right"
           trigger={<Button variant="secondary">Open panel</Button>}
         >
           <Text>A panel at the right edge.</Text>
-        </Dialog>
-        <Dialog
+        </Drawer>
+        <Drawer
+          side="end"
           title="Wide report details"
-          placement="right"
-          size="wide"
+          width="lg"
           trigger={<Button variant="secondary">Open wide panel</Button>}
         >
           <Text>A wide panel for content-heavy details.</Text>
-        </Dialog>
+        </Drawer>
       </div>
     </Theme>
   );

@@ -38,12 +38,6 @@ as its interaction foundation. Copyright (c) 2019 Material-UI SAS. Licensed unde
 MIT license. The complete license is included in `licenses/Base-UI-LICENSE.txt`.
 The package's dependency and lockfile record the installed version.
 
-## Color picking
-
-ColorPicker uses [react-colorful](https://github.com/omgovich/react-colorful) for its
-color area and hue interaction. Licensed under MIT; its locked copyright and
-license notice is included in `licenses/Runtime-Dependencies-LICENSE.txt`.
-
 ## Markdown and syntax highlighting
 
 Markdown uses [react-markdown](https://github.com/remarkjs/react-markdown) and
@@ -55,12 +49,3 @@ GitHub Light Default and GitHub Dark Default theme registrations. Shiki is licen
 `licenses/Runtime-Dependencies-LICENSE.txt` includes the locked runtime dependencies'
 copyright and license notices. The build generates this file from installed packages
 and embeds the same notices in the offline documentation artifact.
-
-## Brand artwork
-
-`EnvUILogo` reproduces the supplied envUI lockup from `assets/brand/envUI`.
-`BrandLogo` reproduces the shared official envsemble lockup. Both React wrappers
-use `currentColor` so the monochrome artwork follows the containing theme.
-Raw envUI logos and favicons are bundled under `dist/assets/envUI`; the envsemble
-lockup is bundled as `dist/assets/envsemble-lockup-black.svg`. This artwork
-belongs to envsemble and is not covered by Google's or Inter's licenses.

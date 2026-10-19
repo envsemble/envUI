@@ -86,7 +86,10 @@ function renderIconModule(name, unfilled, filled) {
     ? renderPaths(unfilled.paths)
     : `{filled ? ${renderPaths(filled.paths)} : ${renderPaths(unfilled.paths)}}`;
 
-  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.\nimport { Icon, type MaterialSymbolProps } from '../Icon.js';\n${fillImport}\nexport function ${name}({ filled: ${fillParameter}, ...props }: MaterialSymbolProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
+  // An icon that follows the selection's fill reads it from context, so it is a client module for
+  // React Server Components; one without a filled variant renders on the server.
+  const directive = hasFillVariant ? "'use client';\n\n" : '';
+  return `// Generated from Google Material Symbols (${manifest.upstream.revision}); Apache-2.0.\n// Run node scripts/GenerateIcons.mjs to regenerate. Do not edit.\n${directive}import { Icon, type MaterialSymbolProps } from '../Icon.js';\n${fillImport}\nexport function ${name}({ filled: ${fillParameter}, ...props }: MaterialSymbolProps) {\n${fillState}  return <Icon viewBox=${viewBox} {...props}>${paths}</Icon>;\n}\n`;
 }
 
 const generatedFiles = new Set(['index.ts', 'Typography.tsx']);

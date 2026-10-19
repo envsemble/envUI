@@ -1,0 +1,91 @@
+{
+  "@envsemble/envui": {
+    "ActionCard": {
+      "report": "ActionCard is Card in 1.0: <Card render={<article />} title meta actions>.",
+      "cases": [
+        {
+          "when": {
+            "actions": [null]
+          },
+          "element": "Card",
+          "add": {
+            "render": {
+              "element": "article"
+            }
+          },
+          "report": "An ActionCard without actions has no action strip in 1.0, where actions alone give a card one: pass the actions it should show, or keep it a content card."
+        },
+        {
+          "when": {},
+          "element": "Card",
+          "add": {
+            "render": {
+              "element": "article"
+            }
+          }
+        }
+      ]
+    },
+    "FeatureCard": {
+      "report": "FeatureCard is Card in 1.0: <Card layout=\"feature\" headingLevel={2} icon title description actions>, with its action as actions.",
+      "cases": [
+        {
+          "when": {},
+          "element": "Card",
+          "props": {
+            "action": {
+              "to": "actions"
+            }
+          },
+          "add": {
+            "layout": "feature",
+            "headingLevel": 2
+          }
+        }
+      ]
+    },
+    "ClickableCard": {
+      "report": "ClickableCard is Card in 1.0, which is a link with href and a button with onClick, and a content card with neither.",
+      "cases": [
+        {
+          "when": {
+            "href": [null],
+            "onClick": [null]
+          },
+          "report": "A ClickableCard without href or onClick is a content card in 1.0, not a button: give it the onClick of the action it starts, or put a Button inside."
+        }
+      ]
+    },
+    "Card": {
+      "report": "Card's as is gone in 1.0: a card with onClick is a button and one with href a link, and render sets the element of a content card, such as render={<article />}. Change an as that is an expression by hand.",
+      "cases": [
+        {
+          "when": {
+            "as": ["button"],
+            "onClick": [null]
+          },
+          "props": {
+            "as": null
+          },
+          "report": "A card with as=\"button\" is a button card only with onClick in 1.0; without it, Card renders a content card: give it the action it starts."
+        },
+        {
+          "when": {
+            "as": ["button", "a", "div"]
+          },
+          "props": {
+            "as": null
+          }
+        },
+        {
+          "when": {
+            "as": ["article"]
+          },
+          "props": {
+            "as": "render"
+          }
+        }
+      ]
+    }
+  }
+}

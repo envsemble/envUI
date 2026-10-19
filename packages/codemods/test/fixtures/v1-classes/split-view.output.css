@@ -1,0 +1,21 @@
+/* A 0.7 SplitView's selectors and custom properties, which 1.0's SplitPane renames, keeps or reports. */
+.env-split-pane {
+  --env-split-view-size: 30;
+  --env-split-view-gutter: 1rem;
+}
+.env-split-pane-pane[data-pane='start'] {
+  background: var(--env-color-bg-raised);
+}
+.env-split-pane[data-resizing] > .env-split-pane-handle::after {
+  background: var(--env-color-border-focus);
+}
+.env-split-pane-pane {
+  overflow: auto;
+}
+/* A class of your own inside :has() is no part of the split pane's compound selector. */
+.env-split-pane:has(.mine[data-resizing]) {
+  outline: none;
+}
+.env-split-pane:not([data-resizing]) > .env-split-pane-handle {
+  cursor: col-resize;
+}

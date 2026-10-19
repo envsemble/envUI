@@ -51,7 +51,7 @@ export function MarkdownEditingFixture() {
   const [requiredSubmissions, setRequiredSubmissions] = useState(0);
   const [block, setBlock] = useState<string | null>(null);
   return (
-    <Stack as="section" className="fixture-section" data-testid="markdown-editing">
+    <Stack render={<section />} className="fixture-section" data-testid="markdown-editing">
       <form
         data-testid="markdown-form"
         onSubmit={(event) => {
@@ -94,7 +94,13 @@ export function MarkdownEditingFixture() {
           setRequiredSubmissions((count) => count + 1);
         }}
       >
-        <MarkdownEditor label="Required source" name="requiredSource" required />
+        <MarkdownEditor
+          label="Required source"
+          name="requiredSource"
+          required
+          className="required-markdown-editor"
+          style={{ maxInlineSize: '40rem' }}
+        />
         <Button type="submit">Submit required Markdown</Button>
         <output data-testid="required-markdown-submissions">{requiredSubmissions}</output>
       </form>
@@ -187,7 +193,7 @@ export function MarkdownExtensionsFixture() {
         }}
       >
         {
-          '# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\nSome <span>inline</span> HTML\n\n<div>A block</div>\n\nPress <kbd>Ctrl</kbd>+<kbd>P</kbd> or <kbd><b>F1</b></kbd>.\n\nNot keys: <kbd onclick=\"alert(1)\">A</kbd> <kbd class=\"x\">B</kbd>'
+          '# Project plan\n\n> A quoted decision\n\nTODO\n\n| A | B |\n| - | - |\n| 1 | 2 |\n\nSome <span>inline</span> HTML\n\n<div>A block</div>\n\nPress <kbd>Ctrl</kbd>+<kbd>P</kbd> or <kbd><b>F1</b></kbd>.\n\nNot keys: <kbd onclick="alert(1)">A</kbd> <kbd class="x">B</kbd>'
         }
       </Markdown>
     </section>

@@ -2,17 +2,13 @@ import { useState } from 'react';
 import {
   Theme,
   Card,
-  ActionGroup,
   Button,
-  InfoChip,
-  DisclosureNote,
+  Badge,
+  Disclosure,
   Stack,
-  Input,
-  NavigationItem,
+  TextField,
+  NavList,
   IconButton,
-  ActionCard,
-  ClickableCard,
-  FeatureCard,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
@@ -30,24 +26,24 @@ export function LayoutFixture() {
           <Card data-testid="layout-card" style={{ maxInlineSize: '24rem' }}>
             <h3>Related content</h3>
             <p>A description with enough content to wrap on a narrow screen.</p>
-            <ActionGroup>
+            <Stack direction="row" wrap align="center" gap={4}>
               <Button variant="secondary">Cancel</Button>
               <Button>Save changes</Button>
-            </ActionGroup>
-            <InfoChip>Updated today</InfoChip>
-            <DisclosureNote title={`Card guidance ${theme}`} open>
+            </Stack>
+            <Badge>Updated today</Badge>
+            <Disclosure title={`Card guidance ${theme}`} open>
               <p>First detail</p>
               <p>Second detail</p>
-            </DisclosureNote>
+            </Disclosure>
           </Card>
           <Stack data-testid="layout-stack" gap={3} style={{ maxInlineSize: '20rem' }}>
-            <Input label={`Layout field ${theme}`} />
+            <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
-            <NavigationItem selected>Destination</NavigationItem>
-            <InfoChip>Metadata</InfoChip>
-            <DisclosureNote title={`Stack guidance ${theme}`} open>
+            <NavList.Item selected>Destination</NavList.Item>
+            <Badge>Metadata</Badge>
+            <Disclosure title={`Stack guidance ${theme}`} open>
               <p>Supporting detail</p>
-            </DisclosureNote>
+            </Disclosure>
           </Stack>
           <div className="fixture-shrink-row" data-testid="shrink-row">
             <span className="fixture-shrink-label">
@@ -57,27 +53,31 @@ export function LayoutFixture() {
               <IconButton icon={<ChevronRight />} aria-label={`Squeezed next ${theme}`} />
             </span>
           </div>
-          <ActionGroup stacked data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
-            <Button>Continue</Button>
-            <Button variant="secondary">Cancel</Button>
+          <Stack gap={2} data-testid="stacked-actions" style={{ maxInlineSize: '20rem' }}>
+            <Button fullWidth>Continue</Button>
+            <Button variant="secondary" fullWidth>
+              Cancel
+            </Button>
             <IconButton icon={<ChevronRight />} aria-label={`Stacked next ${theme}`} />
-          </ActionGroup>
-          <ActionCard
+          </Stack>
+          <Card
+            render={<article />}
             title="Shared action card"
             data-testid="flush-action-card"
             actions={<Button>Continue</Button>}
           >
             <p>Keep the action rail attached.</p>
-          </ActionCard>
-          <ActionCard
+          </Card>
+          <Card
+            render={<article />}
             title="Quarterly report"
             meta="Updated today"
             data-testid="meta-action-card"
             actions={<Button variant="secondary">Open</Button>}
           >
             <p>Figures for the last three months.</p>
-          </ActionCard>
-          <Card heading="Design tokens" meta="12 changes" data-testid="meta-card">
+          </Card>
+          <Card title="Design tokens" meta="12 changes" data-testid="meta-card">
             <p>Colors and spacing shared by every surface.</p>
           </Card>
           <form
@@ -86,33 +86,35 @@ export function LayoutFixture() {
               throw new Error('Card submitted a form');
             }}
           >
-            <ClickableCard
+            <Card
               data-testid="clickable-action"
               onClick={() => setCardActivations((value) => value + 1)}
             >
               <span>Activate card</span>
               <span data-testid="card-activations">{cardActivations}</span>
-            </ClickableCard>
+            </Card>
           </form>
-          <ClickableCard href="#destination" data-testid="clickable-link">
+          <Card href="#destination" data-testid="clickable-link">
             Open destination
-          </ClickableCard>
-          <ClickableCard
+          </Card>
+          <Card
             disabled
             data-testid="disabled-card"
             onClick={() => setCardActivations((value) => value + 1)}
           >
             Unavailable action
-          </ClickableCard>
-          <ClickableCard
+          </Card>
+          <Card
             href="#blocked"
             disabled
             data-testid="disabled-card-link"
             onClick={() => setCardActivations((value) => value + 1)}
           >
             Unavailable destination
-          </ClickableCard>
-          <FeatureCard
+          </Card>
+          <Card
+            layout="feature"
+            headingLevel={2}
             title="Additional content"
             description="Supporting context"
             data-testid="feature-extra"
@@ -120,15 +122,15 @@ export function LayoutFixture() {
             <p>Extra detail</p>
             <p>Another detail</p>
             <Button>Explore detail</Button>
-            <DisclosureNote title={`Feature guidance ${theme}`} open>
+            <Disclosure title={`Feature guidance ${theme}`} open>
               <p>Available options</p>
               <ul>
                 <li>First option</li>
                 <li>Second option</li>
               </ul>
               <p>Choose an option</p>
-            </DisclosureNote>
-          </FeatureCard>
+            </Disclosure>
+          </Card>
         </Theme>
       ))}
     </>

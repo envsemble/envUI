@@ -1,0 +1,6 @@
+{
+  "@envsemble/envui": {
+    "SplitView": "SplitPane.Root",
+    "SplitViewProps": "SplitPane.RootProps"
+  }
+}

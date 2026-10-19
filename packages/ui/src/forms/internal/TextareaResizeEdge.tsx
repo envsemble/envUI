@@ -1,7 +1,20 @@
-import { useLayoutEffect, useRef, useState, type PointerEvent, type RefObject } from 'react';
+'use client';
+
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useMessages } from '../../internal/EnvUIContext.js';
+import { useResize } from '../../internal/useResize.js';
+import { textarea as textareaMessages } from '../../foundations/messages/textarea.js';
 import type { TextareaControlProps } from './TextareaControl.js';
 
-function measureTextarea(input: HTMLTextAreaElement) {
+interface Metrics {
+  height: number;
+  minimumHeight: number;
+  maximumHeight: number;
+  lineHeight: number;
+  fontSize: number;
+}
+
+function measureTextarea(input: HTMLTextAreaElement): Metrics {
   const styles = input.ownerDocument.defaultView!.getComputedStyle(input);
   const minimumHeight = Number.parseFloat(styles.minHeight) || 0;
   const maximumHeight = Number.parseFloat(styles.maxHeight);
@@ -16,7 +29,22 @@ function measureTextarea(input: HTMLTextAreaElement) {
   };
 }
 
-/** The whole lower edge resizes the native control without owning its text or selection. */
+/** The lines a text area without a CSS maximum height can be resized to. */
+const practicalMaximumLines = 500;
+
+const unmeasured: Metrics = {
+  height: 0,
+  minimumHeight: 0,
+  maximumHeight: Infinity,
+  lineHeight: 16,
+  fontSize: 16,
+};
+
+/**
+ * The lower edge of a text area, which resizes it: a separator on useResize that the pointer drags
+ * and the Up and Down arrows move by a line (five with Shift or Page Up and Page Down), with Home for
+ * the minimum height. It sets the text area's height without owning its text or selection.
+ */
 export function TextareaResizeEdge({
   inputRef,
   inputId,
@@ -28,17 +56,30 @@ export function TextareaResizeEdge({
   sizing: NonNullable<TextareaControlProps['sizing']>;
   disabled?: boolean;
 }) {
-  const [resizing, setResizing] = useState(false);
-  const edgeRef = useRef<HTMLButtonElement>(null);
-  const drag = useRef<
-    | (ReturnType<typeof measureTextarea> & {
-        pointerId: number;
-        startY: number;
-        verticalScale: number;
-      })
-    | null
-  >(null);
+  const messages = useMessages('textarea', textareaMessages);
+  const [metrics, setMetrics] = useState<Metrics>(unmeasured);
   const manualHeight = useRef<{ original: string; applied: string } | null>(null);
+
+  // The height the handle reports and starts a drag from follows the text area's own, whatever
+  // changes it.
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const measure = () =>
+      setMetrics((current) => {
+        const next = measureTextarea(input);
+        return Object.keys(next).every(
+          (key) => next[key as keyof Metrics] === current[key as keyof Metrics],
+        )
+          ? current
+          : next;
+      });
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(input);
+    return () => observer.disconnect();
+  }, [inputRef]);
 
   useLayoutEffect(() => {
     const input = inputRef.current;
@@ -52,20 +93,13 @@ export function TextareaResizeEdge({
       }
       manualHeight.current = null;
     }
-    if (automatic || disabled) {
-      const pointerId = drag.current?.pointerId;
-      drag.current = null;
-      setResizing(false);
-      if (pointerId != null && edgeRef.current?.hasPointerCapture(pointerId)) {
-        edgeRef.current.releasePointerCapture(pointerId);
-      }
-    }
-  }, [inputRef, sizing, disabled]);
+  }, [inputRef, sizing]);
 
-  function resizeTo(height: number, limits: ReturnType<typeof measureTextarea>) {
+  function resizeTo(height: number) {
     const input = inputRef.current;
-    if (!input || input.disabled) return;
-    const nextHeight = `${Math.min(limits.maximumHeight, Math.max(limits.minimumHeight, height)) / limits.fontSize}em`;
+    if (!input || input.disabled || !Number.isFinite(height)) return;
+    // In em, so the chosen height follows the text size.
+    const nextHeight = `${height / metrics.fontSize}em`;
     if (!manualHeight.current || input.style.height !== manualHeight.current.applied) {
       manualHeight.current = { original: input.style.height, applied: nextHeight };
     }
@@ -73,75 +107,35 @@ export function TextareaResizeEdge({
     manualHeight.current.applied = input.style.height;
   }
 
-  function finishDrag(event: PointerEvent<HTMLButtonElement>) {
-    if (drag.current?.pointerId !== event.pointerId) return;
-    drag.current = null;
-    setResizing(false);
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-  }
+  const bounded = Number.isFinite(metrics.maximumHeight);
+  // A separator needs a finite maximum: without a CSS one, a practical maximum of a few hundred
+  // lines, or the current height where it is taller.
+  const maximum = bounded
+    ? metrics.maximumHeight
+    : Math.max(metrics.height, metrics.minimumHeight, metrics.lineHeight * practicalMaximumLines);
+  const { handleProps } = useResize({
+    axis: 'block',
+    value: metrics.height,
+    min: metrics.minimumHeight,
+    max: maximum,
+    step: metrics.lineHeight,
+    largeStep: metrics.lineHeight * 5,
+    onChange: (next) => resizeTo(next),
+    disabled,
+  });
 
   return (
-    <button
-      type="button"
-      ref={edgeRef}
-      className="env-textarea-resize-edge"
-      disabled={disabled}
-      aria-label="Resize text area"
-      aria-controls={inputId}
-      aria-description="Drag the bottom edge, or use Up and Down arrows to resize. Home restores the minimum height."
-      data-resizing={resizing || undefined}
-      onPointerDown={(event) => {
-        const input = inputRef.current;
-        if (!input || input.disabled || !event.isPrimary || event.button !== 0) return;
-        event.preventDefault();
-        const bounds = measureTextarea(input);
-        drag.current = {
-          ...bounds,
-          pointerId: event.pointerId,
-          startY: event.clientY,
-          verticalScale: input.getBoundingClientRect().height / bounds.height || 1,
-        };
-        event.currentTarget.setPointerCapture(event.pointerId);
-        setResizing(true);
-      }}
-      onPointerMove={(event) => {
-        const current = drag.current;
-        if (!current || current.pointerId !== event.pointerId) return;
-        if (inputRef.current?.disabled) {
-          finishDrag(event);
-          return;
-        }
-        resizeTo(
-          current.height + (event.clientY - current.startY) / current.verticalScale,
-          current,
-        );
-      }}
-      onPointerUp={finishDrag}
-      onPointerCancel={finishDrag}
-      onLostPointerCapture={finishDrag}
+    <div
+      {...handleProps}
+      // Without a maximum height, End has no height to go to: the practical maximum is not one.
       onKeyDown={(event) => {
-        const input = inputRef.current;
-        if (!input || input.disabled || event.altKey || event.ctrlKey || event.metaKey) return;
-        if (!['ArrowUp', 'ArrowDown', 'Home'].includes(event.key)) return;
-        event.preventDefault();
-        const bounds = measureTextarea(input);
-        const heightStep = bounds.lineHeight * (event.shiftKey ? 5 : 1);
-        resizeTo(
-          event.key === 'Home'
-            ? bounds.minimumHeight
-            : bounds.height + (event.key === 'ArrowUp' ? -heightStep : heightStep),
-          bounds,
-        );
+        if (event.key === 'End' && !bounded) return;
+        handleProps.onKeyDown(event);
       }}
-      onClick={(event) => {
-        // Keyboard and assistive activation grow one line; dragging never adds a click step.
-        const input = inputRef.current;
-        if (!input || input.disabled || event.detail !== 0) return;
-        const bounds = measureTextarea(input);
-        resizeTo(bounds.height + bounds.lineHeight, bounds);
-      }}
+      className="env-textarea-resize-edge"
+      aria-label={messages.resize}
+      aria-controls={inputId}
+      aria-description={messages.resizeDescription}
     />
   );
 }

@@ -1,0 +1,12 @@
+/* Applied while the visual baseline takes a screenshot. The catalogue's top bar sticks below 48 rem,
+   and the display settings stick to the window's corner above it, so either would float over
+   whichever specimen is scrolled beneath it. */
+.docs-header,
+.docs-page-controls {
+  visibility: hidden !important;
+}
+/* The frame's scroll padding would scroll a specimen as tall as the viewport partly out of it,
+   which clips its bottom edge. */
+html {
+  scroll-padding: 0 !important;
+}

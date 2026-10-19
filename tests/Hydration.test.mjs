@@ -39,6 +39,10 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
     globalThis.Date = RealDate;
   }
   assert.match(markup, /Server value/);
+  // The server renders the sidebar as the cookie it read left it: collapsed, 18 rem when open.
+  const sidebar = markup.slice(markup.indexOf('aria-label="Hydrated sidebar"') - 400);
+  assert.match(sidebar.slice(0, 1200), /--env-sidebar-chosen-width:18rem/);
+  assert.match(sidebar.slice(0, 1200), /data-state="collapsed"/);
   // The server wrote the relative time in its own language; the browser corrects it.
   assert.match(markup, />in 2 days<\/time>/);
   // Date fields and calendars without a locale write British English on the server, as the

@@ -1,0 +1,55 @@
+{
+  "@envsemble/envui": {
+    "DatePicker": {
+      "density": {
+        "report": "DatePicker's density is gone: fields take the control height by default, size=\"sm\" gives the small one and variant=\"floating\" the tall one. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm",
+              "showLabel": false
+            }
+          },
+          "standard": {
+            "props": {
+              "variant": "floating"
+            },
+            "report": "the standard density was the tall floating field, which is variant=\"floating\" now."
+          }
+        }
+      },
+      "hint": {
+        "to": "description",
+        "report": "DatePicker's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["outline", "floating"],
+        "report": "DatePicker's variant is outline or floating in 1.0: outlined is outline.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          }
+        }
+      },
+      "withTime": {
+        "report": "DatePicker's withTime is granularity in 1.0: true is \"minute\" and false \"day\", the default.",
+        "values": {
+          "true": {
+            "props": {
+              "granularity": "minute"
+            }
+          },
+          "false": {}
+        }
+      },
+      "className": {
+        "report": "DatePicker's className now goes to the root element, not the trigger: check styles that targeted the trigger, which `.env-date-picker-trigger` inside the root selects."
+      },
+      "style": {
+        "report": "DatePicker's style now goes to the root element, not the trigger: move declarations meant for the trigger to a rule for `.env-date-picker-trigger` inside the root."
+      }
+    }
+  }
+}

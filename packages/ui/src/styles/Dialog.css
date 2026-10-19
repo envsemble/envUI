@@ -1,18 +1,28 @@
-/* Centered dialogs and edge panels share one surface: the popover's look, with a hairline border and
-   the surface corners, plus text and action geometry. */
-.env-modal-pane {
-  border: 0.0625rem solid var(--color-popup-border);
-  color: var(--color-text-primary);
-  font: var(--type-body);
-  width: min(28rem, 100%);
+/* Dialogs and drawers share one surface (DialogSurface): the popover's look at elevation 3, a
+   shadow and a hairline edge, plus text and action geometry. Dialog adds its corners, widths,
+   placements and motion; Drawer its edge geometry, in Drawer.css. */
+.env-dialog-surface {
+  border: 0.0625rem solid var(--env-elevation-3-border);
+  box-shadow: var(--env-elevation-3-shadow);
+  color: var(--env-color-fg-default);
+  font: var(--env-type-body);
   max-height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
   overflow-wrap: anywhere;
   pointer-events: auto;
 }
-.env-surface.env-modal-pane {
-  --env-surface-color: var(--color-dialog);
+.env-surface.env-dialog-surface {
+  --env-surface-color: var(--env-color-bg-raised);
+}
+.env-dialog-popup {
+  width: min(28rem, 100%);
+  /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
+  transform-origin: var(--transform-origin, center);
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+.env-dialog-popup[data-width='lg'] {
+  width: min(44rem, 100%);
 }
 .env-dialog-title,
 .env-dialog-description {
@@ -21,57 +31,34 @@
 /* The description belongs to the title, so they sit closer together than the dialog's sections. */
 .env-dialog-header {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--env-space-2);
 }
 .env-dialog-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
 }
 .env-dialog-title {
   min-inline-size: 0;
   overflow-wrap: anywhere;
-}
-.env-modal-pane[data-size='wide']:not([data-placement='right']) {
-  width: min(44rem, 100%);
-}
-.env-modal-pane[data-placement='right'] {
-  inline-size: min(24rem, 100%);
-  block-size: 100%;
-  max-block-size: none;
-  border-block: 0;
-  border-inline-end: 0;
-}
-.env-modal-pane[data-placement='right'][data-size='wide'] {
-  inline-size: min(44rem, 100%);
-}
-/* Where a panel would leave only a sliver of the page beside it, as on a phone, it takes the whole
-   width instead. */
-@media (max-width: 28rem) {
-  .env-modal-pane[data-placement='right'] {
-    inline-size: 100%;
-    border-inline-start: 0;
-  }
-}
-@media (max-width: 48rem) {
-  .env-modal-pane[data-placement='right'][data-size='wide'] {
-    inline-size: 100%;
-    border-inline-start: 0;
-  }
-}
-.env-dialog-title {
-  font: var(--type-h1);
+  font: var(--env-type-h1);
 }
 .env-dialog-description {
-  font: var(--type-body-small);
-  color: var(--color-text-muted);
+  font: var(--env-type-body-small);
+  color: var(--env-color-fg-muted);
 }
 .env-dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: hsl(from var(--color-dialog-overlay) h s l / var(--state-dialog-overlay-opacity));
+  z-index: var(--env-z-overlay);
+  background: var(--env-color-bg-overlay);
+  /* Motion: the scrim fades in and out. */
+  transition: opacity var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+}
+.env-confirm-dialog-form {
+  /* ConfirmDialog's form, there so Enter in a field confirms; it lays out as if it weren't. */
+  display: contents;
 }
 .env-dialog-positioner {
   box-sizing: border-box;
@@ -80,38 +67,50 @@
   grid-template-rows: minmax(0, 1fr);
   position: fixed;
   inset: 0;
-  z-index: 101;
+  z-index: var(--env-z-modal);
   display: grid;
   place-items: center;
-  padding: max(var(--viewport-gutter), env(safe-area-inset-top))
-    max(var(--viewport-gutter), env(safe-area-inset-right))
-    max(var(--viewport-gutter), env(safe-area-inset-bottom))
-    max(var(--viewport-gutter), env(safe-area-inset-left));
+  padding: max(var(--env-viewport-gutter), env(safe-area-inset-top))
+    max(var(--env-viewport-gutter), env(safe-area-inset-right))
+    max(var(--env-viewport-gutter), env(safe-area-inset-bottom))
+    max(var(--env-viewport-gutter), env(safe-area-inset-left));
   pointer-events: none;
 }
 /* Search-like dialogs open near the top, so results can grow downward without moving the field. */
 .env-dialog-positioner[data-placement='top'] {
   place-items: start center;
-  padding-block-start: max(var(--viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
+  padding-block-start: max(var(--env-viewport-gutter), min(12vh, 6rem), env(safe-area-inset-top));
 }
-.env-dialog-positioner[data-placement='right'] {
-  place-items: stretch end;
-  padding: 0;
+
+/* Motion: the scrim fades, and the dialog fades and rises into place. Movement only without a
+   reduced-motion preference. Dialogs have no positioner, so they scale from the center. */
+.env-dialog-backdrop[data-starting-style],
+.env-dialog-backdrop[data-ending-style],
+.env-dialog-popup[data-starting-style],
+.env-dialog-popup[data-ending-style] {
+  opacity: 0;
 }
-.env-modal-pane[data-placement='right'] {
-  padding-block-start: max(var(--space-5), env(safe-area-inset-top));
-  padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
-  padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
+.env-dialog-backdrop[data-ending-style],
+.env-dialog-popup[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
 }
-/* A panel across the whole width keeps clear of the safe areas on both sides, such as a phone's
-   rounded corners in landscape. */
-@media (max-width: 28rem) {
-  .env-modal-pane[data-placement='right'] {
-    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+@media (prefers-reduced-motion: no-preference) {
+  .env-dialog-popup {
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
   }
-}
-@media (max-width: 48rem) {
-  .env-modal-pane[data-placement='right'][data-size='wide'] {
-    padding-inline: max(var(--space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+  .env-dialog-popup[data-starting-style],
+  .env-dialog-popup[data-ending-style] {
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  .env-dialog-popup[data-placement='top'][data-starting-style],
+  .env-dialog-popup[data-placement='top'][data-ending-style] {
+    transform: translateY(-0.5rem) scale(0.98);
+  }
+  .env-dialog-popup[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
   }
 }

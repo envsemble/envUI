@@ -1,9 +1,15 @@
+'use client';
+
 import { useEffect, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import type { ControlSize } from '../foundations/Theme.js';
 import { IconButton, type ButtonVariant } from '../actions/Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { ChevronLeft } from '../icons/ChevronLeft.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { classNames } from '../internal/classNames.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { useFormatters } from '../internal/useFormatters.js';
+import { pagination } from '../foundations/messages/pagination.js';
 
 /** The items a page shows, for the text of the range. */
 export interface PaginationRange {
@@ -21,33 +27,68 @@ export interface PaginationRange {
 
 export interface PaginationProps
   extends Omit<ComponentPropsWithRef<'nav'>, 'children' | 'onChange'> {
-  /** The page shown, counted from 1. */
+  /**
+   * The page shown, counted from 1. It is kept within the pages that exist, so a page beyond the
+   * end shows the last one.
+   */
   page: number;
-  /** The most items a page shows. */
+  /** The most items a page shows, such as 60; at least 1. */
   pageSize: number;
-  /** All items; omit when it is not known, such as for a list read in batches. */
+  /**
+   * All items, when known; the range then ends with it, as in 1–60 of 245, and the last page ends
+   * the list. Leave it out for a list read in batches, where hasNextPage says when it ends.
+   */
   total?: number;
-  /** Whether a later page exists, for a list without total; true by default. */
+  /**
+   * Whether a later page exists, for a list without total, such as from a cursor's has more.
+   * @default true
+   */
   hasNextPage?: boolean;
-  /** Receives the page before or after the current one when a button is pressed. */
+  /**
+   * Receives the page before or after the current one when its button is pressed. The application
+   * loads that page and passes it back as page.
+   */
   onPageChange: (page: number) => void;
-  /** A page is loading: the button pressed shows a spinner, and both wait. */
+  /**
+   * A page is loading: the button pressed shows a spinner, also when the load starts in an effect
+   * after the page changes, and both buttons ignore presses while staying focusable. A load for
+   * another reason, such as a refresh, makes both wait without a spinner.
+   */
   pending?: boolean;
-  /** Renders nothing while all items fit on one page. */
+  /** Render nothing while every item fits on one page, so neither button has anywhere to go. */
   hideWhenSinglePage?: boolean;
-  /** Text for the range, such as "1–60 of 245", for example in another language. */
+  /**
+   * Writes the range from the first and last item shown, the total, the page and the page count,
+   * for one pager; EnvUIProvider's messages.pagination.range writes it for every pager.
+   * @default 1–60 of 245, or 61–120 without total, with numbers in the locale
+   */
   formatRange?: (range: PaginationRange) => ReactNode;
-  /** Name and tooltip of the previous button; Previous page by default. */
+  /**
+   * The previous button's accessible name and tooltip.
+   * @default 'Previous page', or EnvUIProvider's messages.pagination.previous
+   */
   previousLabel?: string;
-  /** Name and tooltip of the next button; Next page by default. */
+  /**
+   * The next button's accessible name and tooltip.
+   * @default 'Next page', or EnvUIProvider's messages.pagination.next
+   */
   nextLabel?: string;
-  /** As IconButton; secondary by default. */
+  /**
+   * The buttons' variant, as on IconButton, such as text for a quiet toolbar.
+   * @default 'secondary'
+   */
   variant?: ButtonVariant;
-  /** standard (default) takes the surrounding density; compact gives 2 rem buttons anywhere. */
-  size?: 'standard' | 'compact';
+  /**
+   * The buttons' height, as on every control: sm, md or lg in the current scale. Without it, they
+   * take the control height of the container, md unless the container sets another.
+   */
+  size?: ControlSize;
+  /**
+   * The navigation landmark's name, such as Report pages, where a page has more than one.
+   * @default 'Pagination', or EnvUIProvider's messages.pagination.label
+   */
+  'aria-label'?: string;
 }
-
-const englishNumbers = new Intl.NumberFormat('en');
 
 /**
  * The button last pressed, and how far its load is: pressed until the page's effects have run,
@@ -58,18 +99,10 @@ interface Press {
   state: 'pressed' | 'settling' | 'loading';
 }
 
-/** "1–60 of 245", "245 of 245" for a single item, or "61–120" without a total. */
-function formatPageRange({ start, end, total }: PaginationRange) {
-  const shown =
-    start === end
-      ? englishNumbers.format(end)
-      : `${englishNumbers.format(start)}–${englishNumbers.format(end)}`;
-  return total === undefined ? shown : `${shown} of ${englishNumbers.format(total)}`;
-}
-
 /**
- * A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and buttons for
- * the previous and next pages, in a navigation landmark. The application loads the pages.
+ * A compact pager for toolbars: the range of items shown, such as 1–60 of 245, and icon buttons
+ * for the previous and next pages, in a navigation landmark. The application loads the pages; the
+ * range is announced as it changes, and focus stays on the button pressed.
  */
 export function Pagination({
   page,
@@ -79,15 +112,17 @@ export function Pagination({
   onPageChange,
   pending = false,
   hideWhenSinglePage = false,
-  formatRange = formatPageRange,
-  previousLabel = 'Previous page',
-  nextLabel = 'Next page',
+  formatRange,
+  previousLabel,
+  nextLabel,
   variant = 'secondary',
-  size = 'standard',
+  size,
   className,
-  'aria-label': label = 'Pagination',
+  'aria-label': label,
   ...props
 }: PaginationProps) {
+  const messages = useMessages('pagination', pagination);
+  const numbers = useFormatters().number();
   // A press spins its button for the load it starts: one pending in the same update as the press,
   // or one the application starts in an effect after the page changes, as a query keyed by the page
   // does. A press no load follows by then is forgotten, and so is one whose load ended, so a later
@@ -116,7 +151,10 @@ export function Pagination({
 
   function pageButton(direction: 'previous' | 'next') {
     const available = direction === 'previous' ? hasPrevious : hasNext;
-    const name = direction === 'previous' ? previousLabel : nextLabel;
+    const name =
+      direction === 'previous'
+        ? (previousLabel ?? messages.previous)
+        : (nextLabel ?? messages.next);
     const loading = pending && press?.direction === direction;
     return (
       <Tooltip content={name}>
@@ -142,13 +180,19 @@ export function Pagination({
   return (
     <nav
       {...props}
-      aria-label={label}
+      aria-label={label ?? messages.label}
       className={classNames('env-pagination', className)}
-      data-size={size === 'compact' ? 'compact' : undefined}
+      data-size={size}
     >
       {/* Announced when it changes, as a page loads; its own direction keeps numbers in order. */}
       <span className="env-pagination-range" dir="auto" aria-live="polite" aria-atomic="true">
-        {formatRange({ start, end, total: count, page: current, pageCount })}
+        {formatRange
+          ? formatRange({ start, end, total: count, page: current, pageCount })
+          : messages.range({
+              start: numbers.format(start),
+              end: numbers.format(end),
+              total: count === undefined ? undefined : numbers.format(count),
+            })}
       </span>
       {pageButton('previous')}
       {pageButton('next')}

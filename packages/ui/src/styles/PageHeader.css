@@ -1,0 +1,89 @@
+/* PageHeader: a page's title row, with an optional trail above it, a description under it, actions
+   at its end and a toolbar row below. It responds to its own width: below 32 rem the actions move
+   under the title and wrap. */
+.env-page-header {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--env-space-3);
+  min-inline-size: 0;
+}
+/* A sticky header stays at the top of the page, under the frame's header, over the content that
+   scrolls under it, across the page's gutters. */
+.env-page-header[data-sticky] {
+  /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
+  --env-page-header-inset: var(--env-page-gutter, 0rem);
+  position: sticky;
+  inset-block-start: var(--env-frame-sticky-top, 0);
+  z-index: calc(var(--env-z-sticky) - 1);
+  margin-block-start: calc(-1 * var(--env-space-4));
+  margin-inline: calc(-1 * var(--env-page-header-inset));
+  padding-block: var(--env-space-4);
+  padding-inline: var(--env-page-header-inset);
+  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
+}
+.env-page-header-breadcrumbs {
+  min-inline-size: 0;
+}
+.env-page-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--env-space-4);
+}
+.env-page-header-start {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+.env-page-header-heading {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
+}
+.env-page-header-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--env-space-1) var(--env-space-3);
+  min-inline-size: 0;
+}
+/* The title wraps, balanced across its lines, and is never cut short. */
+.env-page-header-title {
+  text-wrap: balance;
+}
+.env-page-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+.env-page-header-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--env-space-2);
+  max-inline-size: 100%;
+}
+.env-page-header-toolbar {
+  min-inline-size: 0;
+}
+@container (width < 32rem) {
+  .env-page-header-row {
+    flex-wrap: wrap;
+  }
+  .env-page-header-actions {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+}
+/* Forced colors: the sticky header's edge stays visible. */
+@media (forced-colors: active) {
+  .env-page-header[data-sticky] {
+    border-block-end-color: CanvasText;
+  }
+}

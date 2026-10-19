@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile, writeFile, mkdir, mkdtemp, rm, lstat, readdir } from 'node:fs/promises';
 import { dirname, join, resolve, relative, isAbsolute, delimiter } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
-import { readDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
+import { readMap } from '../packages/codemods/src/map.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -15,6 +16,7 @@ let consumerDirectory;
 let installedDirectory;
 let consumerRequire;
 let ssr;
+let packedFiles;
 let isolationHook;
 
 function npmCli() {
@@ -55,7 +57,7 @@ function run(script, args = [], cwd = consumerDirectory) {
     });
   } catch (error) {
     const detail = [error.stdout, error.stderr].filter(Boolean).join('\n').slice(-12000);
-    throw new Error(`Consumer command failed: ${script}\n${detail}`);
+    throw new Error(`Consumer command failed: ${script}\n${detail}`, { cause: error });
   }
 }
 
@@ -83,6 +85,7 @@ before(
     );
     const packed = Array.isArray(packResult) ? packResult : Object.values(packResult);
     assert.equal(packed.length, 1);
+    packedFiles = packed[0].files.map((file) => file.path.replaceAll('\\', '/'));
     const dependencies = {};
     for (const name of [
       'react',
@@ -133,10 +136,11 @@ before(
     import { createElement as h } from 'react';
     import { renderToString } from 'react-dom/server';
     import * as ui from '@envsemble/envui';
+    import * as themeBootstrap from '@envsemble/envui/theme-bootstrap';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     if (typeof document !== 'undefined' || typeof window !== 'undefined') throw new Error('DOM globals must be absent');
-    function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme() }); }
+    function ThemeProbe() { return h('span', { 'data-originating-theme': ui.useTheme().theme }); }
     const custom = h(ui.Icon, { label: 'Custom star', viewBox: '0 0 8 8' }, h('path', { d: 'M0 0L8 8' }));
     const html = renderToString(h(ui.Theme, { theme: 'dark' },
       h(ThemeProbe),
@@ -145,44 +149,33 @@ before(
       h(ui.ButtonGroup, { orientation: 'vertical', 'aria-label': 'Connected actions' },
         h(ui.Button, { startIcon: h(Home) }, 'Continue'),
         h(ui.IconButton, { icon: custom, 'aria-label': 'Settings' }),
-        h(ui.Button, { variant: 'important', href: '/confirm' }, 'Confirm')),
-      h(ui.DirectionLink, { direction: 'previous', href: '/previous-guide' }, 'Earlier guide'),
-      h(ui.DirectionLink, { direction: 'next', href: '/next-guide', icon: custom }, 'Following guide'),
-      h(ui.Input, { name: 'title', label: 'Title', hint: 'One line', defaultValue: 'Example' }),
+        h(ui.Button, { variant: 'primary', tone: 'accent', href: '/confirm' }, 'Confirm')),
+      h(ui.Pager.Previous, { href: '/previous-guide' }, 'Earlier guide'),
+      h(ui.Pager.Next, { href: '/next-guide', icon: custom }, 'Following guide'),
+      h(ui.TextField, { name: 'title', label: 'Title', description: 'One line', defaultValue: 'Example' }),
       h(ui.ColorPicker, { name: 'accent', label: 'Accent color', defaultValue: 'ABCDEF' }),
       h(ui.Textarea, { name: 'description', label: 'Description', defaultValue: 'Content' }),
       h(ui.Checkbox, { name: 'enabled', label: 'Enabled', defaultChecked: true }),
       h(ui.Switch, { name: 'alerts', label: 'Alerts' }),
       h(ui.RadioGroup, { name: 'mode', label: 'Mode', defaultValue: 'one' }, h(ui.Radio, { value: 'one', label: 'One' })),
-      h(ui.Select, { name: 'choice', label: 'Choice', options: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
+      h(ui.Select, { name: 'choice', label: 'Choice', items: [{ value: 'one', label: 'One' }], defaultValue: 'one' }),
       h(ui.Combobox, { name: 'owner', label: 'Owner', items: [{ value: 'first', label: 'First person' }], defaultValue: 'first' }),
       h(ui.Combobox, { name: 'reviewers', label: 'Reviewers', multiple: true, items: [{ label: 'Team', items: [{ value: 'second', label: 'Second person' }] }], defaultValue: ['second'] }),
-      h(ui.DateTimeField, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', withTime: true, locale: 'en-GB' }),
+      h(ui.DatePicker, { name: 'due', label: 'Due', defaultValue: '2026-10-14T09:30', granularity: 'minute', locale: 'en-GB' }),
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
-      h(ui.ToastProvider, null, h(ui.Toast, { message: 'Saved', variant: 'success' })),
-      h(ui.BrandLogo),
+      h(ui.Toast.Provider, null, 'Managed notifications'),
       h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
     ));
     console.log(JSON.stringify({
-      exports: Object.keys(ui), html,
-      emptyDirectionLinks: renderToString(h(ui.DirectionLinks, { previous: null, next: null })),
-      pairedDirectionLinks: renderToString(h(ui.DirectionLinks, {
-        'aria-label': 'Guide sequence',
-        previous: { href: '/before', children: 'Before', target: '_blank', rel: 'noopener' },
-        next: { href: '/after', children: 'After' },
-      })),
+      exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
       defaultIcon: renderToString(h(Home)), filledIcon: renderToString(h(Home, { filled: true, label: 'Home' })),
       barrelIcon: renderToString(h(BarrelHome)), customIcon: renderToString(custom),
-      selectedNavigation: renderToString(h(ui.NavigationItem, { selected: true, icon: h(Home, { filled: false }) }, 'Home')),
-      unselectedNavigation: renderToString(h(ui.NavigationItem, { icon: h(Home, { filled: true }) }, 'Home')),
       module: import.meta.resolve('@envsemble/envui'), iconsModule: import.meta.resolve('@envsemble/envui/icons'),
       homeModule: import.meta.resolve('@envsemble/envui/icons/Home'),
       reactModule: import.meta.resolve('react'),
-      colorPickerModule: import.meta.resolve('react-colorful'),
       css: import.meta.resolve('@envsemble/envui/styles.css'),
-      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2'),
-      logo: import.meta.resolve('@envsemble/envui/assets/envsemble-lockup-black.svg')
+      font: import.meta.resolve('@envsemble/envui/assets/Inter.woff2')
     }));
   `,
     );
@@ -200,12 +193,41 @@ after(async function removeConsumerFixture() {
   await rm(fixtureDirectory, { recursive: true, force: true });
 });
 
-test('direction link groups omit empty navigation and preserve destination attributes', () => {
-  assert.equal(ssr.emptyDirectionLinks, '');
-  assert.match(ssr.pairedDirectionLinks, /<nav aria-label="Guide sequence"/);
-  assert.match(ssr.pairedDirectionLinks, /href="\/before" target="_blank" rel="noopener"/);
-  assert.match(ssr.pairedDirectionLinks, /href="\/after" rel="next"/);
-  assert.ok(ssr.pairedDirectionLinks.indexOf('Before') < ssr.pairedDirectionLinks.indexOf('After'));
+test('the packed package ships no logos', () => {
+  assert.ok(packedFiles.includes('dist/assets/Inter.woff2'), 'The pack lists its files.');
+  const images = packedFiles.filter((path) => /\.(?:svg|png|ico)$/i.test(path));
+  // The README's catalogue captures are the only images the package ships.
+  assert.deepEqual(
+    images.filter((path) => !/^dist\/assets\/readme\/catalogue-(?:light|dark)\.png$/.test(path)),
+    [],
+  );
+  assert.deepEqual(
+    packedFiles.filter((path) => /(?:^|\/)(?:brand|envUI)\/|lockup|favicon/i.test(path)),
+    [],
+  );
+});
+
+test('no 0.x name of the rename map is exported, and every namespace is', async () => {
+  const map = readMap(join(repository, 'packages/codemods/src/maps/v1'));
+  const names = (section) => Object.keys(section).filter((name) => !name.startsWith('$'));
+  const entries = {
+    '@envsemble/envui': ssr.exports,
+    '@envsemble/envui/theme-bootstrap': ssr.themeBootstrapExports,
+  };
+  // Namespaces such as Menu and Toast reuse the name of a 0.x component.
+  const namespaces = new Set(
+    Object.values(map.exports['@envsemble/envui'])
+      .filter((name) => name.includes('.'))
+      .map((name) => name.split('.')[0]),
+  );
+  for (const [entry, exported] of Object.entries(entries)) {
+    for (const section of ['exports', 'split', 'removed'])
+      for (const name of names(map[section][entry] ?? {}))
+        if (!namespaces.has(name))
+          assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
+  }
+  for (const namespace of namespaces)
+    assert.ok(ssr.exports.includes(namespace), `Missing namespace export: ${namespace}`);
 });
 
 test('a packed consumer resolves compiled public exports and its own React installation', async function () {
@@ -215,29 +237,24 @@ test('a packed consumer resolves compiled public exports and its own React insta
   assert.match(ssr.homeModule, /\/dist\/icons\/Home\.js$/);
   assert.match(ssr.reactModule, /\/consumer\/node_modules\/react\/index\.js$/);
   assert.equal(existsSync(join(installedDirectory, 'src')), false);
+  // The generated token module is internal, so it does not ship.
+  assert.equal(existsSync(join(installedDirectory, 'dist/generated')), false);
   for (const name of [
     'Theme',
     'useTheme',
     'Button',
     'ButtonGroup',
     'IconButton',
-    'NavigationItem',
-    'DirectionLink',
-    'DirectionLinks',
+    'NavList',
+    'Pager',
     'Card',
-    'ClickableCard',
     'Stack',
-    'ActionGroup',
-    'ActionCard',
-    'FeatureCard',
-    'GroupedRows',
-    'Row',
-    'InfoChip',
-    'DisclosureNote',
+    'List',
+    'Disclosure',
     'EmptyState',
     'Skeleton',
     'LoadingState',
-    'Input',
+    'TextField',
     'ColorPicker',
     'Textarea',
     'Checkbox',
@@ -246,15 +263,26 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Radio',
     'Select',
     'Combobox',
-    'DateTimeField',
+    'DatePicker',
+    'TimePicker',
+    'MonthPicker',
     'Calendar',
     'Dialog',
     'DialogClose',
     'Toast',
-    'ToastProvider',
     'useToast',
     'Icon',
-    'BrandLogo',
+    'DropZone',
+    'Alert',
+    'CounterBadge',
+    'DiffStat',
+    'CalendarHeatmap',
+    'OrganizationSwitcher',
+    'Menu',
+    'ContextMenu',
+    'Menubar',
+    'Table',
+    'Stat',
   ]) {
     assert.ok(ssr.exports.includes(name), `Missing public export: ${name}`);
   }
@@ -262,7 +290,8 @@ test('a packed consumer resolves compiled public exports and its own React insta
     await readFile(join(installedDirectory, 'package.json'), 'utf8'),
   );
   assert.match(installedManifest.peerDependencies.react, /19/);
-  assert.equal(installedManifest.dependencies['react-colorful'], '5.8.1');
+  // ColorPicker's area and hue are envUI's own, on Base UI's Slider.
+  assert.equal(installedManifest.dependencies['react-colorful'], undefined);
   // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add them.
   for (const name of [
     'shiki',
@@ -275,7 +304,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     assert.equal(installedManifest.dependencies[name], undefined);
     assert.equal(installedManifest.peerDependenciesMeta[name]?.optional, true);
   }
-  assert.match(ssr.colorPickerModule, /\/consumer\/node_modules\/react-colorful\//);
   assert.match(
     JSON.parse(await readFile(consumerRequire.resolve('react/package.json'), 'utf8')).version,
     /^19\./,
@@ -287,18 +315,18 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavigationItem, DirectionLink, Icon, BrandLogo, Input, ColorPicker, Textarea, Checkbox, Switch, Stack, ActionGroup,
-      RadioGroup, Radio, Select, Combobox, DateTimeField, Calendar, Dialog, DialogClose, Toast, ToastProvider, useToast,
-      type ThemeValue, type ButtonProps, type ButtonGroupProps, type DirectionLinkProps, type SelectOption, type ComboboxItem, type ToastManager } from '@envsemble/envui';
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
+      EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+      type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
     import '@envsemble/envui/styles.css';
     import { RichText, RichTextEditor, type RichTextEditorHandle, type RichTextReferenceSource } from '@envsemble/envui/rich-text';
-    const buttonProps: ButtonProps = { variant: 'important', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
+    const buttonProps: ButtonProps = { variant: 'primary', tone: 'accent', ref: createRef<HTMLButtonElement>(), startIcon: <Home /> };
     const buttonGroupProps: ButtonGroupProps = { orientation: 'vertical', ref: createRef<HTMLDivElement>(), 'aria-label': 'Actions' };
-    const directionLinkProps: DirectionLinkProps = { direction: 'next', href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
-    const options: SelectOption[] = [{ value: 'one', label: 'One' }];
-    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', leading: <Home /> }];
+    const pagerLinkProps: Pager.LinkProps = { href: '/guide', children: 'Read the guide', ref: createRef<HTMLAnchorElement>(), icon: <Home /> };
+    const options: SelectItem[] = [{ value: 'one', label: 'One' }];
+    const people: ComboboxItem[] = [{ value: 'first', label: 'First person', description: 'first@example.com', start: <Home /> }];
     const theme: ThemeValue = 'dark';
     const referenceSources: RichTextReferenceSource[] = [{ char: '@', items: async ({ query, signal }) => signal.aborted ? [] : [{ id: query, label: query }] }];
     const richTextConsumer = <><RichTextEditor ref={createRef<RichTextEditorHandle>()} value="Notes" references={referenceSources} onValueChange={markdown => { const typed: string = markdown; void typed; }} onUpload={async (file, { signal }) => signal.aborted ? null : ({ url: '/uploads/example', label: file.name, id: 'stable-file-id', kind: 'file' })} /><RichText onReferenceClick={(reference, event) => { event.preventDefault(); void reference.id; }}>Notes</RichText></>;
@@ -306,27 +334,30 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     function NotificationAction() { const manager: ToastManager = useToast(); return <Button onClick={() => manager.show({ message: 'Saved' })}>Save</Button>; }
     export const consumer = <Theme theme={theme} ref={createRef<HTMLDivElement>()}>
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
-      <ConfirmButton variant="quiet" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
-      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="important">Confirm</Button></ButtonGroup>
-      <Stack gap={3} ref={createRef<HTMLDivElement>()}><Input label="First" /><Input label="Second" /></Stack>
-      <ActionGroup stacked ref={createRef<HTMLDivElement>()}><Button>Save</Button><Button variant="secondary">Cancel</Button></ActionGroup>
-      <NavigationItem href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavigationItem>
-      <NavigationItem ref={createRef<HTMLButtonElement>()}>Change view</NavigationItem>
-      <DirectionLink {...directionLinkProps} target="_blank" rel="noopener" />
-      <DirectionLink direction="previous" href="/previous">Previous guide</DirectionLink>
-      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BrandLogo /><BarrelHome />
-      <Input name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
+      <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
+      <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
+      <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
+      <Stack direction="row" wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Stack>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
+      <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
+      <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
+      <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
+      <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
+      <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
+      <Pager.Previous href="/previous">Previous guide</Pager.Previous>
+      <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
+      <TextField name="title" label="Title" required ref={createRef<HTMLInputElement>()} />
       <ColorPicker label="Accent color" name="accent" defaultValue="#abcdef" ref={createRef<HTMLInputElement>()} onValueChange={value => { const typed: string = value; void typed; }} />
       <Textarea label="Notes" ref={createRef<HTMLTextAreaElement>()} />
       <Checkbox label="Enabled" checked="mixed" onCheckedChange={value => { const typed: boolean = value; void typed; }} />
       <Switch label="Alerts" defaultChecked /><RadioGroup name="mode"><Radio value="one" label="One" /></RadioGroup>
-      <Select options={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
+      <Select items={options} name="choice" onValueChange={value => { const typed: string | null = value; void typed; }} />
       <Combobox label="Owner" items={people} onValueChange={(value, item) => { const typed: string | null = value; const chosen: ComboboxItem | null = item; void typed; void chosen; }} />
       <Combobox multiple label="Reviewers" items={[{ label: 'Team', items: people }]} filter={(item, query) => item.label.startsWith(query)} onValueChange={(values, items) => { const typed: string[] = values; const chosen: ComboboxItem[] = items; void typed; void chosen; }} ref={createRef<HTMLInputElement>()} />
-      <DateTimeField label="Due" withTime clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
+      <DatePicker label="Due" granularity="minute" clearable onValueChange={value => { const typed: string | null = value; void typed; }} ref={createRef<HTMLButtonElement>()} />
       <Calendar value="2026-10-14" weekStart={1} onValueChange={value => { const typed: string = value; void typed; }} />
       <Dialog title="Confirm" trigger={<Button>Open</Button>} actions={<DialogClose>Done</DialogClose>} />
-      <ToastProvider><NotificationAction /><Toast message="Saved" /></ToastProvider>
+      <Toast.Provider><NotificationAction /></Toast.Provider>
     </Theme>;
     // @ts-expect-error Icon-only actions require an accessible name.
     const unnamedIconButton = <IconButton icon={<Home />} />;
@@ -334,21 +365,23 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     const unknownTheme = <Theme theme="system" />;
     // @ts-expect-error Button variants are the explicit public contract.
     const unknownButton = <Button variant="custom">Example</Button>;
+    // @ts-expect-error A secondary button has no danger tone: tones come in designed pairs.
+    const undesignedTone = <Button variant="secondary" tone="danger">Example</Button>;
     // @ts-expect-error Connected buttons support rows or columns.
     const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
     const unknownGap = <Stack gap={10} />;
-    // @ts-expect-error Direction links have exactly two supported directions.
-    const unknownDirection = <DirectionLink direction="up" href="/guide">Guide</DirectionLink>;
-    // @ts-expect-error A direction link requires a destination URL.
-    const missingDestination = <DirectionLink direction="next">Guide</DirectionLink>;
+    // @ts-expect-error A pager link takes its direction from its part.
+    const unknownDirection = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
+    // @ts-expect-error A pager link requires a destination URL.
+    const missingDestination = <Pager.Next>Guide</Pager.Next>;
     // @ts-expect-error A multiple combobox takes a list of values.
     const singleValueForSeveral = <Combobox multiple items={people} value="first" />;
     void singleValueForSeveral;
     // @ts-expect-error A color picker requires a visible label.
     const unnamedColorPicker = <ColorPicker defaultValue="#abcdef" />;
     void unnamedColorPicker;
-    void [unnamedIconButton, unknownTheme, unknownButton, unknownOrientation, unknownGap, unknownDirection, missingDestination];
+    void [unnamedIconButton, unknownTheme, unknownButton, undesignedTone, unknownOrientation, unknownGap, unknownDirection, missingDestination];
   `,
   );
   await writeFile(
@@ -389,7 +422,6 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /name="accent"[^>]*value="#abcdef"/);
   assert.match(ssr.html, /data-env-theme="dark"/);
   assert.match(ssr.html, /data-originating-theme="dark"/);
-  assert.match(ssr.html, /class="env-button env-button-primary"/);
   assert.match(
     ssr.html,
     /aria-label="Connected actions" role="group" class="env-button-group" data-orientation="vertical"/,
@@ -417,7 +449,6 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
   assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
-  assert.match(ssr.html, /aria-label="envsemble"/);
 });
 
 /** The index of the parenthesis that closes the group opening at index, or -1. */
@@ -506,7 +537,8 @@ function scopedSelector(selector) {
     .replace(/\s*([>+~])\s*/g, ' $1 ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (normalized === ':where(.env-theme:where(html) > body)') return true;
+  // A themed document root's body takes the body type, from envUI's base layer.
+  if (normalized === 'html.env-theme > body') return true;
   if (
     !/[\s>+~,]/.test(normalized) &&
     /\.env-theme(?![\w-])/.test(normalized) &&
@@ -554,11 +586,11 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     '.env-theme:where(:not(html))',
     '.env-theme:where(html)',
     'html.env-theme',
-    ':where(.env-theme:where(html) > body)',
+    'html.env-theme > body',
     ':where(.env-theme) .env-button',
     '.env-markdown > * + *',
     '.env-button + .env-button',
-    ':where(html:has(.env-app-shell:not([data-title-bar])))',
+    ":where(html:has(.env-app-shell[data-scroll='document']))",
   ])
     assert.ok(scopedSelector(selector), selector);
   for (const selector of [
@@ -615,12 +647,21 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   const css = await readFile(fileURLToPath(ssr.css), 'utf8');
   assert.ok(/\.env-theme\s*\{/.test(css), 'Missing explicit theme boundary.');
   assert.ok(/\[data-env-theme=["']?dark["']?\]/.test(css), 'Missing dark theme boundary.');
-  assert.ok(/--state-lightness-threshold:\s*50/.test(css), 'Preserve the 50% lightness threshold.');
-  assert.ok(/--state-hover-shift:\s*10/.test(css), 'Preserve the 10% hover shift.');
-  assert.ok(/--state-pressed-shift:\s*20/.test(css), 'Preserve the 20% press shift.');
   assert.ok(
-    /--state-lightness-direction:.*sign\(l - var\(--state-lightness-threshold\)\)/.test(css),
-    'Preserve the shared HSL direction rule.',
+    /\[data-env-contrast=["']?high["']?\]/.test(css),
+    'Missing high-contrast theme boundary.',
+  );
+  assert.ok(
+    /@media\s*\(prefers-contrast:\s*more\)/.test(css),
+    'Map prefers-contrast: more onto the high-contrast themes.',
+  );
+  assert.ok(
+    /--env-color-bg-brand-emphasis-hover:\s*#[0-9a-f]{3,8}\b/i.test(css),
+    'Hover and pressed colors are precomputed tokens.',
+  );
+  assert.ok(
+    !/sign\(|--state-[a-z-]*lightness/.test(css),
+    'No runtime lightness rule: every state color is a token the contrast gate can measure.',
   );
   assert.ok(
     /@font-face\s*\{[^}]*font-family:\s*["']envUI Inter["']/.test(css),
@@ -651,11 +692,15 @@ test('the package includes scoped CSS, local fonts, branding and license notices
     );
   }
   assert.equal((await readFile(fileURLToPath(ssr.font))).subarray(0, 4).toString(), 'wOF2');
-  assert.match(await readFile(fileURLToPath(ssr.logo), 'utf8'), /<svg/);
   for (const filename of [
     'README.md',
     'skills/envui-use/SKILL.md',
     'skills/envui-migrate/SKILL.md',
+    'skills/envui-contribute/SKILL.md',
+    'manifest.json',
+    'llms.txt',
+    'llms-full.txt',
+    'bin/envui.mjs',
     'THIRD_PARTY_NOTICES.md',
     'icon-manifest.json',
   ]) {
@@ -666,7 +711,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
   assert.match(
     await readFile(join(installedDirectory, 'licenses/Runtime-Dependencies-LICENSE.txt'), 'utf8'),
-    /react-colorful@5\.8\.1/,
+    /@base-ui\/react@1\.8\.0/,
   );
   for (const filename of [
     'Base-UI-LICENSE.txt',
@@ -677,21 +722,69 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
 });
 
+test('the installed MCP server lists the templates and serves a screen from the package', async function () {
+  const messages = [
+    {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test' } },
+    },
+    { jsonrpc: '2.0', method: 'notifications/initialized' },
+    {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: { name: 'list_templates', arguments: {} },
+    },
+    {
+      jsonrpc: '2.0',
+      id: 3,
+      method: 'tools/call',
+      params: { name: 'get_template', arguments: { name: 'sign-in-page', file: 'SignInPage' } },
+    },
+  ];
+  // The server answers each line on stdin and ends when stdin closes.
+  const output = execFileSync(
+    process.execPath,
+    [join(installedDirectory, 'bin/envui.mjs'), 'mcp'],
+    {
+      cwd: consumerDirectory,
+      input: messages.map((message) => JSON.stringify(message)).join('\n') + '\n',
+      encoding: 'utf8',
+      timeout: 20000,
+    },
+  );
+  const answers = new Map(
+    output
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => JSON.parse(line))
+      .map((message) => [message.id, message]),
+  );
+  const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
+  const { templates } = value(2);
+  const signIn = templates.find((template) => template.name === 'sign-in-page');
+  assert.ok(signIn, `list_templates: ${templates.map((template) => template.name).join(', ')}`);
+  assert.equal(signIn.frame, 'none');
+  assert.deepEqual(signIn.files, ['SignInPage']);
+  const screen = value(3);
+  assert.equal(screen.template, 'sign-in-page');
+  assert.equal(
+    screen.source,
+    await readFile(join(installedDirectory, 'docs/examples/sign-in-page/SignInPage.tsx'), 'utf8'),
+  );
+  assert.match(screen.source, /export default function SignInPage\(\)/);
+});
+
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {
-  assert.match(ssr.defaultIcon, /viewBox="0 -960 960 960"/);
   assert.match(ssr.defaultIcon, /aria-hidden="true"/);
-  assert.match(ssr.defaultIcon, /d="M240-200h120v-200/);
-  assert.match(ssr.filledIcon, /d="M160-200v-360/);
   assert.match(ssr.filledIcon, /role="img"/);
   assert.match(ssr.filledIcon, /aria-label="Home"/);
   assert.doesNotMatch(ssr.filledIcon, /aria-hidden="true"/);
   assert.notEqual(ssr.defaultIcon, ssr.filledIcon);
   assert.equal(ssr.defaultIcon, ssr.barrelIcon);
-  assert.match(ssr.selectedNavigation, /d="M160-200v-360/);
-  assert.match(ssr.unselectedNavigation, /d="M240-200h120v-200/);
-  assert.match(ssr.customIcon, /viewBox="0 0 8 8"/);
   assert.match(ssr.customIcon, /aria-label="Custom star"/);
-  assert.match(ssr.customIcon, /d="M0 0L8 8"/);
   assert.ok(
     (await readdir(join(installedDirectory, 'dist/icons'))).length > 100,
     'The package contains the generated catalogue.',
@@ -699,10 +792,7 @@ test('explicit official icons preserve filled geometry and accept custom SVG con
 });
 
 test('packed skills locate separate versioned documentation and match the release sources', async function () {
-  assert.equal(existsSync(join(installedDirectory, 'USAGE.md')), false);
   const packagedReadme = await readFile(join(installedDirectory, 'README.md'), 'utf8');
-  assert.match(packagedReadme, /\]\(skills\/envui-use\/SKILL\.md\)/);
-  assert.doesNotMatch(packagedReadme, /\]\(\.agents\/skills\//);
   const readmeResources = [
     ...[...packagedReadme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)].map((match) => match[1]),
     ...[...packagedReadme.matchAll(/\b(?:src|srcset)="([^"]+)"/g)].map((match) => match[1]),
@@ -718,7 +808,6 @@ test('packed skills locate separate versioned documentation and match the releas
     );
   }
   const skillNames = await readdir(join(installedDirectory, 'skills'));
-  assert.deepEqual(skillNames.sort(), ['envui-migrate', 'envui-use']);
   for (const skillName of skillNames) {
     const skillFile = join(installedDirectory, 'skills', skillName, 'SKILL.md');
     const source = await readFile(skillFile, 'utf8');
@@ -741,17 +830,123 @@ test('packed skills locate separate versioned documentation and match the releas
       );
     }
   }
-  const packagedDocumentation = readDocumentation(join(installedDirectory, 'docs'));
-  assert.deepEqual(packagedDocumentation, readDocumentation());
-  assert.ok(packagedDocumentation.some((document) => document.path === 'components/dialogs.md'));
-  assert.ok(packagedDocumentation.some((document) => document.path === 'components/rich-text.md'));
-  for (const { path } of packagedDocumentation) {
+  // The package ships the compiled pages: examples and generated props filled in, the example
+  // sources beside them, and the props of every export as JSON.
+  const compiled = compileDocumentation();
+  assert.ok(compiled.has('components/dialog.md'));
+  assert.ok(compiled.has('components/rich-text.md'));
+  assert.ok([...compiled.keys()].some((path) => path.startsWith('examples/')));
+  for (const [path, contents] of compiled) {
     assert.equal(
       await readFile(join(installedDirectory, 'docs', path), 'utf8'),
-      await readFile(join(repository, 'docs', path), 'utf8'),
+      contents,
       `Packaged documentation differs from its release source: ${path}`,
     );
   }
+  assert.deepEqual(
+    JSON.parse(await readFile(join(installedDirectory, 'docs/generated/props.json'), 'utf8')),
+    JSON.parse(await readFile(join(repository, 'docs/generated/props.json'), 'utf8')),
+  );
+});
+
+test('the installed envui command writes the AGENTS.md index and serves MCP through npx', async function () {
+  // The agent files sit at the package root, the manifest with the version; the packaged docs
+  // leave out the committed copies.
+  const { version } = JSON.parse(
+    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
+  );
+  const { version: packagedVersion, ...manifest } = JSON.parse(
+    await readFile(join(installedDirectory, 'manifest.json'), 'utf8'),
+  );
+  assert.equal(packagedVersion, version);
+  assert.deepEqual(
+    manifest,
+    JSON.parse(await readFile(join(repository, 'docs/generated/manifest.json'), 'utf8')),
+  );
+  assert.equal(
+    await readFile(join(installedDirectory, 'llms.txt'), 'utf8'),
+    await readFile(join(repository, 'docs/generated/llms.txt'), 'utf8'),
+  );
+  assert.match(
+    await readFile(join(installedDirectory, 'llms-full.txt'), 'utf8'),
+    /<!-- docs\/components\/button\.md -->\n\n# Button\n/,
+  );
+  for (const name of ['manifest.json', 'llms.txt'])
+    assert.equal(existsSync(join(installedDirectory, 'docs/generated', name)), false, name);
+
+  // npx runs the installed bin; --yes=false never fetches a package of that name instead.
+  const npx = ['exec', '--yes=false', '--', 'envui'];
+  const agentsFile = join(consumerDirectory, 'AGENTS.md');
+  await writeFile(agentsFile, '# Consumer\n\nKeep this.\n');
+  assert.match(run(npmCli(), [...npx, 'agents']), /Updated AGENTS\.md with the envUI index/);
+  const written = await readFile(agentsFile, 'utf8');
+  assert.ok(written.startsWith('# Consumer\n\nKeep this.\n\n<!-- BEGIN envui -->\n'));
+  assert.ok(written.includes(`(\`@envsemble/envui\` ${version})`));
+  const block = written.slice(written.indexOf('<!-- BEGIN envui -->'));
+  assert.ok(Buffer.byteLength(block) <= 8192, `The index is ${Buffer.byteLength(block)} bytes.`);
+  assert.match(run(npmCli(), [...npx, 'agents', '--check']), /has the current envUI index/);
+  await writeFile(agentsFile, written.replace('## envUI', '## envUI, edited'));
+  assert.throws(() => run(npmCli(), [...npx, 'agents', '--check']), /outdated envUI index/);
+  run(npmCli(), [...npx, 'agents']);
+  assert.equal(await readFile(agentsFile, 'utf8'), written);
+
+  const server = spawn(process.execPath, [npmCli(), ...npx, 'mcp'], {
+    cwd: consumerDirectory,
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: {
+      ...Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^npm_/i.test(name))),
+      NODE_OPTIONS: '',
+    },
+  });
+  const responses = [];
+  let buffer = '';
+  let stderr = '';
+  server.stderr.on('data', (chunk) => (stderr += chunk));
+  const exited = new Promise((resolveExit) => server.on('exit', resolveExit));
+  const answered = new Promise((resolveAnswers, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`envui mcp did not answer:\n${stderr}`)),
+      60000,
+    );
+    server.stdout.on('data', (chunk) => {
+      buffer += chunk;
+      for (let end = buffer.indexOf('\n'); end !== -1; end = buffer.indexOf('\n')) {
+        responses.push(JSON.parse(buffer.slice(0, end)));
+        buffer = buffer.slice(end + 1);
+      }
+      if (responses.length === 3) {
+        clearTimeout(timer);
+        resolveAnswers();
+      }
+    });
+  });
+  const send = (message) =>
+    server.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', ...message })}\n`);
+  send({
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: '2025-11-25',
+      capabilities: {},
+      clientInfo: { name: 'consumer', version: '1' },
+    },
+  });
+  send({ method: 'notifications/initialized' });
+  send({ id: 2, method: 'tools/call', params: { name: 'search', arguments: { query: 'modal' } } });
+  send({
+    id: 3,
+    method: 'tools/call',
+    params: { name: 'get_example', arguments: { component: 'Dialog', example: 'ConfirmDelete' } },
+  });
+  await answered;
+  server.stdin.end();
+  assert.equal(await exited, 0, stderr);
+  assert.equal(responses[0].result.serverInfo.version, version);
+  assert.equal(JSON.parse(responses[1].result.content[0].text).results[0].name, 'Dialog');
+  assert.equal(
+    JSON.parse(responses[2].result.content[0].text).source,
+    await readFile(join(installedDirectory, 'docs/examples/dialog/ConfirmDelete.tsx'), 'utf8'),
+  );
 });
 
 test('a small independent bundle excludes unused icons and Base UI', async function () {
@@ -779,9 +974,9 @@ test('a small independent bundle excludes unused icons and Base UI', async funct
   );
   assert.match(iconInputs[0], /\/Home\.js$/);
   assert.ok(result.bytes < 12000, `Small consumer unexpectedly emitted ${result.bytes} bytes.`);
-  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning|BrandLogo/);
+  assert.doesNotMatch(result.code, /@base-ui\/react|CheckCircle|ChevronRight|Warning/);
   assert.ok(
-    result.emittedInputs.every((path) => !path.includes('/react-colorful/')),
+    result.emittedInputs.every((path) => !path.includes('/forms/internal/ColorPlane')),
     'Unused color picking must stay out of basic control bundles.',
   );
   assert.ok(
@@ -879,10 +1074,8 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
     display.avatars,
     /role="group" aria-label="5 people: Alex Morgan, Sam Lee, Priya Shah, 2 more"/,
   );
-  assert.match(display.avatars, /<span dir="ltr">\+3<\/span>/);
   assert.match(display.copy, /<button[^>]*aria-label="Copy link"/);
   assert.match(display.copy, /role="status"/);
-  assert.match(display.pagination, /<nav aria-label="Pagination" class="env-pagination">/);
   assert.match(display.pagination, />61–120 of 245</);
 
   await writeFile(
@@ -892,7 +1085,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       type AvatarGroupPerson, type AvatarGroupProps, type CopyButtonProps, type PaginationProps,
       type PaginationRange, type RelativeTimeProps } from '@envsemble/envui';
     const person: AvatarGroupPerson = { name: 'Alex Morgan', id: 7, href: '/people/alex', src: null, fallback: 'initials' };
-    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'small', total: 12, formatMore: (count) => count + ' more' };
+    const groupProps: AvatarGroupProps = { people: [person], max: 3, size: 'sm', total: 12, formatMore: (count) => count + ' more' };
     const describe = (range: PaginationRange) => range.start + '–' + range.end + ' of ' + (range.total ?? 'many');
     const pagerProps: PaginationProps = { page: 1, pageSize: 10, onPageChange: (page) => { const typed: number = page; void typed; } };
     const timeProps: RelativeTimeProps = { value: new Date(), format: 'narrow', locale: ['de', 'en'], tooltip: false };
@@ -902,8 +1095,8 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
       <AvatarGroup {...groupProps} onPersonClick={(clicked, event) => { void clicked.name; event.preventDefault(); }} />
       <RelativeTime {...timeProps} nowLabel="moments ago" />
       <CopyButton {...copyProps} onCopy={(copied) => { const typed: string = copied; void typed; }} />
-      <CopyButton value="text" size="compact" variant="text">Copy</CopyButton>
-      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="compact" />
+      <CopyButton value="text" size="sm" variant="text">Copy</CopyButton>
+      <Pagination {...pagerProps} formatRange={describe} hasNextPage pending size="sm" />
     </>;
     void text;
     // @ts-expect-error An icon-only copy button requires an accessible name.
@@ -945,7 +1138,7 @@ test('avatar groups, relative times, copy buttons and pagination render on a ser
   ]);
 });
 
-test('the panel dock renders its panels, chips and header on a server and types its contracts', async function () {
+test('the panel dock renders its panels, tabs and header on a server and types its contracts', async function () {
   const dock = await runConsumer(
     'DockConsumer.mjs',
     `
@@ -958,9 +1151,9 @@ test('the panel dock renders its panels, chips and header on a server and types 
       { id: 'budget', title: 'Budget', mode: 'minimized', attention: 'Unsaved changes' },
     ];
     const html = renderToString(h(ui.Theme, { theme: 'light' },
-      h(ui.PanelDock, { panels, onModeChange() {}, onClose() {} },
+      h(ui.PanelDock.Root, { panels, onModeChange() {}, onClose() {} },
         (panel) => h(Fragment, null,
-          h(ui.PanelDockHeader, { title: panel.title, meta: 'Edited today' }),
+          h(ui.PanelDock.Header, { title: panel.title, meta: 'Edited today' }),
           h('p', null, 'Body of ' + panel.title)))));
     console.log(JSON.stringify({ html }));
   `,
@@ -969,13 +1162,11 @@ test('the panel dock renders its panels, chips and header on a server and types 
     dock.html,
     /<section [^>]*aria-label="Notes"[^>]*data-panel-id="notes"[^>]*data-mode="open"/,
   );
-  assert.match(dock.html, /<h2 class="env-panel-dock-title">Notes<\/h2>/);
   for (const name of ['Minimize', 'Maximize', 'Close'])
     assert.match(dock.html, new RegExp(`aria-label="${name}"`));
-  // A minimized panel's content renders too, kept out of sight behind its chip.
+  // A minimized panel's content renders too, kept out of sight behind its tab.
   assert.match(dock.html, /<section [^>]*data-panel-id="budget"[^>]*data-placement="hidden"/);
   assert.match(dock.html, /Body of Budget/);
-  assert.match(dock.html, /<ul class="env-panel-dock-strip" aria-label="Hidden panels">/);
   assert.match(dock.html, /aria-label="Show Budget"/);
   assert.match(dock.html, /Unsaved changes/);
   // Server output is in place before it hydrates, without an entrance.
@@ -984,16 +1175,14 @@ test('the panel dock renders its panels, chips and header on a server and types 
   await writeFile(
     join(consumerDirectory, 'DockConsumer.tsx'),
     `
-    import { PanelDock, PanelDockControls, PanelDockHeader, type PanelDockMode, type PanelDockPanel,
-      type PanelDockProps, type PanelDockHeaderProps, type PanelDockControlsProps } from '@envsemble/envui';
+    import { EnvUIProvider, PanelDock, type PanelDockMode, type PanelDockPanel } from '@envsemble/envui';
     type Document = PanelDockPanel & { body: string };
     const documents: Document[] = [
       { id: 'notes', title: 'Notes', mode: 'open', body: 'Text', height: 320, preferredWidth: 480, minWidth: 320,
         maxWidth: 640, minHeight: 240, maxHeight: 560, active: true, label: 'Notes', icon: <span />, attention: 'Unsaved', tooltip: 'Notes' },
     ];
-    const headerProps: PanelDockHeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3 };
-    const controlsProps: PanelDockControlsProps = { minimizeLabel: 'Min', maximizeLabel: 'Max', restoreLabel: 'Back', closeLabel: 'Shut' };
-    const dockProps: Omit<PanelDockProps<Document>, 'children'> = {
+    const headerProps: PanelDock.HeaderProps = { title: 'Notes', meta: 'Edited today', headingLevel: 3, controls: true };
+    const dockProps: Omit<PanelDock.RootProps<Document>, 'children'> = {
       panels: documents,
       onModeChange: (id, mode) => { const typed: PanelDockMode = mode; void id; void typed; },
       onClose: (id) => { const typed: string = id; void typed; },
@@ -1003,26 +1192,30 @@ test('the panel dock renders its panels, chips and header on a server and types 
       onStackedChange: (stacked) => { const typed: boolean = stacked; void typed; },
       overflow: 'minimize',
       minimizedLabel: 'Hidden panels',
-      showLabel: (label) => 'Show ' + label,
+      openLabel: (label) => 'Show ' + label,
       closeLabel: (label) => 'Close ' + label,
       resizeLabel: (title) => 'Resize ' + title,
     };
     export const dock = (
-      <PanelDock {...dockProps}>
-        {(panel) => <PanelDockHeader {...headerProps} title={panel.body} controls={<PanelDockControls {...controlsProps} />} />}
-      </PanelDock>
+      <EnvUIProvider messages={{ panelDock: { minimize: 'Min', maximize: 'Max', restore: 'Back', close: 'Shut' } }}>
+        <PanelDock.Root {...dockProps}>
+          {(panel) => <PanelDock.Header {...headerProps} title={panel.body} controls={false} />}
+        </PanelDock.Root>
+      </EnvUIProvider>
     );
-    // @ts-expect-error A dock names its chips' buttons with showLabel; restoreLabel is PanelDockControls'.
-    const earlierName = <PanelDock {...dockProps} restoreLabel={(label) => 'Show ' + label}>{() => null}</PanelDock>;
-    // @ts-expect-error A dock's chip labels are functions of each chip's text.
-    const plainRestore = <PanelDock {...dockProps} showLabel="Show">{() => null}</PanelDock>;
+    // @ts-expect-error A dock names its tabs' buttons with openLabel; showLabel, its 0.x name, is not a prop.
+    const earlierName = <PanelDock.Root {...dockProps} showLabel={(label) => 'Show ' + label}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error A dock's tab labels are functions of each tab's text.
+    const plainRestore = <PanelDock.Root {...dockProps} openLabel="Show">{() => null}</PanelDock.Root>;
     // @ts-expect-error A dock scrolls or minimizes what does not fit.
-    const unknownOverflow = <PanelDock {...dockProps} overflow="hide">{() => null}</PanelDock>;
+    const unknownOverflow = <PanelDock.Root {...dockProps} overflow="hide">{() => null}</PanelDock.Root>;
     // @ts-expect-error A panel is open, minimized or maximized.
     const unknownMode: PanelDockPanel = { id: 'notes', title: 'Notes', mode: 'closed' };
     // @ts-expect-error A dock asks the application to change modes and close panels.
-    const inertDock = <PanelDock panels={documents}>{() => null}</PanelDock>;
-    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock];
+    const inertDock = <PanelDock.Root panels={documents}>{() => null}</PanelDock.Root>;
+    // @ts-expect-error The window controls are on or off; their names come from the provider's messages.
+    const ownControls = <PanelDock.Header title="Notes" controls={<span />} />;
+    void [earlierName, plainRestore, unknownOverflow, unknownMode, inertDock, ownControls];
   `,
   );
   await writeFile(

@@ -8,6 +8,8 @@
   /* Connected buttons retain their corners and remain reachable in narrow containers. */
   overflow: auto;
   scrollbar-width: thin;
+  /* Rings are inset here, so on a solid fill Button adds its inner ring in the label color. */
+  --env-button-focus-inner-ring: 0.25rem;
 }
 .env-button-group > .env-button:focus-visible {
   outline-offset: -0.125rem;
@@ -18,24 +20,19 @@
 }
 
 .env-button-group
-  > .env-button:not(.env-button-important):not(
+  > .env-button:not([data-variant='primary']:where([data-tone='accent'])):not(
     :where(
       :nth-child(1 of .env-button:not([hidden])):nth-last-child(1 of .env-button:not([hidden]))
     )
   ) {
-  /* A finite pill radius keeps the browser from scaling down the inner corners. */
-  border-radius: calc(var(--control-height-small) * var(--scale, 1) / 2);
+  /* A finite pill radius keeps the browser from scaling down the inner corners. It follows the
+     height the button draws at, which a coarse pointer raises to the touch height. */
+  border-radius: calc(var(--env-button-height) / 2);
 }
 
 .env-button-group > .env-button.env-icon-button {
-  inline-size: calc(var(--icon-button-size) * var(--scale, 1));
-  min-inline-size: calc(var(--icon-button-size) * var(--scale, 1));
-}
-
-/* Mixed rows share the regular control size; wrapped labels may increase their height. */
-.env-button-group:where(:has(> .env-button:not(.env-button-important):not([hidden])))
-  > .env-button.env-icon-button {
-  inline-size: calc(var(--control-height-small) * var(--scale, 1));
+  inline-size: var(--env-button-height);
+  min-inline-size: var(--env-button-height);
 }
 
 .env-button-group > .env-button[hidden] {
@@ -44,14 +41,14 @@
 
 .env-button-group[data-orientation='horizontal']
   > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: calc(var(--radius-row-inner) * var(--scale, 1));
-  border-end-start-radius: calc(var(--radius-row-inner) * var(--scale, 1));
+  border-start-start-radius: var(--env-radius-row-inner);
+  border-end-start-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='horizontal']
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-start-end-radius: calc(var(--radius-row-inner) * var(--scale, 1));
-  border-end-end-radius: calc(var(--radius-row-inner) * var(--scale, 1));
+  border-start-end-radius: var(--env-radius-row-inner);
+  border-end-end-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='vertical'] {
@@ -84,12 +81,12 @@
 
 .env-button-group[data-orientation='vertical']
   > .env-button:not(:nth-child(1 of .env-button:not([hidden]))) {
-  border-start-start-radius: calc(var(--radius-row-inner) * var(--scale, 1));
-  border-start-end-radius: calc(var(--radius-row-inner) * var(--scale, 1));
+  border-start-start-radius: var(--env-radius-row-inner);
+  border-start-end-radius: var(--env-radius-row-inner);
 }
 
 .env-button-group[data-orientation='vertical']
   > .env-button:not(:nth-last-child(1 of .env-button:not([hidden]))) {
-  border-end-start-radius: calc(var(--radius-row-inner) * var(--scale, 1));
-  border-end-end-radius: calc(var(--radius-row-inner) * var(--scale, 1));
+  border-end-start-radius: var(--env-radius-row-inner);
+  border-end-end-radius: var(--env-radius-row-inner);
 }

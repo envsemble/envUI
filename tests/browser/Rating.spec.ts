@@ -47,6 +47,25 @@ test('a rating fills its stars to the value in half steps and is named once', as
   }
 });
 
+test("ratings, changes and rolling numbers follow the provider's locale and messages", async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=ratings`);
+  const scope = page.getByTestId('ratings-light');
+  const rating = scope.getByTestId('rating-de-light');
+  await expect(rating.locator('.env-rating-value')).toHaveText('4,5');
+  await expect(rating.getByRole('img')).toHaveAccessibleName('4,5 out of 5 stars');
+  await expect(scope.getByTestId('rating-de-named-light').getByRole('img')).toHaveAccessibleName(
+    '3,5 von 5 Sternen',
+  );
+  const diff = scope.getByTestId('diff-de-light');
+  await expect(diff.locator('.env-diff-stat-additions')).toHaveText('+1.234');
+  await expect(diff.locator('.env-diff-stat-label')).toHaveText(
+    '1.234 added lines and 5 removed lines',
+  );
+  await expect(scope.getByTestId('number-de-light')).toHaveText('12.800');
+});
+
 test('a color swatch takes the size of a button icon and stays visible with a ring', async ({
   page,
 }) => {
@@ -57,7 +76,7 @@ test('a color swatch takes the size of a button icon and stays visible with a ri
     await expect(swatch).toHaveAttribute('aria-hidden', 'true');
     const [swatchBox, iconBox] = await Promise.all([
       swatch.boundingBox(),
-      button.locator('.env-symbol').boundingBox(),
+      button.locator('.env-icon').boundingBox(),
     ]);
     expect(Math.abs(swatchBox!.width - iconBox!.width)).toBeLessThan(1);
     expect(Math.abs(swatchBox!.height - iconBox!.height)).toBeLessThan(1);

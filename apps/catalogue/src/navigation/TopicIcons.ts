@@ -4,6 +4,7 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Star } from '@envsemble/envui/icons/Star';
 import { TextFields } from '@envsemble/envui/icons/TextFields';
 import { ViewList } from '@envsemble/envui/icons/ViewList';
+import { Devices } from '@envsemble/envui/icons/Devices';
 import { TouchApp } from '@envsemble/envui/icons/TouchApp';
 import { Info } from '@envsemble/envui/icons/Info';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -21,7 +22,6 @@ import { FormatLineSpacing } from '@envsemble/envui/icons/FormatLineSpacing';
 import { FormatSize } from '@envsemble/envui/icons/FormatSize';
 import { HourglassEmpty } from '@envsemble/envui/icons/HourglassEmpty';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
-import { Label } from '@envsemble/envui/icons/Label';
 import { Notes } from '@envsemble/envui/icons/Notes';
 import { Notifications } from '@envsemble/envui/icons/Notifications';
 import { RadioButtonChecked } from '@envsemble/envui/icons/RadioButtonChecked';
@@ -53,8 +53,10 @@ import { Monitoring } from '@envsemble/envui/icons/Monitoring';
 import { CloudUpload } from '@envsemble/envui/icons/CloudUpload';
 import { CalendarViewMonth } from '@envsemble/envui/icons/CalendarViewMonth';
 import { CalendarMonth } from '@envsemble/envui/icons/CalendarMonth';
+import { DateRange } from '@envsemble/envui/icons/DateRange';
 import { ManageSearch } from '@envsemble/envui/icons/ManageSearch';
 import { DockToBottom } from '@envsemble/envui/icons/DockToBottom';
+import { ViewSidebar } from '@envsemble/envui/icons/ViewSidebar';
 import { Schedule } from '@envsemble/envui/icons/Schedule';
 import { LastPage } from '@envsemble/envui/icons/LastPage';
 import { type Reference } from '../Reference';
@@ -63,6 +65,8 @@ export const foundationIcons: Record<string, typeof Palette> = {
   colors: Palette,
   typography: TextFields,
   spacing: ViewList,
+  scale: ViewList,
+  responsive: Devices,
   icons: Category,
   composition: ViewList,
   accessibility: TouchApp,
@@ -83,58 +87,64 @@ export function getComponentIcon(group: Reference['group']) {
 const referenceIcons: Record<string, typeof Palette> = {
   typography: FormatSize,
   spacing: FormatLineSpacing,
+  scale: FormatSize,
   composition: Extension,
   icons: Widgets,
   accessibility: AccessibilityNew,
-  layout: ViewModule,
+  stack: ViewModule,
   surface: CropSquare,
-  cards: Dashboard,
-  buttons: TouchApp,
-  fields: TextFields,
+  card: Dashboard,
+  button: TouchApp,
+  'text-field': TextFields,
   checkbox: CheckBox,
   switch: ToggleOn,
   radio: RadioButtonChecked,
   select: ArrowDropDownCircle,
   combobox: ManageSearch,
-  'date-time-field': CalendarMonth,
+  'date-picker': CalendarMonth,
+  'time-picker': Schedule,
+  'month-picker': DateRange,
   slider: Tune,
-  'file-dropzone': CloudUpload,
+  'drop-zone': CloudUpload,
   'color-picker': Palette,
   composer: Send,
-  messages: Forum,
-  stats: Monitoring,
-  heatmap: CalendarViewMonth,
+  message: Forum,
+  stat: Monitoring,
+  'calendar-heatmap': CalendarViewMonth,
   rating: Star,
   'relative-time': Schedule,
-  navigation: Explore,
+  'nav-list': Explore,
   tabs: WebAsset,
-  'direction-links': ArrowForward,
+  pager: ArrowForward,
   markdown: Article,
   'rich-text': Article,
   code: Code,
-  chips: Label,
-  disclosures: Notes,
+  disclosure: Notes,
   'empty-state': Inbox,
-  loading: HourglassEmpty,
-  toasts: Notifications,
-  dialogs: WebAsset,
+  spinner: HourglassEmpty,
+  skeleton: HourglassEmpty,
+  toast: Notifications,
+  dialog: WebAsset,
   menu: MoreVert,
   menubar: MenuOpen,
   tooltip: ChatBubble,
   avatar: AccountCircle,
-  meters: Speed,
+  meter: Speed,
+  progress: Speed,
   'app-shell': SpaceDashboard,
+  sidebar: ViewSidebar,
+  'window-frame': WebAsset,
   tree: AccountTree,
   'document-tabs': Tab,
   'panel-dock': DockToBottom,
   'command-palette': KeyboardCommandKey,
   'segmented-control': ViewWeek,
-  badges: Sell,
-  notices: Campaign,
+  badge: Sell,
+  alert: Campaign,
   popover: Chat,
   'hover-card': Preview,
-  tables: TableChart,
-  keyboard: Keyboard,
+  table: TableChart,
+  kbd: Keyboard,
   breadcrumbs: LinearScale,
   pagination: LastPage,
 };

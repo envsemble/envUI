@@ -1,0 +1,23 @@
+.env-form-field > .env-field-hint,
+.env-text-field-well > .env-text-input {
+  color: inherit;
+}
+.env-dropdown-trigger .env-dropdown-option-check,
+.env-dropdown-options .env-dropdown-option {
+  gap: 4px;
+}
+.env-combobox .env-dropdown-options,
+.env-combobox-well .env-combobox-option-label {
+  padding: 0;
+}
+.env-date-time-well,
+.env-checkbox-control + .env-checkbox-mark,
+.env-switch-control,
+.env-radio-options .env-radio-control,
+.env-radio-detail {
+  margin: 0;
+}
+.env-radio-options.env-radio-inline,
+.env-radio-option:hover {
+  outline: none;
+}

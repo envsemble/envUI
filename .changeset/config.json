@@ -1,0 +1,20 @@
+{
+  "$schema": "../node_modules/@changesets/config/schema.json",
+  "baseBranch": "dev",
+  "access": "restricted",
+  "changelog": "./changelog.mjs",
+  "commit": false,
+  "format": "prettier",
+  "fixed": [
+    [
+      "@envsemble/envui",
+      "@envsemble/envui-codemods",
+      "@envsemble/eslint-plugin-envui",
+      "@envsemble/stylelint-config-envui"
+    ]
+  ],
+  "linked": [],
+  "ignore": [],
+  "privatePackages": { "version": false, "tag": false },
+  "updateInternalDependencies": "patch"
+}

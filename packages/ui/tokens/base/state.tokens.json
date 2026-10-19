@@ -1,0 +1,8 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "state": {
+    "$type": "number",
+    "$description": "Opacities of interaction states that components apply themselves. Hover, pressed and selected colors are color tokens of their own (color.bg, color.fg, color.border), and so are scrims and translucent fills.",
+    "disabled-opacity": { "$value": 0.48 }
+  }
+}

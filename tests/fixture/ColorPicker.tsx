@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  ActionGroup,
-  Button,
-  Checkbox,
-  ColorPicker,
-  Stack,
-  Theme,
-  type ThemeValue,
-} from '@envsemble/envui';
+import { Button, Checkbox, ColorPicker, Stack, Theme, type ThemeValue } from '@envsemble/envui';
 
 export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
   const [color, setColor] = useState('#1a73e8');
@@ -19,7 +11,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
   const formId = `${theme}-color-form`;
   return (
     <Theme theme={theme} data-testid={`color-picker-${theme}`}>
-      <Stack as="section" className="fixture-section">
+      <Stack render={<section />} className="fixture-section">
         <form
           id={formId}
           data-testid="color-form"
@@ -72,12 +64,12 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               checked={preventReset}
               onCheckedChange={setPreventReset}
             />
-            <ActionGroup>
+            <Stack direction="row" wrap align="center" gap={4}>
               <Button type="submit">Submit colors</Button>
               <Button type="reset" variant="secondary">
                 Reset colors
               </Button>
-              <Button variant="outlined" onClick={() => setColor('#ff0000')}>
+              <Button variant="outline" onClick={() => setColor('#ff0000')}>
                 Replace selected color
               </Button>
               <Button variant="text" onClick={() => setPolicy('reject')}>
@@ -89,7 +81,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               <Button variant="text" onClick={() => setPolicy('accept')}>
                 Accept color changes
               </Button>
-            </ActionGroup>
+            </Stack>
           </Stack>
         </form>
         <ColorPicker

@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Button, ButtonGroup, IconButton, Stack, Theme, type ThemeValue } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
@@ -20,29 +20,43 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             data-testid={orientation}
           >
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
-            <Button variant="important" iconOnly icon={<Check />} aria-label="Confirm" />
+            <Button
+              variant="primary"
+              tone="accent"
+              iconOnly
+              icon={<Check />}
+              aria-label="Confirm"
+            />
             <IconButton icon={<Settings />} aria-label="Settings" />
-            <Button href="#group-destination" variant="outlined" startIcon={<Settings />}>
+            <Button href="#group-destination" variant="outline" startIcon={<Settings />}>
               Manage
             </Button>
-            <Button variant="destructive" endIcon={<Check />}>
+            <Button variant="primary" tone="danger" endIcon={<Check />}>
               Delete
             </Button>
           </ButtonGroup>
         ))}
         <ButtonGroup data-testid="important-end">
-          <Button variant="important" iconOnly icon={<Check />} aria-label="Approve" />
+          <Button variant="primary" tone="accent" iconOnly icon={<Check />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="important-top">
-          <Button variant="important">Confirm</Button>
+          <Button variant="primary" tone="accent">
+            Confirm
+          </Button>
           <IconButton icon={<Settings />} aria-label="Options" />
         </ButtonGroup>
         <ButtonGroup data-testid="single">
           <Button>Only action</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="single-important">
-          <Button variant="important" iconOnly icon={<Check />} aria-label="Only confirmation" />
+          <Button
+            variant="primary"
+            tone="accent"
+            iconOnly
+            icon={<Check />}
+            aria-label="Only confirmation"
+          />
         </ButtonGroup>
         <ButtonGroup data-testid="dynamic">
           {ends && <Button>First</Button>}
@@ -55,9 +69,11 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           {ends && <Button>Last</Button>}
         </ButtonGroup>
         <Button onClick={() => setEnds((value) => !value)}>Toggle end buttons</Button>
-        <ButtonGroup data-testid="scaled" style={{ '--scale': 1.5 } as CSSProperties}>
-          <Button>Scaled first</Button>
-          <Button variant="secondary">Scaled last</Button>
+        <ButtonGroup data-testid="scaled">
+          <Button size="lg">Large first</Button>
+          <Button size="lg" variant="secondary">
+            Large last
+          </Button>
         </ButtonGroup>
         <form
           onSubmit={(event) => {

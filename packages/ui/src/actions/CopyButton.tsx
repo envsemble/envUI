@@ -1,18 +1,24 @@
+'use client';
+
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import {
   useContext,
-  useEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
   type MouseEvent,
   type ReactNode,
 } from 'react';
-import { Button, type ButtonVariant } from './Button.js';
+import { Button, type ButtonProps, type IconButtonEmphasisProps } from './Button.js';
 import { TooltipNestingContext, TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { Check } from '../icons/Check.js';
 import { ContentCopy } from '../icons/ContentCopy.js';
 import { classNames } from '../internal/classNames.js';
+import { useButtonEmphasis } from '../internal/ControlDefaults.js';
+import { useCopy } from '../internal/useCopy.js';
+import { useMessages } from '../internal/EnvUIContext.js';
+import { copy as copyMessages } from '../foundations/messages/copy.js';
+import type { ControlSize } from '../foundations/Theme.js';
 
 interface CopyButtonBaseProps
   extends Omit<ComponentPropsWithRef<'button'>, 'value' | 'onCopy' | 'children' | 'type'> {
@@ -20,10 +26,13 @@ interface CopyButtonBaseProps
   value: string | (() => string | Promise<string>);
   /** Runs once the text is on the clipboard, with that text. */
   onCopy?: (text: string) => void;
-  /** As Button; secondary by default. */
-  variant?: ButtonVariant;
-  /** standard (default) takes the surrounding density; compact is the 2 rem compact size anywhere. */
-  size?: 'standard' | 'compact';
+  /**
+   * Writes the text instead of the browser's Clipboard API, such as through a desktop app's
+   * clipboard bridge. A rejected promise shows and announces failedLabel.
+   */
+  write?: (text: string) => Promise<void>;
+  /** As Button's: sm, md or lg; without it, the control height of the container. */
+  size?: ControlSize;
   /** The icon at rest, ContentCopy by default; a check replaces it once the text is copied. */
   icon?: ReactNode;
   /** Shown in the tooltip and announced after copying; Copied by default. */
@@ -44,7 +53,12 @@ interface CopyButtonBaseProps
  */
 export type CopyButtonLabel = Exclude<ReactNode, boolean | null | undefined>;
 
+/**
+ * The variant and tone, as IconButton's designed pairs: without a variant, the container's, such as
+ * ghost in a toolbar, and else a neutral secondary button.
+ */
 export type CopyButtonProps = CopyButtonBaseProps &
+  IconButtonEmphasisProps &
   (
     | {
         /**
@@ -68,48 +82,44 @@ const feedbackDuration = 2_000;
 export function CopyButton({
   value,
   onCopy,
-  variant = 'secondary',
-  size = 'standard',
+  write,
+  variant,
+  tone,
+  size,
   icon,
-  copiedLabel = 'Copied',
-  failedLabel = 'Couldn’t copy',
-  copyLabel = 'Copy',
+  copiedLabel: ownCopiedLabel,
+  failedLabel: ownFailedLabel,
+  copyLabel: ownCopyLabel,
   children,
   className,
   onClick,
   'aria-label': label,
   ...props
 }: CopyButtonProps) {
+  // A label prop wins over the provider's messages, which win over the English defaults.
+  const messages = useMessages('copy', copyMessages);
+  const copiedLabel = ownCopiedLabel ?? messages.copied;
+  const failedLabel = ownFailedLabel ?? messages.failed;
+  const copyLabel = ownCopyLabel ?? messages.copy;
+  const emphasis = useButtonEmphasis({ variant, tone, fallbackVariant: 'secondary' });
   // Inside an application's own Tooltip, that tooltip describes the button.
   const nested = useContext(TooltipNestingContext);
-  const [result, setResult] = useState<{ copied: boolean; count: number } | null>(null);
+  // From the press until the result shows, copying; waiting while a promised text is on its way.
+  // Every press shows and announces its result again, also the same result twice in a row.
+  const { copy, status, round, copying, waiting, reset } = useCopy({
+    write,
+    onCopy,
+    resetAfter: feedbackDuration,
+    fieldClassName: 'env-copy-button-field',
+  });
+  const result = status === 'idle' ? null : { copied: status === 'copied', count: round };
   const [hovered, setHovered] = useState(false);
-  // From the press until the result shows; waiting while a promised text is on its way.
-  const [copying, setCopying] = useState(false);
-  const [waiting, setWaiting] = useState(false);
   const shownText = useRef('');
-  useEffect(() => {
-    if (!result) return;
-    const timer = setTimeout(() => setResult(null), feedbackDuration);
-    return () => clearTimeout(timer);
-  }, [result]);
 
-  async function copy(event: MouseEvent<HTMLButtonElement>) {
+  function press(event: MouseEvent<HTMLButtonElement>) {
     onClick?.(event);
     if (event.defaultPrevented) return;
-    setCopying(true);
-    let copied = true;
-    let text = '';
-    try {
-      text = await writeToClipboard(value, event.currentTarget, () => setWaiting(true));
-    } catch {
-      copied = false;
-    }
-    setCopying(false);
-    setWaiting(false);
-    // Every press shows and announces its result again, also the same result twice in a row.
-    setResult((current) => ({ copied, count: (current?.count ?? 0) + 1 }));
-    if (copied) onCopy?.(text);
+    void copy(value, event.currentTarget);
   }
 
   // A label without words, such as an empty string, leaves the button icon-only, as it looks.
@@ -127,20 +137,27 @@ export function CopyButton({
   const symbol = result?.copied ? <Check /> : (icon ?? <ContentCopy />);
   const shared = {
     ...props,
-    variant,
+    ...emphasis,
     pending: waiting,
-    onClick: copy,
+    onClick: press,
     className: classNames('env-copy-button', className),
-    'data-size': size === 'compact' ? 'compact' : undefined,
+    size,
     'data-copied': result?.copied ? '' : undefined,
     'data-failed': result && !result.copied ? '' : undefined,
   };
   const button = iconOnly ? (
-    <Button {...shared} iconOnly icon={symbol} aria-label={name ?? ''} />
+    <Button
+      {...({ ...shared, iconOnly: true, icon: symbol, 'aria-label': name ?? '' } as ButtonProps)}
+    />
   ) : (
-    <Button {...shared} startIcon={symbol} aria-label={name}>
-      {children as CopyButtonLabel}
-    </Button>
+    <Button
+      {...({
+        ...shared,
+        startIcon: symbol,
+        'aria-label': name,
+        children: children as CopyButtonLabel,
+      } as ButtonProps)}
+    />
   );
   const hoverTarget = iconOnly && disabled;
   return (
@@ -158,7 +175,7 @@ export function CopyButton({
           open={result !== null || (iconOnly && (hovered || copying))}
           onOpenChange={(open, details) => {
             setHovered(open);
-            if (!open && details.reason === 'escape-key') setResult(null);
+            if (!open && details.reason === 'escape-key') reset();
           }}
         >
           <BaseTooltip.Trigger
@@ -189,77 +206,4 @@ function hasWords(label: ReactNode): boolean {
   if (typeof label === 'string') return label.trim() !== '';
   if (typeof label === 'object' && Symbol.iterator in label) return [...label].some(hasWords);
   return true;
-}
-
-/** Writes the text with the asynchronous Clipboard API, or by copying a selection where it fails. */
-async function writeToClipboard(
-  value: CopyButtonProps['value'],
-  anchor: HTMLElement,
-  onWait: () => void,
-) {
-  const resolved = typeof value === 'function' ? value() : value;
-  if (typeof resolved === 'string') {
-    await writeText(resolved, anchor);
-    return resolved;
-  }
-  onWait();
-  const clipboard = typeof navigator === 'undefined' ? undefined : navigator.clipboard;
-  if (typeof ClipboardItem !== 'undefined' && clipboard?.write) {
-    // Some browsers allow writing only while handling the press: hand over an item at once and
-    // let its text follow.
-    try {
-      const blob = resolved.then((text) => new Blob([text], { type: 'text/plain' }));
-      // A clipboard that refuses at once leaves the item behind; a text that then fails is
-      // reported once, below, not again as an unhandled rejection of the item's blob.
-      blob.catch(() => undefined);
-      await clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
-      return await resolved;
-    } catch {
-      // Write the text itself once it is ready.
-    }
-  }
-  const text = await resolved;
-  await writeText(text, anchor);
-  return text;
-}
-
-async function writeText(text: string, anchor: HTMLElement) {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    if (!copyWithSelection(text, anchor)) throw new Error('The clipboard is unavailable.');
-  }
-}
-
-/** The fallback for pages without clipboard access: select the text in a hidden field and copy it. */
-function copyWithSelection(text: string, anchor: HTMLElement) {
-  const document = anchor.ownerDocument;
-  const field = document.createElement('textarea');
-  field.value = text;
-  field.readOnly = true;
-  field.tabIndex = -1;
-  field.setAttribute('aria-hidden', 'true');
-  field.className = 'env-copy-button-field';
-  // Beside the button, so a dialog that keeps focus inside itself lets the field take it.
-  (anchor.parentElement ?? document.body).append(field);
-  const focused = document.activeElement;
-  const selection = document.getSelection();
-  const ranges = selection
-    ? Array.from({ length: selection.rangeCount }, (_, index) => selection.getRangeAt(index))
-    : [];
-  field.focus({ preventScroll: true });
-  field.select();
-  let copied = false;
-  try {
-    copied = document.execCommand('copy');
-  } catch {
-    copied = false;
-  }
-  field.remove();
-  (focused as HTMLElement | null)?.focus({ preventScroll: true });
-  if (selection) {
-    selection.removeAllRanges();
-    for (const range of ranges) selection.addRange(range);
-  }
-  return copied;
 }

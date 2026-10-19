@@ -1,0 +1,5 @@
+{
+  "env-radio-options": "env-radio-group",
+  "env-radio-control": "env-radio-input",
+  "env-radio-detail": "env-radio-description"
+}

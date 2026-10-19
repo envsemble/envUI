@@ -1,0 +1,9 @@
+/* Keep component geometry independent of a consuming application's reset. In the env.reset layer,
+   the first of envUI's, so envUI's other layers override it, and so does an application's CSS
+   outside layers or in a layer declared after env. */
+.env-theme,
+.env-theme *,
+.env-theme ::before,
+.env-theme ::after {
+  box-sizing: border-box;
+}

@@ -4,10 +4,16 @@ packages/ui/icon-manifest.json
 packages/ui/README.md
 packages/ui/skills
 packages/ui/docs
+packages/ui/manifest.json
+packages/ui/llms.txt
+packages/ui/llms-full.txt
 apps/catalogue/src/generated
-packages/ui/src/EnvUILogo.tsx
+packages/codemods/test/fixtures
+apps/catalogue/src/brand/EnvUILogo.tsx
 packages/ui/licenses/Runtime-Dependencies-LICENSE.txt
 **/dist
 node_modules
 .cache
 test-results
+bench/results
+docs/generated

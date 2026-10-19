@@ -1,0 +1,44 @@
+{
+  "@envsemble/envui": {
+    "Select": {
+      "density": {
+        "report": "Select's density is gone: size=\"sm\" gives the small trigger, and every popup has the menus' anatomy. For a compact app or region, set scale=\"compact\" on its Theme.",
+        "values": {
+          "compact": {
+            "props": {
+              "size": "sm"
+            }
+          },
+          "standard": {
+            "report": "the popup now has the menus' anatomy, with a check mark on the chosen option."
+          }
+        }
+      },
+      "options": {
+        "to": "items",
+        "report": "Select's options are items in 1.0."
+      },
+      "hint": {
+        "to": "description",
+        "report": "Select's hint is description in 1.0."
+      },
+      "variant": {
+        "current": ["secondary", "outline"],
+        "report": "Select's variant is secondary or outline in 1.0: outlined is outline.",
+        "values": {
+          "outlined": {
+            "props": {
+              "variant": "outline"
+            }
+          }
+        }
+      },
+      "className": {
+        "report": "Select's className now goes to the root element, not the trigger: check styles that targeted the trigger, which `.env-select-trigger` inside the root selects."
+      },
+      "style": {
+        "report": "Select's style now goes to the root element, not the trigger: move declarations meant for the trigger to a rule for `.env-select-trigger` inside the root."
+      }
+    }
+  }
+}

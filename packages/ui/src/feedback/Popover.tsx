@@ -1,28 +1,96 @@
-import { Popover as BasePopover } from '@base-ui/react/popover';
-import { useState, type ReactElement, type ReactNode } from 'react';
-import { classNames } from '../internal/classNames.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+'use client';
 
-export interface PopoverProps {
-  /** The control that opens the popover; it receives the expanded state and ref. */
-  trigger: ReactElement;
-  /** A heading that also names the popover. */
-  title?: ReactNode;
-  /** Content, or a function that receives close for actions inside the popover. */
-  children: ReactNode | ((close: () => void) => ReactNode);
-  /** Accessible name when there is no title. */
-  'aria-label'?: string;
-  side?: 'top' | 'bottom' | 'left' | 'right';
-  align?: 'start' | 'center' | 'end';
-  open?: boolean;
-  defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  /** standard (default) about 20 rem wide; wide about 28 rem. */
-  width?: 'standard' | 'wide';
-  className?: string;
+import { Popover as BasePopover } from '@base-ui/react/popover';
+import {
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
+import { classNames } from '../internal/classNames.js';
+import { markTriggerOwner } from '../internal/triggerOwner.js';
+import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+
+const parts = {
+  Portal: BasePopover.Portal,
+  Positioner: BasePopover.Positioner,
+  Popup: BasePopover.Popup,
+};
+
+/**
+ * Why a popover or a hover card asks to open or close: a press on or a hover over its trigger, focus
+ * on it, Escape, a press outside, focus leaving, its own close, or the application.
+ */
+export type PopoverOpenChangeReason =
+  | 'trigger-press'
+  | 'trigger-hover'
+  | 'trigger-focus'
+  | 'outside-press'
+  | 'escape-key'
+  | 'close-press'
+  | 'focus-out'
+  | 'imperative-action'
+  | 'none';
+
+/** What a popover's or hover card's onOpenChange receives beside the requested state. */
+export interface PopoverOpenChangeDetails {
+  /** Why it asks to open or close. */
+  reason: PopoverOpenChangeReason;
 }
 
-/** A floating panel opened from a trigger, for details or a small form beside the control. */
+export interface PopoverProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
+  /**
+   * The control that opens and closes the popover, such as a Button or an IconButton. It must take
+   * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.
+   */
+  trigger: ReactElement;
+  /** A heading at the top, such as the name of what the popover describes; it names the popover. */
+  title?: ReactNode;
+  /**
+   * The popover's content, or a function that receives close, for an action inside it that should
+   * close the popover once it is done, such as a form's submit.
+   */
+  children: ReactNode | ((close: () => void) => ReactNode);
+  /** The popover's accessible name when it has no title, such as Rename document. */
+  'aria-label'?: string;
+  /**
+   * The side of the trigger the popover opens on: top, bottom, left, right, or inline-start and
+   * inline-end, which follow the text direction. It flips to the other side without room.
+   * @default 'bottom'
+   */
+  side?: PopupSide;
+  /**
+   * How the popover lines up with the trigger along that side: its start, center or end.
+   * @default 'center'
+   */
+  align?: 'start' | 'center' | 'end';
+  /** Whether a controlled popover is open; update it from onOpenChange. */
+  open?: boolean;
+  /**
+   * Whether an uncontrolled popover starts open.
+   * @default false
+   */
+  defaultOpen?: boolean;
+  /**
+   * Receives the requested state, and why, each time the popover asks to open or close: from the
+   * trigger, Esc, a press outside, focus leaving it or close (`close-press`).
+   */
+  onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
+  /**
+   * The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form.
+   * Both narrow to fit the window.
+   * @default 'md'
+   */
+  width?: 'md' | 'lg';
+}
+
+/**
+ * A floating panel beside its trigger, for details or a small form: it opens on press, moves focus
+ * into itself, and closes with Esc, a press outside or when focus leaves it. className, style, ref
+ * and data attributes go to the popover's surface.
+ */
 export function Popover({
   trigger,
   title,
@@ -33,42 +101,41 @@ export function Popover({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
-  width = 'standard',
+  width = 'md',
   className,
+  ...popupProps
 }: PopoverProps) {
-  const theme = useTheme();
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
-  function setOpen(next: boolean) {
+  function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (controlledOpen === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    onOpenChange?.(next, { reason });
   }
-  const close = () => setOpen(false);
+  const close = () => setOpen(false, 'close-press');
+  // The popup takes the text direction at its trigger.
+  const triggerRef = useRef<HTMLButtonElement>(null);
   return (
-    <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
-      <BasePopover.Trigger render={trigger} />
-      <BasePopover.Portal>
-        <Theme theme={theme} className="env-popover-theme">
-          <BasePopover.Positioner
-            side={side}
-            align={align}
-            sideOffset={8}
-            collisionPadding={8}
-            className="env-popover-positioner"
-          >
-            <BasePopover.Popup
-              className={classNames('env-popover', className)}
-              data-width={width}
-              aria-label={title == null ? label : undefined}
-            >
-              {title != null && (
-                <BasePopover.Title className="env-popover-title">{title}</BasePopover.Title>
-              )}
-              {typeof children === 'function' ? children(close) : children}
-            </BasePopover.Popup>
-          </BasePopover.Positioner>
-        </Theme>
-      </BasePopover.Portal>
+    <BasePopover.Root
+      open={open}
+      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+    >
+      <BasePopover.Trigger ref={triggerRef} render={trigger} />
+      <PopupSurface
+        parts={parts}
+        trigger={triggerRef}
+        side={side}
+        align={align}
+        width={width}
+        className={classNames('env-popover', className)}
+        popupProps={{ ...popupProps, 'aria-label': title == null ? label : undefined }}
+      >
+        {title != null && (
+          <BasePopover.Title className="env-popover-title">{title}</BasePopover.Title>
+        )}
+        {typeof children === 'function' ? children(close) : children}
+      </PopupSurface>
     </BasePopover.Root>
   );
 }
+
+markTriggerOwner(Popover);

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "motion": {
+    "duration": {
+      "$type": "duration",
+      "fast": { "$value": { "value": 0.12, "unit": "s" } },
+      "medium": { "$value": { "value": 0.16, "unit": "s" } },
+      "slow": { "$value": { "value": 0.24, "unit": "s" } }
+    },
+    "ease": { "$type": "cubicBezier", "$value": [0.45, 0, 0.2, 1] },
+    "ease-standard": { "$type": "cubicBezier", "$value": "{motion.ease}" },
+    "ease-enter": {
+      "$type": "cubicBezier",
+      "$description": "Elements entering decelerate into place.",
+      "$value": [0.05, 0.7, 0.1, 1]
+    },
+    "ease-exit": {
+      "$type": "cubicBezier",
+      "$description": "Leaving elements accelerate away.",
+      "$value": [0.3, 0, 0.8, 0.15]
+    }
+  }
+}

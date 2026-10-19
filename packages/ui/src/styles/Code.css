@@ -1,14 +1,30 @@
 .env-theme {
-  --font-family-code: ui-monospace, 'Cascadia Code', Consolas, monospace;
-  --font-size-code: 0.8125rem;
+  --env-code-font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --env-code-font-size: 0.8125rem;
+  /*
+   * A switch for the high-contrast colors of highlighted code, set by each Theme as the tokens'
+   * contrast is: empty under high contrast, and invalid otherwise, so that a token's
+   * --env-code-token-now, which starts with it, holds its high-contrast color or nothing.
+   */
+  --env-code-high-contrast: initial;
+}
+.env-theme[data-env-contrast='high'] {
+  --env-code-high-contrast: ;
+}
+@media (prefers-contrast: more) {
+  .env-theme:not([data-env-contrast='standard']) {
+    --env-code-high-contrast: ;
+  }
 }
 .env-code {
   padding: 0.125em 0.375em;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
   background: var(--env-code-background);
   color: var(--env-code-foreground);
-  font: 0.9em/1.4 var(--font-family-code);
-  overflow-wrap: anywhere;
+  font: 0.9em/1.4 var(--env-code-font-family);
+  /* A container where a column should keep room for its longest word, such as a table cell, sets
+     --env-code-overflow-wrap to break-word. */
+  overflow-wrap: var(--env-code-overflow-wrap, anywhere);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -16,11 +32,11 @@
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
-  padding: var(--space-5);
-  border-radius: var(--radius-standard);
+  padding: var(--env-space-5);
+  border-radius: var(--env-radius-sm);
   background: var(--env-code-background);
   color: var(--env-code-foreground);
-  font: var(--font-size-code) / 1.7 var(--font-family-code);
+  font: var(--env-code-font-size) / 1.7 var(--env-code-font-family);
 }
 .env-code-block pre {
   margin: 0;
@@ -31,9 +47,15 @@
 .env-code-block code {
   font: inherit;
 }
+/* Each highlighted token has its standard color and its high-contrast one; see .env-theme. */
+.env-code-block code span {
+  --env-code-token-now: var(--env-code-high-contrast) var(--env-code-token-high);
+
+  color: var(--env-code-token-now, var(--env-code-token));
+}
 .env-code-block pre:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
-  outline-offset: var(--space-1);
+  outline: 0.125rem solid var(--env-color-border-focus);
+  outline-offset: var(--env-space-1);
 }
 .env-code-block[data-wrap] pre {
   white-space: pre-wrap;
@@ -43,8 +65,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  margin-block-end: var(--space-3);
+  gap: var(--env-space-4);
+  margin-block-end: var(--env-space-3);
   min-inline-size: 0;
   flex-wrap: wrap;
 }
@@ -52,9 +74,9 @@
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
-  font: var(--type-body-small);
+  font: var(--env-type-body-small);
 }
-.env-code-copy-status {
+.env-code-block-copy-status {
   position: absolute;
   inline-size: 0.0625rem;
   block-size: 0.0625rem;
@@ -68,11 +90,11 @@
 .env-code-diff {
   min-inline-size: 0;
   overflow: hidden;
-  border-radius: var(--radius-standard);
+  border-radius: var(--env-radius-sm);
   background: var(--env-code-background);
   color: var(--env-code-foreground);
 }
 .env-code-diff > .env-loading-state,
 .env-code-diff > .env-empty-state {
-  padding: var(--space-5);
+  padding: var(--env-space-5);
 }

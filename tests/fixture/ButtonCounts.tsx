@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import {
-  ActionGroup,
   Badge,
   Button,
-  Counter,
-  DiffCount,
+  CounterBadge,
+  DiffStat,
   Tabs,
   Text,
   Theme,
-  type ButtonVariant,
   type ThemeValue,
+  Stack,
 } from '@envsemble/envui';
 
-const variants: ButtonVariant[] = ['primary', 'secondary', 'outlined', 'text', 'important'];
+/** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
+const emphasis = {
+  primary: { variant: 'primary' },
+  secondary: { variant: 'secondary' },
+  outlined: { variant: 'outline' },
+  destructive: { variant: 'primary', tone: 'danger' },
+  important: { variant: 'primary', tone: 'accent' },
+  text: { variant: 'text' },
+} as const;
+const variants = ['primary', 'secondary', 'outlined', 'text', 'important'] as const;
 
 /** Counts and badges inside buttons and tabs, mounted with ?fixture=button-counts. */
 export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
@@ -29,7 +37,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'submissions',
             button: (
               <Button>
-                Submissions <Counter value={24} tone="accent" />
+                Submissions <CounterBadge value={24} tone="accent" />
               </Button>
             ),
             content: <Text>Submissions</Text>,
@@ -38,7 +46,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'drafts',
             button: (
               <Button>
-                Drafts <Counter value={3} />
+                Drafts <CounterBadge value={3} />
               </Button>
             ),
             content: <Text>Drafts</Text>,
@@ -59,22 +67,22 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'diffs',
             button: (
               <Button variant="secondary">
-                Diffs <DiffCount additions={124} deletions={37} />
+                Diffs <DiffStat additions={124} deletions={37} />
               </Button>
             ),
             content: <Text>Diffs</Text>,
           },
         ]}
       />
-      <ActionGroup>
+      <Stack direction="row" wrap align="center" gap={4}>
         {variants.map((variant) => (
-          <Button key={variant} variant={variant}>
-            {variant} <Counter value={7} /> <Badge tone="success">New</Badge>{' '}
-            <DiffCount additions={3} deletions={1} />
+          <Button key={variant} {...emphasis[variant]}>
+            {variant} <CounterBadge value={7} /> <Badge tone="success">New</Badge>{' '}
+            <DiffStat additions={3} deletions={1} />
           </Button>
         ))}
-      </ActionGroup>
-      <DiffCount additions={12} deletions={3} data-testid={`diff-count-${theme}`} />
+      </Stack>
+      <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
     </Theme>
   );
 }

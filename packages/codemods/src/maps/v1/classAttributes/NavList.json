@@ -1,0 +1,14 @@
+{
+  "env-navigation-selected": {
+    "class": "env-nav-list-item",
+    "attributes": {
+      "data-selected": ""
+    }
+  },
+  "env-navigation-icon-only": {
+    "class": "env-nav-list-item",
+    "attributes": {
+      "data-icon-only": ""
+    }
+  }
+}

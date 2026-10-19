@@ -15,62 +15,34 @@ body {
 .docs-app *::after {
   box-sizing: border-box;
 }
-.docs-shell {
-  display: grid;
-  grid-template-columns: clamp(12rem, 18vw, 17rem) minmax(0, 1fr);
-  min-height: 100dvh;
+/* The frame's parts come from AppShell and Sidebar; these rules size the wordmark in their headers
+   and keep the page's own layout. */
+.docs-brand-link,
+.docs-header-brand {
+  display: block;
+  inline-size: 4.5rem;
+  margin-inline-start: var(--env-space-3);
 }
-.docs-sidebar {
-  min-inline-size: 0;
-  position: sticky;
-  top: 0;
-  height: 100dvh;
-  overflow-y: auto;
-  padding: 2rem 1rem;
+.docs-header-brand {
+  inline-size: 4rem;
+  margin-inline-start: var(--env-space-2);
 }
-.docs-mobile-header {
-  display: none;
-}
-.docs-mobile-brand {
-  inline-size: min(5rem, 25%);
-}
-.docs-mobile-brand svg {
+.docs-brand-link svg,
+.docs-header-brand svg {
   display: block;
   inline-size: 100%;
   block-size: auto;
+  color: var(--env-color-fg-default);
 }
-.docs-navigation-panel {
-  min-inline-size: 0;
-}
-.docs-brand-link {
-  display: block;
-  width: 4.5rem;
-  margin: 0 0 2rem 0.75rem;
-}
-.docs-brand-link svg {
-  width: 100%;
-  height: auto;
-  display: block;
-  color: var(--color-text-primary);
-}
-.docs-sidebar-navigation {
-  gap: 0.125rem;
-}
-.docs-nav-heading {
-  margin: 1.5rem 0.75rem 0.5rem;
-}
-.docs-nav-subheading {
-  margin: var(--space-4) var(--space-3) var(--space-1);
-}
-.docs-sidebar-footer {
-  margin: 2rem 0.75rem 0;
+/* The trigger that collapses the navigation starts the header, on the icons' centre line, so it
+   stays where it is as the navigation collapses to a rail or peeks out of one; a rail shows only
+   the trigger. */
+.docs-sidebar[data-rail] .docs-brand-link {
+  display: none;
 }
 .docs-main {
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  min-height: 100dvh;
-  outline: none;
 }
 .docs-page-header,
 .docs-preview,
@@ -81,19 +53,19 @@ body {
   margin-inline: auto;
 }
 .docs-page-header {
-  padding: var(--space-5) var(--docs-gutter) var(--space-4);
-  margin-block-end: var(--space-8);
+  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-4);
+  margin-block-end: var(--env-space-8);
 }
 .docs-page-banner,
 .docs-overview-hero {
-  padding-block: var(--space-9);
+  padding-block: var(--env-space-9);
 }
 .docs-page-banner-heading {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
   max-inline-size: 100%;
 }
 .docs-page-banner {
@@ -105,14 +77,14 @@ body {
 }
 .docs-page-banner-content {
   position: relative;
-  z-index: 1;
+  z-index: var(--env-z-raised);
   inline-size: 100%;
   text-align: center;
 }
 .docs-page-banner-title {
   max-inline-size: 22ch;
   font-size: clamp(1.875rem, calc(1.125rem + 4cqi), 3.5rem);
-  font-weight: 500;
+  font-weight: var(--env-font-weight-medium);
   line-height: 1.1;
   letter-spacing: -0.035em;
   text-wrap: balance;
@@ -128,7 +100,7 @@ body {
   inline-size: clamp(10rem, 28cqi, 18rem);
   aspect-ratio: 1;
   transform: translateY(-50%) rotate(-12deg);
-  color: var(--color-text-muted);
+  color: var(--env-color-fg-muted);
   opacity: 0.1;
   pointer-events: none;
 }
@@ -137,18 +109,75 @@ body {
   width: 100%;
   height: 100%;
 }
-.docs-page-controls {
-  margin-inline-start: auto;
-  flex-shrink: 0;
-  max-inline-size: 100%;
+/* In a narrow banner the page's views wrap onto another row rather than scroll out of sight, so
+   every view, Props included, stays visible. */
+@container (max-inline-size: 30rem) {
+  .docs-reference-tabs .env-tabs-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    --env-surface-radius: var(--env-radius-surface);
+  }
 }
-.docs-theme-toggle {
-  position: fixed;
-  top: max(var(--space-4), env(safe-area-inset-top));
-  right: max(var(--space-4), env(safe-area-inset-right));
-  z-index: 90;
+/* The display settings and the theme stay in the top right corner of the window as the page
+   scrolls, beside the content column rather than in it. The row that holds them sticks to the
+   window's top and is no taller than nothing, so they take no space above the page. */
+.docs-page-controls {
+  position: sticky;
+  z-index: var(--env-z-sticky);
+  inset-block-start: 0;
+  block-size: 0;
+}
+.docs-page-controls-bar {
+  position: absolute;
+  inset-block-start: var(--env-space-3);
+  inset-inline-end: var(--env-space-4);
+  display: flex;
+  gap: var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-page);
+}
+@media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
+  .docs-page-controls {
+    display: none;
+  }
 }
 .docs-page-navigation {
-  padding: var(--space-6) var(--docs-gutter) var(--space-8);
+  padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
   margin-top: auto;
+}
+/* A page's changelog follows the page navigation, in the small muted type of a footnote. */
+.docs-changelog {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+.docs-changelog :is(h2, h3, h4, p, li) {
+  color: inherit;
+  font: inherit;
+}
+.docs-changelog code {
+  color: inherit;
+}
+.docs-changelog :is(h2, h3) {
+  font-weight: var(--env-font-weight-medium);
+}
+/* The foot of every page, below a hairline across the content's width. */
+.docs-footer {
+  inline-size: min(100%, var(--docs-content-width));
+  margin-inline: auto;
+  padding: var(--env-space-5) var(--docs-gutter) var(--env-space-6);
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
+}
+/* A page that has nothing to show yet, such as the templates. */
+.docs-placeholder {
+  display: grid;
+  min-block-size: 22rem;
+}
+.docs-token-color {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--env-space-2);
+}
+/* A section that a route scrolls to, such as a prop's row, stays clear of the window's top edge. */
+.docs-main [id] {
+  scroll-margin-block-start: var(--env-space-6);
 }

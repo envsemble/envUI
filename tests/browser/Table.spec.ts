@@ -83,7 +83,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(sortReport).toHaveAccessibleName('Report sort descending');
   await expect(page.getByTestId('order-light')).toHaveText('audit tokens quarterly roadmap');
   // The sorted header shows its order in the primary text color.
-  await expect(report).toHaveCSS('color', await tokenColor(report, '--color-text-primary'));
+  await expect(report).toHaveCSS('color', await tokenColor(report, '--env-color-fg-default'));
 
   await sortReport.focus();
   await page.keyboard.press('Enter');
@@ -103,7 +103,7 @@ test('sortable headers are buttons that say what pressing does and report the or
   await expect(page.getByTestId('order-light')).toHaveText('roadmap tokens quarterly audit');
   // In a numeric column the arrow comes first, so the label lines up with the numbers below.
   const label = (await reviews.locator('.env-table-header-label').boundingBox())!;
-  const arrow = (await reviews.locator('.env-symbol').boundingBox())!;
+  const arrow = (await reviews.locator('.env-icon').boundingBox())!;
   const number = table.getByRole('cell', { name: '3', exact: true });
   const numberBox = (await number.boundingBox())!;
   const padding = await number.evaluate((cell) => parseFloat(getComputedStyle(cell).paddingRight));
@@ -111,90 +111,94 @@ test('sortable headers are buttons that say what pressing does and report the or
   expect(label.x + label.width).toBeCloseTo(numberBox.x + numberBox.width - padding, 0);
   await expect(reviews.getByRole('button')).toHaveCSS(
     'outline-color',
-    await tokenColor(reviews, '--color-focus-ring'),
+    await tokenColor(reviews, '--env-color-border-focus'),
   );
 });
 
-test('columns resize from the keyboard and the pointer without changing the table width', async ({
-  page,
-}) => {
-  const table = page.getByRole('table', { name: 'Reports light' });
-  const widths = page.getByTestId('widths-light');
-  const handle = table.getByRole('separator', { name: 'Resize Report' });
-  // The last column ends at the table's edge, so it has no handle.
-  await expect(table.getByRole('separator')).toHaveCount(3);
-  await expect(handle).toHaveAttribute('aria-orientation', 'vertical');
-  await expect(handle).toHaveAttribute('aria-valuenow', '40');
-  await expect(handle).toHaveAttribute('aria-valuemin', '10');
-  await expect(handle).toHaveAttribute('aria-valuemax', '60');
-  await expect(handle).toHaveAttribute('aria-valuetext', '40%');
-  // The header keeps its own name beside the sort button and the handle.
-  await expect(table.getByRole('columnheader', { name: 'Report', exact: true })).toBeVisible();
+test(
+  'columns resize from the keyboard and the pointer without changing the table width',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const table = page.getByRole('table', { name: 'Reports light' });
+    const widths = page.getByTestId('widths-light');
+    const handle = table.getByRole('separator', { name: 'Resize Report' });
+    // The last column ends at the table's edge, so it has no handle.
+    await expect(table.getByRole('separator')).toHaveCount(3);
+    await expect(handle).toHaveAttribute('aria-orientation', 'vertical');
+    await expect(handle).toHaveAttribute('aria-valuenow', '40');
+    await expect(handle).toHaveAttribute('aria-valuemin', '10');
+    await expect(handle).toHaveAttribute('aria-valuemax', '60');
+    await expect(handle).toHaveAttribute('aria-valuetext', '40%');
+    // The header keeps its own name beside the sort button and the handle.
+    await expect(table.getByRole('columnheader', { name: 'Report', exact: true })).toBeVisible();
 
-  const tableWidth = (await table.boundingBox())!.width;
-  const columnShare = async (name: string) =>
-    (await table.getByRole('columnheader', { name, exact: true }).boundingBox())!.width /
-    tableWidth;
-  expect(await columnShare('Report')).toBeCloseTo(0.4, 2);
+    const tableWidth = (await table.boundingBox())!.width;
+    const columnShare = async (name: string) =>
+      (await table.getByRole('columnheader', { name, exact: true }).boundingBox())!.width /
+      tableWidth;
+    expect(await columnShare('Report')).toBeCloseTo(0.4, 2);
 
-  await handle.focus();
-  await expect(handle).toHaveCSS('outline-style', 'none');
-  // Keyboard focus shows the boundary line in the focus ring color.
-  await expect
-    .poll(() => handle.evaluate((element) => getComputedStyle(element, '::after').backgroundColor))
-    .toBe(await tokenColor(handle, '--color-focus-ring'));
-  await page.keyboard.press('ArrowRight');
-  await expect(widths).toHaveText('41.0 29.0 15.0 15.0');
-  await page.keyboard.press('Shift+ArrowRight');
-  await expect(widths).toHaveText('46.0 24.0 15.0 15.0');
-  await expect(handle).toHaveAttribute('aria-valuenow', '46');
-  await page.keyboard.press('End');
-  await expect(widths).toHaveText('60.0 10.0 15.0 15.0');
-  await page.keyboard.press('ArrowRight');
-  await expect(widths).toHaveText('60.0 10.0 15.0 15.0');
-  await page.keyboard.press('Home');
-  await expect(widths).toHaveText('10.0 60.0 15.0 15.0');
-  await page.keyboard.press('ArrowLeft');
-  await expect(widths).toHaveText('10.0 60.0 15.0 15.0');
-  await expect.poll(() => columnShare('Report')).toBeCloseTo(0.1, 2);
-  await expect.poll(() => columnShare('Owner')).toBeCloseTo(0.6, 2);
-  expect((await table.boundingBox())!.width).toBeCloseTo(tableWidth, 0);
+    await handle.focus();
+    await expect(handle).toHaveCSS('outline-style', 'none');
+    // Keyboard focus shows the boundary line in the focus ring color.
+    await expect
+      .poll(() =>
+        handle.evaluate((element) => getComputedStyle(element, '::after').backgroundColor),
+      )
+      .toBe(await tokenColor(handle, '--env-color-border-focus'));
+    await page.keyboard.press('ArrowRight');
+    await expect(widths).toHaveText('41.0 29.0 15.0 15.0');
+    await page.keyboard.press('Shift+ArrowRight');
+    await expect(widths).toHaveText('46.0 24.0 15.0 15.0');
+    await expect(handle).toHaveAttribute('aria-valuenow', '46');
+    await page.keyboard.press('End');
+    await expect(widths).toHaveText('60.0 10.0 15.0 15.0');
+    await page.keyboard.press('ArrowRight');
+    await expect(widths).toHaveText('60.0 10.0 15.0 15.0');
+    await page.keyboard.press('Home');
+    await expect(widths).toHaveText('10.0 60.0 15.0 15.0');
+    await page.keyboard.press('ArrowLeft');
+    await expect(widths).toHaveText('10.0 60.0 15.0 15.0');
+    await expect.poll(() => columnShare('Report')).toBeCloseTo(0.1, 2);
+    await expect.poll(() => columnShare('Owner')).toBeCloseTo(0.6, 2);
+    expect((await table.boundingBox())!.width).toBeCloseTo(tableWidth, 0);
 
-  // Double-clicking restores the starting widths.
-  await handle.dblclick();
-  await expect(widths).toHaveText('40.0 30.0 15.0 15.0');
+    // Double-clicking restores the starting widths.
+    await handle.dblclick();
+    await expect(widths).toHaveText('40.0 30.0 15.0 15.0');
 
-  const box = (await handle.boundingBox())!;
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width / 2 + tableWidth * 0.1, box.y + box.height / 2, {
-    steps: 4,
-  });
-  await expect(table).toHaveAttribute('data-resizing', '');
-  await expect(handle).toHaveAttribute('data-resizing', '');
-  await page.mouse.up();
-  await expect(table).not.toHaveAttribute('data-resizing');
-  await expect(handle).toHaveAttribute('aria-valuenow', '50');
-  await expect(table.getByRole('separator', { name: 'Resize Owner' })).toHaveAttribute(
-    'aria-valuemax',
-    '25',
-  );
-  await expect.poll(() => columnShare('Report')).toBeCloseTo(0.5, 2);
-  expect((await table.boundingBox())!.width).toBeCloseTo(tableWidth, 0);
+    const box = (await handle.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 + tableWidth * 0.1, box.y + box.height / 2, {
+      steps: 4,
+    });
+    await expect(table).toHaveAttribute('data-resizing', '');
+    await expect(handle).toHaveAttribute('data-resizing', '');
+    await page.mouse.up();
+    await expect(table).not.toHaveAttribute('data-resizing');
+    await expect(handle).toHaveAttribute('aria-valuenow', '50');
+    await expect(table.getByRole('separator', { name: 'Resize Owner' })).toHaveAttribute(
+      'aria-valuemax',
+      '25',
+    );
+    await expect.poll(() => columnShare('Report')).toBeCloseTo(0.5, 2);
+    expect((await table.boundingBox())!.width).toBeCloseTo(tableWidth, 0);
 
-  // A table can own its widths; a cut-short cell ends with an ellipsis.
-  const owned = page.getByRole('table', { name: 'Owned widths light' });
-  const ownerHandle = owned.getByRole('separator', { name: 'Resize the owner column' });
-  await expect(ownerHandle).toHaveAttribute('aria-valuenow', '35');
-  await ownerHandle.focus();
-  await page.keyboard.press('Shift+ArrowLeft');
-  await expect(ownerHandle).toHaveAttribute('aria-valuenow', '30');
-  await owned.getByRole('separator', { name: 'Resize Name' }).dblclick();
-  await expect(ownerHandle).toHaveAttribute('aria-valuenow', '35');
-  const cut = owned.getByRole('cell', { name: /A very long report name/ });
-  await expect(cut).toHaveCSS('text-overflow', 'ellipsis');
-  expect(await cut.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
-});
+    // A table can own its widths; a cut-short cell ends with an ellipsis.
+    const owned = page.getByRole('table', { name: 'Owned widths light' });
+    const ownerHandle = owned.getByRole('separator', { name: 'Resize the owner column' });
+    await expect(ownerHandle).toHaveAttribute('aria-valuenow', '35');
+    await ownerHandle.focus();
+    await page.keyboard.press('Shift+ArrowLeft');
+    await expect(ownerHandle).toHaveAttribute('aria-valuenow', '30');
+    await owned.getByRole('separator', { name: 'Resize Name' }).dblclick();
+    await expect(ownerHandle).toHaveAttribute('aria-valuenow', '35');
+    const cut = owned.getByRole('cell', { name: /A very long report name/ });
+    await expect(cut).toHaveCSS('text-overflow', 'ellipsis');
+    expect(await cut.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+  },
+);
 
 test('columns resize the other way in a right-to-left table', async ({ page }) => {
   const table = page.getByRole('table', { name: 'Reports light' });
@@ -230,6 +234,27 @@ test('columns resize the other way in a right-to-left table', async ({ page }) =
   expect(header.width / tableWidth).toBeCloseTo(0.5, 2);
 });
 
+test('links in a selected row are underlined, so color is not all that tells them from its text', async ({
+  page,
+}) => {
+  for (const theme of themes) {
+    const rows = page.getByRole('table', { name: `Selected links ${theme}` }).getByRole('row');
+    // all() reads the rows there are now, without waiting: the table may not have rendered yet.
+    await expect(rows).toHaveCount(2);
+    const [selected, other] = await rows.all();
+    const decoration = (row: Locator, name: string) =>
+      row
+        .getByRole('link', { name, exact: true })
+        .evaluate((link) => getComputedStyle(link).textDecorationLine);
+    expect(await decoration(selected!, 'Plain link')).toBe('underline');
+    expect(await decoration(selected!, 'Text button link')).toBe('underline');
+    // A link styled as a button keeps its look, and rows that aren't selected are unchanged.
+    expect(await decoration(selected!, 'Button link')).toBe('none');
+    expect(await decoration(other!, 'Plain link')).toBe('none');
+    expect(await decoration(other!, 'Text button link')).toBe('none');
+  }
+});
+
 test('selected rows report aria-selected and take the selection colors in both themes', async ({
   page,
 }) => {
@@ -242,7 +267,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     await expect(other).toHaveAttribute('aria-selected', 'false');
     const selection = await selected.evaluate((row) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-navigation-selected)';
+      probe.style.backgroundColor = 'var(--env-color-bg-selected)';
       row.closest('.env-theme')!.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
@@ -253,7 +278,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     // A bar in the selection text color marks the start of the row.
     await expect(selected.getByRole('cell').first()).toHaveCSS(
       'box-shadow',
-      `${await tokenColor(selected, '--color-on-navigation-selected')} 3px 0px 0px 0px inset`,
+      `${await tokenColor(selected, '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
     );
     expect(
       await paintedContrast(selected.getByRole('cell', { name: 'Mira Okafor' })),
@@ -263,7 +288,7 @@ test('selected rows report aria-selected and take the selection colors in both t
     await other.hover();
     const hovered = await selected.evaluate((row) => {
       const probe = document.createElement('span');
-      probe.style.backgroundColor = 'var(--color-row-selected-hover)';
+      probe.style.backgroundColor = 'var(--env-color-bg-selected-hover)';
       row.closest('.env-theme')!.append(probe);
       const color = getComputedStyle(probe).backgroundColor;
       probe.remove();
@@ -312,7 +337,7 @@ test('a stacking table lists its rows as blocks in a narrow container and keeps 
     // The selected row keeps its colors as a block.
     await expect(table.getByRole('row', { name: /design-system\/tokens/ })).toHaveCSS(
       'box-shadow',
-      `${await tokenColor(table, '--color-on-navigation-selected')} 3px 0px 0px 0px inset`,
+      `${await tokenColor(table, '--env-color-fg-on-selected')} 3px 0px 0px 0px inset`,
     );
 
     // The header row is visually hidden until a sort button in it has keyboard focus.
@@ -389,7 +414,7 @@ test('a table stacks below the width it is given, measured on its region', async
     await expect(region).toHaveAttribute('data-stacked', '');
     await expect(row).toHaveCSS('display', 'grid');
     await expect(
-      row.getByRole('cell', { name: 'Platform' }).locator('.env-table-cell-label'),
+      row.getByRole('cell', { name: 'Infrastructure' }).locator('.env-table-cell-label'),
     ).toBeVisible();
     await frame.evaluate((element) => (element.style.inlineSize = '62rem'));
     await expect(region).not.toHaveAttribute('data-stacked');
@@ -529,24 +554,43 @@ test('a header named by aria-label lends its name to its sort button and resize 
   ).toBeVisible();
 });
 
-test('content positioned in a cell stays inside the scroll region', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 900 });
-  const region = page.getByRole('region', { name: 'Hidden header text light' });
-  await expect(region).toHaveCSS('position', 'relative');
-  expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
-  // Visually hidden text at the end of a wide header row widens the region, not the page.
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await expect(
-    page.getByRole('table', { name: 'Hidden header text light' }).getByRole('columnheader', {
-      name: 'Actions',
-    }),
-  ).toBeAttached();
+test('a table named by aria-labelledby names its scroll region too, and its strings come from messages', async ({
+  page,
+}) => {
+  const region = page.getByRole('region', { name: 'Quarterly figures light' });
+  await expect(region).toHaveAttribute('tabindex', '0');
+  await expect(region.getByRole('table', { name: 'Quarterly figures light' })).toBeVisible();
+  await expect(region.getByRole('button')).toHaveAccessibleName('Quarter aufsteigend sortieren');
 });
 
-test('a compact table gives the controls in its cells the compact height', async ({ page }) => {
+test(
+  'content positioned in a cell stays inside the scroll region',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    const region = page.getByRole('region', { name: 'Hidden header text light' });
+    await expect(region).toHaveCSS('position', 'relative');
+    expect(await region.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(
+      true,
+    );
+    // Visually hidden text at the end of a wide header row widens the region, not the page.
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await expect(
+      page.getByRole('table', { name: 'Hidden header text light' }).getByRole('columnheader', {
+        name: 'Actions',
+      }),
+    ).toBeAttached();
+  },
+);
+
+test('tables give the controls in their cells the small height at every density', async ({
+  page,
+}) => {
   for (const theme of themes) {
     const table = page.getByRole('table', { name: `Owned widths ${theme}` });
-    await expect(table).toHaveAttribute('data-density', 'compact');
+    await expect(table).toHaveAttribute('data-density', 'sm');
     const button = table.getByRole('button', { name: 'Open' });
     const icon = table.getByRole('button', { name: `More for the report ${theme}` });
     expect((await button.boundingBox())!.height).toBeCloseTo(32, 0);
@@ -554,9 +598,10 @@ test('a compact table gives the controls in its cells the compact height', async
     expect(iconBox.width).toBeCloseTo(32, 0);
     expect(iconBox.height).toBeCloseTo(32, 0);
   }
-  // Standard tables keep the standard control height.
+  // Tables at the default density do too.
   const standard = page.getByRole('table', { name: 'Hidden header text light' });
-  await expect(standard.getByRole('button', { name: 'Edit' })).toHaveCSS('min-height', '40px');
+  await expect(standard).toHaveAttribute('data-density', 'md');
+  await expect(standard.getByRole('button', { name: 'Edit' })).toHaveCSS('min-height', '32px');
 });
 
 test('tables fit a narrow viewport: stacking tables stack, others scroll in their region', async ({

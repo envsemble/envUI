@@ -1,113 +1,131 @@
 .env-card {
-  --surface-card-padding: var(--env-surface-inset);
+  --env-card-padding: var(--env-surface-padding);
 }
 
-.env-clickable-card {
+/* A link or button card: the whole surface is the target. */
+.env-card[data-interactive] {
   inline-size: 100%;
   margin: 0;
-  color: var(--color-text-primary);
+  color: var(--env-color-fg-default);
   font: inherit;
   text-align: start;
   text-decoration: none;
   overflow-wrap: anywhere;
   cursor: pointer;
-  transition: background-color var(--motion-duration-fast) var(--motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-clickable-card:hover:not(:disabled):not([aria-disabled='true']) {
+.env-card[data-interactive]:hover:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-surface-hover);
 }
-.env-clickable-card:active:not(:disabled):not([aria-disabled='true']) {
+.env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
   background: var(--env-surface-pressed);
 }
-.env-clickable-card:focus-visible {
-  outline: 0.125rem solid var(--color-focus-ring);
+.env-card[data-interactive]:focus-visible {
+  outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
 }
-.env-clickable-card:is(:disabled, [aria-disabled='true']) {
-  opacity: var(--state-disabled-opacity);
+.env-card[data-interactive]:is(:disabled, [aria-disabled='true']) {
+  opacity: var(--env-state-disabled-opacity);
   cursor: default;
 }
 @media (prefers-reduced-motion: reduce) {
-  .env-clickable-card {
+  .env-card[data-interactive] {
     transition: none;
   }
 }
 
-.env-action-card {
-  padding: 0;
-  overflow: hidden;
-}
-.env-action-card-body {
-  padding: var(--surface-card-padding);
-}
-.env-action-card-heading {
+/* The heading row: the heading, and the meta at the end of the row; the row wraps when it runs out
+   of room. */
+.env-card-header {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--env-space-3);
 }
-/* The meta goes to the end of the heading row; the heading's child selector outweighs the text
+/* The meta goes to the end of the heading row; the header's child selector outweighs the text
    margin reset that Text applies to every variant. */
-.env-action-card-heading > .env-action-card-meta {
+.env-card-header > .env-card-meta {
   margin-inline-start: auto;
 }
-.env-action-card-body > :where(p:not(.env-text)) {
+
+/* A card with an action strip: the body takes the card's padding and the strip its own fill along
+   the bottom. */
+.env-card[data-layout='stack'][data-actions] {
+  padding: 0;
+  overflow: hidden;
+}
+.env-card[data-layout='stack'][data-actions] > .env-card-body {
+  padding: var(--env-card-padding);
+}
+.env-card[data-layout='stack'][data-actions] > .env-card-body > :where(p:not(.env-text)) {
   margin: 0;
   max-width: 32ch;
-  font: var(--type-body);
-  color: var(--color-text-muted);
+  font: var(--env-type-body);
+  color: var(--env-color-fg-muted);
   overflow-wrap: anywhere;
 }
-.env-action-card > .env-action-card-actions {
-  margin-top: auto;
-  padding: var(--space-3) var(--surface-card-padding);
-  background: var(--color-action-strip);
+.env-card[data-layout='stack'][data-actions] > .env-card-footer {
+  margin-block-start: auto;
+  padding: var(--env-space-3) var(--env-card-padding);
+  background: var(--env-color-bg-default);
 }
 
-.env-feature-card {
-  container: env-feature-card / inline-size;
+/* The feature layout: an icon at the start, the text, and the actions at the end. It follows the
+   card's own width: in a card narrower than 38 rem the actions move below the text. */
+.env-card[data-layout='feature'] {
+  container: env-card / inline-size;
 }
-.env-feature-card-layout {
+.env-card-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--env-space-4);
 }
-.env-feature-card-layout:has(> .env-feature-card-icon) {
+.env-card-layout:has(> .env-card-icon) {
   grid-template-columns: auto minmax(0, 1fr) auto;
 }
-.env-feature-card-icon {
-  width: 2.75rem;
-  height: 2.75rem;
+.env-card-icon {
+  --env-icon-size: 1.5rem;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
   display: grid;
   place-items: center;
-  color: var(--color-text-muted);
-}
-.env-feature-card-icon .env-symbol {
-  width: 1.5rem;
-  height: 1.5rem;
+  color: var(--env-color-fg-muted);
   font-size: 1.5rem;
 }
-.env-feature-card-copy {
+.env-card-layout > .env-card-body {
   min-width: 0;
 }
-.env-feature-card-action {
+.env-card-layout > .env-card-footer {
   min-inline-size: 0;
   max-inline-size: 100%;
   justify-self: end;
 }
-@container env-feature-card (max-width: 38rem) {
-  .env-feature-card-layout {
+@container env-card (max-width: 38rem) {
+  .env-card-layout {
     grid-template-columns: minmax(0, 1fr);
   }
-  .env-feature-card-layout:has(> .env-feature-card-icon) {
+  .env-card-layout:has(> .env-card-icon) {
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .env-feature-card-action {
+  .env-card-layout > .env-card-footer {
     grid-column: 1 / -1;
     justify-self: stretch;
   }
-  .env-feature-card-action > :is(a, button) {
+  .env-card-layout > .env-card-footer > :is(a, button) {
     width: 100%;
+  }
+}
+
+/* Motion: an interactive card settles a little while it is held, less than a compact control. Only
+   without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-card[data-interactive] {
+    transition-property: background-color, color, border-color, transform;
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease);
+  }
+  .env-card[data-interactive]:active:not(:disabled):not([aria-disabled='true']) {
+    transform: scale(0.99);
   }
 }

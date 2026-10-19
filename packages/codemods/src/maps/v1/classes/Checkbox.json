@@ -1,0 +1,5 @@
+{
+  "env-checkbox-control": "env-checkbox-input",
+  "env-checkbox-mark": "env-checkbox-indicator",
+  "env-switch-control": "env-switch-input"
+}

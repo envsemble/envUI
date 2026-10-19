@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Toast, ToastProvider, useToast } from '@envsemble/envui';
+import { Button, Toast, useToast } from '@envsemble/envui';
 
 export function ToastTriggers() {
   const toast = useToast();
@@ -22,19 +22,19 @@ export function ToastTriggers() {
         </Button>
         <Button
           data-testid="toast-success"
-          onClick={() => toast.show({ message: 'Success notice', variant: 'success' })}
+          onClick={() => toast.show({ message: 'Success notice', tone: 'success' })}
         >
           Show success notice
         </Button>
         <Button
           data-testid="toast-info"
-          onClick={() => toast.show({ message: 'Info notice', variant: 'info' })}
+          onClick={() => toast.show({ message: 'Info notice', tone: 'info' })}
         >
           Show info notice
         </Button>
         <Button
           data-testid="toast-error"
-          onClick={() => toast.show({ message: 'Persistent error notice', variant: 'error' })}
+          onClick={() => toast.show({ message: 'Persistent error notice', tone: 'danger' })}
         >
           Show error notice
         </Button>
@@ -43,7 +43,7 @@ export function ToastTriggers() {
           onClick={() =>
             toast.show({
               message: 'Persistent action notice',
-              variant: 'info',
+              tone: 'info',
               action: { label: 'Undo notice', onClick: () => setActionCount((count) => count + 1) },
             })
           }
@@ -64,7 +64,7 @@ export function ToastTriggers() {
             for (let index = 1; index <= 4; index++)
               toast.show({
                 message: `Bottom queue ${index}`,
-                placement: 'bottom-right',
+                placement: 'bottom-end',
                 duration: 0,
               });
           }}
@@ -105,39 +105,15 @@ export function ToastTriggers() {
   );
 }
 
-export function ManualToastFixture() {
-  const [visible, setVisible] = useState(true);
-  const [actions, setActions] = useState(0);
-  return (
-    <section className="fixture-section" data-testid="manual-toast-section">
-      <h2>Independent manual notification</h2>
-      {visible && (
-        <Toast
-          data-testid="manual-toast"
-          message="Manual independent notice"
-          dismissLabel="Dismiss manual notice"
-          onDismiss={() => setVisible(false)}
-          action={{ label: 'Manual action', onClick: () => setActions((count) => count + 1) }}
-        />
-      )}
-      <output data-testid="manual-action-count">{actions}</output>
-      <Button variant="secondary" onClick={() => setVisible(true)}>
-        Restore manual notice
-      </Button>
-    </section>
-  );
-}
-
 function MountNotice() {
   const toast = useToast();
   useEffect(() => {
-    toast.show({ message: 'Mounted persistent notice', variant: 'error' });
+    toast.show({ message: 'Mounted persistent notice', duration: 0 });
   }, [toast]);
   return (
     <Button
       onClick={() => {
-        for (let i = 0; i < 3; i++)
-          toast.show({ message: `Extra persistent ${i}`, variant: 'error' });
+        for (let i = 0; i < 3; i++) toast.show({ message: `Extra persistent ${i}`, duration: 0 });
       }}
     >
       Add strict notices
@@ -151,9 +127,9 @@ export function StrictToastFixture() {
     <>
       <Button onClick={() => setStress(true)}>Mount strict toast provider</Button>
       {stress && (
-        <ToastProvider>
+        <Toast.Provider>
           <MountNotice />
-        </ToastProvider>
+        </Toast.Provider>
       )}
     </>
   );

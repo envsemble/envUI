@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent, InputHTMLAttributes, ReactNode } from 'react';
 import { subscribeFormReset } from './subscribeFormReset.js';
