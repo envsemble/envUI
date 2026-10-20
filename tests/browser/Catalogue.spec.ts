@@ -154,6 +154,8 @@ test('offline reference loads every view without network or script errors', asyn
   page,
   context,
 }) => {
+  // It renders every view of every page, about 12 s on a fast machine and over 30 s on a busy runner.
+  test.slow();
   const errors: string[] = [];
   const requests: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
