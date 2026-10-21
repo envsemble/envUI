@@ -25,7 +25,7 @@ related:
   - menu
   - avatar
   - app-shell
-  - nav-list
+  - navigation-drawer
   - setup
 components:
   - AccountMenu
@@ -84,7 +84,7 @@ AccountMenu is the menu of the person who is signed in. Their avatar, or a row w
 
 ### Don't
 
-- Don't put the application's navigation in the account's menu; it belongs in the sidebar's [NavList](../components/nav-list.md).
+- Don't put the application's navigation in the account's menu; it belongs in a [NavigationDrawer](../components/navigation-drawer.md).
 - Don't hide sign out in a submenu.
 - Don't rename the theme choices; System, Light and Dark come from the provider's messages, translated with the rest.
 

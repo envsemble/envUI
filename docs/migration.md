@@ -94,7 +94,7 @@ Components take the names other libraries and the ARIA patterns use, and compoun
 | `FileDropzone`, `FileDropzoneProps`                                                                                                                                    | `DropZone`, `DropZoneProps`                                                                                                                                                              |
 | `OrganizationMenu`, `OrganizationMenuProps`, `OrganizationMenuOrganization`                                                                                            | `OrganizationSwitcher`, `OrganizationSwitcherProps`, `OrganizationSwitcherItem`                                                                                                          |
 | `GroupedRows`, `GroupedRowsProps`, `Row`, `RowProps`                                                                                                                   | `List.Root`, `List.RootProps`, `List.Item`, `List.ItemProps`                                                                                                                             |
-| `NavigationItem`, `NavigationItemProps`                                                                                                                                | `NavList.Item`, `NavList.ItemProps`, inside a `NavList.Root`                                                                                                                             |
+| `NavigationItem`, `NavigationItemProps`                                                                                                                                | Removed: an array of `Destination` items, passed to `NavigationDrawer`, `Rail` or `Bar`, as [navigation forms](#navigation-forms) lists                                                  |
 | `Menu`, `MenuItem`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem`, `MenuSeparator`, `MenuHeader`, `MenuSubmenu`                                   | `Menu.Root`, `Menu.Item`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem`, `Menu.Separator`, `Menu.Header`, `Menu.Submenu`                                        |
 | `MenuProps`, `MenuItemProps`, `MenuGroupProps`, `MenuRadioGroupProps`, `MenuRadioItemProps`, `MenuCheckboxItemProps`, `MenuHeaderProps`, `MenuSubmenuProps`            | `Menu.RootProps`, `Menu.ItemProps`, `Menu.GroupProps`, `Menu.RadioGroupProps`, `Menu.RadioItemProps`, `Menu.CheckboxItemProps`, `Menu.HeaderProps`, `Menu.SubmenuProps`                  |
 | `Menubar`, `MenubarProps`, `MenubarMenu`, `MenubarMenuProps`, `MenubarMenuOpenChangeDetails`                                                                           | `Menubar.Root`, `Menubar.RootProps`, `Menubar.Menu`, `Menubar.MenuProps`, `Menubar.MenuOpenChangeDetails`                                                                                |
@@ -105,13 +105,13 @@ Components take the names other libraries and the ARIA patterns use, and compoun
 | `ToastProvider`, `ToastProviderProps`                                                                                                                                  | `Toast.Provider`, `Toast.ProviderProps`                                                                                                                                                  |
 | `WindowFrame`, `WindowFrameProps`                                                                                                                                      | `WindowFrame.Root`, `WindowFrame.RootProps`; the other parts are in [the shell](#shell-dock-editors-and-code)                                                                            |
 | `AppShell`, `AppShellProps`, `PanelDock`, `SplitView`, `ClickableCard`, `InfoChip` and the other types                                                                 | As [the app frame](#the-app-frame), [the shell](#shell-dock-editors-and-code), [split panes](#split-panes), [content and display](#content-and-display) and the other sections list them |
-| `env-notice`, `env-counter`, `env-heatmap`, `env-date-time-field`, `env-file-dropzone`, `env-navigation-item`                                                          | `env-alert`, `env-counter-badge`, `env-calendar-heatmap`, `env-date-picker`, `env-drop-zone`, `env-nav-list-item`, with their parts: `env-notice-title` is `env-alert-title`             |
+| `env-notice`, `env-counter`, `env-heatmap`, `env-date-time-field`, `env-file-dropzone`                                                                                 | `env-alert`, `env-counter-badge`, `env-calendar-heatmap`, `env-date-picker`, `env-drop-zone`, with their parts: `env-notice-title` is `env-alert-title`                                  |
 | `env-disclosure-note`, `env-disclosure-content`                                                                                                                        | `env-disclosure`, `env-disclosure-panel`                                                                                                                                                 |
 | `env-grouped-rows`, `env-row`                                                                                                                                          | `env-list`, `env-list-item`                                                                                                                                                              |
 | `env-direction-links`, `env-direction-link`                                                                                                                            | `env-pager`, `env-pager-link`                                                                                                                                                            |
 | `env-organization-trigger`, `env-organization-menu-detail`                                                                                                             | `env-organization-switcher-trigger`, `env-organization-switcher-description`                                                                                                             |
 
-The documentation pages are named after their component, in the singular: `notices` is `alert`, `badges` and `chips` are `badge`, `buttons` is `button`, `heatmap` is `calendar-heatmap`, `cards` is `card`, `date-time-field` is `date-picker`, `dialogs` is `dialog`, `disclosures` is `disclosure`, `file-dropzone` is `drop-zone`, `keyboard` is `kbd`, `rows` is `list`, `messages` is `message`, `meters` is `meter`, `navigation` is `nav-list`, `direction-links` is `pager`, `loading` is `skeleton`, `split-view` is `split-pane`, `layout` is `stack`, `stats` is `stat`, `tables` is `table`, `fields` is `text-field` and `toasts` is `toast`, under `docs/components/` and the catalogue's `components/` routes.
+The documentation pages are named after their component, in the singular: `notices` is `alert`, `badges` and `chips` are `badge`, `buttons` is `button`, `heatmap` is `calendar-heatmap`, `cards` is `card`, `date-time-field` is `date-picker`, `dialogs` is `dialog`, `disclosures` is `disclosure`, `file-dropzone` is `drop-zone`, `keyboard` is `kbd`, `rows` is `list`, `messages` is `message`, `meters` is `meter`, `navigation` is `navigation-drawer`, `direction-links` is `pager`, `loading` is `skeleton`, `split-view` is `split-pane`, `layout` is `stack`, `stats` is `stat`, `tables` is `table`, `fields` is `text-field` and `toasts` is `toast`, under `docs/components/` and the catalogue's `components/` routes.
 
 ### Scale and density
 
@@ -129,7 +129,6 @@ The documentation pages are named after their component, in the singular: `notic
 | `size="compact"` on Tabs, SegmentedControl, Pagination, CopyButton | `size="sm"`                                                             |
 | `compact` on DropZone                                              | `size="sm"`                                                             |
 | `density` on Surface, Menu.Root, ContextMenu, Menubar.Menu         | Removed: give controls `size="sm"`, or set `scale="compact"` on a Theme |
-| `size` on NavList.Item                                             | Removed: items follow the scale                                         |
 
 The codemod reports each use it can't move, such as a value that is an expression. Fields now take the control height by default, menus and the popups of Select and Combobox have one anatomy at the scale's row height, and controls in table cells take the small height; check screens that relied on the 3.5 rem field. In style sheets, `v1-classes` rewrites the uses of `--control-height-small` and `--icon-button-size`, `var(--control-height-small)`, to `var(--env-control-height)`, and `--control-height-compact` to `--env-control-height-sm`, and reports `--scale`, which is gone. 1.0 has one control height where 0.x had three names, so it rewrites a declaration of `--control-height` and reports, and leaves, a declaration of `--control-height-small` or `--icon-button-size`: rewritten, `.toolbar { --control-height: 30px; --control-height-small: 24px; }` would declare `--env-control-height` twice and make every control 24 px, and `:root { --icon-button-size: 40px }` would resize every control. Remove those declarations, or set `--env-control-height` where you mean every control. A region that re-pointed the control heights to look compact, such as `.compact-controls { --control-height: var(--control-height-compact); --control-height-small: var(--control-height-compact); }`, keeps the look with `--env-control-height: var(--env-control-height-sm)` alone, so delete the reported line; `<Theme scale="compact">` around the region is the 1.0 way to make it compact.
 
@@ -199,7 +198,7 @@ Change by hand what the codemods can't see:
 
 | 0.x                                                                       | 1.0                                                                                        |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `trailing` on Menu.Item and NavList.Item                                  | `end`                                                                                      |
+| `trailing` on Menu.Item                                                   | `end`                                                                                      |
 | OrganizationSwitcher `organizations`, `currentOrganizationId`, `onSelect` | `items`, `value`, `onValueChange`                                                          |
 | `OrganizationSwitcherOrganization` and its `name` and `detail`            | `OrganizationSwitcherItem` and its `label` and `description`                               |
 | OrganizationSwitcher `className`, which styled the trigger                | `triggerClassName`; `className`, `style` and `ref` go to the menu popup, as on Menu.Root   |
@@ -213,22 +212,38 @@ Change by hand what the codemods can't see:
 | `.env-breadcrumb`, `.env-breadcrumb-link` and the other parts             | `.env-breadcrumbs-item`, `.env-breadcrumbs-link` and the other parts                       |
 | `.env-tree-row`, `.env-tree-detail`, `.env-tree-trailing`                 | `.env-tree-item`, `.env-tree-description`, `.env-tree-end`                                 |
 | `--env-tree-row-height`                                                   | `--env-tree-item-height`; the `--env-tree-row-padding-block-*` tokens keep their names     |
-| `.env-navigation-selected`, `.env-navigation-icon-only`                   | `.env-nav-list-item:where([data-selected])`, `.env-nav-list-item:where([data-icon-only])`  |
 | `.env-menu-theme`, the theme around a Menu's or Menubar's popup           | `.env-popup-theme`, which every popup shares                                               |
-| `.env-navigation-trailing`, `.env-menu-item-trailing`                     | `.env-nav-list-item-end`, `.env-menu-item-end`                                             |
+| `.env-menu-item-trailing`                                                 | `.env-menu-item-end`                                                                       |
 
 Change by hand:
 
 - the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing`, and an organization's `name` and `detail` where `v1-props` can't read the items, such as a variable, which it reports, on OrganizationSwitcher and AccountMenu.OrganizationSubmenu; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
-- the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
 - a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`, so a selector such as `.env-document-tabs-tab:hover .env-document-tabs-close`, which `v1-classes` reports, matches nothing: write `.env-document-tabs-item:hover .env-document-tabs-close`; the close button is out of the tab order and hidden from assistive technology, and Delete, Backspace or the tab's context menu closes a tab from the keyboard;
 - a style for OrganizationSwitcher's radio, `env-organization-menu-radio` and `-radio-dot`, which `v1-classes` reports and leaves: the current organization takes Menu's check, `.env-menu-item-check` and its `.env-menu-item-check-mark`;
 - a style for the 0.7 contrast pane, `.env-contrast-row-pane`, which has no class in 1.0: style the Surface around the list;
-- a selected or icon-only NavList class in a `className` string, which `v1-classes` reports: the item sets the attributes from `selected` and `iconOnly`;
 - a zero-argument `onSort` handler keeps working as `onSortChange`; take the order from its argument instead of toggling it yourself.
 
-Menu.Item with `href` closes the menu as it is followed, and a disabled one renders no link. The strings of OrganizationSwitcher, DocumentTabs, Breadcrumbs, Pagination, Pager, NavList, Table and Tree come from EnvUIProvider's `messages`; their `*Label` props still override them for one component.
+Menu.Item with `href` closes the menu as it is followed, and a disabled one renders no link. The strings of OrganizationSwitcher, DocumentTabs, Breadcrumbs, Pagination, Pager, Table and Tree come from EnvUIProvider's `messages`; their `*Label` props still override them for one component.
+
+### Navigation forms
+
+NavList and NavList.Skeleton are gone. An application's destinations are one array, which it passes to the navigation form that suits the window: [Bar](components/bar.md) on compact windows, [Rail](components/rail.md) on medium ones and [NavigationDrawer](components/navigation-drawer.md) from expanded; Scaffold shows one per window class. The navigation drawer takes the name Drawer once today's Drawer has become Sheet. 0.x's NavigationItem, which 1.0's prereleases named NavList.Item, is gone with it.
+
+| Before                                                  | 1.0                                                                                             |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `<nav><NavList.Root>…</NavList.Root></nav>`             | `<NavigationDrawer destinations={destinations} />`, a `nav` landmark named Main or `aria-label` |
+| `<NavList.Item href icon selected>Label</NavList.Item>` | `{ label: 'Label', icon, href, current }` in `destinations`                                     |
+| A NavList.Item without `href`, with `onClick`           | `{ label, icon, onSelect }`                                                                     |
+| `end={<CounterBadge value={12} />}`                     | `count: 12`, named as "Inbox, 12 new"                                                           |
+| `<NavList.Group label="Folders">`                       | `group: 'Folders'` on each of its destinations, next to each other                              |
+| `iconOnly`, a sidebar's rail                            | `<Rail destinations={destinations} />`                                                          |
+| NavList.Skeleton                                        | The skeleton state of the frame                                                                 |
+| A NavList.Item as a tab of Tabs                         | A Button, such as `variant="ghost"` with `startIcon`                                            |
+| `messages.navList.itemCount`, `itemEnd`                 | `messages.navigation.itemCount`; end content other than a count has no place in a destination   |
+| `.env-nav-list-item`, `[data-selected]`                 | `.env-drawer-item`, `.env-rail-item`, `.env-bar-item`, with `[data-current]`                    |
+
+No codemod rewrites a NavList: its items are elements, and a destination is data, so turning one into the other is not mechanical. `v1-names` reports NavigationItem and NavigationItemProps, and `v1-classes` the `env-navigation-*` classes. Write the array once, and pass it to each form the application shows.
 
 ### Overlays and feedback
 
@@ -778,16 +793,16 @@ Prefer a small complete slice with shared controls and representative interactio
 
 Consult the relevant [component documentation](index.md) before adopting these candidates:
 
-| Existing responsibility                          | Candidate                                                 |
-| ------------------------------------------------ | --------------------------------------------------------- |
-| Typography, panes, vertical layouts, action rows | Text, Surface, Column, Row for actions, Grid              |
-| Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                     |
-| Side navigation and selected destinations        | NavList.Item with router-owned selection                  |
-| Content/action/clickable cards                   | Appropriate public Card composition                       |
-| Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
-| Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                           |
-| Loading and empty results                        | LoadingState, Skeleton, EmptyState                        |
-| Source, Markdown, formatted editing              | Optional content or rich-text entry                       |
+| Existing responsibility                          | Candidate                                                  |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| Typography, panes, vertical layouts, action rows | Text, Surface, Column, Row for actions, Grid               |
+| Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                      |
+| Side navigation and selected destinations        | Bar, Rail or NavigationDrawer, with router-owned `current` |
+| Content/action/clickable cards                   | Appropriate public Card composition                        |
+| Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch  |
+| Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                            |
+| Loading and empty results                        | LoadingState, Skeleton, EmptyState                         |
+| Source, Markdown, formatted editing              | Optional content or rich-text entry                        |
 
 Port behavior explicitly instead of mechanically translating props. Preserve labels, accessible names, href/router state, callback payloads, refs, form names/reset, focus restoration and mutation timing. Check button types inside forms, pending-operation dismissal rules and draft state through dialogs/navigation.
 

@@ -28,7 +28,7 @@ composes:
   - AppShell
   - Sidebar
   - SidebarTrigger
-  - NavList
+  - NavigationDrawer
   - CounterBadge
   - Breadcrumbs
   - Page
@@ -52,7 +52,7 @@ related:
   - loading
   - app-shell
   - sidebar
-  - nav-list
+  - navigation-drawer
   - breadcrumbs
 ---
 
@@ -69,7 +69,7 @@ Use this pattern to give an application one way around and a clear sense of plac
 ## Anatomy
 
 1. **Frame:** [AppShell.Root](../components/app-shell.md) around everything, with `AppShell.SkipLinks` as the first tab stop, an `AppShell.Header` with `mobileOnly` for phones, and `AppShell.Main` for the page.
-2. **Primary navigation:** one [Sidebar.Root](../components/sidebar.md) with `label="Primary"`, a [SidebarTrigger](../components/sidebar.md) in its `Sidebar.Header`, and a [NavList](../components/nav-list.md) in `Sidebar.Content`. Mark the current page with `selected` on its `NavList.Item`. Put less frequent places under a `Sidebar.Group` with a `label`, and a count on an item with `end`, such as a [CounterBadge](../components/badge.md).
+2. **Primary navigation:** one [Sidebar.Root](../components/sidebar.md) with `label="Primary"`, a [SidebarTrigger](../components/sidebar.md) in its `Sidebar.Header`, and a [NavigationDrawer](../components/navigation-drawer.md) in `Sidebar.Content`. Mark the current page with `selected` on its `NavList.Item`. Put less frequent places under a `Sidebar.Group` with a `label`, and a count on an item with `end`, such as a [CounterBadge](../components/badge.md).
 3. **Trail:** [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the `breadcrumbs` of the page's [PageHeader](../components/page-header.md), for a page two or more levels below a place in the primary navigation.
 4. **Views of one thing:** [Tabs](../components/tabs.md) under the PageHeader, for views of the object the page is about, such as a project's tasks and files.
 5. **Sequence:** a [Pager](../components/pager.md) at the end of the content, for pages read in order, such as a guide's chapters.

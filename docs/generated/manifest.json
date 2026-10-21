@@ -1043,7 +1043,7 @@
         },
         {
           "text": "Destinations in an application's navigation.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "A hierarchy people expand, such as folders.",
@@ -1061,7 +1061,7 @@
       "related": [
         "card",
         "table",
-        "nav-list",
+        "navigation-drawer",
         "surface",
         "radio",
         "spacing"
@@ -2381,7 +2381,7 @@
         },
         {
           "text": "Destinations in an application's navigation, such as a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Previous and next pages of a sequence.",
@@ -2390,7 +2390,7 @@
       ],
       "related": [
         "button",
-        "nav-list",
+        "navigation-drawer",
         "pager",
         "setup"
       ],
@@ -5569,226 +5569,359 @@
       }
     },
     {
-      "name": "NavList",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md",
+      "name": "Bar",
+      "page": "bar",
+      "doc": "docs/components/bar.md",
       "category": "Navigation",
-      "status": "stable",
-      "since": "0.1.0",
-      "summary": "A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label.",
       "aliases": [
-        "NavigationItem",
-        "NavItem",
-        "nav item",
-        "NavList.Item",
-        "Sidebar.Item",
-        "sidebar item",
-        "sidebar navigation",
-        "side navigation",
-        "navigation",
-        "navigation list",
-        "nav links",
-        "navigation links",
-        "sidebar links"
+        "navigation bar",
+        "bottom navigation",
+        "bottom bar",
+        "tab bar",
+        "bottom tabs",
+        "mobile navigation",
+        "NavigationBar",
+        "BottomNavigation"
       ],
       "useWhen": [
-        "An application's main destinations, such as the pages in a sidebar.",
-        "The pages of an area listed beside its content, such as the sections of a guide or of the account settings.",
-        "A collapsed sidebar or a rail that shows only icons, with the labels in tooltips (iconOnly)."
+        "An application's main destinations on a compact window, such as a phone, where Scaffold places the bar at the bottom.",
+        "Three to five destinations of equal weight that people move between often."
       ],
       "avoidWhen": [
+        {
+          "text": "The same destinations on a medium window, such as a tablet.",
+          "use": "Rail"
+        },
+        {
+          "text": "The same destinations on an expanded or larger window, or more than five, or in groups.",
+          "use": "NavigationDrawer"
+        },
         {
           "text": "Switching between views of the same content in one place.",
           "use": "Tabs"
         },
         {
-          "text": "A short list of actions or destinations behind one control.",
-          "use": "Menu"
+          "text": "Actions, such as New or Share.",
+          "use": "Toolbar"
+        }
+      ],
+      "related": [
+        "rail",
+        "navigation-drawer",
+        "tabs",
+        "menu",
+        "badge"
+      ],
+      "exports": [
+        "Bar"
+      ],
+      "examples": [
+        {
+          "name": "PhoneDestinations",
+          "title": "Phone destinations",
+          "description": "Bar is Material's navigation bar: the application's main destinations side by side across the bottom of a compact window, each an icon above its label. It is one of three navigation forms that take the same array of destinations, with Rail and NavigationDrawer; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`.",
+          "file": "docs/examples/bar/PhoneDestinations.tsx"
         },
         {
-          "text": "The path from the top of a hierarchy down to the current page.",
-          "use": "Breadcrumbs"
+          "name": "MoreDestinations",
+          "title": "More than five destinations",
+          "description": "Seven destinations: the bar shows four and More, whose menu holds the current one, so More takes the current fill.",
+          "file": "docs/examples/bar/MoreDestinations.tsx"
+        }
+      ],
+      "parts": {
+        "Bar": {
+          "root": "env-bar",
+          "parts": [
+            {
+              "class": "env-bar",
+              "description": "The navigation bar: a nav landmark across the bottom of a compact window."
+            },
+            {
+              "class": "env-bar-count",
+              "description": "A destination's count, on the icon's top end; 999+ above 999."
+            },
+            {
+              "class": "env-bar-indicator",
+              "description": "The pill around a destination's icon, filled while the destination is current."
+            },
+            {
+              "class": "env-bar-item",
+              "description": "A destination: a link or button with its indicator above its label."
+            },
+            {
+              "class": "env-bar-label",
+              "description": "A destination's label, under its indicator, cut short with an ellipsis."
+            },
+            {
+              "class": "env-bar-list",
+              "description": "The row of destinations, which share the bar's width."
+            },
+            {
+              "class": "env-bar-more",
+              "description": "The last item past five destinations, which opens the rest in a menu."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-current",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-bar-item",
+                "env-bar-more"
+              ]
+            }
+          ]
+        }
+      },
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
+    },
+    {
+      "name": "Rail",
+      "page": "rail",
+      "doc": "docs/components/rail.md",
+      "category": "Navigation",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label.",
+      "aliases": [
+        "navigation rail",
+        "side rail",
+        "icon rail",
+        "collapsed sidebar",
+        "icon sidebar",
+        "NavigationRail",
+        "sidebar rail"
+      ],
+      "useWhen": [
+        "An application's main destinations on a medium window, such as a tablet, where Scaffold places the rail at the window's start.",
+        "Destinations with short labels that fit under their icons."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The same destinations on a compact window, such as a phone.",
+          "use": "Bar"
         },
         {
-          "text": "The previous and next pages of an ordered sequence, such as a guide.",
-          "use": "Pager"
+          "text": "The same destinations on an expanded or larger window, or with group headings and long labels.",
+          "use": "NavigationDrawer"
+        },
+        {
+          "text": "A deep hierarchy that people expand and collapse, such as folders and files.",
+          "use": "Tree"
+        }
+      ],
+      "related": [
+        "bar",
+        "navigation-drawer",
+        "tree",
+        "badge"
+      ],
+      "exports": [
+        "Rail"
+      ],
+      "examples": [
+        {
+          "name": "TabletDestinations",
+          "title": "Tablet destinations",
+          "description": "Rail is Material's navigation rail: a narrow column at the window's start with the application's destinations one under another, each an icon above a short label. It is one of three navigation forms that take the same array of destinations, with Bar and NavigationDrawer; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`.",
+          "file": "docs/examples/rail/TabletDestinations.tsx"
+        },
+        {
+          "name": "GroupsInOrder",
+          "title": "Groups in order",
+          "description": "The same array as a drawer's: the rail shows the grouped destinations in order, without their headings.",
+          "file": "docs/examples/rail/GroupsInOrder.tsx"
+        }
+      ],
+      "parts": {
+        "Rail": {
+          "root": "env-rail",
+          "parts": [
+            {
+              "class": "env-rail",
+              "description": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer."
+            },
+            {
+              "class": "env-rail-count",
+              "description": "A destination's count, on the icon's top end; 999+ above 999."
+            },
+            {
+              "class": "env-rail-footer",
+              "description": "Content at the bottom of the rail, such as the account's button."
+            },
+            {
+              "class": "env-rail-header",
+              "description": "Content above the destinations, such as a button that opens the drawer or the main action."
+            },
+            {
+              "class": "env-rail-indicator",
+              "description": "The pill around a destination's icon, filled while the destination is current."
+            },
+            {
+              "class": "env-rail-item",
+              "description": "A destination: a link or button with its indicator above its label."
+            },
+            {
+              "class": "env-rail-label",
+              "description": "A destination's short label, under its indicator."
+            },
+            {
+              "class": "env-rail-list",
+              "description": "The list of destinations, one under another, which scrolls where the rail is shorter."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-current",
+              "values": [],
+              "parts": [
+                "env-rail-item"
+              ]
+            }
+          ]
+        }
+      },
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
+    },
+    {
+      "name": "NavigationDrawer",
+      "page": "navigation-drawer",
+      "doc": "docs/components/navigation-drawer.md",
+      "category": "Navigation",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings.",
+      "aliases": [
+        "Drawer",
+        "navigation drawer",
+        "nav drawer",
+        "side navigation",
+        "sidebar navigation",
+        "sidebar links",
+        "NavList",
+        "NavList.Item",
+        "NavigationItem",
+        "nav item",
+        "navigation list",
+        "nav links"
+      ],
+      "useWhen": [
+        "An application's main destinations on an expanded or larger window, where Scaffold places the drawer at the window's start.",
+        "Many destinations, in groups under headings, with counts.",
+        "The sections of a guide or of the settings beside their content, with or without icons."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The same destinations on a compact window, such as a phone.",
+          "use": "Bar"
+        },
+        {
+          "text": "The same destinations on a medium window, such as a tablet.",
+          "use": "Rail"
+        },
+        {
+          "text": "Switching between views of the same content in one place.",
+          "use": "Tabs"
         },
         {
           "text": "A deep hierarchy that people expand and collapse, such as folders and files.",
           "use": "Tree"
         },
         {
-          "text": "Choosing one of a few filters or modes that stays selected.",
-          "use": "SegmentedControl"
+          "text": "The path from the top of a hierarchy down to the current page.",
+          "use": "Breadcrumbs"
         }
       ],
       "related": [
-        "app-shell",
+        "bar",
+        "rail",
         "tabs",
-        "menu",
-        "breadcrumbs",
-        "pager",
         "tree",
-        "badge",
-        "tooltip",
-        "icons"
+        "breadcrumbs",
+        "badge"
       ],
       "exports": [
-        "NavList",
-        "NavList.Root",
-        "NavList.Item",
-        "NavList.Group",
-        "NavList.Skeleton"
+        "NavigationDrawer"
       ],
       "examples": [
         {
-          "name": "SidebarNavigation",
-          "title": "Sidebar navigation",
-          "description": "Items also stand on their own, such as the buttons of Tabs. In a Sidebar they follow its rail.",
-          "file": "docs/examples/nav-list/SidebarNavigation.tsx"
+          "name": "AppDestinations",
+          "title": "App destinations",
+          "description": "NavigationDrawer is Material's navigation drawer: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. It is one of three navigation forms that take the same array of destinations, with Bar and Rail; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`. It takes the name Drawer once today's Drawer, the panel that slides over the page, has become Sheet.",
+          "file": "docs/examples/navigation-drawer/AppDestinations.tsx"
         },
         {
-          "name": "GroupedDestinations",
-          "title": "Grouped destinations",
-          "description": "NavList.Group puts related pages under a small heading, which also names the group's list. Without icons, the headings line up with the labels.",
-          "file": "docs/examples/nav-list/GroupedDestinations.tsx"
+          "name": "OneListThreeForms",
+          "title": "One list, three forms",
+          "description": "The same array passed to the Drawer, the Rail and the Bar: the drawer heads the groups, the rail and the bar keep their order.",
+          "file": "docs/examples/navigation-drawer/OneListThreeForms.tsx"
         },
         {
-          "name": "InACompactRegion",
-          "title": "In a compact region",
-          "description": "Items follow the app's scale. A Theme with `scale=\"compact\"` around a whole region, such as a docked list of recent documents, gives its items the compact height and labels.",
-          "file": "docs/examples/nav-list/InACompactRegion.tsx"
-        },
-        {
-          "name": "CollapsedSidebar",
-          "title": "Collapsed sidebar",
-          "description": "With `iconOnly` the items show only their icons and their labels in tooltips; the count turns into a dot, so the item's `aria-label` carries it. The label stays as children for the expanded sidebar.",
-          "file": "docs/examples/nav-list/CollapsedSidebar.tsx"
+          "name": "GuideSections",
+          "title": "Sections of a guide",
+          "description": "Without icons, a drawer lists the pages of a guide under their headings.",
+          "file": "docs/examples/navigation-drawer/GuideSections.tsx"
         }
       ],
       "parts": {
-        "NavList": {
-          "root": "env-nav-list",
+        "NavigationDrawer": {
+          "root": "env-drawer",
           "parts": [
             {
-              "class": "env-nav-list",
-              "description": "The navigation list."
+              "class": "env-drawer",
+              "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
             },
             {
-              "class": "env-nav-list-group",
-              "description": "A group of destinations."
+              "class": "env-drawer-count",
+              "description": "A destination's count, at the item's end; 999+ above 999."
             },
             {
-              "class": "env-nav-list-group-label",
-              "description": "A group's label."
+              "class": "env-drawer-footer",
+              "description": "Content below the destinations, at the bottom of the drawer."
             },
             {
-              "class": "env-nav-list-group-list",
-              "description": "A group's list of destinations."
+              "class": "env-drawer-header",
+              "description": "Content above the destinations, such as the application's name or a search trigger."
             },
             {
-              "class": "env-nav-list-item",
-              "description": "One destination."
+              "class": "env-drawer-heading",
+              "description": "A group's heading, which names the group's list."
             },
             {
-              "class": "env-nav-list-item-dot",
-              "description": "The dot that marks a destination with news."
+              "class": "env-drawer-item",
+              "description": "A destination: a link or button as wide as the drawer, with its icon, label and count."
             },
             {
-              "class": "env-nav-list-item-end",
-              "description": "The end of a destination, for a count."
+              "class": "env-drawer-label",
+              "description": "A destination's label."
             },
             {
-              "class": "env-nav-list-skeleton",
-              "description": "The list's loading placeholder."
+              "class": "env-drawer-list",
+              "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
             },
             {
-              "class": "env-nav-list-skeleton-item",
-              "description": "One placeholder destination."
+              "class": "env-drawer-section",
+              "description": "A group: its heading and the list of its destinations."
             }
           ],
           "states": [
             {
-              "attribute": "data-icon-only",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-nav-list-item",
-                "env-nav-list-skeleton-item"
-              ]
-            },
-            {
-              "attribute": "data-rail",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-nav-list-group-label"
-              ]
-            },
-            {
-              "attribute": "data-selected",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-nav-list-item"
-              ]
-            }
-          ]
-        },
-        "Popup": {
-          "shared": true,
-          "root": "env-popup",
-          "parts": [
-            {
-              "class": "env-popup",
-              "description": "The surface of menus, popovers, tooltips and lists."
-            },
-            {
-              "class": "env-popup-positioner",
-              "description": "A popup's positioner."
-            },
-            {
-              "class": "env-popup-theme",
-              "description": "The theme boundary around a popup."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-elevation",
-              "values": [
-                "1",
-                "2",
-                "3"
-              ],
-              "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-ending-style",
+              "attribute": "data-current",
               "values": [],
               "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-starting-style",
-              "values": [],
-              "parts": [
-                "env-popup"
-              ]
-            },
-            {
-              "attribute": "data-width",
-              "values": [
-                "lg",
-                "md"
-              ],
-              "parts": [
-                "env-popup"
+                "env-drawer-item"
               ]
             }
           ]
@@ -5841,7 +5974,7 @@
         },
         {
           "text": "An application's destinations, such as the pages in a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Sections people may want open at the same time.",
@@ -5851,7 +5984,7 @@
       "related": [
         "segmented-control",
         "document-tabs",
-        "nav-list",
+        "navigation-drawer",
         "button",
         "card",
         "disclosure"
@@ -5887,7 +6020,7 @@
         {
           "name": "VerticalList",
           "title": "Vertical list",
-          "description": "A vertical rail of NavList.Item tabs, with ↑ and ↓; the Tabs is laid out as a row to put the panels beside it.",
+          "description": "A vertical rail of ghost Button tabs with icons, with ↑ and ↓; the Tabs is laid out as a row to put the panels beside it.",
           "file": "docs/examples/tabs/VerticalList.tsx"
         },
         {
@@ -6020,7 +6153,7 @@
         },
         {
           "text": "An application's main destinations, such as the pages in a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "The path from the top of a hierarchy down to the current page.",
@@ -6029,7 +6162,7 @@
       ],
       "related": [
         "pagination",
-        "nav-list",
+        "navigation-drawer",
         "breadcrumbs",
         "button"
       ],
@@ -6162,7 +6295,7 @@
         "window-frame",
         "page",
         "page-header",
-        "nav-list",
+        "navigation-drawer",
         "account-menu"
       ],
       "exports": [
@@ -6426,7 +6559,7 @@
         },
         {
           "text": "The destinations inside a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Two panes of a page that people resize, such as a list and its detail.",
@@ -6439,7 +6572,7 @@
       ],
       "related": [
         "app-shell",
-        "nav-list",
+        "navigation-drawer",
         "account-menu",
         "search-trigger",
         "drawer"
@@ -6996,7 +7129,7 @@
       "avoidWhen": [
         {
           "text": "An application's destinations, such as the pages in a sidebar, one or two levels deep.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "A flat list of items, each with its own actions.",
@@ -7012,7 +7145,7 @@
         }
       ],
       "related": [
-        "nav-list",
+        "navigation-drawer",
         "list",
         "menu",
         "document-tabs",
@@ -7170,7 +7303,7 @@
         },
         {
           "text": "Destinations in an application's navigation.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Choosing one of a few options or filters.",
@@ -7639,7 +7772,7 @@
       "avoidWhen": [
         {
           "text": "The application's main navigation, such as the pages in a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Moving between the items of one level, such as views of the same content.",
@@ -7655,7 +7788,7 @@
         }
       ],
       "related": [
-        "nav-list",
+        "navigation-drawer",
         "tree",
         "pager",
         "link",
@@ -7963,7 +8096,7 @@
         "menu",
         "avatar",
         "app-shell",
-        "nav-list",
+        "navigation-drawer",
         "setup"
       ],
       "exports": [
@@ -8725,7 +8858,7 @@
       ],
       "related": [
         "card",
-        "nav-list",
+        "navigation-drawer",
         "button",
         "stat",
         "code",
@@ -8770,7 +8903,7 @@
         {
           "name": "NavigationCounts",
           "title": "Counts in navigation",
-          "description": "A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.",
+          "description": "The navigation forms show a destination's `count` themselves, in a counter badge's pill, and name it with the label, such as Inbox, 12 new; above 999 it shows 999+.",
           "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
@@ -12179,7 +12312,7 @@
         },
         {
           "text": "An application's navigation, such as the pages in a sidebar.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Content people work in beside a trigger, such as a small form or a color picker.",
@@ -12199,7 +12332,7 @@
         "command-palette",
         "select",
         "popover",
-        "nav-list",
+        "navigation-drawer",
         "tree",
         "kbd",
         "tooltip",
@@ -12552,7 +12685,7 @@
         },
         {
           "text": "Destinations in an application's navigation.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Running a command by name.",
@@ -13497,6 +13630,9 @@
         "index",
         "setup",
         "scale",
+        "bar",
+        "rail",
+        "navigation-drawer",
         "column",
         "row",
         "grid",
@@ -13549,7 +13685,7 @@
         "migration",
         "surface",
         "button",
-        "nav-list",
+        "navigation-drawer",
         "color-picker",
         "accessibility",
         "badge"
@@ -13678,7 +13814,7 @@
       ],
       "related": [
         "button",
-        "nav-list",
+        "navigation-drawer",
         "tabs",
         "accessibility"
       ]
@@ -13857,7 +13993,7 @@
       "composes": [
         "Page",
         "PageHeader",
-        "NavList",
+        "NavigationDrawer",
         "Surface",
         "Column",
         "Row",
@@ -14041,7 +14177,7 @@
         "Alert",
         "Badge",
         "CounterBadge",
-        "NavList",
+        "NavigationDrawer",
         "List",
         "DescriptionList",
         "RelativeTime",
@@ -14129,7 +14265,7 @@
         "AppShell",
         "Sidebar",
         "SidebarTrigger",
-        "NavList",
+        "NavigationDrawer",
         "Page",
         "PageHeader",
         "LoadingState",
@@ -14315,7 +14451,7 @@
         "AppShell",
         "Sidebar",
         "SidebarTrigger",
-        "NavList",
+        "NavigationDrawer",
         "CounterBadge",
         "Breadcrumbs",
         "Page",
@@ -14340,7 +14476,7 @@
         "loading",
         "app-shell",
         "sidebar",
-        "nav-list",
+        "navigation-drawer",
         "breadcrumbs"
       ],
       "doc": "docs/patterns/navigation.md",
@@ -14605,7 +14741,7 @@
         },
         {
           "text": "Moving between destinations of the application.",
-          "use": "NavList"
+          "use": "NavigationDrawer"
         },
         {
           "text": "Information people need to complete a task, such as a required field or an error.",
@@ -14712,7 +14848,7 @@
         "AppShell",
         "Sidebar",
         "SidebarTrigger",
-        "NavList",
+        "NavigationDrawer",
         "SearchTrigger",
         "CommandPalette",
         "AccountMenu",
@@ -14725,7 +14861,7 @@
       "related": [
         "app-shell",
         "sidebar",
-        "nav-list",
+        "navigation-drawer",
         "account-menu",
         "command-palette"
       ],
@@ -14938,7 +15074,7 @@
         "Page",
         "PageHeader",
         "Sidebar",
-        "NavList",
+        "NavigationDrawer",
         "Column",
         "Row",
         "Surface",
@@ -15996,6 +16132,32 @@
       "status": "stable",
       "page": "badge",
       "doc": "docs/components/badge.md"
+    },
+    "Bar": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The navigation bar for compact windows, such as phones: up to five destinations side by side, each an icon above its label, at the bottom of the window. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        }
+      ],
+      "native": [
+        "nav"
+      ],
+      "status": "beta",
+      "page": "bar",
+      "doc": "docs/components/bar.md"
     },
     "Box": {
       "kind": "component",
@@ -19269,7 +19431,7 @@
           "name": "component",
           "type": "ComponentType<LinkComponentProps>",
           "required": true,
-          "description": "Renders every envUI destination (Button, Link, NavList.Item, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
+          "description": "Renders every envUI destination (Button, Link, the destinations of Bar, Rail and Drawer, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
         },
         {
           "name": "children",
@@ -19860,6 +20022,12 @@
           "required": false,
           "default": "false",
           "description": "The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does not run, and a destination has no link to follow."
+        },
+        {
+          "name": "aria-current",
+          "type": "AriaAttributes['aria-current']",
+          "required": false,
+          "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
         },
         {
           "name": "className",
@@ -20650,141 +20818,43 @@
       "page": "month-picker",
       "doc": "docs/components/month-picker.md"
     },
-    "NavList": {
-      "kind": "namespace",
-      "import": "@envsemble/envui",
-      "description": "",
-      "parts": [
-        "NavList.Root",
-        "NavList.Item",
-        "NavList.Group",
-        "NavList.Skeleton"
-      ],
-      "status": "stable",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md"
-    },
-    "NavList.Group": {
+    "NavigationDrawer": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Related items under a small heading, as an item of NavList.Root with a list of its own.",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
       "props": [
         {
-          "name": "label",
-          "type": "ReactNode",
+          "name": "destinations",
+          "type": "readonly DrawerDestination[]",
           "required": true,
-          "description": "The group's visible heading, such as Settings, in small muted text above its items; it also names the group's list for assistive technology."
+          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`."
         },
         {
-          "name": "children",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The group's NavList.Item elements, each of which renders its own list item."
-        }
-      ],
-      "native": [
-        "li"
-      ],
-      "status": "stable",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md"
-    },
-    "NavList.Item": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and end content, marks the current destination with selected, and shows only its icon with iconOnly or in a sidebar rail. Inside NavList.Root or NavList.Group it renders its own list item.",
-      "props": [
-        {
-          "name": "selected",
-          "type": "boolean",
-          "required": false,
-          "description": "The item is the current destination or view: it takes the navigation selection fill and label color, fills its Material Symbol, and reports aria-current=\"page\" unless aria-current is set."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "description": "The destination is unavailable: dimmed, and left out of the tab order. A disabled button cannot be pressed; a disabled link has no destination and reports aria-disabled. An icon-only item still shows its label on hover."
-        },
-        {
-          "name": "icon",
+          "name": "header",
           "type": "ReactNode",
           "required": false,
-          "requiredWhen": "in some forms",
-          "description": "A decorative icon before the label, such as one of envUI's Material Symbols, which shows filled while the item is selected and outlined otherwise, also inside a wrapper. Required with iconOnly."
+          "description": "Content above the destinations, such as the application's name or a search trigger."
         },
         {
-          "name": "selectedIcon",
+          "name": "footer",
           "type": "ReactNode",
           "required": false,
-          "description": "The icon shown while the item is selected, for a custom icon without a filled form; Material Symbols need none."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the content: a number, or a CounterBadge without aria-label, as a count from EnvUIProvider's messages.navList.itemCount, such as Inbox, 3 new; a CounterBadge's aria-label, such as Inbox, 4 unread, or other content's text or aria-label, such as Labs, Beta, as it is, through messages.navList.itemEnd."
+          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "requiredWhen": "in some forms",
-          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds its end content, such as a count."
-        },
-        {
-          "name": "href",
-          "type": "string",
-          "required": false,
-          "description": "The destination: the element is a native link, through the LinkProvider's link component."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "requiredWhen": "in some forms",
-          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. In a sidebar rail, items with an icon show only it without this prop."
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
         }
       ],
       "native": [
-        "button",
-        "a"
+        "element"
       ],
-      "status": "stable",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md"
-    },
-    "NavList.Root": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as a Sidebar.Root. Name it with aria-label or aria-labelledby when the page has more than one.",
-      "props": [],
-      "native": [
-        "ul"
-      ],
-      "status": "stable",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md"
-    },
-    "NavList.Skeleton": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Placeholders in the shape of a NavList.Root's items while the navigation loads, such as in a sidebar before the account's data arrives: an icon and a label each, at the items' height, and only the icon in a sidebar rail. Hidden from assistive technology; put the frame in a LoadingState, which names what loads.",
-      "props": [
-        {
-          "name": "items",
-          "type": "number",
-          "required": false,
-          "default": "3",
-          "description": "How many placeholder items it shows."
-        }
-      ],
-      "native": [
-        "ul"
-      ],
-      "status": "stable",
-      "page": "nav-list",
-      "doc": "docs/components/nav-list.md"
+      "status": "beta",
+      "page": "navigation-drawer",
+      "doc": "docs/components/navigation-drawer.md"
     },
     "OrganizationSwitcher": {
       "kind": "component",
@@ -21641,6 +21711,44 @@
       "status": "stable",
       "page": "radio",
       "doc": "docs/components/radio.md"
+    },
+    "Rail": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The navigation rail for medium windows, such as tablets: a narrow column at the window's start with the destinations one under another, each an icon above a short label. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array Bar and Drawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content above the destinations, such as a button that opens a Sheet with the Drawer, or the main action of the page."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the bottom of the rail, such as the account's AvatarButton."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        }
+      ],
+      "native": [
+        "element"
+      ],
+      "status": "beta",
+      "page": "rail",
+      "doc": "docs/components/rail.md"
     },
     "Rating": {
       "kind": "component",

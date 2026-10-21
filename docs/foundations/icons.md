@@ -49,6 +49,6 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Button](../components/button.md)
-- [NavList](../components/nav-list.md)
+- [NavigationDrawer](../components/navigation-drawer.md)
 - [Tabs](../components/tabs.md)
 - [Accessibility](../foundations/accessibility.md)

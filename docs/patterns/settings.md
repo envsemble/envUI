@@ -22,7 +22,7 @@ avoidWhen:
 composes:
   - Page
   - PageHeader
-  - NavList
+  - NavigationDrawer
   - Surface
   - Column
   - Row
@@ -61,7 +61,7 @@ Use this pattern to let people change how the application behaves for them: noti
 
 ## Anatomy
 
-1. **Page:** a [Page](../components/page.md) with `width="sm"` and a [PageHeader](../components/page-header.md) titled "Settings". A long page lists its sections in a [NavList](../components/nav-list.md) beside them, or gives each its own page.
+1. **Page:** a [Page](../components/page.md) with `width="sm"` and a [PageHeader](../components/page-header.md) titled "Settings". A long page lists its sections in a [NavigationDrawer](../components/navigation-drawer.md) beside them, or gives each its own page.
 2. **Section:** a `section` named by its heading, a [Text](../foundations/typography.md) `variant="title"`, grouping the settings for one thing people want to do, such as "Email notifications" or "Privacy".
 3. **Immediate settings:** rows of a [List](../components/list.md), each with a [Switch](../components/switch.md) as its action, named by the row's title and described by its detail. A [DescriptionList](../components/description-list.md) with `controls` suits a compact list of values with a Select or a Switch.
 4. **Choices:** a [RadioGroup](../components/radio.md) with `orientation="vertical"` for one of a few options with descriptions, such as the theme; a [Select](../components/select.md) for a longer list, such as a time zone.

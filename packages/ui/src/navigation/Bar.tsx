@@ -4,6 +4,7 @@ import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../foundations/Layout.js';
 import { CounterBadge } from '../content/CounterBadge.js';
 import { classNames } from '../internal/classNames.js';
+import { ActionElement } from '../internal/ActionElement.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { MoreHoriz } from '../icons/MoreHoriz.js';
 import * as Menu from './Menu.js';
@@ -14,10 +15,19 @@ import {
   shownCount,
   useNavigationMessages,
   type Destination,
+  type DestinationClasses,
 } from './internal/Destinations.js';
 
 /** The most destinations the bar shows; past it, the last place opens the rest in a menu. */
 const barLimit = 5;
+
+/** The part classes of the bar's destinations. */
+const barClasses: DestinationClasses = {
+  item: 'env-bar-item',
+  indicator: 'env-bar-indicator',
+  label: 'env-bar-label',
+  count: 'env-bar-count',
+};
 
 export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**
@@ -66,7 +76,7 @@ export function Bar({
       <Row render={<ul />} className="env-bar-list">
         {shown.map((destination) => (
           <li key={destinationKey(destination)}>
-            <DestinationItem form="bar" destination={destination} />
+            <DestinationItem classes={barClasses} destination={destination} />
           </li>
         ))}
         {overflow && (
@@ -76,7 +86,7 @@ export function Bar({
               side="top"
               trigger={
                 <Column
-                  render={<button type="button" />}
+                  render={<ActionElement />}
                   className="env-bar-item env-bar-more"
                   data-current={restCurrent ? '' : undefined}
                   aria-label={countedName(messages.more, restCount, messages)}

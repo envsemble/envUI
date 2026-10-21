@@ -14,7 +14,7 @@
   background: var(--env-list-item-fill, transparent);
 }
 
-li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item-dot {
+li.env-navigation-item.env-navigation-selected .env-navigation-dot {
   color: var(--env-color-accent);
 }
 
@@ -67,7 +67,7 @@ li.env-nav-list-item.env-nav-list-item:where([data-selected]) .env-nav-list-item
 .env-document-tabs-tab:hover .env-document-tabs-tab-label,
 .env-breadcrumbs-item + .env-breadcrumbs-item .env-breadcrumbs-link,
 .env-tree-item .env-tree-description,
-.env-nav-list-item.env-nav-list-item:where([data-icon-only]) .env-nav-list-item-end,
+.env-navigation-item.env-navigation-icon-only .env-navigation-trailing,
 .env-menu-item-end {
   color: inherit;
 }

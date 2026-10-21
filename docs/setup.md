@@ -115,7 +115,7 @@ When the application's contrast is fixed, such as an application that is always 
 
 ## Connect your router
 
-Destinations in envUI render native anchors: Button and Link with `href`, NavList.Item, Card, Pager links, Breadcrumbs and Menu.Item destinations. Register the router's link once with `LinkProvider`, around the application, and they navigate on the client. The component receives native anchor props with a string `href`, and must render an anchor and pass the props and the ref on:
+Destinations in envUI render native anchors: Button and Link with `href`, the destinations of Bar, Rail and Drawer, Card, Pager links, Breadcrumbs and Menu.Item destinations. Register the router's link once with `LinkProvider`, around the application, and they navigate on the client. The component receives native anchor props with a string `href`, and must render an anchor and pass the props and the ref on:
 
 ```tsx
 <LinkProvider component={RouterLink}>{app}</LinkProvider>
@@ -232,26 +232,25 @@ export function RouterLinks({ children }: { children: ReactNode }) {
 
 ### The current page and focus
 
-The application decides which destination is current: read the router's location and pass `selected` to the NavList.Item it shows, here with React Router's `useLocation`. A destination that has pages under it stays selected on them.
+The application decides which destination is current: read the router's location and mark that destination `current` in the array it passes to Bar, Rail or Drawer, here with React Router's `useLocation`. A destination that has pages under it stays current on them.
 
 ```tsx recipe
 import { useLocation } from 'react-router';
-import { NavList } from '@envsemble/envui';
+import { NavigationDrawer } from '@envsemble/envui';
+import { Folder } from '@envsemble/envui/icons/Folder';
+import { Group } from '@envsemble/envui/icons/Group';
 
 export function ProjectNavigation() {
   const { pathname } = useLocation();
   const current = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
   return (
-    <nav aria-label="Projects">
-      <NavList.Root>
-        <NavList.Item href="/projects" selected={current('/projects')}>
-          Projects
-        </NavList.Item>
-        <NavList.Item href="/people" selected={current('/people')}>
-          People
-        </NavList.Item>
-      </NavList.Root>
-    </nav>
+    <NavigationDrawer
+      aria-label="Projects"
+      destinations={[
+        { label: 'Projects', icon: <Folder />, href: '/projects', current: current('/projects') },
+        { label: 'People', icon: <Group />, href: '/people', current: current('/people') },
+      ]}
+    />
   );
 }
 ```
@@ -329,7 +328,6 @@ The modules have no side effects, so a bundler keeps only what the application u
 | `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
 | `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
 | `Stat.Root`                            |  3.3 KB |          3.5 KB |
-| `NavList.Item`                         |  3.8 KB |          4.2 KB |
 | `Pager.Next`                           |  1.5 KB |          1.6 KB |
 | `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
 

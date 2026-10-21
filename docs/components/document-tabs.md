@@ -21,7 +21,7 @@ avoidWhen:
   - text: Switching between a fixed set of views of the same content, such as Overview and Settings.
     use: Tabs
   - text: Destinations in an application's navigation.
-    use: NavList
+    use: NavigationDrawer
   - text: Choosing one of a few options or filters.
     use: SegmentedControl
   - text: Items people keep open beside the page, such as drafts.

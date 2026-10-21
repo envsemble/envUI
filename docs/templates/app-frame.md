@@ -24,7 +24,7 @@ composes:
   - AppShell
   - Sidebar
   - SidebarTrigger
-  - NavList
+  - NavigationDrawer
   - SearchTrigger
   - CommandPalette
   - AccountMenu
@@ -36,7 +36,7 @@ composes:
 related:
   - app-shell
   - sidebar
-  - nav-list
+  - navigation-drawer
   - account-menu
   - command-palette
 ---
@@ -57,7 +57,7 @@ The frame every page of an application sits in: a sidebar at the start with the 
 2. **Skip links:** AppShell.SkipLinks, the first tab stops: Skip to content and Skip to Primary.
 3. **Sidebar:** a [Sidebar.Root](../components/sidebar.md) labelled "Primary", `collapsible="rail"`:
    - **Header:** a [SidebarTrigger](../components/sidebar.md) with a generic icon as its `mark`, and the application's name, Northwind;
-   - **Content:** a [SearchTrigger](../components/search-trigger.md) `fullWidth`, then a [NavList](../components/nav-list.md) of the destinations (Home, Projects, Documents, Team), then a `Sidebar.Group` "Workspace" with Settings;
+   - **Content:** a [SearchTrigger](../components/search-trigger.md) `fullWidth`, then a [NavigationDrawer](../components/navigation-drawer.md) of the destinations (Home, Projects, Documents, Team), then a `Sidebar.Group` "Workspace" with Settings;
    - **Footer:** an [AccountMenu](../components/account-menu.md) with Account settings, the theme submenu and Sign out.
 4. **Top bar:** AppShell.Header with `mobileOnly`, only below the breakpoint: a SidebarTrigger and the name at the start, a SearchTrigger `iconOnly` and the account menu at the end.
 5. **Main:** AppShell.Main, which holds the page: `children`, or without them a sample [Page](../components/page.md) with a [PageHeader](../components/page-header.md) and an [EmptyState](../components/empty-state.md).

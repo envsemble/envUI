@@ -15,7 +15,7 @@ export function Notice({ tone, open, compact }: { tone: string; open: boolean; c
       style={{ '--env-alert-tone': 'red', margin: 0, background: 'var(--env-list-item-fill)' }}
     >
       <span className="env-counter-badge-label  owner env-environment">Alex Morgan</span>
-      <span className={compact ? 'env-list-item env-nav-list-item-compact' : `env-list-item ${tone}-row`} />
+      <span className={compact ? 'env-list-item env-navigation-compact' : `env-list-item ${tone}-row`} />
       <span className={clsx(['env-pager-link', open ? 'env-pager-link-title' : null])} />
       <span className={`${tone}env-row env-list-item`} data-class="env-row" />
       <span class="env-calendar-heatmap" style={style} />

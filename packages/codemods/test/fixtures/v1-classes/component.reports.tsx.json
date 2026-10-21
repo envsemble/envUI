@@ -1,0 +1,3 @@
+[
+  "line 18: env-navigation-compact has no 1.0 class: NavList is gone in 1.0: Bar, Rail and NavigationDrawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current."
+]

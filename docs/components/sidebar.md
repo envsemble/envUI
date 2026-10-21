@@ -25,14 +25,14 @@ avoidWhen:
   - text: The frame around the sidebars, with the header and the main content.
     use: AppShell
   - text: The destinations inside a sidebar.
-    use: NavList
+    use: NavigationDrawer
   - text: Two panes of a page that people resize, such as a list and its detail.
     use: SplitPane
   - text: A panel that slides in for a task, such as filters on a phone.
     use: Drawer
 related:
   - app-shell
-  - nav-list
+  - navigation-drawer
   - account-menu
   - search-trigger
   - drawer

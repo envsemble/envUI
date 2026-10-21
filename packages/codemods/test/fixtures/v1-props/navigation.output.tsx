@@ -1,4 +1,4 @@
-import { List, Menu, NavList, OrganizationSwitcher, Table, Tree } from '@envsemble/envui';
+import { List, Menu, OrganizationSwitcher, Table, Tree } from '@envsemble/envui';
 
 export function Navigation({ rows, organizations, orgId, switchTo, open, sort, count }) {
   return (
@@ -8,11 +8,6 @@ export function Navigation({ rows, organizations, orgId, switchTo, open, sort, c
           Comments
         </Menu.Item>
       </Menu.Root>
-      <NavList.Root>
-        <NavList.Item href="/inbox" end={<span>3</span>}>
-          Inbox
-        </NavList.Item>
-      </NavList.Root>
       <OrganizationSwitcher
         items={[{ id: 'northwind', label: 'Northwind', description: 'Admin' }]}
         value={orgId}

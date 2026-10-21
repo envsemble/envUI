@@ -23,7 +23,7 @@ composes:
   - AppShell
   - Sidebar
   - SidebarTrigger
-  - NavList
+  - NavigationDrawer
   - Page
   - PageHeader
   - LoadingState

@@ -8,7 +8,16 @@ import {
   DestinationItem,
   useNavigationMessages,
   type Destination,
+  type DestinationClasses,
 } from './internal/Destinations.js';
+
+/** The part classes of the rail's destinations. */
+const railClasses: DestinationClasses = {
+  item: 'env-rail-item',
+  indicator: 'env-rail-indicator',
+  label: 'env-rail-label',
+  count: 'env-rail-count',
+};
 
 export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**
@@ -63,7 +72,7 @@ export function Rail({
       <Column render={<ul />} className="env-rail-list" align="stretch" gap={1}>
         {destinations.map((destination) => (
           <li key={destinationKey(destination)}>
-            <DestinationItem form="rail" destination={destination} />
+            <DestinationItem classes={railClasses} destination={destination} />
           </li>
         ))}
       </Column>

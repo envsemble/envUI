@@ -23,13 +23,13 @@ avoidWhen:
   - text: Open documents that people close, reorder and keep, as in an editor.
     use: DocumentTabs
   - text: An application's destinations, such as the pages in a sidebar.
-    use: NavList
+    use: NavigationDrawer
   - text: Sections people may want open at the same time.
     use: Disclosure
 related:
   - segmented-control
   - document-tabs
-  - nav-list
+  - navigation-drawer
   - button
   - card
   - disclosure
@@ -67,7 +67,7 @@ The tabs are `items`, each a `value`, a `button`, the panel's `content` and whet
 
 <!-- specimen: TabControls -->
 
-- **Tab controls**: a tab is a Button in any variant, an IconButton or a NavList.Item without `href`. Prefer one variant for every tab of a rail; primary is Button's default. An icon-only tab needs an `aria-label`, and a NavList.Item takes its selected look while its tab is selected.
+- **Tab controls**: a tab is a Button in any variant or an IconButton. Prefer one variant for every tab of a rail; primary is Button's default. An icon-only tab needs an `aria-label`.
 - **Unselected tabs** are transparent with a muted label at rest, and show a translucent state layer on hover and press; the selected tab keeps its variant's hover and pressed colors. Labels keep 4.5:1 contrast at rest and on hover in both themes.
 - Tabs keep their size: labels wrap only within a tab, and a rail with more tabs than fit scrolls. The rail follows the app's [scale](../foundations/scale.md). On touch screens the rail grows to 2.75 rem, as every control of its row does, and each tab, at least as wide, takes presses across the rail's whole height; a vertical rail's tabs grow to 2.75 rem themselves.
 - A vertical rail has the 1.75 rem corners of a surface. Its panels stay below it, as in every Tabs; lay out Tabs as a row to put them beside it.
@@ -81,7 +81,7 @@ The tabs are `items`, each a `value`, a `button`, the panel's `content` and whet
 - **Transitions**: the incoming panel fades in and rises 0.25 rem over 0.16 s, and the outgoing panel fades out of the layout, so content after the tabs moves once when the tab changes. Tab colors change over 0.16 s too. With reduced motion, panels and tabs change at once.
 - **Fill**: with `fill`, the selected panel takes the height left below the rail and lays out its content as a column, so a child with `flex: 1` fills it. The tabs need a height, for example as a flex child of a region with one.
 - **Custom layout**: `renderList` receives the rail and returns what renders in its place, such as the rail beside a heading in a Card. Render the rail once; the panels follow below.
-- **Buttons only**: tabs are buttons. An item whose button has `href` throws an error; for destinations, use NavList.
+- **Buttons only**: tabs are buttons. An item whose button has `href` throws an error; for destinations, use Bar, Rail or Drawer.
 
 ## Content guidelines
 
@@ -102,7 +102,7 @@ The tabs are `items`, each a `value`, a `button`, the panel's `content` and whet
 ### Don't
 
 - Don't use tabs to filter or sort one view; use a [SegmentedControl](../components/segmented-control.md).
-- Don't use tabs for navigation between pages; use [NavList](../components/nav-list.md).
+- Don't use tabs for navigation between pages; use [NavigationDrawer](../components/navigation-drawer.md).
 - Don't nest a control inside a tab's button, or a link as a tab.
 - Don't hide content people need to compare in different tabs.
 
@@ -161,7 +161,7 @@ With `fill` the selected panel takes the height left below the rail, here a regi
 
 ### Vertical list
 
-A vertical rail of NavList.Item tabs, with ↑ and ↓; the Tabs is laid out as a row to put the panels beside it.
+A vertical rail of ghost Button tabs with icons, with ↑ and ↓; the Tabs is laid out as a row to put the panels beside it.
 
 ```tsx example=VerticalList
 

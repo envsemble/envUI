@@ -121,7 +121,9 @@
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/Menu.tsx": "composites",
       "navigation/Menubar.tsx": "base",
-      "navigation/NavList.tsx": "base",
+      "navigation/Bar.tsx": "composites",
+      "navigation/NavigationDrawer.tsx": "base",
+      "navigation/Rail.tsx": "base",
       "navigation/OrganizationSwitcher.tsx": "composites",
       "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
@@ -364,7 +366,12 @@
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
-      "NavList": {},
+      "Bar": {},
+      "Rail": {},
+      "Drawer": {
+        "$comment": "Today's Drawer and the navigation drawer share the env-drawer prefix until Drawer becomes Sheet and NavigationDrawer takes the name Drawer.",
+        "modules": ["navigation/NavigationDrawer.tsx"]
+      },
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },

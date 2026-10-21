@@ -498,9 +498,7 @@
         }
       ],
       "uses": [
-        "Icon",
-        "NavigationDrawer",
-        "Rail"
+        "Icon"
       ]
     },
     "Breadcrumbs": {
@@ -2802,9 +2800,7 @@
         }
       ],
       "uses": [
-        "Bar",
-        "Icon",
-        "Rail"
+        "Icon"
       ]
     },
     "OrganizationSwitcher": {
@@ -3427,9 +3423,7 @@
         }
       ],
       "uses": [
-        "Bar",
-        "Icon",
-        "NavigationDrawer"
+        "Icon"
       ]
     },
     "Rating": {

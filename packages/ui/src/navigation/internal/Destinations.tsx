@@ -75,30 +75,17 @@ export type DrawerDestination = DestinationFields &
     icon?: ReactNode;
   };
 
-/** The navigation forms, by the prefix of their part classes. */
-export type NavigationForm = 'bar' | 'rail' | 'drawer';
-
-/** The part classes of each form's destinations, written out so the part contract finds them. */
-const destinationClasses = {
-  bar: {
-    item: 'env-bar-item',
-    indicator: 'env-bar-indicator',
-    label: 'env-bar-label',
-    count: 'env-bar-count',
-  },
-  rail: {
-    item: 'env-rail-item',
-    indicator: 'env-rail-indicator',
-    label: 'env-rail-label',
-    count: 'env-rail-count',
-  },
-  drawer: {
-    item: 'env-drawer-item',
-    indicator: undefined,
-    label: 'env-drawer-label',
-    count: 'env-drawer-count',
-  },
-} as const;
+/**
+ * The part classes of a form's destinations, which each form writes out as literals: an indicator
+ * around the icon above the label, as in Bar and Rail, or none, for a row of icon, label and count,
+ * as in Drawer.
+ */
+export interface DestinationClasses {
+  item: string;
+  indicator?: string;
+  label: string;
+  count: string;
+}
 
 /** A run of destinations of one group, in the list's order: Drawer's sections. */
 export interface DestinationSection<Item> {
@@ -153,14 +140,13 @@ export const useNavigationMessages = () => useMessages('navigation', navigation)
  * with the count on it, above the label; Drawer puts the icon, the label and the count in a row.
  */
 export function DestinationItem({
-  form,
+  classes,
   destination,
 }: {
-  form: NavigationForm;
+  classes: DestinationClasses;
   destination: DrawerDestination;
 }) {
   const messages = useNavigationMessages();
-  const classes = destinationClasses[form];
   const { label, icon, count, current = false, href, onSelect } = destination;
   const shown = shownCount(count);
   const icons =
@@ -188,7 +174,7 @@ export function DestinationItem({
     'aria-current': current ? ('page' as const) : undefined,
     'aria-label': countedName(label, count, messages),
   };
-  return form === 'drawer' ? (
+  return classes.indicator === undefined ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
       <span className={classes.label}>{label}</span>

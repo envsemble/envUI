@@ -73,7 +73,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Navigation
 
-- [NavList](components/nav-list.md)
+- [Bar](components/bar.md)
+- [Rail](components/rail.md)
+- [NavigationDrawer](components/navigation-drawer.md)
 - [Tabs](components/tabs.md)
 - [Pager](components/pager.md)
 - [AppShell](components/app-shell.md)

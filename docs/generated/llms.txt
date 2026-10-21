@@ -66,7 +66,9 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 
 ## Components: Navigation
 
-- [NavList](docs/components/nav-list.md): A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form. Parts: `.env-nav-list`.
+- [Bar](docs/components/bar.md): The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label. Parts: `.env-bar`.
+- [Rail](docs/components/rail.md): The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label. Parts: `.env-rail`.
+- [NavigationDrawer](docs/components/navigation-drawer.md): The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings. Parts: `.env-drawer`.
 - [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons. Parts: `.env-tabs`.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
 - [AppShell](docs/components/app-shell.md): The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes. Also: useAppShell, readAppShellCookie. Parts: `.env-app-shell`.

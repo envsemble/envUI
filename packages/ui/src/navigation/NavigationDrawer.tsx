@@ -8,8 +8,16 @@ import {
   DestinationItem,
   destinationSections,
   useNavigationMessages,
+  type DestinationClasses,
   type DrawerDestination,
 } from './internal/Destinations.js';
+
+/** The part classes of the drawer's destinations: a row of icon, label and count. */
+const drawerClasses: DestinationClasses = {
+  item: 'env-drawer-item',
+  label: 'env-drawer-label',
+  count: 'env-drawer-count',
+};
 
 export interface NavigationDrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
   /**
@@ -39,7 +47,7 @@ function Section({ group, items }: { group: string; items: DrawerDestination[] }
       <Column render={<ul />} aria-labelledby={headingId} align="stretch" gap={1}>
         {items.map((destination) => (
           <li key={destinationKey(destination)}>
-            <DestinationItem form="drawer" destination={destination} />
+            <DestinationItem classes={drawerClasses} destination={destination} />
           </li>
         ))}
       </Column>
@@ -83,7 +91,7 @@ export function NavigationDrawer({
           section.group === undefined ? (
             section.items.map((destination) => (
               <li key={destinationKey(destination)}>
-                <DestinationItem form="drawer" destination={destination} />
+                <DestinationItem classes={drawerClasses} destination={destination} />
               </li>
             ))
           ) : (

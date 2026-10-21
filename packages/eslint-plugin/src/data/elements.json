@@ -13,7 +13,7 @@
     {
       "id": "[role=link]",
       "role": "link",
-      "owners": ["Link", "NavList.Item", "Pager.Previous", "Pager.Next"],
+      "owners": ["Link", "Bar", "Rail", "NavigationDrawer", "Pager.Previous", "Pager.Next"],
       "use": [{ "component": "Link" }]
     },
     {

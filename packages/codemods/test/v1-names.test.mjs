@@ -59,6 +59,11 @@ const reports = {
   // v1-structure, v1-app-shell and v1-stack, which rewrite each one; ActionCard used as a value is
   // reported.
   'later-transforms.tsx': removedFrom(1, ['ActionCard']),
+  // NavList is gone in 1.0: a list of navigation items becomes an array of destinations by hand.
+  'nav-list.tsx': [
+    ...removedFrom(1, ['NavigationItem']),
+    ...removedFrom(2, ['NavigationItemProps']),
+  ],
   'removed.tsx': [
     ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
     ...removedFrom(2, ['LoadingBarProps', 'MenuDensity', 'SurfaceDensity', 'ToastProps']),
