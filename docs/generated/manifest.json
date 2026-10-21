@@ -7537,7 +7537,7 @@
         },
         {
           "name": "ManyActions",
-          "title": "Don't: Many actions: no room is left for the title.",
+          "title": "Don't: Many actions: the title is cut down to nothing.",
           "description": "",
           "file": "docs/examples/top-bar/ManyActions.tsx"
         },
