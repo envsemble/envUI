@@ -2007,20 +2007,56 @@
         {
           "name": "DismissTip",
           "title": "Dismiss tip",
-          "description": "CloseButton is an icon-only button with a cross, ghost by default, named \"Close\" in the language the EnvUIProvider sets. It closes, dismisses or removes what it sits in, such as a tip, a panel or an item in a list. Under a coarse pointer, its hit area reaches the 2.75 rem touch size, also where its container draws it smaller.",
+          "description": "CloseButton is an icon-only button with a cross that closes, dismisses or removes what it sits in. Under a coarse pointer, its hit area reaches the 2.75 rem touch size.",
           "file": "docs/examples/close-button/DismissTip.tsx"
         },
         {
           "name": "RemovePeople",
-          "title": "Remove items",
-          "description": "Beside others like it, each button names what it removes.",
+          "title": "Remove people",
+          "description": "",
           "file": "docs/examples/close-button/RemovePeople.tsx"
         },
         {
           "name": "ApplicationLabel",
-          "title": "The application's own name",
-          "description": "An EnvUIProvider's `messages` name every CloseButton inside it, in the reader's language.",
+          "title": "Application label",
+          "description": "`aria-label`, else EnvUIProvider's `messages.common.close`, else Close, in the language the provider sets.",
           "file": "docs/examples/close-button/ApplicationLabel.tsx"
+        },
+        {
+          "name": "CloseVariants",
+          "title": "Close variants",
+          "description": "",
+          "file": "docs/examples/close-button/CloseVariants.tsx"
+        },
+        {
+          "name": "CloseAtEnd",
+          "title": "Do: At the end of the header of what it closes, where people look for it.",
+          "description": "",
+          "file": "docs/examples/close-button/CloseAtEnd.tsx"
+        },
+        {
+          "name": "CloseAtStart",
+          "title": "Don't: At the start: it reads as part of the content.",
+          "description": "",
+          "file": "docs/examples/close-button/CloseAtStart.tsx"
+        },
+        {
+          "name": "OneClose",
+          "title": "Do: One way to close, beside the actions.",
+          "description": "",
+          "file": "docs/examples/close-button/OneClose.tsx"
+        },
+        {
+          "name": "TwoCloses",
+          "title": "Don't: A cross and a Close button: two ways to do one thing.",
+          "description": "",
+          "file": "docs/examples/close-button/TwoCloses.tsx"
+        },
+        {
+          "name": "CloseButtonAnatomy",
+          "title": "CloseButton anatomy",
+          "description": "",
+          "file": "docs/examples/close-button/CloseButtonAnatomy.tsx"
         }
       ],
       "parts": {
@@ -2084,14 +2120,50 @@
         {
           "name": "InSidebar",
           "title": "In sidebar",
-          "description": "Here a trigger fills the width at the top of a sidebar and opens a CommandPalette.",
+          "description": "SearchTrigger is the button that opens an application's search. It looks like a search field and presses itself on its shortcut, ⌘K on Apple platforms and Ctrl+K elsewhere, so `onClick` is the one place search opens.",
           "file": "docs/examples/search-trigger/InSidebar.tsx"
         },
         {
           "name": "IconOnly",
           "title": "Icon only",
-          "description": "In a narrow header, the trigger shows only its icon, with the label and the keys in its tooltip. It doesn't listen, since the sidebar's trigger already opens the same search.",
+          "description": "",
           "file": "docs/examples/search-trigger/IconOnly.tsx"
+        },
+        {
+          "name": "UsualShortcut",
+          "title": "Do: The platform's usual shortcut for search.",
+          "description": "",
+          "file": "docs/examples/search-trigger/UsualShortcut.tsx"
+        },
+        {
+          "name": "EditorShortcut",
+          "title": "Don't: A shortcut that editors need, such as Ctrl+B for bold.",
+          "description": "",
+          "file": "docs/examples/search-trigger/EditorShortcut.tsx"
+        },
+        {
+          "name": "ButtonLabel",
+          "title": "Do: Search, or what it searches where there are several.",
+          "description": "",
+          "file": "docs/examples/search-trigger/ButtonLabel.tsx"
+        },
+        {
+          "name": "TypingLabel",
+          "title": "Don't: A placeholder's words: people expect to type, but it is a button.",
+          "description": "",
+          "file": "docs/examples/search-trigger/TypingLabel.tsx"
+        },
+        {
+          "name": "SearchTriggerAnatomy",
+          "title": "SearchTrigger anatomy",
+          "description": "",
+          "file": "docs/examples/search-trigger/SearchTriggerAnatomy.tsx"
+        },
+        {
+          "name": "NarrowSidebar",
+          "title": "Narrow sidebar",
+          "description": "",
+          "file": "docs/examples/search-trigger/NarrowSidebar.tsx"
         }
       ],
       "parts": {
@@ -2253,38 +2325,56 @@
         {
           "name": "FormattingToolbar",
           "title": "Formatting toolbar",
-          "description": "`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path. The default stays in the toolbar: the buttons of a popover, menu or dialog opened from it take their own.",
+          "description": "A toolbar holds the controls for one subject, such as an editor's formatting, as one tab stop that the arrow keys move through. `Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.",
           "file": "docs/examples/toolbar/FormattingToolbar.tsx"
-        },
-        {
-          "name": "ViewControls",
-          "title": "Diagram controls",
-          "description": "A pill Surface rendered as the toolbar floats it over a diagram, with small buttons and a link to help.",
-          "file": "docs/examples/toolbar/ViewControls.tsx"
         },
         {
           "name": "DrawingTools",
           "title": "Drawing tools",
-          "description": "A vertical toolbar of toggles, where one tool stays chosen.",
+          "description": "",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
         },
         {
+          "name": "ViewControls",
+          "title": "View controls",
+          "description": "",
+          "file": "docs/examples/toolbar/ViewControls.tsx"
+        },
+        {
           "name": "PageToolbar",
-          "title": "Page toolbar",
-          "description": "A page's search and filter under its title, with the primary action at the end of the row: a Row in PageHeader's `toolbar`, not a Toolbar.",
+          "title": "Layouts",
+          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------------- | | Icon commands, such as formatting or tools | `Toolbar.Root` with `Toolbar.Button`s | | A page's search, filters and primary action | PageHeader's `toolbar`, a Row | | A section's heading with its actions | `<Row wrap align=\"center\" justify=\"between\">` | | A table's search and actions | A Row above the table, in the size of its rows |",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
-          "name": "SectionToolbar",
-          "title": "Section toolbar",
-          "description": "A section's heading and count at the start and its actions at the end, wrapping when there isn't room.",
-          "file": "docs/examples/toolbar/SectionToolbar.tsx"
+          "name": "GroupedControls",
+          "title": "Do: Related controls in groups, with separators between them.",
+          "description": "",
+          "file": "docs/examples/toolbar/GroupedControls.tsx"
         },
         {
-          "name": "TableToolbar",
-          "title": "Table toolbar",
-          "description": "Small controls above a table of small rows, so the bar and the rows share one density.",
-          "file": "docs/examples/toolbar/TableToolbar.tsx"
+          "name": "UngroupedControls",
+          "title": "Don't: Controls in no order: people search the whole row.",
+          "description": "",
+          "file": "docs/examples/toolbar/UngroupedControls.tsx"
+        },
+        {
+          "name": "SameIconPressed",
+          "title": "Do: A toggle keeps its icon, pressed or not.",
+          "description": "",
+          "file": "docs/examples/toolbar/SameIconPressed.tsx"
+        },
+        {
+          "name": "IconSwapsPressed",
+          "title": "Don't: A pressed toggle that changes its icon: people lose track of what it does.",
+          "description": "",
+          "file": "docs/examples/toolbar/IconSwapsPressed.tsx"
+        },
+        {
+          "name": "ToolbarAnatomy",
+          "title": "Toolbar anatomy",
+          "description": "",
+          "file": "docs/examples/toolbar/ToolbarAnatomy.tsx"
         }
       ],
       "parts": {
@@ -2395,14 +2485,44 @@
         {
           "name": "InRunningText",
           "title": "In running text",
-          "description": "Link is a native `<a>` for a destination inside running text. It takes the font of the text around it, the link color and, by default, an underline, so it stands out from the words beside it. Links render through the `LinkProvider`'s link component, so the application's router handles them.",
+          "description": "Link is a native `<a>` for a destination inside running text. It renders through the `LinkProvider`'s link component, so the application's router handles it.",
           "file": "docs/examples/link/InRunningText.tsx"
         },
         {
           "name": "WithoutUnderline",
-          "title": "Without an underline",
-          "description": "Where the context already marks the words as links, `underline={false}` leaves the link color alone.",
+          "title": "Without underline",
+          "description": "",
           "file": "docs/examples/link/WithoutUnderline.tsx"
+        },
+        {
+          "name": "UnderlinedInText",
+          "title": "Do: The underline in running text.",
+          "description": "",
+          "file": "docs/examples/link/UnderlinedInText.tsx"
+        },
+        {
+          "name": "NoUnderlineInText",
+          "title": "Don't: No underline in a sentence: only its color tells it apart.",
+          "description": "",
+          "file": "docs/examples/link/NoUnderlineInText.tsx"
+        },
+        {
+          "name": "NamesDestination",
+          "title": "Do: Words that name the destination.",
+          "description": "",
+          "file": "docs/examples/link/NamesDestination.tsx"
+        },
+        {
+          "name": "ClickHere",
+          "title": "Don't: Click here: it says nothing out of context.",
+          "description": "",
+          "file": "docs/examples/link/ClickHere.tsx"
+        },
+        {
+          "name": "LinkAnatomy",
+          "title": "Link anatomy",
+          "description": "",
+          "file": "docs/examples/link/LinkAnatomy.tsx"
         }
       ],
       "parts": {
