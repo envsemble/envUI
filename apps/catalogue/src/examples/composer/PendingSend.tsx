@@ -17,7 +17,8 @@ export default function PendingSend() {
   };
 
   return (
-    <Column gap={3}>
+    // As wide as a conversation column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Composer
         aria-label="Reply to Priya Shah"
         placeholder="Write a reply"

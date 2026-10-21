@@ -3,11 +3,11 @@ import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const ignore = () => undefined;
 
-/** The pending, invalid and disabled zones, standard and compact. */
+/** The pending, invalid and disabled zones. */
 export default function States() {
   return (
-    <Example title="Drop zone states" size="collection">
-      <SpecimenGrid>
+    <Example size="collection">
+      <SpecimenGrid size="wide">
         <Specimen title="Pending">
           <DropZone
             pending
@@ -27,14 +27,10 @@ export default function States() {
         <Specimen title="Disabled">
           <DropZone disabled label="Uploads are paused" onDropAccepted={ignore} />
         </Specimen>
-        <Specimen title="Compact, pending">
-          <DropZone size="sm" pending label="Uploading 3 files" onDropAccepted={ignore} />
-        </Specimen>
-        <Specimen title="Compact, error">
+        <Specimen title="Small, error">
           <DropZone
             size="sm"
             label="Attach documents"
-            description="Any file, several at once"
             error="One file is larger than 25 MB."
             onDropAccepted={ignore}
           />

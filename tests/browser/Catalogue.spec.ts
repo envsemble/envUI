@@ -229,6 +229,53 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
   }
 });
 
+test('every dotted stage is the only frame of its figure', async ({ page }) => {
+  // One frame per figure: no stage sits inside another framed or filled box in the article, such
+  // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
+  // frame, which holds its stage and its verdict bar, is the figure's one frame.
+  const pages = references.filter((reference) => reference.format === 'figures');
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const { id } of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    await expect(page.locator('.docs-figures .docs-figure-section').first()).toBeVisible();
+    await expect(page.getByText(/^Loading (specimen|example)/)).toHaveCount(0);
+    const framed = await page.evaluate(() => {
+      const stages = document.querySelectorAll(
+        '.docs-figures :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage, .docs-specimen-grid, .docs-matrix-scroll)',
+      );
+      const visible = (color: string) => !/^(transparent|rgba\(.*,\s*0\))$/.test(color);
+      const found: string[] = [];
+      for (const stage of stages) {
+        const canvas = getComputedStyle(stage).backgroundColor;
+        for (
+          let node = stage.parentElement;
+          node && !node.classList.contains('docs-figures');
+          node = node.parentElement
+        ) {
+          if (node.classList.contains('docs-verdict-frame')) continue;
+          const style = getComputedStyle(node);
+          const bordered = (['Top', 'Right', 'Bottom', 'Left'] as const).some(
+            (side) =>
+              parseFloat(style.getPropertyValue(`border-${side.toLowerCase()}-width`)) > 0 &&
+              !/none|hidden/.test(style.getPropertyValue(`border-${side.toLowerCase()}-style`)),
+          );
+          const filled =
+            (visible(style.backgroundColor) && style.backgroundColor !== canvas) ||
+            style.backgroundImage !== 'none' ||
+            style.boxShadow !== 'none';
+          if (bordered || filled)
+            found.push(`${stage.className.split(' ')[0]} inside ${node.className || node.tagName}`);
+        }
+      }
+      return found;
+    });
+    expect(framed, `${id} has a stage inside another frame`).toEqual([]);
+  }
+});
+
 test('the props view links each source file at the revision the catalogue was built from', async ({
   page,
 }) => {
@@ -698,17 +745,17 @@ test(
   'offline hashes support direct links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${offline}#/components/select/guidelines`);
+    await page.goto(`${offline}#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await page.getByRole('tab', { name: 'Overview', exact: true }).click();
-    await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+    await page.getByRole('tab', { name: 'Props', exact: true }).click();
     await page.goBack();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
       'Overview',
     );
     await page.goForward();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-      'Guidelines',
+      'Props',
     );
   },
 );

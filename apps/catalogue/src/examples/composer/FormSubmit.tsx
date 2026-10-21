@@ -10,7 +10,7 @@ export default function FormSubmit() {
     event.currentTarget.reset();
   };
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Column gap={3}>
         <Composer name="note" aria-label="Note" placeholder="Add a note to the plan" />
         <Text variant="caption" emphasis="muted" role="status">

@@ -41,90 +41,21 @@ components:
 
 ## Overview
 
-A drop zone takes files two ways: dropped onto it, or chosen in the file picker it opens when pressed. It filters them by `accept`, hands the ones it takes to `onDropAccepted` and the others to `onDropRejected`, and takes part in native forms with `name`. The application uploads or reads the files and shows what was chosen; the zone doesn't list them.
+A drop zone takes files dropped onto it, or chosen in the file picker it opens when pressed. The application uploads the files and shows what was chosen.
 
 ```tsx example=LogoUpload
 
 ```
 
-## Anatomy
+### States
 
-1. **Target**: a button with a dashed outline in the field border color, 1 rem corners and the label and description centred; it is the zone's whole area.
-2. **Icon** (`icon`): an upload icon, 1.5 rem in a 2.75 rem circle on the neutral fill; a spinner while `pending`.
-3. **Label** (`label`): what to drop or choose, in medium weight; it names the zone.
-4. **Description** (optional, `description`): which files fit, in muted small text; it describes the zone.
-5. **Error** (optional, `error`): a message with an error icon below the zone, which also turns the outline red.
-
-## Variants and sizes
-
-| Size        | Use for                                                                                                  |
-| ----------- | -------------------------------------------------------------------------------------------------------- |
-| `size="md"` | A file that is the main content of a form, such as a logo: a tall area at least 9 rem high. The default. |
-| `size="sm"` | Attachments in a dense form or a row: one row with a 2 rem icon beside the label and description.        |
+`accept` filters dropped and chosen files; those that don't fit go to `onDropRejected`. While `pending`, a spinner replaces the icon and the zone takes no files.
 
 <!-- specimen: States -->
 
-- The zone fills its container's width; its text wraps, also within long words.
-- A small zone is as tall as a control plus 1 rem, with the label in the small body type.
-
-## States and behaviour
-
-- **Pressing**: pressing the zone, or <kbd>Enter</kbd> or <kbd>Space</kbd> while it has focus, opens the file picker. On hover the outline turns blue over a state layer, and keyboard focus shows a focus outline.
-- **Dragging**: files dragged over the zone turn the outline solid blue on the selection tint, and dropping them anywhere on the zone hands them over. Dragged text or links don't change it.
-- **Filtering**: `accept` filters both the picker and dropped files, by MIME type, group such as `image/*` and extension such as `.webp`. Files that don't fit go to `onDropRejected`, and without `multiple` so do the files after the first; check sizes and contents in `onDropAccepted`.
-- **Pending**: while `pending`, a spinner replaces the icon, the zone reports `aria-busy`, and it takes no new files; change the label to say what is happening, such as "Uploading the logo".
-- **Disabled**: the zone can't be pressed or focused, takes the shared disabled opacity and takes no files. A pending or disabled zone still catches dropped files, so the browser doesn't open them.
-- **In forms**: with `name`, native forms submit the last files the zone took, dropped ones included, and a form reset clears them. `files` hands the zone the files the application keeps, such as after Remove, so the form submits exactly what it shows. People can choose the same file again, such as after removing it.
-- **Hidden**: `hidden` hides the zone, such as while the application shows the chosen file; its file picker still opens through `inputRef`, such as from a Replace button.
-
-## Content guidelines
-
-- Say what to do in the label, with the thing to add: "Drop a logo here, or browse", "Attach documents".
-- Say which files fit in the description: "PNG, JPG or WebP up to 2 MB".
-- Write an error that says how to correct the file: "Choose an image up to 2 MB."
-- While pending, say what is happening in the label: "Uploading the logo".
-
-## Do and don't
-
-### Do
-
-- Show what was chosen beside or in place of the zone, with actions to replace or remove it.
-- Check file sizes and contents in `onDropAccepted`, and show the problem in `error`.
-- Use `files` in a form where people can remove files, so the form submits what it shows.
-
-### Don't
-
-- Don't put links or other controls inside the zone; the whole zone is one button.
-- Don't list the chosen files inside the label.
-- Don't leave a zone pending without saying what it is doing.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                            |
-| ----------------------------------------------- | --------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to and from the zone. |
-| <kbd>Enter</kbd> or <kbd>Space</kbd>            | Opens the file picker.            |
-
-### envUI provides
-
-- A native button named by `label` and described by `description` and `error`, so the file picker is reachable without drag and drop.
-- `aria-busy` and `aria-disabled` while pending, and the native disabled state.
-- The upload icon hidden from assistive technology, the error icon too, and a focus outline.
-- Native file inputs for the picker and for form submission, kept out of the tab order.
-
-### You provide
-
-- A `label` that says what to add, and a `description` of the files that fit.
-- The chosen files in the page, with accessible actions to replace or remove them, and an announcement when an upload ends, such as a status.
-- The checks behind `error`, beyond the types `accept` filters.
-
-## Examples
-
 ### Attach several files
 
-A small zone with `multiple` adds documents to a list the application shows, each with a Remove action.
+With `multiple`, the zone takes several files at once; the application lists them, each with Remove.
 
 ```tsx example=AttachDocuments
 
@@ -132,7 +63,7 @@ A small zone with `multiple` adds documents to a list the application shows, eac
 
 ### Upload with progress
 
-While the application uploads a file, the zone is pending, its label says what is happening, and a status announces when it's done.
+While the application uploads, `pending` keeps the zone busy, and its label says what is happening.
 
 ```tsx example=UploadProgress
 
@@ -140,11 +71,88 @@ While the application uploads a file, the zone is pending, its label says what i
 
 ### In a form
 
-With `name`, the form submits the files the zone took, and Reset clears them.
+With `name`, the form submits the files the zone took, and a reset clears them. `files` hands the zone the files the application keeps.
 
 ```tsx example=InAForm
 
 ```
+
+## Variants
+
+```tsx example=Sizes
+
+```
+
+| Size        | Use for                                                 |
+| ----------- | ------------------------------------------------------- |
+| `size="md"` | A file that is the main content of a form. The default. |
+| `size="sm"` | Attachments in a dense form or a row.                   |
+
+## When to use
+
+```tsx do=SaysWhatIsHappening caption="While pending, a label that says what is happening."
+
+```
+
+```tsx dont=SilentPending caption="A spinner beside a label that still asks for a file."
+
+```
+
+- Show what was chosen beside or in place of the zone, with Replace and Remove.
+- No links or other controls inside the zone: the whole zone is one button.
+
+### Labels
+
+Say what to add in the label, and which files fit in the description.
+
+```tsx do=SaysWhatFits caption="What to add, and which files fit."
+
+```
+
+```tsx dont=BareLabel caption="Upload alone: people find out what fits only when a file is refused."
+
+```
+
+## Anatomy
+
+```tsx anatomy=DropZoneAnatomy
+
+```
+
+1. **Drop zone** (`env-drop-zone`)
+2. **Target** (`env-drop-zone-target`)
+3. **Icon** (`env-drop-zone-icon`, `icon`)
+4. **Label** (`env-drop-zone-label`, `label`)
+5. **Description** (`env-drop-zone-description`, `description`)
+
+## Adapting to width
+
+A zone fills its container, and its text wraps.
+
+```tsx example=NarrowZone widths="14 30"
+
+```
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                      |
+| ----------------------------------------------- | --------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to and from the zone. |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Opens the file picker.      |
+
+### envUI provides
+
+- The zone as a button named by its label and described by its description and error.
+- `aria-busy` while pending.
+- A native file input for the picker and for forms.
+
+### You provide
+
+- A label that says what to add.
+- Checks of size and contents, and the `error` message.
+- An announcement when an upload finishes, and the list of chosen files.
 
 ## Changelog
 

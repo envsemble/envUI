@@ -2777,26 +2777,62 @@
         {
           "name": "AccentColor",
           "title": "Accent color",
-          "description": "ColorSwatch is a round, decorative sample of a color, such as on the button that opens a ColorPicker in a Popover.",
+          "description": "A color picker chooses an opaque color with a color area, a hue slider and a HEX field that stay in step.",
           "file": "docs/examples/color-picker/AccentColor.tsx"
         },
         {
+          "name": "Swatches",
+          "title": "Swatches",
+          "description": "",
+          "file": "docs/examples/color-picker/Swatches.tsx"
+        },
+        {
           "name": "SwatchButton",
-          "title": "Open from a swatch",
-          "description": "A secondary button shows the color as a swatch and its HEX value, and opens the picker in a Popover.",
+          "title": "Swatch button",
+          "description": "In a Popover, opened by a button that shows the color as a swatch and its value.",
           "file": "docs/examples/color-picker/SwatchButton.tsx"
         },
         {
           "name": "ProjectColorForm",
-          "title": "In a form",
-          "description": "`name` submits the HEX value with the form, and Reset returns an uncontrolled picker to its `defaultValue`.",
+          "title": "Project color form",
+          "description": "`name` submits the HEX value, and a reset returns to `defaultValue`.",
           "file": "docs/examples/color-picker/ProjectColorForm.tsx"
         },
         {
-          "name": "Swatches",
-          "title": "Swatches beside names",
-          "description": "ColorSwatch shows each label's color before its name, with the value written beside it; a white swatch keeps its ring.",
-          "file": "docs/examples/color-picker/Swatches.tsx"
+          "name": "SwatchWithValue",
+          "title": "Do: A swatch with the color's value in text.",
+          "description": "",
+          "file": "docs/examples/color-picker/SwatchWithValue.tsx"
+        },
+        {
+          "name": "SwatchAlone",
+          "title": "Don't: A swatch alone, which names no color.",
+          "description": "",
+          "file": "docs/examples/color-picker/SwatchAlone.tsx"
+        },
+        {
+          "name": "ContrastChecked",
+          "title": "Do: Check the contrast of a color that carries text, and say what is wrong.",
+          "description": "",
+          "file": "docs/examples/color-picker/ContrastChecked.tsx"
+        },
+        {
+          "name": "ContrastUnchecked",
+          "title": "Don't: A color too light for text, taken without a word.",
+          "description": "",
+          "file": "docs/examples/color-picker/ContrastUnchecked.tsx"
+        },
+        {
+          "name": "ColorPickerAnatomy",
+          "title": "ColorPicker anatomy",
+          "description": "",
+          "file": "docs/examples/color-picker/ColorPickerAnatomy.tsx"
+        },
+        {
+          "name": "FillWidth",
+          "title": "Fill width",
+          "description": "",
+          "file": "docs/examples/color-picker/FillWidth.tsx"
         }
       ],
       "parts": {
@@ -2962,56 +2998,116 @@
         {
           "name": "ProjectName",
           "title": "Project name",
-          "description": "- SearchField is a TextField for a query, with a search icon and, while it has a query, a clear button; <kbd>Esc</kbd> also clears. Its label is hidden by default, so it sits beside buttons with a placeholder. - Textarea takes text over several lines, at a fixed height that scrolls and resizes from its bottom edge, or growing with its content.",
+          "description": "A text field takes a short value on one line, with a label, a description and an error.",
           "file": "docs/examples/text-field/ProjectName.tsx"
         },
         {
-          "name": "Variants",
-          "title": "Appearances",
-          "description": "Outline fields suit forms, underline fields a title in a document or a header, and ghost fields a search at the top of a sidebar.",
-          "file": "docs/examples/text-field/Variants.tsx"
+          "name": "SearchMembers",
+          "title": "Search members",
+          "description": "",
+          "file": "docs/examples/text-field/SearchMembers.tsx"
+        },
+        {
+          "name": "Notes",
+          "title": "Notes",
+          "description": "",
+          "file": "docs/examples/text-field/Notes.tsx"
         },
         {
           "name": "Validation",
-          "title": "Show an error",
-          "description": "The description states the rule and the error says how to correct the value. Here the field is checked once people leave it, and the error goes as soon as the value fits.",
+          "title": "Validation",
+          "description": "`error` marks the field invalid and shows under the description. Say how to correct the value.",
           "file": "docs/examples/text-field/Validation.tsx"
         },
         {
           "name": "PrefixAndSuffix",
           "title": "Prefix and suffix",
-          "description": "Short text in line with the value, such as the start of an address or a unit; forms submit only the value. It appears once the field has focus or a value, and always beside the placeholder of a field whose label is hidden.",
+          "description": "Short text in line with the value, which forms don't submit. Pressing it places the caret.",
           "file": "docs/examples/text-field/PrefixAndSuffix.tsx"
         },
         {
           "name": "IconAndAction",
-          "title": "Icon and end action",
-          "description": "`startIcon` adds a decorative icon at the start; `endAction` holds a control at the end, here an IconButton that shows the password, which takes the ghost look of the field.",
+          "title": "Icon and action",
+          "description": "`startIcon` is decorative; `endAction` holds a control, such as an IconButton, which takes the field's ghost look.",
           "file": "docs/examples/text-field/IconAndAction.tsx"
-        },
-        {
-          "name": "FieldsBesideButtons",
-          "title": "Fields beside buttons",
-          "description": "Fields share the button height of their size. Without a visible label the placeholder guides; with its label shown, the label rests inside and floats into the outline without changing the height.",
-          "file": "docs/examples/text-field/FieldsBesideButtons.tsx"
-        },
-        {
-          "name": "FilterList",
-          "title": "Search a list",
-          "description": "SearchField filters as people type; its clear button and <kbd>Esc</kbd> clear the query. A status line announces how many members match.",
-          "file": "docs/examples/text-field/FilterList.tsx"
-        },
-        {
-          "name": "SidebarSearch",
-          "title": "Search a sidebar",
-          "description": "A ghost SearchField at the top of a sidebar shows only its icon and placeholder until the pointer or focus gives it a soft fill.",
-          "file": "docs/examples/text-field/SidebarSearch.tsx"
         },
         {
           "name": "TextareaSizing",
           "title": "Textarea sizing",
-          "description": "A fixed Textarea scrolls its text; drag its bottom edge, or focus the edge and use the arrow keys, to resize it. With `sizing=\"content\"` and `rows={1}`, a reply starts at one line and grows with its text.",
+          "description": "A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the arrow keys. With `sizing=\"content\"` it grows with its text.",
           "file": "docs/examples/text-field/TextareaSizing.tsx"
+        },
+        {
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/text-field/Variants.tsx"
+        },
+        {
+          "name": "FieldsBesideButtons",
+          "title": "Sizes",
+          "description": "Outline and ghost fields take the control heights of the scale, `sm`, `md` and `lg`, so they line up with buttons of the same size.",
+          "file": "docs/examples/text-field/FieldsBesideButtons.tsx"
+        },
+        {
+          "name": "ReadOnlyValue",
+          "title": "Do: readOnly for a value people can see and copy but not change.",
+          "description": "",
+          "file": "docs/examples/text-field/ReadOnlyValue.tsx"
+        },
+        {
+          "name": "DisabledValue",
+          "title": "Don't: Disabled to show a fixed value: it can't be focused, copied or submitted.",
+          "description": "",
+          "file": "docs/examples/text-field/DisabledValue.tsx"
+        },
+        {
+          "name": "OutlineForm",
+          "title": "Do: Outline fields in a form, so people see where to type.",
+          "description": "",
+          "file": "docs/examples/text-field/OutlineForm.tsx"
+        },
+        {
+          "name": "GhostForm",
+          "title": "Don't: Ghost fields in a form: nothing shows where to type.",
+          "description": "",
+          "file": "docs/examples/text-field/GhostForm.tsx"
+        },
+        {
+          "name": "LabelAndDescription",
+          "title": "Do: A label that names the value, and the rule in the description.",
+          "description": "Name the value in a short noun phrase, and keep lasting instructions in the description.",
+          "file": "docs/examples/text-field/LabelAndDescription.tsx"
+        },
+        {
+          "name": "PlaceholderAsLabel",
+          "title": "Don't: Instructions in the placeholder: they vanish as people type.",
+          "description": "",
+          "file": "docs/examples/text-field/PlaceholderAsLabel.tsx"
+        },
+        {
+          "name": "HelpfulError",
+          "title": "Do: An error that says how to correct the value.",
+          "description": "",
+          "file": "docs/examples/text-field/HelpfulError.tsx"
+        },
+        {
+          "name": "VagueError",
+          "title": "Don't: An error that only says the value is wrong.",
+          "description": "",
+          "file": "docs/examples/text-field/VagueError.tsx"
+        },
+        {
+          "name": "TextFieldAnatomy",
+          "title": "TextField anatomy",
+          "description": "",
+          "file": "docs/examples/text-field/TextFieldAnatomy.tsx"
+        },
+        {
+          "name": "LongAddress",
+          "title": "Long address",
+          "description": "",
+          "file": "docs/examples/text-field/LongAddress.tsx"
         }
       ],
       "parts": {
@@ -3245,20 +3341,50 @@
         {
           "name": "ProjectName",
           "title": "Project name",
-          "description": "envUI's own fields, such as TextField and Select, have this anatomy built in; use Field for a control they don't cover.",
+          "description": "Field gives a control of your own a label, a description and an error, wired for assistive technology.",
           "file": "docs/examples/field/ProjectName.tsx"
         },
         {
           "name": "ValidateOnBlur",
           "title": "Validate on blur",
-          "description": "`validate` checks the value as focus leaves the control, and the error shows the message it returns.",
+          "description": "`validate` returns an error message for a value, or nothing for a valid one. `validationMode` checks on submit, the default, on blur or on change.",
           "file": "docs/examples/field/ValidateOnBlur.tsx"
         },
         {
           "name": "ApplicationControl",
-          "title": "A control of the application's own",
-          "description": "`render` takes any control, such as a native range input, which the label and the description describe.",
+          "title": "Application control",
+          "description": "`render` on `Field.Control` takes any control, which the label and description then describe.",
           "file": "docs/examples/field/ApplicationControl.tsx"
+        },
+        {
+          "name": "ErrorAfterLeaving",
+          "title": "Do: Show an error once people leave the field or submit.",
+          "description": "",
+          "file": "docs/examples/field/ErrorAfterLeaving.tsx"
+        },
+        {
+          "name": "ErrorOnArrival",
+          "title": "Don't: An error before people have had a chance to type.",
+          "description": "",
+          "file": "docs/examples/field/ErrorOnArrival.tsx"
+        },
+        {
+          "name": "ShortLabel",
+          "title": "Do: A short noun phrase, with guidance in the description.",
+          "description": "",
+          "file": "docs/examples/field/ShortLabel.tsx"
+        },
+        {
+          "name": "WordyLabel",
+          "title": "Don't: A sentence with a colon, which people read twice.",
+          "description": "",
+          "file": "docs/examples/field/WordyLabel.tsx"
+        },
+        {
+          "name": "FieldAnatomy",
+          "title": "Field anatomy",
+          "description": "",
+          "file": "docs/examples/field/FieldAnatomy.tsx"
         }
       ],
       "parts": {
@@ -3378,26 +3504,62 @@
         {
           "name": "AskAnything",
           "title": "Ask anything",
-          "description": "A composer is where people write a message and send it: a multiline field on a raised surface that grows with its text, with a round send button at its end. <kbd>Enter</kbd> sends and <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. While a reply runs, the send button becomes a stop button. The application sends the text with `onSubmit`, or the field's form sends it under its `name`.",
+          "description": "A composer is where people write a message and send it with <kbd>Enter</kbd>; <kbd>Shift</kbd>+<kbd>Enter</kbd> starts a new line. While a reply runs, the send button stops it.",
           "file": "docs/examples/composer/AskAnything.tsx"
-        },
-        {
-          "name": "StartAndFooter",
-          "title": "Start content and a footer",
-          "description": "Start content moves the send button to an action row below the field; the footer describes the field.",
-          "file": "docs/examples/composer/StartAndFooter.tsx"
         },
         {
           "name": "PendingSend",
           "title": "Pending send",
-          "description": "While the reply is sent, `pending` holds the next send; the field stays editable and keeps focus.",
+          "description": "While `pending`, the next send waits; the field stays editable and keeps focus.",
           "file": "docs/examples/composer/PendingSend.tsx"
         },
         {
           "name": "FormSubmit",
-          "title": "Sent by its form",
+          "title": "Form submit",
           "description": "Without `onSubmit`, <kbd>Enter</kbd> and the send button submit the form, which sends the text under `name`.",
           "file": "docs/examples/composer/FormSubmit.tsx"
+        },
+        {
+          "name": "StartAndFooter",
+          "title": "Start and footer",
+          "description": "",
+          "file": "docs/examples/composer/StartAndFooter.tsx"
+        },
+        {
+          "name": "PendingStaysEditable",
+          "title": "Do: pending while a send is in progress, so people can keep writing.",
+          "description": "",
+          "file": "docs/examples/composer/PendingStaysEditable.tsx"
+        },
+        {
+          "name": "DisabledWhileSending",
+          "title": "Don't: A disabled composer, which takes focus away from the draft.",
+          "description": "",
+          "file": "docs/examples/composer/DisabledWhileSending.tsx"
+        },
+        {
+          "name": "ShortFooter",
+          "title": "Do: A footer of a few words.",
+          "description": "",
+          "file": "docs/examples/composer/ShortFooter.tsx"
+        },
+        {
+          "name": "LongFooter",
+          "title": "Don't: Instructions in the footer that nobody reads.",
+          "description": "",
+          "file": "docs/examples/composer/LongFooter.tsx"
+        },
+        {
+          "name": "ComposerAnatomy",
+          "title": "Composer anatomy",
+          "description": "",
+          "file": "docs/examples/composer/ComposerAnatomy.tsx"
+        },
+        {
+          "name": "GrowingDraft",
+          "title": "Growing draft",
+          "description": "",
+          "file": "docs/examples/composer/GrowingDraft.tsx"
         }
       ],
       "parts": {
@@ -3525,20 +3687,68 @@
         {
           "name": "IncludeArchived",
           "title": "Include archived",
-          "description": "A checkbox turns one choice on or off, independently of the choices beside it. It is a native `<input type=\"checkbox\">` inside its `<label>`, so pressing the box or the label toggles it, and forms submit, validate and reset it as the platform does. A checkbox can also be mixed, for the parent of a group whose children are only partly chosen.",
+          "description": "A checkbox turns one choice on or off, on its own, and takes effect when a form is sent.",
           "file": "docs/examples/checkbox/IncludeArchived.tsx"
         },
         {
           "name": "SelectAll",
           "title": "Select all",
-          "description": "The parent is checked when every project is, mixed when some are, and checks or clears them all when pressed. The children line up with the parent's label.",
+          "description": "A parent is checked when every child is, mixed when some are, and checks or clears them all.",
           "file": "docs/examples/checkbox/SelectAll.tsx"
         },
         {
           "name": "NotificationForm",
-          "title": "In a form",
-          "description": "Checkboxes with the same `name` submit one entry for each checked value. A fieldset's legend names the group, and Reset returns every box to `defaultChecked`.",
+          "title": "Notification form",
+          "description": "A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`.",
           "file": "docs/examples/checkbox/NotificationForm.tsx"
+        },
+        {
+          "name": "NamedGroup",
+          "title": "Do: Name a group with a legend, so each choice reads in context.",
+          "description": "",
+          "file": "docs/examples/checkbox/NamedGroup.tsx"
+        },
+        {
+          "name": "UnnamedGroup",
+          "title": "Don't: Checkboxes with no name for the group: mentions of what?",
+          "description": "",
+          "file": "docs/examples/checkbox/UnnamedGroup.tsx"
+        },
+        {
+          "name": "DisabledWithReason",
+          "title": "Do: Say why a choice is unavailable, next to it.",
+          "description": "",
+          "file": "docs/examples/checkbox/DisabledWithReason.tsx"
+        },
+        {
+          "name": "DisabledWithoutReason",
+          "title": "Don't: A disabled checkbox that doesn’t say why.",
+          "description": "",
+          "file": "docs/examples/checkbox/DisabledWithoutReason.tsx"
+        },
+        {
+          "name": "PositiveLabel",
+          "title": "Do: A label that checking means yes to.",
+          "description": "Write the label as the choice it turns on, in sentence case, so checking it means yes.",
+          "file": "docs/examples/checkbox/PositiveLabel.tsx"
+        },
+        {
+          "name": "NegativeLabel",
+          "title": "Don't: A negative label: checking it means no.",
+          "description": "",
+          "file": "docs/examples/checkbox/NegativeLabel.tsx"
+        },
+        {
+          "name": "CheckboxAnatomy",
+          "title": "Checkbox anatomy",
+          "description": "",
+          "file": "docs/examples/checkbox/CheckboxAnatomy.tsx"
+        },
+        {
+          "name": "LongLabel",
+          "title": "Long label",
+          "description": "",
+          "file": "docs/examples/checkbox/LongLabel.tsx"
         }
       ],
       "parts": {
@@ -3635,26 +3845,68 @@
         {
           "name": "NotificationSettings",
           "title": "Notification settings",
-          "description": "A switch turns a setting on or off, and the change takes effect at once, as a light switch does. It is a native checkbox with the switch role, drawn as a track and a thumb with its label beside it, so focus, <kbd>Space</kbd>, pressing the label and form participation behave as the platform's.",
+          "description": "A switch turns a setting on or off, and the change takes effect at once.",
           "file": "docs/examples/switch/NotificationSettings.tsx"
         },
         {
           "name": "ShowCompleted",
-          "title": "Apply at once",
-          "description": "The list follows the switch as soon as it changes; there is nothing to save.",
+          "title": "Show completed",
+          "description": "The application applies the setting as soon as the switch changes; there is nothing to save.",
           "file": "docs/examples/switch/ShowCompleted.tsx"
         },
         {
           "name": "SettingsRows",
-          "title": "Settings in a list",
-          "description": "Each row's switch is named by the row's title and described by its detail, so the visible text is read once.",
+          "title": "Settings rows",
+          "description": "In a row, the row's title names the switch with `aria-labelledby`, and its detail describes it.",
           "file": "docs/examples/switch/SettingsRows.tsx"
         },
         {
           "name": "ManagedSetting",
-          "title": "Unavailable settings",
-          "description": "Disabled switches keep their state visible. A sentence linked to both with `aria-describedby` says why they can't change.",
+          "title": "Do: Say why a setting can't change, and who can change it.",
+          "description": "",
           "file": "docs/examples/switch/ManagedSetting.tsx"
+        },
+        {
+          "name": "DisabledWithoutReason",
+          "title": "Don't: Disabled switches that don’t say why.",
+          "description": "",
+          "file": "docs/examples/switch/DisabledWithoutReason.tsx"
+        },
+        {
+          "name": "SameLabel",
+          "title": "Do: One label, whichever way the switch is set.",
+          "description": "Name the setting in a short phrase, so that on means yes.",
+          "file": "docs/examples/switch/SameLabel.tsx"
+        },
+        {
+          "name": "StateInLabel",
+          "title": "Don't: A label that changes to say the state, which the track shows.",
+          "description": "",
+          "file": "docs/examples/switch/StateInLabel.tsx"
+        },
+        {
+          "name": "PositiveLabel",
+          "title": "Do: A label that on means yes to.",
+          "description": "",
+          "file": "docs/examples/switch/PositiveLabel.tsx"
+        },
+        {
+          "name": "NegativeLabel",
+          "title": "Don't: A negative label: on means no.",
+          "description": "",
+          "file": "docs/examples/switch/NegativeLabel.tsx"
+        },
+        {
+          "name": "SwitchAnatomy",
+          "title": "Switch anatomy",
+          "description": "",
+          "file": "docs/examples/switch/SwitchAnatomy.tsx"
+        },
+        {
+          "name": "LongLabel",
+          "title": "Long label",
+          "description": "",
+          "file": "docs/examples/switch/LongLabel.tsx"
         }
       ],
       "parts": {
@@ -3744,26 +3996,62 @@
         {
           "name": "ProjectAccess",
           "title": "Project access",
-          "description": "- Inline (the default): radios before their labels, side by side, wrapping onto more lines when space runs out. - Rows (`orientation=\"vertical\"`): connected rows that fill the width, with each option's label and description at the start and its radio at the end, for options that need explaining.",
+          "description": "A radio group shows a few options and lets people choose exactly one.",
           "file": "docs/examples/radio/ProjectAccess.tsx"
         },
         {
-          "name": "VisibilityRows",
-          "title": "Selectable rows",
-          "description": "Rows suit options that need a sentence each. The disabled option says why in its description.",
-          "file": "docs/examples/radio/VisibilityRows.tsx"
-        },
-        {
           "name": "RequiredChoice",
-          "title": "A required choice",
-          "description": "The group starts with nothing chosen. Exporting without a choice shows an error linked to the group, announces it and moves focus to the first option.",
+          "title": "Required choice",
+          "description": "With `required` and nothing chosen, the form asks for a choice. Link the error to the group with `aria-describedby`.",
           "file": "docs/examples/radio/RequiredChoice.tsx"
         },
         {
           "name": "InheritedAccess",
-          "title": "A choice that can't change here",
-          "description": "A disabled group keeps its choice visible, and a sentence linked with `aria-describedby` says where to change it.",
+          "title": "Inherited access",
+          "description": "`disabled` on the group keeps its choice visible; a sentence says where to change it.",
           "file": "docs/examples/radio/InheritedAccess.tsx"
+        },
+        {
+          "name": "VisibilityRows",
+          "title": "Visibility rows",
+          "description": "",
+          "file": "docs/examples/radio/VisibilityRows.tsx"
+        },
+        {
+          "name": "DescribedRows",
+          "title": "Do: Rows with a description where options need explaining.",
+          "description": "",
+          "file": "docs/examples/radio/DescribedRows.tsx"
+        },
+        {
+          "name": "LongInlineLabels",
+          "title": "Don't: Explanations packed into inline labels.",
+          "description": "",
+          "file": "docs/examples/radio/LongInlineLabels.tsx"
+        },
+        {
+          "name": "ParallelNames",
+          "title": "Do: Short names that read alike.",
+          "description": "Name the group with a short noun, and give options short, parallel names.",
+          "file": "docs/examples/radio/ParallelNames.tsx"
+        },
+        {
+          "name": "MixedNames",
+          "title": "Don't: Names of different shapes, which people must read twice.",
+          "description": "",
+          "file": "docs/examples/radio/MixedNames.tsx"
+        },
+        {
+          "name": "RadioAnatomy",
+          "title": "Radio anatomy",
+          "description": "",
+          "file": "docs/examples/radio/RadioAnatomy.tsx"
+        },
+        {
+          "name": "WrappingOptions",
+          "title": "Wrapping options",
+          "description": "",
+          "file": "docs/examples/radio/WrappingOptions.tsx"
         }
       ],
       "parts": {
@@ -3963,32 +4251,74 @@
         {
           "name": "ProjectVisibility",
           "title": "Project visibility",
-          "description": "A select chooses one value from a list that stays collapsed until people open it. Its trigger is a pill in a Button style that shows the chosen option, with the label above it and a description and an error below, as on other fields. Select is built on Base UI's select: the list opens below the trigger, takes keyboard focus, chooses with a press or a key and returns focus to the trigger, and a hidden input takes part in native forms.",
+          "description": "A select chooses one value from a list that stays collapsed until people open it.",
           "file": "docs/examples/select/ProjectVisibility.tsx"
         },
         {
-          "name": "TriggerStyles",
-          "title": "Trigger styles",
-          "description": "The secondary trigger fills on the page; the outline one keeps a border on a pane, where a fill would blend in.",
-          "file": "docs/examples/select/TriggerStyles.tsx"
-        },
-        {
           "name": "InviteMember",
-          "title": "In a form",
-          "description": "The label sits above a trigger that fits its content, beside a full-width text field. The description says what the roles mean, and `name` submits the chosen role with the form.",
+          "title": "Invite member",
+          "description": "With `name`, a hidden input submits the chosen value, and a form reset restores `defaultValue`.",
           "file": "docs/examples/select/InviteMember.tsx"
         },
         {
           "name": "SettingRows",
-          "title": "In list rows",
-          "description": "A row's title names its select with `aria-label`; outline triggers stay distinct on the row fill.",
+          "title": "Setting rows",
+          "description": "A row's title names its select with `aria-label`.",
           "file": "docs/examples/select/SettingRows.tsx"
         },
         {
+          "name": "TriggerStyles",
+          "title": "Trigger styles",
+          "description": "",
+          "file": "docs/examples/select/TriggerStyles.tsx"
+        },
+        {
           "name": "SmallToolbar",
-          "title": "Small, in a toolbar",
-          "description": "A small, outline select fits a toolbar beside small text icon buttons. Its list has a check mark on the chosen zoom level.",
+          "title": "Sizes",
+          "description": "`sm`, `md` and `lg`, the control heights of the scale, so a select lines up with the buttons beside it.",
           "file": "docs/examples/select/SmallToolbar.tsx"
+        },
+        {
+          "name": "SensibleDefault",
+          "title": "Do: A default where one option suits most people.",
+          "description": "",
+          "file": "docs/examples/select/SensibleDefault.tsx"
+        },
+        {
+          "name": "NeedlessPlaceholder",
+          "title": "Don't: A placeholder that makes everyone choose what most would pick.",
+          "description": "",
+          "file": "docs/examples/select/NeedlessPlaceholder.tsx"
+        },
+        {
+          "name": "OutlineOnPane",
+          "title": "Do: An outline trigger on a pane.",
+          "description": "",
+          "file": "docs/examples/select/OutlineOnPane.tsx"
+        },
+        {
+          "name": "FilledOnPane",
+          "title": "Don't: A filled trigger on a pane, where its fill blends in.",
+          "description": "",
+          "file": "docs/examples/select/FilledOnPane.tsx"
+        },
+        {
+          "name": "ErrorSaysWhatToDo",
+          "title": "Do: An error that says what to do.",
+          "description": "Name the select with a short noun, and say in a disabled option's label why it is unavailable.",
+          "file": "docs/examples/select/ErrorSaysWhatToDo.tsx"
+        },
+        {
+          "name": "ErrorSaysWhatFailed",
+          "title": "Don't: An error that only says what failed.",
+          "description": "",
+          "file": "docs/examples/select/ErrorSaysWhatFailed.tsx"
+        },
+        {
+          "name": "SelectAnatomy",
+          "title": "Select anatomy",
+          "description": "",
+          "file": "docs/examples/select/SelectAnatomy.tsx"
         }
       ],
       "parts": {
@@ -4257,20 +4587,62 @@
         {
           "name": "WorkItems",
           "title": "Work items",
-          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once. Its options sit side by side on a pill rail, and the chosen one takes the primary colors. SegmentedControl is built on Base UI's radio group: it is a radio group with one tab stop, and the arrow keys move between the options and choose them.",
+          "description": "A segmented control switches between a few views or filters of the same content, and the choice applies at once.",
           "file": "docs/examples/segmented-control/WorkItems.tsx"
         },
         {
           "name": "SmallToolbar",
-          "title": "Small, in a toolbar",
-          "description": "`size=\"sm\"` makes the rail as tall as the small button beside it. Timeline is disabled, and the arrow keys skip it.",
+          "title": "Sizes",
+          "description": "",
           "file": "docs/examples/segmented-control/SmallToolbar.tsx"
         },
         {
-          "name": "FillSidebar",
-          "title": "Fill a sidebar",
-          "description": "With `fullWidth` the control fills a sidebar and splits it between the options. Labels too long for their half end with an ellipsis and show whole in a tooltip on hover and keyboard focus.",
-          "file": "docs/examples/segmented-control/FillSidebar.tsx"
+          "name": "MatchingSize",
+          "title": "Do: The size of the controls beside it.",
+          "description": "",
+          "file": "docs/examples/segmented-control/MatchingSize.tsx"
+        },
+        {
+          "name": "MismatchedSize",
+          "title": "Don't: A larger control than its neighbours, so the row doesn't line up.",
+          "description": "",
+          "file": "docs/examples/segmented-control/MismatchedSize.tsx"
+        },
+        {
+          "name": "IconsOnAll",
+          "title": "Do: Icons on every option, or on none.",
+          "description": "",
+          "file": "docs/examples/segmented-control/IconsOnAll.tsx"
+        },
+        {
+          "name": "IconsOnSome",
+          "title": "Don't: An icon on one option, which then looks more important.",
+          "description": "",
+          "file": "docs/examples/segmented-control/IconsOnSome.tsx"
+        },
+        {
+          "name": "ParallelLabels",
+          "title": "Do: Short labels of about the same length.",
+          "description": "Name options with a word or two that name the view, and name the control with `aria-label`.",
+          "file": "docs/examples/segmented-control/ParallelLabels.tsx"
+        },
+        {
+          "name": "UnevenLabels",
+          "title": "Don't: One long label that unbalances the rail.",
+          "description": "",
+          "file": "docs/examples/segmented-control/UnevenLabels.tsx"
+        },
+        {
+          "name": "SegmentedControlAnatomy",
+          "title": "SegmentedControl anatomy",
+          "description": "",
+          "file": "docs/examples/segmented-control/SegmentedControlAnatomy.tsx"
+        },
+        {
+          "name": "FullWidthScope",
+          "title": "Full width scope",
+          "description": "",
+          "file": "docs/examples/segmented-control/FullWidthScope.tsx"
         }
       ],
       "parts": {
@@ -4459,32 +4831,74 @@
         {
           "name": "ChooseOwner",
           "title": "Choose owner",
-          "description": "A combobox is a text field with a list of options: typing filters the list, the first match is highlighted so <kbd>Enter</kbd> chooses it, and the field shows what was chosen. A single combobox shows the chosen option's label as its text; with `multiple`, chosen options are removable chips in the field. Focus stays in the field while people move through the options, as the WAI-ARIA combobox pattern describes. Combobox is built on Base UI's combobox and the shared text field.",
+          "description": "A combobox is a text field with a list of options: typing filters the list, and <kbd>Enter</kbd> chooses the first match.",
           "file": "docs/examples/combobox/ChooseOwner.tsx"
         },
         {
           "name": "Reviewers",
-          "title": "Several reviewers",
-          "description": "With `multiple`, chosen people show as chips in the field; <kbd>Backspace</kbd> in the empty text removes the last one.",
+          "title": "Reviewers",
+          "description": "With `multiple`, chosen options are chips in the field, and the list stays open. <kbd>Backspace</kbd> in the empty text removes the last chip.",
           "file": "docs/examples/combobox/Reviewers.tsx"
         },
         {
-          "name": "SmallToolbar",
-          "title": "Small, in a toolbar",
-          "description": "`size=\"sm\"` gives the field the small control height, so it lines up with a small button beside it. Without a visible label, its placeholder guides; the popup groups its options under headings.",
-          "file": "docs/examples/combobox/SmallToolbar.tsx"
-        },
-        {
           "name": "ServerSearch",
-          "title": "Search on a server",
-          "description": "With `filter={null}` the list shows the people the application finds for the typed text, with a loading status while it searches.",
+          "title": "Server search",
+          "description": "With `filter={null}` the list shows the options the application finds for the typed text; `loading` shows a spinner while it searches.",
           "file": "docs/examples/combobox/ServerSearch.tsx"
         },
         {
           "name": "RequiredInForm",
-          "title": "In a form",
-          "description": "A multiple combobox submits one entry for each chosen topic. The application checks that one is chosen and shows the error; Reset returns to `defaultValue`.",
+          "title": "Required in form",
+          "description": "`name` submits the value, or one entry for each chip. Validation and its `error` belong to the application.",
           "file": "docs/examples/combobox/RequiredInForm.tsx"
+        },
+        {
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/combobox/Variants.tsx"
+        },
+        {
+          "name": "SmallToolbar",
+          "title": "Sizes",
+          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, a placeholder and an `aria-label` name it.",
+          "file": "docs/examples/combobox/SmallToolbar.tsx"
+        },
+        {
+          "name": "ClearableOptional",
+          "title": "Do: clearable where the value is optional.",
+          "description": "",
+          "file": "docs/examples/combobox/ClearableOptional.tsx"
+        },
+        {
+          "name": "StuckOptional",
+          "title": "Don't: An optional value that people can change but not remove.",
+          "description": "",
+          "file": "docs/examples/combobox/StuckOptional.tsx"
+        },
+        {
+          "name": "NamedLabel",
+          "title": "Do: A label that names what people choose.",
+          "description": "Name the field after what people choose, and use the placeholder for what to type.",
+          "file": "docs/examples/combobox/NamedLabel.tsx"
+        },
+        {
+          "name": "InstructionLabel",
+          "title": "Don't: An instruction as the label.",
+          "description": "",
+          "file": "docs/examples/combobox/InstructionLabel.tsx"
+        },
+        {
+          "name": "ComboboxAnatomy",
+          "title": "Combobox anatomy",
+          "description": "",
+          "file": "docs/examples/combobox/ComboboxAnatomy.tsx"
+        },
+        {
+          "name": "WrappingChips",
+          "title": "Wrapping chips",
+          "description": "",
+          "file": "docs/examples/combobox/WrappingChips.tsx"
         }
       ],
       "parts": {
@@ -4801,38 +5215,86 @@
         {
           "name": "PublishDate",
           "title": "Publish date",
-          "description": "Calendar is the month of days the field opens, which also stands on its own within a page or a panel.",
+          "description": "A date picker is a field that opens a calendar to choose a day, or a day and a time.",
           "file": "docs/examples/date-picker/PublishDate.tsx"
         },
         {
+          "name": "PlanningCalendar",
+          "title": "Planning calendar",
+          "description": "",
+          "file": "docs/examples/date-picker/PlanningCalendar.tsx"
+        },
+        {
           "name": "MeetingTime",
-          "title": "A date and a time",
-          "description": "With `granularity=\"minute\"`, the calendar stays open beside the time's wheels, here with minutes every half hour with `minuteStep={30}`; turning a wheel sets the time at once, Now chooses the current date and time, and Esc or a press outside closes it.",
+          "title": "Meeting time",
+          "description": "With `granularity=\"minute\"`, the calendar stays open beside the time's wheels; turning a wheel sets the time at once.",
           "file": "docs/examples/date-picker/MeetingTime.tsx"
         },
         {
           "name": "WithinRange",
-          "title": "Within a range",
-          "description": "`min` and `max` make the days outside this quarter unavailable, and the month buttons stop at them.",
+          "title": "Within range",
+          "description": "Days outside `min` and `max` are unavailable, and the month buttons stop at them.",
           "file": "docs/examples/date-picker/WithinRange.tsx"
         },
         {
-          "name": "SmallToolbar",
-          "title": "Small, in a toolbar",
-          "description": "`size=\"sm\"` gives the field the small control height, so it lines up with small buttons, and its placeholder shows in place of the hidden label.",
-          "file": "docs/examples/date-picker/SmallToolbar.tsx"
-        },
-        {
           "name": "LeaveRequest",
-          "title": "In a form",
-          "description": "Two required fields submit their days; the application checks their order and shows the error, and Reset returns them to `defaultValue`.",
+          "title": "Leave request",
+          "description": "`name` submits the value as `YYYY-MM-DD`, or `YYYY-MM-DDTHH:mm`, a local date without a zone. Converting it to a moment belongs to the application.",
           "file": "docs/examples/date-picker/LeaveRequest.tsx"
         },
         {
-          "name": "PlanningCalendar",
-          "title": "A calendar on its own",
-          "description": "Calendar chooses a day within the page, named by `aria-label`; a status says which day is chosen.",
-          "file": "docs/examples/date-picker/PlanningCalendar.tsx"
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/date-picker/Variants.tsx"
+        },
+        {
+          "name": "SmallToolbar",
+          "title": "Sizes",
+          "description": "`sm`, `md` and `lg`, the control heights of the scale. With `showLabel={false}`, the placeholder shows in place of the label.",
+          "file": "docs/examples/date-picker/SmallToolbar.tsx"
+        },
+        {
+          "name": "DayOnly",
+          "title": "Do: A day alone where the time doesn't matter.",
+          "description": "",
+          "file": "docs/examples/date-picker/DayOnly.tsx"
+        },
+        {
+          "name": "NeedlessTime",
+          "title": "Don't: A time nobody chose, such as midnight on a due date.",
+          "description": "",
+          "file": "docs/examples/date-picker/NeedlessTime.tsx"
+        },
+        {
+          "name": "LimitsExplained",
+          "title": "Do: Say which days can be chosen in the description.",
+          "description": "",
+          "file": "docs/examples/date-picker/LimitsExplained.tsx"
+        },
+        {
+          "name": "LimitsUnexplained",
+          "title": "Don't: Unavailable days that people find only in the calendar.",
+          "description": "",
+          "file": "docs/examples/date-picker/LimitsUnexplained.tsx"
+        },
+        {
+          "name": "NamedMoment",
+          "title": "Do: A label that names the moment.",
+          "description": "",
+          "file": "docs/examples/date-picker/NamedMoment.tsx"
+        },
+        {
+          "name": "GenericLabel",
+          "title": "Don't: Date, which says nothing about what happens then.",
+          "description": "",
+          "file": "docs/examples/date-picker/GenericLabel.tsx"
+        },
+        {
+          "name": "DatePickerAnatomy",
+          "title": "DatePicker anatomy",
+          "description": "",
+          "file": "docs/examples/date-picker/DatePickerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -5168,26 +5630,62 @@
         {
           "name": "StartTime",
           "title": "Start time",
-          "description": "A time picker is a field that shows a time of day in the reader's locale, such as 09:30 or 9:30 AM, and opens wheels side by side to choose it: the hours, the minutes every `minuteStep`, and on a 12-hour clock AM and PM. The middle row of each wheel is its value, so the chosen time reads as one line, such as 2 00 PM. Its value is a wall-clock time without a zone or a date, as `HH:mm` on the 24-hour clock whatever the locale writes. It shares DatePicker's field and popup, so the two line up in a form.",
+          "description": "A time picker is a field that opens wheels to choose a time of day, in the reader's locale.",
           "file": "docs/examples/time-picker/StartTime.tsx"
         },
         {
           "name": "OfficeHours",
-          "title": "Within office hours",
-          "description": "`min`, `max` and `minuteStep={30}` offer the half hours of the working day; hours outside it, and the half hour after 18:00, are unavailable.",
+          "title": "Office hours",
+          "description": "`min`, `max` and `minuteStep` offer only the times that can be booked.",
           "file": "docs/examples/time-picker/OfficeHours.tsx"
         },
         {
           "name": "ClockConventions",
-          "title": "The locale's clock",
-          "description": "The same value written by two locales: on the 12-hour clock in US English, with an AM/PM wheel, and the 24-hour clock in German, with hours and minutes alone. The value stays `18:45`.",
+          "title": "Clock conventions",
+          "description": "The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 24-hour clock.",
           "file": "docs/examples/time-picker/ClockConventions.tsx"
         },
         {
           "name": "ShiftForm",
-          "title": "In a form",
-          "description": "Two required fields submit their `HH:mm` values; the application checks their order and shows the error, and Reset returns them to `defaultValue`.",
+          "title": "Shift form",
+          "description": "`name` submits the time as `HH:mm`, without a date or a zone. Combining it with a date belongs to the application.",
           "file": "docs/examples/time-picker/ShiftForm.tsx"
+        },
+        {
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/time-picker/Variants.tsx"
+        },
+        {
+          "name": "LimitsExplained",
+          "title": "Do: Say which values can be chosen in the description.",
+          "description": "",
+          "file": "docs/examples/time-picker/LimitsExplained.tsx"
+        },
+        {
+          "name": "LimitsUnexplained",
+          "title": "Don't: Unavailable values that people find only in the popup.",
+          "description": "",
+          "file": "docs/examples/time-picker/LimitsUnexplained.tsx"
+        },
+        {
+          "name": "NamedMoment",
+          "title": "Do: A label that names the moment.",
+          "description": "",
+          "file": "docs/examples/time-picker/NamedMoment.tsx"
+        },
+        {
+          "name": "GenericLabel",
+          "title": "Don't: Time, which says nothing about what happens then.",
+          "description": "",
+          "file": "docs/examples/time-picker/GenericLabel.tsx"
+        },
+        {
+          "name": "TimePickerAnatomy",
+          "title": "TimePicker anatomy",
+          "description": "",
+          "file": "docs/examples/time-picker/TimePickerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -5385,26 +5883,62 @@
         {
           "name": "ReportMonth",
           "title": "Report month",
-          "description": "A month picker is a field that shows a month in the reader's locale, such as October 2026, and opens a year of months to choose it from. Its value is a month without a day or a zone, as `YYYY-MM`. It shares DatePicker's field and popup, and its months follow the calendar's keys.",
+          "description": "A month picker is a field that opens a year of months to choose one, in the reader's locale.",
           "file": "docs/examples/month-picker/ReportMonth.tsx"
         },
         {
           "name": "FiscalYear",
-          "title": "Within a fiscal year",
-          "description": "`min` and `max` make the months outside April to March unavailable, and the year buttons stop at them.",
+          "title": "Fiscal year",
+          "description": "Months outside `min` and `max` are unavailable, and the year buttons stop at them.",
           "file": "docs/examples/month-picker/FiscalYear.tsx"
         },
         {
           "name": "ShortFormat",
-          "title": "A short format",
-          "description": "`formatOptions` writes the month and year as two digits each, as on a card.",
+          "title": "Short format",
+          "description": "`formatOptions` changes how the field writes the month.",
           "file": "docs/examples/month-picker/ShortFormat.tsx"
         },
         {
           "name": "ExpenseForm",
-          "title": "In a form",
-          "description": "A required field submits its `YYYY-MM` value, and Reset empties it again.",
+          "title": "Expense form",
+          "description": "`name` submits the month as `YYYY-MM`, which sorts and compares as text.",
           "file": "docs/examples/month-picker/ExpenseForm.tsx"
+        },
+        {
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/month-picker/Variants.tsx"
+        },
+        {
+          "name": "LimitsExplained",
+          "title": "Do: Say which values can be chosen in the description.",
+          "description": "",
+          "file": "docs/examples/month-picker/LimitsExplained.tsx"
+        },
+        {
+          "name": "LimitsUnexplained",
+          "title": "Don't: Unavailable values that people find only in the popup.",
+          "description": "",
+          "file": "docs/examples/month-picker/LimitsUnexplained.tsx"
+        },
+        {
+          "name": "NamedPeriod",
+          "title": "Do: A label that names the period.",
+          "description": "",
+          "file": "docs/examples/month-picker/NamedPeriod.tsx"
+        },
+        {
+          "name": "GenericLabel",
+          "title": "Don't: Month, which says nothing about what the month is for.",
+          "description": "",
+          "file": "docs/examples/month-picker/GenericLabel.tsx"
+        },
+        {
+          "name": "MonthPickerAnatomy",
+          "title": "MonthPicker anatomy",
+          "description": "",
+          "file": "docs/examples/month-picker/MonthPickerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -5575,26 +6109,62 @@
         {
           "name": "LayerOpacity",
           "title": "Layer opacity",
-          "description": "A slider chooses a value in a range by dragging a thumb along a track, pressing the track or with the keyboard. Its label and the current value sit above the track and a description below it. Slider is built on Base UI's slider, around a native range input, so the arrow keys, focus, form submission and reset behave as the platform's.",
+          "description": "A slider chooses a value in a range by dragging a thumb, pressing the track or with the keyboard.",
           "file": "docs/examples/slider/LayerOpacity.tsx"
         },
         {
           "name": "SaveOnRelease",
-          "title": "Save once a change is complete",
-          "description": "The value follows the thumb as it moves, and `onValueCommitted` saves it once, when the thumb is released or after a key. A status line announces the save.",
+          "title": "Save on release",
+          "description": "`onValueChange` follows the thumb as it moves; `onValueCommitted` reports the value once, when the thumb is released or after a key. Save from it.",
           "file": "docs/examples/slider/SaveOnRelease.tsx"
         },
         {
           "name": "SessionTimeout",
-          "title": "Steps in a form",
-          "description": "`min`, `max` and `step` give whole 5-minute steps from 5 to 120, and `name` submits the value with the form. Reset returns the slider to `defaultValue`.",
+          "title": "Session timeout",
+          "description": "`min`, `max` and `step` set the values, and `name` submits the value with the form.",
           "file": "docs/examples/slider/SessionTimeout.tsx"
         },
         {
           "name": "ManagedLimit",
-          "title": "A value people can't change",
-          "description": "A disabled slider keeps its value visible, and the description says who sets it.",
+          "title": "Managed limit",
+          "description": "A disabled slider keeps its value visible; the description says who sets it.",
           "file": "docs/examples/slider/ManagedLimit.tsx"
+        },
+        {
+          "name": "UsefulSteps",
+          "title": "Do: A step and a range that match the precision people need.",
+          "description": "",
+          "file": "docs/examples/slider/UsefulSteps.tsx"
+        },
+        {
+          "name": "NeedlessPrecision",
+          "title": "Don't: Single minutes over a whole day: no value is easy to reach.",
+          "description": "",
+          "file": "docs/examples/slider/NeedlessPrecision.tsx"
+        },
+        {
+          "name": "FormattedValue",
+          "title": "Do: The value as people read it, with its unit.",
+          "description": "Name the value in a short noun, and format it with its unit in `formatValue`; the same text is announced.",
+          "file": "docs/examples/slider/FormattedValue.tsx"
+        },
+        {
+          "name": "RawValue",
+          "title": "Don't: A raw number that people must interpret.",
+          "description": "",
+          "file": "docs/examples/slider/RawValue.tsx"
+        },
+        {
+          "name": "SliderAnatomy",
+          "title": "Slider anatomy",
+          "description": "",
+          "file": "docs/examples/slider/SliderAnatomy.tsx"
+        },
+        {
+          "name": "NarrowSlider",
+          "title": "Narrow slider",
+          "description": "",
+          "file": "docs/examples/slider/NarrowSlider.tsx"
         }
       ],
       "parts": {
@@ -5710,26 +6280,68 @@
         {
           "name": "LogoUpload",
           "title": "Logo upload",
-          "description": "A drop zone takes files two ways: dropped onto it, or chosen in the file picker it opens when pressed. It filters them by `accept`, hands the ones it takes to `onDropAccepted` and the others to `onDropRejected`, and takes part in native forms with `name`. The application uploads or reads the files and shows what was chosen; the zone doesn't list them.",
+          "description": "A drop zone takes files dropped onto it, or chosen in the file picker it opens when pressed. The application uploads the files and shows what was chosen.",
           "file": "docs/examples/drop-zone/LogoUpload.tsx"
         },
         {
           "name": "AttachDocuments",
-          "title": "Attach several files",
-          "description": "A small zone with `multiple` adds documents to a list the application shows, each with a Remove action.",
+          "title": "Attach documents",
+          "description": "With `multiple`, the zone takes several files at once; the application lists them, each with Remove.",
           "file": "docs/examples/drop-zone/AttachDocuments.tsx"
         },
         {
           "name": "UploadProgress",
-          "title": "Upload with progress",
-          "description": "While the application uploads a file, the zone is pending, its label says what is happening, and a status announces when it's done.",
+          "title": "Upload progress",
+          "description": "While the application uploads, `pending` keeps the zone busy, and its label says what is happening.",
           "file": "docs/examples/drop-zone/UploadProgress.tsx"
         },
         {
           "name": "InAForm",
-          "title": "In a form",
-          "description": "With `name`, the form submits the files the zone took, and Reset clears them.",
+          "title": "In AForm",
+          "description": "With `name`, the form submits the files the zone took, and a reset clears them. `files` hands the zone the files the application keeps.",
           "file": "docs/examples/drop-zone/InAForm.tsx"
+        },
+        {
+          "name": "Sizes",
+          "title": "Sizes",
+          "description": "",
+          "file": "docs/examples/drop-zone/Sizes.tsx"
+        },
+        {
+          "name": "SaysWhatIsHappening",
+          "title": "Do: While pending, a label that says what is happening.",
+          "description": "",
+          "file": "docs/examples/drop-zone/SaysWhatIsHappening.tsx"
+        },
+        {
+          "name": "SilentPending",
+          "title": "Don't: A spinner beside a label that still asks for a file.",
+          "description": "",
+          "file": "docs/examples/drop-zone/SilentPending.tsx"
+        },
+        {
+          "name": "SaysWhatFits",
+          "title": "Do: What to add, and which files fit.",
+          "description": "Say what to add in the label, and which files fit in the description.",
+          "file": "docs/examples/drop-zone/SaysWhatFits.tsx"
+        },
+        {
+          "name": "BareLabel",
+          "title": "Don't: Upload alone: people find out what fits only when a file is refused.",
+          "description": "",
+          "file": "docs/examples/drop-zone/BareLabel.tsx"
+        },
+        {
+          "name": "DropZoneAnatomy",
+          "title": "DropZone anatomy",
+          "description": "",
+          "file": "docs/examples/drop-zone/DropZoneAnatomy.tsx"
+        },
+        {
+          "name": "NarrowZone",
+          "title": "Narrow zone",
+          "description": "",
+          "file": "docs/examples/drop-zone/NarrowZone.tsx"
         }
       ],
       "parts": {

@@ -4,12 +4,12 @@ import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 /** Read-only, disabled and invalid pickers beside an editable one. */
 export default function States() {
   return (
-    <Example title="Color picker states" size="collection">
+    <Example size="collection">
       <SpecimenGrid>
         <Specimen title="Editable">
           <ColorPicker label="Accent color" defaultValue="#3b6fd4" />
         </Specimen>
-        <Specimen title="Read only" caption="The HEX field stays focusable and copyable.">
+        <Specimen title="Read only">
           <ColorPicker label="Workspace color" defaultValue="#2f8f5b" readOnly />
         </Specimen>
         <Specimen title="Disabled">

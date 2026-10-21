@@ -21,7 +21,8 @@ export default function AskAnything() {
   };
 
   return (
-    <Column gap={3}>
+    // As wide as a conversation column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       <Composer
         aria-label="Message"
         placeholder="Ask anything"
