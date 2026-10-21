@@ -761,6 +761,9 @@
     "--color-white": { "value": "#ffffff", "component": "Fixed white" }
   },
   "removed": {
+    "--env-stack-gap": {
+      "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+    },
     "--env-sidebar-width": {
       "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
     },
@@ -870,22 +873,6 @@
     "--surface-card-padding": {
       "replacement": null,
       "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
-    },
-    "--env-breakpoint-sm": {
-      "replacement": "window-class.medium",
-      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-    },
-    "--env-breakpoint-md": {
-      "replacement": "window-class.medium",
-      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-    },
-    "--env-breakpoint-lg": {
-      "replacement": "window-class.expanded",
-      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-    },
-    "--env-breakpoint-xl": {
-      "replacement": "window-class.large",
-      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
     }
   }
 }

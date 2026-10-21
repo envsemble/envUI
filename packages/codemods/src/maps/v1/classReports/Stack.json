@@ -1,0 +1,5 @@
+{
+  "env-stack": {
+    "report": "Stack is gone in 1.0, and with it env-stack and --env-stack-gap: Row and Column render no class, so select [data-env-layout='row'] or [data-env-layout='column'], and their gap as [data-gap='4'], the step of the spacing scale, or set gap on your own class."
+  }
+}
