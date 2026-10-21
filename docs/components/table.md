@@ -106,8 +106,8 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 - **While resizing**: the boundary line shows while the header row is hovered, darkens over the handle, and takes the focus ring color while the handle has focus or is dragged. During a drag the pointer keeps the resize cursor and no text is selected; a drag the browser cancels, such as one taken over for scrolling, returns to where it began. In right-to-left text the handle sits at the left edge of its header and the keys and the drag follow the reading direction. `onColumnWidthsChange` receives every column's width after each change; with `columnWidths` the application keeps them, and with `defaultColumnWidths` the table does.
 - **Narrow layouts**: `narrowLayout="scroll"`, the default, keeps the columns and scrolls sideways. `narrowLayout="stack"` follows the width of the table's region, not the window: below `stackBelow`, 36 rem by default, each body row becomes a block. Its first cell is the row's title, at weight 500, and the other cells show their `label` beside their value. The labels share a column as wide as the longest one, up to 10 rem, so the values line up, and long values, such as an address, wrap within the row. `stackBelow` takes any CSS length, such as `60rem` for a table with seven sortable columns, or a number of pixels.
 - **Stacked rows**: the header row is visually hidden but still read by assistive technology, and appears while a sort button in it has keyboard focus. Resize handles are hidden, and a selected row keeps its bar as a block. The table, its rows and its cells keep their roles whatever their display.
-- **Reporting the layout**: `onStackedChange` is called with `true` when the rows stack and `false` when the columns return, also when a table leaves while its rows stack. The region has `data-stacked` meanwhile, so styles can follow without repeating the width. Use it to offer another sort control while the header row is hidden.
-- **Measuring**: the table measures its region once it is in the document, before the browser paints a client render. Server-rendered markup shows the columns until the page hydrates, and a narrow table then stacks. A hidden table, such as one in a hidden tab panel, has nothing to measure and keeps its layout until it shows again.
+- **Reporting the layout**: `onStackedChange` is called with `true` when the rows stack and `false` when the columns return, also when a table leaves while its rows stack. The region has `data-stacked` meanwhile. Use it to offer another sort control while the header row is hidden.
+- **No measuring**: a container query on the region stacks the rows, so server-rendered markup and the first paint already stack in a narrow region, and nothing moves as the page hydrates. A stacking region is the `env-table` container and fills the width its context gives it. The table reads its layout only to report it: `data-stacked` and `onStackedChange` follow once it is in the document.
 
 ## Content guidelines
 
@@ -139,7 +139,7 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 - Don't put a click handler on a row instead of a link or button in a cell; keyboard and screen reader users can't reach it.
 - Don't set `sortDirection` without sorting the rows: the table only shows and announces the order.
 - Don't leave out `label` on the cells after the first in a stacking table; their values would show without a name.
-- Don't repeat the stacking width in your own media queries; follow `data-stacked` or `onStackedChange`.
+- Don't repeat the stacking width in your own media queries; style stacked rows under `@container env-table (width < 37.5em)`, where 37.5em is the region's `stackBelow`, or follow `onStackedChange` in script.
 
 ## Accessibility
 

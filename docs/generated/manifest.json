@@ -9066,10 +9066,6 @@
             {
               "class": "env-table-sort-button",
               "description": "The button that sorts by a column."
-            },
-            {
-              "class": "env-table-stack-probe",
-              "description": "An invisible element that measures whether rows stack."
             }
           ],
           "states": [
@@ -23421,7 +23417,7 @@
           "type": "'scroll' | 'stack'",
           "required": false,
           "default": "'scroll'",
-          "description": "What the table does when its region is narrower than stackBelow: scroll keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden."
+          "description": "What the table does when its region is narrower than stackBelow: scroll keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden. A container query on the region decides it, so the server's markup and the first paint already stack; a stacking region fills the width its context gives it."
         },
         {
           "name": "stackBelow",
@@ -23434,7 +23430,7 @@
           "name": "onStackedChange",
           "type": "(stacked: boolean) => void",
           "required": false,
-          "description": "Called with true when the rows stack and with false when the columns return, from the same measurement as stackBelow, for example to show another sort control while the header row is hidden; a table that leaves while its rows stack reports false. The region has data-stacked while the rows stack."
+          "description": "Called with true when the rows stack and with false when the columns return, as the table reads its layout once it is in the document, for example to show another sort control while the header row is hidden; a table that leaves while its rows stack reports false. The region has data-stacked from then on while the rows stack; style stacked rows with a container query on env-table, which applies before hydration, rather than through it."
         },
         {
           "name": "columnWidths",

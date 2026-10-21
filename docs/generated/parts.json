@@ -4354,10 +4354,6 @@
         {
           "class": "env-table-sort-button",
           "description": "The button that sorts by a column."
-        },
-        {
-          "class": "env-table-stack-probe",
-          "description": "An invisible element that measures whether rows stack."
         }
       ],
       "states": [

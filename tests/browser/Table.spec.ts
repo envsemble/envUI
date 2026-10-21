@@ -404,57 +404,74 @@ test('stacked labels take the room they need and long values wrap inside the row
   }
 });
 
-test('a table stacks below the width it is given, measured on its region', async ({ page }) => {
-  for (const theme of themes) {
-    const frame = page.getByTestId(`wide-stack-frame-${theme}`);
-    const table = page.getByRole('table', { name: `Seven columns ${theme}` });
-    const region = page.getByRole('region', { name: `Seven columns ${theme}` });
-    const row = table.getByRole('row', { name: /Quarterly report/ });
-    // 48 rem is below the 60 rem this table needs, so its rows stack.
-    await expect(region).toHaveAttribute('data-stacked', '');
-    await expect(row).toHaveCSS('display', 'grid');
-    await expect(
-      row.getByRole('cell', { name: 'Infrastructure' }).locator('.env-table-cell-label'),
-    ).toBeVisible();
-    await frame.evaluate((element) => (element.style.inlineSize = '62rem'));
-    await expect(region).not.toHaveAttribute('data-stacked');
-    await expect(row).toHaveCSS('display', 'table-row');
-    await frame.evaluate((element) => (element.style.inlineSize = '59rem'));
-    await expect(region).toHaveAttribute('data-stacked', '');
-    await frame.evaluate((element) => (element.style.inlineSize = ''));
-  }
-  // The default stays at 36 rem.
-  await expect(page.getByRole('region', { name: 'Stacked light' })).toHaveAttribute(
-    'data-stacked',
-    '',
-  );
-  await expect(page.getByRole('region', { name: 'Reports light' })).not.toHaveAttribute(
-    'data-stacked',
-  );
-});
+test(
+  'a table stacks below the width it is given, measured on its region',
+  { tag: '@engines' },
+  async ({ page }) => {
+    for (const theme of themes) {
+      const frame = page.getByTestId(`wide-stack-frame-${theme}`);
+      const table = page.getByRole('table', { name: `Seven columns ${theme}` });
+      const region = page.getByRole('region', { name: `Seven columns ${theme}` });
+      const row = table.getByRole('row', { name: /Quarterly report/ });
+      // 48 rem is below the 60 rem this table needs, so its rows stack.
+      await expect(region).toHaveAttribute('data-stacked', '');
+      await expect(row).toHaveCSS('display', 'grid');
+      await expect(
+        row.getByRole('cell', { name: 'Infrastructure' }).locator('.env-table-cell-label'),
+      ).toBeVisible();
+      // A container query decides it: the rows return in the same frame as the width, before any
+      // script reads the layout, and data-stacked follows as the table reports it.
+      expect(
+        await row.evaluate((element) => {
+          element.closest<HTMLElement>('[data-testid^="wide-stack-frame"]')!.style.inlineSize =
+            '62rem';
+          return getComputedStyle(element).display;
+        }),
+      ).toBe('table-row');
+      await expect(region).not.toHaveAttribute('data-stacked');
+      await frame.evaluate((element) => (element.style.inlineSize = '59rem'));
+      await expect(region).toHaveAttribute('data-stacked', '');
+      await frame.evaluate((element) => (element.style.inlineSize = ''));
+    }
+    // The default stays at 36 rem.
+    await expect(page.getByRole('region', { name: 'Stacked light' })).toHaveAttribute(
+      'data-stacked',
+      '',
+    );
+    await expect(page.getByRole('region', { name: 'Reports light' })).not.toHaveAttribute(
+      'data-stacked',
+    );
+  },
+);
 
-test('a table measures stackBelow in any CSS length and reports when it stacks', async ({
-  page,
-}) => {
-  for (const theme of themes) {
-    const frame = page.getByTestId(`measured-stack-frame-${theme}`);
-    const region = page.getByRole('region', { name: `Measured threshold ${theme}` });
-    const changes = page.getByTestId(`stack-changes-${theme}`);
-    // calc(20rem + 160px) is 480 px, wider than the region, so its rows stack and it says so.
-    await expect(region).toHaveAttribute('data-stacked', '');
-    await expect(changes).toHaveText('stacked');
-    await frame.evaluate((element) => (element.style.inlineSize = '31rem'));
-    await expect(region).not.toHaveAttribute('data-stacked');
-    await expect(changes).toHaveText('stacked columns');
-    await frame.evaluate((element) => (element.style.inlineSize = '29.5rem'));
-    await expect(region).toHaveAttribute('data-stacked', '');
-    await expect(changes).toHaveText('stacked columns stacked');
-  }
-  // The probe that measures the length never widens the region or the page.
-  const region = page.getByRole('region', { name: 'Measured threshold light' });
-  expect(await region.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-});
+test(
+  'a table measures stackBelow in any CSS length and reports when it stacks',
+  { tag: '@engines' },
+  async ({ page }) => {
+    for (const theme of themes) {
+      const frame = page.getByTestId(`measured-stack-frame-${theme}`);
+      const region = page.getByRole('region', { name: `Measured threshold ${theme}` });
+      const changes = page.getByTestId(`stack-changes-${theme}`);
+      // calc(20rem + 160px) is 480 px, wider than the region, so its rows stack and it says so.
+      await expect(region).toHaveAttribute('data-stacked', '');
+      await expect(changes).toHaveText('stacked');
+      await frame.evaluate((element) => (element.style.inlineSize = '31rem'));
+      await expect(region).not.toHaveAttribute('data-stacked');
+      await expect(changes).toHaveText('stacked columns');
+      await frame.evaluate((element) => (element.style.inlineSize = '29.5rem'));
+      await expect(region).toHaveAttribute('data-stacked', '');
+      await expect(changes).toHaveText('stacked columns stacked');
+    }
+    // The probe that measures the length never widens the region or the page.
+    const region = page.getByRole('region', { name: 'Measured threshold light' });
+    expect(await region.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
+      true,
+    );
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  },
+);
 
 /** Waits for two frames, so resize observations and the renders they cause have run. */
 function nextFrames(page: import('@playwright/test').Page) {
