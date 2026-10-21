@@ -512,6 +512,8 @@ function validateStructureCase(at, each) {
       );
   if (each.element !== undefined && !isComponentName(each.element))
     problems.push(`${at}: "element" must be a component name.`);
+  if (each.childless !== undefined && typeof each.childless !== 'boolean')
+    problems.push(`${at}: "childless" must be true or false.`);
   for (const [prop, operation] of entriesOf(each.props))
     problems.push(...validatePropOperation(`${at}.props.${prop}`, operation));
   for (const [prop, value] of Object.entries(each.add ?? {}))

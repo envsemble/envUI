@@ -40,7 +40,6 @@ composes:
   - Column
   - Row
   - Text
-  - LoadingState
   - Avatar
 related:
   - surface
@@ -74,7 +73,7 @@ Loading shows that something is on its way, in the place and the shape of what i
 | What is loading                | Show                                                  |
 | ------------------------------ | ----------------------------------------------------- |
 | Content of a known shape       | Its components with `skeleton`, over `placeholders()` |
-| Content of no known shape      | LoadingState, a spinner with a label                  |
+| Content of no known shape      | A Spinner with `showLabel`, beside its label          |
 | An update to what is shown     | A Spinner beside it                                   |
 | The result of an action        | `pending` on the Button that started it               |
 | Work whose end can be measured | Progress with a `value`                               |
@@ -82,7 +81,7 @@ Loading shows that something is on its way, in the place and the shape of what i
 
 ### No known shape
 
-LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.
+A Spinner with `showLabel` says what is loading beside it, for results whose number and shape aren't known yet.
 
 ```tsx example=SearchResultsLoading
 
@@ -159,7 +158,7 @@ Not shown: the inert content inside the root, `env-skeleton-content`, which has 
 - One busy region per skeleton, `aria-busy` on its root, whose content is inert: Tab passes over it and assistive technology skips it until it loads.
 - A visually hidden status beside a skeleton list, which holds no wrapper, that says what is loading.
 - A skeleton popup, sheet or supporting pane that keeps focus, so Escape still closes it.
-- LoadingState, a busy status with its label; a pending Button that keeps its size and ignores presses; Progress with its value.
+- A Spinner with `showLabel`, a busy status with its label; a pending Button that keeps its size and ignores presses; Progress with its value.
 
 ### You provide
 

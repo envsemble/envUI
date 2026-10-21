@@ -18,7 +18,7 @@ aliases:
 useWhen:
   - Work of unknown length in a small area, such as a list that updates after a filter changes.
   - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`), or search results, with a label beside it (`LoadingState`).
+  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`), or search results, with its label beside it (`showLabel`).
 avoidWhen:
   - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
     use: Button
@@ -37,7 +37,6 @@ related:
   - accessibility
 components:
   - Spinner
-  - LoadingState
 ---
 
 # Spinner
@@ -50,9 +49,9 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ```
 
-### LoadingState
+### With its label
 
-LoadingState puts a label beside the spinner that says what is loading, for loading whose shape isn't known; where it is known, show the component itself as a skeleton.
+`showLabel` puts the label beside the spinner, to say what is loading where its shape isn't known; where it is known, show the component itself as a skeleton.
 
 ```tsx example=SearchingDocuments
 
@@ -99,11 +98,14 @@ LoadingState puts a label beside the spinner that says what is loading, for load
 1. **Spinner** (`env-spinner`)
 2. **Arc** (`env-spinner-arc`)
 
+Not shown: with `showLabel`, the label beside the arc, `env-spinner-label`.
+
 ## Accessibility
 
 ### envUI provides
 
 - `role="progressbar"` named by `label`, or the spinner hidden without one.
+- With `showLabel`, a busy `role="status"` whose label, Loading by default in the provider's language, is read as the status.
 - A slower turn with a fixed arc under reduced motion, instead of stopping.
 
 ### You provide
@@ -114,5 +116,5 @@ LoadingState puts a label beside the spinner that says what is loading, for load
 
 ## Changelog
 
-- **1.0.0**: LoadingState is a spinner with a label, for loading with no known shape; it holds no placeholders. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0**: `showLabel` shows the label beside the spinner, in a busy status, for loading with no known shape, in place of the LoadingState component of 1.0.0-prerelease.0, which the `v1-structure` codemod rewrites. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.

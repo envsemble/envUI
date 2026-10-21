@@ -12,6 +12,8 @@
 //   SplitView's `start` and `end` or Button's `iconOnly`; an element without one of them is no
 //   case's. Where every case has `has`, an element that sets none of their props is left alone,
 //   also where it spreads props.
+// - `childless`: the case is only for an element without children, such as LoadingState without
+//   the skeleton blocks 1.0.0-prerelease.0 let it hold; an element with children tries the next.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
@@ -324,6 +326,7 @@ export default function transform(file, api, options = {}) {
     }
     let chosen;
     for (const each of rule.cases) {
+      if (each.childless && hasChildren(path.node)) continue;
       const result = (each.has ?? []).every((prop) => hasAttribute(attributes, prop))
         ? matchesWhen(attributes, each.when)
         : false;

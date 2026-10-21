@@ -88,7 +88,7 @@
   background: var(--env-code-background);
   color: var(--env-code-foreground);
 }
-.env-code-diff > .env-loading-state,
+.env-code-diff > .env-spinner,
 .env-code-diff > .env-empty-state {
   padding: var(--env-space-5);
 }

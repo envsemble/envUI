@@ -326,7 +326,7 @@ Rendered checks are measured by the browser step at their widths (`at`, all four
 | `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)      |
 | `busy`      | something visible is `aria-busy="true"`                                                            |
 
-A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card and Surface and `placeholders()`. The scorer sees a prop on a component imported by name, not on a namespace's part such as `List.Item`, so a list's skeleton counts through `placeholders()`. `activity-loading` needs only `LoadingState`, which envUI has, and runs.
+A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card and Surface and `placeholders()`. The scorer sees a prop on a component imported by name, not on a namespace's part such as `List.Item`, so a list's skeleton counts through `placeholders()`. `activity-loading` needs only `showLabel` on Spinner, which envUI has, and runs.
 
 If the task needs mocked data or an API call, add it to `fixtures/basic/src/api.ts` or `fixtures/basic/src/data/`. The hard fixture inherits it. That changes the template hash, and the next run reinstalls the template. Check that the task still makes sense in the hard fixture, whose projects page already has a toolbar (Refresh, Share) and a share modal.
 

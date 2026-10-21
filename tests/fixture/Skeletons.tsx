@@ -13,7 +13,6 @@ import {
   Grid,
   Kbd,
   List,
-  LoadingState,
   Menu,
   Message,
   Popover,
@@ -25,6 +24,7 @@ import {
   TopBar,
   placeholders,
   useSkeleton,
+  Spinner,
 } from '@envsemble/envui';
 import { installDevMode } from '@envsemble/envui/dev';
 import { Folder } from '@envsemble/envui/icons/Folder';
@@ -259,7 +259,7 @@ export function SkeletonsFixture() {
       <Dialog trigger={<Button>Open the dialog</Button>} title="Project" skeleton>
         <Text>Loading the project</Text>
       </Dialog>
-      <LoadingState label="Loading activity" data-testid="loading-state" />
+      <Spinner label="Loading activity" showLabel data-testid="loading-state" />
     </Column>
   );
 }

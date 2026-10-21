@@ -849,7 +849,7 @@
         "Button",
         "EmptyState",
         "Icon",
-        "LoadingState"
+        "Spinner"
       ]
     },
     "ColorPicker": {
@@ -2198,24 +2198,6 @@
         "IconButton",
         "Skeleton",
         "Text"
-      ]
-    },
-    "LoadingState": {
-      "root": "env-loading-state",
-      "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "parts": [
-        {
-          "class": "env-loading-state",
-          "description": "The spinner with a label."
-        },
-        {
-          "class": "env-loading-state-label",
-          "description": "The label that says what is loading."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Spinner"
       ]
     },
     "Markdown": {
@@ -4059,14 +4041,27 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner."
+          "description": "The spinner, or with data-show-label the status line that holds it and its label."
         },
         {
           "class": "env-spinner-arc",
           "description": "The turning arc."
+        },
+        {
+          "class": "env-spinner-label",
+          "description": "The label shown beside the spinner, which says what is loading."
         }
       ],
       "states": [
+        {
+          "attribute": "data-show-label",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-spinner"
+          ]
+        },
         {
           "attribute": "data-size",
           "values": [

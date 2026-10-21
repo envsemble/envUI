@@ -12279,7 +12279,7 @@
       "useWhen": [
         "Work of unknown length in a small area, such as a list that updates after a filter changes.",
         "An update to content already shown, beside the content, which stays in place meanwhile.",
-        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with a label beside it (`LoadingState`)."
+        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with its label beside it (`showLabel`)."
       ],
       "avoidWhen": [
         {
@@ -12308,8 +12308,7 @@
         "accessibility"
       ],
       "exports": [
-        "Spinner",
-        "LoadingState"
+        "Spinner"
       ],
       "examples": [
         {
@@ -12321,7 +12320,7 @@
         {
           "name": "SearchingDocuments",
           "title": "Searching documents",
-          "description": "LoadingState puts a label beside the spinner that says what is loading, for loading whose shape isn't known; where it is known, show the component itself as a skeleton.",
+          "description": "`showLabel` puts the label beside the spinner, to say what is loading where its shape isn't known; where it is known, show the component itself as a skeleton.",
           "file": "docs/examples/spinner/SearchingDocuments.tsx"
         },
         {
@@ -12367,14 +12366,27 @@
           "parts": [
             {
               "class": "env-spinner",
-              "description": "The spinner."
+              "description": "The spinner, or with data-show-label the status line that holds it and its label."
             },
             {
               "class": "env-spinner-arc",
               "description": "The turning arc."
+            },
+            {
+              "class": "env-spinner-label",
+              "description": "The label shown beside the spinner, which says what is loading."
             }
           ],
           "states": [
+            {
+              "attribute": "data-show-label",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-spinner"
+              ]
+            },
             {
               "attribute": "data-size",
               "values": [
@@ -12387,20 +12399,6 @@
               ]
             }
           ]
-        },
-        "LoadingState": {
-          "root": "env-loading-state",
-          "parts": [
-            {
-              "class": "env-loading-state",
-              "description": "The spinner with a label."
-            },
-            {
-              "class": "env-loading-state-label",
-              "description": "The label that says what is loading."
-            }
-          ],
-          "states": []
         }
       },
       "usedIn": {
@@ -16054,7 +16052,6 @@
         "Column",
         "Row",
         "Text",
-        "LoadingState",
         "Avatar"
       ],
       "related": [
@@ -16082,7 +16079,7 @@
         {
           "name": "SearchResultsLoading",
           "title": "No known shape",
-          "description": "LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.",
+          "description": "A Spinner with `showLabel` says what is loading beside it, for results whose number and shape aren't known yet.",
           "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
@@ -20580,26 +20577,6 @@
       "page": "list",
       "doc": "docs/components/list.md"
     },
-    "LoadingState": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "spinner",
-      "doc": "docs/components/spinner.md"
-    },
     "Markdown": {
       "kind": "component",
       "import": "@envsemble/envui/content",
@@ -23981,13 +23958,20 @@
     "Spinner": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+          "description": "The work it stands for, such as Refreshing members or Loading project. Alone it names the spinner as a progress bar for assistive technology; with showLabel it shows beside it. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centres the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
         },
         {
           "name": "size",

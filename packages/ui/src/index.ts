@@ -62,7 +62,6 @@ export * from './feedback/HoverCard.js';
 export * from './feedback/EmptyState.js';
 export { placeholders, isPlaceholder, type Placeholder } from './foundations/placeholders.js';
 export { useSkeleton } from './foundations/SkeletonScope.js';
-export * from './feedback/LoadingState.js';
 export * from './feedback/Spinner.js';
 export * as Toast from './feedback/toast/ToastProvider.js';
 export { useToast } from './feedback/toast/useToast.js';

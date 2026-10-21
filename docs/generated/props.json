@@ -3571,26 +3571,6 @@
         "@envsemble/envui"
       ]
     },
-    "LoadingState": {
-      "kind": "component",
-      "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Markdown": {
       "kind": "component",
       "source": "packages/ui/src/content/Markdown.tsx",
@@ -6966,13 +6946,20 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+          "description": "The work it stands for, such as Refreshing members or Loading project. Alone it names the spinner as a progress bar for assistive technology; with showLabel it shows beside it. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centres the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
         },
         {
           "name": "size",

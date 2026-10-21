@@ -11,7 +11,6 @@ import {
   Button,
   CommandPalette,
   Sheet,
-  LoadingState,
   Progress,
   Toast,
   useToast,
@@ -31,6 +30,7 @@ import {
   ThemeToggle,
   PanelDock,
   type EnvUIMessagesInput,
+  Spinner,
 } from '@envsemble/envui';
 import { CodeBlock, Markdown, MarkdownEditor } from '@envsemble/envui/content';
 import { defaultMessages } from '@envsemble/envui/messages';
@@ -77,7 +77,7 @@ function FeedbackStrings() {
   return (
     <>
       <Alert onDismiss={() => {}}>Saved on this device.</Alert>
-      <LoadingState />
+      <Spinner showLabel />
       <Progress label="Importing" value={null} />
       <Sheet title="Filters" defaultOpen modal={false} disablePointerDismissal>
         Filters

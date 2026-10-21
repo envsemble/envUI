@@ -614,7 +614,7 @@
         {
           "id": "loading-indicator",
           "label": "a loading indicator with a message",
-          "envui": ["LoadingState"]
+          "envui": ["Spinner.showLabel"]
         },
         {
           "id": "activity-text",

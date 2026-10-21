@@ -99,7 +99,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 ## Components: Feedback & overlays
 
 - [EmptyState](docs/components/empty-state.md): Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action. Parts: `.env-empty-state`.
-- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Also: LoadingState. Parts: `.env-spinner`, `.env-loading-state`.
+- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Parts: `.env-spinner`.
 - [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast. Parts: `.env-toast`.
 - [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button. Parts: `.env-alert`.
 - [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose. Parts: `.env-dialog-popup`.

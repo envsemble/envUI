@@ -74,11 +74,11 @@
       "feedback/Sheet.tsx": "composites",
       "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
-      "feedback/LoadingState.tsx": "composites",
       "feedback/Meter.tsx": "base",
       "feedback/Progress.tsx": "base",
       "feedback/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
+      "feedback/internal/SpinnerLabel.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
@@ -258,6 +258,9 @@
       },
       "Alert": {
         "modules": ["feedback/internal/AlertDismiss.tsx"]
+      },
+      "Spinner": {
+        "modules": ["feedback/internal/SpinnerLabel.tsx"]
       },
       "Scaffold": {
         "modules": ["layout/internal/useScrollKeys.ts"]
@@ -463,7 +466,7 @@
         },
         {
           "stylesheet": "Code.css",
-          "classes": ["env-loading-state", "env-empty-state"],
+          "classes": ["env-spinner", "env-empty-state"],
           "note": "A code diff pads its loading and empty states."
         },
         {

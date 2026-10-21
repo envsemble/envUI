@@ -99,6 +99,11 @@
         "to": [],
         "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
+      "LoadingState": {
+        "to": [],
+        "use": "LoadingState is a Spinner with showLabel in 1.0: <Spinner label=\"…\" showLabel />, which says Loading without a label; v1-structure rewrites each use."
+      },
+      "LoadingStateProps": { "to": ["SpinnerProps"] },
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
       "MenuCheckboxItemProps": { "to": ["Menu.CheckboxItemProps"] },
@@ -155,7 +160,7 @@
       "SelectOption": { "to": ["SelectItem"] },
       "Skeleton": {
         "to": [],
-        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, LoadingState is a spinner with a label."
+        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, a Spinner with showLabel shows a spinner and its label."
       },
       "SkeletonProps": {
         "to": [],

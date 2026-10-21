@@ -34,7 +34,7 @@ const reports = {
   // Reported and left as they are: the prerelease's Drawer and a LoadingState's child.
   'prerelease.tsx': [
     `line 9: Drawer: ${drawer.cases[0].report}`,
-    `line 15: LoadingState: ${loadingState.cases[0].children['*'].report}`,
+    `line 15: LoadingState: ${loadingState.cases[1].children['*'].report}`,
   ],
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
   'list-detail.tsx': [
@@ -78,7 +78,7 @@ for (const fixture of fixtures('v1-structure')) {
           report.endsWith(card.report) ||
           report.endsWith(listDetail.report) ||
           report.endsWith(drawer.cases[0].report) ||
-          report.endsWith(loadingState.cases[0].children['*'].report),
+          report.endsWith(loadingState.cases[1].children['*'].report),
       ),
     );
   });

@@ -183,7 +183,7 @@ test(
   },
 );
 
-test('LoadingState is a spinner with a label, for loading with no known shape', async ({
+test('a Spinner with showLabel is a busy status with its label, for loading with no known shape', async ({
   page,
 }) => {
   await open(page);
@@ -191,7 +191,9 @@ test('LoadingState is a spinner with a label, for loading with no known shape', 
   await expect(state).toHaveRole('status');
   await expect(state).toHaveAttribute('aria-busy', 'true');
   await expect(state).toHaveText('Loading activity');
-  await expect(state.locator('.env-spinner')).toBeVisible();
+  await expect(state).toHaveClass(/env-spinner/);
+  await expect(state.locator('.env-spinner-label')).toBeVisible();
+  await expect(state.locator('svg')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('the shift check reports what moves or resizes when a skeleton loads', async ({ page }) => {

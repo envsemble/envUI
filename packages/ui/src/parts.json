@@ -371,10 +371,6 @@
       "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
       "env-loading-bar-indicator": "The moving part of the bar."
     },
-    "LoadingState": {
-      "env-loading-state": "The spinner with a label.",
-      "env-loading-state-label": "The label that says what is loading."
-    },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
       "env-markdown-source": "The Markdown source shown as text.",
@@ -645,8 +641,9 @@
       "env-slider-value": "The value as text."
     },
     "Spinner": {
-      "env-spinner": "The spinner.",
-      "env-spinner-arc": "The turning arc."
+      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
+      "env-spinner-arc": "The turning arc.",
+      "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
     "Stat": {
       "env-stat": "One statistic.",

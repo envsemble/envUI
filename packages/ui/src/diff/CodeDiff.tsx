@@ -20,7 +20,7 @@ import {
 } from '../content/internal/CodeThemes.js';
 import { EmptyState } from '../feedback/EmptyState.js';
 import { useTheme } from '../foundations/Theme.js';
-import { LoadingState } from '../feedback/LoadingState.js';
+import { Spinner } from '../feedback/Spinner.js';
 import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
@@ -236,7 +236,7 @@ export function CodeDiff({
           }
         />
       ) : !loaded ? (
-        <LoadingState label={messages.loading} />
+        <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
           file={{ name: filename, contents: after, lang: lang as never }}
