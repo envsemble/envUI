@@ -8,7 +8,7 @@ import {
   Select,
   Column,
   Text,
-  Drawer,
+  Sheet,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 
@@ -37,7 +37,7 @@ export default function FilterPanel() {
   );
   return (
     <Column gap={4} align="start">
-      <Drawer
+      <Sheet
         trigger={
           <Button variant="secondary" startIcon={<FilterList />}>
             Filters
@@ -82,7 +82,7 @@ export default function FilterPanel() {
             onValueChange={(value) => setOwner(value ?? 'anyone')}
           />
         </Column>
-      </Drawer>
+      </Sheet>
       {/* The list takes the width of a column of the page. */}
       {shown.length > 0 ? (
         <List.Root aria-label="Projects" style={{ inlineSize: 'min(100%, 24rem)' }}>

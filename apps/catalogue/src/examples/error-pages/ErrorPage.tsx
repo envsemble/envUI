@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AppShell, Button, EmptyState, Page, Column, Text } from '@envsemble/envui';
+import { Button, Column, EmptyState, Page, Scaffold, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Warning } from '@envsemble/envui/icons/Warning';
@@ -11,17 +11,15 @@ import { Warning } from '@envsemble/envui/icons/Warning';
  */
 export default function ErrorPage() {
   const main = useRef<HTMLElement>(null);
-  // It replaces the application, so focus moves to Main, which screen readers then read from.
+  // It replaces the application, so focus moves to the body, which screen readers then read from.
   useEffect(() => {
     main.current?.focus({ preventScroll: true });
   }, []);
   return (
-    <AppShell.Main ref={main}>
-      {/* envUI has no centred full-viewport layout yet: this column centres the message. */}
-      <Column
-        justify="center"
-        style={{ minBlockSize: '100dvh', paddingBlock: 'var(--env-space-7)' }}
-      >
+    // A Scaffold with only a body: the main landmark, which fills the window and scrolls.
+    <Scaffold bodyRef={main}>
+      {/* The column fills the body and centres the message in it. */}
+      <Column justify="center" style={{ minBlockSize: '100%', paddingBlock: 'var(--env-space-7)' }}>
         <Page width="sm">
           <EmptyState
             align="center"
@@ -43,7 +41,7 @@ export default function ErrorPage() {
           />
         </Page>
       </Column>
-    </AppShell.Main>
+    </Scaffold>
   );
 }
 

@@ -1,10 +1,12 @@
-import { IconButton, Menu, Menubar, WindowFrame } from '@envsemble/envui';
+import { IconButton, Menu, Menubar, TopBar } from '@envsemble/envui';
 import { Share } from '@envsemble/envui/icons/Share';
 
 export default function InTitleBar() {
   return (
     // A desktop-style window draws its own title bar; the menubar sits at its start.
-    <WindowFrame.TitleBar
+    <TopBar
+      titleBar
+      title="Roadmap.md"
       start={
         <Menubar.Root aria-label="Application menu">
           <Menubar.Menu label="File">
@@ -21,9 +23,7 @@ export default function InTitleBar() {
           </Menubar.Menu>
         </Menubar.Root>
       }
-      end={<IconButton icon={<Share />} aria-label="Share" />}
-    >
-      Roadmap.md
-    </WindowFrame.TitleBar>
+      actions={<IconButton icon={<Share />} aria-label="Share" />}
+    />
   );
 }

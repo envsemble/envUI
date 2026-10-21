@@ -3,7 +3,7 @@ import { Button, EmptyState, Column, Text } from '@envsemble/envui';
 
 /**
  * Catches a page that fails to render and shows a danger EmptyState in its place, so the frame
- * around it keeps working. Wrap the router's outlet inside AppShell.Main with it, keyed by the
+ * around it keeps working. Wrap the router's outlet inside the Scaffold's body with it, keyed by the
  * path, so going to another page starts again.
  */
 class PageErrorBoundary extends Component<

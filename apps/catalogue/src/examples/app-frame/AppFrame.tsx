@@ -1,17 +1,21 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import {
-  AccountMenu,
-  AppShell,
+  Avatar,
+  AvatarButton,
+  Button,
+  Column,
   CommandPalette,
   EmptyState,
   Menu,
   NavList,
   Page,
   PageHeader,
+  Row,
+  Scaffold,
   SearchTrigger,
-  Sidebar,
-  SidebarTrigger,
   Text,
+  ThemeRadioGroup,
+  TopBar,
   type CommandPaletteItem,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -21,6 +25,7 @@ import { Home } from '@envsemble/envui/icons/Home';
 import { Hub } from '@envsemble/envui/icons/Hub';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
+import { Palette } from '@envsemble/envui/icons/Palette';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 interface Destination {
@@ -32,11 +37,11 @@ interface Destination {
 }
 
 /**
- * The application's frame: a sidebar at the start that collapses to a rail of icons and becomes a
- * drawer on a phone, a phone's top bar, search and the account menu, around the page in Main.
- * Render it once, at the application's root, with the current page as its children; `current` is
- * the current route, which marks its destination in the navigation. Without children it shows a
- * sample page.
+ * The application's frame: a Scaffold with a top bar that holds the application's name, search and
+ * the account menu, the navigation at the bottom of a phone and at the start of a wider window, and
+ * the page in the body. Render it once, at the application's root, with the current page as its
+ * children; `current` is the current route, which marks its destination in the navigation. Without
+ * children it shows a sample page.
  */
 export default function AppFrame({
   children,
@@ -76,53 +81,76 @@ export default function AppFrame({
     ];
   }, [query]);
 
-  // One account menu, in the sidebar's footer, and in the phone's top bar where the sidebar is a
-  // drawer.
+  // The account menu: the avatar opens a Menu whose header says who is signed in, then the
+  // person's own things. It is a pattern, not a component, so it is arranged here.
   const account = (
-    <AccountMenu.Root name={user.name} description={user.email} aria-label="Account">
+    <Menu.Root
+      aria-label="Account"
+      align="end"
+      trigger={<AvatarButton name={user.name} description={user.email} />}
+    >
+      <Menu.Header>
+        <Row align="center" gap={3}>
+          <Avatar name={user.name} size="lg" />
+          <Column>
+            <Text>{user.name}</Text>
+            <Text variant="body-sm" emphasis="muted">
+              {user.email}
+            </Text>
+          </Column>
+        </Row>
+      </Menu.Header>
       <Menu.Item href="/account" icon={<ManageAccounts />}>
         Account settings
       </Menu.Item>
-      <AccountMenu.ThemeSubmenu />
+      <Menu.Submenu label="Theme" icon={<Palette />}>
+        <ThemeRadioGroup />
+      </Menu.Submenu>
       <Menu.Separator />
       {/* End the session with your authentication service, then go to the sign-in page. */}
       <Menu.Item icon={<Logout />} onClick={() => navigate('/sign-in')}>
         Sign out
       </Menu.Item>
-    </AccountMenu.Root>
+    </Menu.Root>
   );
 
+  const destinations = [...primary, ...workspace];
   return (
-    // The document scrolls under the header; the sidebar's docked or rail state is remembered.
-    // Add shortcut="mod+b" to toggle it from the keyboard, unless the application has an editor,
-    // where Mod+B is Bold.
-    <AppShell.Root breakpoint="md" persist="app.frame">
-      <AppShell.SkipLinks />
-      <Sidebar.Root label="Primary" collapsible="rail">
-        <Sidebar.Header>
-          {/* A generic mark, never a logo: it toggles the sidebar and shows in the rail. */}
-          <SidebarTrigger mark={<Hub />} />
-          <Text variant="title" render={<span />}>
-            Northwind
-          </Text>
-        </Sidebar.Header>
-        <Sidebar.Content>
-          <SearchTrigger fullWidth onClick={() => setSearching(true)} />
-          <NavList.Root>
-            {primary.map((destination) => (
-              <NavList.Item
+    // The body scrolls under the top bar; the Scaffold shows the navigation that fits its width.
+    <Scaffold
+      topBar={
+        <TopBar
+          title="Northwind"
+          actions={
+            <>
+              <SearchTrigger iconOnly onClick={() => setSearching(true)} />
+              {account}
+            </>
+          }
+        />
+      }
+      navigation={{
+        // At the bottom of a phone: the destinations side by side.
+        bar: (
+          <Row render={<nav aria-label="Primary" />} justify="between" padding={2}>
+            {destinations.map((destination) => (
+              <Button
                 key={destination.href}
                 href={destination.href}
-                icon={destination.icon}
-                selected={isCurrent(destination)}
+                variant="ghost"
+                startIcon={destination.icon}
+                aria-current={isCurrent(destination) ? 'page' : undefined}
               >
                 {destination.label}
-              </NavList.Item>
+              </Button>
             ))}
-          </NavList.Root>
-          <Sidebar.Group label="Workspace">
+          </Row>
+        ),
+        // At the start of a wider window: the destinations, then the workspace's.
+        drawer: (
+          <Column gap={4} render={<nav aria-label="Primary" />} padding={3}>
             <NavList.Root>
-              {workspace.map((destination) => (
+              {primary.map((destination) => (
                 <NavList.Item
                   key={destination.href}
                   href={destination.href}
@@ -133,29 +161,23 @@ export default function AppFrame({
                 </NavList.Item>
               ))}
             </NavList.Root>
-          </Sidebar.Group>
-        </Sidebar.Content>
-        <Sidebar.Footer>{account}</Sidebar.Footer>
-      </Sidebar.Root>
-      {/* A phone's top bar: below the breakpoint the sidebar is a drawer its trigger opens. */}
-      <AppShell.Header
-        mobileOnly
-        start={
-          <>
-            <SidebarTrigger />
-            <Text variant="title" render={<span />}>
-              Northwind
-            </Text>
-          </>
-        }
-        end={
-          <>
-            <SearchTrigger iconOnly onClick={() => setSearching(true)} />
-            {account}
-          </>
-        }
-      />
-      <AppShell.Main>{children ?? <SamplePage />}</AppShell.Main>
+            <NavList.Group label="Workspace">
+              {workspace.map((destination) => (
+                <NavList.Item
+                  key={destination.href}
+                  href={destination.href}
+                  icon={destination.icon}
+                  selected={isCurrent(destination)}
+                >
+                  {destination.label}
+                </NavList.Item>
+              ))}
+            </NavList.Group>
+          </Column>
+        ),
+      }}
+    >
+      {children ?? <SamplePage />}
       <CommandPalette
         open={searching}
         onOpenChange={(open) => {
@@ -170,11 +192,11 @@ export default function AppFrame({
         onAction={(item) => navigate(item.id)}
         emptyLabel="No matching pages or projects"
       />
-    </AppShell.Root>
+    </Scaffold>
   );
 }
 
-/** The page Main shows without children: a Page with its header, where the application's go. */
+/** The page the body shows without children: a Page with its header, where the application's go. */
 function SamplePage() {
   return (
     <Page width="lg" header={<PageHeader title="Home" description="What changed in Northwind." />}>

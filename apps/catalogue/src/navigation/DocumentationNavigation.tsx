@@ -1,12 +1,5 @@
 import type { ReactNode } from 'react';
-import {
-  Link,
-  NavList,
-  SearchTrigger,
-  Sidebar,
-  SidebarTrigger,
-  useSidebar,
-} from '@envsemble/envui';
+import { Column, Link, NavList, SearchTrigger, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -52,9 +45,9 @@ interface SectionsProps {
 
 /**
  * The navigation's sections, in order: Get started, Foundations, Components, Patterns, Templates,
- * Contributing and Changelog. Each is a Sidebar.Group named by its title around a NavList.Root of
- * its pages, so a rail and the drawer name them too. Components are grouped by kind and patterns by
- * intent; Templates lists the overview, then each template page.
+ * Contributing and Changelog. Each is a section named by its heading around a NavList.Root of its
+ * pages. Components are grouped by kind and patterns by intent; Templates lists the overview, then
+ * each template page.
  */
 function Sections({ routePath, page }: SectionsProps) {
   const reference = page?.reference;
@@ -64,9 +57,17 @@ function Sections({ routePath, page }: SectionsProps) {
     </NavList.Item>
   );
   const section = (title: SiteSection, children: ReactNode) => (
-    <Sidebar.Group key={title} label={title} className="docs-nav-section">
+    <Column
+      key={title}
+      gap={1}
+      render={<section aria-label={title} />}
+      className="docs-nav-section"
+    >
+      <Text variant="caption" emphasis="muted" render={<h2 className="docs-nav-heading" />}>
+        {title}
+      </Text>
       <NavList.Root>{children}</NavList.Root>
-    </Sidebar.Group>
+    </Column>
   );
   return (
     <>
@@ -153,70 +154,42 @@ function Sections({ routePath, page }: SectionsProps) {
   );
 }
 
-/**
- * The navigation's top row: the trigger that collapses the navigation to a rail, which stays in
- * place as the rail peeks open, then the envUI wordmark, which leads to the overview. In the drawer the drawer's own close button stands in for
- * the trigger.
- */
-function Header() {
-  const { isMobile } = useSidebar();
+/** The envUI wordmark, which leads to the overview. */
+function Brand() {
   return (
-    <Sidebar.Header className="docs-sidebar-header">
-      {!isMobile && <SidebarTrigger className="docs-sidebar-trigger" />}
-      <Link
-        href={routeHref(homeRoute)}
-        underline={false}
-        className="docs-brand-link"
-        aria-label="envUI overview"
-      >
-        <EnvUILogo />
-      </Link>
-    </Sidebar.Header>
-  );
-}
-
-/** Search, at the top of the navigation: it closes the drawer before search opens over the page. */
-function Search({ onSearch }: { onSearch: () => void }) {
-  const { dismiss } = useSidebar();
-  return (
-    <SearchTrigger
-      fullWidth
-      onClick={() => {
-        dismiss();
-        onSearch();
-      }}
-    />
+    <Link
+      href={routeHref(homeRoute)}
+      underline={false}
+      className="docs-brand-link"
+      aria-label="envUI overview"
+    >
+      <EnvUILogo />
+    </Link>
   );
 }
 
 /**
- * The catalogue's navigation: the wordmark and search above, then the sections. On a wide window it docks beside the page, at a width readers can change, or
- * collapses to a rail of icons that opens over the page; below 48 rem it is a drawer that the top
- * bar's trigger opens.
+ * The catalogue's navigation: the wordmark and search above, then the sections. The frame shows it
+ * at the start of a wide window, and in a sheet that the top bar opens in a narrower one.
  */
-export function DocumentationSidebar({
+export function DocumentationNavigation({
   routePath,
   page,
   onSearch,
-}: SectionsProps & { onSearch: () => void }) {
+  inSheet = false,
+}: SectionsProps & { onSearch: () => void; inSheet?: boolean }) {
   return (
-    // 14.4 rem is the column the catalogue had at 1280 px, the width of its screenshots; readers can
-    // widen it, and the frame remembers their width.
-    <Sidebar.Root
-      label="Documentation"
-      width={14.4}
-      resizable
-      maxWidth={24}
-      resizeLabel="Resize navigation"
+    <Column
+      gap={4}
+      render={<nav aria-label="Documentation" />}
       className="docs-sidebar"
+      data-in-sheet={inSheet || undefined}
     >
-      <Header />
-      <Sidebar.Content align="stretch" className="docs-sidebar-search">
-        <Search onSearch={onSearch} />
-      </Sidebar.Content>
-      <Sidebar.Content className="docs-sidebar-navigation">
+      {!inSheet && <Brand />}
+      <SearchTrigger fullWidth onClick={onSearch} className="docs-sidebar-search" />
+      <Column gap={5} className="docs-sidebar-navigation">
         <Sections routePath={routePath} page={page} />
-      </Sidebar.Content>
-    </Sidebar.Root>
+      </Column>
+    </Column>
   );
 }

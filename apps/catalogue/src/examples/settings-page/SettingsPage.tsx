@@ -10,9 +10,9 @@ import {
   NavList,
   Page,
   PageHeader,
+  Panes,
   Radio,
   RadioGroup,
-  Sidebar,
   Column,
   Row,
   Surface,
@@ -28,7 +28,7 @@ type SectionId = 'profile' | 'notifications' | 'appearance' | 'danger-zone';
 
 /**
  * A settings page inside the app frame: the sections in one column, with an "On this page"
- * navigation beside them on wider screens. Profile waits for Save; notifications and appearance
+ * navigation in a supporting pane beside them from an expanded width. Profile waits for Save; notifications and appearance
  * apply as they change; the danger zone confirms by name.
  */
 export default function SettingsPage() {
@@ -94,70 +94,68 @@ export default function SettingsPage() {
         <PageHeader title="Settings" description="Your profile and how Northwind works for you." />
       }
     >
-      {/* envUI has no responsive columns yet: the navigation and the sections share a row. */}
-      <Row align="start" gap={8}>
-        {/* A sidebar of the page's own, inside Main: it keeps its own state and leaves the frame's
-            sidebar, skip links and shortcut alone. Its provider hides it below the lg breakpoint,
-            where the sections follow each other; above it, it sticks below the frame's sticky
-            header as the sections scroll. */}
-        <Sidebar.Provider breakpoint="lg">
-          <Sidebar.Root
-            label="Settings sections"
-            collapsible="none"
-            mobile="none"
-            // envUI has no sticky page sidebar yet: it sticks below the frame's sticky offset.
-            style={{
-              position: 'sticky',
-              insetBlockStart: 'calc(var(--env-frame-sticky-top, 0rem) + var(--env-space-6))',
-            }}
+      {/* The sections in the main pane, and "On this page" in a supporting pane beside them from
+          an expanded width; narrower, the sections follow each other alone. */}
+      <Panes.Root behavior="supporting">
+        <Panes.Main>
+          <Column gap={8}>
+            <Section id={`${id}-profile`} title="Profile" headingRef={heading('profile')}>
+              <ProfileForm />
+            </Section>
+            <Section
+              id={`${id}-notifications`}
+              title="Notifications"
+              description="Changes apply at once."
+              headingRef={heading('notifications')}
+            >
+              <Notifications />
+            </Section>
+            <Section
+              id={`${id}-appearance`}
+              title="Appearance"
+              description="Applies to Northwind on this device."
+              headingRef={heading('appearance')}
+            >
+              <Appearance />
+            </Section>
+            <Section
+              id={`${id}-danger-zone`}
+              title="Danger zone"
+              headingRef={heading('danger-zone')}
+            >
+              <DangerZone />
+            </Section>
+          </Column>
+        </Panes.Main>
+        <Panes.Supporting
+          label="On this page"
+          // The pane scrolls with the page rather than on its own, so its navigation sticks.
+          style={{ overflow: 'visible', paddingInlineStart: 'var(--env-space-8)' }}
+        >
+          <nav
+            aria-label="Settings sections"
+            style={{ position: 'sticky', insetBlockStart: 'var(--env-space-6)' }}
           >
-            <Sidebar.Content>
-              <NavList.Root>
-                {sections.map((section) => (
-                  <NavList.Item
-                    key={section.id}
-                    href={`#${id}-${section.id}`}
-                    selected={chosen === section.id}
-                    // Links within the page: the current one is a location, not a page.
-                    aria-current={chosen === section.id ? 'location' : undefined}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      go(section.id);
-                    }}
-                  >
-                    {section.title}
-                  </NavList.Item>
-                ))}
-              </NavList.Root>
-            </Sidebar.Content>
-          </Sidebar.Root>
-        </Sidebar.Provider>
-        {/* envUI has no responsive columns yet: the sections take the rest of the row. */}
-        <Column gap={8} style={{ flex: '1 1 0', minInlineSize: 0 }}>
-          <Section id={`${id}-profile`} title="Profile" headingRef={heading('profile')}>
-            <ProfileForm />
-          </Section>
-          <Section
-            id={`${id}-notifications`}
-            title="Notifications"
-            description="Changes apply at once."
-            headingRef={heading('notifications')}
-          >
-            <Notifications />
-          </Section>
-          <Section
-            id={`${id}-appearance`}
-            title="Appearance"
-            description="Applies to Northwind on this device."
-            headingRef={heading('appearance')}
-          >
-            <Appearance />
-          </Section>
-          <Section id={`${id}-danger-zone`} title="Danger zone" headingRef={heading('danger-zone')}>
-            <DangerZone />
-          </Section>
-        </Column>
-      </Row>
+            <NavList.Root>
+              {sections.map((section) => (
+                <NavList.Item
+                  key={section.id}
+                  href={`#${id}-${section.id}`}
+                  selected={chosen === section.id}
+                  // Links within the page: the current one is a location, not a page.
+                  aria-current={chosen === section.id ? 'location' : undefined}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    go(section.id);
+                  }}
+                >
+                  {section.title}
+                </NavList.Item>
+              ))}
+            </NavList.Root>
+          </nav>
+        </Panes.Supporting>
+      </Panes.Root>
     </Page>
   );
 }

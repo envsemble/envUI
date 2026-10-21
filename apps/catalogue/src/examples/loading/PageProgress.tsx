@@ -1,27 +1,16 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import {
-  AppShell,
-  NavList,
-  Page,
-  PageHeader,
-  Sidebar,
-  SidebarTrigger,
-  Text,
-} from '@envsemble/envui';
-import { Apps } from '@envsemble/envui/icons/Apps';
+import { NavList, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 
 /**
- * Stands in for the window. An application renders AppShell.Root at its root, where the document
- * scrolls under the header; this preview scrolls Main in a box and adds no landmarks to the page
- * around it.
+ * Stands in for the window. An application renders its Scaffold at its root, as tall as the window;
+ * this preview is a box 22 rem tall and adds no landmarks to the page around it.
  */
 const preview = {
-  '--env-app-shell-block-size': '22rem',
-  overflow: 'hidden',
+  blockSize: '22rem',
   borderRadius: '1.75rem',
 } as CSSProperties;
 
@@ -54,42 +43,43 @@ export default function PageProgress() {
 
   const page = pages.find(({ id }) => id === shown) ?? pages[0];
   return (
-    <AppShell.Root
-      loading={next !== null}
-      // The bar names the page it loads.
-      loadingLabel={`Loading ${pages.find(({ id }) => id === next)?.label ?? 'page'}`}
+    <Scaffold
       landmarks={false}
-      scroll="main"
       style={preview}
+      topBar={
+        <TopBar
+          title="Northwind"
+          loading={next !== null}
+          // The bar names the page it loads.
+          loadingLabel={`Loading ${pages.find(({ id }) => id === next)?.label ?? 'page'}`}
+        />
+      }
+      bodyRef={main}
+      navigation={{
+        drawer: (
+          <nav aria-label="Primary">
+            <NavList.Root>
+              {pages.map(({ id, label, href, icon }) => (
+                // The router changes the page; the example keeps it in state.
+                <NavList.Item
+                  key={id}
+                  href={href}
+                  icon={icon}
+                  selected={id === shown}
+                  onClick={() => open(id)}
+                >
+                  {label}
+                </NavList.Item>
+              ))}
+            </NavList.Root>
+          </nav>
+        ),
+      }}
     >
-      <Sidebar.Root label="Primary">
-        <Sidebar.Header>
-          <SidebarTrigger mark={<Apps />} />
-        </Sidebar.Header>
-        <Sidebar.Content>
-          <NavList.Root>
-            {pages.map(({ id, label, href, icon }) => (
-              // The router changes the page; the example keeps it in state.
-              <NavList.Item
-                key={id}
-                href={href}
-                icon={icon}
-                selected={id === shown}
-                onClick={() => open(id)}
-              >
-                {label}
-              </NavList.Item>
-            ))}
-          </NavList.Root>
-        </Sidebar.Content>
-      </Sidebar.Root>
-      <AppShell.Header>Northwind</AppShell.Header>
-      <AppShell.Main ref={main}>
-        <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>
-          <Text emphasis="muted">{page.description}</Text>
-        </Page>
-      </AppShell.Main>
-    </AppShell.Root>
+      <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>
+        <Text emphasis="muted">{page.description}</Text>
+      </Page>
+    </Scaffold>
   );
 }
 

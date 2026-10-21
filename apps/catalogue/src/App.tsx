@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
-  AppShell,
   EnvUIProvider,
+  IconButton,
   Link,
   LinkProvider,
   NavList,
+  Scaffold,
   SearchTrigger,
-  SidebarTrigger,
+  Sheet,
   Column,
   ThemeToggle,
+  TopBar,
 } from '@envsemble/envui';
+import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
 import { EnvUILogo } from './brand/EnvUILogo';
 import {
   findReferencePage,
@@ -24,7 +27,7 @@ import { PageHeader } from './layout/PageHeader';
 import { PageFooter } from './layout/PageFooter';
 import { PageChangelog } from './template/TemplateContent';
 import { Overview } from './pages/Overview';
-import { DocumentationSidebar } from './navigation/Sidebar';
+import { DocumentationNavigation } from './navigation/DocumentationNavigation';
 import { PageNavigation } from './navigation/PageNavigation';
 import { RouterLink } from './navigation/RouterLink';
 import { homeRoute, routeHref, revealSection } from './navigation/Address';
@@ -33,12 +36,12 @@ import { reachedFromTabs, useDocumentationRoute } from './navigation/useDocument
 import { DisplayMenu, DisplaySettingsProvider } from './theme/DisplaySettings';
 import { DocumentationSearch } from './search/DocumentationSearch';
 
-/** Where the frame remembers whether the reader keeps the navigation docked or as a rail. */
-const frameStorageKey = 'envui-catalogue-frame';
-
 function Catalogue() {
   const route = useDocumentationRoute();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  // A destination chosen in the navigation's sheet sends focus to the page, not back to the button.
+  const choseDestination = useRef(false);
   const mainElement = useRef<HTMLElement>(null);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
@@ -74,7 +77,7 @@ function Catalogue() {
     mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(contentRoute.split('?')[1]).get('section');
     if (section) return revealSection(section);
-    window.scrollTo({ top: 0 });
+    mainElement.current?.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   const openSearch = () => setSearchOpen(true);
   let content: ReactNode;
@@ -87,38 +90,60 @@ function Catalogue() {
         <NavList.Item href={routeHref(homeRoute)}>Return to overview</NavList.Item>
       </Column>
     );
+  const navigation = (inSheet: boolean) => (
+    <DocumentationNavigation
+      routePath={routePath}
+      page={page}
+      inSheet={inSheet}
+      onSearch={() => {
+        setNavigationOpen(false);
+        openSearch();
+      }}
+    />
+  );
   return (
-    <AppShell.Root persist={frameStorageKey} className="docs-frame">
-      <AppShell.SkipLinks />
-      {/* A phone's top bar: the navigation's drawer, the overview, search, display and theme. */}
-      <AppShell.Header
-        mobileOnly
-        className="docs-header"
-        start={
-          <>
-            <SidebarTrigger />
-            <Link
-              href={routeHref(homeRoute)}
-              underline={false}
-              className="docs-header-brand"
-              aria-label="envUI overview"
-            >
-              <EnvUILogo />
-            </Link>
-          </>
-        }
-        end={
-          <>
-            <SearchTrigger iconOnly onClick={openSearch} />
-            <DisplayMenu iconOnly />
-            <ThemeToggle variant="ghost" />
-          </>
-        }
-      />
-      <DocumentationSidebar routePath={routePath} page={page} onSearch={openSearch} />
-      <AppShell.Main id="docs-main" ref={mainElement} className="docs-main">
-        {/* The display settings and the theme, at the page's top right as it scrolls; a phone's
-            top bar holds them instead. */}
+    <Scaffold
+      className="docs-frame"
+      bodyId="docs-main"
+      bodyRef={mainElement}
+      // The navigation is at the start of a wide window, and in a sheet that the top bar opens in a
+      // narrower one.
+      forms={{ compact: 'none', medium: 'none' }}
+      navigation={{ drawer: navigation(false) }}
+      topBar={
+        <TopBar
+          className="docs-header"
+          start={
+            <>
+              <IconButton
+                icon={<MenuIcon />}
+                aria-label="Open navigation"
+                variant="ghost"
+                onClick={() => setNavigationOpen(true)}
+              />
+              <Link
+                href={routeHref(homeRoute)}
+                underline={false}
+                className="docs-header-brand"
+                aria-label="envUI overview"
+              >
+                <EnvUILogo />
+              </Link>
+            </>
+          }
+          actions={
+            <>
+              <SearchTrigger iconOnly onClick={openSearch} />
+              <DisplayMenu iconOnly />
+              <ThemeToggle variant="ghost" />
+            </>
+          }
+        />
+      }
+    >
+      <div className="docs-main">
+        {/* The display settings and the theme, at the page's top right as it scrolls; the top bar
+            of a narrower window holds them instead. */}
         <div className="docs-page-controls">
           <div className="docs-page-controls-bar">
             <DisplayMenu />
@@ -146,9 +171,30 @@ function Catalogue() {
           standalone?.document && <PageChangelog document={standalone.document} />
         )}
         <PageFooter />
-      </AppShell.Main>
+      </div>
+      <Sheet
+        side="start"
+        aria-label="Documentation"
+        width="min(18rem, 100%)"
+        open={navigationOpen}
+        onOpenChange={(open) => {
+          if (open) choseDestination.current = false;
+          setNavigationOpen(open);
+        }}
+        finalFocus={() => (choseDestination.current ? (mainElement.current ?? true) : true)}
+      >
+        <div
+          onClickCapture={(event) => {
+            if (!(event.target as Element).closest('a[href]')) return;
+            choseDestination.current = true;
+            setNavigationOpen(false);
+          }}
+        >
+          {navigation(true)}
+        </div>
+      </Sheet>
       <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
-    </AppShell.Root>
+    </Scaffold>
   );
 }
 

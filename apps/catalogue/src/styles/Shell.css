@@ -17,8 +17,8 @@ body {
 .docs-app *::after {
   box-sizing: border-box;
 }
-/* The frame's parts come from AppShell and Sidebar; these rules size the wordmark in their headers
-   and keep the page's own layout. */
+/* The frame is a Scaffold with a TopBar, and the navigation at its start or in a sheet; these rules
+   size the wordmark and the navigation and keep the page's own layout. */
 .docs-brand-link,
 .docs-header-brand {
   display: block;
@@ -36,15 +36,32 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The trigger that collapses the navigation starts the header, on the icons' centre line, so it
-   stays where it is as the navigation collapses to a rail or peeks out of one; a rail shows only
-   the trigger. */
-.docs-sidebar[data-rail] .docs-brand-link {
-  display: none;
+/* The navigation at the start of a wide window: a column of its own width with a hairline at its
+   end, which scrolls on its own. In the sheet of a narrower window it takes the sheet's width. */
+.docs-sidebar {
+  inline-size: 15rem;
+  min-block-size: 100%;
+  padding: var(--env-space-4) var(--env-space-3);
+  border-inline-end: 0.0625rem solid var(--env-color-border-muted);
+}
+.docs-sidebar[data-in-sheet] {
+  inline-size: auto;
+  padding: 0;
+  border: 0;
+}
+.docs-nav-heading {
+  padding-inline: var(--env-space-2);
+}
+/* The top bar shows only where the navigation is in a sheet, below an expanded window. */
+@container env-scaffold (width >= 52.5rem) {
+  .docs-frame > .env-scaffold-top-bar {
+    display: none;
+  }
 }
 .docs-main {
   display: flex;
   flex-direction: column;
+  min-block-size: 100%;
 }
 .docs-page-header,
 .docs-preview,
@@ -138,12 +155,12 @@ body {
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-page);
 }
-@media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
+@container env-scaffold (width < 52.5rem) {
   .docs-page-controls {
     display: none;
   }
-  .docs-app {
-    --docs-controls-room: 0;
+  .docs-main {
+    --docs-controls-room: 0rem;
   }
 }
 .docs-page-navigation {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Badge, Button, DescriptionList, Drawer, List } from '@envsemble/envui';
+import { Badge, Button, DescriptionList, List, Sheet } from '@envsemble/envui';
 
-export default function DetailsInDrawer() {
+export default function DetailsInSheet() {
   const [openId, setOpenId] = useState<string | null>(null);
-  // The project stays shown while the drawer slides out.
+  // The project stays shown while the sheet slides out.
   const [shownId, setShownId] = useState<string | null>(null);
   const project = projects.find((candidate) => candidate.id === shownId);
   return (
@@ -35,8 +35,8 @@ export default function DetailsInDrawer() {
           </List.Item>
         ))}
       </List.Root>
-      {/* Focus moves into the drawer as it opens, and back to the row's button as it closes. */}
-      <Drawer
+      {/* Focus moves into the sheet as it opens, and back to the row's button as it closes. */}
+      <Sheet
         open={openId !== null}
         onOpenChange={(open) => {
           if (!open) setOpenId(null);
@@ -54,7 +54,7 @@ export default function DetailsInDrawer() {
             <DescriptionList.Item label="Team">{project.team}</DescriptionList.Item>
           </DescriptionList.Root>
         )}
-      </Drawer>
+      </Sheet>
     </>
   );
 }

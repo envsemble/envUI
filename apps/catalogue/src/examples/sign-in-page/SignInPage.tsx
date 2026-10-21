@@ -1,12 +1,12 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import {
   Alert,
-  AppShell,
   Button,
   Checkbox,
   IconButton,
   Link,
   Page,
+  Scaffold,
   Column,
   Surface,
   Text,
@@ -119,12 +119,10 @@ export default function SignInPage() {
   const summaryErrors = listed.filter((field) => errors[field]);
 
   return (
-    <AppShell.Main>
-      {/* envUI has no centred full-viewport layout yet: this column centres the form. */}
-      <Column
-        justify="center"
-        style={{ minBlockSize: '100dvh', paddingBlock: 'var(--env-space-7)' }}
-      >
+    // A Scaffold with only a body: the main landmark, which fills the window and scrolls.
+    <Scaffold>
+      {/* The column fills the body and centres the form in it. */}
+      <Column justify="center" style={{ minBlockSize: '100%', paddingBlock: 'var(--env-space-7)' }}>
         <Page width="sm">
           {/* One panel in the muted background holds the whole screen, so its edges line up. */}
           <Surface background="muted" render={<Column gap={6} />}>
@@ -247,7 +245,7 @@ export default function SignInPage() {
           </Surface>
         </Page>
       </Column>
-    </AppShell.Main>
+    </Scaffold>
   );
 }
 

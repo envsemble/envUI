@@ -3,13 +3,13 @@ import {
   Button,
   CounterBadge,
   DialogClose,
-  Drawer,
   EmptyState,
   List,
   Radio,
   RadioGroup,
   SearchField,
   Select,
+  Sheet,
   Column,
   Row,
   Text,
@@ -27,7 +27,7 @@ const remToPixels = (width: string) =>
 
 export default function NarrowFilters() {
   // From the medium window class up, measured on the filters' own width, they sit in the toolbar;
-  // in a compact one they move into a drawer, and the search stays in view.
+  // in a compact one they move into a sheet, and the search stays in view.
   const filters = useRef<HTMLDivElement>(null);
   const size = useContainerSize(filters);
   const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
@@ -85,7 +85,7 @@ export default function NarrowFilters() {
             />
           </>
         ) : (
-          <Drawer
+          <Sheet
             trigger={
               <Button variant="secondary" size="sm" startIcon={<FilterList />}>
                 Filters
@@ -105,8 +105,8 @@ export default function NarrowFilters() {
             }
           >
             <Column gap={5}>
-              {/* The page behind the modal drawer is hidden from assistive technology, so the
-                  drawer has its own status, there as it opens, that announces the new count. */}
+              {/* The page behind the modal sheet is hidden from assistive technology, so the
+                  sheet has its own status, there as it opens, that announces the new count. */}
               <Text role="status" variant="body-sm" emphasis="muted">
                 {projectCount(shown.length)} {shown.length === 1 ? 'matches' : 'match'}
               </Text>
@@ -128,7 +128,7 @@ export default function NarrowFilters() {
                 onValueChange={setOwner}
               />
             </Column>
-          </Drawer>
+          </Sheet>
         )}
       </Row>
       <Text role="status" variant="body-sm" emphasis="muted">

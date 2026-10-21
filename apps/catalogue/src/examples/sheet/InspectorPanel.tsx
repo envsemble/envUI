@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, List, Column, Text, Drawer } from '@envsemble/envui';
+import { Button, List, Column, Text, Sheet } from '@envsemble/envui';
 
 const people = [
   { name: 'Alex Morgan', role: 'Designer', email: 'alex.morgan@example.com', team: 'Product' },
@@ -37,7 +37,7 @@ export default function InspectorPanel() {
           />
         ))}
       </List.Root>
-      <Drawer
+      <Sheet
         open={person !== undefined}
         onOpenChange={(open) => {
           if (!open) setSelected(null);
@@ -65,7 +65,7 @@ export default function InspectorPanel() {
             </Column>
           </Column>
         )}
-      </Drawer>
+      </Sheet>
     </>
   );
 }
