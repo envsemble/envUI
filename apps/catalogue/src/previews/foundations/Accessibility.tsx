@@ -6,32 +6,26 @@ import { Example } from '../Example';
 export function AccessibilityPreview() {
   return (
     <>
-      <Example title="Keyboard focus">
-        <Row wrap align="center" gap={4}>
+      <Example
+        title="Keyboard focus"
+        caption={
+          <>
+            <Kbd>Tab</Kbd> and <Kbd keys={['Shift', 'Tab']} /> move between controls in the order
+            they show; <Kbd>Enter</Kbd> activates links, <Kbd>Enter</Kbd> or <Kbd>Space</Kbd>{' '}
+            buttons.
+          </>
+        }
+      >
+        <Row wrap align="center" justify="center" gap={4}>
           <Button className="docs-force-focus">Visible focus</Button>
           <IconButton icon={<ChevronRight />} aria-label="Next item" />
         </Row>
-        <Text emphasis="muted">
-          Use <Kbd>Tab</Kbd> and <Kbd keys={['Shift', 'Tab']} /> to move between controls.{' '}
-          <Kbd>Enter</Kbd> activates links; <Kbd>Enter</Kbd> or <Kbd>Space</Kbd> activates buttons.
-          Keep focus order aligned with the visible layout.
-        </Text>
       </Example>
-      <Example title="Library responsibilities">
-        <Text emphasis="muted">
-          Controls supply semantics, keyboard interaction and connected hints or errors. Dialogs
-          manage modal focus; toasts announce feedback. Component transitions respect reduced
-          motion.
-        </Text>
-      </Example>
-      <Example title="Application responsibilities">
-        <Text emphasis="muted">
-          Supply visible labels, meaningful icon action names, semantic headings and a sensible
-          reading order. Write errors that explain how to recover. Keep the component’s focus
-          indicator visible.
-        </Text>
-      </Example>
-      <Example title="Motion defaults">
+      <Example
+        title="Motion defaults"
+        size="field"
+        caption="Motion supports a state change: brief, and only opacity under reduced motion."
+      >
         <Column gap={4} className="docs-facts">
           <Text variant="body-sm">
             Fast transitions{' '}
@@ -52,9 +46,6 @@ export function AccessibilityPreview() {
             </code>
           </Text>
         </Column>
-        <Text variant="caption" className="docs-caption">
-          Motion supports a state change. Keep it brief and respect reduced motion.
-        </Text>
       </Example>
     </>
   );

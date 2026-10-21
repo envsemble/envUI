@@ -7,6 +7,12 @@ import { Column, Text, type SpaceStep } from '@envsemble/envui';
  */
 export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 
+/**
+ * Whether an Example shows its content on the dotted stage, as a foundation page's preview does;
+ * its caption stays below the stage.
+ */
+export const ExampleStage = createContext(false);
+
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
   title,
@@ -26,6 +32,7 @@ export function Example({
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
 }) {
   const Heading = `h${useContext(SpecimenHeadingLevel)}` as const;
+  const staged = useContext(ExampleStage);
   return (
     <Column
       render={<section />}
@@ -45,7 +52,7 @@ export function Example({
           {title}
         </Text>
       ) : null}
-      {children}
+      {staged ? <div className="docs-foundation-stage">{children}</div> : children}
       {caption && (
         <Text variant="caption" className="docs-caption">
           {caption}
