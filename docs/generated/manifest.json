@@ -15702,25 +15702,25 @@
         {
           "name": "FirstUse",
           "title": "First use",
-          "description": "Use this pattern when a region has nothing to show, to say why and what people can do. \"Empty\" has four causes, and each needs its own words and action: nothing exists yet, nothing matches, everything is done, or the content failed to load or isn't theirs to see. The state takes the place of the list or the table, under the toolbar that stays.",
+          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay. Until something exists, it holds the create action; then the page's own header action takes over.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
           "name": "NoResults",
           "title": "No results",
-          "description": "The search and the status filter stay above the state, which names the query, and a count says how many match. Clear filters resets both and returns focus to the search.",
+          "description": "The search and filters stay, a count in a status says how many match, and Clear filters resets them and returns focus to the search.",
           "file": "docs/examples/empty-states/NoResults.tsx"
         },
         {
           "name": "LoadFailed",
           "title": "Load failed",
-          "description": "In place of the table, a danger state says the documents are safe and offers Try again. The heading and the page's action stay.",
+          "description": "A danger state has the alert role, so it is announced; it says the documents are safe and offers Try again.",
           "file": "docs/examples/empty-states/LoadFailed.tsx"
         },
         {
           "name": "NoAccess",
           "title": "No access",
-          "description": "The project exists, but not for this person: the state says who to ask, and Request access sends the request.",
+          "description": "The state says who to ask, and Request access sends the request.",
           "file": "docs/examples/empty-states/NoAccess.tsx"
         },
         {
@@ -15728,6 +15728,24 @@
           "title": "All done",
           "description": "When the last review is approved, the queue says so plainly, with what comes next and no action.",
           "file": "docs/examples/empty-states/AllDone.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action, the one that ends the state.",
+          "description": "",
+          "file": "docs/examples/empty-states/OneAction.tsx"
+        },
+        {
+          "name": "CompetingActions",
+          "title": "Don't: Several actions compete, and none says what ends the state.",
+          "description": "",
+          "file": "docs/examples/empty-states/CompetingActions.tsx"
+        },
+        {
+          "name": "EmptyStatesAnatomy",
+          "title": "Empty states anatomy",
+          "description": "",
+          "file": "docs/examples/empty-states/EmptyStatesAnatomy.tsx"
         }
       ]
     },
