@@ -409,7 +409,9 @@
       ],
       "parts": {},
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "forms"
+        ]
       }
     },
     {
@@ -15161,6 +15163,7 @@
         "Alert",
         "Link",
         "Column",
+        "Grid",
         "Row",
         "Text"
       ],
@@ -15177,32 +15180,62 @@
         {
           "name": "CreateProject",
           "title": "Create project",
-          "description": "Use this pattern to ask for information in a form and get it right on the first submit: one column of labelled fields, the primary action after the last one, and errors that say how to fix each problem, shown when people submit or leave a field, with focus taken to where they need to act.",
+          "description": "A form asks for information and gets it right on the first submit: one column of labelled fields, the primary action after the last, and errors that say how to fix each problem, with focus taken to where people need to act.",
           "file": "docs/examples/forms/CreateProject.tsx"
-        },
-        {
-          "name": "ErrorSummary",
-          "title": "Error summary",
-          "description": "Submitting with errors shows each field's error and a summary at the top, which takes focus. Each link in it moves focus to its field. envUI has no error summary component yet: this is a danger Alert with a list of Links, and its title is made a heading by hand. Leave the Alert without `announce`: a danger Alert then has no role, so it is read once, as it takes focus, rather than announced as an alert and read again with focus.",
-          "file": "docs/examples/forms/ErrorSummary.tsx"
         },
         {
           "name": "ValidationTiming",
           "title": "Validation timing",
-          "description": "A field is checked when people leave it, once they have typed in it, and on submit. While people type, an error only clears, as soon as the value is right. With two fields, a refused submit shows the error summary and moves focus to it.",
+          "description": "On submit first: show each field's `error`, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.",
           "file": "docs/examples/forms/ValidationTiming.tsx"
         },
         {
           "name": "ServerError",
           "title": "Server error",
-          "description": "The first save fails: the fields keep their values, an Alert at the top says what happened and takes focus, and saving again succeeds.",
+          "description": "The submit Button is `pending` while the form is sent: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an Alert at the top that says what to do.",
           "file": "docs/examples/forms/ServerError.tsx"
+        },
+        {
+          "name": "ErrorSummary",
+          "title": "Error summary",
+          "description": "After a refused submit, a danger Alert titled \"There is a problem\" lists each error as a Link that moves focus to its field. Leave it without `announce`, so it is read once, as it takes focus.",
+          "file": "docs/examples/forms/ErrorSummary.tsx"
         },
         {
           "name": "GroupedChoices",
           "title": "Grouped choices",
-          "description": "One choice of several is a RadioGroup. Several choices are Checkboxes in a native `fieldset` whose `legend` names them, since envUI has no checkbox group yet.",
+          "description": "One choice of several is a RadioGroup; several are Checkboxes in a native `fieldset` whose `legend` names them.",
           "file": "docs/examples/forms/GroupedChoices.tsx"
+        },
+        {
+          "name": "OneColumn",
+          "title": "Do: One column, read top to bottom, with the action after the last field.",
+          "description": "",
+          "file": "docs/examples/forms/OneColumn.tsx"
+        },
+        {
+          "name": "SideBySide",
+          "title": "Don't: Fields side by side: people miss the one beside their path.",
+          "description": "",
+          "file": "docs/examples/forms/SideBySide.tsx"
+        },
+        {
+          "name": "VisibleLabel",
+          "title": "Do: A label, and the format as a description that stays.",
+          "description": "",
+          "file": "docs/examples/forms/VisibleLabel.tsx"
+        },
+        {
+          "name": "PlaceholderLabel",
+          "title": "Don't: The placeholder as the label: it goes as people type.",
+          "description": "",
+          "file": "docs/examples/forms/PlaceholderLabel.tsx"
+        },
+        {
+          "name": "FormAnatomy",
+          "title": "Form layout and validation anatomy",
+          "description": "",
+          "file": "docs/examples/forms/FormAnatomy.tsx"
         }
       ]
     },
