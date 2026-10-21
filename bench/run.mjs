@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { agents } from './lib/agents.mjs';
+import { agentEnv, agents } from './lib/agents.mjs';
 import { auditMarkers, auditRun } from './lib/audit.mjs';
 import { conditions } from './lib/conditions/index.mjs';
 import { redactDeep, redactPaths } from './lib/paths.mjs';
@@ -245,6 +245,7 @@ async function runJob(job, context) {
 /** How the browser step went, for the log. */
 function layoutNote(record) {
   const layout = record.scoreDetail?.layout;
+  if (layout?.harnessError) return ` (browser step failed: ${layout.harnessError})`;
   if (!layout?.checked) return '';
   return layout.rendered
     ? ` (${layout.problemCount} layout problems)`
@@ -258,11 +259,14 @@ function layoutNote(record) {
 async function scoreInto(record, task, context) {
   const detail = scoreRun({ appDir: record.appDir, baseCommit: record.baseCommit, task });
   if (detail.hasOutput && context.browser) {
+    // The result's dev server runs with the agent's environment, in the run's temp folder.
+    const tmpDir = record.tmpDir ?? join(context.runDir, '_tmp', record.name);
     const rendered = await checkRendered({
       browser: context.browser,
       appDir: record.appDir,
-      tmpDir: record.tmpDir ?? join(context.runDir, '_tmp', record.name),
+      tmpDir,
       task,
+      env: agentEnv({ tmpDir, homeDir: join(tmpDir, 'home'), npmCache }),
     });
     await writeJson(join(record.logDir, 'rendered.json'), rendered);
     scoreParts(detail, task, rendered);

@@ -78,7 +78,7 @@ export const C = () => <div style={{ display: 'block' }} />;
   });
   after(() => app.cleanup());
 
-  it('costs a raw style value each, beyond what the file had', () => {
+  it('costs more each than a raw style value, in a part of its own', () => {
     app.write({
       'src/main.tsx': `import { Stack } from '@envsemble/envui';
 
@@ -92,7 +92,20 @@ export const Root = () => (
     });
     const score = scoreRun({ appDir: app.appDir, baseCommit: app.baseCommit, task: task('Stack') });
     assert.equal(score.styles.handRolledLayout.count, 2);
-    assert.equal(score.styles.total, 2);
+    assert.equal(score.styles.total, 0);
+    assert.equal(score.parts.handRolled, scoring.handRolled.max - 2 * scoring.handRolled.cost);
+    assert.ok(scoring.handRolled.cost > scoring.rawStyles.cost);
+  });
+});
+
+describe('the weights', () => {
+  it('add up to 100', () => {
+    const parts = ['typecheck', 'coverage', 'rawHtml', 'duplicates', 'envuiErrors'];
+    const total = [...parts, 'rawStyles', 'handRolled', 'layout'].reduce(
+      (sum, name) => sum + scoring[name].max,
+      0,
+    );
+    assert.equal(total, 100);
   });
 });
 
@@ -209,5 +222,21 @@ describe('the browser step in the score', () => {
     assert.equal(score.parts.layout, 0);
     assert.equal(score.coverage.ratio, 0.5);
     assert.equal(score.score, 100 - scoring.layout.max - scoring.coverage.max / 2);
+  });
+
+  it("leaves out what the step didn't check when it failed on its own account", () => {
+    const score = scoreParts(detail(), layoutTask, {
+      rendered: false,
+      error: null,
+      harnessError: 'the dev server did not start',
+      widths: [],
+      problems: [],
+      checks: [],
+      pageErrors: [],
+    });
+    assert.equal(score.parts.layout, null);
+    assert.deepEqual(score.notChecked, ['layout']);
+    assert.equal(score.layout.harnessError, 'the dev server did not start');
+    assert.equal(score.score, 100);
   });
 });

@@ -170,6 +170,7 @@ export function aggregate(runs) {
       layout: {
         checked: count((run) => run.layout?.checked),
         notRendered: count((run) => run.layout?.checked && !run.layout.rendered),
+        harnessErrors: count((run) => run.layout?.harnessError),
         problems: sum((run) => run.layout?.problemCount),
         runsWithAny: count((run) => (run.layout?.problemCount ?? 0) > 0),
       },
@@ -357,12 +358,18 @@ export function renderSummary(results, tasks) {
     '',
   );
   const layoutRows = runs.filter(
-    (run) => run.layout?.checked && (!run.layout.rendered || run.layout.problemCount > 0),
+    (run) =>
+      run.layout?.harnessError ||
+      (run.layout?.checked && (!run.layout.rendered || run.layout.problemCount > 0)),
   );
   if (layoutRows.length) {
     push('| Task | Agent | Rule | Node | Widths | Message |', '|---|---|---|---|---|---|');
     for (const run of layoutRows) {
-      if (!run.layout.rendered)
+      if (run.layout.harnessError)
+        push(
+          `| ${run.task} | ${run.agent} | browser step failed, not scored | | | ${cell(run.layout.harnessError)} |`,
+        );
+      else if (!run.layout.rendered)
         push(`| ${run.task} | ${run.agent} | not rendered | | | ${cell(run.layout.error)} |`);
       for (const problem of run.layout.problems ?? [])
         push(
@@ -406,7 +413,7 @@ export function renderSummary(results, tasks) {
 
   push('## Scoring', '');
   push(
-    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities covered ${scoring.coverage.max} × covered share, by envUI exports or by what renders; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors and px, private component tokens set and hand-rolled flex or grid layout in inline styles ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; rendered layout ${scoring.layout.max} − ${scoring.layout.cost} per distinct problem at 22, 40, 60 and 80rem, 0 when the app does not render; −${scoring.uiLibraryPenalty} per third-party UI package added or imported; −${scoring.suppressionPenalty} per \`@ts-nocheck\`, \`@ts-ignore\` or \`@ts-expect-error\` added, with the type check run as if they were not there. Parts never go below zero; a run that changed no source scores 0; parts a run could not check, without the browser step, are left out and the rest scaled to 100. Part classes (\`env-*\`) are public and cost nothing. See bench/README.md.`,
+    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities covered ${scoring.coverage.max} × covered share, by envUI exports or by what renders; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors and px and private component tokens set ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; hand-rolled flex or grid layout in inline styles ${scoring.handRolled.max} − ${scoring.handRolled.cost} each; rendered layout ${scoring.layout.max} − ${scoring.layout.cost} per distinct problem at 22, 40, 60 and 80rem, from dev mode, the page's overflow and hand-rolled containers, 0 when the app does not render; −${scoring.uiLibraryPenalty} per third-party UI package added or imported; −${scoring.suppressionPenalty} per \`@ts-nocheck\`, \`@ts-ignore\` or \`@ts-expect-error\` added, with the type check run as if they were not there. Parts never go below zero; a run that changed no source scores 0; parts a run could not check, without the browser step or when it failed on its own account, are left out and the rest scaled to 100. Part classes (\`env-*\`) are public and cost nothing. See bench/README.md.`,
     '',
   );
   return `${lines.join('\n')}\n`;

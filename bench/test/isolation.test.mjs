@@ -22,11 +22,11 @@ describe('isolation audit', () => {
   before(() => {
     dir = mkdtempSync(join(tmpdir(), 'bench-audit-'));
     runDir = join(dir, 'run');
-    audit = auditMarkers({ repoDir, runDir, jobNames: ['claude-sidebar', 'codex-sidebar'] });
+    audit = auditMarkers({ repoDir, runDir, jobNames: ['haiku-sidebar', 'opus-sidebar'] });
   });
   after(() => rmSync(dir, { recursive: true, force: true }));
 
-  const scan = (text, name = 'claude-sidebar') => {
+  const scan = (text, name = 'haiku-sidebar') => {
     const file = join(dir, `${name}-${Math.random().toString(36).slice(2)}.jsonl`);
     writeFileSync(file, text);
     return auditRun({ files: [file], audit, name });
@@ -35,13 +35,13 @@ describe('isolation audit', () => {
   it("passes a transcript that stays in the run's workspace and temp folder", () => {
     const result = scan(
       [
-        `{"cwd":"${json(join(runDir, 'claude-sidebar'))}"}`,
-        `{"command":"cat ${json(join(runDir, 'claude-sidebar', 'node_modules', '@envsemble', 'envui', 'docs', 'index.md'))}"}`,
-        `{"output":"Session cwd remains ${json(join(runDir, 'claude-sidebar'))}; directory changes"}`,
-        `{"output":"Note: your current working directory is ${json(join(runDir, 'claude-sidebar'))}."}`,
+        `{"cwd":"${json(join(runDir, 'haiku-sidebar'))}"}`,
+        `{"command":"cat ${json(join(runDir, 'haiku-sidebar', 'node_modules', '@envsemble', 'envui', 'docs', 'index.md'))}"}`,
+        `{"output":"Session cwd remains ${json(join(runDir, 'haiku-sidebar'))}; directory changes"}`,
+        `{"output":"Note: your current working directory is ${json(join(runDir, 'haiku-sidebar'))}."}`,
         // A scratch folder made next to its own temp folder, for a browser check.
         `{"command":"mkdir -p ${json(join(runDir, '_tmp', 'pw-driver'))} && npm i playwright-core"}`,
-        `{"output":"${json(join(runDir, '_tmp', 'claude-sidebar', 'claude', 'task.out'))}"}`,
+        `{"output":"${json(join(runDir, '_tmp', 'haiku-sidebar', 'claude', 'task.out'))}"}`,
         '{"output":"assets/envUI/envUI-favicon.ico and https://github.com/envsemble/envUI/issues"}',
         '{"command":"cat ../src/App.tsx"}',
       ].join('\n'),
@@ -70,19 +70,19 @@ describe('isolation audit', () => {
     const file = join(dir, 'notes.jsonl');
     writeFileSync(file, `{"command":"cat ${json(join(notes, 'plan.md'))}"}`);
     assert.equal(
-      auditRun({ files: [file], audit: withNotes, name: 'claude-sidebar' }).escaped,
+      auditRun({ files: [file], audit: withNotes, name: 'haiku-sidebar' }).escaped,
       true,
     );
   });
 
   it("flags another run's workspace, temp folder or logs", () => {
     for (const text of [
-      `{"command":"cat ${json(join(runDir, '_logs', 'codex-sidebar', 'transcript.jsonl'))}"}`,
-      `{"command":"ls ${json(join(runDir, 'codex-sidebar', 'src'))}"}`,
-      `{"command":"ls ${json(join(runDir, '_tmp', 'codex-sidebar'))}"}`,
+      `{"command":"cat ${json(join(runDir, '_logs', 'opus-sidebar', 'transcript.jsonl'))}"}`,
+      `{"command":"ls ${json(join(runDir, 'opus-sidebar', 'src'))}"}`,
+      `{"command":"ls ${json(join(runDir, '_tmp', 'opus-sidebar'))}"}`,
       `{"command":"ls ${json(join(runDir, '_tmp'))}"}`,
       `{"command":"cat ${json(join(runDir, 'records.json'))}"}`,
-      '{"command":"cat ../codex-sidebar/src/App.tsx"}',
+      '{"command":"cat ../opus-sidebar/src/App.tsx"}',
       '{"command":"ls ../_logs"}',
     ])
       assert.equal(scan(text).escaped, true, text);
@@ -106,9 +106,9 @@ describe('isolation audit', () => {
   });
 
   it('keeps a wrapped line in its own workspace path', () => {
-    const own = join(runDir, 'codex-inline-notice');
+    const own = join(runDir, 'opus-inline-notice');
     const wrapped = `${json(own).slice(0, -4)}\\r\\n${json(own).slice(-4)}\\\\node_modules`;
-    const result = scan(`{"output":"Cannot find path '${wrapped}'"}`, 'codex-inline-notice');
+    const result = scan(`{"output":"Cannot find path '${wrapped}'"}`, 'opus-inline-notice');
     assert.equal(result.escaped, false);
   });
 });
@@ -116,11 +116,11 @@ describe('isolation audit', () => {
 describe('redaction', () => {
   it('makes run paths relative and hides the user profile', () => {
     const runDir = join(homedir(), 'AppData', 'Local', 'Temp', 'agent-workspaces', 'run-1');
-    const inRun = join(runDir, 'claude-sidebar', 'src', 'App.tsx');
+    const inRun = join(runDir, 'haiku-sidebar', 'src', 'App.tsx');
     const text = `${inRun} and ${json(join(homedir(), '.claude'))} and ${msys(homedir())}/x`;
     const redacted = redactPaths(text, { runDir });
     assert.ok(!redacted.includes(homedir()), redacted);
-    assert.ok(redacted.startsWith(join('claude-sidebar', 'src', 'App.tsx')), redacted);
+    assert.ok(redacted.startsWith(join('haiku-sidebar', 'src', 'App.tsx')), redacted);
     assert.match(redacted, /~[\\/]+\.claude/);
     if (isWindows) assert.match(redacted, /~\/x$/);
   });
@@ -142,7 +142,7 @@ describe('agent environment', () => {
       process.env.npm_config_cache = join(repoDir, '.cache');
       process.env.CLAUDECODE = '1';
       process.env.GITHUB_PERSONAL_ACCESS_TOKEN = 'secret';
-      const tmp = join(tmpdir(), 'run', '_tmp', 'claude-sidebar');
+      const tmp = join(tmpdir(), 'run', '_tmp', 'haiku-sidebar');
       const env = agentEnv({ tmpDir: tmp, homeDir: join(tmp, 'home'), npmCache: join(tmp, 'npm') });
       for (const name of ['INIT_CWD', 'CLAUDECODE', 'GITHUB_PERSONAL_ACCESS_TOKEN'])
         assert.equal(env[name], undefined, name);

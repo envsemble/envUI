@@ -1,5 +1,5 @@
 {
-  "$comment": "Benchmark tasks. Prompts are phrased as a product engineer would ask and never name envUI components. Each capability lists the envUI exports that provide it (any one covers it; 'Component.prop' means that component used with that prop), or, under 'rendered', checks of what the browser step renders: a capability is covered when every check passes at its widths ('at', all four by default), in its state ('loaded' by default, or 'loading', right after the app first renders). Anchors find visible elements by their text or aria-label, case-insensitively, or the nearest element around it that matches 'within'. A task with 'pending' runs only when named in --tasks: it waits for an envUI API that doesn't exist yet.",
+  "$comment": "Benchmark tasks. Prompts are phrased as a product engineer would ask and never name envUI components. Each capability lists the envUI exports that provide it (any one covers it; 'Component.prop' means that component used with that prop), or, under 'rendered', checks of what the browser step renders: a capability is covered when every check passes at its widths ('at', all four by default), in its state ('loaded' by default, or 'loading', right after the app first renders). Anchors find visible elements by their text or aria-label, case-insensitively, or the nearest element around it that matches 'within', and 'up' levels above that. A task with 'pending' runs only when named in --tasks: it waits for an envUI API that doesn't exist yet.",
   "tasks": [
     {
       "id": "sidebar",
@@ -486,7 +486,9 @@
               },
               "relation": "left-of",
               "b": {
-                "text": "Last updated"
+                "text": "Quarterly report",
+                "within": "h1, h2, h3, h4, h5, h6, [role=heading]",
+                "up": 1
               },
               "at": ["60rem", "80rem"]
             }
@@ -503,7 +505,9 @@
                   "text": "Website refresh"
                 },
                 {
-                  "text": "Last updated"
+                  "text": "Quarterly report",
+                  "within": "h1, h2, h3, h4, h5, h6, [role=heading]",
+                  "up": 1
                 }
               ],
               "at": ["22rem"]
@@ -536,7 +540,7 @@
               "check": "size",
               "anchor": {
                 "text": "Workspace name",
-                "within": "form"
+                "within": "form, fieldset, [role=form]"
               },
               "minWidth": 20,
               "maxWidth": 48,
@@ -546,7 +550,7 @@
               "check": "centered",
               "anchor": {
                 "text": "Workspace name",
-                "within": "form"
+                "within": "form, fieldset, [role=form]"
               },
               "tolerance": 2,
               "at": ["80rem"]
@@ -561,7 +565,7 @@
               "check": "size",
               "anchor": {
                 "text": "Workspace name",
-                "within": "form"
+                "within": "form, fieldset, [role=form]"
               },
               "minWidth": 17,
               "at": ["22rem"]
@@ -606,7 +610,6 @@
     {
       "id": "activity-loading",
       "title": "Loading state for content of unknown shape",
-      "pending": "Waits for envUI's skeleton API, which keeps LoadingState for content of unknown shape; check the names when the API lands.",
       "prompt": "Add an Activity section below the projects list that loads the workspace's latest activity with `fetchActivity()` from `src/api.ts`. The activity is free text whose length and paragraphs vary, so while it loads, show that it is loading with a short message instead of imitating its shape; then show the text.",
       "capabilities": [
         {

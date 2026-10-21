@@ -1,12 +1,14 @@
 // The browser step: renders a finished run's app in development, loads envUI's dev mode into it and
-// measures it at four widths. One headless Chromium serves the whole run; its pages are reused, and
-// nothing is captured as an image. Local only: it starts a dev server on 127.0.0.1 and uploads
-// nothing.
-import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
+// measures it at four widths. One headless Chromium serves the whole run, with a new context for
+// each result; nothing is captured as an image. The result's dev server runs in a child process
+// with the agent's environment, and listens on 127.0.0.1. Local only: it uploads nothing.
+import { spawn } from 'node:child_process';
+import { mkdirSync } from 'node:fs';
 import { createServer as createNetServer } from 'node:net';
-import { dirname, join } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { agentEnv } from './agents.mjs';
+import { killTree } from './process.mjs';
 
 /** The widths the docs and the completion checks use. */
 export const layoutWidths = ['22rem', '40rem', '60rem', '80rem'];
@@ -16,49 +18,62 @@ const remToPx = (width) => Math.round(parseFloat(width) * rootPx);
 const windowHeight = 800;
 const loadWidth = remToPx(layoutWidths.at(-1));
 /**
- * How long to wait: for the dev server, for dev mode and the first render (an app that threw and
- * still shows nothing gets `blank` once dev mode is there), and then for the app to settle. The
- * fixture's mocked calls answer within 1.5 s, so the loaded state is measured no
+ * How long to wait: the whole step (`total`), the dev server, dev mode and the first render (an
+ * app that threw and still shows nothing gets `blank` once it's clear), and then for the app to
+ * settle. The fixture's mocked calls answer within 1.5 s, so the loaded state is measured no
  * sooner than `loaded` after the first render, once nothing is busy and the DOM has been quiet for
  * `quiet`, or at `settle` at the latest.
  */
 const timeouts = {
+  total: 120_000,
   server: 60_000,
   ready: 45_000,
   blank: 3_000,
   loaded: 1_800,
   settle: 5_000,
   quiet: 300,
+  close: 10_000,
 };
+const devServerScript = fileURLToPath(new URL('./dev-server.mjs', import.meta.url));
+const isWindows = process.platform === 'win32';
 
 /**
- * Starts one headless Chromium for a run. `page()` lends a page and `release(page)` takes it back,
- * so a run with four jobs in parallel opens at most four pages, whatever its length.
+ * Math.random, seeded, before the app's scripts: the fixture's mocked calls fail at random, and a
+ * result must render the same way every time it is measured.
  */
+function seedRandom() {
+  let state = 0x2026_1021;
+  Math.random = () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let value = Math.imul(state ^ (state >>> 15), 1 | state);
+    value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value;
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Starts one headless Chromium for a run; `context()` opens a fresh context for one result. */
 export async function openBrowser() {
   const { chromium } = await import('playwright');
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: loadWidth, height: windowHeight },
-    deviceScaleFactor: 1,
-    reducedMotion: 'reduce',
-    serviceWorkers: 'block',
-  });
-  const idle = [];
   return {
-    async page() {
-      return idle.pop() ?? (await context.newPage());
-    },
-    async release(page) {
-      page.removeAllListeners('pageerror');
-      await page.goto('about:blank').catch(() => {});
-      idle.push(page);
+    async context() {
+      const context = await browser.newContext({
+        viewport: { width: loadWidth, height: windowHeight },
+        deviceScaleFactor: 1,
+        reducedMotion: 'reduce',
+        serviceWorkers: 'block',
+      });
+      await context.addInitScript(seedRandom);
+      return context;
     },
     async close() {
       await browser.close();
     },
   };
 }
+
+/** A failure of the benchmark's own machinery, not of the result: its parts are not scored. */
+class HarnessError extends Error {}
 
 /** A free port on 127.0.0.1. */
 function freePort() {
@@ -73,118 +88,49 @@ function freePort() {
   });
 }
 
-/** Vite as the app installed it, so the app's own config and plugins load as in `npm run dev`. */
-async function appVite(appDir) {
-  const require = createRequire(join(appDir, 'package.json'));
-  const manifestFile = require.resolve('vite/package.json');
-  const manifest = JSON.parse(readFileSync(manifestFile, 'utf8'));
-  const entry = manifest.exports?.['.'];
-  const file =
-    typeof entry === 'string' ? entry : (entry?.import?.default ?? entry?.import ?? entry?.default);
-  return import(pathToFileURL(join(dirname(manifestFile), file)).href);
-}
-
 /**
- * Loads dev mode before the app's own scripts, in development only: an inline module script the
- * dev server resolves like the app's imports. It sets `__benchDevMode` when the readout is there.
+ * Starts the result's dev server in a child process with the agent's environment; its process is
+ * in `run.server` from the start, so it is stopped however the step ends. Resolves with its URL.
  */
-const devModePlugin = {
-  name: 'bench-dev-mode',
-  apply: 'serve',
-  transformIndexHtml: {
-    order: 'pre',
-    handler(html) {
-      const script = `<script type="module">
-import('@envsemble/envui/dev').then(
-  ({ installDevMode }) => {
-    installDevMode({ button: false, shortcut: false, parts: [] });
-    window.__benchDevMode = 'ready';
-  },
-  (error) => { window.__benchDevMode = 'error: ' + (error && error.message ? error.message : error); },
-);
-</script>`;
-      return html.includes('</head>')
-        ? html.replace('</head>', `${script}\n</head>`)
-        : `${script}\n${html}`;
+async function startServer({ appDir, tmpDir, env, run }) {
+  const port = await freePort();
+  run.alive();
+  const child = spawn(
+    process.execPath,
+    [devServerScript, appDir, String(port), join(tmpDir, 'vite-cache')],
+    {
+      cwd: appDir,
+      env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      detached: !isWindows,
+      windowsHide: true,
     },
-  },
-};
-
-/** The package a bare module specifier names: `@pierre/theme/pierre-dark` is `@pierre/theme`. */
-const packageOf = (specifier) =>
-  specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
-
-/**
- * Stands in for envUI's optional peer dependencies that the app hasn't installed. Dev mode's own UI
- * reaches the content entry's code highlighting, whose theme package is an optional peer, so an app
- * without it couldn't load dev mode. The stand-in is an empty module; dev mode's readout doesn't use
- * it. Applied in the dependency optimizer and in the dev server alike.
- */
-function missingPeersPlugin(appDir) {
-  const require = createRequire(join(appDir, 'package.json'));
-  let optional = new Set();
-  try {
-    const manifest = JSON.parse(
-      readFileSync(require.resolve('@envsemble/envui/package.json'), 'utf8'),
+  );
+  run.server = child;
+  return new Promise((resolve, reject) => {
+    let out = '';
+    let err = '';
+    child.stdout.on('data', (chunk) => {
+      out += chunk;
+      const ready = /^READY (\S+)/m.exec(out);
+      if (ready) resolve(ready[1]);
+      const failed = /^ERROR (.*)$/m.exec(out);
+      if (failed) reject(new HarnessError(`the dev server did not start: ${failed[1]}`));
+    });
+    child.stderr.on('data', (chunk) => {
+      err = `${err}${chunk}`.slice(-2000);
+    });
+    child.on('error', (error) =>
+      reject(new HarnessError(`the dev server did not start: ${error.message}`)),
     );
-    optional = new Set(
-      Object.keys(manifest.peerDependenciesMeta ?? {}).filter(
-        (name) => manifest.peerDependenciesMeta[name]?.optional,
+    child.on('exit', (code) =>
+      reject(
+        new HarnessError(
+          `the dev server exited with ${code}${err.trim() ? `: ${err.trim().slice(-300)}` : ''}`,
+        ),
       ),
     );
-  } catch {
-    // No envUI installed: nothing to stand in for.
-  }
-  const missing = new Map();
-  const isMissing = (name) => {
-    if (!missing.has(name)) {
-      let found = true;
-      try {
-        require.resolve(`${name}/package.json`);
-      } catch {
-        found = false;
-      }
-      missing.set(name, !found);
-    }
-    return missing.get(name);
-  };
-  const prefix = '\0bench-missing-peer:';
-  return {
-    name: 'bench-missing-peers',
-    resolveId(id) {
-      if (/^[./\0]/.test(id)) return null;
-      const name = packageOf(id);
-      return optional.has(name) && isMissing(name) ? `${prefix}${id}` : null;
-    },
-    load(id) {
-      return id.startsWith(prefix)
-        ? 'const missing = { colors: {}, tokenColors: [] };\nexport default missing;\n'
-        : null;
-    },
-  };
-}
-
-/** Starts the app's dev server; its dependency cache goes to the run's temp folder. */
-async function startServer(appDir, tmpDir) {
-  const vite = await appVite(appDir);
-  const port = await freePort();
-  const missingPeers = missingPeersPlugin(appDir);
-  const server = await vite.createServer({
-    root: appDir,
-    mode: 'development',
-    configLoader: 'runner',
-    cacheDir: join(tmpDir, 'vite-cache'),
-    logLevel: 'silent',
-    clearScreen: false,
-    plugins: [devModePlugin, missingPeers],
-    optimizeDeps: {
-      include: ['@envsemble/envui/dev'],
-      rolldownOptions: { plugins: [missingPeers] },
-    },
-    server: { host: '127.0.0.1', port, strictPort: true, open: false, hmr: false, watch: null },
   });
-  await server.listen();
-  return { server, url: `http://127.0.0.1:${port}/` };
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -244,29 +190,92 @@ function measureHere({ width, checks }) {
     const box = element.getBoundingClientRect();
     return box.width > 0 && box.height > 0 && box.right > 0 && box.left < window.innerWidth;
   };
-  /** The visible elements that hold a text: its own element, or the nearest `within` around it. */
-  const anchors = ({ text, within }) => {
+  /**
+   * The visible elements that hold a text: its own element, or the nearest `within` around it,
+   * and `up` levels above that, such as a heading's container.
+   */
+  const anchors = ({ text, within, up = 0 }) => {
     const needle = normalize(text);
     const found = [];
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      if (!normalize(node.textContent ?? '').includes(needle)) continue;
-      let element = node.parentElement;
-      if (within) element = element?.closest(within) ?? null;
+    const add = (start) => {
+      let element = within ? (start?.closest(within) ?? null) : start;
+      for (let level = 0; level < up && element; level += 1) element = element.parentElement;
       if (element && !found.includes(element) && isVisible(element)) found.push(element);
-    }
+    };
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode())
+      if (normalize(node.textContent ?? '').includes(needle)) add(node.parentElement);
     // Labels given by attributes, such as an icon button's or a rail item's aria-label.
-    for (const element of document.querySelectorAll('[aria-label]')) {
-      if (!normalize(element.getAttribute('aria-label') ?? '').includes(needle)) continue;
-      const target = within ? element.closest(within) : element;
-      if (target && !found.includes(target) && isVisible(target)) found.push(target);
-    }
+    for (const element of document.querySelectorAll('[aria-label]'))
+      if (normalize(element.getAttribute('aria-label') ?? '').includes(needle)) add(element);
     return found;
   };
   const first = (spec) => anchors(spec)[0] ?? null;
   const toRem = (px) => Math.round((px / rem) * 100) / 100;
   const boxOf = (element) => element.getBoundingClientRect();
-  const describe = (spec) => `"${spec.text}"${spec.within ? ` in ${spec.within}` : ''}`;
+  const describe = (spec) =>
+    `"${spec.text}"${spec.within ? ` in ${spec.within}` : ''}${spec.up ? ` (${spec.up} up)` : ''}`;
+
+  /**
+   * The benchmark's own check of hand-rolled layout: flex and grid containers that are neither
+   * envUI's layout nodes (`data-env-layout`) nor envUI's parts (an `env-*` class), in the app's
+   * root, as dev mode checks its nodes. A container whose child sticks out while it neither scrolls
+   * nor clips has `child-overflow`; one whose content is wider than it while it doesn't scroll has
+   * `content-overflow`. Only the deepest container with a problem is reported.
+   */
+  const handRolledProblems = () => {
+    const root = document.getElementById('root') ?? document.body;
+    const isEnvui = (element) =>
+      element.hasAttribute('data-env-layout') ||
+      Array.from(element.classList).some((name) => name.startsWith('env-'));
+    const label = (element) =>
+      `${element.tagName.toLowerCase()}${element.classList.length ? `.${element.classList[0]}` : ''}`;
+    const pathOf = (element) => {
+      const steps = [];
+      for (let at = element; at && at !== root && steps.length < 4; at = at.parentElement)
+        steps.unshift(label(at));
+      return `hand-rolled ${steps.join(' > ')}`;
+    };
+    const found = new Map();
+    for (const element of root.querySelectorAll('*')) {
+      if (isEnvui(element) || !isVisible(element)) continue;
+      const style = getComputedStyle(element);
+      if (!/^(inline-)?(flex|grid)$/.test(style.display)) continue;
+      const scrolls = ['auto', 'scroll'].includes(style.overflowX);
+      if (scrolls) continue;
+      const box = element.getBoundingClientRect();
+      const spills =
+        style.overflowX === 'visible' &&
+        Array.from(element.children).some((child) => {
+          const position = getComputedStyle(child).position;
+          if (position === 'fixed' || position === 'absolute' || !isVisible(child)) return false;
+          const inner = child.getBoundingClientRect();
+          return inner.right > box.right + 1 || inner.left < box.left - 1;
+        });
+      const wider = element.scrollWidth - element.clientWidth;
+      if (spills)
+        found.set(element, {
+          rule: 'child-overflow',
+          message: `${pathOf(element)}: a child sticks out of this hand-rolled ${style.display} container, which neither scrolls nor clips.`,
+        });
+      else if (wider > 1)
+        found.set(element, {
+          rule: 'content-overflow',
+          message: `${pathOf(element)}: its content is ${toRem(wider)}rem wider than this hand-rolled ${style.display} container, which doesn't scroll.`,
+        });
+    }
+    const problems = [];
+    for (const [element, problem] of found) {
+      const inner = [...found.keys()].some((other) => other !== element && element.contains(other));
+      if (!inner)
+        problems.push({
+          ...problem,
+          node: `hand-rolled ${label(element)}`,
+          path: pathOf(element),
+        });
+    }
+    return problems;
+  };
 
   const evaluate = (check) => {
     switch (check.check) {
@@ -362,6 +371,7 @@ function measureHere({ width, checks }) {
   const scrolling = document.scrollingElement ?? document.documentElement;
   const wider = scrolling.scrollWidth - window.innerWidth;
   result.pageOverflow = wider > 1 ? toRem(wider) : 0;
+  result.handRolled = handRolledProblems();
   const layout = window.envui?.layout;
   if (!layout) {
     result.error = 'dev mode is not installed';
@@ -418,110 +428,178 @@ export function distinctProblems(widths) {
 }
 
 /**
- * Renders one run's app and measures it. Returns `{ rendered, error, widths, problems, checks,
- * durationMs }`: whether the app rendered at all, dev mode's readings and the page's overflow per
- * width, the distinct problems, and each rendered check's outcome.
+ * Renders one run's app and measures it, within `total` at most. Returns `{ rendered, error,
+ * harnessError, widths, problems, checks, pageErrors, durationMs }`: whether the app rendered at
+ * all, dev mode's readings, the page's overflow and the hand-rolled containers' problems per
+ * width, the distinct problems, and each rendered check's outcome. `error` says why a result
+ * didn't render (a build error, or nothing on the page); `harnessError` says why the step itself
+ * failed (the dev server, dev mode, or the time limit), and then nothing of it is scored.
  */
-export async function checkRendered({ browser, appDir, tmpDir, task }) {
+export async function checkRendered({ browser, appDir, tmpDir, task, env }) {
   const started = Date.now();
-  const checks = renderedChecks(task);
-  const outcome = { rendered: false, error: null, widths: [], problems: [], checks: [] };
-  const pageErrors = [];
-  let dev;
-  let page;
+  mkdirSync(tmpDir, { recursive: true });
+  const outcome = {
+    rendered: false,
+    error: null,
+    harnessError: null,
+    widths: [],
+    problems: [],
+    checks: [],
+    pageErrors: [],
+  };
+  // What the step holds, released by whichever ends first, the step or its time limit; a resource
+  // created after that is released at once.
+  const run = {
+    aborted: false,
+    server: null,
+    context: null,
+    alive() {
+      if (run.aborted) throw new HarnessError('the browser step was stopped');
+    },
+    async release() {
+      run.aborted = true;
+      if (run.server) {
+        killTree(run.server.pid);
+        run.server = null;
+      }
+      const context = run.context;
+      run.context = null;
+      if (context) await withTimeout(context.close(), timeouts.close, 'close').catch(() => {});
+    },
+  };
+  let timer;
   try {
-    dev = await withTimeout(
-      startServer(appDir, tmpDir),
-      timeouts.server,
-      'the dev server did not start',
-    );
-    page = await browser.page();
-    page.on('pageerror', (error) => pageErrors.push(String(error?.message ?? error)));
-    await page.setViewportSize({ width: loadWidth, height: windowHeight });
-    await page.goto(dev.url, { waitUntil: 'load', timeout: timeouts.ready });
-    // Dev mode and the app's first render, whichever comes last. Once dev mode is there, an app
-    // that threw and still shows nothing is given `blank` more, not the whole wait.
-    const deadline = Date.now() + timeouts.ready;
-    let readyAt = null;
-    let state = await page.evaluate(pageState);
-    while (
-      Date.now() < deadline &&
-      !state.overlay &&
-      !(state.mode && state.rendered) &&
-      !String(state.mode ?? '').startsWith('error') &&
-      !(readyAt && pageErrors.length && Date.now() - readyAt > timeouts.blank)
-    ) {
-      await page.waitForTimeout(50);
-      state = await page.evaluate(pageState);
-      if (state.mode === 'ready') readyAt ??= Date.now();
-    }
-    if (state.overlay) throw new Error('the dev server showed a build error');
-    if (String(state.mode ?? '').startsWith('error')) throw new Error(`dev mode: ${state.mode}`);
-    if (state.mode !== 'ready') throw new Error('dev mode did not load');
-    if (!state.rendered)
-      throw new Error(
-        `the app rendered nothing${pageErrors.length ? `: ${pageErrors[0].slice(0, 200)}` : ''}`,
-      );
-    outcome.rendered = true;
-    const firstRender = Date.now();
-
-    // While loading: measured at once, at the width the app loaded at.
-    const loading = checks.filter((check) => check.state === 'loading');
-    if (loading.length) {
-      const reading = await page.evaluate(measureHere, { width: null, checks: loading });
-      for (const result of reading.checks)
-        outcome.checks.push({ ...result, width: 'loading', state: 'loading' });
-    }
-
-    // Loaded: the mocked calls answered, nothing busy and the DOM quiet, within a limit.
-    const settleBy = firstRender + timeouts.settle;
-    await page.waitForTimeout(Math.max(0, firstRender + timeouts.loaded - Date.now()));
-    await page
-      .waitForFunction(() => !document.querySelector('[aria-busy="true"]'), null, {
-        timeout: Math.max(1, settleBy - Date.now()),
-      })
-      .catch(() => {});
-    await page.evaluate(waitForQuiet, {
-      quiet: timeouts.quiet,
-      limit: Math.max(timeouts.quiet, settleBy - Date.now()),
-    });
-
-    for (const width of layoutWidths) {
-      // The window takes the width, so the app's own media queries respond as well as container
-      // queries; layout.at() then measures with the root at that width.
-      await page.setViewportSize({ width: remToPx(width), height: windowHeight });
-      await page.evaluate(
-        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
-      );
-      const here = checks.filter((check) => check.state === 'loaded' && check.at.includes(width));
-      const reading = await page.evaluate(measureHere, { width, checks: here });
-      outcome.widths.push({
-        width,
-        windowClass: reading.windowClass ?? null,
-        pageOverflow: reading.pageOverflow,
-        problems: reading.problems ?? [],
-        error: reading.error ?? null,
-      });
-      for (const result of reading.checks) outcome.checks.push({ ...result, width });
-    }
-    outcome.problems = distinctProblems(outcome.widths);
+    await Promise.race([
+      measureRun({
+        browser,
+        appDir,
+        tmpDir,
+        task,
+        env: env ?? agentEnv({ tmpDir, homeDir: join(tmpDir, 'home') }),
+        run,
+        outcome,
+      }).finally(() => run.release()),
+      new Promise((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(
+              new HarnessError(`the browser step took longer than ${timeouts.total / 1000} s`),
+            ),
+          timeouts.total,
+        );
+      }),
+    ]);
   } catch (error) {
-    outcome.error = String(error?.message ?? error).slice(0, 400);
+    const message = String(error?.message ?? error).slice(0, 400);
+    if (error instanceof HarnessError) {
+      outcome.harnessError = message;
+      outcome.rendered = false;
+    } else outcome.error = message;
   } finally {
-    if (page) await browser.release(page);
-    if (dev) await dev.server.close().catch(() => {});
+    clearTimeout(timer);
+    await run.release();
   }
-  outcome.pageErrors = pageErrors.slice(0, 5).map((message) => message.slice(0, 300));
+  outcome.pageErrors = outcome.pageErrors.slice(0, 5).map((message) => message.slice(0, 300));
   outcome.durationMs = Date.now() - started;
   return outcome;
 }
 
-function withTimeout(promise, ms, message) {
+async function measureRun({ browser, appDir, tmpDir, task, env, run, outcome }) {
+  const checks = renderedChecks(task);
+  const pageErrors = outcome.pageErrors;
+  const url = await withTimeout(
+    startServer({ appDir, tmpDir, env, run }),
+    timeouts.server,
+    'the dev server did not start in time',
+    HarnessError,
+  );
+  run.alive();
+  run.context = await browser.context();
+  if (run.aborted) await run.release();
+  run.alive();
+  const page = await run.context.newPage();
+  page.on('pageerror', (error) => pageErrors.push(String(error?.message ?? error)));
+  await page.goto(url, { waitUntil: 'load', timeout: timeouts.ready }).catch((error) => {
+    throw new HarnessError(`the page did not load: ${error.message}`);
+  });
+
+  // The loading checks as soon as the app has rendered; then dev mode and the loaded state. An app
+  // that threw and still shows nothing is given `blank` after its error, not the whole wait.
+  const loading = checks.filter((check) => check.state === 'loading');
+  const deadline = Date.now() + timeouts.ready;
+  let firstError = null;
+  let firstRender = null;
+  let state;
+  for (;;) {
+    run.alive();
+    state = await page.evaluate(pageState);
+    if (state.rendered && firstRender === null) {
+      firstRender = Date.now();
+      if (loading.length) {
+        const reading = await page.evaluate(measureHere, { width: null, checks: loading });
+        for (const result of reading.checks)
+          outcome.checks.push({ ...result, width: 'loading', state: 'loading' });
+      }
+    }
+    if (pageErrors.length) firstError ??= Date.now();
+    if (state.overlay) break;
+    if (String(state.mode ?? '').startsWith('error')) break;
+    if (state.mode === 'ready' && state.rendered) break;
+    if (!state.rendered && firstError && Date.now() - firstError > timeouts.blank) break;
+    if (Date.now() > deadline) break;
+    await page.waitForTimeout(50);
+  }
+  if (state.overlay) throw new Error('the dev server showed a build error');
+  if (!state.rendered)
+    throw new Error(
+      `the app rendered nothing${pageErrors.length ? `: ${pageErrors[0].slice(0, 200)}` : ''}`,
+    );
+  if (String(state.mode ?? '').startsWith('error'))
+    throw new HarnessError(`dev mode: ${state.mode}`);
+  if (state.mode !== 'ready') throw new HarnessError('dev mode did not load');
+  outcome.rendered = true;
+
+  // Loaded: the mocked calls answered, nothing busy and the DOM quiet, within a limit.
+  const settleBy = firstRender + timeouts.settle;
+  await page.waitForTimeout(Math.max(0, firstRender + timeouts.loaded - Date.now()));
+  await page
+    .waitForFunction(() => !document.querySelector('[aria-busy="true"]'), null, {
+      timeout: Math.max(1, settleBy - Date.now()),
+    })
+    .catch(() => {});
+  await page.evaluate(waitForQuiet, {
+    quiet: timeouts.quiet,
+    limit: Math.max(timeouts.quiet, settleBy - Date.now()),
+  });
+
+  for (const width of layoutWidths) {
+    run.alive();
+    // The window takes the width, so the app's own media queries respond as well as container
+    // queries; layout.at() then measures with the root at that width.
+    await page.setViewportSize({ width: remToPx(width), height: windowHeight });
+    await page.evaluate(
+      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+    );
+    const here = checks.filter((check) => check.state === 'loaded' && check.at.includes(width));
+    const reading = await page.evaluate(measureHere, { width, checks: here });
+    outcome.widths.push({
+      width,
+      windowClass: reading.windowClass ?? null,
+      pageOverflow: reading.pageOverflow,
+      problems: [...(reading.problems ?? []), ...(reading.handRolled ?? [])],
+      error: reading.error ?? null,
+    });
+    for (const result of reading.checks) outcome.checks.push({ ...result, width });
+  }
+  outcome.problems = distinctProblems(outcome.widths);
+}
+
+function withTimeout(promise, ms, message, ErrorType = Error) {
   let timer;
   return Promise.race([
     promise,
     new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(message)), ms);
+      timer = setTimeout(() => reject(new ErrorType(message)), ms);
     }),
   ]).finally(() => clearTimeout(timer));
 }

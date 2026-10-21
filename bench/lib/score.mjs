@@ -15,17 +15,20 @@ export const uiLibraries = readData('ui-libraries.json').packages;
 /**
  * Score parts, 100 points in all. Each part starts at its maximum and loses `cost` per
  * occurrence, down to zero; coverage is proportional; the UI-library and suppression penalties
- * come off the total. `layout` comes from the browser step: `cost` per distinct problem that dev
- * mode or the page's own overflow shows at the four widths, and nothing when the app doesn't
- * render.
+ * come off the total. `handRolled` costs per flex or grid layout hand-rolled in an inline style,
+ * as the ESLint plugin's rule reports it, so that hand-rolling is never cheaper than a primitive.
+ * `layout` comes from the browser step: `cost` per distinct problem that dev mode, the page's own
+ * overflow or the benchmark's check of hand-rolled containers shows at the four widths, and nothing
+ * when the app doesn't render.
  */
 export const scoring = {
   typecheck: { max: 15 },
   coverage: { max: 30 },
-  rawHtml: { max: 20, cost: 4 },
+  rawHtml: { max: 15, cost: 4 },
   duplicates: { max: 10, cost: 5 },
   envuiErrors: { max: 10, cost: 5 },
   rawStyles: { max: 5, cost: 0.5 },
+  handRolled: { max: 5, cost: 2 },
   layout: { max: 10, cost: 2 },
   uiLibraryPenalty: 10,
   suppressionPenalty: 5,
@@ -992,8 +995,7 @@ export function scoreRun({ appDir, baseCommit, task, rendered = null }) {
     css.privateTokens +
     inlineStyle.colors +
     inlineStyle.px +
-    inlineStyle.privateTokens +
-    handRolled.length;
+    inlineStyle.privateTokens;
   const hasOutput = sourceFiles.length > 0 || styleFiles.length > 0;
 
   const detail = {
@@ -1043,7 +1045,10 @@ export function scoreRun({ appDir, baseCommit, task, rendered = null }) {
  * rendered capabilities without the browser step) is left out, and the parts that were checked
  * are scaled to 100; the penalties come off after. Can be called again on the same detail.
  */
-export function scoreParts(detail, task, rendered = null) {
+export function scoreParts(detail, task, step = null) {
+  // A step that failed on its own account, such as a dev server that didn't start, checked
+  // nothing: its parts are left out, as without the step.
+  const rendered = step?.harnessError ? null : step;
   const capabilities = detail.coverage.capabilities.map((capability) => {
     if (capability.kind !== 'rendered') return capability;
     if (!rendered) return { ...capability, covered: null, failed: [] };
@@ -1071,6 +1076,7 @@ export function scoreParts(detail, task, rendered = null) {
     duplicates: clampPart(scoring.duplicates, detail.duplicates.length),
     envuiErrors: clampPart(scoring.envuiErrors, detail.envuiErrors.length),
     rawStyles: clampPart(scoring.rawStyles, detail.styles.total),
+    handRolled: clampPart(scoring.handRolled, detail.styles.handRolledLayout.count),
     layout: !rendered ? null : rendered.rendered ? clampPart(scoring.layout, problems.length) : 0,
     uiLibraryPenalty: penalty(scoring.uiLibraryPenalty, detail.dependencies.ui.length),
     suppressionPenalty: penalty(scoring.suppressionPenalty, detail.typecheck.suppressions.length),
@@ -1082,6 +1088,7 @@ export function scoreParts(detail, task, rendered = null) {
     'duplicates',
     'envuiErrors',
     'rawStyles',
+    'handRolled',
     'layout',
   ];
   const checkedMax = positive
@@ -1119,6 +1126,6 @@ export function scoreParts(detail, task, rendered = null) {
         pageErrors: rendered.pageErrors ?? [],
         durationMs: rendered.durationMs,
       }
-    : { checked: false };
+    : { checked: false, harnessError: step?.harnessError ?? null };
   return detail;
 }
