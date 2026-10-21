@@ -1,16 +1,8 @@
 # Composition & extension
 
-## Build from existing primitives
-
-Surface supplies fill, padding and corners. Row, Column and Grid supply layout. Card combines those layers with standard content spacing. Specialized cards reuse Card.
-
-Use component props and slots for variations. Keep product data, routing and validation in the application.
-
 ## Compose one root
 
-render lets Surface and a layout primitive share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.
-
-Compose surface and layout behavior on one section. Place it inside the application’s Theme boundary.
+Surface supplies fill, padding and corners; Row, Column and Grid supply layout. `render` puts both on one element, with the semantic tag on the element it supplies. A custom render component passes native props, `className`, `style`, `children` and `ref` to its root.
 
 ```tsx
 import { Surface, Column, Text } from '@envsemble/envui';
@@ -29,9 +21,7 @@ export function WorkspacePane() {
 
 ## Create a product component
 
-Wrap public components to attach product meaning. Forward native props and refs so consumers retain accessible attributes and ordinary element behavior. React 19 passes ref as a prop.
-
-ProjectSummary adds product content while Card continues to own its appearance and spacing. It takes Card's content props, less the ones it sets itself, and spreads the rest onto Card, so `id`, `aria-*` attributes, handlers and `ref` reach the element.
+Wrap public components to give them product meaning, and spread the rest of the props onto them, so `id`, `aria-*`, handlers and `ref` reach the element. Card keeps its appearance and spacing.
 
 ```tsx
 import { Card, type CardContentProps } from '@envsemble/envui';
@@ -51,7 +41,7 @@ export function ProjectSummary({ title, description, ...props }: ProjectSummaryP
 
 ## Style a component's parts
 
-Props come first. Where an application's CSS must adjust a component, it targets the component's parts: every part has a class, `env-<component>-<part>`, such as `.env-card-header`, and a component shows its state in `data-*` attributes, such as `[data-tone='danger']` on an Alert. Part classes and state attributes are public and versioned: a release that renames or removes one is a major release, with a migration note. The manifest lists each component's parts with what each one is, and `get_component` returns them.
+Props come first. Where CSS must adjust a component, it targets its parts, `env-<component>-<part>` such as `.env-card-header`, and its `data-*` states, such as `[data-tone='danger']`. Part classes and states are public and versioned; the manifest lists them, and `get_component` returns them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity.
 
 ```css
 @layer app {
@@ -61,15 +51,11 @@ Props come first. Where an application's CSS must adjust a component, it targets
 }
 ```
 
-Set the system tokens, such as `--env-color-bg-muted` or `--env-space-4`, to change what every component takes from them. Component tokens, the custom properties a component declares for itself, such as `--env-card-padding` or `--env-badge-fill`, are the component's own business and may change in any release: don't set or read them. envUI's CSS is in the `env` cascade layer, so an application's rule wins without extra specificity or `!important`.
+Set system tokens, such as `--env-space-4`, to change what every component takes from them. Component tokens, such as `--env-card-padding`, are each component's own and may change in any release: don't set or read them.
 
 ## Extend the shared library
 
-When the same visual behavior is needed across products, add a shared variant, slot or component to envUI. Build on its existing primitives and central tokens, and document the public API.
-
-Application CSS can arrange components in a page and adjust their parts. Changes that every application needs, to a control's appearance or interaction, belong in the library. Avoid copying a component's styles.
-
-Use the existing light and dark themes. Add intentional base colors centrally; interaction colors continue to follow the shared rule.
+What every application needs, a control's look or interaction, belongs in envUI as a variant, slot or component, built on its primitives and tokens; don't copy a component's styles.
 
 TypeScript declarations provide the complete public API.
 
