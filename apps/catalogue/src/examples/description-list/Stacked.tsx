@@ -2,7 +2,12 @@ import { DescriptionList } from '@envsemble/envui';
 
 export default function Stacked() {
   return (
-    <DescriptionList.Root layout="stacked" size="md" aria-label="Contact">
+    <DescriptionList.Root
+      layout="stacked"
+      size="md"
+      aria-label="Contact"
+      style={{ inlineSize: 'min(100%, 26rem)' }}
+    >
       <DescriptionList.Item label="Email">priya.shah@example.com</DescriptionList.Item>
       <DescriptionList.Item label="Phone">+1 555 0142</DescriptionList.Item>
       <DescriptionList.Item label="Address">

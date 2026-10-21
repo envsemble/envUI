@@ -9314,20 +9314,50 @@
         {
           "name": "Facts",
           "title": "Facts",
-          "description": "DescriptionList shows the facts about one thing as labels and their values: a `dl` whose items are its terms with their values. Labels are muted and line up in a column as wide as the longest; below 24 rem of the list's own width, each label moves above its value, so a list in a sidebar or on a phone needs no other layout.",
+          "description": "DescriptionList shows the facts about one thing as labels and their values.",
           "file": "docs/examples/description-list/Facts.tsx"
         },
         {
           "name": "Stacked",
           "title": "Stacked",
-          "description": "Contact details with long values put each label above its value.",
+          "description": "",
           "file": "docs/examples/description-list/Stacked.tsx"
         },
         {
-          "name": "WithControls",
-          "title": "With controls",
-          "description": "Settings of one item, each a small control beside its label.",
-          "file": "docs/examples/description-list/WithControls.tsx"
+          "name": "ControlsAligned",
+          "title": "Do: With controls, each label sits on its control's line.",
+          "description": "",
+          "file": "docs/examples/description-list/ControlsAligned.tsx"
+        },
+        {
+          "name": "ControlsUnaligned",
+          "title": "Don't: Without controls: labels sit higher than the controls beside them.",
+          "description": "",
+          "file": "docs/examples/description-list/ControlsUnaligned.tsx"
+        },
+        {
+          "name": "ShortLabels",
+          "title": "Do: Short nouns as labels, and a dash for a value not set.",
+          "description": "",
+          "file": "docs/examples/description-list/ShortLabels.tsx"
+        },
+        {
+          "name": "WordyLabels",
+          "title": "Don't: Questions, colons and empty values.",
+          "description": "",
+          "file": "docs/examples/description-list/WordyLabels.tsx"
+        },
+        {
+          "name": "DescriptionListAnatomy",
+          "title": "DescriptionList anatomy",
+          "description": "",
+          "file": "docs/examples/description-list/DescriptionListAnatomy.tsx"
+        },
+        {
+          "name": "FactsAtWidths",
+          "title": "Facts at widths",
+          "description": "",
+          "file": "docs/examples/description-list/FactsAtWidths.tsx"
         }
       ],
       "parts": {
@@ -9581,20 +9611,32 @@
         {
           "name": "ShowResults",
           "title": "Show results",
-          "description": "AnimatedNumber shows a number inside text and rolls it to its new value when it changes: in from below when it grows and from above when it shrinks. The movement draws the eye to a count that other controls change, such as the number of results on the button that shows them. The text is always the current value, so accessible names and copied text never hold a number on its way.",
+          "description": "AnimatedNumber shows a number in text and rolls it to its new value: up as it grows, down as it shrinks. Its text is always the current value.",
           "file": "docs/examples/animated-number/ShowResults.tsx"
         },
         {
+          "name": "CustomFormat",
+          "title": "Custom format",
+          "description": "`formatValue` writes the value, such as a currency. By default it follows EnvUIProvider's `locale`.",
+          "file": "docs/examples/animated-number/CustomFormat.tsx"
+        },
+        {
           "name": "SeatsLeft",
-          "title": "Seats left",
-          "description": "The sentence is a status region, so the new count is announced as people change it.",
+          "title": "Do: Roll the one number a choice changes.",
+          "description": "",
           "file": "docs/examples/animated-number/SeatsLeft.tsx"
         },
         {
-          "name": "CustomFormat",
-          "title": "A formatted value",
-          "description": "`formatValue` writes the price as a currency; it rolls up for yearly billing and down for monthly.",
-          "file": "docs/examples/animated-number/CustomFormat.tsx"
+          "name": "EveryNumberRolls",
+          "title": "Don't: Several numbers rolling at once: none of them draws the eye.",
+          "description": "",
+          "file": "docs/examples/animated-number/EveryNumberRolls.tsx"
+        },
+        {
+          "name": "AnimatedNumberAnatomy",
+          "title": "AnimatedNumber anatomy",
+          "description": "",
+          "file": "docs/examples/animated-number/AnimatedNumberAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9685,26 +9727,50 @@
         {
           "name": "ReviewScore",
           "title": "Review score",
-          "description": "A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the value in half steps. It is read-only: it displays a rating and never asks for one. The stars are one image named by the rating, so assistive technology reads it once, such as \"4.5 out of 5 stars\"; `showValue` adds the number before them for people who scan.",
+          "description": "A rating shows a score people gave as stars, in half steps. It only shows a rating; it never asks for one.",
           "file": "docs/examples/rating/ReviewScore.tsx"
         },
         {
+          "name": "ApplicationLabel",
+          "title": "Application label",
+          "description": "`messages.rating.label` on EnvUIProvider writes the name, and the provider's locale the number, such as 4,5 in German.",
+          "file": "docs/examples/rating/ApplicationLabel.tsx"
+        },
+        {
           "name": "Scales",
-          "title": "Half stars and other scales",
-          "description": "The stars fill to the value in half steps. `max` sets another scale, such as ten stars.",
+          "title": "Scales",
+          "description": "",
           "file": "docs/examples/rating/Scales.tsx"
         },
         {
+          "name": "WhoRated",
+          "title": "Do: Say whose rating it is and how many people gave it.",
+          "description": "",
+          "file": "docs/examples/rating/WhoRated.tsx"
+        },
+        {
+          "name": "UnsourcedStars",
+          "title": "Don't: Stars with no source: people can't tell how much they count.",
+          "description": "",
+          "file": "docs/examples/rating/UnsourcedStars.tsx"
+        },
+        {
           "name": "ReviewList",
-          "title": "A list of reviews",
-          "description": "In a list of individual reviews the stars are enough; the reviewer's name says whose rating it is.",
+          "title": "Do: Stars alone beside one reviewer's words.",
+          "description": "",
           "file": "docs/examples/rating/ReviewList.tsx"
         },
         {
-          "name": "ApplicationLabel",
-          "title": "The application's own name",
-          "description": "`messages.rating.label` on EnvUIProvider writes the accessible name, in the reader's language; the provider's locale writes the number, such as 4,5 with a decimal comma in German.",
-          "file": "docs/examples/rating/ApplicationLabel.tsx"
+          "name": "RepeatedRating",
+          "title": "Don't: The rating said again in text: it is read twice.",
+          "description": "",
+          "file": "docs/examples/rating/RepeatedRating.tsx"
+        },
+        {
+          "name": "RatingAnatomy",
+          "title": "Rating anatomy",
+          "description": "",
+          "file": "docs/examples/rating/RatingAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9804,32 +9870,56 @@
         {
           "name": "DraftSaved",
           "title": "Draft saved",
-          "description": "`formatRelativeTime` returns the same text as a string, for places that take only text, such as an option label or an accessible name. It runs anywhere, also on a server.",
+          "description": "RelativeTime shows a moment relative to now, such as 3 hours ago, and keeps it current while the page stays open.",
           "file": "docs/examples/relative-time/DraftSaved.tsx"
         },
         {
           "name": "PastAndComing",
-          "title": "Past and coming moments",
-          "description": "Past moments read \"ago\" and coming ones \"in\"; the unit grows with the distance, from minutes to years.",
+          "title": "Past and coming",
+          "description": "",
           "file": "docs/examples/relative-time/PastAndComing.tsx"
+        },
+        {
+          "name": "VersionLabels",
+          "title": "Version labels",
+          "description": "`formatRelativeTime` returns the same text as a string, for an option label or a name. It doesn't update by itself.",
+          "file": "docs/examples/relative-time/VersionLabels.tsx"
         },
         {
           "name": "Formats",
           "title": "Formats",
-          "description": "`short` and `narrow` shorten the words for tight spaces.",
+          "description": "",
           "file": "docs/examples/relative-time/Formats.tsx"
         },
         {
+          "name": "EventFirst",
+          "title": "Do: Put the event first, so the time never stands alone.",
+          "description": "",
+          "file": "docs/examples/relative-time/EventFirst.tsx"
+        },
+        {
+          "name": "TimeAlone",
+          "title": "Don't: A time on its own: people can't tell what happened.",
+          "description": "",
+          "file": "docs/examples/relative-time/TimeAlone.tsx"
+        },
+        {
           "name": "ExactDateNearby",
-          "title": "The exact date nearby",
-          "description": "Where the date shows beside it, the relative time needs no tooltip.",
+          "title": "Do: Show the date where it matters, with the relative time beside it.",
+          "description": "",
           "file": "docs/examples/relative-time/ExactDateNearby.tsx"
         },
         {
-          "name": "VersionLabels",
-          "title": "Text for an option label",
-          "description": "`formatRelativeTime` returns the same text as a string, for places that take only text. The string doesn't update by itself.",
-          "file": "docs/examples/relative-time/VersionLabels.tsx"
+          "name": "DateOnlyInTooltip",
+          "title": "Don't: The date only in the tooltip: keyboards and screen readers never reach it.",
+          "description": "",
+          "file": "docs/examples/relative-time/DateOnlyInTooltip.tsx"
+        },
+        {
+          "name": "RelativeTimeAnatomy",
+          "title": "RelativeTime anatomy",
+          "description": "",
+          "file": "docs/examples/relative-time/RelativeTimeAnatomy.tsx"
         }
       ],
       "parts": {
