@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Alert, Button, EmptyState, Column, Row, Surface, Text, TextField } from '@envsemble/envui';
-import { Example, Specimen, SpecimenGrid } from '../Example';
+import { Example, ExampleStage } from '../Example';
+import { VerdictFigure } from '../../template/Figures';
 
 /** One rule as a pair: the wording to follow and the wording to avoid, with why. */
 function Pair({
@@ -19,17 +20,20 @@ function Pair({
   avoidCaption: string;
 }) {
   return (
-    <Example title={title}>
-      <Text emphasis="muted">{rule}</Text>
-      <SpecimenGrid size="card">
-        <Specimen title="Do" caption={doCaption}>
-          {doing}
-        </Specimen>
-        <Specimen title="Don’t" caption={avoidCaption}>
-          {avoiding}
-        </Specimen>
-      </SpecimenGrid>
-    </Example>
+    // The do and don't figures have stages of their own.
+    <ExampleStage value={false}>
+      <Example title={title}>
+        <Text emphasis="muted">{rule}</Text>
+        <div className="docs-figure-run" data-count={2} data-verdicts>
+          <VerdictFigure verdict="do" caption={doCaption}>
+            {doing}
+          </VerdictFigure>
+          <VerdictFigure verdict="dont" caption={avoidCaption}>
+            {avoiding}
+          </VerdictFigure>
+        </div>
+      </Example>
+    </ExampleStage>
   );
 }
 
@@ -147,6 +151,7 @@ export function ContentPreview() {
         rule="A title that states the fact, a sentence on why or what next, and one action."
         doing={
           <EmptyState
+            headingLevel={3}
             title="No matching projects"
             description="No project names contain “roadmap”. Check the spelling or clear the filters."
             action={<Button variant="secondary">Clear filters</Button>}
@@ -155,6 +160,7 @@ export function ContentPreview() {
         doCaption="Names the query and offers the way back."
         avoiding={
           <EmptyState
+            headingLevel={3}
             title="Nothing here!"
             description="Looks like there’s nothing to show. Try something else, or start something new!"
             action={
