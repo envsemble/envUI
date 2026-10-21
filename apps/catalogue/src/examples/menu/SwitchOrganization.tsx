@@ -11,7 +11,7 @@ export default function SwitchOrganization() {
   const [currentId, setCurrentId] = useState<string | null>('northwind');
   const [message, setMessage] = useState('');
   return (
-    // As wide as the context area of an application shell's sidebar.
+    // As wide as a navigation Drawer's header.
     <Column gap={4} align="start" style={{ inlineSize: 'min(100%, 14rem)' }}>
       <OrganizationSwitcher
         items={organizations}

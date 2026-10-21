@@ -8,6 +8,7 @@ export default function SeatsAssigned() {
       max={5}
       valueText="2 of 5"
       aria-valuetext="2 of 5 seats"
+      style={{ inlineSize: 'min(100%, 20rem)' }}
     />
   );
 }

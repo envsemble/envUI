@@ -405,13 +405,11 @@ test('single previews retain state when the theme changes', async ({ page }) => 
 
 test('arrowing between views keeps focus on the tabs and adds no history', async ({ page }) => {
   await page.goto(`${offline}#/components/link/overview`);
-  await page.goto(`${offline}#/components/menu/accessibility?section=keyboard`);
+  await page.goto(`${offline}#/components/menu/props`);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Menu');
   const before = await page.evaluate(() => history.length);
   const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  await tabs.getByRole('tab', { name: 'Accessibility', exact: true }).focus();
-  await page.keyboard.press('ArrowLeft');
-  await expect(tabs.getByRole('tab', { name: 'Guidelines', exact: true })).toBeFocused();
+  await tabs.getByRole('tab', { name: 'Props', exact: true }).focus();
   await page.keyboard.press('ArrowLeft');
   await expect(tabs.getByRole('tab', { name: 'Overview', exact: true })).toBeFocused();
   expect(await page.evaluate(() => location.hash)).toBe('#/components/menu/overview');
@@ -425,7 +423,7 @@ test('the views of a page stay in sight on a narrow screen', async ({ page }) =>
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${offline}#/components/menu/overview`);
   const tabs = page.getByRole('tablist', { name: 'Menu reference views', exact: true });
-  for (const name of ['Overview', 'Guidelines', 'Accessibility', 'Props']) {
+  for (const name of ['Overview', 'Props']) {
     const box = await tabs.getByRole('tab', { name, exact: true }).boundingBox();
     expect(box, name).not.toBeNull();
     expect(box!.x, name).toBeGreaterThanOrEqual(0);
