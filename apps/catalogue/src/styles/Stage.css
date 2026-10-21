@@ -150,3 +150,9 @@
   inline-size: 7rem;
   text-align: start;
 }
+
+/* What a matrix cell shows sits in the middle of its column, also a control that is a block. */
+.docs-figures .docs-matrix td > * {
+  inline-size: fit-content;
+  margin-inline: auto;
+}
