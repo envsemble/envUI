@@ -44,109 +44,102 @@ components:
 
 ## Overview
 
-A segmented control switches between a few views or filters of the same content, and the choice applies at once. Its options sit side by side on a pill rail, and the chosen one takes the primary colors. SegmentedControl is built on Base UI's radio group: it is a radio group with one tab stop, and the arrow keys move between the options and choose them.
+A segmented control switches between a few views or filters of the same content, and the choice applies at once.
 
 ```tsx example=WorkItems
 
 ```
 
-## Anatomy
+### States
 
-1. **Rail**: a pill in the translucent fill, like the tab rail, with 0.25 rem padding around the options.
-2. **Segment**: one option, a pill button 0.25 rem from the next. The chosen segment takes the primary action colors; the others are text in the muted color.
-3. **Icon** (optional, `icon`): decorative, at the control icon size of 1 rem, 0.5 rem before the label.
-4. **Label** (`label`): the option's short name, in 0.875 rem text on one line.
-5. **Count** (optional, `count`): a small number after the label, in figures of equal width, such as the items in a view: muted on an unchosen segment, at 4.5:1 on the rail, and in the chosen segment's text color. It is read as part of the option's name.
-6. **Tooltip** (`fullWidth`): shows a label that is cut short whole, on hover and keyboard focus.
+Each option can show an icon and a count. `disabled` dims one option, which the arrow keys skip, or the whole control.
 
-## Variants and sizes
+<!-- specimen: States -->
 
-| Size | Use for                                                                                 |
-| ---- | --------------------------------------------------------------------------------------- |
-| `sm` | Toolbars and other dense surfaces, beside small fields and buttons: a 2 rem rail.       |
-| `md` | A control on the page or above content, beside buttons: a 2.5 rem rail, as a button is. |
-| `lg` | Beside large controls: a 3 rem rail.                                                    |
+## Variants
+
+### Sizes
+
+`sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). Without a `size`, the control takes its container's.
 
 <!-- specimen: Sizes -->
 
-- The rail is as tall as every control of its size in the app's [scale](../foundations/scale.md); without a size it takes its container's control height, `md` by default. Segments fill it inside a 0.25 rem padding, with 1 rem inline padding, 0.75 rem at `sm`. On touch screens the rail grows to 2.75 rem, as every control of its row does, and each segment, at least as wide, takes presses across the rail's whole height.
-- Without `fullWidth` the rail is as wide as its options, up to the width of its container; options that don't fit scroll sideways inside the rail.
-- With `fullWidth` the rail fills its container and splits it evenly between the options. A label too long for its share ends with an ellipsis and shows whole in a tooltip; on touch screens, where tooltips don't show, it wraps onto more lines instead and the rail grows to hold it. The option's accessible name stays whole either way.
+```tsx example=SmallToolbar caption="sm in a toolbar, beside a small button."
 
-## States and behaviour
+```
 
-- **Choosing**: pressing a segment, or moving to it with the arrow keys, chooses it and calls `onValueChange` with its `value`. The control is always controlled: `value` must change for the chosen segment to change.
-- **Hover, pressed and focus**: an unchosen segment takes a state layer and the primary text color under the pointer and a stronger layer while pressed; the chosen one takes the primary action's hover and pressed shades, as [colors and themes](../foundations/colors.md) describes. Keyboard focus shows the shared focus ring around the segment. Without a reduced-motion preference a pressed segment settles slightly, and colors ease between states.
-- **Disabled**: `disabled` on an option dims it with the shared disabled opacity, and the arrow keys skip it; `disabled` on the control dims every option, and it can't be focused or changed.
-- **Full width**: the tooltip of a cut label opens after 400 ms of hover, at once on keyboard focus, and closes with <kbd>Esc</kbd>. A label with room shows no tooltip.
-- **Themes**: the chosen segment takes the primary colors, blue in both themes, so it stays clear on the page, panes and rows.
+## When to use
 
-## Content guidelines
+```tsx do=MatchingSize caption="The size of the controls beside it."
 
-- Name options with one or two words in sentence case that name the view or filter: "Open", "Blocked", "Done"; "List", "Board".
-- Keep labels parallel and about the same length, so the segments balance.
-- Use counts for what each view holds, such as the items in it, and keep them current.
-- Name the control with `aria-label` after what it switches: "Work items", "Layout".
-- Use icons in all options or in none.
+```
 
-## Do and don't
+```tsx dont=MismatchedSize caption="A larger control than its neighbours, so the row doesn't line up."
 
-### Do
+```
 
-- Use two to five options that all fit on one line, and show the content of the chosen one right away.
+```tsx do=IconsOnAll caption="Icons on every option, or on none."
+
+```
+
+```tsx dont=IconsOnSome caption="An icon on one option, which then looks more important."
+
+```
+
 - Put the most used option first, and start on it.
-- Give the control the size of the buttons and fields beside it, such as `sm` in a toolbar.
-- Use `fullWidth` in a narrow container, such as a sidebar, so the options share it evenly.
 
-### Don't
+### Labels
 
-- Don't use a segmented control for actions; use [Button](../components/button.md) or a ButtonGroup.
-- Don't use it in a form for a choice that is saved later; use [Radio](../components/radio.md).
-- Don't use it for content with a panel per option; use [Tabs](../components/tabs.md).
-- Don't put more than five options on the rail, or labels long enough to scroll; use [Select](../components/select.md).
+Name options with a word or two that name the view, and name the control with `aria-label`.
+
+```tsx do=ParallelLabels caption="Short labels of about the same length."
+
+```
+
+```tsx dont=UnevenLabels caption="One long label that unbalances the rail."
+
+```
+
+## Anatomy
+
+```tsx anatomy=SegmentedControlAnatomy
+
+```
+
+1. **Rail** (`env-segmented-control`)
+2. **Segment** (`env-segmented-control-item`)
+3. **Icon** (`env-segmented-control-item > env-icon`, `icon`)
+4. **Label** (`env-segmented-control-item-label`, `label`)
+5. **Count** (`env-segmented-control-item-count`, `count`)
+
+## Adapting to width
+
+The rail is as wide as its options. With `fullWidth` it fills its container and splits it evenly; a label too long for its share ends with an ellipsis and shows whole in a tooltip.
+
+```tsx example=FullWidthScope widths="14 26"
+
+```
 
 ## Accessibility
 
 ### Keyboard
 
-| Key                                             | Action                                                                                                          |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus into the control, to the chosen option, and on out of it; the control is one tab stop.              |
-| <kbd>→</kbd> or <kbd>↓</kbd>                    | Moves to the next option and chooses it, skipping disabled options and wrapping from the last to the first.     |
-| <kbd>←</kbd> or <kbd>↑</kbd>                    | Moves to the previous option and chooses it, skipping disabled options and wrapping from the first to the last. |
-| <kbd>Space</kbd>                                | Chooses the focused option.                                                                                     |
-| <kbd>Esc</kbd> on a cut label's option          | Closes its tooltip.                                                                                             |
+| Key                                             | Action                                                      |
+| ----------------------------------------------- | ----------------------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves into the control, to the chosen option, and out.      |
+| Arrow keys                                      | Choose the next or previous option, skipping disabled ones. |
+| <kbd>Esc</kbd> on a cut label                   | Closes its tooltip.                                         |
 
 ### envUI provides
 
-- The radio group pattern: a `radiogroup` named by `aria-label`, with each segment a `radio` that reports `aria-checked`, one tab stop and the arrow keys.
-- Each option named by its label and count, such as "Open 12", with its icon hidden from assistive technology.
-- The whole label as the option's name when `fullWidth` cuts it short, and in a tooltip on hover and keyboard focus.
-- The shared focus ring, disabled options that the keyboard skips, and a 2.75 rem rail on coarse pointers.
+- A `radiogroup` with each segment a `radio`, one tab stop and the arrow keys.
+- Each option named by its label and count, such as Open 12.
+- The whole label as the name when `fullWidth` cuts it short.
 
 ### You provide
 
 - An `aria-label` that names what the control switches.
-- The content that follows the choice, and its update when `onValueChange` reports a new value.
-- Counts that stay current, or none.
-
-## Examples
-
-### Small, in a toolbar
-
-`size="sm"` makes the rail as tall as the small button beside it. Timeline is disabled, and the arrow keys skip it.
-
-```tsx example=SmallToolbar
-
-```
-
-### Fill a sidebar
-
-With `fullWidth` the control fills a sidebar and splits it between the options. Labels too long for their half end with an ellipsis and show whole in a tooltip on hover and keyboard focus.
-
-```tsx example=FillSidebar
-
-```
+- The content that follows the choice.
 
 ## Changelog
 
