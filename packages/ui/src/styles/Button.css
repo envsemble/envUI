@@ -338,17 +338,18 @@
   }
 }
 
-/* CloseButton: under a coarse pointer its hit area reaches the touch size around it, also where its
-   container draws the buttons smaller, as a field's end does; never wider than the button's box
-   allows across. */
+/* An icon button that its container draws smaller than the touch size, such as a component's close
+   or remove button, reaches it with its hit area under a coarse pointer where the container sets
+   the hook --env-icon-button-hit-area to the touch size, also where it draws the buttons smaller,
+   as a field's end does; never wider than the button's box allows across. */
 @media (pointer: coarse) {
-  .env-close-button {
+  :where(.env-icon-button) {
     position: relative;
   }
-  .env-close-button::before {
+  .env-icon-button::before {
     content: '';
     position: absolute;
-    inset: min(0%, calc((100% - var(--env-control-height-touch)) / 2));
+    inset: min(0%, calc((100% - var(--env-icon-button-hit-area, 0%)) / 2));
   }
 }
 

@@ -62,10 +62,11 @@
 .env-alert-action {
   margin-block-start: var(--env-space-2);
 }
-/* The dismiss button is a small CloseButton circle in the alert's tone, centered on the first line.
+/* The dismiss button is a small IconButton circle with a cross in the alert's tone, centered on the first line.
    Under a coarse pointer it grows to the touch height, as every button does. Alert.css comes after
    Button.css, so at equal specificity the tone wins over the ghost colors. */
 .env-alert-dismiss {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   /* The small button's height, which grows to the touch height under a coarse pointer, as the
      button itself does. */
   --env-alert-dismiss-height: var(--env-control-height-sm);

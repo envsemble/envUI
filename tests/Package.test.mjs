@@ -327,7 +327,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     `
     import { createRef } from 'react';
     import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
-      EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
+      EnvUIProvider, Toolbar, Field, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
     import { Home as BarrelHome } from '@envsemble/envui/icons';
@@ -349,7 +349,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
       <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
       <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
-      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
+      <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { clear: 'Leeren' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><IconButton ref={createRef<HTMLButtonElement>()} aria-label="Schließen" icon={<Home />} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
       <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />

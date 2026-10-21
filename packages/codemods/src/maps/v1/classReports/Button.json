@@ -1,0 +1,5 @@
+{
+  "env-close-button": {
+    "report": "CloseButton is gone, and its close buttons are IconButtons with a cross: style env-icon-button, or a class of your own on the button; envUI's components name theirs, such as env-alert-dismiss and env-toast-dismiss."
+  }
+}

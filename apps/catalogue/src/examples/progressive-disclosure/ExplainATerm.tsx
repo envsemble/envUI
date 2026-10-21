@@ -1,4 +1,4 @@
-import { Button, IconButton, Link, Popover, Column, Row, Text, Tooltip } from '@envsemble/envui';
+import { IconButton, Link, Popover, Column, Row, Text, Tooltip } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Help } from '@envsemble/envui/icons/Help';
 
@@ -38,9 +38,8 @@ export default function ExplainATerm() {
       </Column>
       {/* A Tooltip only names an icon-only control: a few words, the same as its accessible name. */}
       <Tooltip content="Download timesheet">
-        <Button
+        <IconButton
           variant="secondary"
-          iconOnly
           icon={<Download />}
           aria-label="Download timesheet"
           href="/timesheets/2026-03-02.csv"

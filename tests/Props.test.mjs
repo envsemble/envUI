@@ -71,12 +71,9 @@ test('native DOM props are summarised by element instead of listed', () => {
 
 test('a prop required in only some forms names what selects them', () => {
   const button = props('Button');
-  assert.equal(button.icon.required, false);
-  assert.equal(button.icon.requiredWhen, '`iconOnly` is `true`');
-  assert.equal(button['aria-label'].requiredWhen, '`iconOnly` is `true`');
-  assert.equal(button.iconOnly.type, 'boolean');
-  assert.equal(button.iconOnly.requiredWhen, undefined, 'a prop that selects its form is optional');
+  assert.equal(button.iconOnly, undefined, 'IconButton is the one icon-only button');
   assert.equal(button.href.requiredWhen, undefined);
+  assert.equal(props('IconButton').href.requiredWhen, undefined);
   assert.equal(props('ConfirmButton')['aria-label'].requiredWhen, '`icon` is set');
   assert.equal(props('CopyButton')['aria-label'].requiredWhen, '`children` is not set');
 });

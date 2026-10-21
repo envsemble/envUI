@@ -4,7 +4,7 @@
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
-      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is a CloseButton, a client leaf named in the provider's language.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.",
       "props": [
         {
           "name": "tone",
@@ -408,7 +408,7 @@
     "Button": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons; icon-only with iconOnly. It renders a native button or link.",
+      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons. It renders a native button or link. An icon alone is an IconButton.",
       "props": [
         {
           "name": "variant",
@@ -440,7 +440,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -467,30 +467,10 @@
           "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
           "name": "href",
           "type": "string",
           "required": false,
           "description": "The destination: the element is a native link, through the LinkProvider's link component."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -892,51 +872,6 @@
       ],
       "native": [
         "input"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CloseButton": {
-      "kind": "component",
-      "source": "packages/ui/src/actions/CloseButton.tsx",
-      "description": "The button that closes, dismisses or removes what it sits in, such as a dialog, a notification, a tab or a chip: an icon-only button with a cross, named Close in the provider's language. Under a coarse pointer, its hit area reaches the touch size even where it draws smaller.",
-      "props": [
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Close', or EnvUIProvider's messages.common.close",
-          "description": "The button's name, such as Close notification or Remove Alex Morgan where more than one thing closes nearby."
-        },
-        {
-          "name": "variant",
-          "type": "'ghost' | 'secondary'",
-          "required": false,
-          "default": "'ghost'",
-          "description": "ghost, the quiet icon on chrome and inside surfaces, or secondary, on the neutral fill, where the button should read as a control of its own, such as over an image."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The icon; a Close cross by default."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "As Button's: the height, and the width, of the square button."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "description": "As Button's: a spinner replaces the icon while the work runs."
-        }
-      ],
-      "native": [
-        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -1646,7 +1581,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -2469,7 +2404,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -2488,26 +2423,6 @@
           "type": "boolean",
           "required": false,
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -3425,8 +3340,20 @@
     "IconButton": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the neutral secondary one.",
+      "description": "A square button that shows its icon alone, named by aria-label, such as a close button with the Close cross; with href, a native link. Without a variant it takes its container's, and else the neutral secondary one.",
       "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
         {
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
@@ -3468,7 +3395,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6876,7 +6804,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Whether the sheet shows its close button, a CloseButton at the end of the heading. Leave it out only where the sheet holds another control that closes it."
+          "description": "Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it out only where the sheet holds another control that closes it."
         },
         {
           "name": "closeLabel",
@@ -7997,6 +7925,18 @@
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -8031,7 +7971,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "entries": [
         "@envsemble/envui"

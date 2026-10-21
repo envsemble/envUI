@@ -37,8 +37,8 @@
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
+      "actions/internal/ButtonBase.tsx": "composites",
       "actions/ButtonGroup.tsx": "base",
-      "actions/CloseButton.tsx": "composites",
       "actions/ConfirmButton.tsx": "composites",
       "actions/CopyButton.tsx": "composites",
       "actions/SearchTrigger.tsx": "composites",
@@ -227,7 +227,8 @@
         ]
       },
       "Button": {
-        "classes": ["env-icon-button"]
+        "classes": ["env-icon-button"],
+        "modules": ["actions/internal/ButtonBase.tsx"]
       },
       "AvatarButton": {
         "styles": ["Button.css"]
@@ -379,9 +380,6 @@
       "PopupSurface": {
         "classes": ["env-popup"],
         "styles": ["Popup.css"]
-      },
-      "CloseButton": {
-        "styles": ["Button.css"]
       },
       "ColorPicker": {
         "modules": ["forms/internal/ColorPlane.tsx"]

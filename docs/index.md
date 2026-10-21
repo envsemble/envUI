@@ -49,7 +49,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
-- [CloseButton](components/close-button.md)
 - [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)

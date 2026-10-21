@@ -138,6 +138,6 @@ An alert is a message about a page or a section that stays above the content it 
 
 ## Changelog
 
-- **1.0.0**: `tone="danger"` for `error`; the dismiss button is a CloseButton named Dismiss in the provider's language.
+- **1.0.0**: `tone="danger"` for `error`; the dismiss button is an IconButton with a cross, named Dismiss in the provider's language.
 - **1.0.0**: `Notice` is `Alert`, with `AlertTone` and the `env-alert-*` classes; the page is `alert`.
 - **0.5.0**: Notice, an inline banner in four tones with an action, a round dismiss button in its tone and `announce`.

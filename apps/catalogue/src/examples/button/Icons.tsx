@@ -11,7 +11,7 @@ export default function Icons() {
         Next step
       </Button>
       <IconButton icon={<Settings />} aria-label="Project settings" />
-      <Button variant="outline" iconOnly icon={<Add />} aria-label="Add a member" />
+      <IconButton variant="outline" icon={<Add />} aria-label="Add a member" />
     </Row>
   );
 }

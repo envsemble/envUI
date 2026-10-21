@@ -79,10 +79,11 @@
   white-space: normal;
   overflow-wrap: break-word;
 }
-/* The dismiss button is a CloseButton on the notice's strong fill: the fill's text color, with the
+/* The dismiss button is an IconButton with a cross on the notice's strong fill: the fill's text color, with the
    fill's own hover and press steps. Toast.css comes after Button.css, so at equal specificity
    these colors win over the ghost ones. */
 .env-toast-dismiss {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-icon-size: 1.125rem;
   color: inherit;
 }

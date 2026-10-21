@@ -1,4 +1,5 @@
-import { CloseButton, Column, Row, Surface, Text } from '@envsemble/envui';
+import { Column, IconButton, Row, Surface, Text } from '@envsemble/envui';
+import { Close } from '@envsemble/envui/icons/Close';
 
 export default function CloseAtEnd() {
   return (
@@ -10,7 +11,7 @@ export default function CloseAtEnd() {
           </Text>
           <Text variant="body-sm">Projects are easier to follow with everyone in them.</Text>
         </Column>
-        <CloseButton aria-label="Dismiss tip" />
+        <IconButton variant="ghost" icon={<Close />} aria-label="Dismiss tip" />
       </Row>
     </Surface>
   );

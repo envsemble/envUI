@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CloseButton, Column, Row, Text } from '@envsemble/envui';
+import { Column, IconButton, Row, Text } from '@envsemble/envui';
+import { Close } from '@envsemble/envui/icons/Close';
 
 export default function RemovePeople() {
   const [people, setPeople] = useState(['Alex Morgan', 'Priya Shah', 'Sam Lee']);
@@ -10,7 +11,9 @@ export default function RemovePeople() {
         <Row key={person} align="center" gap={2} render={<li />}>
           <Text render={<span />}>{person}</Text>
           {/* Beside others like it, each button names what it removes. */}
-          <CloseButton
+          <IconButton
+            variant="ghost"
+            icon={<Close />}
             size="sm"
             aria-label={`Remove ${person}`}
             onClick={() => setPeople((current) => current.filter((each) => each !== person))}

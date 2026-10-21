@@ -158,9 +158,6 @@
       "env-checkbox-input": "The native input.",
       "env-checkbox-label": "The label."
     },
-    "CloseButton": {
-      "env-close-button": "The button that closes a dialog, panel or message."
-    },
     "Code": {
       "env-code": "Inline code."
     },

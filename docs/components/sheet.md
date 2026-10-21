@@ -30,7 +30,7 @@ related:
   - panes
   - dialog
   - popover
-  - close-button
+  - button
   - panel-dock
 components:
   - Sheet
@@ -98,7 +98,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 1. **Sheet** (`env-sheet-popup`)
 2. **Title** (`env-dialog-title`, `title`)
 3. **Description** (`env-dialog-description`, `description`)
-4. **Close button** (`env-close-button`, `closeLabel`)
+4. **Close button** (`env-dialog-heading > env-button`, `closeLabel`)
 5. **Content** (`env-sheet-popup env-checkbox`, `children`)
 6. **Action** (`env-dialog-actions > env-button`, `actions`)
 

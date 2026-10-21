@@ -41,7 +41,6 @@ test('no English default is left under a provider that sets every message', asyn
   });
   const left = found.filter((text) => englishDefaults.has(text));
   expect(left).toEqual([]);
-  expect(found).toContain('⟦common.close⟧');
   expect(found).toContain('⟦dialog.close⟧');
   expect(found).toContain('⟦themeToggle.toDark⟧');
   for (const key of [
@@ -140,7 +139,7 @@ test('the app parts take their names, labels and announcements from the provider
 test('messages written inline keep the context while they stay the same', async ({ page }) => {
   await page.goto(`${fixtureUrl}/?fixture=message-strings`);
   const probe = page.getByTestId('inline-probe');
-  await expect(probe).toHaveText('⟦inline.close⟧');
+  await expect(probe).toHaveText('⟦inline.clear⟧');
   // The count is written in an effect, after the first paint.
   await expect(probe).toHaveAttribute('data-renders', /^\d+$/);
   const before = await probe.getAttribute('data-renders');

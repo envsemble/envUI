@@ -12,12 +12,21 @@ const listDetail = map.structure['@envsemble/envui']['ListDetail.Root'];
 const actionCard = map.structure['@envsemble/envui'].ActionCard;
 const drawer = map.structure['@envsemble/envui'].Drawer;
 const loadingState = map.structure['@envsemble/envui'].LoadingState;
+const closeButton = map.structure['@envsemble/envui'].CloseButton;
+const button = map.structure['@envsemble/envui'].Button;
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  // CloseButton's default name and Button iconOnly without a variant are reported where rewritten;
+  // an iconOnly that is an expression stays.
+  'buttons.tsx': [
+    `line 8: Button: ${button.report}`,
+    `line 12: Button: ${button.cases[0].report}`,
+    `line 13: CloseButton: ${closeButton.cases[0].report}`,
+  ],
   'list-contrast.tsx': [`line 6: List.Root: ${listRoot.report}`],
   // Reported and left as they are: the prerelease's Drawer and a LoadingState's child.
   'prerelease.tsx': [
@@ -35,6 +44,7 @@ const reports = {
     `line 24: ActionCard: ${actionCard.cases[0].report}`,
   ],
   'action-group.tsx': [
+    `line 17: Button: ${button.cases[0].report}`,
     `line 19: ActionGroup: ${actionGroup.cases[0].children['*'].report}`,
     `line 21: ActionGroup: ${actionGroup.report}`,
   ],
@@ -58,6 +68,7 @@ for (const fixture of fixtures('v1-structure')) {
       result.reports.filter(
         (report) =>
           report.endsWith(actionGroup.report) ||
+          report.endsWith(button.report) ||
           report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
           report.endsWith(card.report) ||
@@ -95,6 +106,36 @@ test('v1-structure imports the new element under a free name and drops the unuse
   assert.match(output, /import \{ Button, Stack as EnvStack \} from '@envsemble\/envui';/);
   assert.match(output, /<EnvStack direction="row" wrap align="center" gap=\{4\}>/);
   assert.match(output, /<\/EnvStack>\n {2}<\/Stack>/);
+});
+
+test('v1-structure imports the icon an element gets, in the quotes of the file', () => {
+  const source = [
+    'import { CloseButton } from "@envsemble/envui";',
+    '',
+    'export const Close = 1;',
+    'export const Dismiss = () => <CloseButton aria-label="Dismiss" />;',
+    '',
+  ].join('\n');
+  const { output } = runTransform(v1Structure, 'dismiss.tsx', source);
+  assert.match(output, /^import \{ Close as EnvClose \} from "@envsemble\/envui\/icons\/Close";$/m);
+  assert.match(
+    output,
+    /<IconButton variant="ghost" icon=\{<EnvClose \/>\} aria-label="Dismiss" \/>/,
+  );
+});
+
+test('v1-structure reuses an icon the file imports from the icons barrel', () => {
+  const source = [
+    "import { CloseButton } from '@envsemble/envui';",
+    "import { Close as Cross } from '@envsemble/envui/icons';",
+    '',
+    'export const Dismiss = () => <CloseButton aria-label="Dismiss" />;',
+    '',
+  ].join('\n');
+  const { output } = runTransform(v1Structure, 'dismiss.tsx', source);
+  assert.match(output, /^import \{ IconButton \} from '@envsemble\/envui';$/m);
+  assert.match(output, /<IconButton variant="ghost" icon=\{<Cross \/>\} aria-label="Dismiss" \/>/);
+  assert.doesNotMatch(output, /icons\/Close'/);
 });
 
 test('v1-structure leaves files without envUI imports alone', () => {

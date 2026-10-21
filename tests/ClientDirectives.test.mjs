@@ -189,7 +189,6 @@ test('a server component imports envUI and renders it on the server', () => {
       'href="/destination"',
       'href="/destination" pending',
       'href="/destination" disabled',
-      'iconOnly icon={…} aria-label="Home"',
     ],
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
     Card: ['layout="feature"', 'href="/destination"'],
@@ -212,7 +211,6 @@ test('a server component imports envUI and renders it on the server', () => {
     'Table.Root',
     'useToast',
     'EnvUIProvider',
-    'CloseButton',
     'Toolbar.Root',
     'Field.Root',
   ])

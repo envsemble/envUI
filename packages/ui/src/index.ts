@@ -14,7 +14,6 @@ export * from './navigation/TopBar.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './foundations/PortalContainer.js';
 export * from './actions/Button.js';
-export * from './actions/CloseButton.js';
 export * as Toolbar from './actions/Toolbar.js';
 export * from './actions/Link.js';
 export * from './actions/ButtonGroup.js';

@@ -58,8 +58,8 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
+        "IconButton",
         "Skeleton"
       ]
     },
@@ -778,21 +778,6 @@
         "Icon"
       ]
     },
-    "CloseButton": {
-      "root": "env-close-button",
-      "source": "packages/ui/src/actions/CloseButton.tsx",
-      "parts": [
-        {
-          "class": "env-close-button",
-          "description": "The button that closes a dialog, panel or message."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Icon",
-        "IconButton"
-      ]
-    },
     "Code": {
       "root": "env-code",
       "source": "packages/ui/src/content/Code.tsx",
@@ -1051,7 +1036,6 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Field",
         "Icon",
         "IconButton",
@@ -1231,7 +1215,10 @@
       ],
       "states": [],
       "uses": [
-        "Button"
+        "Button",
+        "Icon",
+        "IconButton",
+        "Spinner"
       ]
     },
     "ConfirmDialog": {
@@ -1274,8 +1261,10 @@
       "uses": [
         "Button",
         "Icon",
+        "IconButton",
         "Popup",
         "Skeleton",
+        "Spinner",
         "Theme",
         "Tooltip"
       ]
@@ -1741,8 +1730,8 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
+        "IconButton",
         "Menu"
       ]
     },
@@ -3112,7 +3101,6 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
         "IconButton",
         "Tooltip"
@@ -3209,8 +3197,8 @@
       ],
       "uses": [
         "Button",
-        "CloseButton",
         "Icon",
+        "IconButton",
         "ResizeHandle",
         "Skeleton"
       ]
@@ -4011,8 +3999,9 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Dialog",
+        "Icon",
+        "IconButton",
         "Skeleton",
         "Surface",
         "Theme"
@@ -4907,9 +4896,9 @@
       ],
       "uses": [
         "Button",
-        "CloseButton",
         "CounterBadge",
         "Icon",
+        "IconButton",
         "Theme"
       ]
     },
@@ -4964,7 +4953,6 @@
         }
       ],
       "uses": [
-        "Button",
         "IconButton",
         "Kbd",
         "Tooltip"

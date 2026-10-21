@@ -4,7 +4,6 @@ import {
   List,
   SearchTrigger,
   Calendar,
-  CloseButton,
   ColorPicker,
   Combobox,
   Composer,
@@ -141,7 +140,7 @@ const MessagesProbe = memo(function MessagesProbe() {
   });
   return (
     <span ref={ref} data-testid="inline-probe">
-      {messages.close}
+      {messages.clear}
     </span>
   );
 });
@@ -157,7 +156,7 @@ function InlineMessages() {
       <button type="button" onClick={() => setRenders((current) => current + 1)}>
         ⟦rerender⟧ {renders}
       </button>
-      <EnvUIProvider messages={{ common: { close: '⟦inline.close⟧' } }}>
+      <EnvUIProvider messages={{ common: { clear: '⟦inline.clear⟧' } }}>
         <MessagesProbe />
       </EnvUIProvider>
     </>
@@ -174,7 +173,6 @@ export function MessageStringsFixture() {
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
         <Column gap={4} data-testid="messages">
-          <CloseButton />
           <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}}>
             Remove
           </ConfirmButton>

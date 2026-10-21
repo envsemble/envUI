@@ -340,12 +340,19 @@ function validateTokens(tokens) {
 const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
 const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
 
-/** An element a structure case adds as a prop, such as `{ "element": "article" }` for render={<article />}. */
+/**
+ * An element a structure case adds as a prop: `{ "element": "article" }` for render={<article />},
+ * or a component with the module it is imported from, such as
+ * `{ "element": "Close", "from": "@envsemble/envui/icons/Close" }` for icon={<Close />}.
+ */
 const elementValue = (value) =>
   isObject(value) &&
-  Object.keys(value).length === 1 &&
   typeof value.element === 'string' &&
-  /^[a-z][a-z0-9]*$/.test(value.element);
+  ((Object.keys(value).length === 1 && /^[a-z][a-z0-9]*$/.test(value.element)) ||
+    (Object.keys(value).length === 2 &&
+      /^[A-Z][A-Za-z0-9]*$/.test(value.element) &&
+      typeof value.from === 'string' &&
+      /^@envsemble\/envui(?:\/[A-Za-z0-9-]+)*$/.test(value.from)));
 
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a

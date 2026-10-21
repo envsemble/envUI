@@ -10,12 +10,12 @@ import {
   type ReactNode,
 } from 'react';
 import {
-  Button,
   type ButtonAppearanceProps,
   type ButtonEmphasisProps,
   type ButtonTone,
   type ButtonVariant,
 } from './Button.js';
+import { ButtonBase } from './internal/ButtonBase.js';
 import { classNames } from '../internal/classNames.js';
 import { useButtonEmphasis } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -146,17 +146,24 @@ export function ConfirmButton({
       {/* At rest an icon-only button is round and named by its label; armed, it grows to name the
           consequence beside its icon. Both are the same button, so focus stays on it. */}
       {icon != null && !armed ? (
-        <Button {...shared} iconOnly icon={icon} aria-label={label ?? ''} />
-      ) : (
-        <Button
+        <ButtonBase
           {...shared}
+          fallbackVariant="primary"
+          iconOnly
+          icon={icon}
+          aria-label={label ?? ''}
+        />
+      ) : (
+        <ButtonBase
+          {...shared}
+          fallbackVariant="primary"
           startIcon={armed && icon != null ? icon : startIcon}
           endIcon={endIcon}
           // Armed, the visible confirm label names the button.
           aria-label={armed ? undefined : label}
         >
           {armed ? confirmLabel : children}
-        </Button>
+        </ButtonBase>
       )}
       {/* A label change on a focused button is not reliably announced, so the armed state is. */}
       <span className="env-confirm-button-status" role="status">

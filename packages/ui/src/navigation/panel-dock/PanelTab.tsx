@@ -1,7 +1,8 @@
 'use client';
 
 import { useId, useRef } from 'react';
-import { CloseButton } from '../../actions/CloseButton.js';
+import { IconButton } from '../../actions/Button.js';
+import { Close } from '../../icons/Close.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { ActionElement } from '../../internal/ActionElement.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
@@ -53,7 +54,9 @@ export function PanelTab({ panel, openLabel, closeLabel, onRestore, onClose }: P
       }
     >
       {panel.tooltip != null ? <Tooltip content={panel.tooltip}>{restore}</Tooltip> : restore}
-      <CloseButton
+      <IconButton
+        variant="ghost"
+        icon={<Close />}
         className="env-panel-dock-tab-close"
         aria-label={closeLabel(label)}
         onClick={onClose}

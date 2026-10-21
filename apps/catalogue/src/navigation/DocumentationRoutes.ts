@@ -291,7 +291,7 @@ export function normalizeRoute(route: string): string {
   const path = originalPath
     .replace(/^components\/text(?=\/|$)/, 'foundations/typography')
     .replace(/^components\/notes(?=\/|$)/, 'components/disclosure')
-    .replace(/^components\/(icon-buttons|buttons)(?=\/|$)/, 'components/button')
+    .replace(/^components\/(icon-buttons|buttons|close-button)(?=\/|$)/, 'components/button')
     .replace(/^components\/badges(?=\/|$)/, 'components/badge')
     .replace(/^components\/chips(?=\/|$)/, 'components/badge')
     .replace(/^components\/tables(?=\/|$)/, 'components/table')
