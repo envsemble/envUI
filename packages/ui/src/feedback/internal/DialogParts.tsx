@@ -5,12 +5,22 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
 import { Column, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
+import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 
 /**
  * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
  * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
+
+/**
+ * The theme boundary in a modal surface's portal: a layer fixed over the whole viewport, which lets
+ * pointers through to its scrim and surface. Where the document root isn't themed it is the
+ * outermost boundary, so the env-window container, at the window's own width.
+ */
+export function OverlayTheme({ className, ...props }: ThemeProps) {
+  return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
+}
 
 /** The scrim behind a modal surface, which fades in and out. */
 export function DialogBackdrop({ className }: { className?: string }) {

@@ -109,13 +109,17 @@ test.describe('search', () => {
   });
 
   test('a link to a heading opens the view that shows it', async ({ page }) => {
-    // The Keyboard heading is in Button's Accessibility view, not its first.
-    const route = routeOfDocument('button', { section: 'keyboard' });
-    expect(route).toBe('components/button/accessibility?section=keyboard');
+    // The Keyboard heading is in Dialog's Accessibility view, not its first.
+    const route = routeOfDocument('dialog', { section: 'keyboard' });
+    expect(route).toBe('components/dialog/accessibility?section=keyboard');
     // An old link to the page, without a view, opens the same view.
-    expect(normalizeRoute('components/button?section=keyboard')).toBe(route);
-    expect(normalizeRoute('components/button/overview?section=keyboard')).toBe(route);
-    await openCatalogue(page, `${catalogueUrl}/components/button/accessibility#keyboard`);
+    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
+    expect(normalizeRoute('components/dialog/overview?section=keyboard')).toBe(route);
+    // A page of exchanges shows every heading in its Overview, also for a link to an old view.
+    expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
+      'components/button/overview?section=keyboard',
+    );
+    await openCatalogue(page, `${catalogueUrl}/components/dialog/accessibility#keyboard`);
     const heading = page.getByRole('heading', { name: 'Keyboard', exact: true });
     await expect(heading).toBeInViewport();
     await expect(heading).toBeFocused();

@@ -10,6 +10,8 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [For agents](agent-tooling.md) — The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
 
+- [Dev mode](dev-mode.md) — Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
+
 - [Develop envUI locally](local-development.md) — Link a checkout while co-developing a consuming application.
 
 - [Extend the shared library](library-development.md) — Public API changes, changesets, catalogue specimens and acceptance checks.

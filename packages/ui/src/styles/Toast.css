@@ -98,7 +98,10 @@
   outline: 0.125rem solid var(--env-color-fg-on-strong);
   outline-offset: 0.125rem;
 }
+/* The toasts need no window, so their portal's boundary is no container: nothing changes for the
+   fixed viewport inside it. */
 .env-toast-portal-theme {
+  container-type: normal;
   background: none;
 }
 .env-toast-viewport {

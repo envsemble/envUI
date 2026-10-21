@@ -533,6 +533,10 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   assert.equal(iconButton.name, 'Button');
   assert.equal(iconButton.requested, 'IconButton');
   assert.ok(iconButton.exports.find((entry) => entry.name === 'IconButton').props.includes('icon'));
+  // Its public part classes and state attributes, for each export of the page.
+  assert.equal(iconButton.parts.Button.root, 'env-button');
+  assert.equal(iconButton.parts.IconButton.root, 'env-icon-button');
+  assert.ok(iconButton.parts.Button.states.some((state) => state.attribute === 'data-variant'));
   // The page comes as a Markdown content item of its own, not escaped inside the JSON.
   const byAlias = await server.call('get_component', { name: 'modal', docs: true });
   assert.equal(byAlias.value.name, 'Dialog');

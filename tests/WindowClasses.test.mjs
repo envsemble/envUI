@@ -71,7 +71,14 @@ test('the outermost theme boundary is the env-window container, and takes its wi
     /:where\(\.env-theme\):not\(:where\(\.env-theme \.env-theme\)\) \{\s*container: env-window \/ inline-size;\s*inline-size: 100%;/,
     'Theme.css makes the outermost .env-theme the env-window container, as wide as its context',
   );
-  assert.doesNotMatch(sheets['Popup.css'], /\.env-popup-theme \{\s*display: contents/);
+  // An outermost popup boundary is a box out of flow, which a grid or flex body gives no cell; an
+  // overlay's is a layer fixed over the viewport, and a toast's is no container.
+  assert.match(
+    sheets['Popup.css'],
+    /\.env-popup-theme:not\(\.env-theme \.env-popup-theme\) \{\s*display: block;\s*position: absolute;/,
+  );
+  assert.match(sheets['Dialog.css'], /\.env-overlay-theme \{\s*position: fixed;\s*inset: 0;/);
+  assert.match(sheets['Toast.css'], /\.env-toast-portal-theme \{\s*container-type: normal;/);
 });
 
 test('no style sheet queries the viewport width outside the frame', () => {

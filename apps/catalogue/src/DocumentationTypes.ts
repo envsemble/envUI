@@ -38,8 +38,27 @@ export type ExportEntry =
 
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
-  /** A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. */
-  | { kind: 'example'; name: string; heading: string }
+  /**
+   * A file in apps/catalogue/src/examples/<page>/<name>.tsx, under its ### heading. On a page of
+   * exchanges it is a figure: a live example, a do or a don't figure, or an anatomy figure.
+   */
+  | {
+      kind: 'example';
+      name: string;
+      heading: string;
+      /** A do or don't figure, or an anatomy figure; a live example without it. */
+      role?: 'do' | 'dont' | 'anatomy';
+      /** One sentence under the figure; a do or don't figure's verdict. */
+      caption?: string;
+      /** The widths, in rem, of the frames an example is shown in side by side. */
+      widths?: number[];
+      /** The component of docs/generated/parts.json an anatomy figure without a legend numbers. */
+      of?: string;
+      /** An anatomy figure's legend: each numbered part by its class name, and what it is. */
+      legend?: AnatomyLegendItem[];
+    }
+  /** The question an exchange of a page of exchanges answers, shown as a Message. */
+  | { kind: 'question'; text: string }
   /**
    * A template's screen, the file apps/catalogue/src/examples/<page>/<name>.tsx, rendered in frames of
    * the frame route; app renders it inside the app frame template, none on its own.
@@ -48,8 +67,21 @@ export type DocumentationBlock =
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string };
 
+/** One numbered part of an anatomy figure. */
+export interface AnatomyLegendItem {
+  /** The part, by its class name, such as env-card-header, or a selector of env-* class names. */
+  part: string;
+  /**
+   * The legend's Markdown, which names the part; an item that holds only the part's class name
+   * takes its description from docs/generated/parts.json.
+   */
+  text: string;
+}
+
 export type TemplateSectionId =
   | 'overview'
+  | 'usage'
+  | 'width'
   | 'anatomy'
   | 'variants'
   | 'states'
@@ -97,6 +129,8 @@ export interface DocumentationEntry {
   /** The page's Markdown after its title. */
   markdown: string;
   metadata?: DocumentationMetadata;
+  /** A component page written as exchanges: a question and its answer per section. */
+  format?: 'exchanges';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
   /** The exports a template page documents, with namespaces expanded to their parts. */

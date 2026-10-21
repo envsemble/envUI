@@ -1,5 +1,11 @@
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import { Column, Text, type SpaceStep } from '@envsemble/envui';
+
+/**
+ * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
+ * a section of a page of exchanges. The titles of its parts take the level below.
+ */
+export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
@@ -19,6 +25,7 @@ export function Example({
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
 }) {
+  const Heading = `h${useContext(SpecimenHeadingLevel)}` as const;
   return (
     <Column
       render={<section />}
@@ -28,13 +35,13 @@ export function Example({
     >
       {title && actions ? (
         <div className="docs-example-heading">
-          <Text render={<h2 />} variant="headline">
+          <Text render={<Heading />} variant="headline">
             {title}
           </Text>
           {actions}
         </div>
       ) : title ? (
-        <Text render={<h2 />} variant="headline">
+        <Text render={<Heading />} variant="headline">
           {title}
         </Text>
       ) : null}
@@ -72,9 +79,10 @@ export function Specimen({
   children: ReactNode;
   caption?: ReactNode;
 }) {
+  const Heading = useContext(SpecimenHeadingLevel) === 3 ? 'h4' : 'h3';
   return (
     <Column render={<section />} gap={3} className="docs-specimen">
-      <Text render={<h3 />} variant="title">
+      <Text render={<Heading />} variant="title">
         {title}
       </Text>
       {children}

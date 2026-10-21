@@ -31,7 +31,8 @@ export function CompositionPreview() {
       <Example title="Extending the library">
         <Text emphasis="muted">
           Add repeated visual behavior to envUI through public variants and slots. Use the central
-          tokens and forward native props and refs from custom roots; avoid styling private markup.
+          tokens and forward native props and refs from custom roots; target part classes rather
+          than component tokens.
         </Text>
       </Example>
     </>

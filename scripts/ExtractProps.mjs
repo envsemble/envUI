@@ -30,6 +30,7 @@ const entries = [
   ['diff.ts', '@envsemble/envui/diff'],
   ['rich-text.ts', '@envsemble/envui/rich-text'],
   ['theme-bootstrap.ts', '@envsemble/envui/theme-bootstrap'],
+  ['dev.ts', '@envsemble/envui/dev'],
 ];
 
 /** React's per-element attribute interfaces, by the element they describe. */

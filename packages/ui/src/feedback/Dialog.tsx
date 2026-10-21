@@ -8,13 +8,14 @@ import { Button } from '../actions/Button.js';
 import type { ButtonProps, ButtonVariant } from '../actions/Button.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { useTheme } from '../foundations/Theme.js';
 import {
   DialogActions,
   DialogBackdrop,
   DialogContent,
   DialogHeader,
   DialogSurface,
+  OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
@@ -197,7 +198,7 @@ export function Dialog({
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
       <BaseDialog.Portal>
-        <Theme {...theme}>
+        <OverlayTheme {...theme}>
           <ResetControlDefaults>
             {modal && <DialogBackdrop />}
             <div className="env-dialog-positioner" data-placement={placement}>
@@ -222,7 +223,7 @@ export function Dialog({
               </BaseDialog.Popup>
             </div>
           </ResetControlDefaults>
-        </Theme>
+        </OverlayTheme>
       </BaseDialog.Portal>
     </BaseDialog.Root>
   );
