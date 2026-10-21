@@ -87,12 +87,22 @@ test('a surface as a skeleton marks its root and tells what is inside', () => {
   assert.match(loaded, /<i>outside<\/i>/);
   // A component inside a skeleton follows it without a prop of its own.
   assert.match(markup(h(Surface, { skeleton: true }, h(Card, null, h(Reader)))), /<i>inside<\/i>/);
-  // A list can't hold a wrapper: it is inert, and a hidden status beside it is the busy region.
+  // A list can't hold a wrapper: it is inert, with a hidden status beside it, which is empty as
+  // it is rendered, so the text that goes in after it mounts is announced.
   const list = markup(h(List.Root, { skeleton: true }, h(List.Item, { label: 'Launch brief' })));
   assert.match(
     list,
-    /^<ul data-env-skeleton="" inert=""[^>]*>.*<\/ul><span class="env-skeleton-status" role="status" aria-busy="true">Loading<\/span>$/,
+    /^<ul data-env-skeleton="" inert=""[^>]*>.*<\/ul><span class="env-skeleton-status" role="status"><\/span>$/,
   );
+  // A row on its own wraps its start slot too.
+  const row = markup(
+    h(List.Item, {
+      skeleton: true,
+      start: h('input', { type: 'checkbox' }),
+      label: 'Launch brief',
+    }),
+  );
+  assert.match(row, /<div class="env-skeleton-content" inert=""><div class="env-list-item-start"/);
 });
 
 test('missing text renders empty where a skeleton shows a bar, and given slots render', () => {

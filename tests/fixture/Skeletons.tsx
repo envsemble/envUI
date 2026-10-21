@@ -6,6 +6,7 @@ import {
   Bar,
   Button,
   Card,
+  Checkbox,
   Column,
   Dialog,
   Drawer,
@@ -155,6 +156,45 @@ export function SkeletonsFixture() {
           </List.Root>
         </Column>
       </Surface>
+
+      {/* The same content as a skeleton and loaded, whose children take the same boxes: raw
+          text elements in a column, and lists on a muted surface. */}
+      {[true, false].map((skeleton) => (
+        <Grid key={String(skeleton)} columns={2} gap={4}>
+          <Surface
+            skeleton={skeleton}
+            data-testid={`paragraphs-${skeleton ? 'skeleton' : 'loaded'}`}
+            render={<Column gap={2} />}
+          >
+            <p>A raw paragraph.</p>
+            {/* Elements with margins of the browser's own, which the column takes away. */}
+            <h3>A raw heading</h3>
+            <blockquote>A raw quotation.</blockquote>
+          </Surface>
+          <Surface
+            background="muted"
+            padding={3}
+            data-testid={`lists-${skeleton ? 'skeleton' : 'loaded'}`}
+          >
+            <List.Root skeleton={skeleton} aria-label="First list">
+              <List.Item label="Sam Lee" />
+            </List.Root>
+            <List.Root skeleton={skeleton} aria-label="Second list">
+              <List.Item label="Priya Shah" />
+            </List.Root>
+          </Surface>
+        </Grid>
+      ))}
+
+      {/* A row as a skeleton on its own: its start slot is inert with the rest. */}
+      <List.Root aria-label="Rows">
+        <List.Item
+          skeleton
+          data-testid="row-skeleton"
+          start={<Checkbox aria-label="Choose the row" />}
+          label="Alex Morgan"
+        />
+      </List.Root>
 
       {/* Right to left: the bars start at the right. */}
       <Surface skeleton dir="rtl" data-testid="rtl" padding={4}>

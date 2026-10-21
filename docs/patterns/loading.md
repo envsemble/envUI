@@ -157,7 +157,7 @@ Not shown: the inert content inside the root, `env-skeleton-content`, which has 
 ### envUI provides
 
 - One busy region per skeleton, `aria-busy` on its root, whose content is inert: Tab passes over it and assistive technology skips it until it loads.
-- A visually hidden busy status beside a skeleton list or table, which holds no wrapper.
+- A visually hidden status beside a skeleton list, which holds no wrapper, that says what is loading.
 - A skeleton popup, sheet or supporting pane that keeps focus, so Escape still closes it.
 - LoadingState, a busy status with its label; a pending Button that keeps its size and ignores presses; Progress with its value.
 

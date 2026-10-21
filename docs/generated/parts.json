@@ -5503,7 +5503,7 @@
         },
         {
           "class": "env-skeleton-status",
-          "description": "The visually hidden busy status beside a skeleton list."
+          "description": "The visually hidden status beside a skeleton list, which says what is loading."
         }
       ],
       "states": [],

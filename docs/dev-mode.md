@@ -94,7 +94,7 @@ envui.layout
 
 ### Skeleton shift
 
-A skeleton should take the room its content will, so the page doesn't move when the content arrives. `skeletonShift(root, { tolerance })` checks it: it toggles the skeleton's `data-env-skeleton` attribute, which its styles follow, measures every element in both states, puts the attribute back as it was, and returns the differences as problems of the rule `skeleton-shift`.
+A skeleton should take the room its content will, so the page doesn't move when the content arrives. `skeletonShift(root, { tolerance })` checks it: it toggles the skeleton's `data-env-skeleton` attribute, which its styles follow, and the inert wrapper around its content, as the component does, measures every element in both states, puts the attribute back as it was, and returns the differences as problems of the rule `skeleton-shift`.
 
 - `root` is a surface, or a selector for one, whether it is a skeleton now or not. An element that holds skeletons, such as the default root when `root` is left out, has each of them checked, the outermost ones, or itself as one when it holds none.
 - `tolerance` is how far, in px, an element may move or resize before it counts; 1 by default.

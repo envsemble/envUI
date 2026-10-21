@@ -79,14 +79,70 @@ function sizedByItsBox(element: HTMLElement): boolean {
   return after.width === before.width && after.height === before.height;
 }
 
+/** The class of a skeleton's inert content wrapper, which has no box of its own. */
+const wrapperClass = 'env-skeleton-content';
+
+/** Elements whose children must be their own, which a skeleton makes inert as a whole. */
+const unwrappable = new Set(['UL', 'OL', 'DL', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR', 'SELECT']);
+
+/**
+ * The surface's content as a skeleton's component renders it: in its inert wrapper, or out of it.
+ * The wrapper the surface had is put back where it was; one made for a loaded surface wraps all of
+ * its content, as Surface's does.
+ */
+class Wrapper {
+  private element: HTMLElement | null;
+  private content: ChildNode[] = [];
+  private readonly made: boolean;
+
+  constructor(private readonly surface: HTMLElement) {
+    this.element = surface.querySelector<HTMLElement>(`:scope > .${wrapperClass}`);
+    this.made = this.element === null;
+  }
+
+  unwrap() {
+    const element = this.element;
+    if (!element?.isConnected) return;
+    this.content = Array.from(element.childNodes);
+    for (const node of this.content) this.surface.insertBefore(node, element);
+    element.remove();
+  }
+
+  wrap() {
+    if (this.element?.isConnected) return;
+    if (!this.element) {
+      if (unwrappable.has(this.surface.tagName)) return;
+      this.element = document.createElement('div');
+      this.element.className = wrapperClass;
+      this.element.inert = true;
+      this.content = Array.from(this.surface.childNodes);
+    }
+    const first = this.content.find((node) => node.parentNode === this.surface) ?? null;
+    this.surface.insertBefore(this.element, first);
+    this.element.append(...this.content);
+  }
+
+  /** Puts the surface back as it was: wrapped when it had a wrapper, else as it is. */
+  restore(wasSkeleton: boolean) {
+    if (wasSkeleton && !this.made) this.wrap();
+    else this.unwrap();
+  }
+}
+
 /** Measures every element of a surface, loaded and as a skeleton, and returns the differences. */
 function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): LayoutProblem[] {
   const elements = [surface, ...Array.from(surface.querySelectorAll('*'))].filter(
-    (element) => !isDevElement(element),
+    (element) =>
+      !isDevElement(element) &&
+      !(element.parentElement === surface && element.matches(`.${wrapperClass}`)),
   );
   const wasSkeleton = surface.hasAttribute(skeletonAttribute);
+  // As the components do: the attribute, which the styles follow, and the wrapper around the content.
+  const wrapper = new Wrapper(surface);
   const measure = (skeleton: boolean) => {
     surface.toggleAttribute(skeletonAttribute, skeleton);
+    if (skeleton) wrapper.wrap();
+    else wrapper.unwrap();
     return elements.map(rectOf);
   };
   let loaded: Rect[];
@@ -96,6 +152,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
     skeleton = measure(true);
   } finally {
     surface.toggleAttribute(skeletonAttribute, wasSkeleton);
+    wrapper.restore(wasSkeleton);
     // Toggling started the root's pulse anew: put it back in step with the others.
     alignPulses();
   }
@@ -164,7 +221,7 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
 
 /**
  * The elements of a skeleton that move or resize when it loads, measured by toggling its
- * `data-env-skeleton` attribute: the root when it is a skeleton surface or a surface to try as one,
+ * `data-env-skeleton` attribute and its content's inert wrapper, as the component does: the root when it is a skeleton surface or a surface to try as one,
  * else every skeleton inside it.
  */
 export function skeletonShift(

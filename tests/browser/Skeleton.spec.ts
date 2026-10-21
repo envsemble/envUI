@@ -213,7 +213,7 @@ test('the shift check reports what moves or resizes when a skeleton loads', asyn
   await expect(page.getByTestId('projects')).toHaveAttribute('data-env-skeleton', '');
 });
 
-test('a list holds no wrapper: it is inert, and a hidden status beside it is the busy region', async ({
+test('a list holds no wrapper: it is inert, and a hidden status beside it says what is loading', async ({
   page,
 }) => {
   await open(page);
@@ -222,8 +222,55 @@ test('a list holds no wrapper: it is inert, and a hidden status beside it is the
   await expect(list).not.toHaveAttribute('aria-busy');
   const status = page.locator('[data-testid="list-skeleton"] + .env-skeleton-status');
   await expect(status).toHaveRole('status');
-  await expect(status).toHaveAttribute('aria-busy', 'true');
-  await expect(status).toHaveText('Loading');
+  // Its text goes in once it is in the page, so it is announced; it names the list.
+  await expect(status).toHaveText('Loading: Owners loading');
+});
+
+test('a row as a skeleton on its own is inert, its start slot included', async ({ page }) => {
+  await open(page);
+  const row = page.getByTestId('row-skeleton');
+  await expect(row).toHaveAttribute('aria-busy', 'true');
+  const checkbox = row.getByRole('checkbox', { includeHidden: true });
+  expect(await checkbox.evaluate((element) => element.closest('[inert]') !== null)).toBe(true);
+  await expect(checkbox).not.toBeFocused();
+  await checkbox.evaluate((element) => (element as HTMLElement).focus());
+  await expect(checkbox).not.toBeFocused();
+});
+
+test('a skeleton takes the boxes its content takes loaded, through its inert wrapper', async ({
+  page,
+}) => {
+  await open(page);
+  /** Each child's box, from the start of the region, and the region's own size. */
+  const boxes = (id: string) =>
+    page.getByTestId(id).evaluate((root) => {
+      const origin = root.getBoundingClientRect();
+      const children = Array.from(
+        root.querySelectorAll('p, h3, blockquote, .env-list, .env-list-item'),
+      );
+      return [
+        [Math.round(origin.width), Math.round(origin.height)],
+        ...children.map((child) => {
+          const box = child.getBoundingClientRect();
+          return [box.x - origin.x, box.y - origin.y, box.width, box.height].map(Math.round);
+        }),
+      ];
+    });
+  // Raw text elements in a column keep no margins, also inside the wrapper.
+  expect(await boxes('paragraphs-skeleton')).toEqual(await boxes('paragraphs-loaded'));
+  // Lists on a muted surface keep their space between them, also with the status beside them.
+  expect(await boxes('lists-skeleton')).toEqual(await boxes('lists-loaded'));
+  // The shift check toggles the wrapper with the attribute, so it sees the same.
+  const shifts = await page.evaluate(() =>
+    window.envui!.layout!.skeletonShift('[data-testid="paragraphs-loaded"]'),
+  );
+  expect(shifts).toEqual([]);
+  await expect(
+    page.getByTestId('paragraphs-loaded').locator('> .env-skeleton-content'),
+  ).toHaveCount(0);
+  await expect(
+    page.getByTestId('paragraphs-skeleton').locator('> .env-skeleton-content'),
+  ).toHaveCount(1);
 });
 
 test('navigation as a skeleton: icons are shapes, labels bars, no current fill', async ({

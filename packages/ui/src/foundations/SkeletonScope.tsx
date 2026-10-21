@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from './messages/common.js';
 
@@ -45,15 +45,17 @@ export function SkeletonScope({ skeleton, children }: { skeleton: boolean; child
 }
 
 /**
- * The busy region of a skeleton whose root can't hold a wrapper, such as a list: a visually hidden
- * status beside it that says it is loading, which assistive technology hears in place of the
- * inert root.
+ * The status of a skeleton whose root can't hold a wrapper, such as a list, which is inert as a
+ * whole: visually hidden beside it, it says what is loading, the list's label when it has one. The
+ * text goes in once the status is in the page, so assistive technology announces it once.
  */
-export function SkeletonStatus() {
+export function SkeletonStatus({ label }: { label?: string }) {
   const messages = useMessages('common', common);
+  const [shown, setShown] = useState(false);
+  useEffect(() => setShown(true), []);
   return (
-    <span className="env-skeleton-status" role="status" aria-busy="true">
-      {messages.loading}
+    <span className="env-skeleton-status" role="status">
+      {shown ? (label ? `${messages.loading}: ${label}` : messages.loading) : ''}
     </span>
   );
 }

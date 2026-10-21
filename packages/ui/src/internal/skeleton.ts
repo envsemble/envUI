@@ -28,9 +28,9 @@ export function skeletonAttributes(skeleton: boolean | undefined): SkeletonAttri
 }
 
 /**
- * Marks a skeleton's root that can't hold a wrapper, such as a list or a table: inert as a whole,
- * since no element may stand between it and its rows. A visually hidden status beside it, which
- * SkeletonStatus renders, is the busy region assistive technology hears.
+ * Marks a skeleton list's root, which can't hold a wrapper: inert as a whole, since no element may
+ * stand between it and its rows. A visually hidden status beside it, which SkeletonStatus renders,
+ * says what is loading. A table holds its wrapper around the table, in its scroll region.
  */
 export function skeletonListAttributes(skeleton: boolean | undefined) {
   return skeleton ? ({ 'data-env-skeleton': '', inert: true } as const) : {};

@@ -41,7 +41,7 @@
 .env-skeleton-content {
   display: contents;
 }
-/* The busy region beside a skeleton that can't hold a wrapper, such as a list: read, not shown. */
+/* The status beside a skeleton list, which can't hold a wrapper: what is loading, read, not shown. */
 .env-skeleton-status {
   --env-skeleton-status-size: 0.0625rem;
   position: absolute;

@@ -638,7 +638,7 @@
     },
     "Skeleton": {
       "env-skeleton-content": "A skeleton's content: no box of its own, inert, inside the busy root.",
-      "env-skeleton-status": "The visually hidden busy status beside a skeleton list."
+      "env-skeleton-status": "The visually hidden status beside a skeleton list, which says what is loading."
     },
     "Slider": {
       "env-slider": "The slider.",

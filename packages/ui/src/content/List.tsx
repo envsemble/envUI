@@ -87,7 +87,7 @@ function Root({
   return (
     <>
       {list}
-      <SkeletonStatus />
+      <SkeletonStatus label={props['aria-label']} />
     </>
   );
 }
@@ -224,15 +224,15 @@ function Item(props: ItemProps) {
         />
       }
     >
-      {hasStart && (
-        <Row align="center" gap={2} className="env-list-item-start">
-          {reorderable && <ListReorderHandle textValue={text} />}
-          {start}
-        </Row>
-      )}
       {inSkeleton(
         skeleton,
         <>
+          {hasStart && (
+            <Row align="center" gap={2} className="env-list-item-start">
+              {reorderable && <ListReorderHandle textValue={text} />}
+              {start}
+            </Row>
+          )}
           <div className="env-list-item-content">
             {/* A missing label, as over a placeholder item, is an empty line: a bar in a skeleton. */}
             {shownLabel ?? <Text render={<span />} variant="body-sm" />}
