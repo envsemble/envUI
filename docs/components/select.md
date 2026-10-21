@@ -138,7 +138,7 @@ Name the select with a short noun, and say in a disabled option's label why it i
 5. **Chevron** (`env-select-icon`)
 6. **Description** (`env-field-description`, `description`)
 
-```tsx anatomy=SelectListAnatomy open
+```tsx anatomy=SelectListAnatomy open stage=raised
 
 ```
 

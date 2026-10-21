@@ -208,14 +208,17 @@
 .docs-verdict-frame {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  overflow: hidden;
-  border: 0.0625rem solid var(--env-color-border-muted);
-  border-radius: var(--env-radius-surface);
+  /* The stage and the bar are envUI's connected rows (env-connected-rows), which give the outer
+     corners the large radius and the inner corners where they meet the small one; the gap is the
+     one between a list's rows. */
+  gap: 0.125rem;
 }
 
+/* The stage keeps the frame of every stage; its corners are the connected rows'. */
 .docs-verdict-stage {
   min-block-size: 10rem;
   padding: var(--env-space-7) var(--env-space-6);
+  border: 0.0625rem solid var(--env-color-border-muted);
 }
 
 .docs-verdict-bar {

@@ -2,7 +2,7 @@ import { Fragment, useId, useState, type ComponentPropsWithoutRef, type ReactNod
 import { Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
-import type { DocumentationBlock, DocumentationSection } from '../DocumentationTypes';
+import type { DocumentationBlock, DocumentationSection, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
@@ -23,12 +23,15 @@ export function VerdictFigure({
   verdict,
   caption,
   open = false,
+  stage,
   children,
 }: {
   verdict: 'do' | 'dont';
   caption: string;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
+  /** The stage's fill, where the page's would hide the subject. */
+  stage?: StageFill;
 } & (
   | { page: string; name: string; children?: never }
   | { page?: never; name?: never; children: ReactNode }
@@ -43,12 +46,15 @@ export function VerdictFigure({
       data-verdict={verdict}
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
-      <div className="docs-verdict-frame">
+      {/* The stage and the bar are two connected rows: envUI's connected-row parts give the outer
+          corners the large radius and the inner ones the small radius. */}
+      <div className="docs-verdict-frame env-connected-rows">
         <Column
           render={<Theme {...theme} />}
           gap={0}
-          className="docs-verdict-stage"
+          className="docs-verdict-stage env-connected-row"
           data-example={name}
+          data-stage={stage}
           {...keepLinksInPlace}
         >
           {!page ? (
@@ -61,7 +67,7 @@ export function VerdictFigure({
             <ExampleRender page={page} name={name ?? ''} />
           )}
         </Column>
-        <div className="docs-verdict-bar" id={`${id}-verdict`}>
+        <div className="docs-verdict-bar env-connected-row" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>
         </div>
@@ -84,6 +90,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         verdict={block.role}
         caption={block.caption ?? ''}
         open={block.open}
+        stage={block.stage}
       />
     );
   if (block.role === 'anatomy')
@@ -96,6 +103,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         legend={block.legend}
         of={block.of ?? page.title}
         open={block.open}
+        stage={block.stage}
       />
     );
   return (
@@ -106,6 +114,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
       caption={block.caption}
       widths={block.widths}
       open={block.open}
+      stage={block.stage}
     />
   );
 }

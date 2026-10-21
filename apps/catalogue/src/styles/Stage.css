@@ -13,11 +13,13 @@
   container-type: inline-size;
 }
 
-/* The dots, and the frame below, for specimens too, such as a grid of sizes. */
+/* The dots, and the frame below, for specimens too, such as a grid of sizes, and the tiles of
+   When to use. */
 .docs-live-example,
 .docs-verdict-stage,
 .docs-anatomy-stage,
 .docs-foundation-stage,
+.docs-when-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   background-color: var(--env-color-bg-page);
   background-image: radial-gradient(
@@ -29,15 +31,26 @@
   background-position: center;
 }
 
+/* A stage of another fill, where the page's own would hide the subject, such as an open popup of
+   the page's color in the light theme (`stage="raised"`). The dots and the frame stay. */
+:is(
+  .docs-live-example,
+  .docs-verdict-stage,
+  .docs-anatomy-stage,
+  .docs-when-stage
+)[data-stage='raised'] {
+  background-color: var(--env-color-bg-raised);
+}
+
 /* What the stage shows keeps to its width, however wide its content would be. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject) > * {
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas) > * {
   max-inline-size: 100%;
 }
 
 /* A part that takes its width from its container, such as a size container (a primitive with
    `container` too), a strip of tabs, a window or a skeleton, has none of its own and would collapse if centred: an example that is
    or holds one fills the stage, unless it sets its width. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
   > :where(
     .env-card[data-layout='feature'],
     .env-description-list[data-layout='auto'],
@@ -65,7 +78,7 @@
     )
   ),
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
-:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
   > .env-document-tabs-root
   > .env-document-tabs-bar {
   inline-size: 100%;
@@ -99,6 +112,7 @@
 .docs-live-example,
 .docs-anatomy-stage,
 .docs-foundation-stage,
+.docs-when-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   border: 0.0625rem solid var(--env-color-border-muted);
   border-radius: var(--env-radius-surface);
@@ -120,7 +134,8 @@
 }
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
-:is(.docs-live-example, .docs-verdict-stage) > [data-env-layout='row']:not([data-justify]) {
+:is(.docs-live-example, .docs-verdict-stage, .docs-when-canvas)
+  > [data-env-layout='row']:not([data-justify]) {
   justify-content: center;
 }
 

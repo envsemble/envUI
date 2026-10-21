@@ -137,19 +137,19 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ## When to use
 
-```tsx do=FrequentFirst open caption="Frequent actions first, and a destructive one last, apart."
+```tsx do=FrequentFirst open stage=raised caption="Frequent actions first, and a destructive one last, apart."
 
 ```
 
-```tsx dont=DeleteFirst open caption="Delete first, where the keyboard lands."
+```tsx dont=DeleteFirst open stage=raised caption="Delete first, where the keyboard lands."
 
 ```
 
-```tsx do=DisabledWithReason open caption="Keep an unavailable item, disabled, with a description of why."
+```tsx do=DisabledWithReason open stage=raised caption="Keep an unavailable item, disabled, with a description of why."
 
 ```
 
-```tsx dont=HiddenItem open caption="An item that disappears, so people wonder where it went."
+```tsx dont=HiddenItem open stage=raised caption="An item that disappears, so people wonder where it went."
 
 ```
 
@@ -158,11 +158,11 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ### Content
 
-```tsx do=ConsistentIcons open caption="An icon on every item of a set, or on none."
+```tsx do=ConsistentIcons open stage=raised caption="An icon on every item of a set, or on none."
 
 ```
 
-```tsx dont=MixedIcons open caption="An icon on one item only: it stands out for no reason."
+```tsx dont=MixedIcons open stage=raised caption="An icon on one item only: it stands out for no reason."
 
 ```
 
@@ -171,7 +171,7 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ## Anatomy
 
-```tsx anatomy=MenuAnatomy open
+```tsx anatomy=MenuAnatomy open stage=raised
 
 ```
 
