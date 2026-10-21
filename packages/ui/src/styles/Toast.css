@@ -9,14 +9,13 @@
   padding: var(--env-space-2) var(--env-space-3);
   min-width: 0;
   min-height: 3rem;
-  /* Toasts float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
-     fill separates from a surface of its own color. On a light page each tone's edge is its fill
-     a step darker rather than the light popup edge, which would ring it like a halo; in dark it is
-     the popup edge. The edge is the boundary in high contrast and what forced colors paint once
-     the shadow is gone. */
+  /* Toasts float over everything at elevation 2, as menus do, set apart by their strong fill and
+     an edge, with no shadow, so the fill separates from a surface of its own color. On a light page
+     each tone's edge is its fill a step darker rather than the light popup edge, which would ring
+     it like a halo; in dark it is the popup edge. The edge is the boundary in high contrast and
+     what forced colors paint. */
   border: 1px solid var(--env-toast-edge, var(--env-color-border-neutral-strong));
   border-radius: var(--env-radius-sm);
-  box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body-small);
   color: var(--env-color-fg-on-strong);
   flex-wrap: nowrap;

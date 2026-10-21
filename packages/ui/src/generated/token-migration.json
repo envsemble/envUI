@@ -1315,13 +1315,25 @@
     "--control-icon-size": { "kind": "prefixed", "cssVariable": "--env-control-icon-size" },
     "--control-target-min": { "kind": "prefixed", "cssVariable": "--env-control-target-min" },
     "--elevation-0-border": { "kind": "prefixed", "cssVariable": "--env-elevation-0-border" },
-    "--elevation-0-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-0-shadow" },
+    "--elevation-0-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-1-border": { "kind": "prefixed", "cssVariable": "--env-elevation-1-border" },
-    "--elevation-1-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-1-shadow" },
+    "--elevation-1-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-2-border": { "kind": "prefixed", "cssVariable": "--env-elevation-2-border" },
-    "--elevation-2-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-2-shadow" },
+    "--elevation-2-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--elevation-3-border": { "kind": "prefixed", "cssVariable": "--env-elevation-3-border" },
-    "--elevation-3-shadow": { "kind": "prefixed", "cssVariable": "--env-elevation-3-shadow" },
+    "--elevation-3-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
     "--env-app-control-height": {
       "kind": "removed",
       "note": "AppShell is gone: a TopBar with titleBar keeps the small control height."
@@ -1375,6 +1387,22 @@
     "--env-breakpoint-xl": {
       "kind": "removed",
       "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-elevation-0-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-1-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-2-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-3-shadow": {
+      "kind": "removed",
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     },
     "--env-frame-header-block-size": {
       "kind": "removed",

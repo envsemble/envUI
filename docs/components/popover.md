@@ -128,5 +128,5 @@ A popover is as wide as its content up to its width. `side` places it below its 
 ## Changelog
 
 - **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
-- **1.0.0**: Popovers take the level-2 elevation, with its shadow and border.
+- **1.0.0**: Popovers take the level-2 elevation edge, with no shadow.
 - **0.5.0**: Popover, with a title, two widths and a close function for its content.

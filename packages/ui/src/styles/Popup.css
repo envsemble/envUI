@@ -1,6 +1,6 @@
 /* PopupSurface: the floating surfaces of popovers, menus, selects and tooltips share their portal
-   theme, their positioner's layer and, through env-popup, the popup colors, edge, shadow, corners
-   and motion of an elevation. An owner's own class, such as env-popover, adds its layout and
+   theme, their positioner's layer and, through env-popup, the popup colors, edge, corners and
+   motion of an elevation. envUI draws no shadows: the fill and the edge set a popup apart. An owner's own class, such as env-popover, adds its layout and
    the inline sizes of its data-width. */
 /* The theme boundary of a popup's portal. Under a themed document root it has no box: the popup
    measures the root, the window. Where it is the outermost boundary it is the env-window container
@@ -26,14 +26,12 @@
 }
 .env-popup {
   --env-popup-border: var(--env-elevation-2-border);
-  --env-popup-shadow: var(--env-elevation-2-shadow);
   box-sizing: border-box;
   max-block-size: var(--available-height, 80vh);
   overflow-y: auto;
   border: var(--env-control-border-width) solid var(--env-popup-border);
   border-radius: var(--env-radius-surface);
   background: var(--env-color-bg-popup);
-  box-shadow: var(--env-popup-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   overflow-wrap: anywhere;
@@ -44,11 +42,9 @@
 }
 .env-popup[data-elevation='1'] {
   --env-popup-border: var(--env-elevation-1-border);
-  --env-popup-shadow: var(--env-elevation-1-shadow);
 }
 .env-popup[data-elevation='3'] {
   --env-popup-border: var(--env-elevation-3-border);
-  --env-popup-shadow: var(--env-elevation-3-shadow);
 }
 
 /* Motion: a popup fades in and grows from its trigger. Movement only without a reduced-motion
@@ -77,7 +73,7 @@
   }
 }
 
-/* Forced colors: the system paints no shadows, so the popup keeps a visible edge. */
+/* Forced colors: the system replaces the edge's color, so the popup keeps a visible one. */
 @media (forced-colors: active) {
   .env-popup {
     border-color: CanvasText;

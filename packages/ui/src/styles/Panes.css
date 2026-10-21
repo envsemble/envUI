@@ -73,7 +73,6 @@
   border-block-end-width: 0;
   border-start-start-radius: var(--env-radius-surface);
   border-start-end-radius: var(--env-radius-surface);
-  box-shadow: var(--env-elevation-3-shadow);
   background: var(--env-color-bg-raised);
   overscroll-behavior: contain;
 }
@@ -146,7 +145,6 @@
     max-block-size: none;
     border: 0;
     border-radius: 0;
-    box-shadow: none;
     background: none;
   }
   .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-scrim {
@@ -187,7 +185,6 @@
     max-block-size: none;
     border: 0;
     border-radius: 0;
-    box-shadow: none;
     background: none;
   }
   .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
@@ -229,7 +226,6 @@
     max-block-size: none;
     border: 0;
     border-radius: 0;
-    box-shadow: none;
     background: none;
   }
   .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-scrim {

@@ -112,17 +112,18 @@ const distinct = (fill: string, backgrounds: readonly Background[], note?: strin
   on('distinct', fill, backgrounds, note);
 
 /**
- * The hairline edge of an elevated surface at standard contrast: below 3:1 by design. WCAG 1.4.11
- * asks 3:1 of what is needed to identify a component; a popup is identified by its elevation shadow
- * and its content, so its edge is decorative there. Raising the edge to 3:1 would outline every
- * menu, list and popover in mid gray, which changes the identity (Decision 7). The gate still
- * measures the edge, so it can't fade into its surface: at least 1.2:1. It is the boundary in high
- * contrast (4.5:1, measured below) and under forced colors, where the shadow is gone.
+ * The edge of an elevated surface at standard contrast. envUI draws no shadows, so a popup is set
+ * apart by its fill and this edge alone, and a modal by its scrim as well: the edge must be clearly
+ * visible, about 2:1 against the popup's own fill and the page, and at least 1.6:1 against every
+ * surface it floats over. It stays below 3:1 by design: WCAG 1.4.11 asks 3:1 of what is needed to
+ * identify a component, and a popup is identified by its fill and its content; a 3:1 edge would
+ * outline every menu, list and popover in mid gray, which changes the identity (Decision 7). It is
+ * the boundary in high contrast (4.5:1, measured below) and under forced colors.
  */
 const popupEdge = {
-  minimum: { standard: 1.2 },
+  minimum: { standard: 1.6 },
   rationale:
-    'Decorative at standard contrast: the elevation shadow and the content identify the popup, as WCAG 1.4.11 allows, and a 3:1 edge would outline every popup in mid gray. Held to 1.2:1 so it stays visible; the boundary in high contrast and under forced colors.',
+    'No shadows: the edge and the fill set a popup apart, so the edge is clearly visible at 1.6:1 or more against every surface it floats over. Below 3:1 by design, as WCAG 1.4.11 allows: the fill and the content identify the popup, and a 3:1 edge would outline every popup in mid gray. The boundary in high contrast and under forced colors.',
 } as const;
 
 /**

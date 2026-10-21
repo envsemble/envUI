@@ -1083,13 +1083,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.28)',
     },
   },
-  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong danger fill where it floats, on error toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.danger.strong': {
     cssVariable: '--env-color-border-danger-strong',
     type: 'color',
     values: {
       light: '#9f0300',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#6b0100',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1149,13 +1149,13 @@ export const tokens = {
       'dark-high-contrast': '#b5cffb',
     },
   },
-  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong information fill where it floats, on information toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.info.strong': {
     cssVariable: '--env-color-border-info-strong',
     type: 'color',
     values: {
       light: '#174d90',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#003068',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1171,7 +1171,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(0 0 0 / 0.05)',
     },
   },
-  /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify. */
+  /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules and keyboard keys. A floating layer takes its own, clearer edge, elevation.{level}.border. */
   'color.border.muted': {
     cssVariable: '--env-color-border-muted',
     type: 'color',
@@ -1215,13 +1215,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(232 234 238 / 0.55)',
     },
   },
-  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong neutral fill where it floats, on tooltips and neutral toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.neutral.strong': {
     cssVariable: '--env-color-border-neutral-strong',
     type: 'color',
     values: {
       light: '#303234',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#303234',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1248,13 +1248,13 @@ export const tokens = {
       'dark-high-contrast': 'rgb(165 253 193 / 0.28)',
     },
   },
-  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge of elevation 2: color.border.muted, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
+  /** The edge of the strong success fill where it floats, on success toasts. In light the fill is dark on a light page, so its edge is the fill a step darker, about 1.3:1 from it: it reads as the fill’s own edge rather than a light halo, and still sets the fill apart from a surface of its color. High contrast keeps that step, from the darker high-contrast fill, far above 4.5:1 on the page. In dark, where the fill is lighter than the page as every popup is, it is the popup edge, elevation.2.border, and color.border.default at high contrast. A dark edge, unlike the 0.7 alias color.border-strong, which is the light divider color, border.muted. */
   'color.border.success.strong': {
     cssVariable: '--env-color-border-success-strong',
     type: 'color',
     values: {
       light: '#03593f',
-      dark: '#5d6166',
+      dark: '#686b70',
       'light-high-contrast': '#003a28',
       'dark-high-contrast': '#a1a4a9',
     },
@@ -1658,74 +1658,37 @@ export const tokens = {
       'dark-high-contrast': 'transparent',
     },
   },
-  'elevation.0.shadow': {
-    cssVariable: '--env-elevation-0-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 0 0 0 transparent',
-      dark: '0 0 0 0 transparent',
-      'light-high-contrast': '0 0 0 0 transparent',
-      'dark-high-contrast': '0 0 0 0 transparent',
-    },
-  },
+  /** The edge of a level-1 layer, the same as every level's: envUI draws no shadows, so the edge and the fill set a floating layer apart. */
   'elevation.1.border': {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
     values: {
-      light: '#cfd1d5',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  'elevation.1.shadow': {
-    cssVariable: '--env-elevation-1-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 1px 3px 1px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 1px 3px 1px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 1px 3px 1px rgb(0 0 0 / 0.3)',
-    },
-  },
+  /** The edge of menus, Select and Combobox lists, popovers, hover cards, pickers, rich text suggestions, docked panels and drag images: about 2:1 against a popup's own fill and the page, and at least 1.6:1 against every surface it floats over. */
   'elevation.2.border': {
     cssVariable: '--env-elevation-2-border',
     type: 'color',
     values: {
-      light: '#cfd1d5',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
     },
   },
-  'elevation.2.shadow': {
-    cssVariable: '--env-elevation-2-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 2px 6px 2px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 2px 0 rgb(66 68 71 / 0.3), 0 2px 6px 2px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 2px 0 rgb(0 0 0 / 0.6), 0 2px 6px 2px rgb(0 0 0 / 0.3)',
-    },
-  },
+  /** The edge of dialogs, sheets and the command palette, the same as level 2's; a modal's scrim sets it apart as well. */
   'elevation.3.border': {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#cfd1d5',
-      dark: '#5d6166',
+      light: '#afb1b6',
+      dark: '#686b70',
       'light-high-contrast': '#121315',
       'dark-high-contrast': '#a1a4a9',
-    },
-  },
-  'elevation.3.shadow': {
-    cssVariable: '--env-elevation-3-shadow',
-    type: 'shadow',
-    values: {
-      light: '0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)',
-      dark: '0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3)',
-      'light-high-contrast': '0 1px 3px 0 rgb(66 68 71 / 0.3), 0 4px 8px 3px rgb(66 68 71 / 0.15)',
-      'dark-high-contrast': '0 1px 3px 0 rgb(0 0 0 / 0.6), 0 4px 8px 3px rgb(0 0 0 / 0.3)',
     },
   },
   /** The height of a text field's floating variant, whose label rests inside the field and floats into its outline. Other fields take the control height. */
