@@ -90,7 +90,11 @@ export function normalizeRenameMap(map, exportsSnapshot) {
     Object.keys(exportsSnapshot.modules).map((entry) => [entry, {}]),
   );
 
+  // 0.7 names that 1.0 exports again for something else, such as Row, a list row in 0.7 and a
+  // layout primitive in 1.0: an import of one may be 1.0 code, so the rule leaves them alone.
+  const reused = new Set(Array.isArray(map.reused) ? map.reused : []);
   function record(name, rename, entry) {
+    if (reused.has(name)) return;
     const candidates = owners.get(name);
     if (!candidates || rename === undefined) return;
     if (rename.to.length === 1 && rename.to[0] === name) return;

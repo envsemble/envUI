@@ -10,11 +10,11 @@
       "ActionCardProps": { "to": [], "use": "CardProps, with title, meta and actions." },
       "ActionGroup": {
         "to": [],
-        "use": "Lay actions out with Stack: <Stack direction=\"row\" wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Stack gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure rewrites each use."
+        "use": "Lay actions out with Row and Column: <Row wrap align=\"center\" gap={4}> for a row, with justify=\"end\" for the end of a form, and <Column gap={2}> with fullWidth on each labelled Button for a stacked group. v1-structure and v1-stack rewrite each use."
       },
       "ActionGroupProps": {
         "to": [],
-        "use": "StackProps, with direction, wrap, align, justify and gap."
+        "use": "RowProps, with wrap, align, justify and gap, or ColumnProps."
       },
       "AppShell": { "to": ["AppShell.Root"] },
       "AppShellProps": { "to": ["AppShell.RootProps"] },
@@ -136,14 +136,17 @@
       "PanelDockHeader": { "to": ["PanelDock.Header"] },
       "PanelDockHeaderProps": { "to": ["PanelDock.HeaderProps"] },
       "PanelDockProps": { "to": ["PanelDock.RootProps"] },
-      "Row": { "to": ["List.Item"] },
-      "RowProps": { "to": ["List.ItemProps"] },
       "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
       "SelectOption": { "to": ["SelectItem"] },
+      "Stack": {
+        "to": [],
+        "use": "Lay out with Row for direction=\"row\" and Column otherwise, with the same gap, align, justify and render; v1-stack rewrites each element."
+      },
       "StackElement": {
         "to": [],
-        "use": "Stack, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
+        "use": "Row, Column, Grid, Box, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
       },
+      "StackProps": { "to": [], "use": "RowProps or ColumnProps." },
       "Stat": { "to": ["Stat.Root"] },
       "StatGroup": { "to": ["Stat.Group"] },
       "StatGroupProps": { "to": ["Stat.GroupProps"] },

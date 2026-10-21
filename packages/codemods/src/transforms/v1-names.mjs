@@ -715,11 +715,12 @@ export default function transform(file, api, options = {}) {
         continue;
       }
       // An export that a later transform rewrites, such as ActionGroup, which v1-structure turns
-      // into a Stack, or AppShellSkeleton, which v1-app-shell rewrites, is no report while every
+      // into a Stack, AppShellSkeleton, which v1-app-shell rewrites, or Stack, which v1-stack turns
+      // into a Row or a Column (its removed entry names the transform), is no report while every
       // use is an element: that transform rewrites each one, or reports it.
       const references = referencesTo(local);
       if (
-        entry.structure.has(imported) &&
+        (entry.structure.has(imported) || removed.transform) &&
         references.length > 0 &&
         references.every(({ kind }) => kind === 'jsx')
       )
