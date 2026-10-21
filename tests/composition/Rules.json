@@ -243,7 +243,8 @@
         "modules": ["content/internal/ListBehavior.tsx"]
       },
       "Dialog": {
-        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"]
+        "modules": ["feedback/internal/DialogParts.tsx", "feedback/ConfirmDialog.tsx"],
+        "classes": ["env-overlay-theme"]
       },
       "Progress": {
         "styles": ["Meter.css"]
