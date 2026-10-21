@@ -16,7 +16,7 @@ const steps: { step: SpaceStep; rem: string }[] = [
 /** Every step of the spacing scale as the gap between two blocks. */
 export default function GapScale() {
   return (
-    <Example title="Gaps" size="collection">
+    <Example size="collection">
       <SpecimenGrid size="compact">
         {steps.map(({ step, rem }) => (
           <Specimen key={step} title={`gap={${step}}`} caption={rem}>
