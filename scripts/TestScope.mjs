@@ -230,7 +230,7 @@ export function selectScope(paths, root = repositoryRoot) {
     )
       scope.generated.add('icons');
     if (
-      /^packages\/ui\/src\/.*\.tsx?$|^docs\/|^apps\/catalogue\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest)\.mjs$/.test(
+      /^packages\/ui\/src\/.*\.(?:tsx?|css|json)$|^docs\/|^apps\/catalogue\/|^\.changeset\/|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateParts|GenerateManifest)\.mjs$/.test(
         path,
       )
     )
