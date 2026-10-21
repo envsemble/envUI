@@ -37,7 +37,7 @@ export declare const Fragment: any;
   'node_modules/@envsemble/envui/index.d.ts': `export interface ButtonProps { children?: unknown; variant?: 'primary' | 'secondary'; onClick?: () => void }
 export declare function Button(props: ButtonProps): unknown;
 export declare function Dialog(props: { open?: boolean; title?: string; children?: unknown }): unknown;
-export declare function Stack(props: { gap?: number; children?: unknown }): unknown;
+export declare function Column(props: { gap?: number; children?: unknown }): unknown;
 `,
   'node_modules/@base-ui/react/package.json': {
     name: '@base-ui/react',
@@ -73,7 +73,7 @@ export async function makeApp(files = {}) {
       include: ['src'],
     },
     'src/main.tsx':
-      "import { Stack } from '@envsemble/envui';\n\nexport const Root = () => <Stack gap={1} />;\n",
+      "import { Column } from '@envsemble/envui';\n\nexport const Root = () => <Column gap={1} />;\n",
     ...stubs,
     ...files,
   });

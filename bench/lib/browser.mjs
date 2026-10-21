@@ -92,12 +92,12 @@ function freePort() {
  * Starts the result's dev server in a child process with the agent's environment; its process is
  * in `run.server` from the start, so it is stopped however the step ends. Resolves with its URL.
  */
-async function startServer({ appDir, tmpDir, env, run }) {
+async function startServer({ appDir, tmpDir, env, run, fault }) {
   const port = await freePort();
   run.alive();
   const child = spawn(
     process.execPath,
-    [devServerScript, appDir, String(port), join(tmpDir, 'vite-cache')],
+    [devServerScript, appDir, String(port), join(tmpDir, 'vite-cache'), ...(fault ? [fault] : [])],
     {
       cwd: appDir,
       env,
@@ -107,30 +107,49 @@ async function startServer({ appDir, tmpDir, env, run }) {
     },
   );
   run.server = child;
-  return new Promise((resolve, reject) => {
-    let out = '';
-    let err = '';
+  // What the result's dev server said: a failure in it is the result's own, which doesn't render.
+  // Only a port that can't be bound, a process that can't be started, or a wait with nothing said
+  // are the harness's.
+  let out = '';
+  let err = '';
+  const said = () => `${err}${out.replace(/^(READY|ERROR) .*$/gm, '')}`.trim().slice(-300);
+  const started = new Promise((resolve, reject) => {
     child.stdout.on('data', (chunk) => {
       out += chunk;
       const ready = /^READY (\S+)/m.exec(out);
       if (ready) resolve(ready[1]);
-      const failed = /^ERROR (.*)$/m.exec(out);
-      if (failed) reject(new HarnessError(`the dev server did not start: ${failed[1]}`));
+      const failed = /^ERROR (port|result) (.*)$/m.exec(out);
+      if (failed?.[1] === 'port')
+        reject(new HarnessError(`the dev server could not bind its port: ${failed[2]}`));
+      else if (failed) reject(new Error(`the result's dev server failed: ${failed[2]}`));
     });
     child.stderr.on('data', (chunk) => {
       err = `${err}${chunk}`.slice(-2000);
     });
     child.on('error', (error) =>
-      reject(new HarnessError(`the dev server did not start: ${error.message}`)),
+      reject(new HarnessError(`the dev server could not be started: ${error.message}`)),
     );
     child.on('exit', (code) =>
       reject(
-        new HarnessError(
-          `the dev server exited with ${code}${err.trim() ? `: ${err.trim().slice(-300)}` : ''}`,
+        new Error(
+          `the result's dev server exited with ${code}${said() ? `: ${said()}` : ' before it listened'}`,
         ),
       ),
     );
   });
+  try {
+    return await withTimeout(started, timeouts.server, 'timeout');
+  } catch (error) {
+    if (error?.message !== 'timeout') throw error;
+    if (said())
+      throw new Error(`the result's dev server did not start in time, and said: ${said()}`, {
+        cause: error,
+      });
+    throw new HarnessError(
+      `the dev server did not start in ${timeouts.server / 1000} s and said nothing`,
+      { cause: error },
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -145,7 +164,8 @@ function pageState() {
     const box = element.getBoundingClientRect();
     return box.width > 0 && box.height > 0;
   });
-  return { mode, overlay: Boolean(overlay), rendered };
+  const overlayText = overlay ? (overlay.shadowRoot?.textContent ?? overlay.textContent ?? '') : '';
+  return { mode, overlay: Boolean(overlay), overlayText: overlayText.slice(0, 2000), rendered };
 }
 
 /** Resolves once the DOM has been quiet for `quiet` ms, or after `limit` ms. */
@@ -432,10 +452,13 @@ export function distinctProblems(widths) {
  * harnessError, widths, problems, checks, pageErrors, durationMs }`: whether the app rendered at
  * all, dev mode's readings, the page's overflow and the hand-rolled containers' problems per
  * width, the distinct problems, and each rendered check's outcome. `error` says why a result
- * didn't render (a build error, or nothing on the page); `harnessError` says why the step itself
- * failed (the dev server, dev mode, or the time limit), and then nothing of it is scored.
+ * didn't render: its dev server failed in its config or plugins, exited, or said something and
+ * never listened; the page showed a build error; or nothing rendered. `harnessError` says why the
+ * step itself failed: a port that couldn't be bound, the runner's dev-mode plugin, a dev server
+ * that said nothing in time, or the time limit; then nothing of it is scored. `fault` simulates
+ * one of those (see dev-server.mjs), for trying the step.
  */
-export async function checkRendered({ browser, appDir, tmpDir, task, env }) {
+export async function checkRendered({ browser, appDir, tmpDir, task, env, fault }) {
   const started = Date.now();
   mkdirSync(tmpDir, { recursive: true });
   const outcome = {
@@ -475,6 +498,7 @@ export async function checkRendered({ browser, appDir, tmpDir, task, env }) {
         appDir,
         tmpDir,
         task,
+        fault,
         env: env ?? agentEnv({ tmpDir, homeDir: join(tmpDir, 'home') }),
         run,
         outcome,
@@ -504,15 +528,10 @@ export async function checkRendered({ browser, appDir, tmpDir, task, env }) {
   return outcome;
 }
 
-async function measureRun({ browser, appDir, tmpDir, task, env, run, outcome }) {
+async function measureRun({ browser, appDir, tmpDir, task, env, fault, run, outcome }) {
   const checks = renderedChecks(task);
   const pageErrors = outcome.pageErrors;
-  const url = await withTimeout(
-    startServer({ appDir, tmpDir, env, run }),
-    timeouts.server,
-    'the dev server did not start in time',
-    HarnessError,
-  );
+  const url = await startServer({ appDir, tmpDir, env, run, fault });
   run.alive();
   run.context = await browser.context();
   if (run.aborted) await run.release();
@@ -549,7 +568,13 @@ async function measureRun({ browser, appDir, tmpDir, task, env, run, outcome }) 
     if (Date.now() > deadline) break;
     await page.waitForTimeout(50);
   }
-  if (state.overlay) throw new Error('the dev server showed a build error');
+  if (state.overlay) {
+    const message = state.overlayText.replace(/\s+/g, ' ').trim();
+    // A build error in what the runner adds, its virtual:bench-dev-mode module, is the harness's.
+    if (message.includes('bench-dev-mode'))
+      throw new HarnessError(`the runner's dev-mode plugin failed: ${message.slice(0, 200)}`);
+    throw new Error(`the dev server showed a build error: ${message.slice(0, 300)}`);
+  }
   if (!state.rendered)
     throw new Error(
       `the app rendered nothing${pageErrors.length ? `: ${pageErrors[0].slice(0, 200)}` : ''}`,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Modal, Stack, StatusPill, Text, Toolbar } from '../components';
+import { Button, Modal, Column, StatusPill, Text, Toolbar } from '../components';
 import { projects } from '../data/projects';
 
 const shareLink = 'https://example.com/workspace/projects';
@@ -18,7 +18,7 @@ export function ProjectsPage() {
   };
 
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <Text render={<h1 />} variant="headline">
         Projects
       </Text>
@@ -33,10 +33,10 @@ export function ProjectsPage() {
       <ul className="project-list">
         {projects.map((project) => (
           <li key={project.id} className="project-row">
-            <Stack gap={1}>
+            <Column gap={1}>
               <span className="project-name">{project.name}</span>
               <span className="project-meta">{project.owner}</span>
-            </Stack>
+            </Column>
             <StatusPill status={project.status} />
           </li>
         ))}
@@ -59,6 +59,6 @@ export function ProjectsPage() {
           <input className="text-input" value={shareLink} readOnly />
         </label>
       </Modal>
-    </Stack>
+    </Column>
   );
 }

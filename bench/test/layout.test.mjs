@@ -80,17 +80,21 @@ export const C = () => <div style={{ display: 'block' }} />;
 
   it('costs more each than a raw style value, in a part of its own', () => {
     app.write({
-      'src/main.tsx': `import { Stack } from '@envsemble/envui';
+      'src/main.tsx': `import { Column } from '@envsemble/envui';
 
 export const Root = () => (
-  <Stack gap={1}>
+  <Column gap={1}>
     <div style={{ display: 'flex', flexDirection: 'column' }} />
     <div style={{ display: 'grid' }} />
-  </Stack>
+  </Column>
 );
 `,
     });
-    const score = scoreRun({ appDir: app.appDir, baseCommit: app.baseCommit, task: task('Stack') });
+    const score = scoreRun({
+      appDir: app.appDir,
+      baseCommit: app.baseCommit,
+      task: task('Column'),
+    });
     assert.equal(score.styles.handRolledLayout.count, 2);
     assert.equal(score.styles.total, 0);
     assert.equal(score.parts.handRolled, scoring.handRolled.max - 2 * scoring.handRolled.cost);
