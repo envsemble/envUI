@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Button, DescriptionList, Stack, Text } from '@envsemble/envui';
+import { Alert, Button, DescriptionList, Column, Text } from '@envsemble/envui';
 
 export default function SectionAlert() {
   const [requested, setRequested] = useState(false);
@@ -10,7 +10,7 @@ export default function SectionAlert() {
     if (requested) alert.current?.focus();
   }, [requested]);
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <Text render={<h3 />} variant="title">
         Quarterly report
       </Text>
@@ -40,6 +40,6 @@ export default function SectionAlert() {
         <DescriptionList.Item label="Status">In progress</DescriptionList.Item>
         <DescriptionList.Item label="Due">31 March 2026</DescriptionList.Item>
       </DescriptionList.Root>
-    </Stack>
+    </Column>
   );
 }

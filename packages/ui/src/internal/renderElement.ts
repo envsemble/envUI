@@ -21,7 +21,7 @@ export function renderElement(tag: string, render: ReactElement | undefined, pro
   return cloneElement(render as ReactElement<Props>, {
     ...props,
     ...own,
-    className: classNames(props.className, own.className),
+    className: classNames(props.className, own.className) || undefined,
     style: props.style || own.style ? { ...props.style, ...own.style } : undefined,
     ...(props.ref !== undefined && { ref: props.ref }),
   });

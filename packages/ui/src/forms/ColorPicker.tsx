@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type Ref } from 'react';
-import { Stack } from '../foundations/Layout.js';
+import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { colorPicker as colorPickerMessages } from '../foundations/messages/colorPicker.js';
 import { classNames } from '../internal/classNames.js';
@@ -133,7 +133,7 @@ export function ColorPicker({
   const inactive = disabled || readOnly;
 
   return (
-    <Stack
+    <Column
       gap={3}
       role="group"
       aria-labelledby={`${id}-label`}
@@ -206,6 +206,6 @@ export function ColorPicker({
       <span className="env-color-picker-status" role="status">
         {status}
       </span>
-    </Stack>
+    </Column>
   );
 }

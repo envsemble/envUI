@@ -10,7 +10,8 @@ import {
   RadioGroup,
   SearchField,
   Select,
-  Stack,
+  Column,
+  Row,
   Text,
   useContainerSize,
   windowClasses,
@@ -55,8 +56,8 @@ export default function NarrowFilters() {
   };
 
   return (
-    <Stack ref={filters} gap={4}>
-      <Stack direction="row" wrap align="center" gap={3}>
+    <Column ref={filters} gap={4}>
+      <Row wrap align="center" gap={3}>
         <SearchField
           ref={search}
           label="Search projects"
@@ -103,7 +104,7 @@ export default function NarrowFilters() {
               </>
             }
           >
-            <Stack gap={5}>
+            <Column gap={5}>
               {/* The page behind the modal drawer is hidden from assistive technology, so the
                   drawer has its own status, there as it opens, that announces the new count. */}
               <Text role="status" variant="body-sm" emphasis="muted">
@@ -126,10 +127,10 @@ export default function NarrowFilters() {
                 value={owner}
                 onValueChange={setOwner}
               />
-            </Stack>
+            </Column>
           </Drawer>
         )}
-      </Stack>
+      </Row>
       <Text role="status" variant="body-sm" emphasis="muted">
         {projectCount(shown.length)}
       </Text>
@@ -156,7 +157,7 @@ export default function NarrowFilters() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

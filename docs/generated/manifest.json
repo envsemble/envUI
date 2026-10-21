@@ -37,39 +37,113 @@
   ],
   "components": [
     {
-      "name": "Stack",
-      "page": "stack",
-      "doc": "docs/components/stack.md",
+      "name": "Box",
+      "page": "box",
+      "doc": "docs/components/box.md",
       "category": "Layout & surfaces",
       "status": "beta",
-      "since": "0.1.0",
-      "summary": "Stack lays out content in a column, or a row, with even gaps, such as a form and its actions.",
+      "since": "1.0.0",
+      "summary": "Box is a plain block for an inset, a size container or a named region, with no layout of its own.",
       "aliases": [
-        "Layout",
-        "layout",
+        "div",
+        "block",
+        "wrapper",
+        "inset",
+        "padding",
+        "container",
+        "size container",
+        "container query",
+        "region"
+      ],
+      "useWhen": [
+        "Content needs an inset and nothing else, such as a region of a page.",
+        "The application's style sheet queries a region's width, through a named size container.",
+        "A region should show up by name in dev mode and the docs."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Children one under another with gaps.",
+          "use": "Column"
+        },
+        {
+          "text": "Children side by side with gaps.",
+          "use": "Row"
+        },
+        {
+          "text": "Children in columns.",
+          "use": "Grid"
+        },
+        {
+          "text": "A background, a border or corners.",
+          "use": "Surface"
+        }
+      ],
+      "related": [
+        "column",
+        "row",
+        "grid",
+        "surface",
+        "responsive"
+      ],
+      "exports": [
+        "Box"
+      ],
+      "examples": [
+        {
+          "name": "InsetRegion",
+          "title": "Inset region",
+          "description": "Box is a plain block: an inset (`padding`), a size container (`container`) or a named node (`name`), with no gap, no flex and no grid. It is one of envUI's layout primitives, with Row, Column and Grid: it sizes to its content, never paints and has no role or keyboard behaviour of its own. Where its children need space between them, use a Column or a Row instead, or inside it.",
+          "file": "docs/examples/box/InsetRegion.tsx"
+        },
+        {
+          "name": "SizeContainer",
+          "title": "A size container",
+          "description": "`container` names the box for the application's own container queries.",
+          "file": "docs/examples/box/SizeContainer.tsx"
+        }
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
+      }
+    },
+    {
+      "name": "Row",
+      "page": "row",
+      "doc": "docs/components/row.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.",
+      "aliases": [
+        "Stack",
+        "hstack",
+        "horizontal stack",
         "flex",
         "flexbox",
-        "vstack",
-        "hstack",
-        "vertical stack",
-        "column",
-        "spacing",
-        "gap",
+        "inline",
         "ActionGroup",
         "action group",
-        "row",
         "button row",
         "button set",
         "form actions",
-        "toolbar"
+        "toolbar",
+        "wrap"
       ],
       "useWhen": [
-        "Content runs top to bottom with even space between, such as a heading, text and a form.",
-        "Sections and their contents need different spacing, by nesting stacks with different gaps.",
         "A few actions belong together, such as a form's Cancel and Save, in a row that wraps.",
-        "Actions in a narrow pane need the whole width for their labels, stacked with fullWidth buttons."
+        "A heading and its actions share a line, with the actions at the end.",
+        "Small items sit side by side, such as a label and a badge."
       ],
       "avoidWhen": [
+        {
+          "text": "Content top to bottom.",
+          "use": "Column"
+        },
+        {
+          "text": "Content in columns of equal or set widths, such as cards.",
+          "use": "Grid"
+        },
         {
           "text": "Buttons joined into one connected control, such as a main action beside a menu of alternatives.",
           "use": "ButtonGroup"
@@ -77,6 +151,92 @@
         {
           "text": "Controls for one subject that the arrow keys move between, such as an editor's formatting.",
           "use": "Toolbar"
+        }
+      ],
+      "related": [
+        "column",
+        "grid",
+        "box",
+        "toolbar",
+        "button"
+      ],
+      "exports": [
+        "Row"
+      ],
+      "examples": [
+        {
+          "name": "FormActions",
+          "title": "Form actions",
+          "description": "A row of actions, such as a form's Cancel and Save, is a Row with `wrap`, `align=\"center\"` and `justify=\"end\"`.",
+          "file": "docs/examples/row/FormActions.tsx"
+        },
+        {
+          "name": "SectionHeading",
+          "title": "A heading and its actions",
+          "description": "`justify=\"between\"` puts the heading at the start and the action at the end; with `wrap`, the action moves under the heading when there isn't room.",
+          "file": "docs/examples/row/SectionHeading.tsx"
+        }
+      ],
+      "usedIn": {
+        "patterns": [
+          "forms",
+          "settings",
+          "destructive-actions",
+          "feedback",
+          "loading",
+          "empty-states",
+          "navigation",
+          "filtering",
+          "data-tables",
+          "progressive-disclosure"
+        ],
+        "templates": [
+          "index-page",
+          "details-page",
+          "settings-page",
+          "dashboard-page",
+          "error-pages"
+        ]
+      }
+    },
+    {
+      "name": "Column",
+      "page": "column",
+      "doc": "docs/components/column.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Column lays out content one under another with even gaps, such as a heading, text and a form.",
+      "aliases": [
+        "Stack",
+        "Layout",
+        "layout",
+        "flex",
+        "flexbox",
+        "vstack",
+        "vertical stack",
+        "stack",
+        "spacing",
+        "gap",
+        "stacked actions"
+      ],
+      "useWhen": [
+        "Content runs top to bottom with even space between, such as a heading, text and a form.",
+        "Sections and their contents need different spacing, by nesting columns with different gaps.",
+        "Actions in a narrow pane need the whole width for their labels, stacked with fullWidth buttons."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Children side by side, such as a form's actions.",
+          "use": "Row"
+        },
+        {
+          "text": "Content in columns, such as cards or a main column beside its details.",
+          "use": "Grid"
+        },
+        {
+          "text": "An inset or a size container around content, without a column of its own.",
+          "use": "Box"
         },
         {
           "text": "A background, an inset and corners around content.",
@@ -85,58 +245,42 @@
         {
           "text": "A block with a heading, metadata and actions.",
           "use": "Card"
-        },
-        {
-          "text": "Rows of items with labels, descriptions and actions.",
-          "use": "List"
-        },
-        {
-          "text": "Content in columns or a grid; lay it out in the application's CSS with the spacing tokens."
-        },
-        {
-          "text": "The frame of an application, with a header and a sidebar.",
-          "use": "AppShell"
         }
       ],
       "related": [
+        "row",
+        "grid",
+        "box",
         "surface",
-        "card",
-        "button",
         "spacing"
       ],
       "exports": [
-        "Stack"
+        "Column"
       ],
       "examples": [
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "A row of actions, such as a form's Cancel and Save, is a Stack with `direction=\"row\"`, `wrap` and `justify`; actions stacked in a narrow pane are a column of buttons with `fullWidth`. Stack adds no role or keyboard behaviour; it is layout only.",
-          "file": "docs/examples/stack/ProjectDetails.tsx"
+          "description": "Column lays out its children one under another, with the same space between each, a step of the spacing scale, so the parent owns the spacing and the children need no margins. Nest columns to give sections more space than the content inside them. It is one of envUI's layout primitives, with Row, Grid and Box: a flex column that sizes to its content, never paints and has no role or keyboard behaviour of its own.",
+          "file": "docs/examples/column/ProjectDetails.tsx"
         },
         {
           "name": "NestedSpacing",
           "title": "Spacing sections and their content",
           "description": "A larger gap between sections and a smaller one inside them group what belongs together.",
-          "file": "docs/examples/stack/NestedSpacing.tsx"
+          "file": "docs/examples/column/NestedSpacing.tsx"
         },
         {
           "name": "CenteredContent",
           "title": "Centred content",
           "description": "`align=\"center\"` keeps each child at its own width in the middle of the column.",
-          "file": "docs/examples/stack/CenteredContent.tsx"
-        },
-        {
-          "name": "FormActions",
-          "title": "Form actions",
-          "description": "`render` lays out the form as the stack. A row with `render={<footer />}` and `justify=\"end\"` puts the actions at the end of the form.",
-          "file": "docs/examples/stack/FormActions.tsx"
+          "file": "docs/examples/column/CenteredContent.tsx"
         },
         {
           "name": "StackedActions",
           "title": "Stacked actions",
           "description": "In a narrow pane, a column of buttons with `fullWidth` gives each label the whole width.",
-          "file": "docs/examples/stack/StackedActions.tsx"
+          "file": "docs/examples/column/StackedActions.tsx"
         }
       ],
       "usedIn": {
@@ -160,6 +304,76 @@
           "sign-in-page",
           "error-pages"
         ]
+      }
+    },
+    {
+      "name": "Grid",
+      "page": "grid",
+      "doc": "docs/components/grid.md",
+      "category": "Layout & surfaces",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.",
+      "aliases": [
+        "columns",
+        "grid layout",
+        "CSS grid",
+        "card grid",
+        "tiles",
+        "two columns",
+        "auto-fill",
+        "responsive grid"
+      ],
+      "useWhen": [
+        "Items of one kind fill the width in as many columns as fit, such as cards or stats.",
+        "A main column sits beside a narrower one, such as a summary and its details.",
+        "Content lines up in a set number of equal columns."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Content top to bottom, one item per line.",
+          "use": "Column"
+        },
+        {
+          "text": "A few items side by side at their own widths, such as actions.",
+          "use": "Row"
+        },
+        {
+          "text": "Rows of data that people sort, select or compare.",
+          "use": "Table"
+        },
+        {
+          "text": "Two panes people resize, or a list beside its detail.",
+          "use": "SplitPane"
+        }
+      ],
+      "related": [
+        "column",
+        "row",
+        "box",
+        "card",
+        "responsive"
+      ],
+      "exports": [
+        "Grid"
+      ],
+      "examples": [
+        {
+          "name": "ProjectCards",
+          "title": "Project cards",
+          "description": "Grid lays out its children in columns, a step of the spacing scale apart: a number of equal columns, a column template, or as many columns as fit at a minimum width, which needs no width of the window to adapt. It is one of envUI's layout primitives, with Row, Column and Box: a CSS grid that sizes to its content, never paints and has no role or keyboard behaviour of its own.",
+          "file": "docs/examples/grid/ProjectCards.tsx"
+        },
+        {
+          "name": "MainAndDetails",
+          "title": "A main column and its details",
+          "description": "A template gives the main column twice the width of its details.",
+          "file": "docs/examples/grid/MainAndDetails.tsx"
+        }
+      ],
+      "usedIn": {
+        "patterns": [],
+        "templates": []
       }
     },
     {
@@ -191,7 +405,7 @@
         },
         {
           "text": "Content in a column or a row with even gaps inside a page.",
-          "use": "Stack"
+          "use": "Column"
         },
         {
           "text": "A background, an inset and corners around a part of a page.",
@@ -204,7 +418,7 @@
       ],
       "related": [
         "page-header",
-        "stack",
+        "column",
         "surface",
         "app-shell",
         "responsive"
@@ -216,7 +430,7 @@
         {
           "name": "WithHeader",
           "title": "With header",
-          "description": "Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a PageHeader, at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with Stack and the components.",
+          "description": "Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a PageHeader, at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with the layout primitives, such as Row, Column and Grid, and the components.",
           "file": "docs/examples/page/WithHeader.tsx"
         },
         {
@@ -273,7 +487,7 @@
         },
         {
           "text": "The heading of a section inside a page, with its own actions.",
-          "use": "Stack"
+          "use": "Row"
         },
         {
           "text": "A heading with metadata and actions around a block of content.",
@@ -288,7 +502,7 @@
         "page",
         "breadcrumbs",
         "toolbar",
-        "stack",
+        "row",
         "button"
       ],
       "exports": [
@@ -373,7 +587,7 @@
         },
         {
           "text": "Content that simply follows, without a handle.",
-          "use": "Stack"
+          "use": "Column"
         },
         {
           "text": "Columns of a table that people resize.",
@@ -459,7 +673,7 @@
         },
         {
           "text": "Space between children without a background.",
-          "use": "Stack"
+          "use": "Column"
         },
         {
           "text": "Content over the page that people dismiss, such as a form in a window.",
@@ -471,7 +685,7 @@
         }
       ],
       "related": [
-        "stack",
+        "column",
         "card",
         "list",
         "spacing",
@@ -484,7 +698,7 @@
         {
           "name": "DetailPane",
           "title": "Detail pane",
-          "description": "A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a Stack, through `render` on the same element or inside it. Card and other containers build on Surface.",
+          "description": "A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a Column or a Row, through `render` on the same element or inside it. Card and other containers build on Surface.",
           "file": "docs/examples/surface/DetailPane.tsx"
         },
         {
@@ -693,7 +907,7 @@
       ],
       "related": [
         "surface",
-        "stack",
+        "column",
         "list",
         "button",
         "typography"
@@ -1052,7 +1266,7 @@
       "avoidWhen": [
         {
           "text": "A form's or a dialog's actions, which keep a tab stop each.",
-          "use": "Stack"
+          "use": "Row"
         },
         {
           "text": "Buttons joined into one connected control, such as a main action and its menu.",
@@ -1108,7 +1322,7 @@
         {
           "name": "PageToolbar",
           "title": "Page toolbar",
-          "description": "A page's search and filter under its title, with the primary action at the end of the row: a Stack row in PageHeader's `toolbar`, not a Toolbar.",
+          "description": "A page's search and filter under its title, with the primary action at the end of the row: a Row in PageHeader's `toolbar`, not a Toolbar.",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
@@ -1362,7 +1576,7 @@
         "date-picker",
         "composer",
         "markdown",
-        "stack",
+        "column",
         "accessibility"
       ],
       "exports": [
@@ -5633,7 +5847,7 @@
         "toast",
         "command-palette",
         "text-field",
-        "stack",
+        "row",
         "accessibility"
       ],
       "exports": [
@@ -6623,6 +6837,10 @@
         "index",
         "setup",
         "scale",
+        "column",
+        "row",
+        "grid",
+        "box",
         "sidebar",
         "colors"
       ]
@@ -6673,7 +6891,7 @@
       ],
       "related": [
         "colors",
-        "stack",
+        "column",
         "card"
       ]
     },
@@ -6686,7 +6904,9 @@
       "related": [
         "scale",
         "responsive",
-        "stack",
+        "column",
+        "row",
+        "grid",
         "surface",
         "card",
         "list",
@@ -6756,7 +6976,9 @@
       "doc": "docs/foundations/composition.md",
       "related": [
         "surface",
-        "stack",
+        "column",
+        "row",
+        "grid",
         "card",
         "spacing",
         "colors"
@@ -6881,7 +7103,8 @@
         "Button",
         "Alert",
         "Link",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -6961,7 +7184,8 @@
         "PageHeader",
         "NavList",
         "Surface",
-        "Stack",
+        "Column",
+        "Row",
         "Text",
         "List",
         "DescriptionList",
@@ -7055,7 +7279,8 @@
         "TextField",
         "Toast",
         "useToast",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7149,7 +7374,8 @@
         "Link",
         "Select",
         "TextField",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7239,7 +7465,8 @@
         "List",
         "SegmentedControl",
         "TextField",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7327,7 +7554,8 @@
         "Badge",
         "Button",
         "Surface",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7428,7 +7656,8 @@
         "DescriptionList",
         "Badge",
         "Button",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7512,7 +7741,8 @@
       ],
       "composes": [
         "PageHeader",
-        "Stack",
+        "Column",
+        "Row",
         "SearchField",
         "Select",
         "Combobox",
@@ -7625,7 +7855,8 @@
         "LoadingState",
         "Skeleton",
         "Surface",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7724,7 +7955,8 @@
         "Select",
         "Checkbox",
         "TextField",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -7873,7 +8105,8 @@
       "composes": [
         "Page",
         "PageHeader",
-        "Stack",
+        "Column",
+        "Row",
         "SearchField",
         "Select",
         "Button",
@@ -7957,7 +8190,8 @@
         "Menu",
         "IconButton",
         "Tooltip",
-        "Stack",
+        "Column",
+        "Row",
         "Surface",
         "Text",
         "Tabs",
@@ -8030,7 +8264,8 @@
         "PageHeader",
         "Sidebar",
         "NavList",
-        "Stack",
+        "Column",
+        "Row",
         "Surface",
         "Text",
         "TextField",
@@ -8107,7 +8342,8 @@
         "PageHeader",
         "Select",
         "Button",
-        "Stack",
+        "Column",
+        "Row",
         "Stat",
         "Surface",
         "Text",
@@ -8179,7 +8415,7 @@
       "composes": [
         "AppShell",
         "Page",
-        "Stack",
+        "Column",
         "Surface",
         "Text",
         "TextField",
@@ -8255,7 +8491,8 @@
         "Button",
         "Link",
         "Code",
-        "Stack",
+        "Column",
+        "Row",
         "Text"
       ],
       "related": [
@@ -9085,6 +9322,49 @@
       "page": "badge",
       "doc": "docs/components/badge.md"
     },
+    "Box": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A plain block for what needs no row or column of its own: an inset (`padding`), a size container (`container`) or a named node. It sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "box",
+      "doc": "docs/components/box.md"
+    },
     "Breadcrumbs": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -9899,6 +10179,69 @@
       "status": "stable",
       "page": "color-picker",
       "doc": "docs/components/color-picker.md"
+    },
+    "Column": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Lays its direct children out one under another, `gap` apart, such as a form's fields. A flex column that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between the direct children, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How the children line up across the line: stretch, the default, makes each as wide as a column or as tall as a row, except controls such as buttons, which keep their own size; start, center and end keep every child at its own size."
+        },
+        {
+          "name": "justify",
+          "type": "'start' | 'center' | 'end' | 'between'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the children sit along the line when there is room to spare: at the start, in the center, at the end, such as a form's actions, or between, spread out to the edges."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "column",
+      "doc": "docs/components/column.md"
     },
     "Combobox": {
       "kind": "component",
@@ -11979,6 +12322,68 @@
       "page": "field",
       "doc": "docs/components/field.md"
     },
+    "Grid": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Lays its direct children out in columns, `gap` apart: a number of equal columns, a template, or as many as fit at a minimum width. A CSS grid that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "columns",
+          "type": "GridColumns",
+          "required": false,
+          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many columns as fit, each at least that wide. One column by default."
+        },
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between rows and columns, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How each child lines up in its cell's height: stretch, the default, fills the row; start, center and end keep it at its own height."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "grid",
+      "doc": "docs/components/grid.md"
+    },
     "HoverCard": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -13899,7 +14304,7 @@
           "name": "toolbar",
           "type": "ReactNode",
           "required": false,
-          "description": "A second row under the title: search, filters and view switches, laid out with `<Stack direction=\"row\" wrap justify=\"between\">`; see Toolbar's layouts."
+          "description": "A second row under the title: search, filters and view switches, laid out with `<Row wrap justify=\"between\">`; see Toolbar's layouts."
         },
         {
           "name": "sticky",
@@ -14866,6 +15271,75 @@
       "status": "experimental",
       "page": "rich-text",
       "doc": "docs/components/rich-text.md"
+    },
+    "Row": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Lays its direct children out side by side, `gap` apart, with `wrap` to run onto more lines, such as a form's actions. A flex row that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "description": "Lets the row run onto more lines when its children don't fit, as a row of actions does."
+        },
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between the direct children, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How the children line up across the line: stretch, the default, makes each as wide as a column or as tall as a row, except controls such as buttons, which keep their own size; start, center and end keep every child at its own size."
+        },
+        {
+          "name": "justify",
+          "type": "'start' | 'center' | 'end' | 'between'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the children sit along the line when there is room to spare: at the start, in the center, at the end, such as a form's actions, or between, spread out to the edges."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "row",
+      "doc": "docs/components/row.md"
     },
     "SearchField": {
       "kind": "component",
@@ -15913,66 +16387,6 @@
       "page": "split-pane",
       "doc": "docs/components/split-pane.md"
     },
-    "Stack": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A layout of its direct children in a column, or a row, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
-      "props": [
-        {
-          "name": "direction",
-          "type": "'column' | 'row'",
-          "required": false,
-          "default": "'column'",
-          "description": "The direction the children run in: column, one under another, or row, side by side, such as a form's actions."
-        },
-        {
-          "name": "wrap",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Let a row wrap onto more lines when its children don't fit, as a row of actions does."
-        },
-        {
-          "name": "gap",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
-          "required": false,
-          "default": "4",
-          "description": "The space between the direct children, as a step of the spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is 1.5 rem, 6 is 2 rem, 7 is 2.5 rem, 8 is 3 rem and 9 is 4 rem; 0 removes it."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center' | 'end' | 'stretch'",
-          "required": false,
-          "default": "'stretch'",
-          "description": "How the children line up across the stack: stretch makes each as wide as a column (as tall as a row), except controls such as buttons, which keep their own size; start, center and end keep every child at its own size, at that side or in the middle."
-        },
-        {
-          "name": "justify",
-          "type": "'start' | 'center' | 'end' | 'between'",
-          "required": false,
-          "default": "'start'",
-          "description": "Where the children sit along the stack when there is room to spare: at the start, in the center, at the end, such as a form's actions at its end, or between, spread out with the first and last at the edges."
-        },
-        {
-          "name": "render",
-          "type": "ReactElement",
-          "required": false,
-          "description": "The element to render, for its meaning, such as render={<section />} or render={<footer />}, or another component to lay out as the stack without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs. A div by default."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<RenderedElement>",
-          "required": false,
-          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks, and `StackProps['ref']` is a ref to the default element, so a wrapper can forward it to one."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "beta",
-      "page": "stack",
-      "doc": "docs/components/stack.md"
-    },
     "Stat": {
       "kind": "namespace",
       "import": "@envsemble/envui",
@@ -16052,7 +16466,7 @@
     "Surface": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Stack. Card and other containers build on it.",
+      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Column. Card and other containers build on it.",
       "props": [
         {
           "name": "background",
@@ -16079,7 +16493,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
+          "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Column that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
         },
         {
           "name": "ref",

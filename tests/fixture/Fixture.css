@@ -461,3 +461,9 @@ body:has(.density-fixture) {
   justify-items: center;
   gap: 0.5rem;
 }
+/* Layout primitives: a Box's container prop names a container that queries see. */
+@container probe (width < 25rem) {
+  .fixture-container-probe {
+    --fixture-in-probe: yes;
+  }
+}

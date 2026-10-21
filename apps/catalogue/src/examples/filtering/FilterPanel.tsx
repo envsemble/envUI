@@ -6,7 +6,8 @@ import {
   EmptyState,
   List,
   Popover,
-  Stack,
+  Column,
+  Row,
   Text,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
@@ -30,8 +31,8 @@ export default function FilterPanel() {
   );
 
   return (
-    <Stack gap={4}>
-      <Stack ref={toolbar} direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={4}>
+      <Row ref={toolbar} wrap align="center" justify="between" gap={3}>
         <Popover
           title="Filter documents"
           align="start"
@@ -44,7 +45,7 @@ export default function FilterPanel() {
           }
         >
           {/* Each box filters the list at once: no Apply button, and the popover stays open. */}
-          <Stack gap={5}>
+          <Column gap={5}>
             {groups.map((group, index) => (
               // envUI has no checkbox group yet: a fieldset and its legend name the choices, and
               // are read with each one, as RadioGroup's are.
@@ -56,7 +57,7 @@ export default function FilterPanel() {
                 <legend style={{ padding: 0, marginBlockEnd: 'var(--env-space-3)' }}>
                   {group.legend}
                 </legend>
-                <Stack gap={2}>
+                <Column gap={2}>
                   {group.options.map((option, position) => (
                     <Checkbox
                       key={option.value}
@@ -72,11 +73,11 @@ export default function FilterPanel() {
                       }
                     />
                   ))}
-                </Stack>
+                </Column>
               </fieldset>
             ))}
             {filters.length > 0 && (
-              <Stack align="start">
+              <Column gap={4} align="start">
                 <Button
                   variant="text"
                   size="sm"
@@ -88,14 +89,14 @@ export default function FilterPanel() {
                 >
                   Clear filters
                 </Button>
-              </Stack>
+              </Column>
             )}
-          </Stack>
+          </Column>
         </Popover>
         <Text role="status" variant="body-sm" emphasis="muted">
           {documentCount(shown.length)}
         </Text>
-      </Stack>
+      </Row>
       {shown.length > 0 ? (
         <List.Root aria-label="Documents">
           {shown.map((document) => (
@@ -126,7 +127,7 @@ export default function FilterPanel() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

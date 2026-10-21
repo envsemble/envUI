@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, List, SearchField, Stack, Text } from '@envsemble/envui';
+import { Button, List, SearchField, Column, Text } from '@envsemble/envui';
 
 const members = [
   { name: 'Alex Morgan', email: 'alex.morgan@example.com' },
@@ -23,7 +23,7 @@ export default function FilterList() {
     `${name} ${email}`.toLowerCase().includes(term),
   );
   return (
-    <Stack gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       <div style={toolbar}>
         <SearchField
           label="Search members"
@@ -45,6 +45,6 @@ export default function FilterList() {
           ))}
         </List.Root>
       )}
-    </Stack>
+    </Column>
   );
 }

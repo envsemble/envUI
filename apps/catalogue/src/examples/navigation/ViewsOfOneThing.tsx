@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Badge, Button, List, PageHeader, Stack, Tabs, Text } from '@envsemble/envui';
+import { Badge, Button, List, PageHeader, Column, Tabs, Text } from '@envsemble/envui';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 export default function ViewsOfOneThing() {
   const [view, setView] = useState<string | null>('tasks');
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <PageHeader
         headingLevel={3}
         title="Website refresh"
@@ -61,7 +61,7 @@ export default function ViewsOfOneThing() {
           },
         ]}
       />
-    </Stack>
+    </Column>
   );
 }
 

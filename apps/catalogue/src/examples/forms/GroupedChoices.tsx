@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Checkbox, Radio, RadioGroup, Stack, Text } from '@envsemble/envui';
+import { Button, Checkbox, Radio, RadioGroup, Column, Row, Text } from '@envsemble/envui';
 
 export default function GroupedChoices() {
   const [saved, setSaved] = useState('');
@@ -18,7 +18,7 @@ export default function GroupedChoices() {
   };
   return (
     <form noValidate onSubmit={submit}>
-      <Stack gap={6}>
+      <Column gap={6}>
         {/* One choice of several: RadioGroup is a fieldset whose legend names the options. */}
         <RadioGroup label="Email summary" name="frequency" defaultValue="weekly">
           <Radio value="daily" label="Daily" />
@@ -32,7 +32,7 @@ export default function GroupedChoices() {
           <legend style={{ padding: 0, marginBlockEnd: 'var(--env-space-4)' }}>
             Notify me about
           </legend>
-          <Stack gap={3}>
+          <Column gap={3}>
             <Checkbox
               name="topics"
               value="comments"
@@ -42,15 +42,15 @@ export default function GroupedChoices() {
             <Checkbox name="topics" value="mentions" label="Mentions" defaultChecked />
             <Checkbox name="topics" value="assignments" label="Tasks assigned to me" />
             <Checkbox name="topics" value="due" label="Tasks due tomorrow" />
-          </Stack>
+          </Column>
         </fieldset>
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit">Save preferences</Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {saved}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

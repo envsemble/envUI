@@ -20,14 +20,14 @@ avoidWhen:
   - text: The frame of an application, with its header and sidebars.
     use: AppShell
   - text: Content in a column or a row with even gaps inside a page.
-    use: Stack
+    use: Column
   - text: A background, an inset and corners around a part of a page.
     use: Surface
   - text: Two panes side by side that people resize.
     use: SplitPane
 related:
   - page-header
-  - stack
+  - column
   - surface
   - app-shell
   - responsive
@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a [PageHeader](../components/page-header.md), at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with Stack and the components.
+Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a [PageHeader](../components/page-header.md), at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with the layout primitives, such as Row, Column and Grid, and the components.
 
 ```tsx example=WithHeader
 
@@ -78,7 +78,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 
 - Choose the width for what the page holds: `sm` for a form, `md` for reading, `lg` for most application pages.
 - Put the page's heading in `header`, so it shares the column and its gutter.
-- Lay out the content inside with Stack, and keep its own widths, such as a form's fields, to the components.
+- Lay out the content inside with Column, Row and Grid, and keep its own widths, such as a form's fields, to the components.
 
 ### Don't
 

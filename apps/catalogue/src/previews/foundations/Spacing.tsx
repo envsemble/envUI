@@ -1,5 +1,5 @@
 import { Example, SpecimenGrid } from '../Example';
-import { Stack, Text } from '@envsemble/envui';
+import { Column, Text } from '@envsemble/envui';
 
 export function SpacingPreview() {
   return (
@@ -9,7 +9,7 @@ export function SpacingPreview() {
         size="compact"
         caption="Parents own gaps; components own padding. Both use this scale."
       >
-        <Stack gap={3}>
+        <Column gap={3}>
           {[0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4].map((size, i) => (
             <div className="docs-measure" key={size}>
               <code>--env-space-{i + 1}</code>
@@ -17,7 +17,7 @@ export function SpacingPreview() {
               <div className="docs-spacing-bar" style={{ width: `var(--env-space-${i + 1})` }} />
             </div>
           ))}
-        </Stack>
+        </Column>
       </Example>
       <Example title="Responsive sizing">
         <Text emphasis="muted">

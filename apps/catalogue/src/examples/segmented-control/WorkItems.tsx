@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { List, SegmentedControl, Stack } from '@envsemble/envui';
+import { List, SegmentedControl, Column } from '@envsemble/envui';
 
 const items = [
   { id: 'brief', title: 'Write the launch brief', status: 'open' },
@@ -16,8 +16,8 @@ const statuses = [
 export default function WorkItems() {
   const [status, setStatus] = useState('open');
   return (
-    <Stack gap={4}>
-      <Stack align="start">
+    <Column gap={4}>
+      <Column gap={4} align="start">
         <SegmentedControl
           aria-label="Work items"
           value={status}
@@ -27,7 +27,7 @@ export default function WorkItems() {
             count: items.filter((item) => item.status === option.value).length,
           }))}
         />
-      </Stack>
+      </Column>
       <List.Root aria-label={`${statuses.find((option) => option.value === status)?.label} items`}>
         {items
           .filter((item) => item.status === status)
@@ -35,6 +35,6 @@ export default function WorkItems() {
             <List.Item key={item.id} label={item.title} />
           ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }

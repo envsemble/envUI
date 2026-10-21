@@ -41,7 +41,8 @@ composes:
   - Select
   - Checkbox
   - TextField
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - forms

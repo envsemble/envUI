@@ -1,4 +1,4 @@
-import { Avatar, AvatarButton, Menu, Stack, Text } from '@envsemble/envui';
+import { Avatar, AvatarButton, Menu, Column, Text } from '@envsemble/envui';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -18,11 +18,11 @@ export default function AccountMenu() {
         }
       >
         <Menu.Header>
-          <Stack gap={1} align="center">
+          <Column gap={1} align="center">
             <Avatar name="Alex Morgan" size="lg" />
             <Text>Alex Morgan</Text>
             <Text variant="body-sm">alex@example.com</Text>
-          </Stack>
+          </Column>
         </Menu.Header>
         <Menu.Item href="/account" icon={<ManageAccounts />}>
           Account settings

@@ -1,4 +1,4 @@
-import { Stack, Text, windowClasses, type WindowClass } from '@envsemble/envui';
+import { Column, Text, windowClasses, type WindowClass } from '@envsemble/envui';
 import { Example } from '../Example';
 import { TokenValue } from './TokenValue';
 
@@ -29,7 +29,7 @@ export function ResponsivePreview() {
         size="content"
         caption="Container widths in rem, from the theme boundary, the env-window container; components follow their own container."
       >
-        <Stack gap={3}>
+        <Column gap={3}>
           {(Object.keys(windowClasses) as WindowClass[]).map((windowClass) => (
             <div className="docs-measure" key={windowClass}>
               <code>{windowClass}</code>
@@ -37,14 +37,14 @@ export function ResponsivePreview() {
               <Text emphasis="muted">{windowClassUses[windowClass]}</Text>
             </div>
           ))}
-        </Stack>
+        </Column>
       </Example>
       <Example
         title="Stacking order"
         size="content"
         caption="Every z-index comes from these levels, lowest first."
       >
-        <Stack gap={3}>
+        <Column gap={3}>
           {stackingLevels.map(([level, use]) => (
             <div className="docs-measure" key={level}>
               <code>--env-z-{level}</code>
@@ -52,7 +52,7 @@ export function ResponsivePreview() {
               <Text emphasis="muted">{use}</Text>
             </div>
           ))}
-        </Stack>
+        </Column>
       </Example>
     </>
   );

@@ -2,7 +2,7 @@ import {
   Badge,
   CounterBadge,
   NavList,
-  Stack,
+  Column,
   Surface,
   Theme,
   type BadgeTone,
@@ -22,7 +22,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           padding={4}
           data-surface={surface}
         >
-          <Stack gap={2}>
+          <Column gap={2}>
             {(['soft', 'solid', 'outline'] as const).map((variant) => (
               <div key={variant} className="fixture-actions">
                 {tones.map((tone) => (
@@ -43,7 +43,7 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
                 </span>
               ))}
             </div>
-          </Stack>
+          </Column>
         </Surface>
       ))}
       <NavList.Item

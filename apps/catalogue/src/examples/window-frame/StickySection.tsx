@@ -1,4 +1,4 @@
-import { Stack, Text, WindowFrame } from '@envsemble/envui';
+import { Column, Text, WindowFrame } from '@envsemble/envui';
 
 const sections = ['Overview', 'Milestones', 'Risks'];
 
@@ -31,13 +31,13 @@ export default function StickySection() {
               <Text render={<h3 />} variant="title" style={heading}>
                 {section}
               </Text>
-              <Stack gap={2} style={{ padding: '0 1.5rem 1.5rem' }}>
+              <Column gap={2} style={{ padding: '0 1.5rem 1.5rem' }}>
                 {Array.from({ length: 4 }, (_, index) => (
                   <Text key={index} emphasis="muted">
                     {section} note {index + 1}
                   </Text>
                 ))}
-              </Stack>
+              </Column>
             </section>
           ))}
         </WindowFrame.Content>

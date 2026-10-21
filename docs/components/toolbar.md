@@ -16,7 +16,7 @@ useWhen:
   - A tool is chosen from a palette and stays chosen, such as a drawing tool.
 avoidWhen:
   - text: A form's or a dialog's actions, which keep a tab stop each.
-    use: Stack
+    use: Row
   - text: Buttons joined into one connected control, such as a main action and its menu.
     use: ButtonGroup
   - text: A choice of one view or filter, shown as a selected segment.
@@ -65,15 +65,15 @@ A toolbar holds the controls for one subject, such as an editor's formatting, in
 
 ### Layouts
 
-Not every bar of controls is a Toolbar. A Toolbar is one tab stop that the arrow keys move through, which suits icon commands; a bar that holds a text field, a Select or a row of labelled actions is a [Stack](../components/stack.md) row, where every control keeps its tab stop and fields keep their arrow keys.
+Not every bar of controls is a Toolbar. A Toolbar is one tab stop that the arrow keys move through, which suits icon commands; a bar that holds a text field, a Select or a row of labelled actions is a [Row](../components/row.md), where every control keeps its tab stop and fields keep their arrow keys.
 
-| Bar                                                     | Build it with                                                                                              | Why                                                                                        |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Icon commands: an editor's formatting, a canvas's tools | `Toolbar.Root` with `Toolbar.Button`s                                                                      | One tab stop, the arrow keys between the commands, tooltips with their shortcuts           |
-| A page's search, filters and primary action             | [PageHeader](../components/page-header.md)'s `toolbar`, a `<Stack direction="row" wrap justify="between">` | Fields keep their arrow keys, every control is a tab stop, the primary action ends the row |
-| A section's heading and count, with its actions         | `<Stack direction="row" wrap align="center" justify="between">` around a heading and the actions           | The actions sit at the end and wrap under the heading when there isn't room                |
-| A table's search and actions                            | A Stack row above `Table.Root`, with controls of the size that matches the table's row density             | Small controls over small rows; while the rows stack, a Select sorts them                  |
-| Actions in a window's title bar                         | `WindowFrame.TitleBar`'s `end`, its slot for actions at its end                                            | A few quiet commands beside the window's own: ghost buttons of the small size              |
+| Bar                                                     | Build it with                                                                            | Why                                                                                        |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Icon commands: an editor's formatting, a canvas's tools | `Toolbar.Root` with `Toolbar.Button`s                                                    | One tab stop, the arrow keys between the commands, tooltips with their shortcuts           |
+| A page's search, filters and primary action             | [PageHeader](../components/page-header.md)'s `toolbar`, a `<Row wrap justify="between">` | Fields keep their arrow keys, every control is a tab stop, the primary action ends the row |
+| A section's heading and count, with its actions         | `<Row wrap align="center" justify="between">` around a heading and the actions           | The actions sit at the end and wrap under the heading when there isn't room                |
+| A table's search and actions                            | A Row above `Table.Root`, with controls of the size that matches the table's row density | Small controls over small rows; while the rows stack, a Select sorts them                  |
+| Actions in a window's title bar                         | `WindowFrame.TitleBar`'s `end`, its slot for actions at its end                          | A few quiet commands beside the window's own: ghost buttons of the small size              |
 
 A page toolbar that lines up with a sidebar's header takes the frame's header height, `min-block-size: var(--env-app-shell-header-height)`.
 
@@ -148,7 +148,7 @@ A vertical toolbar of toggles, where one tool stays chosen.
 
 ### Page toolbar
 
-A page's search and filter under its title, with the primary action at the end of the row: a Stack row in PageHeader's `toolbar`, not a Toolbar.
+A page's search and filter under its title, with the primary action at the end of the row: a Row in PageHeader's `toolbar`, not a Toolbar.
 
 ```tsx example=PageToolbar
 

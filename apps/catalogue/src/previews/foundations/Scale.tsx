@@ -4,7 +4,7 @@ import {
   IconButton,
   SegmentedControl,
   Select,
-  Stack,
+  Column,
   Table,
   TextField,
   Theme,
@@ -63,11 +63,11 @@ export function ScalePreview() {
           {scales.map((scale) => (
             <Specimen key={scale} title={scale === 'compact' ? 'Compact' : 'Comfortable'}>
               <Theme {...theme} scale={scale}>
-                <Stack gap={3}>
+                <Column gap={3}>
                   {sizes.map((size) => (
                     <SizeRow key={size} size={size} />
                   ))}
-                </Stack>
+                </Column>
               </Theme>
             </Specimen>
           ))}

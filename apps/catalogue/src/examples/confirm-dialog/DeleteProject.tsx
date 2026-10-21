@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button, ConfirmDialog, Stack, Text } from '@envsemble/envui';
+import { Button, ConfirmDialog, Column, Text } from '@envsemble/envui';
 
 export default function DeleteProject() {
   const [result, setResult] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <ConfirmDialog
         trigger={<Button variant="secondary">Delete project</Button>}
         tone="danger"
@@ -14,6 +14,6 @@ export default function DeleteProject() {
         onConfirm={() => setResult('Northwind launch deleted')}
       />
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

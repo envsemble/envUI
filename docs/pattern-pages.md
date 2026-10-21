@@ -19,7 +19,7 @@ avoidWhen:
     see: forms # A page to read instead, by its file name.
   - text: Confirming a destructive action.
     use: ConfirmDialog # Or an export to use instead.
-composes: [Switch, Select, Field, Button, Toast, Stack] # The exports it combines: namespaces, not parts.
+composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combines: namespaces, not parts.
 related: [forms, switch]
 ---
 ```

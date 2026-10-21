@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CounterBadge, IconButton, NavList, Stack } from '@envsemble/envui';
+import { CounterBadge, IconButton, NavList, Column } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Drafts } from '@envsemble/envui/icons/Drafts';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
@@ -18,7 +18,7 @@ export default function CollapsedSidebar() {
   const [collapsed, setCollapsed] = useState(true);
   const [current, setCurrent] = useState('/inbox');
   return (
-    <Stack gap={2} align="start">
+    <Column gap={2} align="start">
       <IconButton
         variant="ghost"
         icon={collapsed ? <Menu /> : <MenuOpen />}
@@ -44,6 +44,6 @@ export default function CollapsedSidebar() {
           ))}
         </NavList.Root>
       </nav>
-    </Stack>
+    </Column>
   );
 }

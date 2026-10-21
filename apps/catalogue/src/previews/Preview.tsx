@@ -1,5 +1,5 @@
 import type { MouseEvent, ReactNode } from 'react';
-import { Stack, Theme, useTheme } from '@envsemble/envui';
+import { Column, Theme, useTheme } from '@envsemble/envui';
 
 /** Link specimens retain native link semantics without navigating out of the demo. */
 function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
@@ -12,7 +12,7 @@ function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
 export function Preview({ children }: { children: ReactNode }) {
   const theme = useTheme();
   return (
-    <Stack
+    <Column
       render={<Theme {...theme} />}
       gap={0}
       className="docs-preview"
@@ -20,6 +20,6 @@ export function Preview({ children }: { children: ReactNode }) {
       onAuxClickCapture={preventExampleNavigation}
     >
       {children}
-    </Stack>
+    </Column>
   );
 }

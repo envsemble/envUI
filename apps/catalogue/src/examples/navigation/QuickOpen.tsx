@@ -3,7 +3,7 @@ import {
   CommandPalette,
   PageHeader,
   SearchTrigger,
-  Stack,
+  Column,
   type CommandPaletteItem,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
@@ -43,12 +43,12 @@ export default function QuickOpen() {
   }, [query]);
 
   return (
-    <Stack ref={page} gap={4}>
+    <Column ref={page} gap={4}>
       {/* Where the frame puts search: the sidebar's top, or the header's end. */}
-      <Stack align="start">
+      <Column gap={4} align="start">
         {/* The catalogue's own search keeps Ctrl+K here; an application's one trigger listens. */}
         <SearchTrigger label="Search Northwind" listen={false} onClick={() => setOpen(true)} />
-      </Stack>
+      </Column>
       <PageHeader headingLevel={3} title={current.label} description={current.description} />
       <CommandPalette
         open={open}
@@ -74,7 +74,7 @@ export default function QuickOpen() {
         }}
         emptyLabel="No matching pages, projects, documents or people"
       />
-    </Stack>
+    </Column>
   );
 }
 

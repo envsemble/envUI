@@ -37,7 +37,7 @@ related:
   - toast
   - command-palette
   - text-field
-  - stack
+  - row
   - accessibility
 components:
   - Dialog

@@ -8,7 +8,7 @@ import type {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Text } from '../foundations/Text.js';
-import { Stack, type SpaceStep } from '../foundations/Layout.js';
+import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
@@ -139,7 +139,7 @@ function InteractiveCard({
       background={background}
       padding={padding}
       render={
-        <Stack
+        <Column
           gap={4}
           render={<ActionElement {...(props as ActionElementProps)} />}
           className={classNames('env-card', className)}
@@ -215,36 +215,36 @@ function ContentCard({
             <DecorativeIcon>{icon}</DecorativeIcon>
           </div>
         )}
-        <Stack className="env-card-body">
+        <Column gap={4} className="env-card-body">
           {(header || descriptionText) && (
-            <Stack gap={1}>
+            <Column gap={1}>
               {header}
               {descriptionText}
-            </Stack>
+            </Column>
           )}
           {children}
-        </Stack>
+        </Column>
         {hasActions && <div className="env-card-footer">{actions}</div>}
       </div>
     );
   } else if (hasActions) {
     content = (
       <>
-        <Stack className="env-card-body">
+        <Column gap={4} className="env-card-body">
           {header}
           {descriptionText}
           {children}
-        </Stack>
-        <Stack
+        </Column>
+        <Row
+          gap={4}
           render={<footer />}
-          direction="row"
           wrap
           align="center"
           justify="end"
           className="env-card-footer"
         >
           {actions}
-        </Stack>
+        </Row>
       </>
     );
   } else {
@@ -261,7 +261,7 @@ function ContentCard({
       background={background}
       padding={padding}
       render={
-        <Stack
+        <Column
           {...props}
           render={render}
           gap={!feature && hasActions ? 0 : 4}

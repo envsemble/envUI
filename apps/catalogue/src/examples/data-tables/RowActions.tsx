@@ -7,7 +7,7 @@ import {
   IconButton,
   Link,
   Menu,
-  Stack,
+  Row,
   Table,
   Tooltip,
 } from '@envsemble/envui';
@@ -83,10 +83,10 @@ export default function RowActions() {
                   <Link href={`/projects/${project.id}`}>{project.name}</Link>
                 </Table.Cell>
                 <Table.Cell nowrap>
-                  <Stack direction="row" align="center" gap={2}>
+                  <Row align="center" gap={2}>
                     <Avatar name={project.owner} size="sm" fallback="initials" />
                     {project.owner}
-                  </Stack>
+                  </Row>
                 </Table.Cell>
                 {/* The other actions wait in the row's menu, named for its row. */}
                 <Table.Cell align="end">

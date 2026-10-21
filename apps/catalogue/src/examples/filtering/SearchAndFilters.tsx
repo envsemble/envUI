@@ -7,7 +7,8 @@ import {
   PageHeader,
   SearchField,
   Select,
-  Stack,
+  Column,
+  Row,
   Text,
 } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -40,7 +41,7 @@ export default function SearchAndFilters() {
   };
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <PageHeader
         headingLevel={3}
         title="Projects"
@@ -48,7 +49,7 @@ export default function SearchAndFilters() {
         toolbar={
           // Not a Toolbar: the field keeps its arrow keys and every control is a tab stop. Each
           // change filters the list at once.
-          <Stack direction="row" wrap align="center" gap={3}>
+          <Row wrap align="center" gap={3}>
             <SearchField
               ref={search}
               label="Search projects"
@@ -77,7 +78,7 @@ export default function SearchAndFilters() {
                 Clear filters
               </Button>
             )}
-          </Stack>
+          </Row>
         }
       />
       {/* The count is announced as the results change. */}
@@ -111,7 +112,7 @@ export default function SearchAndFilters() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

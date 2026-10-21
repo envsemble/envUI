@@ -35,7 +35,7 @@ avoidWhen:
     use: EmptyState
 related:
   - surface
-  - stack
+  - column
   - list
   - button
   - typography

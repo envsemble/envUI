@@ -24,7 +24,8 @@ composes:
   - PageHeader
   - NavList
   - Surface
-  - Stack
+  - Column
+  - Row
   - Text
   - List
   - DescriptionList

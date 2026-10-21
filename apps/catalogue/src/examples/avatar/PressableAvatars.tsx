@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AvatarGroup, Stack, Text } from '@envsemble/envui';
+import { AvatarGroup, Column, Text } from '@envsemble/envui';
 
 const reviewers = [
   { id: 'alex', name: 'Alex Morgan' },
@@ -12,7 +12,7 @@ const reviewers = [
 export default function PressableAvatars() {
   const [opened, setOpened] = useState('');
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <AvatarGroup
         aria-label="Reviewers"
         people={reviewers}
@@ -22,6 +22,6 @@ export default function PressableAvatars() {
       <Text variant="caption" emphasis="muted" role="status">
         {opened}
       </Text>
-    </Stack>
+    </Column>
   );
 }

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { AppShell, Button, Page, Sidebar, SidebarTrigger, Stack, Text } from '@envsemble/envui';
+import { AppShell, Button, Page, Sidebar, SidebarTrigger, Column, Text } from '@envsemble/envui';
 
 /** Stands in for the window; an application renders the frame at its root. */
 const preview = {
@@ -14,10 +14,10 @@ export default function Offcanvas() {
       <AppShell.Header start={<SidebarTrigger />}>Results</AppShell.Header>
       <Sidebar.Root label="Filters" landmark="complementary" collapsible="offcanvas" width={16}>
         <Sidebar.Content align="stretch">
-          <Stack gap={2}>
+          <Column gap={2}>
             <Button variant="secondary">Only mine</Button>
             <Button variant="secondary">Changed this week</Button>
-          </Stack>
+          </Column>
         </Sidebar.Content>
       </Sidebar.Root>
       <AppShell.Main>

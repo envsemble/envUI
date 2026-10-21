@@ -45,7 +45,8 @@ composes:
   - LoadingState
   - Skeleton
   - Surface
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - filtering
@@ -73,7 +74,7 @@ Use this pattern to show records people compare, sort and act on: a table with a
 3. **Values:** a [Link](../components/link.md) on the record's name, an [Avatar](../components/avatar.md) beside a person, a [Badge](../components/badge.md) for a status and [RelativeTime](../components/relative-time.md) for a recent date. Numbers that compare down a column take `numeric`.
 4. **Pagination:** [Pagination](../components/pagination.md) with `page`, `pageSize` and `total` under the table, at its end.
 5. **Selection:** a [Checkbox](../components/checkbox.md) in a narrow first column, labelled with the row's name, `selected` on the row, and a checkbox in the header that is `'mixed'` while some rows are selected.
-6. **Bulk bar:** above the table while rows are selected, the count, then the actions on the selection, each naming the count. Icon-only actions form a [Toolbar.Root](../components/toolbar.md) of `Toolbar.Button`s; labelled actions sit in a [Stack](../components/stack.md) row.
+6. **Bulk bar:** above the table while rows are selected, the count, then the actions on the selection, each naming the count. Icon-only actions form a [Toolbar.Root](../components/toolbar.md) of `Toolbar.Button`s; labelled actions sit in a [Row](../components/row.md).
 7. **Row actions:** a [Menu](../components/menu.md) at the end of the row, opened by an [IconButton](../components/button.md) named for the row, with a [Tooltip](../components/tooltip.md).
 8. **Confirmation and undo:** a [ConfirmDialog](../components/confirm-dialog.md) for deleting, and a toast from [useToast](../components/toast.md) with "Undo" for archiving, as in [Confirmation and destructive actions](destructive-actions.md).
 9. **Loading and empty:** a [LoadingState](../components/skeleton.md) of Skeleton rows while the rows load, and an [EmptyState](../components/empty-state.md) in place of the table when there are none.

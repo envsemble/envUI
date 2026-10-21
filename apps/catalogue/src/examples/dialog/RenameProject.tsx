@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, Dialog, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Dialog, Column, Text, TextField } from '@envsemble/envui';
 
 export default function RenameProject() {
   const formId = useId();
@@ -23,7 +23,7 @@ export default function RenameProject() {
     }, 2000);
   };
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Text>{name}</Text>
       <Dialog
         open={open}
@@ -48,6 +48,6 @@ export default function RenameProject() {
           />
         </form>
       </Dialog>
-    </Stack>
+    </Column>
   );
 }

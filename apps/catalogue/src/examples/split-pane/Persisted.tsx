@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { SplitPane, Stack, Text } from '@envsemble/envui';
+import { SplitPane, Column, Text } from '@envsemble/envui';
 
 export default function Persisted() {
   const [size, setSize] = useState<number>();
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <SplitPane.Root
         unit="rem"
         defaultSize={14}
@@ -27,6 +27,6 @@ export default function Persisted() {
       <Text variant="caption" role="status">
         {size === undefined ? 'Resize the outline.' : `Outline width: ${size} rem`}
       </Text>
-    </Stack>
+    </Column>
   );
 }

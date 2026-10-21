@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, MonthPicker, Stack, Text } from '@envsemble/envui';
+import { Button, MonthPicker, Column, Row, Text } from '@envsemble/envui';
 
 export default function ExpenseForm() {
   const [sent, setSent] = useState('');
@@ -10,18 +10,18 @@ export default function ExpenseForm() {
   };
   return (
     <form onSubmit={submit} onReset={() => setSent('')} style={{ inlineSize: 'min(100%, 16rem)' }}>
-      <Stack>
+      <Column gap={4}>
         <MonthPicker label="Period" name="period" placeholder="Choose a month" required />
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button type="submit">Submit expenses</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </Stack>
+        </Row>
         <Text variant="caption" emphasis="muted" role="status">
           {sent}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

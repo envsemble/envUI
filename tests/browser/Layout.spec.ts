@@ -11,7 +11,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       const scope = page.getByTestId(`layout-${theme}`);
       for (const [id, step] of [
         ['layout-card', 1],
-        ['layout-stack', 0.75],
+        ['layout-column', 0.75],
         ['stacked-actions', 0.5],
       ] as const) {
         const result = await scope.getByTestId(id).evaluate((element) => {
@@ -26,10 +26,10 @@ test('public composition owns spacing and content-fit sizing without documentati
           expect(Math.abs(gap - result.root * step), `${theme}/${id}`).toBeLessThan(1),
         );
       }
-      const stack = scope.getByTestId('layout-stack');
-      const stackWidth = (await stack.boundingBox())!.width;
+      const column = scope.getByTestId('layout-column');
+      const columnWidth = (await column.boundingBox())!.width;
       for (const selector of ['.env-button', '.env-nav-list-item', '.env-badge']) {
-        expect((await stack.locator(selector).boundingBox())!.width).toBeLessThan(stackWidth);
+        expect((await column.locator(selector).boundingBox())!.width).toBeLessThan(columnWidth);
       }
       const actionGroup = scope.getByTestId('stacked-actions');
       const groupWidth = (await actionGroup.boundingBox())!.width;
@@ -66,4 +66,79 @@ test('public composition owns spacing and content-fit sizing without documentati
       }
     }
   }
+});
+
+test.describe('layout primitives', () => {
+  test('lay out with flex and grid at the spacing steps, and never paint', async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=layout`);
+    const scope = page.getByTestId('primitives');
+    const styles = (testId: string) =>
+      scope.getByTestId(testId).evaluate((element) => {
+        const style = getComputedStyle(element);
+        const root = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        return {
+          tag: element.tagName,
+          layout: element.getAttribute('data-env-layout'),
+          name: element.getAttribute('data-env-name'),
+          display: style.display,
+          direction: style.flexDirection,
+          align: style.alignItems,
+          gap: parseFloat(style.columnGap) / root,
+          rowGap: parseFloat(style.rowGap) / root,
+          padding: parseFloat(style.paddingTop) / root,
+          columns: style.gridTemplateColumns.split(' ').length,
+          background: style.backgroundColor,
+          border: style.borderTopStyle,
+          containerType: style.containerType,
+          containerName: style.containerName,
+        };
+      });
+    const row = await styles('row');
+    expect(row).toMatchObject({ layout: 'row', name: 'actions', display: 'flex' });
+    expect(row).toMatchObject({ direction: 'row', align: 'center', gap: 0.75 });
+    expect(row).toMatchObject({ background: 'rgba(0, 0, 0, 0)', border: 'none' });
+    expect(await styles('column')).toMatchObject({
+      tag: 'SECTION',
+      layout: 'column',
+      display: 'flex',
+      direction: 'column',
+      rowGap: 1.5,
+      padding: 1,
+    });
+    // 32 rem holds three columns of at least 10 rem, 0.5 rem apart.
+    expect(await styles('grid-min')).toMatchObject({ display: 'grid', columns: 3, gap: 0.5 });
+    expect(await styles('grid-count')).toMatchObject({ columns: 4 });
+    const template = await scope
+      .getByTestId('grid-template')
+      .evaluate((element) =>
+        [...element.children].map((child) => child.getBoundingClientRect().width),
+      );
+    expect(template[0] / template[1]).toBeCloseTo(2, 1);
+    // A grid without columns is one column, also inside a grid with columns of its own.
+    expect(await styles('grid-inner')).toMatchObject({ columns: 1 });
+    const box = await styles('box');
+    expect(box).toMatchObject({ layout: 'box', display: 'block', padding: 0.5 });
+    expect(box).toMatchObject({ containerType: 'inline-size', containerName: 'probe' });
+    // The Box is the probe container that the fixture's query sees.
+    expect(
+      await scope
+        .getByTestId('box-child')
+        .evaluate((element) => getComputedStyle(element).getPropertyValue('--fixture-in-probe')),
+    ).toBe('yes');
+  });
+
+  test('have no specificity, so any class in the same layer overrides them', async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=layout`);
+    await page.addStyleTag({
+      content: "@layer env.components { [data-testid='row-override'] { gap: 0.125rem; } }",
+    });
+    const gap = await page
+      .getByTestId('row-override')
+      .evaluate(
+        (element) =>
+          parseFloat(getComputedStyle(element).columnGap) /
+          parseFloat(getComputedStyle(document.documentElement).fontSize),
+      );
+    expect(gap).toBe(0.125);
+  });
 });

@@ -24,7 +24,10 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 ## Components: Layout & surfaces
 
-- [Stack](docs/components/stack.md): Stack lays out content in a column, or a row, with even gaps, such as a form and its actions.
+- [Box](docs/components/box.md): Box is a plain block for an inset, a size container or a named region, with no layout of its own.
+- [Row](docs/components/row.md): Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
+- [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
+- [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
 - [Page](docs/components/page.md): The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.
 - [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.
 - [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail.

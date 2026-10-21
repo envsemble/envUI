@@ -25,7 +25,8 @@ composes:
   - PageHeader
   - Select
   - Button
-  - Stack
+  - Column
+  - Row
   - Stat
   - Surface
   - Text
@@ -60,7 +61,7 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 
 1. **Header:** a [PageHeader](../components/page-header.md), "Dashboard", with `controlSize="sm"` and two actions: a [Select](../components/select.md) "Period", Last 7, 30 or 90 days, and an "Export" [Button](../components/button.md) link.
 2. **Figures:** a [Stat.Group](../components/stat.md) of four `Stat.Root`s, each with its label, value and `trend`. The trend's `tone` says whether the change is good news: fewer open tasks and a shorter lead time are `success`, more open tasks and a longer lead time `danger`.
-3. **Panels:** a [Stack](../components/stack.md) row that wraps, each panel a `section` on a muted [Surface](../components/surface.md), named by its `h2`:
+3. **Panels:** a [Row](../components/row.md) that wraps, each panel a `section` on a muted [Surface](../components/surface.md), named by its `h2`:
    - **Activity:** a [CalendarHeatmap](../components/calendar-heatmap.md) of the tasks completed each day;
    - **Storage:** a [Meter](../components/meter.md) of the space used, with a line on what takes it;
    - **Goals:** three [Progress](../components/progress.md) bars, each with its count;

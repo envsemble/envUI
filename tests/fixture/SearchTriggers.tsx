@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Dialog, SearchTrigger, Stack, TextField } from '@envsemble/envui';
+import { Button, Dialog, SearchTrigger, Column, TextField } from '@envsemble/envui';
 // Internal: the rail context a sidebar showing icons only provides.
 import { SidebarRailContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
@@ -15,7 +15,7 @@ export function SearchTriggersFixture() {
   const [second, setSecond] = useState(false);
   const record = (name: string) => () => setLog((entries) => [...entries, name]);
   return (
-    <Stack gap={4} className="fixture-section" style={{ inlineSize: '20rem' }}>
+    <Column gap={4} className="fixture-section" style={{ inlineSize: '20rem' }}>
       <SearchTrigger fullWidth onClick={record('labelled')} />
       <SearchTrigger
         iconOnly
@@ -53,6 +53,6 @@ export function SearchTriggersFixture() {
         </div>
       </SidebarRailContext>
       <output data-testid="search-log">{log.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }

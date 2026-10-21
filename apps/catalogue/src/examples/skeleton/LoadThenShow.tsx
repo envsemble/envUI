@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, LoadingState, SegmentedControl, Skeleton, Stack, Text } from '@envsemble/envui';
+import { Card, LoadingState, SegmentedControl, Skeleton, Column, Text } from '@envsemble/envui';
 
 const projects = {
   website: {
@@ -27,7 +27,7 @@ export default function LoadThenShow() {
   };
   const project = projects[loaded];
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <SegmentedControl
         aria-label="Project"
         items={options}
@@ -36,12 +36,12 @@ export default function LoadThenShow() {
       />
       <Card>
         {chosen === loaded ? (
-          <Stack gap={2}>
+          <Column gap={2}>
             <Text render={<h3 />} variant="title">
               {project.name}
             </Text>
             <Text>{project.summary}</Text>
-          </Stack>
+          </Column>
         ) : (
           <LoadingState label="Loading project">
             <Skeleton width="38%" height="1.25rem" />
@@ -50,6 +50,6 @@ export default function LoadThenShow() {
           </LoadingState>
         )}
       </Card>
-    </Stack>
+    </Column>
   );
 }

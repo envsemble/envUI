@@ -32,7 +32,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Layout & surfaces
 
-- [Stack](components/stack.md)
+- [Box](components/box.md)
+- [Row](components/row.md)
+- [Column](components/column.md)
+- [Grid](components/grid.md)
 - [Page](components/page.md)
 - [PageHeader](components/page-header.md)
 - [SplitPane](components/split-pane.md)

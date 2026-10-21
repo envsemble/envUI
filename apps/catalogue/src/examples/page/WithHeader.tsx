@@ -1,4 +1,4 @@
-import { Button, Card, Page, PageHeader, Stack, Text } from '@envsemble/envui';
+import { Button, Card, Page, PageHeader, Column, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 
 const projects = [
@@ -20,13 +20,13 @@ export default function WithHeader() {
         />
       }
     >
-      <Stack gap={3}>
+      <Column gap={3}>
         {projects.map((project) => (
           <Card key={project.name} title={project.name}>
             <Text variant="body-sm">Owned by {project.owner}</Text>
           </Card>
         ))}
-      </Stack>
+      </Column>
     </Page>
   );
 }

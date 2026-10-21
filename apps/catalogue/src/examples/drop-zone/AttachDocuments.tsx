@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button, DropZone, List, Stack } from '@envsemble/envui';
+import { Button, DropZone, List, Column } from '@envsemble/envui';
 
 export default function AttachDocuments() {
   const [documents, setDocuments] = useState<File[]>([]);
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <DropZone
         size="sm"
         multiple
@@ -32,6 +32,6 @@ export default function AttachDocuments() {
           ))}
         </List.Root>
       )}
-    </Stack>
+    </Column>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, EnvUIProvider, ListDetail, SplitPane, Stack, Text } from '@envsemble/envui';
+import { Button, EnvUIProvider, ListDetail, SplitPane, Column, Row, Text } from '@envsemble/envui';
 
 const projects = ['Northwind launch', 'Annual report', 'Office move', 'Hiring plan'];
 
@@ -44,7 +44,7 @@ export function SplitPanesFixture() {
   const [detailShown, setDetailShown] = useState(false);
   const [listWidth, setListWidth] = useState('60rem');
   return (
-    <Stack gap={5} className="fixture-section">
+    <Column gap={5} className="fixture-section">
       <section aria-label="Persisted">
         <SplitPane.Root
           data-testid="persisted"
@@ -95,14 +95,14 @@ export function SplitPanesFixture() {
         </section>
       </EnvUIProvider>
       <section aria-label="Stacking">
-        <Stack direction="row" gap={2}>
+        <Row gap={2}>
           <Button variant="secondary" onClick={() => setWidth('40rem')}>
             Wide container
           </Button>
           <Button variant="secondary" onClick={() => setWidth('20rem')}>
             Narrow container
           </Button>
-        </Stack>
+        </Row>
         <div style={{ inlineSize: width }}>
           <SplitPane.Root data-testid="stacking" stackBelow="30rem" onStackedChange={setStacked}>
             <Panes name="Stacking" />
@@ -111,7 +111,7 @@ export function SplitPanesFixture() {
         <output data-testid="stacked">{stacked ? 'stacked' : 'side by side'}</output>
       </section>
       <section aria-label="List and detail">
-        <Stack direction="row" gap={2}>
+        <Row gap={2}>
           <Button variant="secondary" onClick={() => setListWidth('60rem')}>
             Wide list and detail
           </Button>
@@ -121,7 +121,7 @@ export function SplitPanesFixture() {
           <Button variant="secondary" onClick={() => setDetailShown(false)}>
             Close the detail
           </Button>
-        </Stack>
+        </Row>
         <div style={{ inlineSize: listWidth }}>
           <ListDetail.Root
             data-testid="list-detail"
@@ -155,6 +155,6 @@ export function SplitPanesFixture() {
           </ListDetail.Root>
         </div>
       </section>
-    </Stack>
+    </Column>
   );
 }

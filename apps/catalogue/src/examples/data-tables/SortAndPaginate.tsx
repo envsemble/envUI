@@ -5,24 +5,25 @@ import {
   Link,
   Pagination,
   RelativeTime,
-  Stack,
+  Column,
+  Row,
   Table,
   Text,
 } from '@envsemble/envui';
 
-type Column = 'name' | 'updated' | 'tasks';
+type SortColumn = 'name' | 'updated' | 'tasks';
 type Direction = 'ascending' | 'descending';
 
 const pageSize = 4;
 
-const columnNames: Record<Column, string> = {
+const columnNames: Record<SortColumn, string> = {
   name: 'name',
   updated: 'updated',
   tasks: 'open tasks',
 };
 
 export default function SortAndPaginate() {
-  const [sort, setSort] = useState<{ column: Column; direction: Direction }>({
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
     column: 'updated',
     direction: 'descending',
   });
@@ -40,16 +41,16 @@ export default function SortAndPaginate() {
   });
   const rows = sorted.slice((page - 1) * pageSize, page * pageSize);
 
-  const direction = (column: Column): Table.SortDirection =>
+  const direction = (column: SortColumn): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
   // A new order starts again from the first page.
-  const sortBy = (column: Column) => (next: Direction) => {
+  const sortBy = (column: SortColumn) => (next: Direction) => {
     setSort({ column, direction: next });
     setPage(1);
   };
 
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Table.Root aria-label="All projects">
         <Table.Head>
           <Table.Row>
@@ -78,10 +79,10 @@ export default function SortAndPaginate() {
                 <Link href={`/projects/${project.id}`}>{project.name}</Link>
               </Table.Cell>
               <Table.Cell nowrap>
-                <Stack direction="row" align="center" gap={2}>
+                <Row align="center" gap={2}>
                   <Avatar name={project.owner} size="sm" fallback="initials" />
                   {project.owner}
-                </Stack>
+                </Row>
               </Table.Cell>
               <Table.Cell>
                 <Badge tone={project.status === 'At risk' ? 'warning' : 'success'}>
@@ -97,7 +98,7 @@ export default function SortAndPaginate() {
           ))}
         </Table.Body>
       </Table.Root>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         {/* The new order is announced politely; the header's arrow alone isn't read out. */}
         <Text role="status" variant="body-sm" emphasis="muted">
           Sorted by {columnNames[sort.column]}, {sort.direction}
@@ -109,8 +110,8 @@ export default function SortAndPaginate() {
           total={projects.length}
           onPageChange={setPage}
         />
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }
 

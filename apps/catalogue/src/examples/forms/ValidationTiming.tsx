@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { Alert, Button, Link, Stack, Text, TextField } from '@envsemble/envui';
+import { Alert, Button, Link, Column, Row, Text, TextField } from '@envsemble/envui';
 
 type FieldName = 'address' | 'email';
 
@@ -65,7 +65,7 @@ export default function ValidationTiming() {
   return (
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         {listed.some((field) => errors[field]) && (
           // Two fields or more: a refused submit lists the errors at the top and moves focus there.
           <Alert
@@ -78,7 +78,7 @@ export default function ValidationTiming() {
               </span>
             }
           >
-            <Stack render={<ul />} gap={1}>
+            <Column render={<ul />} gap={1}>
               {listed
                 .filter((field) => errors[field])
                 .map((field) => (
@@ -94,7 +94,7 @@ export default function ValidationTiming() {
                     </Link>
                   </li>
                 ))}
-            </Stack>
+            </Column>
           </Alert>
         )}
         <TextField
@@ -124,13 +124,13 @@ export default function ValidationTiming() {
           onValueChange={(value) => change('email', value)}
           onBlur={() => leave('email')}
         />
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit">Create workspace</Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {result}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

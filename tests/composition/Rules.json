@@ -307,9 +307,6 @@
         ],
         "styles": ["Editor.css"]
       },
-      "Layout": {
-        "classes": ["env-stack"]
-      },
       "Theme": {
         "modules": ["foundations/ThemeBootstrap.ts"],
         "styles": ["Tokens.css", "TokensHandwritten.css"]

@@ -1,10 +1,10 @@
-import { Button, Card, Stack } from '@envsemble/envui';
+import { Button, Card, Column } from '@envsemble/envui';
 import { Groups } from '@envsemble/envui/icons/Groups';
 import { UploadFile } from '@envsemble/envui/icons/UploadFile';
 
 export default function FeatureCards() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Card
         layout="feature"
         icon={<Groups />}
@@ -21,6 +21,6 @@ export default function FeatureCards() {
         actions={<Button variant="secondary">Import</Button>}
         style={{ inlineSize: 'min(100%, 24rem)' }}
       />
-    </Stack>
+    </Column>
   );
 }

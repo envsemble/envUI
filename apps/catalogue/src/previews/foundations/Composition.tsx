@@ -1,4 +1,4 @@
-import { Card, Stack, Surface, Text } from '@envsemble/envui';
+import { Card, Column, Surface, Text } from '@envsemble/envui';
 import { Example } from '../Example';
 
 export function CompositionPreview() {
@@ -6,10 +6,10 @@ export function CompositionPreview() {
     <>
       <Example title="Surface and layout on one root">
         <Text emphasis="muted">
-          Surface owns fill, padding and corners; Stack owns the gaps. Compose them on the same
-          element through render.
+          Surface owns fill, padding and corners; Column and Row own the gaps. Compose them on the
+          same element through render.
         </Text>
-        <Surface background="default" padding={5} render={<Stack render={<section />} gap={4} />}>
+        <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>
           <Text render={<h2 />} variant="title">
             Workspace
           </Text>

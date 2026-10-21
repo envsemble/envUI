@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { List, LoadingState, SegmentedControl, Skeleton, Stack } from '@envsemble/envui';
+import { List, LoadingState, SegmentedControl, Skeleton, Column } from '@envsemble/envui';
 
 const teams = [
   { value: 'design', label: 'Design' },
@@ -48,10 +48,10 @@ export default function SkeletonList() {
   };
   const name = teams.find((option) => option.value === team)?.label;
   return (
-    <Stack gap={4}>
-      <Stack align="start">
+    <Column gap={4}>
+      <Column gap={4} align="start">
         <SegmentedControl aria-label="Team" value={team} onValueChange={choose} items={teams} />
-      </Stack>
+      </Column>
       {loaded.includes(team) ? (
         <List.Root aria-label={`${name} projects`}>
           {projects[team].map((project) => (
@@ -64,14 +64,14 @@ export default function SkeletonList() {
         <div style={{ visibility: showPlaceholders ? undefined : 'hidden' }}>
           <LoadingState label={`Loading ${name} projects`}>
             {projects[team].map((project, row) => (
-              <Stack key={project.id} gap={2}>
+              <Column key={project.id} gap={2}>
                 <Skeleton width={`${44 - row * 8}%`} height="1rem" emphasis="default" />
                 <Skeleton width="24%" height="0.75rem" />
-              </Stack>
+              </Column>
             ))}
           </LoadingState>
         </div>
       )}
-    </Stack>
+    </Column>
   );
 }

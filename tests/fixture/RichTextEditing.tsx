@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Dialog, EnvUIProvider, Stack, Theme } from '@envsemble/envui';
+import { Button, Dialog, EnvUIProvider, Column, Theme } from '@envsemble/envui';
 import {
   RichText,
   RichTextEditor,
@@ -110,7 +110,12 @@ export function RichTextEditingFixture() {
   const [keyboardClicks, setKeyboardClicks] = useState(0);
   const editorHandle = useRef<RichTextEditorHandle>(null);
   return (
-    <Stack render={<section />} className="fixture-section" data-testid="rich-text-editing">
+    <Column
+      gap={4}
+      render={<section />}
+      className="fixture-section"
+      data-testid="rich-text-editing"
+    >
       {includes('form') && (
         <>
           <form
@@ -282,7 +287,7 @@ export function RichTextEditingFixture() {
           <output data-testid="rich-text-keyboard-clicks">{keyboardClicks}</output>
         </Theme>
       )}
-    </Stack>
+    </Column>
   );
 }
 

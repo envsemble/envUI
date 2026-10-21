@@ -1,5 +1,5 @@
 import { lazy, Suspense, use, useState, type ComponentType, type MouseEvent } from 'react';
-import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
+import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 
@@ -100,8 +100,8 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
   if (!Example || !sourceLoaders[path])
     throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
   return (
-    <Stack gap={3} className="docs-live-example-entry">
-      <Stack
+    <Column gap={3} className="docs-live-example-entry">
+      <Column
         render={<Theme {...theme} />}
         gap={0}
         role="group"
@@ -125,8 +125,8 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
             <Example />
           </Suspense>
         </LoadBoundary>
-      </Stack>
+      </Column>
       <ExampleCode page={page} name={name} />
-    </Stack>
+    </Column>
   );
 }

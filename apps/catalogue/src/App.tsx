@@ -7,7 +7,7 @@ import {
   NavList,
   SearchTrigger,
   SidebarTrigger,
-  Stack,
+  Column,
   ThemeToggle,
 } from '@envsemble/envui';
 import { EnvUILogo } from './brand/EnvUILogo';
@@ -83,9 +83,9 @@ function Catalogue() {
   else if (isOverview) content = <Overview view={overviewView} />;
   else
     content = (
-      <Stack gap={7} className="docs-article">
+      <Column gap={7} className="docs-article">
         <NavList.Item href={routeHref(homeRoute)}>Return to overview</NavList.Item>
-      </Stack>
+      </Column>
     );
   return (
     <AppShell.Root persist={frameStorageKey} className="docs-frame">

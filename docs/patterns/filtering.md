@@ -26,7 +26,8 @@ avoidWhen:
     see: data-tables
 composes:
   - PageHeader
-  - Stack
+  - Column
+  - Row
   - SearchField
   - Select
   - Combobox
@@ -65,7 +66,7 @@ Use this pattern to help people find items in a long list or table: a search fie
 
 ## Anatomy
 
-1. **Toolbar:** the `toolbar` of the page's [PageHeader](../components/page-header.md), a [Stack](../components/stack.md) row that wraps, with `controlSize="sm"` on the header and `size="sm"` on its fields. It is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search field its arrow keys.
+1. **Toolbar:** the `toolbar` of the page's [PageHeader](../components/page-header.md), a [Row](../components/row.md) that wraps, with `controlSize="sm"` on the header and `size="sm"` on its fields. It is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search field its arrow keys.
 2. **Search:** a [SearchField](../components/text-field.md) with a `label` that names what it searches, "Search projects".
 3. **Filters:** a [Select](../components/select.md) with `variant="outline"` per filter of one value, with an option for all, such as "Any status". For a filter of several values, use a [Combobox](../components/combobox.md) with `multiple`, or Checkboxes.
 4. **More filters:** a "Filters" [Button](../components/button.md), with a [CounterBadge](../components/badge.md) of the filters in use, that opens a [Popover](../components/popover.md) of [Checkboxes](../components/checkbox.md) in groups, or a [Drawer](../components/drawer.md) on narrow screens.

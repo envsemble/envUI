@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Select, Stack, Table } from '@envsemble/envui';
+import { Select, Column, Table } from '@envsemble/envui';
 
 const invoices = [
   { number: 'INV-1041', client: 'Northwind', due: '2026-03-14', amount: 1875 },
@@ -9,7 +9,7 @@ const invoices = [
 ];
 
 type Invoice = (typeof invoices)[number];
-type Column = 'client' | 'due' | 'amount';
+type SortColumn = 'client' | 'due' | 'amount';
 type Direction = 'ascending' | 'descending';
 
 const orders = [
@@ -24,7 +24,7 @@ const orders = [
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 const date = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });
 
-function compare(column: Column) {
+function compare(column: SortColumn) {
   return (first: Invoice, second: Invoice) =>
     column === 'amount'
       ? first.amount - second.amount
@@ -32,7 +32,7 @@ function compare(column: Column) {
 }
 
 export default function SortWhileStacked() {
-  const [sort, setSort] = useState<{ column: Column; direction: Direction }>({
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
     column: 'due',
     direction: 'ascending',
   });
@@ -43,9 +43,9 @@ export default function SortWhileStacked() {
       ? compare(sort.column)(first, second)
       : compare(sort.column)(second, first),
   );
-  const direction = (column: Column): Table.SortDirection =>
+  const direction = (column: SortColumn): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
-  const sortBy = (column: Column) => () =>
+  const sortBy = (column: SortColumn) => () =>
     setSort((current) => ({
       column,
       direction:
@@ -53,7 +53,7 @@ export default function SortWhileStacked() {
     }));
   return (
     // As narrow as a phone or a side panel, so the rows stack.
-    <Stack gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
       {stacked && (
         <Select
           label="Sort by"
@@ -61,7 +61,7 @@ export default function SortWhileStacked() {
           onValueChange={(value) => {
             const [column, order] = (value ?? '').split(' ');
             if (column && order)
-              setSort({ column: column as Column, direction: order as Direction });
+              setSort({ column: column as SortColumn, direction: order as Direction });
           }}
           items={orders}
         />
@@ -98,6 +98,6 @@ export default function SortWhileStacked() {
           ))}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }

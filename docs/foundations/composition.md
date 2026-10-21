@@ -2,22 +2,22 @@
 
 ## Build from existing primitives
 
-Surface supplies fill, padding and corners. Stack supplies layout. Card combines those layers with standard content spacing. Specialized cards reuse Card.
+Surface supplies fill, padding and corners. Row, Column and Grid supply layout. Card combines those layers with standard content spacing. Specialized cards reuse Card.
 
 Use component props and slots for variations. Keep product data, routing and validation in the application.
 
 ## Compose one root
 
-render lets Surface and Stack share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.
+render lets Surface and a layout primitive share one element. Put the semantic tag on the supplied element. A custom render component must pass native props, className, style, children and ref to its root.
 
 Compose surface and layout behavior on one section. Place it inside the application’s Theme boundary.
 
 ```tsx
-import { Surface, Stack, Text } from '@envsemble/envui';
+import { Surface, Column, Text } from '@envsemble/envui';
 
 export function WorkspacePane() {
   return (
-    <Surface background="default" padding={5} render={<Stack render={<section />} gap={4} />}>
+    <Surface background="default" padding={5} render={<Column render={<section />} gap={4} />}>
       <Text render={<h2 />} variant="title">
         Workspace
       </Text>
@@ -62,7 +62,9 @@ TypeScript declarations provide the complete public API.
 ## Related topics
 
 - [Surface](../components/surface.md)
-- [Stack](../components/stack.md)
+- [Column](../components/column.md)
+- [Row](../components/row.md)
+- [Grid](../components/grid.md)
 - [Card](../components/card.md)
 - [Spacing & shape](../foundations/spacing.md)
 - [Colors & themes](../foundations/colors.md)

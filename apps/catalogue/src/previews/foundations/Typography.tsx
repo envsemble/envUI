@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Text, Stack } from '@envsemble/envui';
+import { Text, Column } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
 
@@ -16,9 +16,9 @@ function TextSpecimen({ sample, children }: { sample: ReactNode; children: React
   return (
     <li>
       {sample}
-      <Stack gap={1} className="docs-type-meta">
+      <Column gap={1} className="docs-type-meta">
         {children}
-      </Stack>
+      </Column>
     </li>
   );
 }

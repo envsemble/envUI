@@ -3,7 +3,7 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Stack } from '../../foundations/Layout.js';
+import { Column, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 
 /**
@@ -70,24 +70,17 @@ export function DialogHeader({
 /** The row of a dialog's actions at its end, with the primary action last. */
 export function DialogActions({ children, ...props }: ComponentPropsWithRef<'div'>) {
   return (
-    <Stack
-      {...props}
-      direction="row"
-      wrap
-      align="center"
-      justify="end"
-      className="env-dialog-actions"
-    >
+    <Row gap={4} {...props} wrap align="center" justify="end" className="env-dialog-actions">
       {children}
-    </Stack>
+    </Row>
   );
 }
 
 /** The content column of a dialog: header, content and actions 1.5 rem apart. */
 export function DialogContent({ children }: { children: ReactNode }) {
   return (
-    <Stack gap={5} className="env-dialog-content">
+    <Column gap={5} className="env-dialog-content">
       {children}
-    </Stack>
+    </Column>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, SearchField, Stack, TextField } from '@envsemble/envui';
+import { Button, SearchField, Column, TextField } from '@envsemble/envui';
 import { Mail } from '@envsemble/envui/icons/Mail';
 
 /** A toolbar row: the field takes the room the button leaves. */
@@ -11,7 +11,7 @@ const toolbar = {
 
 export default function FieldsBesideButtons() {
   return (
-    <Stack style={{ inlineSize: 'min(100%, 28rem)' }}>
+    <Column gap={4} style={{ inlineSize: 'min(100%, 28rem)' }}>
       <div style={toolbar}>
         <TextField
           showLabel={false}
@@ -26,6 +26,6 @@ export default function FieldsBesideButtons() {
         <SearchField label="Filter projects" showLabel />
         <Button variant="secondary">New project</Button>
       </div>
-    </Stack>
+    </Column>
   );
 }

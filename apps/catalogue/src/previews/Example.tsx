@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Stack, Text, type SpaceStep } from '@envsemble/envui';
+import { Column, Text, type SpaceStep } from '@envsemble/envui';
 
 /** Documentation specimen framing; product UI is composed from public envUI components. */
 export function Example({
@@ -20,7 +20,7 @@ export function Example({
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
 }) {
   return (
-    <Stack
+    <Column
       render={<section />}
       gap={gap}
       data-size={size}
@@ -44,7 +44,7 @@ export function Example({
           {caption}
         </Text>
       )}
-    </Stack>
+    </Column>
   );
 }
 
@@ -73,12 +73,12 @@ export function Specimen({
   caption?: ReactNode;
 }) {
   return (
-    <Stack render={<section />} gap={3} className="docs-specimen">
+    <Column render={<section />} gap={3} className="docs-specimen">
       <Text render={<h3 />} variant="title">
         {title}
       </Text>
       {children}
       {caption && <Text variant="caption">{caption}</Text>}
-    </Stack>
+    </Column>
   );
 }

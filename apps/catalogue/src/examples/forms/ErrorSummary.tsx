@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { Alert, Button, Link, Select, Stack, Text, TextField } from '@envsemble/envui';
+import { Alert, Button, Link, Select, Column, Row, Text, TextField } from '@envsemble/envui';
 
 type FieldName = 'name' | 'email' | 'team';
 type Values = Record<FieldName, string>;
@@ -59,7 +59,7 @@ export default function ErrorSummary() {
   return (
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         {listed.length > 0 && (
           // envUI has no error summary yet: a danger Alert that takes focus lists the errors, each
           // linked to its field. Without `announce` it has no role, so it's read once, as it takes
@@ -74,7 +74,7 @@ export default function ErrorSummary() {
               </span>
             }
           >
-            <Stack render={<ul />} gap={1}>
+            <Column render={<ul />} gap={1}>
               {listed.map((field) => (
                 <li key={field}>
                   <Link
@@ -89,7 +89,7 @@ export default function ErrorSummary() {
                   </Link>
                 </li>
               ))}
-            </Stack>
+            </Column>
           </Alert>
         )}
         <TextField
@@ -125,13 +125,13 @@ export default function ErrorSummary() {
           error={errors.team}
           onValueChange={(value) => change('team', value ?? '')}
         />
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit">Save details</Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {saved}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

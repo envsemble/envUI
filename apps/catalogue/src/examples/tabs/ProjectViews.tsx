@@ -1,4 +1,4 @@
-import { Button, Stack, Tabs, Text } from '@envsemble/envui';
+import { Button, Column, Tabs, Text } from '@envsemble/envui';
 
 export default function ProjectViews() {
   return (
@@ -10,36 +10,36 @@ export default function ProjectViews() {
           value: 'summary',
           button: <Button>Summary</Button>,
           content: (
-            <Stack gap={2}>
+            <Column gap={2}>
               <Text render={<h3 />} variant="title">
                 Northwind launch
               </Text>
               <Text>A shared space for the launch plan, its budget and the team's notes.</Text>
-            </Stack>
+            </Column>
           ),
         },
         {
           value: 'details',
           button: <Button>Details</Button>,
           content: (
-            <Stack gap={2}>
+            <Column gap={2}>
               <Text render={<h3 />} variant="title">
                 Details
               </Text>
               <Text>Owned by Priya Shah. The plan is ready for review by Friday.</Text>
-            </Stack>
+            </Column>
           ),
         },
         {
           value: 'activity',
           button: <Button>Activity</Button>,
           content: (
-            <Stack gap={2}>
+            <Column gap={2}>
               <Text render={<h3 />} variant="title">
                 Activity
               </Text>
               <Text>Sam Lee updated the budget today.</Text>
-            </Stack>
+            </Column>
           ),
         },
       ]}

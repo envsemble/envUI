@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Column, Text, TextField } from '@envsemble/envui';
 
 export default function PendingButton() {
   const [name, setName] = useState('Website refresh');
@@ -20,7 +20,7 @@ export default function PendingButton() {
         }, 1500);
       }}
     >
-      <Stack gap={4} align="start">
+      <Column gap={4} align="start">
         <TextField label="Project name" value={name} onValueChange={setName} />
         {/* The button that started the work shows it; the rest of the form stays as it is. */}
         <Button type="submit" pending={saving}>
@@ -29,7 +29,7 @@ export default function PendingButton() {
         <Text role="status" emphasis="muted">
           {saved}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

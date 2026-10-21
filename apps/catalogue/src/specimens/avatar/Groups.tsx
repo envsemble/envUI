@@ -1,4 +1,4 @@
-import { AvatarGroup, Card, Stack } from '@envsemble/envui';
+import { AvatarGroup, Card, Column } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const people = [
@@ -16,11 +16,11 @@ export default function Groups() {
     <Example title="Avatar groups" size="collection">
       <SpecimenGrid>
         <Specimen title="Sizes">
-          <Stack gap={3} align="start">
+          <Column gap={3} align="start">
             {sizes.map((size) => (
               <AvatarGroup key={size} people={people} max={3} size={size} />
             ))}
-          </Stack>
+          </Column>
         </Specimen>
         <Specimen title="On a card">
           <Card>

@@ -1,8 +1,8 @@
-import { Alert, Stack } from '@envsemble/envui';
+import { Alert, Column } from '@envsemble/envui';
 
 export default function Tones() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Alert title="Sync paused">Changes are saved on this device until you reconnect.</Alert>
       <Alert tone="success">The plan was shared with the team.</Alert>
       <Alert tone="warning" title="Storage almost full">
@@ -11,6 +11,6 @@ export default function Tones() {
       <Alert tone="danger" title="Search is unavailable">
         The search service didn’t respond. Your open documents are still here.
       </Alert>
-    </Stack>
+    </Column>
   );
 }

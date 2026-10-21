@@ -15,7 +15,8 @@ import {
   RelativeTime,
   SearchField,
   Select,
-  Stack,
+  Column,
+  Row,
   Table,
   Text,
   Tooltip,
@@ -29,7 +30,7 @@ import { MoreVert } from '@envsemble/envui/icons/MoreVert';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 type Status = 'active' | 'paused' | 'done';
-type Column = 'name' | 'updated';
+type SortColumn = 'name' | 'updated';
 type Direction = 'ascending' | 'descending';
 
 interface Project {
@@ -55,7 +56,7 @@ export default function IndexPage() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<string | null>('all');
   const [owner, setOwner] = useState<string | null>('anyone');
-  const [sort, setSort] = useState<{ column: Column; direction: Direction }>({
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
     column: 'updated',
     direction: 'descending',
   });
@@ -123,9 +124,9 @@ export default function IndexPage() {
     // The button goes with the empty state, so focus returns to the search.
     search.current?.focus();
   };
-  const direction = (column: Column): Table.SortDirection =>
+  const direction = (column: SortColumn): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
-  const sortBy = (column: Column) => (next: Direction) => setSort({ column, direction: next });
+  const sortBy = (column: SortColumn) => (next: Direction) => setSort({ column, direction: next });
   /** A row's menu button, found by its name. */
   const menuButton = (project: Project | undefined) =>
     project
@@ -190,7 +191,7 @@ export default function IndexPage() {
           }
           toolbar={
             // Not a Toolbar: the search keeps its arrow keys, and every control is a tab stop.
-            <Stack direction="row" wrap align="center" gap={3}>
+            <Row wrap align="center" gap={3}>
               {/* The label shows, so people see what the field searches. */}
               <SearchField
                 ref={search}
@@ -225,17 +226,17 @@ export default function IndexPage() {
                   Clear filters
                 </Button>
               )}
-            </Stack>
+            </Row>
           }
         />
       }
     >
-      <Stack gap={4}>
+      <Column gap={4}>
         {/* The selection's bar: select the page, the count, and what can be done with them. It sits
             above the table, not in its header row, because the header row hides while the rows
             stack on a narrow screen, and the bar stays at every width. */}
-        <Stack direction="row" wrap align="center" justify="between" gap={3}>
-          <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" justify="between" gap={3}>
+          <Row wrap align="center" gap={4}>
             {rows.length > 0 && (
               <Checkbox
                 ref={selectPage}
@@ -256,8 +257,8 @@ export default function IndexPage() {
                   ? `${projectCount(matches.length)} found`
                   : projectCount(matches.length)}
             </Text>
-          </Stack>
-          <Stack direction="row" wrap align="center" gap={2}>
+          </Row>
+          <Row wrap align="center" gap={2}>
             {chosen.length > 0 && (
               <>
                 <Button
@@ -289,12 +290,12 @@ export default function IndexPage() {
                 onValueChange={(value) => {
                   const [column, order] = (value ?? '').split(' ');
                   if (column && order)
-                    setSort({ column: column as Column, direction: order as Direction });
+                    setSort({ column: column as SortColumn, direction: order as Direction });
                 }}
               />
             )}
-          </Stack>
-        </Stack>
+          </Row>
+        </Row>
         {rows.length === 0 ? (
           // No results: the toolbar stays, and the empty state names the query and offers to clear.
           <EmptyState
@@ -342,20 +343,20 @@ export default function IndexPage() {
                 <Table.Row key={project.id} interactive selected={selected.includes(project.id)}>
                   <Table.Cell>
                     {/* The checkbox is the selection people hear; the name is the row's link. */}
-                    <Stack direction="row" align="center" gap={3}>
+                    <Row align="center" gap={3}>
                       <Checkbox
                         aria-label={`Select ${project.name}`}
                         checked={selected.includes(project.id)}
                         onCheckedChange={(checked) => select([project.id], checked)}
                       />
                       <Link href={`/projects/${project.id}`}>{project.name}</Link>
-                    </Stack>
+                    </Row>
                   </Table.Cell>
                   <Table.Cell label="Owner" nowrap>
-                    <Stack direction="row" align="center" gap={2}>
+                    <Row align="center" gap={2}>
                       <Avatar name={project.owner} size="sm" fallback="initials" />
                       {project.owner}
-                    </Stack>
+                    </Row>
                   </Table.Cell>
                   <Table.Cell label="Status">
                     <Badge tone={statusTones[project.status]}>{statusLabels[project.status]}</Badge>
@@ -412,7 +413,7 @@ export default function IndexPage() {
           hideWhenSinglePage
           onPageChange={setPage}
         />
-      </Stack>
+      </Column>
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}

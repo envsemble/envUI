@@ -1,11 +1,11 @@
-import { Button, IconButton, Stack, Surface, Text } from '@envsemble/envui';
+import { Button, IconButton, Column, Surface, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Menu } from '@envsemble/envui/icons/Menu';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
 export default function QuietToolbar() {
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
         {/* A toolbar row: the title takes the room the actions leave. */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -20,6 +20,6 @@ export default function QuietToolbar() {
       <Button variant="ghost" startIcon={<Add />}>
         New section
       </Button>
-    </Stack>
+    </Column>
   );
 }

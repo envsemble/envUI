@@ -1,4 +1,4 @@
-import { NavList, Stack, Tabs, Text } from '@envsemble/envui';
+import { NavList, Column, Tabs, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 import { Notifications } from '@envsemble/envui/icons/Notifications';
 import { Person } from '@envsemble/envui/icons/Person';
@@ -20,12 +20,12 @@ export default function VerticalList() {
         value: section.value,
         button: <NavList.Item icon={<section.icon />}>{section.label}</NavList.Item>,
         content: (
-          <Stack gap={2}>
+          <Column gap={2}>
             <Text render={<h3 />} variant="title">
               {section.label}
             </Text>
             <Text>{section.text}</Text>
-          </Stack>
+          </Column>
         ),
       }))}
     />
