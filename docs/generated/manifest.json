@@ -16339,31 +16339,49 @@
         {
           "name": "SortAndPaginate",
           "title": "Sort and paginate",
-          "description": "Use this pattern to show records people compare, sort and act on: a table with a link to each record, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows. On a narrow screen, the rows stack and a control above the table sorts them.",
+          "description": "A data table shows records people compare, sort and act on: one link per row on the record's name, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows.",
           "file": "docs/examples/data-tables/SortAndPaginate.tsx"
         },
         {
           "name": "SelectAndBulkActions",
           "title": "Select and act on several rows",
-          "description": "Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and \"Clear selection\". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone, and back to Delete when its confirmation is cancelled. The count is announced through a status that is always there.",
+          "description": "While rows are selected, a bulk bar shows the count and actions that name it, \"Archive 2 projects\". Archive acts at once with Undo; Delete asks first, as in destructive actions.",
           "file": "docs/examples/data-tables/SelectAndBulkActions.tsx"
         },
         {
           "name": "RowActions",
           "title": "Row actions",
-          "description": "The project's name is the row's link, and its other actions wait in a menu named for the row. \"Delete project…\" opens a confirmation; after the delete, focus moves to the next row's menu button, and after the last, to the empty state's \"Create project\".",
+          "description": "The name links to the record; the other actions wait in a Menu named for the row, \"More actions for Website refresh\".",
           "file": "docs/examples/data-tables/RowActions.tsx"
         },
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "Choosing a team loads its projects: Skeleton rows in the table's shape after 200 ms, then the table, or, for a team with none, an EmptyState in its place with \"Create project\".",
+          "description": "The first load shows the table's shape after 200 ms, as in Loading; with no records, an EmptyState takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
+        },
+        {
+          "name": "NumbersAlignedEnd",
+          "title": "Do: Numbers aligned to the end with numeric, so they compare down the column.",
+          "description": "",
+          "file": "docs/examples/data-tables/NumbersAlignedEnd.tsx"
+        },
+        {
+          "name": "NumbersAlignedStart",
+          "title": "Don't: Numbers aligned to the start: hundreds and tens look alike.",
+          "description": "",
+          "file": "docs/examples/data-tables/NumbersAlignedStart.tsx"
+        },
+        {
+          "name": "DataTableAnatomy",
+          "title": "Data tables anatomy",
+          "description": "",
+          "file": "docs/examples/data-tables/DataTableAnatomy.tsx"
         },
         {
           "name": "NarrowTable",
           "title": "Narrow table",
-          "description": "As narrow as a phone, the rows stack with each value's label, and a Select and an IconButton above the table sort them, at the size of the small rows.",
+          "description": "",
           "file": "docs/examples/data-tables/NarrowTable.tsx"
         }
       ]
