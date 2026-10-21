@@ -5668,12 +5668,9 @@
           "states": [
             {
               "attribute": "data-current",
-              "values": [
-                ""
-              ],
+              "values": [],
               "parts": [
-                "env-bar-item",
-                "env-bar-more"
+                "env-bar-item"
               ]
             }
           ]
@@ -14259,7 +14256,7 @@
           "use": "EmptyState"
         },
         {
-          "text": "The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.",
+          "text": "The application frame itself before the first page loads, which shows its own parts as skeletons.",
           "use": "AppShell"
         }
       ],
@@ -20032,6 +20029,12 @@
           "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
         },
         {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "The item's accessible name, where its label and end content don't say it as wanted, such as Inbox, 3 new for a destination whose count shows as a badge."
+        },
+        {
           "name": "className",
           "type": "string",
           "required": false,
@@ -20842,6 +20845,13 @@
           "type": "ReactNode",
           "required": false,
           "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
+        },
+        {
+          "name": "headingLevel",
+          "type": "2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "2",
+          "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
         },
         {
           "name": "aria-label",
