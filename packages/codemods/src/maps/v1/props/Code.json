@@ -20,7 +20,7 @@
     },
     "CodeBlock": {
       "theme": {
-        "report": "CodeBlock's theme is gone in 1.0: a code block takes the code theme of the app theme, Pierre Light or Pierre Dark, which envUI chooses, so delete the prop.",
+        "report": "CodeBlock's theme is gone in 1.0: a code block takes the code theme of the app theme, github-light-default or github-dark-dimmed, which envUI chooses, so delete the prop.",
         "values": {
           "light": {},
           "dark": {}

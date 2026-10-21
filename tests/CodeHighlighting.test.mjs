@@ -48,9 +48,8 @@ test('a token without high-contrast styles takes its standard color at high cont
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
   const { wcagContrast, interpolate, formatHex, rgb, differenceEuclidean } = await import('culori');
-  const { codeBackground, codeTheme, diffTheme } = await import(
-    '../packages/ui/dist/content/internal/CodeThemes.js'
-  );
+  const { codeBackground, codeForeground, codeTheme, diffTheme, inlineCodeBackground } =
+    await import('../packages/ui/dist/content/internal/CodeThemes.js');
   const { diffTints } = await import('../packages/ui/dist/content/internal/CodeDiffTints.js');
   const { tintsFile, tintsSource } = await import('../scripts/GenerateCodeThemes.mjs');
   assert.equal(
@@ -58,9 +57,16 @@ test('every highlighted token is readable on its code background, in code blocks
     await tintsSource(),
     'Run node scripts/GenerateCodeThemes.mjs and commit CodeDiffTints.ts.',
   );
-  const pierre = {
-    light: (await import('@pierre/theme/pierre-light')).default,
-    dark: (await import('@pierre/theme/pierre-dark')).default,
+  const theme = async (name) => (await import(`shiki/themes/${name}.mjs`)).default;
+  const github = {
+    light: {
+      standard: await theme('github-light-default'),
+      high: await theme('github-light-high-contrast'),
+    },
+    dark: {
+      standard: await theme('github-dark-dimmed'),
+      high: await theme('github-dark-high-contrast'),
+    },
   };
   // AA for text in the standard themes, AAA under high contrast.
   const targets = { standard: 4.5, high: 7 };
@@ -84,7 +90,7 @@ test('every highlighted token is readable on its code background, in code blocks
         for (const [key, [scheme, contrast]] of Object.entries(variants)) {
           const color = token[key].color;
           if (!color || !token.content.trim()) continue;
-          const ratio = wcagContrast(color, codeBackground(scheme));
+          const ratio = wcagContrast(color, codeBackground(scheme, contrast));
           assert.ok(
             ratio >= targets[contrast],
             `${language} ${key} "${token.content}" ${color}: ${ratio}`,
@@ -97,7 +103,7 @@ test('every highlighted token is readable on its code background, in code blocks
     ...(theme.tokenColors ?? []).map((rule) => rule.settings?.foreground).filter(Boolean),
   ];
   /**
-   * Each original token color of a Pierre theme, with what a readable theme made of it, matched by
+   * Each original token color of a Shiki theme, with what a readable theme made of it, matched by
    * the rules' scopes, since the highlighter may add a rule of its own to a theme it loads.
    */
   const pairs = (original, readable) => {
@@ -112,14 +118,22 @@ test('every highlighted token is readable on its code background, in code blocks
   };
   for (const scheme of ['light', 'dark'])
     for (const contrast of ['standard', 'high']) {
-      const background = codeBackground(scheme);
+      const background = codeBackground(scheme, contrast);
       const target = targets[contrast];
       const theme = codeTheme(scheme, contrast);
       for (const color of textColors(theme))
         assert.ok(wcagContrast(color, background) >= target, `${scheme} ${contrast} ${color}`);
+      // Inline code and a block's plain text take the theme's foreground, on either background.
+      const foreground = codeForeground(scheme, contrast);
+      assert.equal(theme.colors['editor.foreground'], foreground);
+      for (const surface of [background, inlineCodeBackground(scheme, contrast)])
+        assert.ok(
+          wcagContrast(foreground, surface) >= target,
+          `${scheme} ${contrast} foreground ${foreground} on ${surface}`,
+        );
       // Tokens that were distinct stay apart: by 0.02 in OKLab, or as far as they were.
       const distance = differenceEuclidean('oklab');
-      const mapped = [...pairs(pierre[scheme], theme)];
+      const mapped = [...pairs(github[scheme][contrast], theme)];
       for (const [a, aAfter] of mapped)
         for (const [b, bAfter] of mapped)
           if (a < b)

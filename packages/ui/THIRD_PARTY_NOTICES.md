@@ -43,8 +43,10 @@ The package's dependency and lockfile record the installed version.
 Markdown uses [react-markdown](https://github.com/remarkjs/react-markdown) and
 [remark-gfm](https://github.com/remarkjs/remark-gfm), licensed under MIT.
 Syntax highlighting uses [Shiki](https://github.com/shikijs/shiki), including its
-explicit language registrations, JavaScript regular-expression engine, and unmodified
-GitHub Light Default and GitHub Dark Default theme registrations. Shiki is licensed under MIT.
+explicit language registrations, JavaScript regular-expression engine, and the GitHub Light
+Default, GitHub Dark Dimmed, GitHub Light High Contrast and GitHub Dark High Contrast theme
+registrations, from GitHub's VS Code theme, with token colors that fall short of envUI's contrast
+targets made readable where they load. Shiki and the GitHub themes are licensed under MIT.
 
 `licenses/Runtime-Dependencies-LICENSE.txt` includes the locked runtime dependencies'
 copyright and license notices. The build generates this file from installed packages

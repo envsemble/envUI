@@ -1002,7 +1002,7 @@
     "CodeDiff": {
       "kind": "component",
       "source": "packages/ui/src/diff/CodeDiff.tsx",
-      "description": "The changes between two versions of a file, rendered by Diffs (diffs.com) in its own Pierre theme for the app theme, as code blocks are; the whole file when nothing changed.",
+      "description": "The changes between two versions of a file, rendered by Diffs (diffs.com) in the code theme of the app theme, as code blocks are; the whole file when nothing changed.",
       "props": [
         {
           "name": "before",

@@ -497,23 +497,23 @@ Now:
 
 TitleBar and WindowFrame are gone: a window that draws its own title bar is a Scaffold with a `<TopBar titleBar>` across its whole width, as the [window frame](https://github.com/envsemble/envUI/blob/main/docs/patterns/window-frame.md) pattern shows. PanelDock is a namespace; the editors take the field vocabulary. `v1-names` renames the exports and reports TitleBar and WindowFrame, `v1-props` moves the literal props and values, and `v1-classes` renames the classes:
 
-| 0.x                                                                      | 1.0                                                                                                              |
-| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `<TitleBar start end>{title}</TitleBar>`, `TitleBarProps`                | `<TopBar titleBar start={start} title={title} actions={end} />`, `TopBarProps`                                   |
-| `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<Scaffold topBarSpan="full" topBar={bar} bodyRef={ref}>…</Scaffold>`                                            |
-| `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                             |
-| PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                               |
-| PanelDock.Root `showLabel`, which names a tab's button                   | `openLabel`                                                                                                      |
-| RichTextEditor `hint`                                                    | `description`                                                                                                    |
-| RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                  |
-| `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `.env-top-bar[data-title-bar]`, `--env-top-bar-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name |
-| `env-panel-dock-chip*`                                                   | `env-panel-dock-tab*`                                                                                            |
-| `env-code-copy-status`                                                   | `env-code-block-copy-status`                                                                                     |
-| Code `appearance`: `dark`, `subtle`                                      | Removed in 0.7, with the subtle inline code: inline code takes the code theme of the app theme                   |
-| Markdown `inlineCode`: `dark`, `subtle`                                  | Removed in 0.7, as Code's `appearance`                                                                           |
-| CodeBlock `theme`: `light`, `dark`                                       | Removed in 0.7: a code block takes the code theme of the app theme, Pierre Light or Pierre Dark                  |
-| `env-code-subtle`                                                        | Removed: Code has one look                                                                                       |
-| `env-markdown-toolbar`, `env-markdown-editor-status`                     | `env-editor-toolbar`, `env-editor-status`                                                                        |
+| 0.x                                                                      | 1.0                                                                                                                |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `<TitleBar start end>{title}</TitleBar>`, `TitleBarProps`                | `<TopBar titleBar start={start} title={title} actions={end} />`, `TopBarProps`                                     |
+| `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<Scaffold topBarSpan="full" topBar={bar} bodyRef={ref}>…</Scaffold>`                                              |
+| `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                               |
+| PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                                 |
+| PanelDock.Root `showLabel`, which names a tab's button                   | `openLabel`                                                                                                        |
+| RichTextEditor `hint`                                                    | `description`                                                                                                      |
+| RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                    |
+| `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `.env-top-bar[data-title-bar]`, `--env-top-bar-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name   |
+| `env-panel-dock-chip*`                                                   | `env-panel-dock-tab*`                                                                                              |
+| `env-code-copy-status`                                                   | `env-code-block-copy-status`                                                                                       |
+| Code `appearance`: `dark`, `subtle`                                      | Removed in 0.7, with the subtle inline code: inline code takes the code theme of the app theme                     |
+| Markdown `inlineCode`: `dark`, `subtle`                                  | Removed in 0.7, as Code's `appearance`                                                                             |
+| CodeBlock `theme`: `light`, `dark`                                       | Removed in 0.7: a code block takes the code theme of the app theme, `github-light-default` or `github-dark-dimmed` |
+| `env-code-subtle`                                                        | Removed: Code has one look                                                                                         |
+| `env-markdown-toolbar`, `env-markdown-editor-status`                     | `env-editor-toolbar`, `env-editor-status`                                                                          |
 
 Change by hand what the codemods report or can't see:
 
@@ -524,7 +524,7 @@ Change by hand what the codemods report or can't see:
 - **`env-markdown` on rich text**: RichText's root and RichTextEditor's document no longer carry it; select them by `env-prose`, their shared typography, or by `env-rich-text` and `env-rich-text-document`. Markdown keeps `env-markdown` beside `env-prose`.
 - **RichTextEditor `quiet`**, which drew as outlined, is `ghost` now, the field's quiet look: choose `outline` to keep the border.
 - **A RichTextEditor `variant`** that is an expression, which `v1-props` reports.
-- **Code's `appearance`, Markdown's `inlineCode` and CodeBlock's `theme`**: `v1-props` deletes each literal one and reports one whose value is an expression, such as `inlineCode={inlineCode}` in a wrapper of the application's own; delete it, and the wrapper's own prop with it. envUI chooses the code theme, so code that relied on the dark look in the light theme now shows Pierre Light. `v1-classes` reports a style for `env-code-subtle`.
+- **Code's `appearance`, Markdown's `inlineCode` and CodeBlock's `theme`**: `v1-props` deletes each literal one and reports one whose value is an expression, such as `inlineCode={inlineCode}` in a wrapper of the application's own; delete it, and the wrapper's own prop with it. envUI chooses the code theme, so code that relied on the dark look in the light theme now shows `github-light-default`. `v1-classes` reports a style for `env-code-subtle`.
 
 Words that were English and fixed are messages now: CodeBlock's and CodeDiff's, Markdown's table and task names, MarkdownEditor's toolbar, tabs, preview and status, RichTextEditor's toolbar, suggestions and status, the editors' commands and link dialog, and PanelDock's window controls. Set them through EnvUIProvider's `messages`; PanelDock's `minimizedLabel`, `openLabel` (0.x's `showLabel`), `closeLabel` and `resizeLabel` still override its own for one dock. The editors' toolbar buttons show their names in tooltips instead of native titles.
 

@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { Button } from '../actions/Button.js';
 import {
-  codeBackground,
+  codeThemeName,
   codeThemeStyle,
   diffTheme,
   type CodeContrast,
@@ -45,17 +45,17 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 
 /**
  * Diffs paints its own background from the theme's editor color; it takes the code blocks'
- * background instead, so diffs and snippets match in both app themes.
+ * background instead, as the style sheet chooses it for the contrast, so diffs and snippets match.
  */
-const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: ${codeBackground('light')}; --diffs-dark-bg: ${codeBackground('dark')}; }`;
+const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: var(--env-code-background-now, var(--env-code-background)); --diffs-dark-bg: var(--env-code-background-now, var(--env-code-background)); }`;
 
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;
 
-/** The names of the readable Pierre themes of code diffs for a contrast, light and dark. */
+/** The names of the readable code themes of code diffs for a contrast, light and dark. */
 const diffThemeNames = (contrast: CodeContrast) => ({
-  light: diffTheme('light', contrast).name!,
-  dark: diffTheme('dark', contrast).name!,
+  light: codeThemeName('diff', 'light', contrast),
+  dark: codeThemeName('diff', 'dark', contrast),
 });
 let themesRegistered = false;
 /** Registers the diff themes with Diffs once, under their names; each is built when Diffs asks. */
@@ -65,7 +65,7 @@ function registerThemes() {
   for (const contrast of ['standard', 'high'] as const)
     for (const scheme of ['light', 'dark'] as const)
       registerCustomTheme(
-        `envui-pierre-diff-${scheme}${contrast === 'high' ? '-high' : ''}`,
+        codeThemeName('diff', scheme, contrast),
         async () => diffTheme(scheme, contrast) as never,
       );
 }
@@ -108,7 +108,7 @@ const loadedLanguages = new Set<string>();
 
 function prepareHighlighter(language: string) {
   if (loadedLanguages.has(language) && highlighterReady) return highlighterReady;
-  // The Pierre themes, readable on changed lines too; the app theme chooses between them.
+  // The code themes, readable on changed lines too; the app theme chooses between them.
   registerThemes();
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language] as never,
@@ -129,8 +129,8 @@ function prepareHighlighter(language: string) {
 }
 
 /**
- * The changes between two versions of a file, rendered by Diffs (diffs.com) in its own Pierre theme
- * for the app theme, as code blocks are; the whole file when nothing changed.
+ * The changes between two versions of a file, rendered by Diffs (diffs.com) in the code theme
+ * of the app theme, as code blocks are; the whole file when nothing changed.
  */
 export function CodeDiff({
   before,
