@@ -64,7 +64,7 @@ Code sits inside a sentence, for a command, a value or a file name.
 
 ### Highlighting
 
-envUI picks the code theme from the app theme, with every token at 4.5:1 contrast, or 7:1 under high contrast. A block shows its plain source first and colors it once the highlighter loads.
+envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the theme's own color for code in text, and blocks and diffs on a muted grey a step from the page. A block shows its plain source first and colors it once the highlighter loads.
 
 ```tsx example=PlainOutput caption="Without a language, the source stays plain text."
 
@@ -160,6 +160,6 @@ A CodeDiff shows the two versions side by side from 56 rem, and one column below
 
 ## Changelog
 
-- **1.0.0**: The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`.
+- **1.0.0**: Code, CodeBlock, CodeDiff and Markdown's code use Shiki's `github-light-default` and `github-dark-dimmed` code themes instead of the Pierre themes, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast; `@pierre/theme` is no longer a peer. The `DiffCount` that `countDiffLines` feeds is `DiffStat`. Highlighted tokens reach 4.5:1 in both app themes, and 7:1 under high contrast, in code blocks and code diffs. CodeBlock's and CodeDiff's words come from EnvUIProvider's `messages`; the copy button copies through the selection fallback that CopyButton uses, and its status is `env-code-block-copy-status`.
 - **0.7.0**: Code uses the Pierre code themes that Diffs uses, and follows the app theme; `Code`'s `appearance`, `Markdown`'s `inlineCode` and `CodeBlock`'s `theme` are removed. CodeDiff and countDiffLines, in `@envsemble/envui/diff`. The copy button is a quiet icon button.
 - **0.1.0**: Code and CodeBlock.

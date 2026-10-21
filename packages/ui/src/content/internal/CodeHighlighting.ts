@@ -1,4 +1,4 @@
-import { createHighlighterCore } from 'shiki/core';
+import { createHighlighterCore, type HighlighterCore } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import javascript from '@shikijs/langs/javascript';
 import jsx from '@shikijs/langs/jsx';
@@ -13,6 +13,7 @@ import shell from '@shikijs/langs/shellscript';
 import yaml from '@shikijs/langs/yaml';
 import markdown from '@shikijs/langs/markdown';
 import ini from '@shikijs/langs/ini';
+import { codeThemeName } from './CodeColors.js';
 import { codeTheme } from './CodeThemes.js';
 
 export interface CodeTokenStyle {
@@ -31,53 +32,75 @@ export interface CodeToken {
   darkHigh?: CodeTokenStyle;
 }
 
-/** The code themes every token carries, by the key of its style. */
+/** The code themes tokens carry, by the key of their style: standard, and high contrast on request. */
 const themes = {
-  light: () => codeTheme('light'),
-  dark: () => codeTheme('dark'),
-  lightHigh: () => codeTheme('light', 'high'),
-  darkHigh: () => codeTheme('dark', 'high'),
+  standard: { light: () => codeTheme('light'), dark: () => codeTheme('dark') },
+  high: { lightHigh: () => codeTheme('light', 'high'), darkHigh: () => codeTheme('dark', 'high') },
 };
 
-let highlighter: ReturnType<typeof createHighlighterCore> | undefined;
+let highlighter: Promise<HighlighterCore> | undefined;
+let highContrastLoaded: Promise<void> | undefined;
 const cache = new Map<string, CodeToken[][]>();
 let cachedCharacters = 0;
 
-/** One runtime and a bounded cache for the explicitly bundled languages. */
-export async function highlightCode(source: string, language: string): Promise<CodeToken[][]> {
-  const key = `${language}\0${source}`;
+/**
+ * One runtime and a bounded cache for the explicitly bundled languages. Tokens carry their
+ * high-contrast styles only when `highContrast` asks for them: the high-contrast themes load then.
+ */
+export async function highlightCode(
+  source: string,
+  language: string,
+  highContrast = false,
+): Promise<CodeToken[][]> {
+  const key = `${highContrast ? 'high' : 'standard'}\0${language}\0${source}`;
   const existing = cache.get(key);
   if (existing) return existing;
-  highlighter ??= createHighlighterCore({
-    engine: createJavaScriptRegexEngine(),
-    themes: Object.values(themes).map((theme) => theme()),
-    langs: [
-      javascript,
-      jsx,
-      typescript,
-      tsx,
-      java,
-      json,
-      html,
-      css,
-      sql,
-      shell,
-      yaml,
-      markdown,
-      ini,
-    ],
+  highlighter ??= (async () =>
+    createHighlighterCore({
+      engine: createJavaScriptRegexEngine(),
+      themes: await Promise.all(Object.values(themes.standard).map((theme) => theme())),
+      langs: [
+        javascript,
+        jsx,
+        typescript,
+        tsx,
+        java,
+        json,
+        html,
+        css,
+        sql,
+        shell,
+        yaml,
+        markdown,
+        ini,
+      ],
+    }))().catch((error: unknown) => {
+    highlighter = undefined;
+    throw error;
   });
   const runtime = await highlighter;
+  if (highContrast) {
+    highContrastLoaded ??= Promise.all(Object.values(themes.high).map((theme) => theme()))
+      .then((loaded) => runtime.loadTheme(...loaded))
+      .catch((error: unknown) => {
+        highContrastLoaded = undefined;
+        throw error;
+      });
+    await highContrastLoaded;
+  }
   // Another consumer may have filled the cache while this shared runtime initialized.
   const initialized = cache.get(key);
   if (initialized) return initialized;
+  const names: Record<string, string> = {
+    light: codeThemeName('code', 'light', 'standard'),
+    dark: codeThemeName('code', 'dark', 'standard'),
+    ...(highContrast && {
+      lightHigh: codeThemeName('code', 'light', 'high'),
+      darkHigh: codeThemeName('code', 'dark', 'high'),
+    }),
+  };
   const tokens = runtime
-    .codeToTokensWithThemes(source, {
-      lang: language,
-      themes: Object.fromEntries(
-        Object.entries(themes).map(([key, theme]) => [key, theme().name!]),
-      ),
-    })
+    .codeToTokensWithThemes(source, { lang: language, themes: names })
     .map((line) =>
       line.map((token) => ({
         content: token.content,

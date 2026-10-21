@@ -108,7 +108,6 @@
   },
   "peerDependencies": {
     "@pierre/diffs": "^1.5.2",
-    "@pierre/theme": "^2.0.0",
     "@shikijs/langs": "^4.5.0",
     "@tiptap/core": "^3.31.4",
     "@tiptap/extension-image": "^3.31.4",
@@ -131,9 +130,6 @@
   },
   "peerDependenciesMeta": {
     "@pierre/diffs": {
-      "optional": true
-    },
-    "@pierre/theme": {
       "optional": true
     },
     "@shikijs/langs": {
@@ -197,7 +193,6 @@
   },
   "devDependencies": {
     "@pierre/diffs": "1.5.2",
-    "@pierre/theme": "2.0.0",
     "@shikijs/langs": "4.5.0",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-image": "3.31.4",
