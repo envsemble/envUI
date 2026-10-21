@@ -225,8 +225,8 @@ test.describe('hosted build', () => {
     requireSite();
     await serveSite(page);
     await page.goto(`${siteUrl}/#/components/tables/usage?section=keyboard`);
-    // The Keyboard heading is in the Accessibility view, which opens.
-    await expect(page).toHaveURL(`${siteUrl}/components/table/accessibility#keyboard`);
+    // The Keyboard heading is in the Overview, which opens on the figure template.
+    await expect(page).toHaveURL(`${siteUrl}/components/table/overview#keyboard`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Table');
     await page.goto(`${siteUrl}/#/overview/get-started?document=migration&section=documentation`);
     await expect(page).toHaveURL(`${siteUrl}/get-started/migration`);
