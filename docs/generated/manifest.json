@@ -15036,8 +15036,8 @@
       "doc": "docs/foundations/composition.md",
       "related": [
         "surface",
-        "column",
         "row",
+        "column",
         "grid",
         "card",
         "spacing",
