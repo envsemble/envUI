@@ -30,6 +30,8 @@ related: [forms, switch]
 
 Register the page in [the index](index.md) under `## Patterns`, with only its title and path; the summary comes from the frontmatter. Patterns are listed in intent order.
 
+A pattern page may instead be on the [figure template](component-pages.md#sections) of component pages, with a `## When to use` section: live figures, do and don't pairs and an anatomy figure, whose `of` names the component it labels. [Loading](patterns/loading.md) is on it.
+
 ## Pattern sections
 
 | Section              | Required | Holds                                                                                                                                       |
