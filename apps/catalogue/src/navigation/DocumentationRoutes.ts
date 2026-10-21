@@ -25,9 +25,17 @@ export type ReferenceView =
   | (typeof templateViews)[number]['id'];
 export type ViewOption = { id: ReferenceView; title: string };
 
+/** The views of a component page written as exchanges: every exchange, then the props. */
+export const exchangeViews = [
+  { id: 'overview', title: 'Overview' },
+  { id: 'props', title: 'Props' },
+] as const;
+
 /** Which template view shows each authored section; Props and Related are generated. */
 export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
   overview: 'overview',
+  usage: 'overview',
+  width: 'overview',
   examples: 'overview',
   changelog: 'overview',
   anatomy: 'guidelines',
@@ -38,10 +46,22 @@ export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
   accessibility: 'accessibility',
 };
 
+/**
+ * The view that shows a section of a page: on a page of exchanges the Overview, which holds every
+ * exchange, and on the template the view sectionViews names.
+ */
+export function viewOfSection(
+  reference: Pick<Reference, 'format'>,
+  section: TemplateSectionId,
+): ReferenceView {
+  return reference.format === 'exchanges' ? 'overview' : sectionViews[section];
+}
+
 /** The views a page has: the template's, where it has sections for them, or Preview and Usage. */
 export function viewsOf(reference: Reference): readonly ViewOption[] {
   const sections = reference.sections;
   if (!sections) return referenceViews;
+  if (reference.format === 'exchanges') return exchangeViews;
   return templateViews.filter(
     (view) =>
       view.id === 'overview' ||
@@ -201,7 +221,7 @@ export const documentationPages: { path: string; title: string; views: readonly 
 /** The view of a page on the template that shows the heading of id `anchor`, if it has one. */
 export function viewOfHeading(reference: Reference, anchor: string): ReferenceView | undefined {
   const section = reference.sections?.find(({ anchors }) => anchors?.includes(anchor));
-  return section && sectionViews[section.id];
+  return section && viewOfSection(reference, section.id);
 }
 
 /** The address of a page in the view a reader starts with, or the one closest to view. */
@@ -292,7 +312,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/messages(?=\/|$)/, 'components/message')
     .replace(/^components\/cards(?=\/|$)/, 'components/card')
     .replace(/^components\/keyboard(?=\/|$)/, 'components/kbd')
-    .replace(/^components\/layout(?=\/|$)/, 'components/stack')
+    .replace(/^components\/(layout|stack)(?=\/|$)/, 'components/column')
     .replace(/^components\/loading(?=\/|$)/, 'components/skeleton')
     .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
     .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')

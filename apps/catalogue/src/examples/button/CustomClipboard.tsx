@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CopyButton, Stack, Text } from '@envsemble/envui';
+import { CopyButton, Column, Text } from '@envsemble/envui';
 
 export default function CustomClipboard() {
   const [held, setHeld] = useState('');
@@ -9,11 +9,11 @@ export default function CustomClipboard() {
     setHeld(text);
   }
   return (
-    <Stack align="start" gap={2}>
+    <Column align="start" gap={2}>
       <CopyButton value="RPT-2041" write={write} variant="outline">
         Copy ID
       </CopyButton>
       <Text variant="caption">{held ? `The clipboard holds ${held}.` : 'Nothing copied yet.'}</Text>
-    </Stack>
+    </Column>
   );
 }

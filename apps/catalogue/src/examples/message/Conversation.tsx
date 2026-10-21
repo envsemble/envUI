@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Composer, Message, MessageList, Stack } from '@envsemble/envui';
+import { Composer, Message, MessageList, Column } from '@envsemble/envui';
 
 interface Entry {
   id: number;
@@ -50,7 +50,7 @@ export default function Conversation() {
   }
 
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <MessageList aria-label="Conversation with the assistant" busy={replying}>
         {messages.map((entry) => (
           <Message
@@ -69,6 +69,6 @@ export default function Conversation() {
         running={replying}
         onStop={stop}
       />
-    </Stack>
+    </Column>
   );
 }

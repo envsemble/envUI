@@ -1,10 +1,10 @@
 import { useId } from 'react';
-import { Stack, Surface, Text } from '@envsemble/envui';
+import { Column, Surface, Text } from '@envsemble/envui';
 
 export default function DetailPane() {
   const heading = useId();
   return (
-    <Surface padding={5} render={<Stack render={<section />} gap={3} aria-labelledby={heading} />}>
+    <Surface padding={5} render={<Column render={<section />} gap={3} aria-labelledby={heading} />}>
       <Text render={<h3 />} variant="title" id={heading}>
         Northwind launch
       </Text>

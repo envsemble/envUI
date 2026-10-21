@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Stack, Text } from '@envsemble/envui';
+import { Button, EmptyState, List, Column, Text } from '@envsemble/envui';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
 export default function AllDone() {
@@ -24,7 +24,7 @@ export default function AllDone() {
   };
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <Text render={<h3 ref={heading} tabIndex={-1} />} variant="title">
         Waiting for your review
       </Text>
@@ -56,7 +56,7 @@ export default function AllDone() {
           description="When someone asks you to review a document, it appears here."
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

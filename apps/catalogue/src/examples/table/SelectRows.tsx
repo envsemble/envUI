@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Checkbox, Stack, Table, Text } from '@envsemble/envui';
+import { Checkbox, Column, Table, Text } from '@envsemble/envui';
 
 const members = [
   { id: 'alex', name: 'Alex Morgan', email: 'alex@example.com', role: 'Owner' },
@@ -15,7 +15,7 @@ export default function SelectRows() {
       checked ? [...current, id] : current.filter((selectedId) => selectedId !== id),
     );
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Text emphasis="muted">
         {selected.length} of {members.length} selected
       </Text>
@@ -44,6 +44,6 @@ export default function SelectRows() {
           ))}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }

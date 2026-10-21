@@ -1,5 +1,5 @@
 import { Suspense, useState, type ReactNode } from 'react';
-import { Card, EmptyState, Link, Stack, Surface, Text } from '@envsemble/envui';
+import { Card, EmptyState, Link, Column, Surface, Text } from '@envsemble/envui';
 import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
 import { PageHeader } from '../layout/PageHeader';
 import { Documentation } from './Documentation';
@@ -103,9 +103,9 @@ export function StandalonePageContent({ page }: { page: StandalonePage }) {
       {document?.sections ? (
         content
       ) : (
-        <Stack gap={7} className="docs-article">
+        <Column gap={7} className="docs-article">
           {content}
-        </Stack>
+        </Column>
       )}
     </>
   );

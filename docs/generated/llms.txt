@@ -4,6 +4,8 @@
 
 Search envUI before writing any UI element; propose an envUI addition instead of a local copy. Each component page has when to use it and what to use instead, accessibility, examples as source and props generated from the TypeScript declarations. manifest.json holds the same as data, and `npx --no envui mcp` serves it to agents over MCP.
 
+Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: CSS may target them, and each component below names its root classes. Component tokens, such as `--env-card-padding`, are private; use the system tokens. docs/generated/parts.json lists every part with what it is.
+
 ## Setup and workflows
 
 - [Install the private package](docs/setup.md): Registry access, styles, themes and public entry points.
@@ -17,7 +19,7 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Typography](docs/foundations/typography.md): Shared styles for headings, body copy and supporting text.
 - [Spacing & shape](docs/foundations/spacing.md): A shared scale for space, corners and controls that grow with content.
 - [Scale & density](docs/foundations/scale.md): The comfortable and compact app scales, control sizes and the row density of data components.
-- [Responsive layout & stacking](docs/foundations/responsive.md): Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.
+- [Responsive layout & stacking](docs/foundations/responsive.md): Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
@@ -25,91 +27,94 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 
 ## Components: Layout & surfaces
 
-- [Stack](docs/components/stack.md): Stack lays out content in a column, or a row, with even gaps, such as a form and its actions.
-- [Page](docs/components/page.md): The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top.
-- [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top.
-- [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail.
-- [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own.
-- [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order.
-- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.
+- [Box](docs/components/box.md): Box is a plain block for an inset, a size container or a named region, with no layout of its own.
+- [Row](docs/components/row.md): Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
+- [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
+- [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
+- [Page](docs/components/page.md): The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top. Parts: `.env-page`.
+- [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top. Parts: `.env-page-header`.
+- [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail. Parts: `.env-split-pane`, `.env-list-detail`.
+- [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Parts: `.env-surface`.
+- [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order. Parts: `.env-list`.
+- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button. Parts: `.env-card`.
 
 ## Components: Actions
 
-- [Button](docs/components/button.md): Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup.
-- [CloseButton](docs/components/close-button.md): The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language.
-- [SearchTrigger](docs/components/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon.
-- [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys.
-- [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application.
+- [Button](docs/components/button.md): Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
+- [CloseButton](docs/components/close-button.md): The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language. Parts: `.env-close-button`.
+- [SearchTrigger](docs/components/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon. Parts: `.env-search-trigger`.
+- [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys. Parts: `.env-toolbar`.
+- [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application. Parts: `.env-link`.
 
 ## Components: Forms & selection
 
-- [ColorPicker](docs/components/color-picker.md): A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one. Also: ColorSwatch.
-- [TextField](docs/components/text-field.md): Single-line inputs, search fields and multiline textareas share labels, guidance and states. Also: SearchField, Textarea.
-- [Field](docs/components/field.md): The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for.
-- [Composer](docs/components/composer.md): The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply.
-- [Checkbox](docs/components/checkbox.md): A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent.
-- [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes.
-- [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup.
-- [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error.
-- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content.
-- [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several.
-- [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar.
-- [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock.
-- [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period.
-- [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard.
-- [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files.
+- [ColorPicker](docs/components/color-picker.md): A color area, a hue slider and a HEX field for choosing an opaque color, and a color swatch that shows one. Also: ColorSwatch. Parts: `.env-color-picker`, `.env-color-swatch`.
+- [TextField](docs/components/text-field.md): Single-line inputs, search fields and multiline textareas share labels, guidance and states. Also: SearchField, Textarea. Parts: `.env-text-field`.
+- [Field](docs/components/field.md): The parts of a labelled form field, a label, a control, a description and an error, for a control envUI has no field for. Parts: `.env-field`.
+- [Composer](docs/components/composer.md): The message field of a conversation, which grows with its text and sends with Enter, with a send button that stops a running reply. Parts: `.env-composer`.
+- [Checkbox](docs/components/checkbox.md): A native checkbox with its label, for a choice people turn on or off on its own, with a mixed state for a group's parent. Parts: `.env-checkbox`.
+- [Switch](docs/components/switch.md): An on/off setting that takes effect as soon as it changes. Parts: `.env-switch`.
+- [Radio](docs/components/radio.md): One choice from a few options shown together, side by side or as selectable rows. Also: RadioGroup. Parts: `.env-radio-group`, `.env-radio`.
+- [Select](docs/components/select.md): One choice from a list that stays collapsed until opened, on a Button-style trigger with a label, description and error. Parts: `.env-select`.
+- [SegmentedControl](docs/components/segmented-control.md): One choice among a few items on a pill rail, such as views or filters of the same content. Parts: `.env-segmented-control`.
+- [Combobox](docs/components/combobox.md): A text field that filters a list of options as people type, to choose one option or, as chips, several. Parts: `.env-combobox`.
+- [DatePicker](docs/components/date-picker.md): A field that opens a calendar to choose a date, or a date and time, and the calendar on its own. Also: Calendar. Parts: `.env-date-picker`, `.env-calendar`.
+- [TimePicker](docs/components/time-picker.md): A field that opens wheels of hours and minutes to choose a time of day, on the locale's own clock. Parts: `.env-time-picker`.
+- [MonthPicker](docs/components/month-picker.md): A field that opens a year of months to choose a month, such as a billing or reporting period. Parts: `.env-month-picker`.
+- [Slider](docs/components/slider.md): A value in a known range, chosen by dragging a thumb, pressing the track or with the keyboard. Parts: `.env-slider`.
+- [DropZone](docs/components/drop-zone.md): An area that takes dropped files and opens the file picker when pressed; the application handles and shows the files. Parts: `.env-drop-zone`.
 
 ## Components: Navigation
 
-- [NavList](docs/components/nav-list.md): A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form.
-- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons.
-- [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content.
-- [AppShell](docs/components/app-shell.md): The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes. Also: useAppShell, readAppShellCookie.
-- [Sidebar](docs/components/sidebar.md): A frame's sidebar and its parts, which collapse to a rail of icons or out of view, open over the content, resize and become a drawer on phones, with the trigger that opens and closes it. Also: SidebarTrigger, useSidebar.
-- [WindowFrame](docs/components/window-frame.md): A window without the app frame's sidebars that draws its own title bar, with its content scrolling below it, or the title bar on its own.
-- [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu.
-- [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document.
-- [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted.
-- [Breadcrumbs](docs/components/breadcrumbs.md): The path from the top level to the current page, with earlier levels as links or buttons.
-- [Pagination](docs/components/pagination.md): The range of items shown with previous and next page buttons, small enough for a toolbar.
-- [AccountMenu](docs/components/account-menu.md): The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu.
+- [NavList](docs/components/nav-list.md): A list of navigation destinations, such as the pages in a sidebar, with icons, counts, groups and an icon-only form. Parts: `.env-nav-list`.
+- [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons. Parts: `.env-tabs`.
+- [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
+- [AppShell](docs/components/app-shell.md): The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes. Also: useAppShell, readAppShellCookie. Parts: `.env-app-shell`.
+- [Sidebar](docs/components/sidebar.md): A frame's sidebar and its parts, which collapse to a rail of icons or out of view, open over the content, resize and become a drawer on phones, with the trigger that opens and closes it. Also: SidebarTrigger, useSidebar. Parts: `.env-sidebar`, `.env-sidebar-trigger`.
+- [WindowFrame](docs/components/window-frame.md): A window without the app frame's sidebars that draws its own title bar, with its content scrolling below it, or the title bar on its own. Parts: `.env-window-frame`.
+- [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.
+- [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document. Parts: `.env-document-tabs`.
+- [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted. Parts: `.env-panel-dock`.
+- [Breadcrumbs](docs/components/breadcrumbs.md): The path from the top level to the current page, with earlier levels as links or buttons. Parts: `.env-breadcrumbs`.
+- [Pagination](docs/components/pagination.md): The range of items shown with previous and next page buttons, small enough for a toolbar. Parts: `.env-pagination`.
+- [AccountMenu](docs/components/account-menu.md): The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu. Parts: `.env-account-menu`.
 
 ## Components: Content & guidance
 
-- [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions.
-- [Markdown](docs/components/markdown.md): Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview. Also: MarkdownEditor.
-- [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines.
-- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: CounterBadge, DiffStat.
-- [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers.
-- [DescriptionList](docs/components/description-list.md): The facts about one thing, as labels and their values, beside each other or stacked by the list's own width.
-- [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus.
-- [AnimatedNumber](docs/components/animated-number.md): A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed.
-- [Rating](docs/components/rating.md): A read-only rating as stars filled in half steps, named once for assistive technology.
-- [RelativeTime](docs/components/relative-time.md): A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip. Also: formatRelativeTime.
-- [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element.
-- [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue.
-- [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList.
-- [Stat](docs/components/stat.md): Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.
-- [CalendarHeatmap](docs/components/calendar-heatmap.md): A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day.
+- [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions. Parts: `.env-rich-text`, `.env-rich-text-editor`.
+- [Markdown](docs/components/markdown.md): Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview. Also: MarkdownEditor. Parts: `.env-markdown`, `.env-markdown-editor`.
+- [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines. Parts: `.env-code`, `.env-code-block`, `.env-code-diff`.
+- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: CounterBadge, DiffStat. Parts: `.env-badge`, `.env-counter-badge`, `.env-diff-stat`.
+- [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers. Parts: `.env-table`.
+- [DescriptionList](docs/components/description-list.md): The facts about one thing, as labels and their values, beside each other or stacked by the list's own width. Parts: `.env-description-list`.
+- [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Parts: `.env-kbd`.
+- [AnimatedNumber](docs/components/animated-number.md): A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed. Parts: `.env-animated-number`.
+- [Rating](docs/components/rating.md): A read-only rating as stars filled in half steps, named once for assistive technology. Parts: `.env-rating`.
+- [RelativeTime](docs/components/relative-time.md): A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip. Also: formatRelativeTime. Parts: `.env-relative-time`.
+- [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element. Parts: `.env-disclosure`.
+- [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue. Parts: `.env-avatar`, `.env-avatar-button`, `.env-avatar-group`.
+- [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList. Parts: `.env-message`, `.env-message-list`.
+- [Stat](docs/components/stat.md): Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns. Parts: `.env-stat`.
+- [CalendarHeatmap](docs/components/calendar-heatmap.md): A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day. Parts: `.env-calendar-heatmap`.
 
 ## Components: Feedback & overlays
 
-- [EmptyState](docs/components/empty-state.md): Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action.
-- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc.
-- [Skeleton](docs/components/skeleton.md): Placeholders in the shape of content that is loading, in a LoadingState that names the region once. Also: LoadingState.
-- [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast.
-- [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button.
-- [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose.
-- [Drawer](docs/components/drawer.md): A full-height panel that slides in from the start or end edge of the window, for filters, details, an inspector or a phone's navigation.
-- [ConfirmDialog](docs/components/confirm-dialog.md): An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish.
-- [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks.
-- [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher, ThemeRadioGroup.
-- [Menubar](docs/components/menubar.md): A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys.
-- [Tooltip](docs/components/tooltip.md): A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled.
-- [Popover](docs/components/popover.md): A floating panel beside its trigger for details or a small form; Esc or a press outside closes it.
-- [HoverCard](docs/components/hover-card.md): A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview.
-- [Meter](docs/components/meter.md): A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar.
-- [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown.
+- [EmptyState](docs/components/empty-state.md): Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action. Parts: `.env-empty-state`.
+- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Parts: `.env-spinner`.
+- [Skeleton](docs/components/skeleton.md): Placeholders in the shape of content that is loading, in a LoadingState that names the region once. Also: LoadingState. Parts: `.env-skeleton`, `.env-loading-state`.
+- [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast. Parts: `.env-toast`.
+- [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button. Parts: `.env-alert`.
+- [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose. Parts: `.env-dialog-popup`.
+- [Drawer](docs/components/drawer.md): A full-height panel that slides in from the start or end edge of the window, for filters, details, an inspector or a phone's navigation. Parts: `.env-drawer-popup`.
+- [ConfirmDialog](docs/components/confirm-dialog.md): An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish. Parts: `.env-dialog-popup`.
+- [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks. Parts: `.env-command-palette`.
+- [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher, ThemeRadioGroup. Parts: `.env-menu`, `.env-organization-switcher`.
+- [Menubar](docs/components/menubar.md): A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys. Parts: `.env-menubar`.
+- [Tooltip](docs/components/tooltip.md): A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled. Parts: `.env-tooltip`.
+- [Popover](docs/components/popover.md): A floating panel beside its trigger for details or a small form; Esc or a press outside closes it. Parts: `.env-popover`.
+- [HoverCard](docs/components/hover-card.md): A card of supplementary details that opens beside a link on hover and keyboard focus, like a link preview. Parts: `.env-hover-card`.
+- [Meter](docs/components/meter.md): A measurement within a known range, such as the seats assigned of a plan or the storage used of a quota, as a labelled bar. Parts: `.env-meter`.
+- [Progress](docs/components/progress.md): How much of a task is done, such as an upload, as a labelled bar, or that it runs while the amount is unknown. Parts: `.env-progress`.
 
 ## Patterns: Collect and change information
 
@@ -145,4 +150,5 @@ Search envUI before writing any UI element; propose an envUI addition instead of
 - [Full documentation](llms-full.txt): every page above in one file, with examples and props.
 - [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.
 - [Props](docs/generated/props.json): the props of every export.
+- [Parts](docs/generated/parts.json): the part classes and state attributes of every component, with what each part is.
 - [Icons](icon-manifest.json): every icon, imported from `@envsemble/envui/icons/<Name>`.

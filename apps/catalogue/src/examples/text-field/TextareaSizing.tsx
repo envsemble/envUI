@@ -1,4 +1,4 @@
-import { Stack, Textarea } from '@envsemble/envui';
+import { Column, Textarea } from '@envsemble/envui';
 
 const plan = [
   'Goals for the quarter',
@@ -13,7 +13,7 @@ const plan = [
 export default function TextareaSizing() {
   return (
     // As wide as a form column.
-    <Stack style={{ inlineSize: 'min(100%, 24rem)' }}>
+    <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Textarea label="Description" name="description" rows={4} defaultValue={plan} />
       <Textarea
         label="Reply"
@@ -22,6 +22,6 @@ export default function TextareaSizing() {
         rows={1}
         placeholder="Write a reply to Sam Lee"
       />
-    </Stack>
+    </Column>
   );
 }

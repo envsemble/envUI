@@ -4,7 +4,8 @@ import {
   Checkbox,
   ConfirmDialog,
   Link,
-  Stack,
+  Column,
+  Row,
   Table,
   Text,
   Toast,
@@ -67,7 +68,7 @@ function Projects() {
   };
 
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       {/* The bar comes and goes, so a status that is always there announces the count politely
           as it changes; the count the bar shows isn't announced a second time. */}
       <div role="status" style={visuallyHidden}>
@@ -75,7 +76,7 @@ function Projects() {
       </div>
       {selected.length > 0 && (
         // The bulk bar: the count, then the actions on the selection, at the size of the rows.
-        <Stack direction="row" wrap align="center" gap={3}>
+        <Row wrap align="center" gap={3}>
           <Text>{selected.length} selected</Text>
           {/* Only icon buttons, so one tab stop with the arrow keys between them. */}
           <Toolbar.Root aria-label="Selected projects">
@@ -103,7 +104,7 @@ function Projects() {
           >
             Clear selection
           </Button>
-        </Stack>
+        </Row>
       )}
       {/* A narrow column for the checkboxes; the others share the rest. */}
       <Table.Root aria-label="Team projects" defaultColumnWidths={[8, 50, 42]}>
@@ -159,7 +160,7 @@ function Projects() {
           setSelected([]);
         }}
       />
-    </Stack>
+    </Column>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, EmptyState, Page, Stack } from '@envsemble/envui';
+import { Button, EmptyState, Page, Row } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { Home } from '@envsemble/envui/icons/Home';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -25,7 +25,7 @@ export default function NotFoundPage() {
           </>
         }
         action={
-          <Stack direction="row" wrap justify="center" gap={3}>
+          <Row wrap justify="center" gap={3}>
             <Button href="/" startIcon={<Home />}>
               Go to home
             </Button>
@@ -39,7 +39,7 @@ export default function NotFoundPage() {
                 Search
               </Button>
             )}
-          </Stack>
+          </Row>
         }
       />
     </Page>

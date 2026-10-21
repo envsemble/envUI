@@ -1,4 +1,4 @@
-import { Link, Stack, Text } from '@envsemble/envui';
+import { Link, Row, Text } from '@envsemble/envui';
 import { documentedVersion as version } from '../generated/Documentation';
 import { routeHref } from '../navigation/Address';
 
@@ -6,9 +6,9 @@ import { routeHref } from '../navigation/Address';
 export function PageFooter() {
   return (
     <footer className="docs-footer">
-      <Stack direction="row" wrap justify="between" align="center" gap={4}>
+      <Row wrap justify="between" align="center" gap={4}>
         <Text variant="caption">envUI {version}</Text>
-        <Stack render={<nav aria-label="Footer" />} direction="row" wrap gap={5}>
+        <Row render={<nav aria-label="Footer" />} wrap gap={5}>
           <Text variant="caption">
             <Link href={routeHref('changelog')}>Changelog</Link>
           </Text>
@@ -18,8 +18,8 @@ export function PageFooter() {
           <Text variant="caption">
             <Link href="https://github.com/envsemble/envUI/issues">Report an issue</Link>
           </Text>
-        </Stack>
-      </Stack>
+        </Row>
+      </Row>
     </footer>
   );
 }

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, ConfirmDialog, Menu, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, ConfirmDialog, Menu, Column, Text, TextField } from '@envsemble/envui';
 
 /**
  * Confirm dialogs, mounted with ?fixture=confirm-dialogs: a neutral one that confirms at once, a
@@ -22,7 +22,7 @@ export function ConfirmDialogsFixture() {
   const [typedError, setTypedError] = useState('');
   const settleTyped = useRef<(() => void) | null>(null);
   return (
-    <Stack gap={4} className="fixture-section">
+    <Column gap={4} className="fixture-section">
       <ConfirmDialog
         trigger={<Button variant="secondary">Archive project</Button>}
         title="Archive Northwind launch?"
@@ -144,6 +144,6 @@ export function ConfirmDialogsFixture() {
         </form>
       </ConfirmDialog>
       <output data-testid="confirm-log">{log.join(',')}</output>
-    </Stack>
+    </Column>
   );
 }

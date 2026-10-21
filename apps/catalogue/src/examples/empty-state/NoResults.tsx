@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, EmptyState, List, SearchField, Stack, Text } from '@envsemble/envui';
+import { Button, EmptyState, List, SearchField, Column, Text } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projects = ['Northwind launch', 'Pricing research', 'Quarterly planning', 'Support handbook'];
@@ -16,7 +16,7 @@ export default function NoResults() {
     field.current?.focus();
   };
   return (
-    <Stack gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       <SearchField
         ref={field}
         label="Search projects"
@@ -46,6 +46,6 @@ export default function NoResults() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }

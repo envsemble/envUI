@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Disclosure, Stack, TextField } from '@envsemble/envui';
+import { Button, Disclosure, Column, Row, TextField } from '@envsemble/envui';
 
 export default function OpenOnError() {
   const [advanced, setAdvanced] = useState(false);
@@ -16,7 +16,7 @@ export default function OpenOnError() {
 
   return (
     <form onSubmit={submit} noValidate style={{ inlineSize: 'min(100%, 26rem)' }}>
-      <Stack gap={4}>
+      <Column gap={4}>
         <TextField label="Site name" defaultValue="Northwind help" />
         <Disclosure title="Advanced settings" open={advanced} onOpenChange={setAdvanced}>
           <TextField
@@ -27,10 +27,10 @@ export default function OpenOnError() {
             onChange={(event) => setDomain(event.target.value)}
           />
         </Disclosure>
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button type="submit">Save site</Button>
-        </Stack>
-      </Stack>
+        </Row>
+      </Column>
     </form>
   );
 }

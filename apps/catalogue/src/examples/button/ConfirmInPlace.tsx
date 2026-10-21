@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, ConfirmButton, List, Stack } from '@envsemble/envui';
+import { Button, ConfirmButton, List, Column } from '@envsemble/envui';
 import { Delete } from '@envsemble/envui/icons/Delete';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
@@ -35,7 +35,7 @@ export default function ConfirmInPlace() {
   };
 
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <List.Root
         ref={list}
         aria-label="Members with access"
@@ -75,6 +75,6 @@ export default function ConfirmInPlace() {
           />
         )}
       </div>
-    </Stack>
+    </Column>
   );
 }

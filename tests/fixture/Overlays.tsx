@@ -7,7 +7,7 @@ import {
   Link,
   Alert,
   Popover,
-  Stack,
+  Column,
   Text,
   Theme,
   type ThemeValue,
@@ -61,7 +61,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
           trigger={<Button variant="secondary">Rename {theme}</Button>}
         >
           {(close) => (
-            <Stack gap={3}>
+            <Column gap={3}>
               <TextField label="Name" name="name" defaultValue="Roadmap.md" />
               <Button
                 onClick={() => {
@@ -71,7 +71,7 @@ export function PopoverFixture({ theme }: { theme: ThemeValue }) {
               >
                 Save name
               </Button>
-            </Stack>
+            </Column>
           )}
         </Popover>
       </div>

@@ -12,7 +12,8 @@ import {
   Progress,
   RelativeTime,
   Select,
-  Stack,
+  Column,
+  Row,
   Stat,
   Surface,
   Table,
@@ -64,7 +65,7 @@ export default function DashboardPage() {
         />
       }
     >
-      <Stack gap={6}>
+      <Column gap={6}>
         <Stat.Group aria-label={`Figures for the ${periodLabel(period)}`}>
           {figures.map((figure) => (
             <Stat.Root
@@ -77,7 +78,7 @@ export default function DashboardPage() {
         </Stat.Group>
         {/* envUI has no grid of panels yet: the panels share rows of at least 22 rem and wrap,
             so a phone shows one column and a desktop two or three. */}
-        <Stack direction="row" wrap align="stretch" gap={4}>
+        <Row wrap align="stretch" gap={4}>
           <Panel title="Activity" wide>
             <CalendarHeatmap
               aria-label="Tasks completed each day since October"
@@ -159,8 +160,8 @@ export default function DashboardPage() {
               description="Overdue tasks and projects at risk show here."
             />
           </Panel>
-        </Stack>
-      </Stack>
+        </Row>
+      </Column>
     </Page>
   );
 }
@@ -175,12 +176,12 @@ function Panel({ title, wide, children }: { title: string; wide?: boolean; child
       // envUI has no grid of panels yet: a wide panel grows twice as fast as the others.
       style={{ flex: wide ? '2 1 30rem' : '1 1 22rem', minInlineSize: 0 }}
     >
-      <Stack gap={4}>
+      <Column gap={4}>
         <Text id={id} variant="title" render={<h2 />}>
           {title}
         </Text>
         {children}
-      </Stack>
+      </Column>
     </Surface>
   );
 }

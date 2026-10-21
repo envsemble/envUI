@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react';
-import { Button, ConfirmDialog, List, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, ConfirmDialog, List, Column, Text, TextField } from '@envsemble/envui';
 
 const workspace = 'Northwind';
 
@@ -13,7 +13,7 @@ export default function DangerZone() {
   const matches = typed.trim() === workspace;
 
   return (
-    <Stack render={<section aria-labelledby={`${id}-heading`} />} gap={3}>
+    <Column render={<section aria-labelledby={`${id}-heading`} />} gap={3}>
       <Text render={<h3 id={`${id}-heading`} />} variant="title">
         Danger zone
       </Text>
@@ -76,6 +76,6 @@ export default function DangerZone() {
           }}
         />
       </ConfirmDialog>
-    </Stack>
+    </Column>
   );
 }

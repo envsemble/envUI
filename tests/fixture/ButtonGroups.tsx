@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, ButtonGroup, IconButton, Stack, Theme, type ThemeValue } from '@envsemble/envui';
+import { Button, ButtonGroup, IconButton, Column, Theme, type ThemeValue } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ExpandMore } from '@envsemble/envui/icons/ExpandMore';
@@ -10,7 +10,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
   const [ends, setEnds] = useState(true);
   return (
     <Theme theme={theme} data-testid={`button-groups-${theme}`} className="fixture-section">
-      <Stack align="start">
+      <Column gap={4} align="start">
         <Button data-testid="standalone">Standalone action</Button>
         {(['horizontal', 'vertical'] as const).map((orientation) => (
           <ButtonGroup
@@ -108,7 +108,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             <IconButton icon={<Add />} aria-label="Add a list" />
           </ButtonGroup>
         </div>
-      </Stack>
+      </Column>
     </Theme>
   );
 }

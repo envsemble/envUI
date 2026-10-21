@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Button, CommandPalette, Stack, type CommandPaletteItem } from '@envsemble/envui';
+import { Button, CommandPalette, Column, type CommandPaletteItem } from '@envsemble/envui';
 import { Widgets } from '@envsemble/envui/icons/Widgets';
 import { Extension } from '@envsemble/envui/icons/Extension';
 import { DataObject } from '@envsemble/envui/icons/DataObject';
@@ -130,7 +130,7 @@ export function DocumentationSearch({
   if (index.status === 'loading') emptyLabel = 'Loading search…';
   else if (index.status === 'failed')
     emptyLabel = (
-      <Stack gap={3} align="center">
+      <Column gap={3} align="center">
         Search could not load.
         {canRetryLoad ? (
           <Button
@@ -147,7 +147,7 @@ export function DocumentationSearch({
             Reload the page
           </Button>
         )}
-      </Stack>
+      </Column>
     );
   else if (query.trim()) emptyLabel = `No results for “${query.trim()}”`;
   else emptyLabel = 'Search components and their aliases, props, tokens, foundations and guides.';

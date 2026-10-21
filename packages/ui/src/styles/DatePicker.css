@@ -111,43 +111,41 @@
 /* With a time, the time's wheels stand beside the calendar, in a column as tall as it: the column
    adds no height of its own to the row, so the calendar alone sets it, and the wheels sit in the
    middle of the room under the heading. */
+/* Compact first: the time stacks under the calendar, also where no env-window is found. */
 .env-date-picker-panes {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: minmax(0, auto);
   gap: var(--env-space-3);
 }
 .env-date-picker-time {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   gap: var(--env-space-2);
-  block-size: 0;
-  min-block-size: 100%;
 }
 .env-date-picker-time > .env-time-list {
   align-self: center;
 }
 .env-date-picker-time-heading {
-  /* As tall as the calendar's month heading, so the first time lines up with the weekday names. */
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-block-size: var(--env-control-height-md);
+  justify-content: flex-start;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   font-weight: var(--env-font-weight-medium);
 }
-/* Where the window has no room beside the calendar, the time stacks under it. */
-@media (width < 32rem) {
+/* From a medium window up, the time sits beside the calendar, as tall as it, and its heading as
+   tall as the calendar's month heading, so the first time lines up with the weekday names. */
+@container env-window (width >= 37.5rem) {
   .env-date-picker-panes {
-    grid-template-columns: minmax(0, auto);
+    grid-template-columns: auto auto;
   }
   .env-date-picker-time {
-    block-size: auto;
-    min-block-size: 0;
+    block-size: 0;
+    min-block-size: 100%;
   }
   .env-date-picker-time-heading {
-    justify-content: flex-start;
-    min-block-size: 0;
+    justify-content: center;
+    min-block-size: var(--env-control-height-md);
   }
 }
 .env-date-picker-actions {

@@ -1,5 +1,5 @@
 // Counts what the recommended config reports in envUI's own catalogue and test fixture, without
-// enforcing it: they render raw elements and the library's classes on purpose. The counts show how
+// enforcing it: they render raw elements on purpose. The counts show how
 // the rules behave on real envUI code, and what is left of the old names after the renames.
 //
 //   node scripts/Dogfood.mjs [directory …]   default: apps/catalogue/src tests/fixture
@@ -36,7 +36,6 @@ function subject(ruleId, message) {
     'envui/no-hand-rolled-layout':
       /^Inline `display: ([\w-]+)` lays out (a row or a column|a row|a column|a grid)/,
     'envui/no-html-elements': /^Use envUI's (\S+) instead of (.+?)(?:, or |: import)/,
-    'envui/no-private-classes': /^(\S+)/,
     'envui/no-raw-colors': /^Raw color (.+) in an inline style/,
     'envui/no-renamed-exports': /^(?:In envUI 1\.0 )?(\S+)/,
   };

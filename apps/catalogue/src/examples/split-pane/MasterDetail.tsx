@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DescriptionList, Link, List, ListDetail, Stack, Text } from '@envsemble/envui';
+import { DescriptionList, Link, List, ListDetail, Column, Text } from '@envsemble/envui';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan', role: 'Engineering lead', email: 'alex.morgan@example.com' },
@@ -46,7 +46,7 @@ export default function MasterDetail() {
         </List.Root>
       </ListDetail.List>
       <ListDetail.Detail label={chosen.name}>
-        <Stack gap={3} style={{ padding: 'var(--env-space-4)' }}>
+        <Column gap={3} style={{ padding: 'var(--env-space-4)' }}>
           <Text variant="title" render={<h3 />}>
             {chosen.name}
           </Text>
@@ -54,7 +54,7 @@ export default function MasterDetail() {
             <DescriptionList.Item label="Role">{chosen.role}</DescriptionList.Item>
             <DescriptionList.Item label="Email">{chosen.email}</DescriptionList.Item>
           </DescriptionList.Root>
-        </Stack>
+        </Column>
       </ListDetail.Detail>
     </ListDetail.Root>
   );

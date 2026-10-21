@@ -1,4 +1,4 @@
-import { IconButton, Stack, Tooltip } from '@envsemble/envui';
+import { IconButton, Column, Tooltip } from '@envsemble/envui';
 import { Folder } from '@envsemble/envui/icons/Folder';
 import { History } from '@envsemble/envui/icons/History';
 import { Search } from '@envsemble/envui/icons/Search';
@@ -13,13 +13,13 @@ const tools = [
 
 export default function RailOfIcons() {
   return (
-    <Stack gap={1} align="start">
+    <Column gap={1} align="start">
       {tools.map(({ label, icon }) => (
         // inline-end opens beside the rail, toward the content, in either text direction.
         <Tooltip key={label} content={label} side="inline-end">
           <IconButton icon={icon} aria-label={label} variant="ghost" />
         </Tooltip>
       ))}
-    </Stack>
+    </Column>
   );
 }

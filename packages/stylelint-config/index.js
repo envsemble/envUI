@@ -1,7 +1,5 @@
-// Stylelint config for applications built with envUI: no styles for envUI's private markup, colors
-// and stacking order from tokens, and rem for everything that follows the reader's font size, with
+// Stylelint config for applications built with envUI: colors and stacking order from tokens, and rem for everything that follows the reader's font size, with
 // px only for hairlines. See README.md.
-import noPrivateClasses from './plugins/no-private-classes.js';
 import { colorTokenSuggestion, stackingAdvice } from './tokens.js';
 
 const documentation =
@@ -107,12 +105,7 @@ const useColorToken = (property) =>
 
 /** @type {import('stylelint').Config} */
 export default {
-  plugins: [noPrivateClasses],
   rules: {
-    'envui/no-private-classes': [
-      true,
-      { allow: ['env-theme'], url: `${documentation}#envuino-private-classes` },
-    ],
     'color-no-hex': [
       true,
       {

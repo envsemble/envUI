@@ -1,4 +1,4 @@
-import { Button, Menu, Menubar, Stack, Text, WindowFrame } from '@envsemble/envui';
+import { Button, Menu, Menubar, Column, Text, WindowFrame } from '@envsemble/envui';
 
 const recent = ['Roadmap', 'Pricing research', 'Launch checklist', 'Interview notes', 'Budget'];
 
@@ -28,7 +28,7 @@ export default function StartPageWindow() {
           Northwind
         </WindowFrame.TitleBar>
         <WindowFrame.Content>
-          <Stack gap={2} style={{ padding: '1.5rem' }}>
+          <Column gap={2} style={{ padding: '1.5rem' }}>
             <Text render={<h3 />} variant="headline">
               Recent documents
             </Text>
@@ -37,7 +37,7 @@ export default function StartPageWindow() {
                 {name}
               </Text>
             ))}
-          </Stack>
+          </Column>
         </WindowFrame.Content>
       </WindowFrame.Root>
     </div>

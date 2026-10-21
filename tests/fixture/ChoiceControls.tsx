@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Checkbox, Radio, RadioGroup, Stack, Switch } from '@envsemble/envui';
+import { Checkbox, Radio, RadioGroup, Column, Switch } from '@envsemble/envui';
 
 /**
  * Checkbox, Switch and Radio with a class, a style and a ref each, for
@@ -13,7 +13,7 @@ export function ChoiceControlsFixture() {
   const radio = useRef<HTMLInputElement>(null);
   const [refs, setRefs] = useState('');
   return (
-    <Stack gap={4} data-testid="choice-controls">
+    <Column gap={4} data-testid="choice-controls">
       <Checkbox
         ref={checkbox}
         label="Subscribe"
@@ -63,6 +63,6 @@ export function ChoiceControlsFixture() {
         Read refs
       </button>
       <output data-testid="choice-refs">{refs}</output>
-    </Stack>
+    </Column>
   );
 }

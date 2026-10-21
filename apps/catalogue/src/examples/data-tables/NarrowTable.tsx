@@ -1,9 +1,18 @@
 import { useState } from 'react';
-import { Badge, IconButton, RelativeTime, Select, Stack, Table, Tooltip } from '@envsemble/envui';
+import {
+  Badge,
+  IconButton,
+  RelativeTime,
+  Select,
+  Column,
+  Row,
+  Table,
+  Tooltip,
+} from '@envsemble/envui';
 import { ArrowDownward } from '@envsemble/envui/icons/ArrowDownward';
 import { ArrowUpward } from '@envsemble/envui/icons/ArrowUpward';
 
-type Column = 'name' | 'updated' | 'tasks';
+type SortColumn = 'name' | 'updated' | 'tasks';
 type Direction = 'ascending' | 'descending';
 
 const columns = [
@@ -13,7 +22,7 @@ const columns = [
 ];
 
 export default function NarrowTable() {
-  const [sort, setSort] = useState<{ column: Column; direction: Direction }>({
+  const [sort, setSort] = useState<{ column: SortColumn; direction: Direction }>({
     column: 'updated',
     direction: 'descending',
   });
@@ -30,24 +39,24 @@ export default function NarrowTable() {
           : first.tasks - second.tasks;
     return sort.direction === 'ascending' ? order : -order;
   });
-  const direction = (column: Column): Table.SortDirection =>
+  const direction = (column: SortColumn): Table.SortDirection =>
     sort.column === column ? sort.direction : 'none';
-  const sortBy = (column: Column) => (next: Direction) => setSort({ column, direction: next });
+  const sortBy = (column: SortColumn) => (next: Direction) => setSort({ column, direction: next });
   const reverse = sort.direction === 'ascending' ? 'Sort descending' : 'Sort ascending';
 
   return (
     // As narrow as a phone or a side panel, so the rows stack.
-    <Stack gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
       {stacked && (
         // Small controls over small rows, so the bar matches the table's density.
-        <Stack direction="row" align="end" gap={2}>
+        <Row align="end" gap={2}>
           <Select
             label="Sort by"
             size="sm"
             variant="outline"
             items={columns}
             value={sort.column}
-            onValueChange={(value) => value && setSort({ ...sort, column: value as Column })}
+            onValueChange={(value) => value && setSort({ ...sort, column: value as SortColumn })}
           />
           {/* The Tooltip shows the icon-only button's name, which says what pressing it does. */}
           <Tooltip content={reverse}>
@@ -64,7 +73,7 @@ export default function NarrowTable() {
               }
             />
           </Tooltip>
-        </Stack>
+        </Row>
       )}
       <Table.Root
         aria-label="Recent projects"
@@ -110,7 +119,7 @@ export default function NarrowTable() {
           ))}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }
 

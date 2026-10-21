@@ -38,7 +38,7 @@ It takes these options:
 | `open`     | `false` | Open the 3D view and the inspector at once.                                                                                   |
 | `root`     | found   | The element dev mode's view measures, or a selector for it. By default, the same root as the readout's.                       |
 
-It returns a handle with `open()`, `close()`, `toggle()`, `uninstall()` and `layout`. Calling it again returns the same handle.
+It returns a handle with `open()`, `close()`, `toggle()`, `uninstall()`, `layout` and `ready`, a promise that settles once the parts' descriptions have loaded or failed to. Calling it again returns the same handle until it is uninstalled. `uninstall()` puts back a `window.envui.layout` the page had before, and does nothing a second time.
 
 ## What it reads
 
@@ -138,14 +138,14 @@ interface LayoutProblem {
 }
 ```
 
-| `rule`                  | What it finds                                                                                                                                 |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `content-overflow`      | Content wider than a node that doesn't scroll. Only the deepest such node is reported; the nodes around it overflow because of it.            |
-| `child-overflow`        | A child that sticks out of a node that neither scrolls nor clips, and so spills over its neighbours.                                          |
-| `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                              |
-| `layout-paints`         | A primitive, scaffold or Page that paints a background, a border or a shadow. Layout never paints: the look belongs to a component inside it. |
-| `sticky-without-scroll` | A sticky node, or a sticky element in one, whose nearest clipping ancestor never scrolls, so it never sticks.                                 |
-| `text-squeezed`         | Text of its own, longer than `minTextChars`, that wraps in a box narrower than that many characters.                                          |
+| `rule`                  | What it finds                                                                                                                                                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content-overflow`      | Content wider than a node that doesn't scroll. Only the deepest such node is reported; the nodes around it overflow because of it.                                                                                                                                           |
+| `child-overflow`        | A child that sticks out of a node that neither scrolls nor clips, and so spills over its neighbours.                                                                                                                                                                         |
+| `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                                                                                                                                                             |
+| `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, a border or a shadow. Layout never paints: the look belongs to a component. A component that paints through a primitive it renders, whose node carries the component's part class, is no fault. |
+| `sticky-without-scroll` | A sticky node, or a sticky element in one, whose scroll container (its nearest ancestor with `overflow` hidden, auto or scroll; `clip` makes none) never scrolls, so it never sticks.                                                                                        |
+| `text-squeezed`         | Text of its own, longer than `minTextChars`, that wraps in a box narrower than that many characters.                                                                                                                                                                         |
 
 An agent checking its work runs `envui.layout.at(['22rem', '40rem', '60rem', '80rem'])` and fixes every problem it returns, from the deepest node up. In a Playwright test:
 
@@ -158,7 +158,7 @@ expect(results.flatMap((result) => result.problems)).toEqual([]);
 
 ## The 3D view, for people
 
-The button in the corner, or Alt+Shift+D, opens dev mode over the page: the 3D view, with the inspector beside it. It updates as the page changes, scrolls and resizes, at most once an animation frame.
+The button in the corner, or Alt+Shift+D, opens dev mode over the page: the 3D view, with the inspector beside it. Focus moves into it and the page under it is inert; Escape, the button or the shortcut closes it and gives focus back to where it was. It updates as the page changes, scrolls and resizes, at most once an animation frame.
 
 - **Planes.** Every visible node is a plane, lifted one level per step of nesting, so what is inside what reads as what is above what. Sticky, absolute and fixed nodes sit half a level higher; open overlays float two levels above the whole page. A plane shows only the part of its node that is visible inside what clips it.
 - **Surfaces.** Each plane carries what its node holds that isn't a node itself: the node's own paint and copies of its other children, with the nodes inside them left as empty space, since they have planes of their own. The copies keep the computed layout and look of the originals, but are only pictures: they don't respond.
@@ -184,7 +184,7 @@ The inspector has two tabs:
 
 ## Parts
 
-The part names and their descriptions come from `docs/generated/parts.json`, which the package ships. Dev mode fetches it from beside its own module, which works where the package's files are served as they are. Where the bundler moves them, as Vite's dependency optimizer does, hand the data in yourself, or a URL to it; without it, dev mode names parts by their classes alone.
+A node's name is its part class whether or not anything else has loaded, so the readout reads the same before and after. The descriptions the inspector shows come from `docs/generated/parts.json`, which the package ships: its `components`, by export name, and its `shared` groups, each with a `root` class, `parts` (`{ class, description }`) and `states`. Dev mode fetches it from beside its own module, which works where the package's files are served as they are. Where the bundler moves them, as Vite's dependency optimizer does, hand the data in yourself, or a URL to it; without it, the inspector shows no descriptions. Dev mode's own classes, `env-dev-*`, are no part of the contract.
 
 ```ts
 import parts from './parts.json'; // a copy of docs/generated/parts.json

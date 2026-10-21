@@ -3,7 +3,8 @@ import {
   Badge,
   CounterBadge,
   Theme,
-  Stack,
+  Column,
+  Row,
   NavList,
   Icon,
   Tooltip,
@@ -16,13 +17,13 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
   const [selected, setSelected] = useState('home');
   return (
     <Theme theme={theme} data-testid={`navigation-icons-${theme}`} className="fixture-section">
-      <Stack direction="row" wrap align="center" gap={4}>
+      <Row wrap align="center" gap={4}>
         <Home data-testid="home-outline" />
         <Home filled data-testid="home-filled" />
         <Settings data-testid="settings-outline" />
         <Settings filled data-testid="settings-filled" />
-      </Stack>
-      <Stack>
+      </Row>
+      <Column gap={4}>
         <NavList.Item
           data-testid="home-navigation"
           icon={<Home filled={false} />}
@@ -60,8 +61,8 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
         >
           Custom destination
         </NavList.Item>
-      </Stack>
-      <Stack direction="row" wrap align="center" gap={4}>
+      </Column>
+      <Row wrap align="center" gap={4}>
         <NavList.Item
           iconOnly
           icon={<Home />}
@@ -86,8 +87,8 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
             onClick={() => setSelected('settings')}
           />
         </Tooltip>
-      </Stack>
-      <Stack direction="row" wrap align="center" gap={4} data-testid="named-end-navigation">
+      </Row>
+      <Row wrap align="center" gap={4} data-testid="named-end-navigation">
         <NavList.Item
           iconOnly
           icon={<Home />}
@@ -116,7 +117,7 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
         >
           Reports
         </NavList.Item>
-      </Stack>
+      </Row>
     </Theme>
   );
 }

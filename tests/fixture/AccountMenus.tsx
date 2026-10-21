@@ -7,7 +7,7 @@ import {
   EnvUIProvider,
   Menu,
   NavList,
-  Stack,
+  Column,
   ThemePreferenceProvider,
   useThemePreference,
   type ThemePreference,
@@ -44,7 +44,7 @@ export function AccountMenusFixture() {
   const [log, setLog] = useState('');
   return (
     <ThemePreferenceProvider storageKey="fixture-account-theme" applyToDocument={false}>
-      <Stack gap={5} className="fixture-section" style={{ inlineSize: '18rem' }}>
+      <Column gap={5} className="fixture-section" style={{ inlineSize: '18rem' }}>
         <StoredTheme />
         <div data-testid="bound">
           <AccountMenu.Root name="Alex Morgan" description="alex@example.com">
@@ -87,7 +87,7 @@ export function AccountMenusFixture() {
         <output data-testid="account-log">
           {log} {organization} {stored}
         </output>
-      </Stack>
+      </Column>
     </ThemePreferenceProvider>
   );
 }

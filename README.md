@@ -53,20 +53,20 @@ The [migration guide](docs/migration.md), under "Upgrade from envUI 0.x to 1.0",
 Import the stylesheet once at your application entry point, then compose public components:
 
 ```tsx
-import { Button, Card, Stack, Text, Theme } from '@envsemble/envui';
+import { Button, Card, Column, Text, Theme } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import '@envsemble/envui/styles.css';
 
 export function App() {
   return (
     <Theme theme="light">
-      <Card as="article">
-        <Stack gap={3}>
-          <Text as="h1" variant="page-heading">
+      <Card render={<article />}>
+        <Column gap={3}>
+          <Text render={<h1 />} variant="headline">
             Projects
           </Text>
-          <Text tone="muted">A shared space for your team’s work.</Text>
-        </Stack>
+          <Text emphasis="muted">A shared space for your team’s work.</Text>
+        </Column>
         <Button startIcon={<Add />}>Create project</Button>
       </Card>
     </Theme>
@@ -77,21 +77,19 @@ export function App() {
 Native form behavior stays familiar. Render this inside your application’s theme:
 
 ```tsx
-import { ActionGroup, Button, Stack, TextField } from '@envsemble/envui';
+import { Button, Column, Row, TextField } from '@envsemble/envui';
 
 export function ProjectForm() {
   return (
-    <form>
-      <Stack gap={4}>
-        <TextField name="projectName" label="Project name" required />
-        <ActionGroup>
-          <Button type="submit">Create project</Button>
-          <Button type="reset" variant="secondary">
-            Reset
-          </Button>
-        </ActionGroup>
-      </Stack>
-    </form>
+    <Column gap={4} render={<form />}>
+      <TextField name="projectName" label="Project name" required />
+      <Row wrap align="center" gap={4}>
+        <Button type="submit">Create project</Button>
+        <Button type="reset" variant="secondary">
+          Reset
+        </Button>
+      </Row>
+    </Column>
   );
 }
 ```

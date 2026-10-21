@@ -7,7 +7,7 @@ import {
   Page,
   Sidebar,
   SidebarTrigger,
-  Stack,
+  Column,
   Text,
   useSidebar,
 } from '@envsemble/envui';
@@ -22,11 +22,11 @@ function People() {
   const { isRail } = useSidebar('end');
   if (isRail)
     return (
-      <Stack gap={2} align="center">
+      <Column gap={2} align="center">
         {people.map((name) => (
           <Avatar key={name} name={name} size="sm" />
         ))}
-      </Stack>
+      </Column>
     );
   return (
     <List.Root aria-label="People">

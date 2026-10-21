@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Disclosure, Stack } from '@envsemble/envui';
+import { Button, Disclosure, Column } from '@envsemble/envui';
 
 /** Controlled and uncontrolled disclosures, mounted with ?fixture=disclosures. */
 export function DisclosuresFixture() {
@@ -7,7 +7,7 @@ export function DisclosuresFixture() {
   const [changes, setChanges] = useState<boolean[]>([]);
   const [requests, setRequests] = useState<boolean[]>([]);
   return (
-    <Stack gap={4} className="fixture-section" data-testid="disclosures">
+    <Column gap={4} className="fixture-section" data-testid="disclosures">
       <Disclosure
         title="Controlled"
         open={open}
@@ -31,6 +31,6 @@ export function DisclosuresFixture() {
       <Disclosure title="Open at first" defaultOpen>
         <p>Details shown at first</p>
       </Disclosure>
-    </Stack>
+    </Column>
   );
 }

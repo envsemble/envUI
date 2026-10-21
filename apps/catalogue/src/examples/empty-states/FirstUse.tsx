@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Stack, Surface, Text } from '@envsemble/envui';
+import { Button, EmptyState, List, Column, Row, Surface, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
@@ -20,8 +20,8 @@ export default function FirstUse() {
   };
 
   return (
-    <Stack gap={4}>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={4}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text render={<h3 />} variant="title">
           Projects
         </Text>
@@ -31,7 +31,7 @@ export default function FirstUse() {
             Create project
           </Button>
         )}
-      </Stack>
+      </Row>
       {projects.length > 0 ? (
         <List.Root ref={list} aria-label="Projects" tabIndex={-1}>
           {projects.map((project, index) => (
@@ -59,7 +59,7 @@ export default function FirstUse() {
           />
         </Surface>
       )}
-    </Stack>
+    </Column>
   );
 }
 

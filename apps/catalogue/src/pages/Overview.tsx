@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { Text, Surface, Stack, Button, Tabs, Link } from '@envsemble/envui';
+import { Text, Surface, Column, Button, Tabs, Link } from '@envsemble/envui';
 import { documentedVersion as version } from '../generated/Documentation';
 import { EnvUILogo } from '../brand/EnvUILogo';
 
@@ -15,7 +15,7 @@ function OverviewBanner({ tabs }: { tabs: ReactElement }) {
       <Surface
         background="default"
         padding={6}
-        render={<Stack gap={7} align="center" />}
+        render={<Column gap={7} align="center" />}
         className="docs-overview-hero"
       >
         <Text render={<h1 />} aria-label="envUI" className="docs-overview-title">
@@ -35,7 +35,7 @@ export function Overview({ view }: { view: OverviewView }) {
   const viewTabs = useViewTabs((next) => `overview/${next}`);
   const content = {
     components: (
-      <Stack
+      <Column
         render={<section />}
         gap={5}
         className="docs-overview"
@@ -45,7 +45,7 @@ export function Overview({ view }: { view: OverviewView }) {
           Components
         </Text>
         <Catalogue />
-      </Stack>
+      </Column>
     ),
     'get-started': <GettingStarted />,
   };

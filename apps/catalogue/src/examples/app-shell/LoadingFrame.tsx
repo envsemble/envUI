@@ -6,7 +6,7 @@ import {
   Sidebar,
   SidebarTrigger,
   Skeleton,
-  Stack,
+  Column,
 } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons/Apps';
 
@@ -34,11 +34,11 @@ export default function LoadingFrame() {
           <Skeleton width="6rem" />
         </AppShell.Header>
         <AppShell.Main>
-          <Stack gap={3} style={{ padding: '1.5rem' }}>
+          <Column gap={3} style={{ padding: '1.5rem' }}>
             <Skeleton width="40%" height="1.25rem" />
             <Skeleton />
             <Skeleton width="80%" />
-          </Stack>
+          </Column>
         </AppShell.Main>
       </AppShell.Root>
     </LoadingState>

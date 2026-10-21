@@ -798,7 +798,18 @@ export function normalizeMap(map) {
       `component that reads it, and renames only its uses: remove it, or set --${entry.to} where ` +
       `you mean that.${entry.note ? ` ${entry.note}` : ''}`;
   }
-  return { entries, classes, classAttributes, classesWithin, classReports, tokens, tokenNames };
+  // 0.x names that 1.0 exports again for something else, such as Row, the layout primitive.
+  const reused = new Set(Array.isArray(map.reused) ? map.reused : []);
+  return {
+    entries,
+    classes,
+    classAttributes,
+    classesWithin,
+    classReports,
+    tokens,
+    tokenNames,
+    reused,
+  };
 }
 
 const cache = new Map();

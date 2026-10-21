@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Button, Checkbox, ColorPicker, Stack, Theme, type ThemeValue } from '@envsemble/envui';
+import {
+  Button,
+  Checkbox,
+  ColorPicker,
+  Column,
+  Row,
+  Theme,
+  type ThemeValue,
+} from '@envsemble/envui';
 
 export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
   const [color, setColor] = useState('#1a73e8');
@@ -11,7 +19,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
   const formId = `${theme}-color-form`;
   return (
     <Theme theme={theme} data-testid={`color-picker-${theme}`}>
-      <Stack render={<section />} className="fixture-section">
+      <Column gap={4} render={<section />} className="fixture-section">
         <form
           id={formId}
           data-testid="color-form"
@@ -30,7 +38,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
             );
           }}
         >
-          <Stack>
+          <Column gap={4}>
             <ColorPicker
               label="Controlled color"
               name="controlledColor"
@@ -64,7 +72,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               checked={preventReset}
               onCheckedChange={setPreventReset}
             />
-            <Stack direction="row" wrap align="center" gap={4}>
+            <Row wrap align="center" gap={4}>
               <Button type="submit">Submit colors</Button>
               <Button type="reset" variant="secondary">
                 Reset colors
@@ -81,8 +89,8 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
               <Button variant="text" onClick={() => setPolicy('accept')}>
                 Accept color changes
               </Button>
-            </Stack>
-          </Stack>
+            </Row>
+          </Column>
         </form>
         <ColorPicker
           label="External color"
@@ -92,7 +100,7 @@ export function ColorPickerFixture({ theme }: { theme: ThemeValue }) {
         />
         <output data-testid="color-changes">{changes}</output>
         <output data-testid="color-values">{JSON.stringify(values)}</output>
-      </Stack>
+      </Column>
     </Theme>
   );
 }

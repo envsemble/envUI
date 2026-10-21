@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Stack, Text } from '@envsemble/envui';
+import { Button, Column, Text } from '@envsemble/envui';
 import { RichTextEditor } from '@envsemble/envui/rich-text';
 
 export default function ReleaseNotesForm() {
@@ -13,7 +13,7 @@ export default function ReleaseNotesForm() {
     setPublished(notes ? 'Release notes published.' : '');
   }
   return (
-    <Stack gap={4} render={<form onSubmit={publish} noValidate />}>
+    <Column gap={4} render={<form onSubmit={publish} noValidate />}>
       <RichTextEditor
         name="notes"
         label="Release notes"
@@ -26,6 +26,6 @@ export default function ReleaseNotesForm() {
       <Text variant="body-sm" role="status">
         {published}
       </Text>
-    </Stack>
+    </Column>
   );
 }

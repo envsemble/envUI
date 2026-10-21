@@ -3,13 +3,13 @@
 ## React usage
 
 ```tsx
-import { Stack, TextField, IconButton } from '@envsemble/envui';
+import { Column, TextField, IconButton } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 
-<Stack>
+<Column gap={4}>
   <TextField label="Project name" description="Visible labels stay available while typing." />
   <IconButton icon={<ChevronRight />} aria-label="Next project" />
-</Stack>;
+</Column>;
 ```
 
 ### Props & contracts

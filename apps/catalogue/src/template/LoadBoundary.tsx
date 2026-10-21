@@ -1,5 +1,5 @@
 import { Component, createRef, lazy, type ComponentType, type ReactNode } from 'react';
-import { Alert, Button, Stack } from '@envsemble/envui';
+import { Alert, Button, Row } from '@envsemble/envui';
 
 /** A file that a part of a page loads on its own and that failed to arrive. */
 export class ModuleLoadError extends Error {
@@ -232,7 +232,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
           tone="warning"
           title={`The ${what} could not load`}
           action={
-            <Stack direction="row" wrap align="center" gap={4}>
+            <Row wrap align="center" gap={4}>
               {canRetryLoad && (
                 <Button variant="secondary" onClick={this.retry}>
                   Try again
@@ -247,7 +247,7 @@ export class LoadBoundary extends Component<LoadBoundaryProps, LoadBoundaryState
                   Reload the page
                 </Button>
               )}
-            </Stack>
+            </Row>
           }
         >
           The catalogue may have been updated since this page opened, or the connection dropped.

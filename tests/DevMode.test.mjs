@@ -3,6 +3,7 @@
 // every other one, must not reach dev mode's code.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
@@ -100,38 +101,51 @@ test('container queries are read from style sheets by container name, and credit
   );
 });
 
-test('parts.json is read leniently, and an element is named by its known part class', () => {
+test('parts.json is indexed by part class, and names never wait for it', () => {
   const parts = indexParts({
-    components: [
-      {
-        name: 'Card',
+    schemaVersion: 1,
+    components: {
+      Card: {
         root: 'env-card',
-        parts: [{ className: 'env-card-header', description: 'The title row.' }],
-        states: [{ attribute: 'data-skeleton', values: ['true'] }],
+        source: 'packages/ui/src/content/Card.tsx',
+        parts: [
+          { class: 'env-card', description: "The card's surface." },
+          { class: 'env-card-header', description: 'The title row.' },
+        ],
+        states: [{ attribute: 'data-skeleton', values: [''], parts: ['env-card'] }],
       },
-    ],
+    },
+    shared: {
+      ConnectedRows: {
+        root: 'env-connected-rows',
+        parts: [{ class: 'env-connected-row', description: 'One joined row.' }],
+        states: [],
+        usedBy: ['List'],
+      },
+    },
   });
   assert.deepEqual(parts.byClass.get('env-card'), {
     className: 'env-card',
     component: 'Card',
-    description: undefined,
+    description: "The card's surface.",
     root: true,
+    shared: false,
   });
-  assert.equal(parts.byClass.get('env-card-header').description, 'The title row.');
-  assert.deepEqual(parts.states.get('Card'), [{ attribute: 'data-skeleton', values: ['true'] }]);
-  // An object of components by name, with parts from class to description.
-  const byName = indexParts({
-    Badge: { rootClass: 'env-badge', parts: { 'env-badge-icon': 'Its icon.' } },
-  });
-  assert.equal(byName.byClass.get('env-badge-icon').description, 'Its icon.');
-  assert.equal(byName.byClass.get('env-badge').component, 'Badge');
-  const element = (...classes) => ({ classList: classes });
-  assert.equal(partClassOf(element('app', 'env-card', 'env-card-tight'), parts), 'env-card');
-  assert.equal(
-    partClassOf(element('env-surface', 'env-dialog-surface'), null),
-    'env-dialog-surface',
-  );
-  assert.equal(partClassOf(element('app'), parts), null);
+  assert.equal(parts.byClass.get('env-card-header').root, false);
+  assert.equal(parts.byClass.get('env-connected-row').shared, true);
+  assert.deepEqual(parts.states.get('Card'), [
+    { attribute: 'data-skeleton', values: [''], parts: ['env-card'] },
+  ]);
+  // Another format is refused rather than read as having no descriptions.
+  assert.throws(() => indexParts([{ name: 'Card' }]), /no components/);
+  // A component's own class wins over a helper's on the same element; the window's container and
+  // dev mode's own classes are no parts.
+  const element = (...classes) => ({ className: classes.join(' '), classList: classes });
+  assert.equal(partClassOf(element('app', 'env-card', 'env-surface')), 'env-card');
+  assert.equal(partClassOf(element('env-surface', 'env-dialog-surface')), 'env-dialog-surface');
+  assert.equal(partClassOf(element('env-theme', 'env-window')), 'env-theme');
+  assert.equal(partClassOf(element('env-dev-plane')), null);
+  assert.equal(partClassOf(element('app')), null);
 });
 
 test('widths: lengths in px, and window classes', () => {
@@ -337,6 +351,14 @@ test('the readout finds what paints, spills, overflows, never sticks, leaves the
         }),
         3,
       ],
+      // A component painting through a primitive it renders is no fault: the node is its part.
+      [
+        node('column', 'env-card', box(0, 200, 352, 96), {
+          part: 'env-card',
+          paints: ['a shadow'],
+        }),
+        0,
+      ],
       [
         node('popover', 'env-menu-popup', box(-16, 40, 160, 120), {
           overlay: true,
@@ -375,14 +397,17 @@ test('the readout finds what paints, spills, overflows, never sticks, leaves the
 });
 
 test('no entry point but dev reaches dev mode, so production builds contain none of it', async () => {
-  const entries = [
-    'index.ts',
-    'content.ts',
-    'diff.ts',
-    'rich-text.ts',
-    'theme-bootstrap.ts',
-    'messages.ts',
-  ];
+  // Every entry point the package exports, but dev and the one-icon pattern, which the barrel covers.
+  const { exports } = JSON.parse(
+    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
+  );
+  const entries = Object.entries(exports)
+    .filter(
+      ([name, target]) =>
+        name !== './dev' && !name.includes('*') && /\.tsx?$/.test(target['envui-source'] ?? ''),
+    )
+    .map(([, target]) => target['envui-source'].replace(/^\.\/src\//, ''));
+  assert.ok(entries.includes('index.ts') && entries.includes('icons/index.ts'), String(entries));
   const dev = join(repository, 'packages/ui/src/dev');
   for (const entry of entries) {
     const result = await build({

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Radio,
   RadioGroup,
-  Stack,
+  Column,
   Text,
   useThemePreference,
   type ThemePreference,
@@ -21,7 +21,7 @@ export default function AppearanceChoice() {
   const [scale, setScale] = useState<Scale>('comfortable');
   return (
     // envUI has no form column yet: the choices keep to a width that reads easily.
-    <Stack gap={6} style={{ maxInlineSize: '32rem' }}>
+    <Column gap={6} style={{ maxInlineSize: '32rem' }}>
       <RadioGroup
         label="Theme"
         name="theme"
@@ -36,7 +36,7 @@ export default function AppearanceChoice() {
         <Radio value="light" label="Light" />
         <Radio value="dark" label="Dark" />
       </RadioGroup>
-      <Stack gap={3}>
+      <Column gap={3}>
         <RadioGroup
           label="Density"
           name="scale"
@@ -61,7 +61,7 @@ export default function AppearanceChoice() {
         <Text variant="body-sm" emphasis="muted">
           Applies to every page of Northwind on this device.
         </Text>
-      </Stack>
-    </Stack>
+      </Column>
+    </Column>
   );
 }

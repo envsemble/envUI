@@ -5,7 +5,8 @@ import {
   LoadingState,
   SegmentedControl,
   Skeleton,
-  Stack,
+  Column,
+  Row,
   Surface,
   Table,
 } from '@envsemble/envui';
@@ -47,11 +48,11 @@ export default function EmptyAndLoading() {
       <Surface padding={4} style={{ visibility: showPlaceholders ? undefined : 'hidden' }}>
         <LoadingState label={`Loading ${name} projects`}>
           {[0, 1, 2].map((row) => (
-            <Stack key={row} direction="row" align="center" gap={6} style={{ blockSize: '2.5rem' }}>
+            <Row key={row} align="center" gap={6} style={{ blockSize: '2.5rem' }}>
               <Skeleton width={`${36 - row * 6}%`} height="1rem" emphasis="default" />
               <Skeleton width="20%" height="1rem" />
               <Skeleton width="12%" height="1rem" />
-            </Stack>
+            </Row>
           ))}
         </LoadingState>
       </Surface>
@@ -89,12 +90,12 @@ export default function EmptyAndLoading() {
     );
 
   return (
-    <Stack gap={4}>
-      <Stack align="start">
+    <Column gap={4}>
+      <Column gap={4} align="start">
         <SegmentedControl aria-label="Team" value={team} onValueChange={choose} items={teams} />
-      </Stack>
+      </Column>
       {content}
-    </Stack>
+    </Column>
   );
 }
 

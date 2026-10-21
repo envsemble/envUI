@@ -19,7 +19,7 @@ avoidWhen:
     see: forms # A page to read instead, by its file name.
   - text: Confirming a destructive action.
     use: ConfirmDialog # Or an export to use instead.
-composes: [Switch, Select, Field, Button, Toast, Stack] # The exports it combines: namespaces, not parts.
+composes: [Switch, Select, Field, Button, Toast, Column] # The exports it combines: namespaces, not parts.
 related: [forms, switch]
 ---
 ```
@@ -73,4 +73,4 @@ A template's screen is an example file, `apps/catalogue/src/examples/<page>/<Nam
 - An inline `style` only where envUI has no layout for it yet, under a comment that starts "envUI has no", so a later component can find and replace it.
 - Neutral sample data: Alex Morgan, Sam Lee, Priya Shah, Jordan Kim, Maria Garcia and Chen Wei; Northwind; email at `example.com`; absolute dates in February and March 2026. No product names and no logos.
 
-The envUI ESLint rules check every example and template file, so a template uses envUI's components rather than raw elements, no private classes and no raw colors.
+The envUI ESLint rules check every example and template file, so a template uses envUI's components rather than raw elements and no raw colors.

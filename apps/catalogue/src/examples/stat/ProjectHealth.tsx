@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { AnimatedNumber, Button, Stack, Stat } from '@envsemble/envui';
+import { AnimatedNumber, Button, Column, Row, Stat } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 
 export default function ProjectHealth() {
   const [projects, setProjects] = useState(128);
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <Stat.Group aria-label="Project health">
         <Stat.Root
           label="Active projects"
@@ -25,7 +25,7 @@ export default function ProjectHealth() {
           description="Median"
         />
       </Stat.Group>
-      <Stack direction="row" wrap align="center" gap={4}>
+      <Row wrap align="center" gap={4}>
         <Button
           variant="secondary"
           startIcon={<Add />}
@@ -33,7 +33,7 @@ export default function ProjectHealth() {
         >
           Add a project
         </Button>
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }

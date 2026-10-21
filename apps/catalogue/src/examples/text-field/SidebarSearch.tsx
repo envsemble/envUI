@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavList, SearchField, Stack, Surface, Text } from '@envsemble/envui';
+import { NavList, SearchField, Column, Surface, Text } from '@envsemble/envui';
 
 const projects = [
   'Northwind launch',
@@ -18,7 +18,7 @@ export default function SidebarSearch() {
   return (
     // As wide as a sidebar.
     <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 16rem)' }}>
-      <Stack gap={2}>
+      <Column gap={2}>
         <SearchField
           variant="ghost"
           label="Find projects"
@@ -43,7 +43,7 @@ export default function SidebarSearch() {
             No projects match.
           </Text>
         )}
-      </Stack>
+      </Column>
     </Surface>
   );
 }

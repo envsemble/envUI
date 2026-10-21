@@ -50,6 +50,7 @@ export interface LayoutApi {
 function atWidth<T>(root: HTMLElement, width: number | string | undefined, run: () => T): T {
   if (width === undefined) return run();
   const style = root.style;
+  const hadStyle = root.hasAttribute('style');
   const saved = [
     'inline-size',
     'width',
@@ -71,6 +72,7 @@ function atWidth<T>(root: HTMLElement, width: number | string | undefined, run: 
       if (value) style.setProperty(name, value, priority);
       else style.removeProperty(name);
     }
+    if (!hadStyle && !root.getAttribute('style')) root.removeAttribute('style');
   }
 }
 

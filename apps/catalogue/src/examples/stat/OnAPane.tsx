@@ -1,10 +1,10 @@
 import { useId } from 'react';
-import { Stack, Stat, Surface, Text } from '@envsemble/envui';
+import { Column, Stat, Surface, Text } from '@envsemble/envui';
 
 export default function OnAPane() {
   const headingId = useId();
   return (
-    <Surface background="default" padding={5} render={<Stack gap={4} />}>
+    <Surface background="default" padding={5} render={<Column gap={4} />}>
       <Text render={<h3 />} variant="title" id={headingId}>
         Design review
       </Text>

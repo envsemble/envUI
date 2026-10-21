@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, Link, Page, Stack, Text } from '@envsemble/envui';
+import { Button, EmptyState, Link, Page, Column, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 
 /**
@@ -32,7 +32,7 @@ export default function NoAccessPage() {
         title="You don’t have access to this project"
         description={`${project.name} is shared only with its members. Ask ${project.owner}, its owner, to add you, or request access.`}
         action={
-          <Stack align="center" gap={3}>
+          <Column align="center" gap={3}>
             {requested ? null : (
               // Pending, never disabled, while the request is sent.
               <Button pending={sending} onClick={request}>
@@ -43,7 +43,7 @@ export default function NoAccessPage() {
               {requested ? `Request sent. ${project.owner} will get an email.` : ''}
             </Text>
             <Link href="/projects">Go to projects</Link>
-          </Stack>
+          </Column>
         }
       />
     </Page>

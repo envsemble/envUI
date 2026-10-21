@@ -1,4 +1,4 @@
-import { Link, Stack, Table, Text } from '@envsemble/envui';
+import { Link, Column, Table, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import type { ExportEntry, PropEntry } from '../DocumentationTypes';
 import type { Reference } from '../Reference';
@@ -33,7 +33,7 @@ function description(prop: PropEntry) {
 function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
   if (entry.kind === 'namespace') return null;
   return (
-    <Stack render={<section />} gap={4} aria-labelledby={exportSection(name)}>
+    <Column render={<section />} gap={4} aria-labelledby={exportSection(name)}>
       <Text render={<h2 />} variant="title" id={exportSection(name)}>
         <Code>{name}</Code>
       </Text>
@@ -83,7 +83,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
       {entry.kind === 'component' && nativeSentence(entry.native) && (
         <Text emphasis="muted">{nativeSentence(entry.native)}</Text>
       )}
-    </Stack>
+    </Column>
   );
 }
 
@@ -91,7 +91,7 @@ function ExportProps({ name, entry }: { name: string; entry: ExportEntry }) {
 export function PropsTables({ reference }: { reference: Reference }) {
   const sources = [...new Set(Object.values(reference.props ?? {}).map(({ source }) => source))];
   return (
-    <Stack gap={7}>
+    <Column gap={7}>
       <Text emphasis="muted">
         Generated from the TypeScript source,{' '}
         {sources.map((source, index) => (
@@ -109,6 +109,6 @@ export function PropsTables({ reference }: { reference: Reference }) {
       {Object.entries(reference.props ?? {}).map(([name, entry]) => (
         <ExportProps key={name} name={name} entry={entry} />
       ))}
-    </Stack>
+    </Column>
   );
 }

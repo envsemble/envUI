@@ -35,7 +35,7 @@ avoidWhen:
     use: EmptyState
 related:
   - surface
-  - stack
+  - column
   - list
   - button
   - typography
@@ -47,27 +47,57 @@ components:
 
 ## Overview
 
-A card is a rounded surface that groups content about one subject, spaced 1 rem apart. One component makes every kind of card:
+> What is a card, and what does it look like?
 
-- **Content card** (the default): any content, with an optional title row (`title`, `meta`), a `description` and `actions` in a strip along its bottom.
-- **Feature card** (`layout="feature"`): an icon, a title, a description and one action, which stack in a narrow card.
-- **Link card** (`href`) and **button card** (`onClick`): the whole card is one native link or button.
+A card is a rounded surface that groups content about one subject, such as a project's summary, and sets it apart from the page. Its content is spaced 1 rem apart. One component makes every kind of card: a content card with a title row and actions, a feature card, and a card that is one link or button.
 
 ```tsx example=ProjectSummary
 
 ```
 
-## Anatomy
+Cards fill the width their container gives them; set their width on the container or a grid. Card sets no type of its own, so compose its content from Text and other components.
 
-1. **Surface** (`background`, `padding`): the fill with 1.75 rem corners and padding that grows from 1.25 to 1.5 rem with the window, or a fixed step of the spacing scale.
-2. **Header** (`title`, `meta`): the title, an `h3` in the title type, and `meta` in supporting text at the end of the row, 0.75 rem apart; the row wraps when it runs out of room. `headingLevel` sets another level for the page's outline.
-3. **Description** (`description`): a sentence under the title in muted text.
-4. **Content** (`children`): spaced 1 rem apart; Card sets no type of its own, so compose it from Text and other components.
-5. **Footer** (`actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
+## Variants
 
-The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in a 2.75 rem box, the **title**, an `h2` in the headline type, the **description** in supporting text, more content 1 rem below, and the **actions** at the end.
+> Which kinds of card are there?
 
-## Variants and sizes
+### Content card
+
+The default. `title` and `meta` make a title row, `description` a sentence under it, and `actions` a strip of controls along the bottom, in a fill of its own that sets it apart from the card's body in both themes. `render` makes the card an article.
+
+```tsx example=ActionStrip
+
+```
+
+### Feature card
+
+`layout="feature"` presents a feature with an icon at the start, its title and description, and one action at the end.
+
+```tsx example=FeatureCards
+
+```
+
+### Link card
+
+With `href` the whole card is one native link, through the `LinkProvider`'s link component, named by its text: its title, then its summary.
+
+```tsx example=Destinations
+
+```
+
+### Button card
+
+With `onClick` the whole card is a native button with `type="button"`, which can only hold phrasing content, such as spans. A disabled one cannot be pressed.
+
+```tsx example=StartOptions
+
+```
+
+- **Hover and press**: the whole card, padding included, is the target. Hover and pressed take the hover and pressed colors of its background, and keyboard focus shows a focus outline 0.125 rem outside the card.
+- **Disabled**: a disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`. Both take the shared disabled opacity.
+- **Content**: an interactive card takes no `title`, `meta`, `description`, `actions` or `layout`, and its text, in the primary text color, aligns to the start.
+
+> Which backgrounds can a card take?
 
 | Background | Use for                                                                                     |
 | ---------- | ------------------------------------------------------------------------------------------- |
@@ -77,48 +107,76 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 
 <!-- specimen: Backgrounds -->
 
-| Layout    | Use for                                                                                |
-| --------- | -------------------------------------------------------------------------------------- |
-| `stack`   | Content spaced 1 rem apart, with the actions in a strip along the bottom. The default. |
-| `feature` | A feature with an icon at the start, its title and description, and one action.        |
+## When to use
 
-- A card fills the width its container gives it; set its width on the container or a grid.
-- Text in a plain paragraph of a card with an action strip is muted body text, at most 32 characters wide.
-- A feature card narrower than 38 rem moves its action below the text, and the action fills the card's width; it follows its own width, not the window's.
+> When should I use a card, and when something else?
 
-## States and behaviour
+```tsx do=MembersInList caption="Use a List for rows of similar items, each with a label, a description and an action."
 
-- **Link and button cards**: with `href` the card is a native link through the `LinkProvider`'s link component, and with `onClick` a native button with `type="button"`. The whole card, padding included, is the target. Hover and pressed take the hover and pressed colors of its background, and keyboard focus shows a focus outline 0.125 rem outside the card.
-- **Disabled**: a disabled button card cannot be pressed; a disabled link card has no destination, cannot be focused and reports `aria-disabled`. Both take the shared disabled opacity.
-- **Content in link and button cards**: an interactive card takes no `title`, `meta`, `description`, `actions` or `layout`, and its text, in the primary text color, aligns to the start. A button card can only hold phrasing content, such as spans.
-- **Action strip**: `actions` puts the strip along the bottom of a stacked card. It has a fill of its own, the action strip color, which sets it apart from the card's body in both themes.
+```
 
-## Content guidelines
+```tsx dont=MembersAsCards caption="Don't stack cards for a list of similar rows: the repeated fills and corners crowd out the content."
+
+```
+
+```tsx do=OneCardSections caption="Group what belongs to one subject in one card, with Text for its parts."
+
+```
+
+```tsx dont=NestedCards caption="Don't nest cards inside each other; the fills and corners stack up and blur what belongs together."
+
+```
+
+- Use `href` when the whole card goes to one place, and `onClick` when it starts one action. Put several actions in an action strip instead of making the card interactive.
+- Don't put links, buttons or other controls inside a link or button card.
+- Don't name a link or button card with `aria-label` or `aria-labelledby` that leaves out part of its visible text: speech input users say what they see.
+- Lay cards out in a grid that fits as many columns as the room allows, and set `headingLevel` to the level that fits the page's outline.
+- Don't use a card only for its fill; use [Surface](../components/surface.md).
+
+> How do I write a card's content?
 
 - Give a card a short title that names its subject, such as a project's name, and keep its text to a sentence or two.
 - Put the fact that matters most for choosing in `meta`, such as when the card was updated.
 - Name actions with verbs, and put the main one last: "Share", then "Open project".
 - Start a link card with its destination's name, so its accessible name, which is its whole text, starts with what people look for.
 
-## Do and don't
+## Anatomy
 
-### Do
+> What is a card made of?
 
-- Use `href` when the whole card goes to one place, and `onClick` when it starts one action.
-- Let a link or button card's text name it, and keep that text short: a title and a line of summary.
-- Set `headingLevel` to the level that fits the page's outline.
-- Lay cards out in a grid that fits as many columns as the room allows.
-- Put several actions in an action strip instead of making the card interactive.
+```tsx anatomy=CardAnatomy
 
-### Don't
+```
 
-- Don't put links, buttons or other controls inside a link or button card.
-- Don't name a link or button card with `aria-label` or `aria-labelledby` that leaves out part of its visible text: speech input users say what they see.
-- Don't use a card for a list of similar rows; use [List](../components/list.md).
-- Don't nest cards inside each other.
-- Don't use a card only for its fill; use [Surface](../components/surface.md).
+1. **Surface** (`env-card`, `background`, `padding`): the fill with 1.75 rem corners and padding that grows from 1.25 to 1.5 rem with the window, or a fixed step of the spacing scale.
+2. `env-card-header`
+3. **Title** (`env-card-heading`, `title`): an `h3` in the title type; `headingLevel` sets another level for the page's outline.
+4. **Meta** (`env-card-meta`, `meta`): supporting text at the end of the title row, 0.75 rem from the title; the row wraps when it runs out of room.
+5. **Description** (`env-card-description`, `description`): a sentence under the title in muted text.
+6. **Content** (`env-card-body > env-text:last-child`, `children`): spaced 1 rem apart, in `env-card-body`.
+7. **Footer** (`env-card-footer`, `actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
+
+The feature layout, `env-card-layout`, lays out an **icon** (`env-card-icon`), 1.5 rem in the muted color in a 2.75 rem box, the title, an `h2` in the headline type, the description in supporting text, more content 1 rem below, and the actions at the end.
+
+## Adapting to width
+
+> How does a card adapt to the room it has?
+
+A card fills the width its container gives it, and its padding grows from 1.25 to 1.5 rem with the window. A feature card follows its own width, not the window's: narrower than 38 rem, it moves its action below the text, and the action fills the card's width.
+
+```tsx example=InviteFeature widths="24 44"
+
+```
+
+- The title row wraps when it runs out of room, and `meta` keeps to the end of the row, also in right-to-left text.
+- Text in a plain paragraph of a card with an action strip is muted body text, at most 32 characters wide.
+- Lay link and button cards out in a grid of as many columns as fit, as the link cards above do.
 
 ## Accessibility
+
+> How do I keep cards accessible?
+
+A content card is a `div`, or the element of `render`; a link or button card is one native element, named by everything it says. Keep its text short, since all of it is the name.
 
 ### Keyboard
 
@@ -140,40 +198,6 @@ The feature layout lays out an **icon** (`icon`), 1.5 rem in the muted color in 
 - A heading level that fits the page's outline, through `headingLevel`.
 - `render={<article />}` for a card that stands on its own, such as a post in a feed.
 - The routing behind `href`, through `LinkProvider`.
-
-## Examples
-
-### Action strip
-
-`title`, `meta` and `actions` make a title row and a strip of controls along the bottom; `render` makes the card an article.
-
-```tsx example=ActionStrip
-
-```
-
-### Link cards
-
-Each card is one link, named by its title and summary, in a grid of as many columns as fit.
-
-```tsx example=Destinations
-
-```
-
-### Button cards
-
-A button card starts an action, here one way to start a project; a disabled one cannot be pressed.
-
-```tsx example=StartOptions
-
-```
-
-### Feature cards
-
-The feature layout presents a feature with an icon and one action, and stacks them when the card is narrow.
-
-```tsx example=FeatureCards
-
-```
 
 ## Changelog
 

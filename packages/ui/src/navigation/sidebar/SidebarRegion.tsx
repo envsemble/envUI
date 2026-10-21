@@ -14,7 +14,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
-import { breakpointQuery, type Breakpoint } from '../../foundations/breakpoints.js';
+import { breakpointQuery, type Breakpoint } from '../app-shell/frameBreakpoints.js';
 import { classNames } from '../../internal/classNames.js';
 import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';

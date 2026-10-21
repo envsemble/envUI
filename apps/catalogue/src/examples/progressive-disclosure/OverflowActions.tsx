@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, IconButton, Menu, Stack, Text, Tooltip } from '@envsemble/envui';
+import { Button, IconButton, Menu, Column, Row, Text, Tooltip } from '@envsemble/envui';
 import { Archive } from '@envsemble/envui/icons/Archive';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Edit } from '@envsemble/envui/icons/Edit';
@@ -11,13 +11,13 @@ import { Share } from '@envsemble/envui/icons/Share';
 export default function OverflowActions() {
   const [status, setStatus] = useState('');
   return (
-    <Stack gap={3}>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text render={<h3 />} variant="title">
           Launch brief
         </Text>
         {/* The two actions people take most stay visible; the rest wait in one menu. */}
-        <Stack direction="row" wrap align="center" gap={2}>
+        <Row wrap align="center" gap={2}>
           <Button variant="secondary" startIcon={<Share />} href="/documents/launch-brief/share">
             Share
           </Button>
@@ -61,11 +61,11 @@ export default function OverflowActions() {
               Archive
             </Menu.Item>
           </Menu.Root>
-        </Stack>
-      </Stack>
+        </Row>
+      </Row>
       <Text role="status" variant="body-sm" emphasis="muted">
         {status}
       </Text>
-    </Stack>
+    </Column>
   );
 }

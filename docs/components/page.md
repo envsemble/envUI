@@ -20,14 +20,14 @@ avoidWhen:
   - text: The frame of an application, with its header and sidebars.
     use: AppShell
   - text: Content in a column or a row with even gaps inside a page.
-    use: Stack
+    use: Column
   - text: A background, an inset and corners around a part of a page.
     use: Surface
   - text: Two panes side by side that people resize.
     use: SplitPane
 related:
   - page-header
-  - stack
+  - column
   - surface
   - app-shell
   - responsive
@@ -39,7 +39,7 @@ components:
 
 ## Overview
 
-Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a [PageHeader](../components/page-header.md), at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with Stack and the components.
+Page is the column a page's content sits in. It is centered in the space it has, grows to its `width` at most, pads its inline edges with the page gutter and puts its `header`, usually a [PageHeader](../components/page-header.md), at its top. It adds no landmark: it goes inside `AppShell.Main`, or the application's own `main`, and the content inside it lays itself out, with the layout primitives, such as Row, Column and Grid, and the components.
 
 ```tsx example=WithHeader
 
@@ -61,7 +61,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 | `lg` (default) | 76 rem        | A dashboard, a list, a table, most of an application's pages.    |
 | `full`         | The whole     | A board, a canvas or a wide table that uses all the width it has |
 
-- The widths are rem, so they follow the reader's text size, and are custom properties of the page, `--env-page-width-sm`, `-md` and `-lg`, which an application may set on `.env-page` to change them everywhere.
+- The widths are rem, so they follow the reader's text size. Choose one with the `width` prop; the custom properties that hold them are the page's own and may change in any release.
 - The column is as wide as its `width` plus the gutter on each side; in a narrower space it takes the whole width.
 - The page's block padding, 1.5 rem above and 2 rem below, separates its content from the frame's header and the end of the page.
 - `gutter={false}` leaves the inline edges to the content, such as a page that is one full-bleed table; the gutter is `--env-page-gutter`, which a sticky PageHeader also reads to reach across it.
@@ -78,7 +78,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 
 - Choose the width for what the page holds: `sm` for a form, `md` for reading, `lg` for most application pages.
 - Put the page's heading in `header`, so it shares the column and its gutter.
-- Lay out the content inside with Stack, and keep its own widths, such as a form's fields, to the components.
+- Lay out the content inside with Column, Row and Grid, and keep its own widths, such as a form's fields, to the components.
 
 ### Don't
 

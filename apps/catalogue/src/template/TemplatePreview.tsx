@@ -1,5 +1,13 @@
 import { useRef, useState } from 'react';
-import { Link, SegmentedControl, Stack, Text, useContainerSize, useTheme } from '@envsemble/envui';
+import {
+  Link,
+  SegmentedControl,
+  Column,
+  Row,
+  Text,
+  useContainerSize,
+  useTheme,
+} from '@envsemble/envui';
 import { ExampleCode } from './LiveExample';
 import { frameHref } from './FrameAddress';
 import { templateScales, templateWidths } from './TemplateViewports';
@@ -31,15 +39,15 @@ function Frame({
     theme: theme === 'dark' ? 'dark' : 'light',
   });
   return (
-    <Stack gap={2} className="docs-template-frame-entry" data-scale={scale.value}>
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+    <Column gap={2} className="docs-template-frame-entry" data-scale={scale.value}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text variant="body-sm" emphasis="muted">
           {scale.label} scale · {viewport.label} {viewport.width} × {viewport.height}
         </Text>
         <Link href={href} target="_blank" rel="noreferrer">
           Open {scale.label.toLowerCase()} in a new tab
         </Link>
-      </Stack>
+      </Row>
       <div ref={box} className="docs-template-frame-box">
         <div
           className="docs-template-frame-viewport"
@@ -58,7 +66,7 @@ function Frame({
           />
         </div>
       </div>
-    </Stack>
+    </Column>
   );
 }
 
@@ -80,7 +88,7 @@ export function TemplatePreview({
   const [width, setWidth] = useState<(typeof templateWidths)[number]['value']>('desktop');
   const viewport = templateWidths.find((item) => item.value === width) ?? templateWidths[0];
   return (
-    <Stack gap={4} className="docs-template-preview" data-template={name}>
+    <Column gap={4} className="docs-template-preview" data-template={name}>
       <SegmentedControl
         aria-label={`Width of the ${title} preview`}
         size="sm"
@@ -99,6 +107,6 @@ export function TemplatePreview({
         />
       ))}
       <ExampleCode page={page} name={name} />
-    </Stack>
+    </Column>
   );
 }

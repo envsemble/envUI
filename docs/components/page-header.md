@@ -21,7 +21,7 @@ avoidWhen:
   - text: The application's header across every page, with its sidebar toggle and account menu.
     use: AppShell
   - text: The heading of a section inside a page, with its own actions.
-    use: Stack
+    use: Row
   - text: A heading with metadata and actions around a block of content.
     use: Card
   - text: Controls for one subject that the arrow keys move between.
@@ -30,7 +30,7 @@ related:
   - page
   - breadcrumbs
   - toolbar
-  - stack
+  - row
   - button
 components:
   - PageHeader
@@ -61,7 +61,7 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 - **Control size**: `controlSize` gives the buttons and icon buttons in `actions` and `toolbar` that set no `size` the `md` height, 2.5 rem, by default, or `sm`, 2 rem, for a dense page, such as one in a small window. Fields take their own `size`: give a toolbar's fields the same one.
 - **Sticky**: `sticky` keeps the header in view at the top of the page, under the frame's header, with the page's background and a hairline under it.
 - **Heading level**: the title looks the same at every level; set `headingLevel` to 2 or lower for a header inside a pane or a dialog that sits under another heading.
-- A toolbar row that lines up with a sidebar's header takes the frame's header height: `min-block-size: var(--env-app-shell-header-height)` on the row's Stack.
+- A toolbar row that lines up with a sidebar's header takes the frame's header height: `min-block-size: var(--env-app-shell-header-height)` on the Row.
 
 ## States and behaviour
 
@@ -80,7 +80,7 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 ### Do
 
 - Give a page one PageHeader, with the page's `h1`.
-- Use `toolbar` for search, filters and view switches, laid out with a [Stack](../components/stack.md) row, as [Toolbar's layouts](../components/toolbar.md#layouts) describe.
+- Use `toolbar` for search, filters and view switches, laid out with a [Row](../components/row.md), as [Toolbar's layouts](../components/toolbar.md#layouts) describe.
 - Use `controlSize="sm"` on dense pages instead of overriding control heights.
 
 ### Don't

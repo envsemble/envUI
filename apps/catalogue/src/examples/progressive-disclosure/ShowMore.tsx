@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Button, List, Stack, Text } from '@envsemble/envui';
+import { Button, List, Column, Text } from '@envsemble/envui';
 
 /** Enough to scan at a glance; the rest are one press away. */
 const shownAtFirst = 5;
@@ -9,7 +9,7 @@ export default function ShowMore() {
   const [expanded, setExpanded] = useState(false);
   const shown = expanded ? activity : activity.slice(0, shownAtFirst);
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Text render={<h3 id={`${id}-heading`} />} variant="title">
         Recent activity
       </Text>
@@ -28,7 +28,7 @@ export default function ShowMore() {
       >
         {expanded ? 'Show fewer' : `Show all ${activity.length}`}
       </Button>
-    </Stack>
+    </Column>
   );
 }
 

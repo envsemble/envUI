@@ -1,5 +1,5 @@
 import { Component, createRef, type ReactNode } from 'react';
-import { Alert, Button, Link, Stack } from '@envsemble/envui';
+import { Alert, Button, Link, Column } from '@envsemble/envui';
 import { errorMessage, focusDropped, focusedElement, reloadPage } from '../template/LoadBoundary';
 import { PageHeader } from './PageHeader';
 import { homeRoute, routeHref } from '../navigation/Address';
@@ -55,7 +55,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
     // The overview is where the link leads, so there it offers to load the catalogue again.
     const overview = this.props.route.split(/[/?]/)[0] === 'overview';
     return (
-      <Stack gap={7} className="docs-article">
+      <Column gap={7} className="docs-article">
         <PageHeader title={this.props.title} breadcrumb="envUI" />
         <Alert
           ref={this.alert}
@@ -80,7 +80,7 @@ export class PageBoundary extends Component<PageBoundaryProps, PageBoundaryState
             </div>
           )}
         </Alert>
-      </Stack>
+      </Column>
     );
   }
 }

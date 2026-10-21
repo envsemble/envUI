@@ -7,7 +7,7 @@ import {
   IconButton,
   Link,
   Page,
-  Stack,
+  Column,
   Surface,
   Text,
   TextField,
@@ -121,22 +121,22 @@ export default function SignInPage() {
   return (
     <AppShell.Main>
       {/* envUI has no centred full-viewport layout yet: this column centres the form. */}
-      <Stack
+      <Column
         justify="center"
         style={{ minBlockSize: '100dvh', paddingBlock: 'var(--env-space-7)' }}
       >
         <Page width="sm">
           {/* One panel in the muted background holds the whole screen, so its edges line up. */}
-          <Surface background="muted" render={<Stack gap={6} />}>
-            <Stack gap={2}>
+          <Surface background="muted" render={<Column gap={6} />}>
+            <Column gap={2}>
               <Text variant="headline" render={<h1 />}>
                 Sign in to Northwind
               </Text>
               <Text emphasis="muted">Use the email address you were invited with.</Text>
-            </Stack>
+            </Column>
             {/* noValidate: the form checks its own fields and words its own errors. */}
             <form noValidate onSubmit={submit}>
-              <Stack gap={5}>
+              <Column gap={5}>
                 {summaryErrors.length > 0 && (
                   // envUI has no error summary yet: a danger Alert lists each error as a link to
                   // its field. Without `announce` it is read once, as it takes focus.
@@ -150,7 +150,7 @@ export default function SignInPage() {
                       </span>
                     }
                   >
-                    <Stack render={<ul />} gap={1}>
+                    <Column render={<ul />} gap={1}>
                       {summaryErrors.map((field) => (
                         <li key={field}>
                           <Link
@@ -164,7 +164,7 @@ export default function SignInPage() {
                           </Link>
                         </li>
                       ))}
-                    </Stack>
+                    </Column>
                   </Alert>
                 )}
                 {refused && (
@@ -227,13 +227,13 @@ export default function SignInPage() {
                 <Button type="submit" fullWidth pending={signingIn}>
                   Sign in
                 </Button>
-                <Stack gap={1}>
+                <Column gap={1}>
                   <Link href="/forgot-password">Forgot your password?</Link>
                   <Text role="status" emphasis="muted">
                     {status}
                   </Text>
-                </Stack>
-              </Stack>
+                </Column>
+              </Column>
             </form>
             {/* Single sign-on in words only: no provider's name or logo. */}
             <Button variant="secondary" fullWidth href="/sign-in/single-sign-on">
@@ -246,7 +246,7 @@ export default function SignInPage() {
             </Text>
           </Surface>
         </Page>
-      </Stack>
+      </Column>
     </AppShell.Main>
   );
 }

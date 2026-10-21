@@ -779,6 +779,49 @@
         "@envsemble/envui"
       ]
     },
+    "Box": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/Layout.tsx",
+      "description": "A plain block for what needs no row or column of its own: an inset (`padding`), a size container (`container`) or a named node. It sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Breadcrumbs": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Breadcrumbs.tsx",
@@ -1589,6 +1632,69 @@
       ],
       "native": [
         "span"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Column": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/Layout.tsx",
+      "description": "Lays its direct children out one under another, `gap` apart, such as a form's fields. A flex column that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between the direct children, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How the children line up across the line: stretch, the default, makes each as wide as a column or as tall as a row, except controls such as buttons, which keep their own size; start, center and end keep every child at its own size."
+        },
+        {
+          "name": "justify",
+          "type": "'start' | 'center' | 'end' | 'between'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the children sit along the line when there is room to spare: at the start, in the center, at the end, such as a form's actions, or between, spread out to the edges."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3663,6 +3769,68 @@
         "@envsemble/envui"
       ]
     },
+    "Grid": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/Layout.tsx",
+      "description": "Lays its direct children out in columns, `gap` apart: a number of equal columns, a template, or as many as fit at a minimum width. A CSS grid that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "columns",
+          "type": "GridColumns",
+          "required": false,
+          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many equal columns as fit at that width or wider, with empty columns where items run out, so every item keeps one width. One column by default."
+        },
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between rows and columns, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How each child lines up in its cell's height: stretch, the default, fills the row; start, center and end keep it at its own height."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "HoverCard": {
       "kind": "component",
       "source": "packages/ui/src/feedback/HoverCard.tsx",
@@ -5579,7 +5747,7 @@
           "name": "toolbar",
           "type": "ReactNode",
           "required": false,
-          "description": "A second row under the title: search, filters and view switches, laid out with `<Stack direction=\"row\" wrap justify=\"between\">`; see Toolbar's layouts."
+          "description": "A second row under the title: search, filters and view switches, laid out with `<Row wrap justify=\"between\">`; see Toolbar's layouts."
         },
         {
           "name": "sticky",
@@ -6545,6 +6713,75 @@
       ],
       "entries": [
         "@envsemble/envui/rich-text"
+      ]
+    },
+    "Row": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/Layout.tsx",
+      "description": "Lays its direct children out side by side, `gap` apart, with `wrap` to run onto more lines, such as a form's actions. A flex row that sizes to its content and never paints.",
+      "props": [
+        {
+          "name": "wrap",
+          "type": "boolean",
+          "required": false,
+          "description": "Lets the row run onto more lines when its children don't fit, as a row of actions does."
+        },
+        {
+          "name": "gap",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The space between the direct children, a step of the spacing scale. None by default."
+        },
+        {
+          "name": "align",
+          "type": "'start' | 'center' | 'end' | 'stretch'",
+          "required": false,
+          "default": "'stretch'",
+          "description": "How the children line up across the line: stretch, the default, makes each as wide as a column or as tall as a row, except controls such as buttons, which keep their own size; start, center and end keep every child at its own size."
+        },
+        {
+          "name": "justify",
+          "type": "'start' | 'center' | 'end' | 'between'",
+          "required": false,
+          "default": "'start'",
+          "description": "Where the children sit along the line when there is room to spare: at the start, in the center, at the end, such as a form's actions, or between, spread out to the edges."
+        },
+        {
+          "name": "render",
+          "type": "ReactElement",
+          "required": false,
+          "description": "The element to render, for its meaning, such as render={<section />} or render={<ul />}, or another component to lay out without a wrapper, such as a Surface: the primitive's attributes merge into its props. It must forward native props and refs. A div by default."
+        },
+        {
+          "name": "ref",
+          "type": "Ref<RenderedElement>",
+          "required": false,
+          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "required": false,
+          "description": "A name for this node, such as \"filters\" or \"summary\", which dev mode and the docs show; it renders as `data-env-name`. A component's part class names its node instead."
+        },
+        {
+          "name": "container",
+          "type": "string",
+          "required": false,
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
+        },
+        {
+          "name": "padding",
+          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
+          "required": false,
+          "description": "The inset on every side, a step of the spacing scale. None by default."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "entries": [
+        "@envsemble/envui"
       ]
     },
     "SearchField": {
@@ -7593,66 +7830,6 @@
         "@envsemble/envui"
       ]
     },
-    "Stack": {
-      "kind": "component",
-      "source": "packages/ui/src/foundations/Layout.tsx",
-      "description": "A layout of its direct children in a column, or a row, a step of the spacing scale apart, so the parent owns the space between them and the children need no margins.",
-      "props": [
-        {
-          "name": "direction",
-          "type": "'column' | 'row'",
-          "required": false,
-          "default": "'column'",
-          "description": "The direction the children run in: column, one under another, or row, side by side, such as a form's actions."
-        },
-        {
-          "name": "wrap",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Let a row wrap onto more lines when its children don't fit, as a row of actions does."
-        },
-        {
-          "name": "gap",
-          "type": "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9",
-          "required": false,
-          "default": "4",
-          "description": "The space between the direct children, as a step of the spacing scale: 1 is 0.25 rem, 2 is 0.5 rem, 3 is 0.75 rem, 4 is 1 rem, 5 is 1.5 rem, 6 is 2 rem, 7 is 2.5 rem, 8 is 3 rem and 9 is 4 rem; 0 removes it."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center' | 'end' | 'stretch'",
-          "required": false,
-          "default": "'stretch'",
-          "description": "How the children line up across the stack: stretch makes each as wide as a column (as tall as a row), except controls such as buttons, which keep their own size; start, center and end keep every child at its own size, at that side or in the middle."
-        },
-        {
-          "name": "justify",
-          "type": "'start' | 'center' | 'end' | 'between'",
-          "required": false,
-          "default": "'start'",
-          "description": "Where the children sit along the stack when there is room to spare: at the start, in the center, at the end, such as a form's actions at its end, or between, spread out with the first and last at the edges."
-        },
-        {
-          "name": "render",
-          "type": "ReactElement",
-          "required": false,
-          "description": "The element to render, for its meaning, such as render={<section />} or render={<footer />}, or another component to lay out as the stack without a wrapper, such as a Surface or a Theme: the stack's class, gap and alignment merge into its props. It must forward native props and refs. A div by default."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<RenderedElement>",
-          "required": false,
-          "description": "The rendered element, a div by default. Its type is the element type parameter, which a ref passed in sets: a ref to the element that render makes, such as useRef<HTMLElement>(null) with render={<section />}, type-checks, and `StackProps['ref']` is a ref to the default element, so a wrapper can forward it to one."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "Stat": {
       "kind": "namespace",
       "source": "packages/ui/src/content/Stat.tsx",
@@ -7732,7 +7909,7 @@
     "Surface": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Surface.tsx",
-      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Stack. Card and other containers build on it.",
+      "description": "A container with a background, an inset and corners, but no layout of its own: spacing between its children, alignment and behaviour come from what it holds, such as a Column. Card and other containers build on it.",
       "props": [
         {
           "name": "background",
@@ -7759,7 +7936,7 @@
           "name": "render",
           "type": "ReactElement",
           "required": false,
-          "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Stack that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
+          "description": "The element to render the surface as, for its meaning, such as render={<section />}, or another component to render it onto without a wrapper, such as a Column that lays out its content: the surface's class, style and attributes merge into its props. It must forward native props and refs. A div by default."
         },
         {
           "name": "ref",
@@ -9226,15 +9403,6 @@
         "@envsemble/envui"
       ]
     },
-    "breakpointQuery": {
-      "kind": "function",
-      "source": "packages/ui/src/foundations/breakpoints.ts",
-      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
-      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "countDiffLines": {
       "kind": "function",
       "source": "packages/ui/src/diff/countDiffLines.ts",
@@ -9275,7 +9443,7 @@
     "installDevMode": {
       "kind": "function",
       "source": "packages/ui/src/dev/install.tsx",
-      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed.",
+      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
       "signature": "(options?: DevModeOptions): DevModeHandle",
       "entries": [
         "@envsemble/envui/dev"
@@ -9299,15 +9467,6 @@
         "@envsemble/envui"
       ]
     },
-    "useBreakpoint": {
-      "kind": "function",
-      "source": "packages/ui/src/foundations/useMediaQuery.ts",
-      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
-      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "useContainerSize": {
       "kind": "function",
       "source": "packages/ui/src/foundations/useContainerSize.ts",
@@ -9322,15 +9481,6 @@
       "source": "packages/ui/src/internal/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "useMediaQuery": {
-      "kind": "function",
-      "source": "packages/ui/src/foundations/useMediaQuery.ts",
-      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
-      "signature": "(query: string, options?: MediaQueryOptions): boolean",
       "entries": [
         "@envsemble/envui"
       ]

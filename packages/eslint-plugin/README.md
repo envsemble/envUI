@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, flex and grid layout in inline styles, envUI's private `env-` classes, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
+ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, flex and grid layout in inline styles, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
 
 Lint output reaches people and coding agents in their usual edit-and-check loop, so it works even when nobody has read the documentation first. The [Stylelint config](../stylelint-config/README.md) does the same for style sheets.
 
@@ -77,7 +77,6 @@ export default defineConfig(envui.configs.recommended, {
 | ----------------------------------------------- | --------------------------------------------------------------- |
 | [no-hand-rolled-layout](#no-hand-rolled-layout) | Flex and grid layout in inline styles, a warning                |
 | [no-html-elements](#no-html-elements)           | Raw elements and widget roles that envUI provides as components |
-| [no-private-classes](#no-private-classes)       | envUI's private `env-` classes in class names and selectors     |
 | [no-raw-colors](#no-raw-colors)                 | Literal colors in inline styles                                 |
 | [no-renamed-exports](#no-renamed-exports)       | Names that envUI 0.x exported and 1.0 renamed or made internal  |
 
@@ -116,7 +115,7 @@ One rule reads one mapping table, [`src/data/elements.json`](src/data/elements.j
 
 How an element is matched:
 
-1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, a `<Box role="dialog">` of the application's own or of another library, and envUI's own `<Surface role="dialog">` or `<Stack role="menu">`, which hand-roll the widget. An envUI component that renders the role itself, listed in the role's `owners`, passes, since a role on it refines its own: `<Popover role="dialog">`, `<Menu.Submenu role="menu">`, and the component the role names, `<Menu.Root role="menu">`. An element whose name is imported counts by the name its entry point exports, from `@envsemble/envui`, `/content`, `/diff` or `/rich-text`, or from a module listed in [`reexportModules`](#settings): `Surface` imported as `Dialog` is a `Surface`, a `Dialog` from another library is not envUI's, and `<Menu.Item role="menu">` is an item, not the menu. An element whose name nothing in the file declares, as in an example written without its imports, counts by its full written name. With several roles, the first counts.
+1. A static `role` is checked first, on any JSX element: `<ul role="menu">`, a `<Box role="dialog">` of the application's own or of another library, and envUI's own `<Surface role="dialog">` or `<Column role="menu">`, which hand-roll the widget. An envUI component that renders the role itself, listed in the role's `owners`, passes, since a role on it refines its own: `<Popover role="dialog">`, `<Menu.Submenu role="menu">`, and the component the role names, `<Menu.Root role="menu">`. An element whose name is imported counts by the name its entry point exports, from `@envsemble/envui`, `/content`, `/diff` or `/rich-text`, or from a module listed in [`reexportModules`](#settings): `Surface` imported as `Dialog` is a `Surface`, a `Dialog` from another library is not envUI's, and `<Menu.Item role="menu">` is an item, not the menu. An element whose name nothing in the file declares, as in an example written without its imports, counts by its full written name. With several roles, the first counts.
 2. Otherwise HTML elements are checked in the order of the table, and the first entry whose element and attributes match decides. An `<input>` is matched by its `type`.
 3. Nothing is reported for:
    - what a part renders in place of its own element, through the `render` prop: `<Menu.Item render={<a href="/settings" />}>`;
@@ -196,26 +195,6 @@ Each entry has an `id`, an `element` (or `*` with an `except` list) or a `role`,
 
 The tests check that every entry names a 1.0 component and appears in the table above.
 
-### no-private-classes
-
-envUI's markup and its `env-` class names are private: they change in any release, as the 1.0 renames change nearly all of them. Code that sets, selects or restyles them breaks silently. This rule reports `env-` classes:
-
-- in `className` and `class`, in strings, template literals, conditions, arrays and objects, including a utility class's arbitrary variant such as `[&_.env-button]:px-2`;
-- in the arguments of class-name helpers: `clsx`, `cx`, `classnames`, `classNames`, `cn`, `twMerge` and `twJoin`;
-- in `classList.add`, `remove`, `toggle`, `contains` and `replace`, and in `getElementsByClassName`;
-- in selectors passed to `querySelector`, `querySelectorAll`, `closest`, `matches` and a browser test's `locator`, as `.env-…` or `[class*="env-…"]`;
-- in style sheets written in JavaScript: `css`, `injectGlobal`, `createGlobalStyle` and `styled` templates, and `<style>` elements.
-
-Use the component and its props instead, and put your own class on your own element. In tests, find elements by role or label.
-
-A CSS module's lookup such as `styles['env-panel']` names a local class and passes. `env-theme`, the theme boundary on which the setup guide has applications set envUI's tokens, is allowed by default.
-
-| Option       | Default                                                                 | Meaning                                   |
-| ------------ | ----------------------------------------------------------------------- | ----------------------------------------- |
-| `allow`      | `['env-theme']`                                                         | envUI classes that may be used            |
-| `attributes` | `['className', 'class']`                                                | JSX attributes that hold class names      |
-| `functions`  | `['clsx', 'cx', 'classnames', 'classNames', 'cn', 'twMerge', 'twJoin']` | Functions whose arguments are class names |
-
 ### no-raw-colors
 
 Reports literal colors in JSX `style` objects: hex colors, color functions whose channels are not custom properties (`rgb()`, `hsl()`, `hwb()`, `lab()`, `lch()`, `oklab()`, `oklch()`, `color()`), and named colors in properties that take a color, such as `border: '1px solid red'`. Use an envUI color token instead, so the color follows the theme and keeps its contrast. The message suggests the semantic role of the property: a text color such as `var(--env-color-fg-default)` for `color`, `fill` and `stroke`, a `var(--env-color-bg-…)` background, or a `var(--env-color-border-…)` boundary for borders and outlines:
@@ -247,6 +226,7 @@ Type imports count. A name is read statically, so a member with a computed key, 
 What the codemods' map says to do instead comes with the report:
 
 - A name that became internal gives the map's hint: `LoadingBar is internal in envUI 1.0 and no longer exported. AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task.`
+- `Row` and `RowProps`, 0.7's list row, which is `List.Item` in 1.0, are no report: 1.0 exports `Row` again, as a layout primitive, so an import of it may be 1.0 code. The v1-names codemod still rewrites 0.7's, and the type checker holds the rest to 1.0's props.
 - `Toast` stays importable, because 1.0's `Toast` is the namespace of `Toast.Provider`; rendering `<Toast …/>`, the 0.x manual toast, is reported with its hint: show notifications through `useToast()` inside `Toast.Provider`.
 - Each rendered `DirectionLink` is told its part: `<DirectionLink direction="previous">` is `Pager.Previous`, `direction="next"` is `Pager.Next`, and with a computed `direction` the message names both, each with the value that chooses it.
 
@@ -266,7 +246,7 @@ The plugin's own copy:
 | `DiffCount`, `DiffCountProps`                                                                                                                                 | `DiffStat`, `DiffStatProps`                                                                                                                           |
 | `Heatmap`, `HeatmapProps`, `HeatmapCell`, `HeatmapDay`                                                                                                        | `CalendarHeatmap`, `CalendarHeatmapProps`, `CalendarHeatmapCell`, `CalendarHeatmapDay`                                                                |
 | `OrganizationMenu`, `OrganizationMenuProps`, `OrganizationMenuOrganization`                                                                                   | `OrganizationSwitcher`, `OrganizationSwitcherProps`, `OrganizationSwitcherItem`                                                                       |
-| `GroupedRows`, `GroupedRowsProps`, `Row`, `RowProps`                                                                                                          | `List.Root`, `List.RootProps`, `List.Item`, `List.ItemProps`                                                                                          |
+| `GroupedRows`, `GroupedRowsProps`                                                                                                                             | `List.Root`, `List.RootProps`                                                                                                                         |
 | `NavigationItem`, `NavigationItemProps`                                                                                                                       | `NavList.Item`, `NavList.ItemProps`                                                                                                                   |
 | `DirectionLinks`, `DirectionLinksProps`                                                                                                                       | `Pager.Root`, `Pager.RootProps`                                                                                                                       |
 | `DirectionLinksDestination`                                                                                                                                   | `Pager.LinkProps`                                                                                                                                     |
@@ -292,8 +272,8 @@ The plugin's own copy:
 | `CommandPaletteSelectOptions`                                                                                                                                 | `CommandPaletteActionOptions`                                                                                                                         |
 | `LoadingBar`, `LoadingBarProps`, `getInitials`, `useLinkComponent`, `useSidebarCompact`, and `defaultThemeStorageKey` from `@envsemble/envui/theme-bootstrap` | internal, no longer exported                                                                                                                          |
 | `TextTone`, `SurfaceTone`, `SurfaceCorners`                                                                                                                   | `TextEmphasis`, `SurfaceBackground`, `SurfaceRadius`                                                                                                  |
-| `ActionGroup`, `ActionGroupProps`                                                                                                                             | removed: lay actions out with `Stack`, `direction="row"` and `wrap`, or a column of `fullWidth` buttons                                               |
-| `StackElement`, `TextElement`                                                                                                                                 | removed: Stack, Surface and Text take `render`, such as `render={<h2 />}`                                                                             |
+| `ActionGroup`, `ActionGroupProps`                                                                                                                             | removed: lay actions out with `Row` and `wrap`, or a `Column` of `fullWidth` buttons                                                                  |
+| `StackElement`, `TextElement`                                                                                                                                 | removed: Row, Column, Surface and Text take `render`, such as `render={<h2 />}`                                                                       |
 | `ClickableCard`, `ClickableCardProps`                                                                                                                         | `Card`, `CardProps`                                                                                                                                   |
 | `ActionCard`, `ActionCardProps`, `FeatureCard`, `FeatureCardProps`                                                                                            | removed: `Card` with `title` and `actions`, or `layout="feature"`                                                                                     |
 | `InfoChip`, `InfoChipProps`                                                                                                                                   | `Badge`, `BadgeProps`                                                                                                                                 |
@@ -312,4 +292,4 @@ npm run sync:tokens --workspace @envsemble/eslint-plugin-envui   # update the to
 npm run dogfood --workspace @envsemble/eslint-plugin-envui     # count reports in the catalogue and test fixture
 ```
 
-The root `npm test` runs these tests too. The dogfood run only counts: envUI's own catalogue and fixture render raw elements and the library's classes on purpose, so the plugin is not enforced on this repository.
+The root `npm test` runs these tests too. The dogfood run only counts: envUI's own catalogue and fixture render raw elements on purpose, so the plugin is not enforced on this repository.

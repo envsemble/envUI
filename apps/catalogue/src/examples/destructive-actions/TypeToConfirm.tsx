@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, ConfirmDialog, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, ConfirmDialog, Column, Text, TextField } from '@envsemble/envui';
 import { Delete } from '@envsemble/envui/icons/Delete';
 
 const project = { name: 'Data migration', documents: 128, tasks: 46 };
@@ -13,7 +13,7 @@ export default function TypeToConfirm() {
   const matches = typed.trim() === project.name;
 
   return (
-    <Stack gap={4} align="start">
+    <Column gap={4} align="start">
       <Button
         variant="outline"
         tone="danger"
@@ -67,6 +67,6 @@ export default function TypeToConfirm() {
           }}
         />
       </ConfirmDialog>
-    </Stack>
+    </Column>
   );
 }

@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, Dialog, Stack, Text } from '@envsemble/envui';
+import { Button, Dialog, Column, Text } from '@envsemble/envui';
 
 export default function ConfirmDelete() {
   const [open, setOpen] = useState(false);
   const [result, setResult] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={setOpen}
@@ -27,6 +27,6 @@ export default function ConfirmDelete() {
         }
       />
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

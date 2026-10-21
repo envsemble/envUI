@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AccountMenu, Menu, Stack, Text, type ThemePreference } from '@envsemble/envui';
+import { AccountMenu, Menu, Column, Text, type ThemePreference } from '@envsemble/envui';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -8,7 +8,7 @@ export default function RowTrigger() {
   const [theme, setTheme] = useState<ThemePreference>('system');
   return (
     // A sidebar's width, which an application's frame sets.
-    <Stack gap={2} style={{ inlineSize: '16rem' }}>
+    <Column gap={2} style={{ inlineSize: '16rem' }}>
       <AccountMenu.Root trigger="row" name="Priya Shah" description="priya@example.com">
         <Menu.Item icon={<Settings />}>Preferences</Menu.Item>
         <AccountMenu.ThemeSubmenu value={theme} onValueChange={setTheme} closeOnClick />
@@ -18,6 +18,6 @@ export default function RowTrigger() {
       <Text variant="caption" emphasis="muted">
         Theme: {theme}
       </Text>
-    </Stack>
+    </Column>
   );
 }
