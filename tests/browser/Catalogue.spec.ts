@@ -39,13 +39,15 @@ test('offline usage renders shared Markdown guidance and follows relative topic 
   page,
 }) => {
   await page.goto(`${offline}#/foundations/composition/usage`);
+  await expect(page.getByRole('heading', { name: 'Compose one root', exact: true })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Build from existing primitives', exact: true }),
+    page.getByText('Surface supplies fill, padding and corners', { exact: false }),
   ).toBeVisible();
-  await expect(
-    page.getByText('Surface supplies fill, padding and corners.', { exact: false }),
-  ).toBeVisible();
-  await page.locator('.docs-article').getByRole('link', { name: 'Surface', exact: true }).click();
+  await page
+    .locator('.docs-article')
+    .getByRole('link', { name: 'Surface', exact: true })
+    .first()
+    .click();
   // Surface is on the template, so a link to its page opens Overview.
   await expect(page).toHaveURL(/#\/components\/surface\/overview$/);
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();

@@ -2,7 +2,7 @@
 
 ## Compose one root
 
-Surface supplies fill, padding and corners; Row, Column and Grid supply layout. `render` puts both on one element, with the semantic tag on the element it supplies. A custom render component passes native props, `className`, `style`, `children` and `ref` to its root.
+[Surface](../components/surface.md) supplies fill, padding and corners; [Row](../components/row.md), [Column](../components/column.md) and [Grid](../components/grid.md) supply layout. `render` puts both on one element, with the semantic tag on the element it supplies. A custom render component passes native props, `className`, `style`, `children` and `ref` to its root.
 
 ```tsx
 import { Surface, Column, Text } from '@envsemble/envui';
