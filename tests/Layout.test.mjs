@@ -87,8 +87,13 @@ test('every rule of the primitives has zero specificity', () => {
     list.split(/,(?![^(]*\))/).map((selector) => selector.trim()),
   );
   assert.ok(selectors.length > 20);
+  // A skeleton's content wrapper, which has no box, passes a primitive's rules on to its children.
   for (const selector of selectors)
-    assert.match(selector, /^:where\([^()]*\)(?: > \*)?$/, selector);
+    assert.match(
+      selector,
+      /^:where\([^()]*\)(?: > :where\(\.env-skeleton-content\))?(?: > \*)?$/,
+      selector,
+    );
   assert.doesNotMatch(css, /env-stack/);
 });
 
