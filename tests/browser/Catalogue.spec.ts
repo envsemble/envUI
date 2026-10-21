@@ -743,17 +743,17 @@ test(
   'offline hashes support direct links and back/forward navigation',
   { tag: '@engines' },
   async ({ page }) => {
-    await page.goto(`${offline}#/components/select/guidelines`);
+    await page.goto(`${offline}#/components/select/props`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Select');
     await page.getByRole('tab', { name: 'Overview', exact: true }).click();
-    await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
+    await page.getByRole('tab', { name: 'Props', exact: true }).click();
     await page.goBack();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
       'Overview',
     );
     await page.goForward();
     await expect(page.locator('.docs-page-header').getByRole('tab', { selected: true })).toHaveText(
-      'Guidelines',
+      'Props',
     );
   },
 );
