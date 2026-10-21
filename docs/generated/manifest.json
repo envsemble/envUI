@@ -15304,26 +15304,44 @@
         {
           "name": "ImmediateToggles",
           "title": "Immediate toggles",
-          "description": "Use this pattern to let people change how the application behaves for them: notifications, privacy, appearance, their profile and the rare action that can't be undone. Each setting either applies the moment people change it or waits, with the settings it depends on, for a Save button, and the two never share a section.",
+          "description": "Settings let people change how the application works for them. Each setting either applies the moment it changes, or waits with the settings it depends on for a Save button, and the two never share a section.",
           "file": "docs/examples/settings/ImmediateToggles.tsx"
         },
         {
           "name": "SaveSection",
           "title": "Save a section",
-          "description": "A profile's fields depend on each other, so they wait for Save. The section marks its unsaved changes, and Cancel puts back what was saved.",
+          "description": "Fields that only make sense together wait in a `form` for Save, marked by a Badge while they hold unsaved changes; Cancel puts back what was saved.",
           "file": "docs/examples/settings/SaveSection.tsx"
         },
         {
           "name": "AppearanceChoice",
           "title": "Appearance",
-          "description": "The theme applies the moment people choose it, through `useThemePreference`. The density only keeps the choice in the example: the application stores it and passes it to the root provider's `scale`, the app's one scale.",
+          "description": "The theme applies at once through `useThemePreference`. The scale is one for the whole app: store it and pass it to the root provider's `scale`, never to one page.",
           "file": "docs/examples/settings/AppearanceChoice.tsx"
         },
         {
           "name": "DangerZone",
           "title": "Danger zone",
-          "description": "Deleting the workspace can't be undone and affects everyone, so the dialog asks for its name. A confirmation with the wrong name keeps the dialog open and says what to enter.",
+          "description": "The last section, apart from the rest: an outline danger Button opens a ConfirmDialog, which asks for the name when the action can't be undone and reaches everyone, as in destructive actions.",
           "file": "docs/examples/settings/DangerZone.tsx"
+        },
+        {
+          "name": "SwitchesApplyAtOnce",
+          "title": "Do: Switches that apply the moment they change, with no Save button.",
+          "description": "",
+          "file": "docs/examples/settings/SwitchesApplyAtOnce.tsx"
+        },
+        {
+          "name": "SwitchesWithSave",
+          "title": "Don't: Switches that wait for Save: people can't tell which changes are kept.",
+          "description": "",
+          "file": "docs/examples/settings/SwitchesWithSave.tsx"
+        },
+        {
+          "name": "SettingsAnatomy",
+          "title": "Settings anatomy",
+          "description": "",
+          "file": "docs/examples/settings/SettingsAnatomy.tsx"
         }
       ]
     },
