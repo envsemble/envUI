@@ -219,12 +219,9 @@ test('compositions reuse primitive colors while unrelated roles stay independent
     // Each role, and every part that paints it: a component shares the role of what it means.
     const cases = [
       ['--env-color-bg-page', ['canvas', 'canvasCard']],
-      // A list item's component token is the default surface in light and the muted one in dark.
-      ['--env-color-bg-default', ['pane', 'paneCard', ...(theme === 'light' ? ['row'] : [])]],
-      [
-        '--env-color-bg-muted',
-        ['surface', 'card', 'contrastPane', 'radioRow', ...(theme === 'dark' ? ['row'] : [])],
-      ],
+      // A list item's component token is the muted surface in both themes.
+      ['--env-color-bg-default', ['pane', 'paneCard']],
+      ['--env-color-bg-muted', ['surface', 'card', 'contrastPane', 'radioRow', 'row']],
       ['--env-color-list-item-bg', ['row']],
       [
         '--env-color-bg-neutral-muted',

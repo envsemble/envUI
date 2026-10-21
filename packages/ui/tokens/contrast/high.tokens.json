@@ -22,10 +22,12 @@
         "pressed": { "$value": "{contrast-high.color.bg.default.pressed}" }
       },
       "muted": {
+        "$root": { "$value": "{contrast-high.color.bg.muted}" },
         "hover": { "$value": "{contrast-high.color.bg.muted.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.muted.pressed}" }
       },
       "raised": {
+        "$root": { "$value": "{contrast-high.color.bg.raised}" },
         "hover": { "$value": "{contrast-high.color.bg.raised.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.raised.pressed}" }
       },
@@ -196,6 +198,13 @@
       "focus": { "$value": "{contrast-high.color.border.focus}" },
       "info": { "strong": { "$value": "{contrast-high.color.border.info.strong}" } },
       "done": { "$value": "{contrast-high.color.border.done}" }
+    },
+    "list-item": {
+      "bg": {
+        "$root": { "$value": "{contrast-high.color.list-item.bg}" },
+        "hover": { "$value": "{contrast-high.color.list-item.bg.hover}" },
+        "pressed": { "$value": "{contrast-high.color.list-item.bg.pressed}" }
+      }
     },
     "avatar": {
       "bg": {

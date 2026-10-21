@@ -24744,7 +24744,7 @@
         "type": "color",
         "description": "An interactive default surface, such as a card or a list row, under the pointer.",
         "values": {
-          "light": "#e2e4e8",
+          "light": "#dbdde1",
           "dark": "#383a3d",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#303234"
@@ -24756,7 +24756,7 @@
         "type": "color",
         "description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#d2d4d8",
           "dark": "#424447",
           "light-high-contrast": "#dbdde1",
           "dark-high-contrast": "#383a3d"
@@ -24886,9 +24886,9 @@
         "id": "color.bg.muted",
         "cssVariable": "--env-color-bg-muted",
         "type": "color",
-        "description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
+        "description": "The muted surface: Surface background=\"muted\", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme.",
         "values": {
-          "light": "#f6f8fc",
+          "light": "#e2e4e8",
           "dark": "#343638",
           "light-high-contrast": "#f6f8fc",
           "dark-high-contrast": "#343638"
@@ -24900,7 +24900,7 @@
         "type": "color",
         "description": "An interactive muted surface under the pointer.",
         "values": {
-          "light": "#e8eaee",
+          "light": "#d5d7db",
           "dark": "#424447",
           "light-high-contrast": "#e8eaee",
           "dark-high-contrast": "#383a3d"
@@ -24912,7 +24912,7 @@
         "type": "color",
         "description": "An interactive muted surface while pressed.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#d2d4d8",
           "dark": "#4b4d51",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#424447"
@@ -24960,7 +24960,7 @@
         "type": "color",
         "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
-          "light": "rgb(30 31 33 / 0.06)",
+          "light": "rgb(30 31 33 / 0.1)",
           "dark": "rgb(232 234 238 / 0.125)",
           "light-high-contrast": "rgb(30 31 33 / 0.06)",
           "dark-high-contrast": "rgb(232 234 238 / 0.08)"
@@ -24984,7 +24984,7 @@
         "type": "color",
         "description": "The neutral fill while pressed.",
         "values": {
-          "light": "rgb(30 31 33 / 0.29)",
+          "light": "rgb(30 31 33 / 0.25)",
           "dark": "rgb(232 234 238 / 0.28)",
           "light-high-contrast": "rgb(30 31 33 / 0.18)",
           "dark-high-contrast": "rgb(232 234 238 / 0.15)"
@@ -25108,7 +25108,7 @@
         "type": "color",
         "description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
         "values": {
-          "light": "#ffffff",
+          "light": "#eff1f5",
           "dark": "#343638",
           "light-high-contrast": "#ffffff",
           "dark-high-contrast": "#303234"
@@ -25120,7 +25120,7 @@
         "type": "color",
         "description": "A highlighted row in a popup.",
         "values": {
-          "light": "#eff1f5",
+          "light": "#dbdde1",
           "dark": "#424447",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#383a3d"
@@ -25132,7 +25132,7 @@
         "type": "color",
         "description": "A pressed row in a popup.",
         "values": {
-          "light": "#e2e4e8",
+          "light": "#d2d4d8",
           "dark": "#4b4d51",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#424447"
@@ -25144,7 +25144,7 @@
         "type": "color",
         "description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
         "values": {
-          "light": "#ffffff",
+          "light": "#eff1f5",
           "dark": "#28292b",
           "light-high-contrast": "#ffffff",
           "dark-high-contrast": "#28292b"
@@ -25156,7 +25156,7 @@
         "type": "color",
         "description": "An interactive raised surface under the pointer.",
         "values": {
-          "light": "#e8eaee",
+          "light": "#e2e4e8",
           "dark": "#383a3d",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#303234"
@@ -25458,7 +25458,7 @@
         "type": "color",
         "description": "An invalid field border while pressed.",
         "values": {
-          "light": "#d66d63",
+          "light": "#ce5e53",
           "dark": "#d66d63",
           "light-high-contrast": "#5a0100",
           "dark-high-contrast": "#fff6f5"
@@ -25573,7 +25573,7 @@
         "type": "color",
         "description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -25753,7 +25753,7 @@
         "type": "color",
         "description": "Links and text buttons: at least 4.5:1 on every surface and row.",
         "values": {
-          "light": "#0366da",
+          "light": "#005cc8",
           "dark": "#9fc1f8",
           "light-high-contrast": "#00377c",
           "dark-high-contrast": "#e0ebfd"
@@ -25765,7 +25765,7 @@
         "type": "color",
         "description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
         "values": {
-          "light": "#005cc8",
+          "light": "#0053b5",
           "dark": "#9fc1f8",
           "light-high-contrast": "#00377c",
           "dark-high-contrast": "#e0ebfd"
@@ -25777,7 +25777,7 @@
         "type": "color",
         "description": "A link on a tint under the pointer.",
         "values": {
-          "light": "#0053b5",
+          "light": "#004aa2",
           "dark": "#b5cffb",
           "light-high-contrast": "#002f6d",
           "dark-high-contrast": "#eaf2ff"
@@ -25789,7 +25789,7 @@
         "type": "color",
         "description": "A link on a tint while pressed.",
         "values": {
-          "light": "#004aa2",
+          "light": "#00408f",
           "dark": "#cddefc",
           "light-high-contrast": "#00275c",
           "dark-high-contrast": "#f4f8ff"
@@ -25801,7 +25801,7 @@
         "type": "color",
         "description": "A link under the pointer.",
         "values": {
-          "light": "#005cc8",
+          "light": "#0053b5",
           "dark": "#8ab3f5",
           "light-high-contrast": "#002f6d",
           "dark-high-contrast": "#eaf2ff"
@@ -25813,7 +25813,7 @@
         "type": "color",
         "description": "A link while pressed.",
         "values": {
-          "light": "#0053b5",
+          "light": "#004aa2",
           "dark": "#75a5f2",
           "light-high-contrast": "#00275c",
           "dark-high-contrast": "#f4f8ff"
@@ -25825,7 +25825,7 @@
         "type": "color",
         "description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
         "values": {
-          "light": "#5d6166",
+          "light": "#54575c",
           "dark": "#bdbfc3",
           "light-high-contrast": "#303234",
           "dark-high-contrast": "#e8eaee"
@@ -25837,7 +25837,7 @@
         "type": "color",
         "description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
         "values": {
-          "light": "#54575c",
+          "light": "#4b4d51",
           "dark": "#ccced2",
           "light-high-contrast": "#28292b",
           "dark-high-contrast": "#eff1f5"
@@ -25849,7 +25849,7 @@
         "type": "color",
         "description": "Muted text while pressed.",
         "values": {
-          "light": "#4b4d51",
+          "light": "#424447",
           "dark": "#dbdde1",
           "light-high-contrast": "#1e1f21",
           "dark-high-contrast": "#f6f8fc"
@@ -25914,9 +25914,9 @@
         "id": "color.list-item.bg",
         "cssVariable": "--env-color-list-item-bg",
         "type": "color",
-        "description": "The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both.",
+        "description": "The fill of a list item: the muted surface in both themes, so items stand apart from the page and from a surface; high contrast keeps the default surface in light.",
         "values": {
-          "light": "#eff1f5",
+          "light": "#e2e4e8",
           "dark": "#343638",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#343638"
@@ -25928,7 +25928,7 @@
         "type": "color",
         "description": "A list item under the pointer.",
         "values": {
-          "light": "#e2e4e8",
+          "light": "#d5d7db",
           "dark": "#424447",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#383a3d"
@@ -25940,7 +25940,7 @@
         "type": "color",
         "description": "A list item while pressed.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#d2d4d8",
           "dark": "#4b4d51",
           "light-high-contrast": "#dbdde1",
           "dark-high-contrast": "#424447"
@@ -26044,7 +26044,7 @@
         "cssVariable": "--env-elevation-1-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -26066,7 +26066,7 @@
         "cssVariable": "--env-elevation-2-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -26088,7 +26088,7 @@
         "cssVariable": "--env-elevation-3-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#121315",
           "dark-high-contrast": "#a1a4a9"
