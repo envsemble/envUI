@@ -166,7 +166,14 @@ if (scope.generated.has('tokens'))
 if (scope.generated.has('docs'))
   staticTasks.push(
     task('docs:check props', node('scripts/ExtractProps.mjs', '--check')),
-    task('docs:check parts', node('scripts/GenerateParts.mjs', '--check')),
+    task(
+      'docs:check parts',
+      node(
+        'scripts/GenerateParts.mjs',
+        '--check',
+        ...(option('--base') ? ['--base', option('--base')] : []),
+      ),
+    ),
     task('docs:check pages', node('scripts/GenerateDocumentation.mjs', '--check')),
     task('docs:check manifest', node('scripts/GenerateManifest.mjs', '--check')),
   );

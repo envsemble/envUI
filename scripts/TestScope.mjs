@@ -305,12 +305,13 @@ function git(args, root) {
  * The files changed since the merge-base with the integration branch, committed or not, and the
  * untracked ones. The branch is `base`, else ENVUI_BASE, else the first of defaultBases that exists.
  */
+/** The branches to compare with, in order: `base`, else ENVUI_BASE, else defaultBases. */
+export function baseCandidates(base) {
+  return base ? [base] : process.env.ENVUI_BASE ? [process.env.ENVUI_BASE] : defaultBases;
+}
+
 export function changedFiles({ root = repositoryRoot, base } = {}) {
-  const candidates = base
-    ? [base]
-    : process.env.ENVUI_BASE
-      ? [process.env.ENVUI_BASE]
-      : defaultBases;
+  const candidates = baseCandidates(base);
   const found = candidates.find((ref) => {
     try {
       git(['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], root);

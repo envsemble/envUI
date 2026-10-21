@@ -3,9 +3,12 @@
 // their values. The manifest, the docs' anatomy figures and dev mode read it.
 //
 //   node scripts/GenerateParts.mjs           rewrite docs/generated/parts.json
-//   node scripts/GenerateParts.mjs --check   fail when it differs from its sources, or when a part
+//   node scripts/GenerateParts.mjs --check [--base <ref>]
+//                                            fail when it differs from its sources, or when a part
 //                                            or state the base branch lists has gone without a
-//                                            changeset that names it
+//                                            changeset that names it. The base is --base, else
+//                                            ENVUI_BASE, else the first of the check tiers' default
+//                                            bases whose merge-base has the file.
 //
 // What it derives from the library's source (packages/ui/src):
 // - the part classes: the `env-*` literals in class names (`className`, `classNames(…)`, a `class`
@@ -25,6 +28,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Node, Project } from 'ts-morph';
+import { baseCandidates } from './TestScope.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const libraryDirectory = resolve(root, 'packages/ui');
@@ -464,24 +468,27 @@ function git(args) {
   });
 }
 
-/** The contract at the merge-base with the integration branch, as the check tiers pick it. */
-function baseParts() {
-  const candidates = process.env.ENVUI_BASE
-    ? [process.env.ENVUI_BASE]
-    : ['origin/envui-1.0', 'origin/dev'];
-  for (const ref of candidates) {
+/**
+ * The contract at the merge-base with the integration branch, from the first of the check tiers'
+ * bases whose merge-base has it, and what each base skipped lacked.
+ */
+function baseParts(base) {
+  const skipped = [];
+  for (const ref of baseCandidates(base)) {
+    let mergeBase;
     try {
-      const mergeBase = git(['merge-base', 'HEAD', ref]).trim();
-      try {
-        return { ref, parts: JSON.parse(git(['show', `${mergeBase}:${partsPath}`])) };
-      } catch {
-        return { ref, parts: undefined };
-      }
+      mergeBase = git(['merge-base', 'HEAD', ref]).trim();
     } catch {
-      // Try the next branch.
+      skipped.push(`${ref} does not exist here`);
+      continue;
+    }
+    try {
+      return { ref, parts: JSON.parse(git(['show', `${mergeBase}:${partsPath}`])), skipped };
+    } catch {
+      skipped.push(`${ref} has no ${partsPath} at the merge-base ${mergeBase.slice(0, 10)}`);
     }
   }
-  return { ref: undefined, parts: undefined };
+  return { ref: undefined, parts: undefined, skipped };
 }
 
 /** The pending changesets' text, which a removal must name. */
@@ -511,12 +518,16 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       );
       process.exit(1);
     }
-    const base = baseParts();
+    const option = process.argv.indexOf('--base');
+    const base = baseParts(option === -1 ? undefined : process.argv[option + 1]);
     if (!base.parts) {
-      console.log(
-        `${partsPath} matches its sources.${base.ref ? ` ${base.ref} has no ${partsPath} to compare with.` : ''}`,
+      console.log(`${partsPath} matches its sources.`);
+      console.warn(
+        `[33mwarning: no part or state removal was checked: ${base.skipped.join('; ')}. Fetch the integration branch, or pass --base <ref> or set ENVUI_BASE.[0m`,
       );
     } else {
+      if (base.skipped.length)
+        console.log(`Compared with ${base.ref}: ${base.skipped.join('; ')}.`);
       const removed = removedParts(base.parts, parts, pendingChangesets());
       const unrecorded = removed.filter((item) => !item.recorded);
       if (removed.length)
