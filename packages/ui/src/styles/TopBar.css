@@ -1,5 +1,6 @@
-/* TopBar: one row at the top bar height that never wraps, on the page's background with no line
-   below: start content, the title, which truncates first, and the actions at the end. */
+/* TopBar: one row at the top bar height that never wraps, on the navigation's background, a plain
+   rectangle with no line below: start content, the title, which truncates first, and the actions
+   at the end. */
 .env-top-bar {
   box-sizing: border-box;
   position: relative;
@@ -7,9 +8,15 @@
   min-block-size: var(--env-top-bar-height);
   min-inline-size: 0;
   padding-inline: var(--env-space-4);
-  background: var(--env-color-bg-page);
+  /* The navigation's background, the default surface color; on a surface, the surface's color. */
+  background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
   white-space: nowrap;
+}
+/* background="none": no background of its own, so the bar sits on what is behind it, the page or
+   the surface it is on. */
+.env-top-bar[data-background='none'] {
+  background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-top-bar-start,
 .env-top-bar-actions {

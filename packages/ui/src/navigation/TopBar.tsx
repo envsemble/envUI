@@ -9,6 +9,7 @@ import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 
 export interface TopBarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
@@ -42,6 +43,13 @@ export interface TopBarProps
    * @default false
    */
   titleBar?: boolean;
+  /**
+   * The bar's background: default, the navigation's background, the default surface color, as
+   * a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it
+   * is in. Set it on its own, such as a TopBar with none over a Drawer with its background.
+   * @default 'default'
+   */
+  background?: NavigationBackground;
   /** Shows page progress along the bar's bottom edge, such as while the next page loads. */
   loading?: boolean;
   /**
@@ -70,6 +78,7 @@ export function TopBar({
   titleBar = false,
   loading = false,
   loadingLabel,
+  background = 'default',
   render,
   skeleton = false,
   className,
@@ -102,6 +111,7 @@ export function TopBar({
       data-sticky={sticky ? '' : undefined}
       data-title-bar={titleBar ? '' : undefined}
       data-loading={loading ? '' : undefined}
+      data-background={backgroundAttribute(background)}
     >
       {/* In a title bar, buttons that set no variant are ghost, and controls take the small
           height, as the window controls beside them. */}

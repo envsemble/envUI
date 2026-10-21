@@ -221,3 +221,65 @@ test('Rail is a narrow column, and Drawer items fill its width', async ({ page }
   for (const item of await drawer.locator('.env-drawer-item').all())
     expect(Math.abs((await item.boundingBox())!.width - list.width)).toBeLessThan(1);
 });
+
+test('the forms and the top bar fill a plain rectangle with one background, which each turns off on its own', async ({
+  page,
+}) => {
+  await page.goto(`${fixtureUrl}/?fixture=navigation`);
+  for (const theme of ['light', 'dark']) {
+    const scope = page.getByTestId(`navigation-${theme}`).getByTestId('backgrounds');
+    // A token's color in the theme, read from a probe painted with it.
+    const token = (name: string) =>
+      scope.evaluate((element, name) => {
+        const probe = document.createElement('div');
+        probe.style.background = `var(${name})`;
+        element.append(probe);
+        const color = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return color;
+      }, name);
+    const pane = await token('--env-color-bg-default');
+    const pageColor = await token('--env-color-bg-page');
+    expect(pane).not.toBe(pageColor);
+    const look = (locator: Locator) =>
+      locator.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          background: style.backgroundColor,
+          radius: style.borderTopLeftRadius,
+          lines: [style.borderTopWidth, style.borderBottomWidth, style.borderInlineEndWidth],
+        };
+      });
+    const filled = [
+      scope.getByTestId('top-bar-default'),
+      scope.getByRole('navigation', { name: 'Filled drawer' }),
+      scope.getByRole('navigation', { name: 'Filled rail' }),
+      scope.getByRole('navigation', { name: 'Filled bar' }),
+    ];
+    const plain = [
+      scope.getByTestId('top-bar-none'),
+      scope.getByRole('navigation', { name: 'Plain drawer' }),
+      scope.getByRole('navigation', { name: 'Plain rail' }),
+      scope.getByRole('navigation', { name: 'Plain bar' }),
+    ];
+    // By default the navigation's background, square, with no line.
+    for (const element of filled)
+      expect(await look(element)).toEqual({
+        background: pane,
+        radius: '0px',
+        lines: ['0px', '0px', '0px'],
+      });
+    // background="none": the page's, behind it.
+    for (const element of plain) {
+      await expect(element).toHaveAttribute('data-background', 'none');
+      expect((await look(element)).background).toBe(pageColor);
+    }
+    // On a surface, the surface's color rather than a second fill.
+    const surface = await scope
+      .getByTestId('surface')
+      .evaluate((element) => getComputedStyle(element).backgroundColor);
+    expect(
+      (await look(scope.getByRole('navigation', { name: 'Drawer on a surface' }))).background,
+    ).toBe(surface);
+  }
+});

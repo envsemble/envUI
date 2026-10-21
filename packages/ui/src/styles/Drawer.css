@@ -1,6 +1,7 @@
-/* Drawer, the navigation drawer: a column of destinations on a pane, rounded like a Surface, each a
-   pill as wide as the drawer with its icon, label and count, under the headings of their groups. It keeps its header and footer in
-   view and scrolls its list. Every placement is logical, so it follows the text direction. */
+/* Drawer, the navigation drawer: a column of destinations on the navigation's background, a plain
+   rectangle, each a pill as wide as the drawer with its icon, label and count, under the headings
+   of their groups. It keeps its header and footer in view and scrolls its list. Every placement is
+   logical, so it follows the text direction. */
 .env-drawer {
   /* The drawer is as wide as its longest destination, within these bounds. */
   --env-drawer-min-width: 15rem;
@@ -12,11 +13,15 @@
   block-size: 100%;
   min-block-size: 0;
   padding: var(--env-space-3);
-  border-radius: var(--env-radius-surface);
-  /* On a surface, such as a Sheet's, the pane takes the surface's color rather than nesting a pane
-     in a pane. */
+  /* The navigation's background, the default surface color; on a surface, such as a Sheet's, the
+     surface's color rather than a second fill on it. */
   background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
+}
+/* background="none": no background of its own, so the drawer sits on what is behind it, the page or
+   the surface it is on. */
+.env-drawer[data-background='none'] {
+  background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-drawer-header,
 .env-drawer-footer {
@@ -149,11 +154,11 @@
     transform: scale(0.98);
   }
 }
-/* Forced colors: the system paints no fills, so an edge draws the pane and the current item takes
-   the selection colors. */
+/* Forced colors: the system paints no fills, so an edge at its end sets the drawer apart from the
+   body and the current item takes the selection colors. */
 @media (forced-colors: active) {
   .env-drawer {
-    border: 1px solid CanvasText;
+    border-inline-end: 1px solid CanvasText;
   }
   .env-drawer-item[data-current] {
     forced-color-adjust: none;

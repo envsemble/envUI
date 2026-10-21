@@ -19,6 +19,7 @@ import {
   type Destination,
   type DestinationClasses,
 } from './internal/Destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 
 /** The most destinations the bar shows; past it, the last place opens the rest in a menu. */
 const barLimit = 5;
@@ -38,6 +39,13 @@ export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>
    */
   destinations: readonly Destination[];
   /**
+   * The bar's background: default, the navigation's background, the default surface color, as
+   * a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it
+   * is in. Set it on its own, such as a Bar with none under a TopBar with its background.
+   * @default 'default'
+   */
+  background?: NavigationBackground;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -51,6 +59,7 @@ export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>
  */
 export function Bar({
   destinations,
+  background = 'default',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -82,6 +91,7 @@ export function Bar({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-bar', className)}
+      data-background={backgroundAttribute(background)}
     >
       {inSkeleton(
         skeleton,

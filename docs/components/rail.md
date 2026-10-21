@@ -41,6 +41,8 @@ The navigation rail holds an application's main destinations in a narrow column 
 
 ```
 
+It fills a plain rectangle with the navigation's background, the same as the [TopBar](top-bar.md)'s. `background="none"` turns it off.
+
 ### Groups
 
 A destination's `group` shows no heading in the rail: grouped destinations follow one another in the array's order.

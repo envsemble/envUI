@@ -304,6 +304,15 @@
       ],
       "states": [
         {
+          "attribute": "data-background",
+          "values": [
+            "none"
+          ],
+          "parts": [
+            "env-bar"
+          ]
+        },
+        {
           "attribute": "data-current",
           "values": [],
           "parts": [
@@ -1788,6 +1797,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "none"
+          ],
+          "parts": [
+            "env-drawer"
+          ]
+        },
         {
           "attribute": "data-current",
           "values": [],
@@ -3393,6 +3411,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "none"
+          ],
+          "parts": [
+            "env-rail"
+          ]
+        },
         {
           "attribute": "data-current",
           "values": [],
@@ -5035,6 +5062,15 @@
         }
       ],
       "states": [
+        {
+          "attribute": "data-background",
+          "values": [
+            "none"
+          ],
+          "parts": [
+            "env-top-bar"
+          ]
+        },
         {
           "attribute": "data-loading",
           "values": [

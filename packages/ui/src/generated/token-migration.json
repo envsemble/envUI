@@ -1328,7 +1328,7 @@
     },
     "--env-app-divider": {
       "kind": "removed",
-      "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation sits on a pane of its own and the top bar on the page. Panes.Divider is the line between panes."
+      "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation and the top bar fill the navigation's background, which each turns off with background=\"none\". Panes.Divider is the line between panes."
     },
     "--env-app-shell-block-size": {
       "kind": "removed",

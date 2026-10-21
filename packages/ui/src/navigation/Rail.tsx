@@ -12,6 +12,7 @@ import {
   type Destination,
   type DestinationClasses,
 } from './internal/Destinations.js';
+import { backgroundAttribute, type NavigationBackground } from './internal/background.js';
 
 /** The part classes of the rail's destinations. */
 const railClasses: DestinationClasses = {
@@ -35,6 +36,13 @@ export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'
   /** Content at the bottom of the rail, such as the account's AvatarButton. */
   footer?: ReactNode;
   /**
+   * The rail's background: default, the navigation's background, the default surface color, as
+   * a plain rectangle; none, no background of its own, so it sits on the page, or on the surface it
+   * is in. Set it on its own, such as a Rail with its background beside a TopBar with none.
+   * @default 'default'
+   */
+  background?: NavigationBackground;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -50,6 +58,7 @@ export function Rail({
   destinations,
   header,
   footer,
+  background = 'default',
   'aria-label': label,
   'aria-labelledby': labelledBy,
   skeleton = false,
@@ -65,6 +74,7 @@ export function Rail({
       aria-labelledby={labelledBy}
       {...skeletonAttributes(skeleton)}
       className={classNames('env-rail', className)}
+      data-background={backgroundAttribute(background)}
       align="center"
       gap={4}
     >

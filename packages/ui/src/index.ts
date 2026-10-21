@@ -27,6 +27,7 @@ export * from './navigation/Bar.js';
 export * from './navigation/Rail.js';
 export * from './navigation/Drawer.js';
 export type { Destination, DrawerDestination } from './navigation/internal/Destinations.js';
+export type { NavigationBackground } from './navigation/internal/background.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
 export * from './content/Card.js';

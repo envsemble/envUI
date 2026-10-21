@@ -1,6 +1,7 @@
-/* Bar, the navigation bar: a row of up to five destinations across the window's width on a pane's
-   background, each its icon in a pill-shaped indicator above its label. The current destination fills its indicator; the
-   count sits on the icon's top end. It keeps clear of a phone's home indicator. */
+/* Bar, the navigation bar: a row of up to five destinations across the window's width on the
+   navigation's background, a plain rectangle, each its icon in a pill-shaped indicator above its
+   label. The current destination fills its indicator; the count sits on the icon's top end. It
+   keeps clear of a phone's home indicator. */
 .env-bar {
   --env-bar-icon-width: 4rem;
   --env-bar-icon-height: 2rem;
@@ -11,8 +12,14 @@
   padding-block: var(--env-space-2);
   padding-block-end: max(var(--env-space-2), env(safe-area-inset-bottom));
   padding-inline: var(--env-space-1);
-  background: var(--env-color-bg-default);
+  /* The navigation's background, the default surface color; on a surface, the surface's color. */
+  background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
+}
+/* background="none": no background of its own, so the bar sits on what is behind it, the page or
+   the surface it is on. */
+.env-bar[data-background='none'] {
+  background: var(--env-surface-color, var(--env-color-bg-page));
 }
 .env-bar-list {
   margin: 0;
