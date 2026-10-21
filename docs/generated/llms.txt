@@ -11,6 +11,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Install the private package](docs/setup.md): Registry access, styles, themes and public entry points.
 - [Migrate an interface to envUI](docs/migration.md): Replace existing UI while preserving application behavior.
 - [For agents](docs/agent-tooling.md): The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.
+- [Dev mode](docs/dev-mode.md): Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.
 
 ## Foundations
 

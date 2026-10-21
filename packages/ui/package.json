@@ -72,6 +72,12 @@
       "import": "./dist/theme-bootstrap.js",
       "default": "./dist/theme-bootstrap.js"
     },
+    "./dev": {
+      "envui-source": "./src/dev.ts",
+      "types": "./dist/dev.d.ts",
+      "import": "./dist/dev.js",
+      "default": "./dist/dev.js"
+    },
     "./messages": {
       "envui-source": "./src/messages.ts",
       "types": "./dist/messages.d.ts",

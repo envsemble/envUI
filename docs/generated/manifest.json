@@ -18,6 +18,7 @@
       "@envsemble/envui/diff",
       "@envsemble/envui/rich-text",
       "@envsemble/envui/theme-bootstrap",
+      "@envsemble/envui/dev",
       "@envsemble/envui/messages"
     ],
     "styles": "@envsemble/envui/styles.css",
@@ -13309,6 +13310,7 @@
       "related": [
         "migration",
         "colors",
+        "dev-mode",
         "icons",
         "agent-tooling",
         "index"
@@ -13334,6 +13336,21 @@
       "group": "Setup and workflows",
       "summary": "The AGENTS.md index, the MCP server, the manifest, llms.txt and the skills that coding agents use.",
       "doc": "docs/agent-tooling.md",
+      "related": []
+    },
+    {
+      "name": "dev-mode",
+      "title": "Dev mode",
+      "group": "Setup and workflows",
+      "summary": "Check a page's layout while developing: the readout and its problems for agents, at any width, and a 3D view with an inspector for people.",
+      "doc": "docs/dev-mode.md",
+      "exports": [
+        "installDevMode"
+      ],
+      "aliases": [
+        "layout readout",
+        "envui.layout"
+      ],
       "related": []
     }
   ],
@@ -24303,6 +24320,15 @@
       "status": "stable",
       "page": "relative-time",
       "doc": "docs/components/relative-time.md"
+    },
+    "installDevMode": {
+      "kind": "function",
+      "import": "@envsemble/envui/dev",
+      "description": "Installs dev mode: `window.envui.layout` with `describe()`, `check()` and `at()`, a toggle button in the corner and Alt+Shift+D, which open the 3D view and the inspector over the page. Load it in development only, so production builds contain none of it: if (import.meta.env.DEV) { void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode()); } Calling it again returns the dev mode already installed, until it is uninstalled.",
+      "signature": "(options?: DevModeOptions): DevModeHandle",
+      "status": "stable",
+      "page": "dev-mode",
+      "doc": "docs/dev-mode.md"
     },
     "readAppShellCookie": {
       "kind": "function",

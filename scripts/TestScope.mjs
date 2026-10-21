@@ -102,6 +102,7 @@ export const exceptions = [
     [...shared, 'CascadeLayers', 'ForcedColors'],
   ],
   [/^packages\/ui\/src\/foundations\/messages\//, ['Messages']],
+  [/^packages\/ui\/src\/dev(?:\.ts$|\/)/, ['DevMode']],
   [
     /^apps\/catalogue\/|^wrangler\.jsonc$|^scripts\/(?:GenerateDocumentation|ExtractProps|GenerateManifest|GenerateCodeThemes|Search\w*|MarkdownHeadings|FinalizeCatalogue|FinalizeSite|SiteModuleFiles|AssembleSiteVersions)\.m?[jt]s$/,
     catalogue,
