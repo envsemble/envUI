@@ -61,7 +61,7 @@ Page is the column a page's content sits in. It is centered in the space it has,
 | `lg` (default) | 76 rem        | A dashboard, a list, a table, most of an application's pages.    |
 | `full`         | The whole     | A board, a canvas or a wide table that uses all the width it has |
 
-- The widths are rem, so they follow the reader's text size, and are custom properties of the page, `--env-page-width-sm`, `-md` and `-lg`, which an application may set on `.env-page` to change them everywhere.
+- The widths are rem, so they follow the reader's text size. Choose one with the `width` prop; the custom properties that hold them are the page's own and may change in any release.
 - The column is as wide as its `width` plus the gutter on each side; in a narrower space it takes the whole width.
 - The page's block padding, 1.5 rem above and 2 rem below, separates its content from the frame's header and the end of the page.
 - `gutter={false}` leaves the inline edges to the content, such as a page that is one full-bleed table; the gutter is `--env-page-gutter`, which a sticky PageHeader also reads to reach across it.

@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, envUI's private `env-` classes, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
+ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
 
 Lint output reaches people and coding agents in their usual edit-and-check loop, so it works even when nobody has read the documentation first. The [Stylelint config](../stylelint-config/README.md) does the same for style sheets.
 
@@ -76,7 +76,6 @@ export default defineConfig(envui.configs.recommended, {
 | Rule                                      | Reports                                                         |
 | ----------------------------------------- | --------------------------------------------------------------- |
 | [no-html-elements](#no-html-elements)     | Raw elements and widget roles that envUI provides as components |
-| [no-private-classes](#no-private-classes) | envUI's private `env-` classes in class names and selectors     |
 | [no-raw-colors](#no-raw-colors)           | Literal colors in inline styles                                 |
 | [no-renamed-exports](#no-renamed-exports) | Names that envUI 0.x exported and 1.0 renamed or made internal  |
 
@@ -171,26 +170,6 @@ Each entry has an `id`, an `element` (or `*` with an `except` list) or a `role`,
 ```
 
 The tests check that every entry names a 1.0 component and appears in the table above.
-
-### no-private-classes
-
-envUI's markup and its `env-` class names are private: they change in any release, as the 1.0 renames change nearly all of them. Code that sets, selects or restyles them breaks silently. This rule reports `env-` classes:
-
-- in `className` and `class`, in strings, template literals, conditions, arrays and objects, including a utility class's arbitrary variant such as `[&_.env-button]:px-2`;
-- in the arguments of class-name helpers: `clsx`, `cx`, `classnames`, `classNames`, `cn`, `twMerge` and `twJoin`;
-- in `classList.add`, `remove`, `toggle`, `contains` and `replace`, and in `getElementsByClassName`;
-- in selectors passed to `querySelector`, `querySelectorAll`, `closest`, `matches` and a browser test's `locator`, as `.env-…` or `[class*="env-…"]`;
-- in style sheets written in JavaScript: `css`, `injectGlobal`, `createGlobalStyle` and `styled` templates, and `<style>` elements.
-
-Use the component and its props instead, and put your own class on your own element. In tests, find elements by role or label.
-
-A CSS module's lookup such as `styles['env-panel']` names a local class and passes. `env-theme`, the theme boundary on which the setup guide has applications set envUI's tokens, is allowed by default.
-
-| Option       | Default                                                                 | Meaning                                   |
-| ------------ | ----------------------------------------------------------------------- | ----------------------------------------- |
-| `allow`      | `['env-theme']`                                                         | envUI classes that may be used            |
-| `attributes` | `['className', 'class']`                                                | JSX attributes that hold class names      |
-| `functions`  | `['clsx', 'cx', 'classnames', 'classNames', 'cn', 'twMerge', 'twJoin']` | Functions whose arguments are class names |
 
 ### no-raw-colors
 
@@ -288,4 +267,4 @@ npm run sync:tokens --workspace @envsemble/eslint-plugin-envui   # update the to
 npm run dogfood --workspace @envsemble/eslint-plugin-envui     # count reports in the catalogue and test fixture
 ```
 
-The root `npm test` runs these tests too. The dogfood run only counts: envUI's own catalogue and fixture render raw elements and the library's classes on purpose, so the plugin is not enforced on this repository.
+The root `npm test` runs these tests too. The dogfood run only counts: envUI's own catalogue and fixture render raw elements on purpose, so the plugin is not enforced on this repository.

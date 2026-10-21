@@ -120,7 +120,7 @@ AppShell is the frame of an application, made of parts: `AppShell.Root` lays out
 
 ### Don't
 
-- Don't set `--env-frame-*` yourself or restyle the frame's classes; the frame sets them from its parts.
+- Don't set `--env-frame-*` yourself; the frame sets them from its parts.
 - Don't nest frames, or put both an end Sidebar.Root and an AppShell.Aside in one.
 - Don't give Main padding; Page has it.
 

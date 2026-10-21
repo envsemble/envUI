@@ -1,0 +1,778 @@
+{
+  "$comment": "The hand-written part of the part contract, which scripts/GenerateParts.mjs merges into docs/generated/parts.json. descriptions: one line per part class, by component. roots: a component whose root is not env-<its name>. shared: anatomy several components render, by its class prefix. placed: a class that no prefix places, and its group.",
+  "roots": {
+    "Dialog": "env-dialog-popup",
+    "Drawer": "env-drawer-popup",
+    "ConfirmDialog": "env-dialog-popup",
+    "Textarea": "env-text-field"
+  },
+  "shared": {
+    "ConnectedRows": {
+      "prefix": "env-connected-rows",
+      "root": "env-connected-rows"
+    },
+    "EditorChrome": {
+      "prefix": "env-editor"
+    },
+    "ListRow": {
+      "prefix": "env-list-row",
+      "root": "env-list-row"
+    },
+    "Listbox": {
+      "prefix": "env-listbox",
+      "root": "env-listbox"
+    },
+    "LoadingBar": {
+      "prefix": "env-loading-bar",
+      "root": "env-loading-bar"
+    },
+    "Popup": {
+      "prefix": "env-popup",
+      "root": "env-popup"
+    },
+    "Prose": {
+      "prefix": "env-prose",
+      "root": "env-prose"
+    },
+    "ResizeHandle": {
+      "prefix": "env-resize-handle",
+      "root": "env-resize-handle"
+    },
+    "TimeList": {
+      "prefix": "env-time-list",
+      "root": "env-time-list"
+    }
+  },
+  "placed": {
+    "env-connected-row": "ConnectedRows"
+  },
+  "descriptions": {
+    "AccountMenu": {
+      "env-account-menu": "The account menu's popup.",
+      "env-account-menu-header": "The account's name and description at the top of the menu.",
+      "env-account-menu-header-description": "The account's description in the header, such as an email address.",
+      "env-account-menu-header-name": "The account's name in the header.",
+      "env-account-menu-header-text": "The column that holds the header's name and description.",
+      "env-account-menu-trigger": "The button that opens the menu.",
+      "env-account-menu-trigger-description": "The account's description in the trigger.",
+      "env-account-menu-trigger-name": "The account's name in the trigger.",
+      "env-account-menu-trigger-text": "The column that holds the trigger's name and description."
+    },
+    "Alert": {
+      "env-alert": "The alert: an icon and a message in its tone.",
+      "env-alert-action": "The alert's action, such as a button.",
+      "env-alert-content": "The column that holds the title and the message.",
+      "env-alert-dismiss": "The button that dismisses the alert.",
+      "env-alert-icon": "The icon of the alert's tone.",
+      "env-alert-message": "The alert's message.",
+      "env-alert-title": "The alert's title."
+    },
+    "AnimatedNumber": {
+      "env-animated-number": "The number, which animates when its value changes.",
+      "env-animated-number-value": "The digits as they change."
+    },
+    "AppShell": {
+      "env-app-shell": "The app frame: header, sidebars and main region.",
+      "env-app-shell-header": "The frame's header bar.",
+      "env-app-shell-header-end": "The end of the header, for actions.",
+      "env-app-shell-header-start": "The start of the header, for a menu button or a logo.",
+      "env-app-shell-header-title": "The header's title.",
+      "env-app-shell-loading-bar": "The loading bar along the top of the frame.",
+      "env-app-shell-main": "The main region.",
+      "env-app-shell-skip-link": "One link that skips to a region.",
+      "env-app-shell-skip-links": "The skip links, shown on keyboard focus."
+    },
+    "Avatar": {
+      "env-avatar": "The avatar: an image, initials or a figure in a circle.",
+      "env-avatar-fallback": "What shows without an image: initials or a figure.",
+      "env-avatar-fallback-initials": "The fallback that shows initials.",
+      "env-avatar-fallback-person": "The fallback that shows a person's figure.",
+      "env-avatar-image": "The image.",
+      "env-avatar-person": "The figure of a person, drawn when there are no initials.",
+      "env-avatar-person-background": "The figure's background.",
+      "env-avatar-person-figure": "The figure itself."
+    },
+    "AvatarButton": {
+      "env-avatar-button": "The button that shows an avatar.",
+      "env-avatar-button-tooltip": "The tooltip that names the account."
+    },
+    "AvatarGroup": {
+      "env-avatar-group": "The overlapping row of avatars.",
+      "env-avatar-group-item": "One avatar in the group.",
+      "env-avatar-group-overflow": "The count of avatars that don't fit.",
+      "env-avatar-group-tooltip": "The tooltip that names an avatar or the hidden ones."
+    },
+    "Badge": {
+      "env-badge": "The badge: a small pill label.",
+      "env-badge-label": "The badge's text."
+    },
+    "Breadcrumbs": {
+      "env-breadcrumbs": "The breadcrumb navigation.",
+      "env-breadcrumbs-current": "The current page, the last crumb.",
+      "env-breadcrumbs-item": "One crumb.",
+      "env-breadcrumbs-label": "A crumb's text.",
+      "env-breadcrumbs-link": "A crumb's link.",
+      "env-breadcrumbs-list": "The list of crumbs.",
+      "env-breadcrumbs-separator": "The separator between two crumbs.",
+      "env-breadcrumbs-text": "A crumb that is not a link."
+    },
+    "Button": {
+      "env-button": "The button.",
+      "env-button-content": "The button's label and icons.",
+      "env-button-spinner": "The spinner of a pending button."
+    },
+    "ButtonGroup": {
+      "env-button-group": "The row or column of related buttons."
+    },
+    "Calendar": {
+      "env-calendar": "The calendar of one month.",
+      "env-calendar-day": "One day.",
+      "env-calendar-day-mark": "The mark under a day, such as today's.",
+      "env-calendar-grid": "The grid of days.",
+      "env-calendar-header": "The row with the month and the previous and next buttons.",
+      "env-calendar-heading": "The month and year.",
+      "env-calendar-next": "The button for the next month.",
+      "env-calendar-pad": "An empty cell before the first day or after the last.",
+      "env-calendar-previous": "The button for the previous month."
+    },
+    "CalendarHeatmap": {
+      "env-calendar-heatmap": "The heatmap of days over months.",
+      "env-calendar-heatmap-corner": "The empty corner above the weekday labels.",
+      "env-calendar-heatmap-day": "One day's cell, filled by its level.",
+      "env-calendar-heatmap-grid": "The grid of days.",
+      "env-calendar-heatmap-legend": "The legend of levels.",
+      "env-calendar-heatmap-month": "A month's label above the grid.",
+      "env-calendar-heatmap-pad": "An empty cell outside the range.",
+      "env-calendar-heatmap-scroll": "The region that scrolls the grid sideways.",
+      "env-calendar-heatmap-swatch": "One level's swatch in the legend.",
+      "env-calendar-heatmap-tooltip": "The tooltip of a day.",
+      "env-calendar-heatmap-tooltip-positioner": "The tooltip's positioner.",
+      "env-calendar-heatmap-weekday": "A weekday's label beside the grid."
+    },
+    "Card": {
+      "env-card": "The card's surface.",
+      "env-card-body": "The card's content above the footer.",
+      "env-card-description": "The sentence under the title.",
+      "env-card-footer": "The strip of actions.",
+      "env-card-header": "The row with the title and the meta.",
+      "env-card-heading": "The title.",
+      "env-card-icon": "The icon of the feature layout.",
+      "env-card-layout": "The row of the feature layout: icon, text and actions.",
+      "env-card-meta": "The short fact at the end of the title row."
+    },
+    "Checkbox": {
+      "env-checkbox": "The checkbox with its label.",
+      "env-checkbox-box": "The box that shows the state.",
+      "env-checkbox-indicator": "The check or dash inside the box.",
+      "env-checkbox-input": "The native input.",
+      "env-checkbox-label": "The label."
+    },
+    "CloseButton": {
+      "env-close-button": "The button that closes a dialog, panel or message."
+    },
+    "Code": {
+      "env-code": "Inline code."
+    },
+    "CodeBlock": {
+      "env-code-block": "The block of code.",
+      "env-code-block-copy-status": "The announcement that the code was copied.",
+      "env-code-block-heading": "The block's heading, such as a file name."
+    },
+    "CodeDiff": {
+      "env-code-diff": "The diff of two versions of code."
+    },
+    "ColorPicker": {
+      "env-color-picker": "The color picker.",
+      "env-color-picker-area": "The area that holds the plane and the sliders.",
+      "env-color-picker-hue": "The hue slider.",
+      "env-color-picker-hue-control": "The hue slider's control.",
+      "env-color-picker-hue-thumb": "The hue slider's thumb.",
+      "env-color-picker-hue-track": "The hue slider's track.",
+      "env-color-picker-plane": "The plane of saturation and lightness.",
+      "env-color-picker-saturation": "The saturation slider.",
+      "env-color-picker-saturation-slider": "The saturation slider's control.",
+      "env-color-picker-saturation-thumb": "The saturation slider's thumb.",
+      "env-color-picker-status": "The announcement of the chosen color."
+    },
+    "ColorSwatch": {
+      "env-color-swatch": "A swatch of one color."
+    },
+    "Combobox": {
+      "env-combobox": "The combobox field.",
+      "env-combobox-chip": "A chosen value as a chip, in a multiple combobox.",
+      "env-combobox-chip-label": "A chip's text.",
+      "env-combobox-chip-remove": "The button that removes a chip.",
+      "env-combobox-clear": "The button that clears the value.",
+      "env-combobox-control": "The well that holds the chips, the input and the buttons.",
+      "env-combobox-empty": "The message when no option matches.",
+      "env-combobox-end": "The buttons at the end of the well.",
+      "env-combobox-group": "A group of options.",
+      "env-combobox-group-label": "A group's label.",
+      "env-combobox-input": "The text input.",
+      "env-combobox-item": "One option.",
+      "env-combobox-item-indicator": "The check of a chosen option.",
+      "env-combobox-leading": "The leading icon of the well.",
+      "env-combobox-list": "The list of options.",
+      "env-combobox-popup": "The popup with the options.",
+      "env-combobox-status": "The announcement of the number of options.",
+      "env-combobox-trigger": "The button that opens the list.",
+      "env-combobox-value-leading": "The chosen option's icon in the well."
+    },
+    "CommandPalette": {
+      "env-command-palette": "The command palette's dialog.",
+      "env-command-palette-footer": "The footer with the keyboard hints.",
+      "env-command-palette-footer-content": "The content of the footer.",
+      "env-command-palette-group": "A group of commands.",
+      "env-command-palette-heading": "A group's heading.",
+      "env-command-palette-hint": "One keyboard hint.",
+      "env-command-palette-input": "The search input.",
+      "env-command-palette-item": "One command.",
+      "env-command-palette-list": "The list of commands.",
+      "env-command-palette-positioner": "The palette's positioner.",
+      "env-command-palette-search": "The row with the search input.",
+      "env-command-palette-status": "The message when nothing matches, and its announcement."
+    },
+    "Composer": {
+      "env-composer": "The message composer.",
+      "env-composer-action": "The send or stop button.",
+      "env-composer-footer": "The row of actions under the input.",
+      "env-composer-input": "The text input.",
+      "env-composer-start": "The actions at the start of the footer.",
+      "env-composer-surface": "The surface around the input and the footer."
+    },
+    "ConfirmButton": {
+      "env-confirm-button": "The button that asks to confirm before acting.",
+      "env-confirm-button-status": "The announcement of the confirming state."
+    },
+    "ConfirmDialog": {
+      "env-confirm-dialog-form": "The form that holds the dialog's fields and its confirming action."
+    },
+    "CopyButton": {
+      "env-copy-button": "The button that copies a value.",
+      "env-copy-button-field": "The field that shows the value beside the button.",
+      "env-copy-button-status": "The announcement that the value was copied."
+    },
+    "CounterBadge": {
+      "env-counter-badge": "The count badge.",
+      "env-counter-badge-label": "The count."
+    },
+    "DatePicker": {
+      "env-date-picker": "The date field.",
+      "env-date-picker-actions": "The row of actions under the calendar.",
+      "env-date-picker-actions-end": "The actions at the end of that row.",
+      "env-date-picker-clear": "The button that clears the date.",
+      "env-date-picker-control": "The field's well.",
+      "env-date-picker-end": "The buttons at the end of the well.",
+      "env-date-picker-icon": "The calendar icon.",
+      "env-date-picker-native": "The native input that holds the value for forms.",
+      "env-date-picker-panes": "The calendar and the times side by side.",
+      "env-date-picker-placeholder": "The text shown without a date.",
+      "env-date-picker-popup": "The popup with the calendar.",
+      "env-date-picker-time": "The times beside the calendar.",
+      "env-date-picker-time-heading": "The heading of the times.",
+      "env-date-picker-trigger": "The button that opens the calendar.",
+      "env-date-picker-value": "The chosen date as text."
+    },
+    "DescriptionList": {
+      "env-description-list": "The list of labels and values.",
+      "env-description-list-item": "One label and its value.",
+      "env-description-list-label": "A label.",
+      "env-description-list-value": "A value."
+    },
+    "Dialog": {
+      "env-dialog-popup": "The dialog.",
+      "env-dialog-actions": "The row of actions at the bottom.",
+      "env-dialog-backdrop": "The backdrop behind a modal dialog.",
+      "env-dialog-content": "The dialog's content between the header and the actions.",
+      "env-dialog-description": "The sentence under the title.",
+      "env-dialog-header": "The row with the title and the close button.",
+      "env-dialog-heading": "The column with the title and the description.",
+      "env-dialog-positioner": "The positioner that centres the dialog.",
+      "env-dialog-surface": "The dialog's surface.",
+      "env-dialog-title": "The title."
+    },
+    "DiffStat": {
+      "env-diff-stat": "The count of added and removed lines.",
+      "env-diff-stat-additions": "The added lines.",
+      "env-diff-stat-deletions": "The removed lines.",
+      "env-diff-stat-label": "The label for assistive technology."
+    },
+    "Disclosure": {
+      "env-disclosure": "The disclosure: a summary that shows and hides a panel.",
+      "env-disclosure-panel": "The panel it shows."
+    },
+    "DocumentTabs": {
+      "env-document-tabs": "The tabs of open documents.",
+      "env-document-tabs-bar": "The bar that holds the tabs.",
+      "env-document-tabs-close": "A tab's close button.",
+      "env-document-tabs-drag-image": "The image that follows the pointer while a tab is dragged.",
+      "env-document-tabs-end": "The actions at the end of the bar.",
+      "env-document-tabs-item": "One tab with its close button.",
+      "env-document-tabs-root": "The tabs' root element.",
+      "env-document-tabs-tab": "A tab's button.",
+      "env-document-tabs-tab-label": "A tab's title."
+    },
+    "Drawer": {
+      "env-drawer-popup": "The drawer.",
+      "env-drawer-backdrop": "The backdrop behind a modal drawer.",
+      "env-drawer-viewport": "The viewport the drawer slides in from."
+    },
+    "DropZone": {
+      "env-drop-zone": "The area that takes dropped files.",
+      "env-drop-zone-description": "The sentence about the accepted files.",
+      "env-drop-zone-icon": "The icon.",
+      "env-drop-zone-label": "The label.",
+      "env-drop-zone-target": "The target that takes the drop and opens the file picker.",
+      "env-drop-zone-text": "The column with the label and the description."
+    },
+    "EmptyState": {
+      "env-empty-state": "The empty state.",
+      "env-empty-state-description": "The sentence under the title."
+    },
+    "Field": {
+      "env-field": "The field: label, control, description and error.",
+      "env-field-control": "The control.",
+      "env-field-description": "The description under the control.",
+      "env-field-error": "The error message.",
+      "env-field-label": "The label."
+    },
+    "HoverCard": {
+      "env-hover-card": "The card that opens on hover."
+    },
+    "Icon": {
+      "env-icon": "An icon."
+    },
+    "IconButton": {
+      "env-icon-button": "The button that shows only an icon."
+    },
+    "Kbd": {
+      "env-kbd": "A key or key combination.",
+      "env-kbd-combination": "A combination of keys.",
+      "env-kbd-part": "One key of a combination.",
+      "env-kbd-separator": "The separator between two keys."
+    },
+    "Link": {
+      "env-link": "The link."
+    },
+    "List": {
+      "env-list": "The list.",
+      "env-list-announcer": "The announcements of a reordered item.",
+      "env-list-item": "One item.",
+      "env-list-item-content": "An item's content.",
+      "env-list-item-handle": "The handle that reorders an item.",
+      "env-list-item-start": "The start of an item, for the handle or a checkbox."
+    },
+    "ListDetail": {
+      "env-list-detail": "The list and the selected item's detail.",
+      "env-list-detail-back": "The button back to the list, when one pane shows at a time.",
+      "env-list-detail-detail": "The detail pane.",
+      "env-list-detail-list": "The list pane."
+    },
+    "LoadingState": {
+      "env-loading-state": "The spinner with a label."
+    },
+    "Markdown": {
+      "env-markdown": "The rendered Markdown.",
+      "env-markdown-source": "The Markdown source shown as text.",
+      "env-markdown-table": "The region that scrolls a wide table."
+    },
+    "MarkdownEditor": {
+      "env-markdown-editor": "The Markdown editor.",
+      "env-markdown-editor-write": "The text area for writing."
+    },
+    "Menu": {
+      "env-menu": "The menu's popup.",
+      "env-menu-choice": "A radio or checkbox item.",
+      "env-menu-group": "A group of items.",
+      "env-menu-group-label": "A group's label.",
+      "env-menu-header": "The header at the top of the menu.",
+      "env-menu-item": "One item.",
+      "env-menu-item-check": "The place for a chosen item's check.",
+      "env-menu-item-check-mark": "The check of a chosen item.",
+      "env-menu-item-description": "An item's description.",
+      "env-menu-item-end": "The end of an item, for a shortcut or a chevron.",
+      "env-menu-item-label": "An item's label.",
+      "env-menu-item-shortcut": "An item's keyboard shortcut.",
+      "env-menu-item-text": "The column with an item's label and description.",
+      "env-menu-positioner": "The menu's positioner.",
+      "env-menu-separator": "The line between groups.",
+      "env-menu-submenu-chevron": "The chevron of an item that opens a submenu.",
+      "env-menu-submenu-trigger": "An item that opens a submenu."
+    },
+    "Menubar": {
+      "env-menubar": "The menu bar.",
+      "env-menubar-access-key": "The underlined access key in a trigger's label.",
+      "env-menubar-label": "A trigger's label.",
+      "env-menubar-trigger": "A button that opens a menu."
+    },
+    "Message": {
+      "env-message": "One message in a conversation.",
+      "env-message-actions": "The message's actions.",
+      "env-message-author": "The author's name.",
+      "env-message-content": "The message's content.",
+      "env-message-header": "The row with the author and the meta.",
+      "env-message-meta": "The time or another fact about the message.",
+      "env-message-status": "The sending or failed status."
+    },
+    "MessageList": {
+      "env-message-list": "The list of messages."
+    },
+    "Meter": {
+      "env-meter": "The meter.",
+      "env-meter-heading": "The row with the label and the value.",
+      "env-meter-indicator": "The filled part of the track.",
+      "env-meter-label": "The label.",
+      "env-meter-track": "The track.",
+      "env-meter-value": "The value as text."
+    },
+    "MonthPicker": {
+      "env-month-picker": "The month field.",
+      "env-month-picker-grid": "The grid of months.",
+      "env-month-picker-header": "The row with the year and the previous and next buttons.",
+      "env-month-picker-heading": "The year.",
+      "env-month-picker-month": "One month.",
+      "env-month-picker-month-mark": "The mark under a month, such as the current one.",
+      "env-month-picker-next": "The button for the next year.",
+      "env-month-picker-popup": "The popup with the months.",
+      "env-month-picker-previous": "The button for the previous year.",
+      "env-month-picker-year": "The year's grid of months."
+    },
+    "NavList": {
+      "env-nav-list": "The navigation list.",
+      "env-nav-list-group": "A group of destinations.",
+      "env-nav-list-group-label": "A group's label.",
+      "env-nav-list-group-list": "A group's list of destinations.",
+      "env-nav-list-item": "One destination.",
+      "env-nav-list-item-dot": "The dot that marks a destination with news.",
+      "env-nav-list-item-end": "The end of a destination, for a count.",
+      "env-nav-list-skeleton": "The list's loading placeholder.",
+      "env-nav-list-skeleton-item": "One placeholder destination."
+    },
+    "OrganizationSwitcher": {
+      "env-organization-switcher": "The organization switcher's popup.",
+      "env-organization-switcher-create": "The item that creates an organization.",
+      "env-organization-switcher-description": "An organization's description.",
+      "env-organization-switcher-header": "The header of the popup.",
+      "env-organization-switcher-heading": "The heading of the popup.",
+      "env-organization-switcher-option": "One organization.",
+      "env-organization-switcher-options": "The list of organizations.",
+      "env-organization-switcher-trigger": "The button that opens the switcher.",
+      "env-organization-switcher-trigger-label": "The current organization's name in the trigger."
+    },
+    "Page": {
+      "env-page": "The page: a readable width and the gutter.",
+      "env-page-content": "The page's content at its width."
+    },
+    "PageHeader": {
+      "env-page-header": "The page header.",
+      "env-page-header-actions": "The page's actions.",
+      "env-page-header-breadcrumbs": "The breadcrumbs above the title.",
+      "env-page-header-description": "The sentence under the title.",
+      "env-page-header-heading": "The title as a heading.",
+      "env-page-header-meta": "The facts beside the title.",
+      "env-page-header-row": "The row with the title and the actions.",
+      "env-page-header-start": "The column with the title and the description.",
+      "env-page-header-title": "The title.",
+      "env-page-header-title-line": "The line with the title and the meta.",
+      "env-page-header-toolbar": "The toolbar under the title."
+    },
+    "Pager": {
+      "env-pager": "The previous and next links.",
+      "env-pager-link": "One link.",
+      "env-pager-link-copy": "The column with a link's label and title.",
+      "env-pager-link-label": "A link's label, Previous or Next.",
+      "env-pager-link-next": "The link to the next page.",
+      "env-pager-link-previous": "The link to the previous page.",
+      "env-pager-link-title": "The title of the page a link leads to."
+    },
+    "Pagination": {
+      "env-pagination": "The page buttons.",
+      "env-pagination-button": "One page, previous or next button.",
+      "env-pagination-range": "The range of items shown."
+    },
+    "PanelDock": {
+      "env-panel-dock": "The dock of panels.",
+      "env-panel-dock-actions": "A panel's actions in its header.",
+      "env-panel-dock-content": "A panel's content.",
+      "env-panel-dock-controls": "A panel's window controls: minimize, maximize and close.",
+      "env-panel-dock-header": "A panel's header.",
+      "env-panel-dock-header-content": "The header's title and meta.",
+      "env-panel-dock-heading": "A panel's heading.",
+      "env-panel-dock-meta": "A fact beside a panel's title.",
+      "env-panel-dock-panel": "One panel.",
+      "env-panel-dock-probe": "An invisible element that measures the dock's room.",
+      "env-panel-dock-resize": "The handle that resizes the dock.",
+      "env-panel-dock-row": "The row of open panels.",
+      "env-panel-dock-strip": "The strip of minimized panels' tabs.",
+      "env-panel-dock-tab": "A minimized panel's tab.",
+      "env-panel-dock-tab-attention": "The mark of a tab that asks for attention.",
+      "env-panel-dock-tab-close": "A tab's close button.",
+      "env-panel-dock-tab-label": "A tab's title.",
+      "env-panel-dock-tab-restore": "The button that restores a minimized panel.",
+      "env-panel-dock-title": "A panel's title."
+    },
+    "Popover": {
+      "env-popover": "The popover.",
+      "env-popover-title": "The popover's title."
+    },
+    "Progress": {
+      "env-progress": "The progress bar.",
+      "env-progress-heading": "The row with the label and the value.",
+      "env-progress-indicator": "The filled part of the track.",
+      "env-progress-label": "The label.",
+      "env-progress-segment": "One segment of a segmented bar.",
+      "env-progress-track": "The track.",
+      "env-progress-value": "The value as text."
+    },
+    "Radio": {
+      "env-radio": "One radio with its label.",
+      "env-radio-description": "A radio's description.",
+      "env-radio-input": "The native input."
+    },
+    "RadioGroup": {
+      "env-radio-group": "The group of radios."
+    },
+    "Rating": {
+      "env-rating": "The rating.",
+      "env-rating-star": "One star.",
+      "env-rating-star-half": "The filled half of a half star.",
+      "env-rating-stars": "The row of stars.",
+      "env-rating-value": "The rating as text."
+    },
+    "RelativeTime": {
+      "env-relative-time": "A time relative to now, with the exact time in a tooltip."
+    },
+    "RichText": {
+      "env-rich-text": "The rendered rich text.",
+      "env-rich-text-document": "The editable document.",
+      "env-rich-text-reference": "A reference to a person or an item.",
+      "env-rich-text-suggestions": "The list of suggestions while typing a reference.",
+      "env-rich-text-suggestions-positioner": "The suggestions' positioner.",
+      "env-rich-text-task": "A task item.",
+      "env-rich-text-task-check": "A task's checkbox.",
+      "env-rich-text-task-content": "A task's text."
+    },
+    "RichTextEditor": {
+      "env-rich-text-editor": "The rich text editor.",
+      "env-rich-text-editor-content": "The editable region.",
+      "env-rich-text-editor-control": "The well around the toolbar and the document."
+    },
+    "SearchTrigger": {
+      "env-search-trigger": "The button that opens search.",
+      "env-search-trigger-label": "The button's label.",
+      "env-search-trigger-shortcut": "The keyboard shortcut.",
+      "env-search-trigger-tooltip": "The tooltip of the icon-only button."
+    },
+    "SegmentedControl": {
+      "env-segmented-control": "The segmented control.",
+      "env-segmented-control-item": "One segment.",
+      "env-segmented-control-item-count": "A segment's count.",
+      "env-segmented-control-item-label": "A segment's label."
+    },
+    "Select": {
+      "env-select": "The select field.",
+      "env-select-icon": "The chevron.",
+      "env-select-item": "One option.",
+      "env-select-item-indicator": "The check of the chosen option.",
+      "env-select-list": "The list of options.",
+      "env-select-popup": "The popup with the options.",
+      "env-select-trigger": "The button that shows the value and opens the list."
+    },
+    "Sidebar": {
+      "env-sidebar": "The sidebar.",
+      "env-sidebar-content": "The sidebar's scrolling content.",
+      "env-sidebar-footer": "The footer at the bottom.",
+      "env-sidebar-group": "A group of items.",
+      "env-sidebar-group-action": "A group's action.",
+      "env-sidebar-group-heading": "The row with a group's label and action.",
+      "env-sidebar-group-label": "A group's label.",
+      "env-sidebar-handle": "The handle that resizes the sidebar.",
+      "env-sidebar-header": "The header at the top.",
+      "env-sidebar-panel": "The sidebar's panel when it opens over the page."
+    },
+    "SidebarTrigger": {
+      "env-sidebar-trigger": "The button that opens and closes a sidebar.",
+      "env-sidebar-trigger-glyphs": "The icons of the trigger's states.",
+      "env-sidebar-trigger-icon": "The icon.",
+      "env-sidebar-trigger-mark": "The mark of a sidebar with news.",
+      "env-sidebar-trigger-tooltip": "The tooltip."
+    },
+    "Skeleton": {
+      "env-skeleton": "A loading placeholder shape."
+    },
+    "Slider": {
+      "env-slider": "The slider.",
+      "env-slider-control": "The control that takes the pointer.",
+      "env-slider-heading": "The row with the label and the value.",
+      "env-slider-indicator": "The filled part of the track.",
+      "env-slider-label": "The label.",
+      "env-slider-thumb": "The thumb.",
+      "env-slider-track": "The track.",
+      "env-slider-value": "The value as text."
+    },
+    "Spinner": {
+      "env-spinner": "The spinner.",
+      "env-spinner-arc": "The turning arc."
+    },
+    "SplitPane": {
+      "env-split-pane": "The two panes side by side or stacked.",
+      "env-split-pane-handle": "The handle that resizes the panes.",
+      "env-split-pane-pane": "One pane.",
+      "env-split-pane-probe": "An invisible element that measures the room."
+    },
+    "Stack": {
+      "env-stack": "A row or column with a gap."
+    },
+    "Stat": {
+      "env-stat": "One statistic.",
+      "env-stat-description": "The sentence under the value.",
+      "env-stat-footer": "The row with the trend and the description.",
+      "env-stat-group": "A row of statistics.",
+      "env-stat-label": "The label.",
+      "env-stat-trend": "The change since the last period.",
+      "env-stat-value": "The value."
+    },
+    "Surface": {
+      "env-surface": "A surface: fill, padding and corners."
+    },
+    "Switch": {
+      "env-switch": "The switch with its label.",
+      "env-switch-input": "The native input.",
+      "env-switch-label": "The label."
+    },
+    "Table": {
+      "env-table": "The table.",
+      "env-table-body": "The body.",
+      "env-table-caption": "The caption.",
+      "env-table-cell": "A cell.",
+      "env-table-cell-content": "A cell's content.",
+      "env-table-cell-label": "A cell's column name, shown when rows stack.",
+      "env-table-column-resize": "The handle that resizes a column.",
+      "env-table-head": "The head.",
+      "env-table-header-cell": "A column header.",
+      "env-table-header-label": "A column header's text.",
+      "env-table-region": "The region that scrolls the table.",
+      "env-table-row": "A row.",
+      "env-table-sort-button": "The button that sorts by a column.",
+      "env-table-stack-probe": "An invisible element that measures whether rows stack."
+    },
+    "Tabs": {
+      "env-tabs": "The tabs.",
+      "env-tabs-list": "The list of tabs.",
+      "env-tabs-panel": "One panel.",
+      "env-tabs-panels": "The panels.",
+      "env-tabs-tab": "One tab."
+    },
+    "Text": {
+      "env-text": "Text in one of the type styles."
+    },
+    "TextField": {
+      "env-text-field": "The text field.",
+      "env-text-field-control": "The well around the input and its adornments.",
+      "env-text-field-end": "The buttons at the end of the well.",
+      "env-text-field-input": "The input.",
+      "env-text-field-prefix": "Fixed text before the input.",
+      "env-text-field-start": "The icon at the start of the well.",
+      "env-text-field-suffix": "Fixed text after the input."
+    },
+    "Textarea": {
+      "env-textarea-resize-edge": "The edge that resizes the text area."
+    },
+    "Theme": {
+      "env-theme": "The theme boundary."
+    },
+    "ThemeToggle": {
+      "env-theme-toggle": "The button that switches between light and dark."
+    },
+    "TimePicker": {
+      "env-time-picker": "The time field.",
+      "env-time-picker-popup": "The popup with the times."
+    },
+    "Toast": {
+      "env-toast": "One notification.",
+      "env-toast-action": "A notification's action.",
+      "env-toast-announcer": "The announcements of notifications.",
+      "env-toast-dismiss": "A notification's dismiss button.",
+      "env-toast-message": "A notification's message.",
+      "env-toast-portal-theme": "The theme boundary around the notifications.",
+      "env-toast-queued-count": "The count of notifications waiting.",
+      "env-toast-status-icon": "The icon of a notification's tone.",
+      "env-toast-viewport": "The region that holds the notifications."
+    },
+    "Toolbar": {
+      "env-toolbar": "The toolbar.",
+      "env-toolbar-button": "A button.",
+      "env-toolbar-group": "A group of buttons.",
+      "env-toolbar-separator": "The line between groups.",
+      "env-toolbar-tooltip": "A button's tooltip."
+    },
+    "Tooltip": {
+      "env-tooltip": "The tooltip.",
+      "env-tooltip-disabled-target": "The wrapper that lets a disabled control show a tooltip.",
+      "env-tooltip-positioner": "The tooltip's positioner."
+    },
+    "Tree": {
+      "env-tree": "The tree.",
+      "env-tree-chevron": "The chevron that expands an item.",
+      "env-tree-description": "An item's description.",
+      "env-tree-end": "The end of an item, for a count or actions.",
+      "env-tree-icon": "An item's icon.",
+      "env-tree-item": "One item.",
+      "env-tree-label": "An item's label.",
+      "env-tree-rows": "The rows of a level."
+    },
+    "WindowFrame": {
+      "env-window-frame": "The window frame: title bar and content.",
+      "env-window-frame-content": "The content under the title bar.",
+      "env-window-frame-title-bar": "The title bar.",
+      "env-window-frame-title-bar-center": "The center of the title bar.",
+      "env-window-frame-title-bar-end": "The end of the title bar.",
+      "env-window-frame-title-bar-layout": "The row of the title bar's three parts.",
+      "env-window-frame-title-bar-start": "The start of the title bar."
+    },
+    "ConnectedRows": {
+      "env-connected-rows": "Rows joined into one block: lists and vertical radio groups.",
+      "env-connected-row": "One joined row."
+    },
+    "EditorChrome": {
+      "env-editor-status": "The editor's status line, such as a character count.",
+      "env-editor-toolbar": "The editor's formatting toolbar."
+    },
+    "ListRow": {
+      "env-list-row": "The row anatomy of menu, select and combobox options.",
+      "env-list-row-description": "A row's description.",
+      "env-list-row-end": "The end of a row, for a shortcut or a check.",
+      "env-list-row-icon": "A row's icon.",
+      "env-list-row-indicator": "The check of a chosen row.",
+      "env-list-row-label": "A row's label.",
+      "env-list-row-shortcut": "A row's keyboard shortcut.",
+      "env-list-row-text": "The column with a row's label and description."
+    },
+    "Listbox": {
+      "env-listbox": "A list of options in a popup.",
+      "env-listbox-empty": "The message when there are no options.",
+      "env-listbox-options": "The options."
+    },
+    "LoadingBar": {
+      "env-loading-bar": "The loading bar.",
+      "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
+      "env-loading-bar-indicator": "The moving part of the bar."
+    },
+    "Popup": {
+      "env-popup": "The surface of menus, popovers, tooltips and lists.",
+      "env-popup-positioner": "A popup's positioner.",
+      "env-popup-theme": "The theme boundary around a popup."
+    },
+    "Prose": {
+      "env-prose": "Long-form text: paragraphs, lists, headings and tables."
+    },
+    "ResizeHandle": {
+      "env-resize-handle": "A handle that resizes a region."
+    },
+    "TimeList": {
+      "env-time-list": "The columns of hours, minutes and periods.",
+      "env-time-list-column": "One column.",
+      "env-time-list-row": "One time in a column."
+    }
+  }
+}
