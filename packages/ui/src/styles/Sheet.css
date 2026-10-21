@@ -12,6 +12,9 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   place-items: stretch end;
+  /* The env-window container of the sheet and what it holds (see .env-overlay-theme in
+     Dialog.css): it has no inline padding, so it measures the whole window. */
+  container: env-window / inline-size;
   pointer-events: none;
 }
 .env-sheet-viewport[data-side='start'] {

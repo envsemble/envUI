@@ -66,12 +66,25 @@ test('the outermost theme boundary is the env-window container, and takes its wi
     'Theme.css makes the outermost .env-theme the env-window container, as wide as its context',
   );
   // An outermost popup boundary is a box out of flow, which a grid or flex body gives no cell; an
-  // overlay's is a layer fixed over the viewport, and a toast's is no container.
+  // overlay's has no box, its positioner being the container, and a toast's is no container.
   assert.match(
     sheets['Popup.css'],
     /\.env-popup-theme:not\(\.env-theme \.env-popup-theme\) \{\s*display: block;\s*position: absolute;/,
   );
-  assert.match(sheets['Dialog.css'], /\.env-overlay-theme \{\s*position: fixed;\s*inset: 0;/);
+  assert.match(
+    sheets['Dialog.css'],
+    /\.env-overlay-theme \{\s*display: contents;\s*container-type: normal;/,
+  );
+  for (const [sheet, layer] of [
+    ['Dialog.css', 'env-dialog-positioner'],
+    ['CommandPalette.css', 'env-command-palette-positioner'],
+    ['Sheet.css', 'env-sheet-viewport'],
+  ])
+    assert.match(
+      sheets[sheet],
+      new RegExp(`\.${layer} \{[^}]*position: fixed;[^}]*container: env-window / inline-size;`),
+      `${layer} is the env-window container of its surface`,
+    );
   assert.match(sheets['Toast.css'], /\.env-toast-portal-theme \{\s*container-type: normal;/);
 });
 

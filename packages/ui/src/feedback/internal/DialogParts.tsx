@@ -14,9 +14,9 @@ import { Theme, type ThemeProps } from '../../foundations/Theme.js';
  */
 
 /**
- * The theme boundary in a modal surface's portal: a layer fixed over the whole viewport, which lets
- * pointers through to its scrim and surface. Where the document root isn't themed it is the
- * outermost boundary, so the env-window container, at the window's own width.
+ * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
+ * no stacking context: the scrim and the surface's positioner keep their own layers, under what
+ * opens over them, and the positioner, fixed over the viewport, is the env-window container.
  */
 export function OverlayTheme({ className, ...props }: ThemeProps) {
   return <Theme {...props} className={classNames('env-overlay-theme', className)} />;

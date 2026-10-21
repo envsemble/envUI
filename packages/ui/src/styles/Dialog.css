@@ -16,13 +16,21 @@
   --env-surface-color: var(--env-color-bg-raised);
 }
 .env-dialog-popup {
-  width: min(28rem, 100%);
+  /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
+     container, so its content box stays as wide as the window. */
+  --env-dialog-gutters: calc(
+    max(var(--env-viewport-gutter), env(safe-area-inset-left)) +
+      max(var(--env-viewport-gutter), env(safe-area-inset-right))
+  );
+  width: min(28rem, 100% - var(--env-dialog-gutters));
+  margin-left: max(var(--env-viewport-gutter), env(safe-area-inset-left));
+  margin-right: max(var(--env-viewport-gutter), env(safe-area-inset-right));
   /* Motion: it fades in, below; it has no positioner, so it scales from the center. */
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-dialog-popup[data-width='lg'] {
-  width: min(44rem, 100%);
+  width: min(44rem, 100% - var(--env-dialog-gutters));
 }
 .env-dialog-title,
 .env-dialog-description {
@@ -48,20 +56,19 @@
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
 }
-/* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Drawer, CommandPalette):
-   a layer fixed over the whole viewport, at the scrim's level, that lets pointers through to its
-   scrim and surface. Where the document root isn't themed it is the outermost boundary, so the
-   env-window container (Theme.css), and as wide as the window. Being fixed over the viewport
-   itself, it changes nothing for the fixed scrim and positioner inside it in any engine, also one
-   whose container-type contains layout, which makes it their containing block: they cover the
-   viewport, and Base UI's focus trap and scroll lock work on the same elements as before. The
-   layer is a stacking context at the scrim's level, so the scrim and the surface keep their order
-   inside it, under popovers, toasts and tooltips, which portal beside it. */
+/* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Sheet, CommandPalette) has
+   no box: it carries the theme to the scrim and the surface and is no container. The surface's
+   layer, the fixed positioner over the viewport (Sheet's viewport), is the env-window container
+   instead, as wide as the window, so the boundary is neither a stacking context nor a containing
+   block in any engine. The scrim and the positioner keep their own layers in the root context,
+   under the menus, toasts and tooltips opened over them, which portal beside them: a boundary that
+   were fixed over the viewport would start a stacking context even without a z-index (a fixed box
+   always does), and one of no height out of flow would be the fixed scrim's containing block in an
+   engine whose container-type also contains layout. The positioner, a stacking context already,
+   is safe as the container in both. */
 .env-overlay-theme {
-  position: fixed;
-  inset: 0;
-  z-index: var(--env-z-overlay);
-  pointer-events: none;
+  display: contents;
+  container-type: normal;
 }
 .env-dialog-backdrop {
   position: fixed;
@@ -86,10 +93,11 @@
   z-index: var(--env-z-modal);
   display: grid;
   place-items: center;
-  padding: max(var(--env-viewport-gutter), env(safe-area-inset-top))
-    max(var(--env-viewport-gutter), env(safe-area-inset-right))
-    max(var(--env-viewport-gutter), env(safe-area-inset-bottom))
-    max(var(--env-viewport-gutter), env(safe-area-inset-left));
+  /* The env-window container of what the dialog holds (see .env-overlay-theme). Its inline
+     gutters are the popup's margins, so the container measures the whole window. */
+  container: env-window / inline-size;
+  padding-block: max(var(--env-viewport-gutter), env(safe-area-inset-top))
+    max(var(--env-viewport-gutter), env(safe-area-inset-bottom));
   pointer-events: none;
 }
 /* Search-like dialogs open near the top, so results can grow downward without moving the field. */

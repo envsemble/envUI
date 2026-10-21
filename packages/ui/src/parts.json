@@ -282,7 +282,7 @@
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",
       "env-dialog-title": "The title.",
-      "env-overlay-theme": "The theme boundary that covers the window under a dialog, a sheet or the command palette, so they measure the window and cover the viewport."
+      "env-overlay-theme": "The theme boundary of a dialog's, a sheet's or the command palette's portal. It has no box, so their scrim and positioner keep their own layers; the positioner is the env-window container."
     },
     "DiffStat": {
       "env-diff-stat": "The count of added and removed lines.",
