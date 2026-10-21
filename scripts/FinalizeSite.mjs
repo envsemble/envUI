@@ -1,7 +1,7 @@
 // Completes the hosted catalogue that `vite build --mode site` leaves in dist/site: the response
 // headers the Worker applies, the third-party notices of what it bundles, the files each lazily
 // loaded module needs (module-files.json, from Vite's manifest; see SiteModuleFiles.mjs) and
-// versions.json.
+// versions.json. It checks first that dev mode is in the dev mode page's files only (SiteDevMode.mjs).
 //
 //   node scripts/FinalizeSite.mjs [--with-versions] [--production]
 //
@@ -14,6 +14,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assembleSiteVersions } from './AssembleSiteVersions.mjs';
 import { collectCatalogueNotices } from './DependencyNotices.mjs';
+import { checkDevModeChunks } from './SiteDevMode.mjs';
 import { writeModuleFiles } from './SiteModuleFiles.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -26,6 +27,8 @@ await copyFile(
   resolve(repositoryRoot, 'apps/catalogue/site/_headers'),
   resolve(siteDirectory, '_headers'),
 );
+// Dev mode loads on its own page only, which the manifest shows before it goes.
+await checkDevModeChunks(siteDirectory);
 if (!(await writeModuleFiles(siteDirectory)))
   console.log(
     "dist/site is already finalised: module-files.json stays as written from Vite's manifest, which is gone. Run npm run build:site to build the site again.",

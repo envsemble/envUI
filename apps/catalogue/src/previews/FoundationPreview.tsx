@@ -8,6 +8,7 @@ import { Text } from '@envsemble/envui';
 import { AccessibilityPreview } from './foundations/Accessibility';
 import { CompositionPreview } from './foundations/Composition';
 import { ContentPreview } from './foundations/Content';
+import { ExampleStage } from './Example';
 import { Preview } from './Preview';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 
@@ -70,7 +71,10 @@ function FoundationTopic({ id, onIconUsage }: FoundationPreviewProps) {
 export function FoundationPreview(props: FoundationPreviewProps) {
   return (
     <Preview>
-      <FoundationTopic {...props} />
+      {/* Every figure sits on the dotted stage; the icon list is a tool, not a figure. */}
+      <ExampleStage value={props.id !== 'icons'}>
+        <FoundationTopic {...props} />
+      </ExampleStage>
     </Preview>
   );
 }

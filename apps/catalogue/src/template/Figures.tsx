@@ -14,7 +14,8 @@ type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
 
 /**
  * A do or don't figure: the live example in a frame with a green Do or red Don't bar and its one
- * sentence below, and the example's code under it.
+ * sentence below, and the example's code under it. A foundation page's preview passes its sample
+ * as `children` instead, which has no code of its own.
  */
 export function VerdictFigure({
   page,
@@ -22,14 +23,16 @@ export function VerdictFigure({
   verdict,
   caption,
   open = false,
+  children,
 }: {
-  page: string;
-  name: string;
   verdict: 'do' | 'dont';
   caption: string;
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
-}) {
+} & (
+  | { page: string; name: string; children?: never }
+  | { page?: never; name?: never; children: ReactNode }
+)) {
   const theme = useTheme();
   const label = verdict === 'do' ? 'Do' : 'Don’t';
   const id = useId();
@@ -48,12 +51,14 @@ export function VerdictFigure({
           data-example={name}
           {...keepLinksInPlace}
         >
-          {open ? (
-            <OpenExample name={name}>
-              <ExampleRender page={page} name={name} />
+          {!page ? (
+            children
+          ) : open ? (
+            <OpenExample name={name ?? ''}>
+              <ExampleRender page={page} name={name ?? ''} />
             </OpenExample>
           ) : (
-            <ExampleRender page={page} name={name} />
+            <ExampleRender page={page} name={name ?? ''} />
           )}
         </Column>
         <div className="docs-verdict-bar" id={`${id}-verdict`}>
@@ -64,7 +69,7 @@ export function VerdictFigure({
       <figcaption className="docs-verdict-caption" id={`${id}-caption`}>
         {caption}
       </figcaption>
-      <ExampleCode page={page} name={name} />
+      {page && <ExampleCode page={page} name={name ?? ''} />}
     </figure>
   );
 }

@@ -410,6 +410,7 @@
       "parts": {},
       "usedIn": {
         "patterns": [
+          "forms",
           "loading"
         ]
       }
@@ -15480,6 +15481,7 @@
       ],
       "related": [
         "scale",
+        "setup",
         "migration",
         "surface",
         "button",
@@ -15585,8 +15587,8 @@
       "doc": "docs/foundations/composition.md",
       "related": [
         "surface",
-        "column",
         "row",
+        "column",
         "grid",
         "card",
         "spacing",
@@ -15713,6 +15715,7 @@
         "Alert",
         "Link",
         "Column",
+        "Grid",
         "Row",
         "Text"
       ],
@@ -15729,32 +15732,62 @@
         {
           "name": "CreateProject",
           "title": "Create project",
-          "description": "Use this pattern to ask for information in a form and get it right on the first submit: one column of labelled fields, the primary action after the last one, and errors that say how to fix each problem, shown when people submit or leave a field, with focus taken to where they need to act.",
+          "description": "A form asks for information and gets it right on the first submit: one column of labelled fields, the primary action after the last, and errors that say how to fix each problem, with focus taken to where people need to act.",
           "file": "docs/examples/forms/CreateProject.tsx"
-        },
-        {
-          "name": "ErrorSummary",
-          "title": "Error summary",
-          "description": "Submitting with errors shows each field's error and a summary at the top, which takes focus. Each link in it moves focus to its field. envUI has no error summary component yet: this is a danger Alert with a list of Links, and its title is made a heading by hand. Leave the Alert without `announce`: a danger Alert then has no role, so it is read once, as it takes focus, rather than announced as an alert and read again with focus.",
-          "file": "docs/examples/forms/ErrorSummary.tsx"
         },
         {
           "name": "ValidationTiming",
           "title": "Validation timing",
-          "description": "A field is checked when people leave it, once they have typed in it, and on submit. While people type, an error only clears, as soon as the value is right. With two fields, a refused submit shows the error summary and moves focus to it.",
+          "description": "On submit first: show each field's `error`, and move focus to the error summary, or straight to the field when there is only one. Then as people leave a field they have typed in. Never while they type, though an error goes as soon as the value is right.",
           "file": "docs/examples/forms/ValidationTiming.tsx"
         },
         {
           "name": "ServerError",
           "title": "Server error",
-          "description": "The first save fails: the fields keep their values, an Alert at the top says what happened and takes focus, and saving again succeeds.",
+          "description": "The submit Button is `pending` while the form is sent: it keeps its size and ignores presses. When the server refuses or can't be reached, keep everything people entered, and move focus to an Alert at the top that says what to do.",
           "file": "docs/examples/forms/ServerError.tsx"
+        },
+        {
+          "name": "ErrorSummary",
+          "title": "Error summary",
+          "description": "After a refused submit, a danger Alert titled \"There is a problem\" lists each error as a Link that moves focus to its field. Leave it without `announce`, so it is read once, as it takes focus.",
+          "file": "docs/examples/forms/ErrorSummary.tsx"
         },
         {
           "name": "GroupedChoices",
           "title": "Grouped choices",
-          "description": "One choice of several is a RadioGroup. Several choices are Checkboxes in a native `fieldset` whose `legend` names them, since envUI has no checkbox group yet.",
+          "description": "One choice of several is a RadioGroup; several are Checkboxes in a native `fieldset` whose `legend` names them.",
           "file": "docs/examples/forms/GroupedChoices.tsx"
+        },
+        {
+          "name": "OneColumn",
+          "title": "Do: One column, read top to bottom, with the action after the last field.",
+          "description": "",
+          "file": "docs/examples/forms/OneColumn.tsx"
+        },
+        {
+          "name": "SideBySide",
+          "title": "Don't: Fields side by side: people miss the one beside their path.",
+          "description": "",
+          "file": "docs/examples/forms/SideBySide.tsx"
+        },
+        {
+          "name": "VisibleLabel",
+          "title": "Do: A label, and the format as a description that stays.",
+          "description": "",
+          "file": "docs/examples/forms/VisibleLabel.tsx"
+        },
+        {
+          "name": "PlaceholderLabel",
+          "title": "Don't: The placeholder as the label: it goes as people type.",
+          "description": "",
+          "file": "docs/examples/forms/PlaceholderLabel.tsx"
+        },
+        {
+          "name": "FormAnatomy",
+          "title": "Form layout and validation anatomy",
+          "description": "",
+          "file": "docs/examples/forms/FormAnatomy.tsx"
         }
       ]
     },
@@ -15823,26 +15856,44 @@
         {
           "name": "ImmediateToggles",
           "title": "Immediate toggles",
-          "description": "Use this pattern to let people change how the application behaves for them: notifications, privacy, appearance, their profile and the rare action that can't be undone. Each setting either applies the moment people change it or waits, with the settings it depends on, for a Save button, and the two never share a section.",
+          "description": "Settings let people change how the application works for them. Each setting either applies the moment it changes, or waits with the settings it depends on for a Save button, and the two never share a section.",
           "file": "docs/examples/settings/ImmediateToggles.tsx"
         },
         {
           "name": "SaveSection",
           "title": "Save a section",
-          "description": "A profile's fields depend on each other, so they wait for Save. The section marks its unsaved changes, and Cancel puts back what was saved.",
+          "description": "Fields that only make sense together wait in a `form` for Save, marked by a Badge while they hold unsaved changes; Cancel puts back what was saved.",
           "file": "docs/examples/settings/SaveSection.tsx"
         },
         {
           "name": "AppearanceChoice",
           "title": "Appearance",
-          "description": "The theme applies the moment people choose it, through `useThemePreference`. The density only keeps the choice in the example: the application stores it and passes it to the root provider's `scale`, the app's one scale.",
+          "description": "The theme applies at once through `useThemePreference`. The scale is one for the whole app: store it and pass it to the root provider's `scale`, never to one page.",
           "file": "docs/examples/settings/AppearanceChoice.tsx"
         },
         {
           "name": "DangerZone",
           "title": "Danger zone",
-          "description": "Deleting the workspace can't be undone and affects everyone, so the dialog asks for its name. A confirmation with the wrong name keeps the dialog open and says what to enter.",
+          "description": "The last section, apart from the rest: an outline danger Button opens a ConfirmDialog, which asks for the name when the action can't be undone and reaches everyone, as in destructive actions.",
           "file": "docs/examples/settings/DangerZone.tsx"
+        },
+        {
+          "name": "SwitchesApplyAtOnce",
+          "title": "Do: Switches that apply the moment they change, with no Save button.",
+          "description": "",
+          "file": "docs/examples/settings/SwitchesApplyAtOnce.tsx"
+        },
+        {
+          "name": "SwitchesWithSave",
+          "title": "Don't: Switches that wait for Save: people can't tell which changes are kept.",
+          "description": "",
+          "file": "docs/examples/settings/SwitchesWithSave.tsx"
+        },
+        {
+          "name": "SettingsAnatomy",
+          "title": "Settings anatomy",
+          "description": "",
+          "file": "docs/examples/settings/SettingsAnatomy.tsx"
         }
       ]
     },
@@ -15905,32 +15956,44 @@
         {
           "name": "UndoInstead",
           "title": "Undo instead",
-          "description": "Use this pattern to choose how much friction a destructive action needs. Asking \"Are you sure?\" before everything trains people to confirm without reading. Act at once when the action can be undone, ask in place when little is at stake, and keep a dialog, and a typed name, for what can't be undone or reaches other people.",
+          "description": "A destructive action gets only as much friction as it needs: asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from useToast offers Undo.",
           "file": "docs/examples/destructive-actions/UndoInstead.tsx"
         },
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "Removing an attachment is small and quick to redo, so the button asks in place: the first press says \"Remove file?\", the second removes it.",
+          "description": "The first press names the consequence in the button, \"Remove file?\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
           "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
         },
         {
           "name": "ConfirmDelete",
           "title": "Confirm from a menu",
-          "description": "\"Delete document…\" in a row's menu opens a ConfirmDialog that names the document. Cancel returns focus to the menu button; after the delete, focus moves to the next row's menu button.",
+          "description": "The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`; after the delete, move focus to the next row.",
           "file": "docs/examples/destructive-actions/ConfirmDelete.tsx"
         },
         {
           "name": "TypeToConfirm",
           "title": "Type to confirm",
-          "description": "Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field confirms as the button does.",
+          "description": "The confirm button stays enabled: a wrong name keeps the dialog open, shows the field's error and moves focus to it.",
           "file": "docs/examples/destructive-actions/TypeToConfirm.tsx"
         },
         {
           "name": "BulkDelete",
           "title": "Bulk delete",
-          "description": "The count of the selection is in the button, the question and the confirm button. After the delete, the button has gone with the selection, so focus moves into the list.",
+          "description": "The count is in the button, the question and the confirm button: \"Delete 2 documents…\".",
           "file": "docs/examples/destructive-actions/BulkDelete.tsx"
+        },
+        {
+          "name": "DangerKeptForDelete",
+          "title": "Do: The danger tone only on what deletes or ends something.",
+          "description": "",
+          "file": "docs/examples/destructive-actions/DangerKeptForDelete.tsx"
+        },
+        {
+          "name": "DangerEverywhere",
+          "title": "Don't: Every action in the danger tone: none of them stands out.",
+          "description": "",
+          "file": "docs/examples/destructive-actions/DangerEverywhere.tsx"
         }
       ]
     },
@@ -16000,32 +16063,44 @@
         {
           "name": "SaveConfirmation",
           "title": "Save confirmation",
-          "description": "Use this pattern to choose where a message goes and how loudly it speaks. A message about a field belongs on the field, a condition of the page in an Alert on the page, the outcome of an action in a toast, and a state of a row or a destination in a Badge or a count beside it. Each is announced at most once, and only what needs people interrupts them.",
+          "description": "Feedback goes as close as it can to what it is about, and speaks only as loudly as it must: each message is announced at most once, and only what needs people interrupts them. The outcome of an action people started is a toast from useToast.",
           "file": "docs/examples/feedback/SaveConfirmation.tsx"
         },
         {
           "name": "SectionAlert",
           "title": "A condition of the page",
-          "description": "A read-only project says so in a warning Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do. Once the request is sent, its button goes, so focus moves to the Alert, which reads its new text once: a warning Alert without `announce` has no role, so the change isn't announced as well.",
+          "description": "An Alert that is there when the page loads describes it and isn't announced; it offers the one thing people can do.",
           "file": "docs/examples/feedback/SectionAlert.tsx"
         },
         {
           "name": "BackgroundTask",
           "title": "Background work",
-          "description": "The export runs while people carry on. When it ends, a toast with a \"Download\" action reaches them, and the page keeps a link to the file.",
+          "description": "When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link, since a toast can be dismissed.",
           "file": "docs/examples/feedback/BackgroundTask.tsx"
         },
         {
           "name": "StatusInRows",
           "title": "Status in rows",
-          "description": "Each project's status is a Badge in its row, in one tone per status, with its words carrying the meaning.",
+          "description": "One tone per status everywhere, with words that carry the meaning without the color.",
           "file": "docs/examples/feedback/StatusInRows.tsx"
         },
         {
           "name": "UnreadCount",
           "title": "Unread counts",
-          "description": "A CounterBadge on a navigation item says how many new items wait there; its label says what it counts.",
+          "description": "A CounterBadge's `aria-label` says what it counts, \"12 unread\".",
           "file": "docs/examples/feedback/UnreadCount.tsx"
+        },
+        {
+          "name": "StatusInWords",
+          "title": "Do: Each status in its own words, with the tone adding to them.",
+          "description": "",
+          "file": "docs/examples/feedback/StatusInWords.tsx"
+        },
+        {
+          "name": "StatusInColor",
+          "title": "Don't: The same word in every tone: only the color tells them apart.",
+          "description": "",
+          "file": "docs/examples/feedback/StatusInColor.tsx"
         }
       ]
     },
@@ -16218,25 +16293,25 @@
         {
           "name": "FirstUse",
           "title": "First use",
-          "description": "Use this pattern when a region has nothing to show, to say why and what people can do. \"Empty\" has four causes, and each needs its own words and action: nothing exists yet, nothing matches, everything is done, or the content failed to load or isn't theirs to see. The state takes the place of the list or the table, under the toolbar that stays.",
+          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay. Until something exists, it holds the create action; then the page's own header action takes over.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
           "name": "NoResults",
           "title": "No results",
-          "description": "The search and the status filter stay above the state, which names the query, and a count says how many match. Clear filters resets both and returns focus to the search.",
+          "description": "The search and filters stay, a count in a status says how many match, and Clear filters resets them and returns focus to the search.",
           "file": "docs/examples/empty-states/NoResults.tsx"
         },
         {
           "name": "LoadFailed",
           "title": "Load failed",
-          "description": "In place of the table, a danger state says the documents are safe and offers Try again. The heading and the page's action stay.",
+          "description": "A danger state has the alert role, so it is announced; it says the documents are safe and offers Try again.",
           "file": "docs/examples/empty-states/LoadFailed.tsx"
         },
         {
           "name": "NoAccess",
           "title": "No access",
-          "description": "The project exists, but not for this person: the state says who to ask, and Request access sends the request.",
+          "description": "The state says who to ask, and Request access sends the request.",
           "file": "docs/examples/empty-states/NoAccess.tsx"
         },
         {
@@ -16244,6 +16319,24 @@
           "title": "All done",
           "description": "When the last review is approved, the queue says so plainly, with what comes next and no action.",
           "file": "docs/examples/empty-states/AllDone.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action, the one that ends the state.",
+          "description": "",
+          "file": "docs/examples/empty-states/OneAction.tsx"
+        },
+        {
+          "name": "CompetingActions",
+          "title": "Don't: Several actions compete, and none says what ends the state.",
+          "description": "",
+          "file": "docs/examples/empty-states/CompetingActions.tsx"
+        },
+        {
+          "name": "EmptyStatesAnatomy",
+          "title": "Empty states anatomy",
+          "description": "",
+          "file": "docs/examples/empty-states/EmptyStatesAnatomy.tsx"
         }
       ]
     },
@@ -16322,32 +16415,50 @@
         {
           "name": "PrimaryNavigation",
           "title": "Primary navigation",
-          "description": "Use this pattern to give an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up for pages deep in a hierarchy, tabs only for views of one thing, and a quick way to open anything by name. After every change of page, focus and the window's title follow.",
+          "description": "Navigation gives an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up from deep pages, tabs only for views of one thing, and a quick way to open anything by name.",
           "file": "docs/examples/navigation/PrimaryNavigation.tsx"
         },
         {
           "name": "Hierarchy",
           "title": "Hierarchy",
-          "description": "Breadcrumbs in the PageHeader show the levels above the page, and each level below links one level down. A press on a level opens it, and focus moves to its heading.",
+          "description": "The trail shows the levels above the page, each a link; the page itself is the last level and no link.",
           "file": "docs/examples/navigation/Hierarchy.tsx"
         },
         {
           "name": "ViewsOfOneThing",
           "title": "Views of one thing",
-          "description": "Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions, not a tab.",
+          "description": "Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.",
           "file": "docs/examples/navigation/ViewsOfOneThing.tsx"
         },
         {
           "name": "QuickOpen",
           "title": "Quick open",
-          "description": "The SearchTrigger opens a CommandPalette of pages, projects, documents and people. In an application its shortcut opens it too; here it takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.",
+          "description": "Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.",
           "file": "docs/examples/navigation/QuickOpen.tsx"
         },
         {
           "name": "ListAndDetail",
           "title": "List and detail",
-          "description": "A list of projects, as narrow as a phone, shows its detail in place of the list. The back button names where it goes, \"All projects\", and returns focus to the project that was open.",
+          "description": "As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.",
           "file": "docs/examples/navigation/ListAndDetail.tsx"
+        },
+        {
+          "name": "TabsForViews",
+          "title": "Do: Tabs for the views of the one thing the page is about.",
+          "description": "",
+          "file": "docs/examples/navigation/TabsForViews.tsx"
+        },
+        {
+          "name": "TabsForPlaces",
+          "title": "Don't: Tabs for places of the application: they have no address of their own.",
+          "description": "",
+          "file": "docs/examples/navigation/TabsForPlaces.tsx"
+        },
+        {
+          "name": "NavigationAnatomy",
+          "title": "Navigation anatomy",
+          "description": "",
+          "file": "docs/examples/navigation/NavigationAnatomy.tsx"
         }
       ]
     },
@@ -16417,13 +16528,13 @@
         {
           "name": "AppFrame",
           "title": "App frame",
-          "description": "Use this pattern to frame every screen of an application: a Scaffold with a TopBar of the name, search and the account menu, one array of destinations that the Scaffold shows as a Bar on a phone, a Rail on a tablet and a Drawer from expanded, and the page in its body. Render it once, at the application's root, around the router's outlet. Narrow the window to see the forms change.",
+          "description": "The app frame is one Scaffold at the application's root, around the router's outlet: a TopBar with the name, search and the account menu, one array of destinations, and the page in the body.",
           "file": "docs/examples/app-frame/AppFrame.tsx"
         },
         {
           "name": "MenuOnPhones",
           "title": "A menu on phones",
-          "description": "A guide's chapters, without icons: a Drawer from medium, and the same Drawer in a Sheet from the top bar's menu button on a phone.",
+          "description": "With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides the bar, and a menu button in the top bar opens the same Drawer in a Sheet.",
           "file": "docs/examples/app-frame/MenuOnPhones.tsx"
         },
         {
@@ -16431,6 +16542,30 @@
           "title": "Details beside the page",
           "description": "Side content that is not navigation goes in a supporting pane of Panes, in the body.",
           "file": "docs/examples/app-frame/WithDetails.tsx"
+        },
+        {
+          "name": "DestinationsInNavigation",
+          "title": "Do: Every destination in the navigation, and the page's own action in its header.",
+          "description": "",
+          "file": "docs/examples/app-frame/DestinationsInNavigation.tsx"
+        },
+        {
+          "name": "DestinationsInTopBar",
+          "title": "Don't: More destinations in the top bar: people look for them in two places.",
+          "description": "",
+          "file": "docs/examples/app-frame/DestinationsInTopBar.tsx"
+        },
+        {
+          "name": "AppFrameAnatomy",
+          "title": "App frame anatomy",
+          "description": "",
+          "file": "docs/examples/app-frame/AppFrameAnatomy.tsx"
+        },
+        {
+          "name": "FrameByWidth",
+          "title": "Frame by width",
+          "description": "",
+          "file": "docs/examples/app-frame/FrameByWidth.tsx"
         }
       ]
     },
@@ -16470,6 +16605,7 @@
         "AvatarButton",
         "Avatar",
         "Button",
+        "IconButton",
         "Row",
         "Column",
         "Text",
@@ -16487,20 +16623,32 @@
         {
           "name": "AvatarMenu",
           "title": "Avatar menu",
-          "description": "Use this pattern to show who is signed in and give them their own things from one place: their avatar, at the end of the top bar, opens a Menu whose header shows their avatar, name and email, then account settings, the theme and Sign out. It is a pattern rather than a component because applications arrange it differently: what the header shows, which items follow, and whether the trigger is the avatar or a row with the name.",
+          "description": "The account menu is a Menu opened from the person's AvatarButton at the end of the TopBar: a header with who is signed in, then their own things, ending with Sign out.",
           "file": "docs/examples/account-menu/AvatarMenu.tsx"
         },
         {
           "name": "WithOrganizations",
           "title": "Organizations",
-          "description": "A submenu switches between the person's organizations; the header and the row name the current one.",
+          "description": "A submenu switches between the person's organizations; the header names the current one.",
           "file": "docs/examples/account-menu/WithOrganizations.tsx"
         },
         {
           "name": "RowTrigger",
           "title": "A row at the foot of the navigation",
-          "description": "The trigger is a row with the avatar and the name, as wide as the navigation drawer, and the menu opens above it.",
+          "description": "A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; the menu opens above it with `side=\"top\"`.",
           "file": "docs/examples/account-menu/RowTrigger.tsx"
+        },
+        {
+          "name": "AvatarTrigger",
+          "title": "Do: The person's own avatar, named by their name, at the end of the top bar.",
+          "description": "",
+          "file": "docs/examples/account-menu/AvatarTrigger.tsx"
+        },
+        {
+          "name": "GenericTrigger",
+          "title": "Don't: The same icon for everyone: nothing says who is signed in.",
+          "description": "",
+          "file": "docs/examples/account-menu/GenericTrigger.tsx"
         }
       ]
     },
@@ -16543,6 +16691,7 @@
         "PageHeader",
         "EmptyState",
         "Button",
+        "IconButton",
         "Column",
         "Drawer",
         "Text"
@@ -16558,20 +16707,38 @@
         {
           "name": "StartPageWindow",
           "title": "Start page window",
-          "description": "Use this pattern to frame a window that draws its own title bar, as an installed web app with the Window Controls Overlay does: a Scaffold with a TopBar `titleBar` across its whole width, and the content scrolling in the body below it, so the window controls drawn over the title bar never cover a scrollbar. It is a pattern rather than a component: the Scaffold is the frame, and the application chooses what the title bar and the body hold.",
+          "description": "The window frame is for an installed application that draws its own title bar: a Scaffold with `topBarSpan=\"full\"` and `scroll=\"body\"`, a TopBar with `titleBar` across the top, and the content scrolling below it, where the window controls never cover a scrollbar.",
           "file": "docs/examples/window-frame/StartPageWindow.tsx"
         },
         {
           "name": "WithMenubar",
           "title": "A menubar in the title bar",
-          "description": "The menubar at the start of the title bar, and a page whose header sticks at the top of the body.",
+          "description": "A Menubar in the TopBar's `start`, and a page whose header sticks at the top of the body.",
           "file": "docs/examples/window-frame/WithMenubar.tsx"
         },
         {
           "name": "WithNavigation",
           "title": "Navigation below the title bar",
-          "description": "The navigation runs below the title bar, which spans the window.",
+          "description": "The Scaffold's navigation runs below the title bar, which spans the window.",
           "file": "docs/examples/window-frame/WithNavigation.tsx"
+        },
+        {
+          "name": "QuietTitleBar",
+          "title": "Do: The title and the menubar, with empty space to drag the window by.",
+          "description": "",
+          "file": "docs/examples/window-frame/QuietTitleBar.tsx"
+        },
+        {
+          "name": "CrowdedTitleBar",
+          "title": "Don't: The page's actions in the title bar: no room is left to drag the window.",
+          "description": "",
+          "file": "docs/examples/window-frame/CrowdedTitleBar.tsx"
+        },
+        {
+          "name": "WindowFrameAnatomy",
+          "title": "Window frame anatomy",
+          "description": "",
+          "file": "docs/examples/window-frame/WindowFrameAnatomy.tsx"
         }
       ]
     },
@@ -16647,25 +16814,43 @@
         {
           "name": "SearchAndFilters",
           "title": "Search and filters",
-          "description": "Use this pattern to help people find items in a long list or table: a search field and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, the page says what was asked for and offers to clear it.",
+          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an EmptyState names the query and offers Clear filters, under the toolbar that stays.",
           "file": "docs/examples/filtering/SearchAndFilters.tsx"
         },
         {
           "name": "FilterPanel",
           "title": "Filters in a popover",
-          "description": "A Filters button opens a popover of checkboxes in two groups, Type and Edited by; each box filters the documents at once, and the button counts the filters in use.",
+          "description": "A Filters button, with a CounterBadge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
           "file": "docs/examples/filtering/FilterPanel.tsx"
         },
         {
           "name": "ActiveFilters",
           "title": "Filters in use",
-          "description": "Each filter in use is a token that removes it, with \"Add filter\" to choose another and \"Clear filters\" to remove them all. envUI has no removable token yet: each is a small secondary Button with a Close icon, named \"Remove filter\" and its text.",
+          "description": "Each filter in use is a token named after it, \"Status: Open\", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small secondary Button with a Close `endIcon`.",
           "file": "docs/examples/filtering/ActiveFilters.tsx"
         },
         {
+          "name": "AppliedAtOnce",
+          "title": "Do: Each choice filters at once, and a count says how many match.",
+          "description": "",
+          "file": "docs/examples/filtering/AppliedAtOnce.tsx"
+        },
+        {
+          "name": "WaitsForApply",
+          "title": "Don't: An Apply button for quick filters: nothing says what will match.",
+          "description": "",
+          "file": "docs/examples/filtering/WaitsForApply.tsx"
+        },
+        {
+          "name": "FilteringAnatomy",
+          "title": "Filtering and search anatomy",
+          "description": "",
+          "file": "docs/examples/filtering/FilteringAnatomy.tsx"
+        },
+        {
           "name": "NarrowFilters",
-          "title": "Narrow windows",
-          "description": "Where the example is compact, narrower than 37.5 rem, the Selects move into a Sheet opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.",
+          "title": "Narrow filters",
+          "description": "",
           "file": "docs/examples/filtering/NarrowFilters.tsx"
         }
       ]
@@ -16744,31 +16929,49 @@
         {
           "name": "SortAndPaginate",
           "title": "Sort and paginate",
-          "description": "Use this pattern to show records people compare, sort and act on: a table with a link to each record, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows. On a narrow screen, the rows stack and a control above the table sorts them.",
+          "description": "A data table shows records people compare, sort and act on: one link per row on the record's name, sortable columns, numbers aligned to compare, a page of rows at a time, and selection that leads to actions on several rows.",
           "file": "docs/examples/data-tables/SortAndPaginate.tsx"
         },
         {
           "name": "SelectAndBulkActions",
           "title": "Select and act on several rows",
-          "description": "Selecting rows shows the bulk bar: the count, a Toolbar of icon buttons that name the count, and \"Clear selection\". Archive acts at once and offers Undo; Delete asks first. Focus moves to the header's checkbox once the selection has gone, and back to Delete when its confirmation is cancelled. The count is announced through a status that is always there.",
+          "description": "While rows are selected, a bulk bar shows the count and actions that name it, \"Archive 2 projects\". Archive acts at once with Undo; Delete asks first, as in destructive actions.",
           "file": "docs/examples/data-tables/SelectAndBulkActions.tsx"
         },
         {
           "name": "RowActions",
           "title": "Row actions",
-          "description": "The project's name is the row's link, and its other actions wait in a menu named for the row. \"Delete project…\" opens a confirmation; after the delete, focus moves to the next row's menu button, and after the last, to the empty state's \"Create project\".",
+          "description": "The name links to the record; the other actions wait in a Menu named for the row, \"More actions for Website refresh\".",
           "file": "docs/examples/data-tables/RowActions.tsx"
         },
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "Choosing a team loads its projects: the table as a skeleton after 200 ms, then the table, or, for a team with none, an EmptyState in its place with \"Create project\".",
+          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an EmptyState takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
+        },
+        {
+          "name": "NumbersAlignedEnd",
+          "title": "Do: Numbers aligned to the end with numeric, so they compare down the column.",
+          "description": "",
+          "file": "docs/examples/data-tables/NumbersAlignedEnd.tsx"
+        },
+        {
+          "name": "NumbersAlignedStart",
+          "title": "Don't: Numbers aligned to the start: hundreds and tens look alike.",
+          "description": "",
+          "file": "docs/examples/data-tables/NumbersAlignedStart.tsx"
+        },
+        {
+          "name": "DataTableAnatomy",
+          "title": "Data tables anatomy",
+          "description": "",
+          "file": "docs/examples/data-tables/DataTableAnatomy.tsx"
         },
         {
           "name": "NarrowTable",
           "title": "Narrow table",
-          "description": "As narrow as a phone, the rows stack with each value's label, and a Select and an IconButton above the table sort them, at the size of the small rows.",
+          "description": "",
           "file": "docs/examples/data-tables/NarrowTable.tsx"
         }
       ]
@@ -16844,32 +17047,50 @@
         {
           "name": "AdvancedOptions",
           "title": "Advanced options",
-          "description": "Use this pattern to keep a page about its main task while the rest stays within reach: advanced options behind a disclosure, the long tail of a list behind \"Show all\", the details of a row in a sheet, rare actions in a menu, and the meaning of a term in a popover. Choose the component by how deep the content goes and whether people must act on it, and never hide what a task needs.",
+          "description": "Progressive disclosure keeps a page about its main task while the rest stays one step away: advanced options behind a Disclosure, the long tail of a list behind Show all, details in a sheet, rare actions in a menu. What a task needs is never hidden.",
           "file": "docs/examples/progressive-disclosure/AdvancedOptions.tsx"
         },
         {
           "name": "ShowMore",
           "title": "Show all",
-          "description": "The list shows its five most recent items; \"Show all 12\" shows the rest, and pressing it again hides them. The button keeps its place and focus; its label becomes \"Show fewer\", and `aria-expanded` says which state it is in.",
+          "description": "The button stays after the list and says what a press does, \"Show all 12\", then \"Show fewer\"; `aria-expanded` says the same.",
           "file": "docs/examples/progressive-disclosure/ShowMore.tsx"
         },
         {
           "name": "DetailsInSheet",
           "title": "Details in a sheet",
-          "description": "Each row opens its project's details in a Sheet over the list, so people keep their place; closing it returns focus to the row.",
+          "description": "The list stays in place under the Sheet, so people continue from the row they opened.",
           "file": "docs/examples/progressive-disclosure/DetailsInSheet.tsx"
         },
         {
           "name": "OverflowActions",
           "title": "Overflow actions",
-          "description": "Share and Edit stay visible; the actions used less often wait in a \"More actions\" menu.",
+          "description": "Share and Edit stay visible; the rest wait in a More actions menu, a destructive item last.",
           "file": "docs/examples/progressive-disclosure/OverflowActions.tsx"
         },
         {
           "name": "ExplainATerm",
           "title": "Explain a term",
-          "description": "A help button opens a Popover with a short definition and a link. The icon-only download button has a Tooltip that repeats its name.",
+          "description": "A help button opens a Popover with a short definition and a link; a Tooltip only repeats an icon-only control's name.",
           "file": "docs/examples/progressive-disclosure/ExplainATerm.tsx"
+        },
+        {
+          "name": "RequiredInView",
+          "title": "Do: What every export needs in view; only the optional settings behind the summary.",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/RequiredInView.tsx"
+        },
+        {
+          "name": "RequiredHidden",
+          "title": "Don't: A required field behind a closed summary: people submit without seeing it.",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/RequiredHidden.tsx"
+        },
+        {
+          "name": "DisclosureLayers",
+          "title": "Progressive disclosure anatomy",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/DisclosureLayers.tsx"
         }
       ]
     }

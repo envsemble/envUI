@@ -17,6 +17,7 @@
 .docs-live-example,
 .docs-verdict-stage,
 .docs-anatomy-stage,
+.docs-foundation-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   background-color: var(--env-color-bg-page);
   background-image: radial-gradient(
@@ -97,6 +98,7 @@
 
 .docs-live-example,
 .docs-anatomy-stage,
+.docs-foundation-stage,
 .docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   border: 0.0625rem solid var(--env-color-border-muted);
   border-radius: var(--env-radius-surface);
@@ -210,6 +212,28 @@
 .docs-figures .docs-matrix td > * {
   inline-size: fit-content;
   margin-inline: auto;
+}
+
+/* A foundation page's figures: each Example's content on the stage, centred, at the Example's
+   width; its caption below. */
+.docs-example > .docs-foundation-stage:not(h2):not(.docs-caption) {
+  max-inline-size: 100%;
+}
+
+.docs-foundation-stage {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--env-space-5);
+  min-block-size: 8rem;
+  min-inline-size: 0;
+  padding: var(--env-space-7) var(--env-space-6);
+  container-type: inline-size;
+}
+
+.docs-foundation-stage > * {
+  inline-size: min(100%, var(--docs-example-width));
+  min-inline-size: 0;
 }
 
 /* A figure that shows its overlays open (`open` on its fence): a room as wide as the stage, with

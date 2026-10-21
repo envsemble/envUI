@@ -1,12 +1,12 @@
 import { Example, SpecimenGrid } from '../Example';
-import { Column, Text } from '@envsemble/envui';
+import { Column } from '@envsemble/envui';
 
 export function SpacingPreview() {
   return (
     <>
       <Example
         title="Spacing scale"
-        size="compact"
+        size="field"
         caption="Parents own gaps; components own padding. Both use this scale."
       >
         <Column gap={3}>
@@ -18,12 +18,6 @@ export function SpacingPreview() {
             </div>
           ))}
         </Column>
-      </Example>
-      <Example title="Responsive sizing">
-        <Text emphasis="muted">
-          Use relative units and let content wrap. The library increases touch targets to at least
-          2.75 rem for coarse pointers.
-        </Text>
       </Example>
       <Example title="Corner scale" size="wide">
         <SpecimenGrid size="compact">

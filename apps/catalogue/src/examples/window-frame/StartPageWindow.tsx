@@ -23,7 +23,7 @@ export default function StartPageWindow() {
             icon={<NoteAdd />}
             title="Start writing"
             description="Your notes stay on this device until you share them."
-            headingLevel={2}
+            headingLevel={3}
             action={<Button>New note</Button>}
           />
         </Column>
