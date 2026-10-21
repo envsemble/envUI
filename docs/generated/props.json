@@ -61,7 +61,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -307,6 +307,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -753,7 +760,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "title",
@@ -2417,7 +2424,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -2734,6 +2741,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -2909,7 +2923,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3379,7 +3393,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3606,7 +3620,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3639,7 +3653,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -4246,7 +4260,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -4536,7 +4550,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -5636,7 +5650,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -5720,7 +5734,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -5935,6 +5949,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -6872,7 +6893,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -7059,7 +7080,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -7103,7 +7124,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -7144,7 +7165,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "render",
@@ -7457,7 +7478,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -8513,7 +8534,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -8663,7 +8684,7 @@
     "isPlaceholder": {
       "kind": "function",
       "source": "packages/ui/src/foundations/placeholders.ts",
-      "description": "Whether an item is one of the stand-ins that `placeholders()` returns.",
+      "description": "Whether an item is one of the stand-ins that `placeholders()` returns, by its id, so it holds after the items are serialized, such as from a server component to a client one.",
       "signature": "(item: unknown): boolean",
       "entries": [
         "@envsemble/envui"
@@ -8672,8 +8693,8 @@
     "placeholders": {
       "kind": "function",
       "source": "packages/ui/src/foundations/placeholders.ts",
-      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders(3)`. Each item has only an `id`, `placeholder-0`, `placeholder-1` and so on, for keys; every other field is undefined, and the components render missing text as bars of a default length for its text style. The item type follows from where the list goes, such as the items it stands in for, so the code that renders real items renders these too; it must tolerate the missing fields, as optional chaining does.",
-      "signature": "<Item = { id: string; }>(count: number): Item[]",
+      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders<Project>(3)`. Each item has only an `id`, `envui-placeholder-0`, `envui-placeholder-1` and so on, for keys; its other fields are undefined, which the type says, and the components render missing text as bars of a default length for its text style.",
+      "signature": "<Item = object>(count: number): Placeholder<Item>[]",
       "entries": [
         "@envsemble/envui"
       ]

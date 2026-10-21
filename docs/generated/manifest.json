@@ -707,10 +707,6 @@
               "description": "The scrim behind the supporting sheet."
             },
             {
-              "class": "env-panes-skeleton",
-              "description": "The content of a skeleton supporting pane: no box of its own, inert."
-            },
-            {
               "class": "env-panes-supporting",
               "description": "The supporting pane, a sheet over the main pane in less room."
             }
@@ -740,15 +736,6 @@
               "values": [],
               "parts": [
                 "env-panes"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-panes-skeleton"
               ]
             },
             {
@@ -801,6 +788,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -1199,6 +1201,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -1496,6 +1513,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -1700,6 +1732,7 @@
               "attribute": "data-env-skeleton",
               "values": [],
               "parts": [
+                "env-card",
                 "env-card-description",
                 "env-card-header",
                 "env-card-heading",
@@ -2112,10 +2145,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -2140,15 +2169,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -2166,6 +2186,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -2435,10 +2470,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -2463,15 +2494,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -2489,6 +2511,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -4543,10 +4580,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -4571,15 +4604,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -4597,6 +4621,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -4801,10 +4840,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -4829,15 +4864,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -4855,6 +4881,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -5194,10 +5235,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -5222,15 +5259,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -5248,6 +5276,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -5572,10 +5615,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -5600,15 +5639,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -5626,6 +5656,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         },
         "TimeList": {
           "shared": true,
@@ -5840,10 +5885,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -5868,15 +5909,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -5894,6 +5926,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         },
         "TimeList": {
           "shared": true,
@@ -6146,10 +6193,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -6174,15 +6217,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -6200,6 +6234,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -6672,8 +6721,30 @@
               "parts": [
                 "env-bar-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-bar"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -6785,8 +6856,30 @@
               "parts": [
                 "env-rail-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-rail"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -6929,8 +7022,30 @@
               "parts": [
                 "env-drawer-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-drawer"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -7387,6 +7502,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -8179,10 +8309,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -8207,15 +8333,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -8233,6 +8350,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -9615,6 +9747,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -10307,10 +10454,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -10335,15 +10478,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -10361,6 +10495,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -10747,6 +10896,7 @@
       },
       "usedIn": {
         "patterns": [
+          "loading",
           "app-frame",
           "account-menu",
           "data-tables"
@@ -10906,6 +11056,7 @@
               "attribute": "data-env-skeleton",
               "values": [],
               "parts": [
+                "env-message",
                 "env-message-author",
                 "env-message-header",
                 "env-message-meta"
@@ -10948,6 +11099,21 @@
             {
               "class": "env-message-list",
               "description": "The list of messages."
+            }
+          ],
+          "states": []
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
             }
           ],
           "states": []
@@ -11139,6 +11305,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11369,10 +11550,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -11397,15 +11574,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -11423,6 +11591,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11579,6 +11762,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12153,6 +12351,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12356,6 +12569,15 @@
               ]
             },
             {
+              "attribute": "data-env-skeleton",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-dialog-popup"
+              ]
+            },
+            {
               "attribute": "data-placement",
               "values": [
                 "center",
@@ -12395,6 +12617,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12501,6 +12738,15 @@
               ]
             },
             {
+              "attribute": "data-env-skeleton",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-sheet-popup"
+              ]
+            },
+            {
               "attribute": "data-side",
               "values": [
                 "bottom",
@@ -12534,6 +12780,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12645,6 +12906,21 @@
             {
               "class": "env-confirm-dialog-form",
               "description": "The form that holds the dialog's fields and its confirming action."
+            }
+          ],
+          "states": []
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
             }
           ],
           "states": []
@@ -12877,6 +13153,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13252,10 +13543,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -13280,15 +13567,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -13306,6 +13584,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13483,10 +13776,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -13511,15 +13800,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -13537,6 +13817,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13703,10 +13998,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -13731,15 +14022,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -13757,6 +14039,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13886,10 +14183,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -13914,15 +14207,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -13940,6 +14224,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -14051,10 +14350,6 @@
               "description": "A popup's positioner."
             },
             {
-              "class": "env-popup-skeleton",
-              "description": "The content of a skeleton popup: no box of its own, inert."
-            },
-            {
               "class": "env-popup-theme",
               "description": "The theme boundary around a popup."
             }
@@ -14079,15 +14374,6 @@
               ]
             },
             {
-              "attribute": "data-env-skeleton",
-              "values": [
-                ""
-              ],
-              "parts": [
-                "env-popup-skeleton"
-              ]
-            },
-            {
               "attribute": "data-starting-style",
               "values": [],
               "parts": [
@@ -14105,6 +14391,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden busy status beside a skeleton list."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -15101,10 +15402,6 @@
         {
           "text": "Content that turned out empty, or that failed to load.",
           "use": "EmptyState"
-        },
-        {
-          "text": "The application frame itself before the first page loads, which shows its own parts as skeletons.",
-          "use": "Scaffold"
         }
       ],
       "composes": [
@@ -15125,7 +15422,9 @@
         "TextField",
         "Column",
         "Row",
-        "Text"
+        "Text",
+        "LoadingState",
+        "Avatar"
       ],
       "related": [
         "surface",
@@ -15140,38 +15439,68 @@
         {
           "name": "CardsLoading",
           "title": "Cards loading",
-          "description": "Use this pattern to tell people that something is on its way. Where the shape of what is coming is known, the page renders its own components as skeletons, over placeholder items, so the code is the same loading and loaded and nothing moves when the content lands.",
+          "description": "Loading shows that something is on its way, in the place and the shape of what is coming. Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.",
           "file": "docs/examples/loading/CardsLoading.tsx"
         },
         {
           "name": "SkeletonList",
-          "title": "A list per team",
-          "description": "Each team's projects load the first time it is chosen: the list is a skeleton over placeholder rows after 200 ms.",
+          "title": "Skeleton list",
+          "description": "`items ?? placeholders<Item>(3)` gives the components stand-ins to render; text given as undefined is a bar of its text style's length. Show the skeleton once a load has taken 200 ms.",
           "file": "docs/examples/loading/SkeletonList.tsx"
         },
         {
-          "name": "PageProgress",
-          "title": "Page progress",
-          "description": "Choosing a page in the navigation starts loading it: the page on screen stays, and stays selected in the navigation, and after 200 ms the bar along the top bar's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the navigation selects it, and focus moves to the Scaffold's body, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The Scaffold sits in a box here, with `landmarks={false}` and a block size of its own; an application renders it at its root.",
-          "file": "docs/examples/loading/PageProgress.tsx"
-        },
-        {
-          "name": "RefreshInPlace",
-          "title": "Refresh in place",
-          "description": "The activity stays while it refreshes; a small Spinner beside its heading says it is updating.",
-          "file": "docs/examples/loading/RefreshInPlace.tsx"
+          "name": "SearchResultsLoading",
+          "title": "No known shape",
+          "description": "LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.",
+          "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
           "name": "PendingButton",
-          "title": "Pending button",
+          "title": "An action",
           "description": "The button that saves shows the work in progress; the outcome is announced once it is done.",
           "file": "docs/examples/loading/PendingButton.tsx"
         },
         {
           "name": "UploadProgress",
-          "title": "Upload progress",
-          "description": "Progress measures each file and says what has been sent, in megabytes.",
+          "title": "Measurable work",
+          "description": "Progress measures each file and says what has been sent.",
           "file": "docs/examples/loading/UploadProgress.tsx"
+        },
+        {
+          "name": "PageProgress",
+          "title": "A whole page",
+          "description": "After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.",
+          "file": "docs/examples/loading/PageProgress.tsx"
+        },
+        {
+          "name": "SkeletonInPlace",
+          "title": "Do: The content's own components as a skeleton, where it will appear.",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonInPlace.tsx"
+        },
+        {
+          "name": "SpinnerInPlace",
+          "title": "Don't: A spinner for content of a known shape: the page jumps when it lands.",
+          "description": "",
+          "file": "docs/examples/loading/SpinnerInPlace.tsx"
+        },
+        {
+          "name": "RefreshInPlace",
+          "title": "Do: Content that refreshes stays, with a Spinner beside it.",
+          "description": "",
+          "file": "docs/examples/loading/RefreshInPlace.tsx"
+        },
+        {
+          "name": "SkeletonOnRefresh",
+          "title": "Don't: Content turned back into a skeleton to refresh: people lose their place.",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonOnRefresh.tsx"
+        },
+        {
+          "name": "SkeletonAnatomy",
+          "title": "Loading anatomy",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonAnatomy.tsx"
         }
       ]
     },
@@ -15951,7 +16280,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -16197,6 +16526,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -16643,7 +16979,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "title",
@@ -18307,7 +18643,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -18624,6 +18960,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -18799,7 +19142,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19279,7 +19622,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19510,7 +19853,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19543,7 +19886,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20150,7 +20493,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20440,7 +20783,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -21540,7 +21883,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -21624,7 +21967,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -21839,6 +22182,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -22776,7 +23126,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -22963,7 +23313,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23007,7 +23357,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23048,7 +23398,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "render",
@@ -23361,7 +23711,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -24428,7 +24778,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is marked busy, and its content can't be focused or read until it loads."
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -24580,7 +24930,7 @@
     "isPlaceholder": {
       "kind": "function",
       "import": "@envsemble/envui",
-      "description": "Whether an item is one of the stand-ins that `placeholders()` returns.",
+      "description": "Whether an item is one of the stand-ins that `placeholders()` returns, by its id, so it holds after the items are serialized, such as from a server component to a client one.",
       "signature": "(item: unknown): boolean",
       "status": "beta",
       "page": "surface",
@@ -24589,8 +24939,8 @@
     "placeholders": {
       "kind": "function",
       "import": "@envsemble/envui",
-      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders(3)`. Each item has only an `id`, `placeholder-0`, `placeholder-1` and so on, for keys; every other field is undefined, and the components render missing text as bars of a default length for its text style. The item type follows from where the list goes, such as the items it stands in for, so the code that renders real items renders these too; it must tolerate the missing fields, as optional chaining does.",
-      "signature": "<Item = { id: string; }>(count: number): Item[]",
+      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders<Project>(3)`. Each item has only an `id`, `envui-placeholder-0`, `envui-placeholder-1` and so on, for keys; its other fields are undefined, which the type says, and the components render missing text as bars of a default length for its text style.",
+      "signature": "<Item = object>(count: number): Placeholder<Item>[]",
       "status": "beta",
       "page": "surface",
       "doc": "docs/components/surface.md"

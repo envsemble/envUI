@@ -47,7 +47,7 @@
     "Notice": ["Alert"],
     "Spinner": ["Spinner"],
     "Loader": ["Spinner", "LoadingState"],
-    "Loading": ["Spinner", "LoadingState", "placeholders", "Surface", "Card", "List", "Table"],
+    "Loading": ["Spinner", "LoadingState"],
     "Skeleton": ["placeholders", "Surface", "Card", "List", "Table", "Stat", "LoadingState"],
     "Shimmer": ["placeholders", "Surface", "Card", "List", "Table", "Stat", "LoadingState"],
     "Tabs": ["Tabs"],

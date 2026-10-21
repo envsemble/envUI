@@ -201,7 +201,9 @@
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
       "env-connected-row": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
       "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
-      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document."
+      "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document.",
+      "env-skeleton-content": "A skeleton's inert content without a box, which every component that takes skeleton renders inside its busy root (Skeleton.css).",
+      "env-skeleton-status": "The visually hidden busy status beside a skeleton list (Skeleton.css)."
     },
     "components": {
       "dev": {

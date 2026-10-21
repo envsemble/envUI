@@ -31,7 +31,7 @@ import {
   resizeColumns,
   sameWidths,
 } from './internal/TableColumns.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
@@ -249,38 +249,39 @@ function Root({
         stack ? ({ '--env-table-stack-below': cssLength(stackBelow) } as CSSProperties) : undefined
       }
     >
-      <table
-        role={stack ? 'table' : undefined}
-        aria-labelledby={stack && caption != null ? captionId : undefined}
-        {...props}
-        ref={(node) => {
-          table.current = node;
-          setRef(ref, node);
-        }}
-        aria-label={caption == null ? label : undefined}
-        className={classNames('env-table', className)}
-        data-density={density}
-        data-fixed-layout={widths ? '' : undefined}
-        data-resizing={resizing === null ? undefined : ''}
-      >
-        {caption != null && (
-          <caption id={captionId} className="env-table-caption">
-            {caption}
-          </caption>
-        )}
-        {widths && (
-          <colgroup>
-            {widths.map((width, index) => (
-              <col key={index} style={{ inlineSize: `${width}%` }} />
-            ))}
-          </colgroup>
-        )}
-        <TableStackContext value={stack}>
-          <TableColumnsContext value={columns}>
-            <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
-          </TableColumnsContext>
-        </TableStackContext>
-      </table>
+      {inSkeleton(
+        skeleton,
+        <table
+          role={stack ? 'table' : undefined}
+          aria-labelledby={stack && caption != null ? captionId : undefined}
+          {...props}
+          ref={(node) => {
+            table.current = node;
+            setRef(ref, node);
+          }}
+          aria-label={caption == null ? label : undefined}
+          className={classNames('env-table', className)}
+          data-density={density}
+          data-fixed-layout={widths ? '' : undefined}
+          data-resizing={resizing === null ? undefined : ''}
+        >
+          {caption != null && (
+            <caption id={captionId} className="env-table-caption">
+              {caption}
+            </caption>
+          )}
+          {widths && (
+            <colgroup>
+              {widths.map((width, index) => (
+                <col key={index} style={{ inlineSize: `${width}%` }} />
+              ))}
+            </colgroup>
+          )}
+          <TableStackContext value={stack}>
+            <TableColumnsContext value={columns}>{children}</TableColumnsContext>
+          </TableStackContext>
+        </table>,
+      )}
     </div>
   );
 }

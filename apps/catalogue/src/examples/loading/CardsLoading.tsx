@@ -31,7 +31,7 @@ export default function CardsLoading() {
       </Button>
       {/* The same cards, over placeholder items while the projects load. */}
       <Grid columns={{ min: '12rem' }} gap={4} style={{ inlineSize: '100%' }}>
-        {(items ?? placeholders(3)).map((project) => (
+        {(items ?? placeholders<Project>(3)).map((project) => (
           <Card
             key={project.id}
             skeleton={!items}

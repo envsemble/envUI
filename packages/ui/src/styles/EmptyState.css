@@ -2,7 +2,8 @@
   justify-items: start;
   align-content: start;
 }
-.env-empty-state:where([data-tone='danger']) > .env-icon {
+.env-empty-state:where([data-tone='danger']) > .env-icon,
+.env-empty-state:where([data-tone='danger']) > .env-skeleton-content > .env-icon {
   color: var(--env-color-fg-danger);
 }
 
@@ -14,14 +15,21 @@
   padding-block: var(--env-space-8);
   text-align: center;
 }
-.env-empty-state:where([data-align='center']) > .env-icon {
+.env-empty-state:where([data-align='center']) > .env-icon,
+.env-empty-state:where([data-align='center']) > .env-skeleton-content > .env-icon {
   width: 2.5rem;
   height: 2.5rem;
 }
-.env-empty-state:where([data-align='center']):not([data-tone='danger']) > .env-icon {
+.env-empty-state:where([data-align='center']):not([data-tone='danger']) > .env-icon,
+.env-empty-state:where([data-align='center']):not([data-tone='danger'])
+  > .env-skeleton-content
+  > .env-icon {
   color: var(--env-color-fg-muted);
 }
-.env-empty-state:where([data-align='center']) > .env-empty-state-description {
+.env-empty-state:where([data-align='center']) > .env-empty-state-description,
+.env-empty-state:where([data-align='center'])
+  > .env-skeleton-content
+  > .env-empty-state-description {
   max-inline-size: 30rem;
 }
 

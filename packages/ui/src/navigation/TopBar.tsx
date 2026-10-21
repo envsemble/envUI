@@ -7,7 +7,7 @@ import { topBar } from '../foundations/messages/topBar.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export interface TopBarProps
@@ -105,15 +105,16 @@ export function TopBar({
     >
       {/* In a title bar, buttons that set no variant are ghost, and controls take the small
           height, as the window controls beside them. */}
-      <SkeletonScope skeleton={skeleton}>
-        {titleBar ? (
+      {inSkeleton(
+        skeleton,
+        titleBar ? (
           <ControlDefaults variant="ghost" size="sm">
             {content}
           </ControlDefaults>
         ) : (
           content
-        )}
-      </SkeletonScope>
+        ),
+      )}
       <LoadingBar
         active={loading}
         label={loadingLabel ?? messages.loadingPage}

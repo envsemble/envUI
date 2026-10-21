@@ -21,7 +21,7 @@ function style(page: Page, selector: string, property: string, pseudo?: string) 
     );
 }
 
-test('a skeleton is busy and inert, draws text as bars and shapes, and loads in place', async ({
+test('a skeleton is one busy region with inert content, draws text as bars and shapes, and loads in place', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -29,7 +29,18 @@ test('a skeleton is busy and inert, draws text as bars and shapes, and loads in 
   const projects = page.getByTestId('projects');
   await expect(projects).toHaveAttribute('data-env-skeleton', '');
   await expect(projects).toHaveAttribute('aria-busy', 'true');
-  await expect(projects).toHaveJSProperty('inert', true);
+  // The root stays in the accessibility tree, so its busy state is heard; its content is inert.
+  await expect(projects).toHaveJSProperty('inert', false);
+  await expect(projects.locator('> .env-skeleton-content')).toHaveJSProperty('inert', true);
+  // Exactly one busy region is exposed, however many skeletons are nested inside it.
+  const exposedBusy = (selector: string) =>
+    page.evaluate((root) => {
+      const scope = document.querySelector(root)!;
+      return [scope, ...scope.querySelectorAll('[aria-busy="true"]')].filter(
+        (element) => element.getAttribute('aria-busy') === 'true' && !element.closest('[inert]'),
+      ).length;
+    }, selector);
+  expect(await exposedBusy('[data-testid="projects"]')).toBe(1);
   // Inert content is skipped by the keyboard: Tab goes from the button before it to the next
   // surface's controls.
   await page.getByRole('button', { name: 'Load' }).focus();
@@ -88,11 +99,28 @@ test('a skeleton is busy and inert, draws text as bars and shapes, and loads in 
     await style(page, '[data-testid="top-bar"] .env-top-bar-title', 'display', '::before'),
   ).toBe('inline-block');
 
+  // Content laid out as a block of its own in the line draws its own bar.
+  expect(await style(page, '[data-testid="kbd"]', 'text-decoration-line')).toBe('line-through');
+  expect(
+    await style(
+      page,
+      '[data-testid="inline-blocks"] .env-animated-number-value',
+      'text-decoration-line',
+    ),
+  ).toBe('line-through');
+  // Running text in a narrow column wraps onto several lines, each drawn as a bar.
+  const multi = page.getByTestId('multi-line');
+  const lines = await multi.evaluate(
+    (element) =>
+      element.getBoundingClientRect().height / parseFloat(getComputedStyle(element).lineHeight),
+  );
+  expect(lines).toBeGreaterThanOrEqual(2);
+
   // Loaded: the same components over the items, no longer a skeleton.
   await page.getByRole('button', { name: 'Load' }).click();
   await expect(projects).not.toHaveAttribute('data-env-skeleton');
   await expect(projects).not.toHaveAttribute('aria-busy');
-  await expect(projects).toHaveJSProperty('inert', false);
+  await expect(projects.locator('> .env-skeleton-content')).toHaveCount(0);
   await expect(page.getByTestId('reader')).toHaveText('loaded');
   await expect(page.locator(heading).first()).toHaveText('Launch brief');
   expect(await style(page, '[data-testid="projects"]', 'text-decoration-line')).toBe('none');
@@ -103,7 +131,7 @@ test('a skeleton is busy and inert, draws text as bars and shapes, and loads in 
   expect(await style(page, heading, 'display')).toBe('none');
 });
 
-test('the shimmer runs in step across the page, and stays still with reduced motion', async ({
+test('the pulse runs in step across the page, and stays still with reduced motion', async ({
   page,
 }) => {
   await open(page);
@@ -111,7 +139,7 @@ test('the shimmer runs in step across the page, and stays still with reduced mot
     page.evaluate(() =>
       document
         .getAnimations()
-        .filter((animation) => (animation as CSSAnimation).animationName === 'env-skeleton-shimmer')
+        .filter((animation) => (animation as CSSAnimation).animationName === 'env-skeleton-pulse')
         .map((animation) => animation.startTime),
     );
   // The surface over placeholders and the card that is a skeleton itself, started at once.
@@ -122,7 +150,7 @@ test('the shimmer runs in step across the page, and stays still with reduced mot
 });
 
 test(
-  'a skeleton popup keeps focus and closes, its content busy and inert',
+  'a skeleton popup is the busy root, keeps focus and closes, its content inert',
   { tag: '@engines' },
   async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -130,7 +158,8 @@ test(
     await page.getByRole('button', { name: 'Open the menu' }).click();
     const menu = page.locator('.env-menu');
     await expect(menu).toHaveAttribute('aria-busy', 'true');
-    await expect(menu.locator('.env-popup-skeleton')).toHaveJSProperty('inert', true);
+    await expect(menu).toHaveAttribute('data-env-skeleton', '');
+    await expect(menu.locator('> .env-skeleton-content')).toHaveJSProperty('inert', true);
     await expect(menu).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(menu).toBeHidden();
@@ -138,10 +167,19 @@ test(
     await page.getByRole('button', { name: 'Open the dialog' }).click();
     const dialog = page.getByRole('dialog');
     await expect(dialog).toHaveAttribute('aria-busy', 'true');
-    await expect(dialog.locator('.env-dialog-content')).toHaveAttribute('data-env-skeleton', '');
+    await expect(dialog).toHaveAttribute('data-env-skeleton', '');
     await expect(dialog.locator('.env-dialog-content')).toHaveJSProperty('inert', true);
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
+
+    // Raw text in a popup's content is a bar too: the popup draws the line through it.
+    await page.getByRole('button', { name: 'Open the popover' }).click();
+    const popover = page.locator('.env-popover');
+    await expect(popover).toHaveAttribute('aria-busy', 'true');
+    await expect(popover).toHaveCSS('text-decoration-line', 'line-through');
+    await expect(popover.locator('> .env-skeleton-content')).toHaveCSS('display', 'contents');
+    await page.keyboard.press('Escape');
+    await expect(popover).toBeHidden();
   },
 );
 
@@ -173,4 +211,66 @@ test('the shift check reports what moves or resizes when a skeleton loads', asyn
   // The surface is put back as it was.
   await expect(page.getByTestId('loaded')).not.toHaveAttribute('data-env-skeleton');
   await expect(page.getByTestId('projects')).toHaveAttribute('data-env-skeleton', '');
+});
+
+test('a list holds no wrapper: it is inert, and a hidden status beside it is the busy region', async ({
+  page,
+}) => {
+  await open(page);
+  const list = page.getByTestId('list-skeleton');
+  await expect(list).toHaveJSProperty('inert', true);
+  await expect(list).not.toHaveAttribute('aria-busy');
+  const status = page.locator('[data-testid="list-skeleton"] + .env-skeleton-status');
+  await expect(status).toHaveRole('status');
+  await expect(status).toHaveAttribute('aria-busy', 'true');
+  await expect(status).toHaveText('Loading');
+});
+
+test('navigation as a skeleton: icons are shapes, labels bars, no current fill', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page);
+  for (const [id, label] of [
+    ['drawer', 'env-drawer-label'],
+    ['rail', 'env-rail-label'],
+    ['bar', 'env-bar-text'],
+  ]) {
+    const nav = page.getByTestId(id);
+    await expect(nav).toHaveAttribute('aria-busy', 'true');
+    await expect(nav.locator('> .env-skeleton-content')).toHaveJSProperty('inert', true);
+    expect(await style(page, `[data-testid="${id}"] .${label}`, 'display', '::before')).toBe(
+      'inline-block',
+    );
+    expect(await style(page, `[data-testid="${id}"] .env-icon`, 'background-color')).not.toBe(
+      'rgba(0, 0, 0, 0)',
+    );
+  }
+});
+
+test('right to left, the bars start at the right', async ({ page }) => {
+  await open(page);
+  const title = page.getByTestId('rtl-title');
+  expect(await style(page, '[data-testid="rtl-title"]', 'direction')).toBe('rtl');
+  // The placeholder sits at the start of the line, its right: the space left of it is empty.
+  const offset = await title.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const box = element.getBoundingClientRect();
+    const bar = parseFloat(getComputedStyle(element, '::before').inlineSize);
+    return { box: box.width, bar };
+  });
+  expect(offset.bar).toBeLessThan(offset.box);
+});
+
+test('in forced colors, bars and shapes stay visible in the system gray', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
+  await open(page);
+  const heading = '[data-testid="project-card"] .env-card-heading';
+  const bar = await style(page, heading, 'background-color', '::before');
+  expect(bar).not.toBe('rgba(0, 0, 0, 0)');
+  expect(await style(page, '[data-testid="projects"]', 'text-decoration-color')).not.toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  expect(await style(page, '[data-testid="projects"] .env-avatar', 'background-color')).toBe(bar);
 });

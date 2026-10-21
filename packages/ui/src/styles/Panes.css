@@ -264,15 +264,3 @@
     border-color: CanvasText;
   }
 }
-
-/* A skeleton supporting pane's content, wrapped in an element without a box, so the pane keeps its
-   layout and focus while what it holds is the skeleton. The wrapper draws no line through text of
-   its own, so each child of it draws the skeleton's. */
-.env-panes-skeleton {
-  display: contents;
-}
-.env-panes-skeleton[data-env-skeleton] > * {
-  text-decoration: line-through var(--env-skeleton-color);
-  text-decoration-thickness: 0.8em;
-  text-decoration-skip-ink: none;
-}

@@ -59,7 +59,7 @@ export default function EmptyAndLoading() {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {(rows ?? placeholders(3)).map((project, row) => (
+            {(rows ?? placeholders<Project>(3)).map((project, row) => (
               <Table.Row key={project.name ?? row}>
                 <Table.Cell>{project.name}</Table.Cell>
                 <Table.Cell nowrap>{project.owner}</Table.Cell>
@@ -87,7 +87,13 @@ const teams = [
   { value: 'sales', label: 'Sales' },
 ];
 
-const projects: Record<string, { name: string; owner: string; tasks: number }[]> = {
+interface Project {
+  name: string;
+  owner: string;
+  tasks: number;
+}
+
+const projects: Record<string, Project[]> = {
   design: [
     { name: 'Website refresh', owner: 'Priya Shah', tasks: 12 },
     { name: 'Onboarding guide', owner: 'Jordan Kim', tasks: 8 },

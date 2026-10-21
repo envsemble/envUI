@@ -236,6 +236,7 @@ export function Sheet({
                 data-width={named ? width : 'custom'}
                 aria-label={title == null ? label : undefined}
                 aria-busy={pending || skeleton || undefined}
+                data-env-skeleton={skeleton ? '' : undefined}
                 initialFocus={initialFocus ?? defaultFocus}
                 finalFocus={finalFocus}
               >

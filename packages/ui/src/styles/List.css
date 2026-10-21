@@ -33,7 +33,8 @@
 .env-list > .env-list-item[data-start] {
   justify-content: flex-start;
 }
-.env-list > .env-list-item[data-start] > .env-list-item-content {
+.env-list > .env-list-item[data-start] > .env-list-item-content,
+.env-list > .env-list-item[data-start] > .env-skeleton-content > .env-list-item-content {
   flex: 1 1 0;
 }
 /* The start slot stays above an interactive row's target, which covers the row, so its handle,

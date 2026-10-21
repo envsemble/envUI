@@ -76,15 +76,18 @@
   --env-top-bar-title-bar-right: var(--env-top-bar-title-bar-start);
 }
 /* The three sections keep their grid columns whichever the bar holds. */
-.env-top-bar[data-title-bar] > .env-top-bar-start {
+.env-top-bar[data-title-bar] > .env-top-bar-start,
+.env-top-bar[data-title-bar] > .env-skeleton-content > .env-top-bar-start {
   grid-column: 1;
 }
-.env-top-bar[data-title-bar] > .env-top-bar-title {
+.env-top-bar[data-title-bar] > .env-top-bar-title,
+.env-top-bar[data-title-bar] > .env-skeleton-content > .env-top-bar-title {
   grid-column: 2;
   font: inherit;
   text-align: center;
 }
-.env-top-bar[data-title-bar] > .env-top-bar-actions {
+.env-top-bar[data-title-bar] > .env-top-bar-actions,
+.env-top-bar[data-title-bar] > .env-skeleton-content > .env-top-bar-actions {
   grid-column: 3;
   justify-content: end;
 }

@@ -34,6 +34,9 @@
       "prefix": "env-prose",
       "root": "env-prose"
     },
+    "Skeleton": {
+      "prefix": "env-skeleton"
+    },
     "ResizeHandle": {
       "prefix": "env-resize-handle",
       "root": "env-resize-handle"
@@ -527,8 +530,7 @@
       "env-panes-divider": "The divider that resizes the panes.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
-      "env-panes-scrim": "The scrim behind the supporting sheet.",
-      "env-panes-skeleton": "The content of a skeleton supporting pane: no box of its own, inert."
+      "env-panes-scrim": "The scrim behind the supporting sheet."
     },
     "Popover": {
       "env-popover": "The popover.",
@@ -537,7 +539,6 @@
     "Popup": {
       "env-popup": "The surface of menus, popovers, tooltips and lists.",
       "env-popup-positioner": "A popup's positioner.",
-      "env-popup-skeleton": "The content of a skeleton popup: no box of its own, inert.",
       "env-popup-theme": "The theme boundary around a popup."
     },
     "Progress": {
@@ -634,6 +635,10 @@
       "env-sheet-popup": "The sheet.",
       "env-sheet-backdrop": "The backdrop behind a modal sheet.",
       "env-sheet-viewport": "The viewport the sheet slides in from, at its edge."
+    },
+    "Skeleton": {
+      "env-skeleton-content": "A skeleton's content: no box of its own, inert, inside the busy root.",
+      "env-skeleton-status": "The visually hidden busy status beside a skeleton list."
     },
     "Slider": {
       "env-slider": "The slider.",

@@ -96,14 +96,10 @@ export function DialogContent({
   skeleton?: boolean;
   children: ReactNode;
 }) {
-  // A skeleton dialog keeps focus on its popup, which stays busy and closes with Escape; its
-  // content is the skeleton, and inert.
+  // A skeleton dialog keeps focus on its popup, the busy root, which closes with Escape; its
+  // content is inert.
   return (
-    <Column
-      gap={5}
-      className="env-dialog-content"
-      {...(skeleton && { 'data-env-skeleton': '', inert: true })}
-    >
+    <Column gap={5} className="env-dialog-content" inert={skeleton || undefined}>
       <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
     </Column>
   );

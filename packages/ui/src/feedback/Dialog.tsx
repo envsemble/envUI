@@ -213,6 +213,7 @@ export function Dialog({
                 data-placement={placement}
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}
+                data-env-skeleton={skeleton ? '' : undefined}
                 initialFocus={initialFocus}
                 finalFocus={finalFocus}
               >

@@ -86,6 +86,14 @@
   display: inline-block;
 }
 
+/* In a skeleton, an animated number is a bar: its value is laid out as a block of its own in the
+   line, which the skeleton's line through text doesn't reach, so it draws its own. */
+[data-env-skeleton] .env-animated-number-value {
+  text-decoration: line-through var(--env-skeleton-color);
+  text-decoration-thickness: 0.8em;
+  text-decoration-skip-ink: none;
+}
+
 /* Motion: a changed number fades in, and without a reduced-motion preference rolls in from below
    when it grows and from above when it shrinks. */
 .env-animated-number-value[data-direction] {

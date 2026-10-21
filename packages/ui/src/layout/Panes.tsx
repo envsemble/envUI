@@ -25,8 +25,8 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
-import type { SkeletonProps } from '../internal/skeleton.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesSize, writePanesSize } from './panesSize.js';
 
 /**
@@ -436,7 +436,7 @@ function Supporting({
       role={sheet ? 'dialog' : 'region'}
       aria-modal={sheet || undefined}
       aria-label={label}
-      aria-busy={skeleton || undefined}
+      {...skeletonAttributes(skeleton)}
       className={classNames('env-panes-supporting', className)}
       onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
         onKeyDown?.(event);
@@ -468,15 +468,7 @@ function Supporting({
       <div className="env-panes-close">
         <CloseButton aria-label={closeLabel ?? messages.close} onClick={close} />
       </div>
-      <SkeletonScope skeleton={skeleton}>
-        {skeleton ? (
-          <div data-env-skeleton="" inert className="env-panes-skeleton">
-            {children}
-          </div>
-        ) : (
-          children
-        )}
-      </SkeletonScope>
+      {inSkeleton(skeleton, children)}
     </div>
   );
 }

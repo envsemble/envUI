@@ -463,7 +463,7 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /<span class="env-loading-state-label">Loading projects<\/span>/);
   assert.match(
     ssr.html,
-    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true" inert=""[^>]*><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
+    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
   );
 });
 

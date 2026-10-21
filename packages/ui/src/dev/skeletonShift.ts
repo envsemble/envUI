@@ -6,6 +6,7 @@ import { describeElement, isDevElement, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { partClassOf } from './parts.js';
 import { rootFontPx, toRem } from './units.js';
+import { alignPulses } from '../foundations/SkeletonScope.js';
 
 /** The attribute that marks a skeleton's root, which its styles follow. */
 const skeletonAttribute = 'data-env-skeleton';
@@ -61,6 +62,23 @@ function surfacesOf(root: HTMLElement): HTMLElement[] {
   return inside.length > 0 ? inside : [root];
 }
 
+/**
+ * Whether media has a definite width and height of its own, such as an avatar's picture, which
+ * hold its place whatever loads: an aspect ratio tried on it changes nothing.
+ */
+function sizedByItsBox(element: HTMLElement): boolean {
+  const before = element.getBoundingClientRect();
+  if (before.width === 0 || before.height === 0) return false;
+  const { style } = element;
+  const kept = [style.getPropertyValue('aspect-ratio'), style.getPropertyPriority('aspect-ratio')];
+  style.setProperty('aspect-ratio', '1 / 9', 'important');
+  const after = element.getBoundingClientRect();
+  if (kept[0]) style.setProperty('aspect-ratio', kept[0], kept[1]);
+  else style.removeProperty('aspect-ratio');
+  if (!element.getAttribute('style')) element.removeAttribute('style');
+  return after.width === before.width && after.height === before.height;
+}
+
 /** Measures every element of a surface, loaded and as a skeleton, and returns the differences. */
 function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): LayoutProblem[] {
   const elements = [surface, ...Array.from(surface.querySelectorAll('*'))].filter(
@@ -78,6 +96,8 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
     skeleton = measure(true);
   } finally {
     surface.toggleAttribute(skeletonAttribute, wasSkeleton);
+    // Toggling started the root's pulse anew: put it back in step with the others.
+    alignPulses();
   }
   const index = new Map(elements.map((element, at) => [element, at]));
   const rem = (px: number) => `${toRem(px, rootPx)}rem`;
@@ -127,7 +147,8 @@ function shiftsOf(surface: HTMLElement, tolerance: number, rootPx: number): Layo
       (element) =>
         !reported.has(element) &&
         element.matches('img, video, iframe') &&
-        getComputedStyle(element).aspectRatio === 'auto',
+        getComputedStyle(element).aspectRatio === 'auto' &&
+        !sizedByItsBox(element as HTMLElement),
     )
     .map(
       (element): LayoutProblem => ({

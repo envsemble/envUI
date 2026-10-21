@@ -10,9 +10,15 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { inSkeleton } from '../foundations/inSkeleton.js';
+import { inSkeleton, inSkeletonList } from '../foundations/inSkeleton.js';
+import { SkeletonStatus } from '../foundations/SkeletonScope.js';
 import { Text } from '../foundations/Text.js';
-import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
+import {
+  given,
+  skeletonAttributes,
+  skeletonListAttributes,
+  type SkeletonProps,
+} from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
 
@@ -51,31 +57,38 @@ function Root({
 }: RootProps) {
   // A reorderable list needs the browser; a list without it stays server-rendered markup, and
   // ships no client code.
-  if (onReorder)
-    return (
-      <ReorderableList
-        {...props}
-        {...skeletonAttributes(skeleton)}
-        density={density}
-        onReorder={onReorder}
-        className={className}
-      >
-        {inSkeleton(skeleton, markReorderable(children))}
-      </ReorderableList>
-    );
-  return (
+  // A list's rows must be its children, so a skeleton list is inert as a whole, and a visually
+  // hidden status beside it is the busy region.
+  const list = onReorder ? (
+    <ReorderableList
+      {...props}
+      {...skeletonListAttributes(skeleton)}
+      density={density}
+      onReorder={onReorder}
+      className={className}
+    >
+      {inSkeletonList(skeleton, markReorderable(children))}
+    </ReorderableList>
+  ) : (
     <Grid
       render={
         <ul
           {...props}
-          {...skeletonAttributes(skeleton)}
+          {...skeletonListAttributes(skeleton)}
           data-density={density}
           className={classNames('env-list', 'env-connected-rows', className)}
         />
       }
     >
-      {inSkeleton(skeleton, children)}
+      {inSkeletonList(skeleton, children)}
     </Grid>
+  );
+  if (!skeleton) return list;
+  return (
+    <>
+      {list}
+      <SkeletonStatus />
+    </>
   );
 }
 

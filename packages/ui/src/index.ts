@@ -61,7 +61,7 @@ export * from './feedback/Alert.js';
 export * from './feedback/Popover.js';
 export * from './feedback/HoverCard.js';
 export * from './feedback/EmptyState.js';
-export { placeholders, isPlaceholder } from './foundations/placeholders.js';
+export { placeholders, isPlaceholder, type Placeholder } from './foundations/placeholders.js';
 export { useSkeleton } from './foundations/SkeletonScope.js';
 export * from './feedback/LoadingState.js';
 export * from './feedback/Spinner.js';

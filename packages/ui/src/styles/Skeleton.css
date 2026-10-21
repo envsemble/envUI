@@ -8,7 +8,7 @@
    They change paint only, never size, so the page doesn't move when the content loads; dev mode's
    layout.skeletonShift() checks it. Text that is missing, as over a placeholder item, is a bar of a
    default length for its text style, on as many lines as the style usually takes, in the parts that
-   turn it on in their own style sheets. Every bar and shape takes one color, which shimmers in step
+   turn it on in their own style sheets. Every bar and shape takes one color, which pulses in step
    across the page. A component whose generic look isn't right, such as a chart's, gives its own in
    its style sheet. */
 
@@ -36,6 +36,23 @@
   text-decoration-thickness: 0.8em;
   text-decoration-skip-ink: none;
 }
+/* The skeleton's content, inert while the root stays a busy region people hear: a wrapper without
+   a box of its own, so the content keeps its layout and the root's line through text reaches it. */
+.env-skeleton-content {
+  display: contents;
+}
+/* The busy region beside a skeleton that can't hold a wrapper, such as a list: read, not shown. */
+.env-skeleton-status {
+  --env-skeleton-status-size: 0.0625rem;
+  position: absolute;
+  inline-size: var(--env-skeleton-status-size);
+  block-size: var(--env-skeleton-status-size);
+  margin: calc(-1 * var(--env-skeleton-status-size));
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* Underlines and other lines of the content's own aren't drawn. Missing text is a bar only where a
    part turns it on, not in what that part holds. */
 [data-env-skeleton] * {
@@ -118,14 +135,14 @@
   mask-composite: intersect, add, add;
 }
 
-/* Motion: the color shimmers, every skeleton's in step, as the component aligns their start. With a
+/* Motion: the color pulses, every skeleton's in step, as the component aligns their start. With a
    reduced-motion preference it stays still. */
 @media (prefers-reduced-motion: no-preference) {
   [data-env-skeleton] {
-    animation: env-skeleton-shimmer 1.6s ease-in-out infinite;
+    animation: env-skeleton-pulse 1.6s ease-in-out infinite;
   }
 }
-@keyframes env-skeleton-shimmer {
+@keyframes env-skeleton-pulse {
   50% {
     --env-skeleton-color: var(--env-skeleton-shine);
   }

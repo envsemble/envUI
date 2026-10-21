@@ -99,7 +99,8 @@ A skeleton should take the room its content will, so the page doesn't move when 
 - `root` is a surface, or a selector for one, whether it is a skeleton now or not. An element that holds skeletons, such as the default root when `root` is left out, has each of them checked, the outermost ones, or itself as one when it holds none.
 - `tolerance` is how far, in px, an element may move or resize before it counts; 1 by default.
 - It reports the deepest element that resizes, and an element that moves within its parent, not everything that moves with them. It also reports media without an aspect ratio, which has no size until it loads.
-- Run it on the loaded page: it shows the same content as a skeleton, so both states hold the same elements. A page rendered over placeholder items has empty text where the loaded one has words.
+- Run it on the loaded page: it shows the same content as a skeleton, so both states hold the same elements. It can't see what real data changes, such as a placeholder's bar of a default length against a longer title, or fewer placeholder items than real ones; a page rendered over placeholder items has empty text where the loaded one has words.
+- It reports media without an aspect ratio, unless its own width and height are both set, as an avatar's are.
 
 ```js
 envui.layout.skeletonShift('[data-testid="projects"]');

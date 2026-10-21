@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 import {
   Alert,
+  AnimatedNumber,
   Avatar,
+  Bar,
   Button,
   Card,
   Column,
   Dialog,
+  Drawer,
   Grid,
+  Kbd,
   List,
   LoadingState,
   Menu,
   Message,
   Popover,
+  Rail,
   Stat,
   Surface,
   Table,
@@ -21,6 +26,7 @@ import {
   useSkeleton,
 } from '@envsemble/envui';
 import { installDevMode } from '@envsemble/envui/dev';
+import { Folder } from '@envsemble/envui/icons/Folder';
 
 interface Project {
   id: string;
@@ -54,6 +60,13 @@ const projects: Project[] = [
   },
 ];
 
+/** Destinations over placeholder items: an empty label, and an icon of their kind. */
+const destinations = placeholders<{ label: string }>(3).map((destination) => ({
+  label: destination.label ?? '',
+  icon: <Folder />,
+  href: `#${destination.id}`,
+}));
+
 /** A component of the application's own that reads whether it is in a skeleton. */
 function Reader() {
   return <span data-testid="reader">{useSkeleton() ? 'in a skeleton' : 'loaded'}</span>;
@@ -66,7 +79,7 @@ function Reader() {
 export function SkeletonsFixture() {
   const [loaded, setLoaded] = useState(false);
   const items = loaded ? projects : undefined;
-  const list = items ?? placeholders(3);
+  const list = items ?? placeholders<Project>(3);
   useEffect(() => {
     const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} } });
     return () => devMode.uninstall();
@@ -127,8 +140,38 @@ export function SkeletonsFixture() {
             </Table.Body>
           </Table.Root>
           <div data-testid="raw">Raw text in a div</div>
+          {/* Content laid out as a block of its own in the line draws its own bar. */}
+          <Text data-testid="inline-blocks">
+            Press <Kbd data-testid="kbd">K</Kbd> to open <AnimatedNumber value={42} /> projects.
+          </Text>
+          {/* Running text over several lines: a bar on each line. */}
+          <Text data-testid="multi-line" style={{ inlineSize: '12rem' }}>
+            A paragraph long enough to wrap onto several lines in its narrow column.
+          </Text>
+          {/* A skeleton inside a skeleton, and a list that holds no wrapper: neither is heard. */}
+          <Card skeleton data-testid="nested-card" title="Nested" />
+          <List.Root skeleton aria-label="Nested owners" data-testid="nested-list">
+            <List.Item label="Sam Lee" />
+          </List.Root>
         </Column>
       </Surface>
+
+      {/* Right to left: the bars start at the right. */}
+      <Surface skeleton dir="rtl" data-testid="rtl" padding={4}>
+        <Text variant="title" render={<h3 />} data-testid="rtl-title" />
+      </Surface>
+
+      {/* A list skeleton on its own: inert, with a visually hidden busy status beside it. */}
+      <List.Root skeleton aria-label="Owners loading" data-testid="list-skeleton">
+        {placeholders<Project>(2).map((project) => (
+          <List.Item key={project.id} label={project.owner} />
+        ))}
+      </List.Root>
+
+      {/* Navigation whose destinations are loading: bars and icon shapes. */}
+      <Drawer skeleton data-testid="drawer" destinations={destinations} />
+      <Rail skeleton data-testid="rail" destinations={destinations} />
+      <Bar skeleton data-testid="bar" destinations={destinations} />
 
       {/* The same content loaded, which the shift check toggles. */}
       <Surface data-testid="loaded" background="muted" padding={4}>
@@ -167,7 +210,7 @@ export function SkeletonsFixture() {
       <Card skeleton data-testid="card-skeleton" title="Title" description={undefined} />
 
       <Popover trigger={<Button>Open the popover</Button>} title="Details" skeleton>
-        <Text>Loading details</Text>
+        Raw details in the popover
       </Popover>
       <Menu.Root trigger={<Button>Open the menu</Button>} aria-label="Actions" skeleton>
         <Menu.Item>Rename</Menu.Item>

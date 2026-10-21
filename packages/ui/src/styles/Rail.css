@@ -141,3 +141,33 @@
     color: CanvasText;
   }
 }
+
+/* In a skeleton, a destination is its icon as a filled shape and its label as a bar, with no fill
+   for the current one, whether it is a link or a button. */
+.env-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-rail-item {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+}
+.env-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-rail-item * {
+  visibility: visible;
+}
+.env-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-rail-item .env-icon * {
+  visibility: hidden;
+}
+.env-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-rail-indicator {
+  background: transparent;
+}
+[data-env-skeleton] .env-rail-count {
+  forced-color-adjust: none;
+  border-color: transparent;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-rail-count * {
+  visibility: hidden;
+}
+/* A destination whose label is loading, given as an empty string, is a bar of a label's length. */
+.env-rail:is([data-env-skeleton], [data-env-skeleton] *) .env-rail-label {
+  --env-skeleton-placeholder: inline-block;
+  --env-skeleton-length: 3rem;
+}

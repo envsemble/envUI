@@ -5,7 +5,8 @@ export interface SkeletonProps {
   /**
    * Shows the component, and everything inside it, as a skeleton while its content loads: text
    * becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and
-   * corners stay. It is marked busy, and its content can't be focused or read until it loads.
+   * corners stay. It is a busy region, and its content can't be focused or read until it loads.
+   * Turning it on or off renders its content anew, so state inside it starts over.
    * @default false
    */
   skeleton?: boolean;
@@ -13,26 +14,26 @@ export interface SkeletonProps {
 
 /**
  * The attributes of a skeleton's root: data-env-skeleton, which the styles and dev mode follow,
- * aria-busy, and inert, so nothing in it can be focused, pressed or read.
+ * and aria-busy, so assistive technology hears one busy region. Its content, not the root, is
+ * inert: inSkeleton wraps it.
  */
 export interface SkeletonAttributes {
   'data-env-skeleton'?: '';
   'aria-busy'?: true;
-  inert?: true;
+}
+
+/** Marks a skeleton's root: busy, and followed by the skeleton's styles. */
+export function skeletonAttributes(skeleton: boolean | undefined): SkeletonAttributes {
+  return skeleton ? { 'data-env-skeleton': '', 'aria-busy': true } : {};
 }
 
 /**
- * Marks a skeleton's root. A popup, which must keep focus so people can close it, passes
- * `inert: false` and makes its content inert instead.
+ * Marks a skeleton's root that can't hold a wrapper, such as a list or a table: inert as a whole,
+ * since no element may stand between it and its rows. A visually hidden status beside it, which
+ * SkeletonStatus renders, is the busy region assistive technology hears.
  */
-export function skeletonAttributes(
-  skeleton: boolean | undefined,
-  { inert = true }: { inert?: boolean } = {},
-): SkeletonAttributes {
-  if (!skeleton) return {};
-  return inert
-    ? { 'data-env-skeleton': '', 'aria-busy': true, inert: true }
-    : { 'data-env-skeleton': '', 'aria-busy': true };
+export function skeletonListAttributes(skeleton: boolean | undefined) {
+  return skeleton ? ({ 'data-env-skeleton': '', inert: true } as const) : {};
 }
 
 /**

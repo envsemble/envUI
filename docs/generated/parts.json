@@ -59,7 +59,8 @@
       ],
       "uses": [
         "CloseButton",
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "AnimatedNumber": {
@@ -308,12 +309,20 @@
           "parts": [
             "env-bar-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-bar"
+          ]
         }
       ],
       "uses": [
         "CounterBadge",
         "Icon",
-        "Menu"
+        "Menu",
+        "Skeleton"
       ]
     },
     "Breadcrumbs": {
@@ -367,6 +376,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -645,6 +655,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -704,6 +715,7 @@
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
+            "env-card",
             "env-card-description",
             "env-card-header",
             "env-card-heading",
@@ -1045,6 +1057,7 @@
         "IconButton",
         "ListRow",
         "Popup",
+        "Skeleton",
         "Spinner",
         "TextField",
         "Theme"
@@ -1133,6 +1146,7 @@
         "Icon",
         "Kbd",
         "ListRow",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1234,6 +1248,7 @@
         "Alert",
         "Button",
         "Dialog",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1260,6 +1275,7 @@
         "Button",
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -1397,6 +1413,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme",
         "TimeList"
@@ -1515,6 +1532,15 @@
           ]
         },
         {
+          "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-dialog-popup"
+          ]
+        },
+        {
           "attribute": "data-placement",
           "values": [
             "center",
@@ -1556,6 +1582,7 @@
       ],
       "uses": [
         "Button",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1767,10 +1794,18 @@
           "parts": [
             "env-drawer-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-drawer"
+          ]
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "DropZone": {
@@ -1884,6 +1919,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Text"
       ]
     },
@@ -1966,6 +2002,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2183,6 +2220,7 @@
         "ConnectedRows",
         "Icon",
         "IconButton",
+        "Skeleton",
         "Text"
       ]
     },
@@ -2375,6 +2413,7 @@
         "Icon",
         "Kbd",
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2434,6 +2473,7 @@
       "uses": [
         "Menu",
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2475,6 +2515,7 @@
           "attribute": "data-env-skeleton",
           "values": [],
           "parts": [
+            "env-message",
             "env-message-author",
             "env-message-header",
             "env-message-meta"
@@ -2512,6 +2553,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Spinner"
       ]
     },
@@ -2527,6 +2569,7 @@
       "states": [],
       "uses": [
         "Icon",
+        "Skeleton",
         "Spinner"
       ]
     },
@@ -2622,6 +2665,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme"
       ]
@@ -3111,10 +3155,6 @@
           "description": "The scrim behind the supporting sheet."
         },
         {
-          "class": "env-panes-skeleton",
-          "description": "The content of a skeleton supporting pane: no box of its own, inert."
-        },
-        {
           "class": "env-panes-supporting",
           "description": "The supporting pane, a sheet over the main pane in less room."
         }
@@ -3147,15 +3187,6 @@
           ]
         },
         {
-          "attribute": "data-env-skeleton",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-panes-skeleton"
-          ]
-        },
-        {
           "attribute": "data-open",
           "values": [
             ""
@@ -3180,7 +3211,8 @@
         "Button",
         "CloseButton",
         "Icon",
-        "ResizeHandle"
+        "ResizeHandle",
+        "Skeleton"
       ]
     },
     "Popover": {
@@ -3209,6 +3241,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -3366,10 +3399,18 @@
           "parts": [
             "env-rail-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-rail"
+          ]
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "Rating": {
@@ -3425,6 +3466,7 @@
       "states": [],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3744,6 +3786,7 @@
         "IconButton",
         "Kbd",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3808,6 +3851,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3893,6 +3937,7 @@
         "Icon",
         "ListRow",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme"
       ]
@@ -3918,6 +3963,15 @@
         {
           "attribute": "data-ending-style",
           "values": [],
+          "parts": [
+            "env-sheet-popup"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-sheet-popup"
           ]
@@ -3959,6 +4013,7 @@
       "uses": [
         "CloseButton",
         "Dialog",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -4116,6 +4171,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Surface"
       ]
     },
@@ -4151,6 +4207,9 @@
             "env-surface"
           ]
         }
+      ],
+      "uses": [
+        "Skeleton"
       ]
     },
     "Switch": {
@@ -4352,7 +4411,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "Tabs": {
@@ -4729,6 +4789,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme",
         "TimeList"
@@ -4944,6 +5005,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -5002,7 +5064,8 @@
         }
       ],
       "uses": [
-        "LoadingBar"
+        "LoadingBar",
+        "Skeleton"
       ]
     },
     "Tree": {
@@ -5325,10 +5388,6 @@
           "description": "A popup's positioner."
         },
         {
-          "class": "env-popup-skeleton",
-          "description": "The content of a skeleton popup: no box of its own, inert."
-        },
-        {
           "class": "env-popup-theme",
           "description": "The theme boundary around a popup."
         }
@@ -5350,15 +5409,6 @@
           "values": [],
           "parts": [
             "env-popup"
-          ]
-        },
-        {
-          "attribute": "data-env-skeleton",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-popup-skeleton"
           ]
         },
         {
@@ -5442,6 +5492,55 @@
       ],
       "usedBy": [
         "Panes"
+      ]
+    },
+    "Skeleton": {
+      "root": null,
+      "parts": [
+        {
+          "class": "env-skeleton-content",
+          "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+        },
+        {
+          "class": "env-skeleton-status",
+          "description": "The visually hidden busy status beside a skeleton list."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "Alert",
+        "Bar",
+        "Breadcrumbs",
+        "CalendarHeatmap",
+        "Combobox",
+        "CommandPalette",
+        "ConfirmDialog",
+        "CopyButton",
+        "DatePicker",
+        "Dialog",
+        "Drawer",
+        "EmptyState",
+        "HoverCard",
+        "List",
+        "Menu",
+        "Menubar",
+        "Message",
+        "MessageList",
+        "MonthPicker",
+        "Panes",
+        "Popover",
+        "Rail",
+        "RelativeTime",
+        "SearchTrigger",
+        "SegmentedControl",
+        "Select",
+        "Sheet",
+        "Stat",
+        "Surface",
+        "Table",
+        "TimePicker",
+        "Tooltip",
+        "TopBar"
       ]
     },
     "TimeList": {

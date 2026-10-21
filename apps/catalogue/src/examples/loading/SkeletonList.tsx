@@ -6,7 +6,13 @@ const teams = [
   { value: 'marketing', label: 'Marketing' },
   { value: 'sales', label: 'Sales' },
 ];
-const projects: Record<string, { id: string; name: string; owner: string }[]> = {
+interface Project {
+  id: string;
+  name: string;
+  owner: string;
+}
+
+const projects: Record<string, Project[]> = {
   design: [
     { id: 'website-refresh', name: 'Website refresh', owner: 'Alex Morgan' },
     { id: 'icon-set', name: 'Icon set', owner: 'Sam Lee' },
@@ -60,7 +66,7 @@ export default function SkeletonList() {
         skeleton={!items}
         style={{ visibility: items || showPlaceholders ? undefined : 'hidden' }}
       >
-        {(items ?? placeholders(3)).map((project) => (
+        {(items ?? placeholders<Project>(3)).map((project) => (
           <List.Item key={project.id} label={project.name} description={project.owner} />
         ))}
       </List.Root>

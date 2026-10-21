@@ -16,7 +16,7 @@ await build({
   stdin: {
     contents: [
       "export { placeholders, isPlaceholder } from './packages/ui/src/foundations/placeholders.ts';",
-      "export { skeletonAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
+      "export { skeletonAttributes, skeletonListAttributes, given } from './packages/ui/src/internal/skeleton.ts';",
       "export { useSkeleton } from './packages/ui/src/foundations/SkeletonScope.tsx';",
       "export { Surface } from './packages/ui/src/foundations/Surface.tsx';",
       "export { Text } from './packages/ui/src/foundations/Text.tsx';",
@@ -37,7 +37,8 @@ await build({
   logLevel: 'error',
 });
 const library = await import(pathToFileURL(output).href);
-const { placeholders, isPlaceholder, skeletonAttributes, given, useSkeleton } = library;
+const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes, given } = library;
+const { useSkeleton } = library;
 const { Surface, Text, Card, List, Stat, Alert } = library;
 
 const markup = (element) => renderToStaticMarkup(element);
@@ -46,30 +47,27 @@ test('placeholders() returns stand-in items with ids for keys, and nothing else'
   const items = placeholders(3);
   assert.deepEqual(
     items.map((item) => item.id),
-    ['placeholder-0', 'placeholder-1', 'placeholder-2'],
+    ['envui-placeholder-0', 'envui-placeholder-1', 'envui-placeholder-2'],
   );
   assert.deepEqual(Object.keys(items[0]), ['id']);
   assert.equal(items[0].title, undefined);
   assert.ok(items.every(isPlaceholder));
-  assert.equal(isPlaceholder({ id: 'placeholder-0' }), false);
+  // By the id, so a stand-in stays one when it is serialized, as to a client component.
+  assert.ok(isPlaceholder(JSON.parse(JSON.stringify(items[1]))));
+  assert.equal(isPlaceholder({ id: 'project-1' }), false);
+  assert.equal(isPlaceholder({ id: 7 }), false);
   assert.equal(isPlaceholder(null), false);
   assert.deepEqual(placeholders(0), []);
   assert.deepEqual(placeholders(-2), []);
   assert.equal(placeholders(2.7).length, 2);
 });
 
-test('a skeleton root is marked, busy and inert; a popup keeps focus and only says busy', () => {
+test('a skeleton root is marked and busy, and a list, which holds no wrapper, inert', () => {
   assert.deepEqual(skeletonAttributes(false), {});
   assert.deepEqual(skeletonAttributes(undefined), {});
-  assert.deepEqual(skeletonAttributes(true), {
-    'data-env-skeleton': '',
-    'aria-busy': true,
-    inert: true,
-  });
-  assert.deepEqual(skeletonAttributes(true, { inert: false }), {
-    'data-env-skeleton': '',
-    'aria-busy': true,
-  });
+  assert.deepEqual(skeletonAttributes(true), { 'data-env-skeleton': '', 'aria-busy': true });
+  assert.deepEqual(skeletonListAttributes(true), { 'data-env-skeleton': '', inert: true });
+  assert.deepEqual(skeletonListAttributes(false), {});
   assert.equal(given({ title: undefined }, 'title'), true);
   assert.equal(given({}, 'title'), false);
 });
@@ -79,13 +77,22 @@ test('a surface as a skeleton marks its root and tells what is inside', () => {
     return h('i', null, useSkeleton() ? 'inside' : 'outside');
   }
   const html = markup(h(Surface, { skeleton: true }, h(Reader)));
-  assert.match(html, /^<div data-env-skeleton="" aria-busy="true" inert="" class="env-surface"/);
-  assert.match(html, /<i>inside<\/i>/);
+  // The root is the busy region people hear; its content, without a box of its own, is inert.
+  assert.match(
+    html,
+    /^<div data-env-skeleton="" aria-busy="true" class="env-surface"[^>]*><div class="env-skeleton-content" inert=""><i>inside<\/i><\/div><\/div>$/,
+  );
   const loaded = markup(h(Surface, null, h(Reader)));
   assert.doesNotMatch(loaded, /aria-busy|inert|data-env-skeleton/);
   assert.match(loaded, /<i>outside<\/i>/);
   // A component inside a skeleton follows it without a prop of its own.
   assert.match(markup(h(Surface, { skeleton: true }, h(Card, null, h(Reader)))), /<i>inside<\/i>/);
+  // A list can't hold a wrapper: it is inert, and a hidden status beside it is the busy region.
+  const list = markup(h(List.Root, { skeleton: true }, h(List.Item, { label: 'Launch brief' })));
+  assert.match(
+    list,
+    /^<ul data-env-skeleton="" inert=""[^>]*>.*<\/ul><span class="env-skeleton-status" role="status" aria-busy="true">Loading<\/span>$/,
+  );
 });
 
 test('missing text renders empty where a skeleton shows a bar, and given slots render', () => {
@@ -110,7 +117,7 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
     row,
     /<div class="env-list-item-content"><span class="env-text" data-variant="body-sm"><\/span><small><\/small><\/div>/,
   );
-  assert.match(markup(h(List.Item, { label: 'Atlas' })), /content">Atlas<\/div>/);
+  assert.match(markup(h(List.Item, { label: 'Launch brief' })), /content">Launch brief<\/div>/);
 
   const stat = markup(h(Stat.Root, { label: 'Projects', value: undefined, skeleton: true }));
   assert.match(stat, /<div class="env-stat-value"><\/div>/);
@@ -127,7 +134,7 @@ test('the style sheet draws text as bars, shapes and missing text, and keeps sti
     css,
     /\[data-env-skeleton\] :empty::before \{[^}]*display: var\(--env-skeleton-placeholder\);/,
   );
-  // The shimmer runs only without a reduced-motion preference.
+  // The pulse runs only without a reduced-motion preference.
   const motion = css.indexOf('@media (prefers-reduced-motion: no-preference)');
   assert.ok(motion > 0);
   assert.equal(css.indexOf('animation:'), css.indexOf('animation:', motion));

@@ -26,11 +26,13 @@
 .env-message-meta {
   color: var(--env-color-fg-muted);
 }
-.env-message[data-from='other'] > .env-message-content {
+.env-message[data-from='other'] > .env-message-content,
+.env-message[data-from='other'] > .env-skeleton-content > .env-message-content {
   inline-size: 100%;
 }
 /* The bubble takes the row tone on the canvas; as a translucent fill it stays distinct on panes. */
-.env-message[data-from='self'] > .env-message-content {
+.env-message[data-from='self'] > .env-message-content,
+.env-message[data-from='self'] > .env-skeleton-content > .env-message-content {
   max-inline-size: min(100%, max(75%, 16rem));
   padding: var(--env-space-2) var(--env-space-4);
   border-radius: var(--env-radius-lg);
@@ -40,7 +42,10 @@
 .env-message-content[data-text] {
   white-space: pre-wrap;
 }
-.env-message[data-from='self'][data-status='failed'] > .env-message-content {
+.env-message[data-from='self'][data-status='failed'] > .env-message-content,
+.env-message[data-from='self'][data-status='failed']
+  > .env-skeleton-content
+  > .env-message-content {
   box-shadow: inset 0 0 0 0.0625rem var(--env-color-border-danger);
 }
 .env-message-content > :first-child {
@@ -67,13 +72,15 @@
 }
 /* A text icon action at the edge lines its icon up with the message, not its round hit area,
    through Button's edge hooks. */
-.env-message[data-from='self'] > .env-message-actions {
+.env-message[data-from='self'] > .env-message-actions,
+.env-message[data-from='self'] > .env-skeleton-content > .env-message-actions {
   --env-button-text-icon-edge-end: calc(
     (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
   );
   justify-content: flex-end;
 }
-.env-message[data-from='other'] > .env-message-actions {
+.env-message[data-from='other'] > .env-message-actions,
+.env-message[data-from='other'] > .env-skeleton-content > .env-message-actions {
   --env-button-text-icon-edge-start: calc(
     (var(--env-control-icon-size) - var(--env-message-action-height)) / 2
   );
@@ -103,11 +110,12 @@
 [data-env-skeleton] .env-message-meta {
   --env-skeleton-length: 4rem;
 }
-[data-env-skeleton] .env-message[data-from='other'] > .env-message-content {
+.env-message[data-from='other']:is([data-env-skeleton], [data-env-skeleton] *)
+  .env-message-content {
   --env-skeleton-length: 36rem;
   --env-skeleton-lines: 3;
   --env-skeleton-last: 60%;
 }
-[data-env-skeleton] .env-message[data-from='self'] > .env-message-content {
+.env-message[data-from='self']:is([data-env-skeleton], [data-env-skeleton] *) .env-message-content {
   --env-skeleton-length: 12rem;
 }

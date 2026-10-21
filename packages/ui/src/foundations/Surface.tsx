@@ -5,7 +5,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { classNames } from '../internal/classNames.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import type { SpaceStep } from './Layout.js';
-import { SkeletonScope } from './SkeletonScope.js';
+import { inSkeleton } from './inSkeleton.js';
 
 /**
  * A surface's fill: default, the background of panes and side regions; muted, the background of
@@ -83,7 +83,7 @@ export function Surface<RenderedElement extends HTMLElement = HTMLDivElement>({
       ...skeletonAttributes(skeleton),
       // A render element's own children stay when the surface is given none.
       ...(children !== undefined && {
-        children: <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>,
+        children: inSkeleton(skeleton, children),
       }),
       className: classNames('env-surface', className),
       'data-background': background,

@@ -21,8 +21,6 @@ useWhen:
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
-  - text: The application frame itself before the first page loads, which shows its own parts as skeletons.
-    use: Scaffold
 composes:
   - Scaffold
   - TopBar
@@ -42,6 +40,8 @@ composes:
   - Column
   - Row
   - Text
+  - LoadingState
+  - Avatar
 related:
   - surface
   - card
@@ -55,98 +55,40 @@ related:
 
 ## Overview
 
-Use this pattern to tell people that something is on its way. Where the shape of what is coming is known, the page renders its own components as skeletons, over placeholder items, so the code is the same loading and loaded and nothing moves when the content lands.
+Loading shows that something is on its way, in the place and the shape of what is coming. Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.
 
 ```tsx example=CardsLoading
 
 ```
 
-## Anatomy
+### Placeholder items
 
-1. **The skeleton:** `skeleton` on the component that holds the content: Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, TopBar, Dialog, Sheet, Popover, HoverCard, Menu.Root or Panes.Supporting. Everything inside follows it.
-2. **Placeholder items:** `placeholders(count)` stands in for the items, so the page writes `items ?? placeholders(3)` and renders its normal components. A placeholder has only an `id`; `isPlaceholder(item)` tells one apart.
-3. **Missing text:** text given as undefined, such as `title={item.title}` over a placeholder, is a bar of its text style's usual length.
-4. **No known shape:** a [LoadingState](../components/spinner.md), a spinner with a label.
-5. **An update to what is shown:** a [Spinner](../components/spinner.md) beside it.
-6. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.
-7. **Measurable work:** [Progress](../components/progress.md) with a `value`.
-8. **A whole page:** the loading bar along the bottom edge of the [TopBar](../components/top-bar.md), through `loading`.
-
-## States and behaviour
-
-- **The look.** Text becomes bars as long as the text, icons, avatars, media and controls become filled shapes of their size, and backgrounds, borders and corners stay. A component whose generic look isn't right gives its own; one of the application's own reads `useSkeleton()`.
-- **No shift.** A skeleton changes paint, never size. Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place before it loads. In development, [dev mode](../dev-mode.md)'s `envui.layout.skeletonShift()` reports what moves.
-- **One shimmer.** Every skeleton on the page shimmers in step. With a reduced-motion preference it stays still.
-- **Wait first.** A load that ends within 200 ms shows nothing; show the skeleton once a timer fires.
-- **Keep what is shown.** Content that updates stays in place under a Spinner, rather than turning back into a skeleton.
-- **The end.** Content replaces its skeleton in place. Content that fails or turns out empty shows an [EmptyState](../components/empty-state.md) there instead.
-
-## Content guidelines
-
-- Name what is loading, not that something is: "Loading projects", "Uploading annual-review.pdf".
-- Don't promise a time ("Almost there"): the indicator can't know it.
-- Keep a pending button's label; say the outcome once it is done, such as "Saved".
-
-## Do and don't
-
-### Do
-
-- Render the components the content will fill, as skeletons, at the place it will appear.
-- Pass placeholder items through the same code that renders the real ones.
-- Leave controls that don't depend on the work usable while it runs.
-
-### Don't
-
-- Don't draw a separate loading version of a page by hand.
-- Don't cover the page with a spinner for one region's update.
-- Don't use a Progress bar for work whose end you can't measure.
-
-## Accessibility
-
-### Focus and keyboard
-
-Loading never moves focus. A skeleton is inert, so Tab passes over it; once its content arrives, focus stays where it was. A skeleton popup keeps focus on itself, so Escape still closes it. A pending button stays in the tab order; don't disable the control that started the work.
-
-### envUI provides
-
-- `aria-busy` on a skeleton, whose content is inert and hidden from assistive technology until it loads.
-- LoadingState: a busy status region with its label beside the spinner.
-- A pending Button that keeps its size, reports that it is busy and ignores presses.
-- Progress with its value and `valueText`.
-
-### You provide
-
-- A label for every indicator that names what is loading.
-- A status message where the wait is long, since a skeleton itself is not read.
-- The delay before a skeleton or spinner appears.
-
-## Examples
-
-### A list per team
-
-Each team's projects load the first time it is chosen: the list is a skeleton over placeholder rows after 200 ms.
+`items ?? placeholders<Item>(3)` gives the components stand-ins to render; text given as undefined is a bar of its text style's length. Show the skeleton once a load has taken 200 ms.
 
 ```tsx example=SkeletonList
 
 ```
 
-### Page progress
+## Variants
 
-Choosing a page in the navigation starts loading it: the page on screen stays, and stays selected in the navigation, and after 200 ms the bar along the top bar's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the navigation selects it, and focus moves to the Scaffold's body, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The Scaffold sits in a box here, with `landmarks={false}` and a block size of its own; an application renders it at its root.
+| What is loading                | Show                                                  |
+| ------------------------------ | ----------------------------------------------------- |
+| Content of a known shape       | Its components with `skeleton`, over `placeholders()` |
+| Content of no known shape      | LoadingState, a spinner with a label                  |
+| An update to what is shown     | A Spinner beside it                                   |
+| The result of an action        | `pending` on the Button that started it               |
+| Work whose end can be measured | Progress with a `value`                               |
+| A whole page                   | `loading` on the TopBar                               |
 
-```tsx example=PageProgress
+### No known shape
+
+LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.
+
+```tsx example=SearchResultsLoading
 
 ```
 
-### Refresh in place
-
-The activity stays while it refreshes; a small Spinner beside its heading says it is updating.
-
-```tsx example=RefreshInPlace
-
-```
-
-### Pending button
+### An action
 
 The button that saves shows the work in progress; the outcome is announced once it is done.
 
@@ -154,14 +96,77 @@ The button that saves shows the work in progress; the outcome is announced once 
 
 ```
 
-### Upload progress
+### Measurable work
 
-Progress measures each file and says what has been sent, in megabytes.
+Progress measures each file and says what has been sent.
 
 ```tsx example=UploadProgress
 
 ```
 
+### A whole page
+
+After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.
+
+```tsx example=PageProgress
+
+```
+
+## When to use
+
+```tsx do=SkeletonInPlace caption="The content's own components as a skeleton, where it will appear."
+
+```
+
+```tsx dont=SpinnerInPlace caption="A spinner for content of a known shape: the page jumps when it lands."
+
+```
+
+```tsx do=RefreshInPlace caption="Content that refreshes stays, with a Spinner beside it."
+
+```
+
+```tsx dont=SkeletonOnRefresh caption="Content turned back into a skeleton to refresh: people lose their place."
+
+```
+
+- Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place; dev mode's `envui.layout.skeletonShift()` reports what moves.
+- When content fails or turns out empty, show an [EmptyState](../components/empty-state.md) in its place.
+
+### Content
+
+- Name what is loading: "Loading projects", "Uploading annual-review.pdf".
+- Don't promise a time, such as "Almost there".
+
+## Anatomy
+
+```tsx anatomy=SkeletonAnatomy of="Card"
+
+```
+
+1. **Busy root** (`env-card`)
+2. **Title bar** (`env-card-heading`)
+3. **Meta bar** (`env-card-meta`)
+4. **Description bars** (`env-card-description`)
+5. **Action shape** (`env-card-footer`)
+
+Not shown: the inert content inside the root, `env-skeleton-content`, which has no box of its own. Every bar and shape pulses in step across the page, and keeps still with a reduced-motion preference.
+
+## Accessibility
+
+### envUI provides
+
+- One busy region per skeleton, `aria-busy` on its root, whose content is inert: Tab passes over it and assistive technology skips it until it loads.
+- A visually hidden busy status beside a skeleton list or table, which holds no wrapper.
+- A skeleton popup, sheet or supporting pane that keeps focus, so Escape still closes it.
+- LoadingState, a busy status with its label; a pending Button that keeps its size and ignores presses; Progress with its value.
+
+### You provide
+
+- A label that names what is loading, on every indicator.
+- A status message where the wait is long, since the skeleton's content isn't read.
+- The delay before a skeleton or spinner appears.
+
 ## Changelog
 
-- **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders.
+- **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders. The page is on the figure template.

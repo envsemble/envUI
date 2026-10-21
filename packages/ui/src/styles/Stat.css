@@ -51,10 +51,12 @@
   );
   gap: var(--env-space-5) var(--env-stat-group-gap);
 }
-.env-stat-group > .env-stat {
+.env-stat-group > .env-stat,
+.env-stat-group > .env-skeleton-content > .env-stat {
   container-type: inline-size;
 }
-.env-stat-group > .env-stat .env-stat-value {
+.env-stat-group > .env-stat .env-stat-value,
+.env-stat-group > .env-skeleton-content > .env-stat .env-stat-value {
   font-size: clamp(1.25rem, 8.33cqi + 0.833rem, 1.75rem);
 }
 

@@ -234,7 +234,7 @@ NavList and NavList.Skeleton are gone. An application's destinations are one arr
 | `end={<CounterBadge value={12} />}`                     | `count: 12`, named as "Inbox, 12 new"                                                         |
 | `<NavList.Group label="Folders">`                       | `group: 'Folders'` on each of its destinations, next to each other                            |
 | `iconOnly`, a sidebar's rail                            | `<Rail destinations={destinations} />`                                                        |
-| NavList.Skeleton                                        | The skeleton state of the frame                                                               |
+| NavList.Skeleton                                        | `skeleton` on the Drawer, Rail or Bar: its labels are bars and its icons filled shapes        |
 | A NavList.Item as a tab of Tabs                         | A Button, such as `variant="ghost"` with `startIcon`                                          |
 | `messages.navList.itemCount`, `itemEnd`                 | `messages.navigation.itemCount`; end content other than a count has no place in a destination |
 | `.env-nav-list-item`, `[data-selected]`                 | `.env-drawer-item`, `.env-rail-item`, `.env-bar-item`, with `[data-current]`                  |
@@ -403,19 +403,19 @@ The outermost boundary takes the whole width its parent gives it (`inline-size: 
 
 ### Skeletons
 
-Skeleton is gone: a component that paints a container, such as Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, TopBar, Dialog, Sheet, Popover, HoverCard, Menu.Root or Panes.Supporting, takes `skeleton` and shows itself, and everything inside it, as a skeleton. The page renders its normal components over placeholder items while they load, so it has no separate loading version. `v1-names` reports each `Skeleton` and `SkeletonProps`, and `v1-classes` each `env-skeleton` and `env-skeleton-highlight`:
+Skeleton is gone: a component that paints a container, such as Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, TopBar, Drawer, Rail, Bar, Dialog, Sheet, Popover, HoverCard, Menu.Root or Panes.Supporting, takes `skeleton` and shows itself, and everything inside it, as a skeleton. The page renders its normal components over placeholder items while they load, so it has no separate loading version. `v1-names` reports each `Skeleton` and `SkeletonProps`, and `v1-classes` each `env-skeleton` and `env-skeleton-highlight`:
 
-| Before                                                    | Now                                                                                    |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `<LoadingState label="…">` around `<Skeleton>` blocks     | The component itself, `<List.Root skeleton={!items}>`, over `items ?? placeholders(3)` |
-| `<Skeleton width="40%" height="1.25rem" />` for a heading | The heading, `<Text variant="title">{item?.name}</Text>`: missing text is a bar        |
-| `NavList.Skeleton`                                        | The navigation's items in a surface with `skeleton`                                    |
-| `<LoadingState>` for loading with no known shape          | `<LoadingState label="…" />`, now a spinner with its label beside it                   |
-| `.env-skeleton` in a style sheet                          | `[data-env-skeleton]`, on the skeleton's root, and what is inside it                   |
+| Before                                                    | Now                                                                                          |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `<LoadingState label="…">` around `<Skeleton>` blocks     | The component itself, `<List.Root skeleton={!items}>`, over `items ?? placeholders<Item>(3)` |
+| `<Skeleton width="40%" height="1.25rem" />` for a heading | The heading, `<Text variant="title">{item?.name}</Text>`: missing text is a bar              |
+| `NavList.Skeleton`                                        | `<Drawer skeleton>`, `<Rail skeleton>` or `<Bar skeleton>` over its destinations             |
+| `<LoadingState>` for loading with no known shape          | `<LoadingState label="…" />`, now a spinner with its label beside it                         |
+| `.env-skeleton` in a style sheet                          | `[data-env-skeleton]`, on the skeleton's root, and what is inside it                         |
 
-- A skeleton's root is `aria-busy` and inert: its content can't be focused or read until it loads. A popup, a sheet and the supporting pane keep focus, so their content is inert instead.
-- Text becomes bars and icons, media and controls filled shapes of their size, in one color that shimmers in step across the page, and still with a reduced-motion preference. Give media an aspect ratio so it holds its place.
-- `placeholders(count)` returns stand-in items with an `id` each, and `isPlaceholder(item)` tells one apart; `useSkeleton()` tells a component of the application's own that it is inside a skeleton.
+- A skeleton's root is a busy region, `aria-busy`, which assistive technology hears once, and its content, in an inert wrapper without a box of its own, can't be focused or read until it loads. A list or a table, which holds no wrapper, is inert as a whole, with a visually hidden busy status beside it. Turning `skeleton` on or off renders the content anew.
+- Text becomes bars and icons, media and controls filled shapes of their size, in one color that pulses in step across the page, and still with a reduced-motion preference. Give media an aspect ratio so it holds its place.
+- `placeholders<Item>(count)` returns stand-in items with an `id` each and every other field of `Item` possibly undefined, as the type says, and `isPlaceholder(item)` tells one apart; `useSkeleton()` tells a component of the application's own that it is inside a skeleton.
 - LoadingState takes no children: it shows a spinner with its `label`.
 - The documentation's Skeleton page is the [Loading](https://github.com/envsemble/envUI/blob/main/docs/patterns/loading.md) pattern, and LoadingState is on the [Spinner](https://github.com/envsemble/envUI/blob/main/docs/components/spinner.md) page.
 

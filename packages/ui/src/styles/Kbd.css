@@ -37,3 +37,11 @@
   color: var(--env-kbd-fg, var(--env-color-fg-muted));
   font: var(--env-kbd-separator-font, var(--env-type-body-small));
 }
+
+/* In a skeleton, a key keeps its cap and its label is a bar. A key is laid out as a block of its own
+   in the line, which the skeleton's line through text doesn't reach, so it draws its own. */
+[data-env-skeleton] .env-kbd {
+  text-decoration: line-through var(--env-skeleton-color);
+  text-decoration-thickness: 0.8em;
+  text-decoration-skip-ink: none;
+}
