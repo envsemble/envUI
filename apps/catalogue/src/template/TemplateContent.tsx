@@ -1,4 +1,4 @@
-import { Badge, Link, Message, Stack, Text } from '@envsemble/envui';
+import { Badge, Link, Stack, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {
@@ -11,7 +11,7 @@ import {
 } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
-import { ExchangeColumns, ExchangeSection } from './Exchanges';
+import { ExchangeColumns, ExchangeQuestion, ExchangeSection } from './Exchanges';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
@@ -197,17 +197,13 @@ function PropsExchange({ reference }: { reference: Document }) {
   const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
   return (
     <section className="docs-exchange" data-section="props">
-      <div className="docs-exchange-header">
-        <div className="docs-exchange-heading">
-          <Documentation markdown="## Props" path={reference.path} />
-        </div>
-        <Message from="self" className="docs-exchange-question" aria-label="Question on props">
-          Which props does {reference.title} take?
-        </Message>
+      <div className="docs-exchange-heading">
+        <Documentation markdown="## Props" path={reference.path} />
       </div>
+      <ExchangeQuestion section="Props" text={`Which props does ${reference.title} take?`} />
       <div className="docs-exchange-answer">
         <Documentation
-          markdown={`The props reference lists every prop of ${list}, with its type, its default and what it does, generated from the TypeScript declarations.`}
+          markdown={`Every prop of ${list}, with its type and default.`}
           path={reference.path}
         />
         <Text>

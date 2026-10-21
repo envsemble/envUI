@@ -1,0 +1,94 @@
+/* The dotted stage every figure sits on, live examples, do and don't figures, anatomy figures and,
+   on a page of exchanges, specimens alike, so a reader can tell an example from the page around
+   it. It takes the theme the reader has chosen and centres what it shows. A device of the
+   documentation, kept out of envUI. */
+.docs-live-example,
+.docs-verdict-stage,
+.docs-anatomy-stage {
+  display: grid;
+  place-content: center stretch;
+  justify-items: center;
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+  container-type: inline-size;
+}
+
+/* The dots, and the frame below, for specimens too, such as a grid of sizes. */
+.docs-live-example,
+.docs-verdict-stage,
+.docs-anatomy-stage,
+.docs-exchanges :is(.docs-specimen-grid, .docs-matrix-scroll) {
+  background-color: var(--env-color-bg-page);
+  background-image: radial-gradient(
+    circle,
+    var(--env-color-border-muted) 0.0625rem,
+    transparent 0.0625rem
+  );
+  background-size: 1rem 1rem;
+  background-position: center;
+}
+
+/* What the stage shows keeps to its width, however wide its content would be. */
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject) > * {
+  max-inline-size: 100%;
+}
+
+/* A part that takes its width from its container, such as a size container, a strip of tabs, a
+   window or skeleton bars, has none of its own and would collapse if centred: an example that is
+   or holds one fills the stage, unless it sets its width. */
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
+  > :where(
+    .env-card[data-layout='feature'],
+    .env-description-list[data-layout='auto'],
+    .env-page-header,
+    .env-split-pane,
+    .env-stat-group,
+    .env-document-tabs,
+    .env-panel-dock,
+    .env-window-frame,
+    .env-skeleton,
+    :has(
+      .env-card[data-layout='feature'],
+      .env-description-list[data-layout='auto'],
+      .env-page-header,
+      .env-split-pane,
+      .env-stat-group,
+      .env-document-tabs,
+      .env-panel-dock,
+      .env-window-frame,
+      .env-skeleton
+    )
+  ),
+/* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
+  > .env-document-tabs-root
+  > .env-document-tabs-bar {
+  inline-size: 100%;
+}
+
+/* In a frame of a given width, the example fills the frame, whose width it is shown at. */
+.docs-width-frame > .docs-live-example {
+  justify-items: stretch;
+}
+
+.docs-live-example,
+.docs-anatomy-stage,
+.docs-exchanges :is(.docs-specimen-grid, .docs-matrix-scroll) {
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-surface);
+}
+
+.docs-exchanges .docs-specimen-grid {
+  padding: var(--env-space-6);
+}
+
+.docs-live-example {
+  min-block-size: 8rem;
+  padding: var(--env-space-7) var(--env-space-6);
+}
+
+@container (width < 30rem) {
+  .docs-live-example {
+    padding: var(--env-space-6) var(--env-space-4);
+  }
+}

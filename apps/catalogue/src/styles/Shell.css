@@ -8,8 +8,6 @@ body {
 .docs-app {
   --docs-content-width: 72rem;
   --docs-gutter: clamp(0.75rem, 3vw, 3rem);
-  /* Room that content at the inline end keeps for the display controls while they show. */
-  --docs-controls-room: 9rem;
   min-height: 100dvh;
 }
 .docs-app *,
@@ -141,9 +139,6 @@ body {
 @media (width < 48rem), (max-height: 32rem) and (max-width: 54rem) {
   .docs-page-controls {
     display: none;
-  }
-  .docs-app {
-    --docs-controls-room: 0;
   }
 }
 .docs-page-navigation {

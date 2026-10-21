@@ -141,38 +141,60 @@ test('a page of exchanges asks its questions and numbers the parts of its anatom
   await page.goto(`${offline}#/components/button/overview`);
   // Every exchange is in the Overview; the props have a view of their own.
   await expect(page.getByRole('tab')).toHaveText(['Overview', 'Props']);
-  await expect(page.locator('.docs-exchange-question').first()).toHaveText(
-    'What is a button, and what does it look like?',
-  );
+  const question = page.locator('.docs-exchange-question').first();
+  await expect(question).toHaveText('What is a button, and what does it look like?');
+  // The question and its answer keep their own lanes: the bubble ends at the inline end and
+  // starts short of the answer's start, and the answer stops short of the bubble's end.
+  const lanes = () =>
+    page
+      .locator('.docs-exchange')
+      .first()
+      .evaluate((section) => {
+        const bubble = section
+          .querySelector('.docs-exchange-question > .env-message-content')!
+          .getBoundingClientRect();
+        const answer = section.querySelector('.docs-exchange-answer')!.getBoundingClientRect();
+        const box = section.getBoundingClientRect();
+        return {
+          bubbleAtEnd: Math.round(box.right - bubble.right) === 0,
+          bubbleInset: bubble.left - answer.left > 16,
+          answerInset: box.right - answer.right > 16,
+          answerBelow: answer.top >= bubble.bottom,
+        };
+      });
+  const apart = { bubbleAtEnd: true, bubbleInset: true, answerInset: true, answerBelow: true };
+  await expect.poll(lanes).toEqual(apart);
   // Do and don't figures carry their verdict and one sentence, with the code below.
-  const verdict = page.getByRole('figure', { name: /^Do Use one primary button per group/ });
+  const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.docs-verdict-bar')).toHaveText('Do');
   await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
-  // The anatomy numbers each part of the live button, in the light and the dark theme, beside
-  // the part it names, and keeps them there as the page narrows.
+  // The anatomy numbers each part of the live button beside the part it names, in the theme the
+  // reader has chosen alone, and keeps them there as the page narrows and the theme changes.
   const stages = page.locator('.docs-anatomy-stage');
-  await expect(stages).toHaveCount(2);
+  await expect(stages).toHaveCount(1);
   const placement = () =>
-    stages.first().evaluate((stage) => {
+    stages.evaluate((stage) => {
       const icon = stage.querySelector('.env-button > .env-icon')!.getBoundingClientRect();
       const badge = [...stage.querySelectorAll('.docs-anatomy-badge')]
         .find((item) => item.textContent === '2')!
         .getBoundingClientRect();
       return {
         badges: stage.querySelectorAll('.docs-anatomy-badge').length,
-        offset: Math.round(badge.left + badge.width / 2 - (icon.left + icon.width / 2)),
+        // Centred on the icon, give or take the rounding of a centred stage.
+        aligned: Math.abs(badge.left + badge.width / 2 - (icon.left + icon.width / 2)) <= 1,
+        theme: stage.getAttribute('data-env-theme'),
       };
     });
-  await expect.poll(placement).toEqual({ badges: 4, offset: 0 });
-  await expect(stages.nth(1).locator('.docs-anatomy-badge')).toHaveCount(4);
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'light' });
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
-  await expect.poll(placement).toEqual({ badges: 4, offset: 0 });
+  await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
+  await expect.poll(lanes).toEqual(apart);
   await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
 });
 
-test('every anatomy figure numbers each part its legend names, in both themes', async ({
-  page,
-}) => {
+test('every anatomy figure numbers each part its legend names', async ({ page }) => {
   // A legend part the example doesn't render would leave its number off the figure.
   const pages = references
     .filter((reference) => reference.format === 'exchanges')
@@ -192,10 +214,10 @@ test('every anatomy figure numbers each part its legend names, in both themes', 
     await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
     for (const figure of await anatomy.all()) {
       const legend = await figure.locator('.docs-anatomy-legend > li').count();
-      for (const stage of await figure.locator('.docs-anatomy-stage').all())
-        await expect(stage.locator('.docs-anatomy-badge'), `${id} numbers every part`).toHaveCount(
-          legend,
-        );
+      await expect(
+        figure.locator('.docs-anatomy-stage .docs-anatomy-badge'),
+        `${id} numbers every part`,
+      ).toHaveCount(legend);
     }
   }
 });

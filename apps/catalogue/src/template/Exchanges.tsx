@@ -204,9 +204,26 @@ function questionText(text: string) {
 }
 
 /**
- * One section of a page of exchanges: its heading, then each question as a compact Message at the
- * inline end, and its answer as full-width content with its figures. `lead` comes right after the
- * first question, before the authored answer.
+ * A question, as the reader's bubble in the question lane at the inline end. A Message is an
+ * article; the section it asks about names it.
+ */
+export function ExchangeQuestion({ section, text }: { section: string; text: string }) {
+  return (
+    <Message
+      from="self"
+      className="docs-exchange-question"
+      aria-label={`Question on ${section.toLowerCase()}`}
+    >
+      {questionText(text)}
+    </Message>
+  );
+}
+
+/**
+ * One section of a page of exchanges, laid out like a transcript in two lanes: its heading across
+ * both, then each question as the reader's bubble in the lane at the inline end and its answer,
+ * figures included, in the lane at the start. Each lane stops short of the other's far edge.
+ * `lead` comes right after the first question, before the authored answer.
  */
 export function ExchangeSection({
   reference,
@@ -275,30 +292,16 @@ export function ExchangeSection({
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
   const [heading, first, ...followUps] = turns;
-  const question = (text: string) => (
-    // A Message is an article; the section it asks about names it.
-    <Message
-      from="self"
-      className="docs-exchange-question"
-      aria-label={`Question on ${section.title.toLowerCase()}`}
-    >
-      {questionText(text)}
-    </Message>
-  );
   // A section without a question, the changelog, is its Markdown alone.
   if (!first) return <section data-section={section.id}>{heading.content}</section>;
   return (
     <section className="docs-exchange" data-section={section.id}>
-      <div className="docs-exchange-header">
-        <div className="docs-exchange-heading">{heading.content}</div>
-        {question(first.question!)}
-      </div>
-      <div className="docs-exchange-answer">{first.content}</div>
-      {followUps.map(({ question: text, content }, index) => (
-        <div key={index} className="docs-exchange-turn">
-          {question(text!)}
+      <div className="docs-exchange-heading">{heading.content}</div>
+      {[first, ...followUps].map(({ question, content }, index) => (
+        <Fragment key={index}>
+          <ExchangeQuestion section={section.title} text={question!} />
           <div className="docs-exchange-answer">{content}</div>
-        </div>
+        </Fragment>
       ))}
     </section>
   );
