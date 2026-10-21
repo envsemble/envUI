@@ -15511,32 +15511,44 @@
         {
           "name": "SaveConfirmation",
           "title": "Save confirmation",
-          "description": "Use this pattern to choose where a message goes and how loudly it speaks. A message about a field belongs on the field, a condition of the page in an Alert on the page, the outcome of an action in a toast, and a state of a row or a destination in a Badge or a count beside it. Each is announced at most once, and only what needs people interrupts them.",
+          "description": "Feedback goes as close as it can to what it is about, and speaks only as loudly as it must: each message is announced at most once, and only what needs people interrupts them. The outcome of an action people started is a toast from useToast.",
           "file": "docs/examples/feedback/SaveConfirmation.tsx"
         },
         {
           "name": "SectionAlert",
           "title": "A condition of the page",
-          "description": "A read-only project says so in a warning Alert that stays while the condition lasts. It is read with the page, not announced, and it offers the one thing people can do. Once the request is sent, its button goes, so focus moves to the Alert, which reads its new text once: a warning Alert without `announce` has no role, so the change isn't announced as well.",
+          "description": "An Alert that is there when the page loads describes it and isn't announced; it offers the one thing people can do.",
           "file": "docs/examples/feedback/SectionAlert.tsx"
         },
         {
           "name": "BackgroundTask",
           "title": "Background work",
-          "description": "The export runs while people carry on. When it ends, a toast with a \"Download\" action reaches them, and the page keeps a link to the file.",
+          "description": "When the export ends, a toast with Download reaches people wherever they are, and the page keeps a link, since a toast can be dismissed.",
           "file": "docs/examples/feedback/BackgroundTask.tsx"
         },
         {
           "name": "StatusInRows",
           "title": "Status in rows",
-          "description": "Each project's status is a Badge in its row, in one tone per status, with its words carrying the meaning.",
+          "description": "One tone per status everywhere, with words that carry the meaning without the color.",
           "file": "docs/examples/feedback/StatusInRows.tsx"
         },
         {
           "name": "UnreadCount",
           "title": "Unread counts",
-          "description": "A CounterBadge on a navigation item says how many new items wait there; its label says what it counts.",
+          "description": "A CounterBadge's `aria-label` says what it counts, \"12 unread\".",
           "file": "docs/examples/feedback/UnreadCount.tsx"
+        },
+        {
+          "name": "StatusInWords",
+          "title": "Do: Each status in its own words, with the tone adding to them.",
+          "description": "",
+          "file": "docs/examples/feedback/StatusInWords.tsx"
+        },
+        {
+          "name": "StatusInColor",
+          "title": "Don't: The same word in every tone: only the color tells them apart.",
+          "description": "",
+          "file": "docs/examples/feedback/StatusInColor.tsx"
         }
       ]
     },
