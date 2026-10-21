@@ -24,6 +24,13 @@ test('concurrent cold highlighting consumers share one token matrix', async (con
   assert.equal(await highlightCode(source, 'javascript'), requests[0]);
 });
 
+test('tokens carry high-contrast colors only when asked, which loads those themes', async () => {
+  const standard = await highlightCode('const a = 1;', 'javascript');
+  assert.ok(standard.flat().every((token) => !token.lightHigh && !token.darkHigh));
+  const high = await highlightCode('const a = 1;', 'javascript', true);
+  assert.ok(high.flat().some((token) => token.lightHigh?.color && token.darkHigh?.color));
+});
+
 test('a token without high-contrast styles takes its standard color at high contrast', () => {
   assert.deepEqual(tokenStyle({ color: '#123456', fontStyle: 1 }, undefined), {
     '--env-code-token': '#123456',
@@ -48,8 +55,15 @@ test('a token without high-contrast styles takes its standard color at high cont
 
 test('every highlighted token is readable on its code background, in code blocks and diffs', async () => {
   const { wcagContrast, interpolate, formatHex, rgb, differenceEuclidean } = await import('culori');
-  const { codeBackground, codeForeground, codeTheme, diffTheme, inlineCodeBackground } =
-    await import('../packages/ui/dist/content/internal/CodeThemes.js');
+  const { codeTheme, diffTheme } = await import(
+    '../packages/ui/dist/content/internal/CodeThemes.js'
+  );
+  const { codeBackground, codeColors, codeContrastTargets } = await import(
+    '../packages/ui/dist/content/internal/CodeColors.js'
+  );
+  const { over, readableReplacements } = await import(
+    '../packages/ui/dist/content/internal/ReadableColors.js'
+  );
   const { diffTints } = await import('../packages/ui/dist/content/internal/CodeDiffTints.js');
   const { tintsFile, tintsSource } = await import('../scripts/GenerateCodeThemes.mjs');
   assert.equal(
@@ -85,7 +99,7 @@ test('every highlighted token is readable on its code background, in code blocks
     darkHigh: ['dark', 'high'],
   };
   for (const [language, source] of Object.entries(samples))
-    for (const line of await highlightCode(source, language))
+    for (const line of await highlightCode(source, language, true))
       for (const token of line)
         for (const [key, [scheme, contrast]] of Object.entries(variants)) {
           const color = token[key].color;
@@ -120,13 +134,35 @@ test('every highlighted token is readable on its code background, in code blocks
     for (const contrast of ['standard', 'high']) {
       const background = codeBackground(scheme, contrast);
       const target = targets[contrast];
-      const theme = codeTheme(scheme, contrast);
+      const theme = await codeTheme(scheme, contrast);
       for (const color of textColors(theme))
         assert.ok(wcagContrast(color, background) >= target, `${scheme} ${contrast} ${color}`);
+      // The fixed colors around tokens are the installed theme's: inline code on its color for code
+      // in text over its editor, and its foreground, moved where it falls short on either background.
+      const original = github[scheme][contrast].colors;
+      const text = original['textCodeBlock.background'];
+      const inline = over(
+        text.slice(0, 7),
+        Number.parseInt(text.slice(7), 16) / 255,
+        original['editor.background'],
+      );
+      const fg = original['editor.foreground'];
+      const readable =
+        readableReplacements(
+          [fg],
+          [background, inline],
+          codeContrastTargets[contrast],
+          scheme === 'light' ? 'darker' : 'lighter',
+        )[fg.toLowerCase()] ?? fg;
+      const { foreground } = codeColors(scheme, contrast);
+      assert.deepEqual(
+        [codeColors(scheme, contrast).inline, foreground],
+        [inline, readable],
+        `${scheme} ${contrast}: update CodeColors.ts to the installed themes`,
+      );
       // Inline code and a block's plain text take the theme's foreground, on either background.
-      const foreground = codeForeground(scheme, contrast);
       assert.equal(theme.colors['editor.foreground'], foreground);
-      for (const surface of [background, inlineCodeBackground(scheme, contrast)])
+      for (const surface of [background, inline])
         assert.ok(
           wcagContrast(foreground, surface) >= target,
           `${scheme} ${contrast} foreground ${foreground} on ${surface}`,
@@ -144,7 +180,7 @@ test('every highlighted token is readable on its code background, in code blocks
 
       // Diffs: the change colors read on code's background, and the tokens on every line and word
       // Diffs tints with them, mixed as its style sheet mixes them.
-      const diff = diffTheme(scheme, contrast);
+      const diff = await diffTheme(scheme, contrast);
       assert.notEqual(diff.name, theme.name);
       const backgrounds = [background];
       for (const [kind, key] of [

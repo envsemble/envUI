@@ -1,68 +1,51 @@
 import githubDarkDimmed from 'shiki/themes/github-dark-dimmed.mjs';
-import githubDarkHighContrast from 'shiki/themes/github-dark-high-contrast.mjs';
 import githubLightDefault from 'shiki/themes/github-light-default.mjs';
-import githubLightHighContrast from 'shiki/themes/github-light-high-contrast.mjs';
 import type { ThemeRegistration } from 'shiki/core';
-import type { CSSProperties } from 'react';
 import type { ThemeValue } from '../../foundations/Theme.js';
+import {
+  codeBackground,
+  codeColors,
+  codeContrastTargets,
+  codeThemeName,
+  type CodeContrast,
+} from './CodeColors.js';
 import { diffTints } from './CodeDiffTints.js';
 import { mixInLab, over, readableReplacements, type Direction } from './ReadableColors.js';
 
-/** Whether code takes its standard colors or those of a high-contrast theme. */
-export type CodeContrast = 'standard' | 'high';
-
-/**
- * The contrast every token color reaches on the backgrounds it sits on: 4.5:1 (WCAG AA for text),
- * and 7:1 (AAA) under high contrast, each with a margin so that rounding never drops below it.
- */
-export const codeContrastTargets: Record<CodeContrast, number> = { standard: 4.55, high: 7.05 };
-
-/**
- * The code themes, as Shiki ships them: github-light-default and github-dark-dimmed, the grey dark
- * one, and github-light-high-contrast and github-dark-high-contrast under high contrast.
- */
-const github: Record<ThemeValue, Record<CodeContrast, ThemeRegistration>> = {
-  light: {
-    standard: githubLightDefault as ThemeRegistration,
-    high: githubLightHighContrast as ThemeRegistration,
-  },
-  dark: {
-    standard: githubDarkDimmed as ThemeRegistration,
-    high: githubDarkHighContrast as ThemeRegistration,
-  },
+/** The standard code themes, as Shiki ships them: github-light-default and the grey github-dark-dimmed. */
+const standard: Record<ThemeValue, ThemeRegistration> = {
+  light: githubLightDefault as ThemeRegistration,
+  dark: githubDarkDimmed as ThemeRegistration,
 };
 
+let highContrast: Promise<Record<ThemeValue, ThemeRegistration>> | undefined;
 /**
- * The background of code blocks and diffs: the muted canvas of the themes' own design system
- * (`bgColor-muted`), which it draws code blocks on, since the themes' editor backgrounds are as
- * white as the light canvas, or too near the dark one, to set code apart. Under high contrast in
- * the dark theme, code keeps its theme's editor background, the darkest canvas: on the muted one,
- * no text could reach 7:1 on the words a diff tints.
+ * The high-contrast code themes, github-light-high-contrast and github-dark-high-contrast, loaded
+ * only once code is shown at high contrast, so that applications without it never download them.
  */
-const blockBackgrounds: Record<ThemeValue, Record<CodeContrast, string>> = {
-  light: { standard: '#f6f8fa', high: '#e7ecf0' },
-  dark: { standard: '#2d333b', high: '#0a0c10' },
-};
+function loadHighContrast() {
+  highContrast ??= Promise.all([
+    import('shiki/themes/github-light-high-contrast.mjs'),
+    import('shiki/themes/github-dark-high-contrast.mjs'),
+  ]).then(
+    ([light, dark]) => ({
+      light: light.default as ThemeRegistration,
+      dark: dark.default as ThemeRegistration,
+    }),
+    (error: unknown) => {
+      highContrast = undefined;
+      throw error;
+    },
+  );
+  return highContrast;
+}
+
+/** The Shiki theme of an app theme and contrast. */
+async function shikiTheme(scheme: ThemeValue, contrast: CodeContrast) {
+  return contrast === 'high' ? (await loadHighContrast())[scheme] : standard[scheme];
+}
 
 const direction = (scheme: ThemeValue): Direction => (scheme === 'light' ? 'darker' : 'lighter');
-
-/** The background of code blocks and diffs in the app theme and contrast. */
-export function codeBackground(scheme: ThemeValue, contrast: CodeContrast = 'standard') {
-  return blockBackgrounds[scheme][contrast];
-}
-
-/**
- * The background of inline code: the theme's own color for code in text
- * (`textCodeBlock.background`), over its editor's background.
- */
-export function inlineCodeBackground(scheme: ThemeValue, contrast: CodeContrast = 'standard') {
-  const colors = github[scheme][contrast].colors ?? {};
-  const editor = colors['editor.background'] ?? codeBackground(scheme, contrast);
-  const text = colors['textCodeBlock.background'];
-  if (!text) return codeBackground(scheme, contrast);
-  const alpha = text.length === 9 ? Number.parseInt(text.slice(7), 16) / 255 : 1;
-  return over(text.slice(0, 7), alpha, editor);
-}
 
 /** Every text color a theme gives code: its foreground and each token rule's foreground. */
 function textColors(theme: ThemeRegistration) {
@@ -72,7 +55,7 @@ function textColors(theme: ThemeRegistration) {
   return colors.filter(Boolean).map((color) => color.toLowerCase());
 }
 
-/** A code theme under envUI's name, with its text colors replaced as `replacements` lists. */
+/** A Shiki theme under envUI's name, with its text colors replaced as `replacements` lists. */
 function withColors(
   theme: ThemeRegistration,
   name: string,
@@ -98,34 +81,24 @@ function withColors(
   } as ThemeRegistration;
 }
 
-const memo = <T>(build: (scheme: ThemeValue, contrast: CodeContrast) => T) => {
-  const built = new Map<string, T>();
+/** Builds each theme once, when it is first asked for. */
+const memo = (
+  build: (scheme: ThemeValue, contrast: CodeContrast) => Promise<ThemeRegistration>,
+) => {
+  const built = new Map<string, Promise<ThemeRegistration>>();
   return (scheme: ThemeValue, contrast: CodeContrast = 'standard') => {
     const key = `${scheme}-${contrast}`;
-    if (!built.has(key)) built.set(key, build(scheme, contrast));
+    if (!built.has(key))
+      built.set(
+        key,
+        build(scheme, contrast).catch((error: unknown) => {
+          built.delete(key);
+          throw error;
+        }),
+      );
     return built.get(key)!;
   };
 };
-
-/**
- * The text color of code, inline and in blocks: the theme's foreground, moved as the token colors
- * are where it falls short on either background.
- */
-export const codeForeground = memo((scheme, contrast) => {
-  const original = github[scheme][contrast].colors?.['editor.foreground'] ?? '';
-  return (
-    readableReplacements(
-      [original],
-      [codeBackground(scheme, contrast), inlineCodeBackground(scheme, contrast)],
-      codeContrastTargets[contrast],
-      direction(scheme),
-    )[original.toLowerCase()] ?? original
-  );
-});
-
-/** The name envUI registers a code theme under, for code blocks or for diffs. */
-export const codeThemeName = (kind: 'code' | 'diff', scheme: ThemeValue, contrast: CodeContrast) =>
-  `envui-github${kind === 'diff' ? '-diff' : ''}-${scheme}${contrast === 'high' ? '-high' : ''}`;
 
 /**
  * The code theme of an app theme and contrast: its Shiki theme, with each token color that falls
@@ -134,21 +107,19 @@ export const codeThemeName = (kind: 'code' | 'diff', scheme: ThemeValue, contras
  * its chroma as the gamut allows there. Tokens that were distinct stay distinct. The colors are
  * computed where the theme first loads, from the installed Shiki themes.
  */
-export const codeTheme = memo((scheme, contrast) => {
-  const theme = github[scheme][contrast];
+export const codeTheme = memo(async (scheme, contrast) => {
+  const theme = await shikiTheme(scheme, contrast);
+  const { block, foreground } = codeColors(scheme, contrast);
   return withColors(
     theme,
     codeThemeName('code', scheme, contrast),
     readableReplacements(
       textColors(theme),
-      [codeBackground(scheme, contrast)],
+      [block],
       codeContrastTargets[contrast],
       direction(scheme),
     ),
-    {
-      'editor.background': codeBackground(scheme, contrast),
-      'editor.foreground': codeForeground(scheme, contrast),
-    },
+    { 'editor.background': block, 'editor.foreground': foreground },
   );
 });
 
@@ -163,8 +134,8 @@ const changeColorKeys = {
  * readable on the lines and words Diffs tints with the addition and deletion colors too, and those
  * colors, which also color the change counts, readable on code's background.
  */
-export const diffTheme = memo((scheme, contrast) => {
-  const theme = github[scheme][contrast];
+export const diffTheme = memo(async (scheme, contrast) => {
+  const theme = await shikiTheme(scheme, contrast);
   const background = codeBackground(scheme, contrast);
   const target = codeContrastTargets[contrast];
   const changeColors: Record<string, string> = {};
@@ -191,19 +162,3 @@ export const diffTheme = memo((scheme, contrast) => {
     { ...changeColors, 'editor.background': background },
   );
 });
-
-/**
- * The code theme's colors for the app theme, standard and high-contrast, as CSS custom properties:
- * the style sheet takes the high-contrast ones where the nearest Theme's contrast is high.
- */
-export function codeThemeStyle(theme: ThemeValue): CSSProperties {
-  return {
-    '--env-code-background': codeBackground(theme),
-    '--env-code-background-high': codeBackground(theme, 'high'),
-    '--env-code-inline-background': inlineCodeBackground(theme),
-    '--env-code-inline-background-high': inlineCodeBackground(theme, 'high'),
-    '--env-code-foreground': codeForeground(theme),
-    '--env-code-foreground-high': codeForeground(theme, 'high'),
-    colorScheme: theme,
-  } as CSSProperties;
-}

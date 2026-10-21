@@ -9,15 +9,15 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
 import {
   codeThemeName,
   codeThemeStyle,
-  diffTheme,
   type CodeContrast,
-} from '../content/internal/CodeThemes.js';
+} from '../content/internal/CodeColors.js';
+import { diffTheme } from '../content/internal/CodeThemes.js';
+import { useCodeContrast } from '../content/internal/useCodeContrast.js';
 import { EmptyState } from '../feedback/EmptyState.js';
 import { useTheme } from '../foundations/Theme.js';
 import { LoadingState } from '../feedback/LoadingState.js';
@@ -70,55 +70,27 @@ function registerThemes() {
       );
 }
 
-/**
- * The contrast of the nearest Theme around an element, as the style sheet reads it: high where it
- * says so, standard where it says so, and otherwise high while the system asks for more contrast.
- * Diffs takes its colors as themes rather than from the style sheet, so it follows this.
- */
-function useCodeContrast(ref: RefObject<HTMLElement | null>): CodeContrast {
-  const { contrast: themeContrast } = useTheme();
-  const [contrast, setContrast] = useState<CodeContrast>(
-    themeContrast === 'high' ? 'high' : 'standard',
-  );
-  useEffect(() => {
-    const element = ref.current;
-    const theme = element?.closest('.env-theme');
-    const media = window.matchMedia?.('(prefers-contrast: more)');
-    const update = () => {
-      const attribute = theme?.getAttribute('data-env-contrast');
-      setContrast(
-        attribute === 'high' || (attribute !== 'standard' && media?.matches) ? 'high' : 'standard',
-      );
-    };
-    update();
-    media?.addEventListener('change', update);
-    const observer = new MutationObserver(update);
-    if (theme)
-      observer.observe(theme, { attributes: true, attributeFilter: ['data-env-contrast'] });
-    return () => {
-      media?.removeEventListener('change', update);
-      observer.disconnect();
-    };
-  }, [ref, themeContrast]);
-  return contrast;
-}
-
 let highlighterReady: Promise<void> | undefined;
 const loadedLanguages = new Set<string>();
+const loadedContrasts = new Set<CodeContrast>();
 
-function prepareHighlighter(language: string) {
-  if (loadedLanguages.has(language) && highlighterReady) return highlighterReady;
+/**
+ * Loads a language and the themes of a contrast into Diffs' highlighter, adding to what it has:
+ * the high-contrast themes load only once a diff shows at high contrast.
+ */
+function prepareHighlighter(language: string, contrast: CodeContrast) {
+  if (loadedLanguages.has(language) && loadedContrasts.has(contrast) && highlighterReady)
+    return highlighterReady;
   // The code themes, readable on changed lines too; the app theme chooses between them.
   registerThemes();
+  const contrasts = new Set([...loadedContrasts, contrast]);
   highlighterReady = preloadHighlighter({
     langs: [...loadedLanguages, language] as never,
-    themes: [
-      ...Object.values(diffThemeNames('standard')),
-      ...Object.values(diffThemeNames('high')),
-    ],
+    themes: [...contrasts].flatMap((each) => Object.values(diffThemeNames(each))),
   }).then(
     () => {
       loadedLanguages.add(language);
+      loadedContrasts.add(contrast);
     },
     (error: unknown) => {
       highlighterReady = undefined;
@@ -157,7 +129,7 @@ export function CodeDiff({
   useEffect(() => {
     let active = true;
     setLoaded(false);
-    prepareHighlighter(lang).then(
+    prepareHighlighter(lang, contrast).then(
       () => {
         if (active) setLoaded(true);
       },
@@ -168,7 +140,7 @@ export function CodeDiff({
     return () => {
       active = false;
     };
-  }, [lang, attempt]);
+  }, [lang, contrast, attempt]);
 
   // Split and unified are different markup from Diffs, which CSS can't switch between, so the
   // width is measured: as the diff loads, before it paints, so it never shows the other layout
