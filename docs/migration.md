@@ -29,7 +29,7 @@ Connect Theme to the current preference and first-render initialization. Scope o
 
 ## Upgrade from envUI 0.x to 1.0
 
-envUI 1.0 renames components, compound parts, classes and documentation pages, and makes a few helpers internal; nothing is exported under a 0.x name. The codemods and the lint packages, released with envUI at the same version, do most of the work. The codemods are meant for 0.x code, run once: code already written for 1.0 can read as 0.x to them. Commit first, as the codemods write files in place:
+envUI 1.0 renames components, compound parts, classes and documentation pages, and makes a few helpers internal; nothing is exported under a 0.x name but `Row`, which is a [layout primitive](#layout-primitives) now. The codemods and the lint packages, released with envUI at the same version, do most of the work. The codemods are meant for 0.x code, run once: code already written for 1.0 can read as 0.x to them. Commit first, as the codemods write files in place:
 
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
@@ -80,7 +80,7 @@ The codemods also leave class names built at run time, CSS-in-JS outside a tagge
 
 ### Renamed components, parts and pages
 
-Components take the names other libraries and the ARIA patterns use, and compound components are namespaces of parts, `Menu.Root` and `Menu.Item`. `v1-names` renames every export below, with its props types, and `v1-classes` the classes; nothing is exported under a 0.x name.
+Components take the names other libraries and the ARIA patterns use, and compound components are namespaces of parts, `Menu.Root` and `Menu.Item`. `v1-names` renames every export below, with its props types, and `v1-classes` the classes; nothing is exported under a 0.x name but `Row`, which is a [layout primitive](#layout-primitives) now.
 
 | 0.x                                                                                                                                                                    | 1.0                                                                                                                                                                                      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

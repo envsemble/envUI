@@ -220,10 +220,13 @@ test('no 0.x name of the rename map is exported, and every namespace is', async 
       .filter((name) => name.includes('.'))
       .map((name) => name.split('.')[0]),
   );
+  // Names that 1.0 exports again for something else, such as Row, a list row in 0.x and a layout
+  // primitive in 1.0, which the map lists as reused.
+  const reused = new Set(map.reused ?? []);
   for (const [entry, exported] of Object.entries(entries)) {
     for (const section of ['exports', 'split', 'removed'])
       for (const name of names(map[section][entry] ?? {}))
-        if (!namespaces.has(name))
+        if (!namespaces.has(name) && !reused.has(name))
           assert.ok(!exported.includes(name), `${entry} still exports ${name}.`);
   }
   for (const namespace of namespaces)
@@ -248,7 +251,10 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'NavList',
     'Pager',
     'Card',
-    'Stack',
+    'Row',
+    'Column',
+    'Grid',
+    'Box',
     'List',
     'Disclosure',
     'EmptyState',
@@ -315,7 +321,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Stack,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -336,8 +342,8 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <Button {...buttonProps}>Create</Button><IconButton aria-label="Open" icon={<Home filled />} />
       <ConfirmButton variant="ghost" icon={<Home />} aria-label="Remove" confirmLabel="Remove?" onConfirm={() => undefined} />
       <ButtonGroup {...buttonGroupProps}><Button href="/">Home</Button><IconButton aria-label="Options" icon={<Home />} /><Button variant="primary" tone="accent">Confirm</Button></ButtonGroup>
-      <Stack gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Stack>
-      <Stack direction="row" wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Stack>
+      <Column gap={3} ref={createRef<HTMLDivElement>()}><TextField label="First" /><TextField label="Second" /></Column>
+      <Row wrap justify="end" ref={createRef<HTMLDivElement>()}><Button fullWidth>Save</Button><Button variant="outline" tone="danger">Cancel</Button></Row>
       <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
@@ -370,7 +376,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     // @ts-expect-error Connected buttons support rows or columns.
     const unknownOrientation = <ButtonGroup orientation="diagonal" />;
     // @ts-expect-error Layout gap must use the defined spacing scale.
-    const unknownGap = <Stack gap={10} />;
+    const unknownGap = <Row gap={10} />;
     // @ts-expect-error A pager link takes its direction from its part.
     const unknownDirection = <Pager.Next direction="up" href="/guide">Guide</Pager.Next>;
     // @ts-expect-error A pager link requires a destination URL.
@@ -556,7 +562,8 @@ function scopedSelector(selector) {
 }
 
 /**
- * A selector that starts at an envUI class, or a zero-specificity :where() around such selectors,
+ * A selector that starts at an envUI class or an envUI data-env- attribute, such as a layout
+ * primitive's [data-env-layout], or a zero-specificity :where() around such selectors,
  * never names the document element, through which it would reach the whole page, and reaches
  * siblings only within envUI's elements or with an envUI class.
  */
@@ -564,7 +571,7 @@ function scopedElement(selector) {
   const list = splitSelectors(selector);
   if (list.length !== 1) return list.length > 1 && list.every(scopedElement);
   if (namesDocumentElement(selector) || !siblingsStayScoped(selector)) return false;
-  if (/^(?:[a-zA-Z][\w-]*)?\.env-/.test(selector)) return true;
+  if (/^(?:[a-zA-Z][\w-]*)?(?:\.env-|\[data-env-)/.test(selector)) return true;
   if (!selector.startsWith(':where(')) return false;
   const end = closingParenthesis(selector, ':where'.length);
   if (end === -1) return false;
@@ -591,6 +598,8 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     '.env-markdown > * + *',
     '.env-button + .env-button',
     ":where(html:has(.env-app-shell[data-scroll='document']))",
+    ":where([data-env-layout='row'], [data-env-layout='column']) > *",
+    ':where([data-env-layout][data-gap="4"])',
   ])
     assert.ok(scopedSelector(selector), selector);
   for (const selector of [
@@ -598,6 +607,8 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':root',
     ':where(body)',
     ':where(.env-theme, body)',
+    ':where([data-gap])',
+    '[data-layout] > *',
     ':where(.env-theme) , body',
     ':where(.env-theme',
     ':where(html:has(body))',

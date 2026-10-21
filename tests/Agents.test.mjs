@@ -874,7 +874,7 @@ test('plan covers the capabilities of the benchmark tasks, and suggests few othe
     assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
   }
   // Recall is the list above: 30 of the 43 capabilities. Precision is the share of candidates the
-  // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Stack,
+  // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Column,
   // Badge and the like count against it although they fit, so it understates.
   const recall = Object.values(planned).flat().length;
   assert.ok(recall >= 30, `benchmark recall ${recall} of 43`);
@@ -967,7 +967,7 @@ const corpus = [
     ['SegmentedControl'],
   ],
   ['a Dark Mode switch in the header', ['ThemeToggle'], ['AppShell'], ['Switch']],
-  ['a form with a postal code field', [], ['TextField', 'Stack', 'Field'], ['Code']],
+  ['a form with a postal code field', [], ['TextField', 'Column', 'Field'], ['Code']],
   ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],
