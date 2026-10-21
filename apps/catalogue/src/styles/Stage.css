@@ -70,6 +70,23 @@
   inline-size: 100%;
 }
 
+/* A Scaffold on the stage stands in for a window, so it paints what a window would, the page's
+   background, with a surface's corners: its regions then read as an application's frame, with the
+   navigation's pane and the top bar against the page rather than the dots. */
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-width-box)
+  > .env-scaffold {
+  border-radius: var(--env-radius-surface);
+  background-color: var(--env-color-bg-page);
+  overflow: clip;
+}
+
+/* A top bar alone on the stage is a strip of a window's top, on the page's background with no line
+   below: a surface's corners set it apart from the dots. */
+:is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-width-box)
+  > .env-top-bar {
+  border-radius: var(--env-radius-surface);
+}
+
 /* A width frame keeps its own width on the stage; the example fills it. It is a window of its own,
    the env-window container, so what the example holds lays out at the frame's width: container
    queries without a name, such as a Page's gutters, and those on the window see the frame. */
