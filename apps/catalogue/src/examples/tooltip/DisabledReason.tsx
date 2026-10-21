@@ -2,6 +2,7 @@ import { Button, Column, Text, Tooltip } from '@envsemble/envui';
 import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 
 export default function DisabledReason() {
+  // Shown open in the docs; without defaultOpen, it opens on hover.
   return (
     <Column gap={2} align="start">
       <Tooltip

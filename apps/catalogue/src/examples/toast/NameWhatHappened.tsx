@@ -5,7 +5,8 @@ const moved: ToastNotification = { tone: 'success', message: 'Roadmap.md moved t
 
 function MoveButton() {
   const toast = useToast();
-  // Shown at once here, as after a press, and kept until it is dismissed.
+  // Shown at once in the docs, as after a press, and kept until it is dismissed; without this
+  // effect, the button shows it.
   useEffect(() => {
     const id = toast.show({ ...moved, duration: Infinity });
     return () => toast.dismiss(id);

@@ -172,7 +172,7 @@ export function Select({
       onValueChange={handleValueChange}
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
       }}
       modal={containedModal(portal, true)}
       name={name}

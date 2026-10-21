@@ -21,27 +21,35 @@ export function usePortalContainer(): PortalContainerValue {
   return useContext(PortalContainerContext);
 }
 
-/** Whether an event's target is a node outside an element, across documents and realms. */
-function outside(container: HTMLElement, target: EventTarget | null | undefined) {
-  if (!target || typeof (target as Node).nodeType !== 'number') return false;
-  return !container.contains(target as Node);
+/** A node, across documents and realms. */
+const isNode = (target: unknown): target is Node =>
+  !!target && typeof (target as Node).nodeType === 'number';
+
+/** Where an event happened: the innermost node of its path, inside a shadow root too. */
+function originOf(event: Event | null | undefined) {
+  return event?.composedPath?.()[0] ?? event?.target ?? undefined;
 }
 
 /**
  * Whether a contained overlay keeps itself open against a change: a close that came from outside
- * its container, such as a press elsewhere on the page or Esc while focus is elsewhere, or from no
- * event, such as another tooltip opening, other than code that closes it. An owner cancels such a
- * change in its root's onOpenChange.
+ * its container and its own trigger, such as a press elsewhere on the page or Esc while focus is
+ * elsewhere, or from no event, such as another tooltip opening, other than code that closes it.
+ * Its trigger, which may sit outside the container, still closes it, as do its own controls. An
+ * owner cancels such a change in its root's onOpenChange, passing its trigger where it holds one.
  */
 export function keepsOpen(
   { container, contained }: PortalContainerValue,
   next: boolean,
-  details: { event?: Event | null | undefined; reason?: string },
+  details: { event?: Event | null | undefined; reason?: string; trigger?: Element | undefined },
+  trigger?: Element | null,
 ) {
   if (!contained || next || !container) return false;
-  const target = details.event?.target;
-  if (!target) return details.reason !== 'imperative-action';
-  return outside(container, target);
+  // Pressing, hovering away from or leaving the trigger closes it, as it would anywhere.
+  if (details.reason?.startsWith('trigger-')) return false;
+  const origin = originOf(details.event);
+  if (!isNode(origin)) return details.reason !== 'imperative-action';
+  const own = [container, trigger, details.trigger].filter((element) => element instanceof Node);
+  return !own.some((element) => element!.contains(origin));
 }
 
 /**

@@ -181,7 +181,7 @@ export function ContextMenu({
     <BaseContextMenu.Root
       open={open}
       onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
+        if (keepsOpen(portal, next, details, region.current)) details.cancel();
         else setOpen(next);
       }}
       disabled={disabled}

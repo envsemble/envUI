@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Dialog, Column, Text } from '@envsemble/envui';
 
 export default function ConfirmDelete() {
+  // Shown open in the docs; start closed, useState(false), to open it from its trigger.
   const [open, setOpen] = useState(true);
   const [result, setResult] = useState('');
   return (

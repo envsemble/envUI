@@ -451,7 +451,7 @@ function TooltipTrigger({
         key={isDisabled ? 'disabled' : 'enabled'}
         open={open}
         onOpenChange={(next, details) => {
-          if (keepsOpen(portal, next, details)) {
+          if (keepsOpen(portal, next, details, triggerRef.current)) {
             details.cancel();
             return;
           }

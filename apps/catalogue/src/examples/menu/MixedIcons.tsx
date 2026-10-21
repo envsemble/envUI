@@ -3,6 +3,7 @@ import { Add } from '@envsemble/envui/icons/Add';
 import { Upload } from '@envsemble/envui/icons/Upload';
 
 export default function MixedIcons() {
+  // Shown open in the docs; without defaultOpen, it opens from its trigger.
   return (
     <Menu.Root aria-label="New" defaultOpen trigger={<Button startIcon={<Add />}>New</Button>}>
       {/* Wrong: one item with an icon stands out from its set for no reason. */}

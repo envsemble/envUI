@@ -9,7 +9,8 @@ const invited = people.map(
 
 function InviteButton() {
   const toast = useToast();
-  // Shown at once here, as after a press, and kept until they are dismissed.
+  // Shown at once in the docs, as after a press, and kept until they are dismissed; without this
+  // effect, the button shows them.
   useEffect(() => {
     const ids = invited.map((notification) => toast.show({ ...notification, duration: Infinity }));
     return () => ids.forEach((id) => toast.dismiss(id));

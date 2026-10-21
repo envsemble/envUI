@@ -311,7 +311,7 @@ import { useState, type ReactNode } from 'react';
 export function Preview({ children }: { children: ReactNode }) {
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   return (
-    <div style={{ position: 'relative', contain: 'layout' }}>
+    <div style={{ position: 'relative', contain: 'layout', containerType: 'inline-size' }}>
       <PortalContainer container={layer} contained>
         {children}
       </PortalContainer>
@@ -322,7 +322,8 @@ export function Preview({ children }: { children: ReactNode }) {
 ```
 
 - `container` is the element they render into. Pass `null` while it mounts, as above: they wait for it.
-- `contained` makes them part of the container rather than the window, for a preview of an interface with its overlays open, such as `defaultOpen` on a Menu.Root: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side, without flipping, at its content's size; and a press or <kbd>Esc</kbd> elsewhere in the page doesn't close them. Give the container layout containment, as above, so dialogs, sheets, toasts and scrims are placed inside it rather than over the window, and make it `inert` where it is only a picture.
+- `contained` makes them part of the container rather than the window, for a preview of an interface with its overlays open, such as `defaultOpen` on a Menu.Root: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side, without flipping, at its content's size; toasts are shown without the page's <kbd>F6</kbd> shortcut; and a press or <kbd>Esc</kbd> elsewhere in the page doesn't close them, while the overlay's trigger and its own controls still do. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere.
+- Give the container layout containment, as above, so dialogs, sheets, toasts and scrims are placed inside it rather than over the window, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. Make it `inert` where it is only a picture.
 
 ## React Server Components
 

@@ -7,6 +7,7 @@ const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', '
 const recent = documents.slice(0, 3);
 
 export default function ShowRecent() {
+  // Shown open in the docs; start closed, useState(false), to open it from the button.
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   const names = query

@@ -107,7 +107,7 @@ function Root({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
         else onOpenChange?.(next);
       }}
       modal={containedModal(portal, true)}
@@ -378,11 +378,16 @@ function Submenu({
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
+  const portal = usePortalContainer();
   return (
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, trigger.current)) {
+          details.cancel();
+          return;
+        }
         closeReason.current = next ? null : details.reason;
         onOpenChange?.(next);
       }}

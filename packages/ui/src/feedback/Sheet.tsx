@@ -212,7 +212,7 @@ export function Sheet({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, eventDetails) => {
-        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
+        if ((!next && pending) || keepsOpen(portal, next, eventDetails, triggerRef.current)) {
           eventDetails.cancel();
           return;
         }

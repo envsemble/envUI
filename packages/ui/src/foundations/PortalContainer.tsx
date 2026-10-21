@@ -16,9 +16,13 @@ export interface PortalContainerProps {
    * Whether the overlays belong to the container rather than the window, as in a preview of an
    * interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the
    * page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and
-   * sizes to its content; and a press or Esc outside the container doesn't close them. Make the
-   * container a containing block, such as with `contain: layout`, to keep fixed overlays, such as
-   * dialogs and their scrims, inside it.
+   * sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc
+   * outside the container and the overlay's trigger doesn't close them, while the trigger and the
+   * overlay's own controls do. Make the container a containing block, such as with
+   * `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and
+   * give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size
+   * container, or else as the window. A ContextMenu, which opens at the pointer, renders into the
+   * container but is otherwise as it is anywhere.
    * @default false
    */
   contained?: boolean;

@@ -6,6 +6,7 @@ import { Search } from '@envsemble/envui/icons/Search';
 const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', 'Budget.md'];
 
 export default function EmptyUntilTyped() {
+  // Shown open in the docs; start closed, useState(false), to open it from the button.
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   // Wrong: nothing to choose until people type, though they often want a recent document.

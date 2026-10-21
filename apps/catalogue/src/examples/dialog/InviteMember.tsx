@@ -10,7 +10,8 @@ const roles = [
 export default function InviteMember() {
   const formId = useId();
   const emailField = useRef<HTMLInputElement>(null);
-  // Shown open after a send with a mistyped address, its error on the field.
+  // Shown open in the docs after a send with a mistyped address, its error on the field; start
+  // closed and empty, with useState(false), useState('') and useState<string>().
   const [open, setOpen] = useState(true);
   const [email, setEmail] = useState('sam.lee@example');
   const [error, setError] = useState<string | undefined>(

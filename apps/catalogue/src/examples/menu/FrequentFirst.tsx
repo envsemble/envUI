@@ -9,6 +9,7 @@ export default function FrequentFirst() {
   return (
     <Menu.Root
       aria-label="Document actions"
+      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
     >

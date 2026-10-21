@@ -112,7 +112,7 @@ export function HoverCard({
     <BasePreviewCard.Root
       open={open}
       onOpenChange={(next, details) => {
-        if (keepsOpen(portal, next, details)) details.cancel();
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
         else setOpen(next, details.reason as PopoverOpenChangeReason);
       }}
     >

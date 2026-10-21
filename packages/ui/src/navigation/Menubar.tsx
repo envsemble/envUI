@@ -435,7 +435,7 @@ function Menu({
         // late, focus may already be in one of the menu's own submenus, so the menu stays open.
         if (
           (!next && details.reason === 'trigger-focus' && focusInSubmenu()) ||
-          keepsOpen(portal, next, details)
+          keepsOpen(portal, next, details, trigger.current)
         ) {
           details.cancel();
           return;

@@ -8,6 +8,7 @@ const final = false;
 export default function HiddenItem() {
   return (
     <Menu.Root
+      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       aria-label="Report actions"
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}

@@ -3,6 +3,7 @@ import { Button, Dialog } from '@envsemble/envui';
 export default function CancelAsCloseLabel() {
   return (
     <Dialog
+      // Shown open in the docs; without defaultOpen, it opens from its trigger.
       defaultOpen
       trigger={<Button variant="secondary">Archive project</Button>}
       title="Archive Northwind launch?"
