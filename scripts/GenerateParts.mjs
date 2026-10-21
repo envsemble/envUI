@@ -451,7 +451,7 @@ export function removedParts(before, after, changesets = '') {
         label,
         name,
         // The whole name, so a changeset about env-card-header doesn't record env-card.
-        recorded: new RegExp(`(?<![\w-])${name}(?![\w-])`).test(changesets),
+        recorded: new RegExp(String.raw`(?<![\w-])${name}(?![\w-])`).test(changesets),
       });
   return removed;
 }
