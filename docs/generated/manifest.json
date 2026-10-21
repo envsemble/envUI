@@ -10451,26 +10451,56 @@
         {
           "name": "Conversation",
           "title": "Conversation",
-          "description": "MessageList is a log, so assistive technology politely announces messages as they arrive. A Composer below the list writes the next message.",
+          "description": "A message is one entry of a conversation, such as a chat message or a comment, in a MessageList that announces new messages politely. A Composer below writes the next one.",
           "file": "docs/examples/message/Conversation.tsx"
         },
         {
           "name": "DeliveryStatus",
           "title": "Delivery status",
-          "description": "A message that couldn't be sent says so and offers Retry; while it is sent again it shows Sending.",
+          "description": "`status` shows Sending, or Not sent; offer Retry beside a message that failed.",
           "file": "docs/examples/message/DeliveryStatus.tsx"
         },
         {
           "name": "FormattedAnswer",
-          "title": "A formatted answer",
-          "description": "Markdown inside a message from someone else keeps the full width. A CopyButton in `actions` copies the answer.",
+          "title": "Formatted answer",
+          "description": "",
           "file": "docs/examples/message/FormattedAnswer.tsx"
         },
         {
           "name": "CommentThread",
-          "title": "A comment thread",
-          "description": "Comments by several people read best at full width: each is `from=\"other\"`, with its author and a RelativeTime in the header.",
+          "title": "Do: Comments by others, each with its author, at full width.",
+          "description": "",
           "file": "docs/examples/message/CommentThread.tsx"
+        },
+        {
+          "name": "SelfForOthers",
+          "title": "Don't: self for someone else, to put them on a side: self means you.",
+          "description": "",
+          "file": "docs/examples/message/SelfForOthers.tsx"
+        },
+        {
+          "name": "AuthorWhereNeeded",
+          "title": "Do: An author where it tells people apart.",
+          "description": "",
+          "file": "docs/examples/message/AuthorWhereNeeded.tsx"
+        },
+        {
+          "name": "AuthorEverywhere",
+          "title": "Don't: Your own name on your own messages.",
+          "description": "",
+          "file": "docs/examples/message/AuthorEverywhere.tsx"
+        },
+        {
+          "name": "MessageAnatomy",
+          "title": "Message anatomy",
+          "description": "",
+          "file": "docs/examples/message/MessageAnatomy.tsx"
+        },
+        {
+          "name": "BubbleWidth",
+          "title": "Bubble width",
+          "description": "",
+          "file": "docs/examples/message/BubbleWidth.tsx"
         }
       ],
       "parts": {
@@ -10613,26 +10643,62 @@
         {
           "name": "ProjectHealth",
           "title": "Project health",
-          "description": "- Stat.Root is one figure with its `label`, an optional `trend` and an optional `description`. It has no surface of its own. - Stat.Group puts stats on one surface, a pane by default, in as many even columns as fit.",
+          "description": "A stat is a labelled key figure, with how it changed. Stat.Group puts a few on one surface.",
           "file": "docs/examples/stat/ProjectHealth.tsx"
         },
         {
           "name": "TrendTones",
-          "title": "Good news and bad news",
-          "description": "Fewer risks take the success tone, a higher error rate the danger tone, and a rising cost that stays within budget the warning tone.",
+          "title": "Trend tones",
+          "description": "A trend's `tone` replaces the default where a rise is bad news, or a fall good news.",
           "file": "docs/examples/stat/TrendTones.tsx"
         },
         {
           "name": "OnAPane",
-          "title": "On a pane",
-          "description": "On a pane, the group takes the muted background and a smaller padding; the heading names the group.",
+          "title": "Backgrounds",
+          "description": "Stat.Group is `default` on the page, and `muted` on a pane; `page` and `raised` where they fit.",
           "file": "docs/examples/stat/OnAPane.tsx"
         },
         {
           "name": "InACard",
-          "title": "One figure in a card",
-          "description": "A stat on its own has no surface; a Card gives it one.",
+          "title": "One figure",
+          "description": "A Stat.Root has no surface; a Card gives one figure a frame.",
           "file": "docs/examples/stat/InACard.tsx"
+        },
+        {
+          "name": "TrendInWords",
+          "title": "Do: Say the change in words, with its period.",
+          "description": "",
+          "file": "docs/examples/stat/TrendInWords.tsx"
+        },
+        {
+          "name": "TrendWithoutWords",
+          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
+          "description": "",
+          "file": "docs/examples/stat/TrendWithoutWords.tsx"
+        },
+        {
+          "name": "BadNewsTone",
+          "title": "Do: A rise that is bad news in the danger tone.",
+          "description": "",
+          "file": "docs/examples/stat/BadNewsTone.tsx"
+        },
+        {
+          "name": "DefaultToneForBadNews",
+          "title": "Don't: A rising error rate in the default success tone.",
+          "description": "",
+          "file": "docs/examples/stat/DefaultToneForBadNews.tsx"
+        },
+        {
+          "name": "StatAnatomy",
+          "title": "Stat anatomy",
+          "description": "",
+          "file": "docs/examples/stat/StatAnatomy.tsx"
+        },
+        {
+          "name": "GroupColumns",
+          "title": "Group columns",
+          "description": "",
+          "file": "docs/examples/stat/GroupColumns.tsx"
         }
       ],
       "parts": {
@@ -10756,26 +10822,62 @@
         {
           "name": "Deployments",
           "title": "Deployments",
-          "description": "A calendar heatmap shows a value for each day as a shade of one tone: weeks are columns and weekdays rows, with month names above and a legend below. Higher values stand out more in both themes. Every day is a cell named with its date and value, shown in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through. The application passes the values by day; dates are calendar days, independent of time zones.",
+          "description": "A calendar heatmap shows a value for each day as a shade of one tone, weeks as columns. Each day is named with its date and value, shown in a tooltip.",
           "file": "docs/examples/calendar-heatmap/Deployments.tsx"
         },
         {
           "name": "ColorByRank",
           "title": "Color by rank",
-          "description": "`thresholds` from quantiles of the active days make each step hold about as many days, so a few very busy days don't leave the rest pale.",
+          "description": "`thresholds` sets where each step starts, such as quantiles of the data, so a few very busy days don't leave the rest pale.",
           "file": "docs/examples/calendar-heatmap/ColorByRank.tsx"
         },
         {
+          "name": "CustomTooltip",
+          "title": "Custom tooltip",
+          "description": "`formatTooltip` lays out the tooltip; the day's name keeps its date and value.",
+          "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
+        },
+        {
           "name": "ApplicationStrings",
-          "title": "The application's own strings",
-          "description": "EnvUIProvider's messages write the legend in the application's words, in the reader's language, and its locale names the months, weekdays and dates; `weekStart={1}` starts the weeks on Monday.",
+          "title": "Application strings",
+          "description": "EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.calendarHeatmap` writes the legend. `weekStart={1}` starts weeks on Monday.",
           "file": "docs/examples/calendar-heatmap/ApplicationStrings.tsx"
         },
         {
-          "name": "CustomTooltip",
-          "title": "A tooltip of your own",
-          "description": "`formatTooltip` lays out the tooltip; the day's accessible name keeps its date and value.",
-          "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
+          "name": "IncidentsInDanger",
+          "title": "Do: A tone that says what more means: danger for incidents.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/IncidentsInDanger.tsx"
+        },
+        {
+          "name": "IncidentsInSuccess",
+          "title": "Don't: Incidents in the success tone: a bad week reads as a good one.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/IncidentsInSuccess.tsx"
+        },
+        {
+          "name": "FiveLevels",
+          "title": "Do: Five steps, which people can tell apart.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/FiveLevels.tsx"
+        },
+        {
+          "name": "TenLevels",
+          "title": "Don't: Ten steps: neighbouring shades look the same.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/TenLevels.tsx"
+        },
+        {
+          "name": "HeatmapAnatomy",
+          "title": "CalendarHeatmap anatomy",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/HeatmapAnatomy.tsx"
+        },
+        {
+          "name": "ScrollingWeeks",
+          "title": "Scrolling weeks",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/ScrollingWeeks.tsx"
         }
       ],
       "parts": {

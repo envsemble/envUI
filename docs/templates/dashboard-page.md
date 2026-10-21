@@ -82,7 +82,7 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 
 - Replace `stats`, `goals`, `documents`, `upcoming` and `completedPerDay` with your service's data for the period.
 - Point "Export" and the documents' links at your routes; they're plain paths through the application's `LinkProvider` ([setup](../setup.md)).
-- Write each trend's label as a change with its period, "+12% from last month", and choose its direction by whether the number went up or down. Set its `tone` where that direction is good or bad news against the default, as for open tasks and lead time ([Stat](../components/stat.md#variants-and-sizes)).
+- Write each trend's label as a change with its period, "+12% from last month", and choose its direction by whether the number went up or down. Set its `tone` where that direction is good or bad news against the default, as for open tasks and lead time ([Stat](../components/stat.md#trend-tones)).
 
 ## Content guidelines
 

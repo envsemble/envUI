@@ -42,117 +42,103 @@ components:
 
 ## Overview
 
-A stat is a labelled key figure: what is measured, the figure in large digits, and optionally how it changed and over what period. Stats sum up a view, such as a dashboard, in a few figures people take in at a glance.
+A stat is a labelled key figure, with how it changed. Stat.Group puts a few on one surface.
 
-The parts are members of the `Stat` namespace:
-
-- **Stat.Root** is one figure with its `label`, an optional `trend` and an optional `description`. It has no surface of its own.
-- **Stat.Group** puts stats on one surface, a pane by default, in as many even columns as fit.
-
-```tsx example=ProjectHealth
+```tsx example=ProjectHealth caption="An AnimatedNumber as the value rolls to each new figure."
 
 ```
 
-## Anatomy
+## Variants
 
-1. **Label** (`label`): muted 0.875 rem text above the figure.
-2. **Value** (`value`): the figure at 1.75 rem and medium weight, in tabular digits, so figures of the same length line up.
-3. **Trend** (optional, `trend`): a 1 rem direction icon and the change as text, at medium weight in the trend's tone.
-4. **Description** (optional, `description`): muted 0.875 rem text after the trend, such as the period.
-5. **Group** (Stat.Group): a surface, a pane by default, with the surface's padding, which holds the stats in columns.
+| Trend  | Default tone |
+| ------ | ------------ |
+| `up`   | `success`    |
+| `down` | `danger`     |
+| `flat` | `neutral`    |
 
-The label, value and footer are 0.25 rem apart. The trend and the description share a row, 0.75 rem apart, and wrap when they don't fit.
+### Trend tones
 
-## Variants and sizes
-
-| Trend direction | Icon          | Default tone |
-| --------------- | ------------- | ------------ |
-| `up`            | Trending up   | `success`    |
-| `down`          | Trending down | `danger`     |
-| `flat`          | Trending flat | `neutral`    |
-
-- A trend's `tone` replaces the default: `success`, `warning`, `danger` or `neutral`. Set it when a rise is bad news, as for costs or errors, or a fall is good news, as for open risks.
-- **Columns**: Stat.Group lays its stats out in as many even columns as fit, each at least 11 rem wide, 1 to 2 rem apart, with 1.5 rem between rows. A narrow group, such as on a phone, keeps two columns down to 6.5 rem each, and stacks its stats only below that.
-- **Figures in a group** shrink with a narrow column, from 1.75 rem down to 1.25 rem, so they stay on one line.
-- **Group background**: `default` for a group on the page, the default; `muted` for a group on a pane, so it stands apart; `page` or `raised` where those fit. `padding` takes a step of the spacing scale; without it, the inset is 1.25 rem in narrow windows and 1.5 rem from 50 rem wide.
-
-## States and behaviour
-
-- **Changing figures**: an AnimatedNumber as the `value` rolls to each new figure, up as it grows and down as it shrinks, and fades with a reduced-motion preference.
-- **Named groups**: a Stat.Group with `aria-label` or `aria-labelledby` has `role="group"`, so screen readers announce its name as people enter it; without a name it adds no role.
-- **Reading order**: a stat reads as its text in order: label, value, trend and description. The trend's icon is hidden from assistive technology.
-- **Long text**: labels, figures and descriptions wrap, anywhere in a long word if they must, instead of overflowing their column.
-- **Read-only**: stats take no focus and no input.
-
-## Content guidelines
-
-- Keep labels short, as a noun phrase in sentence case: "Active projects", "Lead time", "Error rate".
-- Put the unit in the value or the description: "2.5 days", "0.4%", "Median".
-- Format figures in the application, in the reader's language and with its separators: "1,284", "€4,120".
-- Write the trend so it reads well without its icon and its color: "+12% from last month", "2 fewer than last week", "No change".
-- Say the period in the description when the trend's text doesn't: "Last 30 days".
-
-## Do and don't
-
-### Do
-
-- Show a few figures that matter for the view, three to five in a group.
-- Set the trend's `tone` when a change in its direction is good or bad news against the default.
-- Name a group with `aria-label` or `aria-labelledby` when it stands for a section, such as Project health.
-- Put a single stat in a [Card](../components/card.md) or a Surface where it needs a frame.
-
-### Don't
-
-- Don't use stats for many values people compare or sort; use a [Table](../components/table.md).
-- Don't show a quantity of a known maximum as a stat alone; use a [Meter](../components/meter.md).
-- Don't rely on the trend's color to say whether a change is good; say it in the label where it matters.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                                                     |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Pass over the stats, which take no focus; screen readers reach them as they read the page. |
-
-### envUI provides
-
-- The trend's direction in its text and icon, never in color alone, with the icon hidden from assistive technology.
-- `role="group"` on a Stat.Group named with `aria-label` or `aria-labelledby`.
-- Labels, figures, trends and descriptions at 4.5:1 or more on the canvas, panes and rows, in every tone and both themes.
-- Tabular digits, so figures line up and don't shift as they change.
-
-### You provide
-
-- A trend label that says which way the figure moved, such as "+12%" or "2 fewer", since the icon is hidden.
-- A name for a group that stands for a section.
-- Figures formatted in the reader's language, with their units.
-
-## Examples
-
-### Good news and bad news
-
-Fewer risks take the success tone, a higher error rate the danger tone, and a rising cost that stays within budget the warning tone.
+A trend's `tone` replaces the default where a rise is bad news, or a fall good news.
 
 ```tsx example=TrendTones
 
 ```
 
-### On a pane
+### Backgrounds
 
-On a pane, the group takes the muted background and a smaller padding; the heading names the group.
+Stat.Group is `default` on the page, and `muted` on a pane; `page` and `raised` where they fit.
 
 ```tsx example=OnAPane
 
 ```
 
-### One figure in a card
+### One figure
 
-A stat on its own has no surface; a Card gives it one.
+A Stat.Root has no surface; a Card gives one figure a frame.
 
 ```tsx example=InACard
 
 ```
+
+## When to use
+
+```tsx do=TrendInWords caption="Say the change in words, with its period."
+
+```
+
+```tsx dont=TrendWithoutWords caption="A bare percentage: without the icon and color, it doesn't say which way."
+
+```
+
+```tsx do=BadNewsTone caption="A rise that is bad news in the danger tone."
+
+```
+
+```tsx dont=DefaultToneForBadNews caption="A rising error rate in the default success tone."
+
+```
+
+- Three to five stats in a group.
+
+### Content
+
+- Labels as short noun phrases: Active projects, Lead time.
+- The unit in the value or the description: 2.5 days, Median.
+- Figures formatted in the reader's language: 1,284, €4,120.
+
+## Anatomy
+
+```tsx anatomy=StatAnatomy
+
+```
+
+1. **Group** (`env-stat-group`)
+2. **Label** (`env-stat-label`, `label`)
+3. **Value** (`env-stat-value`, `value`)
+4. **Trend** (`env-stat-trend`, `trend`)
+5. **Description** (`env-stat-description`, `description`)
+
+## Adapting to width
+
+A group shows as many even columns as fit, keeps two in a narrow group, and stacks only below that. Figures shrink to stay on one line.
+
+```tsx example=GroupColumns widths="12 20 40"
+
+```
+
+## Accessibility
+
+### envUI provides
+
+- The trend's direction in its text and icon, never in color alone.
+- `role="group"` on a named Stat.Group.
+- Tabular digits, so figures don't shift as they change.
+
+### You provide
+
+- A trend label that says which way, such as +12% or 2 fewer.
+- A name for a group that stands for a section.
+- Figures formatted in the reader's language.
 
 ## Changelog
 
