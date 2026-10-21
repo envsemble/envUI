@@ -8107,44 +8107,74 @@
         {
           "name": "EditAndPreview",
           "title": "Edit and preview",
-          "description": "- RichTextEditor edits the Markdown, with references people insert by typing a trigger such as @, optional slash commands, attachments the application uploads and links from its own picker. - RichText shows saved Markdown read-only with the editor's own schema, so it looks the same and its references work the same. It renders on a server too. - createRichTextExtensions returns the Tiptap extensions both share, for other Tiptap integrations that need the same schema.",
+          "description": "RichTextEditor is a field for formatted text that people edit as it looks; its value is Markdown. RichText shows saved Markdown the same way. Both come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, as setup describes.",
           "file": "docs/examples/rich-text/EditAndPreview.tsx"
         },
         {
           "name": "SavedContent",
-          "title": "Show saved content",
-          "description": "RichText shows saved Markdown read-only. The application opens references and links through `onReferenceClick` and `onLinkClick`.",
+          "title": "Saved content",
+          "description": "RichText shows saved Markdown read-only, also on a server. `onReferenceClick` and `onLinkClick` open references and links.",
           "file": "docs/examples/rich-text/SavedContent.tsx"
         },
         {
           "name": "References",
-          "title": "Mention people and topics",
-          "description": "Each reference source has a trigger, a name for its list and a lookup. Here a timer stands in for a search on a server, which the signal cancels when the query changes.",
+          "title": "References",
+          "description": "Typing a source's trigger, such as @, opens its suggestions. The Markdown keeps each reference's ID; resolving it is the application's.",
           "file": "docs/examples/rich-text/References.tsx"
         },
         {
           "name": "SlashCommands",
           "title": "Slash commands",
-          "description": "`slashCommands` adds a menu of blocks on /, and the application's own commands after them.",
+          "description": "`slashCommands` offers blocks on /, then the application's own commands.",
           "file": "docs/examples/rich-text/SlashCommands.tsx"
         },
         {
           "name": "UploadsAndLinks",
-          "title": "Attachments and links",
-          "description": "`onUpload` makes Attach files upload through the application, and `onRequestLink` replaces the link dialog with the application's own picker.",
+          "title": "Uploads and links",
+          "description": "`onUpload` adds Attach files, and `onRequestLink` replaces the link dialog with the application's picker.",
           "file": "docs/examples/rich-text/UploadsAndLinks.tsx"
         },
         {
           "name": "EditorCommands",
-          "title": "Commands from outside",
+          "title": "Editor commands",
           "description": "`ref.editor` is the Tiptap editor, so the application can change the document with its commands.",
           "file": "docs/examples/rich-text/EditorCommands.tsx"
         },
         {
           "name": "ReleaseNotesForm",
-          "title": "In a form",
-          "description": "With `name`, the form submits the Markdown. `error` says what to fix.",
+          "title": "Release notes form",
+          "description": "With `name`, a form submits the Markdown; `error` says what to fix.",
           "file": "docs/examples/rich-text/ReleaseNotesForm.tsx"
+        },
+        {
+          "name": "FewCommands",
+          "title": "Do: The commands the content needs, such as three for a comment.",
+          "description": "",
+          "file": "docs/examples/rich-text/FewCommands.tsx"
+        },
+        {
+          "name": "EveryCommand",
+          "title": "Don't: Every command for a comment: the toolbar outweighs the text.",
+          "description": "",
+          "file": "docs/examples/rich-text/EveryCommand.tsx"
+        },
+        {
+          "name": "PlaceholderSaysHow",
+          "title": "Do: A label that names the document, and a placeholder that says how to start.",
+          "description": "",
+          "file": "docs/examples/rich-text/PlaceholderSaysHow.tsx"
+        },
+        {
+          "name": "VaguePlaceholder",
+          "title": "Don't: Text and Enter text here: neither says what to write.",
+          "description": "",
+          "file": "docs/examples/rich-text/VaguePlaceholder.tsx"
+        },
+        {
+          "name": "RichTextAnatomy",
+          "title": "RichText anatomy",
+          "description": "",
+          "file": "docs/examples/rich-text/RichTextAnatomy.tsx"
         }
       ],
       "parts": {
@@ -8418,32 +8448,62 @@
         {
           "name": "ProjectNote",
           "title": "Project note",
-          "description": "MarkdownEditor writes such a string: a native textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with Markdown. Both come from `@envsemble/envui/content`.",
+          "description": "Markdown renders a Markdown string in envUI's typography, and MarkdownEditor writes one. Both come from `@envsemble/envui/content`.",
           "file": "docs/examples/markdown/ProjectNote.tsx"
         },
         {
           "name": "EditDescription",
-          "title": "Write and preview",
-          "description": "MarkdownEditor with a label and a description grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.",
+          "title": "Edit description",
+          "description": "MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with `previewProps`.",
           "file": "docs/examples/markdown/EditDescription.tsx"
         },
         {
           "name": "OpenInPanel",
-          "title": "Open links in a panel",
-          "description": "`renderLink` opens document links in a panel with a plain click, and leaves modified clicks and other links to the browser.",
+          "title": "Open in panel",
+          "description": "`renderLink` renders links, such as to open some in a panel; modified clicks stay the browser's.",
           "file": "docs/examples/markdown/OpenInPanel.tsx"
         },
         {
           "name": "CustomElements",
-          "title": "Render an element your way",
-          "description": "`components` replaces how an element renders: here a quote becomes an Alert.",
+          "title": "Custom elements",
+          "description": "`components` replaces how an element renders, here a quote as an Alert; `remarkPlugins` and `rehypePlugins` extend the rest.",
           "file": "docs/examples/markdown/CustomElements.tsx"
         },
         {
           "name": "LinkPicker",
-          "title": "An application's link picker",
-          "description": "`onRequestLink` lets the application choose the link, here after a pause that stands in for its picker, with a shorter toolbar.",
+          "title": "Link picker",
+          "description": "",
           "file": "docs/examples/markdown/LinkPicker.tsx"
+        },
+        {
+          "name": "WithToolbar",
+          "title": "Do: A toolbar, so people needn't know the syntax.",
+          "description": "",
+          "file": "docs/examples/markdown/WithToolbar.tsx"
+        },
+        {
+          "name": "WithoutToolbar",
+          "title": "Don't: No toolbar: only people who know Markdown can format.",
+          "description": "",
+          "file": "docs/examples/markdown/WithoutToolbar.tsx"
+        },
+        {
+          "name": "LinkNamesDestination",
+          "title": "Do: Link text that names the destination.",
+          "description": "",
+          "file": "docs/examples/markdown/LinkNamesDestination.tsx"
+        },
+        {
+          "name": "ClickHere",
+          "title": "Don't: Click here: out of context, it says nothing.",
+          "description": "",
+          "file": "docs/examples/markdown/ClickHere.tsx"
+        },
+        {
+          "name": "MarkdownEditorAnatomy",
+          "title": "Markdown anatomy",
+          "description": "",
+          "file": "docs/examples/markdown/MarkdownEditorAnatomy.tsx"
         }
       ],
       "parts": {
