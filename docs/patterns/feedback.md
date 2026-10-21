@@ -73,7 +73,7 @@ Choose the surface by the message's scope, its urgency and whether people must a
 | An action failed and the page can't show it          | A toast with `tone="danger"` and "Try again"                                            | At once, as an alert              | Until dismissed             |
 | A decision people must make before going on          | A [Dialog](../components/dialog.md) or [ConfirmDialog](../components/confirm-dialog.md) | As it opens, with focus           | Until answered              |
 | The state of a row or an object                      | A [Badge](../components/badge.md) beside its name                                       | No: read with the row             | While the state lasts       |
-| New items behind a destination                       | A destination's `count` in a [Drawer](../components/drawer.md)     | No: part of the item's name       | Until the items are seen    |
+| New items behind a destination                       | A destination's `count` in a [Drawer](../components/drawer.md)                          | No: part of the item's name       | Until the items are seen    |
 
 1. **Field errors:** on the field, as [Form layout and validation](forms.md) describes.
 2. **Alert:** a title and one sentence, in its tone, with an `action` where there is one thing to do.

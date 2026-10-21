@@ -39,45 +39,9 @@ function LoadedPart({ part, what }: { part: typeof tokenReference; what: string 
   );
 }
 
-/** The Templates overview: a card per template page, saying where its screens render. */
-function Templates() {
-  const templates = pagesOf('Templates').flatMap((entry) => {
-    const page = guidePages.find((item) => item.path === entry.path);
-    return page?.document ? [{ ...page, document: page.document }] : [];
-  });
-  if (!templates.length)
-    return (
-      <Surface background="default" padding={0} className="docs-placeholder">
-        <EmptyState
-          align="center"
-          headingLevel={2}
-          icon={<ViewQuilt />}
-          title="No templates yet"
-          description="Templates are not published yet. Until then, the patterns and the examples on each component's page show how envUI composes."
-        />
-      </Surface>
-    );
-  return (
-    <ul className="docs-template-gallery" aria-label="Templates">
-      {templates.map(({ path, title, document }) => (
-        <li key={path}>
-          <Card
-            actions={<Link href={routeHref(path)}>Open {title}</Link>}
-            title={title}
-            headingLevel={2}
-            meta={document.metadata?.frame === 'app' ? 'Inside the app frame' : 'A whole screen'}
-            description={document.summary}
-            icon={<ViewQuilt />}
-          />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /**
- * A page with one view: a guide, pattern or template page of docs/, the token reference, the
- * templates overview or the changelog, under a banner with its title and section.
+ * A page with one view: a guide or pattern page of docs/, the token reference or the changelog,
+ * under a banner with its title and section.
  */
 export function StandalonePageContent({ page }: { page: StandalonePage }) {
   let content: ReactNode;
@@ -86,8 +50,7 @@ export function StandalonePageContent({ page }: { page: StandalonePage }) {
   else if (document) content = <Documentation document={document} />;
   else if (page.path === 'foundations/tokens')
     content = <LoadedPart part={tokenReference} what="token reference" />;
-  else if (page.path === 'changelog') content = <LoadedPart part={changelog} what="changelog" />;
-  else content = <Templates />;
+  else content = <LoadedPart part={changelog} what="changelog" />;
   // A pattern's section in the banner names its intent too.
   const breadcrumb = document?.metadata?.intent
     ? `${page.section} / ${document.metadata.intent}`

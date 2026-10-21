@@ -410,9 +410,7 @@ const destinations: Destination[] = [
 ];
 
 function Sidebar({ label }: { label: string }) {
-  return (
-    <Drawer className="density-sidebar" aria-label={label} destinations={destinations} />
-  );
+  return <Drawer className="density-sidebar" aria-label={label} destinations={destinations} />;
 }
 
 function NavigationSection() {

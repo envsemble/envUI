@@ -29,7 +29,7 @@ composes:
   - EmptyState
   - Button
   - Column
-  - NavList
+  - Drawer
   - Text
 related:
   - scaffold

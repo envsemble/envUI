@@ -736,7 +736,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
 });
 
-test('the installed MCP server lists the templates and serves a screen from the package', async function () {
+test('the installed MCP server lists the patterns and serves an example from the package', async function () {
   const messages = [
     {
       jsonrpc: '2.0',
@@ -749,13 +749,13 @@ test('the installed MCP server lists the templates and serves a screen from the 
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
-      params: { name: 'list_templates', arguments: {} },
+      params: { name: 'list_patterns', arguments: {} },
     },
     {
       jsonrpc: '2.0',
       id: 3,
       method: 'tools/call',
-      params: { name: 'get_template', arguments: { name: 'sign-in-page', file: 'SignInPage' } },
+      params: { name: 'get_example', arguments: { component: 'app-frame', example: 'AppFrame' } },
     },
   ];
   // The server answers each line on stdin and ends when stdin closes.
@@ -777,18 +777,17 @@ test('the installed MCP server lists the templates and serves a screen from the 
       .map((message) => [message.id, message]),
   );
   const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
-  const { templates } = value(2);
-  const signIn = templates.find((template) => template.name === 'sign-in-page');
-  assert.ok(signIn, `list_templates: ${templates.map((template) => template.name).join(', ')}`);
-  assert.equal(signIn.frame, 'none');
-  assert.deepEqual(signIn.files, ['SignInPage']);
-  const screen = value(3);
-  assert.equal(screen.template, 'sign-in-page');
-  assert.equal(
-    screen.source,
-    await readFile(join(installedDirectory, 'docs/examples/sign-in-page/SignInPage.tsx'), 'utf8'),
+  const { patterns } = value(2);
+  assert.ok(
+    patterns.some((pattern) => pattern.name === 'app-frame'),
+    `list_patterns: ${patterns.map((pattern) => pattern.name).join(', ')}`,
   );
-  assert.match(screen.source, /export default function SignInPage\(\)/);
+  const example = value(3);
+  assert.equal(
+    example.source,
+    await readFile(join(installedDirectory, 'docs/examples/app-frame/AppFrame.tsx'), 'utf8'),
+  );
+  assert.match(example.source, /export default function AppFrame\(\)/);
 });
 
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {

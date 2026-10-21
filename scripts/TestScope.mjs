@@ -110,7 +110,6 @@ export const exceptions = [
   ],
   // Live development edits the catalogue's sources and watches them update; the affected tier runs it.
   [/^apps\/catalogue\/src\//, ['LiveDevelopment']],
-  [/^docs\/templates\/|^apps\/catalogue\/src\/template\//, ['Templates']],
 ];
 
 /** More specs than this importing a changed helper leaves it to `npm run verify`. */

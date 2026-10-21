@@ -59,11 +59,6 @@ export type DocumentationBlock =
     }
   /** The question an exchange of a page of exchanges answers, shown as a Message. */
   | { kind: 'question'; text: string }
-  /**
-   * A template's screen, the file apps/catalogue/src/examples/<page>/<name>.tsx, rendered in frames of
-   * the frame route; app renders it inside the app frame template, none on its own.
-   */
-  | { kind: 'template'; name: string; heading: string; frame: 'app' | 'none' }
   /** A catalogue-only specimen in apps/catalogue/src/specimens/<page>/<name>.tsx. */
   | { kind: 'specimen'; name: string };
 
@@ -115,8 +110,6 @@ export interface DocumentationMetadata {
   intent?: string;
   /** The exports a pattern or template page combines. */
   composes?: string[];
-  /** Where a template page's screens render: inside the app frame, or on their own. */
-  frame?: 'app' | 'none';
 }
 
 export interface DocumentationEntry {

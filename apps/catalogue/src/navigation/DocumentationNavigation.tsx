@@ -6,7 +6,6 @@ import { RocketLaunch } from '@envsemble/envui/icons/RocketLaunch';
 import { Article } from '@envsemble/envui/icons/Article';
 import { Token } from '@envsemble/envui/icons/Token';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
-import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
 import { Handyman } from '@envsemble/envui/icons/Handyman';
 import { History } from '@envsemble/envui/icons/History';
 import { references, foundations, componentGroups } from '../Reference';
@@ -32,7 +31,7 @@ interface NavigationProps {
 
 /**
  * The catalogue's destinations, one group per section of the site, in order: Get started,
- * Foundations, Components, Patterns, Templates, Contributing and Changelog. Drawer has one level of
+ * Foundations, Components, Patterns, Contributing and Changelog. Drawer has one level of
  * groups, so the kinds of components and the intents of patterns fold into their sections, in the
  * order the index gives them; the overview lists them by kind. `onChoose` runs as a destination is
  * followed, such as to close the sheet the navigation sits in.
@@ -99,8 +98,6 @@ export function documentationDestinations(
         }),
     ),
     ...pages('Patterns', patternPages, () => <Pattern />),
-    // The overview first, then the template pages it introduces.
-    ...pages('Templates', pagesOf('Templates'), () => <ViewQuilt />),
     ...pages('Contributing', pagesOf('Contributing'), () => <Handyman />),
     ...pages('Changelog', [changelogPage], () => <History />),
   ];

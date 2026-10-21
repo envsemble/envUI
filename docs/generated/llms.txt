@@ -31,9 +31,10 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Row](docs/components/row.md): Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
 - [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
 - [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
-- [Page](docs/components/page.md): The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top. Parts: `.env-page`.
+- [Scaffold](docs/components/scaffold.md): The invisible structure of an application's screen, with a top bar region, the navigation and a body that scrolls, which shows the navigation form that fits its own width. Also: resolveNavigationForms. Parts: `.env-scaffold`.
+- [Panes](docs/components/panes.md): Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room. Parts: `.env-panes`.
+- [Page](docs/components/page.md): The invisible column a page's content sits in, centered at a readable width with the page gutter by window class, and the page's header at its top. Parts: `.env-page`.
 - [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top. Parts: `.env-page-header`.
-- [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail. Parts: `.env-split-pane`, `.env-list-detail`.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Parts: `.env-surface`.
 - [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order. Parts: `.env-list`.
 - [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button. Parts: `.env-card`.
@@ -68,18 +69,15 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 
 - [Bar](docs/components/bar.md): The navigation bar for compact windows, such as phones, with three to five destinations, each an icon above its label. Parts: `.env-bar`.
 - [Rail](docs/components/rail.md): The navigation rail for medium windows, such as tablets, a narrow column of destinations, each an icon above a short label. Parts: `.env-rail`.
-- [NavigationDrawer](docs/components/navigation-drawer.md): The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings. Parts: `.env-drawer`.
+- [Drawer](docs/components/drawer.md): The navigation drawer for expanded and larger windows, a column of destinations with icons, labels, counts and group headings. Parts: `.env-drawer`.
 - [Tabs](docs/components/tabs.md): Switches between panels of related content in one place, from a rail of buttons. Parts: `.env-tabs`.
 - [Pager](docs/components/pager.md): Previous and next links between the pages of an ordered sequence, such as a guide, centered at the end of the content. Parts: `.env-pager`.
-- [AppShell](docs/components/app-shell.md): The frame of a whole application, built from parts, with a header, sidebars, the main content and an aside, and the frame's published sizes. Also: useAppShell, readAppShellCookie. Parts: `.env-app-shell`.
-- [Sidebar](docs/components/sidebar.md): A frame's sidebar and its parts, which collapse to a rail of icons or out of view, open over the content, resize and become a drawer on phones, with the trigger that opens and closes it. Also: SidebarTrigger, useSidebar. Parts: `.env-sidebar`, `.env-sidebar-trigger`.
-- [WindowFrame](docs/components/window-frame.md): A window without the app frame's sidebars that draws its own title bar, with its content scrolling below it, or the title bar on its own. Parts: `.env-window-frame`.
+- [TopBar](docs/components/top-bar.md): The bar at the top of an application or a screen, with start content, a title that truncates first and actions, which can stick, show page progress or be the window's title bar. Parts: `.env-top-bar`.
 - [Tree](docs/components/tree.md): A virtualized tree of rows for large hierarchies, such as file trees, with keyboard navigation and a context menu. Parts: `.env-tree`.
 - [DocumentTabs](docs/components/document-tabs.md): Editor-style tabs for open documents, which people switch, close, pin and close all; the application renders the active document. Parts: `.env-document-tabs`.
 - [PanelDock](docs/components/panel-dock.md): Panels docked side by side at the bottom of a region, for work beside the page, that minimize to tabs and maximize while their content stays mounted. Parts: `.env-panel-dock`.
 - [Breadcrumbs](docs/components/breadcrumbs.md): The path from the top level to the current page, with earlier levels as links or buttons. Parts: `.env-breadcrumbs`.
 - [Pagination](docs/components/pagination.md): The range of items shown with previous and next page buttons, small enough for a toolbar. Parts: `.env-pagination`.
-- [AccountMenu](docs/components/account-menu.md): The signed-in person's menu, opened from their avatar or a row with their name, with a header, a theme submenu and an optional organization submenu. Parts: `.env-account-menu`.
 
 ## Components: Content & guidance
 
@@ -107,7 +105,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast. Parts: `.env-toast`.
 - [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button. Parts: `.env-alert`.
 - [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose. Parts: `.env-dialog-popup`.
-- [Drawer](docs/components/drawer.md): A full-height panel that slides in from the start or end edge of the window, for filters, details, an inspector or a phone's navigation. Parts: `.env-drawer-popup`.
+- [Sheet](docs/components/sheet.md): A panel that slides in over the page from the end, the start or the bottom edge of the window, for filters, details, an inspector or a short set of choices. Parts: `.env-sheet-popup`.
 - [ConfirmDialog](docs/components/confirm-dialog.md): An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish. Parts: `.env-dialog-popup`.
 - [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks. Parts: `.env-command-palette`.
 - [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher, ThemeRadioGroup. Parts: `.env-menu`, `.env-organization-switcher`.
@@ -133,19 +131,12 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 ## Patterns: Find and navigate
 
 - [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
+- [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
+- [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
+- [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 - [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 - [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.
-
-## Templates
-
-- [App frame with sidebar](docs/templates/app-frame.md): The application's frame, with a sidebar of destinations that collapses to a rail, search, the account menu and a phone's top bar, around the page people are on. (a whole screen)
-- [Index page](docs/templates/index-page.md): A page inside the app frame that lists every object of one kind in a table people search, filter, sort and select, with bulk actions and pages. (inside the app frame)
-- [Details page](docs/templates/details-page.md): A page inside the app frame for one object, with where it sits, its status and actions, its content in tabs and a panel of its details beside them. (inside the app frame)
-- [Settings page](docs/templates/settings-page.md): A page inside the app frame where people change their profile, notifications and appearance, and delete the workspace, with each section saved the way its settings need. (inside the app frame)
-- [Dashboard](docs/templates/dashboard-page.md): A page inside the app frame with the workspace's key figures for a period and panels of activity, storage, goals, recent documents, what's due and alerts. (inside the app frame)
-- [Sign-in page](docs/templates/sign-in-page.md): A whole screen where people sign in with an email address and password, or with single sign-on, before the application opens. (a whole screen)
-- [Error and not-found pages](docs/templates/error-pages.md): The pages for an address with no page, an object people may not open, and an application that failed to load, each saying what happened and what to do next. (inside the app frame)
 
 ## Optional
 

@@ -1634,6 +1634,60 @@
         "Icon"
       ]
     },
+    "Drawer": {
+      "root": "env-drawer",
+      "source": "packages/ui/src/navigation/Drawer.tsx",
+      "parts": [
+        {
+          "class": "env-drawer",
+          "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
+        },
+        {
+          "class": "env-drawer-count",
+          "description": "A destination's count, at the item's end; 999+ above 999."
+        },
+        {
+          "class": "env-drawer-footer",
+          "description": "Content below the destinations, at the bottom of the drawer."
+        },
+        {
+          "class": "env-drawer-header",
+          "description": "Content above the destinations, such as the application's name or a search trigger."
+        },
+        {
+          "class": "env-drawer-heading",
+          "description": "A group's heading, which names the group's list."
+        },
+        {
+          "class": "env-drawer-item",
+          "description": "A destination: a link or button as wide as the drawer, with its icon, label and count."
+        },
+        {
+          "class": "env-drawer-label",
+          "description": "A destination's label."
+        },
+        {
+          "class": "env-drawer-list",
+          "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
+        },
+        {
+          "class": "env-drawer-section",
+          "description": "A group: its heading and the list of its destinations."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-current",
+          "values": [],
+          "parts": [
+            "env-drawer-item"
+          ]
+        }
+      ],
+      "uses": [
+        "Icon"
+      ]
+    },
     "DropZone": {
       "root": "env-drop-zone",
       "source": "packages/ui/src/forms/DropZone.tsx",
@@ -2435,60 +2489,6 @@
         "Icon",
         "Popup",
         "TextField"
-      ]
-    },
-    "NavigationDrawer": {
-      "root": "env-drawer",
-      "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
-      "parts": [
-        {
-          "class": "env-drawer",
-          "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
-        },
-        {
-          "class": "env-drawer-count",
-          "description": "A destination's count, at the item's end; 999+ above 999."
-        },
-        {
-          "class": "env-drawer-footer",
-          "description": "Content below the destinations, at the bottom of the drawer."
-        },
-        {
-          "class": "env-drawer-header",
-          "description": "Content above the destinations, such as the application's name or a search trigger."
-        },
-        {
-          "class": "env-drawer-heading",
-          "description": "A group's heading, which names the group's list."
-        },
-        {
-          "class": "env-drawer-item",
-          "description": "A destination: a link or button as wide as the drawer, with its icon, label and count."
-        },
-        {
-          "class": "env-drawer-label",
-          "description": "A destination's label."
-        },
-        {
-          "class": "env-drawer-list",
-          "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
-        },
-        {
-          "class": "env-drawer-section",
-          "description": "A group: its heading and the list of its destinations."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-current",
-          "values": [],
-          "parts": [
-            "env-drawer-item"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon"
       ]
     },
     "OrganizationSwitcher": {

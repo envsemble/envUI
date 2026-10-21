@@ -15,7 +15,6 @@ import { ExchangeColumns, ExchangeSection } from './Exchanges';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
-import { TemplatePreview } from './TemplatePreview';
 
 const statusTones = {
   experimental: 'warning',
@@ -132,13 +131,6 @@ function Section({ reference, section }: { reference: Document; section: Documen
           <Documentation key={index} markdown={block.markdown} path={reference.path} />
         ) : block.kind === 'example' ? (
           <LiveExample
-            key={block.name}
-            page={reference.id}
-            name={block.name}
-            title={block.heading}
-          />
-        ) : block.kind === 'template' ? (
-          <TemplatePreview
             key={block.name}
             page={reference.id}
             name={block.name}

@@ -439,6 +439,18 @@
       ],
       "rules": [
         {
+          "stylesheet": "Page.css",
+          "classes": [
+            "env-page-header",
+            "env-page-header-breadcrumbs",
+            "env-page-header-description",
+            "env-page-header-toolbar",
+            "env-page-header-actions"
+          ],
+          "properties": ["--env-page-sticky-*", "scroll-margin-block-start"],
+          "note": "A Page reckons the height of its sticky PageHeader from the rows the header has, read with :has(), so what scrolls into view in its content keeps clear of it; it never styles the header."
+        },
+        {
           "stylesheet": "ButtonGroup.css",
           "classes": ["env-button", "env-icon-button"],
           "properties": ["border-radius", "border-*-radius", "outline-offset"],

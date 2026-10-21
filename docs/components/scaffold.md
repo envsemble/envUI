@@ -49,7 +49,7 @@ The application gives it the navigation forms it wants, each the same destinatio
 
 ```
 
-Render one Scaffold at the application's root, around the router's outlet, with the current page, usually a [Page](page.md) or [Panes](panes.md), as its children. The [app frame](../templates/app-frame.md) template is the reference for an application's frame, and the [window frame](../patterns/window-frame.md) pattern for a window that draws its own title bar.
+Render one Scaffold at the application's root, around the router's outlet, with the current page, usually a [Page](page.md) or [Panes](panes.md), as its children. The [app frame](../patterns/app-frame.md) pattern is the reference for an application's frame, and the [window frame](../patterns/window-frame.md) pattern for a window that draws its own title bar.
 
 ## Anatomy
 

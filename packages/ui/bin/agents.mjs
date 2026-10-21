@@ -158,11 +158,6 @@ function renderBlock(manifest, aliasCount, packagePath) {
   lines.push('');
   if (manifest.patterns.length)
     lines.push(`Patterns, \`patterns/<name>.md\`: ${pageList(manifest.patterns)}.`);
-  if (manifest.templates.length)
-    lines.push(
-      `Templates, \`templates/<name>.md\`: ${pageList(manifest.templates)}.`,
-      'Template sources: `docs/examples/<template>/<Name>.tsx`; copy one and edit it.',
-    );
   if (manifest.foundations.length)
     lines.push(`Foundations, \`foundations/<name>.md\`: ${pageList(manifest.foundations)}.`);
   lines.push(endMarker);

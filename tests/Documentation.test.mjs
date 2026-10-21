@@ -416,7 +416,7 @@ const patternFrontmatter = [
   'useWhen: [Someone changes a preference.]',
   'avoidWhen:',
   '  - text: A form submitted once.',
-  '    see: sign-in-page',
+  '    see: switch',
   '  - text: A single choice.',
   '    use: Checkbox',
   'composes: [Switch]',
@@ -475,69 +475,11 @@ const patternBody = [
   '',
 ].join('\n');
 
-const templateFrontmatter = [
-  '---',
-  'title: Sign-in page',
-  'summary: A whole screen to sign in with an email and a password.',
-  'status: beta',
-  'since: 0.2.0',
-  'frame: none',
-  'aliases: [login page]',
-  'useWhen: [People sign in to the application.]',
-  'avoidWhen:',
-  '  - text: Changing a preference.',
-  '    see: settings',
-  'composes: [Switch]',
-  'related: [settings]',
-  '---',
-  '',
-].join('\n');
-
-const templateBody = [
-  '# Sign-in page',
-  '',
-  '## Overview',
-  '',
-  'A screen of its own.',
-  '',
-  '```tsx template=SignInPage',
-  '```',
-  '',
-  '## Anatomy',
-  '',
-  '1. A form.',
-  '',
-  '## Accessibility',
-  '',
-  '### Landmarks and headings',
-  '',
-  '- One main and one level-one heading.',
-  '',
-  '### envUI provides',
-  '',
-  '- Labelled fields.',
-  '',
-  '### You provide',
-  '',
-  '- The page title.',
-  '',
-  '## Examples',
-  '',
-  '### Signed out',
-  '',
-  'The screen inside the app frame.',
-  '',
-  '```tsx template=SignedOut frame=app',
-  '```',
-  '',
-].join('\n');
-
-/** A docs/ folder with a component, a pattern and a template page and their example files. */
+/** A docs/ folder with a component and a pattern page and their example files. */
 async function compositionFixture(run) {
   await templateFixture(async ({ page, read, examples, docs }) => {
     await writeFile(page, switchFrontmatter + switchBody);
     await mkdir(join(docs, 'patterns'), { recursive: true });
-    await mkdir(join(docs, 'templates'), { recursive: true });
     await writeFile(
       join(docs, 'index.md'),
       [
@@ -551,64 +493,42 @@ async function compositionFixture(run) {
         '',
         '- [Settings](patterns/settings.md)',
         '',
-        '## Templates',
-        '',
-        '- [Sign-in page](templates/sign-in-page.md)',
-        '',
       ].join('\n'),
     );
-    for (const [folder, names] of [
-      ['settings', ['Lead', 'Grouped', 'SavedAtOnce']],
-      ['sign-in-page', ['SignInPage', 'SignedOut']],
-    ]) {
+    for (const [folder, names] of [['settings', ['Lead', 'Grouped', 'SavedAtOnce']]]) {
       await mkdir(join(examples, folder), { recursive: true });
       for (const name of names) await writeFile(join(examples, folder, `${name}.tsx`), lead(name));
     }
     const pattern = join(docs, 'patterns', 'settings.md');
-    const template = join(docs, 'templates', 'sign-in-page.md');
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await writeFile(template, templateFrontmatter + templateBody);
-    await run({ pattern, template, read, examples, docs });
+    await run({ pattern, read, examples, docs });
   });
 }
 
-test('pattern and template pages are read into sections, examples and screens', async () => {
+test('pattern pages are read into sections and examples', async () => {
   await compositionFixture(async ({ read, examples }) => {
     const documents = read();
     const settings = documents.find((document) => document.id === 'settings');
-    const signIn = documents.find((document) => document.id === 'sign-in-page');
     assert.deepEqual(
       settings.sections.map((section) => section.id),
       ['overview', 'anatomy', 'content', 'accessibility', 'examples'],
     );
-    const blocks = (document) => document.sections.flatMap((section) => section.blocks);
-    assert.deepEqual(
-      blocks(signIn).filter((block) => block.kind === 'template'),
-      [
-        { kind: 'template', name: 'SignInPage', heading: 'Sign-in page', frame: 'none' },
-        { kind: 'template', name: 'SignedOut', heading: 'Signed out', frame: 'app' },
-      ],
-    );
-    assert.equal(blocks(settings).filter((block) => block.kind === 'example').length, 3);
-
-    // The packaged page fills in every screen's source; a screen keeps a frame that differs.
-    const compiled = compileDocument(signIn, documents, { examples });
-    assert.ok(compiled.includes(`\`\`\`tsx template=SignInPage\n${lead('SignInPage')}\`\`\``));
-    assert.ok(
-      compiled.includes(`\`\`\`tsx template=SignedOut frame=app\n${lead('SignedOut')}\`\`\``),
-    );
+    const blocks = settings.sections.flatMap((section) => section.blocks);
+    assert.equal(blocks.filter((block) => block.kind === 'example').length, 3);
+    // The packaged page fills in every example's source.
+    const compiled = compileDocument(settings, documents, { examples });
+    assert.ok(compiled.includes(`\`\`\`tsx example=Lead\n${lead('Lead')}\`\`\``));
     assert.doesNotMatch(compiled, /## Props/);
   });
 });
 
-test('pattern and template pages are validated as their kind', async () => {
-  await compositionFixture(async ({ pattern, template, read, docs }) => {
+test('pattern pages are validated as their kind', async () => {
+  await compositionFixture(async ({ pattern, read, docs }) => {
     const rejects = async (file, source, expected) => {
       await writeFile(file, source);
       assert.throws(read, expected);
     };
     const p = patternFrontmatter;
-    const t = templateFrontmatter;
     const withComposes = (list) => p.replace('composes: [Switch]', `composes: ${list}`);
     // Frontmatter: the fields of the kind, with values from their lists and names that exist.
     await rejects(pattern, p.replace(/intent: .*\n/, '') + patternBody, /intent is required/);
@@ -631,32 +551,20 @@ test('pattern and template pages are validated as their kind', async () => {
     );
     await rejects(
       pattern,
-      p.replace('see: sign-in-page', 'see: nowhere') + patternBody,
+      p.replace('see: switch', 'see: nowhere') + patternBody,
       /nowhere in avoidWhen, which is not an indexed page/,
     );
     await rejects(
       pattern,
-      p.replace('see: sign-in-page', 'see: settings') + patternBody,
+      p.replace('see: switch', 'see: settings') + patternBody,
       /the page itself/,
     );
     await rejects(
       pattern,
-      p.replace('    see: sign-in-page', '    see: sign-in-page\n    use: Switch') + patternBody,
+      p.replace('    see: switch', '    see: switch\n    use: Switch') + patternBody,
       /\{ text, see \}/,
     );
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await rejects(
-      template,
-      t.replace('frame: none', 'frame: side') + templateBody,
-      /frame must be one of app, none/,
-    );
-    await rejects(template, t.replace('frame: none\n', '') + templateBody, /frame is required/);
-    await rejects(
-      template,
-      t.replace('frame: none', 'frame: none\nintent: Find and navigate') + templateBody,
-      /unknown field intent/,
-    );
-    await writeFile(template, templateFrontmatter + templateBody);
     // Sections: the subset of the kind, with the ones it needs.
     await rejects(
       pattern,
@@ -681,7 +589,7 @@ test('pattern and template pages are validated as their kind', async () => {
     await rejects(
       pattern,
       p + patternBody.replace('example=Grouped', 'template=Grouped'),
-      /belongs on a template page/,
+      /the fence `tsx template=Grouped` is malformed/,
     );
     await rejects(
       pattern,
@@ -694,37 +602,6 @@ test('pattern and template pages are validated as their kind', async () => {
     );
     await rejects(pattern, patternBody, /Pattern page patterns\/settings\.md needs frontmatter/);
     await writeFile(pattern, patternFrontmatter + patternBody);
-    await rejects(
-      template,
-      t + templateBody.replace('### Landmarks and headings', '### Landmarks'),
-      /"### Landmarks and headings" list/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignInPage', 'example=SignInPage'),
-      /shows the main screen/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignInPage\n```', 'template=SignInPage\n<Page />\n```'),
-      /fence of template SignInPage must be empty/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignedOut frame=app', 'template=signedOut'),
-      /signedOut must be a PascalCase/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('frame=app', 'frame=side'),
-      /frame=side; frame is app or none/,
-    );
-    await rejects(
-      template,
-      t + templateBody.replace('template=SignedOut', 'template=Missing'),
-      /template Missing has no file/,
-    );
-    await writeFile(template, templateFrontmatter + templateBody);
     // The summary lives in the frontmatter only.
     const index = join(docs, 'index.md');
     const source = await readFile(index, 'utf8');
@@ -734,16 +611,6 @@ test('pattern and template pages are validated as their kind', async () => {
       /repeats a summary/,
     );
     // Each page's folder matches the index section that lists it.
-    await rejects(
-      index,
-      source.replace('## Templates', '## Foundations'),
-      /templates\/sign-in-page\.md is a template page, from docs\/templates, but the index lists it under "## Foundations"; list it under "## Templates"/,
-    );
-    await rejects(
-      index,
-      source.replace('## Patterns', '## Templates'),
-      /patterns\/settings\.md is a pattern page.*under "## Templates"; list it under "## Patterns"/,
-    );
     await rejects(
       index,
       source.replace('## Forms & selection', '## Patterns'),
@@ -757,11 +624,11 @@ test('pattern and template pages are validated as their kind', async () => {
     await writeFile(index, source);
     // A fence that names a file but doesn't parse is an error, not a code block.
     await rejects(
-      template,
-      t + templateBody.replace('frame=app', 'layout=app'),
-      /the fence `tsx template=SignedOut layout=app` is malformed/,
+      pattern,
+      patternFrontmatter + patternBody.replace('example=Grouped', 'example=Grouped layout=app'),
+      /the fence `tsx example=Grouped layout=app` is malformed/,
     );
-    await writeFile(template, templateFrontmatter + templateBody);
+    await writeFile(pattern, patternFrontmatter + patternBody);
     assert.doesNotThrow(read);
   });
 });

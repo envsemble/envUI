@@ -18,7 +18,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
 
-- [Write a pattern or template page](pattern-pages.md) — The frontmatter, sections and files of pattern and template pages, and the rules for template screens.
+- [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
 
 ## Foundations
 
@@ -132,18 +132,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
 - [Navigation](patterns/navigation.md)
+- [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
 - [Window frame](patterns/window-frame.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)
-
-## Templates
-
-- [App frame](templates/app-frame.md)
-- [Index page](templates/index-page.md)
-- [Details page](templates/details-page.md)
-- [Settings page](templates/settings-page.md)
-- [Dashboard](templates/dashboard-page.md)
-- [Sign-in page](templates/sign-in-page.md)
-- [Error and not-found pages](templates/error-pages.md)

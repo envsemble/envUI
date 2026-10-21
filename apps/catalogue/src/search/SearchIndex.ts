@@ -7,16 +7,7 @@ import { indexOptions, queryOptionsFor } from '../../../../scripts/SearchTerms.m
 /** What a search finds, as scripts/SearchIndex.mjs describes it. */
 export interface SearchResult {
   id: string;
-  kind:
-    | 'component'
-    | 'export'
-    | 'prop'
-    | 'token'
-    | 'foundation'
-    | 'pattern'
-    | 'template'
-    | 'guide'
-    | 'page';
+  kind: 'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page';
   title: string;
   detail: string;
   /** The document id of the page it is on, such as button, or a catalogue page's, such as tokens. */

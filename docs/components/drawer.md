@@ -5,8 +5,10 @@ status: beta
 since: 1.0.0
 category: Navigation
 aliases:
-  - Drawer
   - navigation drawer
+  - Sidebar
+  - sidebar
+  - hamburger menu
   - nav drawer
   - side navigation
   - sidebar navigation

@@ -392,52 +392,6 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
 
-test("in the hosted build, a template page's previews load in the site's own frames", async ({
-  page,
-}) => {
-  // The previews are iframes of the site's frame route, ?frame=, so the site's framing headers in
-  // _headers must allow its own origin: X-Frame-Options DENY left them blank.
-  requireSite();
-  await serveSite(page);
-  await page.goto(`${siteUrl}/templates/index-page`);
-  const frames = page.locator('iframe.docs-template-frame');
-  await expect(frames.first()).toBeVisible();
-  for (const frame of await frames.all()) {
-    await frame.scrollIntoViewIfNeeded();
-    await expect(
-      page.frameLocator(`iframe[title="${await frame.getAttribute('title')}"]`).locator('main'),
-    ).toBeVisible();
-  }
-});
-
-/**
- * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
- * the overview had not loaded failing, chosen by when it is asked for rather than by
- * module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
- * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
- * serves every file.
- */
-async function openFailingButtonPage(page: Page) {
-  const loaded = new Set<string>();
-  let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
-  await serveSite(page, {
-    failing: (pathname) => {
-      if (!pathname.startsWith('/assets/')) return false;
-      if (state === 'opening') loaded.add(pathname);
-      return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
-    },
-    failure: 'aborted',
-  });
-  await page.goto(`${siteUrl}/#/overview`);
-  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
-  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
-  state = 'failing';
-  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
-  const hero = page.getByRole('group', { name: 'Button example', exact: true });
-  await expect(hero.getByText('The example could not load')).toBeVisible();
-  return { hero, set: (next: 'assets' | 'up') => (state = next) };
-}
-
 test("in the hosted build, a reload whose files can't be fetched keeps the page and says so", async ({
   page,
 }) => {

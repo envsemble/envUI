@@ -2678,6 +2678,44 @@
         "@envsemble/envui"
       ]
     },
+    "Drawer": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/Drawer.tsx",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly DrawerDestination[]",
+          "required": true,
+          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content above the destinations, such as the application's name or a search trigger."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        }
+      ],
+      "native": [
+        "element"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "DropZone": {
       "kind": "component",
       "source": "packages/ui/src/forms/DropZone.tsx",
@@ -4697,44 +4735,6 @@
         "@envsemble/envui"
       ]
     },
-    "NavigationDrawer": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
-      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
-      "props": [
-        {
-          "name": "destinations",
-          "type": "readonly DrawerDestination[]",
-          "required": true,
-          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`."
-        },
-        {
-          "name": "header",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content above the destinations, such as the application's name or a search trigger."
-        },
-        {
-          "name": "footer",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "messages.navigation.label, Main",
-          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
-        }
-      ],
-      "native": [
-        "element"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
     "OrganizationSwitcher": {
       "kind": "component",
       "source": "packages/ui/src/navigation/OrganizationSwitcher.tsx",
@@ -6440,14 +6440,14 @@
           "name": "iconOnly",
           "type": "boolean",
           "required": false,
-          "default": "true inside a sidebar showing icons only, else false",
+          "default": "false",
           "description": "Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip."
         },
         {
           "name": "tooltipSide",
           "type": "'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end'",
           "required": false,
-          "default": "'inline-end' inside a sidebar showing icons only, else 'bottom'",
+          "default": "'bottom'",
           "description": "The side of the trigger the icon-only tooltip opens on."
         },
         {
@@ -6462,7 +6462,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Fill the width of the container, such as at the top of a sidebar."
+          "description": "Fill the width of the container, such as at the top of a navigation drawer."
         }
       ],
       "native": [

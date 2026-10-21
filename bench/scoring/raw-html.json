@@ -11,8 +11,8 @@
     "meter": { "weight": 1, "use": ["Meter"] },
     "details": { "weight": 1, "use": ["Disclosure"] },
     "kbd": { "weight": 0.5, "use": ["Kbd"] },
-    "nav": { "weight": 0.5, "use": ["AppShell", "Drawer", "Breadcrumbs"] },
-    "aside": { "weight": 0.5, "use": ["AppShell", "Dialog"] },
+    "nav": { "weight": 0.5, "use": ["Scaffold", "Drawer", "Breadcrumbs"] },
+    "aside": { "weight": 0.5, "use": ["Scaffold", "Dialog"] },
     "svg": { "weight": 0.5, "use": ["@envsemble/envui/icons/*", "Icon"] }
   },
   "inputTypes": {
@@ -54,7 +54,7 @@
     "alert": ["Alert"],
     "status": ["Alert", "Toast"],
     "tooltip": ["Tooltip"],
-    "navigation": ["AppShell", "Breadcrumbs"],
+    "navigation": ["Scaffold", "Breadcrumbs"],
     "table": ["Table"],
     "grid": ["Table"],
     "tree": ["Tree"]
