@@ -755,9 +755,37 @@ export default function transform(file, api, options = {}) {
     }
   }
 
+  /** The name a namespace member access reads, such as Row in `ui.Row` or `ui['Row']`. */
+  const memberName = (access, kind) => {
+    if (qualifiedKinds.has(kind)) return access.right?.name;
+    return access.computed ? literalValue(access.property) : access.property?.name;
+  };
+  // Through a namespace import, a file reads as 1.0 layout code as it does through named imports:
+  // it reads `ui.Column`, `ui.Grid` or `ui.Box`, or renders `<ui.Row>` with a prop only the layout
+  // primitive takes, as v1-stack writes it.
+  const namespaceLayoutCode = (local) =>
+    referencesTo(local).some(({ path, kind }) => {
+      if (!memberKinds.has(kind)) return false;
+      const access = path.parent.node;
+      const name = memberName(access, kind);
+      if (['Column', 'Grid', 'Box'].includes(name)) return true;
+      const opening = path.parent.parent?.node;
+      return (
+        reused.has(name) &&
+        opening?.type === 'JSXOpeningElement' &&
+        opening.name === access &&
+        opening.attributes.some(
+          (attribute) =>
+            attribute.type === 'JSXAttribute' &&
+            ['gap', 'wrap', 'justify', 'padding'].includes(attribute.name.name),
+        )
+      );
+    });
+
   // `import * as ui from '@envsemble/envui'`: rewrite `ui.<old name>` accesses.
   for (const { local, entry } of namespaceImports) {
     const handled = new Set();
+    const layout = entry.name === library && namespaceLayoutCode(local);
     for (const { path, kind } of referencesTo(local)) {
       if (kind === 'value') {
         // `const { Input } = ui` and `({ Input } = ui)`.
@@ -827,6 +855,7 @@ export default function transform(file, api, options = {}) {
           );
         continue;
       }
+      if (layout && reused.has(name)) continue;
       const flavor = flavorOf(kind);
       const outer = accessPath.parent?.node;
       const rename = entry.renames.get(name);

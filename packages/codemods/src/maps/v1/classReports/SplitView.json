@@ -3,7 +3,16 @@
     "report": "Panes has no generic pane: its panes are env-panes-main and env-panes-supporting, or env-panes-list and env-panes-detail."
   },
   "env-panes": {
-    "attributes": ["data-resizing"],
-    "report": "Panes sets no data-resizing while dragging: the divider has data-dragging, so write .env-panes:has(> .env-panes-divider[data-dragging])."
+    "attributes": [
+      "data-resizing",
+      "data-orientation",
+      "data-stack-below",
+      "data-stacked",
+      "data-detail-shown"
+    ],
+    "report": "Panes decides its arrangement in CSS and marks it with data-behavior, data-split-at and data-open, the pane shown in less room: it has no orientation or stacking, and while its divider is dragged the divider has data-dragging, so write .env-panes:has(> .env-panes-divider[data-dragging]) for data-resizing."
+  },
+  "env-split-pane-probe": {
+    "report": "Panes measures nothing: CSS decides its arrangement from its own width, at splitAt, so the probe is gone."
   }
 }

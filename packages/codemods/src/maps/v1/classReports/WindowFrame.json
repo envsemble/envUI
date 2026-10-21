@@ -1,5 +1,11 @@
 {
   "env-title-bar": {
     "report": "TitleBar is gone: a TopBar with titleBar is the window's title bar, .env-top-bar[data-title-bar], with the parts env-top-bar-start, env-top-bar-title and env-top-bar-actions."
+  },
+  "env-window-frame": {
+    "report": "WindowFrame is gone: a window that draws its title bar is a Scaffold, env-scaffold, with data-top-bar-span=\"full\", and its title bar a TopBar, .env-top-bar[data-title-bar]."
+  },
+  "env-window-frame-title-bar-layout": {
+    "report": "The title bar's layout has no class in 1.0: a TopBar lays out env-top-bar-start, env-top-bar-title and env-top-bar-actions itself."
   }
 }

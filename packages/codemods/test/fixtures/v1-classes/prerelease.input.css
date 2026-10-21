@@ -1,0 +1,46 @@
+/* Part classes of 1.0.0-prerelease.0 that 1.0 renames, or has none for. */
+.env-app-shell-header > .env-app-shell-header-title {
+  font-weight: var(--env-font-weight-strong);
+}
+.env-app-shell-header-start,
+.env-app-shell-header-end {
+  gap: var(--env-space-2);
+}
+.env-app-shell-main .env-app-shell-skip-links .env-app-shell-skip-link {
+  color: var(--env-color-fg-link);
+}
+.env-app-shell-loading-bar {
+  block-size: 2px;
+}
+.env-app-shell[data-mobile] {
+  block-size: 100dvh;
+}
+.env-sidebar[data-state='collapsed'] .env-sidebar-trigger {
+  color: var(--env-color-fg-muted);
+}
+.env-nav-list-item[data-selected] {
+  font-weight: var(--env-font-weight-strong);
+}
+.env-split-pane[data-stacked] .env-split-pane-handle {
+  display: none;
+}
+.env-list-detail[data-detail-shown] .env-list-detail-back,
+.env-list-detail-list,
+.env-list-detail-detail {
+  padding: var(--env-space-2);
+}
+.env-window-frame-title-bar .env-window-frame-title-bar-center {
+  padding-inline-start: var(--env-window-frame-title-bar-start);
+}
+.env-window-frame-content {
+  overscroll-behavior: contain;
+}
+.env-account-menu-trigger,
+.env-drawer-popup[data-side='end'],
+.env-table-stack-probe {
+  outline: 1px solid var(--env-color-border-default);
+}
+.x {
+  max-inline-size: var(--env-breakpoint-md);
+  border-block-end: var(--env-app-shell-header-divider);
+}
