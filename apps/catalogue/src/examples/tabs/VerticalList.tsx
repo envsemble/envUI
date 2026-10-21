@@ -1,4 +1,4 @@
-import { NavList, Column, Tabs, Text } from '@envsemble/envui';
+import { Button, Column, Tabs, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 import { Notifications } from '@envsemble/envui/icons/Notifications';
 import { Person } from '@envsemble/envui/icons/Person';
@@ -18,7 +18,11 @@ export default function VerticalList() {
       style={{ flexDirection: 'row', alignItems: 'start' }}
       items={sections.map((section) => ({
         value: section.value,
-        button: <NavList.Item icon={<section.icon />}>{section.label}</NavList.Item>,
+        button: (
+          <Button variant="ghost" startIcon={<section.icon />}>
+            {section.label}
+          </Button>
+        ),
         content: (
           <Column gap={2}>
             <Text render={<h3 />} variant="title">

@@ -1,13 +1,14 @@
 import { useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import {
-  Column,
-  CounterBadge,
-  NavList,
+  Bar,
+  Drawer,
   Page,
   PageHeader,
+  Rail,
   Scaffold,
   Text,
   TopBar,
+  type Destination,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Description } from '@envsemble/envui/icons/Description';
@@ -38,18 +39,18 @@ export default function PrimaryNavigation() {
     main.current?.focus();
   };
 
-  // One item per destination; the router renders the page, and the example keeps it in state.
-  const item = ({ id, label, href, icon, unread }: Destination) => (
-    <NavList.Item
-      key={id}
-      href={href}
-      icon={icon}
-      selected={id === current}
-      end={unread ? <CounterBadge value={unread} aria-label={`${unread} unread`} /> : undefined}
-      onClick={() => go(id)}
-    >
-      {label}
-    </NavList.Item>
+  // One array of destinations, which every navigation form takes; the router renders the page,
+  // and the example keeps it in state.
+  const items: Destination[] = [...destinations, ...workspace].map(
+    ({ id, label, href, icon, unread }, index) => ({
+      label,
+      href,
+      icon,
+      count: unread,
+      group: index < destinations.length ? undefined : 'Workspace',
+      current: id === current,
+      onSelect: () => go(id),
+    }),
   );
 
   return (
@@ -58,18 +59,11 @@ export default function PrimaryNavigation() {
       style={preview}
       bodyRef={main}
       topBar={<TopBar title="Northwind" />}
-      // The one primary navigation, named Primary, its current page selected.
+      // The one primary navigation, named Main, its current page marked, in each form.
       navigation={{
-        drawer: (
-          <Column
-            gap={4}
-            render={<nav aria-label="Primary" />}
-            style={{ padding: 'var(--env-space-3)' }}
-          >
-            <NavList.Root>{destinations.map(item)}</NavList.Root>
-            <NavList.Group label="Workspace">{workspace.map(item)}</NavList.Group>
-          </Column>
-        ),
+        bar: <Bar destinations={items} />,
+        rail: <Rail destinations={items} />,
+        drawer: <Drawer destinations={items} />,
       }}
     >
       <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>
@@ -79,7 +73,7 @@ export default function PrimaryNavigation() {
   );
 }
 
-interface Destination {
+interface Place {
   id: string;
   label: string;
   href: string;
@@ -88,7 +82,7 @@ interface Destination {
   unread?: number;
 }
 
-const destinations: Destination[] = [
+const destinations: Place[] = [
   {
     id: 'home',
     label: 'Home',
@@ -120,7 +114,7 @@ const destinations: Destination[] = [
   },
 ];
 
-const workspace: Destination[] = [
+const workspace: Place[] = [
   {
     id: 'team',
     label: 'Team',

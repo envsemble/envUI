@@ -251,6 +251,55 @@
         "Icon"
       ]
     },
+    "Bar": {
+      "root": "env-bar",
+      "source": "packages/ui/src/navigation/Bar.tsx",
+      "parts": [
+        {
+          "class": "env-bar",
+          "description": "The navigation bar: a nav landmark across the bottom of a compact window."
+        },
+        {
+          "class": "env-bar-count",
+          "description": "A destination's count, on the icon's top end; 999+ above 999."
+        },
+        {
+          "class": "env-bar-indicator",
+          "description": "The pill around a destination's icon, filled while the destination is current."
+        },
+        {
+          "class": "env-bar-item",
+          "description": "A destination: a link or button with its indicator above its label."
+        },
+        {
+          "class": "env-bar-label",
+          "description": "A destination's label, under its indicator, cut short with an ellipsis."
+        },
+        {
+          "class": "env-bar-list",
+          "description": "The row of destinations, which share the bar's width."
+        },
+        {
+          "class": "env-bar-more",
+          "description": "The last item past five destinations, which opens the rest in a menu."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-current",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-bar-item",
+            "env-bar-more"
+          ]
+        }
+      ],
+      "uses": [
+        "Icon"
+      ]
+    },
     "Breadcrumbs": {
       "root": "env-breadcrumbs",
       "source": "packages/ui/src/navigation/Breadcrumbs.tsx",
@@ -2388,81 +2437,58 @@
         "TextField"
       ]
     },
-    "NavList": {
-      "root": "env-nav-list",
-      "source": "packages/ui/src/navigation/NavList.tsx",
+    "NavigationDrawer": {
+      "root": "env-drawer",
+      "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
       "parts": [
         {
-          "class": "env-nav-list",
-          "description": "The navigation list."
+          "class": "env-drawer",
+          "description": "The navigation drawer: a nav landmark, a column with the header, the list and the footer."
         },
         {
-          "class": "env-nav-list-group",
-          "description": "A group of destinations."
+          "class": "env-drawer-count",
+          "description": "A destination's count, at the item's end; 999+ above 999."
         },
         {
-          "class": "env-nav-list-group-label",
-          "description": "A group's label."
+          "class": "env-drawer-footer",
+          "description": "Content below the destinations, at the bottom of the drawer."
         },
         {
-          "class": "env-nav-list-group-list",
-          "description": "A group's list of destinations."
+          "class": "env-drawer-header",
+          "description": "Content above the destinations, such as the application's name or a search trigger."
         },
         {
-          "class": "env-nav-list-item",
-          "description": "One destination."
+          "class": "env-drawer-heading",
+          "description": "A group's heading, which names the group's list."
         },
         {
-          "class": "env-nav-list-item-dot",
-          "description": "The dot that marks a destination with news."
+          "class": "env-drawer-item",
+          "description": "A destination: a link or button as wide as the drawer, with its icon, label and count."
         },
         {
-          "class": "env-nav-list-item-end",
-          "description": "The end of a destination, for a count."
+          "class": "env-drawer-label",
+          "description": "A destination's label."
         },
         {
-          "class": "env-nav-list-skeleton",
-          "description": "The list's loading placeholder."
+          "class": "env-drawer-list",
+          "description": "The list of destinations and groups, which scrolls where the drawer is shorter."
         },
         {
-          "class": "env-nav-list-skeleton-item",
-          "description": "One placeholder destination."
+          "class": "env-drawer-section",
+          "description": "A group: its heading and the list of its destinations."
         }
       ],
       "states": [
         {
-          "attribute": "data-icon-only",
-          "values": [
-            ""
-          ],
+          "attribute": "data-current",
+          "values": [],
           "parts": [
-            "env-nav-list-item",
-            "env-nav-list-skeleton-item"
-          ]
-        },
-        {
-          "attribute": "data-rail",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-nav-list-group-label"
-          ]
-        },
-        {
-          "attribute": "data-selected",
-          "values": [
-            ""
-          ],
-          "parts": [
-            "env-nav-list-item"
+            "env-drawer-item"
           ]
         }
       ],
       "uses": [
-        "Icon",
-        "Popup",
-        "Tooltip"
+        "Icon"
       ]
     },
     "OrganizationSwitcher": {
@@ -3125,6 +3151,56 @@
       ],
       "uses": [
         "ConnectedRows"
+      ]
+    },
+    "Rail": {
+      "root": "env-rail",
+      "source": "packages/ui/src/navigation/Rail.tsx",
+      "parts": [
+        {
+          "class": "env-rail",
+          "description": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer."
+        },
+        {
+          "class": "env-rail-count",
+          "description": "A destination's count, on the icon's top end; 999+ above 999."
+        },
+        {
+          "class": "env-rail-footer",
+          "description": "Content at the bottom of the rail, such as the account's button."
+        },
+        {
+          "class": "env-rail-header",
+          "description": "Content above the destinations, such as a button that opens the drawer or the main action."
+        },
+        {
+          "class": "env-rail-indicator",
+          "description": "The pill around a destination's icon, filled while the destination is current."
+        },
+        {
+          "class": "env-rail-item",
+          "description": "A destination: a link or button with its indicator above its label."
+        },
+        {
+          "class": "env-rail-label",
+          "description": "A destination's short label, under its indicator."
+        },
+        {
+          "class": "env-rail-list",
+          "description": "The list of destinations, one under another, which scrolls where the rail is shorter."
+        }
+      ],
+      "states": [
+        {
+          "attribute": "data-current",
+          "values": [],
+          "parts": [
+            "env-rail-item"
+          ]
+        }
+      ],
+      "uses": [
+        "Icon"
       ]
     },
     "Rating": {
@@ -5066,7 +5142,6 @@
         "Menu",
         "Menubar",
         "MonthPicker",
-        "NavList",
         "Popover",
         "RelativeTime",
         "SearchTrigger",

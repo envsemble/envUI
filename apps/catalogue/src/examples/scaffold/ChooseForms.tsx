@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Column, NavList, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
+import { Drawer, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Settings } from '@envsemble/envui/icons/Settings';
 
@@ -17,18 +17,13 @@ export default function ChooseForms() {
       topBar={<TopBar title="Settings" />}
       navigation={{
         drawer: (
-          <Column
-            render={<nav aria-label="Settings" />}
-            padding={3}
-            style={{ inlineSize: '12rem' }}
-          >
-            <NavList.Root>
-              <NavList.Item icon={<Home />} selected>
-                General
-              </NavList.Item>
-              <NavList.Item icon={<Settings />}>Advanced</NavList.Item>
-            </NavList.Root>
-          </Column>
+          <Drawer
+            aria-label="Settings"
+            destinations={[
+              { label: 'General', icon: <Home />, href: '#general', current: true },
+              { label: 'Advanced', icon: <Settings />, href: '#advanced' },
+            ]}
+          />
         ),
       }}
     >

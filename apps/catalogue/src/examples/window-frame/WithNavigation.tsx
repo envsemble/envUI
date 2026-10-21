@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Column, NavList, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
+import { Drawer, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Home } from '@envsemble/envui/icons/Home';
 
@@ -16,14 +16,12 @@ export default function WithNavigation() {
       topBar={<TopBar titleBar title="Northwind" />}
       navigation={{
         drawer: (
-          <Column render={<nav aria-label="Primary" />} padding={3} style={{ inlineSize: '12rem' }}>
-            <NavList.Root>
-              <NavList.Item icon={<Home />} selected>
-                Home
-              </NavList.Item>
-              <NavList.Item icon={<Description />}>Documents</NavList.Item>
-            </NavList.Root>
-          </Column>
+          <Drawer
+            destinations={[
+              { label: 'Home', icon: <Home />, href: '#home', current: true },
+              { label: 'Documents', icon: <Description />, href: '#documents' },
+            ]}
+          />
         ),
       }}
     >

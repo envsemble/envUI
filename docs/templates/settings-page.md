@@ -23,7 +23,7 @@ composes:
   - Page
   - PageHeader
   - Panes
-  - NavList
+  - Drawer
   - Column
   - Row
   - Surface
@@ -63,7 +63,7 @@ A settings page inside the [app frame](app-frame.md): the person's profile, thei
 
 1. **Page:** a [Page](../components/page.md) of `width="lg"` with a [PageHeader](../components/page-header.md), "Settings", and a one-line description.
 2. **Panes:** supporting [Panes](../components/panes.md), with the sections in the main pane and the navigation in the supporting pane, side by side from an expanded width, 52.5 rem of their own.
-3. **On this page:** the supporting pane of [Panes](../components/panes.md), beside the sections from an expanded width and hidden in less room, holding a `nav` labelled "Settings sections" with a [NavList](../components/nav-list.md) of the sections. It sticks at the top of the Scaffold's body as the sections scroll. Each item moves focus to its section's heading, and the current one has `aria-current="location"`.
+3. **On this page:** the supporting pane of [Panes](../components/panes.md), beside the sections from an expanded width and hidden in less room, holding a `nav` labelled "Settings sections" with a [Drawer](../components/drawer.md) of the sections. It sticks at the top of the Scaffold's body as the sections scroll. Each item moves focus to its section's heading, and the current one has `aria-current="location"`.
 4. **Sections:** a `section` named by its `h2`, a [Text](../foundations/typography.md) `variant="title"`, with a muted line where the section applies at once:
    - **Profile:** a `form` on a muted [Surface](../components/surface.md): an [Avatar](../components/avatar.md) with the person's initials, a "Unsaved changes" [Badge](../components/badge.md) while edits wait, the name and email address [TextField](../components/text-field.md)s, then Save profile and Cancel [Button](../components/button.md)s and a status line;
    - **Notifications:** [List](../components/list.md) rows that don't wrap, each with a [Switch](../components/switch.md) named by the row's title and described by its detail, which stays beside the text at every width;

@@ -1,15 +1,15 @@
-import { useState, type CSSProperties, type ReactNode } from 'react';
+import { useState, type CSSProperties } from 'react';
 import {
-  Button,
-  Column,
+  Bar,
+  Drawer,
   IconButton,
-  NavList,
   Page,
   PageHeader,
-  Row,
+  Rail,
   Scaffold,
   Text,
   TopBar,
+  type Destination,
 } from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -19,22 +19,21 @@ import { Search } from '@envsemble/envui/icons/Search';
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
 const preview: CSSProperties = { blockSize: '22rem' };
 
-interface Destination {
-  label: string;
-  icon: ReactNode;
-}
-
-const destinations: Destination[] = [
-  { label: 'Home', icon: <Home /> },
-  { label: 'Inbox', icon: <Inbox /> },
-  { label: 'Projects', icon: <Category /> },
-];
-
 export default function NavigationForms() {
   const [current, setCurrent] = useState('Home');
+  // One array of destinations, which each navigation form takes.
+  const destinations: Destination[] = [
+    { label: 'Home', icon: <Home /> },
+    { label: 'Inbox', icon: <Inbox />, count: 3 },
+    { label: 'Projects', icon: <Category /> },
+  ].map((destination) => ({
+    ...destination,
+    current: destination.label === current,
+    onSelect: () => setCurrent(destination.label),
+  }));
   return (
-    // The same destinations in each form; the Scaffold shows the one for its own width: the bar
-    // in a compact width, the rail in a medium one and the drawer from expanded.
+    // The Scaffold shows the form for its own width: the bar in a compact width, the rail in a
+    // medium one and the drawer from expanded.
     <Scaffold
       landmarks={false}
       style={preview}
@@ -42,50 +41,9 @@ export default function NavigationForms() {
         <TopBar title="Northwind" actions={<IconButton icon={<Search />} aria-label="Search" />} />
       }
       navigation={{
-        bar: (
-          <Row render={<nav aria-label="Primary" />} justify="between" padding={2}>
-            {destinations.map(({ label, icon }) => (
-              <Button
-                key={label}
-                variant="ghost"
-                startIcon={icon}
-                aria-current={label === current ? 'page' : undefined}
-                onClick={() => setCurrent(label)}
-              >
-                {label}
-              </Button>
-            ))}
-          </Row>
-        ),
-        rail: (
-          <Column render={<nav aria-label="Primary" />} gap={2} padding={2}>
-            {destinations.map(({ label, icon }) => (
-              <IconButton
-                key={label}
-                icon={icon}
-                aria-label={label}
-                aria-current={label === current ? 'page' : undefined}
-                onClick={() => setCurrent(label)}
-              />
-            ))}
-          </Column>
-        ),
-        drawer: (
-          <Column render={<nav aria-label="Primary" />} padding={3} style={{ inlineSize: '14rem' }}>
-            <NavList.Root>
-              {destinations.map(({ label, icon }) => (
-                <NavList.Item
-                  key={label}
-                  icon={icon}
-                  selected={label === current}
-                  onClick={() => setCurrent(label)}
-                >
-                  {label}
-                </NavList.Item>
-              ))}
-            </NavList.Root>
-          </Column>
-        ),
+        bar: <Bar destinations={destinations} />,
+        rail: <Rail destinations={destinations} />,
+        drawer: <Drawer destinations={destinations} />,
       }}
     >
       <Page header={<PageHeader title={current} headingLevel={3} />}>

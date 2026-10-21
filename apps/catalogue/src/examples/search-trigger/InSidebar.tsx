@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import {
   CommandPalette,
-  NavList,
+  Drawer,
   SearchTrigger,
   Column,
   Text,
   type CommandPaletteItem,
+  type Destination,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
@@ -13,6 +14,12 @@ import { Group } from '@envsemble/envui/icons/Group';
 import { Home } from '@envsemble/envui/icons/Home';
 
 const documents = ['Roadmap', 'Launch checklist', 'Pricing research', 'Interview notes'];
+
+const destinations: Destination[] = [
+  { label: 'Home', icon: <Home />, href: '/', current: true },
+  { label: 'Projects', icon: <FolderOpen />, href: '/projects' },
+  { label: 'People', icon: <Group />, href: '/people' },
+];
 
 export default function InSidebar() {
   const [open, setOpen] = useState(false);
@@ -26,23 +33,13 @@ export default function InSidebar() {
     [query],
   );
   return (
-    // A sidebar's width, which an application's frame sets.
-    <Column gap={3} style={{ inlineSize: '16rem' }}>
-      {/* The catalogue's own search keeps Ctrl+K here; an application's one trigger listens. */}
-      <SearchTrigger fullWidth listen={false} onClick={() => setOpen(true)} />
-      <nav aria-label="Workspace">
-        <NavList.Root>
-          <NavList.Item href="/" icon={<Home />} selected>
-            Home
-          </NavList.Item>
-          <NavList.Item href="/projects" icon={<FolderOpen />}>
-            Projects
-          </NavList.Item>
-          <NavList.Item href="/people" icon={<Group />}>
-            People
-          </NavList.Item>
-        </NavList.Root>
-      </nav>
+    <Column gap={3}>
+      <Drawer
+        aria-label="Workspace"
+        destinations={destinations}
+        // The catalogue's own search keeps Ctrl+K here; an application's one trigger listens.
+        header={<SearchTrigger fullWidth listen={false} onClick={() => setOpen(true)} />}
+      />
       <CommandPalette
         open={open}
         onOpenChange={(next) => {

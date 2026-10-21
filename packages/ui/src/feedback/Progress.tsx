@@ -5,9 +5,9 @@ import type { CSSProperties } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
-import type { BarProps } from './Meter.js';
+import type { RangeBarProps } from './Meter.js';
 
-export interface ProgressProps extends BarProps {
+export interface ProgressProps extends RangeBarProps {
   /**
    * How much of the task is done, between min and max, such as 40 of 100; null while the amount of
    * work is unknown, which shows an indeterminate bar announced as Loading.

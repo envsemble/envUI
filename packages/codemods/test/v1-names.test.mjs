@@ -62,6 +62,10 @@ const reports = {
   'shell.tsx': [
     ...removedFrom(1, ['TitleBar', 'WindowFrame']),
     ...removedFrom(2, ['TitleBarProps']),
+  // NavList is gone in 1.0: a list of navigation items becomes an array of destinations by hand.
+  'nav-list.tsx': [
+    ...removedFrom(1, ['NavigationItem']),
+    ...removedFrom(2, ['NavigationItemProps']),
   ],
   'removed.tsx': [
     ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),

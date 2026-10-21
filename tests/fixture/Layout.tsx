@@ -10,7 +10,6 @@ import {
   Column,
   Row,
   TextField,
-  NavList,
   IconButton,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
@@ -42,7 +41,6 @@ export function LayoutFixture() {
           <Column data-testid="layout-column" gap={3} style={{ maxInlineSize: '20rem' }}>
             <TextField label={`Layout field ${theme}`} />
             <Button>Fit action</Button>
-            <NavList.Item selected>Destination</NavList.Item>
             <Badge>Metadata</Badge>
             <Disclosure title={`Column guidance ${theme}`} open>
               <p>Supporting detail</p>

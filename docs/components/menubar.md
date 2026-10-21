@@ -20,7 +20,7 @@ avoidWhen:
   - text: A short list of actions behind one control.
     use: Menu
   - text: Destinations in an application's navigation.
-    use: NavList
+    use: Drawer
   - text: Running a command by name.
     use: CommandPalette
   - text: A row of actions that stay visible, such as a toolbar.

@@ -20,7 +20,7 @@ useWhen:
   - Rows people preview with a click and open to keep with a double click, as in a desktop editor.
 avoidWhen:
   - text: An application's destinations, such as the pages in a sidebar, one or two levels deep.
-    use: NavList
+    use: Drawer
   - text: A flat list of items, each with its own actions.
     use: List
   - text: Records that share the same fields and that people compare.
@@ -28,7 +28,7 @@ avoidWhen:
   - text: Sections of content people show and hide in a page.
     use: Disclosure
 related:
-  - nav-list
+  - drawer
   - list
   - menu
   - document-tabs
@@ -105,7 +105,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 
 ### Don't
 
-- Don't use a tree for an application's few destinations; use [NavList](../components/nav-list.md).
+- Don't use a tree for an application's few destinations; use [Drawer](../components/drawer.md).
 - Don't put buttons, links or fields inside rows; rows are not focusable, and their actions belong in the context menu and a toolbar.
 - Don't make a context menu the only way to reach an action.
 - Don't pass collapsed rows' descendants in `items`.

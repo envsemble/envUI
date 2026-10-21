@@ -1,16 +1,14 @@
 import { useState } from 'react';
-import { Button, IconButton, NavList, Tabs, Text } from '@envsemble/envui';
-import { Apps } from '@envsemble/envui/icons/Apps';
+import { Button, IconButton, Tabs, Text } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
-/** Tabs built from each kind of control: button variants with a disabled tab, icons, navigation. */
+/** Tabs built from each kind of control: button variants with a disabled tab, and icons. */
 export default function TabControls() {
   const [buttonStyle, setButtonStyle] = useState<string | null>('primary');
   const [iconView, setIconView] = useState<string | null>('home');
-  const [workspaceView, setWorkspaceView] = useState<string | null>('home');
   return (
     <Example title="Tab controls" size="collection">
       <SpecimenGrid size="wide">
@@ -69,25 +67,6 @@ export default function TabControls() {
                   <IconButton variant="primary" icon={<Settings />} aria-label="Settings view" />
                 ),
                 content: <Text>Settings content</Text>,
-              },
-            ]}
-          />
-        </Specimen>
-        <Specimen title="Navigation items">
-          <Tabs
-            aria-label="Workspace views"
-            value={workspaceView}
-            onValueChange={setWorkspaceView}
-            items={[
-              {
-                value: 'home',
-                button: <NavList.Item icon={<Home />}>Home</NavList.Item>,
-                content: <Text>Workspace overview</Text>,
-              },
-              {
-                value: 'projects',
-                button: <NavList.Item icon={<Apps />}>Projects</NavList.Item>,
-                content: <Text>Workspace projects</Text>,
               },
             ]}
           />

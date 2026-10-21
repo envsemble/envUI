@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { NavList, Page, PageHeader, Scaffold, Text, TopBar } from '@envsemble/envui';
+import {
+  Drawer,
+  Page,
+  PageHeader,
+  Rail,
+  Scaffold,
+  Text,
+  TopBar,
+  type Destination,
+} from '@envsemble/envui';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Group } from '@envsemble/envui/icons/Group';
@@ -42,6 +51,15 @@ export default function PageProgress() {
   };
 
   const page = pages.find(({ id }) => id === shown) ?? pages[0];
+  // The router changes the page; the example keeps it in state. The page on screen stays current
+  // until the next one arrives.
+  const destinations: Destination[] = pages.map(({ id, label, href, icon }) => ({
+    label,
+    href,
+    icon,
+    current: id === shown,
+    onSelect: () => open(id),
+  }));
   return (
     <Scaffold
       landmarks={false}
@@ -56,24 +74,8 @@ export default function PageProgress() {
       }
       bodyRef={main}
       navigation={{
-        drawer: (
-          <nav aria-label="Primary">
-            <NavList.Root>
-              {pages.map(({ id, label, href, icon }) => (
-                // The router changes the page; the example keeps it in state.
-                <NavList.Item
-                  key={id}
-                  href={href}
-                  icon={icon}
-                  selected={id === shown}
-                  onClick={() => open(id)}
-                >
-                  {label}
-                </NavList.Item>
-              ))}
-            </NavList.Root>
-          </nav>
-        ),
+        rail: <Rail destinations={destinations} />,
+        drawer: <Drawer destinations={destinations} />,
       }}
     >
       <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>

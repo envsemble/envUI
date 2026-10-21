@@ -22,7 +22,7 @@ avoidWhen:
 composes:
   - Scaffold
   - TopBar
-  - NavList
+  - Drawer
   - Page
   - PageHeader
   - LoadingState

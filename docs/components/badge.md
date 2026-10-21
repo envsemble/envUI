@@ -43,7 +43,7 @@ avoidWhen:
     use: Stat
 related:
   - card
-  - nav-list
+  - drawer
   - button
   - stat
   - code
@@ -106,7 +106,7 @@ CounterBadge is `neutral`, a quiet fill with text in the primary color, or `acce
 
 - Badges have no interactive states: they are not focusable and don't respond to the pointer or the keyboard.
 - **In a button**, such as a tab with a count, a badge takes the button's text color as an outlined pill. A CounterBadge keeps its own filled pill, and a DiffStat sits on a pill that leans back toward the canvas so its tones keep their contrast; on the solid fills of primary and important buttons, both take the button's text color as an outlined pill instead.
-- **In navigation**, NavList.Item shows a CounterBadge as its `end` content, and a small dot instead while the item is icon-only, whose name then says the count.
+- **In navigation**, Bar, Rail and Drawer show a destination's `count` in a pill of their own, and its name says it, such as Inbox, 12 new; they take a number, not a CounterBadge.
 - **Names**: a CounterBadge with `aria-label` hides its visible value from assistive technology and reads the label instead, such as "12 unread". A DiffStat always reads its label once instead of the signs, "12 added lines and 3 removed lines" by default.
 
 ## Content guidelines
@@ -185,7 +185,7 @@ A decorative icon before the label repeats the state at a glance.
 
 ### Counts in navigation
 
-A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.
+The navigation forms show a destination's `count` themselves, in a counter badge's pill, and name it with the label, such as Inbox, 12 new; above 999 it shows 999+.
 
 ```tsx example=NavigationCounts
 

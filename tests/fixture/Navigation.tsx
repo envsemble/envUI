@@ -1,123 +1,115 @@
-import { useState } from 'react';
+import { useState, type ComponentPropsWithRef } from 'react';
 import {
-  Badge,
-  CounterBadge,
-  Theme,
-  Column,
-  Row,
-  NavList,
+  Bar,
+  Button,
   Icon,
-  Tooltip,
+  LinkProvider,
+  Drawer,
+  Rail,
+  Theme,
+  type Destination,
   type ThemeValue,
 } from '@envsemble/envui';
+import { Archive } from '@envsemble/envui/icons/Archive';
+import { Delete } from '@envsemble/envui/icons/Delete';
+import { Drafts } from '@envsemble/envui/icons/Drafts';
 import { Home } from '@envsemble/envui/icons/Home';
+import { Inbox } from '@envsemble/envui/icons/Inbox';
+import { Label } from '@envsemble/envui/icons/Label';
+import { Send } from '@envsemble/envui/icons/Send';
 import { Settings } from '@envsemble/envui/icons/Settings';
+import { Star } from '@envsemble/envui/icons/Star';
 
+/** A router's link: it marks the anchors it renders, so a test sees that destinations use it. */
+function RouterLink(props: ComponentPropsWithRef<'a'> & { href: string }) {
+  return <a {...props} data-router-link="" />;
+}
+
+/** Destinations whose current one follows a press, as an application's router would set it. */
+function useDestinations(start: string) {
+  const [current, setCurrent] = useState(start);
+  const select = (label: string) => ({
+    current: current === label,
+    onSelect: () => setCurrent(label),
+  });
+  return { current, select };
+}
+
+/**
+ * Bar, Rail and Drawer over the same destinations, in both themes, mounted with
+ * ?fixture=navigation: icon fill, counts, groups, the Bar's More menu, landmark names and routing.
+ */
 export function NavigationFixture({ theme }: { theme: ThemeValue }) {
-  const [selected, setSelected] = useState('home');
+  const icons = useDestinations('Home');
+  const mail = useDestinations('Inbox');
+  const many = useDestinations('Labels');
+  const iconDestinations: Destination[] = [
+    { label: 'Home', icon: <Home />, ...icons.select('Home') },
+    {
+      label: 'Settings',
+      // A Material Symbol inside the application's own wrapper fills too.
+      icon: (
+        <span>
+          <Settings />
+        </span>
+      ),
+      ...icons.select('Settings'),
+    },
+    {
+      label: 'Custom',
+      icon: (
+        <Icon viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" />
+        </Icon>
+      ),
+      ...icons.select('Custom'),
+    },
+  ];
+  const mailDestinations: Destination[] = [
+    { label: 'Inbox', icon: <Inbox />, count: 3, ...mail.select('Inbox') },
+    { label: 'Drafts', icon: <Drafts />, count: 0, ...mail.select('Drafts') },
+    { label: 'Sent', icon: <Send />, count: 1200, ...mail.select('Sent') },
+    { label: 'Starred', icon: <Star />, group: 'Folders', ...mail.select('Starred') },
+    { label: 'Archive', icon: <Archive />, group: 'Folders', ...mail.select('Archive') },
+    { label: 'Settings', icon: <Settings />, group: 'Account', ...mail.select('Settings') },
+  ];
+  const manyDestinations: Destination[] = [
+    { label: 'Home', icon: <Home />, href: '#home' },
+    { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 2 },
+    { label: 'Drafts', icon: <Drafts />, href: '#drafts' },
+    { label: 'Sent', icon: <Send />, href: '#sent' },
+    { label: 'Labels', icon: <Label />, count: 4, ...many.select('Labels') },
+    { label: 'Archive', icon: <Archive />, href: '#archive', count: 1 },
+    { label: 'Trash', icon: <Delete />, href: '#trash' },
+  ];
+  const linked: Destination[] = [
+    { label: 'Home', icon: <Home />, href: '#home', current: true },
+    { label: 'Inbox', icon: <Inbox />, href: '#inbox' },
+  ];
   return (
-    <Theme theme={theme} data-testid={`navigation-icons-${theme}`} className="fixture-section">
-      <Row wrap align="center" gap={4}>
-        <Home data-testid="home-outline" />
-        <Home filled data-testid="home-filled" />
-        <Settings data-testid="settings-outline" />
-        <Settings filled data-testid="settings-filled" />
-      </Row>
-      <Column gap={4}>
-        <NavList.Item
-          data-testid="home-navigation"
-          icon={<Home filled={false} />}
-          selected={selected === 'home'}
-          onClick={() => setSelected('home')}
-        >
-          Home destination
-        </NavList.Item>
-        <NavList.Item
-          data-testid="settings-navigation"
-          icon={
-            <span>
-              <Settings filled />
-            </span>
-          }
-          selected={selected === 'settings'}
-          onClick={() => setSelected('settings')}
-        >
-          Settings destination
-        </NavList.Item>
-        <NavList.Item
-          data-testid="custom-navigation"
-          icon={
-            <Icon viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="8" />
-            </Icon>
-          }
-          selectedIcon={
-            <Icon viewBox="0 0 24 24">
-              <rect x="4" y="4" width="16" height="16" />
-            </Icon>
-          }
-          selected={selected === 'custom'}
-          onClick={() => setSelected('custom')}
-        >
-          Custom destination
-        </NavList.Item>
-      </Column>
-      <Row wrap align="center" gap={4}>
-        <NavList.Item
-          iconOnly
-          icon={<Home />}
-          aria-label="Home overview"
-          data-testid="icon-only-navigation"
-          selected={selected === 'home'}
-          onClick={() => setSelected('home')}
+    <Theme theme={theme} data-testid={`navigation-${theme}`} className="fixture-section">
+      <div data-testid="icons">
+        <Drawer aria-label="Icon fill" destinations={iconDestinations} />
+      </div>
+      <div className="fixture-navigation-forms" data-testid="forms">
+        <Drawer
+          aria-label="Mail drawer"
+          destinations={mailDestinations}
+          header={<Button size="sm">Compose</Button>}
+          footer={<span>Footer</span>}
         />
-        <NavList.Item
-          iconOnly
-          disabled
-          icon={<Settings />}
-          aria-label="Archive"
-          data-testid="disabled-icon-only-navigation"
-        />
-        <Tooltip content="Settings and preferences">
-          <NavList.Item
-            iconOnly
-            icon={<Settings />}
-            aria-label="Settings"
-            data-testid="described-navigation"
-            onClick={() => setSelected('settings')}
-          />
-        </Tooltip>
-      </Row>
-      <Row wrap align="center" gap={4} data-testid="named-end-navigation">
-        <NavList.Item
-          iconOnly
-          icon={<Home />}
-          aria-label="Count"
-          end={<CounterBadge value={3} />}
-        />
-        <NavList.Item iconOnly icon={<Home />} aria-label="Number" end={7} />
-        <NavList.Item
-          iconOnly
-          icon={<Home />}
-          aria-label="Capped"
-          end={<CounterBadge value="99+" />}
-        />
-        <NavList.Item
-          iconOnly
-          icon={<Home />}
-          aria-label="Unread"
-          end={<CounterBadge value={4} aria-label="4 unread" />}
-        />
-        <NavList.Item iconOnly icon={<Home />} aria-label="Labs" end={<Badge>Beta</Badge>} />
-        <NavList.Item iconOnly icon={<Home />} aria-label="Inbox" end="New" />
-        <NavList.Item
-          icon={<Home />}
-          aria-label="Reports"
-          end={<Badge aria-label="Recently updated">Updated</Badge>}
-        >
-          Reports
-        </NavList.Item>
-      </Row>
+        <Rail aria-label="Mail rail" destinations={mailDestinations} />
+        <div className="fixture-navigation-bars">
+          <Bar aria-label="Mail bar" destinations={mailDestinations.slice(0, 4)} />
+          <Bar aria-label="Many bar" destinations={manyDestinations} />
+          <Bar destinations={linked} />
+        </div>
+      </div>
+      <p data-testid="current">{`${mail.current}, ${many.current}`}</p>
+      <LinkProvider component={RouterLink}>
+        <h2 id={`routed-heading-${theme}`}>Routed</h2>
+        <Rail aria-labelledby={`routed-heading-${theme}`} destinations={linked} />
+      </LinkProvider>
     </Theme>
   );
 }

@@ -4,7 +4,6 @@ import {
   IconButton,
   Link,
   LinkProvider,
-  NavList,
   Scaffold,
   SearchTrigger,
   Sheet,
@@ -87,7 +86,7 @@ function Catalogue() {
   else
     content = (
       <Column gap={7} className="docs-article">
-        <NavList.Item href={routeHref(homeRoute)}>Return to overview</NavList.Item>
+        <Link href={routeHref(homeRoute)}>Return to overview</Link>
       </Column>
     );
   const navigation = (inSheet: boolean) => (
@@ -99,6 +98,15 @@ function Catalogue() {
         setNavigationOpen(false);
         openSearch();
       }}
+      // A destination chosen in the sheet closes it and sends focus to the page.
+      onChoose={
+        inSheet
+          ? () => {
+              choseDestination.current = true;
+              setNavigationOpen(false);
+            }
+          : undefined
+      }
     />
   );
   return (
@@ -183,15 +191,7 @@ function Catalogue() {
         }}
         finalFocus={() => (choseDestination.current ? (mainElement.current ?? true) : true)}
       >
-        <div
-          onClickCapture={(event) => {
-            if (!(event.target as Element).closest('a[href]')) return;
-            choseDestination.current = true;
-            setNavigationOpen(false);
-          }}
-        >
-          {navigation(true)}
-        </div>
+        {navigation(true)}
       </Sheet>
       <DocumentationSearch open={searchOpen} onOpenChange={setSearchOpen} />
     </Scaffold>

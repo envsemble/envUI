@@ -10,7 +10,8 @@ import {
   List,
   Menu,
   Menubar,
-  NavList,
+  Drawer,
+  Rail,
   Pagination,
   Radio,
   RadioGroup,
@@ -29,6 +30,8 @@ import {
   type ButtonProps,
 } from '@envsemble/envui';
 import { Close } from '@envsemble/envui/icons/Close';
+import { Home } from '@envsemble/envui/icons/Home';
+import { Inbox } from '@envsemble/envui/icons/Inbox';
 import '@envsemble/envui/styles.css';
 // Internal: the lists of times and months the pickers open, shown here without their popups.
 import { TimeList } from '../../packages/ui/src/forms/internal/TimeList.js';
@@ -97,17 +100,20 @@ function Page() {
           { value: 'two', button: <Button>Two</Button>, content: 'Second' },
         ]}
       />
-      <NavList.Root aria-label="Places">
-        <NavList.Item href="#home" selected data-testid="nav-selected">
-          Home
-        </NavList.Item>
-        <NavList.Item href="#inbox" data-testid="nav">
-          Inbox
-        </NavList.Item>
-        <NavList.Item disabled data-testid="nav-disabled">
-          Archive
-        </NavList.Item>
-      </NavList.Root>
+      <Drawer
+        aria-label="Places"
+        destinations={[
+          { label: 'Home', icon: <Home />, href: '#home', current: true },
+          { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
+        ]}
+      />
+      <Rail
+        aria-label="Rail places"
+        destinations={[
+          { label: 'Home', icon: <Home />, href: '#home', current: true },
+          { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
+        ]}
+      />
       <div style={{ display: 'flex', gap: '1rem' }}>
         <Checkbox label="Checked" defaultChecked />
         <Checkbox label="Unchecked" />

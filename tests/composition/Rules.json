@@ -117,7 +117,9 @@
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/Menu.tsx": "composites",
       "navigation/Menubar.tsx": "base",
-      "navigation/NavList.tsx": "base",
+      "navigation/Bar.tsx": "composites",
+      "navigation/Drawer.tsx": "base",
+      "navigation/Rail.tsx": "base",
       "navigation/OrganizationSwitcher.tsx": "composites",
       "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
@@ -339,7 +341,8 @@
       },
       "Breadcrumbs": {},
       "DocumentTabs": {},
-      "NavList": {},
+      "Bar": {},
+      "Rail": {},
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },

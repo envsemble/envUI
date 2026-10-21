@@ -284,6 +284,32 @@
         "@envsemble/envui"
       ]
     },
+    "Bar": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/Bar.tsx",
+      "description": "The navigation bar for compact windows, such as phones: up to five destinations side by side, each an icon above its label, at the bottom of the window. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        }
+      ],
+      "native": [
+        "nav"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Box": {
       "kind": "component",
       "source": "packages/ui/src/foundations/Layout.tsx",
@@ -3417,7 +3443,7 @@
           "name": "component",
           "type": "ComponentType<LinkComponentProps>",
           "required": true,
-          "description": "Renders every envUI destination (Button, Link, NavList.Item, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
+          "description": "Renders every envUI destination (Button, Link, the destinations of Bar, Rail and Drawer, Card, Pager links and menu links with href). It must render an anchor and forward native props and ref, for example a router's link that navigates on the client."
         },
         {
           "name": "children",
@@ -3875,6 +3901,12 @@
           "required": false,
           "default": "false",
           "description": "The item is unavailable: it stays in place, dimmed, and reports aria-disabled; its action does not run, and a destination has no link to follow."
+        },
+        {
+          "name": "aria-current",
+          "type": "AriaAttributes['aria-current']",
+          "required": false,
+          "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
         },
         {
           "name": "className",
@@ -4665,137 +4697,39 @@
         "@envsemble/envui"
       ]
     },
-    "NavList": {
-      "kind": "namespace",
-      "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "",
-      "parts": [
-        "NavList.Root",
-        "NavList.Item",
-        "NavList.Group",
-        "NavList.Skeleton"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "NavList.Group": {
+    "NavigationDrawer": {
       "kind": "component",
-      "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "Related items under a small heading, as an item of NavList.Root with a list of its own.",
+      "source": "packages/ui/src/navigation/NavigationDrawer.tsx",
+      "description": "The navigation drawer for expanded and larger windows: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop. Its list scrolls where the drawer is shorter than its destinations.",
       "props": [
         {
-          "name": "label",
-          "type": "ReactNode",
+          "name": "destinations",
+          "type": "readonly DrawerDestination[]",
           "required": true,
-          "description": "The group's visible heading, such as Settings, in small muted text above its items; it also names the group's list for assistive technology."
+          "description": "The application's destinations, the same array Bar and Rail take: each a row with its icon, its label and its count. A heading starts each run of destinations of one `group`."
         },
         {
-          "name": "children",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The group's NavList.Item elements, each of which renders its own list item."
-        }
-      ],
-      "native": [
-        "li"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "NavList.Item": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A navigation destination: a native link with href, through the LinkProvider's link component, or a button that changes the view. It shows an optional icon, its label and end content, marks the current destination with selected, and shows only its icon with iconOnly or in a sidebar rail. Inside NavList.Root or NavList.Group it renders its own list item.",
-      "props": [
-        {
-          "name": "selected",
-          "type": "boolean",
-          "required": false,
-          "description": "The item is the current destination or view: it takes the navigation selection fill and label color, fills its Material Symbol, and reports aria-current=\"page\" unless aria-current is set."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "description": "The destination is unavailable: dimmed, and left out of the tab order. A disabled button cannot be pressed; a disabled link has no destination and reports aria-disabled. An icon-only item still shows its label on hover."
-        },
-        {
-          "name": "icon",
+          "name": "header",
           "type": "ReactNode",
           "required": false,
-          "requiredWhen": "in some forms",
-          "description": "A decorative icon before the label, such as one of envUI's Material Symbols, which shows filled while the item is selected and outlined otherwise, also inside a wrapper. Required with iconOnly."
+          "description": "Content above the destinations, such as the application's name or a search trigger."
         },
         {
-          "name": "selectedIcon",
+          "name": "footer",
           "type": "ReactNode",
           "required": false,
-          "description": "The icon shown while the item is selected, for a custom icon without a filled form; Material Symbols need none."
-        },
-        {
-          "name": "end",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Content at the end of the item, such as a CounterBadge or a Badge; it is part of the item's accessible name. An icon-only item shows a small accent dot instead. Where the name comes from aria-label, or from the label of an icon-only item, it adds the content: a number, or a CounterBadge without aria-label, as a count from EnvUIProvider's messages.navList.itemCount, such as Inbox, 3 new; a CounterBadge's aria-label, such as Inbox, 4 unread, or other content's text or aria-label, such as Labs, Beta, as it is, through messages.navList.itemEnd."
+          "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
         },
         {
           "name": "aria-label",
           "type": "string",
           "required": false,
-          "requiredWhen": "in some forms",
-          "description": "The destination's name, such as Inbox, for an icon-only item; the tooltip shows it. The item's name adds its end content, such as a count."
-        },
-        {
-          "name": "href",
-          "type": "string",
-          "required": false,
-          "description": "The destination: the element is a native link, through the LinkProvider's link component."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "requiredWhen": "in some forms",
-          "description": "Show only the icon, in a circle as tall as the item, as in a collapsed sidebar; a tooltip at the item's inline end shows aria-label on hover and keyboard focus. In a sidebar rail, items with an icon show only it without this prop."
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
         }
       ],
       "native": [
-        "button",
-        "a"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "NavList.Root": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "A plain list of navigation items and groups, for a sidebar or anywhere else. It adds no landmark of its own: place it in a nav element, or in a region that is one, such as a Sidebar.Root. Name it with aria-label or aria-labelledby when the page has more than one.",
-      "props": [],
-      "native": [
-        "ul"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "NavList.Skeleton": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/NavList.tsx",
-      "description": "Placeholders in the shape of a NavList.Root's items while the navigation loads, such as in a sidebar before the account's data arrives: an icon and a label each, at the items' height, and only the icon in a sidebar rail. Hidden from assistive technology; put the frame in a LoadingState, which names what loads.",
-      "props": [
-        {
-          "name": "items",
-          "type": "number",
-          "required": false,
-          "default": "3",
-          "description": "How many placeholder items it shows."
-        }
-      ],
-      "native": [
-        "ul"
+        "element"
       ],
       "entries": [
         "@envsemble/envui"
@@ -5867,6 +5801,44 @@
       ],
       "native": [
         "fieldset"
+      ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "Rail": {
+      "kind": "component",
+      "source": "packages/ui/src/navigation/Rail.tsx",
+      "description": "The navigation rail for medium windows, such as tablets: a narrow column at the window's start with the destinations one under another, each an icon above a short label. A `nav` landmark; the current destination reports aria-current=\"page\", and every destination is a tab stop.",
+      "props": [
+        {
+          "name": "destinations",
+          "type": "readonly Destination[]",
+          "required": true,
+          "description": "The application's destinations, the same array Bar and Drawer take, each an icon above a short label. Groups don't show: the destinations follow one another in the array's order."
+        },
+        {
+          "name": "header",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content above the destinations, such as a button that opens a Sheet with the Drawer, or the main action of the page."
+        },
+        {
+          "name": "footer",
+          "type": "ReactNode",
+          "required": false,
+          "description": "Content at the bottom of the rail, such as the account's AvatarButton."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "default": "messages.navigation.label, Main",
+          "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        }
+      ],
+      "native": [
+        "element"
       ],
       "entries": [
         "@envsemble/envui"

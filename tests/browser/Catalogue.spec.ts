@@ -121,18 +121,12 @@ test('live examples keep links in place, show their source, and specimens show f
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
   // Catalogue-only specimens, such as the forced interaction states, sit in the exchange they
-  // illustrate on a page of exchanges, and in the guidelines on a page on the template.
+  // illustrate on a page of exchanges.
   const disclosure = page.locator('.docs-preview details.env-disclosure').first();
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
   await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/nav-list/guidelines`);
-  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
-  await navigationDisclosure.locator('summary').click();
-  await expect(
-    navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
-  ).toBeVisible();
 });
 
 test('a page of exchanges asks its questions and numbers the parts of its anatomy', async ({

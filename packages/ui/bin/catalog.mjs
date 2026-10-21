@@ -658,7 +658,7 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     if (structural) structure.push(part);
     const first = pick(hits, shape);
     // A part whose words are at least half in a phrase its sentence already named belongs to that, as
-    // "links" in "a sidebar with links" belongs to NavList. Only the phrase's own words count, so
+    // "links" in "a sidebar with links" belongs to the navigation. Only the phrase's own words count, so
     // the button of "a Delete button and a confirm dialog" stays a Button.
     const claim = claims.find(
       (item) =>

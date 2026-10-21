@@ -16,7 +16,9 @@ import { CheckBox } from '@envsemble/envui/icons/CheckBox';
 import { Code } from '@envsemble/envui/icons/Code';
 import { CropSquare } from '@envsemble/envui/icons/CropSquare';
 import { Dashboard } from '@envsemble/envui/icons/Dashboard';
+import { BottomNavigation } from '@envsemble/envui/icons/BottomNavigation';
 import { Explore } from '@envsemble/envui/icons/Explore';
+import { SideNavigation } from '@envsemble/envui/icons/SideNavigation';
 import { Extension } from '@envsemble/envui/icons/Extension';
 import { FormatLineSpacing } from '@envsemble/envui/icons/FormatLineSpacing';
 import { FormatSize } from '@envsemble/envui/icons/FormatSize';
@@ -113,7 +115,9 @@ const referenceIcons: Record<string, typeof Palette> = {
   'calendar-heatmap': CalendarViewMonth,
   rating: Star,
   'relative-time': Schedule,
-  'nav-list': Explore,
+  bar: BottomNavigation,
+  rail: SideNavigation,
+  drawer: Explore,
   tabs: WebAsset,
   pager: ArrowForward,
   markdown: Article,

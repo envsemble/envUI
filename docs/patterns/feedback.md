@@ -28,7 +28,7 @@ composes:
   - Alert
   - Badge
   - CounterBadge
-  - NavList
+  - Drawer
   - List
   - DescriptionList
   - RelativeTime
@@ -73,13 +73,13 @@ Choose the surface by the message's scope, its urgency and whether people must a
 | An action failed and the page can't show it          | A toast with `tone="danger"` and "Try again"                                            | At once, as an alert              | Until dismissed             |
 | A decision people must make before going on          | A [Dialog](../components/dialog.md) or [ConfirmDialog](../components/confirm-dialog.md) | As it opens, with focus           | Until answered              |
 | The state of a row or an object                      | A [Badge](../components/badge.md) beside its name                                       | No: read with the row             | While the state lasts       |
-| New items behind a destination                       | A [CounterBadge](../components/badge.md) as the `end` of a NavList item                 | No: part of the item's name       | Until the items are seen    |
+| New items behind a destination                       | A destination's `count` in a [Drawer](../components/drawer.md)     | No: part of the item's name       | Until the items are seen    |
 
 1. **Field errors:** on the field, as [Form layout and validation](forms.md) describes.
 2. **Alert:** a title and one sentence, in its tone, with an `action` where there is one thing to do.
 3. **Toast:** one short sentence, at most one action, shown from anywhere under one `Toast.Provider`.
 4. **Badge:** a state in a word or two, in a tone that means the same everywhere.
-5. **CounterBadge:** a count with an `aria-label` that says what it counts, in a [NavList](../components/nav-list.md) item's `end`.
+5. **CounterBadge:** a count with an `aria-label` that says what it counts, such as beside a menu item; a destination of Bar, Rail or Drawer takes its `count` as a number instead.
 6. **Status text:** a [Text](../foundations/typography.md) with `role="status"` for a quiet outcome beside its control, such as "Changes saved."
 
 ## States and behaviour
@@ -129,7 +129,7 @@ Feedback doesn't move focus, with two exceptions: after a refused form or a fail
 - Timers that pause on hover, on keyboard focus and in a background window; notifications with an action or a danger tone that stay.
 - Alerts whose info and success tones are status messages, and whose warning and danger tones take the alert role only with `announce`; tone icons hidden from assistive technology.
 - Badges whose label carries the meaning, with decorative icons hidden.
-- A CounterBadge in a NavList item's `end` as part of the item's name, with its `aria-label` read in place of the number.
+- A destination's count as part of its name, such as Inbox, 12 new, in Bar, Rail and Drawer.
 
 ### You provide
 

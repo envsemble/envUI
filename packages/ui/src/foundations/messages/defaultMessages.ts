@@ -24,7 +24,7 @@ import { markdown } from './markdown.js';
 import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
 import { monthPicker } from './monthPicker.js';
-import { navList } from './navList.js';
+import { navigation } from './navigation.js';
 import { organizationSwitcher } from './organizationSwitcher.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
@@ -77,7 +77,7 @@ export const defaultMessages = {
   markdownEditor,
   message,
   monthPicker,
-  navList,
+  navigation,
   organizationSwitcher,
   pager,
   pagination,

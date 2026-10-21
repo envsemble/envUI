@@ -14,7 +14,7 @@
         {
           "id": "nav-links",
           "label": "sidebar navigation links",
-          "envui": ["NavList"]
+          "envui": ["Drawer"]
         }
       ]
     },

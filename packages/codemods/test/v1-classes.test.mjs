@@ -48,8 +48,6 @@ test('renameClass prefers the longest entry', () => {
   assert.equal(renameClass('env-date-time-field', classes), 'env-date-picker');
   assert.equal(renameClass('env-date-time-field-icon', classes), 'env-date-picker-icon');
   assert.equal(renameClass('env-date-time-well', classes), 'env-date-picker-control');
-  assert.equal(renameClass('env-navigation-item', classes), 'env-nav-list-item');
-  assert.equal(renameClass('env-navigation-dot', classes), 'env-nav-list-item-dot');
   assert.equal(renameClass('env-direction-links', classes), 'env-pager');
   assert.equal(renameClass('env-direction-link-label', classes), 'env-pager-link-label');
 });

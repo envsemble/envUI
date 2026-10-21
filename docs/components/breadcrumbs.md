@@ -17,7 +17,7 @@ useWhen:
   - A header or a bar names the current item's place in one line beside its status and actions (`wrap={false}`).
 avoidWhen:
   - text: The application's main navigation, such as the pages in a sidebar.
-    use: NavList
+    use: Drawer
   - text: Moving between the items of one level, such as views of the same content.
     use: Tabs
   - text: Previous and next pages of a sequence.
@@ -25,7 +25,7 @@ avoidWhen:
   - text: Browsing and expanding a whole hierarchy.
     use: Tree
 related:
-  - nav-list
+  - drawer
   - tree
   - pager
   - link
@@ -86,7 +86,7 @@ Breadcrumbs show the path from the top level to the current page, such as a work
 
 ### Don't
 
-- Don't use breadcrumbs as the only navigation; pair them with a [NavList](../components/nav-list.md) or a [Tree](../components/tree.md).
+- Don't use breadcrumbs as the only navigation; pair them with a [Drawer](../components/drawer.md) or a [Tree](../components/tree.md).
 - Don't make the current page a link.
 - Don't show a trail of a single level.
 - Don't use breadcrumbs for steps of a flow or for history; they show where a page sits, not how people got there.
