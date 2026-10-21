@@ -74,6 +74,7 @@
 @import './Popover.css' layer(env.components);
 @import './Avatar.css' layer(env.components);
 @import './Tooltip.css' layer(env.components);
+@import './HoverDetail.css' layer(env.components);
 @import './Meter.css' layer(env.components);
 @import './AvatarGroup.css' layer(env.components);
 @import './RelativeTime.css' layer(env.components);

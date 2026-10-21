@@ -2001,6 +2001,7 @@
         }
       ],
       "uses": [
+        "HoverDetail",
         "Popup",
         "Skeleton",
         "Theme"
@@ -4537,6 +4538,9 @@
             "env-text"
           ]
         }
+      ],
+      "uses": [
+        "HoverDetail"
       ]
     },
     "TextField": {
@@ -5004,6 +5008,7 @@
         }
       ],
       "uses": [
+        "HoverDetail",
         "Popup",
         "Skeleton",
         "Theme"
@@ -5254,6 +5259,21 @@
       "usedBy": [
         "MarkdownEditor",
         "RichTextEditor"
+      ]
+    },
+    "HoverDetail": {
+      "root": "env-hover-detail",
+      "parts": [
+        {
+          "class": "env-hover-detail",
+          "description": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "HoverCard",
+        "Text",
+        "Tooltip"
       ]
     },
     "ListRow": {

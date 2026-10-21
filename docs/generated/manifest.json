@@ -14522,6 +14522,12 @@
           "file": "docs/examples/tooltip/ShortcutHints.tsx"
         },
         {
+          "name": "TextAbbreviation",
+          "title": "Text abbreviation",
+          "description": "Text that isn't a control, such as an abbreviation, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; buttons, icon buttons and links keep their own look. Make it focusable with `tabIndex={0}`, so keyboard focus opens the tooltip too.",
+          "file": "docs/examples/tooltip/TextAbbreviation.tsx"
+        },
+        {
           "name": "RailOfIcons",
           "title": "Beside a rail",
           "description": "",
@@ -14603,6 +14609,17 @@
               ]
             }
           ]
+        },
+        "HoverDetail": {
+          "shared": true,
+          "root": "env-hover-detail",
+          "parts": [
+            {
+              "class": "env-hover-detail",
+              "description": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
+            }
+          ],
+          "states": []
         },
         "Popup": {
           "shared": true,
@@ -14941,6 +14958,12 @@
           "file": "docs/examples/hover-card/DocumentPreview.tsx"
         },
         {
+          "name": "TextDetails",
+          "title": "Text details",
+          "description": "A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too.",
+          "file": "docs/examples/hover-card/TextDetails.tsx"
+        },
+        {
           "name": "PersonDetails",
           "title": "Person details",
           "description": "",
@@ -14991,6 +15014,17 @@
               ]
             }
           ]
+        },
+        "HoverDetail": {
+          "shared": true,
+          "root": "env-hover-detail",
+          "parts": [
+            {
+              "class": "env-hover-detail",
+              "description": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
+            }
+          ],
+          "states": []
         },
         "Popup": {
           "shared": true,
@@ -20431,7 +20465,7 @@
           "name": "trigger",
           "type": "ReactElement",
           "required": true,
-          "description": "The element that opens the card on hover and keyboard focus; it receives the ref."
+          "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; a link or another control keeps its own look."
         },
         {
           "name": "children",
@@ -25599,7 +25633,7 @@
           "name": "children",
           "type": "ReactElement<TriggerProps>",
           "required": true,
-          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, the tooltip describes their `trigger`; around a HoverCard, it shows nothing. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too. One element: text, a Fragment or a component that doesn't pass the ref on to its element gets no tooltip, and says so while developing."
+          "description": "The one control it describes, such as an IconButton, which takes the trigger's props and ref, and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, the tooltip describes their `trigger`; around a HoverCard, it shows nothing. A disabled control is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu item, it is focusable and carries the control's name, role and state, reported disabled, so keyboard focus opens it too. One element: text, a Fragment or a component that doesn't pass the ref on to its element gets no tooltip, and says so while developing. Text, such as a focusable span or Text that holds text, takes a quiet dotted underline, env-hover-detail."
         },
         {
           "name": "ref",

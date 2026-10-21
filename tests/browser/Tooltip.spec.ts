@@ -517,3 +517,27 @@ test.describe('Tooltip', () => {
     );
   });
 });
+
+test('a text trigger takes a quiet dotted underline, a button trigger none', async ({ page }) => {
+  await page.goto(tooltips);
+  const text = page.getByTestId('tooltip-text-trigger');
+  await expect(text).toHaveClass(/\benv-hover-detail\b/);
+  const style = await text.evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return {
+      line: computed.textDecorationLine,
+      decoration: computed.textDecorationStyle,
+      cursor: computed.cursor,
+    };
+  });
+  expect(style).toMatchObject({ line: 'underline', decoration: 'dotted' });
+  expect(style.cursor).not.toBe('help');
+  await text.focus();
+  await expect(page.getByRole('tooltip')).toHaveText('Central European Time');
+
+  const button = page.getByRole('button', { name: 'Archive', exact: true });
+  await expect(button).not.toHaveClass(/\benv-hover-detail\b/);
+  expect(await button.evaluate((element) => getComputedStyle(element).textDecorationLine)).toBe(
+    'none',
+  );
+});

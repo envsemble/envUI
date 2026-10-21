@@ -14,6 +14,10 @@
     "EditorChrome": {
       "prefix": "env-editor"
     },
+    "HoverDetail": {
+      "prefix": "env-hover-detail",
+      "root": "env-hover-detail"
+    },
     "ListRow": {
       "prefix": "env-list-row",
       "root": "env-list-row"
@@ -333,6 +337,9 @@
     },
     "HoverCard": {
       "env-hover-card": "The card that opens on hover."
+    },
+    "HoverDetail": {
+      "env-hover-detail": "Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger, with a quiet dotted underline; an application's own text component can take it too."
     },
     "Icon": {
       "env-icon": "An icon."
