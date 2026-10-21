@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Theme, useTheme, type ThemeValue } from '@envsemble/envui';
+import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
@@ -156,19 +156,20 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   return callouts.sort((a, b) => a.number - b.number);
 }
 
-/** The component in one theme, with its callouts measured from its live parts. */
+/**
+ * The component in the theme the reader has chosen, following it as it changes, with its callouts
+ * measured from its live parts.
+ */
 function AnatomyStage({
   page,
   name,
-  theme,
   legend,
 }: {
   page: string;
   name: string;
-  theme: ThemeValue;
   legend: AnatomyLegendItem[];
 }) {
-  const { contrast, scale } = useTheme();
+  const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
   const subject = useRef<HTMLDivElement>(null);
   const [callouts, setCallouts] = useState<Callout[]>([]);
@@ -206,14 +207,7 @@ function AnatomyStage({
     };
   }, [legend]);
   return (
-    <Theme
-      theme={theme}
-      contrast={contrast}
-      scale={scale}
-      ref={stage}
-      className="docs-anatomy-stage"
-      data-theme={theme}
-    >
+    <Theme {...theme} ref={stage} className="docs-anatomy-stage" data-example={name}>
       {/* A picture of the parts: the live component neither takes focus nor changes under it. */}
       <div ref={subject} className="docs-anatomy-subject" inert>
         <ExampleRender page={page} name={name} />
@@ -258,8 +252,8 @@ function legendText({ part, text }: AnatomyLegendItem) {
 }
 
 /**
- * An anatomy figure: the live component in the light and the dark theme, a numbered callout on
- * each part its legend names, by class name, and the legend, with the example's code below.
+ * An anatomy figure: the live component in the reader's theme, a numbered callout on each part its
+ * legend names, by class name, and the legend of part names, with the example's code below.
  */
 export function AnatomyFigure({
   page,
@@ -279,10 +273,7 @@ export function AnatomyFigure({
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
     <figure className="docs-anatomy" aria-label={title}>
-      <div className="docs-anatomy-stages" data-example={name}>
-        <AnatomyStage page={page} name={name} theme="light" legend={items} />
-        <AnatomyStage page={page} name={name} theme="dark" legend={items} />
-      </div>
+      <AnatomyStage page={page} name={name} legend={items} />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
         {items.length > 0 && (

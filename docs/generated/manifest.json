@@ -1376,56 +1376,56 @@
         {
           "name": "ProjectSummary",
           "title": "Project summary",
-          "description": "",
+          "description": "A card groups content about one subject on a rounded surface.",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
           "name": "ActionStrip",
           "title": "Content card",
-          "description": "The default. `title` and `meta` make a title row, `description` a sentence under it, and `actions` a strip of controls along the bottom, in a fill of its own that sets it apart from the card's body in both themes. `render` makes the card an article.",
+          "description": "The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.",
           "file": "docs/examples/card/ActionStrip.tsx"
         },
         {
           "name": "FeatureCards",
           "title": "Feature card",
-          "description": "`layout=\"feature\"` presents a feature with an icon at the start, its title and description, and one action at the end.",
+          "description": "`layout=\"feature\"`: an icon, a title and a sentence, and one action.",
           "file": "docs/examples/card/FeatureCards.tsx"
         },
         {
           "name": "Destinations",
           "title": "Link card",
-          "description": "With `href` the whole card is one native link, through the `LinkProvider`'s link component, named by its text: its title, then its summary.",
+          "description": "With `href`, the whole card is one link.",
           "file": "docs/examples/card/Destinations.tsx"
         },
         {
           "name": "StartOptions",
           "title": "Button card",
-          "description": "With `onClick` the whole card is a native button with `type=\"button\"`, which can only hold phrasing content, such as spans. A disabled one cannot be pressed.",
+          "description": "With `onClick`, the whole card is one button. It holds only phrasing content, such as spans.",
           "file": "docs/examples/card/StartOptions.tsx"
         },
         {
-          "name": "MembersInList",
-          "title": "Do: Use a List for rows of similar items, each with a label, a description and an action.",
-          "description": "",
-          "file": "docs/examples/card/MembersInList.tsx"
-        },
-        {
-          "name": "MembersAsCards",
-          "title": "Don't: Don't stack cards for a list of similar rows: the repeated fills and corners crowd out the content.",
-          "description": "",
-          "file": "docs/examples/card/MembersAsCards.tsx"
-        },
-        {
           "name": "OneCardSections",
-          "title": "Do: Group what belongs to one subject in one card, with Text for its parts.",
+          "title": "Do: One card per subject, with Text for its parts.",
           "description": "",
           "file": "docs/examples/card/OneCardSections.tsx"
         },
         {
           "name": "NestedCards",
-          "title": "Don't: Don't nest cards inside each other; the fills and corners stack up and blur what belongs together.",
+          "title": "Don't: Cards inside cards: the fills and corners stack up.",
           "description": "",
           "file": "docs/examples/card/NestedCards.tsx"
+        },
+        {
+          "name": "ShortCard",
+          "title": "Do: A short title that names the subject, and a sentence or two.",
+          "description": "",
+          "file": "docs/examples/card/ShortCard.tsx"
+        },
+        {
+          "name": "WordyCard",
+          "title": "Don't: A long title and a paragraph: the card stops being scannable.",
+          "description": "",
+          "file": "docs/examples/card/WordyCard.tsx"
         },
         {
           "name": "CardAnatomy",
@@ -1587,7 +1587,7 @@
         {
           "name": "CreateProject",
           "title": "Create project",
-          "description": "",
+          "description": "A button starts an action. With `href` it is a native link that looks like a button.",
           "file": "docs/examples/button/CreateProject.tsx"
         },
         {
@@ -1595,18 +1595,6 @@
           "title": "Icons",
           "description": "",
           "file": "docs/examples/button/Icons.tsx"
-        },
-        {
-          "name": "ConfirmInPlace",
-          "title": "Confirm in place",
-          "description": "",
-          "file": "docs/examples/button/ConfirmInPlace.tsx"
-        },
-        {
-          "name": "CopyValue",
-          "title": "Copy value",
-          "description": "",
-          "file": "docs/examples/button/CopyValue.tsx"
         },
         {
           "name": "ConnectedButtons",
@@ -1617,14 +1605,20 @@
         {
           "name": "PendingAction",
           "title": "Pending action",
-          "description": "While `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.",
+          "description": "While `pending`, a spinner replaces the content at the same size, and presses do nothing.",
           "file": "docs/examples/button/PendingAction.tsx"
         },
         {
-          "name": "CustomClipboard",
-          "title": "Custom clipboard",
-          "description": "A CopyButton writes the text with the asynchronous Clipboard API, or with `write`, the application's own clipboard writer, such as a desktop shell's bridge; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A `write` that rejects reports \"Couldn’t copy\". A function `value` runs at the press, and a promise keeps the button pending until it resolves. \"Copied\" (or \"Couldn’t copy\") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.",
-          "file": "docs/examples/button/CustomClipboard.tsx"
+          "name": "ConfirmInPlace",
+          "title": "Confirm in place",
+          "description": "ConfirmButton arms on the first press and acts on the second. <kbd>Esc</kbd>, leaving it or 4 seconds disarm it.",
+          "file": "docs/examples/button/ConfirmInPlace.tsx"
+        },
+        {
+          "name": "CopyValue",
+          "title": "Copy value",
+          "description": "CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about two seconds.",
+          "file": "docs/examples/button/CopyValue.tsx"
         },
         {
           "name": "Variants",
@@ -1646,45 +1640,45 @@
         },
         {
           "name": "OnePrimaryAction",
-          "title": "Do: Use one primary button per group, and put it where the eye ends: at the end of a dialog's or a form's actions.",
+          "title": "Do: One primary button per group, at the end of its actions.",
           "description": "",
           "file": "docs/examples/button/OnePrimaryAction.tsx"
         },
         {
           "name": "SeveralPrimaryActions",
-          "title": "Don't: Don't line up several primary buttons: none of them stands out, and people can't tell which one moves them on.",
+          "title": "Don't: Several primary buttons: none of them stands out.",
           "description": "",
           "file": "docs/examples/button/SeveralPrimaryActions.tsx"
         },
         {
-          "name": "LinkInText",
-          "title": "Do: Use a Link for a destination inside a sentence.",
+          "name": "ExplainWhatIsMissing",
+          "title": "Do: Let people press it, then show what is missing.",
           "description": "",
-          "file": "docs/examples/button/LinkInText.tsx"
+          "file": "docs/examples/button/ExplainWhatIsMissing.tsx"
         },
         {
-          "name": "ButtonInText",
-          "title": "Don't: Don't put a button in running text: it breaks the line and reads as an action.",
+          "name": "DisabledUntilValid",
+          "title": "Don't: A disabled button that doesn’t say why.",
           "description": "",
-          "file": "docs/examples/button/ButtonInText.tsx"
-        },
-        {
-          "name": "SayWhatWillHappen",
-          "title": "Say what will happen",
-          "description": "",
-          "file": "docs/examples/button/SayWhatWillHappen.tsx"
+          "file": "docs/examples/button/DisabledUntilValid.tsx"
         },
         {
           "name": "SpecificLabel",
-          "title": "Do: Name the action and what it affects, such as Remove Sam Lee.",
-          "description": "",
+          "title": "Do: Name the action and what it affects.",
+          "description": "Start with a verb and say what will happen.",
           "file": "docs/examples/button/SpecificLabel.tsx"
         },
         {
           "name": "VagueLabel",
-          "title": "Don't: Don't use a vague label such as OK or Submit when a specific verb fits.",
+          "title": "Don't: OK or Submit, when a specific verb fits.",
           "description": "",
           "file": "docs/examples/button/VagueLabel.tsx"
+        },
+        {
+          "name": "SayWhatWillHappen",
+          "title": "Labels",
+          "description": "",
+          "file": "docs/examples/button/SayWhatWillHappen.tsx"
         },
         {
           "name": "ButtonAnatomy",

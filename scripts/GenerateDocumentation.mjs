@@ -131,17 +131,16 @@ export const templateSections = [
 ];
 
 /**
- * The sections of a component page written as exchanges, in order: each opens with its question,
- * a `> …?` line, and answers it with Markdown and live figures. Props and Related are generated,
- * as on the template.
+ * The sections of a component page on the figure template, in order: short text and live figures
+ * under ordinary headings. Props and Related are generated, as on the section template.
  */
-export const exchangeSections = [
-  { id: 'overview', title: 'Overview', required: true, question: true },
-  { id: 'variants', title: 'Variants', question: true },
-  { id: 'usage', title: 'When to use', required: true, question: true },
-  { id: 'anatomy', title: 'Anatomy', question: true },
-  { id: 'width', title: 'Adapting to width', question: true },
-  { id: 'accessibility', title: 'Accessibility', required: true, question: true },
+export const figureSections = [
+  { id: 'overview', title: 'Overview', required: true },
+  { id: 'variants', title: 'Variants' },
+  { id: 'usage', title: 'When to use', required: true },
+  { id: 'anatomy', title: 'Anatomy' },
+  { id: 'width', title: 'Adapting to width' },
+  { id: 'accessibility', title: 'Accessibility', required: true },
   { id: 'props', title: 'Props', generated: true },
   { id: 'related', title: 'Related', generated: true },
   { id: 'changelog', title: 'Changelog' },
@@ -560,7 +559,7 @@ function headingProblems(token) {
 }
 
 /**
- * A figure of a page of exchanges: ```tsx example=Name```, a do or don't figure
+ * A figure of a page on the figure template: ```tsx example=Name```, a do or don't figure
  * ```tsx do=Name caption="…"``` or ```tsx dont=Name caption="…"```, or an anatomy figure
  * ```tsx anatomy=Name```, each with optional attributes.
  */
@@ -610,20 +609,20 @@ export function readPartNames(directory = documentationDirectory) {
 }
 
 /**
- * Whether a component page is written as exchanges: its first section, "## Overview", opens with a
- * question, a blockquote.
+ * Whether a component page is on the figure template: it has a "## When to use" section, which the
+ * section template has not.
  */
-export function opensWithQuestion(tokens) {
-  const start = tokens.findIndex((token) => token.type === 'heading' && token.depth === 2);
-  if (start === -1 || tokens[start].text !== 'Overview') return false;
-  return tokens.slice(start + 1).find((token) => token.type !== 'space')?.type === 'blockquote';
+export function usesFigures(tokens) {
+  return tokens.some(
+    (token) => token.type === 'heading' && token.depth === 2 && token.text === 'When to use',
+  );
 }
 
 /**
- * The blocks of a component page written as exchanges: per section, its question and any
- * follow-up questions (blockquotes), Markdown, live figures with their legends, and specimens.
+ * The blocks of a component page on the figure template: per section, Markdown, live figures with
+ * their legends, and specimens.
  */
-function readExchanges(document, body, { examples, specimens, partNames }) {
+function readFigures(document, body, { examples, specimens, partNames }) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
@@ -633,15 +632,13 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
   let subheading;
   /** The anatomy figure an ordered list right after it is the legend of. */
   let legendOf;
-  /** The section whose question is still to come. */
-  let asking;
   for (const token of tokens) {
     problems.push(...headingProblems(token));
     if (token.type === 'heading' && token.depth === 2) {
-      const section = exchangeSections.find((item) => item.title === token.text);
+      const section = figureSections.find((item) => item.title === token.text);
       if (!section) {
         problems.push(
-          `"## ${token.text}" is not a section of a page of exchanges (${exchangeSections
+          `"## ${token.text}" is not a section of a component page (${figureSections
             .filter((item) => !item.generated)
             .map((item) => item.title)
             .join(', ')})`,
@@ -654,15 +651,14 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
       const previous = sections.at(-1);
       if (
         previous &&
-        exchangeSections.indexOf(section) <
-          exchangeSections.findIndex((item) => item.id === previous.id)
+        figureSections.indexOf(section) <
+          figureSections.findIndex((item) => item.id === previous.id)
       )
         problems.push(`"## ${token.text}" must come before "## ${previous.title}"`);
       current = { id: section.id, title: section.title, blocks: [], tokens: [] };
       sections.push(current);
       subheading = undefined;
       legendOf = undefined;
-      asking = section.question ? current : undefined;
     }
     if (!current) {
       if (token.type !== 'space') problems.push('content must follow a "##" section heading');
@@ -679,21 +675,10 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
       appendMarkdown(token.raw);
       continue;
     }
-    const isQuestion = token.type === 'blockquote' && current.id !== 'changelog';
-    if (asking && !(token.type === 'heading' && token.depth === 2)) {
-      if (!isQuestion) problems.push(`"## ${asking.title}" opens with its question, a "> …?" line`);
-      asking = undefined;
-    }
-    if (isQuestion) {
-      const text = token.text.replace(/\s+/g, ' ').trim();
-      if (token.tokens.length !== 1 || token.tokens[0].type !== 'paragraph')
-        problems.push(`the question "${text}" is one paragraph`);
-      if (!/\?$/.test(text)) problems.push(`the question "${text}" ends with a question mark`);
-      blocks.push({ kind: 'question', text });
-      subheading = undefined;
-      legendOf = undefined;
-      continue;
-    }
+    if (token.type === 'blockquote')
+      problems.push(
+        `${current.title} has a blockquote; write its text as a paragraph, or a rule as a do and don't pair`,
+      );
     if (token.type === 'heading' && token.depth === 3) subheading = token.text;
     if (isPropsTable(token))
       problems.push(`${current.title} lists props in a table; the Props section is generated`);
@@ -742,7 +727,8 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
       }
       for (const key of figureAttributes[role].required)
         if (!attributes[key]) problems.push(`${role} ${name} needs ${key}="…", one sentence`);
-      if (current.id === 'changelog') problems.push(`${role} ${name} must be in an exchange`);
+      if (current.id === 'changelog')
+        problems.push(`${role} ${name} belongs in a section before the changelog`);
       if (!/^[A-Z][A-Za-z\d]*$/.test(name))
         problems.push(`${role} ${name} must be a PascalCase file name`);
       if (token.text.trim())
@@ -806,8 +792,7 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
             `anatomy ${block.name} has no legend, and docs/generated/parts.json lists no parts of ${component}${block.of ? '' : '; write a legend or name the component with of="Name"'}`,
           );
       }
-  if (asking) problems.push(`"## ${asking.title}" opens with its question, a "> …?" line`);
-  for (const section of exchangeSections)
+  for (const section of figureSections)
     if (section.required && !sections.some((item) => item.id === section.id))
       problems.push(`"## ${section.title}" is required`);
   const overview = sections.find((item) => item.id === 'overview');
@@ -819,7 +804,7 @@ function readExchanges(document, body, { examples, specimens, partNames }) {
   if (accessibility) problems.push(...accessibilityProblems(accessibility.tokens, 'component'));
   if (problems.length)
     throw new Error(
-      `${document.path} does not follow the page of exchanges:\n  - ${problems.join('\n  - ')}`,
+      `${document.path} does not follow the figure template:\n  - ${problems.join('\n  - ')}`,
     );
   return sections.map(({ id, title, blocks }) => ({ id, title, blocks }));
 }
@@ -845,8 +830,8 @@ function readTemplate(document, body, { examples, specimens, kind = 'component',
       if (!section) {
         problems.push(
           `"## ${token.text}" is not a template section${kind === 'component' ? '' : ` of a ${kind} page`} (${allowed.map((item) => item.title).join(', ')})${
-            kind === 'component' && exchangeSections.some((item) => item.title === token.text)
-              ? '; a page of exchanges opens its "## Overview" with its question, a "> …?" line'
+            kind === 'component' && figureSections.some((item) => item.title === token.text)
+              ? '; a page on the figure template has a "## When to use" section'
               : ''
           }`,
         );
@@ -1134,9 +1119,9 @@ export function readDocumentation(
         markdown,
         ...(frontmatter && { frontmatter, yaml }),
       };
-      if (template && component && opensWithQuestion(tokens)) {
-        document.format = 'exchanges';
-        document.sections = readExchanges(document, markdown, {
+      if (template && component && usesFigures(tokens)) {
+        document.format = 'figures';
+        document.sections = readFigures(document, markdown, {
           examples: filesOf(examples, id),
           specimens: filesOf(specimens, id),
           partNames,
@@ -1338,13 +1323,12 @@ export function compileDocument(document, documents, { props, examples = example
     let text = '';
     for (const block of section.blocks) {
       if (block.kind === 'markdown') text += block.markdown;
-      else if (block.kind === 'question') text += `> ${block.text}\n\n`;
       else if (block.kind === 'example' || block.kind === 'template') {
         // The fence outlasts any backticks in the source, and closes on a line of its own.
         const source = exampleSource(document.id, block.name, examples).replace(/\n*$/, '\n');
         const fence = fenceFor(source);
         // A template's screen keeps its frame where it differs from the page's; a figure of a
-        // page of exchanges keeps its kind and attributes.
+        // page on the figure template keeps its kind and attributes.
         const info =
           block.kind === 'example'
             ? [
@@ -1363,7 +1347,7 @@ export function compileDocument(document, documents, { props, examples = example
     }
     return text.replace(/\n{3,}/g, '\n\n').replace(/\s*$/, '\n');
   };
-  for (const section of document.format === 'exchanges' ? exchangeSections : templateSections) {
+  for (const section of document.format === 'figures' ? figureSections : templateSections) {
     if (section.id === 'props') {
       if (propsSection) parts.push(propsSection);
       continue;
