@@ -482,3 +482,14 @@
     border-color: GrayText;
   }
 }
+
+/* In a skeleton, a button, a link drawn as one included, is a filled shape of its size. */
+[data-env-skeleton] .env-button {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] .env-button * {
+  visibility: hidden;
+}

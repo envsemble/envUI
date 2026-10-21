@@ -31,7 +31,7 @@ related:
   - list
   - card
   - stat
-  - skeleton
+  - loading
 components:
   - DescriptionList
 ---
@@ -68,7 +68,7 @@ DescriptionList shows the facts about one thing as labels and their values: a `d
 
 - DescriptionList has no states and handles no keys; the controls in its values handle their own.
 - The values wrap anywhere rather than widen the list; labels wrap between words.
-- **Loading**: while the facts load, put pairs of [Skeleton](../components/skeleton.md) lines in the items inside a LoadingState, so the list keeps its shape.
+- **Loading**: while the facts load, render the list in a surface with `skeleton`, its values given as undefined, so it keeps its shape, as [Loading](../patterns/loading.md) shows.
 
 ## Content guidelines
 

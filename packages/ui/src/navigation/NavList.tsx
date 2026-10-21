@@ -20,7 +20,6 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { navList, type NavListMessages } from '../foundations/messages/navList.js';
 import { CounterBadge, type CounterBadgeProps } from '../content/CounterBadge.js';
-import { Skeleton as Placeholder } from '../feedback/Skeleton.js';
 
 /**
  * Whether an item is one of a list's own items, which renders as its list item: true for the items
@@ -266,49 +265,9 @@ function Group({ label, children, className, ...props }: GroupProps) {
   );
 }
 
-export interface SkeletonProps extends Omit<ComponentPropsWithRef<'ul'>, 'children'> {
-  /**
-   * How many placeholder items it shows.
-   * @default 3
-   */
-  items?: number;
-}
-
-/**
- * Placeholders in the shape of a NavList.Root's items while the navigation loads, such as in a
- * sidebar before the account's data arrives: an icon and a label each, at the items' height, and
- * only the icon in a sidebar rail. Hidden from assistive technology; put the frame in a
- * LoadingState, which names what loads.
- */
-function Skeleton({ items = 3, className, ...props }: SkeletonProps) {
-  const inRail = useSidebarRail();
-  return (
-    <ul
-      aria-hidden="true"
-      {...props}
-      className={classNames('env-nav-list', 'env-nav-list-skeleton', className)}
-    >
-      {Array.from({ length: items }, (_, index) => (
-        <li key={index}>
-          <span className="env-nav-list-skeleton-item" data-icon-only={inRail ? '' : undefined}>
-            <Placeholder
-              width="var(--env-control-icon-size)"
-              height="var(--env-control-icon-size)"
-            />
-            {!inRail && (
-              <Placeholder width={`${4.25 + ((index * 1.5) % 2.5)}rem`} height="0.75rem" />
-            )}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 // Each part is named for React DevTools by a pure call, so a bundler drops the parts an
 // application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'NavList.Root');
 const ItemPart = /* @__PURE__ */ withDisplayName(Item, 'NavList.Item');
 const GroupPart = /* @__PURE__ */ withDisplayName(Group, 'NavList.Group');
-const SkeletonPart = /* @__PURE__ */ withDisplayName(Skeleton, 'NavList.Skeleton');
-export { RootPart as Root, ItemPart as Item, GroupPart as Group, SkeletonPart as Skeleton };
+export { RootPart as Root, ItemPart as Item, GroupPart as Group };

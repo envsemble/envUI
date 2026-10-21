@@ -15,7 +15,6 @@ import {
   Drawer,
   LoadingState,
   Progress,
-  Skeleton,
   Toast,
   useToast,
   ConfirmButton,
@@ -79,9 +78,7 @@ function FeedbackStrings() {
   return (
     <>
       <Alert onDismiss={() => {}}>Saved on this device.</Alert>
-      <LoadingState>
-        <Skeleton />
-      </LoadingState>
+      <LoadingState />
       <Progress label="Importing" value={null} />
       <Drawer title="Filters" defaultOpen modal={false} disablePointerDismissal>
         Filters

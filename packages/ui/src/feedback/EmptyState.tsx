@@ -3,9 +3,13 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Column, Grid } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
+import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
-export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
+export interface EmptyStateProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title'>,
+    SkeletonProps {
   /** What is missing or what happened, such as "No projects yet"; a heading of `headingLevel`. */
   title: ReactNode;
   /** Why, and what people can do, in a sentence or two of muted text under the title. */
@@ -36,23 +40,28 @@ export interface EmptyStateProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
  * What a region shows when it has nothing to show: no items yet, no matches, or content that failed
  * to load. A title, a description, an optional icon and the action that resolves the state.
  */
-export function EmptyState({
-  title,
-  description,
-  icon,
-  action,
-  tone = 'neutral',
-  headingLevel = 4,
-  align = 'start',
-  className,
-  children,
-  ...props
-}: EmptyStateProps) {
+export function EmptyState(allProps: EmptyStateProps) {
+  const {
+    title,
+    description,
+    icon,
+    action,
+    tone = 'neutral',
+    headingLevel = 4,
+    align = 'start',
+    skeleton = false,
+    className,
+    children,
+    ...props
+  } = allProps;
+  // A description given as undefined, as over a placeholder item, is a bar in a skeleton.
+  const hasDescription = description != null || given(allProps, 'description');
   const stateIcon = icon ?? (tone === 'danger' ? <ErrorIcon /> : null);
   return (
     <Grid
       role={tone === 'danger' ? 'alert' : undefined}
       {...props}
+      {...skeletonAttributes(skeleton)}
       // The state's data-align, start or center, which the grid's own alignment reads too.
       align={align}
       gap={4}
@@ -61,15 +70,17 @@ export function EmptyState({
       data-tone={tone}
       data-align={align}
     >
-      {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
-      <Column gap={2} className="env-empty-state-description">
-        <Text render={createElement(`h${headingLevel}`)} variant="title">
-          {title}
-        </Text>
-        {description != null && <Text variant="body-sm">{description}</Text>}
-        {children}
-      </Column>
-      {action}
+      <SkeletonScope skeleton={skeleton}>
+        {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
+        <Column gap={2} className="env-empty-state-description">
+          <Text render={createElement(`h${headingLevel}`)} variant="title">
+            {title}
+          </Text>
+          {hasDescription && <Text variant="body-sm">{description}</Text>}
+          {children}
+        </Column>
+        {action}
+      </SkeletonScope>
     </Grid>
   );
 }

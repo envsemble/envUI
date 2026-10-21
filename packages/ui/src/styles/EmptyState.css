@@ -24,3 +24,9 @@
 .env-empty-state:where([data-align='center']) > .env-empty-state-description {
   max-inline-size: 30rem;
 }
+
+/* A description given as undefined, as over a placeholder item, takes no room outside a skeleton;
+   in one it is a bar. */
+.env-empty-state-description > .env-text:empty:not([data-env-skeleton] *) {
+  display: none;
+}

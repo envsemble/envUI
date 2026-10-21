@@ -4,6 +4,7 @@
 import { measure, resolveRoot } from './measure.js';
 import type { LayoutProblem } from './model.js';
 import { read, type Reading } from './readout.js';
+import { skeletonShift, type SkeletonShiftOptions } from './skeletonShift.js';
 import { rootFontPx, toPx, windowClassOf, type WindowClass } from './units.js';
 
 export interface LayoutOptions {
@@ -44,6 +45,13 @@ export interface LayoutApi {
     widths: readonly (number | string)[],
     options?: Omit<LayoutOptions, 'width'>,
   ): LayoutAtResult[];
+  /**
+   * The elements of a skeleton that move or resize when it loads, as `skeleton-shift` problems:
+   * it toggles the surface's skeleton state, measures every element in both and puts it back. The
+   * root is a surface or a selector for one, else the page, whose skeletons it checks; run it on
+   * the loaded page, so both states hold the same content.
+   */
+  skeletonShift(root?: Element | string, options?: SkeletonShiftOptions): LayoutProblem[];
 }
 
 /** Resizes the root for one synchronous measurement, and puts it back. */
@@ -99,4 +107,5 @@ export const layout: LayoutApi = {
       };
     });
   },
+  skeletonShift,
 };

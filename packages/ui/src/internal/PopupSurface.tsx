@@ -13,6 +13,7 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { classNames } from './classNames.js';
 import { ResetControlDefaults } from './ControlDefaults.js';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
+import { SkeletonScope } from '../foundations/SkeletonScope.js';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
 export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
@@ -92,6 +93,11 @@ export interface PopupSurfaceProps {
   positionerClassName?: string;
   /** More props for the Popup part: aria-label, ref, render, data attributes and handlers. */
   popupProps?: Record<string, unknown>;
+  /**
+   * Shows the content as a skeleton: the popup is busy and keeps focus, so people can still close
+   * it, while its content, wrapped in an element without a box, is the skeleton and inert.
+   */
+  skeleton?: boolean;
   children?: ReactNode;
 }
 
@@ -167,6 +173,7 @@ export function PopupSurface({
   layout,
   positionerClassName,
   popupProps,
+  skeleton = false,
   children,
 }: PopupSurfaceProps) {
   const theme = useTheme();
@@ -187,13 +194,24 @@ export function PopupSurface({
               <Popup
                 {...(layout && { render: layout })}
                 {...popupProps}
+                {...(skeleton && { 'aria-busy': true })}
                 {...(initialFocus !== undefined && { initialFocus })}
                 {...(finalFocus !== undefined && { finalFocus })}
                 className={classNames('env-popup', className)}
                 data-elevation={elevation}
                 data-width={width}
               >
-                <ResetControlDefaults>{children}</ResetControlDefaults>
+                <ResetControlDefaults>
+                  <SkeletonScope skeleton={skeleton}>
+                    {skeleton ? (
+                      <div data-env-skeleton="" inert className="env-popup-skeleton">
+                        {children}
+                      </div>
+                    ) : (
+                      children
+                    )}
+                  </SkeletonScope>
+                </ResetControlDefaults>
               </Popup>
             </Positioner>
           </Theme>

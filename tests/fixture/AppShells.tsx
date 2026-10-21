@@ -5,7 +5,7 @@ import {
   Button,
   EnvUIProvider,
   IconButton,
-  LoadingState,
+  Surface,
   Menu,
   Menubar,
   NavList,
@@ -533,8 +533,8 @@ export function FullShellFixture() {
 
 /**
  * The frame's loading state beside the frame it stands for, mounted with ?fixture=loading-frame:
- * the same parts with NavList.Skeleton, marked busy and named by a LoadingState. ?real shows the
- * frame itself, for comparing their boxes.
+ * the same parts, with the navigation in a skeleton surface and the frame marked busy. ?real shows
+ * the frame itself, for comparing their boxes.
  */
 export function LoadingFrameFixture() {
   const real = params().has('real');
@@ -557,7 +557,19 @@ export function LoadingFrameFixture() {
             </NavList.Item>
           </NavList.Root>
         ) : (
-          <NavList.Skeleton items={3} />
+          <Surface skeleton background="default" padding={0} radius="none">
+            <NavList.Root>
+              <NavList.Item href="#/" icon={<Home />}>
+                Home
+              </NavList.Item>
+              <NavList.Item href="#/products" icon={<Category />}>
+                Products
+              </NavList.Item>
+              <NavList.Item href="#/settings" icon={<Settings />}>
+                Settings
+              </NavList.Item>
+            </NavList.Root>
+          </Surface>
         )}
       </Sidebar.Content>
     </Sidebar.Root>
@@ -571,5 +583,5 @@ export function LoadingFrameFixture() {
       </AppShell.Main>
     </AppShell.Root>
   );
-  return real ? frame : <LoadingState label="Loading workspace">{frame}</LoadingState>;
+  return frame;
 }

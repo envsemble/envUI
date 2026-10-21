@@ -133,3 +133,14 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* In a skeleton, a badge is a filled shape of its size, without its text or tone. */
+[data-env-skeleton] :is(.env-badge, .env-counter-badge) {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] :is(.env-badge, .env-counter-badge) * {
+  visibility: hidden;
+}

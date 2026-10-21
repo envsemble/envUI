@@ -91,3 +91,18 @@
   background: var(--env-alert-pressed);
   color: var(--env-alert-tone);
 }
+
+/* A title or message given as undefined, as over a placeholder item, takes no room outside a
+   skeleton; in one it is a bar. */
+:is(.env-alert-title, .env-alert-message):empty:not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] :is(.env-alert-title, .env-alert-message) {
+  --env-skeleton-placeholder: inline-block;
+}
+[data-env-skeleton] .env-alert-title {
+  --env-skeleton-length: 12rem;
+}
+[data-env-skeleton] .env-alert-message {
+  --env-skeleton-length: 24rem;
+}

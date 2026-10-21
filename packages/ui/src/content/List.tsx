@@ -10,10 +10,13 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
+import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { Text } from '../foundations/Text.js';
+import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
 
-export interface RootProps extends ComponentPropsWithRef<'ul'> {
+export interface RootProps extends ComponentPropsWithRef<'ul'>, SkeletonProps {
   /**
    * How tightly the rows pack: xs, sm, md or lg changes only their block padding, never the text.
    * @default 'md'
@@ -38,13 +41,26 @@ const reorderableProp = 'data-env-reorderable';
  * `<Surface background="muted" padding={3}>`, the rows take the raised fill, so they stand out
  * from it. With onReorder, people move the rows by their handles.
  */
-function Root({ density = 'md', onReorder, className, children, ...props }: RootProps) {
+function Root({
+  density = 'md',
+  onReorder,
+  skeleton = false,
+  className,
+  children,
+  ...props
+}: RootProps) {
   // A reorderable list needs the browser; a list without it stays server-rendered markup, and
   // ships no client code.
   if (onReorder)
     return (
-      <ReorderableList {...props} density={density} onReorder={onReorder} className={className}>
-        {markReorderable(children)}
+      <ReorderableList
+        {...props}
+        {...skeletonAttributes(skeleton)}
+        density={density}
+        onReorder={onReorder}
+        className={className}
+      >
+        <SkeletonScope skeleton={skeleton}>{markReorderable(children)}</SkeletonScope>
       </ReorderableList>
     );
   return (
@@ -52,12 +68,13 @@ function Root({ density = 'md', onReorder, className, children, ...props }: Root
       render={
         <ul
           {...props}
+          {...skeletonAttributes(skeleton)}
           data-density={density}
           className={classNames('env-list', 'env-connected-rows', className)}
         />
       }
     >
-      {children}
+      <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
     </Grid>
   );
 }
@@ -75,10 +92,16 @@ function markReorderable(children: ReactNode): ReactNode {
   });
 }
 
-export interface ItemProps extends ComponentPropsWithRef<'li'> {
-  /** The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. */
+export interface ItemProps extends ComponentPropsWithRef<'li'>, SkeletonProps {
+  /**
+   * The row's main text, such as an item's name; a link marked `data-row-target` in an interactive
+   * row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place.
+   */
   label: ReactNode;
-  /** A short fact in muted text below the label, such as who changed the item and when. */
+  /**
+   * A short fact in muted text below the label, such as who changed the item and when. Given as
+   * undefined, such as over a placeholder item, a skeleton shows a bar in its place.
+   */
   description?: ReactNode;
   /** A control at the end of the row, such as a Button; it moves below the text when it doesn't fit. */
   action?: ReactNode;
@@ -148,11 +171,13 @@ function Item(props: ItemProps) {
     selected = false,
     start,
     textValue,
+    skeleton = false,
     children,
     className,
     [reorderableProp]: reorderable = false,
     ...rest
   } = props as ItemProps & { [reorderableProp]?: boolean };
+  const hasDescription = description != null || given(props, 'description');
   // The current row says so on its target, which people reach and hear, or on the row itself.
   let current = false;
   const mark = (node: ReactNode) => {
@@ -178,6 +203,7 @@ function Item(props: ItemProps) {
         <li
           aria-current={selected && !current ? 'true' : undefined}
           {...rest}
+          {...skeletonAttributes(skeleton)}
           className={classNames('env-list-item', 'env-connected-row', className)}
           data-interactive={interactive ? '' : undefined}
           data-selected={selected ? '' : undefined}
@@ -191,12 +217,15 @@ function Item(props: ItemProps) {
           {start}
         </Row>
       )}
-      <div className="env-list-item-content">
-        {shownLabel}
-        {shownDescription != null && <small>{shownDescription}</small>}
-        {shownChildren}
-      </div>
-      {action}
+      <SkeletonScope skeleton={skeleton}>
+        <div className="env-list-item-content">
+          {/* A missing label, as over a placeholder item, is an empty line: a bar in a skeleton. */}
+          {shownLabel ?? <Text render={<span />} variant="body-sm" />}
+          {hasDescription && <small>{shownDescription}</small>}
+          {shownChildren}
+        </div>
+        {action}
+      </SkeletonScope>
     </Row>
   );
 }

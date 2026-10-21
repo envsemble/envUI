@@ -31,6 +31,8 @@ import {
   resizeColumns,
   sameWidths,
 } from './internal/TableColumns.js';
+import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -52,7 +54,9 @@ const TableStackContext = createContext(false);
 const TableColumnsContext = createContext<TableColumns | null>(null);
 const TableSectionContext = createContext<'head' | 'body' | null>(null);
 
-export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'> {
+export interface RootProps
+  extends Omit<ComponentPropsWithRef<'table'>, 'aria-label'>,
+    SkeletonProps {
   /**
    * Accessible name of the table and its scroll region when there is no caption. A table needs a
    * caption, an aria-label or an aria-labelledby, which names its region too.
@@ -182,6 +186,7 @@ function Root({
   onColumnWidthsChange,
   minColumnWidths,
   resizableColumns = false,
+  skeleton = false,
   className,
   children,
   ref,
@@ -229,6 +234,7 @@ function Root({
     <div
       ref={region}
       className={classNames('env-table-region', regionClassName)}
+      {...skeletonAttributes(skeleton)}
       role="region"
       // The region is a tab stop so keyboard users can scroll wide tables.
       tabIndex={0}
@@ -270,7 +276,9 @@ function Root({
           </colgroup>
         )}
         <TableStackContext value={stack}>
-          <TableColumnsContext value={columns}>{children}</TableColumnsContext>
+          <TableColumnsContext value={columns}>
+            <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
+          </TableColumnsContext>
         </TableStackContext>
       </table>
     </div>

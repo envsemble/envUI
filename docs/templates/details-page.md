@@ -82,7 +82,7 @@ The page for one object, here the Website refresh project, inside the [app frame
 - **Tabs:** the arrow keys move between Overview, Activity and Files; each panel starts with its own `h2`.
 - **Archive:** happens at once; the status turns to Archived in the header and the panel, and the toast offers Undo.
 - **Delete:** asks first, naming the project, with Cancel focused; after the deletion the application goes back to the list and confirms there with a toast. The sample says so in a status line.
-- **Loading:** show the header with the name people chose from the list, and [Skeleton](../components/skeleton.md) blocks in the shape of the tabs and the panel until the rest arrives.
+- **Loading:** show the header with the name people chose from the list, and the tabs' panel as a skeleton, with `skeleton` on its surface, until the rest arrives.
 - **Not found or no access:** show the [not-found or no-access page](error-pages.md) inside the frame instead of an empty page.
 - **Widths:** the columns sit side by side when the page is about 56 rem wide, on a desktop. Narrower, on a tablet beside the app sidebar and on a phone, the panel moves below the tabs, since reading order follows the source's. The header's actions move under the title below 32 rem.
 

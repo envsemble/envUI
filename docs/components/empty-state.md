@@ -20,8 +20,8 @@ useWhen:
   - Content failed to load and people can try again (`tone="danger"`).
   - A state takes the place of a whole page's or region's content (`align="center"`).
 avoidWhen:
-  - text: Content that is on its way, which keeps its layout while it loads.
-    use: Skeleton
+  - text: Content that is on its way, which keeps its layout while it loads, as a skeleton.
+    use: Surface
   - text: A message about a page or section that still has its content.
     use: Alert
   - text: Feedback after an action, such as a failed save.
@@ -30,7 +30,6 @@ avoidWhen:
     use: Spinner
 related:
   - loading
-  - skeleton
   - alert
   - toast
   - card
@@ -96,7 +95,7 @@ An empty state takes the place of content that isn't there: it says why, such as
 
 ### Don't
 
-- Don't show an empty state while content is still loading; use [Skeleton](../components/skeleton.md).
+- Don't show an empty state while content is still loading; show the content's components as skeletons, as [Loading](../patterns/loading.md) shows.
 - Don't report a failed action, such as a save, with an empty state; use [Toast](../components/toast.md) or [Alert](../components/alert.md).
 - Don't centre a state inside a small card or a dialog.
 - Don't fill an empty state with decoration or several competing actions.

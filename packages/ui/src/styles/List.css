@@ -97,6 +97,15 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
+/* A description given as undefined, as over a placeholder item, takes no room outside a skeleton;
+   in one it is a bar. */
+.env-list-item-content > small:empty:not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] .env-list-item-content > small {
+  --env-skeleton-placeholder: inline-block;
+  --env-skeleton-length: 14rem;
+}
 /* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
    they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
    fill. */

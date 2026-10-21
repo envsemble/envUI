@@ -17,7 +17,6 @@ import {
   Checkbox,
   Switch,
   Badge,
-  Skeleton,
   type ThemeValue,
 } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
@@ -163,7 +162,6 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
           data-testid={`${theme}-color-switch`}
         />
         <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
-        <Skeleton data-testid={`${theme}-color-skeleton`} />
       </Column>
     </Theme>
   );

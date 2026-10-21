@@ -138,6 +138,14 @@
       "PanelDockProps": { "to": ["PanelDock.RootProps"] },
       "SegmentedControlOption": { "to": ["SegmentedControlItem"] },
       "SelectOption": { "to": ["SelectItem"] },
+      "Skeleton": {
+        "to": [],
+        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, LoadingState is a spinner with a label."
+      },
+      "SkeletonProps": {
+        "to": [],
+        "use": "Skeleton is gone: skeleton on a Surface, Card, List.Root, Table.Root and the other containers, over placeholders(count)."
+      },
       "Stack": {
         "to": [],
         "use": "Lay out with Row for direction=\"row\" and Column otherwise, with the same gap, align, justify and render; v1-stack rewrites each element."

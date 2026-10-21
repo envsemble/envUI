@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Button,
-  EmptyState,
-  LoadingState,
-  SegmentedControl,
-  Skeleton,
   Column,
-  Row,
-  Surface,
+  EmptyState,
+  SegmentedControl,
   Table,
+  placeholders,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
-/** Placeholders appear only once a load has taken this long, so quick loads never flash them. */
+/** The skeleton appears only once a load has taken this long, so quick loads never flash it. */
 const placeholderDelay = 200;
 
 export default function EmptyAndLoading() {
@@ -38,55 +35,40 @@ export default function EmptyAndLoading() {
   };
 
   const name = teams.find((option) => option.value === team)?.label ?? '';
-  const rows = projects[team];
+  const rows = loaded.includes(team) ? projects[team] : undefined;
 
-  let content;
-  if (!loaded.includes(team))
-    content = (
-      // Rows of placeholders in the shape of the table's rows, on its surface. They keep their
-      // space, hidden, until the delay has passed, so the page doesn't jump.
-      <Surface padding={4} style={{ visibility: showPlaceholders ? undefined : 'hidden' }}>
-        <LoadingState label={`Loading ${name} projects`}>
-          {[0, 1, 2].map((row) => (
-            <Row key={row} align="center" gap={6} style={{ blockSize: '2.5rem' }}>
-              <Skeleton width={`${36 - row * 6}%`} height="1rem" emphasis="default" />
-              <Skeleton width="20%" height="1rem" />
-              <Skeleton width="12%" height="1rem" />
-            </Row>
-          ))}
-        </LoadingState>
-      </Surface>
-    );
-  else if (rows.length === 0)
-    content = (
-      // In place of the table, the empty state says what goes here and how to start.
+  // In place of the table, the empty state says what goes here and how to start. While the rows
+  // load, the table is a skeleton over placeholder rows; until the delay has passed it keeps its
+  // space, hidden, so the page doesn't jump.
+  const content =
+    rows?.length === 0 ? (
       <EmptyState
         icon={<FolderOpen />}
         title={`No ${name} projects yet`}
         description="Projects bring a team’s documents, tasks and people together."
         action={<Button startIcon={<Add />}>Create project</Button>}
       />
-    );
-  else
-    content = (
-      <Table.Root aria-label={`${name} projects`}>
-        <Table.Head>
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Owner</Table.HeaderCell>
-            <Table.HeaderCell numeric>Open tasks</Table.HeaderCell>
-          </Table.Row>
-        </Table.Head>
-        <Table.Body>
-          {rows.map((project) => (
-            <Table.Row key={project.name}>
-              <Table.Cell>{project.name}</Table.Cell>
-              <Table.Cell nowrap>{project.owner}</Table.Cell>
-              <Table.Cell numeric>{project.tasks}</Table.Cell>
+    ) : (
+      <div style={{ visibility: rows || showPlaceholders ? undefined : 'hidden' }}>
+        <Table.Root aria-label={`${name} projects`} skeleton={!rows}>
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Name</Table.HeaderCell>
+              <Table.HeaderCell>Owner</Table.HeaderCell>
+              <Table.HeaderCell numeric>Open tasks</Table.HeaderCell>
             </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+          </Table.Head>
+          <Table.Body>
+            {(rows ?? placeholders(3)).map((project, row) => (
+              <Table.Row key={project.name ?? row}>
+                <Table.Cell>{project.name}</Table.Cell>
+                <Table.Cell nowrap>{project.owner}</Table.Cell>
+                <Table.Cell numeric>{project.tasks}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </div>
     );
 
   return (

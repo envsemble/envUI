@@ -60,8 +60,20 @@ const reports = {
   // reported.
   'later-transforms.tsx': removedFrom(1, ['ActionCard']),
   'removed.tsx': [
-    ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
-    ...removedFrom(2, ['LoadingBarProps', 'MenuDensity', 'SurfaceDensity', 'ToastProps']),
+    ...removedFrom(1, [
+      'getInitials',
+      'LoadingBar',
+      'Skeleton',
+      'useLinkComponent',
+      'useSidebarCompact',
+    ]),
+    ...removedFrom(2, [
+      'LoadingBarProps',
+      'MenuDensity',
+      'SkeletonProps',
+      'SurfaceDensity',
+      'ToastProps',
+    ]),
   ],
   'shadowing-namespace.tsx': [
     'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',

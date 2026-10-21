@@ -122,7 +122,6 @@ const referenceIcons: Record<string, typeof Palette> = {
   disclosure: Notes,
   'empty-state': Inbox,
   spinner: HourglassEmpty,
-  skeleton: HourglassEmpty,
   toast: Notifications,
   dialog: WebAsset,
   menu: MoreVert,

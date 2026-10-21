@@ -74,7 +74,7 @@ The workspace's overview inside the [app frame](app-frame.md): four figures for 
 - **Period:** choosing another period changes the figures and their trends at once; the other panels show the present, so they stay. Keep the period in the address.
 - **Export:** a link to the report for the chosen period, which the browser downloads. For a report that takes a while, start it and say when it's ready with a toast that carries a Download action ([Notifications and feedback](../patterns/feedback.md)).
 - **Empty panels:** a panel with nothing to show keeps its place and says so in its own words, as Alerts does; the page never hides a panel people look for.
-- **Loading:** show [Skeleton](../components/skeleton.md) blocks in each panel's shape while its data arrives, panel by panel, rather than one spinner for the page.
+- **Loading:** show each panel as a skeleton, with `skeleton` on its surface, while its data arrives, panel by panel, rather than one spinner for the page.
 - **A panel fails:** replace its content with an EmptyState with `tone="danger"` and "Try again", and keep the other panels.
 - **Widths:** the page is `width="full"`. On a desktop the panels share rows of two or three, the wide ones taking more of a row; on a tablet they share rows of one or two; on a phone each takes the width, the figures stack and the table's rows stack.
 

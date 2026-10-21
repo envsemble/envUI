@@ -100,7 +100,7 @@ AppShell is the frame of an application, made of parts: `AppShell.Root` lays out
 - **Below the breakpoint**: the sidebars render nothing inline, even before hydration, and their content opens in a drawer from their side; the header's title hides.
 - **Title bar**: with `titleBar` the header takes the height of the title bar area the window reports, and at least `--env-title-bar-height` (2.5 rem, 2 rem in the compact scale); empty space drags the window, its controls stay clickable and are small, with buttons that set no variant ghost, and it leaves room for the window controls through `env(titlebar-area-*)`, as [WindowFrame](../components/window-frame.md)'s title bar does. A trigger in it keeps the centre line of a rail's icons below it, and beside a title bar a sidebar's header drags the window too. The frame scrolls Main, so `--env-frame-sticky-top` is `0px`.
 - **Loading**: `loading` shows page progress along the header's bottom edge after a short delay, then completes.
-- **Loading frame**: the same parts, with [NavList.Skeleton](../components/nav-list.md) in `Sidebar.Content` and the same `persist`, stand in for the frame on the first load inside a [LoadingState](../components/skeleton.md).
+- **Loading frame**: the same parts, with the navigation and the page as skeletons and the same `persist`, stand in for the frame on the first load, as [Loading](../patterns/loading.md) describes.
 - **Motion**: the sidebars' widths animate after the first frame and never under a reduced-motion preference.
 
 ## Content guidelines
@@ -175,7 +175,7 @@ A start and an end sidebar, each with its own trigger, state and rail; content a
 
 ### The first load
 
-The same parts with NavList.Skeleton and the same `persist` key stand in for the frame in a LoadingState until the application's data arrives.
+The same parts and the same `persist` key stand in for the frame until the application's data arrives, with the navigation and the page in skeleton surfaces.
 
 ```tsx example=LoadingFrame
 

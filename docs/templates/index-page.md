@@ -82,7 +82,7 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 - **Archive:** happens at once, for one row from its menu or for the selection, with "Undo" in the toast. The control people used goes with it, so focus moves once the menu has closed: from a row's menu to the next row's menu button, or the one before for the last row; from the bulk buttons to "Select this page". Where no row is left, it moves to the empty state's "Clear filters", or to the search.
 - **Delete:** asks first, naming the project or the count in the title and the button; Cancel takes focus and returns it to the control that asked. After a delete the toast confirms it, and focus moves as after archiving.
 - **First use:** with no projects at all, replace the table with an EmptyState that explains projects and offers "Create project" ([Empty states](../patterns/empty-states.md)).
-- **Loading and errors:** show [Skeleton](../components/skeleton.md) rows in the table's shape while the first page loads, `pending` on Pagination while another does, and an EmptyState with `tone="danger"` and "Try again" when it fails.
+- **Loading and errors:** show the table as a skeleton over placeholder rows while the first page loads, `pending` on Pagination while another does, and an EmptyState with `tone="danger"` and "Try again" when it fails.
 - **Widths:** on a desktop and a tablet the columns show; below 36 rem of the table's own width the rows stack, each a block with its labels, and the toolbar and the bar wrap.
 
 ### Connect your data

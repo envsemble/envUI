@@ -32,7 +32,7 @@
 @import './Kbd.css' layer(env.components);
 @import './List.css' layer(env.components);
 @import './EmptyState.css' layer(env.components);
-@import './Skeleton.css' layer(env.components);
+@import './LoadingState.css' layer(env.components);
 @import './Spinner.css' layer(env.components);
 @import './LoadingBar.css' layer(env.components);
 @import './Text.css' layer(env.components);
@@ -93,6 +93,7 @@
 @import './DescriptionList.css' layer(env.components);
 @import './CalendarHeatmap.css' layer(env.components);
 @import './Motion.css' layer(env.components);
+@import './Skeleton.css' layer(env.components);
 /* envUI's own Inter. Cascade layers order style rules; a font face is no style rule, so it stays
    outside them, and an application's own face of this name replaces it. */
 @font-face {

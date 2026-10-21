@@ -83,3 +83,30 @@
     --env-message-action-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
 }
+
+/* An author or meta given as undefined, as over a placeholder item, takes no room outside a
+   skeleton. In one, missing text is a bar: the author's and the meta's short, another person's
+   message three lines, and one's own a line in its bubble. */
+:is(.env-message-author, .env-message-meta):empty:not([data-env-skeleton] *) {
+  display: none;
+}
+.env-message-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] :is(.env-message-author, .env-message-meta, .env-message-content) {
+  --env-skeleton-placeholder: inline-block;
+}
+[data-env-skeleton] .env-message-author {
+  --env-skeleton-length: 6rem;
+}
+[data-env-skeleton] .env-message-meta {
+  --env-skeleton-length: 4rem;
+}
+[data-env-skeleton] .env-message[data-from='other'] > .env-message-content {
+  --env-skeleton-length: 36rem;
+  --env-skeleton-lines: 3;
+  --env-skeleton-last: 60%;
+}
+[data-env-skeleton] .env-message[data-from='self'] > .env-message-content {
+  --env-skeleton-length: 12rem;
+}

@@ -115,7 +115,7 @@ test('a page an alias names ranks above the props of that name', () => {
   assert.deepEqual(best('modal'), ['page:dialog']);
   assert.deepEqual(best('hint'), ['page:tooltip']);
   assert.deepEqual(best('shortcut'), ['page:kbd']);
-  assert.deepEqual(best('placeholder'), ['page:skeleton']);
+  assert.deepEqual(best('placeholder'), ['page:surface']);
   assert.deepEqual(best('topbar'), ['page:app-shell']);
   assert.deepEqual(best('dark mode'), ['page:colors']);
   // An export's own name counts more than a page's alias of it.
@@ -192,7 +192,7 @@ test('a pattern or template names its kind, and what it composes finds it', () =
   const loading = records.find(({ id }) => id === 'page:loading');
   assert.equal(loading.kind, 'pattern');
   assert.equal(loading.detail, 'Pattern · Keep people informed');
-  assert.match(loading.keywords, /\bSkeleton\b/);
+  assert.match(loading.keywords, /\bplaceholders\b/);
   assert.match(loading.keywords, /Keep people informed/);
   for (const record of records.filter(({ kind }) => kind === 'template'))
     assert.equal(record.detail, 'Template', record.id);

@@ -28,8 +28,7 @@ composes:
   - Select
   - List
   - Table
-  - LoadingState
-  - Skeleton
+  - placeholders
   - Badge
   - Button
   - Surface

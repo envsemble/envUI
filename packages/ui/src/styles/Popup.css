@@ -42,6 +42,16 @@
   transform-origin: var(--transform-origin, center);
   transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
 }
+/* A skeleton popup's content is wrapped in an element without a box, which draws no line through
+   text of its own, so each child of it draws the skeleton's. */
+.env-popup-skeleton {
+  display: contents;
+}
+.env-popup-skeleton[data-env-skeleton] > * {
+  text-decoration: line-through var(--env-skeleton-color);
+  text-decoration-thickness: 0.8em;
+  text-decoration-skip-ink: none;
+}
 .env-popup[data-elevation='1'] {
   --env-popup-border: var(--env-elevation-1-border);
   --env-popup-shadow: var(--env-elevation-1-shadow);

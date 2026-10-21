@@ -393,3 +393,9 @@
     outline-offset: -2px;
   }
 }
+
+/* In a skeleton, an empty cell, as over a placeholder row, is a bar of about a value's length. */
+[data-env-skeleton] .env-table-cell {
+  --env-skeleton-placeholder: inline-block;
+  --env-skeleton-length: 6rem;
+}

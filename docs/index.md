@@ -108,7 +108,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [EmptyState](components/empty-state.md)
 - [Spinner](components/spinner.md)
-- [Skeleton](components/skeleton.md)
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)

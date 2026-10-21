@@ -313,7 +313,7 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/cards(?=\/|$)/, 'components/card')
     .replace(/^components\/keyboard(?=\/|$)/, 'components/kbd')
     .replace(/^components\/(layout|stack)(?=\/|$)/, 'components/column')
-    .replace(/^components\/loading(?=\/|$)/, 'components/skeleton')
+    .replace(/^components\/(loading|skeleton)(?=\/|$)/, 'patterns/loading')
     .replace(/^components\/markdown-editor(?=\/|$)/, 'components/markdown')
     .replace(/^components\/(input|textarea)(?=\/|$)/, 'components/text-field')
     .replace(/^components\/fields(?=\/|$)/, 'components/text-field')

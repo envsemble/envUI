@@ -36,7 +36,7 @@ related:
   - checkbox
   - pagination
   - empty-state
-  - skeleton
+  - loading
   - typography
 components:
   - Table
@@ -119,7 +119,7 @@ While a stacking table stacks its rows, each row is a block titled by its first 
 - Put secondary detail in a quieter second line with `<Text variant="caption">`, such as a team under a project, rather than in a column of its own.
 - Show states with a [Badge](../components/badge.md) that names them, not with color alone.
 - Write a word such as "None" in a cell without a value, rather than leaving it blank.
-- When there are no rows, show an [EmptyState](../components/empty-state.md) in place of the table that says why and offers the next action; tell an empty list apart from a filter that matches nothing. While the rows load, show [skeletons in a LoadingState](../components/skeleton.md) in the shape of the rows. The [loading pattern](../patterns/loading.md) compares the other ways to show progress.
+- When there are no rows, show an [EmptyState](../components/empty-state.md) in place of the table that says why and offers the next action; tell an empty list apart from a filter that matches nothing. While the rows load, show the table itself as a skeleton, with `skeleton` on Table.Root, over placeholder rows. The [loading pattern](../patterns/loading.md) compares the other ways to show progress.
 - Show a long table a page at a time with [Pagination](../components/pagination.md).
 
 ## Do and don't

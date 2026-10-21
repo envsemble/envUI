@@ -180,7 +180,6 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       checkbox: `[data-testid="${theme}-color-checkbox"]`,
       switch: `[data-testid="${theme}-color-switch"]`,
       chip: `[data-testid="${theme}-color-chip"]`,
-      skeleton: `[data-testid="${theme}-color-skeleton"]`,
     };
     async function compareToken(token: string) {
       return boundary.evaluate(
@@ -225,7 +224,7 @@ test('compositions reuse primitive colors while unrelated roles stay independent
       ['--env-color-list-item-bg', ['row']],
       [
         '--env-color-bg-neutral-muted',
-        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip', 'skeleton'],
+        ['secondary', 'icon', 'select', 'selectError', 'tabRail', 'chip'],
       ],
       ['--env-color-fg-control', ['secondary', 'icon', 'select', 'selectError']],
       ['--env-color-fg-link', ['link', 'textButton']],

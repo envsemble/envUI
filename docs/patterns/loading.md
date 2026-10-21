@@ -11,14 +11,16 @@ aliases:
   - progress
   - pending
   - placeholder
+  - placeholders
+  - skeleton
+  - skeleton screen
+  - shimmer
 useWhen:
   - A page, a region or the result of an action takes long enough that people would notice.
   - Work with a measurable end, such as an upload, runs while people wait.
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
-  - text: The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.
-    use: AppShell
 composes:
   - AppShell
   - Sidebar
@@ -26,19 +28,21 @@ composes:
   - NavList
   - Page
   - PageHeader
-  - LoadingState
-  - Skeleton
+  - Card
+  - Grid
+  - List
+  - placeholders
   - Spinner
   - Button
   - Progress
-  - List
   - SegmentedControl
   - TextField
   - Column
   - Row
   - Text
 related:
-  - skeleton
+  - surface
+  - card
   - spinner
   - progress
   - button
@@ -49,80 +53,84 @@ related:
 
 ## Overview
 
-Use this pattern to tell people that something is on its way: a page, a region of one, or the result of something they did. Choose the indicator by what is loading, show it where the content will appear, and keep what people already see in place.
+Use this pattern to tell people that something is on its way. Where the shape of what is coming is known, the page renders its own components as skeletons, over placeholder items, so the code is the same loading and loaded and nothing moves when the content lands.
 
-Here each team's projects load the first time it is chosen: skeletons in the shape of the rows stand in for them, once the load has taken 200 ms.
-
-```tsx example=SkeletonList
+```tsx example=CardsLoading
 
 ```
 
 ## Anatomy
 
-Choose one indicator by what is loading:
-
-1. **A whole page or route:** the loading bar along the bottom edge of the frame's header, through `loading` on [AppShell.Root](../components/app-shell.md). It appears after 200 ms, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
-2. **Content whose shape is known:** [Skeleton](../components/skeleton.md) placeholders in a `LoadingState`, which names the region once with its `label`.
-3. **A small area, or an update to content already shown:** a [Spinner](../components/spinner.md) with a `label`, beside what it updates.
-4. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.
-5. **A task whose completion can be measured, such as an upload:** [Progress](../components/progress.md) with a `value` and a `valueText` in the units people think in.
+1. **The skeleton:** `skeleton` on the component that holds the content: Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, Dialog, Popover, HoverCard or Menu.Root. Everything inside follows it.
+2. **Placeholder items:** `placeholders(count)` stands in for the items, so the page writes `items ?? placeholders(3)` and renders its normal components. A placeholder has only an `id`; `isPlaceholder(item)` tells one apart.
+3. **Missing text:** text given as undefined, such as `title={item.title}` over a placeholder, is a bar of its text style's usual length.
+4. **No known shape:** a [LoadingState](../components/spinner.md), a spinner with a label.
+5. **An update to what is shown:** a [Spinner](../components/spinner.md) beside it.
+6. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.
+7. **Measurable work:** [Progress](../components/progress.md) with a `value`.
+8. **A whole page:** the loading bar of [AppShell.Root](../components/app-shell.md), through `loading`.
 
 ## States and behaviour
 
-- **Wait before showing anything.** A load that ends within 200 ms shows nothing: an indicator that flashes for a moment reads as a glitch. The loading bar waits on its own; for skeletons and spinners, start a timer and show them once it fires.
-- **Keep what is already shown.** When content updates, leave it in place under a Spinner rather than swapping it for skeletons, and mark the region `aria-busy` while it changes.
-- **Match the shape.** Skeletons stand in for the rows, lines and headings that will arrive, at about their size, so the page doesn't jump when the content lands.
-- **Pending actions.** A pending Button keeps its size and ignores presses, so the work doesn't start again while it runs. The rest of the form stays usable unless the work depends on it.
-- **Measurable work.** Progress moves as the work does and says what is done, such as "3 of 6 MB". Work whose end isn't known uses a Spinner instead of a bar that pretends to know.
-- **The end.** When content arrives it replaces its placeholders in place. When it fails or turns out empty, show an [EmptyState](../components/empty-state.md) there instead, with a way to try again.
-- **Reduced motion.** The loading bar fades instead of moving, skeletons stop pulsing and spinners turn slowly.
+- **The look.** Text becomes bars as long as the text, icons, avatars, media and controls become filled shapes of their size, and backgrounds, borders and corners stay. A component whose generic look isn't right gives its own; one of the application's own reads `useSkeleton()`.
+- **No shift.** A skeleton changes paint, never size. Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place before it loads. In development, [dev mode](../dev-mode.md)'s `envui.layout.skeletonShift()` reports what moves.
+- **One shimmer.** Every skeleton on the page shimmers in step. With a reduced-motion preference it stays still.
+- **Wait first.** A load that ends within 200 ms shows nothing; show the skeleton once a timer fires.
+- **Keep what is shown.** Content that updates stays in place under a Spinner, rather than turning back into a skeleton.
+- **The end.** Content replaces its skeleton in place. Content that fails or turns out empty shows an [EmptyState](../components/empty-state.md) there instead.
 
 ## Content guidelines
 
-- Name what is loading, not that something is: "Loading projects", "Refreshing activity", "Uploading annual-review.pdf".
-- Don't promise a time ("Almost there", "Just a second"): the indicator can't know it.
-- Keep the label of a pending button as it was; the spinner says the work is running. Say the outcome once it is done, such as "Saved".
+- Name what is loading, not that something is: "Loading projects", "Uploading annual-review.pdf".
+- Don't promise a time ("Almost there"): the indicator can't know it.
+- Keep a pending button's label; say the outcome once it is done, such as "Saved".
 
 ## Do and don't
 
 ### Do
 
-- Show the indicator where the content will appear, at its size.
-- Announce loading once per region: one `LoadingState` label, not one per placeholder.
+- Render the components the content will fill, as skeletons, at the place it will appear.
+- Pass placeholder items through the same code that renders the real ones.
 - Leave controls that don't depend on the work usable while it runs.
 
 ### Don't
 
+- Don't draw a separate loading version of a page by hand.
 - Don't cover the page with a spinner for one region's update.
 - Don't use a Progress bar for work whose end you can't measure.
-- Don't show more than one indicator for the same work.
 
 ## Accessibility
 
 ### Focus and keyboard
 
-Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading or to the frame's `AppShell.Main`.
+Loading never moves focus. A skeleton is inert, so Tab passes over it; once its content arrives, focus stays where it was. A skeleton popup keeps focus on itself, so Escape still closes it. A pending button stays in the tab order; don't disable the control that started the work.
 
 ### envUI provides
 
-- The loading bar's progressbar role and its `loadingLabel` name.
-- A `LoadingState` that is a busy status region named by its `label`; Skeletons inside it are hidden from assistive technologies.
-- A Spinner with a `label` as a named progress indicator; without one, it is hidden as decoration.
-- A pending Button that keeps its size, reports that it is busy and ignores presses until the work ends.
-- Progress with its value and `valueText` exposed to assistive technologies.
+- `aria-busy` on a skeleton, whose content is inert and hidden from assistive technology until it loads.
+- LoadingState: a busy status region with its label beside the spinner.
+- A pending Button that keeps its size, reports that it is busy and ignores presses.
+- Progress with its value and `valueText`.
 
 ### You provide
 
 - A label for every indicator that names what is loading.
-- `aria-busy` on a region whose content updates under a Spinner.
-- The delay before skeletons and spinners appear.
-- A status message when an action completes, such as "Saved".
+- A status message where the wait is long, since a skeleton itself is not read.
+- The delay before a skeleton or spinner appears.
 
 ## Examples
 
+### A list per team
+
+Each team's projects load the first time it is chosen: the list is a skeleton over placeholder rows after 200 ms.
+
+```tsx example=SkeletonList
+
+```
+
 ### Page progress
 
-Choosing a page in the sidebar starts loading it: the page on screen stays, and stays selected in the sidebar, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the sidebar selects it, and focus moves to `AppShell.Main`, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`; an application renders it at its root.
+Choosing a page in the sidebar starts loading it: after 200 ms the bar along the header's bottom edge shows the next page is on its way, named by `loadingLabel`. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`.
 
 ```tsx example=PageProgress
 
@@ -151,3 +159,7 @@ Progress measures each file and says what has been sent, in megabytes.
 ```tsx example=UploadProgress
 
 ```
+
+## Changelog
+
+- **1.0.0**: Skeletons are the components themselves, with `skeleton` and `placeholders()`, in place of hand-built Skeleton placeholders.

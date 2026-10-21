@@ -18,6 +18,7 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 
 /**
  * Why a dialog or a drawer asks to open or close: its trigger, Escape, a press outside, focus
@@ -48,7 +49,9 @@ export type DialogFocusTarget =
       interaction: 'mouse' | 'touch' | 'pen' | 'keyboard' | '',
     ) => HTMLElement | boolean | void | null);
 
-export interface DialogProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+export interface DialogProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
+    SkeletonProps {
   /** Whether the dialog is open, for a dialog the application controls with onOpenChange. */
   open?: boolean;
   /**
@@ -176,6 +179,7 @@ export function Dialog({
   initialFocus,
   finalFocus,
   pending = false,
+  skeleton = false,
   className,
   ...popupProps
 }: DialogProps) {
@@ -208,11 +212,11 @@ export function Dialog({
                 className={classNames('env-dialog-popup', className)}
                 data-placement={placement}
                 data-width={width}
-                aria-busy={pending || undefined}
+                aria-busy={pending || skeleton || undefined}
                 initialFocus={initialFocus}
                 finalFocus={finalFocus}
               >
-                <DialogContent>
+                <DialogContent skeleton={skeleton}>
                   <DialogHeader title={title} description={description} />
                   {children}
                   <DialogActions>

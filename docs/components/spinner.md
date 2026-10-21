@@ -13,27 +13,31 @@ aliases:
   - throbber
   - circular progress
   - loading
+  - LoadingState
+  - loading state
 useWhen:
   - Work of unknown length in a small area, such as a list that updates after a filter changes.
   - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`).
+  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`), or search results, with a label beside it (`LoadingState`).
 avoidWhen:
   - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
     use: Button
-  - text: Content of a known shape while it loads, such as a card or a list.
-    use: Skeleton
+  - text: Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton with `skeleton`.
+    use: Surface
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
   - text: Loading a page or a route of an application, along the frame's header.
     use: AppShell
 related:
-  - skeleton
+  - loading
+  - surface
   - progress
   - button
   - app-shell
   - accessibility
 components:
   - Spinner
+  - LoadingState
 ---
 
 # Spinner
@@ -65,6 +69,7 @@ For the work that follows a press, the button that started it shows a spinner it
 - **Labelled or hidden**: with `label` the spinner has `role="progressbar"`, named by the label and without a value. Without a label it is hidden from assistive technology, for a pending button, a busy region or a status that already says what happens.
 - **Not announced**: a spinner that appears isn't read out by itself. Mark the region that updates with `aria-busy`, and say in a status what people wait for, where it matters.
 - **Read-only**: a spinner takes no focus and no input.
+- **LoadingState**: a spinner with a label beside it that says what is loading, in a status region marked busy, for loading whose shape isn't known. Where it is known, show the component itself as a skeleton.
 
 ## Content guidelines
 
@@ -81,7 +86,7 @@ For the work that follows a press, the button that started it shows a spinner it
 
 ### Don't
 
-- Don't use a spinner for content of a known shape; show [Skeleton](../components/skeleton.md) placeholders instead.
+- Don't use a spinner for content of a known shape; show the component as a skeleton instead, as [Loading](../patterns/loading.md) shows.
 - Don't use a spinner for a task whose progress can be measured; use [Progress](../components/progress.md).
 - Don't show several spinners for one piece of work, or a spinner for work that ends in a moment.
 
@@ -123,6 +128,14 @@ Choosing another view keeps the tasks shown while the new ones load. A small spi
 
 ```
 
+### Loading with no known shape
+
+LoadingState says what is loading beside the spinner, for results whose number and shape aren't known yet.
+
+```tsx example=SearchingDocuments
+
+```
+
 ### Content on its way
 
 A large spinner in the middle of a preview's frame, which keeps its size while the file renders.
@@ -133,5 +146,5 @@ A large spinner in the middle of a preview's frame, which keeps its size while t
 
 ## Changelog
 
-- **1.0.0**: `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0**: LoadingState is a spinner with a label, for loading with no known shape; it holds no placeholders. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.

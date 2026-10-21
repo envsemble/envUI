@@ -78,11 +78,10 @@
       "feedback/Drawer.tsx": "composites",
       "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
-      "feedback/LoadingState.tsx": "base",
+      "feedback/LoadingState.tsx": "composites",
       "feedback/Meter.tsx": "base",
       "feedback/Progress.tsx": "base",
       "feedback/Popover.tsx": "base",
-      "feedback/Skeleton.tsx": "base",
       "feedback/Spinner.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
@@ -425,6 +424,7 @@
       "ConnectedRows.css": "Shared connected-row corners.",
       "Prose.css": "The prose typography Markdown and the rich-text components share.",
       "Motion.css": "The keyframes several components share.",
+      "Skeleton.css": "The skeleton state every component that paints a container takes, by element and data-env-skeleton.",
       "Reset.css": "The box-sizing reset inside every theme boundary."
     },
     "childRules": {

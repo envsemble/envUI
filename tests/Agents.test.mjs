@@ -136,9 +136,7 @@ test('the manifest has every component page, export, example and token', () => {
   for (const page of manifest.templates) assert.ok(page.frame && page.files.length > 0, page.name);
   // A component page leads to the patterns and templates that compose it.
   assert.ok(
-    manifest.components
-      .find((item) => item.name === 'Skeleton')
-      .usedIn.patterns.includes('loading'),
+    manifest.components.find((item) => item.name === 'Card').usedIn.patterns.includes('loading'),
   );
   for (const component of manifest.components) assert.ok(component.usedIn, component.name);
   // Tokens: current names with values, and the 0.7 names with their successors.

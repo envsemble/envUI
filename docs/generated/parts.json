@@ -92,6 +92,14 @@
       ],
       "states": [
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-alert-message",
+            "env-alert-title"
+          ]
+        },
+        {
           "attribute": "data-tone",
           "values": [
             "danger",
@@ -827,6 +835,16 @@
           ],
           "parts": [
             "env-card"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-card-description",
+            "env-card-header",
+            "env-card-heading",
+            "env-card-meta"
           ]
         },
         {
@@ -2303,6 +2321,10 @@
         {
           "class": "env-loading-state",
           "description": "The spinner with a label."
+        },
+        {
+          "class": "env-loading-state-label",
+          "description": "The label that says what is loading."
         }
       ],
       "states": []
@@ -2561,6 +2583,15 @@
       ],
       "states": [
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-message-author",
+            "env-message-header",
+            "env-message-meta"
+          ]
+        },
+        {
           "attribute": "data-from",
           "values": [
             "other",
@@ -2731,14 +2762,6 @@
         {
           "class": "env-nav-list-item-end",
           "description": "The end of a destination, for a count."
-        },
-        {
-          "class": "env-nav-list-skeleton",
-          "description": "The list's loading placeholder."
-        },
-        {
-          "class": "env-nav-list-skeleton-item",
-          "description": "One placeholder destination."
         }
       ],
       "states": [
@@ -2748,8 +2771,7 @@
             ""
           ],
           "parts": [
-            "env-nav-list-item",
-            "env-nav-list-skeleton-item"
+            "env-nav-list-item"
           ]
         },
         {
@@ -4014,28 +4036,6 @@
         "Tooltip"
       ]
     },
-    "Skeleton": {
-      "root": "env-skeleton",
-      "source": "packages/ui/src/feedback/Skeleton.tsx",
-      "parts": [
-        {
-          "class": "env-skeleton",
-          "description": "A loading placeholder shape."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-emphasis",
-          "values": [
-            "default",
-            "muted"
-          ],
-          "parts": [
-            "env-skeleton"
-          ]
-        }
-      ]
-    },
     "Slider": {
       "root": "env-slider",
       "source": "packages/ui/src/forms/Slider.tsx",
@@ -4227,6 +4227,13 @@
           ],
           "parts": [
             "env-stat-trend"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-stat-description"
           ]
         },
         {
@@ -4577,6 +4584,13 @@
             "muted",
             "subtle"
           ],
+          "parts": [
+            "env-text"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
           "parts": [
             "env-text"
           ]
@@ -5397,6 +5411,10 @@
           "description": "A popup's positioner."
         },
         {
+          "class": "env-popup-skeleton",
+          "description": "The content of a skeleton popup: no box of its own, inert."
+        },
+        {
           "class": "env-popup-theme",
           "description": "The theme boundary around a popup."
         }
@@ -5418,6 +5436,15 @@
           "values": [],
           "parts": [
             "env-popup"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-popup-skeleton"
           ]
         },
         {

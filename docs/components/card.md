@@ -53,6 +53,14 @@ A card groups content about one subject on a rounded surface.
 
 ```
 
+### Loading
+
+`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes. Render it over placeholder items, as [Loading](../patterns/loading.md) shows; a title or description given as undefined is a bar of its usual length.
+
+```tsx example=CardLoading
+
+```
+
 ## Variants
 
 ### Content card

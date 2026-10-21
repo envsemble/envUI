@@ -52,12 +52,13 @@ Dev mode reads the DOM, not the React tree:
 
 ## The readout, for agents
 
-`window.envui.layout` has three functions. Each measures the page synchronously when it is called; none changes the page.
+`window.envui.layout` has these functions. Each measures the page synchronously when it is called and leaves it as it was.
 
 ```js
 envui.layout.describe(); // the page as text: every node, then the problems
 envui.layout.check(); // the problems only, as a list; [] when there are none
 envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in turn
+envui.layout.skeletonShift('#projects'); // what moves when a skeleton loads
 ```
 
 Each takes an options object:
@@ -89,6 +90,21 @@ A check at the four widths the docs use:
 envui.layout
   .at(['22rem', '40rem', '60rem', '80rem'])
   .flatMap(({ width, problems }) => problems.map((problem) => `${width}: ${problem.message}`));
+```
+
+### Skeleton shift
+
+A skeleton should take the room its content will, so the page doesn't move when the content arrives. `skeletonShift(root, { tolerance })` checks it: it toggles the skeleton's `data-env-skeleton` attribute, which its styles follow, measures every element in both states, puts the attribute back as it was, and returns the differences as problems of the rule `skeleton-shift`.
+
+- `root` is a surface, or a selector for one, whether it is a skeleton now or not. An element that holds skeletons, such as the default root when `root` is left out, has each of them checked, the outermost ones, or itself as one when it holds none.
+- `tolerance` is how far, in px, an element may move or resize before it counts; 1 by default.
+- It reports the deepest element that resizes, and an element that moves within its parent, not everything that moves with them. It also reports media without an aspect ratio, which has no size until it loads.
+- Run it on the loaded page: it shows the same content as a skeleton, so both states hold the same elements. A page rendered over placeholder items has empty text where the loaded one has words.
+
+```js
+envui.layout.skeletonShift('[data-testid="projects"]');
+// [{ rule: 'skeleton-shift', node: 'env-text', path: 'env-surface > env-text',
+//    message: 'It changes from 20rem×3.31rem to 20rem×1.31rem when the skeleton loads, …' }]
 ```
 
 ### The text
@@ -146,6 +162,7 @@ interface LayoutProblem {
 | `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, a border or a shadow. Layout never paints: the look belongs to a component. A component that paints through a primitive it renders, whose node carries the component's part class, is no fault. |
 | `sticky-without-scroll` | A sticky node, or a sticky element in one, whose scroll container (its nearest ancestor with `overflow` hidden, auto or scroll; `clip` makes none) never scrolls, so it never sticks.                                                                                        |
 | `text-squeezed`         | Text of its own, longer than `minTextChars`, that wraps in a box narrower than that many characters.                                                                                                                                                                         |
+| `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads, or media without an aspect ratio.                                                                                                                                                     |
 
 An agent checking its work runs `envui.layout.at(['22rem', '40rem', '60rem', '80rem'])` and fixes every problem it returns, from the deepest node up. In a Playwright test:
 

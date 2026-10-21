@@ -40,6 +40,17 @@
   margin-inline-start: auto;
 }
 
+/* A title, meta or description given as undefined, as over a placeholder item, takes no room
+   outside a skeleton; in one it is a bar. */
+:is(.env-card-heading, .env-card-meta, .env-card-description):empty:not([data-env-skeleton] *),
+.env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
+  display: none;
+}
+
+[data-env-skeleton] .env-card .env-card-meta {
+  --env-skeleton-length: 5rem;
+}
+
 /* A card with an action strip: the body takes the card's padding and the strip its own fill along
    the bottom. */
 .env-card[data-layout='stack'][data-actions] {

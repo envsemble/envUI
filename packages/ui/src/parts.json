@@ -371,7 +371,8 @@
       "env-list-detail-list": "The list pane."
     },
     "LoadingState": {
-      "env-loading-state": "The spinner with a label."
+      "env-loading-state": "The spinner with a label.",
+      "env-loading-state-label": "The label that says what is loading."
     },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
@@ -446,9 +447,7 @@
       "env-nav-list-group-list": "A group's list of destinations.",
       "env-nav-list-item": "One destination.",
       "env-nav-list-item-dot": "The dot that marks a destination with news.",
-      "env-nav-list-item-end": "The end of a destination, for a count.",
-      "env-nav-list-skeleton": "The list's loading placeholder.",
-      "env-nav-list-skeleton-item": "One placeholder destination."
+      "env-nav-list-item-end": "The end of a destination, for a count."
     },
     "OrganizationSwitcher": {
       "env-organization-switcher": "The organization switcher's popup.",
@@ -598,9 +597,6 @@
       "env-sidebar-trigger-icon": "The icon.",
       "env-sidebar-trigger-mark": "The mark of a sidebar with news.",
       "env-sidebar-trigger-tooltip": "The tooltip."
-    },
-    "Skeleton": {
-      "env-skeleton": "A loading placeholder shape."
     },
     "Slider": {
       "env-slider": "The slider.",
@@ -759,6 +755,7 @@
     "Popup": {
       "env-popup": "The surface of menus, popovers, tooltips and lists.",
       "env-popup-positioner": "A popup's positioner.",
+      "env-popup-skeleton": "The content of a skeleton popup: no box of its own, inert.",
       "env-popup-theme": "The theme boundary around a popup."
     },
     "Prose": {

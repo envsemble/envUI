@@ -60,7 +60,6 @@ The `NavList` namespace has four parts:
 - **NavList.Root** is a plain list of items and groups.
 - **NavList.Item** is one destination, with an optional icon and end content such as a count. With `iconOnly` it shows only its icon, and its label in a tooltip.
 - **NavList.Group** puts related items under a small heading, inside NavList.Root.
-- **NavList.Skeleton** stands in for a list's items while the navigation loads.
 
 Items also stand on their own, such as the buttons of Tabs. In a [Sidebar](../components/sidebar.md) they follow its rail.
 
@@ -99,7 +98,7 @@ Items also stand on their own, such as the buttons of Tabs. In a [Sidebar](../co
 - **Disabled**: a disabled item is dimmed with the shared disabled opacity and leaves the tab order. A disabled button cannot be pressed; a disabled link has no destination, cannot be followed and reports `aria-disabled`.
 - **Icon-only**: with `iconOnly` the item shows its icon in a circle, named by `aria-label`, and its label in a tooltip at its inline end, after 400 ms of hover or at once on keyboard focus; <kbd>Esc</kbd> hides it. A disabled icon-only item shows it on hover. An application Tooltip around the item replaces the label tooltip, so only one shows. Keep the label as children: the item shows it again once `iconOnly` turns off.
 - **In a sidebar**: in a sidebar's rail, items with an icon show only it, without `iconOnly`; the label text names the item where it has no `aria-label`, and the same element stays, so focus does too. A sidebar's peek, held rail or drawer closes after a link in it is followed.
-- **Loading**: NavList.Skeleton shows `items` placeholders (3) at the items' height, an icon and a label each, and only the icon in a rail; it is hidden from assistive technology, so put the frame in a LoadingState that names what loads.
+- **Loading**: while the navigation loads, render its items in a surface with `skeleton`, as [Loading](../patterns/loading.md) shows: their labels become bars and their icons filled shapes.
 - **Trailing content**: it follows the label and is part of the item's accessible name, so a CounterBadge needs an `aria-label` where its number alone doesn't say what it counts. An icon-only item shows a dot instead, which assistive technology doesn't hear.
 - **Lists and groups**: inside NavList.Root and NavList.Group, each item renders its own list item, also through the application's components. An element the application writes in the list, such as its own `<li>`, and an item inside an item, such as in end content, render no list item of their own.
 
@@ -187,7 +186,7 @@ With `iconOnly` the items show only their icons and their labels in tooltips; th
 
 ## Changelog
 
-- **1.0.0**: `NavigationItem` is `NavList.Item`, with the `env-nav-list-item-*` classes, and the page is `nav-list`. New: NavList.Root, a plain list of items, and NavList.Group, related items under a small heading. An item renders its `<li>` only as an item of NavList.Root or NavList.Group, not inside the application's own `<li>` or inside another item. NavList.Item's `trailing` is `end`. An icon-only item, or one named by `aria-label`, says its end content in its name: a number, or a CounterBadge without `aria-label`, as a count, such as Inbox, 12 new, from `messages.navList.itemCount`, and a CounterBadge's `aria-label` or other content's text as it is, such as Inbox, 12 unread or Labs, Beta, from `messages.navList.itemEnd`; the dot alone was hidden from assistive technology. The selected and icon-only modifiers are the `data-selected` and `data-icon-only` attributes instead of the `env-nav-list-item-selected` and `-icon-only` classes, and in a sidebar's rail an item sets `data-icon-only` itself. New: NavList.Skeleton, the loading state of a list's items.
+- **1.0.0**: `NavigationItem` is `NavList.Item`, with the `env-nav-list-item-*` classes, and the page is `nav-list`. New: NavList.Root, a plain list of items, and NavList.Group, related items under a small heading. An item renders its `<li>` only as an item of NavList.Root or NavList.Group, not inside the application's own `<li>` or inside another item. NavList.Item's `trailing` is `end`. An icon-only item, or one named by `aria-label`, says its end content in its name: a number, or a CounterBadge without `aria-label`, as a count, such as Inbox, 12 new, from `messages.navList.itemCount`, and a CounterBadge's `aria-label` or other content's text as it is, such as Inbox, 12 unread or Labs, Beta, from `messages.navList.itemEnd`; the dot alone was hidden from assistive technology. The selected and icon-only modifiers are the `data-selected` and `data-icon-only` attributes instead of the `env-nav-list-item-selected` and `-icon-only` classes, and in a sidebar's rail an item sets `data-icon-only` itself.
 - **0.5.0**: `trailing` content, a dot while icon-only. An icon-only item shows its label in a tooltip at its inline end instead of a native title. Selected labels keep 4.5:1 contrast on hover.
 - **0.3.0**: Items follow a compact AppShell sidebar, showing their icon with the label as accessible name.
 - **0.2.0**: Destinations render through the `LinkProvider`'s link component.
