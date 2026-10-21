@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { Column } from '../foundations/Layout.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
@@ -126,6 +127,7 @@ export function HoverCard({
         align={align}
         width={width}
         className={classNames('env-hover-card', className)}
+        layout={<Column gap={3} padding={5} />}
         popupProps={popupProps}
       >
         {children}

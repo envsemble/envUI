@@ -63,12 +63,10 @@
    rows of the row height that highlight on hover and keyboard focus, where a check mark and a
    heavier label show the chosen option. It stands apart from the page, panes, rows and dialogs. */
 .env-select-popup {
-  display: grid;
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));
   max-width: min(22rem, var(--available-width));
   max-height: var(--available-height);
-  padding: var(--env-space-1);
   overflow: hidden;
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
 }
@@ -76,11 +74,9 @@
   display: none;
 }
 .env-select-list {
-  display: grid;
   grid-auto-rows: minmax(min-content, auto);
   align-content: start;
   min-height: 0;
-  min-inline-size: 0;
   max-height: calc(var(--available-height) - var(--env-space-2));
   overflow-y: auto;
   overscroll-behavior: contain;

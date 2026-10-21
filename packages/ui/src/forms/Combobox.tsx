@@ -18,6 +18,7 @@ import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
+import { Column, Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
@@ -582,6 +583,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           sideOffset={popupOffset}
           dir={direction}
           className="env-combobox-popup"
+          layout={<Column padding={1} />}
         >
           <BaseCombobox.Status className="env-combobox-status">
             {loading ? (
@@ -596,12 +598,17 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           </BaseCombobox.Empty>
           {/* The options are busy while they load, not the popup, whose status announces
               the loading label meanwhile. */}
-          <BaseCombobox.List className="env-combobox-list" aria-busy={loading || undefined}>
+          <BaseCombobox.List
+            render={<Grid />}
+            className="env-combobox-list"
+            aria-busy={loading || undefined}
+          >
             {(entry: Item | ComboboxGroup<Item>) =>
               grouped && isGroup(entry) ? (
                 <BaseCombobox.Group
                   key={entry.label}
                   items={entry.items as Item[]}
+                  render={<Grid />}
                   className="env-combobox-group"
                 >
                   <BaseCombobox.GroupLabel className="env-combobox-group-label">

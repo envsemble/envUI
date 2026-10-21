@@ -133,6 +133,8 @@ export function TimePicker({
       icon={<Schedule />}
       rootClassName="env-date-picker env-time-picker"
       popupClassName="env-time-picker-popup"
+      popupGap={2}
+      popupPadding={2}
       initialFocus={timeListFirstColumn}
       clearLabel={clearLabel ?? messages.clear}
       onClear={() => commit(null)}

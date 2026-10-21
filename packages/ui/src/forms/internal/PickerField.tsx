@@ -15,6 +15,7 @@ import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { PopupSurface } from '../../internal/PopupSurface.js';
+import { Column, type SpaceStep } from '../../foundations/Layout.js';
 import { type ControlSize } from '../../foundations/Theme.js';
 import { IconButton } from '../../actions/Button.js';
 import { Close } from '../../icons/Close.js';
@@ -122,6 +123,8 @@ export function PickerField({
   icon,
   rootClassName,
   popupClassName,
+  popupGap = 3,
+  popupPadding = 4,
   initialFocus,
   clearLabel,
   onClear,
@@ -162,6 +165,10 @@ export function PickerField({
   rootClassName: string;
   /** The owner's classes on the popup, beside env-date-picker-popup. */
   popupClassName?: string;
+  /** The space between the popup's parts, a step of the spacing scale. */
+  popupGap?: SpaceStep;
+  /** The popup's inset, a step of the spacing scale. */
+  popupPadding?: SpaceStep;
   /** The element focus moves to as the popup opens, from the popup. */
   initialFocus: (popup: HTMLElement | null) => HTMLElement | null;
   /** The clear button's name. */
@@ -341,6 +348,7 @@ export function PickerField({
         className={
           popupClassName ? `env-date-picker-popup ${popupClassName}` : 'env-date-picker-popup'
         }
+        layout={<Column gap={popupGap} padding={popupPadding} />}
         popupProps={{ ref: popupRef, ...accessibleName }}
         initialFocus={() => initialFocus(popupRef.current) ?? true}
       >

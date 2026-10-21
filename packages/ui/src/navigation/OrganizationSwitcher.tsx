@@ -7,6 +7,7 @@ import { Groups3 } from '../icons/Groups3.js';
 import { UnfoldMore } from '../icons/UnfoldMore.js';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { Column } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { organizationSwitcher } from '../foundations/messages/organizationSwitcher.js';
 import * as Menu from './Menu.js';
@@ -128,14 +129,20 @@ export function OrganizationSwitcher({
         </Button>
       }
     >
-      <div role="presentation" className="env-organization-switcher-header">
+      <Column
+        role="presentation"
+        align="center"
+        justify="center"
+        gap={2}
+        className="env-organization-switcher-header"
+      >
         <DecorativeIcon>
           <Groups3 />
         </DecorativeIcon>
         <span className="env-organization-switcher-heading" id={headingId}>
           {heading ?? messages.heading}
         </span>
-      </div>
+      </Column>
       <OrganizationOptions
         aria-labelledby={headingId}
         items={items}

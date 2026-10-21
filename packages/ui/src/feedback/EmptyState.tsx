@@ -50,9 +50,13 @@ export function EmptyState({
 }: EmptyStateProps) {
   const stateIcon = icon ?? (tone === 'danger' ? <ErrorIcon /> : null);
   return (
-    <div
+    <Column
       role={tone === 'danger' ? 'alert' : undefined}
       {...props}
+      // The column's alignment is also the state's data-align, start or center.
+      align={align}
+      gap={4}
+      padding={5}
       className={classNames('env-empty-state', className)}
       data-tone={tone}
       data-align={align}
@@ -66,6 +70,6 @@ export function EmptyState({
         {children}
       </Column>
       {action}
-    </div>
+    </Column>
   );
 }

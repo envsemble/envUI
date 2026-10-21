@@ -3,6 +3,7 @@
 import { Meter as BaseMeter } from '@base-ui/react/meter';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Column, Row } from '../foundations/Layout.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 
 /** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
@@ -66,12 +67,13 @@ export function Meter({
       locale={locale}
       // Only a text of the application's replaces Base UI's formatted value.
       {...(ariaValueText !== undefined && { 'aria-valuetext': ariaValueText })}
+      render={<Column gap={2} />}
       className={classNames('env-meter', className)}
     >
-      <div className="env-meter-heading">
+      <Row wrap justify="between" gap={3} className="env-meter-heading">
         <BaseMeter.Label className="env-meter-label">{label}</BaseMeter.Label>
         {valueText != null && <span className="env-meter-value">{valueText}</span>}
-      </div>
+      </Row>
       <BaseMeter.Track className="env-meter-track">
         <BaseMeter.Indicator className="env-meter-indicator" />
       </BaseMeter.Track>

@@ -2,6 +2,7 @@
 
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Column } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 
@@ -21,7 +22,8 @@ export interface LoadingStateProps extends ComponentPropsWithRef<'div'> {
 export function LoadingState({ label, className, children, ...props }: LoadingStateProps) {
   const messages = useMessages('common', common);
   return (
-    <div
+    <Column
+      gap={2}
       {...props}
       role="status"
       aria-label={props['aria-label'] ?? label ?? messages.loading}
@@ -29,6 +31,6 @@ export function LoadingState({ label, className, children, ...props }: LoadingSt
       className={classNames('env-loading-state', className)}
     >
       {children}
-    </div>
+    </Column>
   );
 }

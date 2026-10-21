@@ -4,10 +4,6 @@
 .env-popover,
 .env-hover-card {
   inline-size: min(20rem, calc(100vw - 2rem));
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-3);
-  padding: var(--env-space-5);
 }
 .env-popover[data-width='lg'],
 .env-hover-card[data-width='lg'] {

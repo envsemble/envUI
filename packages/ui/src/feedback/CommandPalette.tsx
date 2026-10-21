@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Column, Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ListRow } from '../internal/ListRow.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
@@ -204,6 +205,7 @@ export function CommandPalette({
             <div className="env-command-palette-positioner">
               <BaseDialog.Popup
                 {...popupProps}
+                render={<Column padding={2} />}
                 className={classNames('env-command-palette', className)}
                 aria-label={label}
                 initialFocus={input}
@@ -227,7 +229,7 @@ export function CommandPalette({
                     highlighted.current = { item, index: item ? details.index : -1 };
                   }}
                 >
-                  <div className="env-command-palette-search">
+                  <Row align="center" gap={3} className="env-command-palette-search">
                     <DecorativeIcon>
                       <Search />
                     </DecorativeIcon>
@@ -241,9 +243,10 @@ export function CommandPalette({
                       placeholder={placeholder}
                       onKeyDown={onKeyDown}
                     />
-                  </div>
+                  </Row>
                   <BaseAutocomplete.List
                     ref={list}
+                    render={<Grid />}
                     className="env-command-palette-list"
                     aria-label={label}
                     hidden={items.length === 0}
@@ -260,6 +263,7 @@ export function CommandPalette({
                             <BaseAutocomplete.Group
                               key={section.id}
                               items={section.items}
+                              render={<Grid />}
                               className="env-command-palette-group"
                             >
                               <BaseAutocomplete.GroupLabel className="env-command-palette-heading">
@@ -284,17 +288,23 @@ export function CommandPalette({
                   </BaseAutocomplete.Status>
                 </BaseAutocomplete.Root>
                 {(Boolean(hints?.length) || footer != null) && (
-                  <div className="env-command-palette-footer">
+                  <Row wrap align="center" className="env-command-palette-footer">
                     {hints?.map((hint, hintIndex) => (
-                      <span key={hintIndex} className="env-command-palette-hint">
+                      <Row
+                        key={hintIndex}
+                        render={<span />}
+                        align="center"
+                        gap={2}
+                        className="env-command-palette-hint"
+                      >
                         <Kbd keys={hint.keys} />
                         <span>{hint.label}</span>
-                      </span>
+                      </Row>
                     ))}
                     {footer != null && (
                       <span className="env-command-palette-footer-content">{footer}</span>
                     )}
-                  </div>
+                  </Row>
                 )}
               </BaseDialog.Popup>
             </div>
