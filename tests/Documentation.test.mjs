@@ -765,3 +765,176 @@ test('pattern and template pages are validated as their kind', async () => {
     assert.doesNotThrow(read);
   });
 });
+
+/** A Switch page written as exchanges: a question per section, live figures and a legend. */
+const exchangeBody = [
+  '# Switch',
+  '',
+  '## Overview',
+  '',
+  '> What is a switch, and what does it look like?',
+  '',
+  'Turns a setting on or off.',
+  '',
+  '```tsx example=Basic',
+  '',
+  '```',
+  '',
+  '## When to use',
+  '',
+  '> When should I use a switch?',
+  '',
+  '```tsx do=Instant caption="Use a switch for a setting that applies at once."',
+  '',
+  '```',
+  '',
+  '```tsx dont=OnSubmit caption="Don\'t use a switch in a form that applies on submit."',
+  '',
+  '```',
+  '',
+  '> How do I label it?',
+  '',
+  'Name the setting, not the action.',
+  '',
+  '## Anatomy',
+  '',
+  '> What is a switch made of?',
+  '',
+  '```tsx anatomy=Parts',
+  '',
+  '```',
+  '',
+  '1. **Track** (`env-switch`): the pill.',
+  '2. `env-switch-thumb`',
+  '',
+  '## Adapting to width',
+  '',
+  '> How does it behave when narrow?',
+  '',
+  '```tsx example=Narrow widths="16 30"',
+  '',
+  '```',
+  '',
+  '## Accessibility',
+  '',
+  '> How do I keep it accessible?',
+  '',
+  '### envUI provides',
+  '',
+  '- The switch role.',
+  '',
+  '### You provide',
+  '',
+  '- A label.',
+  '',
+  '## Changelog',
+  '',
+  '- **0.1.0**: Switch.',
+  '',
+].join('\n');
+
+test('a page whose Overview opens with a question is read as exchanges', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
+      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+    await writeFile(page, switchFrontmatter + exchangeBody);
+    const documents = read();
+    const switchPage = documents[1];
+    assert.equal(switchPage.format, 'exchanges');
+    assert.deepEqual(
+      switchPage.sections.map((section) => section.id),
+      ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'changelog'],
+    );
+    const blocks = switchPage.sections.flatMap((section) => section.blocks);
+    assert.deepEqual(
+      blocks.filter((block) => block.kind === 'question').map((block) => block.text),
+      [
+        'What is a switch, and what does it look like?',
+        'When should I use a switch?',
+        'How do I label it?',
+        'What is a switch made of?',
+        'How does it behave when narrow?',
+        'How do I keep it accessible?',
+      ],
+    );
+    const figure = (name) => blocks.find((block) => block.name === name);
+    assert.deepEqual(
+      [figure('Instant').role, figure('Instant').caption],
+      ['do', 'Use a switch for a setting that applies at once.'],
+    );
+    assert.equal(
+      figure('OnSubmit').heading,
+      "Don't: Don't use a switch in a form that applies on submit.",
+    );
+    assert.deepEqual(figure('Parts').legend, [
+      { part: 'env-switch', text: '**Track** (`env-switch`): the pill.' },
+      { part: 'env-switch-thumb', text: '`env-switch-thumb`' },
+    ]);
+    assert.deepEqual(figure('Narrow').widths, [16, 30]);
+
+    // The packaged page keeps the questions, the figures' kinds and attributes, and the legend.
+    const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
+    assert.match(compiled, /^> When should I use a switch\?$/m);
+    assert.ok(
+      compiled.includes(
+        `\`\`\`tsx do=Instant caption="Use a switch for a setting that applies at once."\n${switchExample}\`\`\``,
+      ),
+    );
+    assert.match(
+      compiled,
+      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-thumb`\n/,
+    );
+    assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## Props'));
+  });
+});
+
+test('a page of exchanges rejects what breaks its form', async () => {
+  await templateFixture(async ({ page, read, examples }) => {
+    for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
+      await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
+    const rejects = async (body, pattern) => {
+      await writeFile(page, switchFrontmatter + body);
+      assert.throws(read, pattern);
+    };
+    const body = exchangeBody;
+    await rejects(
+      body.replace('> How does it behave when narrow?\n\n', ''),
+      /"## Adapting to width" opens with its question/,
+    );
+    await rejects(
+      body.replace('> How do I label it?', '> How do I label it.'),
+      /ends with a question mark/,
+    );
+    await rejects(
+      body.replace(' caption="Use a switch for a setting that applies at once."', ''),
+      /do Instant needs caption/,
+    );
+    await rejects(body.replace('widths="16 30"', 'widths="wide"'), /widths="wide"/);
+    await rejects(
+      body.replace('anatomy=Parts', 'anatomy=Parts size=lg'),
+      /anatomy Parts takes no size/,
+    );
+    await rejects(
+      body.replace('2. `env-switch-thumb`', '2. The thumb.'),
+      /item 2 of the legend of anatomy Parts names no part/,
+    );
+    await rejects(
+      body.replace('## Adapting to width', '## Width'),
+      /not a section of a page of exchanges/,
+    );
+    await rejects(
+      body.replace(/## When to use[\s\S]*?(?=## Anatomy)/, ''),
+      /"## When to use" is required/,
+    );
+    await rejects(
+      body.replace('## Changelog', '## Variants\n\n> Which variants are there?\n\n## Changelog'),
+      /"## Variants" must come before "## Accessibility"/,
+    );
+    await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
+    // An old-template page that borrows an exchange section is told how exchanges begin.
+    await rejects(
+      switchBody.replace('## States and behaviour', '## When to use'),
+      /opens its "## Overview" with its question/,
+    );
+  });
+});

@@ -1,0 +1,316 @@
+/* Component pages written as exchanges: each section a heading and a question, as a compact
+   message at the inline end, then its answer across the full width, with live figures. */
+.docs-exchanges {
+  container-type: inline-size;
+}
+
+.docs-exchange {
+  display: grid;
+  gap: var(--env-space-6);
+  min-inline-size: 0;
+  padding-block-start: var(--env-space-8);
+  border-block-start: 0.0625rem solid var(--env-color-border-muted);
+}
+
+.docs-exchange:first-child {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+
+/* The section's heading and its question share a row where there is room. */
+.docs-exchange-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--env-space-4) var(--env-space-6);
+}
+
+.docs-exchange-heading {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.docs-exchange-heading h2 {
+  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.01em;
+}
+
+.docs-exchange-question {
+  flex: 1 1 18rem;
+  max-inline-size: 100%;
+}
+
+.docs-exchange-question > .env-message-content {
+  max-inline-size: min(100%, 34rem);
+}
+
+.docs-exchange-turn {
+  display: grid;
+  gap: var(--env-space-6);
+  min-inline-size: 0;
+  margin-block-start: var(--env-space-4);
+}
+
+.docs-exchange-answer {
+  display: grid;
+  gap: var(--env-space-6);
+  min-inline-size: 0;
+}
+
+/* Lists that answer side by side, such as what envUI provides and what you provide. */
+.docs-exchange-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--env-space-5);
+}
+
+.docs-exchange-column {
+  min-inline-size: 0;
+  padding: var(--env-space-5) var(--env-space-6);
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-muted);
+}
+
+.docs-figure-caption {
+  margin: 0;
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}
+
+/* Figures that follow each other, such as a do and a don't, sit side by side. */
+.docs-figure-run {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  align-items: start;
+  gap: var(--env-space-7) var(--env-space-6);
+  min-inline-size: 0;
+}
+
+.docs-figure-run[data-count='4'] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+}
+
+/* Do and don't figures come in pairs: two to a row where there is room, their stages and
+   sentences lined up across the row. */
+.docs-figure-run[data-verdicts] {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--env-space-7);
+}
+
+.docs-figure-run[data-verdicts] > .docs-verdict {
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  row-gap: var(--env-space-3);
+}
+
+/* A subsection's text beside its one figure. */
+.docs-exchange-split {
+  display: grid;
+  align-items: start;
+  gap: var(--env-space-5) var(--env-space-7);
+  min-inline-size: 0;
+}
+
+@container (width >= 44rem) {
+  .docs-figure-run[data-verdicts] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 56rem) {
+  .docs-exchange-split {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}
+
+/* An example in frames of given widths, side by side; the strip scrolls where they don't fit. */
+.docs-width-strip {
+  display: flex;
+  align-items: start;
+  gap: var(--env-space-5);
+  min-inline-size: 0;
+  padding-block-end: var(--env-space-2);
+  overflow-x: auto;
+}
+
+.docs-width-frame {
+  display: grid;
+  flex: none;
+  gap: var(--env-space-2);
+  margin: 0;
+}
+
+/* A do or don't figure: the example on a quiet stage, a green or red bar, and one sentence. */
+.docs-verdict {
+  display: grid;
+  align-content: start;
+  gap: var(--env-space-3);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-verdict-frame {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  overflow: hidden;
+  border-radius: var(--env-radius-surface);
+  background: var(--env-color-bg-muted);
+}
+
+.docs-verdict-stage {
+  justify-content: center;
+  background: var(--env-color-bg-muted);
+  min-block-size: 10rem;
+  padding: var(--env-space-7) var(--env-space-6);
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+.docs-verdict-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--env-space-2);
+  padding: var(--env-space-2) var(--env-space-4);
+  color: var(--env-color-fg-on-strong);
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-medium);
+}
+
+.docs-verdict-bar > svg {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.docs-verdict[data-verdict='do'] .docs-verdict-bar {
+  background: var(--env-color-bg-success-strong);
+}
+
+.docs-verdict[data-verdict='dont'] .docs-verdict-bar {
+  background: var(--env-color-bg-danger-strong);
+}
+
+.docs-verdict-caption {
+  padding-inline: var(--env-space-2);
+  font: var(--env-type-body);
+}
+
+/* An anatomy figure: the component in the light and the dark theme with numbered callouts on its
+   parts, measured from the live parts, and the legend below. */
+.docs-anatomy {
+  display: grid;
+  gap: var(--env-space-5);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-anatomy-stages {
+  overflow: hidden;
+  border: 0.0625rem solid var(--env-color-border-muted);
+  border-radius: var(--env-radius-surface);
+}
+
+.docs-anatomy-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 3.5rem 3.75rem;
+  background-color: var(--env-color-bg-page);
+  background-image: radial-gradient(
+    circle,
+    var(--env-color-border-muted) 0.0625rem,
+    transparent 0.0625rem
+  );
+  background-size: 1rem 1rem;
+  container-type: inline-size;
+}
+
+.docs-anatomy-subject {
+  display: grid;
+  justify-items: center;
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.docs-anatomy-lines {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.docs-anatomy-lines line {
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+}
+
+.docs-anatomy-lines circle {
+  fill: var(--env-color-bg-page);
+  stroke: var(--env-color-fg-default);
+  stroke-width: 1px;
+}
+
+.docs-anatomy-box {
+  fill: none;
+  stroke: var(--env-color-fg-muted);
+  stroke-width: 1px;
+  stroke-dasharray: 3 2;
+}
+
+.docs-anatomy-badge,
+.docs-anatomy-number {
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--env-radius-lg);
+  background: var(--env-color-fg-default);
+  color: var(--env-color-bg-page);
+  font: var(--env-type-body-small);
+  font-weight: var(--env-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-anatomy-badge {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+.docs-anatomy-caption {
+  display: grid;
+  gap: var(--env-space-4);
+}
+
+.docs-anatomy-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: var(--env-space-4) var(--env-space-7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-anatomy-legend > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--env-space-3);
+}
+
+.docs-anatomy-legend p {
+  margin: 0;
+}
+
+@container (width < 30rem) {
+  .docs-anatomy-stage {
+    padding: 3.5rem 2.75rem;
+  }
+
+  .docs-verdict-stage {
+    padding: var(--env-space-6) var(--env-space-4);
+  }
+}

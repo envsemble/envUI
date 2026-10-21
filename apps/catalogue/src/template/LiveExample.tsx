@@ -90,9 +90,11 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
   );
 }
 
-/** An example rendered live in the documentation's theme, with its source and a copy button. */
-export function LiveExample({ page, name, title }: { page: string; name: string; title: string }) {
-  const theme = useTheme();
+/**
+ * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
+ * live example and of each figure of a page of exchanges.
+ */
+export function ExampleRender({ page, name }: { page: string; name: string }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
@@ -100,32 +102,93 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
   if (!Example || !sourceLoaders[path])
     throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
   return (
+    <LoadBoundary
+      what="example"
+      modules={[`src/examples/${page}/${name}.tsx`]}
+      onRetry={() => {
+        forgetExample(path);
+        setAttempt((count) => count + 1);
+      }}
+    >
+      <Suspense fallback={<Text role="status">Loading example…</Text>}>
+        {/* The example is looked up among module-level lazy components, not created here. */}
+        {/* eslint-disable-next-line react-hooks/static-components */}
+        <Example />
+      </Suspense>
+    </LoadBoundary>
+  );
+}
+
+/** The handlers that keep an example's links from leaving the documentation. */
+export const keepLinksInPlace = {
+  onClickCapture: preventNavigation,
+  onAuxClickCapture: preventNavigation,
+};
+
+/**
+ * An example rendered live in the documentation's theme, with its source and a copy button; with
+ * `widths`, in a frame of each width, side by side, and with `caption`, a sentence below it.
+ */
+export function LiveExample({
+  page,
+  name,
+  title,
+  caption,
+  widths,
+}: {
+  page: string;
+  name: string;
+  title: string;
+  caption?: string;
+  widths?: number[];
+}) {
+  const theme = useTheme();
+  return (
     <Stack gap={3} className="docs-live-example-entry">
-      <Stack
-        render={<Theme {...theme} />}
-        gap={0}
-        role="group"
-        aria-label={`${title} example`}
-        className="docs-live-example"
-        data-example={name}
-        onClickCapture={preventNavigation}
-        onAuxClickCapture={preventNavigation}
-      >
-        <LoadBoundary
-          what="example"
-          modules={[`src/examples/${page}/${name}.tsx`]}
-          onRetry={() => {
-            forgetExample(path);
-            setAttempt((count) => count + 1);
-          }}
+      {widths ? (
+        <div
+          role="group"
+          aria-label={`${title} example`}
+          className="docs-width-strip"
+          // The strip scrolls where its frames don't fit, so the keyboard can scroll it too.
+          tabIndex={0}
+          data-example={name}
+          {...keepLinksInPlace}
         >
-          <Suspense fallback={<Text role="status">Loading example…</Text>}>
-            {/* The example is looked up among module-level lazy components, not created here. */}
-            {/* eslint-disable-next-line react-hooks/static-components */}
-            <Example />
-          </Suspense>
-        </LoadBoundary>
-      </Stack>
+          {widths.map((width) => (
+            <figure key={width} className="docs-width-frame">
+              <Stack
+                render={<Theme {...theme} />}
+                gap={0}
+                className="docs-live-example"
+                style={{ inlineSize: `${width}rem` }}
+              >
+                <ExampleRender page={page} name={name} />
+              </Stack>
+              <Text render={<figcaption />} variant="caption" emphasis="muted">
+                {width} rem wide
+              </Text>
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <Stack
+          render={<Theme {...theme} />}
+          gap={0}
+          role="group"
+          aria-label={`${title} example`}
+          className="docs-live-example"
+          data-example={name}
+          {...keepLinksInPlace}
+        >
+          <ExampleRender page={page} name={name} />
+        </Stack>
+      )}
+      {caption && (
+        <Text className="docs-figure-caption" emphasis="muted">
+          {caption}
+        </Text>
+      )}
       <ExampleCode page={page} name={name} />
     </Stack>
   );
