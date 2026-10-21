@@ -133,4 +133,9 @@
   .env-bar-count {
     border: 1px solid CanvasText;
   }
+  /* The current indicator's colors are forced off, so its count takes the canvas's own. */
+  .env-bar-item[data-current] .env-bar-count {
+    background: Canvas;
+    color: CanvasText;
+  }
 }

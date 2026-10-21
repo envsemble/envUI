@@ -135,4 +135,9 @@
   .env-rail-count {
     border: 1px solid CanvasText;
   }
+  /* The current indicator's colors are forced off, so its count takes the canvas's own. */
+  .env-rail-item[data-current] .env-rail-count {
+    background: Canvas;
+    color: CanvasText;
+  }
 }

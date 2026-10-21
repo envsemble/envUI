@@ -49,6 +49,7 @@
 /* A group's heading lines up with its destinations' icons and labels. */
 .env-drawer-heading {
   display: block;
+  margin: 0;
   padding: var(--env-space-1) var(--env-space-3);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
@@ -160,5 +161,10 @@
   }
   .env-drawer-count {
     border: 1px solid CanvasText;
+  }
+  /* The current item's colors are forced off, so its count takes the canvas's own. */
+  .env-drawer-item[data-current] .env-drawer-count {
+    background: Canvas;
+    color: CanvasText;
   }
 }

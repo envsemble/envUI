@@ -67,7 +67,7 @@ Bar is Material's navigation bar: the application's main destinations side by si
 - **Hover and press**: the indicator takes the navigation hover and pressed fills, and settles slightly while held, without a reduced-motion preference.
 - **Links and buttons**: with `href` a destination is a native link through the `LinkProvider`'s link component, and `onSelect` runs as it is followed; without `href` it is a button that runs `onSelect`.
 - **Counts**: a count of 0 shows nothing. The count is part of the destination's name, such as "Inbox, 4 new", from `messages.navigation.itemCount`, so the pill is hidden from assistive technology.
-- **More**: its menu lists the remaining destinations with their icons and counts; the current one reports `aria-current="page"`. <kbd>Esc</kbd> closes it and returns focus to More.
+- **More**: its menu lists the remaining destinations with their icons and counts, each named with its count as the others are; the current one reports `aria-current="page"`. More is named with the sum of their counts, and says when it holds the current page, such as "More, 5 new, current page inside", from `messages.navigation.moreCurrent`. <kbd>Esc</kbd> closes it and returns focus to More.
 
 ## Content guidelines
 
