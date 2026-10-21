@@ -1,6 +1,6 @@
 # @envsemble/eslint-plugin-envui
 
-ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, envUI's private `env-` classes, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
+ESLint rules for applications built with envUI. They report what envUI already provides but the code builds by hand: raw buttons, fields, dialogs, tables and menus, flex and grid layout in inline styles, envUI's private `env-` classes, literal colors in inline styles, and names that envUI 1.0 renamed. Every message names the envUI component or token to use and how to import it.
 
 Lint output reaches people and coding agents in their usual edit-and-check loop, so it works even when nobody has read the documentation first. The [Stylelint config](../stylelint-config/README.md) does the same for style sheets.
 
@@ -24,7 +24,7 @@ import envui from '@envsemble/eslint-plugin-envui';
 export default defineConfig(envui.configs.recommended);
 ```
 
-`configs.recommended` turns on every rule as an error for JavaScript and TypeScript files (`**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`) and enables JSX. TypeScript files need a parser such as typescript-eslint's, set up as usual; the rules need no type information. To pick rules yourself, register the plugin and configure them:
+`configs.recommended` turns on every rule for JavaScript and TypeScript files (`**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}`) and enables JSX: each as an error, except [no-hand-rolled-layout](#no-hand-rolled-layout), a warning. TypeScript files need a parser such as typescript-eslint's, set up as usual; the rules need no type information. To pick rules yourself, register the plugin and configure them:
 
 ```js
 export default defineConfig({
@@ -73,12 +73,36 @@ export default defineConfig(envui.configs.recommended, {
 
 ## Rules
 
-| Rule                                      | Reports                                                         |
-| ----------------------------------------- | --------------------------------------------------------------- |
-| [no-html-elements](#no-html-elements)     | Raw elements and widget roles that envUI provides as components |
-| [no-private-classes](#no-private-classes) | envUI's private `env-` classes in class names and selectors     |
-| [no-raw-colors](#no-raw-colors)           | Literal colors in inline styles                                 |
-| [no-renamed-exports](#no-renamed-exports) | Names that envUI 0.x exported and 1.0 renamed or made internal  |
+| Rule                                            | Reports                                                         |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| [no-hand-rolled-layout](#no-hand-rolled-layout) | Flex and grid layout in inline styles, a warning                |
+| [no-html-elements](#no-html-elements)           | Raw elements and widget roles that envUI provides as components |
+| [no-private-classes](#no-private-classes)       | envUI's private `env-` classes in class names and selectors     |
+| [no-raw-colors](#no-raw-colors)                 | Literal colors in inline styles                                 |
+| [no-renamed-exports](#no-renamed-exports)       | Names that envUI 0.x exported and 1.0 renamed or made internal  |
+
+### no-hand-rolled-layout
+
+Warns on `display: flex`, `inline-flex`, `grid` and `inline-grid` in JSX `style` objects, and names the layout primitive to use instead: Row for a flex row, Column for a flex column (`flexDirection: 'column'` or `'column-reverse'`), Row or Column when the direction is computed, and Grid for a grid. The primitives take envUI's spacing steps for their gap and padding, and show up as named nodes in dev mode:
+
+```text
+Inline `display: flex` lays out a row by hand: use envUI's Row instead, import { Row } from '@envsemble/envui', with its gap, padding and alignment props and `wrap` to wrap. Keep plain CSS only where Row can't do what you need.
+```
+
+It is a warning, not an error, in `configs.recommended`: plain CSS stays allowed where a primitive can't do what the layout needs. Disable it on that line and say why:
+
+```tsx
+// eslint-disable-next-line envui/no-hand-rolled-layout -- a subgrid lines the rows up with the header
+<div style={{ display: 'grid', gridTemplateColumns: 'subgrid' }} />
+```
+
+What it reads:
+
+- every object literal in the `style` value, through conditions, spreads and calls, such as `style={{ ...base, ...(stacked ? { display: 'flex' } : {}) }}` and `style={useMemo(() => ({ display: 'grid' }), [])}`;
+- a `const` of the same file that holds an object literal, with or without `as const`, as in `style={row}` with `const row = { display: 'flex' }`, and one of its keys, as in `style={styles.toolbar}`; the declaration is reported once, however many elements use it;
+- both branches of a condition, as in `display: wide ? 'grid' : 'flex'`.
+
+A computed display, a style object from another module or a function's parameter, and style sheets pass: plain CSS in a style sheet is the application's own business. Flex and grid properties without a `display` of their own, such as `flex: 1` or `gridColumn` on a child, pass too. The rule has no options.
 
 ### no-html-elements
 
