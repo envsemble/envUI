@@ -125,6 +125,14 @@
   text-align: center;
 }
 
+/* A part that takes its width from its column, such as a field, fills it. */
+.docs-figures
+  .docs-specimen
+  > :is(.env-field, .env-slider, .env-drop-zone, .env-composer, .env-color-picker) {
+  align-self: stretch;
+  text-align: start;
+}
+
 /* A matrix on its stage, such as forced states by variant: the table centred with even space on
    its four sides, its columns after the label column of one width, each cell's content centred in
    its column, and each label on the centre line of its row or column. */
