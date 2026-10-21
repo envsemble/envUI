@@ -107,7 +107,7 @@ export default function AppFrame() {
       navigation={{
         bar: <Bar destinations={destinations} />,
         rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        drawer: <Drawer destinations={destinations} headingLevel={3} />,
       }}
     >
       <Page width="lg" header={<PageHeader title={page.label} headingLevel={3} />}>

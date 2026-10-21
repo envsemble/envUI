@@ -363,6 +363,14 @@
     "--env-app-shell-header-height": {
       "replacement": "top-bar.height",
       "note": "AppShell is gone; TopBar's height."
+    },
+    "--env-window-frame-title-bar-start": {
+      "cssVariable": "--env-top-bar-title-bar-start",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
+    },
+    "--env-window-frame-title-bar-end": {
+      "cssVariable": "--env-top-bar-title-bar-end",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
     }
   },
   "aliases": {
@@ -1099,6 +1107,33 @@
     },
     "--env-split-pane-size": {
       "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
+    },
+    "--env-breakpoint-sm": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-md": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-lg": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-xl": {
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-app-shell-header-divider": {
+      "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+    },
+    "--env-app-shell-loading-bar-offset": {
+      "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
+    },
+    "--env-split-pane-handle": {
+      "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+    },
+    "--env-window-frame-title-bar-left": {
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-right": {
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
     }
   }
 }

@@ -61,86 +61,30 @@ related:
 
 ## Overview
 
-Use this pattern to give an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up for pages deep in a hierarchy, tabs only for views of one thing, and a quick way to open anything by name. After every change of page, focus and the window's title follow.
+Navigation gives an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up from deep pages, tabs only for views of one thing, and a quick way to open anything by name.
 
 ```tsx example=PrimaryNavigation
 
 ```
 
-## Anatomy
+### Changing the page
 
-1. **Frame:** a [Scaffold](../components/scaffold.md) around everything, with its skip links as the first tab stops, a [TopBar](../components/top-bar.md) in its `topBar`, and the page in its body.
-2. **Primary navigation:** one array of destinations, each `{ label, icon, href, current }`, given to [Bar](../components/bar.md), [Rail](../components/rail.md) and [Drawer](../components/drawer.md) in the Scaffold's `navigation`, which shows the one that fits its width: a bar at the bottom of a compact window, a rail at the start of a medium one and a drawer from expanded. Mark the current place with `current`, head the less frequent places with a `group`, and show new things at a place with its `count`.
-3. **Trail:** [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the `breadcrumbs` of the page's [PageHeader](../components/page-header.md), for a page two or more levels below a place in the primary navigation.
-4. **Views of one thing:** [Tabs](../components/tabs.md) under the PageHeader, for views of the object the page is about, such as a project's tasks and files.
-5. **Sequence:** a [Pager](../components/pager.md) at the end of the content, for pages read in order, such as a guide's chapters.
-6. **Quick open:** a [SearchTrigger](../components/search-trigger.md) in the top bar's actions that opens a [CommandPalette](../components/command-palette.md) of places, projects, documents and people.
-7. **List and detail:** list-detail [Panes](../components/panes.md) for a list whose items open beside it, as in an inbox, which show one at a time with a back button in less room.
-8. **Links:** `href` on every destination, Breadcrumbs level and [Link](../components/link.md), rendered by the router's link through [LinkProvider](../setup.md#connect-your-router).
+After the router shows the new page, move focus to the Scaffold's body or the page's `h1`, and set `document.title`, such as "Projects – Northwind". Give every place an `href`, rendered by the router's link through [LinkProvider](../setup.md#connect-your-router); the examples keep the page in state instead.
 
-## States and behaviour
+## Variants
 
-- **One primary navigation.** The navigation lists the places of the application, in every form the Scaffold shows, and stays the same on every page. Don't add a second list of the same places elsewhere, such as in the top bar.
-- **The current page.** The destination of the page shown is `current`. On a page below it, such as one project, keep its place current, Projects, and let the trail say the rest.
-- **Changing the page.** The router shows the new page. Then move focus to the Scaffold's body, which takes focus without being a tab stop, or to the page's `h1`, and set `document.title` to the page's name and the application's, "Projects – Northwind". A page that loads first shows its progress with `loading` on the TopBar; see [Loading](loading.md).
-- **The trail.** Breadcrumbs show the levels above the page, each a link; the last level names the page and is no link. Show it from the second level down; a top-level page needs none.
-- **Tabs or navigation.** Tabs switch what shows below them, in place, for one object. A different place, even a related one such as a project's settings, is a link, a destination or a button with `href`.
-- **Quick open.** The trigger's shortcut, <kbd>Ctrl</kbd>+<kbd>K</kbd> or <kbd>⌘</kbd>+<kbd>K</kbd>, opens the palette from anywhere. Choosing a result opens it as a link would; the palette closes and focus moves to the new page.
-- **Narrow windows.** The Scaffold shows the navigation form that fits its width, a bar at the bottom of a phone. Panes show the list or the detail, one at a time.
-- **Connect your router.** Wire `LinkProvider` to the router's link once, at the root, as [setup](../setup.md#connect-your-router) describes; envUI's links then navigate without loading the page again. The examples keep the page in state instead.
-
-## Content guidelines
-
-- Name each place with a short noun, the same word as the page's title: "Projects" in the sidebar opens the page "Projects".
-- Name the navigation after its role, "Main" by default, rather than after its look, such as "Drawer".
-- Use the page's own title as its level in the trail, cut short only by the component.
-- Label tabs with nouns for the views, "Tasks" and "Files", in sentence case, as [Capitalisation and punctuation](../foundations/content.md#capitalisation-and-punctuation) describes.
-- Name a link after its destination, as [Buttons and actions](../foundations/content.md#buttons-and-actions) describes: "Project settings", not "More".
-
-## Do and don't
-
-### Do
-
-- Keep one primary navigation, in the same order on every page.
-- Mark the current page, and move focus to it after it opens.
-- Set the window's title on every page.
-- Use links for places, so people can open them in a new tab and share their address.
-
-### Don't
-
-- Don't use tabs to move between places of the application.
-- Don't put the current page in the trail as a link.
-- Don't hide the primary navigation behind a menu on wide screens.
-- Don't give a destination `onSelect` alone where the page has an address; give it `href`.
-
-## Accessibility
-
-### Focus and keyboard
-
-The skip links come first: "Skip to content" moves focus to the body, and "Skip to navigation" to the navigation form that shows. <kbd>Tab</kbd> moves through the destinations, each a tab stop. After a press on an item, focus moves to the body or to the new page's heading, so the screen reader reads the new page from its start. A press on a Breadcrumbs level does the same. Tabs are one tab stop: the arrow keys move between them, and <kbd>Tab</kbd> goes on to the panel. The palette takes focus into its field, keeps it inside, and returns it as it closes; after a result opens a page, move focus to that page. In list-detail Panes showing one pane at a time, opening an item moves focus to the back button, and the back button returns it to the item.
-
-### envUI provides
-
-- Skip links to the body and to the navigation form that shows, and the banner and main landmarks of the Scaffold.
-- `aria-current="page"` on the current destination, and on the last Breadcrumbs level, in a `nav` named "Breadcrumb".
-- The Scaffold's body with `tabIndex={-1}`, so it can take focus without becoming a tab stop.
-- Tabs with the tab, tab list and tab panel roles, and a roving tab stop.
-- A CommandPalette that announces the number of results, and a SearchTrigger that announces its shortcut with `aria-keyshortcuts`.
-- Panes' focus moves between the list and the detail while one shows at a time.
-
-### You provide
-
-- One array of destinations for every form, and `current` on the place shown.
-- Focus on the body or the page's heading after each change of page, and `document.title`.
-- `LinkProvider` with the router's link, and an `href` on every place.
-- `aria-current` on the chosen item's link in a list-detail Panes' list, where its back button returns focus.
-- Short labels, as Bar and Rail show them under their icons; a `count` is named "3 new".
-
-## Examples
+| Need                                | Use                                                                                                                                 |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| The places of the application       | One array of destinations given to [Bar](../components/bar.md), [Rail](../components/rail.md) and [Drawer](../components/drawer.md) |
+| A page two or more levels down      | [Breadcrumbs](../components/breadcrumbs.md) with `wrap={false}` in the [PageHeader](../components/page-header.md)                   |
+| Views of the object a page is about | [Tabs](../components/tabs.md) under the PageHeader                                                                                  |
+| Pages read in order                 | A [Pager](../components/pager.md) at the end of the content                                                                         |
+| Opening anything by name            | A [SearchTrigger](../components/search-trigger.md) that opens a [CommandPalette](../components/command-palette.md)                  |
+| A list whose items open beside it   | List-detail [Panes](../components/panes.md)                                                                                         |
 
 ### Hierarchy
 
-Breadcrumbs in the PageHeader show the levels above the page, and each level below links one level down. A press on a level opens it, and focus moves to its heading.
+The trail shows the levels above the page, each a link; the page itself is the last level and no link.
 
 ```tsx example=Hierarchy
 
@@ -148,7 +92,7 @@ Breadcrumbs in the PageHeader show the levels above the page, and each level bel
 
 ### Views of one thing
 
-Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions, not a tab.
+Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.
 
 ```tsx example=ViewsOfOneThing
 
@@ -156,7 +100,7 @@ Tabs switch the views of one project in place. Its settings are another page, so
 
 ### Quick open
 
-The SearchTrigger opens a CommandPalette of pages, projects, documents and people. In an application its shortcut opens it too; here it takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.
+Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.
 
 ```tsx example=QuickOpen
 
@@ -164,8 +108,60 @@ The SearchTrigger opens a CommandPalette of pages, projects, documents and peopl
 
 ### List and detail
 
-A list of projects, as narrow as a phone, shows its detail in place of the list. The back button names where it goes, "All projects", and returns focus to the project that was open.
+As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.
 
 ```tsx example=ListAndDetail
 
 ```
+
+## When to use
+
+```tsx do=TabsForViews caption="Tabs for the views of the one thing the page is about."
+
+```
+
+```tsx dont=TabsForPlaces caption="Tabs for places of the application: they have no address of their own."
+
+```
+
+- One primary navigation, in the same order on every page, never hidden behind a menu on a wide window.
+- On a page below a place, such as one project, keep the place current and let the trail say the rest.
+
+### Content
+
+- Name each place with a short noun, the word of its page's title.
+- Name the navigation after its role, "Main", rather than its look.
+- Name a link after its destination: "Project settings", not "More".
+
+## Anatomy
+
+```tsx anatomy=NavigationAnatomy
+
+```
+
+1. **Primary navigation** (`env-rail`)
+2. **Quick open** (`env-search-trigger`)
+3. **Trail** (`env-breadcrumbs`)
+4. **Views** (`env-tabs-list`)
+
+Not shown: the [Pager](../components/pager.md) at the end of a page read in order.
+
+## Accessibility
+
+The skip links come first. After a page opens, from a destination, a trail level or a quick-open result, focus moves to its body or heading, so a screen reader reads it from the start. Tabs are one tab stop whose arrow keys move between them.
+
+### envUI provides
+
+- Skip links, the banner and main landmarks, and a body that takes focus without being a tab stop.
+- `aria-current="page"` on the current destination and the last trail level.
+- Tabs with their roles and roving tab stop; a palette that announces the number of results.
+- Panes' focus moves between the list and the detail while one shows at a time.
+
+### You provide
+
+- `current` on the place shown, focus after each change of page, and `document.title`.
+- `LinkProvider` with the router's link, and an `href` on every place.
+
+## Changelog
+
+- **1.0.0**: The page is on the figure template.

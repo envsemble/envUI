@@ -26,7 +26,7 @@ export default function WithNavigation() {
         ),
       }}
     >
-      <Page header={<PageHeader title="Home" headingLevel={2} />}>
+      <Page header={<PageHeader title="Home" headingLevel={3} />}>
         <Text emphasis="muted">What changed since you last looked.</Text>
       </Page>
     </Scaffold>

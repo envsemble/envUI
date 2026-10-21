@@ -1,7 +1,7 @@
 import { Suspense, useState, type ReactNode } from 'react';
 import { Column, Text } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
-import { Documentation } from './Documentation';
+import { GuideDocument } from './GuideDocument';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 import { MetadataBadges, SingleViewContent } from '../template/TemplateContent';
 import type { StandalonePage } from '../navigation/DocumentationRoutes';
@@ -45,7 +45,7 @@ export function StandalonePageContent({ page }: { page: StandalonePage }) {
   let content: ReactNode;
   const { document } = page;
   if (document?.sections) content = <SingleViewContent document={document} />;
-  else if (document) content = <Documentation document={document} />;
+  else if (document) content = <GuideDocument document={document} />;
   else if (page.path === 'foundations/tokens')
     content = <LoadedPart part={tokenReference} what="token reference" />;
   else content = <LoadedPart part={changelog} what="changelog" />;
