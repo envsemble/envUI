@@ -1,5 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const tablesFixture = `${fixtureUrl}/?fixture=tables`;
 const themes = ['light', 'dark'] as const;
@@ -462,7 +463,7 @@ test(
       await expect(region).toHaveAttribute('data-stacked', '');
       await expect(changes).toHaveText('stacked columns stacked');
     }
-    // The probe that measures the length never widens the region or the page.
+    // The length, the region's font size times 37.5, never widens the region or the page.
     const region = page.getByRole('region', { name: 'Measured threshold light' });
     expect(await region.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(
       true,
@@ -639,3 +640,55 @@ test('tables fit a narrow viewport: stacking tables stack, others scroll in thei
   await page.keyboard.press('ArrowRight');
   await expect(handle).toHaveAttribute('aria-valuenow', '41');
 });
+
+/** A stacking table of two rows in a box of the given width, with the given stackBelow. */
+const stackingTable = (name: string, width: string, stackBelow: string, cell = "'Ana'") =>
+  `h('div', {style: {inlineSize: '${width}'}}, h(Table.Root, {'aria-label': '${name}',
+    narrowLayout: 'stack', stackBelow: '${stackBelow}'},
+    h(Table.Head, null, h(Table.Row, null, h(Table.HeaderCell, null, 'Name'),
+      h(Table.HeaderCell, null, 'Team'))),
+    h(Table.Body, null, h(Table.Row, null, h(Table.Cell, null, ${cell}),
+      h(Table.Cell, {label: 'Team'}, 'Design')))))`;
+
+test(
+  'a stacking table stacks in the server markup, follows the root size and keeps nested tables apart',
+  { tag: '@engines' },
+  async ({ page }) => {
+    const hydrate = await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {Table} from '@envsemble/envui';
+      export const element = h('div', null,
+        ${stackingTable('Narrow', '20rem', '36rem')},
+        ${stackingTable('Thirty', '25rem', '30rem')},
+        ${stackingTable('Outer', '20rem', '36rem', stackingTable('Inner', '15rem', '5rem'))});`,
+      { hydrate: true },
+    );
+    const firstRow = (name: string) =>
+      page.getByRole('table', { name, exact: true }).locator('tbody > tr').first();
+    // Before any script runs, the container query has already stacked the narrow table.
+    await expect(firstRow('Narrow')).toHaveCSS('display', 'grid');
+    await expect(page.getByRole('region', { name: 'Narrow' })).not.toHaveAttribute('data-stacked');
+    // 25 rem is under 30 rem at the 16 px root; at a 12 px root, 30 rem is 360 px and 25 rem is
+    // 300 px, still under it, and both follow the root together.
+    await expect(firstRow('Thirty')).toHaveCSS('display', 'grid');
+    await page.evaluate(() => (document.documentElement.style.fontSize = '12px'));
+    await expect(firstRow('Thirty')).toHaveCSS('display', 'grid');
+    await page.evaluate(() => {
+      const box = document.querySelector<HTMLElement>('[aria-label="Thirty"]')!.parentElement!;
+      box.style.inlineSize = '400px';
+    });
+    // 400 px is under 30 rem at 16 px (480 px), but over it at 12 px (360 px): the threshold is
+    // the region's own em, which follows the root, not a measured length.
+    await expect(firstRow('Thirty')).toHaveCSS('display', 'table-row');
+    await page.evaluate(() => (document.documentElement.style.fontSize = ''));
+    expect(await hydrate()).toEqual([]);
+    await expect(page.getByRole('region', { name: 'Narrow' })).toHaveAttribute('data-stacked', '');
+    await expect(page.getByRole('region', { name: 'Thirty' })).toHaveAttribute('data-stacked', '');
+    // The outer table stacks; the inner one, wider than its 5 rem, keeps its columns and reports
+    // so, rather than the stacked reading of the table around it.
+    await expect(page.getByRole('region', { name: 'Outer' })).toHaveAttribute('data-stacked', '');
+    await expect(page.getByRole('region', { name: 'Inner' })).not.toHaveAttribute('data-stacked');
+    await expect(firstRow('Inner')).toHaveCSS('display', 'table-row');
+  },
+);

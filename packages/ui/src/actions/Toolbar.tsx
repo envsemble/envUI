@@ -96,6 +96,8 @@ function Root({
       disabled={disabled}
       loopFocus={loopFocus}
       className={classNames('env-toolbar', className)}
+      // Base UI sets it too; written here, it is part of the toolbar's documented states.
+      data-orientation={orientation}
       data-size={size}
     >
       <OrientationContext value={orientation}>
@@ -128,6 +130,7 @@ function Group({ className, disabled, render, children, ...props }: GroupProps) 
       render={lineOf(orientation, render)}
       disabled={disabled}
       className={classNames('env-toolbar-group', className)}
+      data-orientation={orientation}
     >
       <DisabledContext value={inherited || Boolean(disabled)}>{children}</DisabledContext>
     </BaseToolbar.Group>
