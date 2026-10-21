@@ -25137,7 +25137,7 @@
         "type": "color",
         "description": "The default surface: Surface, sidebars, standard menus.",
         "values": {
-          "light": "#f6f8fc",
+          "light": "#e2e4e8",
           "dark": "#28292b",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#28292b"
@@ -25149,7 +25149,7 @@
         "type": "color",
         "description": "An interactive default surface, such as a card or a list row, under the pointer.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#d5d7db",
           "dark": "#383a3d",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#303234"
@@ -25293,7 +25293,7 @@
         "type": "color",
         "description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
         "values": {
-          "light": "#ffffff",
+          "light": "#eff1f5",
           "dark": "#343638",
           "light-high-contrast": "#f6f8fc",
           "dark-high-contrast": "#343638"
@@ -25305,7 +25305,7 @@
         "type": "color",
         "description": "An interactive muted surface under the pointer.",
         "values": {
-          "light": "#eff1f5",
+          "light": "#e2e4e8",
           "dark": "#424447",
           "light-high-contrast": "#e8eaee",
           "dark-high-contrast": "#383a3d"
@@ -25317,7 +25317,7 @@
         "type": "color",
         "description": "An interactive muted surface while pressed.",
         "values": {
-          "light": "#e2e4e8",
+          "light": "#dbdde1",
           "dark": "#4b4d51",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#424447"
@@ -25365,7 +25365,7 @@
         "type": "color",
         "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
-          "light": "rgb(30 31 33 / 0.06)",
+          "light": "rgb(30 31 33 / 0.08)",
           "dark": "rgb(232 234 238 / 0.125)",
           "light-high-contrast": "rgb(30 31 33 / 0.06)",
           "dark-high-contrast": "rgb(232 234 238 / 0.08)"
@@ -25389,7 +25389,7 @@
         "type": "color",
         "description": "The neutral fill while pressed.",
         "values": {
-          "light": "rgb(30 31 33 / 0.27)",
+          "light": "rgb(30 31 33 / 0.25)",
           "dark": "rgb(232 234 238 / 0.28)",
           "light-high-contrast": "rgb(30 31 33 / 0.18)",
           "dark-high-contrast": "rgb(232 234 238 / 0.15)"
@@ -25477,7 +25477,7 @@
         "type": "color",
         "description": "The page behind all content: the app frame, title bars and Surface background=\"page\".",
         "values": {
-          "light": "#e8eaee",
+          "light": "#ffffff",
           "dark": "#1e1f21",
           "light-high-contrast": "#ffffff",
           "dark-high-contrast": "#1e1f21"
@@ -25489,7 +25489,7 @@
         "type": "color",
         "description": "An interactive page-colored surface under the pointer.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#eff1f5",
           "dark": "#2c2d30",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#28292b"
@@ -25501,7 +25501,7 @@
         "type": "color",
         "description": "An interactive page-colored surface while pressed.",
         "values": {
-          "light": "#d2d4d8",
+          "light": "#e2e4e8",
           "dark": "#383a3d",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#303234"
@@ -26321,7 +26321,7 @@
         "type": "color",
         "description": "The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both.",
         "values": {
-          "light": "#f6f8fc",
+          "light": "#e2e4e8",
           "dark": "#343638",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#343638"
@@ -26333,7 +26333,7 @@
         "type": "color",
         "description": "A list item under the pointer.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#d5d7db",
           "dark": "#424447",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#383a3d"

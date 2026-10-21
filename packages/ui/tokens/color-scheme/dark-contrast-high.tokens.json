@@ -15,7 +15,6 @@
           "pressed": { "$value": "{palette.neutral.75}" }
         },
         "page": {
-          "$root": { "$value": "{palette.neutral.92}" },
           "hover": { "$value": "{palette.neutral.88}" },
           "pressed": { "$value": "{palette.neutral.84}" }
         },
@@ -30,7 +29,6 @@
           "pressed": { "$value": "{palette.neutral.75}" }
         },
         "raised": {
-          "$root": { "$value": "{palette.neutral.88}" },
           "hover": { "$value": "{palette.neutral.84}" },
           "pressed": { "$value": "{palette.neutral.80}" }
         },

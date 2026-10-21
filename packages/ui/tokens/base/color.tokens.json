@@ -7,25 +7,25 @@
       "page": {
         "$root": {
           "$description": "The page behind all content: the app frame, title bars and Surface background=\"page\".",
-          "$value": "{palette.neutral.6}"
+          "$value": "{palette.neutral.0}"
         },
         "hover": {
           "$description": "An interactive page-colored surface under the pointer.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.4}"
         },
         "pressed": {
           "$description": "An interactive page-colored surface while pressed.",
-          "$value": "{palette.neutral.13}"
+          "$value": "{palette.neutral.8}"
         }
       },
       "default": {
         "$root": {
           "$description": "The default surface: Surface, sidebars, standard menus.",
-          "$value": "{palette.neutral.2}"
+          "$value": "{palette.neutral.8}"
         },
         "hover": {
           "$description": "An interactive default surface, such as a card or a list row, under the pointer.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.12}"
         },
         "pressed": {
           "$description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
@@ -35,15 +35,15 @@
       "muted": {
         "$root": {
           "$description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
-          "$value": "{palette.neutral.0}"
+          "$value": "{palette.neutral.4}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.neutral.8}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.neutral.10}"
         }
       },
       "raised": {
@@ -121,7 +121,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.06
+              "alpha": 0.08
             }
           },
           "hover": {
@@ -137,7 +137,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.27
+              "alpha": 0.25
             }
           }
         },
