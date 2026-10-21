@@ -909,7 +909,7 @@ test('plan leaves out what a part does not ask for', () => {
 test('plan finds the right component for paraphrases the benchmark does not use', () => {
   const names = (description) =>
     plan(manifest, description).candidates.map((item) => item.component);
-  assert.deepEqual(names('a sidebar with links'), ['NavList']);
+  assert.deepEqual(names('a sidebar with links'), ['NavigationDrawer']);
   assert.deepEqual(names('let users switch between light and dark themes'), ['ThemeToggle']);
   assert.deepEqual(names('a theme switcher in the header'), ['ThemeToggle']);
   assert.deepEqual(names('a dark mode toggle'), ['ThemeToggle']);

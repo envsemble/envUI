@@ -11,7 +11,7 @@
     "meter": { "weight": 1, "use": ["Meter"] },
     "details": { "weight": 1, "use": ["Disclosure"] },
     "kbd": { "weight": 0.5, "use": ["Kbd"] },
-    "nav": { "weight": 0.5, "use": ["AppShell", "NavList", "Breadcrumbs"] },
+    "nav": { "weight": 0.5, "use": ["AppShell", "NavigationDrawer", "Breadcrumbs"] },
     "aside": { "weight": 0.5, "use": ["AppShell", "Dialog"] },
     "svg": { "weight": 0.5, "use": ["@envsemble/envui/icons/*", "Icon"] }
   },
@@ -60,6 +60,6 @@
     "tree": ["Tree"]
   },
   "anchorAsButton": { "weight": 1, "use": ["Button", "Link"] },
-  "anchorLink": { "weight": 0.5, "use": ["Link", "NavList", "Button href"] },
+  "anchorLink": { "weight": 0.5, "use": ["Link", "NavigationDrawer", "Button href"] },
   "clickableElement": { "weight": 1, "use": ["Button", "IconButton", "ClickableCard"] }
 }

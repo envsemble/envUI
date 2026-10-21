@@ -17,6 +17,8 @@ aliases:
   - nav item
   - navigation list
   - nav links
+  - navigation links
+  - navigation
 useWhen:
   - An application's main destinations on an expanded or larger window, where Scaffold places the drawer at the window's start.
   - Many destinations, in groups under headings, with counts.
