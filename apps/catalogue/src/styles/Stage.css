@@ -197,6 +197,14 @@
   display: none;
 }
 
+/* Toasts, which an anatomy figure shows without what raised them, sit in its middle. */
+.docs-anatomy-subject .docs-overlay-layer .env-toast-viewport {
+  inset: 0;
+  inline-size: fit-content;
+  block-size: fit-content;
+  margin: auto;
+}
+
 /* The layer envUI's overlays render into, through PortalContainer, over the room. */
 .docs-overlay-layer {
   position: absolute;
