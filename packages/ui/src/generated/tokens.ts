@@ -1171,7 +1171,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(0 0 0 / 0.05)',
     },
   },
-  /** Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules and keyboard keys. A floating layer takes its own, clearer edge, elevation.{level}.border. */
+  /** Decorative lines and outlines that are not a control’s only boundary: table lines, quote bars, keyboard keys and color swatches. envUI draws no line that only divides: sections, list rows, title bars, menus and Markdown rules separate by space and background. A floating layer takes its own, clearer edge, elevation.{level}.border. */
   'color.border.muted': {
     cssVariable: '--env-color-border-muted',
     type: 'color',
