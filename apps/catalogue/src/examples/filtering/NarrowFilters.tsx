@@ -12,17 +12,24 @@ import {
   Select,
   Stack,
   Text,
-  useBreakpoint,
+  useContainerSize,
+  windowClasses,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
+/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
+const remToPixels = (width: string) =>
+  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
 export default function NarrowFilters() {
-  // From the md breakpoint up the filters sit in the toolbar; below it they move into a drawer,
-  // and the search stays in view.
-  const wide = useBreakpoint('md');
+  // From the medium window class up, measured on the filters' own width, they sit in the toolbar;
+  // in a compact one they move into a drawer, and the search stays in view.
+  const filters = useRef<HTMLDivElement>(null);
+  const size = useContainerSize(filters);
+  const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('any');
   const [owner, setOwner] = useState<string | null>('anyone');
@@ -48,7 +55,7 @@ export default function NarrowFilters() {
   };
 
   return (
-    <Stack gap={4}>
+    <Stack ref={filters} gap={4}>
       <Stack direction="row" wrap align="center" gap={3}>
         <SearchField
           ref={search}

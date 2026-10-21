@@ -732,29 +732,28 @@ test("every export has a status, a guide's exports stable unless its statuses sa
   );
   for (const name of ['EnvUIProvider', 'useTheme', 'Text', 'Icon'])
     assert.equal(manifest.exports[name].status, 'stable', name);
-  // Hooks first released in 1.0 are beta through their pages' statuses.
-  for (const name of ['useContainerSize', 'useBreakpoint', 'breakpointQuery', 'useMediaQuery'])
+  // Exports first released in 1.0 are beta through their pages' statuses.
+  for (const name of ['useContainerSize', 'useLocale'])
     assert.equal(manifest.exports[name].status, 'beta', name);
-  assert.equal(manifest.exports.useLocale.status, 'beta');
   const directory = mkdtempSync(join(workDirectory, 'docs-'));
   cpSync(documentationDirectory, directory, { recursive: true });
-  const responsive = join(directory, 'foundations', 'responsive.md');
+  const setup = join(directory, 'setup.md');
   const withStatuses = (statusLines) =>
     writeFileSync(
-      responsive,
-      readFileSync(join(documentationDirectory, 'foundations', 'responsive.md'), 'utf8').replace(
+      setup,
+      readFileSync(join(documentationDirectory, 'setup.md'), 'utf8').replace(
         /^statuses:.*\n(?: {2}.*\n)*/m,
         `statuses:\n${statusLines}`,
       ),
     );
-  withStatuses('  useContainerSize: beta\n');
+  withStatuses('  useLocale: beta\n');
   const changed = buildManifest({ directory });
-  assert.equal(changed.exports.useContainerSize.status, 'beta');
-  assert.equal(changed.exports.useMediaQuery.status, 'stable');
-  withStatuses('  useMediaQuery: stable\n');
+  assert.equal(changed.exports.useLocale.status, 'beta');
+  assert.equal(changed.exports.LinkProvider.status, 'stable');
+  withStatuses('  LinkProvider: stable\n');
   assert.throws(
     () => readDocumentation(directory, { props, versions: undefined }),
-    /statuses of useMediaQuery repeats the default status of a guide's exports/,
+    /statuses of LinkProvider repeats the default status of a guide's exports/,
   );
 });
 

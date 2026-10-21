@@ -13,8 +13,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { breakpointQuery, type Breakpoint } from '../../foundations/breakpoints.js';
-import { useMediaQuery } from '../../foundations/useMediaQuery.js';
+import { breakpointQuery, type Breakpoint } from './frameBreakpoints.js';
+import { useMediaQuery } from '../../internal/useMediaQuery.js';
 import { useShortcut } from '../../internal/useShortcut.js';
 import {
   appShellCookie,

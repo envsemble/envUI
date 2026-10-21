@@ -59,7 +59,7 @@ export const aliases = {
   'theme-bootstrap': ['ThemePreference', 'ThemeContrast'],
   ThemePreferenceContext: ['ThemePreference'],
   useMediaQuery: ['ResponsiveHooks'],
-  breakpoints: ['ResponsiveHooks'],
+  frameBreakpoints: ['AppShell', 'Sidebar', 'ResponsiveHooks'],
   Layout: ['Stack'],
   StackStyle: ['Stack'],
   Density: ['Scale'],

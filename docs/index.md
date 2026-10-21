@@ -24,7 +24,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Typography](foundations/typography.md) — Shared styles for headings, body copy and supporting text.
 - [Spacing & shape](foundations/spacing.md) — A shared scale for space, corners and controls that grow with content.
 - [Scale & density](foundations/scale.md) — The comfortable and compact app scales, control sizes and the row density of data components.
-- [Responsive layout & stacking](foundations/responsive.md) — Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.
+- [Responsive layout & stacking](foundations/responsive.md) — Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](foundations/composition.md) — Build product interfaces from shared primitives and existing components.
 - [Icons & assets](foundations/icons.md) — Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](foundations/accessibility.md) — Keyboard access, visible focus and clear guidance across shared controls.

@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useSyncExternalStore } from 'react';
-import { breakpointQuery, type Breakpoint } from './breakpoints.js';
 
 export interface MediaQueryOptions {
   /**
@@ -32,8 +31,8 @@ function mediaQueryList(query: string) {
 /**
  * Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to
  * date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's
- * answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS
- * (`@media`, or `@container` for a component's own width) where the difference is only in styles.
+ * answer; a page rendered only in the browser gets the answer in its first render. Private: only
+ * AppShell and Sidebar ask about the viewport's width; everything else responds to its container.
  */
 export function useMediaQuery(query: string, options: MediaQueryOptions = {}): boolean {
   const { defaultValue = false } = options;
@@ -56,12 +55,4 @@ export function useMediaQuery(query: string, options: MediaQueryOptions = {}): b
   const read = () => mediaQueryList(query)?.matches ?? defaultValue;
   const readOnServer = () => defaultValue;
   return useSyncExternalStore(subscribe, read, readOnServer);
-}
-
-/**
- * Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from
- * 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.
- */
-export function useBreakpoint(breakpoint: Breakpoint, options: MediaQueryOptions = {}): boolean {
-  return useMediaQuery(breakpointQuery(breakpoint), options);
 }

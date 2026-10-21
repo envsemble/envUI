@@ -19,7 +19,6 @@ import {
   Table,
   Text,
   Tooltip,
-  useBreakpoint,
   useToast,
   type BadgeTone,
 } from '@envsemble/envui';
@@ -89,8 +88,6 @@ export default function IndexPage() {
     // runs after it.
     else requestAnimationFrame(() => target?.focus());
   });
-  // On a phone the search takes the toolbar's whole width.
-  const wide = useBreakpoint('sm');
 
   const term = query.trim().toLowerCase();
   const filtered = term !== '' || status !== 'all' || owner !== 'anyone';
@@ -200,8 +197,9 @@ export default function IndexPage() {
                 label="Search projects"
                 showLabel
                 size="sm"
-                // envUI has no full-width toolbar field yet: on a phone it takes the whole row.
-                style={wide ? undefined : { inlineSize: '100%' }}
+                // envUI has no full-width toolbar field yet: it grows into the row, and takes the
+                // whole row where the toolbar is narrow, without asking the window's width.
+                style={{ flex: '1 1 14rem', maxInlineSize: '24rem' }}
                 value={query}
                 onValueChange={(value) => filter(() => setQuery(value))}
               />

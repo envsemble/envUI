@@ -136,8 +136,8 @@
   font: var(--env-type-body-small);
   font-weight: var(--env-font-weight-medium);
 }
-/* Where the window has no room beside the calendar, the time stacks under it. */
-@media (width < 32rem) {
+/* In a compact window, with no room beside the calendar, the time stacks under it. */
+@container env-window (width < 37.5rem) {
   .env-date-picker-panes {
     grid-template-columns: minmax(0, auto);
   }

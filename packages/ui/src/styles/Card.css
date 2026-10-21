@@ -71,7 +71,8 @@
 }
 
 /* The feature layout: an icon at the start, the text, and the actions at the end. It follows the
-   card's own width: in a card narrower than 38 rem the actions move below the text. */
+   card's own width at the window classes: in a compact card, narrower than 37.5 rem, the actions
+   move below the text. */
 .env-card[data-layout='feature'] {
   container: env-card / inline-size;
 }
@@ -101,7 +102,7 @@
   max-inline-size: 100%;
   justify-self: end;
 }
-@container env-card (max-width: 38rem) {
+@container env-card (width < 37.5rem) {
   .env-card-layout {
     grid-template-columns: minmax(0, 1fr);
   }

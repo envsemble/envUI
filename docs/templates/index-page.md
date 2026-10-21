@@ -41,8 +41,6 @@ composes:
   - EmptyState
   - ConfirmDialog
   - useToast
-  - useBreakpoint
-  - useMediaQuery
 related:
   - empty-states
   - destructive-actions
@@ -64,7 +62,7 @@ The page that lists every object of one kind, here Northwind's projects, inside 
 ## Anatomy
 
 1. **Header:** a [PageHeader](../components/page-header.md), "Projects", with a description, the primary action "Create project" and `controlSize="sm"`.
-2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md) with its label shown, "Search projects", the toolbar's whole width on a phone; a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set and some projects match.
+2. **Toolbar:** the header's `toolbar`, a [Stack](../components/stack.md) row that wraps: a [SearchField](../components/text-field.md) with its label shown, "Search projects", which grows into the row and takes the whole of a narrow one; a [Select](../components/select.md) for the status and one for the owner, all `size="sm"`, and "Clear filters" while a filter is set and some projects match.
 3. **Selection bar:** a [Checkbox](../components/checkbox.md) "Select this page", checked, unchecked or mixed; a [Text](../foundations/typography.md) with `role="status"` that counts the projects, those found or those selected; and, with a selection, "Archive 3 projects" and "Delete 3 projects…" [Button](../components/button.md)s. While the rows stack, a "Sort by" Select joins them. The bar sits above the table rather than in its header row, as [Data tables](../patterns/data-tables.md) put it, because the header row hides while the rows stack, and selecting the page must work at every width.
 4. **Table:** a [Table](../components/table.md) with `narrowLayout="stack"`, sortable Name and Updated columns, and per row:
    - a Checkbox named "Select {project}" and a [Link](../components/link.md) to the project, the row's one destination;

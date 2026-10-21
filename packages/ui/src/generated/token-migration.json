@@ -1345,6 +1345,30 @@
       "cssVariable": "--env-frame-header-block-size",
       "note": "The height of the app frame's header or title bar, which the frame sets on the document."
     },
+    "--env-breakpoint-lg": {
+      "kind": "removed",
+      "token": "window-class.expanded",
+      "cssVariable": "--env-window-class-expanded",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-md": {
+      "kind": "removed",
+      "token": "window-class.medium",
+      "cssVariable": "--env-window-class-medium",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-sm": {
+      "kind": "removed",
+      "token": "window-class.medium",
+      "cssVariable": "--env-window-class-medium",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-xl": {
+      "kind": "removed",
+      "token": "window-class.large",
+      "cssVariable": "--env-window-class-large",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
     "--env-sidebar-collapsed-width": {
       "kind": "removed",
       "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."

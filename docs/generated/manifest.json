@@ -6713,17 +6713,21 @@
       "name": "responsive",
       "title": "Responsive layout & stacking",
       "group": "Foundations",
-      "summary": "Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.",
+      "summary": "Window classes, container queries, measuring a container and the stacking order of frames and popups.",
       "doc": "docs/foundations/responsive.md",
       "exports": [
-        "useMediaQuery",
-        "useBreakpoint",
-        "breakpointQuery",
         "useContainerSize"
       ],
       "aliases": [
+        "window class",
+        "window classes",
+        "size class",
         "breakpoint",
         "breakpoints",
+        "compact",
+        "medium",
+        "expanded",
+        "large",
         "media query",
         "responsive",
         "mobile layout",
@@ -7525,7 +7529,7 @@
         "List",
         "Text",
         "EmptyState",
-        "useBreakpoint"
+        "useContainerSize"
       ],
       "related": [
         "data-tables",
@@ -7558,7 +7562,7 @@
         {
           "name": "NarrowFilters",
           "title": "Narrow windows",
-          "description": "Below the `md` breakpoint the Selects move into a Drawer opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.",
+          "description": "Where the example is compact, narrower than 37.5 rem, the Selects move into a Drawer opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.",
           "file": "docs/examples/filtering/NarrowFilters.tsx"
         }
       ]
@@ -7886,9 +7890,7 @@
         "Pagination",
         "EmptyState",
         "ConfirmDialog",
-        "useToast",
-        "useBreakpoint",
-        "useMediaQuery"
+        "useToast"
       ],
       "related": [
         "empty-states",
@@ -17555,15 +17557,6 @@
       "page": "avatar",
       "doc": "docs/components/avatar.md"
     },
-    "breakpointQuery": {
-      "kind": "function",
-      "import": "@envsemble/envui",
-      "description": "The media query for a viewport at least as wide as a breakpoint (`up`, the default), or narrower than it (`down`), so that `up` and `down` of one breakpoint never both match nor both miss: `breakpointQuery('md')` is `(width >= 48rem)`.",
-      "signature": "(breakpoint: Breakpoint, direction?: \"up\" | \"down\"): string",
-      "status": "beta",
-      "page": "responsive",
-      "doc": "docs/foundations/responsive.md"
-    },
     "countDiffLines": {
       "kind": "function",
       "import": "@envsemble/envui/diff",
@@ -17621,15 +17614,6 @@
       "page": "app-shell",
       "doc": "docs/components/app-shell.md"
     },
-    "useBreakpoint": {
-      "kind": "function",
-      "import": "@envsemble/envui",
-      "description": "Whether the viewport is at least as wide as a breakpoint: `useBreakpoint('md')` is true from 48 rem up. As useMediaQuery, it returns `defaultValue` on the server and while hydrating.",
-      "signature": "(breakpoint: Breakpoint, options?: MediaQueryOptions): boolean",
-      "status": "beta",
-      "page": "responsive",
-      "doc": "docs/foundations/responsive.md"
-    },
     "useContainerSize": {
       "kind": "function",
       "import": "@envsemble/envui",
@@ -17650,15 +17634,6 @@
       "status": "beta",
       "page": "setup",
       "doc": "docs/setup.md"
-    },
-    "useMediaQuery": {
-      "kind": "function",
-      "import": "@envsemble/envui",
-      "description": "Whether the viewport matches a media query, such as `(prefers-reduced-motion: reduce)`, kept up to date as it changes. It returns `defaultValue` on the server and while hydrating, then the browser's answer; a page rendered only in the browser gets the answer in its first render. Prefer CSS (`@media`, or `@container` for a component's own width) where the difference is only in styles.",
-      "signature": "(query: string, options?: MediaQueryOptions): boolean",
-      "status": "beta",
-      "page": "responsive",
-      "doc": "docs/foundations/responsive.md"
     },
     "useSidebar": {
       "kind": "function",
@@ -17723,34 +17698,6 @@
         "cssVariable": "--env-body-font-weight",
         "type": "fontWeight",
         "value": "400"
-      },
-      {
-        "id": "breakpoint.lg",
-        "cssVariable": "--env-breakpoint-lg",
-        "type": "dimension",
-        "description": "64 rem: a tablet held sideways or a laptop.",
-        "value": "64rem"
-      },
-      {
-        "id": "breakpoint.md",
-        "cssVariable": "--env-breakpoint-md",
-        "type": "dimension",
-        "description": "48 rem: a tablet held upright, and the default line between a phone's layout and a wider one.",
-        "value": "48rem"
-      },
-      {
-        "id": "breakpoint.sm",
-        "cssVariable": "--env-breakpoint-sm",
-        "type": "dimension",
-        "description": "40 rem: a large phone held sideways, or a narrow window.",
-        "value": "40rem"
-      },
-      {
-        "id": "breakpoint.xl",
-        "cssVariable": "--env-breakpoint-xl",
-        "type": "dimension",
-        "description": "80 rem: a desktop window.",
-        "value": "80rem"
       },
       {
         "id": "color.avatar.bg",
@@ -19893,6 +19840,27 @@
         }
       },
       {
+        "id": "window-class.expanded",
+        "cssVariable": "--env-window-class-expanded",
+        "type": "dimension",
+        "description": "52.5 rem: where expanded starts, such as a tablet held sideways.",
+        "value": "52.5rem"
+      },
+      {
+        "id": "window-class.large",
+        "cssVariable": "--env-window-class-large",
+        "type": "dimension",
+        "description": "75 rem: where large starts, such as a desktop window.",
+        "value": "75rem"
+      },
+      {
+        "id": "window-class.medium",
+        "cssVariable": "--env-window-class-medium",
+        "type": "dimension",
+        "description": "37.5 rem: where medium starts, such as a tablet held upright or a narrow desktop window; narrower is compact, such as a phone.",
+        "value": "37.5rem"
+      },
+      {
         "id": "z.base",
         "cssVariable": "--env-z-base",
         "type": "number",
@@ -21364,6 +21332,34 @@
         "cssVariable": "--env-app-topbar-block-size",
         "use": "--env-frame-header-block-size",
         "note": "The height of the app frame's header or title bar, which the frame sets on the document."
+      },
+      {
+        "cssVariable": "--env-breakpoint-lg",
+        "use": "--env-window-class-expanded",
+        "removed": true,
+        "type": "dimension",
+        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+      },
+      {
+        "cssVariable": "--env-breakpoint-md",
+        "use": "--env-window-class-medium",
+        "removed": true,
+        "type": "dimension",
+        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+      },
+      {
+        "cssVariable": "--env-breakpoint-sm",
+        "use": "--env-window-class-medium",
+        "removed": true,
+        "type": "dimension",
+        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+      },
+      {
+        "cssVariable": "--env-breakpoint-xl",
+        "use": "--env-window-class-large",
+        "removed": true,
+        "type": "dimension",
+        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
       },
       {
         "cssVariable": "--env-sidebar-collapsed-width",

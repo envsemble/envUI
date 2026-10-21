@@ -870,6 +870,22 @@
     "--surface-card-padding": {
       "replacement": null,
       "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
+    },
+    "--env-breakpoint-sm": {
+      "replacement": "window-class.medium",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-md": {
+      "replacement": "window-class.medium",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-lg": {
+      "replacement": "window-class.expanded",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
+    },
+    "--env-breakpoint-xl": {
+      "replacement": "window-class.large",
+      "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
     }
   }
 }

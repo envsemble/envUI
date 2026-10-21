@@ -44,7 +44,7 @@ Inside a `Theme`, or a document root themed by `ThemePreferenceProvider`, these 
 - Use relative units and the shared spacing scale. The parent owns gaps; each component owns its internal padding.
 - Theme supplies scoped border-box sizing. Text, controls and layout children shrink to their container; long labels wrap. Rem and em dimensions follow browser text settings without shrinking the whole interface on a phone.
 - A Card in the feature layout responds to its own width. Dialogs, selects and notification stacks fit the viewport; code, tables, toolbars and crowded connected controls scroll within their own regions.
-- Applications own page grids and custom content, and take viewport breakpoints from envUI's [breakpoints](../foundations/responsive.md). Use minmax(0, 1fr) for grid tracks, min-inline-size: 0 for flex children and max-inline-size: 100% for media. Avoid fixed pixel widths and heights; retain content-driven height and a viewport meta tag.
+- Applications own page grids and custom content, and respond to their container at envUI's [window classes](../foundations/responsive.md). Use minmax(0, 1fr) for grid tracks, min-inline-size: 0 for flex children and max-inline-size: 100% for media. Avoid fixed pixel widths and heights; retain content-driven height and a viewport meta tag.
 - Let text wrap and controls grow with content. The application chooses where its layout changes; there is no separate mobile theme or component set.
 - Text has no outer margins. Cards already space direct children; Stack and ActionGroup supply other layouts.
 - Use component defaults for geometry. Choose Surface for a plain pane and Card for a content surface.

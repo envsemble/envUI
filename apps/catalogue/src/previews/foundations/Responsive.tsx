@@ -1,4 +1,4 @@
-import { Stack, Text, breakpoints, useBreakpoint, type Breakpoint } from '@envsemble/envui';
+import { Stack, Text, windowClasses, type WindowClass } from '@envsemble/envui';
 import { Example } from '../Example';
 import { TokenValue } from './TokenValue';
 
@@ -14,31 +14,28 @@ const stackingLevels = [
   ['tooltip', 'Tooltips'],
 ] as const;
 
-/** One breakpoint, with whether this window is at least as wide. */
-function BreakpointRow({ breakpoint }: { breakpoint: Breakpoint }) {
-  const reached = useBreakpoint(breakpoint);
-  return (
-    <div className="docs-measure">
-      <code>--env-breakpoint-{breakpoint}</code>
-      <span>{breakpoints[breakpoint]}</span>
-      <Text emphasis="muted">
-        {reached ? 'This window is at least as wide' : 'This window is narrower'}
-      </Text>
-    </div>
-  );
-}
+const windowClassUses: Record<WindowClass, string> = {
+  compact: 'A phone held upright, or a narrow pane',
+  medium: 'A tablet held upright, or a narrow window',
+  expanded: 'A tablet held sideways, or a laptop window',
+  large: 'A desktop window',
+};
 
 export function ResponsivePreview() {
   return (
     <>
       <Example
-        title="Breakpoints"
+        title="Window classes"
         size="content"
-        caption="Viewport widths in rem, for the page and the app frame; components follow their container instead."
+        caption="Container widths in rem, from the theme boundary, the env-window container; components follow their own container."
       >
         <Stack gap={3}>
-          {(Object.keys(breakpoints) as Breakpoint[]).map((breakpoint) => (
-            <BreakpointRow key={breakpoint} breakpoint={breakpoint} />
+          {(Object.keys(windowClasses) as WindowClass[]).map((windowClass) => (
+            <div className="docs-measure" key={windowClass}>
+              <code>{windowClass}</code>
+              <span>from {windowClasses[windowClass]}</span>
+              <Text emphasis="muted">{windowClassUses[windowClass]}</Text>
+            </div>
           ))}
         </Stack>
       </Example>
