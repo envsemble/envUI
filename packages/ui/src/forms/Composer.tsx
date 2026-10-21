@@ -104,7 +104,13 @@ function useContentHeight(inputRef: RefObject<HTMLTextAreaElement | null>, text:
   }, [inputRef, text]);
   useEffect(() => {
     const input = inputRef.current;
-    if (!input || typeof ResizeObserver === 'undefined') return;
+    // Only where the style sheet can't size the field to its text.
+    if (
+      !input ||
+      typeof ResizeObserver === 'undefined' ||
+      input.ownerDocument.defaultView?.CSS?.supports('field-sizing', 'content')
+    )
+      return;
     let width = input.clientWidth;
     // A new width rewraps the text, and so does the web font once it has loaded.
     const observer = new ResizeObserver(() => {
