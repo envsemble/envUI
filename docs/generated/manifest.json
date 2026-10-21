@@ -10058,20 +10058,50 @@
         {
           "name": "VisibilityHelp",
           "title": "Visibility help",
-          "description": "A disclosure is a one-line summary that shows and hides the details below it. It is the native `<details>` element with its `<summary>`, so opening, closing, the keyboard and what assistive technology hears are the platform's. It suits guidance and settings that most people don't need; what they need to complete a task stays visible.",
+          "description": "A disclosure is a one-line summary that shows and hides the details below it, on the native `<details>` element. Finding text in a closed panel opens it, where the browser supports it.",
           "file": "docs/examples/disclosure/VisibilityHelp.tsx"
         },
         {
           "name": "FrequentQuestions",
-          "title": "Questions, one open at a time",
-          "description": "Disclosures with the same `name` act as one group: opening an answer closes the one that was open.",
+          "title": "Frequent questions",
+          "description": "Disclosures that share a `name` open one at a time, where the browser supports it.",
           "file": "docs/examples/disclosure/FrequentQuestions.tsx"
         },
         {
           "name": "OpenOnError",
-          "title": "Open on an error",
-          "description": "Advanced settings stay closed until a field in them has an error; `open` and `onOpenChange` then open the disclosure so the error shows.",
+          "title": "Open on error",
+          "description": "`open` and `onOpenChange` control it, such as to open it when a field inside has an error.",
           "file": "docs/examples/disclosure/OpenOnError.tsx"
+        },
+        {
+          "name": "OptionalHelp",
+          "title": "Do: Optional guidance in a disclosure, and what the task needs in sight.",
+          "description": "",
+          "file": "docs/examples/disclosure/OptionalHelp.tsx"
+        },
+        {
+          "name": "HiddenRules",
+          "title": "Don't: Rules people need, hidden: they find them only after an error.",
+          "description": "",
+          "file": "docs/examples/disclosure/HiddenRules.tsx"
+        },
+        {
+          "name": "SayWhatItHolds",
+          "title": "Do: A summary that says what the details hold.",
+          "description": "",
+          "file": "docs/examples/disclosure/SayWhatItHolds.tsx"
+        },
+        {
+          "name": "VagueSummary",
+          "title": "Don't: More or Show details: people open it to find out.",
+          "description": "",
+          "file": "docs/examples/disclosure/VagueSummary.tsx"
+        },
+        {
+          "name": "DisclosureAnatomy",
+          "title": "Disclosure anatomy",
+          "description": "",
+          "file": "docs/examples/disclosure/DisclosureAnatomy.tsx"
         }
       ],
       "parts": {
@@ -10156,56 +10186,68 @@
         {
           "name": "PersonWithName",
           "title": "Person with name",
-          "description": "- AvatarButton is an avatar as a button, such as the account menu's trigger, with a halo on hover, press and while its menu is open, and the name in a tooltip. - AvatarGroup overlaps the avatars of a set of people, with a chip that counts the people it doesn't show and lists them in its tooltip.",
+          "description": "An avatar is a round picture of a person or an organization. Beside a visible name it is decorative; with `named` it is an image named after them.",
           "file": "docs/examples/avatar/PersonWithName.tsx"
         },
         {
-          "name": "Colors",
-          "title": "Colors",
-          "description": "The eight colors of an avatar without a picture, with initials and with the default person picture; each holds white at 4.5:1 or more.",
-          "file": "docs/examples/avatar/Colors.tsx"
-        },
-        {
-          "name": "Sizes",
-          "title": "Sizes",
-          "description": "Four sizes, from a compact row to a profile page; each is named here, with no name beside it.",
-          "file": "docs/examples/avatar/Sizes.tsx"
-        },
-        {
-          "name": "Fallbacks",
-          "title": "Pictures and fallbacks",
-          "description": "A picture covers the circle. One that fails to load shows the default person picture, and an organization shows its initials.",
-          "file": "docs/examples/avatar/Fallbacks.tsx"
-        },
-        {
-          "name": "ColorsFromNames",
-          "title": "Colors from names",
-          "description": "Each name chooses its color, the same wherever the name appears.",
-          "file": "docs/examples/avatar/ColorsFromNames.tsx"
-        },
-        {
-          "name": "OwnColor",
-          "title": "An organization's own color",
-          "description": "`hue` sets the color, such as an organization's own, instead of the one its name would choose.",
-          "file": "docs/examples/avatar/OwnColor.tsx"
-        },
-        {
           "name": "AccountButton",
-          "title": "Account menu",
-          "description": "AvatarButton opens the account menu; its tooltip shows the name and the e-mail address, and its halo stays while the menu is open.",
+          "title": "Account button",
+          "description": "",
           "file": "docs/examples/avatar/AccountButton.tsx"
         },
         {
           "name": "ProjectMembers",
-          "title": "Members in a row",
-          "description": "Groups on List rows show three or two avatars and count the rest, also people who are counted in `total` but not passed. The ring takes the row's fill.",
+          "title": "Project members",
+          "description": "",
           "file": "docs/examples/avatar/ProjectMembers.tsx"
         },
         {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
-          "description": "With `onPersonClick` every avatar is a button named after the person; a person with `href` is a link. The chip lists the people it hides.",
+          "description": "With `onPersonClick` each avatar in a group is a button; a person with `href` is a link. The count lists the people it hides.",
           "file": "docs/examples/avatar/PressableAvatars.tsx"
+        },
+        {
+          "name": "Sizes",
+          "title": "Sizes",
+          "description": "",
+          "file": "docs/examples/avatar/Sizes.tsx"
+        },
+        {
+          "name": "Fallbacks",
+          "title": "Pictures and fallbacks",
+          "description": "Without a picture, or while it loads or after it fails, an avatar shows the default person picture; `fallback=\"initials\"` shows initials, for an organization.",
+          "file": "docs/examples/avatar/Fallbacks.tsx"
+        },
+        {
+          "name": "NamesBeside",
+          "title": "Do: The name beside the avatar, wherever there is room.",
+          "description": "",
+          "file": "docs/examples/avatar/NamesBeside.tsx"
+        },
+        {
+          "name": "AvatarsAlone",
+          "title": "Don't: Avatars alone: people must hover each one to learn who it is.",
+          "description": "",
+          "file": "docs/examples/avatar/AvatarsAlone.tsx"
+        },
+        {
+          "name": "RoleAsBadge",
+          "title": "Do: A role in a Badge, beside the name.",
+          "description": "",
+          "file": "docs/examples/avatar/RoleAsBadge.tsx"
+        },
+        {
+          "name": "RoleAsColor",
+          "title": "Don't: A role in the avatar's color: nobody can read it.",
+          "description": "",
+          "file": "docs/examples/avatar/RoleAsColor.tsx"
+        },
+        {
+          "name": "AvatarAnatomy",
+          "title": "Avatar anatomy",
+          "description": "",
+          "file": "docs/examples/avatar/AvatarAnatomy.tsx"
         }
       ],
       "parts": {
