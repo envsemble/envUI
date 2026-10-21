@@ -32,8 +32,8 @@ const stageOf = (element: HTMLElement) => {
 };
 
 /**
- * The overlays in the layer: each outermost box that doesn't cover the stage, as a scrim or a
- * dialog's positioner does.
+ * The overlays in the layer: each outermost box that isn't a scrim or a positioner over the whole
+ * stage.
  */
 function overlays(layer: HTMLElement) {
   const stage = stageOf(layer);
@@ -43,8 +43,12 @@ function overlays(layer: HTMLElement) {
     for (const child of element.children) {
       if (!(child instanceof HTMLElement)) continue;
       const box = child.getBoundingClientRect();
-      const covers = box.width >= area.width - 1 && box.height >= area.height - 1;
-      // What a scrim or a positioner holds is the overlay.
+      // A scrim or a positioner is fixed and covers the stage; what it holds is the overlay, even
+      // where that fills the stage too, such as a sheet in a narrow figure.
+      const covers =
+        box.width >= area.width - 1 &&
+        box.height >= area.height - 1 &&
+        getComputedStyle(child).position === 'fixed';
       if (box.width > 1 && box.height > 1 && !covers) found.push(child);
       else visit(child);
     }

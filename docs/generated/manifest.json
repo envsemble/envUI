@@ -12944,6 +12944,12 @@
           "title": "Don't: Apply: people can't tell what they will see.",
           "description": "",
           "file": "docs/examples/sheet/VagueAction.tsx"
+        },
+        {
+          "name": "SheetAnatomy",
+          "title": "Sheet anatomy",
+          "description": "",
+          "file": "docs/examples/sheet/SheetAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14314,6 +14320,12 @@
           "title": "Don't: Paragraphs of help: too much to read beside the page.",
           "description": "",
           "file": "docs/examples/popover/LongHelp.tsx"
+        },
+        {
+          "name": "PopoverAnatomy",
+          "title": "Popover anatomy",
+          "description": "",
+          "file": "docs/examples/popover/PopoverAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14482,6 +14494,12 @@
           "title": "Don't: A card that only repeats what the link says.",
           "description": "",
           "file": "docs/examples/hover-card/RepeatsTrigger.tsx"
+        },
+        {
+          "name": "HoverCardAnatomy",
+          "title": "HoverCard anatomy",
+          "description": "",
+          "file": "docs/examples/hover-card/HoverCardAnatomy.tsx"
         }
       ],
       "parts": {
