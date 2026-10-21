@@ -19,7 +19,7 @@ export function ProjectsPage() {
 
   return (
     <Stack gap={5}>
-      <Text as="h1" variant="page-heading">
+      <Text render={<h1 />} variant="headline">
         Projects
       </Text>
       <Toolbar
@@ -28,7 +28,7 @@ export function ProjectsPage() {
           { id: 'share', label: 'Share', primary: true, onClick: () => setSharing(true) },
         ]}
       >
-        <Text tone="muted">{projects.length} projects</Text>
+        <Text emphasis="muted">{projects.length} projects</Text>
       </Toolbar>
       <ul className="project-list">
         {projects.map((project) => (

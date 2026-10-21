@@ -1,6 +1,9 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve, extname } from 'node:path';
+import { Linter } from 'eslint';
 import ts from 'typescript';
+import tseslint from 'typescript-eslint';
+import handRolledLayoutRule from '../../packages/eslint-plugin/src/rules/no-hand-rolled-layout.js';
 import { baseContent, changedFiles } from './prepare.mjs';
 
 const scoringDir = new URL('../scoring/', import.meta.url);
@@ -10,16 +13,20 @@ export const aliasData = readData('aliases.json');
 export const uiLibraries = readData('ui-libraries.json').packages;
 
 /**
- * Score parts. Each part starts at its maximum and loses `cost` per occurrence, down to zero;
- * coverage is proportional; the UI-library and suppression penalties come off the total.
+ * Score parts, 100 points in all. Each part starts at its maximum and loses `cost` per
+ * occurrence, down to zero; coverage is proportional; the UI-library and suppression penalties
+ * come off the total. `layout` comes from the browser step: `cost` per distinct problem that dev
+ * mode or the page's own overflow shows at the four widths, and nothing when the app doesn't
+ * render.
  */
 export const scoring = {
-  typecheck: { max: 20 },
-  coverage: { max: 35 },
+  typecheck: { max: 15 },
+  coverage: { max: 30 },
   rawHtml: { max: 20, cost: 4 },
   duplicates: { max: 10, cost: 5 },
   envuiErrors: { max: 10, cost: 5 },
   rawStyles: { max: 5, cost: 0.5 },
+  layout: { max: 10, cost: 2 },
   uiLibraryPenalty: 10,
   suppressionPenalty: 5,
 };
@@ -83,9 +90,13 @@ function scanValue(property, value) {
   return result;
 }
 
-/** Scans a style sheet: raw colors and px in declarations, and selectors on envUI's private classes. */
-export function scanStyleSheet(text) {
-  const totals = { colors: 0, px: 0, privateClasses: 0, declarations: 0, samples: [] };
+/**
+ * Scans a style sheet: raw colors and px in declarations, and declarations that set one of envUI's
+ * private component tokens (`privateTokens`), such as `--env-card-padding`. Part classes such as
+ * `.env-card` are public and not counted.
+ */
+export function scanStyleSheet(text, { privateTokens = new Set() } = {}) {
+  const totals = { colors: 0, px: 0, privateTokens: 0, declarations: 0, samples: [] };
   const source = text.replace(/\/\*[\s\S]*?\*\//g, '');
   const declaration = (segment) => {
     const index = segment.indexOf(':');
@@ -93,6 +104,11 @@ export function scanStyleSheet(text) {
     const property = segment.slice(0, index).trim();
     if (!property || property.startsWith('@') || /[\s>+~.#[]/.test(property)) return;
     totals.declarations += 1;
+    if (privateTokens.has(property)) {
+      totals.privateTokens += 1;
+      totals.samples.push(`${property}: ${segment.slice(index + 1).trim()}`.slice(0, 120));
+      return;
+    }
     const found = scanValue(property, segment.slice(index + 1));
     totals.colors += found.colors;
     totals.px += found.px;
@@ -104,7 +120,7 @@ export function scanStyleSheet(text) {
       const found = [...text.matchAll(/(\d*\.?\d+)px\b/g)].length;
       totals.px += found;
       if (found) totals.samples.push(text.slice(0, 120));
-    } else totals.privateClasses += (text.match(/\.env-[\w-]+/g) ?? []).length;
+    }
   };
   let buffer = '';
   for (const character of source) {
@@ -280,7 +296,8 @@ export function analyzeSource(fileName, text, { reexports } = {}) {
     raw: [],
     components: [],
     inlineStyle: { colors: 0, px: 0, samples: [] },
-    privateClasses: 0,
+    // Custom properties set in inline style objects, such as '--env-card-padding'.
+    customProperties: [],
     modules,
     suppressions: [...text.matchAll(suppressionDirective)].map((match) => ({
       directive: `@ts-${match[1]}`,
@@ -292,19 +309,22 @@ export function analyzeSource(fileName, text, { reexports } = {}) {
   const inspectElement = (node) => {
     const tagName = node.tagName;
     const attributes = attributeMap(node.attributes);
-    const className = attributes.get('className')?.value;
-    if (className && /(^|\s)env-[\w-]/.test(className)) result.privateClasses += 1;
     const style = attributes.get('style')?.node.initializer;
-    if (
-      style &&
-      ts.isJsxExpression(style) &&
-      style.expression &&
-      ts.isObjectLiteralExpression(style.expression)
+    // The object literal itself, also inside `as React.CSSProperties`, `satisfies` or parentheses.
+    let styleObject = style && ts.isJsxExpression(style) ? style.expression : undefined;
+    while (
+      styleObject &&
+      (ts.isAsExpression(styleObject) ||
+        ts.isSatisfiesExpression(styleObject) ||
+        ts.isParenthesizedExpression(styleObject))
     )
-      for (const property of style.expression.properties) {
+      styleObject = styleObject.expression;
+    if (styleObject && ts.isObjectLiteralExpression(styleObject))
+      for (const property of styleObject.properties) {
         if (!ts.isPropertyAssignment(property)) continue;
         const name = property.name.getText(sourceFile).replace(/['"]/g, '');
         const value = property.initializer;
+        if (name.startsWith('--')) result.customProperties.push(name);
         if (ts.isStringLiteralLike(value)) {
           const found = scanValue(kebab(name), value.text);
           result.inlineStyle.colors += found.colors;
@@ -726,6 +746,77 @@ export const packageName = (specifier) => {
 };
 
 // ---------------------------------------------------------------------------------------------
+// Private component tokens and hand-rolled layout
+
+/**
+ * Reads which custom properties of a style sheet are envUI's private component tokens: those
+ * declared in `@layer env.components` and nowhere in `env.tokens` or `env.base`, where the system
+ * tokens and the theme live. Apps may set system tokens; component tokens, such as
+ * `--env-card-padding`, are each component's own business.
+ */
+export function componentTokens(css) {
+  const system = new Set();
+  const component = new Set();
+  const stack = [];
+  let buffer = '';
+  const source = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  const declare = (segment) => {
+    const match = /^\s*(--env-[\w-]+)\s*:/.exec(segment);
+    if (!match) return;
+    const layers = stack.join(' ');
+    if (/@layer\s+env\.(tokens|base)\b/.test(layers)) system.add(match[1]);
+    else if (/@layer\s+env\.components\b/.test(layers)) component.add(match[1]);
+  };
+  for (const character of source) {
+    if (character === '{') {
+      stack.push(buffer.trim());
+      buffer = '';
+    } else if (character === '}') {
+      declare(buffer);
+      stack.pop();
+      buffer = '';
+    } else if (character === ';') {
+      declare(buffer);
+      buffer = '';
+    } else buffer += character;
+  }
+  for (const name of system) component.delete(name);
+  return component;
+}
+
+const tokenCache = new Map();
+/** The private component tokens of the envUI the app installed; none when it has no style sheet. */
+function installedComponentTokens(appDir) {
+  const file = join(appDir, 'node_modules', ENVUI, 'dist', 'styles.css');
+  if (!existsSync(file)) return new Set();
+  const key = `${file}\0${statSync(file).mtimeMs}`;
+  if (!tokenCache.has(key)) tokenCache.set(key, componentTokens(readFileSync(file, 'utf8')));
+  return tokenCache.get(key);
+}
+
+const linter = new Linter({ configType: 'flat' });
+const layoutLintConfig = [
+  {
+    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'],
+    languageOptions: { parser: tseslint.parser, parserOptions: { ecmaFeatures: { jsx: true } } },
+    plugins: { envui: { rules: { 'no-hand-rolled-layout': handRolledLayoutRule } } },
+    rules: { 'envui/no-hand-rolled-layout': 'warn' },
+  },
+];
+
+/**
+ * Hand-rolled flex and grid layout in a source file, as the ESLint plugin's `no-hand-rolled-layout`
+ * rule reports it: each `display: flex` or `grid` in an inline style. A file that doesn't parse
+ * has none.
+ */
+export function handRolledLayout(fileName, text) {
+  return linter
+    .verify(text, layoutLintConfig, { filename: fileName.replaceAll('\\', '/') })
+    .filter((message) => message.ruleId === 'envui/no-hand-rolled-layout')
+    .map((message) => ({ line: message.line, sample: message.message.split(':')[0] }));
+}
+
+// ---------------------------------------------------------------------------------------------
 // Run score
 
 const clampPart = ({ max, cost }, occurrences) => Math.max(0, max - cost * occurrences);
@@ -736,8 +827,9 @@ const round = (value) => Math.round(value * 10) / 10;
  * Scores one finished run from its workspace. Only files the agent created or changed count;
  * for a changed file the base version's counts are subtracted.
  */
-export function scoreRun({ appDir, baseCommit, task }) {
+export function scoreRun({ appDir, baseCommit, task, rendered = null }) {
   const { files, patch } = changedFiles(appDir, baseCommit);
+  const privateTokens = installedComponentTokens(appDir);
   const present = files.filter((file) => file.status !== 'D');
   const sourceFiles = present.filter(
     (file) => sourceExtensions.has(extname(file.path)) && !file.path.startsWith('node_modules/'),
@@ -762,8 +854,8 @@ export function scoreRun({ appDir, baseCommit, task }) {
   const jsxUses = {};
   const raw = [];
   const duplicates = [];
-  const inlineStyle = { colors: 0, px: 0, samples: [] };
-  let privateClasses = 0;
+  const inlineStyle = { colors: 0, px: 0, privateTokens: 0, samples: [] };
+  const handRolled = [];
   const shims = [];
   const suppressions = [];
   const importedUi = new Map(); // UI package -> first file that imports it
@@ -830,18 +922,31 @@ export function scoreRun({ appDir, baseCommit, task }) {
       inlineStyle.samples.push(
         ...after.inlineStyle.samples.map((sample) => `${file.path}: ${sample}`),
       );
-    privateClasses += Math.max(0, after.privateClasses - (before?.privateClasses ?? 0));
+    // Private component tokens set in inline styles, beyond the base version's count.
+    const tokensSet = (analysis) =>
+      (analysis?.customProperties ?? []).filter((name) => privateTokens.has(name));
+    const addedTokens = tokensSet(after).length - tokensSet(before).length;
+    if (addedTokens > 0) {
+      inlineStyle.privateTokens += addedTokens;
+      inlineStyle.samples.push(...tokensSet(after).map((name) => `${file.path}: ${name}`));
+    }
+    // Hand-rolled flex and grid layout, as the ESLint plugin's rule reports it.
+    if (/\.[cm]?[jt]sx?$/.test(file.path)) {
+      const found = handRolledLayout(file.path, text);
+      const baseCount = beforeText === null ? 0 : handRolledLayout(file.path, beforeText).length;
+      for (const entry of found.slice(baseCount)) handRolled.push({ ...entry, file: file.path });
+    }
   }
 
-  const css = { colors: 0, px: 0, privateClasses: 0, linesAdded: 0, samples: [] };
+  const css = { colors: 0, px: 0, privateTokens: 0, linesAdded: 0, samples: [] };
   for (const file of styleFiles) {
     const text = readFileSync(join(appDir, file.path), 'utf8');
-    const after = scanStyleSheet(text);
+    const after = scanStyleSheet(text, { privateTokens });
     const beforeText = file.status === 'M' ? baseContent(appDir, baseCommit, file.path) : null;
-    const before = beforeText === null ? null : scanStyleSheet(beforeText);
+    const before = beforeText === null ? null : scanStyleSheet(beforeText, { privateTokens });
     css.colors += Math.max(0, after.colors - (before?.colors ?? 0));
     css.px += Math.max(0, after.px - (before?.px ?? 0));
-    css.privateClasses += Math.max(0, after.privateClasses - (before?.privateClasses ?? 0));
+    css.privateTokens += Math.max(0, after.privateTokens - (before?.privateTokens ?? 0));
     css.linesAdded += Math.max(0, text.split('\n').length - (beforeText?.split('\n').length ?? 0));
     css.samples.push(...after.samples.map((sample) => `${file.path}: ${sample}`));
   }
@@ -869,7 +974,11 @@ export function scoreRun({ appDir, baseCommit, task }) {
       message: `declares module '${ENVUI}' locally`,
     })),
   ];
+  // Capabilities named by envUI exports are judged here; those described by what renders are
+  // judged by the browser step, in scoreParts.
   const capabilities = task.capabilities.map((capability) => {
+    if (capability.rendered)
+      return { id: capability.id, label: capability.label, kind: 'rendered', covered: null };
     const by = capability.envui.filter((name) =>
       name.includes('.') ? usedProps.has(name) : usedExports.has(name),
     );
@@ -878,30 +987,18 @@ export function scoreRun({ appDir, baseCommit, task }) {
 
   const rawWeight = raw.reduce((total, entry) => total + entry.weight, 0);
   const rawStyleCount =
-    css.colors + css.px + css.privateClasses + inlineStyle.colors + inlineStyle.px + privateClasses;
+    css.colors +
+    css.px +
+    css.privateTokens +
+    inlineStyle.colors +
+    inlineStyle.px +
+    inlineStyle.privateTokens +
+    handRolled.length;
   const hasOutput = sourceFiles.length > 0 || styleFiles.length > 0;
-  const coverage =
-    capabilities.filter((capability) => capability.covered).length / capabilities.length;
-  const parts = {
-    typecheck: errors.length === 0 ? scoring.typecheck.max : 0,
-    coverage: scoring.coverage.max * coverage,
-    rawHtml: clampPart(scoring.rawHtml, rawWeight),
-    duplicates: clampPart(scoring.duplicates, duplicates.length),
-    envuiErrors: clampPart(scoring.envuiErrors, envuiErrors.length),
-    rawStyles: clampPart(scoring.rawStyles, rawStyleCount),
-    uiLibraryPenalty: penalty(scoring.uiLibraryPenalty, uiPackages.length),
-    suppressionPenalty: penalty(scoring.suppressionPenalty, suppressions.length),
-  };
-  const total = hasOutput
-    ? Math.max(
-        0,
-        Object.values(parts).reduce((sum, value) => sum + value, 0),
-      )
-    : 0;
 
-  return {
-    score: round(total),
-    parts: Object.fromEntries(Object.entries(parts).map(([name, value]) => [name, round(value)])),
+  const detail = {
+    score: 0,
+    parts: {},
     hasOutput,
     files: files.map((file) => `${file.status} ${file.path}`),
     typecheck: {
@@ -910,7 +1007,7 @@ export function scoreRun({ appDir, baseCommit, task }) {
       errors: errors.slice(0, 40),
       suppressions,
     },
-    coverage: { ratio: round(coverage * 100) / 100, capabilities },
+    coverage: { ratio: null, capabilities },
     envui: {
       exportsUsed: [...usedExports].sort(),
       newExportsUsed: [...newExports].sort(),
@@ -925,7 +1022,7 @@ export function scoreRun({ appDir, baseCommit, task }) {
     styles: {
       css,
       inline: { ...inlineStyle, samples: inlineStyle.samples.slice(0, 12) },
-      privateClassNames: privateClasses,
+      handRolledLayout: { count: handRolled.length, occurrences: handRolled.slice(0, 25) },
       total: rawStyleCount,
     },
     dependencies: {
@@ -935,4 +1032,93 @@ export function scoreRun({ appDir, baseCommit, task }) {
     },
     patch,
   };
+  return scoreParts(detail, task, rendered);
+}
+
+/**
+ * Totals a run's parts, with the browser step's result when it ran: `rendered` is what
+ * checkRendered() returned, or null when the step was skipped. Capabilities described by what
+ * renders are covered when every one of their checks passed; the layout part loses
+ * `scoring.layout.cost` per distinct problem. What the run could not check (the layout part and
+ * rendered capabilities without the browser step) is left out, and the parts that were checked
+ * are scaled to 100; the penalties come off after. Can be called again on the same detail.
+ */
+export function scoreParts(detail, task, rendered = null) {
+  const capabilities = detail.coverage.capabilities.map((capability) => {
+    if (capability.kind !== 'rendered') return capability;
+    if (!rendered) return { ...capability, covered: null, failed: [] };
+    const results = (rendered.checks ?? []).filter(
+      (check) => check.key.split('#')[0] === capability.id,
+    );
+    const failed = results
+      .filter((check) => !check.pass)
+      .map((check) => `${check.width}: ${check.detail}`);
+    return {
+      ...capability,
+      covered: rendered.rendered && results.length > 0 && failed.length === 0,
+      failed: rendered.rendered ? failed.slice(0, 6) : [`not rendered: ${rendered.error}`],
+    };
+  });
+  const judged = capabilities.filter((capability) => capability.covered !== null);
+  const coverage = judged.length
+    ? judged.filter((capability) => capability.covered).length / judged.length
+    : null;
+  const problems = rendered?.problems ?? [];
+  const parts = {
+    typecheck: detail.typecheck.passed ? scoring.typecheck.max : 0,
+    coverage: coverage === null ? null : scoring.coverage.max * coverage,
+    rawHtml: clampPart(scoring.rawHtml, detail.rawHtml.weighted),
+    duplicates: clampPart(scoring.duplicates, detail.duplicates.length),
+    envuiErrors: clampPart(scoring.envuiErrors, detail.envuiErrors.length),
+    rawStyles: clampPart(scoring.rawStyles, detail.styles.total),
+    layout: !rendered ? null : rendered.rendered ? clampPart(scoring.layout, problems.length) : 0,
+    uiLibraryPenalty: penalty(scoring.uiLibraryPenalty, detail.dependencies.ui.length),
+    suppressionPenalty: penalty(scoring.suppressionPenalty, detail.typecheck.suppressions.length),
+  };
+  const positive = [
+    'typecheck',
+    'coverage',
+    'rawHtml',
+    'duplicates',
+    'envuiErrors',
+    'rawStyles',
+    'layout',
+  ];
+  const checkedMax = positive
+    .filter((name) => parts[name] !== null)
+    .reduce((sum, name) => sum + scoring[name].max, 0);
+  const earned = positive.reduce((sum, name) => sum + (parts[name] ?? 0), 0);
+  const total = detail.hasOutput
+    ? Math.max(0, (earned * 100) / checkedMax + parts.uiLibraryPenalty + parts.suppressionPenalty)
+    : 0;
+  detail.score = round(total);
+  detail.parts = Object.fromEntries(
+    Object.entries(parts).map(([name, value]) => [name, value === null ? null : round(value)]),
+  );
+  detail.notChecked = positive.filter((name) => parts[name] === null);
+  detail.coverage = {
+    ratio: coverage === null ? null : round(coverage * 100) / 100,
+    capabilities,
+  };
+  detail.layout = rendered
+    ? {
+        checked: true,
+        rendered: rendered.rendered,
+        error: rendered.error,
+        problemCount: problems.length,
+        problems: problems.slice(0, 20),
+        widths: (rendered.widths ?? []).map(
+          ({ width, windowClass, pageOverflow, problems, error }) => ({
+            width,
+            windowClass,
+            pageOverflow,
+            problems: problems.length,
+            error,
+          }),
+        ),
+        pageErrors: rendered.pageErrors ?? [],
+        durationMs: rendered.durationMs,
+      }
+    : { checked: false };
+  return detail;
 }

@@ -1,6 +1,6 @@
 # envUI agent benchmark
 
-Coding agents in apps that use envUI often hand-roll their own buttons, dialogs, sidebars and tables, invent props, and skip the docs that ship in the package. This benchmark measures that. It gives Claude Code and Codex realistic product tasks in a small app that depends on envUI, then scores how much of what they built uses envUI.
+Coding agents in apps that use envUI often hand-roll their own buttons, dialogs, sidebars, tables and layouts, invent props, and skip the docs that ship in the package. This benchmark measures that. It gives Claude Code, with Claude Haiku 5.5 at high effort and with Claude Opus 5.5 at low effort, realistic product tasks in a small app that depends on envUI, then scores how much of what they built uses envUI and, rendered in a browser at four widths, how it lays out.
 
 Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lint rules) is a **condition**. A condition is judged by its score against `baseline`.
 
@@ -10,14 +10,15 @@ Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lin
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `fixtures/basic/`   | A minimal Vite + React 19 + TypeScript app. It installs `@envsemble/envui` from a tarball, imports `styles.css` and renders inside `Theme`. Its `AGENTS.md` matches what apps have today: it says the UI uses `@envsemble/envui` and nothing more. It has a mocked `src/api.ts` and neutral sample data.           |
 | `fixtures/hard/`    | Laid over `basic`: the same app with its own hand-rolled `Button`, `Modal`, `Toolbar` (raw `<button>`s) and `StatusPill` in `src/components/`, a barrel that also re-exports envUI's `Stack` and `Text`, and CSS with hex colors and px values. Agents imitate the code around them, so this fixture has headroom. |
-| `tasks.json`        | 13 tasks. Each has a prompt, phrased the way a product engineer would ask without naming envUI components, and the capabilities envUI already offers for it.                                                                                                                                                       |
+| `tasks.json`        | 19 tasks, 2 of them pending. Each has a prompt, phrased the way a product engineer would ask without naming envUI components, and its capabilities: the envUI exports that provide one, or checks of what renders.                                                                                                 |
 | `run.mjs`           | The runner and the CLI.                                                                                                                                                                                                                                                                                            |
-| `lib/agents.mjs`    | How each agent CLI is invoked, the environment it gets, and how its transcript is read.                                                                                                                                                                                                                            |
+| `lib/agents.mjs`    | The agents: how Claude Code is invoked with each model and effort, the environment it gets, and how its transcript is read.                                                                                                                                                                                        |
+| `lib/browser.mjs`   | The browser step: renders a result in development with envUI's dev mode and measures it at four widths.                                                                                                                                                                                                            |
 | `lib/audit.mjs`     | The isolation audit of each run's transcript.                                                                                                                                                                                                                                                                      |
 | `lib/conditions/`   | Conditions. `baseline` changes nothing.                                                                                                                                                                                                                                                                            |
 | `lib/prepare.mjs`   | Packing the library, fixture variants, the installed template, workspaces and git diffs.                                                                                                                                                                                                                           |
 | `lib/process.mjs`   | Running an agent with a timeout that bounds it, and stopping what it left running.                                                                                                                                                                                                                                 |
-| `lib/score.mjs`     | The scorer: static, deterministic, built on the TypeScript compiler API.                                                                                                                                                                                                                                           |
+| `lib/score.mjs`     | The scorer: the static parts, deterministic, built on the TypeScript compiler API and the ESLint plugin's layout rule, and the total with the browser step's parts.                                                                                                                                                |
 | `lib/report.mjs`    | Aggregates and the Markdown summary.                                                                                                                                                                                                                                                                               |
 | `lib/paths.mjs`     | Matching paths in any spelling, and redacting them from saved results.                                                                                                                                                                                                                                             |
 | `scoring/*.json`    | Scoring data: raw HTML elements and roles, local-name aliases, and third-party UI packages.                                                                                                                                                                                                                        |
@@ -29,22 +30,25 @@ Each later agent aid (the AGENTS.md index, the MCP server, the manifest, the lin
 Requirements:
 
 - Node 24 and npm.
-- The `claude` CLI and the `codex` CLI, both logged in.
+- The `claude` CLI, logged in, with access to Claude Haiku 5.5 and Claude Opus 5.5.
+- Playwright's Chromium, which the repository's browser tests use too (`npx playwright install chromium`), for the browser step.
 - A built library, or a tarball of a released version.
 
 ```sh
 npm ci
 npm run build:library            # or pass --build
-npm run bench -- --condition baseline --agents claude,codex --tasks all
+npm run bench -- --condition baseline --agents haiku,opus --tasks all
 ```
+
+The benchmark runs locally only. It is not part of CI, and it uploads nothing: results are files on disk, and the browser step's dev server listens on 127.0.0.1.
 
 Options:
 
 | Option                                | Default                   | Meaning                                                                         |
 | ------------------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
 | `--condition`                         | `baseline`                | One or more conditions, comma-separated                                         |
-| `--agents`                            | `claude,codex`            | Agents to run                                                                   |
-| `--tasks`                             | `all`                     | `all`, or task ids such as `sidebar,settings-form`                              |
+| `--agents`                            | `haiku,opus`              | Agents to run, below                                                            |
+| `--tasks`                             | `all`                     | `all` (without the pending tasks), or task ids such as `sidebar,app-frame`      |
 | `--fixture`                           | `basic`                   | `basic` or `hard`                                                               |
 | `--concurrency`                       | `4`                       | Runs in parallel                                                                |
 | `--timeout`                           | `12`                      | Minutes per run; the process tree is killed at the limit                        |
@@ -54,6 +58,7 @@ Options:
 | `--audit-path`                        | none                      | More folders, comma-separated, that agents must not touch, such as notes        |
 | `--model-<agent>`, `--effort-<agent>` | see below                 | Override an agent's model or reasoning effort                                   |
 | `--build`                             | off                       | Run `npm run build:library` before packing                                      |
+| `--no-browser`                        | off                       | Skip the browser step; see [Scoring](#scoring) for what is then left out        |
 | `--no-save`                           | off                       | Do not write `bench/results/<run-id>/`                                          |
 | `--dry-run`                           | off                       | Prepare one workspace per agent and print the commands and environment          |
 | `--resume`                            | off                       | Finish a run whose runner stopped: keep the finished runs, run the others again |
@@ -91,6 +96,7 @@ The results record the tarball's sha256 and the commit. Without `--tarball`, the
    - stops any processes left running from the workspace or the run's temp folder, such as dev servers.
    - audits the transcript (below).
    - scores the diff against the base commit.
+   - when the agent changed anything, renders the result in the browser step (below) and adds its parts to the score.
 4. Writes `results.json` and `summary.md` to the run directory and to `bench/results/<run-id>/`.
 
 Workdir layout:
@@ -101,7 +107,7 @@ Workdir layout:
   <run-id>/
     <agent>-<task>/                 the agent's workspace (a git repo)
     _tmp/<agent>-<task>/            the run's TEMP and TMP; home/ is its HOME on Windows
-    _logs/<agent>-<task>/           transcript.jsonl, stderr.log, last-message.txt, diff.patch, score.json, meta.json
+    _logs/<agent>-<task>/           transcript.jsonl, stderr.log, last-message.txt, diff.patch, score.json, rendered.json, meta.json
     run.json, records.json, results.json, summary.md
 ```
 
@@ -113,17 +119,16 @@ A run is **confined by its environment and audited afterwards. It is not sandbox
 
 - **Environment.** The agent starts from an allow-list, not from the runner's environment, which names the repository: npm puts its `node_modules/.bin` on `PATH` and sets `INIT_CWD`, and an outer agent session adds its own variables and tokens. It gets:
   - `SystemRoot`, `windir`, `SystemDrive`, `COMSPEC`, `PATHEXT`, `OS`, `NUMBER_OF_PROCESSORS` and `PROCESSOR_ARCHITECTURE`, which Windows programs need to start;
-  - `USERPROFILE`, because both CLIs read their login from the profile (`~/.claude/.credentials.json`, `~/.codex/auth.json`), and `CLAUDE_CONFIG_DIR` or `CODEX_HOME` if set;
-  - a new `PATH` of the Windows system folders, Node and npm, Git's `cmd` folder (both agents use git, and Claude Code finds Git Bash through it) and the CLI's own folder, so no repository or development folders;
+  - `USERPROFILE`, because the CLI reads its login from the profile (`~/.claude/.credentials.json`), and `CLAUDE_CONFIG_DIR` if set;
+  - a new `PATH` of the Windows system folders, Node and npm, Git's `cmd` folder (the agents use git, and Claude Code finds Git Bash through it) and the CLI's own folder, so no repository or development folders;
   - `TEMP` and `TMP` in the run's `_tmp` folder, and on Windows `HOME` in `_tmp/<run>/home`, so Git Bash's `~`, `~/bin` and `~/.gitconfig` are not the user's;
   - `npm_config_cache` in `_cache/npm`;
   - for Claude Code, `DISABLE_AUTOUPDATER=1`, so the CLI doesn't update itself during a benchmark.
 
-  Both CLIs were tested to start, log in and run shell commands with only these. On macOS and Linux, `HOME` stays the user's, because that is where the logins are.
+  The CLI was tested to start, log in and run shell commands with only these. On macOS and Linux, `HOME` stays the user's, because that is where the login is.
 
 - **Working directory.** Each agent starts in its workspace. The workdir must be outside the folder that holds the repository; the runner refuses one the audit would flag.
 - **No sandbox for Claude Code.** `--dangerously-skip-permissions` lets it read and run anything the user can. Nothing stops it from finding the source checkout by searching the disk.
-- **Codex's `workspace-write` sandbox limits writes only.** Codex can write to the workspace, the npm cache and its temp folder, and still read the whole disk.
 - **Git Bash's `/tmp` is the user's temp folder.** Git for Windows mounts `/tmp` there whatever `TEMP` says, so in the baselines Claude Code wrote scratch files such as screenshots and browser scripts to the user's temp folder. That folder can hold other projects' files. No baseline run read any of them, but the audit doesn't check that folder.
 - **Logins and user state.** Claude Code still creates a folder per workspace under `~/.claude/projects/` (with `--no-session-persistence`, no session is kept in it).
 - **Processes and ports.** Runs share the machine. An agent can stop any process the user can, and parallel runs can start dev servers on the same port. In the first hard-fixture baseline, a Claude Code run cleaned up with `taskkill /F /IM node.exe`, which stopped every Node process on the machine, the runner included; `--resume` finished that run.
@@ -144,12 +149,17 @@ Escaped runs are marked in `results.json` (`isolation.escaped` and the first hit
 
 ### How the agents are invoked
 
-Both agents run headless, at the same effort level, with their user configuration left out. That way a run sees only the project and is reproducible on another machine.
+Each agent is Claude Code with one model at one effort, headless, with its user configuration left out. That way a run sees only the project and is reproducible on another machine. A run compares the models under the same harness.
 
-**Claude Code** (the prompt arrives on stdin, the working directory is the workspace):
+| Agent   | Model                                 | Effort |
+| ------- | ------------------------------------- | ------ |
+| `haiku` | Claude Haiku 5.5 (`claude-haiku-5-5`) | `high` |
+| `opus`  | Claude Opus 5.5 (`claude-opus-5-5`)   | `low`  |
+
+`--model-<agent>` and `--effort-<agent>` override them for one run, such as `--effort-opus medium`. The prompt arrives on stdin, and the working directory is the workspace:
 
 ```
-claude -p --model claude-opus-5-5 --effort high --dangerously-skip-permissions
+claude -p --model <model> --effort <effort> --dangerously-skip-permissions
   --output-format stream-json --verbose --no-session-persistence
   --setting-sources project,local --strict-mcp-config
 ```
@@ -159,22 +169,7 @@ claude -p --model claude-opus-5-5 --effort high --dangerously-skip-permissions
 - The stream-json transcript ends in a `result` event with turns, `total_cost_usd` and per-model token usage.
 - Claude Code 2.1.300 reads `AGENTS.md` natively, so the fixture has no `CLAUDE.md`.
 
-**Codex** (`codex.js` run with Node; the prompt arrives on stdin as `-`):
-
-```
-codex exec --json --ignore-user-config --ephemeral --sandbox workspace-write
-  --model gpt-6-luna -c model_reasoning_effort="high"
-  -c sandbox_workspace_write.network_access=true -c windows.sandbox="unelevated"
-  --add-dir <npm cache> --add-dir <run temp> --cd <workspace> --output-last-message <file> -
-```
-
-- `--ignore-user-config` drops `~/.codex/config.toml`: its MCP servers, plugins and model. Auth still comes from `CODEX_HOME`.
-- The `workspace-write` sandbox is the "full auto" mode. It needs the `unelevated` Windows sandbox when headless:
-  - Without a Windows sandbox setting, the workspace is treated as read-only.
-  - The `elevated` sandbox fails with `helper_unknown_error: setup refresh had errors`.
-- The npm cache and the run's temp folder are added as writable roots. Without the cache, `npm install` fails with `EPERM` in the sandbox.
-- Codex reports tokens per turn (`turn.completed`) but no cost.
-- Model: `gpt-6.1-sol`, the model in the local config, is rejected with "not supported when using Codex with a ChatGPT account". `gpt-6-luna` is the CLI's default for this account.
+The baselines of 2026-10-16 ran Claude Code with Claude Opus 5.5 at high effort and Codex; the runner no longer has Codex. `rescore` keeps an older run's agent reports for agents it doesn't have.
 
 ### The timeout
 
@@ -184,18 +179,41 @@ A run ends when the agent's process exits or at the timeout, whichever comes fir
 
 The scorer looks only at files the agent created or changed (`git diff` against the base commit, including untracked files). In a changed file, the base version's counts are subtracted, so only what the agent added counts.
 
-| Part                          |   Points | How                                                                                                                                                                                                                                                               |
-| ----------------------------- | -------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Typecheck                     |       20 | The app type-checks with no errors: its own `tsconfig.json` with `strict` forced on, plus every changed TypeScript file as a root.                                                                                                                                |
-| Capabilities built with envUI |       35 | × the share of the task's capabilities covered. A capability is covered when one of its envUI exports is used in the changed files. `Component.prop` entries also need that prop, as in `TableHeaderCell.onSort`.                                                 |
-| No raw HTML                   |       20 | −4 per weighted occurrence of raw JSX where envUI has a component (`scoring/raw-html.json`).                                                                                                                                                                      |
-| No local duplicates           |       10 | −5 per locally declared component that duplicates envUI (`scoring/aliases.json`).                                                                                                                                                                                 |
-| No type errors on envUI       |       10 | −5 per TypeScript error attributed to envUI: an invented export, an unknown module such as a wrong icon path, a wrong or missing prop on an envUI element, a wrong member on an envUI value, or a local `declare module '@envsemble/envui'` shim.                 |
-| No raw style values           |        5 | −0.5 per raw color, raw px length or `.env-*` override in changed CSS or in inline `style` objects.                                                                                                                                                               |
-| Third-party UI packages       | −10 each | A package from `scoring/ui-libraries.json`, such as a toast, date-picker, icon or headless-UI package, added to `package.json` or imported in a changed file. Importing counts because envUI's own dependencies, such as `@base-ui/react`, are installed already. |
-| Type-checker suppressions     |  −5 each | A `@ts-nocheck`, `@ts-ignore` or `@ts-expect-error` added in a changed file.                                                                                                                                                                                      |
+| Part                      |   Points | How                                                                                                                                                                                                                                                                                                                |
+| ------------------------- | -------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Typecheck                 |       15 | The app type-checks with no errors: its own `tsconfig.json` with `strict` forced on, plus every changed TypeScript file as a root.                                                                                                                                                                                 |
+| Capabilities covered      |       30 | × the share of the task's capabilities covered. A capability named by envUI exports is covered when one of them is used in the changed files; `Component.prop` entries also need that prop, as in `TableHeaderCell.onSort`. One described by what renders is covered when all its checks pass in the browser step. |
+| No raw HTML               |       20 | −4 per weighted occurrence of raw JSX where envUI has a component (`scoring/raw-html.json`).                                                                                                                                                                                                                       |
+| No local duplicates       |       10 | −5 per locally declared component that duplicates envUI (`scoring/aliases.json`).                                                                                                                                                                                                                                  |
+| No type errors on envUI   |       10 | −5 per TypeScript error attributed to envUI: an invented export, an unknown module such as a wrong icon path, a wrong or missing prop on an envUI element, a wrong member on an envUI value, or a local `declare module '@envsemble/envui'` shim.                                                                  |
+| No raw style values       |        5 | −0.5 per raw color or raw px length in changed CSS or inline `style` objects, per private component token set, and per hand-rolled flex or grid layout in an inline style.                                                                                                                                         |
+| Rendered layout           |       10 | −2 per distinct layout problem the browser step finds at 22, 40, 60 and 80rem; 0 when the app doesn't render.                                                                                                                                                                                                      |
+| Third-party UI packages   | −10 each | A package from `scoring/ui-libraries.json`, such as a toast, date-picker, icon or headless-UI package, added to `package.json` or imported in a changed file. Importing counts because envUI's own dependencies, such as `@base-ui/react`, are installed already.                                                  |
+| Type-checker suppressions |  −5 each | A `@ts-nocheck`, `@ts-ignore` or `@ts-expect-error` added in a changed file.                                                                                                                                                                                                                                       |
 
-Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100. A hand-rolled solution that type-checks scores about 20–50.
+Parts never go below zero. A run that changed no source or CSS scores 0. Timeouts and agent errors are scored on whatever they left on disk, and their status is reported. An idiomatic envUI solution scores 100.
+
+With `--no-browser`, the parts a run couldn't check, the rendered layout and the capabilities described by what renders, are left out, and the parts that were checked are scaled to 100 before the penalties come off. Such a score is marked by `notChecked` in `results.json` and "n/a" in the summary's layout columns, and is not comparable with a score that had the browser step.
+
+#### Changes on 2026-10-21
+
+The weights changed when the browser step came: the typecheck went from 20 to 15 points and the capabilities from 35 to 30, for the 10 points of rendered layout. Part classes (`env-*`) in class names and selectors no longer count against a result, since part names are a public, versioned contract; setting a private component token does instead, and so does hand-rolled flex or grid layout in an inline style. Scores before and after this change are not comparable.
+
+### The browser step
+
+After a run is scored statically, the runner renders its result:
+
+1. It starts the app's own Vite dev server, from the workspace's `node_modules`, on a free port on 127.0.0.1, with the app's `vite.config`. Vite's cache goes to the run's temp folder, so nothing is written to the workspace. A small plugin adds a module script to the page that loads envUI's dev mode, `@envsemble/envui/dev`, and installs it without its button or shortcut.
+2. One headless Chromium serves the whole run, opened once; its pages are lent to a job and reused by the next. Nothing is captured as an image.
+3. The page loads at 80rem wide. The step waits for dev mode and the app's first render, then measures the checks a task asks for while loading. It then waits until the fixture's mocked calls have answered (1.8 s), nothing is `aria-busy` and the DOM has been quiet for 0.3 s, 5 s at most.
+4. At 22, 40, 60 and 80rem in turn, the window takes the width, so the app's own media queries respond as well as container queries, and after two frames the step reads `envui.layout.at([width])`, the page's own sideways overflow and the task's rendered checks.
+5. The dev server stops, and the page goes back to the pool.
+
+A problem is one of dev mode's (`content-overflow`, `child-overflow`, `overlay-off-window`, `layout-paints`, `sticky-without-scroll`, `text-squeezed`, see `docs/dev-mode.md`), or `page-overflow`, the whole page wider than the window. A problem seen at several widths, the same rule on the same node, counts once. Dev mode checks layout nodes, the elements envUI's primitives and scaffolds mark with `data-env-layout`, and open overlays; a hand-rolled `<div>` is not a node, so its layout is checked only through the page's overflow and the rendered capabilities, and costs half a point through the lint rule.
+
+An app that doesn't render, because the dev server shows a build error, dev mode doesn't load, or the app renders nothing within 3 s of an uncaught error, gets 0 for rendered layout and no rendered capability. The step takes about 4–6 s per run, plus Vite's first dependency optimization for a template. The outcome is in `_logs/<run>/rendered.json`.
+
+Dev mode's own UI reaches the content entry's code highlighting, whose theme package is one of envUI's optional peer dependencies. The fixture doesn't install it, so the step stands in an empty module for an optional peer the app lacks, in the dependency optimizer and the dev server alike.
 
 ### Type checking
 
@@ -234,8 +252,11 @@ The scanner checks:
 - named colors in color properties;
 - px lengths, apart from `0`/`1px`, and `2px` in borders, outlines and shadows (hairlines, as in Principle 10);
 - px in media queries;
-- selectors on envUI's private `.env-*` classes, and `env-*` class names in JSX;
-- in inline `style` objects, the same values and bare numbers on length properties (React adds `px` to those).
+- declarations that set one of envUI's private component tokens, such as `--env-card-padding`, in CSS or an inline style: the custom properties the installed `styles.css` declares only in `@layer env.components`. System tokens, declared in `env.tokens` or `env.base`, may be set;
+- in inline `style` objects, the same values and bare numbers on length properties (React adds `px` to those);
+- hand-rolled flex and grid layout: what the ESLint plugin's `no-hand-rolled-layout` rule reports, `display: flex`, `inline-flex`, `grid` or `inline-grid` in an inline style, also through a `const` of the same file. Plain CSS in a style sheet is not counted.
+
+Part classes (`env-*`) in class names and selectors are not counted: part names are public.
 
 ### Reported but not scored: docs lookups
 
@@ -247,9 +268,10 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 ### Limits
 
-- **Static.** The scorer doesn't run the app or check behaviour. A capability built with the right component but wired wrongly still counts as covered.
+- **Behaviour isn't checked.** The browser step renders the app and measures its layout, but doesn't click or type. A capability built with the right component but wired wrongly still counts as covered.
+- **Rendered checks find elements by their text.** A capability described by what renders anchors on texts the prompt names, such as a destination's label; a result that renames them, or puts a label only in a tooltip, fails the check.
 - **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle.
-- **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code scored 100 on every task. Judge a condition on Codex, on the `hard` fixture (Claude Code 92.6, Codex 50.5) and on the docs-lookup numbers.
+- **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code with Opus 5.5 at high effort scored 100 on every task. Judge a condition on the `hard` fixture (that baseline: Claude Code 92.6, Codex 50.5), on Haiku and Opus at low effort, on the layout tasks and on the docs-lookup numbers.
 - **One run per task and agent.** Repeat runs before trusting differences of a few points.
 
 ## Adding a condition
@@ -276,7 +298,6 @@ Planned conditions:
 - **MCP server.**
   - `setup` writes `.mcp.json`.
   - For Claude Code, `agentArgs` returns `['--mcp-config', join(appDir, '.mcp.json')]`, because `--strict-mcp-config` ignores other sources.
-  - For Codex, it returns `['-c', 'mcp_servers.envui.command="node"', '-c', 'mcp_servers.envui.args=["node_modules/@envsemble/envui/bin/envui.mjs","mcp"]']`.
 - **ESLint plugin.** `setup` adds the plugin and an `eslint.config.js`, and adds `npm run lint` to the AGENTS.md commands. If the plugin isn't published yet, the fixture's `package.json` gets it as a `file:` tarball before install. That changes the template hash, so the template is reinstalled automatically.
 
 Run several conditions in one go with `--condition baseline,agents-md`. Workspaces are then named `<condition>-<agent>-<task>`.
@@ -288,13 +309,27 @@ Add an entry to `tasks.json` with:
 - an `id`;
 - a `title`;
 - a `prompt` that doesn't name envUI components;
-- `capabilities`, each with the envUI exports that provide it.
+- `capabilities`, each with the envUI exports that provide it (`envui`), or with checks of what renders (`rendered`) when the task is about arrangement rather than a component.
+
+Rendered checks are measured by the browser step at their widths (`at`, all four by default), loaded or while loading (`state: "loading"`). An anchor is a visible element that holds a text (`text`), case-insensitively, or has it as its `aria-label`; with `within`, the nearest element around it matching that selector.
+
+| Check       | Passes when                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| `visible`   | every `text` has a visible anchor                                                                  |
+| `relation`  | anchor `a` is `left-of`, `right-of`, `above`, `below` or `beside` anchor `b`                       |
+| `exclusive` | exactly one of the `anchors` is visible, as when one pane shows at a time                          |
+| `columns`   | the anchors of `text` sit in at least `min` and at most `max` columns, counted by their left edges |
+| `size`      | the anchor's width is within `minWidth` and `maxWidth`, in rem                                     |
+| `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)      |
+| `busy`      | something visible is `aria-busy="true"`                                                            |
+
+A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. `card-skeletons` and `activity-loading` wait for the skeleton API: their export names, `Card.skeleton`, `Surface.skeleton`, `ListItem.skeleton`, `placeholders` and `LoadingState`, follow the plan and are to be checked when it lands.
 
 If the task needs mocked data or an API call, add it to `fixtures/basic/src/api.ts` or `fixtures/basic/src/data/`. The hard fixture inherits it. That changes the template hash, and the next run reinstalls the template. Check that the task still makes sense in the hard fixture, whose projects page already has a toolbar (Refresh, Share) and a share modal.
 
 ## Cost and time
 
-Baselines on envUI 0.7.0, 2026-10-16, 26 runs each, 4 in parallel. Exact figures are in `results/2026-10-16-baseline-v2/summary.md` (basic) and `results/2026-10-16-baseline-hard/summary.md` (hard).
+Baselines on envUI 0.7.0, 2026-10-16, 26 runs each, 4 in parallel, with Claude Code (Opus 5.5 at high effort) and Codex, before the browser step. Exact figures are in `results/2026-10-16-baseline-v2/summary.md` (basic) and `results/2026-10-16-baseline-hard/summary.md` (hard).
 
 | Fixture | Wall-clock time | Agent       | Agent time | Per run     | Cost at list price | Input tokens (cached) | Output tokens |
 | ------- | --------------- | ----------- | ---------: | ----------- | -----------------: | --------------------- | ------------: |
@@ -306,5 +341,6 @@ Baselines on envUI 0.7.0, 2026-10-16, 26 runs each, 4 in parallel. Exact figures
 - The hard baseline's wall-clock time includes a resume: a run stopped the runner after 12 minutes, and three runs were done again. The table counts only the runs in the results.
 - Installing a template takes 30–40 s, once per tarball and fixture. Copying a workspace takes about 15 s per run.
 - No run came near the 12-minute timeout.
-- Claude Code reports a list-price cost per run. On a subscription this is an estimate, not a charge. Codex reports tokens only.
+- Claude Code reports a list-price cost per run. On a subscription this is an estimate, not a charge. Codex reported tokens only.
+- The browser step adds about 4–6 s per run.
 - Every condition repeats the full matrix. Run single tasks (`--tasks sidebar`) while developing a condition.

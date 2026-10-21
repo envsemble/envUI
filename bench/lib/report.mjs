@@ -38,6 +38,7 @@ export function compactRun(run) {
     harnessError: run.harnessError && excerpt(run.harnessError, 600),
     score: score?.score ?? 0,
     parts: score?.parts,
+    notChecked: score?.notChecked ?? [],
     files: score?.files,
     typecheck: score && {
       passed: score.typecheck.passed,
@@ -70,12 +71,28 @@ export function compactRun(run) {
       total: score.styles.total,
       cssColors: score.styles.css.colors,
       cssPx: score.styles.css.px,
-      cssPrivateClasses: score.styles.css.privateClasses,
+      cssPrivateTokens: score.styles.css.privateTokens,
       cssLinesAdded: score.styles.css.linesAdded,
       inlineColors: score.styles.inline.colors,
       inlinePx: score.styles.inline.px,
-      privateClassNames: score.styles.privateClassNames,
-      samples: [...score.styles.css.samples, ...score.styles.inline.samples].slice(0, 8),
+      inlinePrivateTokens: score.styles.inline.privateTokens,
+      handRolledLayout: score.styles.handRolledLayout.count,
+      samples: [
+        ...score.styles.css.samples,
+        ...score.styles.inline.samples,
+        ...score.styles.handRolledLayout.occurrences.map(
+          (entry) => `${entry.file}:${entry.line} ${entry.sample}`,
+        ),
+      ].slice(0, 8),
+    },
+    layout: score?.layout && {
+      ...score.layout,
+      problems: (score.layout.problems ?? []).map(({ rule, path, message, widths }) => ({
+        rule,
+        path,
+        widths,
+        message: excerpt(message, 300),
+      })),
     },
     dependencies: score?.dependencies,
   };
@@ -145,6 +162,16 @@ export function aggregate(runs) {
       rawStyles: {
         total: sum((run) => run.styles?.total),
         runsWithAny: count((run) => (run.styles?.total ?? 0) > 0),
+        handRolledLayout: sum((run) => run.styles?.handRolledLayout),
+        privateTokens: sum(
+          (run) => (run.styles?.cssPrivateTokens ?? 0) + (run.styles?.inlinePrivateTokens ?? 0),
+        ),
+      },
+      layout: {
+        checked: count((run) => run.layout?.checked),
+        notRendered: count((run) => run.layout?.checked && !run.layout.rendered),
+        problems: sum((run) => run.layout?.problemCount),
+        runsWithAny: count((run) => (run.layout?.problemCount ?? 0) > 0),
       },
       uiDependencies: group.flatMap((run) => run.dependencies?.ui ?? []),
       time: {
@@ -200,27 +227,27 @@ export function renderSummary(results, tasks) {
 
   push('## Aggregates', '');
   push(
-    '| Condition | Agent | Runs | Mean score | Median | Escaped | Read envUI docs | Typecheck pass | Capabilities via envUI | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | UI packages | Suppressions | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
+    '| Condition | Agent | Runs | Mean score | Median | Escaped | Read envUI docs | Typecheck pass | Capabilities covered | Runs with raw HTML | Local duplicates | envUI type errors | Raw style values | Hand-rolled layout | Layout problems | Not rendered | UI packages | Suppressions | Timeouts / errors | Time | Cost | Tokens in / cached / out |',
   );
-  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
+  push('|---|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|');
   for (const group of aggregates)
     push(
-      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${group.escaped ?? 'n/a'} | ${group.readEnvuiDocs}/${group.runs} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.uiDependencies.length} | ${group.suppressions ?? 0} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
+      `| ${group.condition} | ${group.agent} | ${group.runs} | **${group.score.mean}** | ${group.score.median} | ${group.escaped ?? 'n/a'} | ${group.readEnvuiDocs}/${group.runs} | ${Math.round(group.typecheckPassRate * 100)}% | ${group.capabilities.covered}/${group.capabilities.total} | ${group.rawHtml.runsWithAny}/${group.runs} | ${group.duplicates.total} | ${group.envuiErrors.total} | ${group.rawStyles.total} | ${group.rawStyles.handRolledLayout} | ${group.layout.checked ? group.layout.problems : 'n/a'} | ${group.layout.checked ? `${group.layout.notRendered}/${group.layout.checked}` : 'n/a'} | ${group.uiDependencies.length} | ${group.suppressions ?? 0} | ${group.statuses.timeout} / ${group.statuses['agent-error'] + group.statuses['harness-error']} | ${minutes(group.time.totalMs)} | ${group.costUsd === null ? 'n/a' : `$${group.costUsd}`} | ${thousands(group.tokens.input + group.tokens.cachedInput + group.tokens.cacheWrite)} / ${thousands(group.tokens.cachedInput)} / ${thousands(group.tokens.output)} |`,
     );
   push('');
 
   push('## Runs', '');
   push(
-    '| Task | Agent | Score | Read envUI docs | Typecheck | Capabilities via envUI | Raw HTML (weighted) | Duplicates | envUI errors | Raw styles | Time | Status | Isolation |',
+    '| Task | Agent | Score | Read envUI docs | Typecheck | Capabilities covered | Raw HTML (weighted) | Duplicates | envUI errors | Raw styles | Layout problems | Time | Status | Isolation |',
   );
-  push('|---|---|--:|--:|---|---|--:|--:|--:|--:|--:|---|---|');
+  push('|---|---|--:|--:|---|---|--:|--:|--:|--:|--:|--:|---|---|');
   for (const task of tasks)
     for (const run of runs.filter((candidate) => candidate.task === task.id)) {
       const covered =
         run.coverage?.capabilities.filter((capability) => capability.covered).length ?? 0;
       const total = run.coverage?.capabilities.length ?? task.capabilities.length;
       push(
-        `| ${task.id} | ${run.agent} | **${run.score}** | ${run.agentReport?.envuiLookups?.docs ? 'yes' : 'no'} | ${run.typecheck ? (run.typecheck.passed ? 'pass' : `${run.typecheck.errorCount} errors`) : 'n/a'} | ${covered}/${total} | ${run.rawHtml?.weighted ?? 0} | ${run.duplicates?.length ?? 0} | ${run.envuiErrors?.length ?? 0} | ${run.styles?.total ?? 0} | ${minutes(run.durationMs ?? 0)} | ${run.status} | ${run.isolation ? (run.isolation.escaped ? '**escaped**' : 'ok') : 'n/a'} |`,
+        `| ${task.id} | ${run.agent} | **${run.score}** | ${run.agentReport?.envuiLookups?.docs ? 'yes' : 'no'} | ${run.typecheck ? (run.typecheck.passed ? 'pass' : `${run.typecheck.errorCount} errors`) : 'n/a'} | ${covered}/${total} | ${run.rawHtml?.weighted ?? 0} | ${run.duplicates?.length ?? 0} | ${run.envuiErrors?.length ?? 0} | ${run.styles?.total ?? 0} | ${layoutCell(run.layout)} | ${minutes(run.durationMs ?? 0)} | ${run.status} | ${run.isolation ? (run.isolation.escaped ? '**escaped**' : 'ok') : 'n/a'} |`,
       );
     }
   push('');
@@ -247,8 +274,12 @@ export function renderSummary(results, tasks) {
       `${weak.length} of ${runs.length} runs scored below 90; ${weak.filter((run) => run.agentReport?.envuiLookups?.docs > 0).length} of those read envUI's Markdown docs or skills, against ${runs.filter((run) => run.score >= 90 && run.agentReport?.envuiLookups?.docs > 0).length} of the ${runs.length - weak.length} others.`,
       '',
     );
-  push('### Capabilities not built with envUI', '');
-  push(`| Task | Capability | envUI provides | ${agentNames.join(' | ')} |`);
+  push('### Capabilities not covered', '');
+  push(
+    'A capability named by envUI exports is covered when the result uses one of them; one described by what renders is covered when all its checks pass in the browser step.',
+    '',
+  );
+  push(`| Task | Capability | Covered by | ${agentNames.join(' | ')} |`);
   push(`|---|---|---|${agentNames.map(() => '---').join('|')}|`);
   for (const task of tasks)
     for (const capability of task.capabilities) {
@@ -265,7 +296,7 @@ export function renderSummary(results, tasks) {
       });
       if (marks.some((mark) => mark.startsWith('missed')))
         push(
-          `| ${task.id} | ${capability.label} | ${capability.envui.map((name) => `\`${name}\``).join(', ')} | ${marks.join(' | ')} |`,
+          `| ${task.id} | ${capability.label} | ${capability.rendered ? 'what renders' : capability.envui.map((name) => `\`${name}\``).join(', ')} | ${marks.join(' | ')} |`,
         );
     }
   push('');
@@ -320,19 +351,45 @@ export function renderSummary(results, tasks) {
   } else push('None.');
   push('');
 
-  push('### Raw style values, added dependencies and UI packages', '');
+  push('### Rendered layout', '');
+  push(
+    "Problems found by dev mode's `layout.at()` and the page's own sideways overflow at 22, 40, 60 and 80rem; one problem seen at several widths counts once.",
+    '',
+  );
+  const layoutRows = runs.filter(
+    (run) => run.layout?.checked && (!run.layout.rendered || run.layout.problemCount > 0),
+  );
+  if (layoutRows.length) {
+    push('| Task | Agent | Rule | Node | Widths | Message |', '|---|---|---|---|---|---|');
+    for (const run of layoutRows) {
+      if (!run.layout.rendered)
+        push(`| ${run.task} | ${run.agent} | not rendered | | | ${cell(run.layout.error)} |`);
+      for (const problem of run.layout.problems ?? [])
+        push(
+          `| ${run.task} | ${run.agent} | ${problem.rule} | ${cell(problem.path)} | ${problem.widths.join(', ')} | ${cell(problem.message)} |`,
+        );
+    }
+  } else
+    push(
+      runs.some((run) => run.layout?.checked)
+        ? 'None.'
+        : 'Not checked: the browser step was skipped.',
+    );
+  push('');
+
+  push('### Raw style values, hand-rolled layout, added dependencies and UI packages', '');
   const styleRows = runs.filter(
     (run) =>
       (run.styles?.total ?? 0) > 0 || run.dependencies?.added.length || run.dependencies?.ui.length,
   );
   if (styleRows.length) {
     push(
-      '| Task | Agent | Raw colors | Raw px | `.env-*` overrides | Added dependencies | Third-party UI packages | Examples |',
-      '|---|---|--:|--:|--:|---|---|---|',
+      '| Task | Agent | Raw colors | Raw px | Private tokens set | Hand-rolled layout | Added dependencies | Third-party UI packages | Examples |',
+      '|---|---|--:|--:|--:|--:|---|---|---|',
     );
     for (const run of styleRows)
       push(
-        `| ${run.task} | ${run.agent} | ${run.styles.cssColors + run.styles.inlineColors} | ${run.styles.cssPx + run.styles.inlinePx} | ${run.styles.cssPrivateClasses + run.styles.privateClassNames} | ${(run.dependencies?.added ?? []).map((name) => `\`${name}\``).join(', ')} | ${(run.dependencies?.ui ?? []).map((name) => `\`${name}\``).join(', ')} | ${cell(run.styles.samples.slice(0, 3).join('; '))} |`,
+        `| ${run.task} | ${run.agent} | ${run.styles.cssColors + run.styles.inlineColors} | ${run.styles.cssPx + run.styles.inlinePx} | ${(run.styles.cssPrivateTokens ?? 0) + (run.styles.inlinePrivateTokens ?? 0)} | ${run.styles.handRolledLayout ?? 0} | ${(run.dependencies?.added ?? []).map((name) => `\`${name}\``).join(', ')} | ${(run.dependencies?.ui ?? []).map((name) => `\`${name}\``).join(', ')} | ${cell(run.styles.samples.slice(0, 3).join('; '))} |`,
       );
   } else push('None.');
   push('');
@@ -349,10 +406,16 @@ export function renderSummary(results, tasks) {
 
   push('## Scoring', '');
   push(
-    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities built with envUI ${scoring.coverage.max} × covered share; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors, px and \`.env-*\` overrides ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; −${scoring.uiLibraryPenalty} per third-party UI package added or imported; −${scoring.suppressionPenalty} per \`@ts-nocheck\`, \`@ts-ignore\` or \`@ts-expect-error\` added, with the type check run as if they were not there. Parts never go below zero; a run that changed no source scores 0. See bench/README.md.`,
+    `Per run, over the files the agent created or changed (counts in a changed file are relative to its base version): typecheck passes ${scoring.typecheck.max}; task capabilities covered ${scoring.coverage.max} × covered share, by envUI exports or by what renders; raw HTML ${scoring.rawHtml.max} − ${scoring.rawHtml.cost} per weighted element; local duplicates of envUI ${scoring.duplicates.max} − ${scoring.duplicates.cost} each; type errors on envUI ${scoring.envuiErrors.max} − ${scoring.envuiErrors.cost} each; raw colors and px, private component tokens set and hand-rolled flex or grid layout in inline styles ${scoring.rawStyles.max} − ${scoring.rawStyles.cost} each; rendered layout ${scoring.layout.max} − ${scoring.layout.cost} per distinct problem at 22, 40, 60 and 80rem, 0 when the app does not render; −${scoring.uiLibraryPenalty} per third-party UI package added or imported; −${scoring.suppressionPenalty} per \`@ts-nocheck\`, \`@ts-ignore\` or \`@ts-expect-error\` added, with the type check run as if they were not there. Parts never go below zero; a run that changed no source scores 0; parts a run could not check, without the browser step, are left out and the rest scaled to 100. Part classes (\`env-*\`) are public and cost nothing. See bench/README.md.`,
     '',
   );
   return `${lines.join('\n')}\n`;
+}
+
+/** A run's layout cell: its problems, "not rendered", or n/a without the browser step. */
+function layoutCell(layout) {
+  if (!layout?.checked) return 'n/a';
+  return layout.rendered ? String(layout.problemCount) : 'not rendered';
 }
 
 function sumKind(aggregates, kind) {
