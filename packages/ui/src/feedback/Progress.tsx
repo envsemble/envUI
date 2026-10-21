@@ -3,7 +3,7 @@
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import type { CSSProperties } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 import type { BarProps } from './Meter.js';
@@ -52,7 +52,7 @@ export function Progress({
       max={max}
       locale={locale}
       {...(spoken !== undefined && { 'aria-valuetext': spoken })}
-      render={<Column gap={2} />}
+      render={<Grid gap={2} />}
       className={classNames('env-progress', className)}
       data-segmented={steps !== undefined || undefined}
     >

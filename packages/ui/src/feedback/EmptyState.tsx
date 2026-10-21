@@ -1,7 +1,7 @@
 import { createElement, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Column } from '../foundations/Layout.js';
+import { Column, Grid } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
@@ -50,10 +50,10 @@ export function EmptyState({
 }: EmptyStateProps) {
   const stateIcon = icon ?? (tone === 'danger' ? <ErrorIcon /> : null);
   return (
-    <Column
+    <Grid
       role={tone === 'danger' ? 'alert' : undefined}
       {...props}
-      // The column's alignment is also the state's data-align, start or center.
+      // The state's data-align, start or center, which the grid's own alignment reads too.
       align={align}
       gap={4}
       padding={5}
@@ -70,6 +70,6 @@ export function EmptyState({
         {children}
       </Column>
       {action}
-    </Column>
+    </Grid>
   );
 }

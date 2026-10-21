@@ -1,16 +1,18 @@
 /* Conversation entries. Messages from the person using the app are compact bubbles at the inline end;
    messages from others are full-width content, so long formatted answers keep a readable measure. */
 .env-message-list {
+  align-content: start;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
 .env-message {
+  justify-items: start;
   margin: 0;
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
 }
 .env-message[data-from='self'] {
-  align-items: end;
+  justify-items: end;
 }
 .env-message-header {
   align-items: baseline;
@@ -61,7 +63,7 @@
   --env-control-height: var(--env-control-height-sm);
   /* The height the actions draw at, which a coarse pointer raises to the touch height. */
   --env-message-action-height: var(--env-control-height);
-  align-self: stretch;
+  justify-self: stretch;
 }
 /* A text icon action at the edge lines its icon up with the message, not its round hit area,
    through Button's edge hooks. */

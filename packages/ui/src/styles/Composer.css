@@ -3,9 +3,6 @@
 .env-composer {
   --env-composer-min-rows: 1;
   --env-composer-max-rows: 8;
-  display: grid;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
   max-inline-size: 100%;
 }
 .env-composer-surface {
@@ -69,11 +66,6 @@
   /* The height its buttons draw at, which a coarse pointer raises to the touch height. */
   --env-composer-start-height: var(--env-control-height);
   grid-area: start;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
   min-block-size: var(--env-control-height);
   /* Start content lines up with the field's text above it. */
   padding-inline-start: var(--env-space-4);

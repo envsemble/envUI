@@ -17,7 +17,7 @@ import { ChevronRight } from '../icons/ChevronRight.js';
 import { Check } from '../icons/Check.js';
 import { FieldFrame, type FieldProps } from './internal/FieldFrame.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
-import { Column, Grid } from '../foundations/Layout.js';
+import { Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
@@ -202,7 +202,7 @@ export function Select({
           sideOffset={getPopupOffset}
           trigger={triggerRef}
           className="env-select-popup"
-          layout={<Column padding={1} />}
+          layout={<Grid padding={1} />}
         >
           <BaseSelect.List render={<Grid />} className="env-select-list">
             {items.map((item) => (

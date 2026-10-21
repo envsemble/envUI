@@ -1,3 +1,7 @@
+.env-empty-state {
+  justify-items: start;
+  align-content: start;
+}
 .env-empty-state:where([data-tone='danger']) > .env-icon {
   color: var(--env-color-fg-danger);
 }
@@ -5,7 +9,8 @@
 /* Centred: the state takes the place of a page's or region's content, in the middle of the room the
    application gives it, with the icon at the size of a feature card's. */
 .env-empty-state:where([data-align='center']) {
-  justify-content: center;
+  justify-items: center;
+  align-content: center;
   padding-block: var(--env-space-8);
   text-align: center;
 }

@@ -2,6 +2,7 @@
    The trend carries its tone in an icon and text, never in color alone. */
 .env-stat {
   --env-stat-tone: var(--env-color-fg-muted);
+  align-content: start;
   color: var(--env-color-fg-default);
   overflow-wrap: anywhere;
 }

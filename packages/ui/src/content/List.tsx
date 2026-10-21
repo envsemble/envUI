@@ -9,7 +9,7 @@ import {
 } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
-import { Column, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
 
@@ -48,7 +48,7 @@ function Root({ density = 'md', onReorder, className, children, ...props }: Root
       </ReorderableList>
     );
   return (
-    <Column
+    <Grid
       render={
         <ul
           {...props}
@@ -58,7 +58,7 @@ function Root({ density = 'md', onReorder, className, children, ...props }: Root
       }
     >
       {children}
-    </Column>
+    </Grid>
   );
 }
 

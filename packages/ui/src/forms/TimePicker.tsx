@@ -5,6 +5,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { timePicker as timePickerMessages } from '../foundations/messages/timePicker.js';
 import { Button } from '../actions/Button.js';
+import { Row } from '../foundations/Layout.js';
 import { Schedule } from '../icons/Schedule.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
 import { TimeList, timeListFirstColumn } from './internal/TimeList.js';
@@ -158,7 +159,7 @@ export function TimePicker({
             max={maxMinutes}
             locale={locale}
           />
-          <div className="env-date-picker-actions">
+          <Row wrap align="center" gap={2} className="env-date-picker-actions">
             <Button
               variant="text"
               aria-disabled={!nowAvailable || undefined}
@@ -168,14 +169,21 @@ export function TimePicker({
             >
               {nowLabel ?? messages.now}
             </Button>
-            <span className="env-date-picker-actions-end">
+            <Row
+              render={<span />}
+              wrap
+              align="center"
+              justify="end"
+              gap={2}
+              className="env-date-picker-actions-end"
+            >
               {clearable && serialized && (
                 <Button variant="text" onClick={clear}>
                   {clearLabel ?? messages.clear}
                 </Button>
               )}
-            </span>
-          </div>
+            </Row>
+          </Row>
         </>
       )}
     </PickerField>

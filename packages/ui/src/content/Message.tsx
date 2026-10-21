@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
@@ -70,9 +70,8 @@ export function Message({
   ...props
 }: MessageProps) {
   return (
-    <Column
+    <Grid
       render={<article />}
-      align="start"
       gap={2}
       {...props}
       className={classNames('env-message', className)}
@@ -107,7 +106,7 @@ export function Message({
           </ControlDefaults>
         </Row>
       )}
-    </Column>
+    </Grid>
   );
 }
 
@@ -127,7 +126,7 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
  */
 export function MessageList({ busy = false, className, ...props }: MessageListProps) {
   return (
-    <Column
+    <Grid
       gap={5}
       aria-live="polite"
       aria-busy={busy || undefined}

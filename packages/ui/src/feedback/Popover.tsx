@@ -11,7 +11,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
-import { Column } from '../foundations/Layout.js';
+import { Grid } from '../foundations/Layout.js';
 
 const parts = {
   Portal: BasePopover.Portal,
@@ -128,7 +128,7 @@ export function Popover({
         align={align}
         width={width}
         className={classNames('env-popover', className)}
-        layout={<Column gap={3} padding={5} />}
+        layout={<Grid gap={3} padding={5} />}
         popupProps={{ ...popupProps, 'aria-label': title == null ? label : undefined }}
       >
         {title != null && (

@@ -1,7 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Column, Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import {
   Surface,
   type SurfaceAppearanceProps,
@@ -66,7 +66,7 @@ const trendTones: Record<Trend['direction'], TrendTone> = {
  */
 function Root({ label, value, description, trend, className, ...props }: RootProps) {
   return (
-    <Column gap={1} {...props} className={classNames('env-stat', className)}>
+    <Grid gap={1} {...props} className={classNames('env-stat', className)}>
       <div className="env-stat-label">{label}</div>
       <div className="env-stat-value">{value}</div>
       {(trend != null || description != null) && (
@@ -87,7 +87,7 @@ function Root({ label, value, description, trend, className, ...props }: RootPro
           {description != null && <span className="env-stat-description">{description}</span>}
         </Row>
       )}
-    </Column>
+    </Grid>
   );
 }
 

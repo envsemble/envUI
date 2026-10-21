@@ -7,9 +7,7 @@
 }
 .env-radio-group {
   overflow-wrap: anywhere;
-  display: grid;
   gap: 0.125rem;
-  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
@@ -89,8 +87,6 @@
 }
 
 .env-radio-group[data-orientation='horizontal'] {
-  display: flex;
-  flex-wrap: wrap;
   gap: var(--env-space-4) var(--env-space-6);
 }
 .env-radio-group[data-orientation='horizontal'] legend {

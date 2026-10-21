@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column } from '../foundations/Layout.js';
+import { Grid } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
 
@@ -22,7 +22,7 @@ export interface LoadingStateProps extends ComponentPropsWithRef<'div'> {
 export function LoadingState({ label, className, children, ...props }: LoadingStateProps) {
   const messages = useMessages('common', common);
   return (
-    <Column
+    <Grid
       gap={2}
       {...props}
       role="status"
@@ -31,6 +31,6 @@ export function LoadingState({ label, className, children, ...props }: LoadingSt
       className={classNames('env-loading-state', className)}
     >
       {children}
-    </Column>
+    </Grid>
   );
 }

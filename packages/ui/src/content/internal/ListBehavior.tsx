@@ -16,7 +16,7 @@ import { IconButton } from '../../actions/Button.js';
 import { list as listMessages } from '../../foundations/messages/list.js';
 import { DragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
-import { Column } from '../../foundations/Layout.js';
+import { Grid } from '../../foundations/Layout.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { useFormatters } from '../../internal/useFormatters.js';
@@ -126,7 +126,7 @@ export function ReorderableList({
   );
   return (
     <ReorderContext value={reorder}>
-      <Column
+      <Grid
         render={
           <ul
             {...props}
@@ -145,7 +145,7 @@ export function ReorderableList({
         }
       >
         {children}
-      </Column>
+      </Grid>
       <span id={instructions} hidden>
         {messages.instructions}
       </span>

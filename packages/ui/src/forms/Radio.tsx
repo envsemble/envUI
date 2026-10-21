@@ -9,6 +9,7 @@ import type {
   Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { subscribeFormReset } from './internal/subscribeFormReset.js';
 
@@ -102,6 +103,28 @@ export function RadioGroup({
     if (value === undefined) setUncontrolledValue(nextValue);
     onValueChange?.(nextValue);
   }
+  const fieldset = (
+    <fieldset
+      {...props}
+      ref={(node) => {
+        fieldsetRef.current = node;
+        setRef(ref, node);
+      }}
+      disabled={disabled}
+      data-orientation={orientation}
+      className={classNames(
+        'env-radio-group',
+        orientation === 'vertical' ? 'env-connected-rows' : undefined,
+        className,
+      )}
+    />
+  );
+  const content = (
+    <>
+      {label != null && <legend>{label}</legend>}
+      {children}
+    </>
+  );
   return (
     <RadioContext.Provider
       value={{
@@ -115,23 +138,13 @@ export function RadioGroup({
         select,
       }}
     >
-      <fieldset
-        {...props}
-        ref={(node) => {
-          fieldsetRef.current = node;
-          setRef(ref, node);
-        }}
-        disabled={disabled}
-        data-orientation={orientation}
-        className={classNames(
-          'env-radio-group',
-          orientation === 'vertical' ? 'env-connected-rows' : undefined,
-          className,
-        )}
-      >
-        {label != null && <legend>{label}</legend>}
-        {children}
-      </fieldset>
+      {orientation === 'horizontal' ? (
+        <Row wrap render={fieldset}>
+          {content}
+        </Row>
+      ) : (
+        <Grid render={fieldset}>{content}</Grid>
+      )}
     </RadioContext.Provider>
   );
 }

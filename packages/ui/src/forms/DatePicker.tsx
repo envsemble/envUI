@@ -13,6 +13,7 @@ import { useResolvedLocale } from '../internal/useFormatters.js';
 import { type ControlSize } from '../foundations/Theme.js';
 import { datePicker as datePickerMessages } from '../foundations/messages/datePicker.js';
 import { Button } from '../actions/Button.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { CalendarClock } from '../icons/CalendarClock.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { Calendar, calendarActiveDay } from './Calendar.js';
@@ -337,12 +338,12 @@ export function DatePicker({
       {withTime ? (
         // The times stand beside the days, as tall as the calendar; the chosen day's share of min
         // and max limits them.
-        <div className="env-date-picker-panes">
+        <Grid gap={3} className="env-date-picker-panes">
           {calendar}
-          <div className="env-date-picker-time">
-            <div className="env-date-picker-time-heading" id={timeHeadingId}>
+          <Grid gap={2} className="env-date-picker-time">
+            <Row align="center" className="env-date-picker-time-heading" id={timeHeadingId}>
               {timeLabel ?? messages.time}
-            </div>
+            </Row>
             <TimeList
               aria-labelledby={timeHeadingId}
               value={current?.minutes}
@@ -353,12 +354,12 @@ export function DatePicker({
               max={boundMinutes(maxMoment, timeDay)}
               locale={locale}
             />
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       ) : (
         calendar
       )}
-      <div className="env-date-picker-actions">
+      <Row wrap align="center" gap={2} className="env-date-picker-actions">
         <Button
           variant="text"
           aria-disabled={!nowAvailable || undefined}
@@ -368,14 +369,21 @@ export function DatePicker({
         >
           {withTime ? (nowLabel ?? messages.now) : (todayLabel ?? messages.today)}
         </Button>
-        <span className="env-date-picker-actions-end">
+        <Row
+          render={<span />}
+          wrap
+          align="center"
+          justify="end"
+          gap={2}
+          className="env-date-picker-actions-end"
+        >
           {clearable && serialized && (
             <Button variant="text" onClick={clear}>
               {clearLabel ?? messages.clear}
             </Button>
           )}
-        </span>
-      </div>
+        </Row>
+      </Row>
     </PickerField>
   );
 }

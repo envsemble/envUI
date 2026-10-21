@@ -17,6 +17,7 @@ import { IconButton } from '../actions/Button.js';
 import { ArrowUpward } from '../icons/ArrowUpward.js';
 import { Stop } from '../icons/Stop.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { composer as composerMessages } from '../foundations/messages/composer.js';
@@ -224,7 +225,8 @@ export function Composer({
   const actionLabel = running ? (stopLabel ?? messages.stop) : (sendLabel ?? messages.send);
 
   return (
-    <div
+    <Grid
+      gap={2}
       className={classNames('env-composer', className)}
       style={
         {
@@ -271,7 +273,11 @@ export function Composer({
           }}
           onKeyDown={handleKeyDown}
         />
-        {start != null && <div className="env-composer-start">{start}</div>}
+        {start != null && (
+          <Row wrap align="center" gap={2} className="env-composer-start">
+            {start}
+          </Row>
+        )}
         <IconButton
           variant="primary"
           className="env-composer-action"
@@ -294,6 +300,6 @@ export function Composer({
           {footer}
         </div>
       )}
-    </div>
+    </Grid>
   );
 }

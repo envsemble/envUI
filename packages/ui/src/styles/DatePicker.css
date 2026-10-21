@@ -101,6 +101,7 @@
 /* The calendar popup: the shared popup, as wide as the calendar, with small controls. */
 .env-date-picker-popup {
   --env-control-height: var(--env-control-height-sm);
+  align-content: start;
   inline-size: auto;
   max-inline-size: calc(100vw - 2rem);
 }
@@ -109,22 +110,15 @@
    middle of the room under the heading. */
 /* Compact first: the time stacks under the calendar, also where no env-window is found. */
 .env-date-picker-panes {
-  display: grid;
   grid-template-columns: minmax(0, auto);
-  gap: var(--env-space-3);
 }
 .env-date-picker-time {
-  display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  gap: var(--env-space-2);
 }
 .env-date-picker-time > .env-time-list {
   align-self: center;
 }
 .env-date-picker-time-heading {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
   font-weight: var(--env-font-weight-medium);
@@ -144,18 +138,7 @@
     min-block-size: var(--env-control-height-md);
   }
 }
-.env-date-picker-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-2);
-}
 .env-date-picker-actions-end {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--env-space-2);
   margin-inline-start: auto;
 }
 

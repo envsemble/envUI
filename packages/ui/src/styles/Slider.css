@@ -6,12 +6,8 @@
   min-inline-size: 0;
 }
 .env-slider-heading {
-  display: flex;
-  flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
   gap: var(--env-space-1) var(--env-space-3);
-  min-inline-size: 0;
 }
 .env-slider-label {
   min-inline-size: 0;

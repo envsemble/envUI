@@ -3,7 +3,7 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Column, Row } from '../../foundations/Layout.js';
+import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 
@@ -58,7 +58,7 @@ export function DialogHeader({
 }) {
   if (title == null && description == null && close == null) return null;
   return (
-    <Column gap={2} className="env-dialog-header">
+    <Grid gap={2} className="env-dialog-header">
       {(title != null || close != null) && (
         <Row align="center" justify="between" gap={4} className="env-dialog-heading">
           {title != null ? (
@@ -74,7 +74,7 @@ export function DialogHeader({
           {description}
         </BaseDialog.Description>
       )}
-    </Column>
+    </Grid>
   );
 }
 

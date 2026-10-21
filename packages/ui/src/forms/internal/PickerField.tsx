@@ -15,7 +15,7 @@ import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { PopupSurface } from '../../internal/PopupSurface.js';
-import { Column, type SpaceStep } from '../../foundations/Layout.js';
+import { Grid, type SpaceStep } from '../../foundations/Layout.js';
 import { type ControlSize } from '../../foundations/Theme.js';
 import { IconButton } from '../../actions/Button.js';
 import { Close } from '../../icons/Close.js';
@@ -348,7 +348,7 @@ export function PickerField({
         className={
           popupClassName ? `env-date-picker-popup ${popupClassName}` : 'env-date-picker-popup'
         }
-        layout={<Column gap={popupGap} padding={popupPadding} />}
+        layout={<Grid gap={popupGap} padding={popupPadding} />}
         popupProps={{ ref: popupRef, ...accessibleName }}
         initialFocus={() => initialFocus(popupRef.current) ?? true}
       >

@@ -10,6 +10,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { useHydrated } from '../internal/useHydrated.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
@@ -210,12 +211,13 @@ export function Calendar({
   const named = props['aria-label'] != null || props['aria-labelledby'] != null;
 
   return (
-    <div
+    <Grid
+      gap={2}
       role={named ? 'group' : undefined}
       {...props}
       className={classNames('env-calendar', className)}
     >
-      <div className="env-calendar-header">
+      <Row align="center" gap={1} className="env-calendar-header">
         <IconButton
           variant="ghost"
           icon={<ChevronLeft />}
@@ -246,7 +248,7 @@ export function Calendar({
             if (nextAvailable) moveTo(addMonths(active, 1), false);
           }}
         />
-      </div>
+      </Row>
       <table
         ref={grid}
         role="grid"
@@ -303,6 +305,6 @@ export function Calendar({
           ))}
         </tbody>
       </table>
-    </div>
+    </Grid>
   );
 }

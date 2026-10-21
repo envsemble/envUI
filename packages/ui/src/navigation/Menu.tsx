@@ -12,7 +12,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column } from '../foundations/Layout.js';
+import { Grid } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import type { PopupSide } from '../internal/PopupSurface.js';
 import { Check } from '../icons/Check.js';
@@ -412,7 +412,7 @@ export interface GroupProps {
 /** A labelled group of related items, with a small heading above its rows. */
 function Group({ label, children, className }: GroupProps) {
   return (
-    <BaseMenu.Group render={<Column />} className={classNames('env-menu-group', className)}>
+    <BaseMenu.Group render={<Grid />} className={classNames('env-menu-group', className)}>
       <BaseMenu.GroupLabel className="env-menu-group-label">{label}</BaseMenu.GroupLabel>
       {children}
     </BaseMenu.Group>
@@ -445,7 +445,7 @@ function RadioGroup({
 }: RadioGroupProps) {
   return (
     <BaseMenu.RadioGroup
-      render={<Column />}
+      render={<Grid />}
       aria-labelledby={labelledBy}
       className={classNames('env-menu-group', className)}
       value={value}

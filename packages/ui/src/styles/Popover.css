@@ -4,6 +4,7 @@
 .env-popover,
 .env-hover-card {
   inline-size: min(20rem, calc(100vw - 2rem));
+  align-content: start;
 }
 .env-popover[data-width='lg'],
 .env-hover-card[data-width='lg'] {

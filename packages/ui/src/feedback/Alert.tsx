@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Column, Grid, Row } from '../foundations/Layout.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
 import { CheckCircle } from '../icons/CheckCircle.js';
@@ -81,7 +81,7 @@ export function Alert({
           <DecorativeIcon>{symbol}</DecorativeIcon>
         </span>
       )}
-      <Column gap={1} className="env-alert-content">
+      <Grid gap={1} className="env-alert-content">
         {title != null && <div className="env-alert-title">{title}</div>}
         {children != null && <div className="env-alert-message">{children}</div>}
         {action != null && (
@@ -89,7 +89,7 @@ export function Alert({
             {action}
           </Row>
         )}
-      </Column>
+      </Grid>
       {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
     </Grid>
   );
