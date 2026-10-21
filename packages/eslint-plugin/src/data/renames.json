@@ -206,7 +206,7 @@
       },
       "useLinkComponent": {
         "to": [],
-        "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+        "use": "Render envUI's Link, Button with href, the destinations of Bar, Rail and NavigationDrawer, or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
       },
       "useSidebarCompact": {
         "to": [],
