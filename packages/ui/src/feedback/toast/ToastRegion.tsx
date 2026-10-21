@@ -3,7 +3,7 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { Button, IconButton } from '../../actions/Button.js';
-import { CounterBadge } from '../../content/CounterBadge.js';
+import { Badge } from '../../content/Badge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
@@ -224,10 +224,10 @@ export function ToastRegion({
             aria-label={regionLabel}
           >
             {hiddenCount > 0 && (
-              <CounterBadge
+              <Badge
                 className="env-toast-queued-count"
                 data-toast-id="queued"
-                value={`+${hiddenCount}`}
+                count={`+${hiddenCount}`}
                 aria-label={messages.hidden({ count: hiddenCount })}
               />
             )}
@@ -300,11 +300,11 @@ export function ToastRegion({
           }}
         >
           {hiddenCount > 0 && (
-            <CounterBadge
+            <Badge
               className="env-toast-queued-count"
               data-toast-id="queued"
               role="status"
-              value={`+${hiddenCount}`}
+              count={`+${hiddenCount}`}
               aria-label={messages.hidden({ count: hiddenCount })}
             />
           )}

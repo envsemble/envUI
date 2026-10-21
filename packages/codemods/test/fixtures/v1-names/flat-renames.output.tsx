@@ -1,6 +1,5 @@
 import {
   Button,
-  CounterBadge,
   DatePicker,
   DiffStat,
   Disclosure,
@@ -11,7 +10,7 @@ import {
   OrganizationSwitcher,
 } from '@envsemble/envui';
 import type {
-  CounterBadgeProps,
+  BadgeProps,
   DatePickerProps,
   DiffStatProps,
   DisclosureProps,
@@ -40,7 +39,7 @@ export interface ProfileFormProps {
   disclosure?: DisclosureProps;
   tone: AlertTone;
   notice?: AlertProps;
-  counter?: CounterBadgeProps;
+  counter?: BadgeProps;
   diff?: DiffStatProps;
   heatmap?: CalendarHeatmapProps;
   days?: CalendarHeatmapDay[];
@@ -48,7 +47,7 @@ export interface ProfileFormProps {
   switcher?: OrganizationSwitcherProps;
 }
 
-type CounterComponent = typeof CounterBadge;
+type DiffComponent = typeof DiffStat;
 
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
@@ -61,7 +60,6 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
       <DatePicker {...start} />
       <DropZone {...upload} />
       <Disclosure summary="Details">Owned by Contoso.</Disclosure>
-      <CounterBadge value={3} />
       <DiffStat additions={12} deletions={4} />
       <CalendarHeatmap days={[]} />
       <Button type="submit">Save</Button>
@@ -69,4 +67,4 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   );
 }
 
-export type { CounterComponent };
+export type { DiffComponent };

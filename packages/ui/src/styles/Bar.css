@@ -57,7 +57,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The count, on the icon's top end, in the accent counter badge's pill. */
+/* The count, on the icon's top end, in the pill of an accent count badge. */
 .env-bar-count {
   box-sizing: border-box;
   position: absolute;

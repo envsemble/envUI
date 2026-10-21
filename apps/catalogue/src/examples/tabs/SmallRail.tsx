@@ -1,4 +1,4 @@
-import { Button, CounterBadge, Tabs, Text } from '@envsemble/envui';
+import { Button, Tabs, Text, Badge } from '@envsemble/envui';
 
 export default function SmallRail() {
   return (
@@ -10,7 +10,7 @@ export default function SmallRail() {
           value: 'open',
           button: (
             <Button>
-              Open <CounterBadge value={8} />
+              Open <Badge count={8} />
             </Button>
           ),
           content: <Text>Eight requests wait for a review.</Text>,

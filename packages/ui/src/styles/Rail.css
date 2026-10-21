@@ -60,7 +60,7 @@
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
-/* The count, on the icon's top end, in the accent counter badge's pill. */
+/* The count, on the icon's top end, in the pill of an accent count badge. */
 .env-rail-count {
   box-sizing: border-box;
   position: absolute;

@@ -54,7 +54,6 @@
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
       "content/ColorSwatch.tsx": "base",
-      "content/CounterBadge.tsx": "base",
       "content/DescriptionList.tsx": "base",
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
@@ -243,7 +242,7 @@
         "styles": ["Text.css"]
       },
       "Badge": {
-        "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"]
+        "modules": ["content/DiffStat.tsx"]
       },
       "Code": {
         "modules": [

@@ -24,7 +24,7 @@ avoidWhen:
   - text: A quantity within a known range, such as the seats assigned of a plan's five.
     use: Meter
   - text: A count on a control, such as unread messages on a tab.
-    use: CounterBadge
+    use: Badge
   - text: A summary people open or act on, with a description and actions.
     use: Card
 related:

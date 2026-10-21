@@ -134,7 +134,7 @@
         {
           "id": "count",
           "label": "project count",
-          "envui": ["Badge", "CounterBadge"]
+          "envui": ["Badge"]
         },
         {
           "id": "actions",
@@ -183,7 +183,7 @@
         {
           "id": "counts",
           "label": "count in each tab",
-          "envui": ["Badge", "CounterBadge"]
+          "envui": ["Badge"]
         }
       ]
     },

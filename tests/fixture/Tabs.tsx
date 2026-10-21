@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Button,
-  CounterBadge,
   DocumentTabs,
   EnvUIProvider,
   Menu,
@@ -13,6 +12,7 @@ import {
   Theme,
   type DocumentTab,
   type ThemeValue,
+  Badge,
 } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 
@@ -208,7 +208,7 @@ export function CompactTabsFixture({ theme }: { theme: ThemeValue }) {
               value: 'submissions',
               button: (
                 <Button variant="secondary">
-                  Submissions <CounterBadge value={24} />
+                  Submissions <Badge count={24} />
                 </Button>
               ),
               content: null,

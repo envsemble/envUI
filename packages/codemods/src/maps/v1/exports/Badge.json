@@ -1,7 +1,7 @@
 {
   "@envsemble/envui": {
-    "Counter": "CounterBadge",
-    "CounterProps": "CounterBadgeProps",
+    "CounterProps": "BadgeProps",
+    "CounterBadgeProps": "BadgeProps",
     "DiffCount": "DiffStat",
     "DiffCountProps": "DiffStatProps",
     "InfoChip": "Badge",

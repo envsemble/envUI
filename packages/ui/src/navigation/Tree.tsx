@@ -46,7 +46,7 @@ export interface TreeItem {
    * out of room, and is read with the label.
    */
   description?: ReactNode;
-  /** Content at the end of the row, such as a CounterBadge or a Badge; it is read with the label. */
+  /** Content at the end of the row, such as a Badge with a count; it is read with the label. */
   end?: ReactNode;
   /** The row's native tooltip, such as the full path of a truncated name. */
   title?: string;

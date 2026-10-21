@@ -84,7 +84,7 @@
   flex: 1 1 auto;
   min-inline-size: 0;
 }
-/* The count, at the item's end, in the counter badge's pill. */
+/* The count, at the item's end, in the pill of a count badge. */
 .env-drawer-count {
   box-sizing: border-box;
   flex: none;

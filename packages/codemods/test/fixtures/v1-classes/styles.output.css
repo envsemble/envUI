@@ -18,9 +18,9 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
   color: var(--env-color-accent);
 }
 
-.env-counter-badge,
-.env-counter-badge-label,
-.env-counter-badge {
+.env-badge:where([data-count]),
+.env-badge-count-label,
+.env-badge:where([data-count]) {
   min-width: 2ch;
 }
 
@@ -58,7 +58,7 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 /* DiffCount's label had the counter's class; DiffStat names it for itself. */
 .env-diff-stat .env-diff-stat-label,
 .env-diff-stat:hover > .env-diff-stat-label,
-.env-counter-badge .env-counter-badge-label {
+.env-badge:where([data-count]) .env-badge-count-label {
   clip-path: inset(50%);
 }
 /* Navigation parts named after their components, and modifiers that became attributes. */

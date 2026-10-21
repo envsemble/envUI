@@ -85,8 +85,9 @@
       "env-avatar-group-tooltip": "The tooltip that names an avatar or the hidden ones."
     },
     "Badge": {
-      "env-badge": "The badge: a small pill label.",
-      "env-badge-label": "The badge's text."
+      "env-badge": "The badge: a small pill label, or with data-count a compact count.",
+      "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
+      "env-badge-label": "The badge's text, or its count."
     },
     "Bar": {
       "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
@@ -243,10 +244,6 @@
       "env-copy-button": "The button that copies a value.",
       "env-copy-button-field": "The field that shows the value beside the button.",
       "env-copy-button-status": "The announcement that the value was copied."
-    },
-    "CounterBadge": {
-      "env-counter-badge": "The count badge.",
-      "env-counter-badge-label": "The count."
     },
     "DatePicker": {
       "env-date-picker": "The date field.",

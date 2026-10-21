@@ -9661,6 +9661,7 @@
       "summary": "Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.",
       "aliases": [
         "Counter",
+        "CounterBadge",
         "DiffCount",
         "InfoChip",
         "info chip",
@@ -9684,7 +9685,7 @@
         "A short state sits beside the content it describes, such as In review, Blocked or Archived.",
         "A short name or category marks an item, such as a team or a folder (`variant=\"outline\"`).",
         "A piece of neutral metadata sits beside related content, such as a plan or a count of seats.",
-        "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (CounterBadge).",
+        "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (`count`).",
         "The size of a change shows beside a file or a version, such as +12 −3 (DiffStat)."
       ],
       "avoidWhen": [
@@ -9719,7 +9720,6 @@
       ],
       "exports": [
         "Badge",
-        "CounterBadge",
         "DiffStat"
       ],
       "examples": [
@@ -9802,14 +9802,27 @@
           "parts": [
             {
               "class": "env-badge",
-              "description": "The badge: a small pill label."
+              "description": "The badge: a small pill label, or with data-count a compact count."
+            },
+            {
+              "class": "env-badge-count-label",
+              "description": "What a count means, such as 12 unread, for assistive technology; visually hidden."
             },
             {
               "class": "env-badge-label",
-              "description": "The badge's text."
+              "description": "The badge's text, or its count."
             }
           ],
           "states": [
+            {
+              "attribute": "data-count",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-badge"
+              ]
+            },
             {
               "attribute": "data-tone",
               "values": [
@@ -9833,31 +9846,6 @@
               ],
               "parts": [
                 "env-badge"
-              ]
-            }
-          ]
-        },
-        "CounterBadge": {
-          "root": "env-counter-badge",
-          "parts": [
-            {
-              "class": "env-counter-badge",
-              "description": "The count badge."
-            },
-            {
-              "class": "env-counter-badge-label",
-              "description": "The count."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-tone",
-              "values": [
-                "accent",
-                "neutral"
-              ],
-              "parts": [
-                "env-counter-badge"
               ]
             }
           ]
@@ -10575,7 +10563,7 @@
         },
         {
           "text": "A compact count beside a label, such as unread messages.",
-          "use": "CounterBadge"
+          "use": "Badge"
         },
         {
           "text": "A headline figure with its label and trend, such as on a dashboard.",
@@ -11637,7 +11625,7 @@
         },
         {
           "text": "A count on a control, such as unread messages on a tab.",
-          "use": "CounterBadge"
+          "use": "Badge"
         },
         {
           "text": "A summary people open or act on, with a description and actions.",
@@ -15951,7 +15939,6 @@
         "useToast",
         "Alert",
         "Badge",
-        "CounterBadge",
         "Drawer",
         "List",
         "DescriptionList",
@@ -16001,7 +15988,7 @@
         {
           "name": "UnreadCount",
           "title": "Unread counts",
-          "description": "A CounterBadge's `aria-label` says what it counts, \"12 unread\".",
+          "description": "A count Badge's `aria-label` says what it counts, \"12 unread\".",
           "file": "docs/examples/feedback/UnreadCount.tsx"
         },
         {
@@ -16708,7 +16695,6 @@
         "Radio",
         "Menu",
         "Button",
-        "CounterBadge",
         "Badge",
         "List",
         "Text",
@@ -16734,7 +16720,7 @@
         {
           "name": "FilterPanel",
           "title": "Filters in a popover",
-          "description": "A Filters button, with a CounterBadge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
+          "description": "A Filters button, with a count Badge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
           "file": "docs/examples/filtering/FilterPanel.tsx"
         },
         {
@@ -17263,22 +17249,8 @@
     "Badge": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats.",
+      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "Meaning of the state; done is the purple of completed work. Neutral by default."
-        },
-        {
-          "name": "variant",
-          "type": "'soft' | 'solid' | 'outline'",
-          "required": false,
-          "default": "'soft'",
-          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
-        },
         {
           "name": "icon",
           "type": "ReactNode",
@@ -17288,8 +17260,34 @@
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
+          "required": false,
           "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+        },
+        {
+          "name": "count",
+          "type": "number | string",
+          "required": false,
+          "description": "A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in tabular figures, as beside a navigation label, in a tab or on a button."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "Meaning of the state; done is the purple of completed work. Neutral by default. A count in the accent tone, solid, draws attention, such as unread messages that need an answer."
+        },
+        {
+          "name": "variant",
+          "type": "'soft' | 'solid' | 'outline'",
+          "required": false,
+          "default": "'soft'",
+          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "What the count means, such as 12 unread, which assistive technology reads in place of the number; the number alone otherwise."
         }
       ],
       "native": [
@@ -18920,38 +18918,6 @@
       "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
-    },
-    "CounterBadge": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A compact rounded count, for example beside a navigation label or a menu item.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number | string",
-          "required": true,
-          "description": "The count, such as 12, or short text such as 99+; shown in tabular figures."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "description": "Full meaning for assistive technology, such as \"12 unread\"; the number alone otherwise."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral (default) is a quiet fill; accent draws attention."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "status": "stable",
-      "page": "badge",
-      "doc": "docs/components/badge.md"
     },
     "DatePicker": {
       "kind": "component",
@@ -20890,7 +20856,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         }
       ],
       "native": [],
@@ -21004,7 +20970,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "href",
@@ -21124,7 +21090,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "icon",

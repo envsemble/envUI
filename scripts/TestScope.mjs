@@ -30,7 +30,7 @@ export const aliases = {
   Progress: ['Meter'],
   Spinner: ['Meter'],
   AnimatedNumber: ['Stat'],
-  CounterBadge: ['DiffStat'],
+  Badge: ['DiffStat'],
   ButtonCounts: ['DiffStat'],
   ConfirmButton: ['Button'],
   AvatarButton: ['Button'],

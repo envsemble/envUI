@@ -32,7 +32,6 @@ export * from './content/Card.js';
 export * as List from './content/List.js';
 export * from './content/Disclosure.js';
 export * from './content/Badge.js';
-export * from './content/CounterBadge.js';
 export * from './content/DiffStat.js';
 export * as Table from './content/Table.js';
 export * from './content/Kbd.js';

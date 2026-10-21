@@ -1,6 +1,5 @@
 import {
   Button,
-  Counter,
   DateTimeField,
   DiffCount,
   DisclosureNote,
@@ -48,7 +47,7 @@ export interface ProfileFormProps {
   switcher?: OrganizationMenuProps;
 }
 
-type CounterComponent = typeof Counter;
+type DiffComponent = typeof DiffCount;
 
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
@@ -61,7 +60,6 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
       <DateTimeField {...start} />
       <FileDropzone {...upload} />
       <DisclosureNote summary="Details">Owned by Contoso.</DisclosureNote>
-      <Counter value={3} />
       <DiffCount additions={12} deletions={4} />
       <Heatmap days={[]} />
       <Button type="submit">Save</Button>
@@ -69,4 +67,4 @@ export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   );
 }
 
-export type { CounterComponent };
+export type { DiffComponent };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CounterBadge, IconButton, Menu, Column, Text } from '@envsemble/envui';
+import { IconButton, Menu, Column, Text, Badge } from '@envsemble/envui';
 import { Comment } from '@envsemble/envui/icons/Comment';
 import { Delete } from '@envsemble/envui/icons/Delete';
 import { Download } from '@envsemble/envui/icons/Download';
@@ -24,7 +24,7 @@ export default function IconsAndShortcuts() {
         </Menu.Item>
         <Menu.Item
           icon={<Comment />}
-          end={<CounterBadge value={3} aria-label="3 unresolved" />}
+          end={<Badge count={3} aria-label="3 unresolved" />}
           onClick={() => setLastAction('Show comments')}
         >
           Show comments

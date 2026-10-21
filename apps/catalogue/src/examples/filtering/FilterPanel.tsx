@@ -2,13 +2,13 @@ import { useRef, useState } from 'react';
 import {
   Button,
   Checkbox,
-  CounterBadge,
   EmptyState,
   List,
   Popover,
   Column,
   Row,
   Text,
+  Badge,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -40,7 +40,7 @@ export default function FilterPanel() {
             <Button variant="secondary" size="sm" startIcon={<FilterList />}>
               Filters
               {/* The count of filters in use; its label says what the number counts. */}
-              {applied > 0 && <CounterBadge value={applied} aria-label={`${applied} in use`} />}
+              {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
             </Button>
           }
         >

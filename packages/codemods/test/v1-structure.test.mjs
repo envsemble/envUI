@@ -14,12 +14,15 @@ const drawer = map.structure['@envsemble/envui'].Drawer;
 const loadingState = map.structure['@envsemble/envui'].LoadingState;
 const closeButton = map.structure['@envsemble/envui'].CloseButton;
 const button = map.structure['@envsemble/envui'].Button;
+const counterBadge = map.structure['@envsemble/envui'].CounterBadge;
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
+  // A tone that is an expression stays: an accent count is solid.
+  'badges.tsx': [`line 10: CounterBadge: ${counterBadge.report}`],
   // CloseButton's default name and Button iconOnly without a variant are reported where rewritten;
   // an iconOnly that is an expression stays.
   'buttons.tsx': [
@@ -69,6 +72,7 @@ for (const fixture of fixtures('v1-structure')) {
         (report) =>
           report.endsWith(actionGroup.report) ||
           report.endsWith(button.report) ||
+          report.endsWith(counterBadge.report) ||
           report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
           report.endsWith(card.report) ||

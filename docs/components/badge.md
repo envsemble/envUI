@@ -6,6 +6,7 @@ since: 0.5.0
 category: Content & guidance
 aliases:
   - Counter
+  - CounterBadge
   - DiffCount
   - InfoChip
   - info chip
@@ -28,7 +29,7 @@ useWhen:
   - A short state sits beside the content it describes, such as In review, Blocked or Archived.
   - A short name or category marks an item, such as a team or a folder (`variant="outline"`).
   - A piece of neutral metadata sits beside related content, such as a plan or a count of seats.
-  - A number belongs to a label, such as unread messages beside a navigation item or comments on a button (CounterBadge).
+  - A number belongs to a label, such as unread messages beside a navigation item or comments on a button (`count`).
   - The size of a change shows beside a file or a version, such as +12 −3 (DiffStat).
 avoidWhen:
   - text: An action, or a choice people turn on and off, even when it looks like a pill.
@@ -50,7 +51,6 @@ related:
   - colors
 components:
   - Badge
-  - CounterBadge
   - DiffStat
 ---
 
@@ -64,7 +64,7 @@ A badge is a small, static pill that names a state or a fact beside the content 
 
 ```
 
-```tsx example=CountsInButtons caption="CounterBadge: a count, here inside buttons."
+```tsx example=CountsInButtons caption="With count, a compact count, here inside buttons."
 
 ```
 
@@ -97,7 +97,7 @@ A badge is a small, static pill that names a state or a fact beside the content 
 | `danger`  | Failed or at risk, such as Failed.                    |
 | `done`    | Completed work, such as Merged.                       |
 
-CounterBadge takes `neutral` or `accent`, for a count that needs attention.
+A count takes the same tones and variants: neutral and soft by default, and `tone="accent" variant="solid"` for a count that needs attention.
 
 ## When to use
 
@@ -126,7 +126,7 @@ CounterBadge takes `neutral` or `accent`, for a count that needs attention.
 
 ### In navigation
 
-```tsx example=NavigationCounts caption="Bar, Rail and Drawer show a destination's count themselves, from a number, not a CounterBadge."
+```tsx example=NavigationCounts caption="Bar, Rail and Drawer show a destination's count themselves, from a number, not a Badge."
 
 ```
 
@@ -140,7 +140,7 @@ CounterBadge takes `neutral` or `accent`, for a count that needs attention.
 2. **Icon** (`env-badge > env-icon`, `icon`)
 3. **Label** (`env-badge-label`, `children`)
 
-CounterBadge has `env-counter-badge-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
+A count is `env-badge[data-count]`, with `env-badge-count-label` for its `aria-label`; DiffStat has `env-diff-stat-additions` and `env-diff-stat-deletions`.
 
 ## Adapting to width
 
@@ -155,16 +155,16 @@ A badge stays on one line and ends with an ellipsis where its container is narro
 ### envUI provides
 
 - The label as text, read in place; the icon hidden.
-- A CounterBadge's `aria-label` read instead of its number.
+- A count's `aria-label` read instead of its number.
 - A DiffStat named once, such as 12 added lines and 3 removed lines, from `messages.diffStat.label` or `formatLabel`.
 
 ### You provide
 
-- An `aria-label` on a CounterBadge whose number doesn't explain itself, such as 12 unread.
+- An `aria-label` on a count whose number doesn't explain itself, such as 12 unread.
 - A status region where a change of count must be announced.
 
 ## Changelog
 
-- **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is `CounterBadge` and `DiffCount` is `DiffStat`, with their props types and the `env-counter-badge-*` and `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-counter-badge-*` and `--env-diff-stat-*` hooks.
+- **1.0.0**: InfoChip is Badge, a pill, and its page joins this one. The `subtle` variant is `soft`. `Counter` is a Badge with `count`, which the `v1-structure` codemod writes, `.env-badge[data-count]` with `env-badge-count-label`, and `DiffCount` is `DiffStat`, with its props type and the `env-diff-stat-*` classes; the page is `badge`. DiffStat writes its numbers and its name in the locale, and its name comes from `messages.diffStat.label`. A control sets the badges inside it through the `--env-badge-*`, `--env-badge-count-*` and `--env-diff-stat-*` hooks.
 - **0.7.0**: DiffCount; a counter in a button keeps its own filled pill, except on primary and important fills.
 - **0.5.0**: Badge in six tones and three variants, and Counter; in a button, a badge or counter takes the button's text color as an outlined pill.

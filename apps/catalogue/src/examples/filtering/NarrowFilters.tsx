@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import {
   Button,
-  CounterBadge,
   DialogClose,
   EmptyState,
   List,
@@ -15,6 +14,7 @@ import {
   Text,
   useContainerSize,
   windowClasses,
+  Badge,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -89,7 +89,7 @@ export default function NarrowFilters() {
             trigger={
               <Button variant="secondary" size="sm" startIcon={<FilterList />}>
                 Filters
-                {applied > 0 && <CounterBadge value={applied} aria-label={`${applied} in use`} />}
+                {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
               </Button>
             }
             title="Filters"

@@ -9,7 +9,7 @@ export function Notices({ tone, open }: { tone: string; open: boolean }) {
       `}
     >
       <span className={`env-list-item
-        env-counter-badge`} />
+        env-counter`} />
     </section>
   );
 }

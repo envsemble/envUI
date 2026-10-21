@@ -231,14 +231,27 @@
       "parts": [
         {
           "class": "env-badge",
-          "description": "The badge: a small pill label."
+          "description": "The badge: a small pill label, or with data-count a compact count."
+        },
+        {
+          "class": "env-badge-count-label",
+          "description": "What a count means, such as 12 unread, for assistive technology; visually hidden."
         },
         {
           "class": "env-badge-label",
-          "description": "The badge's text."
+          "description": "The badge's text, or its count."
         }
       ],
       "states": [
+        {
+          "attribute": "data-count",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-badge"
+          ]
+        },
         {
           "attribute": "data-tone",
           "values": [
@@ -319,7 +332,7 @@
         }
       ],
       "uses": [
-        "CounterBadge",
+        "Badge",
         "Icon",
         "Menu",
         "Skeleton"
@@ -1267,32 +1280,6 @@
         "Spinner",
         "Theme",
         "Tooltip"
-      ]
-    },
-    "CounterBadge": {
-      "root": "env-counter-badge",
-      "source": "packages/ui/src/content/CounterBadge.tsx",
-      "parts": [
-        {
-          "class": "env-counter-badge",
-          "description": "The count badge."
-        },
-        {
-          "class": "env-counter-badge-label",
-          "description": "The count."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "neutral"
-          ],
-          "parts": [
-            "env-counter-badge"
-          ]
-        }
       ]
     },
     "DatePicker": {
@@ -4895,8 +4882,8 @@
         }
       ],
       "uses": [
+        "Badge",
         "Button",
-        "CounterBadge",
         "Icon",
         "IconButton",
         "Theme"

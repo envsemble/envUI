@@ -195,10 +195,10 @@ ruleTester.run('no-renamed-exports', rule, {
     },
     // Members of a namespace import.
     {
-      code: "import * as envui from '@envsemble/envui'; <envui.Input />; envui.Counter; <envui.Menubar />;",
+      code: "import * as envui from '@envsemble/envui'; <envui.Input />; envui.DiffCount; <envui.Menubar />;",
       errors: [
         renamed('Input', 'TextField'),
-        renamed('Counter', 'CounterBadge'),
+        renamed('DiffCount', 'DiffStat'),
         namespace('Menubar', 'envui.Menubar', 'envui.Menubar.Root'),
       ],
     },
@@ -218,8 +218,8 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [{ ...renamed('Input', 'TextField'), line: 1, column: 9 }, internal('LoadingBar')],
     },
     {
-      code: "const envui = require('@envsemble/envui'); envui.Notice; require('@envsemble/envui').Counter;",
-      errors: [renamed('Notice', 'Alert'), renamed('Counter', 'CounterBadge')],
+      code: "const envui = require('@envsemble/envui'); envui.Notice; require('@envsemble/envui').DiffCount;",
+      errors: [renamed('Notice', 'Alert'), renamed('DiffCount', 'DiffStat')],
     },
     {
       code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.GroupedRows, (await import('@envsemble/envui')).getInitials]; }",

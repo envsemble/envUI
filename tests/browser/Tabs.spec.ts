@@ -20,7 +20,7 @@ test('compact tabs make the whole rail as tall as a compact control', async ({ p
     expect(Math.abs(rail.height - control.height), theme).toBeLessThan(1);
     // The counter fits inside its tab, centred on the label's line.
     const tab = (await scope.getByRole('tab', { name: /Submissions/ }).boundingBox())!;
-    const counter = (await scope.locator('.env-counter-badge').boundingBox())!;
+    const counter = (await scope.locator('.env-badge[data-count]').boundingBox())!;
     expect(counter.y).toBeGreaterThanOrEqual(tab.y);
     expect(counter.y + counter.height).toBeLessThanOrEqual(tab.y + tab.height);
     const label = await scope.getByRole('tab', { name: /Submissions/ }).evaluate((node) => {

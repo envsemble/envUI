@@ -43,8 +43,11 @@
       "ClickableCard": { "to": ["Card"] },
       "ClickableCardProps": { "to": ["CardProps"] },
       "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
-      "Counter": { "to": ["CounterBadge"] },
-      "CounterProps": { "to": ["CounterBadgeProps"] },
+      "Counter": {
+        "to": [],
+        "use": "Counter is Badge with count in 1.0: <Badge count={value}>, solid in the accent tone; v1-structure rewrites each use."
+      },
+      "CounterProps": { "to": ["BadgeProps"] },
       "DateTimeField": { "to": ["DatePicker"] },
       "DateTimeFieldProps": { "to": ["DatePickerProps"] },
       "DiffCount": { "to": ["DiffStat"] },

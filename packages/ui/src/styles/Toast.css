@@ -151,13 +151,13 @@
   margin: 0;
   pointer-events: none;
 }
-/* The CounterBadge of hidden notices sits beyond the stack: above it at the bottom end, and below it,
-   centered, at the top center, where notices arrive from above. It takes the neutral toast colors,
-   so it reads over any page. */
+/* The count of hidden notices, a Badge, sits beyond the stack: above it at the bottom end, and below
+   it, centered, at the top center, where notices arrive from above. It takes the neutral toast
+   colors through the badge's count hooks, so it reads over any page. */
 .env-toast-viewport > .env-toast-queued-count {
+  --env-badge-count-bg: var(--env-color-bg-neutral-strong);
+  --env-badge-count-fg: var(--env-color-fg-on-strong);
   order: 1;
-  background: var(--env-color-bg-neutral-strong);
-  color: var(--env-color-fg-on-strong);
 }
 .env-toast-viewport[data-placement='bottom-end'] {
   inset-inline-end: max(var(--env-space-4), env(safe-area-inset-right));

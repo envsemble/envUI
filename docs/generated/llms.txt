@@ -83,7 +83,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions. Parts: `.env-rich-text`, `.env-rich-text-editor`.
 - [Markdown](docs/components/markdown.md): Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview. Also: MarkdownEditor. Parts: `.env-markdown`, `.env-markdown-editor`.
 - [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines. Parts: `.env-code`, `.env-code-block`, `.env-code-diff`.
-- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: CounterBadge, DiffStat. Parts: `.env-badge`, `.env-counter-badge`, `.env-diff-stat`.
+- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: DiffStat. Parts: `.env-badge`, `.env-diff-stat`.
 - [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers. Parts: `.env-table`.
 - [DescriptionList](docs/components/description-list.md): The facts about one thing, as labels and their values, beside each other or stacked by the list's own width. Parts: `.env-description-list`.
 - [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Parts: `.env-kbd`.
