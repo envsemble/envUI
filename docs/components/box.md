@@ -41,68 +41,43 @@ components:
 
 ## Overview
 
-Box is a plain block: an inset (`padding`), a size container (`container`) or a named node (`name`), with no gap, no flex and no grid. It is one of envUI's layout primitives, with [Row](../components/row.md), [Column](../components/column.md) and [Grid](../components/grid.md): it sizes to its content, never paints and has no role or keyboard behaviour of its own. Where its children need space between them, use a Column or a Row instead, or inside it.
+Box is a plain block for an inset, a size container or a name, with no layout of its own. Like [Row](row.md), [Column](column.md) and [Grid](grid.md), it sizes to its content and never paints.
 
 ```tsx example=InsetRegion
 
 ```
 
-## Anatomy
+### Size container
 
-1. **Container**: a `div`, or the element in `render`. It renders `data-env-layout="box"`, and `data-env-name` from `name`.
-2. **Padding** (`padding`): an inset on every side, a step of the spacing scale; none by default.
-3. **Children**: in the normal flow.
-
-## Variants and sizes
-
-- `padding` takes the steps of the spacing scale: `padding={4}` is 1 rem, `padding={5}` 1.5 rem, `padding={6}` 2 rem, smaller at the compact scale.
-- `container="summary"` makes the box an inline-size container named `summary`, for container queries in the application's style sheet, such as `@container summary (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
-- `container="env-window"` makes the box a window of its own on purpose, such as a preview frame: what it holds lays out at the box's window class rather than the page's. The other `env-*` names are envUI's own; don't give them to your containers.
-- `name="invitation"` names the node for dev mode and the docs, as `data-env-name`. A component's part class names a node first.
-
-## States and behaviour
-
-- Box has no states and does nothing on its own: no focus, no keys, no announcements.
-- Its rules have no specificity, so a component's part class or any class of the application overrides them.
-- `render` renders another element for its meaning, such as `render={<section />}` or `render={<aside />}`.
-
-## Do and don't
-
-### Do
-
-- Name the regions of a page, so dev mode and agents can refer to them.
-- Use a named container for a region whose own width the application's style sheet queries.
-
-### Don't
-
-- Don't nest boxes to space content; use a [Column](../components/column.md) or a [Row](../components/row.md), whose gap spaces it.
-- Don't paint a Box with a background or a border; use a [Surface](../components/surface.md).
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                                    |
-| ----------------------------------------------- | ------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the controls inside in document order. Box handles no keys. |
-
-### envUI provides
-
-- A plain element with no role of its own, or the element in `render`, such as a section, an aside or a navigation region.
-
-### You provide
-
-- A heading and a name for a box that is a region, such as `render={<section />}` with `aria-labelledby`.
-
-## Examples
-
-### A size container
-
-`container` names the box for the application's own container queries.
+`container="summary"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. Give one in a flex row a width of its own: a container takes its width from its context, never from its content.
 
 ```tsx example=SizeContainer
 
 ```
+
+## When to use
+
+```tsx do=OneInset caption="One inset on the region, and a Column inside for the gaps."
+
+```
+
+```tsx dont=BoxPerChild caption="A padded box around each child: every gap is different."
+
+```
+
+- `name` names a region for dev mode and agents, as `data-env-name`.
+- The `env-*` container names are envUI's own; `container="env-window"` only for a preview frame whose content should lay out at the box's width.
+
+## Accessibility
+
+### envUI provides
+
+- A `div` with no role of its own, or the element in `render`, such as `render={<section />}`.
+- No keys, focus or announcements of its own.
+
+### You provide
+
+- A heading and a name for a box that is a region, such as `aria-labelledby` on a section.
 
 ## Changelog
 

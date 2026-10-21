@@ -25,35 +25,35 @@
         },
         "hover": {
           "$description": "An interactive default surface, such as a card or a list row, under the pointer.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.neutral.10}"
         },
         "pressed": {
           "$description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.13}"
         }
       },
       "muted": {
         "$root": {
-          "$description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
-          "$value": "{palette.neutral.2}"
+          "$description": "The muted surface: Surface background=\"muted\", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme.",
+          "$value": "{palette.neutral.8}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.neutral.6}"
+          "$value": "{palette.neutral.12}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.13}"
         }
       },
       "raised": {
         "$root": {
           "$description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
-          "$value": "{palette.neutral.0}"
+          "$value": "{palette.neutral.4}"
         },
         "hover": {
           "$description": "An interactive raised surface under the pointer.",
-          "$value": "{palette.neutral.6}"
+          "$value": "{palette.neutral.8}"
         },
         "pressed": {
           "$description": "An interactive raised surface while pressed.",
@@ -63,13 +63,13 @@
       "popup": {
         "$root": {
           "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
-          "$value": "{palette.neutral.0}"
+          "$value": "{palette.neutral.4}"
         },
         "hover": {
           "$description": "A highlighted row in a popup.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.neutral.10}"
         },
-        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.8}" }
+        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.13}" }
       },
       "field": { "$description": "Text fields and other inputs.", "$value": "{palette.neutral.0}" },
       "overlay": {
@@ -121,7 +121,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.06
+              "alpha": 0.1
             }
           },
           "hover": {
@@ -137,7 +137,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.29
+              "alpha": 0.25
             }
           }
         },
@@ -455,15 +455,15 @@
       "muted": {
         "$root": {
           "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
-          "$value": "{palette.neutral.60}"
+          "$value": "{palette.neutral.65}"
         },
         "hover": {
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
-          "$value": "{palette.neutral.65}"
+          "$value": "{palette.neutral.70}"
         },
         "pressed": {
           "$description": "Muted text while pressed.",
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.75}"
         }
       },
       "control": {
@@ -473,23 +473,23 @@
       "link": {
         "$root": {
           "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
-          "$value": "{palette.blue.55}"
+          "$value": "{palette.blue.60}"
         },
-        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.60}" },
-        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.65}" }
+        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.65}" },
+        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.70}" }
       },
       "link-on-tint": {
         "$root": {
           "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
-          "$value": "{palette.blue.60}"
+          "$value": "{palette.blue.65}"
         },
         "hover": {
           "$description": "A link on a tint under the pointer.",
-          "$value": "{palette.blue.65}"
+          "$value": "{palette.blue.70}"
         },
         "pressed": {
           "$description": "A link on a tint while pressed.",
-          "$value": "{palette.blue.70}"
+          "$value": "{palette.blue.75}"
         }
       },
       "accent": {
@@ -534,7 +534,7 @@
       "muted": {
         "$root": {
           "$description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.14}"
         },
         "hover": {
           "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
@@ -609,7 +609,7 @@
           },
           "pressed": {
             "$description": "An invalid field border while pressed.",
-            "$value": "{palette.red.40}"
+            "$value": "{palette.red.45}"
           }
         }
       },
@@ -698,18 +698,18 @@
       "$description": "Component tokens of list items: they take another role in each scheme, which no one role names.",
       "bg": {
         "$root": {
-          "$description": "The fill of a list item: the default surface in light, the muted one in dark, so items stand apart from the page and from a surface in both.",
-          "$value": "{color.bg.default}",
+          "$description": "The fill of a list item: the muted surface in both themes, so items stand apart from the page and from a surface; high contrast keeps the default surface in light.",
+          "$value": "{color.bg.muted}",
           "$extensions": { "com.envsemble.envui": { "component": "List items" } }
         },
         "hover": {
           "$description": "A list item under the pointer.",
-          "$value": "{color.bg.default.hover}",
+          "$value": "{color.bg.muted.hover}",
           "$extensions": { "com.envsemble.envui": { "component": "List items" } }
         },
         "pressed": {
           "$description": "A list item while pressed.",
-          "$value": "{color.bg.default.pressed}",
+          "$value": "{color.bg.muted.pressed}",
           "$extensions": { "com.envsemble.envui": { "component": "List items" } }
         }
       }

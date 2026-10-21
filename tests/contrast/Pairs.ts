@@ -72,7 +72,7 @@ const layerPressed = '--env-color-bg-neutral-subtle-pressed';
 const navigationHover = '--env-color-bg-navigation-hover';
 const navigationPressed = '--env-color-bg-navigation-pressed';
 // Component tokens that take a different role per theme.
-const row = '--env-color-list-item-bg'; // List rows: the default surface in light, the muted one in dark
+const row = '--env-color-list-item-bg'; // List rows: the muted surface in both themes
 const rowHover = '--env-color-list-item-bg-hover';
 const rowPressed = '--env-color-list-item-bg-pressed';
 
