@@ -21,6 +21,11 @@ export interface ResizeOptions {
   min: number;
   /** The largest size. */
   max: number;
+  /**
+   * The largest size the room allows, in `unit`, read from the handle as a drag starts or a key
+   * moves it: where it is under `max`, the drag starts at it and goes no further.
+   */
+  room?: (handle: HTMLElement) => number;
   /** How far an arrow key moves it; 10 by default. */
   step?: number;
   /** How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default. */
@@ -72,6 +77,8 @@ interface Drag {
   pointerId: number;
   start: number;
   startValue: number;
+  /** The largest size for this drag: max, or less where the room allows less. */
+  max: number;
   /** Size units per pixel of pointer movement, with the axis's and the direction's sign. */
   scale: number;
 }
@@ -89,6 +96,7 @@ export function useResize({
   value,
   min,
   max,
+  room,
   step = 10,
   largeStep = step * 10,
   unit = 'px',
@@ -112,8 +120,10 @@ export function useResize({
     const rtl = axis === 'inline' && (provided ?? getComputedStyle(element).direction) === 'rtl';
     return (rtl ? -1 : 1) * (reverse ? -1 : 1);
   };
-  const change = (next: number, committed: boolean) =>
-    onChange(clamp(next, min, max), { committed });
+  const change = (next: number, committed: boolean, upper = max) =>
+    onChange(clamp(next, min, upper), { committed });
+  /** The largest size the room allows now, never under min nor over max. */
+  const upperAt = (handle: HTMLElement) => (room ? clamp(room(handle), min, max) : max);
 
   const position = (event: ReactPointerEvent<HTMLElement>) =>
     axis === 'inline' ? event.clientX : event.clientY;
@@ -139,10 +149,13 @@ export function useResize({
     const perUnit =
       unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
     const perPixel = perUnit * layoutPerScreen;
+    const upper = upperAt(event.currentTarget);
     drag.current = {
       pointerId: event.pointerId,
       start: position(event),
-      startValue: value,
+      // A size beyond the room shows at the room's size, so the drag starts from there.
+      startValue: Math.min(value, upper),
+      max: upper,
       scale: perPixel * sign(event.currentTarget),
     };
     setDragging(true);
@@ -152,7 +165,12 @@ export function useResize({
     if (!current || current.pointerId !== event.pointerId) return;
     // A button released outside the window can arrive as a move without it.
     if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) end(event);
-    else change(current.startValue + (position(event) - current.start) * current.scale, false);
+    else
+      change(
+        current.startValue + (position(event) - current.start) * current.scale,
+        false,
+        current.max,
+      );
   };
   const end = (event: ReactPointerEvent<HTMLElement>) => {
     const current = drag.current;
@@ -164,26 +182,33 @@ export function useResize({
     // A cancelled drag, such as one the browser took over for scrolling, or one whose pointer the
     // handle lost, returns to where it began.
     if (event.type === 'pointercancel' || event.type === 'lostpointercapture')
-      change(current.startValue, true);
-    else change(current.startValue + (position(event) - current.start) * current.scale, true);
+      change(current.startValue, true, current.max);
+    else
+      change(
+        current.startValue + (position(event) - current.start) * current.scale,
+        true,
+        current.max,
+      );
   };
 
   const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (disabled || event.altKey || event.ctrlKey || event.metaKey) return;
     const amount = event.shiftKey ? largeStep : step;
     const direction = sign(event.currentTarget);
+    const upper = upperAt(event.currentTarget);
+    const from = Math.min(value, upper);
     const forward = axis === 'inline' ? 'ArrowRight' : 'ArrowDown';
     const backward = axis === 'inline' ? 'ArrowLeft' : 'ArrowUp';
     let next: number;
-    if (event.key === forward) next = value + amount * direction;
-    else if (event.key === backward) next = value - amount * direction;
-    else if (event.key === 'PageUp') next = value + largeStep;
-    else if (event.key === 'PageDown') next = value - largeStep;
+    if (event.key === forward) next = from + amount * direction;
+    else if (event.key === backward) next = from - amount * direction;
+    else if (event.key === 'PageUp') next = from + largeStep;
+    else if (event.key === 'PageDown') next = from - largeStep;
     else if (event.key === 'Home') next = min;
-    else if (event.key === 'End') next = max;
+    else if (event.key === 'End') next = upper;
     else return;
     event.preventDefault();
-    change(next, true);
+    change(next, true, upper);
   };
 
   return {

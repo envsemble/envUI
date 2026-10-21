@@ -19,6 +19,7 @@ import {
   Tree,
   Menubar,
   Panes,
+  readPanesSize,
   TopBar,
   Menu,
   Table,
@@ -227,6 +228,18 @@ export function HydrationApp() {
           <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>
           <Panes.Divider label="Hydrated split" />
           <Panes.Supporting label="Hydrated supporting">Hydrated supporting pane</Panes.Supporting>
+        </Panes.Root>
+        {/* A width kept under `persist`, which the server read from the request's cookies and the
+            page passes on as it hydrates: the server's markup has it, and nothing moves. */}
+        <Panes.Root
+          behavior="supporting"
+          splitAt="medium"
+          persist="hydrated-kept-panes"
+          defaultSize={readPanesSize('theme=dark; hydrated-kept-panes=30', 'hydrated-kept-panes')}
+        >
+          <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
+          <Panes.Divider label="Hydrated kept split" />
+          <Panes.Supporting label="Hydrated kept supporting">Kept supporting pane</Panes.Supporting>
         </Panes.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
           <PanelDock.Root

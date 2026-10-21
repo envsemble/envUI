@@ -7,6 +7,7 @@ export * from './foundations/useContainerSize.js';
 export * from './layout/Scaffold.js';
 export * as Panes from './layout/Panes.js';
 export type { PanesBehavior, PanesSplitAt } from './layout/Panes.js';
+export { readPanesSize } from './layout/panesSize.js';
 export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
 export * from './navigation/TopBar.js';

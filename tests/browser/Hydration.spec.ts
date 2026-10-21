@@ -84,6 +84,11 @@ test('public components hydrate server output without recoverable errors', async
   await expect(conversation.getByRole('article')).toHaveCount(2);
   await expect(conversation.getByRole('article').last()).toHaveText('Hydrated message');
   await expect(composer).toHaveValue('');
+  // A width the server read from a cookie stays as the page hydrates: nothing moves.
+  await expect(page.getByRole('separator', { name: 'Hydrated kept split' })).toHaveAttribute(
+    'aria-valuetext',
+    '30 rem',
+  );
   // The server renders the panes side by side; the divider moves the supporting pane's edge.
   const split = page.getByRole('separator', { name: 'Hydrated split' });
   await expect(split).toHaveAttribute('aria-valuetext', '22.5 rem');

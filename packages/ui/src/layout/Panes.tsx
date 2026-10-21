@@ -16,6 +16,7 @@ import {
   type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
+import { CloseButton } from '../actions/CloseButton.js';
 import { panes } from '../foundations/messages/panes.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
@@ -24,6 +25,7 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { readPanesSize, writePanesSize } from './panesSize.js';
 
 /**
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
@@ -57,11 +59,16 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   open?: boolean;
   /**
-   * Called with false when people close what `open` shows below `splitAt`: Escape or a press on
-   * the scrim closes the supporting sheet, and the back button returns from the detail to the
-   * list. Set `open` from it.
+   * Called with false when people close what `open` shows below `splitAt`: Escape, the close
+   * button or a press on the scrim closes the supporting sheet, and the back button returns from
+   * the detail to the list. Set `open` from it.
    */
   onOpenChange?: (open: boolean) => void;
+  /**
+   * The name of the supporting sheet's close button, which shows only while the pane is a sheet.
+   * @default 'Close', or EnvUIProvider's messages.panes.close
+   */
+  closeLabel?: string;
   /**
    * The back button's label in a list-detail's detail, below `splitAt`. Name where it goes, such as
    * All projects.
@@ -95,9 +102,11 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   maxSize?: number;
   /**
-   * Keeps the width people choose under this localStorage key, for Panes the application doesn't
-   * control; a double click on the divider forgets it. It is read after the first render, so the
-   * server's markup and hydration agree.
+   * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
+   * control; a double click on the divider forgets it. Read it on the server with
+   * `readPanesSize(cookieHeader, key)` and pass it as `defaultSize`, so the server's markup has it
+   * and nothing moves as the page hydrates. Without that, the kept width applies after the first
+   * render.
    */
   persist?: string;
   /**
@@ -139,6 +148,7 @@ interface PanesContextValue {
   open: boolean;
   close: () => void;
   backLabel: string | undefined;
+  closeLabel: string | undefined;
   size: number;
   min: number;
   max: number;
@@ -157,37 +167,38 @@ function usePanes(part: string) {
   return context;
 }
 
-function readStoredSize(key: string) {
-  try {
-    const stored = window.localStorage.getItem(key);
-    const size = stored === null ? NaN : Number(stored);
-    return Number.isFinite(size) ? size : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function writeStoredSize(key: string, size: number | undefined) {
-  try {
-    if (size === undefined) window.localStorage.removeItem(key);
-    else window.localStorage.setItem(key, String(size));
-  } catch {
-    // Panes still work when browser storage is unavailable.
-  }
-}
-
 /** Sizes are kept to a hundredth of a rem. */
 const round = (value: number) => Math.round(value * 100) / 100;
 
 /** Whether an element shows, as CSS decided: it has a box. */
 const shows = (element: HTMLElement | null) => element !== null && element.offsetParent !== null;
 
+/** The widest the resized pane can be, in rem, beside the other pane's least width. */
+function roomFor(divider: HTMLElement) {
+  const root = divider.parentElement;
+  if (!root) return Infinity;
+  const rem =
+    Number.parseFloat(getComputedStyle(divider.ownerDocument.documentElement).fontSize) || 16;
+  const other =
+    Number.parseFloat(getComputedStyle(root).getPropertyValue('--env-panes-other-min')) || 16;
+  return round((root.clientWidth - divider.offsetWidth) / rem - other);
+}
+
+/** What Tab reaches inside an element, in order. */
+const tabbables = (element: HTMLElement) =>
+  [
+    ...element.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]',
+    ),
+  ].filter((candidate) => candidate.tabIndex >= 0 && candidate.getClientRects().length > 0);
+
 /**
  * Two panes side by side, after Material's pane patterns, and how they behave in less room: a main
  * pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time.
- * Invisible structure that never paints, except the supporting pane while it is a sheet. Its own
- * width decides, in CSS: it is the env-panes container. Each pane scrolls on its own when Panes
- * has a height, as in a Scaffold's body; an optional Panes.Divider resizes them.
+ * Invisible structure that never paints, except the supporting pane while it is a sheet, which is
+ * modal. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own
+ * when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes
+ * them.
  */
 function Root({
   behavior,
@@ -195,6 +206,7 @@ function Root({
   open = false,
   onOpenChange,
   backLabel,
+  closeLabel,
   size: controlledSize,
   defaultSize = 22.5,
   onSizeChange,
@@ -217,7 +229,7 @@ function Root({
   const [chosenSize, setChosenSize] = useState<number>();
   const size = clamp(controlledSize ?? chosenSize ?? defaultSize);
   useLayoutEffect(() => {
-    setChosenSize(persist ? readStoredSize(persist) : undefined);
+    setChosenSize(persist ? readPanesSize(document.cookie, persist) : undefined);
   }, [persist]);
 
   const latest = useRef({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
@@ -227,7 +239,7 @@ function Root({
     const value = current.clamp(next);
     if (current.controlledSize === undefined) {
       setChosenSize(value);
-      if (committed && current.persist) writeStoredSize(current.persist, value);
+      if (committed && current.persist) writePanesSize(current.persist, value);
     }
     if (committed || value !== current.size) current.onSizeChange?.(value, { committed });
   }, []);
@@ -236,7 +248,7 @@ function Root({
     const value = current.clamp(current.defaultSize);
     if (current.controlledSize === undefined) {
       setChosenSize(undefined);
-      if (current.persist) writeStoredSize(current.persist, undefined);
+      if (current.persist) writePanesSize(current.persist, undefined);
     }
     current.onSizeChange?.(value, { committed: true });
   }, []);
@@ -247,8 +259,21 @@ function Root({
   const resizedId = `${useId()}-resized`;
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo<PanesContextValue>(
-    () => ({ behavior, open, close, backLabel, size, min, max, change, reset, resizedId, listRef }),
-    [behavior, open, close, backLabel, size, min, max, change, reset, resizedId],
+    () => ({
+      behavior,
+      open,
+      close,
+      backLabel,
+      closeLabel,
+      size,
+      min,
+      max,
+      change,
+      reset,
+      resizedId,
+      listRef,
+    }),
+    [behavior, open, close, backLabel, closeLabel, size, min, max, change, reset, resizedId],
   );
   return (
     <PanesContext value={context}>
@@ -287,35 +312,65 @@ function Main({ label, className, ...props }: PaneProps) {
 
 /**
  * The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it
- * is a sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a
- * compact one. Opening it moves focus into it, and Escape or a press on the scrim closes it, which
- * returns focus to where it was.
+ * is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet
+ * in a compact one. As a sheet it is a dialog with a close button: the rest of the Panes is inert,
+ * focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim
+ * closes it, which returns focus to where it was.
  */
-function Supporting({ label, className, onKeyDown, ref, id, ...props }: NamedPaneProps) {
-  const { open, close, resizedId } = usePanes('Supporting');
+function Supporting({ label, className, onKeyDown, ref, id, children, ...props }: NamedPaneProps) {
+  const { open, close, closeLabel, resizedId } = usePanes('Supporting');
+  const messages = useMessages('panes', panes);
   const pane = useRef<HTMLDivElement | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
-  const wasOpen = useRef(open);
-  // Only a sheet takes focus as it opens and gives it back as it closes; side by side, the pane is
-  // there all along. CSS decides which it is: a sheet is positioned over the main pane.
+  // Whether the pane is a sheet: CSS decides, positioning it over the main pane below splitAt. Read
+  // while it is open, again as the Panes' width changes; side by side it is there all along.
+  const [sheet, setSheet] = useState(false);
   useLayoutEffect(() => {
     const element = pane.current;
-    const opened = open && !wasOpen.current;
-    const closed = !open && wasOpen.current;
-    wasOpen.current = open;
-    if (!element) return;
-    const sheet = getComputedStyle(element).position === 'absolute';
-    if (opened && sheet) {
-      const active = element.ownerDocument.activeElement;
-      returnFocus.current = active instanceof HTMLElement ? active : null;
-      element.focus();
-    } else if (closed) {
+    if (!open || !element) {
+      setSheet(false);
+      return;
+    }
+    const check = () => setSheet(getComputedStyle(element).position === 'absolute');
+    check();
+    const observer = new ResizeObserver(check);
+    if (element.parentElement) observer.observe(element.parentElement);
+    return () => observer.disconnect();
+  }, [open]);
+  // As a sheet, the rest of the Panes is inert and focus moves in; as it closes, focus goes back to
+  // where it was. A sheet that becomes a pane beside the main one, as the Panes widen, keeps focus
+  // where it is.
+  const openRef = useRef(open);
+  openRef.current = open;
+  useLayoutEffect(() => {
+    const element = pane.current;
+    if (!sheet || !element) return;
+    const document = element.ownerDocument;
+    const active = document.activeElement;
+    returnFocus.current = active instanceof HTMLElement ? active : null;
+    if (!element.contains(active)) element.focus();
+    const others = [...(element.parentElement?.children ?? [])].filter(
+      (other): other is HTMLElement =>
+        other instanceof HTMLElement &&
+        other !== element &&
+        !other.inert &&
+        // The scrim stays live: a press on it closes the sheet.
+        !other.classList.contains('env-panes-scrim'),
+    );
+    for (const other of others) other.inert = true;
+    return () => {
+      for (const other of others) other.inert = false;
       const target = returnFocus.current;
       returnFocus.current = null;
-      if (target?.isConnected && element.contains(element.ownerDocument.activeElement))
-        target.focus();
-    }
-  }, [open]);
+      if (openRef.current) return;
+      const now = document.activeElement;
+      const lost = now === null || now === document.body || element.contains(now);
+      if (!target?.isConnected || !lost) return;
+      // WebKit lets focus onto what was inert only once styles are worked out again.
+      target.getBoundingClientRect();
+      target.focus();
+    };
+  }, [sheet]);
   return (
     <div
       tabIndex={-1}
@@ -325,17 +380,42 @@ function Supporting({ label, className, onKeyDown, ref, id, ...props }: NamedPan
         pane.current = node;
         setRef(ref, node);
       }}
-      role="region"
+      role={sheet ? 'dialog' : 'region'}
+      aria-modal={sheet || undefined}
       aria-label={label}
       className={classNames('env-panes-supporting', className)}
       onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
         onKeyDown?.(event);
-        if (event.defaultPrevented || event.key !== 'Escape' || !open) return;
-        if (getComputedStyle(event.currentTarget).position !== 'absolute') return;
-        event.preventDefault();
-        close();
+        if (event.defaultPrevented || !sheet) return;
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          close();
+          return;
+        }
+        // Tab stays in the sheet, from its last stop to its first and back.
+        if (event.key !== 'Tab') return;
+        const stops = tabbables(event.currentTarget);
+        const first = stops[0];
+        const last = stops[stops.length - 1];
+        const active = event.currentTarget.ownerDocument.activeElement;
+        if (!first || !last) {
+          event.preventDefault();
+        } else if (event.shiftKey && (active === first || active === event.currentTarget)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }}
-    />
+    >
+      {/* Always rendered, so the server's markup has it; the style sheet shows it only while the
+          pane is a sheet, and hidden it is out of the tab order and the accessibility tree. */}
+      <div className="env-panes-close">
+        <CloseButton aria-label={closeLabel ?? messages.close} onClick={close} />
+      </div>
+      {children}
+    </div>
   );
 }
 
@@ -442,6 +522,9 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
       value={size}
       min={min}
       max={max}
+      // The widest the resized pane can be in the Panes' width, leaving the other pane its room,
+      // read as a drag starts or a key moves the divider: a drag starts at the width that shows.
+      room={roomFor}
       step={1}
       largeStep={5}
       onChange={(value, { committed }) => change(value, committed)}

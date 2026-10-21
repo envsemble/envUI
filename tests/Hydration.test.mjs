@@ -41,6 +41,8 @@ test('prepare compiled-public-API hydration acceptance fixture', async () => {
   assert.match(markup, /Server value/);
   // The server renders the panes with their size and the side-by-side split, which CSS decides.
   assert.match(markup, /--env-panes-size:22\.5rem/);
+  // A width kept in a cookie, which the server read: its markup has it.
+  assert.match(markup, /--env-panes-size:30rem/);
   assert.match(markup, /data-split-at="medium"/);
   // The server wrote the relative time in its own language; the browser corrects it.
   assert.match(markup, />in 2 days<\/time>/);

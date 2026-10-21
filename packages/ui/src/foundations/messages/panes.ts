@@ -9,6 +9,8 @@ export const panes = {
   size: ({ size }: { size: string }) => `${size} rem`,
   /** The back button of a list-detail's detail while one pane shows at a time. */
   back: 'Back',
+  /** The close button of the supporting pane while it is a sheet. */
+  close: 'Close',
 };
 
 export type PanesMessages = typeof panes;

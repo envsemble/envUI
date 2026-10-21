@@ -58,8 +58,9 @@
   border-inline-start: var(--env-control-border-width) solid var(--env-color-border-muted);
 }
 
-/* Supporting, below data-split-at: the supporting pane is a bottom sheet over the main pane while
-   open, as wide as the panes and at most 85% of their height, over a scrim that closes it. */
+/* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
+   while open, as wide as the panes and at most 85% of their height, over a scrim that closes it,
+   with its close button at the top end. */
 .env-panes-supporting {
   position: absolute;
   inset-inline: 0;
@@ -77,6 +78,16 @@
 }
 .env-panes[data-behavior='supporting'][data-open] > .env-panes-supporting {
   display: block;
+}
+/* The sheet's close button stays at its top end as the sheet scrolls; side by side it hides. */
+.env-panes-close {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--env-z-raised);
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--env-space-2);
+  background: var(--env-color-bg-raised);
 }
 .env-panes-scrim {
   display: none;
@@ -139,6 +150,11 @@
   .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-scrim {
     display: none;
   }
+  .env-panes:is([data-split-at='medium'])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
+    display: none;
+  }
   .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-list {
     display: block;
     grid-column: 1;
@@ -176,6 +192,11 @@
     > .env-panes-scrim {
     display: none;
   }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
+    display: none;
+  }
   .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
     > .env-panes-list {
     display: block;
@@ -210,6 +231,11 @@
     background: none;
   }
   .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-scrim {
+    display: none;
+  }
+  .env-panes:is([data-split-at])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
     display: none;
   }
   .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-list {

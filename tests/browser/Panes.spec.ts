@@ -33,44 +33,91 @@ test.describe('Panes, supporting', () => {
     expect((await box(main)).height).toBeCloseTo(24 * 16 - 2, 0);
   });
 
-  test('below splitAt it is a sheet while open, which Escape and the scrim close', async ({
+  test(
+    'below splitAt it is a modal sheet while open, which Escape, its button and the scrim close',
+    { tag: '@engines' },
+    async ({ page }) => {
+      await page.goto(panes('&width=45rem'));
+      const root = page.getByTestId('supporting');
+      const supporting = root.locator('.env-panes-supporting');
+      const main = root.locator('.env-panes-main');
+      const close = supporting.getByRole('button', { name: 'Close' });
+      await expect(supporting).toBeHidden();
+      await expect(root.getByRole('separator')).toBeHidden();
+      const show = root.getByRole('button', { name: 'Show details' });
+      // From the keyboard, as WebKit focuses no button that a press activates.
+      await show.focus();
+      await page.keyboard.press('Enter');
+      // Medium: a side sheet at the end, as tall as the panes, over a scrim; a modal dialog that
+      // focus moves into, with the rest of the panes inert.
+      const sheet = root.getByRole('dialog', { name: 'Details' });
+      await expect(sheet).toBeVisible();
+      await expect(sheet).toHaveAttribute('aria-modal', 'true');
+      await expect(sheet).toBeFocused();
+      await expect(sheet).toHaveCSS('position', 'absolute');
+      await expect(main).toHaveJSProperty('inert', true);
+      const placed = await box(sheet);
+      const frame = await box(page.getByTestId('supporting-frame'));
+      expect(placed.x + placed.width).toBeCloseTo(frame.x + frame.width - 1, 0);
+      expect(placed.height).toBeCloseTo(frame.height - 2, 0);
+      await expect(root.locator('.env-panes-scrim')).toBeVisible();
+      // Tab stays in the sheet: its close button, its content, and round again.
+      await page.keyboard.press('Tab');
+      await expect(close).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(sheet.getByRole('button', { name: 'Edit details' })).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(close).toBeFocused();
+      await page.keyboard.press('Shift+Tab');
+      await expect(sheet.getByRole('button', { name: 'Edit details' })).toBeFocused();
+      await page.keyboard.press('Escape');
+      await expect(supporting).toBeHidden();
+      await expect(show).toBeFocused();
+      await expect(main).toHaveJSProperty('inert', false);
+      // Its close button and the scrim close it too.
+      await page.keyboard.press('Enter');
+      await close.click();
+      await expect(supporting).toBeHidden();
+      await expect(show).toBeFocused();
+      await show.click();
+      await root.locator('.env-panes-scrim').click({ position: { x: 10, y: 10 } });
+      await expect(supporting).toBeHidden();
+      // Compact: a bottom sheet across the width, shorter than the panes.
+      await setWidth(page, '30rem');
+      await show.click();
+      const bottom = await box(supporting);
+      const narrow = await box(page.getByTestId('supporting-frame'));
+      expect(bottom.width).toBeCloseTo(narrow.width - 2, 0);
+      expect(bottom.y + bottom.height).toBeCloseTo(narrow.y + narrow.height - 1, 0);
+      expect(bottom.height).toBeLessThan(narrow.height * 0.9);
+      // Wider again, the panes sit side by side, whatever open says: a region again, without its
+      // close button, beside a main pane that isn't inert.
+      await page.getByTestId('supporting-frame').evaluate((frame) => {
+        frame.style.inlineSize = '80rem';
+      });
+      await expect(supporting).toHaveCSS('position', 'static');
+      await expect(root.getByRole('region', { name: 'Details' })).toBeVisible();
+      await expect(close).toBeHidden();
+      await expect(main).toHaveJSProperty('inert', false);
+      await expect(root.locator('.env-panes-scrim')).toBeHidden();
+    },
+  );
+
+  test('the divider starts from the width that shows, where the room allows less than the size', async ({
     page,
   }) => {
-    await page.goto(panes('&width=45rem'));
+    await page.goto(panes('&width=45rem&split=medium&size=40'));
     const root = page.getByTestId('supporting');
+    const divider = root.getByRole('separator', { name: 'Resize details' });
     const supporting = root.getByRole('region', { name: 'Details' });
-    await expect(supporting).toBeHidden();
-    await expect(root.getByRole('separator')).toBeHidden();
-    const show = root.getByRole('button', { name: 'Show details' });
-    await show.click();
-    // Medium: a side sheet at the end, as tall as the panes, over a scrim; focus moves into it.
-    await expect(supporting).toBeVisible();
-    await expect(supporting).toBeFocused();
-    await expect(supporting).toHaveCSS('position', 'absolute');
-    const sheet = await box(supporting);
-    const frame = await box(page.getByTestId('supporting-frame'));
-    expect(sheet.x + sheet.width).toBeCloseTo(frame.x + frame.width - 1, 0);
-    expect(sheet.height).toBeCloseTo(frame.height - 2, 0);
-    await expect(root.locator('.env-panes-scrim')).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(supporting).toBeHidden();
-    await expect(show).toBeFocused();
-    // The scrim closes it too.
-    await show.click();
-    await root.locator('.env-panes-scrim').click({ position: { x: 10, y: 10 } });
-    await expect(supporting).toBeHidden();
-    // Compact: a bottom sheet across the width, shorter than the panes.
-    await setWidth(page, '30rem');
-    await show.click();
-    const bottom = await box(supporting);
-    const narrow = await box(page.getByTestId('supporting-frame'));
-    expect(bottom.width).toBeCloseTo(narrow.width - 2, 0);
-    expect(bottom.y + bottom.height).toBeCloseTo(narrow.y + narrow.height - 1, 0);
-    expect(bottom.height).toBeLessThan(narrow.height * 0.9);
-    // Wider again, the panes sit side by side, whatever open says, and Escape leaves them be.
-    await setWidth(page, '80rem');
-    await expect(supporting).toHaveCSS('position', 'static');
-    await expect(root.locator('.env-panes-scrim')).toBeHidden();
+    const shown = (await box(supporting)).width / 16;
+    expect(shown).toBeLessThan(30);
+    // ArrowRight narrows the supporting pane by 1 rem from the width it shows, not from 40 rem.
+    await divider.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(async () => (await box(supporting)).width / 16).toBeCloseTo(shown - 1, 0);
+    const value = Number.parseFloat((await divider.getAttribute('aria-valuetext'))!);
+    expect(value).toBeLessThan(30);
   });
 
   test('splitAt sets where the panes sit side by side', async ({ page }) => {
@@ -115,7 +162,8 @@ test.describe('Panes, supporting', () => {
       await page.mouse.up();
       await expect(divider).toHaveAttribute('aria-valuetext', '20.5 rem');
       await expect(page.getByTestId('sizes')).toContainText('20.5!');
-      // The size is kept, and read again after the first render.
+      // The size is kept in a cookie, and read again after the first render.
+      expect(await page.evaluate(() => document.cookie)).toContain('fixture-panes=20.5');
       await page.reload();
       await expect(page.getByRole('separator', { name: 'Resize details' })).toHaveAttribute(
         'aria-valuetext',
@@ -127,7 +175,7 @@ test.describe('Panes, supporting', () => {
         'aria-valuetext',
         '22.5 rem',
       );
-      expect(await page.evaluate(() => localStorage.getItem('fixture-panes'))).toBeNull();
+      expect(await page.evaluate(() => document.cookie)).not.toContain('fixture-panes=');
     },
   );
 
