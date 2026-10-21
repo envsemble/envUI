@@ -15,18 +15,22 @@
           "pressed": { "$value": "{palette.neutral.15}" }
         },
         "page": {
+          "$root": { "$value": "{palette.neutral.0}" },
           "hover": { "$value": "{palette.neutral.4}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },
         "default": {
+          "$root": { "$value": "{palette.neutral.4}" },
           "hover": { "$value": "{palette.neutral.8}" },
           "pressed": { "$value": "{palette.neutral.10}" }
         },
         "muted": {
+          "$root": { "$value": "{palette.neutral.2}" },
           "hover": { "$value": "{palette.neutral.6}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },
         "raised": {
+          "$root": { "$value": "{palette.neutral.0}" },
           "hover": { "$value": "{palette.neutral.4}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },

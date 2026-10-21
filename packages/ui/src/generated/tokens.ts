@@ -385,7 +385,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-default',
     type: 'color',
     values: {
-      light: '#eff1f5',
+      light: '#f6f8fc',
       dark: '#28292b',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#28292b',
@@ -396,7 +396,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-default-hover',
     type: 'color',
     values: {
-      light: '#e2e4e8',
+      light: '#dbdde1',
       dark: '#383a3d',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#303234',
@@ -407,7 +407,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-default-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#424447',
       'light-high-contrast': '#dbdde1',
       'dark-high-contrast': '#383a3d',
@@ -528,7 +528,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted',
     type: 'color',
     values: {
-      light: '#f6f8fc',
+      light: '#ffffff',
       dark: '#343638',
       'light-high-contrast': '#f6f8fc',
       'dark-high-contrast': '#343638',
@@ -539,7 +539,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-hover',
     type: 'color',
     values: {
-      light: '#e8eaee',
+      light: '#eff1f5',
       dark: '#424447',
       'light-high-contrast': '#e8eaee',
       'dark-high-contrast': '#383a3d',
@@ -550,7 +550,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#e2e4e8',
       dark: '#4b4d51',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#424447',
@@ -594,7 +594,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.09)',
+      light: 'rgb(30 31 33 / 0.06)',
       dark: 'rgb(232 234 238 / 0.125)',
       'light-high-contrast': 'rgb(30 31 33 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
@@ -616,7 +616,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.29)',
+      light: 'rgb(30 31 33 / 0.27)',
       dark: 'rgb(232 234 238 / 0.28)',
       'light-high-contrast': 'rgb(30 31 33 / 0.18)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
@@ -682,7 +682,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-subtle-pressed',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.1)',
+      light: 'rgb(30 31 33 / 0.09)',
       dark: 'rgb(232 234 238 / 0.1)',
       'light-high-contrast': 'rgb(30 31 33 / 0.08)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
@@ -715,7 +715,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-page',
     type: 'color',
     values: {
-      light: '#ffffff',
+      light: '#e8eaee',
       dark: '#1e1f21',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#1e1f21',
@@ -726,7 +726,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-page-hover',
     type: 'color',
     values: {
-      light: '#eff1f5',
+      light: '#dbdde1',
       dark: '#2c2d30',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#28292b',
@@ -737,7 +737,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-page-pressed',
     type: 'color',
     values: {
-      light: '#e2e4e8',
+      light: '#d2d4d8',
       dark: '#383a3d',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#303234',
@@ -781,7 +781,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
-      light: '#ffffff',
+      light: '#f6f8fc',
       dark: '#28292b',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#28292b',
@@ -792,7 +792,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-hover',
     type: 'color',
     values: {
-      light: '#e8eaee',
+      light: '#dbdde1',
       dark: '#383a3d',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#303234',
@@ -803,7 +803,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#424447',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#383a3d',
@@ -814,7 +814,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected',
     type: 'color',
     values: {
-      light: '#dbe8fd',
+      light: '#d2e1fc',
       dark: '#293a55',
       'light-high-contrast': '#c8dbfc',
       'dark-high-contrast': '#1d2e47',
@@ -825,7 +825,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected-hover',
     type: 'color',
     values: {
-      light: '#d2e1fc',
+      light: '#bfd5fb',
       dark: '#33445f',
       'light-high-contrast': '#bfd5fb',
       'dark-high-contrast': '#253650',
@@ -836,7 +836,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-selected-pressed',
     type: 'color',
     values: {
-      light: '#cddefc',
+      light: '#c3d8fc',
       dark: '#3c4e69',
       'light-high-contrast': '#bad2fb',
       'dark-high-contrast': '#293a55',
@@ -1298,7 +1298,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-accent',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1320,7 +1320,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-danger',
     type: 'color',
     values: {
-      light: '#b72b20',
+      light: '#ac190f',
       dark: '#f8aca6',
       'light-high-contrast': '#7a0200',
       'dark-high-contrast': '#ffe4e2',
@@ -1342,7 +1342,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-done',
     type: 'color',
     values: {
-      light: '#7a3fc8',
+      light: '#7032bf',
       dark: '#d2b2f7',
       'light-high-contrast': '#53009a',
       'dark-high-contrast': '#f1e6ff',
@@ -1353,7 +1353,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link',
     type: 'color',
     values: {
-      light: '#0366da',
+      light: '#005cc8',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1364,7 +1364,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1375,7 +1375,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint-hover',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#b5cffb',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1386,7 +1386,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-on-tint-pressed',
     type: 'color',
     values: {
-      light: '#004aa2',
+      light: '#00408f',
       dark: '#cddefc',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
@@ -1397,7 +1397,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-hover',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#8ab3f5',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1408,7 +1408,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
@@ -1485,7 +1485,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-success',
     type: 'color',
     values: {
-      light: '#176f35',
+      light: '#02652b',
       dark: '#7ad197',
       'light-high-contrast': '#00441a',
       'dark-high-contrast': '#a5fdc1',
@@ -1496,7 +1496,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-warning',
     type: 'color',
     values: {
-      light: '#8a5504',
+      light: '#7e4b00',
       dark: '#ebb750',
       'light-high-contrast': '#553200',
       'dark-high-contrast': '#ffe8be',
@@ -1507,7 +1507,7 @@ export const tokens = {
     cssVariable: '--env-color-list-item-bg',
     type: 'color',
     values: {
-      light: '#eff1f5',
+      light: '#f6f8fc',
       dark: '#343638',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#343638',
@@ -1518,7 +1518,7 @@ export const tokens = {
     cssVariable: '--env-color-list-item-bg-hover',
     type: 'color',
     values: {
-      light: '#e2e4e8',
+      light: '#dbdde1',
       dark: '#424447',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#383a3d',
@@ -1529,7 +1529,7 @@ export const tokens = {
     cssVariable: '--env-color-list-item-bg-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d2d4d8',
       dark: '#4b4d51',
       'light-high-contrast': '#dbdde1',
       'dark-high-contrast': '#424447',

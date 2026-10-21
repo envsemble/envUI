@@ -100,7 +100,7 @@ Component tokens name a color that no one role does: `--env-color-list-item-bg`,
 
 - Use the semantic role for what an element is, not for the color it should have: `fg-muted` for any supporting text, `border-default` for a control's only boundary, `border-muted` for a divider.
 - Use the same role for a component in both themes; the themes give the role its grade. Component tokens may take another role per theme, as list rows do.
-- Light theme uses a white page, cool pale surfaces, soft gray rows and blue actions and selection. Dark theme uses dark gray surfaces that grow lighter as they rise, and a soft blue for actions and selection.
+- Light theme uses a pale cool gray page, near-white surfaces and white cards, which grow lighter as they rise, with blue actions and selection. Dark theme uses dark gray surfaces that grow lighter as they rise, and a soft blue for actions and selection.
 - Surfaces (page, default, muted, raised) are opaque. Fills drawn on them are translucent layers of the text color, so they keep their tone on the page and stay distinct on every other surface.
 - Disabled controls use 0.48 opacity, which WCAG exempts from contrast; a choice control or a slider fades with its label.
 - Focus rings are blue in both themes. A ring drawn inside a solid fill of its own color gains an inner ring in the label color.
