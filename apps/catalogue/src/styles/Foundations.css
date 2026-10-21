@@ -131,8 +131,8 @@
   align-items: center;
   text-align: center;
 }
-/* Leave the source grid usable beside its non-modal inspector on desktop. */
-@media (min-width: 76rem) {
+/* Leave the source grid usable beside its non-modal inspector in a large window. */
+@container env-window (width >= 75rem) {
   body:has(.docs-icon-details) .docs-main {
     padding-inline-end: 24rem;
   }

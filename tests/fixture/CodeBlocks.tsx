@@ -1,4 +1,4 @@
-import { EnvUIProvider, Stack } from '@envsemble/envui';
+import { EnvUIProvider, Column } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 
 const source = 'npm install @envsemble/envui\nnpm run build';
@@ -6,7 +6,7 @@ const source = 'npm install @envsemble/envui\nnpm run build';
 /** Code blocks to copy, in English and with the provider's words, mounted with ?fixture=code-block. */
 export function CodeBlockFixture() {
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <CodeBlock copyable language="sh" data-testid="install">
         {source}
       </CodeBlock>
@@ -27,6 +27,6 @@ export function CodeBlockFixture() {
           Hallo
         </CodeBlock>
       </EnvUIProvider>
-    </Stack>
+    </Column>
   );
 }

@@ -30,7 +30,8 @@ composes:
   - Menu
   - IconButton
   - Tooltip
-  - Stack
+  - Column
+  - Row
   - Surface
   - Text
   - Tabs
@@ -68,7 +69,7 @@ The page for one object, here the Website refresh project, inside the [app frame
    - **Title and description:** the object's name as the `h1`, and one sentence about it;
    - **Meta:** its status as a [Badge](../components/badge.md);
    - **Actions:** "Edit", a secondary [Button](../components/button.md), and a [Menu](../components/menu.md) of the rest, opened by an [IconButton](../components/button.md) "More actions" with a [Tooltip](../components/tooltip.md): Duplicate, Archive and "Delete project…".
-2. **Columns:** a [Stack](../components/stack.md) row that wraps, the main column first.
+2. **Columns:** a [Row](../components/row.md) that wraps, the main column first.
 3. **Main column:** [Tabs](../components/tabs.md) "Project views":
    - **Overview:** a paragraph about the project and a [List](../components/list.md) of tasks, each with its assignee, due date and a status Badge;
    - **Activity:** a List of events, each with the person's [Avatar](../components/avatar.md) and a [RelativeTime](../components/relative-time.md);

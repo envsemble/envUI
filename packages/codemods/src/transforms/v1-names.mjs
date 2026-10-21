@@ -195,7 +195,7 @@ function isAccessedFurther(path) {
 }
 
 export default function transform(file, api, options = {}) {
-  const { entries } = loadMap(options.map);
+  const { entries, reused } = loadMap(options.map);
   if (![...entries.keys()].some((entry) => file.source.includes(entry))) return undefined;
 
   const j = api.jscodeshift.withParser(parserFor(file.path));
@@ -530,9 +530,35 @@ export default function transform(file, api, options = {}) {
     }
   }
 
+  // 1.0 exports some 0.x names again for something else, such as Row, a list row in 0.x and a
+  // layout primitive in 1.0. A file that reads as 1.0 layout code keeps them as they are: one that
+  // imports Column, Grid or Box from the entry, or renders such a name with a prop only the layout
+  // primitive takes (gap, wrap, justify or padding).
+  const layoutCode = (entry) =>
+    specifiers.some(
+      (other) => other.entry === entry && ['Column', 'Grid', 'Box'].includes(other.imported),
+    ) ||
+    specifiers.some(
+      (other) =>
+        other.entry === entry &&
+        reused.has(other.imported) &&
+        !other.isType &&
+        referencesTo(other.local).some(
+          ({ path, kind }) =>
+            kind === 'jsx' &&
+            path.parent.node.type === 'JSXOpeningElement' &&
+            path.parent.node.attributes.some(
+              (attribute) =>
+                attribute.type === 'JSXAttribute' &&
+                ['gap', 'wrap', 'justify', 'padding'].includes(attribute.name.name),
+            ),
+        ),
+    );
+
   // Pass 2: plan each imported specifier.
   for (const info of specifiers) {
     const { entry, imported, local } = info;
+    if (entry && reused.has(imported) && layoutCode(entry)) continue;
     const rename = entry.renames.get(imported);
     const split = entry.splits.get(imported);
     const removed = entry.removed.get(imported);
@@ -715,11 +741,12 @@ export default function transform(file, api, options = {}) {
         continue;
       }
       // An export that a later transform rewrites, such as ActionGroup, which v1-structure turns
-      // into a Stack, or AppShellSkeleton, which v1-app-shell rewrites, is no report while every
+      // into a Stack, AppShellSkeleton, which v1-app-shell rewrites, or Stack, which v1-stack turns
+      // into a Row or a Column (its removed entry names the transform), is no report while every
       // use is an element: that transform rewrites each one, or reports it.
       const references = referencesTo(local);
       if (
-        entry.structure.has(imported) &&
+        (entry.structure.has(imported) || removed.transform) &&
         references.length > 0 &&
         references.every(({ kind }) => kind === 'jsx')
       )

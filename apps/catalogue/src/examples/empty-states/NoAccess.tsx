@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, Stack, Surface, Text } from '@envsemble/envui';
+import { Button, EmptyState, Column, Surface, Text } from '@envsemble/envui';
 import { Lock } from '@envsemble/envui/icons/Lock';
 
 export default function NoAccess() {
@@ -11,7 +11,7 @@ export default function NoAccess() {
   }, [requested]);
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <Text render={<h3 />} variant="title">
         Annual review
       </Text>
@@ -42,6 +42,6 @@ export default function NoAccess() {
           }
         />
       </Surface>
-    </Stack>
+    </Column>
   );
 }

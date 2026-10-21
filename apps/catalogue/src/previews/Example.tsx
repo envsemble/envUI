@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { Stack, Text, type SpaceStep } from '@envsemble/envui';
+import { Column, Text, type SpaceStep } from '@envsemble/envui';
 
 /**
  * The level of a specimen's title: 2 where the specimen is a section of its own, 3 where it sits in
@@ -27,7 +27,7 @@ export function Example({
 }) {
   const Heading = `h${useContext(SpecimenHeadingLevel)}` as const;
   return (
-    <Stack
+    <Column
       render={<section />}
       gap={gap}
       data-size={size}
@@ -51,7 +51,7 @@ export function Example({
           {caption}
         </Text>
       )}
-    </Stack>
+    </Column>
   );
 }
 
@@ -81,12 +81,12 @@ export function Specimen({
 }) {
   const Heading = useContext(SpecimenHeadingLevel) === 3 ? 'h4' : 'h3';
   return (
-    <Stack render={<section />} gap={3} className="docs-specimen">
+    <Column render={<section />} gap={3} className="docs-specimen">
       <Text render={<Heading />} variant="title">
         {title}
       </Text>
       {children}
       {caption && <Text variant="caption">{caption}</Text>}
-    </Stack>
+    </Column>
   );
 }

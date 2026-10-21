@@ -1,8 +1,8 @@
-import { Button, CounterBadge, DiffStat, Stack } from '@envsemble/envui';
+import { Button, CounterBadge, DiffStat, Row } from '@envsemble/envui';
 
 export default function CountsInButtons() {
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
+    <Row wrap align="center" gap={4}>
       <Button variant="secondary">
         Comments <CounterBadge value={4} />
       </Button>
@@ -12,6 +12,6 @@ export default function CountsInButtons() {
       <Button>
         Review requests <CounterBadge value={2} tone="accent" />
       </Button>
-    </Stack>
+    </Row>
   );
 }

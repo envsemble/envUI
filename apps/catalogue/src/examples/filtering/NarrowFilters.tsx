@@ -10,19 +10,27 @@ import {
   RadioGroup,
   SearchField,
   Select,
-  Stack,
+  Column,
+  Row,
   Text,
-  useBreakpoint,
+  useContainerSize,
+  windowClasses,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 const projectCount = (count: number) => (count === 1 ? '1 project' : `${count} projects`);
 
+/** A width in rem, such as a window class's, in CSS pixels at the document's font size. */
+const remToPixels = (width: string) =>
+  Number.parseFloat(width) * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
 export default function NarrowFilters() {
-  // From the md breakpoint up the filters sit in the toolbar; below it they move into a drawer,
-  // and the search stays in view.
-  const wide = useBreakpoint('md');
+  // From the medium window class up, measured on the filters' own width, they sit in the toolbar;
+  // in a compact one they move into a drawer, and the search stays in view.
+  const filters = useRef<HTMLDivElement>(null);
+  const size = useContainerSize(filters);
+  const wide = size === undefined || size.inlineSize >= remToPixels(windowClasses.medium);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('any');
   const [owner, setOwner] = useState<string | null>('anyone');
@@ -48,8 +56,8 @@ export default function NarrowFilters() {
   };
 
   return (
-    <Stack gap={4}>
-      <Stack direction="row" wrap align="center" gap={3}>
+    <Column ref={filters} gap={4}>
+      <Row wrap align="center" gap={3}>
         <SearchField
           ref={search}
           label="Search projects"
@@ -96,7 +104,7 @@ export default function NarrowFilters() {
               </>
             }
           >
-            <Stack gap={5}>
+            <Column gap={5}>
               {/* The page behind the modal drawer is hidden from assistive technology, so the
                   drawer has its own status, there as it opens, that announces the new count. */}
               <Text role="status" variant="body-sm" emphasis="muted">
@@ -119,10 +127,10 @@ export default function NarrowFilters() {
                 value={owner}
                 onValueChange={setOwner}
               />
-            </Stack>
+            </Column>
           </Drawer>
         )}
-      </Stack>
+      </Row>
       <Text role="status" variant="body-sm" emphasis="muted">
         {projectCount(shown.length)}
       </Text>
@@ -149,7 +157,7 @@ export default function NarrowFilters() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

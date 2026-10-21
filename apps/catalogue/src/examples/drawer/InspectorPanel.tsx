@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, List, Stack, Text, Drawer } from '@envsemble/envui';
+import { Button, List, Column, Text, Drawer } from '@envsemble/envui';
 
 const people = [
   { name: 'Alex Morgan', role: 'Designer', email: 'alex.morgan@example.com', team: 'Product' },
@@ -50,20 +50,20 @@ export default function InspectorPanel() {
         closeLabel="Close details"
       >
         {person && (
-          <Stack gap={4}>
-            <Stack gap={1}>
+          <Column gap={4}>
+            <Column gap={1}>
               <Text variant="caption" emphasis="muted">
                 Email
               </Text>
               <Text>{person.email}</Text>
-            </Stack>
-            <Stack gap={1}>
+            </Column>
+            <Column gap={1}>
               <Text variant="caption" emphasis="muted">
                 Team
               </Text>
               <Text>{person.team}</Text>
-            </Stack>
-          </Stack>
+            </Column>
+          </Column>
         )}
       </Drawer>
     </>

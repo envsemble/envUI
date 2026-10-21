@@ -44,7 +44,7 @@ Paths default to the current folder. The CLI runs jscodeshift's runner with the 
 
 1. Commit first: the codemods write files in place.
 2. Run `npx envui-codemods v1-names src`.
-3. Run `npx envui-codemods v1-app-shell src`, `npx envui-codemods v1-structure src`, then `npx envui-codemods v1-render src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
+3. Run `npx envui-codemods v1-app-shell src`, `npx envui-codemods v1-structure src`, `npx envui-codemods v1-render src`, then `npx envui-codemods v1-stack src`. The codemods are meant for 0.x code, run once. Some 1.0 code reads as 0.x to them, such as a `useTheme()` call whose result nothing reads as `{ theme, contrast }`, so a run over code already written for 1.0 can change it.
 4. Run `npx envui-codemods v1-props src`.
 5. Run `npx envui-codemods v1-classes src` over the scripts and style sheets.
 6. Install `@envsemble/envui` 1.0, run your formatter, then type-check. Fix each reported line; removed exports stay in the code on purpose, so the type checker points at them too.
@@ -57,6 +57,7 @@ Rewrites imports from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`,
 - **Namespace parts.** `import { Menu, MenuItem, MenuSeparator }` becomes `import { Menu }`; `<Menu>` becomes `<Menu.Root>`, `<MenuItem>` becomes `<Menu.Item>`, `MenuItemProps` becomes `Menu.ItemProps` and `typeof Table` becomes `typeof Table.Root`. The same applies to Menubar, Table, Stat, List, NavList, Pager, WindowFrame (with `TitleBar`, which becomes `WindowFrame.TitleBar`), PanelDock (with `PanelDockHeader`, which becomes `PanelDock.Header`) and `ToastProvider`, which becomes `Toast.Provider`. Type-only imports stay type-only: `import type { MenuItemProps }` becomes `import type { Menu }`, or is dropped when `Menu` is already imported. When the file already uses the namespace name, for instance for the `Menu` icon, the namespace is imported under a free alias such as `Menu as EnvMenu`. Existing `Menu.Root` and `Menu.Item` accesses are left as they are, so running the codemod again changes nothing.
 - **Shadowing locals.** Each rewritten reference must reach the import. Where a local in an inner scope has the name the rewrite would write, such as a `const Menu` in the function that renders `<MenuItem>`, or a local `TextField` where `<Input>` becomes `TextField`, the reference there uses a second import under a free alias, `<EnvMenu.Item>` with `Menu as EnvMenu`, and the run reports each one. Scopes follow the language: a `const`, `let` or `class` in a block, a `for` head, a `case` or a `catch` clause hides an import only inside it, a function body's `var` hides it in the body but not in the parameter defaults, an enum member inside its enum, and type parameters, local types and namespaces only from the types they declare, as TypeScript keeps values, types and namespaces apart: a local `interface Input` hides the import from `let field: Input` but not from `<Input />`, and the first name of `typeof Input.displayName` is a value, which a local `const Input` hides. Where a renamed reference would be read by a local of the new name, such as a type parameter `TextFieldProps` in the function that uses `InputProps`, the import keeps its old name as an alias: `TextFieldProps as InputProps`.
 - **Namespace imports.** With `import * as ui from '@envsemble/envui'`, or `import ui = require('@envsemble/envui')` in TypeScript, `ui.Input` becomes `ui.TextField`, `<ui.MenuItem>` becomes `<ui.Menu.Item>` and `typeof ui.Input` becomes `typeof ui.TextField`. A literal key is followed too: `ui['Input']` becomes `ui['TextField']`, and `ui['MenuItem']` becomes `ui.Menu.Item`.
+- **Row.** 0.x's list row, `Row` with `RowProps`, becomes `List.Item`, but 1.0 exports `Row` again as a layout primitive. A file that reads as 1.0 layout code keeps it as it is: one that imports `Column`, `Grid` or `Box`, or renders `Row` with `gap`, `wrap`, `justify` or `padding`, which only the layout primitive takes.
 - **DirectionLink.** `<DirectionLink direction="previous">` becomes `<Pager.Previous>` and `direction="next"` becomes `<Pager.Next>`, without the prop.
 - **Re-exports.** `export { Input } from '@envsemble/envui'` becomes `export { TextField } from '@envsemble/envui'`.
 - **defaultThemeStorageKey.** References become the string `'env-theme'` and the import goes.
@@ -131,6 +132,18 @@ Rewrites elements whose 1.0 form is another element, as the map's `structure` se
 - It leaves an ActionGroup that spreads props, as in `<ActionGroup {...group}>`, and reports it: the spread may set `stacked` or `align`. A Button in a stacked one that spreads props is reported instead of getting `fullWidth`, since the spread may set `iconOnly` or `fullWidth`.
 
 Each entry is a list of cases matched on the element's literal props; a case renames the element, drops, renames or maps props, adds props to it or to its children, such as `render={<article />}`, makes its children from its props, such as SplitView's panes, moves props' values in front of its children, such as WindowFrame's title bar, wraps its children in a part, or wraps it in another element. `has` limits a case to elements that set some props, whatever their values. Later 1.0 changes add entries, not code.
+
+## v1-stack
+
+Rewrites Stack, which 1.0 replaces with the layout primitives Row and Column, also the Stacks that `v1-structure` writes for ActionGroup, so run it after `v1-structure` and `v1-render`:
+
+- `<Stack direction="row">` becomes `<Row>`, and a Stack without `direction`, or with `direction="column"`, becomes `<Column>`, without the prop. `gap`, `align`, `justify`, `render`, Row's `wrap` and the native props stay as they are.
+- A Stack without `gap` gets `gap={4}`, Stack's default, as its first prop, so a spread after it still wins: Row and Column have no gap of their own.
+- `wrap` on a column goes, as a column never wrapped, and is reported.
+- The import of Stack becomes the imports of Row and Column, as the file uses them. Where the file already uses the name Row or Column for something else, such as a local `type Column`, the primitive is imported under a free alias, such as `Column as EnvColumn`, and reported.
+- Through a namespace import, `<ui.Stack direction="row">` becomes `<ui.Row>`.
+
+It reports, and leaves as it is, a `direction` that is an expression, such as `direction={vertical ? 'column' : 'row'}`: write a Row or a Column for each value. It reports an element that spreads props, which may set `direction`, a use of Stack other than as an element, such as passed as a value, which keeps the import, and `StackProps`, which is RowProps or ColumnProps. Only the changed text is replaced, so the file keeps its layout.
 
 ## v1-classes
 

@@ -39,7 +39,7 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   actions?: ReactNode;
   /**
    * A second row under the title: search, filters and view switches, laid out with
-   * `<Stack direction="row" wrap justify="between">`; see Toolbar's layouts.
+   * `<Row wrap justify="between">`; see Toolbar's layouts.
    */
   toolbar?: ReactNode;
   /**

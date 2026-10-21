@@ -3,7 +3,7 @@
 import { useRef, useState, type RefObject } from 'react';
 import { Button } from '../../actions/Button.js';
 import { Dialog } from '../../feedback/Dialog.js';
-import { Stack } from '../../foundations/Layout.js';
+import { Column } from '../../foundations/Layout.js';
 import { linkDialog as linkDialogMessages } from '../../foundations/messages/linkDialog.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { TextField } from '../TextField.js';
@@ -58,7 +58,7 @@ export function LinkDialog({
       }}
       actions={<Button onClick={insert}>{messages.insert}</Button>}
     >
-      <Stack>
+      <Column gap={4}>
         <TextField
           label={messages.text}
           value={label}
@@ -81,7 +81,7 @@ export function LinkDialog({
             }
           }}
         />
-      </Stack>
+      </Column>
     </Dialog>
   );
 }

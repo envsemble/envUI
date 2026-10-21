@@ -32,7 +32,13 @@ export const transforms = {
   'v1-structure': {
     file: fileURLToPath(new URL('./transforms/v1-structure.mjs', import.meta.url)),
     description:
-      'Rewrite elements whose 1.0 form is another element or shape, such as ActionGroup, which becomes a Stack; what cannot be rewritten is reported.',
+      'Rewrite elements whose 1.0 form is another element or shape, such as ActionGroup, which becomes a Stack for v1-stack to rewrite; what cannot be rewritten is reported.',
+    extensions: scripts,
+  },
+  'v1-stack': {
+    file: fileURLToPath(new URL('./transforms/v1-stack.mjs', import.meta.url)),
+    description:
+      'Rewrite Stack into the layout primitives: direction="row" becomes a Row, any other Stack a Column, with gap={4} where it set none; a direction that is an expression is reported.',
     extensions: scripts,
   },
   'v1-classes': {

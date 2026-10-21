@@ -3,7 +3,7 @@ import {
   Button,
   IconButton,
   NavList,
-  Stack,
+  Column,
   Surface,
   Card,
   List,
@@ -61,7 +61,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
       <NavList.Item selected data-testid={`${theme}-navigation-selected`}>
         {theme} selected navigation
       </NavList.Item>
-      <Stack gap={3}>
+      <Column gap={3}>
         <Surface background="muted" data-testid={`${theme}-color-surface`}>
           Surface
         </Surface>
@@ -164,7 +164,7 @@ export function ColorControls({ theme }: { theme: ThemeValue }) {
         />
         <Badge data-testid={`${theme}-color-chip`}>Info</Badge>
         <Skeleton data-testid={`${theme}-color-skeleton`} />
-      </Stack>
+      </Column>
     </Theme>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, Toast, useToast, type ToastNotification, Stack } from '@envsemble/envui';
+import { Button, Toast, useToast, type ToastNotification, Row } from '@envsemble/envui';
 
 const notifications: ToastNotification[] = [
   { tone: 'neutral', message: 'Files archived.' },
@@ -14,7 +14,7 @@ const notifications: ToastNotification[] = [
 function ToneButtons() {
   const toast = useToast();
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
+    <Row wrap align="center" gap={4}>
       {notifications.map((notification) => (
         <Button
           key={notification.tone}
@@ -24,7 +24,7 @@ function ToneButtons() {
           Show {notification.tone}
         </Button>
       ))}
-    </Stack>
+    </Row>
   );
 }
 

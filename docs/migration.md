@@ -29,7 +29,7 @@ Connect Theme to the current preference and first-render initialization. Scope o
 
 ## Upgrade from envUI 0.x to 1.0
 
-envUI 1.0 renames components, compound parts, classes and documentation pages, and makes a few helpers internal; nothing is exported under a 0.x name. The codemods and the lint packages, released with envUI at the same version, do most of the work. The codemods are meant for 0.x code, run once: code already written for 1.0 can read as 0.x to them. Commit first, as the codemods write files in place:
+envUI 1.0 renames components, compound parts, classes and documentation pages, and makes a few helpers internal; nothing is exported under a 0.x name but `Row`, which is a [layout primitive](#layout-primitives) now. The codemods and the lint packages, released with envUI at the same version, do most of the work. The codemods are meant for 0.x code, run once: code already written for 1.0 can read as 0.x to them. Commit first, as the codemods write files in place:
 
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
@@ -37,6 +37,7 @@ npx @envsemble/envui-codemods@<version> v1-names src
 npx @envsemble/envui-codemods@<version> v1-app-shell src
 npx @envsemble/envui-codemods@<version> v1-structure src
 npx @envsemble/envui-codemods@<version> v1-render src
+npx @envsemble/envui-codemods@<version> v1-stack src
 npx @envsemble/envui-codemods@<version> v1-props src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```
@@ -53,8 +54,9 @@ export default defineConfig(envui.configs.recommended);
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
 - `v1-app-shell` rewrites 0.x's AppShell, which `v1-names` names `AppShell.Root`, into the frame's parts, and AppShellSkeleton into the same parts in a LoadingState, as [the app frame](#the-app-frame) lists. The navigation's NavList items, also those behind a condition or from a `map`, go into a `NavList.Root`.
-- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, SplitView becomes a SplitPane, as [split panes](#split-panes) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
+- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, which `v1-stack` then makes a Row or a Column, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, SplitView becomes a SplitPane, as [split panes](#split-panes) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`, and a ternary of element names into a ternary of elements, `as={section ? 'h2' : 'h1'}` into `render={section ? <h2 /> : <h1 />}`.
+- `v1-stack` rewrites Stack into the [layout primitives](#layout-primitives): `<Stack direction="row">` becomes `<Row>` and any other Stack a `<Column>`, with `gap={4}`, Stack's default, where it set none.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them. A value that is a conditional of literals has each literal mapped, also in nested ternaries and beside `&&`, `||` and `??`: `tone={failed ? 'error' : 'info'}` becomes `tone={failed ? 'danger' : 'info'}`, and a value that 1.0 drops as the default becomes `undefined`, so `size={large ? 'large' : 'standard'}` on an Avatar becomes `size={large ? 'lg' : undefined}`.
 - `v1-classes` renames `env-*` classes and `--env-*` custom properties in style sheets, CSS-in-JS templates (such as `` css`…` `` and `` styled.div`…` ``), class names, selector strings and test locators, turns the modifier classes that became attributes into attribute selectors, and renames the tokens' custom properties: `--color-text-muted` becomes `--env-color-fg-muted`, `--space-4` becomes `--env-space-4` and `--control-height-small` becomes `--env-control-height`, as [tokens](#tokens) lists them. It renames every use, `var(--old)`, but a declaration only where the old name is the one that becomes the token: where 1.0 merges several names into one token, as it merges `--control-height`, `--control-height-small` and `--icon-button-size`, a declaration of another of them stays and is reported, since rewriting it would set the token for every component that reads it. It reports a token that 1.0 removes without one token in its place, and a 0.7 fixed color no token replaces, with what to use instead.
 - `envui/no-renamed-exports` reports the 0.x names left in imports and re-exports, and also those it can follow statically through namespace imports, `require()`, `import()`, `import … = require()`, destructuring and `createElement()`, with each one's 1.0 name or what to use instead. A name read through a computed member such as `envui[name]` is not followed; the type check catches those. The recommended config also reports raw elements that envUI provides and raw colors; `@envsemble/stylelint-config-envui` does the same for style sheets.
@@ -78,7 +80,7 @@ The codemods also leave class names built at run time, CSS-in-JS outside a tagge
 
 ### Renamed components, parts and pages
 
-Components take the names other libraries and the ARIA patterns use, and compound components are namespaces of parts, `Menu.Root` and `Menu.Item`. `v1-names` renames every export below, with its props types, and `v1-classes` the classes; nothing is exported under a 0.x name.
+Components take the names other libraries and the ARIA patterns use, and compound components are namespaces of parts, `Menu.Root` and `Menu.Item`. `v1-names` renames every export below, with its props types, and `v1-classes` the classes; nothing is exported under a 0.x name but `Row`, which is a [layout primitive](#layout-primitives) now.
 
 | 0.x                                                                                                                                                                    | 1.0                                                                                                                                                                                      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -135,27 +137,27 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 Buttons take a `variant` for their emphasis and a `tone` for their meaning, and Text, Skeleton and Surface take the words the rest of envUI uses. `v1-props` moves each literal value, `v1-render` each literal `as` and `v1-structure` each ActionGroup:
 
-| 0.x                                                                                                          | 1.0                                                                 |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `variant="important"` on Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle, Pagination | `variant="primary" tone="accent"`                                   |
-| `variant="destructive"`                                                                                      | `variant="primary" tone="danger"`                                   |
-| `variant="outlined"`, `variant="quiet"`                                                                      | `variant="outline"`, `variant="ghost"`                              |
-| Text `tone`: `primary`, `muted`, `quiet`                                                                     | `emphasis`: `default`, `muted`, `subtle`                            |
-| Text `variant`: `page-heading`, `section-heading`, `supporting`                                              | `headline`, `title`, `body-sm`                                      |
-| Skeleton `tone`: `base`, `highlight`                                                                         | `emphasis`: `muted`, `default`                                      |
-| Surface `tone`: `pane`, `row`, `canvas`, `alternate`                                                         | `background`: `default`, `muted`, `page`, `raised`                  |
-| Surface `corners`: `surface`, `standard`, `pill`, `none`                                                     | `radius`: `xl`, `sm`, `full`, `none`                                |
-| `as="h2"` on Text, Stack and Surface                                                                         | `render={<h2 />}`                                                   |
-| `<ActionGroup align="end">`                                                                                  | `<Stack direction="row" wrap align="center" gap={4} justify="end">` |
-| `<ActionGroup stacked>`                                                                                      | `<Stack gap={2}>` with `fullWidth` on each labelled Button          |
-| `TextTone`, `SurfaceTone`, `SurfaceCorners`                                                                  | `TextEmphasis`, `SurfaceBackground`, `SurfaceRadius`                |
-| `ActionGroup`, `ActionGroupProps`, `StackElement`, `TextElement`                                             | Removed: `Stack` and `render`                                       |
+| 0.x                                                                                                          | 1.0                                                         |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| `variant="important"` on Button, IconButton, ConfirmButton, CopyButton, DialogClose, ThemeToggle, Pagination | `variant="primary" tone="accent"`                           |
+| `variant="destructive"`                                                                                      | `variant="primary" tone="danger"`                           |
+| `variant="outlined"`, `variant="quiet"`                                                                      | `variant="outline"`, `variant="ghost"`                      |
+| Text `tone`: `primary`, `muted`, `quiet`                                                                     | `emphasis`: `default`, `muted`, `subtle`                    |
+| Text `variant`: `page-heading`, `section-heading`, `supporting`                                              | `headline`, `title`, `body-sm`                              |
+| Skeleton `tone`: `base`, `highlight`                                                                         | `emphasis`: `muted`, `default`                              |
+| Surface `tone`: `pane`, `row`, `canvas`, `alternate`                                                         | `background`: `default`, `muted`, `page`, `raised`          |
+| Surface `corners`: `surface`, `standard`, `pill`, `none`                                                     | `radius`: `xl`, `sm`, `full`, `none`                        |
+| `as="h2"` on Text, Stack and Surface                                                                         | `render={<h2 />}`                                           |
+| `<ActionGroup align="end">`                                                                                  | `<Row wrap align="center" gap={4} justify="end">`           |
+| `<ActionGroup stacked>`                                                                                      | `<Column gap={2}>` with `fullWidth` on each labelled Button |
+| `TextTone`, `SurfaceTone`, `SurfaceCorners`                                                                  | `TextEmphasis`, `SurfaceBackground`, `SurfaceRadius`        |
+| `ActionGroup`, `ActionGroupProps`, `StackElement`, `TextElement`                                             | Removed: `Row`, `Column` and `render`                       |
 
 In style sheets the modifier classes become attributes on the component's root class, which `v1-classes` writes with the specificity they had: `.env-button-important` is `.env-button:where([data-variant='primary'][data-tone='accent'])`, `.env-text-tone-muted` `.env-text:where([data-emphasis='muted'])`, `.env-surface-row` `.env-surface:where([data-background='muted'])` and `.env-skeleton-highlight` `.env-skeleton:where([data-emphasis='default'])`. The same holds for every modifier class: Button's `env-button-primary`, `env-button-important`, `env-button-destructive`, `env-button-secondary`, `env-button-outlined`, `env-button-text`, `env-button-quiet` and `env-button-underlined` are `[data-variant]`, `[data-tone]` and `[data-underline]` on `.env-button`; Text's `env-text-{variant}`, such as `env-text-caption`, and `env-text-tone-{tone}` are `[data-variant]` and `[data-emphasis]` on `.env-text`; Surface's `env-surface-{tone}` and `env-surface-corners-{corners}` are `[data-background]` and `[data-radius]` on `.env-surface`; and Skeleton's `env-skeleton-{tone}` is `[data-emphasis]`. The icon wrapper `env-symbol` is `env-icon`. A button without a `variant` takes its container's, such as ghost in a Toolbar.
 
 A `variant` typed as a union of variants, such as `variant={pressed ? 'primary' : 'secondary'}` or a prop typed `'primary' | 'secondary'`, type-checks with the tones that every variant in it takes: neutral beside secondary, danger too beside outline, ghost and text, and accent only on primary.
 
-`render` changes which element the component renders, so the `ref` of Surface, Stack and Text takes the element `render` makes: a ref to it, such as `useRef<HTMLElement>(null)` with `render={<section />}`, or `useRef<HTMLDivElement>(null)` with `render={<div />}` on Text, type-checks, as a ref to the default element, a div or a paragraph, does. `SurfaceProps`, `StackProps` and `TextProps` keep the default element's ref, so a wrapper that forwards `TextProps['ref']` to a `<p>` still type-checks; a wrapper that renders another element names it, as in `SurfaceProps<HTMLElement>`.
+`render` changes which element the component renders, so the `ref` of Surface, the layout primitives and Text takes the element `render` makes: a ref to it, such as `useRef<HTMLElement>(null)` with `render={<section />}`, or `useRef<HTMLDivElement>(null)` with `render={<div />}` on Text, type-checks, as a ref to the default element, a div or a paragraph, does. `SurfaceProps`, `RowProps`, `ColumnProps` and `TextProps` keep the default element's ref, so a wrapper that forwards `TextProps['ref']` to a `<p>` still type-checks; a wrapper that renders another element names it, as in `SurfaceProps<HTMLElement>`.
 
 ### Fields and choice controls
 
@@ -327,6 +329,37 @@ Behaviour that changes without a rename: a link card's accessible name is its te
 `size`, `defaultSize`, `minSize` and `maxSize` keep their percentages, now of the split pane's whole width; `onSizeChange` receives `{ committed }` as its second argument; `stackBelow` and `onStackedChange` are unchanged. Change by hand a SplitView that spreads props, which `v1-structure` reports. A list beside its detail that stacked with `onStackedChange` and showed one pane at a time is ListDetail now, with `detailShown`, `onBack` and `backLabel`.
 
 In style sheets, `v1-classes` renames the classes and reports what 1.0 has no counterpart for: `--env-split-view-gutter`, as the handle has a width of its own; `--env-split-view-size`, which was unitless and is `--env-split-pane-size` with its unit now, set from `size`; a pane's `[data-pane]`, as the panes have none; and the root's `[data-resizing]`, as the handle has `data-dragging` while it moves. Stacked panes have a hairline between them rather than the gutter's gap.
+
+### Layout primitives
+
+Stack is gone: Row, Column, Grid and Box lay content out, thin wrappers over flex and grid that size to their content and never paint. `v1-stack` rewrites each Stack:
+
+| Before                                                | Now                                                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `<Stack direction="row" wrap align="center" gap={4}>` | `<Row wrap align="center" gap={4}>`                                                                           |
+| `<Stack gap={3}>`, `<Stack direction="column">`       | `<Column gap={3}>`                                                                                            |
+| `<Stack>`, whose gap was 1 rem by default             | `<Column gap={4}>`: Row and Column have no gap of their own                                                   |
+| `wrap` on a column                                    | Dropped: a Column has no `wrap`                                                                               |
+| `StackProps`                                          | `RowProps` or `ColumnProps`                                                                                   |
+| Columns or a grid in the application's CSS            | `<Grid columns={3}>`, `<Grid columns="minmax(0, 2fr) minmax(0, 1fr)">` or `<Grid columns={{ min: '14rem' }}>` |
+| A `div` for an inset or a size container              | `<Box padding={4}>`, `<Box container="summary">`                                                              |
+
+- Each primitive renders `data-env-layout` (`box`, `row`, `column` or `grid`) on its root and `name` as `data-env-name`, and no class: the `env-stack` class is gone. Its options are attributes, such as `data-gap="4"` and `data-align="center"`, which its style sheet reads with no specificity, so a component's part class or any class of the application overrides them. Select `[data-env-layout='row']` where a style sheet selected `.env-stack[data-direction='row']`.
+- `gap` and `padding` take the numbered steps of the spacing scale, 0 to 9; `align` and `justify` take Stack's values. A Stack's `direction` that is an expression stays and is reported: write a Row or a Column for each value.
+- A primitive is a size container only with `container`, which names it: `<Box container="summary">` is `container: summary / inline-size`.
+- `Row` and `RowProps` were 0.x's list row, which is `List.Item` in 1.0, and are the layout primitive now. `v1-names`, which reads 0.x code, still renames them, so run it before `v1-stack`, and only once; `envui/no-renamed-exports` no longer reports them.
+- The documentation's Stack page is the [Column](https://github.com/envsemble/envUI/blob/main/docs/components/column.md) page, beside [Row](https://github.com/envsemble/envUI/blob/main/docs/components/row.md), [Grid](https://github.com/envsemble/envUI/blob/main/docs/components/grid.md) and [Box](https://github.com/envsemble/envUI/blob/main/docs/components/box.md).
+
+### Window classes and container queries
+
+envUI responds to containers only, at window classes: compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, which `windowClasses` and the `--env-window-class-*` tokens hold. The outermost theme boundary, the themed document root or the Theme around the application, is the `env-window` container that window-class queries measure:
+
+| 0.x                                                                   | 1.0                                                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `@media (width >= 48rem)` in an application's style sheet             | `@container env-window (width >= 52.5rem)`, or another window class, over a compact default |
+| Card's feature layout below 38 rem, PageHeader's actions below 32 rem | Below 37.5 rem of their own width, compact                                                  |
+
+The outermost boundary takes the whole width its parent gives it (`inline-size: 100%`), as a size container can't take its content's; override it with a class of your own where it shouldn't. A nested Theme is no container. Media queries that are not about width, such as `pointer`, `forced-colors` and `prefers-reduced-motion`, stay.
 
 ### The app frame
 
@@ -704,6 +737,7 @@ Removed, with what to use instead:
 | `--env-sidebar-width`                 | —                                       | AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable.                    |
 | `--env-split-view-gutter`             | —                                       | SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap.                          |
 | `--env-split-view-size`               | —                                       | SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead. |
+| `--env-stack-gap`                     | —                                       | Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead.                |
 | `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                                                                |
 | `--member-identity-copy-height`       | —                                       | Unused.                                                                                                                                                |
 | `--member-identity-email-line-height` | —                                       | Unused.                                                                                                                                                |
@@ -746,7 +780,7 @@ Consult the relevant [component documentation](index.md) before adopting these c
 
 | Existing responsibility                          | Candidate                                                 |
 | ------------------------------------------------ | --------------------------------------------------------- |
-| Typography, panes, vertical layouts, action rows | Text, Surface, Stack (`direction="row"` for actions)      |
+| Typography, panes, vertical layouts, action rows | Text, Surface, Column, Row for actions, Grid              |
 | Buttons, inline links, icon/connected actions    | Button, Link, IconButton, ButtonGroup                     |
 | Side navigation and selected destinations        | NavList.Item with router-owned selection                  |
 | Content/action/clickable cards                   | Appropriate public Card composition                       |

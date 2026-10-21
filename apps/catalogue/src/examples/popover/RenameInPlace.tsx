@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Button, Popover, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Popover, Column, Row, Text, TextField } from '@envsemble/envui';
 import { Edit } from '@envsemble/envui/icons/Edit';
 
 export default function RenameInPlace() {
   const [name, setName] = useState('Launch plan.md');
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <Text>{name}</Text>
       <Popover
         aria-label="Rename document"
@@ -24,18 +24,18 @@ export default function RenameInPlace() {
               close();
             }}
           >
-            <Stack gap={4}>
+            <Column gap={4}>
               <TextField label="Name" name="name" defaultValue={name} required />
-              <Stack direction="row" wrap align="center" gap={4} justify="end">
+              <Row wrap align="center" gap={4} justify="end">
                 <Button variant="secondary" onClick={close}>
                   Cancel
                 </Button>
                 <Button type="submit">Rename</Button>
-              </Stack>
-            </Stack>
+              </Row>
+            </Column>
           </form>
         )}
       </Popover>
-    </Stack>
+    </Column>
   );
 }

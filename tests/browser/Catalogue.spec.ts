@@ -117,7 +117,7 @@ test('live examples keep links in place, show their source, and specimens show f
   const code = page.locator('[data-example="ButtonLinks"] ~ details').first();
   await code.locator('summary').click();
   await expect(code.locator('.env-code-block')).toContainText(
-    "import { Button, Stack } from '@envsemble/envui';",
+    "import { Button, Row } from '@envsemble/envui';",
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
   // Catalogue-only specimens, such as the forced interaction states, sit in the exchange they

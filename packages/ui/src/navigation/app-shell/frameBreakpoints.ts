@@ -1,11 +1,12 @@
 /**
- * The viewport widths where a page's layout may change, smallest first: the values of the
- * `breakpoint.*` tokens (`--env-breakpoint-sm` …), which CSS can't read inside `@media`. Components
- * respond to their container's width instead; these are for the page and the app frame.
+ * The viewport widths where AppShell and Sidebar change, smallest first, which their `breakpoint`
+ * and `dockAt` props name. They are private to the frame, whose style sheets write the same widths
+ * in their media queries; everything else responds to its container at the window classes
+ * (`windowClasses`).
  */
 export const breakpoints = { sm: '40rem', md: '48rem', lg: '64rem', xl: '80rem' } as const;
 
-/** A breakpoint's name: `sm` (40 rem), `md` (48 rem), `lg` (64 rem) or `xl` (80 rem). */
+/** A frame breakpoint's name: `sm` (40 rem), `md` (48 rem), `lg` (64 rem) or `xl` (80 rem). */
 export type Breakpoint = keyof typeof breakpoints;
 
 /**

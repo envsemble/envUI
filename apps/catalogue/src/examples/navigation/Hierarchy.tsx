@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Breadcrumbs, Link, List, PageHeader, Stack, Text } from '@envsemble/envui';
+import { Breadcrumbs, Link, List, PageHeader, Column, Text } from '@envsemble/envui';
 
 /** Moves focus to the page's heading, which takes focus without becoming a tab stop. */
 function focusHeading(page: HTMLElement | null) {
@@ -27,7 +27,7 @@ export default function Hierarchy() {
   };
 
   return (
-    <Stack ref={page} gap={4}>
+    <Column ref={page} gap={4}>
       <PageHeader
         headingLevel={3}
         title={shown}
@@ -67,7 +67,7 @@ export default function Hierarchy() {
       ) : (
         <Text emphasis="muted">The last level: {shown} itself, with nothing below it.</Text>
       )}
-    </Stack>
+    </Column>
   );
 }
 

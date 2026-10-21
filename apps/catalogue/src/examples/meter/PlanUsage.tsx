@@ -1,4 +1,4 @@
-import { Card, Meter, Stack, Text } from '@envsemble/envui';
+import { Card, Meter, Column, Text } from '@envsemble/envui';
 
 const limits = [
   { label: 'Seats assigned', used: 5, limit: 5, unit: 'seats' },
@@ -10,7 +10,7 @@ const number = new Intl.NumberFormat('en');
 export default function PlanUsage() {
   return (
     <Card title="Team plan">
-      <Stack gap={5}>
+      <Column gap={5}>
         {limits.map(({ label, used, limit, unit }) => {
           const text = `${number.format(used)} of ${number.format(limit)}`;
           return (
@@ -26,7 +26,7 @@ export default function PlanUsage() {
         })}
         {/* The meter has no warning color; the page says when a limit is reached. */}
         <Text variant="body-sm">All seats are assigned. Remove a member to invite another.</Text>
-      </Stack>
+      </Column>
     </Card>
   );
 }

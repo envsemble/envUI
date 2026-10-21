@@ -8,7 +8,7 @@ import {
   Text,
   Theme,
   type ThemeValue,
-  Stack,
+  Row,
 } from '@envsemble/envui';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
@@ -74,14 +74,14 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
           },
         ]}
       />
-      <Stack direction="row" wrap align="center" gap={4}>
+      <Row wrap align="center" gap={4}>
         {variants.map((variant) => (
           <Button key={variant} {...emphasis[variant]}>
             {variant} <CounterBadge value={7} /> <Badge tone="success">New</Badge>{' '}
             <DiffStat additions={3} deletions={1} />
           </Button>
         ))}
-      </Stack>
+      </Row>
       <DiffStat additions={12} deletions={3} data-testid={`diff-stat-${theme}`} />
     </Theme>
   );

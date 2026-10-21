@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Slider, Stack, Text } from '@envsemble/envui';
+import { Button, Slider, Column, Row, Text } from '@envsemble/envui';
 
 export default function SessionTimeout() {
   const [saved, setSaved] = useState('');
@@ -14,7 +14,7 @@ export default function SessionTimeout() {
       }}
       onReset={() => setSaved('')}
     >
-      <Stack gap={5}>
+      <Column gap={5}>
         <Slider
           label="Sign out after"
           description="Minutes without activity, from 5 to 120."
@@ -25,14 +25,14 @@ export default function SessionTimeout() {
           defaultValue={30}
           formatValue={(value) => `${value} min`}
         />
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button type="submit">Save</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </Stack>
+        </Row>
         <Text role="status">{saved}</Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Stack, useContainerSize } from '@envsemble/envui';
+import { Button, Column, useContainerSize } from '@envsemble/envui';
 
 /** A box whose width the test changes, with its content and border sizes, and one in vertical text. */
 export function ContainerSizeFixture() {
@@ -12,7 +12,7 @@ export function ContainerSizeFixture() {
   const format = (size?: { inlineSize: number; blockSize: number }) =>
     size ? `${Math.round(size.inlineSize)} × ${Math.round(size.blockSize)}` : 'unmeasured';
   return (
-    <Stack gap={4} className="fixture-section">
+    <Column gap={4} className="fixture-section">
       <Button variant="secondary" onClick={() => setWidth(420)}>
         Widen the box
       </Button>
@@ -33,6 +33,6 @@ export function ContainerSizeFixture() {
         style={{ writingMode: 'vertical-rl', inlineSize: '80px', blockSize: '200px' }}
       />
       <output data-testid="vertical-size">{format(verticalSize)}</output>
-    </Stack>
+    </Column>
   );
 }

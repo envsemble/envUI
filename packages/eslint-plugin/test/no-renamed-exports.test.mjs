@@ -102,8 +102,9 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [renamed('MenuItem', 'Menu.Item'), renamed('MenuSeparator', 'Menu.Separator')],
     },
     {
+      // Row was a list row in 0.7 and is a layout primitive in 1.0, so it is no report.
       code: "import { GroupedRows, Row } from '@envsemble/envui';",
-      errors: [renamed('GroupedRows', 'List.Root'), renamed('Row', 'List.Item')],
+      errors: [renamed('GroupedRows', 'List.Root')],
     },
     {
       code: "import { DirectionLink } from '@envsemble/envui';",
@@ -221,10 +222,10 @@ ruleTester.run('no-renamed-exports', rule, {
       errors: [renamed('Notice', 'Alert'), renamed('Counter', 'CounterBadge')],
     },
     {
-      code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.Row, (await import('@envsemble/envui')).getInitials]; }",
+      code: "async function load() { const { Input } = await import('@envsemble/envui'); const ui = await import('@envsemble/envui'); return [Input, ui.GroupedRows, (await import('@envsemble/envui')).getInitials]; }",
       errors: [
         renamed('Input', 'TextField'),
-        renamed('Row', 'List.Item', 'List'),
+        renamed('GroupedRows', 'List.Root', 'List'),
         internal('getInitials'),
       ],
     },

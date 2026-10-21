@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, TextField } from '@envsemble/envui';
+import { Column, TextField } from '@envsemble/envui';
 
 const handlePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -13,7 +13,7 @@ export default function Validation() {
       : undefined;
   return (
     // As wide as a form column.
-    <Stack style={{ inlineSize: 'min(100%, 24rem)' }}>
+    <Column gap={4} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <TextField
         label="Project handle"
         name="handle"
@@ -24,6 +24,6 @@ export default function Validation() {
         onBlur={() => setChecked(true)}
         error={error}
       />
-    </Stack>
+    </Column>
   );
 }

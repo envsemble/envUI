@@ -3,14 +3,24 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Stack } from '../../foundations/Layout.js';
+import { Column, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
+import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 
 /**
  * The parts Dialog, Drawer, CommandPalette and other modal surfaces share, inside a Base UI Dialog
  * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
+
+/**
+ * The theme boundary in a modal surface's portal: a layer fixed over the whole viewport, which lets
+ * pointers through to its scrim and surface. Where the document root isn't themed it is the
+ * outermost boundary, so the env-window container, at the window's own width.
+ */
+export function OverlayTheme({ className, ...props }: ThemeProps) {
+  return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
+}
 
 /** The scrim behind a modal surface, which fades in and out. */
 export function DialogBackdrop({ className }: { className?: string }) {
@@ -70,24 +80,17 @@ export function DialogHeader({
 /** The row of a dialog's actions at its end, with the primary action last. */
 export function DialogActions({ children, ...props }: ComponentPropsWithRef<'div'>) {
   return (
-    <Stack
-      {...props}
-      direction="row"
-      wrap
-      align="center"
-      justify="end"
-      className="env-dialog-actions"
-    >
+    <Row gap={4} {...props} wrap align="center" justify="end" className="env-dialog-actions">
       {children}
-    </Stack>
+    </Row>
   );
 }
 
 /** The content column of a dialog: header, content and actions 1.5 rem apart. */
 export function DialogContent({ children }: { children: ReactNode }) {
   return (
-    <Stack gap={5} className="env-dialog-content">
+    <Column gap={5} className="env-dialog-content">
       {children}
-    </Stack>
+    </Column>
   );
 }

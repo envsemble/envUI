@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, ConfirmDialog, Stack, Text } from '@envsemble/envui';
+import { Button, ConfirmDialog, Column, Text } from '@envsemble/envui';
 
 export default function AsyncWithError() {
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function AsyncWithError() {
       }, 1200);
     });
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <ConfirmDialog
         trigger={<Button variant="secondary">Archive project</Button>}
         title="Archive Northwind launch?"
@@ -37,6 +37,6 @@ export default function AsyncWithError() {
         }}
       />
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

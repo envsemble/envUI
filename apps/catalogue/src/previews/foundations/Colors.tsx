@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { Button, ColorPicker, Dialog, Stack, Text, useTheme } from '@envsemble/envui';
+import { Button, ColorPicker, Dialog, Column, Text, useTheme } from '@envsemble/envui';
 import { TokenValue } from './TokenValue';
 import { Example, Specimen, SpecimenGrid } from '../Example';
 import { colorGroups, colorVariable } from '../../theme/Palette';
@@ -87,10 +87,10 @@ function ColorPalette() {
   }, [theme, palettes]);
   return (
     // Each group is an Example, so the visual baseline captures it; their margins space them.
-    <Stack ref={paletteElement} gap={0} className="docs-palette">
+    <Column ref={paletteElement} gap={0} className="docs-palette">
       {colorGroups.map(([group, tokens]) => (
         <Example key={group} title={group} size="collection">
-          <Stack gap={0}>
+          <Column gap={0}>
             {tokens.map(([token, label]) => (
               <div className="docs-palette-row" key={label}>
                 <div className="docs-palette-label">
@@ -102,10 +102,10 @@ function ColorPalette() {
                 <ColorSwatch token={token} label={label} value={colorValues[token]} />
               </div>
             ))}
-          </Stack>
+          </Column>
         </Example>
       ))}
-    </Stack>
+    </Column>
   );
 }
 

@@ -4,7 +4,8 @@ import {
   DialogClose,
   Drawer,
   Link,
-  Stack,
+  Column,
+  Row,
   Text,
   TextField,
   type DialogOpenChangeReason,
@@ -19,8 +20,8 @@ export function DrawersFixture() {
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
   const main = useRef<HTMLElement>(null);
   return (
-    <Stack gap={4} className="fixture-section">
-      <Stack direction="row" wrap gap={3}>
+    <Column gap={4} className="fixture-section">
+      <Row wrap gap={3}>
         <Drawer
           title="Filters"
           description="Narrow the list."
@@ -36,10 +37,10 @@ export function DrawersFixture() {
           trigger={<Button variant="secondary">Open navigation</Button>}
         >
           <nav aria-label="Sections">
-            <Stack gap={2}>
+            <Column gap={2}>
               <Link href="#overview">Overview</Link>
               <Link href="#people">People</Link>
-            </Stack>
+            </Column>
           </nav>
         </Drawer>
         <Button variant="secondary" onClick={() => setOpen(true)}>
@@ -66,7 +67,7 @@ export function DrawersFixture() {
         >
           <TextField label="Query" name="query" />
         </Drawer>
-      </Stack>
+      </Row>
       <div dir="rtl">
         <Drawer title="Details" trigger={<Button variant="secondary">Open details rtl</Button>}>
           <Text>In right-to-left text.</Text>
@@ -75,6 +76,6 @@ export function DrawersFixture() {
       <main ref={main} tabIndex={-1} data-testid="drawer-main">
         <output data-testid="drawer-reason">{reason}</output>
       </main>
-    </Stack>
+    </Column>
   );
 }

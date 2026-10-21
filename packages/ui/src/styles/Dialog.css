@@ -48,9 +48,25 @@
   font: var(--env-type-body-small);
   color: var(--env-color-fg-muted);
 }
+/* The theme boundary of a modal surface's portal (Dialog, ConfirmDialog, Drawer, CommandPalette):
+   a layer fixed over the whole viewport, at the scrim's level, that lets pointers through to its
+   scrim and surface. Where the document root isn't themed it is the outermost boundary, so the
+   env-window container (Theme.css), and as wide as the window. Being fixed over the viewport
+   itself, it changes nothing for the fixed scrim and positioner inside it in any engine, also one
+   whose container-type contains layout, which makes it their containing block: they cover the
+   viewport, and Base UI's focus trap and scroll lock work on the same elements as before. The
+   layer is a stacking context at the scrim's level, so the scrim and the surface keep their order
+   inside it, under popovers, toasts and tooltips, which portal beside it. */
+.env-overlay-theme {
+  position: fixed;
+  inset: 0;
+  z-index: var(--env-z-overlay);
+  pointer-events: none;
+}
 .env-dialog-backdrop {
   position: fixed;
   inset: 0;
+  pointer-events: auto;
   z-index: var(--env-z-overlay);
   background: var(--env-color-bg-overlay);
   /* Motion: the scrim fades in and out. */

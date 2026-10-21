@@ -1,4 +1,4 @@
-import { Button, SearchField, Stack, Table } from '@envsemble/envui';
+import { Button, SearchField, Column, Row, Table } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 const invoices = [
@@ -9,14 +9,14 @@ const invoices = [
 
 export default function TableToolbar() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       {/* Small controls above a table of small rows, so the bar matches its density. */}
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         <SearchField label="Search invoices" size="sm" />
         <Button variant="secondary" size="sm" startIcon={<Download />}>
           Export
         </Button>
-      </Stack>
+      </Row>
       <Table.Root aria-label="Invoices" density="sm">
         <Table.Head>
           <Table.Row>
@@ -35,6 +35,6 @@ export default function TableToolbar() {
           ))}
         </Table.Body>
       </Table.Root>
-    </Stack>
+    </Column>
   );
 }

@@ -24,7 +24,8 @@ composes:
   - PageHeader
   - Sidebar
   - NavList
-  - Stack
+  - Column
+  - Row
   - Surface
   - Text
   - TextField
@@ -61,7 +62,7 @@ A settings page inside the [app frame](app-frame.md): the person's profile, thei
 ## Anatomy
 
 1. **Page:** a [Page](../components/page.md) of `width="lg"` with a [PageHeader](../components/page-header.md), "Settings", and a one-line description.
-2. **Columns:** a [Stack](../components/stack.md) row, with the navigation and the sections side by side from the `lg` breakpoint up.
+2. **Columns:** a [Row](../components/row.md), with the navigation and the sections side by side from the `lg` breakpoint up.
 3. **On this page:** a [Sidebar.Root](../components/sidebar.md) of the page's own, labelled "Settings sections", with `collapsible="none"` and `mobile="none"`, in a `Sidebar.Provider` with `breakpoint="lg"`, holding a [NavList](../components/nav-list.md) of the sections. It sticks below `--env-frame-sticky-top` as the sections scroll. Each item moves focus to its section's heading, and the current one has `aria-current="location"`.
 4. **Sections:** a `section` named by its `h2`, a [Text](../foundations/typography.md) `variant="title"`, with a muted line where the section applies at once:
    - **Profile:** a `form` on a muted [Surface](../components/surface.md): an [Avatar](../components/avatar.md) with the person's initials, a "Unsaved changes" [Badge](../components/badge.md) while edits wait, the name and email address [TextField](../components/text-field.md)s, then Save profile and Cancel [Button](../components/button.md)s and a status line;

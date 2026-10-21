@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Card, Stack, Text } from '@envsemble/envui';
+import { Card, Column, Text } from '@envsemble/envui';
 
 /** Documentation banner composed from the library's card, text and layout primitives. */
 export function PageHeader({
@@ -28,9 +28,9 @@ export function PageHeader({
             {symbol}
           </span>
         )}
-        <Stack gap={6} align="center" className="docs-page-banner-content">
+        <Column gap={6} align="center" className="docs-page-banner-content">
           <div className="docs-page-banner-heading">
-            <Stack gap={3} align="center">
+            <Column gap={3} align="center">
               {breadcrumb && <Text variant="caption">{breadcrumb}</Text>}
               <Text render={<h1 />} variant="headline" className="docs-page-banner-title">
                 {title}
@@ -41,11 +41,11 @@ export function PageHeader({
                 </Text>
               )}
               {meta}
-            </Stack>
+            </Column>
             {actions}
           </div>
           {children}
-        </Stack>
+        </Column>
       </Card>
     </header>
   );

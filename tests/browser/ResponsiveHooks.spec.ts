@@ -3,7 +3,7 @@ import { fixtureUrl } from './Servers';
 
 const fixture = `${fixtureUrl}/?fixture=responsive-hooks`;
 
-test('useBreakpoint and useMediaQuery follow the viewport', async ({ page }) => {
+test('useMediaQuery follows the viewport, as AppShell and Sidebar ask it', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 700 });
   await page.goto(fixture);
   const breakpoint = page.getByTestId('breakpoint');

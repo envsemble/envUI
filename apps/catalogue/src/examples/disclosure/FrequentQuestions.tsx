@@ -1,4 +1,4 @@
-import { Disclosure, Stack, Text } from '@envsemble/envui';
+import { Disclosure, Column, Text } from '@envsemble/envui';
 
 const questions = [
   {
@@ -17,7 +17,7 @@ const questions = [
 
 export default function FrequentQuestions() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       {questions.map(({ question, answer }, index) => (
         // A shared name lets one answer stay open at a time, where the browser supports it; the
         // first starts open.
@@ -25,6 +25,6 @@ export default function FrequentQuestions() {
           <Text>{answer}</Text>
         </Disclosure>
       ))}
-    </Stack>
+    </Column>
   );
 }

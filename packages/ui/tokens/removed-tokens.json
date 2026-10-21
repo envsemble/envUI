@@ -761,6 +761,9 @@
     "--color-white": { "value": "#ffffff", "component": "Fixed white" }
   },
   "removed": {
+    "--env-stack-gap": {
+      "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
+    },
     "--env-sidebar-width": {
       "note": "AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable."
     },

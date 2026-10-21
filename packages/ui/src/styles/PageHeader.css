@@ -1,8 +1,9 @@
 /* PageHeader: a page's title row, with an optional trail above it, a description under it, actions
-   at its end and a toolbar row below. It responds to its own width: below 32 rem the actions move
-   under the title and wrap. */
+   at its end and a toolbar row below. It responds to its own width at the window classes, compact
+   first: in a compact header the actions wrap under the title, and from a medium one, 37.5 rem,
+   they sit at the end of the title row. */
 .env-page-header {
-  container-type: inline-size;
+  container: env-page-header / inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--env-space-3);
@@ -28,6 +29,7 @@
 }
 .env-page-header-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--env-space-4);
 }
@@ -62,23 +64,23 @@
 }
 .env-page-header-actions {
   display: flex;
-  flex: none;
+  flex: 1 1 100%;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: var(--env-space-2);
   max-inline-size: 100%;
 }
 .env-page-header-toolbar {
   min-inline-size: 0;
 }
-@container (width < 32rem) {
+@container env-page-header (width >= 37.5rem) {
   .env-page-header-row {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   .env-page-header-actions {
-    flex: 1 1 100%;
-    justify-content: flex-start;
+    flex: none;
+    justify-content: flex-end;
   }
 }
 /* Forced colors: the sticky header's edge stays visible. */

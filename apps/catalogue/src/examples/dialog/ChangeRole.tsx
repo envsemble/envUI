@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Dialog, Radio, RadioGroup, Stack, Text } from '@envsemble/envui';
+import { Button, Dialog, Radio, RadioGroup, Column, Text } from '@envsemble/envui';
 
 const roleNames: Record<string, string> = { member: 'Member', admin: 'Admin' };
 
@@ -8,7 +8,7 @@ export default function ChangeRole() {
   const [role, setRole] = useState('member');
   const [choice, setChoice] = useState(role);
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Text>Alex Morgan · {roleNames[role]}</Text>
       <Dialog
         open={open}
@@ -40,6 +40,6 @@ export default function ChangeRole() {
           <Radio value="admin" label="Admin" description="Also manages members and billing." />
         </RadioGroup>
       </Dialog>
-    </Stack>
+    </Column>
   );
 }

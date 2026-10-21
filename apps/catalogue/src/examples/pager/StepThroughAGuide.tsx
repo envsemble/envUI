@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pager, Stack, Text } from '@envsemble/envui';
+import { Pager, Column, Text } from '@envsemble/envui';
 import { ArrowBack } from '@envsemble/envui/icons/ArrowBack';
 import { ArrowForward } from '@envsemble/envui/icons/ArrowForward';
 
@@ -16,7 +16,7 @@ export default function StepThroughAGuide() {
   const previous = pages[index - 1];
   const next = pages[index + 1];
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <Text render={<h3 />} variant="title">
         {pages[index].title}
       </Text>
@@ -39,6 +39,6 @@ export default function StepThroughAGuide() {
           }
         }
       />
-    </Stack>
+    </Column>
   );
 }

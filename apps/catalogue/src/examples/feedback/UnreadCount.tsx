@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, CounterBadge, NavList, Stack } from '@envsemble/envui';
+import { Button, CounterBadge, NavList, Column } from '@envsemble/envui';
 import { AlternateEmail } from '@envsemble/envui/icons/AlternateEmail';
 import { Inbox } from '@envsemble/envui/icons/Inbox';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
@@ -11,7 +11,7 @@ export default function UnreadCount() {
     value > 0 ? <CounterBadge value={value} tone="accent" aria-label={`${value} ${noun}`} /> : null;
   return (
     // envUI has no sidebar here, outside an app frame: the navigation keeps to a sidebar's width.
-    <Stack gap={4} style={{ inlineSize: 'min(100%, 16rem)' }}>
+    <Column gap={4} style={{ inlineSize: 'min(100%, 16rem)' }}>
       <nav aria-label="Workspace">
         <NavList.Root>
           <NavList.Item href="/inbox" icon={<Inbox />} selected end={count(unread.inbox, 'unread')}>
@@ -40,6 +40,6 @@ export default function UnreadCount() {
       >
         Mark all as read
       </Button>
-    </Stack>
+    </Column>
   );
 }

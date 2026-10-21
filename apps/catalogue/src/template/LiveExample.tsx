@@ -1,5 +1,5 @@
 import { lazy, Suspense, use, useState, type ComponentType, type MouseEvent } from 'react';
-import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
+import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 
@@ -151,7 +151,7 @@ export function LiveExample({
 }) {
   const theme = useTheme();
   return (
-    <Stack gap={3} className="docs-live-example-entry">
+    <Column gap={3} className="docs-live-example-entry">
       {widths ? (
         <div
           role="group"
@@ -164,14 +164,15 @@ export function LiveExample({
         >
           {widths.map((width) => (
             <figure key={width} className="docs-width-frame">
-              <Stack
+              <Column
                 render={<Theme {...theme} />}
+                container="env-window"
                 gap={0}
                 className="docs-live-example"
                 style={{ inlineSize: `${width}rem` }}
               >
                 <ExampleRender page={page} name={name} />
-              </Stack>
+              </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide
               </Text>
@@ -179,8 +180,9 @@ export function LiveExample({
           ))}
         </div>
       ) : (
-        <Stack
+        <Column
           render={<Theme {...theme} />}
+          container="env-window"
           gap={0}
           role="group"
           aria-label={`${title} example`}
@@ -189,7 +191,7 @@ export function LiveExample({
           {...keepLinksInPlace}
         >
           <ExampleRender page={page} name={name} />
-        </Stack>
+        </Column>
       )}
       {caption && (
         <Text className="docs-figure-caption" emphasis="muted">
@@ -197,6 +199,6 @@ export function LiveExample({
         </Text>
       )}
       <ExampleCode page={page} name={name} />
-    </Stack>
+    </Column>
   );
 }

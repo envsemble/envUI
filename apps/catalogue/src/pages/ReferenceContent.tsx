@@ -1,4 +1,4 @@
-import { Link, Stack, Text } from '@envsemble/envui';
+import { Link, Column, Text } from '@envsemble/envui';
 import { Documentation } from './Documentation';
 import {
   pageHref,
@@ -61,18 +61,18 @@ function RelatedTopics({ page }: { page: ReferencePage }) {
   });
   if (!related.length) return null;
   return (
-    <Stack render={<section />}>
+    <Column gap={4} render={<section />}>
       <Text render={<h2 />} variant="headline">
         Related topics
       </Text>
-      <Stack gap={2}>
+      <Column gap={2}>
         {related.map((item) => (
           <Text key={item.path}>
             <Link href={pageHref(item)}>{item.reference.title}</Link>
           </Text>
         ))}
-      </Stack>
-    </Stack>
+      </Column>
+    </Column>
   );
 }
 
@@ -129,20 +129,20 @@ export function ReferenceContent({
             ) : (
               <ComponentPreview id={reference.id} />
             )}
-            <Stack gap={7} className="docs-article">
+            <Column gap={7} className="docs-article">
               <RelatedTopics page={page} />
-            </Stack>
+            </Column>
           </>
         ),
         usage: (
-          <Stack gap={7} className="docs-article">
+          <Column gap={7} className="docs-article">
             <Usage reference={reference} search={search} />
             <Text emphasis="muted">
               <Link href={routeHref('overview/get-started')}>
                 Setup, local edits and version updates
               </Link>
             </Text>
-          </Stack>
+          </Column>
         ),
       }}
     />

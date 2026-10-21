@@ -1,4 +1,4 @@
-import { Alert, Button, Stack } from '@envsemble/envui';
+import { Alert, Button, Column } from '@envsemble/envui';
 import { Example } from '../../previews/Example';
 
 const tones = [
@@ -12,7 +12,7 @@ const tones = [
 export default function ToneMatrix() {
   return (
     <Example title="Tones with every part" size="wide">
-      <Stack gap={3}>
+      <Column gap={3}>
         {tones.map(({ tone, title }) => (
           <Alert
             key={tone}
@@ -24,7 +24,7 @@ export default function ToneMatrix() {
             A message of one or two sentences that says what it means and what to do next.
           </Alert>
         ))}
-      </Stack>
+      </Column>
     </Example>
   );
 }

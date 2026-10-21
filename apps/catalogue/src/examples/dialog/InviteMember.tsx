@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, Dialog, Select, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Dialog, Select, Column, Text, TextField } from '@envsemble/envui';
 
 const roles = [
   { value: 'member', label: 'Member' },
@@ -38,7 +38,7 @@ export default function InviteMember() {
     }, 1500);
   };
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={openChange}
@@ -54,7 +54,7 @@ export default function InviteMember() {
         }
       >
         <form id={formId} onSubmit={invite} noValidate>
-          <Stack gap={4}>
+          <Column gap={4}>
             <TextField
               ref={emailField}
               label="Email address"
@@ -76,10 +76,10 @@ export default function InviteMember() {
               items={roles}
               defaultValue="member"
             />
-          </Stack>
+          </Column>
         </form>
       </Dialog>
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

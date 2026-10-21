@@ -734,7 +734,7 @@ export function plan(manifest, description, { limit = 12 } = {}) {
     next: [
       'These are candidates matched on words, not an import list: confirm each with get_component (when to use it, and what to use instead) and get_props before writing code, and use only exports these tools confirm exist.',
       uncovered.length
-        ? 'For the uncovered parts, search in other words, then compose envUI components (Stack, Surface, List, Card) and tokens; if something is still missing, propose an envUI addition instead of a local copy.'
+        ? 'For the uncovered parts, search in other words, then compose envUI components (Row, Column, Grid, Surface, List, Card) and tokens; if something is still missing, propose an envUI addition instead of a local copy.'
         : undefined,
       ignored.length
         ? 'The ignored words read as content, such as labels or code; search them if they name an element.'
@@ -743,7 +743,7 @@ export function plan(manifest, description, { limit = 12 } = {}) {
         ? `Start from get_template ${templates[0].name}: copy its screen and edit it, rather than laying the page out from scratch.`
         : undefined,
       structure.length && !templates.length
-        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell.Root, Page and Stack around the components.`
+        ? `No template matches ${structure.map((part) => `"${part}"`).join(', ')}: lay the page out with AppShell.Root, Page, Row, Column and Grid around the components.`
         : undefined,
     ].filter(Boolean),
   };

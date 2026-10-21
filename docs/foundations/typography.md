@@ -8,22 +8,22 @@ components:
 ## React usage
 
 ```tsx
-import { Text, Stack } from '@envsemble/envui';
+import { Column, Text } from '@envsemble/envui';
 
-<Stack>
+<Column gap={4}>
   <Text render={<h1 />} variant="headline">Project overview</Text>
   <Text render={<h2 />} variant="title">Project details</Text>
   <Text>Shared context for your team.</Text>
   <Text variant="body-sm">Notes for the project.</Text>
   <Text variant="caption">Updated today</Text>
-</Stack>
+</Column>
 
-<Stack>
+<Column gap={4}>
   <Text render={<h3 />} variant="headline">Project overview</Text>
   <Text emphasis="muted">Shared project context.</Text>
   <Text emphasis="subtle">Updated today.</Text>
   <Text>Project status: <Text render={<span />} emphasis="muted">Draft</Text></Text>
-</Stack>
+</Column>
 ```
 
 ### Props & contracts
@@ -41,12 +41,12 @@ import { Text, Stack } from '@envsemble/envui';
 - Choose the semantic element separately from its visual style. Use actual headings for document structure.
 - Use display for a page hero or welcome: it scales from 1.75 to 2.75 rem with the viewport and balances its lines. Use at most one display text per view.
 - Text applies the shared scale and palette. Small body text (body-sm) and captions are small and muted. In 1.0, page-heading is headline, section-heading is title, supporting is body-sm, and `tone` is `emphasis` (primary is default, quiet is subtle); `as` is `render`.
-- Text adds no outer spacing. Stack or the containing component owns the gaps.
+- Text adds no outer spacing. A Column, a Row or the containing component owns the gaps.
 
 TypeScript declarations provide the complete public API.
 
 ## Related topics
 
 - [Colors & themes](../foundations/colors.md)
-- [Stack](../components/stack.md)
+- [Column](../components/column.md)
 - [Card](../components/card.md)

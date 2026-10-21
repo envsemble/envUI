@@ -1,5 +1,5 @@
 import { Fragment, useId, type ReactNode } from 'react';
-import { Message, Stack, Theme, useTheme } from '@envsemble/envui';
+import { Message, Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
 import type { DocumentationBlock, DocumentationSection } from '../DocumentationTypes';
@@ -37,7 +37,7 @@ export function VerdictFigure({
       aria-labelledby={`${id}-verdict ${id}-caption`}
     >
       <div className="docs-verdict-frame">
-        <Stack
+        <Column
           render={<Theme {...theme} />}
           gap={0}
           className="docs-verdict-stage"
@@ -45,7 +45,7 @@ export function VerdictFigure({
           {...keepLinksInPlace}
         >
           <ExampleRender page={page} name={name} />
-        </Stack>
+        </Column>
         <div className="docs-verdict-bar" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>

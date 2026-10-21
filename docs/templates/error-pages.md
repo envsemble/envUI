@@ -30,7 +30,8 @@ composes:
   - Button
   - Link
   - Code
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - empty-states
@@ -51,9 +52,9 @@ The pages people see when what they asked for isn't there: an address with no pa
 
 ## Anatomy
 
-1. **Not found** (`NotFoundPage`, inside the frame): a [Page](../components/page.md) of `width="md"` with an [EmptyState](../components/empty-state.md) `align="center"` and `headingLevel={1}`, "Page not found", that shows the address in [Code](../components/code.md), with "Go to home" and, where the application has a search page, "Search" [Button](../components/button.md) links in a [Stack](../components/stack.md).
+1. **Not found** (`NotFoundPage`, inside the frame): a [Page](../components/page.md) of `width="md"` with an [EmptyState](../components/empty-state.md) `align="center"` and `headingLevel={1}`, "Page not found", that shows the address in [Code](../components/code.md), with "Go to home" and, where the application has a search page, "Search" [Button](../components/button.md) links in a [Row](../components/row.md).
 2. **No access** (`NoAccessPage`, inside the frame): the same EmptyState, "You don't have access to this project", naming the owner, with a "Request access" Button, a status [Text](../foundations/typography.md) and a [Link](../components/link.md) back to the list.
-3. **Failed to load** (`ErrorPage`, a whole screen): [AppShell.Main](../components/app-shell.md) on its own, a Stack as tall as the window that centres a Page of `width="sm"`, and an EmptyState with `tone="danger"`, "Something went wrong", "Try again" and a reference in Code to quote to support.
+3. **Failed to load** (`ErrorPage`, a whole screen): [AppShell.Main](../components/app-shell.md) on its own, a Column as tall as the window that centres a Page of `width="sm"`, and an EmptyState with `tone="danger"`, "Something went wrong", "Try again" and a reference in Code to quote to support.
 4. **Error boundary** (the example below): a React error boundary around the page inside AppShell.Main that shows a danger EmptyState in the page's place.
 
 ## States and behaviour

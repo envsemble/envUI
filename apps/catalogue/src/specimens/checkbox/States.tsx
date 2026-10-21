@@ -1,4 +1,4 @@
-import { Checkbox, Stack } from '@envsemble/envui';
+import { Checkbox, Column } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const states = [
@@ -14,10 +14,10 @@ export default function States() {
       <SpecimenGrid size="compact">
         {states.map(({ title, checked }) => (
           <Specimen key={title} title={title}>
-            <Stack gap={3}>
+            <Column gap={3}>
               <Checkbox label="Include archived projects" checked={checked} />
               <Checkbox label="Include archived projects" checked={checked} disabled />
-            </Stack>
+            </Column>
           </Specimen>
         ))}
         <Specimen title="Long label">

@@ -1,4 +1,4 @@
-import { Button, Card, Stack } from '@envsemble/envui';
+import { Button, Card, Column } from '@envsemble/envui';
 
 const members = [
   { name: 'Alex Morgan', role: 'Editor' },
@@ -8,7 +8,7 @@ const members = [
 
 export default function MembersAsCards() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       {members.map(({ name, role }) => (
         <Card
           key={name}
@@ -17,6 +17,6 @@ export default function MembersAsCards() {
           actions={<Button variant="outline">Manage</Button>}
         />
       ))}
-    </Stack>
+    </Column>
   );
 }

@@ -1573,6 +1573,10 @@
         {
           "class": "env-dialog-title",
           "description": "The title."
+        },
+        {
+          "class": "env-overlay-theme",
+          "description": "The theme boundary that covers the window under a dialog, a sheet or the command palette, so they measure the window and cover the viewport."
         }
       ],
       "states": [
@@ -4178,56 +4182,6 @@
       ],
       "uses": [
         "ResizeHandle"
-      ]
-    },
-    "Stack": {
-      "root": "env-stack",
-      "source": "packages/ui/src/foundations/Layout.tsx",
-      "parts": [
-        {
-          "class": "env-stack",
-          "description": "A row or column with a gap."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-align",
-          "values": [
-            "center",
-            "end",
-            "start"
-          ],
-          "parts": [
-            "env-stack"
-          ]
-        },
-        {
-          "attribute": "data-direction",
-          "values": [
-            "row"
-          ],
-          "parts": [
-            "env-stack"
-          ]
-        },
-        {
-          "attribute": "data-justify",
-          "values": [
-            "between",
-            "center",
-            "end"
-          ],
-          "parts": [
-            "env-stack"
-          ]
-        },
-        {
-          "attribute": "data-wrap",
-          "values": [],
-          "parts": [
-            "env-stack"
-          ]
-        }
       ]
     },
     "Stat": {

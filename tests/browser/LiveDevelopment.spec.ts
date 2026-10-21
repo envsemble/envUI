@@ -53,7 +53,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     // An example file uses the new export as an application would.
     const editedExample =
       `import { LiveAcceptance } from '@envsemble/envui';\n` +
-      originals[3].replace(/(<Stack[^>]*>)/, '$1<LiveAcceptance />');
+      originals[3].replace(/(<(?:Row|Column)[^>]*>)/, '$1<LiveAcceptance />');
     expect(editedExample).toContain('<LiveAcceptance />');
     await writeFile(example, editedExample);
     await expect(

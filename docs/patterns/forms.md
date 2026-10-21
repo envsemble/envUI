@@ -36,7 +36,8 @@ composes:
   - Button
   - Alert
   - Link
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - settings

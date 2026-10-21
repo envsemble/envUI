@@ -1,8 +1,8 @@
-import { Button, Stack } from '@envsemble/envui';
+import { Button, Row } from '@envsemble/envui';
 
 export default function ButtonLinks() {
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
+    <Row wrap align="center" gap={4}>
       <Button href="/projects">Open projects</Button>
       <Button variant="text" href="/help">
         Read help
@@ -10,6 +10,6 @@ export default function ButtonLinks() {
       <Button variant="text" href="/guide" underline>
         Read the guide
       </Button>
-    </Stack>
+    </Row>
   );
 }

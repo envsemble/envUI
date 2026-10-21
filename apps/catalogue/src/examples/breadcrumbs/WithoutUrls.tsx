@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Breadcrumbs, Button, List, Stack, Text } from '@envsemble/envui';
+import { Breadcrumbs, Button, List, Column, Text } from '@envsemble/envui';
 
 const folders: Record<string, string[]> = {
   Workspace: ['Plans', 'Notes'],
@@ -21,7 +21,7 @@ export default function WithoutUrls() {
     requestAnimationFrame(() => heading.current?.focus());
   };
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Breadcrumbs
         aria-label="Folder"
         items={path.map((name, index) => ({
@@ -53,6 +53,6 @@ export default function WithoutUrls() {
       ) : (
         <Text emphasis="muted">This folder is empty.</Text>
       )}
-    </Stack>
+    </Column>
   );
 }

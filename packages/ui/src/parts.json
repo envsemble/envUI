@@ -44,7 +44,8 @@
     }
   },
   "placed": {
-    "env-connected-row": "ConnectedRows"
+    "env-connected-row": "ConnectedRows",
+    "env-overlay-theme": "Dialog"
   },
   "descriptions": {
     "AccountMenu": {
@@ -289,7 +290,8 @@
       "env-dialog-heading": "The column with the title and the description.",
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",
-      "env-dialog-title": "The title."
+      "env-dialog-title": "The title.",
+      "env-overlay-theme": "The theme boundary that covers the window under a dialog, a sheet or the command palette, so they measure the window and cover the viewport."
     },
     "DiffStat": {
       "env-diff-stat": "The count of added and removed lines.",
@@ -619,9 +621,6 @@
       "env-split-pane-handle": "The handle that resizes the panes.",
       "env-split-pane-pane": "One pane.",
       "env-split-pane-probe": "An invisible element that measures the room."
-    },
-    "Stack": {
-      "env-stack": "A row or column with a gap."
     },
     "Stat": {
       "env-stat": "One statistic.",

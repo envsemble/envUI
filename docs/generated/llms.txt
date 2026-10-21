@@ -19,7 +19,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Typography](docs/foundations/typography.md): Shared styles for headings, body copy and supporting text.
 - [Spacing & shape](docs/foundations/spacing.md): A shared scale for space, corners and controls that grow with content.
 - [Scale & density](docs/foundations/scale.md): The comfortable and compact app scales, control sizes and the row density of data components.
-- [Responsive layout & stacking](docs/foundations/responsive.md): Viewport breakpoints, container queries, the media query hooks and the stacking order of frames and popups.
+- [Responsive layout & stacking](docs/foundations/responsive.md): Window classes, container queries, measuring a container and the stacking order of frames and popups.
 - [Composition & extension](docs/foundations/composition.md): Build product interfaces from shared primitives and existing components.
 - [Icons & assets](docs/foundations/icons.md): Local Material Symbols and official brand assets, ready to use.
 - [Accessibility](docs/foundations/accessibility.md): Keyboard access, visible focus and clear guidance across shared controls.
@@ -27,7 +27,10 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 
 ## Components: Layout & surfaces
 
-- [Stack](docs/components/stack.md): Stack lays out content in a column, or a row, with even gaps, such as a form and its actions. Parts: `.env-stack`.
+- [Box](docs/components/box.md): Box is a plain block for an inset, a size container or a named region, with no layout of its own.
+- [Row](docs/components/row.md): Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
+- [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
+- [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
 - [Page](docs/components/page.md): The column a page's content sits in, centered at one of four widths with the page gutter, and the page's header at its top. Parts: `.env-page`.
 - [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top. Parts: `.env-page-header`.
 - [SplitPane](docs/components/split-pane.md): Two panes with a handle between them that people drag or move with the arrow keys, and ListDetail, a list beside the detail of its chosen item. Also: ListDetail. Parts: `.env-split-pane`, `.env-list-detail`.

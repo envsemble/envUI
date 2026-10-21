@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Menu, Stack, Text } from '@envsemble/envui';
+import { Button, Menu, Column, Text } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 import { Link } from '@envsemble/envui/icons/Link';
 import { Send } from '@envsemble/envui/icons/Send';
@@ -11,7 +11,7 @@ const formats = ['PDF', 'Word document', 'Markdown'];
 export default function Submenus() {
   const [lastAction, setLastAction] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Menu.Root
         aria-label="Share"
         align="start"
@@ -42,6 +42,6 @@ export default function Submenus() {
       <Text variant="body-sm" role="status">
         {lastAction}
       </Text>
-    </Stack>
+    </Column>
   );
 }
