@@ -3,10 +3,11 @@ import githubLightDefault from 'shiki/themes/github-light-default.mjs';
 import type { ThemeRegistration } from 'shiki/core';
 import type { ThemeValue } from '../../foundations/Theme.js';
 import {
-  codeBackground,
+  codeBackgrounds,
   codeColors,
   codeContrastTargets,
   codeThemeName,
+  diffBackground,
   type CodeContrast,
 } from './CodeColors.js';
 import { diffTints } from './CodeDiffTints.js';
@@ -102,24 +103,25 @@ const memo = (
 
 /**
  * The code theme of an app theme and contrast: its Shiki theme, with each token color that falls
- * short of the contrast's target on code's background moved to the closest color of the same
+ * short of the contrast's target on a code block, over any surface, moved to the closest color of the same
  * OKLCH hue that reaches it, darker in the light theme and lighter in the dark one, with as much of
  * its chroma as the gamut allows there. Tokens that were distinct stay distinct. The colors are
  * computed where the theme first loads, from the installed Shiki themes.
  */
 export const codeTheme = memo(async (scheme, contrast) => {
   const theme = await shikiTheme(scheme, contrast);
-  const { block, foreground } = codeColors(scheme, contrast);
+  const { foreground } = codeColors(scheme, contrast);
+  const backgrounds = codeBackgrounds('block', scheme, contrast);
   return withColors(
     theme,
     codeThemeName('code', scheme, contrast),
     readableReplacements(
       textColors(theme),
-      [block],
+      backgrounds,
       codeContrastTargets[contrast],
       direction(scheme),
     ),
-    { 'editor.background': block, 'editor.foreground': foreground },
+    { 'editor.background': backgrounds[0]!, 'editor.foreground': foreground },
   );
 });
 
@@ -136,7 +138,7 @@ const changeColorKeys = {
  */
 export const diffTheme = memo(async (scheme, contrast) => {
   const theme = await shikiTheme(scheme, contrast);
-  const background = codeBackground(scheme, contrast);
+  const background = diffBackground(scheme, contrast);
   const target = codeContrastTargets[contrast];
   const changeColors: Record<string, string> = {};
   const backgrounds = [background];
