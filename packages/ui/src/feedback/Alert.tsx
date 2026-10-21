@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
 import { CheckCircle } from '../icons/CheckCircle.js';
@@ -65,18 +66,35 @@ export function Alert({
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
   const symbol = icon === undefined ? toneIcons[tone] : icon;
   return (
-    <div {...props} role={role} className={classNames('env-alert', className)} data-tone={tone}>
+    <Grid
+      columns="auto minmax(0, 1fr) auto"
+      align="start"
+      gap={3}
+      padding={4}
+      render={
+        <div
+          {...props}
+          role={role}
+          className={classNames('env-alert', className)}
+          data-tone={tone}
+        />
+      }
+    >
       {symbol !== false && symbol != null && (
         <span className="env-alert-icon">
           <DecorativeIcon>{symbol}</DecorativeIcon>
         </span>
       )}
-      <div className="env-alert-content">
+      <Grid gap={1} className="env-alert-content">
         {title != null && <div className="env-alert-title">{title}</div>}
         {children != null && <div className="env-alert-message">{children}</div>}
-        {action != null && <div className="env-alert-action">{action}</div>}
-      </div>
+        {action != null && (
+          <Row wrap gap={2} className="env-alert-action">
+            {action}
+          </Row>
+        )}
+      </Grid>
       {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
-    </div>
+    </Grid>
   );
 }

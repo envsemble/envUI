@@ -8,7 +8,7 @@ import type {
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Text } from '../foundations/Text.js';
-import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
+import { Column, Grid, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 
@@ -188,14 +188,14 @@ function ContentCard({
     feature && meta == null
       ? headingText
       : (title != null || meta != null) && (
-          <div className="env-card-header">
+          <Row wrap align="center" gap={3} className="env-card-header">
             {headingText}
             {meta != null && (
               <Text render={<span />} variant="body-sm" className="env-card-meta">
                 {meta}
               </Text>
             )}
-          </div>
+          </Row>
         );
   const descriptionText = description != null && (
     <Text
@@ -209,7 +209,7 @@ function ContentCard({
   let content: ReactNode;
   if (feature) {
     content = (
-      <div className="env-card-layout">
+      <Grid align="center" gap={4} className="env-card-layout">
         {icon != null && (
           <div className="env-card-icon">
             <DecorativeIcon>{icon}</DecorativeIcon>
@@ -225,7 +225,7 @@ function ContentCard({
           {children}
         </Column>
         {hasActions && <div className="env-card-footer">{actions}</div>}
-      </div>
+      </Grid>
     );
   } else if (hasActions) {
     content = (

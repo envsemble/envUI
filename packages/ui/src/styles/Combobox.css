@@ -154,13 +154,10 @@
 .env-combobox-popup {
   /* The rows' leading content is as large as an avatar's slot. */
   --env-list-row-icon-size: 1.25rem;
-  display: flex;
-  flex-direction: column;
   width: max-content;
   min-width: min(var(--anchor-width), var(--available-width));
   max-width: min(22rem, var(--available-width));
   max-block-size: min(var(--available-height), 20rem);
-  padding: var(--env-space-1);
   overflow: hidden;
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
 }
@@ -168,19 +165,13 @@
   display: none;
 }
 .env-combobox-list {
-  display: grid;
   grid-auto-rows: minmax(min-content, auto);
   align-content: start;
   flex: 1 1 auto;
   min-block-size: 0;
-  min-inline-size: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-padding-block: var(--env-space-1);
-}
-.env-combobox-group {
-  display: grid;
-  gap: inherit;
 }
 .env-combobox-group + .env-combobox-group {
   margin-block-start: var(--env-space-1);

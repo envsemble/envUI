@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
@@ -69,23 +70,28 @@ export function Message({
   ...props
 }: MessageProps) {
   return (
-    <article
-      {...props}
-      className={classNames('env-message', className)}
-      data-from={from}
-      data-status={status}
+    <Grid
+      gap={2}
+      render={
+        <article
+          {...props}
+          className={classNames('env-message', className)}
+          data-from={from}
+          data-status={status}
+        />
+      }
     >
       {(present(author) || present(meta)) && (
-        <header className="env-message-header">
+        <Row render={<header />} wrap className="env-message-header">
           {present(author) && <span className="env-message-author">{author}</span>}
           {present(meta) && <span className="env-message-meta">{meta}</span>}
-        </header>
+        </Row>
       )}
       <div className="env-message-content" data-text={typeof children === 'string' || undefined}>
         {children}
       </div>
       {status != null && (
-        <div className="env-message-status">
+        <Row align="center" gap={1} className="env-message-status">
           {status === 'sending' ? (
             <Spinner size="sm" />
           ) : (
@@ -94,16 +100,16 @@ export function Message({
             </DecorativeIcon>
           )}
           <MessageStatusLabel status={status} label={statusLabel} />
-        </div>
+        </Row>
       )}
       {present(actions) && (
-        <div className="env-message-actions">
+        <Row wrap align="center" gap={1} className="env-message-actions">
           <ControlDefaults variant="ghost" size="sm">
             {actions}
           </ControlDefaults>
-        </div>
+        </Row>
       )}
-    </article>
+    </Grid>
   );
 }
 
@@ -123,7 +129,8 @@ export interface MessageListProps extends ComponentPropsWithRef<'div'> {
  */
 export function MessageList({ busy = false, className, ...props }: MessageListProps) {
   return (
-    <div
+    <Grid
+      gap={5}
       aria-live="polite"
       aria-busy={busy || undefined}
       {...props}

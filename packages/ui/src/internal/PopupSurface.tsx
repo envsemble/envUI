@@ -5,6 +5,7 @@ import {
   useLayoutEffect,
   useState,
   type ComponentType,
+  type ReactElement,
   type ReactNode,
   type RefObject,
 } from 'react';
@@ -78,10 +79,15 @@ export interface PopupSurfaceProps {
   dir?: Direction;
   /** How far it floats above the page: 1, 2 (the default, as menus and popovers) or 3. */
   elevation?: 1 | 2 | 3;
-  /** Its width: md, 20 rem, or lg, 28 rem, both narrowing to fit the window; its content's without. */
+  /** The widest it grows, where its owner's style sheet reads it: md, 20 rem, or lg, 28 rem. */
   width?: 'md' | 'lg';
   /** The owner's popup class, such as env-popover, beside env-popup. */
   className?: string;
+  /**
+   * The layout primitive the popup element renders as, which lays out its content, such as
+   * <Column gap={3} padding={5} />. A render in popupProps replaces it.
+   */
+  layout?: ReactElement;
   /** The owner's positioner class. */
   positionerClassName?: string;
   /** More props for the Popup part: aria-label, ref, render, data attributes and handlers. */
@@ -158,6 +164,7 @@ export function PopupSurface({
   elevation = 2,
   width,
   className,
+  layout,
   positionerClassName,
   popupProps,
   children,
@@ -178,6 +185,7 @@ export function PopupSurface({
               className={classNames('env-popup-positioner', positionerClassName)}
             >
               <Popup
+                {...(layout && { render: layout })}
                 {...popupProps}
                 {...(initialFocus !== undefined && { initialFocus })}
                 {...(finalFocus !== undefined && { finalFocus })}

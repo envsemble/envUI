@@ -42,6 +42,9 @@ const ownThresholds = {
   // SplitPane and ListDetail stack at their stackBelow, 44 rem by default; Panes replaces them.
   'SplitPane.css': ['44rem'],
   'ListDetail.css': ['44rem'],
+  // A stacking Table's region makes 37.5em its stackBelow through its font size, as em in a
+  // container query is the container's own.
+  'Table.css': ['37.5em'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {

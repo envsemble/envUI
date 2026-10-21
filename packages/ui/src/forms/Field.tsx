@@ -4,6 +4,7 @@ import { Field as BaseField } from '@base-ui/react/field';
 import { createContext, useContext, type ComponentProps, type ReactNode } from 'react';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import type { ControlSize } from '../foundations/Theme.js';
 
@@ -22,7 +23,12 @@ export type RootProps = Omit<ComponentProps<typeof BaseField.Root>, 'className'>
  */
 function Root({ className, invalid, children, ...props }: RootProps) {
   return (
-    <BaseField.Root {...props} invalid={invalid} className={classNames('env-field', className)}>
+    <BaseField.Root
+      render={<Grid gap={3} />}
+      {...props}
+      invalid={invalid}
+      className={classNames('env-field', className)}
+    >
       <InvalidContext value={invalid === true}>{children}</InvalidContext>
     </BaseField.Root>
   );
@@ -96,10 +102,10 @@ function FieldError({ className, children, match, ...props }: ErrorProps) {
       className={classNames('env-field-error', className)}
       // The message, the children or the browser's, follows the icon.
       render={({ children: message, ...errorProps }) => (
-        <div {...errorProps}>
+        <Row align="start" gap={2} {...errorProps}>
           <ErrorIcon aria-hidden="true" focusable="false" />
           <span>{message}</span>
-        </div>
+        </Row>
       )}
     />
   );

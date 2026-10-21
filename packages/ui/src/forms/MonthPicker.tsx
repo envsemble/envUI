@@ -5,6 +5,7 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { useResolvedLocale } from '../internal/useFormatters.js';
 import { monthPicker as monthPickerMessages } from '../foundations/messages/monthPicker.js';
 import { Button } from '../actions/Button.js';
+import { Row } from '../foundations/Layout.js';
 import { CalendarMonth } from '../icons/CalendarMonth.js';
 import { MonthGrid, monthGridActive } from './internal/MonthGrid.js';
 import { PickerField, usePickerOpen, type PickerFieldProps } from './internal/PickerField.js';
@@ -164,7 +165,7 @@ export function MonthPicker({
         previousYearLabel={previousYearLabel ?? messages.previousYear}
         nextYearLabel={nextYearLabel ?? messages.nextYear}
       />
-      <div className="env-date-picker-actions">
+      <Row wrap align="center" gap={2} className="env-date-picker-actions">
         <Button
           variant="text"
           aria-disabled={!thisMonthAvailable || undefined}
@@ -175,13 +176,20 @@ export function MonthPicker({
           {thisMonthLabel ?? messages.thisMonth}
         </Button>
         {clearable && serialized && (
-          <span className="env-date-picker-actions-end">
+          <Row
+            render={<span />}
+            wrap
+            align="center"
+            justify="end"
+            gap={2}
+            className="env-date-picker-actions-end"
+          >
             <Button variant="text" onClick={() => choose(null)}>
               {clearLabel ?? messages.clear}
             </Button>
-          </span>
+          </Row>
         )}
-      </div>
+      </Row>
     </PickerField>
   );
 }

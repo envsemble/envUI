@@ -1,19 +1,9 @@
 /* Meter and Progress share one look: a label row over a rounded track whose indicator fills with
    the value. Each emits its own classes, env-meter* and env-progress*; Progress adds the
    indeterminate sweep and segments. */
-.env-meter,
-.env-progress {
-  display: grid;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
-}
 .env-meter-heading,
 .env-progress-heading {
-  display: flex;
-  flex-wrap: wrap;
   align-items: baseline;
-  justify-content: space-between;
-  gap: var(--env-space-3);
   font: var(--env-type-body-small);
 }
 .env-meter-label,

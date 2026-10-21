@@ -176,7 +176,7 @@
   },
   "packages/ui/src/styles/Popover.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 4
+      "count": 3
     }
   },
   "packages/ui/src/styles/Rating.css": {

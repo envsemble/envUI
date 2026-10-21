@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode, Ref } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { Grid } from '../../foundations/Layout.js';
 import {
   PopupSurface,
   type PopupAlign,
@@ -15,7 +16,8 @@ import {
 export function renderMenuPopup(label: string | undefined) {
   return function renderPopup(props: ComponentPropsWithRef<'div'>) {
     return (
-      <div
+      <Grid
+        padding={1}
         {...props}
         aria-labelledby={label === undefined ? props['aria-labelledby'] : undefined}
         aria-label={label}

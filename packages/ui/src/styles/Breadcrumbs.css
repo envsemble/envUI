@@ -3,26 +3,13 @@
   min-inline-size: 0;
 }
 .env-breadcrumbs-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-1);
   margin: 0;
   padding: 0;
   list-style: none;
   font: var(--env-type-body-small);
 }
-.env-breadcrumbs-item {
-  min-inline-size: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-1);
-}
 /* On one line, the current page gives way first and ends in an ellipsis; earlier levels keep their
    width. Nothing clips the list, so focus outlines stay whole. */
-.env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list {
-  flex-wrap: nowrap;
-}
 .env-breadcrumbs[data-nowrap] > .env-breadcrumbs-list > .env-breadcrumbs-item:not(:last-child) {
   flex-shrink: 0;
 }

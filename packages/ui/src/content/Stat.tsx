@@ -1,6 +1,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import {
   Surface,
   type SurfaceAppearanceProps,
@@ -65,25 +66,28 @@ const trendTones: Record<Trend['direction'], TrendTone> = {
  */
 function Root({ label, value, description, trend, className, ...props }: RootProps) {
   return (
-    <div {...props} className={classNames('env-stat', className)}>
+    <Grid gap={1} {...props} className={classNames('env-stat', className)}>
       <div className="env-stat-label">{label}</div>
       <div className="env-stat-value">{value}</div>
       {(trend != null || description != null) && (
-        <div className="env-stat-footer">
+        <Row wrap align="center" className="env-stat-footer">
           {trend != null && (
-            <span
+            <Row
+              render={<span />}
+              align="center"
+              gap={1}
               className="env-stat-trend"
               data-direction={trend.direction}
               data-tone={trend.tone ?? trendTones[trend.direction]}
             >
               <DecorativeIcon>{trendIcons[trend.direction]}</DecorativeIcon>
               <span>{trend.label}</span>
-            </span>
+            </Row>
           )}
           {description != null && <span className="env-stat-description">{description}</span>}
-        </div>
+        </Row>
       )}
-    </div>
+    </Grid>
   );
 }
 
@@ -116,6 +120,7 @@ function Group({ background = 'default', padding, className, ...props }: GroupPr
       background={background}
       padding={padding}
       className={classNames('env-stat-group', className)}
+      render={<Grid />}
     />
   );
 }

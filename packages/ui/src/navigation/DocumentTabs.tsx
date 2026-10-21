@@ -15,6 +15,7 @@ import {
 } from 'react';
 import { CloseButton } from '../actions/CloseButton.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useMessages } from '../internal/EnvUIContext.js';
@@ -360,6 +361,7 @@ export function DocumentTabs({
       }}
       aria-label={label}
       activateOnFocus
+      render={<Row align="stretch" />}
       className={classNames('env-document-tabs', className)}
       style={style}
       data-fade-left={fades.left ? '' : undefined}
@@ -431,7 +433,7 @@ export function DocumentTabs({
         }}
         className="env-document-tabs-root"
       >
-        <div className="env-document-tabs-bar">
+        <Row align="center" className="env-document-tabs-bar">
           <ContextMenu
             aria-label={contextMenuLabel ?? messages.actions}
             onOpenChange={(open) => {
@@ -488,7 +490,11 @@ export function DocumentTabs({
           >
             {strip}
           </ContextMenu>
-          {end != null && <div className="env-document-tabs-end">{end}</div>}
+          {end != null && (
+            <Row align="center" gap={1} className="env-document-tabs-end">
+              {end}
+            </Row>
+          )}
           {drag && dragged && (
             // The floating copy of the dragged tab, beside the pointer; decorative, since the drag is
             // a pointer's alternative to the context menu.
@@ -501,7 +507,7 @@ export function DocumentTabs({
               <span className="env-document-tabs-tab-label">{dragged.label}</span>
             </div>
           )}
-        </div>
+        </Row>
       </BaseTabs.Root>
     </DirectionProvider>
   );

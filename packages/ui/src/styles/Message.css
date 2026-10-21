@@ -1,18 +1,12 @@
 /* Conversation entries. Messages from the person using the app are compact bubbles at the inline end;
    messages from others are full-width content, so long formatted answers keep a readable measure. */
 .env-message-list {
-  display: grid;
   align-content: start;
-  gap: var(--env-space-5);
-  min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
 .env-message {
-  display: grid;
   justify-items: start;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
   margin: 0;
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
@@ -20,13 +14,7 @@
 .env-message[data-from='self'] {
   justify-items: end;
 }
-.env-message > * {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-}
 .env-message-header {
-  display: flex;
-  flex-wrap: wrap;
   align-items: baseline;
   column-gap: var(--env-space-2);
   font: var(--env-type-body-small);
@@ -64,9 +52,6 @@
 .env-message-status {
   /* The spinner takes the status's color, through its hook. */
   --env-spinner-color: currentColor;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
@@ -79,10 +64,6 @@
   /* The height the actions draw at, which a coarse pointer raises to the touch height. */
   --env-message-action-height: var(--env-control-height);
   justify-self: stretch;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-1);
 }
 /* A text icon action at the edge lines its icon up with the message, not its round hit area,
    through Button's edge hooks. */

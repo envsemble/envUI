@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters, type Formatters } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
@@ -334,30 +335,16 @@ export function CalendarHeatmap({
   const scroller = useRef<HTMLDivElement>(null);
   useEffect(() => () => clearTimeout(hoverTimer.current), []);
 
-  // Narrow containers scroll inside the heatmap, starting at the most recent weeks. It stays there
-  // as the weeks settle, such as when the web font loads, until the person scrolls it.
-  const pinned = useRef(true);
+  // Narrow containers scroll inside the heatmap, starting at the most recent weeks: the scroller is a
+  // reversed row, whose scroll origin is its end (CalendarHeatmap.css), so the server's markup and
+  // the first paint already show them and they stay in view as the weeks settle, such as when the
+  // web font loads. A later end, such as new data, scrolls back to them.
+  const shownEnd = useRef(model.end);
   useLayoutEffect(() => {
-    const element = scroller.current;
-    const table = grid.current;
-    if (!element || !table) return;
-    pinned.current = true;
-    const toEnd = () => {
-      if (!pinned.current) return;
-      const rtl = getComputedStyle(element).direction === 'rtl';
-      element.scrollLeft = rtl ? -element.scrollWidth : element.scrollWidth;
-    };
-    toEnd();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(toEnd);
-    observer.observe(element);
-    observer.observe(table);
-    return () => observer.disconnect();
+    if (shownEnd.current === model.end) return;
+    shownEnd.current = model.end;
+    if (scroller.current) scroller.current.scrollLeft = 0;
   }, [model.end]);
-
-  function unpin() {
-    pinned.current = false;
-  }
 
   function cellFrom(target: EventTarget | null) {
     return target instanceof Element ? target.closest<HTMLElement>('td[data-day]') : null;
@@ -492,19 +479,14 @@ export function CalendarHeatmap({
   const shown = tip ? model.days.get(tip.day) : undefined;
   const legendLevels = Array.from({ length: model.levelCount }, (_, level) => level);
   return (
-    <div
+    <Grid
       {...props}
+      gap={2}
       className={classNames('env-calendar-heatmap', className)}
       style={style}
       data-tone={tone}
     >
-      <div
-        className="env-calendar-heatmap-scroll"
-        ref={scroller}
-        onPointerDown={unpin}
-        onWheel={unpin}
-        onKeyDown={unpin}
-      >
+      <div className="env-calendar-heatmap-scroll" ref={scroller}>
         <table
           ref={grid}
           role="grid"
@@ -531,7 +513,7 @@ export function CalendarHeatmap({
           />
         </table>
       </div>
-      <div className="env-calendar-heatmap-legend" aria-hidden="true">
+      <Row wrap align="center" className="env-calendar-heatmap-legend" aria-hidden="true">
         <span>{lessLabel}</span>
         {legendLevels.map((level) => (
           <span
@@ -548,7 +530,7 @@ export function CalendarHeatmap({
           />
         ))}
         <span>{moreLabel}</span>
-      </div>
+      </Row>
       <BaseTooltip.Root
         open={tip?.open ?? false}
         onOpenChange={(open, details) => {
@@ -591,7 +573,7 @@ export function CalendarHeatmap({
           }
         />
       </BaseTooltip.Root>
-    </div>
+    </Grid>
   );
 }
 

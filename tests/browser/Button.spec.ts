@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
+import { openServerMarkup } from './ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=adoption`;
 
@@ -203,3 +204,63 @@ test('motion settles presses and respects reduced motion', async ({ page }) => {
   await expect(button).toHaveCSS('transform', 'none');
   await page.mouse.up();
 });
+
+test(
+  'every variant keeps its focus ring clear of its label, and a text button lines up with the text',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await openServerMarkup(
+      page,
+      `import {createElement as h} from 'react';
+      import {Button} from '@envsemble/envui';
+      const variants = ['primary', 'secondary', 'outline', 'ghost', 'text'];
+      export const element = h('div', {style: {padding: '2rem'}},
+        h('p', {id: 'edge', style: {margin: 0}}, 'Edge'),
+        h('div', {style: {display: 'flex', gap: '1rem', flexWrap: 'wrap'}},
+          variants.map((variant) => h(Button, {key: variant, variant, 'data-testid': variant},
+            'Learn more'))),
+        h('div', {style: {display: 'flex'}}, h(Button, {variant: 'text', 'data-testid': 'aligned'},
+          'Learn more')));`,
+    );
+    const rings: Record<string, { outer: number }> = {};
+    for (const variant of ['primary', 'secondary', 'outline', 'ghost', 'text']) {
+      const button = page.getByTestId(variant);
+      // Keyboard focus, so :focus-visible draws the ring: the buttons are the page's tab stops.
+      await page.keyboard.press('Tab');
+      await expect(button).toBeFocused();
+      const ring = await button.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const offset = parseFloat(style.outlineOffset);
+        const box = element.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        const label = range.getBoundingClientRect();
+        // The ring's inner edge is the border box grown by the offset; the label must keep 2 px
+        // from it on every side, also where the pill's round ends curve in at the label's corners.
+        const radius = (box.height + 2 * offset) / 2;
+        const rise = Math.max(0, label.height / 2 - 0);
+        const curve = radius - Math.sqrt(Math.max(0, radius ** 2 - rise ** 2));
+        return {
+          style: style.outlineStyle,
+          inline: Math.min(label.left - box.left, box.right - label.right) + offset - curve,
+          block: Math.min(label.top - box.top, box.bottom - label.bottom) + offset,
+          outer: box.height + 2 * (offset + parseFloat(style.outlineWidth)),
+        };
+      });
+      expect(ring.style, variant).toBe('solid');
+      expect(ring.inline, variant).toBeGreaterThanOrEqual(2);
+      expect(ring.block, variant).toBeGreaterThanOrEqual(2);
+      rings[variant] = ring;
+    }
+    // A ghost button's ring traces its state layer: no bigger than a filled button's.
+    expect(rings.ghost!.outer).toBeLessThanOrEqual(rings.secondary!.outer);
+    // The text button's padding is taken back by its margin: its label starts where the text does.
+    const edge = (await page.locator('#edge').boundingBox())!.x;
+    const label = await page.getByTestId('aligned').evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getBoundingClientRect().left;
+    });
+    expect(Math.abs(label - edge)).toBeLessThan(0.5);
+  },
+);

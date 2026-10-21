@@ -3,7 +3,7 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { classNames } from '../../internal/classNames.js';
-import { Column, Row } from '../../foundations/Layout.js';
+import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 
@@ -44,7 +44,8 @@ export function DialogSurface({ className, ...props }: SurfaceProps) {
 
 /**
  * The title, with a close button at its end where the owner passes one, and the description under
- * it. The title names the dialog and the description describes it.
+ * it. The title names the dialog and the description describes it; the description belongs to the
+ * title, so they sit closer together than the dialog's sections.
  */
 export function DialogHeader({
   title,
@@ -57,23 +58,23 @@ export function DialogHeader({
 }) {
   if (title == null && description == null && close == null) return null;
   return (
-    <div className="env-dialog-header">
+    <Grid gap={2} className="env-dialog-header">
       {(title != null || close != null) && (
-        <div className="env-dialog-heading">
+        <Row align="center" justify="between" gap={4} className="env-dialog-heading">
           {title != null ? (
             <BaseDialog.Title className="env-dialog-title">{title}</BaseDialog.Title>
           ) : (
             <span />
           )}
           {close}
-        </div>
+        </Row>
       )}
       {description != null && (
         <BaseDialog.Description className="env-dialog-description">
           {description}
         </BaseDialog.Description>
       )}
-    </div>
+    </Grid>
   );
 }
 

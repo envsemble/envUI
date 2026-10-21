@@ -12,6 +12,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Grid } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { FileInput } from '../internal/FileInput.js';
@@ -159,6 +160,41 @@ export function DropZone({
     .filter(Boolean)
     .join(' ');
 
+  const target = (
+    <ActionElement
+      disabled={disabled}
+      pending={pending}
+      aria-labelledby={nameIds}
+      aria-describedby={error != null ? `${id}-error` : undefined}
+      onClick={() => {
+        if (available) picker.current?.click();
+      }}
+    />
+  );
+  const targetContent = (
+    <>
+      <span className="env-drop-zone-icon">
+        {pending ? (
+          <Spinner size={size === 'sm' ? 'sm' : 'md'} />
+        ) : (
+          <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
+        )}
+      </span>
+      <Grid render={<span />} gap={size === 'sm' ? 0 : 1} className="env-drop-zone-text">
+        <span className="env-drop-zone-label" id={`${id}-label`}>
+          {label}
+        </span>
+        {description != null && (
+          <>
+            {/* A space between the lines, so the visible text reads as the name does. */}{' '}
+            <span className="env-drop-zone-description" id={`${id}-description`}>
+              {description}
+            </span>
+          </>
+        )}
+      </Grid>
+    </>
+  );
   return (
     <Field.Root
       {...props}
@@ -192,37 +228,9 @@ export function DropZone({
         if (available) take(Array.from(event.dataTransfer.files));
       }}
     >
-      <ActionElement
-        className="env-drop-zone-target"
-        disabled={disabled}
-        pending={pending}
-        aria-labelledby={nameIds}
-        aria-describedby={error != null ? `${id}-error` : undefined}
-        onClick={() => {
-          if (available) picker.current?.click();
-        }}
-      >
-        <span className="env-drop-zone-icon">
-          {pending ? (
-            <Spinner size={size === 'sm' ? 'sm' : 'md'} />
-          ) : (
-            <DecorativeIcon>{icon ?? <CloudUpload />}</DecorativeIcon>
-          )}
-        </span>
-        <span className="env-drop-zone-text">
-          <span className="env-drop-zone-label" id={`${id}-label`}>
-            {label}
-          </span>
-          {description != null && (
-            <>
-              {/* A space between the lines, so the visible text reads as the name does. */}{' '}
-              <span className="env-drop-zone-description" id={`${id}-description`}>
-                {description}
-              </span>
-            </>
-          )}
-        </span>
-      </ActionElement>
+      <Grid gap={3} className="env-drop-zone-target" render={target}>
+        {targetContent}
+      </Grid>
       <FileInput
         ref={(node) => {
           picker.current = node;

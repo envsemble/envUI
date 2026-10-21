@@ -15,10 +15,6 @@
   position: absolute;
   inset: 0;
   z-index: calc(var(--env-z-sticky) - 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-inline-size: 0;
   overflow: clip;
   pointer-events: none;
 }
@@ -34,8 +30,6 @@
 /* The row never positions, transforms or contains its panels, so a maximized panel inside it fills
    the dock instead of the row, and does not scroll with it. */
 .env-panel-dock-row {
-  display: flex;
-  align-items: flex-end;
   gap: var(--env-panel-dock-gap);
   min-block-size: 0;
   padding: var(--env-panel-dock-gutter) var(--env-panel-dock-gutter) 0;
@@ -74,8 +68,6 @@
   min-inline-size: var(--env-panel-dock-panel-min-width, 20rem);
   max-inline-size: var(--env-panel-dock-panel-max-width, 48rem);
   block-size: var(--env-panel-dock-panel-height, 28rem);
-  display: flex;
-  flex-direction: column;
   border: 0.0625rem solid var(--env-elevation-2-border);
   border-block-end: 0;
   border-start-start-radius: var(--env-radius-surface);
@@ -207,8 +199,6 @@
 }
 .env-panel-dock-heading {
   flex: 1 1 10rem;
-  min-inline-size: 0;
-  display: grid;
   gap: 0.125rem;
   /* Long words break only where they would overflow the line. */
   overflow-wrap: break-word;
@@ -227,8 +217,6 @@
 }
 .env-panel-dock-actions,
 .env-panel-dock-controls {
-  display: flex;
-  align-items: center;
   gap: 0.125rem;
 }
 /* On a row of their own the actions stay at the inline end. */
@@ -258,8 +246,6 @@
   position: relative;
   z-index: calc(var(--env-z-raised) + 2);
   flex: 0 0 auto;
-  display: flex;
-  align-items: flex-end;
   gap: var(--env-panel-dock-gap);
   margin: 0;
   padding: var(--env-space-2) var(--env-panel-dock-gutter) 0;
@@ -276,8 +262,6 @@
   flex: 0 0 auto;
   max-inline-size: 14rem;
   block-size: var(--env-panel-dock-tab-height);
-  display: flex;
-  align-items: center;
   border: 0.0625rem solid var(--env-elevation-2-border);
   border-block-end: 0;
   border-start-start-radius: var(--env-radius-sm);
@@ -347,10 +331,12 @@
   outline-offset: -0.125rem;
 }
 
-/* Measures the stackBelow width in the dock's own text size. It lies before the inline start, where
+/* Measures the stackBelow width in the dock's own text size, also wider than the dock, which the
+   column's limit on its children would otherwise cap. It lies before the inline start, where
    overflow is never scrollable. */
 .env-panel-dock-probe {
   position: absolute;
+  max-inline-size: none;
   inset-block-start: 0;
   inset-inline-end: 100%;
   block-size: 0;

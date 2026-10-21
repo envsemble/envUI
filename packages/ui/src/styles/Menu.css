@@ -10,12 +10,10 @@
   /* One leading slot holds a check mark or an icon. */
   --env-menu-slot: calc(var(--env-control-icon-size) + var(--env-space-2));
   --env-menu-leading: 0rem;
-  display: grid;
-  gap: 0;
   inline-size: max-content;
-  min-inline-size: 12rem;
-  max-inline-size: min(22rem, calc(100vw - 2rem));
-  padding: var(--env-space-1);
+  min-inline-size: min(12rem, var(--available-width, 100vw));
+  /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window. */
+  max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
   /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
      default: a shadow and a hairline edge that forced colors keep once the shadow is gone. */
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
@@ -147,10 +145,6 @@
   background: var(--env-color-border-muted);
 }
 /* A group is its own set of rows below a small muted heading. */
-.env-menu-group {
-  display: grid;
-  gap: 0;
-}
 .env-menu > .env-menu-group:not(:first-child) {
   margin-block-start: var(--env-space-1);
 }
@@ -178,11 +172,6 @@
   min-block-size: 7.25rem;
   padding: var(--env-space-5) var(--env-space-3);
   border-radius: var(--env-radius-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--env-space-2);
   background: var(--env-color-bg-popup);
   color: var(--env-color-fg-default);
   text-align: center;

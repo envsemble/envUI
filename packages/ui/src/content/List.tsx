@@ -9,6 +9,7 @@ import {
 } from 'react';
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { ListReorderHandle, ReorderableList } from './internal/ListBehavior.js';
 
@@ -47,13 +48,17 @@ function Root({ density = 'md', onReorder, className, children, ...props }: Root
       </ReorderableList>
     );
   return (
-    <ul
-      {...props}
-      data-density={density}
-      className={classNames('env-list', 'env-connected-rows', className)}
+    <Grid
+      render={
+        <ul
+          {...props}
+          data-density={density}
+          className={classNames('env-list', 'env-connected-rows', className)}
+        />
+      }
     >
       {children}
-    </ul>
+    </Grid>
   );
 }
 
@@ -164,19 +169,27 @@ function Item(props: ItemProps) {
     textValue ??
     (typeof label === 'string' || typeof label === 'number' ? String(label) : undefined);
   return (
-    <li
-      aria-current={selected && !current ? 'true' : undefined}
-      {...rest}
-      className={classNames('env-list-item', 'env-connected-row', className)}
-      data-interactive={interactive ? '' : undefined}
-      data-selected={selected ? '' : undefined}
-      data-start={hasStart ? '' : undefined}
+    <Row
+      wrap
+      align="center"
+      justify="between"
+      gap={3}
+      render={
+        <li
+          aria-current={selected && !current ? 'true' : undefined}
+          {...rest}
+          className={classNames('env-list-item', 'env-connected-row', className)}
+          data-interactive={interactive ? '' : undefined}
+          data-selected={selected ? '' : undefined}
+          data-start={hasStart ? '' : undefined}
+        />
+      }
     >
       {hasStart && (
-        <div className="env-list-item-start">
+        <Row align="center" gap={2} className="env-list-item-start">
           {reorderable && <ListReorderHandle textValue={text} />}
           {start}
-        </div>
+        </Row>
       )}
       <div className="env-list-item-content">
         {shownLabel}
@@ -184,7 +197,7 @@ function Item(props: ItemProps) {
         {shownChildren}
       </div>
       {action}
-    </li>
+    </Row>
   );
 }
 

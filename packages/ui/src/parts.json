@@ -652,8 +652,7 @@
       "env-table-header-label": "A column header's text.",
       "env-table-region": "The region that scrolls the table.",
       "env-table-row": "A row.",
-      "env-table-sort-button": "The button that sorts by a column.",
-      "env-table-stack-probe": "An invisible element that measures whether rows stack."
+      "env-table-sort-button": "The button that sorts by a column."
     },
     "Tabs": {
       "env-tabs": "The tabs.",

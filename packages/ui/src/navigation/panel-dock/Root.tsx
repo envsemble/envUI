@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import { classNames } from '../../internal/classNames.js';
+import { Column, Row } from '../../foundations/Layout.js';
 import { cssLength } from '../../internal/cssLength.js';
 import { setRef } from '../../internal/setRef.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
@@ -692,7 +693,8 @@ export function Root<T extends PanelDockPanel>({
   }, [hasTabs]);
 
   return (
-    <div
+    <Column
+      justify="end"
       {...props}
       ref={(node) => {
         root.current = node;
@@ -703,7 +705,8 @@ export function Root<T extends PanelDockPanel>({
       data-filled={filled || undefined}
       data-tabs={hasTabs || undefined}
     >
-      <div
+      <Row
+        align="end"
         ref={row}
         className="env-panel-dock-row"
         data-overflowing={overflowing || undefined}
@@ -737,9 +740,12 @@ export function Root<T extends PanelDockPanel>({
             />
           );
         })}
-      </div>
+      </Row>
       {hasTabs && (
-        <ul ref={strip} className="env-panel-dock-strip" aria-label={tabsLabel}>
+        <Row
+          align="end"
+          render={<ul ref={strip} className="env-panel-dock-strip" aria-label={tabsLabel} />}
+        >
           {tabs.map((panel) => (
             <PanelTab
               key={panel.id}
@@ -750,7 +756,7 @@ export function Root<T extends PanelDockPanel>({
               onClose={() => close(panel.id)}
             />
           ))}
-        </ul>
+        </Row>
       )}
       <div
         ref={probe}
@@ -758,7 +764,7 @@ export function Root<T extends PanelDockPanel>({
         aria-hidden="true"
         style={{ inlineSize: cssLength(stackBelow) }}
       />
-    </div>
+    </Column>
   );
 }
 

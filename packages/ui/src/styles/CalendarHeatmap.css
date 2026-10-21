@@ -6,9 +6,6 @@
   --env-calendar-heatmap-gap: 0.1875rem;
   /* As wide as its weeks, so the legend ends with them, and never wider than its container. */
   inline-size: fit-content;
-  display: grid;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
   max-inline-size: 100%;
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
@@ -29,7 +26,12 @@
   --env-calendar-heatmap-tone: var(--env-color-fg-done);
 }
 /* Narrow containers scroll the weeks sideways inside the heatmap. */
+/* A reversed row, so its scroll origin is its end: it starts at the most recent weeks, also in the
+   server's markup, and keeps them in view as the weeks grow. The weeks sit at the inline start
+   where they fit. */
 .env-calendar-heatmap-scroll {
+  display: flex;
+  flex-direction: row-reverse;
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-x: auto;
@@ -37,6 +39,8 @@
   scrollbar-width: thin;
 }
 .env-calendar-heatmap-grid {
+  flex: none;
+  margin-inline-end: auto;
   border-collapse: separate;
   border-spacing: var(--env-calendar-heatmap-gap);
   font: inherit;
@@ -96,9 +100,6 @@
   outline-offset: 0.0625rem;
 }
 .env-calendar-heatmap-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   gap: var(--env-calendar-heatmap-gap);
   justify-self: end;
 }

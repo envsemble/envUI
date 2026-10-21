@@ -9062,10 +9062,6 @@
             {
               "class": "env-table-sort-button",
               "description": "The button that sorts by a column."
-            },
-            {
-              "class": "env-table-stack-probe",
-              "description": "An invisible element that measures whether rows stack."
             }
           ],
           "states": [
@@ -12947,7 +12943,7 @@
         {
           "name": "RenameInPlace",
           "title": "A small form",
-          "description": "A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width gives the field room.",
+          "description": "A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width lets the field grow to 28 rem.",
           "file": "docs/examples/popover/RenameInPlace.tsx"
         },
         {
@@ -19103,7 +19099,7 @@
           "type": "'md' | 'lg'",
           "required": false,
           "default": "'md'",
-          "description": "md about 20 rem wide; lg about 28 rem."
+          "description": "The widest the card grows: md, 20 rem, or lg, 28 rem. It is as wide as its content from 12 rem up, and narrows to fit the window."
         },
         {
           "name": "open",
@@ -21450,7 +21446,7 @@
           "type": "'md' | 'lg'",
           "required": false,
           "default": "'md'",
-          "description": "The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. Both narrow to fit the window."
+          "description": "The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. It is as wide as its content from 12 rem up, and narrows to fit the window."
         }
       ],
       "native": [
@@ -23417,7 +23413,7 @@
           "type": "'scroll' | 'stack'",
           "required": false,
           "default": "'scroll'",
-          "description": "What the table does when its region is narrower than stackBelow: scroll keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden."
+          "description": "What the table does when its region is narrower than stackBelow: scroll keeps the columns and scrolls sideways; stack shows each body row as a block that starts with its first cell, followed by the other cells with their labels. The header row is then visually hidden. A container query on the region decides it, so the server's markup and the first paint already stack; a stacking region fills the width its context gives it."
         },
         {
           "name": "stackBelow",
@@ -23430,7 +23426,7 @@
           "name": "onStackedChange",
           "type": "(stacked: boolean) => void",
           "required": false,
-          "description": "Called with true when the rows stack and with false when the columns return, from the same measurement as stackBelow, for example to show another sort control while the header row is hidden; a table that leaves while its rows stack reports false. The region has data-stacked while the rows stack."
+          "description": "Called with true when the rows stack and with false when the columns return, as the table reads its layout once it is in the document, for example to show another sort control while the header row is hidden; a table that leaves while its rows stack reports false. The region has data-stacked from then on while the rows stack; style stacked rows with a container query on env-table, which applies before hydration, rather than through it."
         },
         {
           "name": "columnWidths",

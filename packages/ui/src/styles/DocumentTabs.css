@@ -13,9 +13,6 @@
   /* The widest a tab, and the copy of one being dragged, grows. */
   --env-document-tabs-item-max: 14rem;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  min-inline-size: 0;
   max-inline-size: 100%;
   block-size: var(--env-control-height-md);
   border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
@@ -24,9 +21,6 @@
 /* Content after the tabs, such as a button that closes them all, keeps its size at the end. */
 .env-document-tabs-end {
   flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
   padding-inline: var(--env-space-1);
 }
 .env-document-tabs {
@@ -36,11 +30,8 @@
   /* The strip is the offset parent of its items, which Base UI measures to scroll the active tab
      into view. */
   position: relative;
-  display: flex;
   flex: 1 1 auto;
-  align-items: stretch;
   gap: 0.125rem;
-  min-inline-size: 0;
   block-size: 100%;
   padding-inline: var(--env-space-1);
   overflow-x: auto;

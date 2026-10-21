@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { Grid } from '../foundations/Layout.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
@@ -47,7 +48,8 @@ export interface HoverCardProps
    */
   closeDelay?: number;
   /**
-   * md about 20 rem wide; lg about 28 rem.
+   * The widest the card grows: md, 20 rem, or lg, 28 rem. It is as wide as its content from 12 rem
+   * up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';
@@ -126,6 +128,7 @@ export function HoverCard({
         align={align}
         width={width}
         className={classNames('env-hover-card', className)}
+        layout={<Grid gap={3} padding={5} />}
         popupProps={popupProps}
       >
         {children}

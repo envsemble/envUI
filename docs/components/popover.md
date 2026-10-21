@@ -58,12 +58,12 @@ A popover is a floating panel that opens beside its trigger, for details people 
 
 ## Variants and sizes
 
-| Width | Use for                                                        |
-| ----- | -------------------------------------------------------------- |
-| `md`  | Details and a field or two: 20 rem wide. The default.          |
-| `lg`  | A longer form, or a field with actions beside it: 28 rem wide. |
+| Width | Use for                                                         |
+| ----- | --------------------------------------------------------------- |
+| `md`  | Details and a field or two: up to 20 rem wide. The default.     |
+| `lg`  | A longer form, or a field with actions beside it: up to 28 rem. |
 
-- Both widths narrow to the window less 2 rem, and keep 0.5 rem from its edges.
+- A popover is as wide as its content, from 12 rem up to its width, and never wider than the room beside its trigger: it keeps 0.5 rem from the window's edges. `width` is the widest it grows; for a fixed width, set `inline-size` through `className`.
 - A popover taller than the room beside its trigger scrolls inside its surface.
 - `side` places it below the trigger (the default), above it, to its left or right, or at the start or end of the line (`inline-start`, `inline-end`), which follow the text direction, and `align` lines it up with the trigger's start, centre (the default) or end. Where the window has no room, it flips to the other side.
 
@@ -89,7 +89,7 @@ A popover is a floating panel that opens beside its trigger, for details people 
 
 - Give every popover a `title`, or an `aria-label` where a visible title would repeat its trigger.
 - Close the popover with `close` once its action is done, and show the result beside the trigger.
-- Use the `lg` width for a form, so fields and actions keep their room.
+- Use the `lg` width for a form, so fields and actions can grow to 28 rem.
 - Keep what the popover shows reachable elsewhere where it matters, since it is out of sight until opened.
 
 ### Don't
@@ -125,7 +125,7 @@ A popover is a floating panel that opens beside its trigger, for details people 
 
 ### A small form
 
-A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width gives the field room.
+A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width lets the field grow to 28 rem.
 
 ```tsx example=RenameInPlace
 
@@ -149,6 +149,6 @@ An icon-only trigger, named after what it explains, opens the popover to its rig
 
 ## Changelog
 
-- **1.0.0**: `width` is `md` or `lg`; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
+- **1.0.0**: `width` is `md` or `lg`, the widest the popover grows as it sizes to its content; `side` takes `inline-start` and `inline-end`; `className`, `style`, `ref` and data attributes reach the surface, which renders on PopupSurface in the trigger's text direction.
 - **1.0.0**: Popovers take the level-2 elevation, with its shadow and border.
 - **0.5.0**: Popover, with a title, two widths and a close function for its content.

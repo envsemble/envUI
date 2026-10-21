@@ -11,6 +11,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { Grid } from '../foundations/Layout.js';
 
 const parts = {
   Portal: BasePopover.Portal,
@@ -79,8 +80,8 @@ export interface PopoverProps
    */
   onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
   /**
-   * The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form.
-   * Both narrow to fit the window.
+   * The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a
+   * longer form. It is as wide as its content from 12 rem up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';
@@ -127,6 +128,7 @@ export function Popover({
         align={align}
         width={width}
         className={classNames('env-popover', className)}
+        layout={<Grid gap={3} padding={5} />}
         popupProps={{ ...popupProps, 'aria-label': title == null ? label : undefined }}
       >
         {title != null && (

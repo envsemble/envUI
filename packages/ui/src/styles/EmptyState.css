@@ -1,10 +1,6 @@
 .env-empty-state {
-  display: grid;
   justify-items: start;
   align-content: start;
-  min-width: 0;
-  padding: var(--env-space-5);
-  gap: var(--env-space-4);
 }
 .env-empty-state:where([data-tone='danger']) > .env-icon {
   color: var(--env-color-fg-danger);

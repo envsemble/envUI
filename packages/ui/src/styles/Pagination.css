@@ -3,13 +3,10 @@
    pager itself wraps the buttons below the range. */
 .env-pagination {
   box-sizing: border-box;
+  /* An inline row, as wide as its range and buttons. */
   display: inline-flex;
   flex: 0 0 auto;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-1);
   inline-size: fit-content;
-  min-inline-size: 0;
   max-inline-size: 100%;
 }
 /* A size gives the buttons that control height; without one they take the container's. */

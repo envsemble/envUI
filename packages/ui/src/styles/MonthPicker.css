@@ -3,20 +3,14 @@
    and unavailable months are faded. Coarse pointers get touch-tall months. */
 .env-month-picker-year {
   --env-month-picker-row: var(--env-control-height-md);
-  display: grid;
-  gap: var(--env-space-2);
   inline-size: calc(7 * var(--env-control-height-md));
   max-inline-size: 100%;
-  min-inline-size: 0;
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
 }
 .env-month-picker-header {
   /* The year buttons are as tall as a month. */
   --env-control-height: var(--env-month-picker-row);
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
 }
 .env-month-picker-heading {
   flex: 1 1 auto;

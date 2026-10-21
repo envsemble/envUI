@@ -28,17 +28,6 @@
 .env-dialog-description {
   margin: 0;
 }
-/* The description belongs to the title, so they sit closer together than the dialog's sections. */
-.env-dialog-header {
-  display: grid;
-  gap: var(--env-space-2);
-}
-.env-dialog-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--env-space-4);
-}
 .env-dialog-title {
   min-inline-size: 0;
   overflow-wrap: anywhere;

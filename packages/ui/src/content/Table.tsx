@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type RefObject,
@@ -79,7 +80,9 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-la
   /**
    * What the table does when its region is narrower than stackBelow: scroll keeps the columns and
    * scrolls sideways; stack shows each body row as a block that starts with its first cell,
-   * followed by the other cells with their labels. The header row is then visually hidden.
+   * followed by the other cells with their labels. The header row is then visually hidden. A
+   * container query on the region decides it, so the server's markup and the first paint already
+   * stack; a stacking region fills the width its context gives it.
    */
   narrowLayout?: 'scroll' | 'stack';
   /**
@@ -89,10 +92,11 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-la
    */
   stackBelow?: string | number;
   /**
-   * Called with true when the rows stack and with false when the columns return, from the same
-   * measurement as stackBelow, for example to show another sort control while the header row is
-   * hidden; a table that leaves while its rows stack reports false. The region has data-stacked
-   * while the rows stack.
+   * Called with true when the rows stack and with false when the columns return, as the table
+   * reads its layout once it is in the document, for example to show another sort control while
+   * the header row is hidden; a table that leaves while its rows stack reports false. The region
+   * has data-stacked from then on while the rows stack; style stacked rows with a container query
+   * on env-table, which applies before hydration, rather than through it.
    */
   onStackedChange?: (stacked: boolean) => void;
   /**
@@ -123,40 +127,41 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'table'>, 'aria-la
 }
 
 /**
- * Whether a region is narrower than a probe sized to a CSS length, following both as they change.
- * It is measured after the markup is in the document, before the browser paints a client render;
- * server-rendered markup shows the columns until hydration measures it.
+ * Whether a stacking table's rows are stacked, as its container query on the region laid them
+ * out: read from the table's --env-table-stacked once it is in the document, and again as the
+ * region or the table resizes. CSS decides the layout; this only reports it, so the server's
+ * markup and the first paint already stack where the region is narrow.
  */
-function useNarrowerThan(
+function useStacked(
   region: RefObject<HTMLElement | null>,
-  probe: RefObject<HTMLElement | null>,
+  table: RefObject<HTMLElement | null>,
   enabled: boolean,
-  length: string | number,
+  stackBelow: string | number,
 ) {
-  const [narrower, setNarrower] = useState(false);
+  const [stacked, setStacked] = useState(false);
   useLayoutEffect(() => {
     const element = region.current;
-    const threshold = probe.current;
-    // A table that stops stacking starts over, so stacking again never reuses an old measurement.
-    if (!enabled || !element || !threshold) {
-      setNarrower(false);
+    const grid = table.current;
+    // A table that stops stacking starts over, so stacking again never reuses an old reading.
+    if (!enabled || !element || !grid) {
+      setStacked(false);
       return;
     }
-    const measure = () => {
-      // A hidden region, such as one in a hidden tab panel, has no box to measure; it keeps its
-      // layout until it shows again.
+    const read = () => {
+      // A hidden region, such as one in a hidden tab panel, lays nothing out; it keeps its state
+      // until it shows again.
       if (element.getClientRects().length === 0) return;
-      setNarrower(element.clientWidth < threshold.offsetWidth);
+      setStacked(getComputedStyle(grid).getPropertyValue('--env-table-stacked').trim() === '1');
     };
-    measure();
+    read();
     if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(measure);
+    const observer = new ResizeObserver(read);
     observer.observe(element);
-    // A length in rem or em follows the text size.
-    observer.observe(threshold);
+    // The table changes size as its rows stack, and as the text size changes the threshold.
+    observer.observe(grid);
     return () => observer.disconnect();
-  }, [region, probe, enabled, length]);
-  return enabled && narrower;
+  }, [region, table, enabled, stackBelow]);
+  return enabled && stacked;
 }
 
 /**
@@ -179,6 +184,7 @@ function Root({
   resizableColumns = false,
   className,
   children,
+  ref,
   ...props
 }: RootProps) {
   const captionId = useId();
@@ -187,8 +193,8 @@ function Root({
   const labelledBy = caption != null ? captionId : props['aria-labelledby'];
   const stack = narrowLayout === 'stack';
   const region = useRef<HTMLDivElement>(null);
-  const probe = useRef<HTMLDivElement>(null);
-  const stacked = useNarrowerThan(region, probe, stack, stackBelow);
+  const table = useRef<HTMLTableElement>(null);
+  const stacked = useStacked(region, table, stack, stackBelow);
   useStackedReport(stacked, onStackedChange);
   // Widths the table owns start over when the defaults change, for example with another column.
   const defaultsKey = defaultColumnWidths?.join(' ');
@@ -231,11 +237,20 @@ function Root({
       data-sticky-header={stickyHeader ? '' : undefined}
       data-narrow-layout={stack ? 'stack' : undefined}
       data-stacked={stacked ? '' : undefined}
+      // The container query compares the region with 37.5em, an em of stackBelow / 37.5: in a
+      // query, em is the container's own.
+      style={
+        stack ? ({ '--env-table-stack-below': cssLength(stackBelow) } as CSSProperties) : undefined
+      }
     >
       <table
         role={stack ? 'table' : undefined}
         aria-labelledby={stack && caption != null ? captionId : undefined}
         {...props}
+        ref={(node) => {
+          table.current = node;
+          setRef(ref, node);
+        }}
         aria-label={caption == null ? label : undefined}
         className={classNames('env-table', className)}
         data-density={density}
@@ -258,14 +273,6 @@ function Root({
           <TableColumnsContext value={columns}>{children}</TableColumnsContext>
         </TableStackContext>
       </table>
-      {stack && (
-        <div
-          ref={probe}
-          className="env-table-stack-probe"
-          aria-hidden="true"
-          style={{ inlineSize: cssLength(stackBelow) }}
-        />
-      )}
     </div>
   );
 }

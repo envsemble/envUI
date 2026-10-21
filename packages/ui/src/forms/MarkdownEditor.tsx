@@ -7,6 +7,7 @@ import { Button } from '../actions/Button.js';
 import { Tabs } from '../navigation/Tabs.js';
 import { markdownEditor as markdownEditorMessages } from '../foundations/messages/markdownEditor.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import type { TextareaProps } from './Textarea.js';
@@ -179,7 +180,7 @@ export function MarkdownEditor({
     }
   }
   const source = (
-    <div className="env-markdown-editor-write">
+    <Grid gap={3} className="env-markdown-editor-write">
       {toolbar !== false && (
         <EditorToolbar
           label={messages.toolbar}
@@ -247,7 +248,7 @@ export function MarkdownEditor({
           }}
         />
       </FieldFrame>
-    </div>
+    </Grid>
   );
   return (
     <>

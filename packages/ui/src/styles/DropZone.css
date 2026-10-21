@@ -9,12 +9,9 @@
 }
 .env-drop-zone-target {
   box-sizing: border-box;
-  display: grid;
   justify-items: center;
   align-content: center;
-  gap: var(--env-space-3);
   inline-size: 100%;
-  min-inline-size: 0;
   min-block-size: 9rem;
   margin: 0;
   padding: var(--env-space-5) var(--env-space-4);
@@ -43,11 +40,6 @@
 .env-drop-zone-icon > .env-icon {
   inline-size: 1.5rem;
   block-size: 1.5rem;
-}
-.env-drop-zone-text {
-  display: grid;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
 }
 .env-drop-zone-label {
   font-weight: var(--env-font-weight-medium);
@@ -92,13 +84,9 @@
   grid-template-columns: auto minmax(0, 1fr);
   justify-items: start;
   align-items: center;
-  gap: var(--env-space-3);
   min-block-size: calc(var(--env-control-height) + var(--env-space-4));
   padding: var(--env-space-2) var(--env-space-4);
   text-align: start;
-}
-.env-drop-zone[data-size='sm'] .env-drop-zone-text {
-  gap: 0;
 }
 .env-drop-zone[data-size='sm'] .env-drop-zone-icon {
   inline-size: 2rem;
