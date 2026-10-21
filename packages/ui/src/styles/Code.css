@@ -62,13 +62,7 @@
   overflow-wrap: anywhere;
 }
 .env-code-block-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--env-space-4);
   margin-block-end: var(--env-space-3);
-  min-inline-size: 0;
-  flex-wrap: wrap;
 }
 .env-code-block-heading > span {
   min-inline-size: 0;

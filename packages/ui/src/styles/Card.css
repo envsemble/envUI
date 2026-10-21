@@ -34,16 +34,8 @@
   }
 }
 
-/* The heading row: the heading, and the meta at the end of the row; the row wraps when it runs out
-   of room. */
-.env-card-header {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--env-space-3);
-}
-/* The meta goes to the end of the heading row; the header's child selector outweighs the text
-   margin reset that Text applies to every variant. */
+/* The heading row, which wraps when it runs out of room: the meta goes to its end; the header's
+   child selector outweighs the text margin reset that Text applies to every variant. */
 .env-card-header > .env-card-meta {
   margin-inline-start: auto;
 }
@@ -75,12 +67,6 @@
    the text, at its full width, and from a medium one, 37.5 rem, at the end of the row. */
 .env-card[data-layout='feature'] {
   container: env-card / inline-size;
-}
-.env-card-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  gap: var(--env-space-4);
 }
 .env-card-layout:has(> .env-card-icon) {
   grid-template-columns: auto minmax(0, 1fr);

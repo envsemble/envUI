@@ -16,6 +16,7 @@ import { IconButton } from '../../actions/Button.js';
 import { list as listMessages } from '../../foundations/messages/list.js';
 import { DragIndicator } from '../../icons/DragIndicator.js';
 import { classNames } from '../../internal/classNames.js';
+import { Column } from '../../foundations/Layout.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
 import { setRef } from '../../internal/setRef.js';
 import { useFormatters } from '../../internal/useFormatters.js';
@@ -125,22 +126,26 @@ export function ReorderableList({
   );
   return (
     <ReorderContext value={reorder}>
-      <ul
-        {...props}
-        ref={forward}
-        data-density={density}
-        data-reorderable=""
-        className={classNames('env-list', 'env-connected-rows', className)}
-        onKeyDown={(event: KeyboardEvent<HTMLUListElement>) => {
-          onKeyDown?.(event);
-          const list = element.current;
-          if (event.defaultPrevented || !list) return;
-          const row = rowOf(list, event.target);
-          if (row) handlers.rowKeyDown(event, row, labelOf(row));
-        }}
+      <Column
+        render={
+          <ul
+            {...props}
+            ref={forward}
+            data-density={density}
+            data-reorderable=""
+            className={classNames('env-list', 'env-connected-rows', className)}
+            onKeyDown={(event: KeyboardEvent<HTMLUListElement>) => {
+              onKeyDown?.(event);
+              const list = element.current;
+              if (event.defaultPrevented || !list) return;
+              const row = rowOf(list, event.target);
+              if (row) handlers.rowKeyDown(event, row, labelOf(row));
+            }}
+          />
+        }
       >
         {children}
-      </ul>
+      </Column>
       <span id={instructions} hidden>
         {messages.instructions}
       </span>

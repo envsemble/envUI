@@ -6,9 +6,6 @@
   --env-calendar-heatmap-gap: 0.1875rem;
   /* As wide as its weeks, so the legend ends with them, and never wider than its container. */
   inline-size: fit-content;
-  display: grid;
-  gap: var(--env-space-2);
-  min-inline-size: 0;
   max-inline-size: 100%;
   color: var(--env-color-fg-muted);
   font: var(--env-font-weight-regular) 0.75rem / 1 var(--env-font-family);
@@ -96,9 +93,6 @@
   outline-offset: 0.0625rem;
 }
 .env-calendar-heatmap-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   gap: var(--env-calendar-heatmap-gap);
   justify-self: end;
 }

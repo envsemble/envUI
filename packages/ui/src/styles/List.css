@@ -2,9 +2,7 @@
 .env-list {
   /* The density sets the rows' block padding; a row is at least as tall as a small control with it. */
   --env-list-row-padding: calc(var(--env-row-padding-block-md) + var(--env-space-1));
-  min-inline-size: 0;
   overflow-wrap: anywhere;
-  display: grid;
   gap: 0.125rem;
   margin: 0;
   padding: 0;
@@ -15,11 +13,6 @@
   --env-list-item-fill-hover: var(--env-color-list-item-bg-hover);
   --env-list-item-fill-pressed: var(--env-color-list-item-bg-pressed);
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--env-space-3);
   min-height: calc(var(--env-control-height-sm) + 2 * var(--env-list-row-padding));
   padding: var(--env-list-row-padding) var(--env-row-padding-inline);
   font: var(--env-type-body-small);
@@ -35,10 +28,6 @@
 .env-list[data-density='lg'] {
   --env-list-row-padding: calc(var(--env-row-padding-block-lg) + var(--env-space-1));
 }
-.env-list > .env-list-item > * {
-  min-inline-size: 0;
-  max-inline-size: 100%;
-}
 /* A row with content before its label, such as a drag handle, an avatar or a checkbox: the start
    slot, then the text, which takes the room left, then the action. */
 .env-list > .env-list-item[data-start] {
@@ -53,9 +42,6 @@
   position: relative;
   z-index: var(--env-z-raised);
   flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-2);
 }
 /* The handle, ahead of the label, reaches in toward the row's corner rather than the text. */
 .env-list-item-start > .env-list-item-handle {

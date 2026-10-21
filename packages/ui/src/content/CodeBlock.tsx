@@ -7,6 +7,7 @@ import { Check } from '../icons/Check.js';
 import { useTheme } from '../foundations/Theme.js';
 import { codeBlock as codeBlockMessages } from '../foundations/messages/codeBlock.js';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useCopy } from '../internal/useCopy.js';
 import { codeThemeStyle } from './internal/CodeThemes.js';
@@ -71,7 +72,7 @@ export function CodeBlock({
       style={{ ...codeThemeStyle(theme), ...style }}
     >
       {(label || copyable) && (
-        <div className="env-code-block-heading">
+        <Row wrap align="center" justify="between" gap={4} className="env-code-block-heading">
           <span>{label ?? language ?? messages.title}</span>
           {copyable && (
             <IconButton
@@ -81,7 +82,7 @@ export function CodeBlock({
               onClick={(event) => void copySource(event.currentTarget)}
             />
           )}
-        </div>
+        </Row>
       )}
       <pre
         ref={preRef}

@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { TooltipPopup } from '../feedback/internal/TooltipPopup.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { useFormatters, type Formatters } from '../internal/useFormatters.js';
 import { calendarHeatmap as calendarHeatmapMessages } from '../foundations/messages/calendarHeatmap.js';
@@ -492,8 +493,9 @@ export function CalendarHeatmap({
   const shown = tip ? model.days.get(tip.day) : undefined;
   const legendLevels = Array.from({ length: model.levelCount }, (_, level) => level);
   return (
-    <div
+    <Grid
       {...props}
+      gap={2}
       className={classNames('env-calendar-heatmap', className)}
       style={style}
       data-tone={tone}
@@ -531,7 +533,7 @@ export function CalendarHeatmap({
           />
         </table>
       </div>
-      <div className="env-calendar-heatmap-legend" aria-hidden="true">
+      <Row wrap align="center" className="env-calendar-heatmap-legend" aria-hidden="true">
         <span>{lessLabel}</span>
         {legendLevels.map((level) => (
           <span
@@ -548,7 +550,7 @@ export function CalendarHeatmap({
           />
         ))}
         <span>{moreLabel}</span>
-      </div>
+      </Row>
       <BaseTooltip.Root
         open={tip?.open ?? false}
         onOpenChange={(open, details) => {
@@ -591,7 +593,7 @@ export function CalendarHeatmap({
           }
         />
       </BaseTooltip.Root>
-    </div>
+    </Grid>
   );
 }
 

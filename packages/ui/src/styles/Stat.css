@@ -2,10 +2,6 @@
    The trend carries its tone in an icon and text, never in color alone. */
 .env-stat {
   --env-stat-tone: var(--env-color-fg-muted);
-  display: grid;
-  align-content: start;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
   color: var(--env-color-fg-default);
   overflow-wrap: anywhere;
 }
@@ -20,18 +16,11 @@
   letter-spacing: -0.02em;
 }
 .env-stat-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   column-gap: var(--env-space-3);
   row-gap: var(--env-space-1);
   font: var(--env-type-body-small);
 }
 .env-stat-trend {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
   color: var(--env-stat-tone);
   font-weight: var(--env-font-weight-medium);
 }
@@ -55,13 +44,11 @@
    its figures shrink with their column so they stay on one line. */
 .env-stat-group {
   --env-stat-group-gap: clamp(var(--env-space-4), 5%, var(--env-space-6));
-  display: grid;
   grid-template-columns: repeat(
     auto-fit,
     minmax(min(100%, 11rem, max(6.5rem, (100% - var(--env-stat-group-gap)) / 2)), 1fr)
   );
   gap: var(--env-space-5) var(--env-stat-group-gap);
-  min-inline-size: 0;
 }
 .env-stat-group > .env-stat {
   container-type: inline-size;
