@@ -15731,32 +15731,50 @@
         {
           "name": "PrimaryNavigation",
           "title": "Primary navigation",
-          "description": "Use this pattern to give an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up for pages deep in a hierarchy, tabs only for views of one thing, and a quick way to open anything by name. After every change of page, focus and the window's title follow.",
+          "description": "Navigation gives an application one way around and a clear sense of place: one primary navigation that marks the current page, a trail back up from deep pages, tabs only for views of one thing, and a quick way to open anything by name.",
           "file": "docs/examples/navigation/PrimaryNavigation.tsx"
         },
         {
           "name": "Hierarchy",
           "title": "Hierarchy",
-          "description": "Breadcrumbs in the PageHeader show the levels above the page, and each level below links one level down. A press on a level opens it, and focus moves to its heading.",
+          "description": "The trail shows the levels above the page, each a link; the page itself is the last level and no link.",
           "file": "docs/examples/navigation/Hierarchy.tsx"
         },
         {
           "name": "ViewsOfOneThing",
           "title": "Views of one thing",
-          "description": "Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions, not a tab.",
+          "description": "Tabs switch the views of one project in place. Its settings are another page, so they are a link in the header's actions.",
           "file": "docs/examples/navigation/ViewsOfOneThing.tsx"
         },
         {
           "name": "QuickOpen",
           "title": "Quick open",
-          "description": "The SearchTrigger opens a CommandPalette of pages, projects, documents and people. In an application its shortcut opens it too; here it takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search. Choosing a result opens it, and focus moves to the new page's heading once the palette has closed.",
+          "description": "Choosing a result opens it as a link would. Here the trigger takes `listen={false}`, so <kbd>Ctrl</kbd>+<kbd>K</kbd> stays with the catalogue's own search.",
           "file": "docs/examples/navigation/QuickOpen.tsx"
         },
         {
           "name": "ListAndDetail",
           "title": "List and detail",
-          "description": "A list of projects, as narrow as a phone, shows its detail in place of the list. The back button names where it goes, \"All projects\", and returns focus to the project that was open.",
+          "description": "As narrow as a phone, the detail shows in place of the list, with a back button that names where it goes.",
           "file": "docs/examples/navigation/ListAndDetail.tsx"
+        },
+        {
+          "name": "TabsForViews",
+          "title": "Do: Tabs for the views of the one thing the page is about.",
+          "description": "",
+          "file": "docs/examples/navigation/TabsForViews.tsx"
+        },
+        {
+          "name": "TabsForPlaces",
+          "title": "Don't: Tabs for places of the application: they have no address of their own.",
+          "description": "",
+          "file": "docs/examples/navigation/TabsForPlaces.tsx"
+        },
+        {
+          "name": "NavigationAnatomy",
+          "title": "Navigation anatomy",
+          "description": "",
+          "file": "docs/examples/navigation/NavigationAnatomy.tsx"
         }
       ]
     },

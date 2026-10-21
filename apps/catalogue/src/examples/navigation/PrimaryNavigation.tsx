@@ -64,7 +64,7 @@ export default function PrimaryNavigation() {
       navigation={{
         bar: <Bar destinations={items} />,
         rail: <Rail destinations={items} />,
-        drawer: <Drawer destinations={items} />,
+        drawer: <Drawer destinations={items} headingLevel={3} />,
       }}
     >
       <Page width="md" header={<PageHeader title={page.label} headingLevel={3} />}>
