@@ -15826,13 +15826,13 @@
         {
           "name": "AppFrame",
           "title": "App frame",
-          "description": "Use this pattern to frame every screen of an application: a Scaffold with a TopBar of the name, search and the account menu, one array of destinations that the Scaffold shows as a Bar on a phone, a Rail on a tablet and a Drawer from expanded, and the page in its body. Render it once, at the application's root, around the router's outlet. Narrow the window to see the forms change.",
+          "description": "The app frame is one Scaffold at the application's root, around the router's outlet: a TopBar with the name, search and the account menu, one array of destinations, and the page in the body.",
           "file": "docs/examples/app-frame/AppFrame.tsx"
         },
         {
           "name": "MenuOnPhones",
           "title": "A menu on phones",
-          "description": "A guide's chapters, without icons: a Drawer from medium, and the same Drawer in a Sheet from the top bar's menu button on a phone.",
+          "description": "With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides the bar, and a menu button in the top bar opens the same Drawer in a Sheet.",
           "file": "docs/examples/app-frame/MenuOnPhones.tsx"
         },
         {
@@ -15840,6 +15840,30 @@
           "title": "Details beside the page",
           "description": "Side content that is not navigation goes in a supporting pane of Panes, in the body.",
           "file": "docs/examples/app-frame/WithDetails.tsx"
+        },
+        {
+          "name": "DestinationsInNavigation",
+          "title": "Do: Every destination in the navigation, and the page's own action in its header.",
+          "description": "",
+          "file": "docs/examples/app-frame/DestinationsInNavigation.tsx"
+        },
+        {
+          "name": "DestinationsInTopBar",
+          "title": "Don't: More destinations in the top bar: people look for them in two places.",
+          "description": "",
+          "file": "docs/examples/app-frame/DestinationsInTopBar.tsx"
+        },
+        {
+          "name": "AppFrameAnatomy",
+          "title": "App frame anatomy",
+          "description": "",
+          "file": "docs/examples/app-frame/AppFrameAnatomy.tsx"
+        },
+        {
+          "name": "FrameByWidth",
+          "title": "Frame by width",
+          "description": "",
+          "file": "docs/examples/app-frame/FrameByWidth.tsx"
         }
       ]
     },
@@ -15879,6 +15903,7 @@
         "AvatarButton",
         "Avatar",
         "Button",
+        "IconButton",
         "Row",
         "Column",
         "Text",
@@ -15896,20 +15921,32 @@
         {
           "name": "AvatarMenu",
           "title": "Avatar menu",
-          "description": "Use this pattern to show who is signed in and give them their own things from one place: their avatar, at the end of the top bar, opens a Menu whose header shows their avatar, name and email, then account settings, the theme and Sign out. It is a pattern rather than a component because applications arrange it differently: what the header shows, which items follow, and whether the trigger is the avatar or a row with the name.",
+          "description": "The account menu is a Menu opened from the person's AvatarButton at the end of the TopBar: a header with who is signed in, then their own things, ending with Sign out.",
           "file": "docs/examples/account-menu/AvatarMenu.tsx"
         },
         {
           "name": "WithOrganizations",
           "title": "Organizations",
-          "description": "A submenu switches between the person's organizations; the header and the row name the current one.",
+          "description": "A submenu switches between the person's organizations; the header names the current one.",
           "file": "docs/examples/account-menu/WithOrganizations.tsx"
         },
         {
           "name": "RowTrigger",
           "title": "A row at the foot of the navigation",
-          "description": "The trigger is a row with the avatar and the name, as wide as the navigation drawer, and the menu opens above it.",
+          "description": "A ghost Button `fullWidth` with the avatar and the name, as wide as the drawer; the menu opens above it with `side=\"top\"`.",
           "file": "docs/examples/account-menu/RowTrigger.tsx"
+        },
+        {
+          "name": "AvatarTrigger",
+          "title": "Do: The person's own avatar, named by their name, at the end of the top bar.",
+          "description": "",
+          "file": "docs/examples/account-menu/AvatarTrigger.tsx"
+        },
+        {
+          "name": "GenericTrigger",
+          "title": "Don't: The same icon for everyone: nothing says who is signed in.",
+          "description": "",
+          "file": "docs/examples/account-menu/GenericTrigger.tsx"
         }
       ]
     },
@@ -15952,6 +15989,7 @@
         "PageHeader",
         "EmptyState",
         "Button",
+        "IconButton",
         "Column",
         "Drawer",
         "Text"
@@ -15967,20 +16005,38 @@
         {
           "name": "StartPageWindow",
           "title": "Start page window",
-          "description": "Use this pattern to frame a window that draws its own title bar, as an installed web app with the Window Controls Overlay does: a Scaffold with a TopBar `titleBar` across its whole width, and the content scrolling in the body below it, so the window controls drawn over the title bar never cover a scrollbar. It is a pattern rather than a component: the Scaffold is the frame, and the application chooses what the title bar and the body hold.",
+          "description": "The window frame is for an installed application that draws its own title bar: a Scaffold with `topBarSpan=\"full\"` and `scroll=\"body\"`, a TopBar with `titleBar` across the top, and the content scrolling below it, where the window controls never cover a scrollbar.",
           "file": "docs/examples/window-frame/StartPageWindow.tsx"
         },
         {
           "name": "WithMenubar",
           "title": "A menubar in the title bar",
-          "description": "The menubar at the start of the title bar, and a page whose header sticks at the top of the body.",
+          "description": "A Menubar in the TopBar's `start`, and a page whose header sticks at the top of the body.",
           "file": "docs/examples/window-frame/WithMenubar.tsx"
         },
         {
           "name": "WithNavigation",
           "title": "Navigation below the title bar",
-          "description": "The navigation runs below the title bar, which spans the window.",
+          "description": "The Scaffold's navigation runs below the title bar, which spans the window.",
           "file": "docs/examples/window-frame/WithNavigation.tsx"
+        },
+        {
+          "name": "QuietTitleBar",
+          "title": "Do: The title and the menubar, with empty space to drag the window by.",
+          "description": "",
+          "file": "docs/examples/window-frame/QuietTitleBar.tsx"
+        },
+        {
+          "name": "CrowdedTitleBar",
+          "title": "Don't: The page's actions in the title bar: no room is left to drag the window.",
+          "description": "",
+          "file": "docs/examples/window-frame/CrowdedTitleBar.tsx"
+        },
+        {
+          "name": "WindowFrameAnatomy",
+          "title": "Window frame anatomy",
+          "description": "",
+          "file": "docs/examples/window-frame/WindowFrameAnatomy.tsx"
         }
       ]
     },

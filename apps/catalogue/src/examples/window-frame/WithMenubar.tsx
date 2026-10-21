@@ -28,7 +28,7 @@ export default function WithMenubar() {
         />
       }
     >
-      <Page width="md" header={<PageHeader title="Roadmap" headingLevel={2} sticky />}>
+      <Page width="md" header={<PageHeader title="Roadmap" headingLevel={3} sticky />}>
         <Text>The page header sticks at the top of the body as it scrolls.</Text>
         <div style={{ blockSize: '30rem' }} />
       </Page>

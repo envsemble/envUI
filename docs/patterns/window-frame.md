@@ -28,6 +28,7 @@ composes:
   - PageHeader
   - EmptyState
   - Button
+  - IconButton
   - Column
   - Drawer
   - Text
@@ -42,47 +43,65 @@ related:
 
 ## Overview
 
-Use this pattern to frame a window that draws its own title bar, as an installed web app with the Window Controls Overlay does: a [Scaffold](../components/scaffold.md) with a [TopBar](../components/top-bar.md) `titleBar` across its whole width, and the content scrolling in the body below it, so the window controls drawn over the title bar never cover a scrollbar. It is a pattern rather than a component: the Scaffold is the frame, and the application chooses what the title bar and the body hold.
+The window frame is for an installed application that draws its own title bar: a [Scaffold](../components/scaffold.md) with `topBarSpan="full"` and `scroll="body"`, a [TopBar](../components/top-bar.md) with `titleBar` across the top, and the content scrolling below it, where the window controls never cover a scrollbar.
 
 ```tsx example=StartPageWindow
 
 ```
 
+### Outside such a window
+
+In a browser tab the title bar area is undefined, and the TopBar falls back to its own height across the full width. Zoomed in, the window reports a smaller area, which the small controls still fit.
+
+## Variants
+
+### A menubar in the title bar
+
+A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose header sticks at the top of the body.
+
+```tsx example=WithMenubar
+
+```
+
+### Navigation below the title bar
+
+The Scaffold's navigation runs below the title bar, which spans the window.
+
+```tsx example=WithNavigation
+
+```
+
+## When to use
+
+```tsx do=QuietTitleBar caption="The title and the menubar, with empty space to drag the window by."
+
+```
+
+```tsx dont=CrowdedTitleBar caption="The page's actions in the title bar: no room is left to drag the window."
+
+```
+
+- The page's own actions go in its PageHeader.
+
+### Content
+
+- Title the bar as the window's title would read: the document's or the application's name.
+- Order the menubar's menus as the platform does: File, Edit, View.
+
 ## Anatomy
 
-1. **Frame:** a Scaffold with `topBarSpan="full"` and `scroll="body"`, which fills the window; its body scrolls.
-2. **Title bar:** a TopBar with `titleBar` in the Scaffold's `topBar`: it takes the title bar area the window leaves free, empty space drags the window, its title is centred and its controls are small; a [Menubar](../components/menubar.md) can sit in its `start`.
-3. **Navigation** (optional): the Scaffold's navigation forms, below the title bar.
-4. **Content:** a [Page](../components/page.md) in the body, with its PageHeader, which can stick at the body's top.
+```tsx anatomy=WindowFrameAnatomy
 
-## States and behaviour
+```
 
-- **Outside such a window**, in a browser tab, the title bar area is undefined, and the TopBar falls back to the title bar height across the full width.
-- **Zoom:** the window reports a smaller title bar area once the page is zoomed in; the small controls still fit.
-- **Scrolling:** the body scrolls below the title bar, and the keyboard scrolls it as it would the document.
-
-## Content guidelines
-
-- Title the bar with the document's or the application's name, as the window's title would read.
-- Keep the menubar's menus to the application's commands, in the platform's order: File, Edit, View.
-
-## Do and don't
-
-### Do
-
-- Run the title bar across the whole width with `topBarSpan="full"`, so it lies under the window controls.
-- Keep empty space in the title bar, so people can drag the window.
-
-### Don't
-
-- Don't fill the title bar with controls; the page's own actions go in its PageHeader.
-- Don't scroll the document; the Scaffold's body scrolls under the title bar.
+1. **Title bar** (`env-top-bar`, `topBar`)
+2. **Menubar** (`env-menubar`, `start`)
+3. **Title** (`env-top-bar-title`, `title`)
+4. **Body** (`env-scaffold-body`)
 
 ## Accessibility
 
-### Focus and keyboard
-
-The Scaffold's skip links come first, then the title bar's controls, then the navigation and the body. The menubar is one tab stop whose menus the arrow keys open.
+The skip links come first, then the title bar's controls, then the navigation and the body. The menubar is one tab stop whose menus the arrow keys open.
 
 ### envUI provides
 
@@ -94,24 +113,6 @@ The Scaffold's skip links come first, then the title bar's controls, then the na
 - The window's title in `document.title` as well as the bar.
 - Names for icon-only controls in the title bar.
 
-## Examples
-
-### A menubar in the title bar
-
-The menubar at the start of the title bar, and a page whose header sticks at the top of the body.
-
-```tsx example=WithMenubar
-
-```
-
-### Navigation below the title bar
-
-The navigation runs below the title bar, which spans the window.
-
-```tsx example=WithNavigation
-
-```
-
 ## Changelog
 
-- **1.0.0**: The window frame is a pattern built from Scaffold and TopBar, in place of the WindowFrame component.
+- **1.0.0**: The window frame is a pattern built from Scaffold and TopBar, in place of the WindowFrame component. The page is on the figure template.
