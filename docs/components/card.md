@@ -47,8 +47,6 @@ components:
 
 ## Overview
 
-> What is a card, and what does it look like?
-
 A card groups content about one subject on a rounded surface.
 
 ```tsx example=ProjectSummary
@@ -56,8 +54,6 @@ A card groups content about one subject on a rounded surface.
 ```
 
 ## Variants
-
-> Which kinds of card are there?
 
 ### Content card
 
@@ -91,9 +87,7 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 ```
 
-> Which backgrounds can a card take?
-
-<!-- specimen: Backgrounds -->
+### Backgrounds
 
 | Background | Use for                                         |
 | ---------- | ----------------------------------------------- |
@@ -101,9 +95,9 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 | `default`  | A quieter fill, such as a settings section.     |
 | `page`     | The page's own color, set apart by its corners. |
 
-## When to use
+<!-- specimen: Backgrounds -->
 
-> When should I use a card, and when something else?
+## When to use
 
 ```tsx do=OneCardSections caption="One card per subject, with Text for its parts."
 
@@ -115,7 +109,7 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 
 - No links or controls inside a link or button card.
 
-> How do I write a card's content?
+### Content
 
 ```tsx do=ShortCard caption="A short title that names the subject, and a sentence or two."
 
@@ -129,8 +123,6 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 - Start a link card with its destination's name.
 
 ## Anatomy
-
-> What is a card made of?
 
 ```tsx anatomy=CardAnatomy
 
@@ -148,8 +140,6 @@ The feature layout adds `env-card-layout` and its icon, `env-card-icon`.
 
 ## Adapting to width
 
-> How does a card adapt to the room it has?
-
 A card fills its container. Narrower than 38 rem, a feature card moves its action below the text.
 
 ```tsx example=InviteFeature widths="24 40"
@@ -157,8 +147,6 @@ A card fills its container. Narrower than 38 rem, a feature card moves its actio
 ```
 
 ## Accessibility
-
-> How do I keep cards accessible?
 
 ### Keyboard
 

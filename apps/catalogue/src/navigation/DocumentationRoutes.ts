@@ -25,8 +25,8 @@ export type ReferenceView =
   | (typeof templateViews)[number]['id'];
 export type ViewOption = { id: ReferenceView; title: string };
 
-/** The views of a component page written as exchanges: every exchange, then the props. */
-export const exchangeViews = [
+/** The views of a component page on the figure template: every section, then the props. */
+export const figureViews = [
   { id: 'overview', title: 'Overview' },
   { id: 'props', title: 'Props' },
 ] as const;
@@ -47,21 +47,21 @@ export const sectionViews: Record<TemplateSectionId, ReferenceView> = {
 };
 
 /**
- * The view that shows a section of a page: on a page of exchanges the Overview, which holds every
- * exchange, and on the template the view sectionViews names.
+ * The view that shows a section of a page: on the figure template the Overview, which holds every
+ * section, and on the section template the view sectionViews names.
  */
 export function viewOfSection(
   reference: Pick<Reference, 'format'>,
   section: TemplateSectionId,
 ): ReferenceView {
-  return reference.format === 'exchanges' ? 'overview' : sectionViews[section];
+  return reference.format === 'figures' ? 'overview' : sectionViews[section];
 }
 
 /** The views a page has: the template's, where it has sections for them, or Preview and Usage. */
 export function viewsOf(reference: Reference): readonly ViewOption[] {
   const sections = reference.sections;
   if (!sections) return referenceViews;
-  if (reference.format === 'exchanges') return exchangeViews;
+  if (reference.format === 'figures') return figureViews;
   return templateViews.filter(
     (view) =>
       view.id === 'overview' ||

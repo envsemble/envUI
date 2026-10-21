@@ -1,4 +1,14 @@
-import { lazy, Suspense, use, useState, type ComponentType, type MouseEvent } from 'react';
+import {
+  createContext,
+  lazy,
+  Suspense,
+  use,
+  useContext,
+  useState,
+  type ComponentType,
+  type MouseEvent,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { Disclosure, Stack, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
@@ -61,45 +71,74 @@ function preventNavigation(event: MouseEvent<HTMLDivElement>) {
 function Source({ path, name }: { path: string; name: string }) {
   const source = use(sourceOf(path));
   return (
-    <CodeBlock language="tsx" label={`${name}.tsx`} copyable>
+    <CodeBlock language="tsx" label={`${name}.tsx`} copyable className="docs-example-source">
       {source.replace(/\n$/, '')}
     </CodeBlock>
   );
 }
 
+/**
+ * Where the open code of a figure that sits in a narrower cell, beside another figure or beside
+ * text, is shown: a slot across the whole content column below the cells, so code never scrolls
+ * sideways in a cell. Without a slot, the code opens in its own disclosure.
+ */
+export const CodeSlot = createContext<HTMLElement | null>(null);
+
 /** An example's source in a Code disclosure, with a copy button; a template preview shows it too. */
 export function ExampleCode({ page, name }: { page: string; name: string }) {
   // A retry renders the code afresh from its file loaded again.
   const [, setAttempt] = useState(0);
+  const slot = useContext(CodeSlot);
+  const [open, setOpen] = useState(false);
   const path = examplePath(page, name);
-  return (
-    <Disclosure
-      title={
-        <>
-          Code<span className="docs-visually-hidden">, {name}.tsx</span>
-        </>
-      }
-      className="docs-live-example-code"
+  const code = (
+    <LoadBoundary
+      what="code"
+      modules={[`src/examples/${page}/${name}.tsx?raw`]}
+      onRetry={() => {
+        forgetSource(path);
+        setAttempt((count) => count + 1);
+      }}
     >
-      <LoadBoundary
-        what="code"
-        modules={[`src/examples/${page}/${name}.tsx?raw`]}
-        onRetry={() => {
-          forgetSource(path);
-          setAttempt((count) => count + 1);
-        }}
-      >
-        <Suspense fallback={<Text role="status">Loading code…</Text>}>
-          <Source path={path} name={name} />
-        </Suspense>
-      </LoadBoundary>
-    </Disclosure>
+      <Suspense fallback={<Text role="status">Loading code…</Text>}>
+        <Source path={path} name={name} />
+      </Suspense>
+    </LoadBoundary>
+  );
+  const title = (
+    <>
+      Code<span className="docs-visually-hidden">, {name}.tsx</span>
+    </>
+  );
+  if (!slot)
+    return (
+      <Disclosure title={title} className="docs-live-example-code">
+        {code}
+      </Disclosure>
+    );
+  return (
+    <>
+      <Disclosure
+        title={title}
+        open={open}
+        onOpenChange={setOpen}
+        className="docs-live-example-code"
+        data-slotted=""
+      />
+      {open &&
+        createPortal(
+          <section className="docs-code-panel" aria-label={`Code, ${name}.tsx`}>
+            {code}
+          </section>,
+          slot,
+        )}
+    </>
   );
 }
 
 /**
  * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
- * live example and of each figure of a page of exchanges.
+ * live example and of each figure of a page on the figure template.
  */
 export function ExampleRender({ page, name }: { page: string; name: string }) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
@@ -134,7 +173,7 @@ export const keepLinksInPlace = {
 
 /**
  * An example rendered live in the documentation's theme, with its source and a copy button; with
- * `widths`, in a frame of each width, side by side, and with `caption`, a sentence below it.
+ * `widths`, in a frame of each width, one to a row, and with `caption`, a sentence below it.
  */
 export function LiveExample({
   page,
@@ -157,20 +196,24 @@ export function LiveExample({
           role="group"
           aria-label={`${title} example`}
           className="docs-width-strip"
-          // The strip scrolls where its frames don't fit, so the keyboard can scroll it too.
-          tabIndex={0}
           data-example={name}
           {...keepLinksInPlace}
         >
           {widths.map((width) => (
             <figure key={width} className="docs-width-frame">
+              {/* The stage scrolls where the frame is wider than the page, so the keyboard can
+                  scroll it too. */}
               <Stack
                 render={<Theme {...theme} />}
                 gap={0}
                 className="docs-live-example"
-                style={{ inlineSize: `${width}rem` }}
+                tabIndex={0}
+                aria-label={`${width} rem wide`}
+                role="group"
               >
-                <ExampleRender page={page} name={name} />
+                <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
+                  <ExampleRender page={page} name={name} />
+                </div>
               </Stack>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
                 {width} rem wide

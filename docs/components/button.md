@@ -52,8 +52,6 @@ components:
 
 ## Overview
 
-> What is a button, and what does it look like?
-
 A button starts an action. With `href` it is a native link that looks like a button.
 
 ```tsx example=CreateProject
@@ -68,7 +66,9 @@ A button starts an action. With `href` it is a native link that looks like a but
 
 ```
 
-> What does it do on its own?
+### States
+
+Hover, press, keyboard focus and disabled, for each variant.
 
 <!-- specimen: InteractionStates -->
 
@@ -98,8 +98,6 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 ## Variants
 
-> Which variants are there, and when do I use each?
-
 ```tsx example=Variants
 
 ```
@@ -122,15 +120,13 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 ```
 
-> Which sizes are there?
-
-<!-- specimen: Sizes -->
+### Sizes
 
 `sm`, `md` and `lg`, the control heights of the [scale](../foundations/scale.md). Without a `size`, a button takes its container's, such as `sm` in a table cell.
 
-## When to use
+<!-- specimen: Sizes -->
 
-> When should I use a button, and when something else?
+## When to use
 
 ```tsx do=OnePrimaryAction caption="One primary button per group, at the end of its actions."
 
@@ -150,7 +146,7 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 - `href` for a destination, `onClick` for an action.
 
-> How do I write its label?
+### Labels
 
 Start with a verb and say what will happen.
 
@@ -170,8 +166,6 @@ When the outcome is known, put it in the label.
 
 ## Anatomy
 
-> What is a button made of?
-
 ```tsx anatomy=ButtonAnatomy
 
 ```
@@ -185,8 +179,6 @@ Not shown: the spinner, `env-button-spinner`, and a ButtonGroup's `env-button-gr
 
 ## Adapting to width
 
-> How does a button behave when space runs out?
-
 Labels wrap, and icon-only buttons keep their size. On touch screens every button grows to at least 2.75 rem.
 
 ```tsx example=NarrowActions widths="16 30"
@@ -198,8 +190,6 @@ Labels wrap, and icon-only buttons keep their size. On touch screens every butto
 ```
 
 ## Accessibility
-
-> How do I keep buttons accessible?
 
 ### Keyboard
 

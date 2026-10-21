@@ -1,12 +1,12 @@
-import { Fragment, useId, type ReactNode } from 'react';
-import { Message, Stack, Theme, useTheme } from '@envsemble/envui';
+import { Fragment, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from 'react';
+import { Stack, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
 import type { DocumentationBlock, DocumentationSection } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
-import { ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
+import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
 import { Specimen } from './Specimen';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -59,7 +59,7 @@ export function VerdictFigure({
   );
 }
 
-/** One figure of an answer, by its kind. */
+/** One figure of a section, by its kind. */
 function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
   if (block.role === 'do' || block.role === 'dont')
     return (
@@ -159,17 +159,17 @@ export function lastSubsection(markdown: string): [string, string] | undefined {
   return [lines.slice(0, start).join('\n'), lines.slice(start).join('\n')];
 }
 
-/** An answer's Markdown, with runs of lists in columns. */
-export function ExchangeColumns({ markdown, path }: { markdown: string; path: string }) {
+/** A section's Markdown, with runs of lists in columns. */
+export function SectionColumns({ markdown, path }: { markdown: string; path: string }) {
   return (
     <>
       {splitColumns(markdown).map((piece, index) =>
         typeof piece === 'string' ? (
           <Documentation key={index} markdown={piece} path={path} />
         ) : (
-          <div key={index} className="docs-exchange-columns">
+          <div key={index} className="docs-section-columns">
             {piece.map((column, part) => (
-              <div key={part} className="docs-exchange-column">
+              <div key={part} className="docs-section-column">
                 <Documentation markdown={column} path={path} />
               </div>
             ))}
@@ -196,36 +196,28 @@ function groupFigures(blocks: DocumentationBlock[]) {
   return groups;
 }
 
-/** A question's text, with its `code` spans as code. */
-function questionText(text: string) {
-  return text
-    .split(/`([^`]+)`/)
-    .map((part, index) => (index % 2 ? <code key={index}>{part}</code> : part));
-}
-
 /**
- * A question, as the reader's bubble in the question lane at the inline end. A Message is an
- * article; the section it asks about names it.
+ * Cells that share a row, figures side by side or a subsection beside its figure, and below them a
+ * slot across the whole content column where their open code shows.
  */
-export function ExchangeQuestion({ section, text }: { section: string; text: string }) {
+function SharedRow(props: ComponentPropsWithoutRef<'div'>) {
+  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
   return (
-    <Message
-      from="self"
-      className="docs-exchange-question"
-      aria-label={`Question on ${section.toLowerCase()}`}
-    >
-      {questionText(text)}
-    </Message>
+    <div className="docs-shared-row">
+      <CodeSlot value={slot}>
+        <div {...props} />
+      </CodeSlot>
+      <div ref={setSlot} className="docs-code-slot" />
+    </div>
   );
 }
 
 /**
- * One section of a page of exchanges, laid out like a transcript in two lanes: its heading across
- * both, then each question as the reader's bubble in the lane at the inline end and its answer,
- * figures included, in the lane at the start. Each lane stops short of the other's far edge.
- * `lead` comes right after the first question, before the authored answer.
+ * One section of a page on the figure template: its heading, then its content in the order it is
+ * written, with figures that follow each other side by side and a subsection beside its one
+ * figure. `lead` comes right after the heading, before the authored content.
  */
-export function ExchangeSection({
+export function FigureSection({
   reference,
   section,
   lead,
@@ -234,35 +226,35 @@ export function ExchangeSection({
   section: DocumentationSection;
   lead?: ReactNode;
 }) {
-  const turns: { question?: string; content: ReactNode[] }[] = [{ content: [] }];
-  const groups = groupFigures(section.blocks);
+  const blocks = [...section.blocks];
+  // The first Markdown block opens with the section's "## Title" line, which the heading shows.
+  const first = blocks[0];
+  const [title, ...intro] = first?.kind === 'markdown' ? first.markdown.split('\n') : [''];
+  if (first?.kind === 'markdown') blocks[0] = { kind: 'markdown', markdown: intro.join('\n') };
+  const groups = groupFigures(blocks);
   /** Subsections of text shown beside the figure at an index of groups. */
   const beside = new Map<number, string>();
+  const content: ReactNode[] = lead ? [<Fragment key="lead">{lead}</Fragment>] : [];
+  const markdown = (key: number, text: string) => (
+    <SectionColumns key={key} markdown={text} path={reference.path} />
+  );
   groups.forEach((group, index) => {
-    if (!Array.isArray(group) && group.kind === 'question') {
-      turns.push({
-        question: group.text,
-        content: turns.length === 1 && lead ? [<Fragment key="lead">{lead}</Fragment>] : [],
-      });
-      return;
-    }
-    const content = turns.at(-1)!.content;
     const text = beside.get(index);
     if (Array.isArray(group) && text !== undefined)
       content.push(
-        <div key={index} className="docs-exchange-split">
+        <SharedRow key={index} className="docs-figure-split">
           <div>
             <Documentation markdown={text} path={reference.path} />
           </div>
           <Figure page={reference} block={group[0]} />
-        </div>,
+        </SharedRow>,
       );
     else if (Array.isArray(group))
       content.push(
         group.length === 1 ? (
           <Figure key={index} page={reference} block={group[0]} />
         ) : (
-          <div
+          <SharedRow
             key={index}
             className="docs-figure-run"
             data-count={group.length}
@@ -271,7 +263,7 @@ export function ExchangeSection({
             {group.map((block) => (
               <Figure key={block.name} page={reference} block={block} />
             ))}
-          </div>
+          </SharedRow>
         ),
       );
     else if (group.kind === 'markdown') {
@@ -279,30 +271,28 @@ export function ExchangeSection({
       const next = groups[index + 1];
       const split = Array.isArray(next) && next.length === 1 && lastSubsection(group.markdown);
       if (split) {
-        if (split[0].trim())
-          content.push(<ExchangeColumns key={index} markdown={split[0]} path={reference.path} />);
+        if (split[0].trim()) content.push(markdown(index, split[0]));
         beside.set(index + 1, split[1]);
-      } else
-        content.push(
-          <ExchangeColumns key={index} markdown={group.markdown} path={reference.path} />,
-        );
+      } else content.push(markdown(index, group.markdown));
     } else if (group.kind === 'example')
       content.push(<Figure key={index} page={reference} block={group} />);
     else if (group.kind === 'specimen')
       content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
-  const [heading, first, ...followUps] = turns;
-  // A section without a question, the changelog, is its Markdown alone.
-  if (!first) return <section data-section={section.id}>{heading.content}</section>;
+  // The changelog is its Markdown alone.
+  if (section.id === 'changelog')
+    return (
+      <section data-section={section.id}>
+        <Documentation markdown={title} path={reference.path} />
+        {content}
+      </section>
+    );
   return (
-    <section className="docs-exchange" data-section={section.id}>
-      <div className="docs-exchange-heading">{heading.content}</div>
-      {[first, ...followUps].map(({ question, content }, index) => (
-        <Fragment key={index}>
-          <ExchangeQuestion section={section.title} text={question!} />
-          <div className="docs-exchange-answer">{content}</div>
-        </Fragment>
-      ))}
+    <section className="docs-figure-section" data-section={section.id}>
+      <div className="docs-figure-section-heading">
+        <Documentation markdown={title} path={reference.path} />
+      </div>
+      {content}
     </section>
   );
 }

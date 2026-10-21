@@ -1209,7 +1209,7 @@
         {
           "name": "ProjectSummary",
           "title": "Project summary",
-          "description": "",
+          "description": "A card groups content about one subject on a rounded surface.",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
@@ -1420,7 +1420,7 @@
         {
           "name": "CreateProject",
           "title": "Create project",
-          "description": "",
+          "description": "A button starts an action. With `href` it is a native link that looks like a button.",
           "file": "docs/examples/button/CreateProject.tsx"
         },
         {
@@ -1498,7 +1498,7 @@
         {
           "name": "SpecificLabel",
           "title": "Do: Name the action and what it affects.",
-          "description": "",
+          "description": "Start with a verb and say what will happen.",
           "file": "docs/examples/button/SpecificLabel.tsx"
         },
         {
@@ -1509,7 +1509,7 @@
         },
         {
           "name": "SayWhatWillHappen",
-          "title": "Say what will happen",
+          "title": "Labels",
           "description": "",
           "file": "docs/examples/button/SayWhatWillHappen.tsx"
         },

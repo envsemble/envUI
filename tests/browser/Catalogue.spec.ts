@@ -113,20 +113,25 @@ test('live examples keep links in place, show their source, and specimens show f
     .getByRole('link', { name: 'Read help', exact: true })
     .click({ modifiers: ['Control'] });
   expect(await page.evaluate(() => location.hash)).toBe(hash);
-  // Every example shows the source of its file, ready to copy.
-  const code = page.locator('[data-example="ButtonLinks"] ~ details').first();
-  await code.locator('summary').click();
+  // Every example shows the source of its file, ready to copy. A figure that shares its row opens
+  // its code below the row, across the whole content column.
+  await page
+    .locator('[data-example="ButtonLinks"] ~ details summary', { hasText: 'Code' })
+    .first()
+    .click();
+  const code = page.getByRole('region', { name: 'Code, ButtonLinks.tsx', exact: true });
   await expect(code.locator('.env-code-block')).toContainText(
-    "import { Button, Stack } from '@envsemble/envui';",
+    'export default function ButtonLinks',
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
-  // Catalogue-only specimens, such as the forced interaction states, sit in the exchange they
-  // illustrate on a page of exchanges, and in the guidelines on a page on the template.
-  const disclosure = page.locator('.docs-preview details.env-disclosure').first();
-  await disclosure.locator('summary').focus();
-  await disclosure.locator('summary').press('Enter');
-  await expect(disclosure).toHaveAttribute('open', '');
-  await expect(disclosure.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
+  const widths = await code.evaluate((panel) => ({
+    panel: Math.round(panel.getBoundingClientRect().width),
+    column: Math.round(panel.closest('.docs-figure-section')!.getBoundingClientRect().width),
+  }));
+  expect(widths.panel).toBe(widths.column);
+  // Catalogue-only specimens, such as the forced interaction states, sit in the section they
+  // illustrate on the figure template, and in the guidelines on the section template.
+  await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
   await page.goto(`${offline}#/components/nav-list/guidelines`);
   const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
   await navigationDisclosure.locator('summary').click();
@@ -135,35 +140,40 @@ test('live examples keep links in place, show their source, and specimens show f
   ).toBeVisible();
 });
 
-test('a page of exchanges asks its questions and numbers the parts of its anatomy', async ({
+test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
   page,
 }) => {
   await page.goto(`${offline}#/components/button/overview`);
-  // Every exchange is in the Overview; the props have a view of their own.
+  // Every section is in the Overview; the props have a view of their own.
   await expect(page.getByRole('tab')).toHaveText(['Overview', 'Props']);
-  const question = page.locator('.docs-exchange-question').first();
-  await expect(question).toHaveText('What is a button, and what does it look like?');
-  // The question and its answer keep their own lanes: the bubble ends at the inline end and
-  // starts short of the answer's start, and the answer stops short of the bubble's end.
-  const lanes = () =>
+  // Ordinary headings in the fixed order, and no questions.
+  await expect(page.locator('.docs-figure-section-heading h2')).toHaveText([
+    'Overview',
+    'Variants',
+    'When to use',
+    'Anatomy',
+    'Adapting to width',
+    'Accessibility',
+    'Props',
+  ]);
+  await expect(page.locator('.docs-figures .env-message')).toHaveCount(0);
+  // Figures that share a row are cells of one size: equal widths, and stages as tall as the
+  // tallest.
+  const cells = () =>
     page
-      .locator('.docs-exchange')
+      .locator('[data-section="overview"] .docs-figure-run')
       .first()
-      .evaluate((section) => {
-        const bubble = section
-          .querySelector('.docs-exchange-question > .env-message-content')!
-          .getBoundingClientRect();
-        const answer = section.querySelector('.docs-exchange-answer')!.getBoundingClientRect();
-        const box = section.getBoundingClientRect();
+      .evaluate((run) => {
+        const stages = [...run.querySelectorAll('.docs-live-example')].map((stage) =>
+          stage.getBoundingClientRect(),
+        );
         return {
-          bubbleAtEnd: Math.round(box.right - bubble.right) === 0,
-          bubbleInset: bubble.left - answer.left > 16,
-          answerInset: box.right - answer.right > 16,
-          answerBelow: answer.top >= bubble.bottom,
+          count: stages.length,
+          widths: new Set(stages.map((box) => Math.round(box.width))).size,
+          heights: new Set(stages.map((box) => Math.round(box.height))).size,
         };
       });
-  const apart = { bubbleAtEnd: true, bubbleInset: true, answerInset: true, answerBelow: true };
-  await expect.poll(lanes).toEqual(apart);
+  await expect.poll(cells).toEqual({ count: 3, widths: 1, heights: 1 });
   // Do and don't figures carry their verdict and one sentence, with the code below.
   const verdict = page.getByRole('figure', { name: /^Do One primary button per group/ });
   await expect(verdict.locator('.docs-verdict-bar')).toHaveText('Do');
@@ -190,14 +200,13 @@ test('a page of exchanges asks its questions and numbers the parts of its anatom
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
   await page.setViewportSize({ width: 420, height: 800 });
   await expect.poll(placement).toEqual({ badges: 4, aligned: true, theme: 'dark' });
-  await expect.poll(lanes).toEqual(apart);
   await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
   // A legend part the example doesn't render would leave its number off the figure.
   const pages = references
-    .filter((reference) => reference.format === 'exchanges')
+    .filter((reference) => reference.format === 'figures')
     .map((reference) => ({
       id: reference.id,
       figures: (reference.sections ?? [])

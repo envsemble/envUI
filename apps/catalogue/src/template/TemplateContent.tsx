@@ -11,7 +11,7 @@ import {
 } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
-import { ExchangeColumns, ExchangeQuestion, ExchangeSection } from './Exchanges';
+import { FigureSection, SectionColumns } from './Figures';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
@@ -98,14 +98,14 @@ function UseAndAvoid({
   return headings[0] === 'When to use' ? (
     <Documentation markdown={markdown} path={path} />
   ) : (
-    <ExchangeColumns markdown={markdown} path={path} />
+    <SectionColumns markdown={markdown} path={path} />
   );
 }
 
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
-  if (reference.format === 'exchanges')
+  if (reference.format === 'figures')
     return (
-      <ExchangeSection
+      <FigureSection
         reference={reference}
         section={section}
         lead={
@@ -186,30 +186,27 @@ function Related({ reference }: { reference: Document }) {
 }
 
 /**
- * The last exchange of a page of exchanges, which leads to its props: the Props view lists them,
+ * The Props section of a page on the figure template, which leads to the Props view: it lists them,
  * generated from the TypeScript declarations.
  */
-function PropsExchange({ reference }: { reference: Document }) {
+function PropsSection({ reference }: { reference: Document }) {
   const page = referencePages.find((item) => item.reference.id === reference.id);
   const components = reference.metadata?.components ?? [];
   if (!page || !components.length) return null;
   const names = components.map((name) => `\`${name}\``);
   const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
   return (
-    <section className="docs-exchange" data-section="props">
-      <div className="docs-exchange-heading">
+    <section className="docs-figure-section" data-section="props">
+      <div className="docs-figure-section-heading">
         <Documentation markdown="## Props" path={reference.path} />
       </div>
-      <ExchangeQuestion section="Props" text={`Which props does ${reference.title} take?`} />
-      <div className="docs-exchange-answer">
-        <Documentation
-          markdown={`Every prop of ${list}, with its type and default.`}
-          path={reference.path}
-        />
-        <Text>
-          <Link href={pageHref(page, 'props')}>Open the props reference</Link>
-        </Text>
-      </div>
+      <Documentation
+        markdown={`Every prop of ${list}, with its type and default.`}
+        path={reference.path}
+      />
+      <Text>
+        <Link href={pageHref(page, 'props')}>Open the props reference</Link>
+      </Text>
     </section>
   );
 }
@@ -222,15 +219,18 @@ function Sections({
   reference: Document;
   sections: DocumentationSection[];
 }) {
-  const exchanges = reference.format === 'exchanges';
+  const figures = reference.format === 'figures';
   return (
-    <Stack gap={8} className={`docs-article docs-template${exchanges ? ' docs-exchanges' : ''}`}>
+    <Stack
+      gap={figures ? 9 : 8}
+      className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
+    >
       {sections
         .filter((section) => section.id !== 'changelog')
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
-      {exchanges && <PropsExchange reference={reference} />}
+      {figures && <PropsSection reference={reference} />}
       {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
     </Stack>
   );

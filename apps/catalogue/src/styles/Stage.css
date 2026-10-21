@@ -1,5 +1,5 @@
 /* The dotted stage every figure sits on, live examples, do and don't figures, anatomy figures and,
-   on a page of exchanges, specimens alike, so a reader can tell an example from the page around
+   on a page on the figure template, specimens alike, so a reader can tell an example from the page around
    it. It takes the theme the reader has chosen and centres what it shows. A device of the
    documentation, kept out of envUI. */
 .docs-live-example,
@@ -17,7 +17,7 @@
 .docs-live-example,
 .docs-verdict-stage,
 .docs-anatomy-stage,
-.docs-exchanges :is(.docs-specimen-grid, .docs-matrix-scroll) {
+.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   background-color: var(--env-color-bg-page);
   background-image: radial-gradient(
     circle,
@@ -66,19 +66,19 @@
   inline-size: 100%;
 }
 
-/* In a frame of a given width, the example fills the frame, whose width it is shown at. */
-.docs-width-frame > .docs-live-example {
-  justify-items: stretch;
+/* A width frame keeps its own width on the stage; the example fills it. */
+.docs-width-box {
+  display: grid;
 }
 
 .docs-live-example,
 .docs-anatomy-stage,
-.docs-exchanges :is(.docs-specimen-grid, .docs-matrix-scroll) {
+.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   border: 0.0625rem solid var(--env-color-border-muted);
   border-radius: var(--env-radius-surface);
 }
 
-.docs-exchanges .docs-specimen-grid {
+.docs-figures .docs-specimen-grid {
   padding: var(--env-space-6);
 }
 
@@ -91,4 +91,10 @@
   .docs-live-example {
     padding: var(--env-space-6) var(--env-space-4);
   }
+}
+
+/* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
+:is(.docs-live-example, .docs-verdict-stage)
+  > .env-stack[data-direction='row']:not([data-justify]) {
+  justify-content: center;
 }

@@ -1,81 +1,56 @@
-/* Component pages written as exchanges, laid out like a transcript: each section's heading
-   across the page, each question as the reader's bubble in a lane at the inline end, and its
-   answer, figures included, in a lane at the start. Each lane stops short of the other's far edge
-   by the inset, so a question and its answer read apart at a glance. */
-.docs-exchanges {
+/* Component pages on the figure template: ordinary sections of short text and live figures, with
+   a rhythm of space. What belongs together sits close: a heading and its first content, text and
+   the figure it introduces, a figure's stage, caption and code. Unrelated parts sit clearly apart:
+   one sub-topic from the next, and one section from the next, which the article's gap sets. */
+.docs-figures {
   container-type: inline-size;
 }
 
-.docs-exchange {
-  /* The inset grows with the page and tightens on narrow ones, where the lanes still read apart. */
-  --docs-lane-inset: clamp(2rem, 12cqi, 9rem);
+.docs-figure-section {
   /* A link to a section stops below the sticky display controls. */
   scroll-margin-block-start: var(--env-space-9);
   display: grid;
-  grid-template-columns:
-    [answer-start] var(--docs-lane-inset)
-    [question-start] minmax(0, 1fr)
-    [answer-end] var(--docs-lane-inset)
-    [question-end];
-  row-gap: var(--env-space-6);
+  grid-template-columns: minmax(0, 1fr);
+  /* The space between sub-topics of a section. */
+  row-gap: var(--env-space-8);
   min-inline-size: 0;
 }
 
-/* The heading marks where a section starts, with a hairline that runs to the page's end; it keeps
-   the page's outline and the address links point at. */
-.docs-exchange-heading {
-  grid-column: answer-start / question-end;
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-5);
-  min-inline-size: 0;
-}
-
-.docs-exchange-heading::after {
-  content: '';
-  flex: 1;
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
-}
-
-.docs-exchange-heading h2 {
+.docs-figure-section-heading h2 {
   margin: 0;
-  font: var(--env-font-weight-medium) 1.125rem / 1.3 var(--env-font-family);
+  font: var(--env-font-weight-medium) 1.5rem / 1.25 var(--env-font-family);
+  letter-spacing: -0.01em;
 }
 
-.docs-exchange-question {
-  grid-column: question-start / question-end;
-  justify-self: end;
-  max-inline-size: 100%;
+/* A heading sits close to what it heads. */
+.docs-figure-section-heading + * {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
 }
 
-.docs-exchange-question > .env-message-content {
-  max-inline-size: min(100%, 32rem);
+/* Text sits close to the figure it introduces. */
+.docs-figure-section
+  > .env-markdown
+  + :is(.docs-live-example-entry, .docs-shared-row, .docs-anatomy, .docs-verdict, .docs-example) {
+  margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
 }
 
-/* A follow-up question leaves room after the answer before it. */
-.docs-exchange-answer + .docs-exchange-question {
-  margin-block-start: var(--env-space-5);
-}
-
-.docs-exchange-answer {
-  grid-column: answer-start / answer-end;
-  display: grid;
-  gap: var(--env-space-6);
-  min-inline-size: 0;
-}
-
-/* Lists that answer side by side, such as what envUI provides and what you provide. */
-.docs-exchange-columns {
+/* Lists side by side, such as what envUI provides and what you provide, in cells of one size. */
+.docs-section-columns {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: var(--env-space-5);
 }
 
-.docs-exchange-column {
+.docs-section-column {
   min-inline-size: 0;
   padding: var(--env-space-5) var(--env-space-6);
   border-radius: var(--env-radius-surface);
   background: var(--env-color-bg-muted);
+}
+
+/* A figure: its stage, its caption and its code, close together. */
+.docs-live-example-entry {
+  gap: var(--env-space-2);
 }
 
 .docs-figure-caption {
@@ -84,11 +59,34 @@
   font: var(--env-type-body-small);
 }
 
-/* Figures that follow each other, such as a do and a don't, sit side by side. */
+/* Cells that share a row, and the slot below them where their open code spans the column. */
+.docs-shared-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.docs-code-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--env-space-4);
+  min-inline-size: 0;
+}
+
+.docs-code-slot:not(:empty) {
+  margin-block-start: var(--env-space-4);
+}
+
+/* A slotted disclosure is only the toggle; its code shows in the slot. */
+.docs-live-example-code[data-slotted] > .env-disclosure-panel {
+  display: none;
+}
+
+/* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
+   code lined up across the row on rows of their own, so the stages match the tallest. */
 .docs-figure-run {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  align-items: start;
   gap: var(--env-space-7) var(--env-space-6);
   min-inline-size: 0;
 }
@@ -97,21 +95,30 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
 }
 
-/* Do and don't figures come in pairs: two to a row where there is room, their stages and
-   sentences lined up across the row. */
+/* Do and don't figures come in pairs, two to a row where there is room. */
 .docs-figure-run[data-verdicts] {
   grid-template-columns: minmax(0, 1fr);
-  row-gap: var(--env-space-7);
 }
 
-.docs-figure-run[data-verdicts] > .docs-verdict {
+.docs-figure-run > * {
+  display: grid;
   grid-row: span 3;
   grid-template-rows: subgrid;
-  row-gap: var(--env-space-3);
+  row-gap: var(--env-space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.docs-figure-run > * > :first-child {
+  grid-row: 1;
+}
+
+.docs-figure-run > * > :last-child {
+  grid-row: 3;
 }
 
 /* A subsection's text beside its one figure. */
-.docs-exchange-split {
+.docs-figure-split {
   display: grid;
   align-items: start;
   gap: var(--env-space-5) var(--env-space-7);
@@ -125,33 +132,58 @@
 }
 
 @container (width >= 56rem) {
-  .docs-exchange-split {
+  .docs-figure-split {
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   }
 }
 
-/* An example in frames of given widths, side by side; the strip scrolls where they don't fit. */
+/* An example at given widths: one frame to a row, each centred on a stage of its own, which
+   scrolls where the frame is wider than the page. */
 .docs-width-strip {
-  display: flex;
-  align-items: start;
+  display: grid;
   gap: var(--env-space-5);
   min-inline-size: 0;
-  padding-block-end: var(--env-space-2);
-  overflow-x: auto;
 }
 
 .docs-width-frame {
   display: grid;
-  flex: none;
   gap: var(--env-space-2);
+  min-inline-size: 0;
   margin: 0;
 }
 
-/* A do or don't figure: the example on a quiet stage, a green or red bar, and one sentence. */
+.docs-width-frame > .docs-live-example {
+  overflow-x: auto;
+}
+
+/* The frame the example responds to, outlined so its width shows. */
+.docs-width-box {
+  container-type: inline-size;
+  outline: 0.0625rem dashed var(--env-color-border-default);
+  outline-offset: var(--env-space-2);
+}
+
+/* Code soft-wraps where the content column is narrower than a 100-character line, rather than
+   scrolling sideways; examples are formatted to that width. */
+@container (width < 60rem) {
+  .docs-example-source pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (width < 48rem) {
+  .docs-example-source pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* A do or don't figure: the example on the stage, a green or red bar, and one sentence. */
 .docs-verdict {
   display: grid;
   align-content: start;
-  gap: var(--env-space-3);
+  gap: var(--env-space-2);
   min-inline-size: 0;
   margin: 0;
 }
@@ -202,7 +234,7 @@
    callouts on its parts, measured from the live parts, and the legend of part names below. */
 .docs-anatomy {
   display: grid;
-  gap: var(--env-space-5);
+  gap: var(--env-space-4);
   min-inline-size: 0;
   margin: 0;
 }
@@ -309,4 +341,9 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* A frame wider than the page scrolls from its start, rather than centring past the stage's edge. */
+.docs-width-frame > .docs-live-example {
+  justify-items: safe center;
 }
