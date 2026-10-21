@@ -79,6 +79,15 @@ function Catalogue() {
     mainElement.current?.scrollTo({ top: 0 });
   }, [contentRoute, title]);
   const openSearch = () => setSearchOpen(true);
+  // The navigation's sheet is for narrower windows: one wide enough for the drawer closes it.
+  useEffect(() => {
+    if (!navigationOpen) return;
+    const wide = window.matchMedia('(width >= 52.5rem)');
+    const close = () => wide.matches && setNavigationOpen(false);
+    close();
+    wide.addEventListener('change', close);
+    return () => wide.removeEventListener('change', close);
+  }, [navigationOpen]);
   let content: ReactNode;
   if (page) content = <ReferenceContent key={page.path} page={page} view={view} search={search} />;
   else if (standalone) content = <StandalonePageContent key={standalone.path} page={standalone} />;

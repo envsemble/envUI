@@ -23,6 +23,7 @@
 }
 .env-sheet-popup {
   --env-sheet-width: 24rem;
+  --env-sheet-bottom-width: 40rem;
   /* A swipe toward the edge moves the sheet with the finger: Base UI sets the movement, and its
      own transform while the finger is down. */
   --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
@@ -50,7 +51,7 @@
 /* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
    rounded, and clear of the safe area at the bottom. */
 .env-sheet-popup[data-side='bottom'] {
-  inline-size: min(40rem, 100%);
+  inline-size: min(var(--env-sheet-bottom-width), 100%);
   max-block-size: 100%;
   border-block-end-width: 0;
   border-end-start-radius: 0;
@@ -65,11 +66,11 @@
     inline-size: min(var(--env-sheet-width), 100%);
   }
   .env-sheet-popup[data-width='md'][data-side='end'] {
-    border-inline-start-width: 0.0625rem;
+    border-inline-start-width: var(--env-control-border-width);
     padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
   }
   .env-sheet-popup[data-width='md'][data-side='start'] {
-    border-inline-end-width: 0.0625rem;
+    border-inline-end-width: var(--env-control-border-width);
     padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
   }
 }
@@ -79,11 +80,11 @@
     inline-size: min(var(--env-sheet-width), 100%);
   }
   .env-sheet-popup[data-width='lg'][data-side='end'] {
-    border-inline-start-width: 0.0625rem;
+    border-inline-start-width: var(--env-control-border-width);
     padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
   }
   .env-sheet-popup[data-width='lg'][data-side='start'] {
-    border-inline-end-width: 0.0625rem;
+    border-inline-end-width: var(--env-control-border-width);
     padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
   }
 }

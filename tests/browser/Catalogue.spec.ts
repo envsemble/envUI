@@ -392,6 +392,34 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
 
+/**
+ * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
+ * the overview had not loaded failing, chosen by when it is asked for rather than by
+ * module-files.json, so a file the map leaves out fails too. Returns the hero example, and a
+ * setter: `assets` makes every file under /assets/ fail, as when only the map arrives, and `up`
+ * serves every file.
+ */
+async function openFailingButtonPage(page: Page) {
+  const loaded = new Set<string>();
+  let state: 'opening' | 'failing' | 'assets' | 'up' = 'opening';
+  await serveSite(page, {
+    failing: (pathname) => {
+      if (!pathname.startsWith('/assets/')) return false;
+      if (state === 'opening') loaded.add(pathname);
+      return state === 'assets' || (state === 'failing' && !loaded.has(pathname));
+    },
+    failure: 'aborted',
+  });
+  await page.goto(`${siteUrl}/#/overview`);
+  await expect(page.getByRole('heading', { level: 1, name: 'envUI' })).toBeVisible();
+  await expect(page.getByText(/^Loading .*…$/)).toHaveCount(0);
+  state = 'failing';
+  await page.evaluate(() => (window.location.hash = '#/components/button/overview'));
+  const hero = page.getByRole('group', { name: 'Button example', exact: true });
+  await expect(hero.getByText('The example could not load')).toBeVisible();
+  return { hero, set: (next: 'assets' | 'up') => (state = next) };
+}
+
 test("in the hosted build, a reload whose files can't be fetched keeps the page and says so", async ({
   page,
 }) => {
@@ -474,12 +502,12 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-  // Focus leaves for the page; the theme changes with a click that moves no focus.
-  await page.evaluate(() => {
-    (document.activeElement as HTMLElement | null)?.blur();
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  });
-  const scrolled = await page.evaluate(() => window.scrollY);
+  // Focus leaves for the page; the theme changes with a click that moves no focus. The frame's
+  // body scrolls, not the document.
+  const body = page.locator('#docs-main');
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+  const scrolled = await body.evaluate((element) => element.scrollTop);
   expect(scrolled).toBeGreaterThan(1000);
   await page
     .locator('.docs-page-controls')
@@ -487,7 +515,7 @@ test('a retry returns focus once, and later updates leave focus where it is', as
     .evaluate((toggle: HTMLElement) => toggle.click());
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
-  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
 });
 
 test('an example that fails to render says so in place, and the rest of the page works', async ({
@@ -639,17 +667,18 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
 
   for (const width of [1920, 960, 390]) {
     await page.setViewportSize({ width, height: 1400 });
+    // The content fills the frame's body, which fills the window below the top bar.
     const canvas = await page.locator('.docs-main').evaluate((main) => {
-      const rect = main.getBoundingClientRect();
+      const body = main.closest('.env-scaffold-body')!;
       return {
-        height: rect.height,
-        bottom: rect.bottom + window.scrollY,
-        documentHeight: document.documentElement.scrollHeight,
+        height: main.getBoundingClientRect().height,
+        body: body.clientHeight,
+        bottom: body.getBoundingClientRect().bottom,
         background: getComputedStyle(main).backgroundImage,
       };
     });
-    expect(canvas.height).toBeGreaterThanOrEqual(1400);
-    expect(Math.abs(canvas.bottom - canvas.documentHeight)).toBeLessThan(1);
+    expect(canvas.height).toBeGreaterThanOrEqual(canvas.body - 1);
+    expect(Math.abs(canvas.bottom - 1400)).toBeLessThan(1);
     expect(canvas.background).toBe('none');
   }
 

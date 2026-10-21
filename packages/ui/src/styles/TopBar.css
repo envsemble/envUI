@@ -7,7 +7,7 @@
   min-block-size: var(--env-top-bar-height);
   min-inline-size: 0;
   padding-inline: var(--env-space-4);
-  border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
   white-space: nowrap;
@@ -56,7 +56,10 @@
   column-gap: var(--env-space-3);
   min-block-size: 0;
   /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
-  block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--env-title-bar-height));
+  block-size: max(
+    calc(env(titlebar-area-height, 0px) + var(--env-control-border-width)),
+    var(--env-title-bar-height)
+  );
   padding-left: calc(env(titlebar-area-x, 0px) + var(--env-top-bar-title-bar-left));
   padding-right: calc(
     100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +

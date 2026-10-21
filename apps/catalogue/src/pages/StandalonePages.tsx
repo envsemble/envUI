@@ -1,12 +1,10 @@
 import { Suspense, useState, type ReactNode } from 'react';
-import { Card, EmptyState, Link, Column, Surface, Text } from '@envsemble/envui';
-import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
+import { Column, Text } from '@envsemble/envui';
 import { PageHeader } from '../layout/PageHeader';
 import { Documentation } from './Documentation';
 import { LoadBoundary, lazyPart } from '../template/LoadBoundary';
 import { MetadataBadges, SingleViewContent } from '../template/TemplateContent';
-import { guidePages, pagesOf, type StandalonePage } from '../navigation/DocumentationRoutes';
-import { routeHref } from '../navigation/Address';
+import type { StandalonePage } from '../navigation/DocumentationRoutes';
 
 /** The token reference and the changelog, large pages that load with the page that shows them. */
 const tokenReference = lazyPart(

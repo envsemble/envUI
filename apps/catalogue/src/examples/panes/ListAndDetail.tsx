@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Column, List, Panes, Text } from '@envsemble/envui';
+import { Column, Link, List, Panes, Text } from '@envsemble/envui';
 
 const messages = [
   { id: 'launch', from: 'Priya Shah', subject: 'Launch checklist', body: 'The venue is booked.' },
@@ -27,16 +27,19 @@ export default function ListAndDetail() {
               key={message.id}
               selected={message.id === chosen.id}
               label={
-                <button
-                  type="button"
+                // The row's target: the item that opens the message, where Back returns focus.
+                <Link
+                  href={`/inbox/${message.id}`}
+                  underline={false}
                   data-row-target
+                  aria-current={message.id === chosen.id || undefined}
                   onClick={() => {
                     setChosen(message);
                     setOpen(true);
                   }}
                 >
                   {message.subject}
-                </button>
+                </Link>
               }
               description={message.from}
             />

@@ -31,10 +31,13 @@
   flex-wrap: wrap;
   gap: var(--env-space-2);
 }
+.env-scaffold-skip-link {
+  --env-scaffold-skip-link-hidden-size: 0.0625rem;
+}
 .env-scaffold-skip-link:not(:focus) {
   position: absolute;
-  inline-size: 0.0625rem;
-  block-size: 0.0625rem;
+  inline-size: var(--env-scaffold-skip-link-hidden-size);
+  block-size: var(--env-scaffold-skip-link-hidden-size);
   min-inline-size: 0;
   min-block-size: 0;
   margin: 0;
