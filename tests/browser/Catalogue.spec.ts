@@ -532,8 +532,13 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   });
   await page.route(source, (route) => route.abort());
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
-  const entry = page.locator('.docs-live-example-entry').first();
-  await entry.locator('.docs-live-example-code summary').click();
+  await page
+    .locator('.docs-live-example-entry')
+    .first()
+    .locator('.docs-live-example-code summary')
+    .click();
+  // The first figure shares its row, so its code opens below the row.
+  const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.
   await expect(
@@ -593,8 +598,12 @@ test('an example that fails to render says so in place, and the rest of the page
   // The other examples and the example's code render.
   const variants = page.getByRole('group', { name: 'Variants example', exact: true });
   await expect(variants.getByRole('button').first()).toBeVisible();
-  const entry = page.locator('.docs-live-example-entry').first();
-  await entry.locator('.docs-live-example-code summary').click();
+  await page
+    .locator('.docs-live-example-entry')
+    .first()
+    .locator('.docs-live-example-code summary')
+    .click();
+  const entry = page.getByRole('region', { name: 'Code, CreateProject.tsx', exact: true });
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
   await page

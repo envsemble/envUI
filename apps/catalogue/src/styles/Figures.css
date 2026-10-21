@@ -84,20 +84,14 @@
 
 /* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
    code lined up across the row on rows of their own, so the stages match the tallest. */
+/* A run is one column until all its figures fit side by side, so no row is left with an orphan:
+   pairs, and do and don't figures, two to a row from 38 rem, three from 58 rem, four as two rows
+   of two from 38 rem. */
 .docs-figure-run {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--env-space-7) var(--env-space-6);
   min-inline-size: 0;
-}
-
-.docs-figure-run[data-count='4'] {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-}
-
-/* Do and don't figures come in pairs, two to a row where there is room. */
-.docs-figure-run[data-verdicts] {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .docs-figure-run > * {
@@ -125,9 +119,15 @@
   min-inline-size: 0;
 }
 
-@container (width >= 44rem) {
-  .docs-figure-run[data-verdicts] {
+@container (width >= 38rem) {
+  .docs-figure-run:is([data-count='2'], [data-count='4'], [data-verdicts]) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 58rem) {
+  .docs-figure-run[data-count='3']:not([data-verdicts]) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -152,7 +152,9 @@
   margin: 0;
 }
 
+/* A frame wider than the page scrolls from its start, rather than centring past the stage's edge. */
 .docs-width-frame > .docs-live-example {
+  justify-items: safe center;
   overflow-x: auto;
 }
 
@@ -341,9 +343,4 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-/* A frame wider than the page scrolls from its start, rather than centring past the stage's edge. */
-.docs-width-frame > .docs-live-example {
-  justify-items: safe center;
 }
