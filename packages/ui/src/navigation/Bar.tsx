@@ -4,6 +4,8 @@ import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../foundations/Layout.js';
 import { CounterBadge } from '../content/CounterBadge.js';
 import { classNames } from '../internal/classNames.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { ActionElement } from '../internal/ActionElement.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { MoreHoriz } from '../icons/MoreHoriz.js';
@@ -29,7 +31,7 @@ const barClasses: DestinationClasses = {
   count: 'env-bar-count',
 };
 
-export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
+export interface BarProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array Rail and Drawer take. Give the bar 3 to 5: past
    * 5 it shows the first 4 and a More item that opens the rest in a menu. Groups don't show.
@@ -51,6 +53,7 @@ export function Bar({
   destinations,
   'aria-label': label,
   'aria-labelledby': labelledBy,
+  skeleton = false,
   className,
   ...props
 }: BarProps) {
@@ -77,73 +80,77 @@ export function Bar({
       {...props}
       aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
       aria-labelledby={labelledBy}
+      {...skeletonAttributes(skeleton)}
       className={classNames('env-bar', className)}
     >
-      <Row render={<ul />} className="env-bar-list">
-        {shown.map((destination) => (
-          <li key={destinationKey(destination)}>
-            <DestinationItem classes={barClasses} destination={destination} />
-          </li>
-        ))}
-        {overflow && (
-          <li>
-            <Menu.Root
-              aria-label={messages.more}
-              side="top"
-              trigger={
-                <Column
-                  render={<ActionElement />}
-                  className="env-bar-item env-bar-more"
-                  {...moreState}
-                  align="center"
-                  gap={1}
-                >
-                  <span className="env-bar-icon">
-                    <DecorativeIcon>
-                      <MoreHoriz />
-                    </DecorativeIcon>
-                    {restShown !== undefined && (
-                      <span className="env-bar-count" aria-hidden="true">
-                        {restShown}
-                      </span>
-                    )}
-                  </span>
-                  <span className="env-bar-text">{messages.more}</span>
-                </Column>
-              }
-            >
-              {rest.map((destination) => {
-                const count = shownCount(destination.count);
-                // Named as the other destinations are, such as Inbox, 3 new, with the badge hidden.
-                const shared = {
-                  icon: destination.icon,
-                  'aria-current': destination.current ? ('page' as const) : undefined,
-                  'aria-label': countedName(destination.label, destination.count, messages),
-                  end:
-                    count === undefined ? undefined : (
-                      <CounterBadge value={count} aria-hidden="true" />
-                    ),
-                  children: destination.label,
-                };
-                return destination.href === undefined ? (
-                  <Menu.Item
-                    key={destinationKey(destination)}
-                    {...shared}
-                    onClick={destination.onSelect}
-                  />
-                ) : (
-                  <Menu.Item
-                    key={destinationKey(destination)}
-                    {...shared}
-                    href={destination.href}
-                    onClick={destination.onSelect}
-                  />
-                );
-              })}
-            </Menu.Root>
-          </li>
-        )}
-      </Row>
+      {inSkeleton(
+        skeleton,
+        <Row render={<ul />} className="env-bar-list">
+          {shown.map((destination) => (
+            <li key={destinationKey(destination)}>
+              <DestinationItem classes={barClasses} destination={destination} />
+            </li>
+          ))}
+          {overflow && (
+            <li>
+              <Menu.Root
+                aria-label={messages.more}
+                side="top"
+                trigger={
+                  <Column
+                    render={<ActionElement />}
+                    className="env-bar-item env-bar-more"
+                    {...moreState}
+                    align="center"
+                    gap={1}
+                  >
+                    <span className="env-bar-icon">
+                      <DecorativeIcon>
+                        <MoreHoriz />
+                      </DecorativeIcon>
+                      {restShown !== undefined && (
+                        <span className="env-bar-count" aria-hidden="true">
+                          {restShown}
+                        </span>
+                      )}
+                    </span>
+                    <span className="env-bar-text">{messages.more}</span>
+                  </Column>
+                }
+              >
+                {rest.map((destination) => {
+                  const count = shownCount(destination.count);
+                  // Named as the other destinations are, such as Inbox, 3 new, with the badge hidden.
+                  const shared = {
+                    icon: destination.icon,
+                    'aria-current': destination.current ? ('page' as const) : undefined,
+                    'aria-label': countedName(destination.label, destination.count, messages),
+                    end:
+                      count === undefined ? undefined : (
+                        <CounterBadge value={count} aria-hidden="true" />
+                      ),
+                    children: destination.label,
+                  };
+                  return destination.href === undefined ? (
+                    <Menu.Item
+                      key={destinationKey(destination)}
+                      {...shared}
+                      onClick={destination.onSelect}
+                    />
+                  ) : (
+                    <Menu.Item
+                      key={destinationKey(destination)}
+                      {...shared}
+                      href={destination.href}
+                      onClick={destination.onSelect}
+                    />
+                  );
+                })}
+              </Menu.Root>
+            </li>
+          )}
+        </Row>,
+      )}
     </nav>
   );
 }

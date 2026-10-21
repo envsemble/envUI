@@ -1,5 +1,6 @@
 'use client';
 
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { Drawer as BaseDrawer } from '@base-ui/react/drawer';
 import {
   useCallback,
@@ -39,7 +40,8 @@ import {
 } from '../internal/PortalContainerContext.js';
 
 export interface SheetProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
+    SkeletonProps {
   /** Whether the sheet is open, for a sheet the application controls with onOpenChange. */
   open?: boolean;
   /**
@@ -169,6 +171,7 @@ export function Sheet({
   initialFocus,
   finalFocus,
   pending = false,
+  skeleton = false,
   className,
   style,
   ref,
@@ -238,11 +241,12 @@ export function Sheet({
                 data-side={side}
                 data-width={named ? width : 'custom'}
                 aria-label={title == null ? label : undefined}
-                aria-busy={pending || undefined}
+                aria-busy={pending || skeleton || undefined}
+                data-env-skeleton={skeleton ? '' : undefined}
                 initialFocus={portal.contained ? false : (initialFocus ?? defaultFocus)}
                 finalFocus={portal.contained ? false : finalFocus}
               >
-                <DialogContent>
+                <DialogContent skeleton={skeleton}>
                   <DialogHeader
                     title={title}
                     description={description}

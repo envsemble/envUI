@@ -13,27 +13,31 @@ aliases:
   - throbber
   - circular progress
   - loading
+  - LoadingState
+  - loading state
 useWhen:
   - Work of unknown length in a small area, such as a list that updates after a filter changes.
   - An update to content already shown, beside the content, which stays in place meanwhile.
-  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`).
+  - Content whose shape isn't known while it loads, such as a file's preview (`size="lg"`), or search results, with a label beside it (`LoadingState`).
 avoidWhen:
   - text: The work that follows a press, such as saving; show it on the button that started it with `pending`.
     use: Button
-  - text: Content of a known shape while it loads, such as a card or a list.
-    use: Skeleton
+  - text: Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton with `skeleton`.
+    use: Surface
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
   - text: Loading a page or a route of an application, along the top bar.
     use: TopBar
 related:
-  - skeleton
+  - loading
+  - surface
   - progress
   - button
   - scaffold
   - accessibility
 components:
   - Spinner
+  - LoadingState
 ---
 
 # Spinner
@@ -43,6 +47,14 @@ components:
 A spinner shows work of unknown length in a small area, such as a preview on its way.
 
 ```tsx example=LoadingPreview
+
+```
+
+### LoadingState
+
+LoadingState puts a label beside the spinner that says what is loading, for loading whose shape isn't known; where it is known, show the component itself as a skeleton.
+
+```tsx example=SearchingDocuments
 
 ```
 
@@ -102,5 +114,5 @@ A spinner shows work of unknown length in a small area, such as a preview on its
 
 ## Changelog
 
-- **1.0.0**: `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
+- **1.0.0**: LoadingState is a spinner with a label, for loading with no known shape; it holds no placeholders. `size` is `sm`, `md` or `lg`, as `data-size`; the drawing is hidden from assistive technology also when the spinner has a label.
 - **0.4.0**: Spinner, in small, standard and large sizes; pending buttons show a small one.

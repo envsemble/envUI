@@ -1086,7 +1086,8 @@ export function readDocumentation(
         markdown,
         ...(frontmatter && { frontmatter, yaml }),
       };
-      if (template && component && usesFigures(tokens)) {
+      // Component and pattern pages may be on the figure template.
+      if (template && (component || kind === 'pattern') && usesFigures(tokens)) {
         document.format = 'figures';
         document.sections = readFigures(document, markdown, {
           examples: filesOf(examples, id),

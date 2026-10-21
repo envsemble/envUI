@@ -131,7 +131,7 @@ The codemod reports each use it can't move, such as a value that is an expressio
 
 ### Variants, tones and render
 
-Buttons take a `variant` for their emphasis and a `tone` for their meaning, and Text, Skeleton and Surface take the words the rest of envUI uses. `v1-props` moves each literal value, `v1-render` each literal `as` and `v1-structure` each ActionGroup:
+Buttons take a `variant` for their emphasis and a `tone` for their meaning, and Text and Surface take the words the rest of envUI uses. `v1-props` moves each literal value, `v1-render` each literal `as` and `v1-structure` each ActionGroup:
 
 | 0.x                                                                                                          | 1.0                                                         |
 | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
@@ -140,7 +140,6 @@ Buttons take a `variant` for their emphasis and a `tone` for their meaning, and 
 | `variant="outlined"`, `variant="quiet"`                                                                      | `variant="outline"`, `variant="ghost"`                      |
 | Text `tone`: `primary`, `muted`, `quiet`                                                                     | `emphasis`: `default`, `muted`, `subtle`                    |
 | Text `variant`: `page-heading`, `section-heading`, `supporting`                                              | `headline`, `title`, `body-sm`                              |
-| Skeleton `tone`: `base`, `highlight`                                                                         | `emphasis`: `muted`, `default`                              |
 | Surface `tone`: `pane`, `row`, `canvas`, `alternate`                                                         | `background`: `default`, `muted`, `page`, `raised`          |
 | Surface `corners`: `surface`, `standard`, `pill`, `none`                                                     | `radius`: `xl`, `sm`, `full`, `none`                        |
 | `as="h2"` on Text, Stack and Surface                                                                         | `render={<h2 />}`                                           |
@@ -235,7 +234,7 @@ NavList and NavList.Skeleton are gone. An application's destinations are one arr
 | `end={<CounterBadge value={12} />}`                     | `count: 12`, named as "Inbox, 12 new"                                                         |
 | `<NavList.Group label="Folders">`                       | `group: 'Folders'` on each of its destinations, next to each other                            |
 | `iconOnly`, a sidebar's rail                            | `<Rail destinations={destinations} />`                                                        |
-| NavList.Skeleton                                        | The skeleton state of the frame                                                               |
+| NavList.Skeleton                                        | `skeleton` on the Drawer, Rail or Bar: its labels are bars and its icons filled shapes        |
 | A NavList.Item as a tab of Tabs                         | A Button, such as `variant="ghost"` with `startIcon`                                          |
 | `messages.navList.itemCount`, `itemEnd`                 | `messages.navigation.itemCount`; end content other than a count has no place in a destination |
 | `.env-nav-list-item`, `[data-selected]`                 | `.env-drawer-item`, `.env-rail-item`, `.env-bar-item`, with `[data-current]`                  |
@@ -401,6 +400,24 @@ envUI responds to containers only, at window classes: compact below 37.5 rem, me
 | Card's feature layout below 38 rem, PageHeader's actions below 32 rem | Below 37.5 rem of their own width, compact                                                  |
 
 The outermost boundary takes the whole width its parent gives it (`inline-size: 100%`), as a size container can't take its content's; override it with a class of your own where it shouldn't. A nested Theme is no container. Media queries that are not about width, such as `pointer`, `forced-colors` and `prefers-reduced-motion`, stay.
+
+### Skeletons
+
+Skeleton is gone: a component that paints a container, such as Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, TopBar, Drawer, Rail, Bar, Dialog, Sheet, Popover, HoverCard, Menu.Root or Panes.Supporting, takes `skeleton` and shows itself, and everything inside it, as a skeleton. The page renders its normal components over placeholder items while they load, so it has no separate loading version. `v1-names` reports each `Skeleton` and `SkeletonProps`, and `v1-classes` each `env-skeleton` and `env-skeleton-highlight`:
+
+| Before                                                    | Now                                                                                          |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `<LoadingState label="…">` around `<Skeleton>` blocks     | The component itself, `<List.Root skeleton={!items}>`, over `items ?? placeholders<Item>(3)` |
+| `<Skeleton width="40%" height="1.25rem" />` for a heading | The heading, `<Text variant="title">{item?.name}</Text>`: missing text is a bar              |
+| `NavList.Skeleton`                                        | `<Drawer skeleton>`, `<Rail skeleton>` or `<Bar skeleton>` over its destinations             |
+| `<LoadingState>` for loading with no known shape          | `<LoadingState label="…" />`, now a spinner with its label beside it                         |
+| `.env-skeleton` in a style sheet                          | `[data-env-skeleton]`, on the skeleton's root, and what is inside it                         |
+
+- A skeleton's root is a busy region, `aria-busy`, which assistive technology hears once, and its content, in an inert wrapper without a box of its own, can't be focused or read until it loads. A list, which holds no wrapper, is inert as a whole, with a visually hidden status beside it that says what is loading; a table holds its wrapper inside its scroll region. Turning `skeleton` on or off renders the content anew.
+- Text becomes bars and icons, media and controls filled shapes of their size, in one color that pulses in step across the page, and still with a reduced-motion preference. Give media an aspect ratio so it holds its place.
+- `placeholders<Item>(count)` returns stand-in items with an `id` each and every other field of `Item` possibly undefined, as the type says, and `isPlaceholder(item)` tells one apart; `useSkeleton()` tells a component of the application's own that it is inside a skeleton.
+- LoadingState takes no children: it shows a spinner with its `label`.
+- The documentation's Skeleton page is the [Loading](https://github.com/envsemble/envUI/blob/main/docs/patterns/loading.md) pattern, and LoadingState is on the [Spinner](https://github.com/envsemble/envUI/blob/main/docs/components/spinner.md) page.
 
 ### The app frame
 
@@ -872,7 +889,7 @@ Consult the relevant [component documentation](index.md) before adopting these c
 | Content/action/clickable cards                   | Appropriate public Card composition                       |
 | Fields and choices                               | TextField, Textarea, Select, Checkbox, RadioGroup, Switch |
 | Modal/inspector shells, notifications            | Dialog, Toast.Provider/useToast                           |
-| Loading and empty results                        | LoadingState, Skeleton, EmptyState                        |
+| Loading and empty results                        | `skeleton`, LoadingState, EmptyState                      |
 | Source, Markdown, formatted editing              | Optional content or rich-text entry                       |
 
 Port behavior explicitly instead of mechanically translating props. Preserve labels, accessible names, href/router state, callback payloads, refs, form names/reset, focus restoration and mutation timing. Check button types inside forms, pending-operation dismissal rules and draft state through dialogs/navigation.

@@ -189,8 +189,6 @@ test('an icon-only ConfirmButton is round at rest and names the consequence when
 
 test('motion settles presses and respects reduced motion', async ({ page }) => {
   await page.goto(fixture);
-  const skeleton = page.locator('.env-skeleton').first();
-  await expect(skeleton).toHaveCSS('animation-name', 'env-motion-pulse');
   const button = page.getByTestId('router-button');
   await button.hover();
   await page.mouse.down();
@@ -198,7 +196,6 @@ test('motion settles presses and respects reduced motion', async ({ page }) => {
   await page.mouse.up();
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(skeleton).toHaveCSS('animation-name', 'none');
   await button.hover();
   await page.mouse.down();
   await expect(button).toHaveCSS('transform', 'none');

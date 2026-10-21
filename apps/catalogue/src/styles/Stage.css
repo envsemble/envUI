@@ -34,7 +34,7 @@
 }
 
 /* A part that takes its width from its container, such as a size container (a primitive with
-   `container` too), a strip of tabs, a window or skeleton bars, has none of its own and would collapse if centred: an example that is
+   `container` too), a strip of tabs, a window or a skeleton, has none of its own and would collapse if centred: an example that is
    or holds one fills the stage, unless it sets its width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
   > :where(
@@ -47,7 +47,7 @@
     .env-document-tabs,
     .env-panel-dock,
     .env-scaffold,
-    .env-skeleton,
+    [data-env-skeleton],
     [data-env-container],
     :has(
       .env-card[data-layout='feature'],
@@ -59,7 +59,7 @@
       .env-document-tabs,
       .env-panel-dock,
       .env-scaffold,
-      .env-skeleton,
+      [data-env-skeleton],
       [data-env-container]
     )
   ),

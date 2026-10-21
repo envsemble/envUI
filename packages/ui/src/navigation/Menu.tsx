@@ -25,6 +25,7 @@ import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -39,7 +40,8 @@ const menuParts = {
 };
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
+    SkeletonProps {
   /**
    * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
    * button semantics and ref, so it must accept native props and a ref.
@@ -96,6 +98,7 @@ function Root({
   open,
   defaultOpen,
   onOpenChange,
+  skeleton = false,
   className,
   ref,
   ...popupProps
@@ -124,6 +127,7 @@ function Root({
         className={className}
         popupRef={ref}
         popupProps={popupProps}
+        skeleton={skeleton}
       >
         {children}
       </MenuPopup>

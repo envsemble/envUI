@@ -1,10 +1,10 @@
 {
   "@envsemble/envui": {
     "AppShellSkeleton": {
-      "use": "AppShellSkeleton is gone: render the frame's Scaffold with placeholder items in its navigation and page, inside a LoadingState."
+      "use": "AppShellSkeleton is gone: render the frame's Scaffold with skeleton on its TopBar, Drawer, Rail or Bar and its page's surfaces, over placeholders(count)."
     },
     "AppShellSkeletonProps": {
-      "use": "AppShellSkeleton is gone: the frame, a Scaffold, with placeholder items is its loading state."
+      "use": "AppShellSkeleton is gone: the frame, a Scaffold, with skeleton on its parts over placeholders(count), is its loading state."
     },
     "LoadingBar": {
       "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."

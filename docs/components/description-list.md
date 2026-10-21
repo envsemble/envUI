@@ -31,7 +31,7 @@ related:
   - list
   - card
   - stat
-  - skeleton
+  - loading
 components:
   - DescriptionList
 ---

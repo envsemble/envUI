@@ -1,0 +1,5 @@
+/* Loading with no known shape: a spinner and a muted label that says what is loading. */
+.env-loading-state {
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+}

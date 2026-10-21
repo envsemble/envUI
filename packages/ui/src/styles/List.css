@@ -33,7 +33,8 @@
 .env-list > .env-list-item[data-start] {
   justify-content: flex-start;
 }
-.env-list > .env-list-item[data-start] > .env-list-item-content {
+.env-list > .env-list-item[data-start] > .env-list-item-content,
+.env-list > .env-list-item[data-start] > .env-skeleton-content > .env-list-item-content {
   flex: 1 1 0;
 }
 /* The start slot stays above an interactive row's target, which covers the row, so its handle,
@@ -97,10 +98,29 @@
   color: var(--env-color-fg-muted);
   font: var(--env-type-body-small);
 }
+/* A description given as undefined, as over a placeholder item, takes no room outside a skeleton;
+   in one it is a bar. */
+.env-list-item-content > small:empty:not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] .env-list-item-content > small {
+  --env-skeleton-placeholder: inline-block;
+  --env-skeleton-length: 14rem;
+}
 /* On a muted Surface that holds only lists, a pane of their own, the rows take the raised fill, so
    they stand out from it. A surface with more in it, such as a card with a heading, keeps the row
-   fill. */
-.env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list > .env-list-item {
+   fill. A skeleton's content wrapper and a skeleton list's status beside it don't count. */
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-list
+  > .env-list-item,
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-skeleton-content
+  > .env-list
+  > .env-list-item {
   --env-list-item-fill: var(--env-color-bg-raised);
   --env-list-item-fill-hover: var(--env-color-bg-raised-hover);
   --env-list-item-fill-pressed: var(--env-color-bg-raised-pressed);
@@ -145,7 +165,30 @@
     transition: none;
   }
 }
-.env-surface[data-background='muted']:not(:has(> :not(.env-list))) > .env-list + .env-list {
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-list
+  + .env-list,
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-list
+  + .env-skeleton-status
+  + .env-list,
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-skeleton-content
+  > .env-list
+  + .env-list,
+.env-surface[data-background='muted']:not(
+    :has(> :not(.env-list, .env-skeleton-status, .env-skeleton-content))
+  ):not(:has(> .env-skeleton-content > :not(.env-list, .env-skeleton-status)))
+  > .env-skeleton-content
+  > .env-list
+  + .env-skeleton-status
+  + .env-list {
   margin-block-start: var(--env-space-3);
 }
 /* Forced colors: the system paints no fills or shadows, so the current or checked row takes an

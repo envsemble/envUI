@@ -21,7 +21,6 @@ import {
 import { EmptyState } from '../feedback/EmptyState.js';
 import { useTheme } from '../foundations/Theme.js';
 import { LoadingState } from '../feedback/LoadingState.js';
-import { Skeleton } from '../feedback/Skeleton.js';
 import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
@@ -237,11 +236,7 @@ export function CodeDiff({
           }
         />
       ) : !loaded ? (
-        <LoadingState label={messages.loading}>
-          <Skeleton width="100%" height="1rem" />
-          <Skeleton width="90%" height="1rem" />
-          <Skeleton width="95%" height="1rem" />
-        </LoadingState>
+        <LoadingState label={messages.loading} />
       ) : before === after ? (
         <File
           file={{ name: filename, contents: after, lang: lang as never }}

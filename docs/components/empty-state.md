@@ -20,8 +20,8 @@ useWhen:
   - Content failed to load and people can try again (`tone="danger"`).
   - A state takes the place of a whole page's or region's content (`align="center"`).
 avoidWhen:
-  - text: Content that is on its way, which keeps its layout while it loads.
-    use: Skeleton
+  - text: Content that is on its way, which keeps its layout while it loads, as a skeleton.
+    use: Surface
   - text: A message about a page or section that still has its content.
     use: Alert
   - text: Feedback after an action, such as a failed save.
@@ -30,7 +30,6 @@ avoidWhen:
     use: Spinner
 related:
   - loading
-  - skeleton
   - alert
   - toast
   - card

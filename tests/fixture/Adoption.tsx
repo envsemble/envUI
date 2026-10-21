@@ -14,7 +14,6 @@ import {
   Meter,
   OrganizationSwitcher,
   SearchField,
-  Skeleton,
   Spinner,
   Theme,
   ThemePreferenceProvider,
@@ -128,7 +127,6 @@ export function AdoptionFixture() {
               onCreate={() => setAction('Create first organization')}
             />
           </div>
-          <Skeleton width="4rem" />
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
             <TextField showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>

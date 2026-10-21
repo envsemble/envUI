@@ -1,22 +1,157 @@
-.env-skeleton {
-  max-inline-size: 100%;
-  display: block;
-  height: 0.8rem;
-  border-radius: var(--env-radius-sm);
-  background: var(--env-color-bg-neutral-muted);
-}
-.env-skeleton:where([data-emphasis='default']) {
-  background: var(--env-color-bg-neutral-muted-hover);
+/* Skeletons. A component with `skeleton` marks its root data-env-skeleton, and everything inside it
+   follows these rules:
+   - text becomes bars: a bar along each line of text, as long as the text, drawn as a thick line
+     through it, which reaches raw text anywhere inside as well as Text;
+   - media and controls become filled shapes of their size and corners, and so do icons, avatars
+     and badges, by rules in their own style sheets;
+   - surfaces, borders and corners stay.
+   They change paint only, never size, so the page doesn't move when the content loads; dev mode's
+   layout.skeletonShift() checks it. Text that is missing, as over a placeholder item, is a bar of a
+   default length for its text style, on as many lines as the style usually takes, in the parts that
+   turn it on in their own style sheets. Every bar and shape takes one color, which pulses in step
+   across the page. A component whose generic look isn't right, such as a chart's, gives its own in
+   its style sheet. */
+
+/* The color of every bar and shape. The root animates it, and everything inside inherits it. */
+@property --env-skeleton-color {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: transparent;
 }
 
-/* Motion: skeletons pulse. Only without a reduced-motion preference. */
+[data-env-skeleton] {
+  --env-skeleton-fill: var(--env-color-bg-neutral-muted-hover);
+  --env-skeleton-shine: color-mix(
+    in srgb,
+    var(--env-color-bg-neutral-muted-hover) 40%,
+    var(--env-color-bg-neutral-muted)
+  );
+  --env-skeleton-color: var(--env-skeleton-fill);
+  /* The length of missing text whose part sets none. */
+  --env-skeleton-text-length: 10rem;
+  /* Text is never drawn: a line through it as thick as its letters stands for it. The line goes on
+     to the text of everything inside, but not into a control that is a shape of its own. */
+  -webkit-text-fill-color: transparent;
+  text-decoration: line-through var(--env-skeleton-color);
+  text-decoration-thickness: 0.8em;
+  text-decoration-skip-ink: none;
+}
+/* The skeleton's content, inert while the root stays a busy region people hear: a wrapper without
+   a box of its own, so the content keeps its layout and the root's line through text reaches it. */
+.env-skeleton-content {
+  display: contents;
+}
+/* The status beside a skeleton list, which can't hold a wrapper: what is loading, read, not shown. */
+.env-skeleton-status {
+  --env-skeleton-status-size: 0.0625rem;
+  position: absolute;
+  inline-size: var(--env-skeleton-status-size);
+  block-size: var(--env-skeleton-status-size);
+  margin: calc(-1 * var(--env-skeleton-status-size));
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Underlines and other lines of the content's own aren't drawn. Missing text is a bar only where a
+   part turns it on, not in what that part holds. */
+[data-env-skeleton] * {
+  --env-skeleton-placeholder: none;
+  text-decoration-color: transparent;
+}
+
+/* Media and controls: a filled shape of their size and corners, with nothing drawn inside. A
+   component whose element isn't one of these, such as an avatar or a badge, gives its own shape the
+   same way in its style sheet. A whole surface that is a link or a button, such as a card, marked
+   data-interactive, stays a surface. */
+[data-env-skeleton]
+  :is(
+    button,
+    input,
+    select,
+    textarea,
+    img,
+    svg,
+    video,
+    canvas,
+    picture,
+    iframe,
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='slider']
+  ):where(:not([data-interactive], [data-env-skeleton])) {
+  forced-color-adjust: none;
+  border-color: transparent;
+  box-shadow: none;
+  background: var(--env-skeleton-color);
+  /* A loaded image moves out of its box, which keeps its size. */
+  object-fit: none;
+  object-position: -100vw 0;
+}
+[data-env-skeleton]
+  :is(
+    button,
+    input,
+    select,
+    textarea,
+    img,
+    svg,
+    video,
+    canvas,
+    picture,
+    iframe,
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='slider']
+  ):where(:not([data-interactive], [data-env-skeleton]))
+  * {
+  visibility: hidden;
+}
+
+/* Missing text, as over a placeholder item: a bar of its part's length on each of its lines, as
+   thick as a line of text, the last one shorter. A component turns it on for its text parts in its
+   own style sheet, with --env-skeleton-placeholder: inline-block on the part, and sets
+   --env-skeleton-length, --env-skeleton-lines and --env-skeleton-last. */
+@property --env-skeleton-placeholder {
+  syntax: 'none | inline-block';
+  inherits: true;
+  initial-value: none;
+}
+[data-env-skeleton] :empty::before {
+  forced-color-adjust: none;
+  content: '';
+  display: var(--env-skeleton-placeholder);
+  vertical-align: top;
+  inline-size: var(--env-skeleton-length, var(--env-skeleton-text-length));
+  max-inline-size: 100%;
+  block-size: calc(var(--env-skeleton-lines, 1) * 1lh);
+  background: var(--env-skeleton-color);
+  mask:
+    repeating-linear-gradient(transparent 0 0.22lh, CanvasText 0 0.78lh, transparent 0 1lh),
+    linear-gradient(CanvasText 0 0) 0 0 / 100% calc(100% - 1lh) no-repeat,
+    linear-gradient(CanvasText 0 0) 0 100% / var(--env-skeleton-last, 100%) 1lh no-repeat;
+  mask-composite: intersect, add, add;
+}
+
+/* Motion: the color pulses, every skeleton's in step, as the component aligns their start. With a
+   reduced-motion preference it stays still. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-skeleton {
-    animation: env-motion-pulse 1.6s ease-in-out infinite alternate;
+  [data-env-skeleton] {
+    animation: env-skeleton-pulse 1.6s ease-in-out infinite;
   }
 }
-@keyframes env-motion-pulse {
-  to {
-    opacity: 0.55;
+@keyframes env-skeleton-pulse {
+  50% {
+    --env-skeleton-color: var(--env-skeleton-shine);
+  }
+}
+
+/* Forced colors: the bars and shapes take the system's gray text color. */
+@media (forced-colors: active) {
+  [data-env-skeleton] {
+    --env-skeleton-fill: GrayText;
+    --env-skeleton-shine: GrayText;
   }
 }

@@ -270,8 +270,8 @@
       "capabilities": [
         {
           "id": "placeholders",
-          "label": "loading placeholders",
-          "envui": ["Skeleton", "LoadingState"]
+          "label": "the list itself as a skeleton over placeholder rows",
+          "envui": ["placeholders", "Surface.skeleton", "Card.skeleton"]
         },
         {
           "id": "error-message",
@@ -577,13 +577,12 @@
     {
       "id": "card-skeletons",
       "title": "Project cards that load in their own shape",
-      "pending": "Waits for envUI's skeleton API: a skeleton prop on surfaces and placeholder items. Card.skeleton, Surface.skeleton, ListItem.skeleton and placeholders are the names the plan gives; check them when the API lands.",
       "prompt": "Load the projects with `fetchProjects()` from `src/api.ts` instead of importing the sample data directly, and show them as cards with the name, the owner, the status and the number of open tasks. While they load, show the same cards in a loading shape, roughly like the real ones (three of them), rather than a spinner. If loading fails, show an error message with a Retry button.",
       "capabilities": [
         {
           "id": "skeleton-surfaces",
           "label": "the cards themselves as skeletons while loading",
-          "envui": ["Card.skeleton", "Surface.skeleton", "ListItem.skeleton"]
+          "envui": ["Card.skeleton", "Surface.skeleton"]
         },
         {
           "id": "placeholder-items",

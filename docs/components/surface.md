@@ -14,6 +14,9 @@ aliases:
   - well
   - region
   - toolbar
+  - skeleton
+  - placeholder
+  - loading
 useWhen:
   - A region needs a background, an inset and corners, such as a detail pane or a side panel.
   - A block should stand apart from what is around it, such as a summary on a pane.
@@ -37,6 +40,9 @@ related:
   - colors
 components:
   - Surface
+  - placeholders
+  - isPlaceholder
+  - useSkeleton
 ---
 
 # Surface
@@ -50,6 +56,14 @@ A surface gives a region a background, an inset and rounded corners, and nothing
 ```
 
 ```tsx example=Toolbar caption="Fully rounded ends for a group of controls over dense content."
+
+```
+
+### Loading
+
+A pane that is a skeleton until its project arrives; its Text, given no text, is a bar of the text style's length.
+
+```tsx example=SurfaceLoading
 
 ```
 
@@ -108,7 +122,7 @@ Without `padding`, the inset grows from 1.25 rem in narrow windows to 1.5 rem fr
 
 ## Changelog
 
-- **1.0.0**: `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
+- **1.0.0**: `skeleton`, with `placeholders()`, `isPlaceholder()` and `useSkeleton()`. `tone` is `background`, with the names of the background roles: `pane` is `default`, `row` `muted`, `canvas` `page` and `alternate` `raised`; `corners` is `radius`: `surface` is `xl`, `standard` `sm` and `pill` `full`; `render` replaces `as`. The backgrounds take the semantic background colors.
 - **0.5.0**: `density="compact"`, which gives the controls inside the compact height.
 - **0.4.0**: The inset is at least 1.25 rem.
 - **0.1.0**: Surface, with backgrounds, padding and corners.

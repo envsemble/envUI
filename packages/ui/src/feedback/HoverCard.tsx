@@ -12,6 +12,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../foundations/Layout.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
@@ -23,7 +24,8 @@ const parts = {
 };
 
 export interface HoverCardProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'>,
+    SkeletonProps {
   /** The element that opens the card on hover and keyboard focus; it receives the ref. */
   trigger: ReactElement;
   /** The details. Supplementary: never the only place essential information appears. */
@@ -88,6 +90,7 @@ export function HoverCard({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  skeleton = false,
   className,
   ...popupProps
 }: HoverCardProps) {
@@ -132,6 +135,7 @@ export function HoverCard({
         side={side}
         align={align}
         width={width}
+        skeleton={skeleton}
         className={classNames('env-hover-card', className)}
         layout={<Grid gap={3} padding={5} />}
         popupProps={popupProps}

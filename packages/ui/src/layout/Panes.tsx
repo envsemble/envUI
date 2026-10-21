@@ -25,6 +25,8 @@ import { ResizeHandle } from '../internal/ResizeHandle.js';
 import { setRef } from '../internal/setRef.js';
 import { useFormatters } from '../internal/useFormatters.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesSize, writePanesSize } from './panesSize.js';
 
 /**
@@ -138,6 +140,12 @@ export interface NamedPaneProps extends ComponentPropsWithRef<'div'> {
   /** Names the pane's region, such as Details or Projects. */
   label: string;
 }
+
+/**
+ * The supporting pane: named, and a skeleton while what it holds loads. It stays busy and keeps
+ * focus, as a sheet must, while its content is the skeleton, and inert.
+ */
+export interface SupportingProps extends NamedPaneProps, SkeletonProps {}
 
 export interface DividerProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'onChange'> {
@@ -331,7 +339,16 @@ function Main({ label, className, ...props }: PaneProps) {
  * it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which
  * returns focus to where it was.
  */
-function Supporting({ label, className, onKeyDown, ref, id, children, ...props }: NamedPaneProps) {
+function Supporting({
+  label,
+  skeleton = false,
+  className,
+  onKeyDown,
+  ref,
+  id,
+  children,
+  ...props
+}: SupportingProps) {
   const { open, close, closeLabel, resizedId } = usePanes('Supporting');
   const messages = useMessages('panes', panes);
   const pane = useRef<HTMLDivElement | null>(null);
@@ -419,6 +436,7 @@ function Supporting({ label, className, onKeyDown, ref, id, children, ...props }
       role={sheet ? 'dialog' : 'region'}
       aria-modal={sheet || undefined}
       aria-label={label}
+      {...skeletonAttributes(skeleton)}
       className={classNames('env-panes-supporting', className)}
       onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
         onKeyDown?.(event);
@@ -450,7 +468,7 @@ function Supporting({ label, className, onKeyDown, ref, id, children, ...props }
       <div className="env-panes-close">
         <CloseButton aria-label={closeLabel ?? messages.close} onClick={close} />
       </div>
-      {children}
+      {inSkeleton(skeleton, children)}
     </div>
   );
 }

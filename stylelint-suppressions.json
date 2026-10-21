@@ -270,11 +270,6 @@
       "count": 5
     }
   },
-  "packages/ui/src/styles/Skeleton.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 1
-    }
-  },
   "packages/ui/src/styles/Spinner.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 6
