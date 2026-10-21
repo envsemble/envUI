@@ -5,7 +5,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 
 export default function ConnectedButtons() {
   return (
-    <Stack align="start">
+    <Stack direction="row" wrap align="start" gap={6}>
       <ButtonGroup aria-label="Project actions">
         <Button>Open</Button>
         <Button>Edit</Button>
