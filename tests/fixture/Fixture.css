@@ -33,9 +33,34 @@
   gap: 0.75rem;
 }
 
-/* Shell and title bar fixtures fill the viewport; the host document margin would offset them. */
-body:has(:is(.fixture-app-shell, .fixture-full-shell, .fixture-title-bar-page)) {
+/* A Scaffold that fills the viewport; the host document margin would offset it. */
+body:has(> #root > .env-theme > .env-scaffold) {
   margin: 0;
+}
+/* A Scaffold in a frame of the width a test sets, 30 rem tall. */
+.fixture-scaffold-frame {
+  block-size: 30rem;
+  border: 0.0625rem solid var(--env-color-border-muted);
+}
+.fixture-scaffold-frame > .env-scaffold {
+  block-size: 100%;
+}
+.fixture-destinations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+.fixture-keys-navigation {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  block-size: 100%;
+  inline-size: 14rem;
+}
+/* Panes in a frame of the width a test sets, 24 rem tall, so each pane scrolls on its own. */
+.fixture-panes-frame {
+  block-size: 24rem;
+  border: 0.0625rem solid var(--env-color-border-muted);
 }
 .fixture-sidebar-list {
   block-size: 100%;
@@ -44,28 +69,12 @@ body:has(:is(.fixture-app-shell, .fixture-full-shell, .fixture-title-bar-page)) 
   overflow-y: auto;
   list-style: none;
 }
-.fixture-sticky-header {
-  position: sticky;
-  inset-block-start: var(--env-frame-sticky-top);
-  z-index: 1;
-  padding: 0.75rem 1.5rem;
-  background: var(--env-color-bg-page);
-  border-block-end: 0.0625rem solid var(--env-color-border-muted);
-}
 .fixture-recording {
   inline-size: 10rem;
   block-size: 2rem;
 }
 .fixture-tall-page {
   padding: 1.5rem;
-}
-.fixture-full-view {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  display: grid;
-  place-items: center;
-  background: var(--env-color-bg-page);
 }
 .fixture-context-area {
   display: grid;
@@ -133,13 +142,6 @@ body:has(:is(.fixture-app-shell, .fixture-full-shell, .fixture-title-bar-page)) 
 }
 .fixture-wide-stack-frame {
   inline-size: min(100%, 48rem);
-}
-/* The second shell's topbar covers the top of the first shell's content. */
-.fixture-two-shells-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--env-space-2);
-  padding-block-start: 6rem;
 }
 .fixture-measured-stack-frame {
   inline-size: min(100%, 25rem);
@@ -446,16 +448,6 @@ body:has(.density-fixture) {
   position: absolute;
 }
 
-/* Sidebars beside a page, without the frame. */
-.fixture-sidebar-row {
-  display: flex;
-  block-size: 20rem;
-  border: 1px solid var(--env-color-border-muted);
-}
-.fixture-sidebar-page {
-  flex: 1;
-  padding: 1rem;
-}
 .fixture-avatar-rail {
   display: grid;
   justify-items: center;

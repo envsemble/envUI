@@ -228,9 +228,7 @@ export function Sheet({
                 {...popupProps}
                 ref={attachPopup}
                 className={classNames('env-sheet-popup', className)}
-                style={
-                  { ...(!named && { '--env-sheet-width': width }), ...style } as CSSProperties
-                }
+                style={{ ...(!named && { '--env-sheet-width': width }), ...style } as CSSProperties}
                 data-side={side}
                 data-width={named ? width : 'custom'}
                 aria-label={title == null ? label : undefined}

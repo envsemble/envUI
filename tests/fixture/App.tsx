@@ -13,16 +13,8 @@ import { CardsFixture } from './Cards.js';
 import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture } from './Adoption.js';
-import {
-  AppShellFixture,
-  FramedAppShellFixture,
-  FullShellFixture,
-  LoadingFrameFixture,
-  ScrollKeysFixture,
-  TwoAppShellsFixture,
-} from './AppShells.js';
-import { SidebarRailsFixture, SidebarsFixture } from './Sidebars.js';
-import { WindowFrameFixture } from './WindowFrames.js';
+import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
+import { PanesFixture } from './Panes.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
 import { MarkdownFixture } from './Markdowns.js';
 import { MenusFixture } from './Menus.js';
@@ -80,12 +72,10 @@ import { ResponsiveHooksFixture } from './ResponsiveHooks.js';
 import { PrimitivesFixture } from './Primitives.js';
 import { MessageStringsFixture } from './MessageStrings.js';
 import { DirectionFixture } from './Direction.js';
-import { SplitPanesFixture } from './SplitPanes.js';
 import { PageHeadersFixture } from './PageHeaders.js';
 import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
-import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import { ListsFixture } from './Lists.js';
 import { DevModeFixture } from './DevMode.js';
@@ -99,17 +89,11 @@ import {
 
 /** Fixtures that fill the viewport, or need it to themselves, are only mounted on their own. */
 const standaloneFixtures: Record<string, () => ReactNode> = {
-  'app-shell': AppShellFixture,
-  'two-app-shells': TwoAppShellsFixture,
-  'framed-app-shell': FramedAppShellFixture,
-  'full-shell': FullShellFixture,
-  'loading-frame': LoadingFrameFixture,
-  'sidebar-rails': SidebarRailsFixture,
-  sidebars: SidebarsFixture,
-  'window-frame': WindowFrameFixture,
   'code-block': CodeBlockFixture,
   'markdown-tables': MarkdownFixture,
+  scaffold: ScaffoldFixture,
   'scroll-keys': ScrollKeysFixture,
+  panes: PanesFixture,
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
@@ -124,13 +108,10 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   sheets: SheetsFixture,
   tooltips: TooltipsFixture,
   meters: MetersFixture,
-  'split-panes': SplitPanesFixture,
   'page-headers': PageHeadersFixture,
   'description-lists': DescriptionListsFixture,
   'container-size': ContainerSizeFixture,
   'search-triggers': SearchTriggersFixture,
-  'account-menus': AccountMenusFixture,
-  'account-menu-shell': AccountMenuShellFixture,
   'confirm-dialogs': ConfirmDialogsFixture,
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,

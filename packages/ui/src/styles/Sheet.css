@@ -44,7 +44,7 @@
   padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
   padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
 }
-.env-sheet-popup[data-width='custom'] {
+.env-sheet-popup[data-width='custom']:not([data-side='bottom']) {
   inline-size: min(var(--env-sheet-width), 100%);
 }
 /* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
@@ -61,7 +61,7 @@
    sheet does too. The edge it slides from has no border, and the safe area of that window edge
    pads it. */
 @container env-window (width >= 37.5rem) {
-  .env-sheet-popup[data-width='md'] {
+  .env-sheet-popup[data-width='md']:not([data-side='bottom']) {
     inline-size: min(var(--env-sheet-width), 100%);
   }
   .env-sheet-popup[data-width='md'][data-side='end'] {
@@ -74,7 +74,7 @@
   }
 }
 @container env-window (width >= 52.5rem) {
-  .env-sheet-popup[data-width='lg'] {
+  .env-sheet-popup[data-width='lg']:not([data-side='bottom']) {
     --env-sheet-width: 44rem;
     inline-size: min(var(--env-sheet-width), 100%);
   }

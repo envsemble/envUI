@@ -77,7 +77,9 @@
   overflow-y: auto;
   padding-block-start: env(safe-area-inset-top);
 }
-.env-scaffold[data-top-bar-span='full'] > .env-scaffold-navigation > :is(.env-scaffold-rail, .env-scaffold-drawer) {
+.env-scaffold[data-top-bar-span='full']
+  > .env-scaffold-navigation
+  > :is(.env-scaffold-rail, .env-scaffold-drawer) {
   grid-row: 2 / -1;
   padding-block-start: 0;
 }
@@ -146,4 +148,19 @@
   .env-scaffold[data-large='bar'] > .env-scaffold-body {
     padding-block-end: 0;
   }
+}
+
+/* A PanelDock placed directly in the body lies over the body's visible area and stays there while
+   the body scrolls: the body becomes a container of both its sizes, which its row in the grid sets,
+   and the dock sticks across its scrollport, as tall as it, taking no room in its flow. Its
+   negative margin lifts it by its own height, wherever it sits among the body's children. */
+.env-scaffold-body:has(> .env-panel-dock) {
+  container-type: size;
+}
+.env-scaffold-body > .env-panel-dock {
+  position: sticky;
+  inset-block: 0;
+  inset-inline: auto;
+  block-size: 100cqb;
+  margin-block-start: -100cqb;
 }

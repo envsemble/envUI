@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Theme, TextField } from '@envsemble/envui';
-import { useMediaQuery } from '../../packages/ui/src/internal/useMediaQuery.js';
 import { useShortcut } from '../../packages/ui/src/internal/useShortcut.js';
 
 /** A button that a shortcut presses while it is shown, as a search trigger would. */
@@ -15,8 +14,6 @@ function ShortcutButton({ label, onPress }: { label: string; onPress: (label: st
 }
 
 export function ResponsiveHooksFixture() {
-  const wide = useMediaQuery('(width >= 48rem)');
-  const portrait = useMediaQuery('(orientation: portrait)');
   const [pressed, setPressed] = useState<string[]>([]);
   const [second, setSecond] = useState(true);
   const press = (label: string) => setPressed((labels) => [...labels, label]);
@@ -26,8 +23,6 @@ export function ResponsiveHooksFixture() {
   useEffect(() => setReady(true), []);
   return (
     <Theme theme="light" className="fixture-section" data-ready={ready || undefined}>
-      <output data-testid="breakpoint">{wide ? 'md and up' : 'below md'}</output>
-      <output data-testid="orientation">{portrait ? 'portrait' : 'landscape'}</output>
       <TextField label="Notes" />
       <ShortcutButton label="First search" onPress={press} />
       <div hidden={!second}>

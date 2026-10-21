@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import {
   Badge,
   Breadcrumbs,
@@ -8,6 +8,7 @@ import {
   SearchField,
   Column,
   Row,
+  Scaffold,
   Text,
 } from '@envsemble/envui';
 
@@ -19,8 +20,7 @@ const trail = [
 
 /**
  * Page headers for the layout checks: one in a container the test narrows, one at heading level 2
- * with small controls, and a sticky one on a page under a frame header 48 px tall, with content
- * that sticks below both.
+ * with small controls, and a sticky one on a page in a Scaffold's body, with a field far below.
  */
 export function PageHeadersFixture() {
   const [width, setWidth] = useState('48rem');
@@ -66,36 +66,30 @@ export function PageHeadersFixture() {
           }
         />
       </section>
-      <div style={{ '--env-frame-sticky-top': '48px' } as CSSProperties}>
-        <div
-          data-testid="frame-header"
-          style={{
-            position: 'sticky',
-            insetBlockStart: 0,
-            blockSize: '48px',
-            zIndex: 'var(--env-z-sticky)',
-            background: 'var(--env-color-bg-raised)',
-          }}
-        />
-        <Page
-          data-testid="page"
-          width="md"
-          header={<PageHeader data-testid="sticky" title="Annual report" sticky />}
-        >
-          <div
-            data-testid="sticky-content"
-            style={{
-              position: 'sticky',
-              insetBlockStart:
-                'calc(var(--env-frame-sticky-top) + var(--env-page-header-block-size, 0px))',
-            }}
+      <div className="fixture-scaffold-frame" data-testid="frame">
+        <Scaffold landmarks={false}>
+          <Page
+            data-testid="page"
+            width="md"
+            header={
+              <PageHeader
+                data-testid="sticky"
+                title="Annual report"
+                sticky
+                actions={<Button>Share</Button>}
+                toolbar={<Button variant="secondary">Filter</Button>}
+              />
+            }
           >
-            Section heading that sticks below both
-          </div>
-          <div style={{ blockSize: '200vh' }}>
-            <Text>Long page content.</Text>
-          </div>
-        </Page>
+            <div style={{ blockSize: '60rem' }}>
+              <Text>Long page content.</Text>
+            </div>
+            <label>
+              Far field <input data-testid="far-field" />
+            </label>
+            <div style={{ blockSize: '20rem' }} />
+          </Page>
+        </Scaffold>
       </div>
     </Column>
   );

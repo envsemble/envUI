@@ -21,7 +21,7 @@ import {
   useToast,
   type ThemeContrast,
   type ThemeValue,
-  Drawer,
+  Sheet,
 } from '@envsemble/envui';
 
 const statusOptions = [
@@ -81,13 +81,13 @@ function PopupTriggers({ name }: { name: string }) {
       <HoverCard delay={0} trigger={<Link href="#card">Card {name}</Link>}>
         <Text>Card {name} details.</Text>
       </HoverCard>
-      <Drawer
+      <Sheet
         side="end"
         title={`Panel ${name}`}
         trigger={<Button variant="secondary">Panel {name}</Button>}
       >
         <Text>Panel content.</Text>
-      </Drawer>
+      </Sheet>
       <Button variant="secondary" onClick={() => setPalette(true)}>
         Palette {name}
       </Button>

@@ -1,15 +1,5 @@
-import { createElement, useState, type CSSProperties, type ReactNode } from 'react';
-import {
-  Button,
-  IconButton,
-  Menu,
-  Menubar,
-  Page,
-  PageHeader,
-  Scaffold,
-  TopBar,
-  type ScaffoldForms,
-} from '@envsemble/envui';
+import { createElement, useState, type CSSProperties } from 'react';
+import { IconButton, Menu, Menubar, Scaffold, TopBar, type ScaffoldForms } from '@envsemble/envui';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -58,9 +48,7 @@ export function ScaffoldFixture() {
   const forms = query.get('forms') ? (JSON.parse(query.get('forms')!) as ScaffoldForms) : undefined;
   const only = query.get('only')?.split(',');
   const given = only
-    ? Object.fromEntries(
-        Object.entries(navigation).filter(([form]) => only.includes(form)),
-      )
+    ? Object.fromEntries(Object.entries(navigation).filter(([form]) => only.includes(form)))
     : navigation;
   return (
     <div dir={query.get('dir') ?? undefined}>
@@ -194,44 +182,5 @@ export function ScrollKeysFixture() {
     >
       <TallPage paragraphs={400} />
     </Scaffold>
-  );
-}
-
-/**
- * A Page with a sticky PageHeader in a Scaffold's body, mounted with ?fixture=pages: the header
- * has a toolbar, and the page a field far down that takes focus.
- */
-export function PagesFixture() {
-  const query = params();
-  const width = query.get('width') ?? '60rem';
-  const content: ReactNode = (
-    <>
-      <div style={{ blockSize: '150vh' }}>Long page content.</div>
-      <label>
-        Far field <input data-testid="far-field" />
-      </label>
-      <div style={{ blockSize: '50vh' }} />
-    </>
-  );
-  return (
-    <div className="fixture-scaffold-frame" style={{ inlineSize: width }} data-testid="frame">
-      <Scaffold className="fixture-scaffold">
-        <Page
-          data-testid="page"
-          width="md"
-          header={
-            <PageHeader
-              data-testid="sticky"
-              title="Annual report"
-              sticky
-              actions={<Button>Share</Button>}
-              toolbar={<Button variant="secondary">Filter</Button>}
-            />
-          }
-        >
-          {content}
-        </Page>
-      </Scaffold>
-    </div>
   );
 }

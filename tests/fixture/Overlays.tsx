@@ -11,7 +11,7 @@ import {
   Text,
   Theme,
   type ThemeValue,
-  Drawer,
+  Sheet,
 } from '@envsemble/envui';
 
 export function AlertsFixture({ theme }: { theme: ThemeValue }) {
@@ -98,21 +98,21 @@ export function DialogVariantsFixture() {
         >
           <TextField label="Search" name="search" />
         </Dialog>
-        <Drawer
+        <Sheet
           side="end"
           title="Report details"
           trigger={<Button variant="secondary">Open panel</Button>}
         >
           <Text>A panel at the right edge.</Text>
-        </Drawer>
-        <Drawer
+        </Sheet>
+        <Sheet
           side="end"
           title="Wide report details"
           width="lg"
           trigger={<Button variant="secondary">Open wide panel</Button>}
         >
           <Text>A wide panel for content-heavy details.</Text>
-        </Drawer>
+        </Sheet>
       </div>
     </Theme>
   );

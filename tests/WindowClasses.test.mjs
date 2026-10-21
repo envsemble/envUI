@@ -1,6 +1,6 @@
 // The window classes: the constant holds the window-class tokens' widths, the theme boundary is the
 // env-window container, and the style sheets respond to containers at those widths. Width media
-// queries are left only in the frame's style sheets, which a later change removes with the frame.
+// queries are left nowhere.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -29,9 +29,6 @@ const sheets = Object.fromEntries(
     .map((file) => [file, readFileSync(join(styles, file), 'utf8')]),
 );
 
-/** The style sheets whose width media queries go with the app frame they belong to. */
-const frameSheets = ['AppShell.css', 'AppShellBase.css', 'Sidebar.css', 'Drawer.css'];
-
 /**
  * Container thresholds that are a component's own rather than a window class, each with why: a
  * window class would not fit them.
@@ -39,9 +36,6 @@ const frameSheets = ['AppShell.css', 'AppShellBase.css', 'Sidebar.css', 'Drawer.
 const ownThresholds = {
   // A label beside its value needs about 24 rem, whatever the window.
   'DescriptionList.css': ['24rem'],
-  // SplitPane and ListDetail stack at their stackBelow, 44 rem by default; Panes replaces them.
-  'SplitPane.css': ['44rem'],
-  'ListDetail.css': ['44rem'],
 };
 
 test('windowClasses holds the widths of the window-class tokens, from compact up', () => {
@@ -81,10 +75,10 @@ test('the outermost theme boundary is the env-window container, and takes its wi
   assert.match(sheets['Toast.css'], /\.env-toast-portal-theme \{\s*container-type: normal;/);
 });
 
-test('no style sheet queries the viewport width outside the frame', () => {
+test('no style sheet queries the viewport width', () => {
   const widthMedia = /@media[^{]*\b(?:min-|max-)?width\b/;
   const found = Object.entries(sheets)
-    .filter(([file, css]) => !frameSheets.includes(file) && widthMedia.test(css))
+    .filter(([, css]) => widthMedia.test(css))
     .map(([file]) => file);
   assert.deepEqual(found, []);
 });

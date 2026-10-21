@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, List, Panes, Text, type PanesSplitAt } from '@envsemble/envui';
+import { Button, Panes, Text, type PanesSplitAt } from '@envsemble/envui';
 
 const params = () => new URLSearchParams(location.search);
 
@@ -16,6 +16,7 @@ export function PanesFixture() {
   const [width, setWidth] = useState(query.get('width') ?? '60rem');
   const [open, setOpen] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [sizes, setSizes] = useState<string[]>([]);
   return (
     <div dir={query.get('dir') ?? undefined} className="fixture-section">
@@ -26,7 +27,11 @@ export function PanesFixture() {
           </button>
         ))}
       </div>
-      <div className="fixture-panes-frame" style={{ inlineSize: width }} data-testid="supporting-frame">
+      <div
+        className="fixture-panes-frame"
+        style={{ inlineSize: width }}
+        data-testid="supporting-frame"
+      >
         <Panes.Root
           behavior="supporting"
           splitAt={splitAt}
@@ -58,23 +63,28 @@ export function PanesFixture() {
         <Panes.Root
           behavior="list-detail"
           splitAt={splitAt}
-          open={chosen !== null}
-          onOpenChange={(next) => !next && setChosen(null)}
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
           backLabel="All projects"
           data-testid="list-detail"
         >
           <Panes.List label="Projects">
-            <List.Root aria-label="Projects">
+            <ul aria-label="Projects">
               {projects.map((project) => (
-                <List.Item
-                  key={project}
-                  current={chosen === project}
-                  onClick={() => setChosen(project)}
-                >
-                  {project}
-                </List.Item>
+                <li key={project}>
+                  <button
+                    type="button"
+                    aria-current={chosen === project ? 'true' : undefined}
+                    onClick={() => {
+                      setChosen(project);
+                      setDetailOpen(true);
+                    }}
+                  >
+                    {project}
+                  </button>
+                </li>
               ))}
-            </List.Root>
+            </ul>
           </Panes.List>
           <Panes.Divider />
           <Panes.Detail label={chosen ?? 'No project'}>

@@ -133,9 +133,11 @@ export function useResize({
     const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
     // A rem follows the root's font size, read as the drag starts.
     const remPixels = () =>
-      Number.parseFloat(getComputedStyle(event.currentTarget.ownerDocument.documentElement).fontSize) ||
-      16;
-    const perUnit = unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
+      Number.parseFloat(
+        getComputedStyle(event.currentTarget.ownerDocument.documentElement).fontSize,
+      ) || 16;
+    const perUnit =
+      unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
     const perPixel = perUnit * layoutPerScreen;
     drag.current = {
       pointerId: event.pointerId,

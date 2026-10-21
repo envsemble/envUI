@@ -1,6 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=page-headers`;
 
@@ -57,69 +56,31 @@ test.describe('PageHeader', () => {
   });
 
   test(
-    'sticks under the frame header and publishes its height on its page',
+    'sticks at the top of the body that scrolls, and what takes focus keeps clear of it',
     { tag: '@engines' },
     async ({ page }) => {
-      await page.setViewportSize({ width: 1024, height: 700 });
       await page.goto(fixture);
+      const body = page.locator('.env-scaffold-body');
       const sticky = page.getByTestId('sticky');
-      const content = page.getByTestId('sticky-content');
-      // Scrolled well past the header's place, once the page is long enough to scroll that far.
+      await body.evaluate((element) => element.scrollTo(0, 600));
+      await expect.poll(() => body.evaluate((element) => element.scrollTop)).toBe(600);
+      // It sticks at the body's top, across the page's gutters.
+      const top = (await box(body)).y;
+      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(top, 0);
+      // Nothing measures it: no height is published on the page.
+      const page_ = page.getByTestId('page');
+      expect(
+        await page_.evaluate((element) =>
+          element.style.getPropertyValue('--env-page-header-block-size'),
+        ),
+      ).toBe('');
+      // A field scrolled into view as it takes focus lands below the header, from its rows alone.
+      await body.evaluate((element) => element.scrollTo(0, 0));
+      await page.getByTestId('far-field').focus();
+      const header = await box(sticky);
       await expect
-        .poll(() => page.evaluate(() => (window.scrollTo(0, 1200), window.scrollY)))
-        .toBeGreaterThan(1000);
-      // It sticks at --env-frame-sticky-top, 48 px, under the frame header.
-      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(48, 0);
-      const height = (await box(sticky)).height;
-      const published = await page
-        .getByTestId('page')
-        .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
-      expect(Number.parseFloat(published)).toBeCloseTo(height, 0);
-      // Content sticks below both, from the two variables.
-      await expect.poll(async () => (await box(content)).y).toBeCloseTo(48 + height, 0);
-      // Without a frame's offset, it sticks at the top.
-      await sticky.evaluate((element) => {
-        const frame = element.closest<HTMLElement>('[style*="--env-frame-sticky-top"]')!;
-        frame.style.removeProperty('--env-frame-sticky-top');
-      });
-      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
+        .poll(async () => (await box(page.getByTestId('far-field'))).y)
+        .toBeGreaterThanOrEqual(header.y + header.height);
     },
   );
-
-  test("keeps its page's element across a parent's renders, and its height published", async ({
-    page,
-  }) => {
-    const hydrate = await openServerMarkup(
-      page,
-      `import {createElement as h, useState} from 'react';
-      import {Page, PageHeader} from '@envsemble/envui';
-      // Every element the page's ref receives, null for a detach.
-      const refs = (globalThis.pageRefs = []);
-      const pageRef = (node) => { refs.push(node ? node.tagName : null); };
-      function Parent() {
-        const [count, setCount] = useState(0);
-        return h(Page, {ref: pageRef, 'data-testid': 'page',
-            header: h(PageHeader, {title: 'Renders ' + count, sticky: true})},
-          h('button', {type: 'button', onClick: () => setCount((value) => value + 1)}, 'Render'));
-      }
-      export const element = h(Parent);`,
-      { hydrate: true },
-    );
-    expect(await hydrate()).toEqual([]);
-    const refs = () => page.evaluate(() => (window as unknown as { pageRefs: unknown[] }).pageRefs);
-    expect(await refs()).toEqual(['DIV']);
-    for (let render = 1; render <= 3; render++) {
-      await page.getByRole('button', { name: 'Render' }).click();
-      await expect(page.getByRole('heading', { name: `Renders ${render}` })).toBeVisible();
-    }
-    // Never detached and attached again, as a new ref callback on each render would.
-    expect(await refs()).toEqual(['DIV']);
-    await expect
-      .poll(() =>
-        page
-          .getByTestId('page')
-          .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size')),
-      )
-      .not.toBe('');
-  });
 });

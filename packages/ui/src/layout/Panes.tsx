@@ -209,7 +209,10 @@ function Root({
 }: RootProps) {
   const min = Math.max(0, minSize);
   const max = Math.max(min, maxSize);
-  const clamp = useCallback((value: number) => round(Math.min(max, Math.max(min, value))), [min, max]);
+  const clamp = useCallback(
+    (value: number) => round(Math.min(max, Math.max(min, value))),
+    [min, max],
+  );
   // A size chosen by resizing, or read from storage; until then the default applies.
   const [chosenSize, setChosenSize] = useState<number>();
   const size = clamp(controlledSize ?? chosenSize ?? defaultSize);

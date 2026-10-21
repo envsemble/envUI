@@ -1,6 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
-  AccountMenu,
   ConfirmDialog,
   List,
   SearchTrigger,
@@ -12,7 +11,7 @@ import {
   Alert,
   Button,
   CommandPalette,
-  Drawer,
+  Sheet,
   LoadingState,
   Progress,
   Skeleton,
@@ -26,7 +25,8 @@ import {
   Dialog,
   EnvUIProvider,
   SearchField,
-  SplitPane,
+  Panes,
+  Scaffold,
   Column,
   Textarea,
   ThemePreferenceProvider,
@@ -83,9 +83,9 @@ function FeedbackStrings() {
         <Skeleton />
       </LoadingState>
       <Progress label="Importing" value={null} />
-      <Drawer title="Filters" defaultOpen modal={false} disablePointerDismissal>
+      <Sheet title="Filters" defaultOpen modal={false} disablePointerDismissal>
         Filters
-      </Drawer>
+      </Sheet>
       <Button variant="secondary" onClick={() => setPalette(true)}>
         Open palette
       </Button>
@@ -233,31 +233,31 @@ export function MessageStringsFixture() {
           <Calendar aria-label="Planning" defaultValue="2026-10-14" />
           <Composer aria-label="Reply" defaultValue="Hello" onSubmit={() => {}} />
           <ColorPicker label="Accent" defaultValue="#336699" />
-          {/* Layout: the handle between two panes. */}
-          <SplitPane.Root>
-            <SplitPane.Pane>Start</SplitPane.Pane>
-            <SplitPane.ResizeHandle />
-            <SplitPane.Pane>End</SplitPane.Pane>
-          </SplitPane.Root>
+          {/* Layout: the divider between two panes, a detail's back button, and a scaffold's skip
+              links. */}
+          <Panes.Root behavior="list-detail" open>
+            <Panes.List label="Start">Start</Panes.List>
+            <Panes.Divider />
+            <Panes.Detail>End</Panes.Detail>
+          </Panes.Root>
+          <Scaffold
+            landmarks={false}
+            navigation={{ rail: <nav aria-label="Rail" /> }}
+            style={{ blockSize: '6rem' }}
+          >
+            Body
+          </Scaffold>
           <Toast.Provider>
             <FeedbackStrings />
           </Toast.Provider>
           <ShellAndEditorStrings />
-          {/* App parts: a search trigger, a reorderable list's handle and announcements, an
-              account menu with its theme and organization submenus, and a confirm dialog. */}
+          {/* App parts: a search trigger, a reorderable list's handle and announcements, and a
+              confirm dialog. */}
           <SearchTrigger listen={false} />
           <List.Root aria-label="Order" onReorder={() => {}}>
             <List.Item label="First" />
             <List.Item label="Second" />
           </List.Root>
-          <AccountMenu.Root name="Alex Morgan">
-            <AccountMenu.ThemeSubmenu />
-            <AccountMenu.OrganizationSubmenu
-              items={[{ id: 'northwind', label: 'Northwind' }]}
-              value="northwind"
-              onValueChange={() => {}}
-            />
-          </AccountMenu.Root>
           <ConfirmDialog
             trigger={<Button variant="secondary">Open confirm</Button>}
             title="Remove the draft?"
