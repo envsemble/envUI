@@ -41,12 +41,12 @@ avoidWhen:
   - text: How full or complete something is, such as storage used.
     use: Meter
   - text: A headline number with its label and trend, such as on a dashboard.
-    use: Stat
+    see: key-figures
 related:
   - card
   - drawer
   - button
-  - stat
+  - key-figures
   - code
   - colors
 components:

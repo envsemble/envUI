@@ -23,7 +23,7 @@ avoidWhen:
   - text: A few items, each with its own actions, that people don't compare field by field.
     use: List
   - text: A handful of key figures for a dashboard, such as revenue this month.
-    use: Stat
+    see: key-figures
   - text: Items nested inside other items, such as folders and files.
     use: Tree
   - text: Arranging content in columns for layout, such as a set of summaries.
@@ -31,7 +31,7 @@ avoidWhen:
   - text: A spreadsheet that people edit cell by cell and move through with the arrow keys.
 related:
   - list
-  - stat
+  - key-figures
   - badge
   - checkbox
   - pagination

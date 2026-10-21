@@ -175,12 +175,30 @@
         "use": "Row, Column, Grid, Box, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
       },
       "StackProps": { "to": [], "use": "RowProps or ColumnProps." },
-      "Stat": { "to": ["Stat.Root"] },
-      "StatGroup": { "to": ["Stat.Group"] },
-      "StatGroupProps": { "to": ["Stat.GroupProps"] },
-      "StatProps": { "to": ["Stat.RootProps"] },
-      "StatTrend": { "to": ["Stat.Trend"] },
-      "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "Stat": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern builds a figure from Text, a muted label and a headline figure in tabular digits, with a Badge that says the trend in words, and a group from a Surface around a Grid; no codemod rewrites it."
+      },
+      "StatGroup": {
+        "to": [],
+        "use": "Stat.Group is gone: the key figures pattern puts the figures in a Surface with role=\"group\" around a Grid of even columns."
+      },
+      "StatGroupProps": {
+        "to": [],
+        "use": "SurfaceProps; Stat.Group is gone: the key figures pattern puts the figures in a Surface around a Grid."
+      },
+      "StatProps": {
+        "to": [],
+        "use": "Stat is gone, with its props: the key figures pattern builds a figure from Text and a Badge."
+      },
+      "StatTrend": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern says the trend with a Badge, its tone and a trending icon."
+      },
+      "StatTrendTone": {
+        "to": [],
+        "use": "BadgeTone; Stat is gone: the key figures pattern says the trend with a Badge in its tone."
+      },
       "SurfaceCorners": { "to": ["SurfaceRadius"] },
       "SurfaceDensity": {
         "to": [],

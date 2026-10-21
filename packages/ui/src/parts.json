@@ -645,15 +645,6 @@
       "env-spinner-arc": "The turning arc.",
       "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
-    "Stat": {
-      "env-stat": "One statistic.",
-      "env-stat-description": "The sentence under the value.",
-      "env-stat-footer": "The row with the trend and the description.",
-      "env-stat-group": "A row of statistics.",
-      "env-stat-label": "The label.",
-      "env-stat-trend": "The change since the last period.",
-      "env-stat-value": "The value."
-    },
     "Surface": {
       "env-surface": "A surface: fill, padding and corners."
     },

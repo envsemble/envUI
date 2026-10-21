@@ -5,7 +5,6 @@ import {
   Badge,
   Card,
   SegmentedControl,
-  Stat,
 } from '@envsemble/envui';
 
 const people = [{ name: 'Alex Morgan' }];
@@ -24,8 +23,6 @@ export const Content = ({ size }: { size: 'small' | 'large' }) => (
     </Card>
     <Card>Plain</Card>
     <Card>No actions yet</Card>
-    <Stat.Root label="Projects" value="128" description="Last 30 days" />
-    <Stat.Group background="muted" />
     <SegmentedControl aria-label="Views" items={views} value="open" onValueChange={() => {}} />
     <Avatar name="Jordan Ellis" size={size} />
   </>

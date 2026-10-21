@@ -100,7 +100,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Disclosure](components/disclosure.md)
 - [Avatar](components/avatar.md)
 - [Message](components/message.md)
-- [Stat](components/stat.md)
 - [CalendarHeatmap](components/calendar-heatmap.md)
 
 ## Feedback & overlays
@@ -129,6 +128,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Notifications and feedback](patterns/feedback.md)
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
+- [Key figures](patterns/key-figures.md)
 - [Navigation](patterns/navigation.md)
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)

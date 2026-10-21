@@ -19,13 +19,13 @@ avoidWhen:
   - text: Exact figures people compare or read one by one.
     use: Table
   - text: A headline number with its trend.
-    use: Stat
+    see: key-figures
   - text: Choosing a day.
     use: Calendar
   - text: A share of a known range, such as storage used.
     use: Meter
 related:
-  - stat
+  - key-figures
   - table
   - date-picker
   - tooltip

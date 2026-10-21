@@ -46,7 +46,6 @@ import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
-import { StatsFixture } from './Stats.js';
 import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
@@ -292,12 +291,6 @@ export default function App() {
             <>
               <MessagesFixture theme="light" />
               <MessagesFixture theme="dark" />
-            </>
-          )}
-          {includes('stats') && (
-            <>
-              <StatsFixture theme="light" />
-              <StatsFixture theme="dark" />
             </>
           )}
           {includes('drop-zones') && (

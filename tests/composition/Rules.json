@@ -64,7 +64,6 @@
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",
       "content/RelativeTime.tsx": "composites",
-      "content/Stat.tsx": "base",
       "content/Table.tsx": "base",
       "content/formatRelativeTime.ts": "base",
       "feedback/Alert.tsx": "composites",

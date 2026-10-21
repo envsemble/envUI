@@ -8,7 +8,7 @@ import { Table } from '@envsemble/envui';
 import { TextField } from '@envsemble/envui';
 import { Alert } from '@envsemble/envui';
 // @ts-ignore -- moves with the names
-import { Stat } from '@envsemble/envui';
+import { PanelDock } from '@envsemble/envui';
 
 export const settings = (
   <>
@@ -21,8 +21,8 @@ export const settings = (
     <TextField label="Name" />
     <TextField label="Email" />
     <Alert>Saved</Alert>
-    <Stat.Group>
-      <Stat.Root label="Members" value={3} />
-    </Stat.Group>
+    <PanelDock.Root>
+      <PanelDock.Header />
+    </PanelDock.Root>
   </>
 );

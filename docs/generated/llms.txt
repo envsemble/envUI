@@ -93,7 +93,6 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element. Parts: `.env-disclosure`.
 - [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue. Parts: `.env-avatar`, `.env-avatar-button`, `.env-avatar-group`.
 - [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList. Parts: `.env-message`, `.env-message-list`.
-- [Stat](docs/components/stat.md): Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns. Parts: `.env-stat`.
 - [CalendarHeatmap](docs/components/calendar-heatmap.md): A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day. Parts: `.env-calendar-heatmap`.
 
 ## Components: Feedback & overlays
@@ -125,6 +124,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Notifications and feedback](docs/patterns/feedback.md): Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.
 - [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
 - [Empty states](docs/patterns/empty-states.md): Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
+- [Key figures](docs/patterns/key-figures.md): Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.
 
 ## Patterns: Find and navigate
 

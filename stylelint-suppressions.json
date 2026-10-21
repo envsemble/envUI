@@ -199,11 +199,6 @@
       "count": 4
     }
   },
-  "packages/ui/src/styles/Stat.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 6
-    }
-  },
   "packages/ui/src/styles/Table.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 20

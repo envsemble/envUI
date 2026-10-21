@@ -245,6 +245,14 @@ export function findReferencePage(path: string) {
   return referencePages.find((page) => page.path === path.split('/').slice(0, 2).join('/'));
 }
 
+/** Component pages that became patterns, by their slug: the pattern each one opens. */
+const componentPatterns: Record<string, string> = {
+  'window-frame': 'window-frame',
+  'account-menu': 'account-menu',
+  stat: 'key-figures',
+  stats: 'key-figures',
+};
+
 /** Keep downloaded references and old bookmarks working after topic consolidation. */
 export function normalizeRoute(route: string): string {
   const [originalPath, ...query] = route.split('?');
@@ -275,9 +283,10 @@ export function normalizeRoute(route: string): string {
   // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
   if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest}`;
   if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest}`;
-  // The app frame's components became patterns and scaffolds.
-  if (/^components\/(window-frame|account-menu)(?:\/|$)/.test(originalPath))
-    return `patterns/${originalPath.split('/')[1]}${rest}`;
+  // Components that became patterns open their pattern.
+  const slug = originalPath.split('/')[1] ?? '';
+  if (originalPath.startsWith('components/') && Object.hasOwn(componentPatterns, slug))
+    return `patterns/${componentPatterns[slug]}${rest}`;
   if (findStandalonePage(originalPath)) return `${originalPath}${rest}`;
   if (/^getting-started(?:\/|$)/.test(originalPath)) {
     return `overview/get-started${search.size ? `?${search}` : ''}`;
@@ -295,7 +304,6 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/badges(?=\/|$)/, 'components/badge')
     .replace(/^components\/chips(?=\/|$)/, 'components/badge')
     .replace(/^components\/tables(?=\/|$)/, 'components/table')
-    .replace(/^components\/stats(?=\/|$)/, 'components/stat')
     .replace(/^components\/toasts(?=\/|$)/, 'components/toast')
     .replace(/^components\/dialogs(?=\/|$)/, 'components/dialog')
     .replace(/^components\/meters(?=\/|$)/, 'components/meter')

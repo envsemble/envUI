@@ -29,7 +29,6 @@ export const aliases = {
   Kbd: ['DataDisplay'],
   Progress: ['Meter'],
   Spinner: ['Meter', 'Skeleton'],
-  AnimatedNumber: ['Stat'],
   Badge: ['DiffStat'],
   ButtonCounts: ['DiffStat'],
   ConfirmButton: ['Button'],

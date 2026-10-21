@@ -17,7 +17,6 @@ import {
   Message,
   Popover,
   Rail,
-  Stat,
   Surface,
   Table,
   Text,
@@ -121,9 +120,6 @@ export function SkeletonsFixture() {
               />
             ))}
           </List.Root>
-          <Stat.Group>
-            <Stat.Root label="Projects" value={items?.length} data-testid="stat" />
-          </Stat.Group>
           <Table.Root aria-label="Projects table">
             <Table.Head>
               <Table.Row>

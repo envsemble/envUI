@@ -19,14 +19,14 @@ avoidWhen:
   - text: How much of a task is done, such as an upload or an import.
     use: Progress
   - text: A key figure without a range, such as the active projects this month.
-    use: Stat
+    see: key-figures
   - text: A value people set within a range, such as a volume or a limit.
     use: Slider
   - text: A score on a scale of stars, such as a review's 4.5 out of 5.
     use: Rating
 related:
   - progress
-  - stat
+  - key-figures
   - slider
   - colors
 components:

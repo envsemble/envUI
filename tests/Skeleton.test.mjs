@@ -22,7 +22,6 @@ await build({
       "export { Text } from './packages/ui/src/foundations/Text.tsx';",
       "export { Card } from './packages/ui/src/content/Card.tsx';",
       "export * as List from './packages/ui/src/content/List.tsx';",
-      "export * as Stat from './packages/ui/src/content/Stat.tsx';",
       "export { Alert } from './packages/ui/src/feedback/Alert.tsx';",
     ].join('\n'),
     resolveDir: repository,
@@ -39,7 +38,7 @@ await build({
 const library = await import(pathToFileURL(output).href);
 const { placeholders, isPlaceholder, skeletonAttributes, skeletonListAttributes, given } = library;
 const { useSkeleton } = library;
-const { Surface, Text, Card, List, Stat, Alert } = library;
+const { Surface, Text, Card, List, Alert } = library;
 
 const markup = (element) => renderToStaticMarkup(element);
 
@@ -129,8 +128,6 @@ test('missing text renders empty where a skeleton shows a bar, and given slots r
   );
   assert.match(markup(h(List.Item, { label: 'Launch brief' })), /content">Launch brief<\/div>/);
 
-  const stat = markup(h(Stat.Root, { label: 'Projects', value: undefined, skeleton: true }));
-  assert.match(stat, /<div class="env-stat-value"><\/div>/);
   assert.match(markup(h(Alert, { title: undefined }, undefined)), /env-alert-title/);
   assert.match(markup(h(Text, null, undefined)), /^<p class="env-text" data-variant="body"><\/p>$/);
 });

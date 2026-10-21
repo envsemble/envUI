@@ -89,9 +89,6 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="name-cell"]', 'display', '::before')).toBe(
     'inline-block',
   );
-  expect(await style(page, '[data-testid="stat"] .env-stat-value', 'display', '::before')).toBe(
-    'inline-block',
-  );
 
   // A top bar's missing title is a bar too.
   await expect(page.getByTestId('top-bar')).toHaveAttribute('aria-busy', 'true');

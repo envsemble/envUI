@@ -176,10 +176,10 @@ ruleTester.run('no-renamed-exports', rule, {
       ],
     },
     {
-      code: "import { Table as DataTable, Stat } from '@envsemble/envui'; <><DataTable /><Stat /></>;",
+      code: "import { Table as DataTable, Menubar } from '@envsemble/envui'; <><DataTable /><Menubar /></>;",
       errors: [
         namespace('Table', 'DataTable', 'DataTable.Root'),
-        namespace('Stat', 'Stat', 'Stat.Root'),
+        namespace('Menubar', 'Menubar', 'Menubar.Root'),
       ],
     },
     // The manual Toast is internal: rendering it is reported with what to do instead.

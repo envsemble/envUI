@@ -330,7 +330,7 @@ export function Preview({ children }: { children: ReactNode }) {
 envUI works in an application built on React Server Components. Server and client components import from the same entry points:
 
 - Components that keep state, run effects, read context or take part in Base UI's interactions are client components. Their modules start with `'use client'`, as Base UI's parts do, so a server component renders them as client references and the bundler sends them to the browser. They include `Theme`, `Dialog`, `Menu.Root` and its parts, `Table.Root`, the form fields, and icons that follow a selection's fill.
-- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert`, `List.Item` and `Stat.Root`, render on the server and send no code of their own to the browser.
+- Components that only lay out markup, such as `Card`, `Badge`, `Text`, `Button`, `Alert` and `List.Item`, render on the server and send no code of their own to the browser.
 - The entry points carry no directive, so `Menu.Item` from `@envsemble/envui` in a server component is the client part, reached through its namespace.
 - Plain functions, such as `createThemeBootstrapScript` and `formatRelativeTime`, run on the server.
 
@@ -361,7 +361,6 @@ The modules have no side effects, so a bundler keeps only what the application u
 | `Table.Root`, `Body`, `Row` and `Cell` |  9.2 KB |          5.3 KB |
 | `Menu.Item` alone                      |  7.7 KB |          3.8 KB |
 | `Menu.Root` with a `Menu.Item`         |  9.2 KB |          7.4 KB |
-| `Stat.Root`                            |  3.3 KB |          3.5 KB |
 | `Pager.Next`                           |  1.5 KB |          1.6 KB |
 | `Badge`, which is no namespace's part  |  0.6 KB |          0.9 KB |
 

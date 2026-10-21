@@ -22,11 +22,11 @@ avoidWhen:
   - text: A measurement within a known range, such as storage used.
     use: Meter
   - text: A key figure on a dashboard, such as the average score this month.
-    use: Stat
+    see: key-figures
   - text: A state or a category, such as Approved or Featured.
     use: Badge
 related:
-  - stat
+  - key-figures
   - badge
   - meter
   - radio

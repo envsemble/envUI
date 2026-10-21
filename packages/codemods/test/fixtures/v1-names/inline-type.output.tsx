@@ -1,9 +1,9 @@
-import { Button, type Menu, Stat, type Table } from '@envsemble/envui';
+import { Button, type Menu, Menubar, type Table } from '@envsemble/envui';
 
-export function Summary(props: { item: Menu.ItemProps; tone: Stat.TrendTone; sort: Table.SortDirection }) {
+export function Summary(props: { item: Menu.ItemProps; details: Menubar.MenuOpenChangeDetails; sort: Table.SortDirection }) {
   return (
-    <Stat.Group>
+    <Menubar.Root>
       <Button>{props.item.children}</Button>
-    </Stat.Group>
+    </Menubar.Root>
   );
 }

@@ -293,7 +293,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'ContextMenu',
     'Menubar',
     'Table',
-    'Stat',
   ]) {
     assert.ok(ssr.exports.includes(name), `Missing public export: ${name}`);
   }

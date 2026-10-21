@@ -4075,77 +4075,6 @@
         }
       ]
     },
-    "Stat": {
-      "root": "env-stat",
-      "source": "packages/ui/src/content/Stat.tsx",
-      "parts": [
-        {
-          "class": "env-stat",
-          "description": "One statistic."
-        },
-        {
-          "class": "env-stat-description",
-          "description": "The sentence under the value."
-        },
-        {
-          "class": "env-stat-footer",
-          "description": "The row with the trend and the description."
-        },
-        {
-          "class": "env-stat-group",
-          "description": "A row of statistics."
-        },
-        {
-          "class": "env-stat-label",
-          "description": "The label."
-        },
-        {
-          "class": "env-stat-trend",
-          "description": "The change since the last period."
-        },
-        {
-          "class": "env-stat-value",
-          "description": "The value."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-direction",
-          "values": [
-            "down",
-            "flat",
-            "up"
-          ],
-          "parts": [
-            "env-stat-trend"
-          ]
-        },
-        {
-          "attribute": "data-env-skeleton",
-          "values": [],
-          "parts": [
-            "env-stat-description"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "danger",
-            "neutral",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-stat-trend"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon",
-        "Skeleton",
-        "Surface"
-      ]
-    },
     "Surface": {
       "root": "env-surface",
       "source": "packages/ui/src/foundations/Surface.tsx",
@@ -5505,7 +5434,6 @@
         "SegmentedControl",
         "Select",
         "Sheet",
-        "Stat",
         "Surface",
         "Table",
         "TimePicker",

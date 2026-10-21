@@ -123,7 +123,6 @@ const page = render(
     h(ui.IconButton, { icon: h(Search), 'aria-label': 'Searching', pending: true }),
     h(ui.Menu.Root, { trigger: h(ui.Button, null, 'More') }, h(ui.Menu.Item, null, 'Rename')),
     h(ui.Alert, { tone: 'success', title: 'Saved' }, 'The release is saved.'),
-    h(ui.Stat.Root, { label: 'Builds', value: 12 }),
   ),
 );
 

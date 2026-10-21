@@ -212,6 +212,7 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
@@ -314,6 +315,7 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
@@ -411,7 +413,8 @@
       "usedIn": {
         "patterns": [
           "forms",
-          "loading"
+          "loading",
+          "key-figures"
         ]
       }
     },
@@ -1404,6 +1407,7 @@
           "settings",
           "loading",
           "empty-states",
+          "key-figures",
           "data-tables"
         ]
       }
@@ -1980,7 +1984,8 @@
       },
       "usedIn": {
         "patterns": [
-          "loading"
+          "loading",
+          "key-figures"
         ]
       }
     },
@@ -2455,6 +2460,7 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
@@ -9707,14 +9713,14 @@
         },
         {
           "text": "A headline number with its label and trend, such as on a dashboard.",
-          "use": "Stat"
+          "see": "key-figures"
         }
       ],
       "related": [
         "card",
         "drawer",
         "button",
-        "stat",
+        "key-figures",
         "code",
         "colors"
       ],
@@ -9878,6 +9884,7 @@
           "settings",
           "feedback",
           "empty-states",
+          "key-figures",
           "navigation",
           "filtering",
           "data-tables",
@@ -9916,7 +9923,7 @@
         },
         {
           "text": "A handful of key figures for a dashboard, such as revenue this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "Items nested inside other items, such as folders and files.",
@@ -9932,7 +9939,7 @@
       ],
       "related": [
         "list",
-        "stat",
+        "key-figures",
         "badge",
         "checkbox",
         "pagination",
@@ -10276,14 +10283,14 @@
         },
         {
           "text": "One headline number with its trend.",
-          "use": "Stat"
+          "see": "key-figures"
         }
       ],
       "related": [
         "table",
         "list",
         "card",
-        "stat",
+        "key-figures",
         "loading"
       ],
       "exports": [
@@ -10567,7 +10574,7 @@
         },
         {
           "text": "A headline figure with its label and trend, such as on a dashboard.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "How far a task has come.",
@@ -10576,7 +10583,7 @@
       ],
       "related": [
         "button",
-        "stat",
+        "key-figures",
         "badge",
         "typography",
         "accessibility"
@@ -10644,7 +10651,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "key-figures"
+        ]
       }
     },
     {
@@ -10682,7 +10691,7 @@
         },
         {
           "text": "A key figure on a dashboard, such as the average score this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "A state or a category, such as Approved or Featured.",
@@ -10690,7 +10699,7 @@
         }
       ],
       "related": [
-        "stat",
+        "key-figures",
         "badge",
         "meter",
         "radio",
@@ -11591,209 +11600,6 @@
       }
     },
     {
-      "name": "Stat",
-      "page": "stat",
-      "doc": "docs/components/stat.md",
-      "category": "Content & guidance",
-      "status": "stable",
-      "since": "0.5.0",
-      "summary": "Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.",
-      "aliases": [
-        "KPI",
-        "metric",
-        "statistic",
-        "key figure",
-        "key metric",
-        "big number",
-        "stat card",
-        "StatGroup",
-        "Stat.Group",
-        "Stat.Root"
-      ],
-      "useWhen": [
-        "The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.",
-        "A figure with how it changed since an earlier period, such as +12% from last month."
-      ],
-      "avoidWhen": [
-        {
-          "text": "Many values to compare or sort, such as figures for each project.",
-          "use": "Table"
-        },
-        {
-          "text": "A quantity within a known range, such as the seats assigned of a plan's five.",
-          "use": "Meter"
-        },
-        {
-          "text": "A count on a control, such as unread messages on a tab.",
-          "use": "Badge"
-        },
-        {
-          "text": "A summary people open or act on, with a description and actions.",
-          "use": "Card"
-        }
-      ],
-      "related": [
-        "animated-number",
-        "meter",
-        "table",
-        "card",
-        "surface",
-        "colors"
-      ],
-      "exports": [
-        "Stat",
-        "Stat.Root",
-        "Stat.Group"
-      ],
-      "examples": [
-        {
-          "name": "ProjectHealth",
-          "title": "Project health",
-          "description": "A stat is a labelled key figure, with how it changed. Stat.Group puts a few on one surface.",
-          "file": "docs/examples/stat/ProjectHealth.tsx"
-        },
-        {
-          "name": "TrendTones",
-          "title": "Trend tones",
-          "description": "A trend's `tone` replaces the default where a rise is bad news, or a fall good news.",
-          "file": "docs/examples/stat/TrendTones.tsx"
-        },
-        {
-          "name": "OnAPane",
-          "title": "Backgrounds",
-          "description": "Stat.Group is `default` on the page, and `muted` on a pane; `page` and `raised` where they fit.",
-          "file": "docs/examples/stat/OnAPane.tsx"
-        },
-        {
-          "name": "InACard",
-          "title": "One figure",
-          "description": "A Stat.Root has no surface; a Card gives one figure a frame.",
-          "file": "docs/examples/stat/InACard.tsx"
-        },
-        {
-          "name": "TrendInWords",
-          "title": "Do: Say the change in words, with its period.",
-          "description": "",
-          "file": "docs/examples/stat/TrendInWords.tsx"
-        },
-        {
-          "name": "TrendWithoutWords",
-          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
-          "description": "",
-          "file": "docs/examples/stat/TrendWithoutWords.tsx"
-        },
-        {
-          "name": "BadNewsTone",
-          "title": "Do: A rise that is bad news in the danger tone.",
-          "description": "",
-          "file": "docs/examples/stat/BadNewsTone.tsx"
-        },
-        {
-          "name": "DefaultToneForBadNews",
-          "title": "Don't: A rising error rate in the default success tone.",
-          "description": "",
-          "file": "docs/examples/stat/DefaultToneForBadNews.tsx"
-        },
-        {
-          "name": "StatAnatomy",
-          "title": "Stat anatomy",
-          "description": "",
-          "file": "docs/examples/stat/StatAnatomy.tsx"
-        },
-        {
-          "name": "GroupColumns",
-          "title": "Group columns",
-          "description": "",
-          "file": "docs/examples/stat/GroupColumns.tsx"
-        }
-      ],
-      "parts": {
-        "Stat": {
-          "root": "env-stat",
-          "parts": [
-            {
-              "class": "env-stat",
-              "description": "One statistic."
-            },
-            {
-              "class": "env-stat-description",
-              "description": "The sentence under the value."
-            },
-            {
-              "class": "env-stat-footer",
-              "description": "The row with the trend and the description."
-            },
-            {
-              "class": "env-stat-group",
-              "description": "A row of statistics."
-            },
-            {
-              "class": "env-stat-label",
-              "description": "The label."
-            },
-            {
-              "class": "env-stat-trend",
-              "description": "The change since the last period."
-            },
-            {
-              "class": "env-stat-value",
-              "description": "The value."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-direction",
-              "values": [
-                "down",
-                "flat",
-                "up"
-              ],
-              "parts": [
-                "env-stat-trend"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-stat-description"
-              ]
-            },
-            {
-              "attribute": "data-tone",
-              "values": [
-                "danger",
-                "neutral",
-                "success",
-                "warning"
-              ],
-              "parts": [
-                "env-stat-trend"
-              ]
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": []
-      }
-    },
-    {
       "name": "CalendarHeatmap",
       "page": "calendar-heatmap",
       "doc": "docs/components/calendar-heatmap.md",
@@ -11821,7 +11627,7 @@
         },
         {
           "text": "A headline number with its trend.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "Choosing a day.",
@@ -11833,7 +11639,7 @@
         }
       ],
       "related": [
-        "stat",
+        "key-figures",
         "table",
         "date-picker",
         "tooltip",
@@ -14997,7 +14803,7 @@
         },
         {
           "text": "A key figure without a range, such as the active projects this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "A value people set within a range, such as a volume or a limit.",
@@ -15010,7 +14816,7 @@
       ],
       "related": [
         "progress",
-        "stat",
+        "key-figures",
         "slider",
         "colors"
       ],
@@ -15321,6 +15127,7 @@
       "related": [
         "index",
         "setup",
+        "key-figures",
         "loading",
         "app-frame",
         "scaffold",
@@ -16235,6 +16042,129 @@
           "title": "Empty states anatomy",
           "description": "",
           "file": "docs/examples/empty-states/EmptyStatesAnatomy.tsx"
+        }
+      ]
+    },
+    {
+      "name": "key-figures",
+      "title": "Key figures",
+      "group": "Patterns",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.",
+      "aliases": [
+        "Stat",
+        "Stat.Root",
+        "Stat.Group",
+        "StatGroup",
+        "stat",
+        "stats",
+        "KPI",
+        "metric",
+        "statistic",
+        "key figure",
+        "key metric",
+        "big number",
+        "stat card",
+        "trend"
+      ],
+      "useWhen": [
+        "The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.",
+        "A figure with how it changed since an earlier period, such as +12% from last month."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Many values to compare or sort, such as figures for each project.",
+          "use": "Table"
+        },
+        {
+          "text": "A quantity within a known range, such as the seats assigned of a plan's five.",
+          "use": "Meter"
+        },
+        {
+          "text": "A count on a control, such as unread messages on a tab.",
+          "use": "Badge"
+        },
+        {
+          "text": "A figure that changes while people look at it.",
+          "use": "AnimatedNumber"
+        }
+      ],
+      "composes": [
+        "Surface",
+        "Grid",
+        "Column",
+        "Row",
+        "Text",
+        "Badge",
+        "AnimatedNumber",
+        "Button",
+        "Card"
+      ],
+      "related": [
+        "animated-number",
+        "badge",
+        "meter",
+        "table",
+        "card",
+        "surface"
+      ],
+      "doc": "docs/patterns/key-figures.md",
+      "examples": [
+        {
+          "name": "ProjectHealth",
+          "title": "Project health",
+          "description": "A key figure is a muted label, a large figure in Text and a Badge that says how it changed, with the period beside it. A Surface holds a few of them in a Grid of even columns.",
+          "file": "docs/examples/key-figures/ProjectHealth.tsx"
+        },
+        {
+          "name": "OnAPane",
+          "title": "On a pane",
+          "description": "A group on a pane takes the `muted` fill, so its figures stand apart; the pane's heading names it.",
+          "file": "docs/examples/key-figures/OnAPane.tsx"
+        },
+        {
+          "name": "InACard",
+          "title": "One figure",
+          "description": "A Card frames a single figure.",
+          "file": "docs/examples/key-figures/InACard.tsx"
+        },
+        {
+          "name": "TrendInWords",
+          "title": "Do: Say the change in words, with its period.",
+          "description": "",
+          "file": "docs/examples/key-figures/TrendInWords.tsx"
+        },
+        {
+          "name": "TrendWithoutWords",
+          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
+          "description": "",
+          "file": "docs/examples/key-figures/TrendWithoutWords.tsx"
+        },
+        {
+          "name": "BadNewsTone",
+          "title": "Do: A rise that is bad news in the danger tone.",
+          "description": "",
+          "file": "docs/examples/key-figures/BadNewsTone.tsx"
+        },
+        {
+          "name": "GoodNewsToneForBadNews",
+          "title": "Don't: A rising error rate in the success tone.",
+          "description": "",
+          "file": "docs/examples/key-figures/GoodNewsToneForBadNews.tsx"
+        },
+        {
+          "name": "KeyFiguresAnatomy",
+          "title": "Key figures anatomy",
+          "description": "",
+          "file": "docs/examples/key-figures/KeyFiguresAnatomy.tsx"
+        },
+        {
+          "name": "GroupColumns",
+          "title": "Group columns",
+          "description": "",
+          "file": "docs/examples/key-figures/GroupColumns.tsx"
         }
       ]
     },
@@ -23987,96 +23917,6 @@
       "status": "stable",
       "page": "spinner",
       "doc": "docs/components/spinner.md"
-    },
-    "Stat": {
-      "kind": "namespace",
-      "import": "@envsemble/envui",
-      "description": "",
-      "parts": [
-        "Stat.Root",
-        "Stat.Group"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
-    },
-    "Stat.Group": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Stats on one surface, a pane's fill by default, in as many even columns as fit; they wrap as space runs out. Use the muted background for a group on a pane. A group named with aria-label or aria-labelledby is exposed as a group, so assistive technology announces the name.",
-      "props": [
-        {
-          "name": "background",
-          "type": "'default' | 'muted' | 'page' | 'raised'",
-          "required": false,
-          "default": "'default'",
-          "description": "The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its stats stand apart; page or raised where those fit."
-        },
-        {
-          "name": "padding",
-          "type": "SurfaceAppearanceProps['padding']",
-          "required": false,
-          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
-          "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
-    },
-    "Stat.Root": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
-      "props": [
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What the figure measures, such as Active projects, in muted text above it."
-        },
-        {
-          "name": "value",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
-        },
-        {
-          "name": "trend",
-          "type": "Trend",
-          "required": false,
-          "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
     },
     "Surface": {
       "kind": "component",

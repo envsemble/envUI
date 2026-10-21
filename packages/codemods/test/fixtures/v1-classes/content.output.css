@@ -19,6 +19,6 @@
 .env-avatar-group:where([data-size='xl']) {
   --ring: red;
 }
-.env-stat-description {
+.env-stat-detail {
   font-style: italic;
 }

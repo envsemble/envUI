@@ -202,7 +202,7 @@ test('a server component imports envUI and renders it on the server', () => {
         main.variants[name]?.includes(variant),
         `${name} renders on the server with ${variant}`,
       );
-  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
+  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
   for (const name of [
     'Menu.Item',
