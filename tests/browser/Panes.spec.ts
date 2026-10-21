@@ -216,13 +216,23 @@ test.describe('Panes in a Scaffold whose document scrolls', { tag: '@engines' },
         )
         .toBe(600);
       await page.getByRole('button', { name: 'Message 40', exact: true }).focus();
-      const scrolled = await page.evaluate(() => document.scrollingElement!.scrollTop);
       await page
         .getByRole('main')
         .getByRole('button', { name: 'Show details' })
         .evaluate((button: HTMLElement) => button.click());
       const sheet = page.getByRole('dialog', { name: 'Details' });
       await expect(sheet).toBeVisible();
+      // Where the page is as the sheet opens, once focus has scrolled it as far as it would: WebKit
+      // scrolls the focused message clear of the bars a moment later.
+      let scrolled = -1;
+      await expect
+        .poll(async () => {
+          const now = await page.evaluate(() => document.scrollingElement!.scrollTop);
+          const settled = now === scrolled;
+          scrolled = now;
+          return settled;
+        })
+        .toBe(true);
       await expect(sheet).toHaveAttribute('aria-modal', 'true');
       await expect(sheet).toHaveCSS('position', 'fixed');
       // What a fixed box covers: the window, less the room the page keeps for its scrollbar.
