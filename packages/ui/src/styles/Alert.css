@@ -94,7 +94,8 @@
 
 /* A title or message given as undefined, as over a placeholder item, takes no room outside a
    skeleton; in one it is a bar. */
-:is(.env-alert-title, .env-alert-message):empty:not([data-env-skeleton] *) {
+.env-alert-title:empty:not([data-env-skeleton] *),
+.env-alert-message:empty:not([data-env-skeleton] *) {
   display: none;
 }
 [data-env-skeleton] :is(.env-alert-title, .env-alert-message) {

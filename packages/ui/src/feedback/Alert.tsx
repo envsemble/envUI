@@ -3,7 +3,7 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { CheckCircle } from '../icons/CheckCircle.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
@@ -90,23 +90,26 @@ export function Alert(allProps: AlertProps) {
         />
       }
     >
-      <SkeletonScope skeleton={skeleton}>
-        {symbol !== false && symbol != null && (
-          <span className="env-alert-icon">
-            <DecorativeIcon>{symbol}</DecorativeIcon>
-          </span>
-        )}
-        <Grid gap={1} className="env-alert-content">
-          {hasTitle && <div className="env-alert-title">{title}</div>}
-          {hasMessage && <div className="env-alert-message">{children}</div>}
-          {action != null && (
-            <Row wrap gap={2} className="env-alert-action">
-              {action}
-            </Row>
+      {inSkeleton(
+        skeleton,
+        <>
+          {symbol !== false && symbol != null && (
+            <span className="env-alert-icon">
+              <DecorativeIcon>{symbol}</DecorativeIcon>
+            </span>
           )}
-        </Grid>
-        {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
-      </SkeletonScope>
+          <Grid gap={1} className="env-alert-content">
+            {hasTitle && <div className="env-alert-title">{title}</div>}
+            {hasMessage && <div className="env-alert-message">{children}</div>}
+            {action != null && (
+              <Row wrap gap={2} className="env-alert-action">
+                {action}
+              </Row>
+            )}
+          </Grid>
+          {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
+        </>,
+      )}
     </Grid>
   );
 }

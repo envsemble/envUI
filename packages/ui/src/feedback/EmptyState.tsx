@@ -3,7 +3,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Column, Grid } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
@@ -70,17 +70,20 @@ export function EmptyState(allProps: EmptyStateProps) {
       data-tone={tone}
       data-align={align}
     >
-      <SkeletonScope skeleton={skeleton}>
-        {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
-        <Column gap={2} className="env-empty-state-description">
-          <Text render={createElement(`h${headingLevel}`)} variant="title">
-            {title}
-          </Text>
-          {hasDescription && <Text variant="body-sm">{description}</Text>}
-          {children}
-        </Column>
-        {action}
-      </SkeletonScope>
+      {inSkeleton(
+        skeleton,
+        <>
+          {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
+          <Column gap={2} className="env-empty-state-description">
+            <Text render={createElement(`h${headingLevel}`)} variant="title">
+              {title}
+            </Text>
+            {hasDescription && <Text variant="body-sm">{description}</Text>}
+            {children}
+          </Column>
+          {action}
+        </>,
+      )}
     </Grid>
   );
 }

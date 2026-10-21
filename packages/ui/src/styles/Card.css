@@ -42,7 +42,9 @@
 
 /* A title, meta or description given as undefined, as over a placeholder item, takes no room
    outside a skeleton; in one it is a bar. */
-:is(.env-card-heading, .env-card-meta, .env-card-description):empty:not([data-env-skeleton] *),
+.env-card-heading:empty:not([data-env-skeleton] *),
+.env-card-meta:empty:not([data-env-skeleton] *),
+.env-card-description:empty:not([data-env-skeleton] *),
 .env-card-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {
   display: none;
 }

@@ -11,7 +11,7 @@ import { TrendingDown } from '../icons/TrendingDown.js';
 import { TrendingFlat } from '../icons/TrendingFlat.js';
 import { TrendingUp } from '../icons/TrendingUp.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type TrendTone = 'neutral' | 'success' | 'warning' | 'danger';
@@ -77,28 +77,31 @@ function Root(allProps: RootProps) {
       {...skeletonAttributes(skeleton)}
       className={classNames('env-stat', className)}
     >
-      <SkeletonScope skeleton={skeleton}>
-        <div className="env-stat-label">{label}</div>
-        <div className="env-stat-value">{value}</div>
-        {(trend != null || hasDescription) && (
-          <Row wrap align="center" className="env-stat-footer">
-            {trend != null && (
-              <Row
-                render={<span />}
-                align="center"
-                gap={1}
-                className="env-stat-trend"
-                data-direction={trend.direction}
-                data-tone={trend.tone ?? trendTones[trend.direction]}
-              >
-                <DecorativeIcon>{trendIcons[trend.direction]}</DecorativeIcon>
-                <span>{trend.label}</span>
-              </Row>
-            )}
-            {hasDescription && <span className="env-stat-description">{description}</span>}
-          </Row>
-        )}
-      </SkeletonScope>
+      {inSkeleton(
+        skeleton,
+        <>
+          <div className="env-stat-label">{label}</div>
+          <div className="env-stat-value">{value}</div>
+          {(trend != null || hasDescription) && (
+            <Row wrap align="center" className="env-stat-footer">
+              {trend != null && (
+                <Row
+                  render={<span />}
+                  align="center"
+                  gap={1}
+                  className="env-stat-trend"
+                  data-direction={trend.direction}
+                  data-tone={trend.tone ?? trendTones[trend.direction]}
+                >
+                  <DecorativeIcon>{trendIcons[trend.direction]}</DecorativeIcon>
+                  <span>{trend.label}</span>
+                </Row>
+              )}
+              {hasDescription && <span className="env-stat-description">{description}</span>}
+            </Row>
+          )}
+        </>,
+      )}
     </Grid>
   );
 }

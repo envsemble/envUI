@@ -10,7 +10,7 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../internal/inSkeleton.js';
 import { Text } from '../foundations/Text.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -60,7 +60,7 @@ function Root({
         onReorder={onReorder}
         className={className}
       >
-        <SkeletonScope skeleton={skeleton}>{markReorderable(children)}</SkeletonScope>
+        {inSkeleton(skeleton, markReorderable(children))}
       </ReorderableList>
     );
   return (
@@ -74,7 +74,7 @@ function Root({
         />
       }
     >
-      <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
+      {inSkeleton(skeleton, children)}
     </Grid>
   );
 }
@@ -217,15 +217,18 @@ function Item(props: ItemProps) {
           {start}
         </Row>
       )}
-      <SkeletonScope skeleton={skeleton}>
-        <div className="env-list-item-content">
-          {/* A missing label, as over a placeholder item, is an empty line: a bar in a skeleton. */}
-          {shownLabel ?? <Text render={<span />} variant="body-sm" />}
-          {hasDescription && <small>{shownDescription}</small>}
-          {shownChildren}
-        </div>
-        {action}
-      </SkeletonScope>
+      {inSkeleton(
+        skeleton,
+        <>
+          <div className="env-list-item-content">
+            {/* A missing label, as over a placeholder item, is an empty line: a bar in a skeleton. */}
+            {shownLabel ?? <Text render={<span />} variant="body-sm" />}
+            {hasDescription && <small>{shownDescription}</small>}
+            {shownChildren}
+          </div>
+          {action}
+        </>,
+      )}
     </Row>
   );
 }

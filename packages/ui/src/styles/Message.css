@@ -87,7 +87,8 @@
 /* An author or meta given as undefined, as over a placeholder item, takes no room outside a
    skeleton. In one, missing text is a bar: the author's and the meta's short, another person's
    message three lines, and one's own a line in its bubble. */
-:is(.env-message-author, .env-message-meta):empty:not([data-env-skeleton] *) {
+.env-message-author:empty:not([data-env-skeleton] *),
+.env-message-meta:empty:not([data-env-skeleton] *) {
   display: none;
 }
 .env-message-header:not(:has(> :not(:empty))):not([data-env-skeleton] *) {

@@ -6,7 +6,7 @@ import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
-import { SkeletonScope } from '../foundations/SkeletonScope.js';
+import { inSkeleton } from '../internal/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type MessageStatus = 'sending' | 'failed';
@@ -91,36 +91,42 @@ export function Message(allProps: MessageProps) {
         />
       }
     >
-      <SkeletonScope skeleton={skeleton}>
-        {(hasAuthor || hasMeta) && (
-          <Row render={<header />} wrap className="env-message-header">
-            {hasAuthor && <span className="env-message-author">{author}</span>}
-            {hasMeta && <span className="env-message-meta">{meta}</span>}
-          </Row>
-        )}
-        <div className="env-message-content" data-text={typeof children === 'string' || undefined}>
-          {children}
-        </div>
-        {status != null && (
-          <Row align="center" gap={1} className="env-message-status">
-            {status === 'sending' ? (
-              <Spinner size="sm" />
-            ) : (
-              <DecorativeIcon>
-                <ErrorIcon />
-              </DecorativeIcon>
-            )}
-            <MessageStatusLabel status={status} label={statusLabel} />
-          </Row>
-        )}
-        {present(actions) && (
-          <Row wrap align="center" gap={1} className="env-message-actions">
-            <ControlDefaults variant="ghost" size="sm">
-              {actions}
-            </ControlDefaults>
-          </Row>
-        )}
-      </SkeletonScope>
+      {inSkeleton(
+        skeleton,
+        <>
+          {(hasAuthor || hasMeta) && (
+            <Row render={<header />} wrap className="env-message-header">
+              {hasAuthor && <span className="env-message-author">{author}</span>}
+              {hasMeta && <span className="env-message-meta">{meta}</span>}
+            </Row>
+          )}
+          <div
+            className="env-message-content"
+            data-text={typeof children === 'string' || undefined}
+          >
+            {children}
+          </div>
+          {status != null && (
+            <Row align="center" gap={1} className="env-message-status">
+              {status === 'sending' ? (
+                <Spinner size="sm" />
+              ) : (
+                <DecorativeIcon>
+                  <ErrorIcon />
+                </DecorativeIcon>
+              )}
+              <MessageStatusLabel status={status} label={statusLabel} />
+            </Row>
+          )}
+          {present(actions) && (
+            <Row wrap align="center" gap={1} className="env-message-actions">
+              <ControlDefaults variant="ghost" size="sm">
+                {actions}
+              </ControlDefaults>
+            </Row>
+          )}
+        </>,
+      )}
     </Grid>
   );
 }
