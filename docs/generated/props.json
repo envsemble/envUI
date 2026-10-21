@@ -5744,6 +5744,36 @@
         "@envsemble/envui"
       ]
     },
+    "PortalContainer": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/PortalContainer.tsx",
+      "description": "Renders envUI's overlays inside it, popups, dialogs, sheets and toasts, into another element than the document's body, and with `contained`, as part of that element.",
+      "props": [
+        {
+          "name": "container",
+          "type": "HTMLElement | null",
+          "required": true,
+          "description": "The element that envUI's popups, dialogs, sheets and toasts inside render into, in place of the document's body, such as an element in a shadow root or in an iframe's document. Pass null while the element mounts: overlays wait for it."
+        },
+        {
+          "name": "contained",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "native": [],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "Progress": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Progress.tsx",
@@ -6703,6 +6733,13 @@
           "type": "(value: string | null) => void",
           "required": false,
           "description": "Receives the value of the option people choose."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the list starts open, such as in a picture of the open list."
         },
         {
           "name": "name",
@@ -8463,6 +8500,13 @@
           "required": false,
           "default": "400",
           "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the tooltip starts open, such as in a picture of the interface; it then closes as an opened one does."
         }
       ],
       "native": [

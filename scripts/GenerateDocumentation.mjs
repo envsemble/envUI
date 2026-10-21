@@ -543,17 +543,23 @@ function headingProblems(token) {
 /**
  * A figure of a page on the figure template: ```tsx example=Name```, a do or don't figure
  * ```tsx do=Name caption="…"``` or ```tsx dont=Name caption="…"```, or an anatomy figure
- * ```tsx anatomy=Name```, each with optional attributes.
+ * ```tsx anatomy=Name```, each with optional attributes, written name="value", and flags, such as
+ * `open`, written as their name alone.
  */
 const figurePattern =
-  /^tsx\s+(example|do|dont|anatomy)=(\S+)((?:\s+[a-z]+=(?:"[^"]*"|[^\s"]+))*)\s*$/;
+  /^tsx\s+(example|do|dont|anatomy)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
 /** The attributes each kind of figure takes, and those it needs. */
 const figureAttributes = {
-  example: { allowed: ['caption', 'widths'], required: [] },
-  do: { allowed: ['caption'], required: ['caption'] },
-  dont: { allowed: ['caption'], required: ['caption'] },
-  anatomy: { allowed: ['caption', 'of'], required: [] },
+  example: { allowed: ['caption', 'widths', 'open'], required: [] },
+  do: { allowed: ['caption', 'open'], required: ['caption'] },
+  dont: { allowed: ['caption', 'open'], required: ['caption'] },
+  anatomy: { allowed: ['caption', 'of', 'open'], required: [] },
 };
+/**
+ * The attributes that are flags, written without a value: `open` shows the example's overlays
+ * open on its stage, contained.
+ */
+const figureFlags = new Set(['open']);
 /** A file name as words: ConnectedButtons is "Connected buttons". */
 const fileWords = (name) =>
   name
@@ -688,19 +694,25 @@ function readFigures(document, body, { examples, specimens, partNames }) {
       const match = (token.lang ?? '').match(figurePattern);
       if (!match) {
         problems.push(
-          `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, \`tsx do=Name caption="…"\`, \`tsx dont=Name caption="…"\` or \`tsx anatomy=Name\`, with attributes as name="value"`,
+          `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, \`tsx do=Name caption="…"\`, \`tsx dont=Name caption="…"\` or \`tsx anatomy=Name\`, with attributes as name="value" and flags, such as open, as their name alone`,
         );
         continue;
       }
       const [, role, name, rest] = match;
       const attributes = {};
-      for (const [, key, quoted, plain] of rest.matchAll(/\s+([a-z]+)=(?:"([^"]*)"|([^\s"]+))/g)) {
+      for (const [, key, value, quoted, plain] of rest.matchAll(
+        /\s+([a-z]+)(=(?:"([^"]*)"|([^\s"]+)))?/g,
+      )) {
         if (!figureAttributes[role].allowed.includes(key))
           problems.push(
             `${role} ${name} takes no ${key}${figureAttributes[role].allowed.length ? `; it takes ${figureAttributes[role].allowed.join(', ')}` : ''}`,
           );
+        else if (figureFlags.has(key) && value)
+          problems.push(`${role} ${name} has ${key}${value}; write the flag ${key} alone`);
+        else if (!figureFlags.has(key) && !value)
+          problems.push(`${role} ${name} has ${key} without a value; write ${key}="…"`);
         if (key in attributes) problems.push(`${role} ${name} repeats ${key}`);
-        attributes[key] = (quoted ?? plain).trim();
+        attributes[key] = value ? (quoted ?? plain).trim() : true;
       }
       for (const key of figureAttributes[role].required)
         if (!attributes[key]) problems.push(`${role} ${name} needs ${key}="…", one sentence`);
@@ -744,6 +756,7 @@ function readFigures(document, body, { examples, specimens, partNames }) {
         block.widths = widths;
       }
       if (attributes.of !== undefined) block.of = attributes.of;
+      if (attributes.open === true) block.open = true;
       blocks.push(block);
       if (role === 'anatomy') legendOf = block;
       continue;
@@ -1285,6 +1298,7 @@ export function compileDocument(document, documents, { props, examples = example
         const info = [
           `${block.role ?? 'example'}=${block.name}`,
           block.of && `of=${block.of}`,
+          block.open && 'open',
           block.widths && `widths="${block.widths.join(' ')}"`,
           block.caption && `caption="${block.caption}"`,
         ]

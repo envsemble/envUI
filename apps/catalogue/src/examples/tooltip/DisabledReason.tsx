@@ -2,9 +2,13 @@ import { Button, Column, Text, Tooltip } from '@envsemble/envui';
 import { PersonAdd } from '@envsemble/envui/icons/PersonAdd';
 
 export default function DisabledReason() {
+  // Shown open in the docs; without defaultOpen, it opens on hover.
   return (
     <Column gap={2} align="start">
-      <Tooltip content="All seats are assigned. Remove a member to invite someone else.">
+      <Tooltip
+        content="All seats are assigned. Remove a member to invite someone else."
+        defaultOpen
+      >
         <Button disabled startIcon={<PersonAdd />}>
           Invite member
         </Button>

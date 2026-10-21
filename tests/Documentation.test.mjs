@@ -651,7 +651,7 @@ const figureBody = [
   '',
   '```',
   '',
-  '```tsx dont=OnSubmit caption="Don\'t use a switch in a form that applies on submit."',
+  '```tsx dont=OnSubmit open caption="Don\'t use a switch in a form that applies on submit."',
   '',
   '```',
   '',
@@ -717,6 +717,9 @@ test('a component page with a When to use section is on the figure template', as
       { part: 'env-switch-input', text: '`env-switch-input`' },
     ]);
     assert.deepEqual(figure('Narrow').widths, [16, 30]);
+    // The flag open shows the example's overlays open; other figures leave it out.
+    assert.equal(figure('OnSubmit').open, true);
+    assert.equal(figure('Instant').open, undefined);
 
     // The packaged page keeps the figures' kinds and attributes, and the legend.
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
@@ -726,6 +729,7 @@ test('a component page with a When to use section is on the figure template', as
         `\`\`\`tsx do=Instant caption="Use a switch for a setting that applies at once."\n${switchExample}\`\`\``,
       ),
     );
+    assert.ok(compiled.includes('```tsx dont=OnSubmit open caption="Don\'t use a switch'));
     assert.match(
       compiled,
       /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-input`\n/,
@@ -756,6 +760,11 @@ test('a page on the figure template rejects what breaks its form', async () => {
       body.replace('anatomy=Parts', 'anatomy=Parts size=lg'),
       /anatomy Parts takes no size/,
     );
+    await rejects(
+      body.replace('dont=OnSubmit open', 'dont=OnSubmit open=yes'),
+      /write the flag open alone/,
+    );
+    await rejects(body.replace('anatomy=Parts', 'anatomy=Parts of'), /has of without a value/);
     await rejects(
       body.replace('2. `env-switch-input`', '2. The thumb.'),
       /item 2 of the legend of anatomy Parts names no part/,

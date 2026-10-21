@@ -76,19 +76,19 @@ Write the shortcut after the name, and give the control `aria-keyshortcuts`.
 
 ## When to use
 
-```tsx do=IconOnlyNamed caption="Name an icon-only control."
+```tsx do=IconOnlyNamed open caption="Name an icon-only control."
 
 ```
 
-```tsx dont=RepeatsLabel caption="A tooltip that repeats a visible label."
+```tsx dont=RepeatsLabel open caption="A tooltip that repeats a visible label."
 
 ```
 
-```tsx do=DisabledReason caption="Say why a control is disabled in the page too."
+```tsx do=DisabledReason open caption="Say why a control is disabled in the page too."
 
 ```
 
-```tsx dont=ReasonOnlyInTooltip caption="The reason only in a tooltip, which touch screens never show."
+```tsx dont=ReasonOnlyInTooltip open caption="The reason only in a tooltip, which touch screens never show."
 
 ```
 
@@ -96,13 +96,24 @@ Write the shortcut after the name, and give the control `aria-keyshortcuts`.
 
 ### Content
 
-```tsx do=ShortName caption="A few words, the same as the control’s accessible name."
+```tsx do=ShortName open caption="A few words, the same as the control’s accessible name."
 
 ```
 
-```tsx dont=LongTooltip caption="A paragraph people must hold the pointer still to read."
+```tsx dont=LongTooltip open caption="A paragraph people must hold the pointer still to read."
 
 ```
+
+## Anatomy
+
+```tsx anatomy=TooltipAnatomy open
+
+```
+
+1. **Tooltip** (`env-tooltip`, `content`)
+2. **Control** (`env-icon-button`, `children`)
+
+Not shown: the wrapper that takes the pointer for a disabled control, `env-tooltip-disabled-target`.
 
 ## Accessibility
 

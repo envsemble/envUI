@@ -138,7 +138,13 @@ Name the select with a short noun, and say in a disabled option's label why it i
 5. **Chevron** (`env-select-icon`)
 6. **Description** (`env-field-description`, `description`)
 
-Not shown: the open list's popup, `env-select-popup`, and its options, `env-select-item`, with the chosen one's check, `env-select-item-indicator`.
+```tsx anatomy=SelectListAnatomy open
+
+```
+
+1. **List** (`env-select-popup`)
+2. **Option** (`env-select-item`, `items`)
+3. **Check** (`env-select-item-indicator`)
 
 ## Accessibility
 

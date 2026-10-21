@@ -116,6 +116,17 @@ Under every figure the catalogue shows a closed Code toggle with the file's sour
 | ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                          | `caption`, required: what not to do and why, as one sentence. |
 | ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts. | `of`: see below. `caption`: a sentence below it.              |
 
+Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
+
+### Open overlays
+
+A popup, a menu, a tooltip, a dialog, a sheet or a toast renders in a portal, outside the figure, so a figure of it shows only its trigger. With `open` on its fence, a figure shows it open, as a picture: the catalogue renders the example's overlays into its stage through envUI's `PortalContainer`, `contained`, so they neither lock the page's scroll, take focus nor close when the reader presses elsewhere, and the figure is inert.
+
+- The example opens them itself, as an application would: `defaultOpen` on a Menu.Root, Dialog, Select, Tooltip or Popover, an `open` state that starts true for a CommandPalette, and a toast shown from an effect with `duration: Infinity`, dismissed in its cleanup. Say so in a comment, such as "Shown open after a send with a mistyped address."
+- A popup opens beside its trigger, and the figure centres the two together on the stage, growing to hold them; a dialog, a sheet or a palette is placed on the stage, over its scrim, which fills the stage; a toast sits at the stage's edge, clear of the trigger.
+- In an anatomy figure, the callouts number the open parts like any other, and keep clear of what opens a popup, such as a select's field; the scrim is left out, so name it in the sentence below. Leave out the trigger where the anatomy is of the overlay, such as a dialog without `trigger`.
+- Use it for figures whose point is in the open overlay: a menu's items, a dialog's buttons, a tooltip's words, a toast's message. A figure whose point is the trigger stays closed.
+
 ### Examples at several widths
 
 `widths="16 30"` shows the example in a frame of each width in rem, one to a row, each centred on its own stage with its width outlined and labelled, where it responds to that width: its container queries see the frame. Choose widths on either side of where the component changes, such as `widths="24 40"` around a card's 38 rem. Where a frame is wider than the page, its stage scrolls.

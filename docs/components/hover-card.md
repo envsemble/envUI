@@ -60,17 +60,26 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ## When to use
 
-```tsx do=NameAndFacts caption="The name, then one or two facts that help decide."
+```tsx do=NameAndFacts open caption="The name, then one or two facts that help decide."
 
 ```
 
-```tsx dont=RepeatsTrigger caption="A card that only repeats what the link says."
+```tsx dont=RepeatsTrigger open caption="A card that only repeats what the link says."
 
 ```
 
 - Keep the details supplementary: the page the link leads to has them too, as touch screens have no hover.
 - No links, buttons or fields in the card: the keyboard and touch can't reach them.
 - No Tooltip around a HoverCard or as its trigger; put what it would say in the card.
+
+## Anatomy
+
+```tsx anatomy=HoverCardAnatomy open
+
+```
+
+1. **Card** (`env-hover-card`, `children`)
+2. **Trigger** (`env-link`, `trigger`)
 
 ## Accessibility
 

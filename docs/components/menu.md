@@ -137,19 +137,19 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ## When to use
 
-```tsx do=FrequentFirst caption="Frequent actions first, and a destructive one last, apart."
+```tsx do=FrequentFirst open caption="Frequent actions first, and a destructive one last, apart."
 
 ```
 
-```tsx dont=DeleteFirst caption="Delete first, where the keyboard lands."
+```tsx dont=DeleteFirst open caption="Delete first, where the keyboard lands."
 
 ```
 
-```tsx do=DisabledWithReason caption="Keep an unavailable item, disabled, with a description of why."
+```tsx do=DisabledWithReason open caption="Keep an unavailable item, disabled, with a description of why."
 
 ```
 
-```tsx dont=HiddenItem caption="An item that disappears, so people wonder where it went."
+```tsx dont=HiddenItem open caption="An item that disappears, so people wonder where it went."
 
 ```
 
@@ -158,16 +158,32 @@ With `href`, an item is a link, through the `LinkProvider`.
 
 ### Content
 
-```tsx do=ConsistentIcons caption="An icon on every item of a set, or on none."
+```tsx do=ConsistentIcons open caption="An icon on every item of a set, or on none."
 
 ```
 
-```tsx dont=MixedIcons caption="An icon on one item only: it stands out for no reason."
+```tsx dont=MixedIcons open caption="An icon on one item only: it stands out for no reason."
 
 ```
 
 - Start an action with a verb, such as Rename, and name a destination after its page.
 - Show a `shortcut` only where the application handles its keys.
+
+## Anatomy
+
+```tsx anatomy=MenuAnatomy open
+
+```
+
+1. **Menu** (`env-menu`)
+2. **Group label** (`env-menu-group-label`, `label`)
+3. **Item** (`env-menu-item`)
+4. **Icon** (`env-menu-item env-icon`, `icon`)
+5. **Shortcut** (`env-menu-item-shortcut`, `shortcut`)
+6. **Description** (`env-menu-item-description`, `description`)
+7. **Separator** (`env-menu-separator`)
+
+Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choice, `env-menu-item-check`.
 
 ## Accessibility
 

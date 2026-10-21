@@ -11,6 +11,7 @@ import {
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Grid } from '../foundations/Layout.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 
@@ -118,10 +119,14 @@ export function Popover({
   const close = () => setOpen(false, 'close-press');
   // The popup takes the text direction at its trigger.
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const portal = usePortalContainer();
   return (
     <BasePopover.Root
       open={open}
-      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        else setOpen(next, details.reason as PopoverOpenChangeReason);
+      }}
     >
       <BasePopover.Trigger ref={triggerRef} render={trigger} />
       <PopupSurface

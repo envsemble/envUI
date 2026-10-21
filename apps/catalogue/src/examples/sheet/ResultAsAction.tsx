@@ -4,6 +4,8 @@ import { FilterList } from '@envsemble/envui/icons/FilterList';
 export default function ResultAsAction() {
   return (
     <Sheet
+      // Shown open in the docs; without defaultOpen, it opens from its trigger.
+      defaultOpen
       trigger={
         <Button variant="secondary" startIcon={<FilterList />}>
           Filters

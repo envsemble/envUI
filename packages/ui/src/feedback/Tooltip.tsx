@@ -26,6 +26,7 @@ import {
   TooltipPopup,
   type TooltipSide,
 } from './internal/TooltipPopup.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 
 /** The props of the control a Tooltip describes, as far as the tooltip reads them. */
 interface TriggerProps {
@@ -77,6 +78,12 @@ export interface TooltipProps
    * @default 400
    */
   delay?: number;
+  /**
+   * Whether the tooltip starts open, such as in a picture of the interface; it then closes as an
+   * opened one does.
+   * @default false
+   */
+  defaultOpen?: boolean;
 }
 
 /** The control's own accessible name, where its props give one as text: a first guess. */
@@ -260,7 +267,15 @@ function useControl(children: ReactElement<TriggerProps>, forwarded: Forwarded) 
  * Popover; popupClassName styles the tooltip's popup.
  */
 export function Tooltip(props: TooltipProps) {
-  const { content, children, side = 'top', delay = 400, popupClassName, ...forwarded } = props;
+  const {
+    content,
+    children,
+    side = 'top',
+    delay = 400,
+    defaultOpen = false,
+    popupClassName,
+    ...forwarded
+  } = props;
   const hoverCardTrigger = useContext(HoverCardTriggerContext);
   // Text, a Fragment or a list can't take the trigger's props and ref.
   if (!isValidElement(children) || children.type === Fragment) {
@@ -295,6 +310,7 @@ export function Tooltip(props: TooltipProps) {
       content={content}
       side={side}
       delay={delay}
+      defaultOpen={defaultOpen}
       popupClassName={popupClassName}
       forwarded={forwarded}
     >
@@ -320,6 +336,7 @@ function TooltipTrigger({
   children,
   side,
   delay,
+  defaultOpen,
   popupClassName,
   forwarded,
 }: {
@@ -327,6 +344,7 @@ function TooltipTrigger({
   children: ReactElement<TriggerProps>;
   side: TooltipSide;
   delay: number;
+  defaultOpen: boolean;
   popupClassName?: string;
   forwarded: Forwarded;
 }) {
@@ -337,8 +355,9 @@ function TooltipTrigger({
   // closes that popup and the tooltip doesn't cover it.
   const expanded = isExpanded(trigger);
   const popupId = `${useId()}-tooltip`;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultOpen);
   if (open && expanded) setOpen(false);
+  const portal = usePortalContainer();
   // The tooltip takes the text direction at its trigger, the control or its wrapper.
   const triggerRef = useRef<HTMLButtonElement>(null);
   // Once the popup closes, such as on Esc, focus returns to the control: that focus opens no
@@ -432,6 +451,10 @@ function TooltipTrigger({
         key={isDisabled ? 'disabled' : 'enabled'}
         open={open}
         onOpenChange={(next, details) => {
+          if (keepsOpen(portal, next, details, triggerRef.current)) {
+            details.cancel();
+            return;
+          }
           if (next && expanded) return;
           if (next && returning.current) {
             if (

@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
+import { OpenExample } from './OpenExample';
 
 /**
  * Every example file, rendered live, and its source as text, each loaded with the page that shows
@@ -181,14 +182,24 @@ export function LiveExample({
   title,
   caption,
   widths,
+  open = false,
 }: {
   page: string;
   name: string;
   title: string;
   caption?: string;
   widths?: number[];
+  /** Whether the example's overlays are shown open, as a picture. */
+  open?: boolean;
 }) {
   const theme = useTheme();
+  const render = open ? (
+    <OpenExample name={name}>
+      <ExampleRender page={page} name={name} />
+    </OpenExample>
+  ) : (
+    <ExampleRender page={page} name={name} />
+  );
   return (
     <Column gap={3} className="docs-live-example-entry">
       {widths ? (
@@ -213,7 +224,7 @@ export function LiveExample({
                 role="group"
               >
                 <div className="docs-width-box" style={{ inlineSize: `${width}rem` }}>
-                  <ExampleRender page={page} name={name} />
+                  {render}
                 </div>
               </Column>
               <Text render={<figcaption />} variant="caption" emphasis="muted">
@@ -228,12 +239,12 @@ export function LiveExample({
           container="env-window"
           gap={0}
           role="group"
-          aria-label={`${title} example`}
+          aria-label={open ? `${title} example, shown open as a picture` : `${title} example`}
           className="docs-live-example"
           data-example={name}
           {...keepLinksInPlace}
         >
-          <ExampleRender page={page} name={name} />
+          {render}
         </Column>
       )}
       {caption && (

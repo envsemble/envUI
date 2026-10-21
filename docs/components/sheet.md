@@ -77,17 +77,32 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 ## When to use
 
-```tsx do=ResultAsAction caption="A primary action named after its result."
+```tsx do=ResultAsAction open caption="A primary action named after its result."
 
 ```
 
-```tsx dont=VagueAction caption="Apply: people can't tell what they will see."
+```tsx dont=VagueAction open caption="Apply: people can't tell what they will see."
 
 ```
 
 - Name the sheet after what it holds, such as Filters or Alex Morgan, with a `title` or an `aria-label`.
 - Keep the close button unless another control in the sheet closes it.
 - Show the next level inside the sheet rather than opening another; side content that fits beside the page is a [Panes](panes.md) supporting pane.
+
+## Anatomy
+
+```tsx anatomy=SheetAnatomy open
+
+```
+
+1. **Sheet** (`env-sheet-popup`)
+2. **Title** (`env-dialog-title`, `title`)
+3. **Description** (`env-dialog-description`, `description`)
+4. **Close button** (`env-close-button`, `closeLabel`)
+5. **Content** (`env-sheet-popup env-checkbox`, `children`)
+6. **Action** (`env-dialog-actions > env-button`, `actions`)
+
+Not shown: the scrim behind a modal sheet, `env-sheet-backdrop`.
 
 ## Accessibility
 

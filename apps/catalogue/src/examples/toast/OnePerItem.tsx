@@ -1,12 +1,21 @@
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { useEffect } from 'react';
+import { Button, Toast, useToast, type ToastNotification } from '@envsemble/envui';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
+// Wrong: one action, and a notification for each person it reached.
+const invited = people.map(
+  (person): ToastNotification => ({ tone: 'success', message: `Invited ${person}.` }),
+);
 
 function InviteButton() {
   const toast = useToast();
-  // Wrong: one action, and a notification for each person it reached.
-  const invite = () =>
-    people.forEach((person) => toast.show({ tone: 'success', message: `Invited ${person}.` }));
+  // Shown at once in the docs, as after a press, and kept until they are dismissed; without this
+  // effect, the button shows them.
+  useEffect(() => {
+    const ids = invited.map((notification) => toast.show({ ...notification, duration: Infinity }));
+    return () => ids.forEach((id) => toast.dismiss(id));
+  }, [toast]);
+  const invite = () => invited.forEach((notification) => toast.show(notification));
   return <Button onClick={invite}>Invite 3 people</Button>;
 }
 

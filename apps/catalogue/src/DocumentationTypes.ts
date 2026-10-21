@@ -54,6 +54,8 @@ export type DocumentationBlock =
       widths?: number[];
       /** The component of docs/generated/parts.json an anatomy figure without a legend numbers. */
       of?: string;
+      /** Whether the figure shows the example's overlays open, contained in its stage. */
+      open?: boolean;
       /** An anatomy figure's legend: each numbered part by its class name, and what it is. */
       legend?: AnatomyLegendItem[];
     }

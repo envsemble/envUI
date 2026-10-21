@@ -4644,6 +4644,12 @@
           "title": "Select anatomy",
           "description": "",
           "file": "docs/examples/select/SelectAnatomy.tsx"
+        },
+        {
+          "name": "SelectListAnatomy",
+          "title": "Select anatomy",
+          "description": "",
+          "file": "docs/examples/select/SelectListAnatomy.tsx"
         }
       ],
       "parts": {
@@ -5248,6 +5254,12 @@
           "title": "Combobox anatomy",
           "description": "",
           "file": "docs/examples/combobox/ComboboxAnatomy.tsx"
+        },
+        {
+          "name": "ComboboxListAnatomy",
+          "title": "Combobox anatomy",
+          "description": "",
+          "file": "docs/examples/combobox/ComboboxListAnatomy.tsx"
         },
         {
           "name": "WrappingChips",
@@ -12612,6 +12624,12 @@
           "title": "Don't: A message that only repeats the tone.",
           "description": "",
           "file": "docs/examples/toast/GenericSuccess.tsx"
+        },
+        {
+          "name": "ToastAnatomy",
+          "title": "Toast anatomy",
+          "description": "",
+          "file": "docs/examples/toast/ToastAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13060,6 +13078,12 @@
           "title": "Don't: Are you sure? with Yes and No: neither says what happens.",
           "description": "",
           "file": "docs/examples/dialog/AreYouSure.tsx"
+        },
+        {
+          "name": "DialogAnatomy",
+          "title": "Dialog anatomy",
+          "description": "",
+          "file": "docs/examples/dialog/DialogAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13274,6 +13298,12 @@
           "title": "Don't: Apply: people can't tell what they will see.",
           "description": "",
           "file": "docs/examples/sheet/VagueAction.tsx"
+        },
+        {
+          "name": "SheetAnatomy",
+          "title": "Sheet anatomy",
+          "description": "",
+          "file": "docs/examples/sheet/SheetAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13461,6 +13491,12 @@
           "title": "Don't: Yes and No: people read the question again to choose.",
           "description": "",
           "file": "docs/examples/confirm-dialog/YesNo.tsx"
+        },
+        {
+          "name": "ConfirmDialogAnatomy",
+          "title": "ConfirmDialog anatomy",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/ConfirmDialogAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13576,6 +13612,12 @@
           "title": "Don't: An empty list until people type.",
           "description": "",
           "file": "docs/examples/command-palette/EmptyUntilTyped.tsx"
+        },
+        {
+          "name": "CommandPaletteAnatomy",
+          "title": "CommandPalette anatomy",
+          "description": "",
+          "file": "docs/examples/command-palette/CommandPaletteAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13922,6 +13964,12 @@
           "title": "Don't: An icon on one item only: it stands out for no reason.",
           "description": "",
           "file": "docs/examples/menu/MixedIcons.tsx"
+        },
+        {
+          "name": "MenuAnatomy",
+          "title": "Menu anatomy",
+          "description": "",
+          "file": "docs/examples/menu/MenuAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14513,6 +14561,12 @@
           "title": "Don't: A paragraph people must hold the pointer still to read.",
           "description": "",
           "file": "docs/examples/tooltip/LongTooltip.tsx"
+        },
+        {
+          "name": "TooltipAnatomy",
+          "title": "Tooltip anatomy",
+          "description": "",
+          "file": "docs/examples/tooltip/TooltipAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14719,6 +14773,12 @@
           "title": "Don't: Paragraphs of help: too much to read beside the page.",
           "description": "",
           "file": "docs/examples/popover/LongHelp.tsx"
+        },
+        {
+          "name": "PopoverAnatomy",
+          "title": "Popover anatomy",
+          "description": "",
+          "file": "docs/examples/popover/PopoverAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14902,6 +14962,12 @@
           "title": "Don't: A card that only repeats what the link says.",
           "description": "",
           "file": "docs/examples/hover-card/RepeatsTrigger.tsx"
+        },
+        {
+          "name": "HoverCardAnatomy",
+          "title": "HoverCard anatomy",
+          "description": "",
+          "file": "docs/examples/hover-card/HoverCardAnatomy.tsx"
         }
       ],
       "parts": {
@@ -15328,6 +15394,7 @@
         "EnvUIProvider",
         "useLocale",
         "LinkProvider",
+        "PortalContainer",
         "createThemeBootstrapScript",
         "Theme",
         "ThemePreferenceProvider",
@@ -22565,6 +22632,42 @@
       "page": "popover",
       "doc": "docs/components/popover.md"
     },
+    "PortalContainer": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Renders envUI's overlays inside it, popups, dialogs, sheets and toasts, into another element than the document's body, and with `contained`, as part of that element.",
+      "props": [
+        {
+          "name": "container",
+          "type": "HTMLElement | null",
+          "required": true,
+          "description": "The element that envUI's popups, dialogs, sheets and toasts inside render into, in place of the document's body, such as an element in a shadow root or in an iframe's document. Pass null while the element mounts: overlays wait for it."
+        },
+        {
+          "name": "contained",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "native": [],
+      "aliases": [
+        "portal container",
+        "shadow root",
+        "iframe",
+        "overlay preview"
+      ],
+      "status": "beta",
+      "page": "setup",
+      "doc": "docs/setup.md"
+    },
     "Progress": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -23524,6 +23627,13 @@
           "type": "(value: string | null) => void",
           "required": false,
           "description": "Receives the value of the option people choose."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the list starts open, such as in a picture of the open list."
         },
         {
           "name": "name",
@@ -25295,6 +25405,13 @@
           "required": false,
           "default": "400",
           "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the tooltip starts open, such as in a picture of the interface; it then closes as an opened one does."
         }
       ],
       "native": [

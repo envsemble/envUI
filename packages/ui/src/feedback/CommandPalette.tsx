@@ -20,6 +20,11 @@ import { Search } from '../icons/Search.js';
 import { Kbd } from '../content/Kbd.js';
 import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
 
 export interface CommandPaletteItem {
   /** Stable identifier; options carry it as data-item-id. */
@@ -131,6 +136,7 @@ export function CommandPalette({
   ...popupProps
 }: CommandPaletteProps) {
   const theme = useTheme();
+  const portal = usePortalContainer();
   const locale = useLocale();
   const messages = useMessages('commandPalette', commandPalette);
   const input = useRef<HTMLInputElement>(null);
@@ -197,8 +203,18 @@ export function CommandPalette({
   );
 
   return (
-    <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
-      <BaseDialog.Portal>
+    <BaseDialog.Root
+      open={open}
+      onOpenChange={(next, eventDetails) => {
+        if (keepsOpen(portal, next, eventDetails)) {
+          eventDetails.cancel();
+          return;
+        }
+        onOpenChange(next);
+      }}
+      modal={containedModal(portal, true)}
+    >
+      <BaseDialog.Portal container={portal.container}>
         <OverlayTheme {...theme}>
           <ResetControlDefaults>
             <DialogBackdrop />
@@ -208,7 +224,8 @@ export function CommandPalette({
                 render={<Column padding={2} />}
                 className={classNames('env-command-palette', className)}
                 aria-label={label}
-                initialFocus={input}
+                initialFocus={portal.contained ? false : input}
+                {...(portal.contained && { finalFocus: false })}
               >
                 <BaseAutocomplete.Root
                   open

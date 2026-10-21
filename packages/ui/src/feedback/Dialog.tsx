@@ -18,6 +18,11 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 
 /**
@@ -186,22 +191,23 @@ export function Dialog({
   const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const closeLabel = ownCloseLabel ?? messages.close;
+  const portal = usePortalContainer();
   return (
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, eventDetails) => {
-        if (!next && pending) {
+        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
           eventDetails.cancel();
           return;
         }
         onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
-      modal={modal}
+      modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
-      <BaseDialog.Portal>
+      <BaseDialog.Portal container={portal.container}>
         <OverlayTheme {...theme}>
           <ResetControlDefaults>
             {modal && <DialogBackdrop />}
@@ -214,8 +220,8 @@ export function Dialog({
                 data-width={width}
                 aria-busy={pending || skeleton || undefined}
                 data-env-skeleton={skeleton ? '' : undefined}
-                initialFocus={initialFocus}
-                finalFocus={finalFocus}
+                initialFocus={portal.contained ? false : initialFocus}
+                finalFocus={portal.contained ? false : finalFocus}
               >
                 <DialogContent skeleton={skeleton}>
                   <DialogHeader title={title} description={description} />

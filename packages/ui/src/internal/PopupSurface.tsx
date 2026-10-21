@@ -2,9 +2,14 @@
 
 import { DirectionProvider, useDirection } from '@base-ui/react/direction-provider';
 import {
+  useCallback,
   useLayoutEffect,
+  useRef,
   useState,
+  type FocusEvent,
+  type Ref,
   type ComponentType,
+  type CSSProperties,
   type ReactElement,
   type ReactNode,
   type RefObject,
@@ -13,6 +18,12 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { classNames } from './classNames.js';
 import { ResetControlDefaults } from './ControlDefaults.js';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
+import { setRef } from './setRef.js';
+import {
+  containedCollisionAvoidance,
+  containedPopupStyle,
+  usePortalContainer,
+} from './PortalContainerContext.js';
 import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes } from './skeleton.js';
 
@@ -40,7 +51,7 @@ type FocusTarget = boolean | RefObject<HTMLElement | null> | ((type: string) => 
  * Tooltip or PreviewCard.
  */
 export interface PopupParts {
-  Portal: ComponentType<{ children?: ReactNode }>;
+  Portal: ComponentType<{ container?: HTMLElement | null; children?: ReactNode }>;
   // Each Base UI positioner takes more than the props PopupSurface passes.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Positioner: ComponentType<any>;
@@ -178,8 +189,37 @@ export function PopupSurface({
   children,
 }: PopupSurfaceProps) {
   const theme = useTheme();
+  const { container, contained } = usePortalContainer();
+  const ownStyle = popupProps?.style as CSSProperties | undefined;
+  const ownRef = popupProps?.ref as Ref<HTMLElement> | undefined;
+  const ownFocusCapture = popupProps?.onFocusCapture as
+    | ((event: FocusEvent<HTMLElement>) => void)
+    | undefined;
+  // When the popup appeared, to tell the focus Base UI moves into it as it opens.
+  const openedAt = useRef(0);
+  const attachPopup = useCallback(
+    (node: HTMLElement | null) => {
+      openedAt.current = node ? performance.now() : 0;
+      setRef(ownRef, node);
+    },
+    [ownRef],
+  );
+  /**
+   * In a contained container a popup takes no focus as it opens, such as a menu open from the
+   * start: focus that arrives in its first moments from outside the container and the trigger goes
+   * back where it was. Focus from the trigger, or that people move in later, stays.
+   */
+  const keepFocusOut = (event: FocusEvent<HTMLElement>) => {
+    ownFocusCapture?.(event);
+    if (performance.now() - openedAt.current > 500) return;
+    const from = event.relatedTarget;
+    const own = [container, trigger?.current, anchorElement(anchor), event.currentTarget];
+    if (from instanceof Node && own.some((element) => element?.contains(from))) return;
+    if (from instanceof HTMLElement) from.focus({ preventScroll: true });
+    else if (event.target instanceof HTMLElement) event.target.blur();
+  };
   return (
-    <Portal>
+    <Portal container={container}>
       <Directed dir={dir} anchor={anchor} trigger={trigger}>
         {(direction) => (
           <Theme {...theme} className="env-popup-theme" dir={direction}>
@@ -189,12 +229,18 @@ export function PopupSurface({
               sideOffset={sideOffset}
               {...(alignOffset !== undefined && { alignOffset })}
               collisionPadding={collisionPadding}
+              {...(contained && { collisionAvoidance: containedCollisionAvoidance })}
               {...(anchor !== undefined && { anchor })}
               className={classNames('env-popup-positioner', positionerClassName)}
             >
               <Popup
                 {...(layout && { render: layout })}
                 {...popupProps}
+                {...(contained && {
+                  style: { ...containedPopupStyle, ...ownStyle },
+                  ref: attachPopup,
+                  onFocusCapture: keepFocusOut,
+                })}
                 {...skeletonAttributes(skeleton)}
                 {...(initialFocus !== undefined && { initialFocus })}
                 {...(finalFocus !== undefined && { finalFocus })}

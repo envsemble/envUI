@@ -70,11 +70,11 @@ Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` return
 
 ## When to use
 
-```tsx do=DangerForDelete caption="tone=danger for an action that deletes."
+```tsx do=DangerForDelete open caption="tone=danger for an action that deletes."
 
 ```
 
-```tsx dont=NeutralForDelete caption="A neutral deletion: focus starts on Delete, so a hurried Enter deletes."
+```tsx dont=NeutralForDelete open caption="A neutral deletion: focus starts on Delete, so a hurried Enter deletes."
 
 ```
 
@@ -82,13 +82,27 @@ Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` return
 
 ### Content
 
-```tsx do=NameTheConsequence caption="Buttons that name what each choice does."
+```tsx do=NameTheConsequence open caption="Buttons that name what each choice does."
 
 ```
 
-```tsx dont=YesNo caption="Yes and No: people read the question again to choose."
+```tsx dont=YesNo open caption="Yes and No: people read the question again to choose."
 
 ```
+
+## Anatomy
+
+```tsx anatomy=ConfirmDialogAnatomy open
+
+```
+
+1. **Dialog** (`env-dialog-popup`)
+2. **Question** (`env-dialog-title`, `title`)
+3. **Description** (`env-dialog-description`, `description`)
+4. **Cancel** (`env-dialog-actions > env-button:first-child`, `cancelLabel`)
+5. **Confirm** (`env-dialog-actions > env-button:last-child`, `confirmLabel`)
+
+Not shown: the error of a failed action, an `env-alert` above the buttons.
 
 ## Accessibility
 

@@ -143,7 +143,14 @@ Name the field after what people choose, and use the placeholder for what to typ
 7. **Clear** (`env-combobox-clear`, `clearable`)
 8. **Trigger** (`env-combobox-trigger`)
 
-Not shown: the open list's popup, `env-combobox-popup`, and its options, `env-combobox-item`.
+```tsx anatomy=ComboboxListAnatomy open
+
+```
+
+1. **List** (`env-combobox-popup`)
+2. **Option** (`env-combobox-item`, `items`)
+3. **Leading content** (`env-combobox-item env-avatar`, `start`)
+4. **Check** (`env-combobox-item-indicator`)
 
 ## Adapting to width
 
