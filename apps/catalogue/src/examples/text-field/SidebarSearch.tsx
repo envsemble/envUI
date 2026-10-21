@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavList, SearchField, Column, Surface, Text } from '@envsemble/envui';
+import { NavigationDrawer, SearchField, Text } from '@envsemble/envui';
 
 const projects = [
   'Northwind launch',
@@ -16,9 +16,9 @@ export default function SidebarSearch() {
     project.toLowerCase().includes(query.trim().toLowerCase()),
   );
   return (
-    // As wide as a sidebar.
-    <Surface background="default" padding={3} style={{ inlineSize: 'min(100%, 16rem)' }}>
-      <Column gap={2}>
+    <NavigationDrawer
+      aria-label="Projects"
+      header={
         <SearchField
           variant="ghost"
           label="Find projects"
@@ -26,24 +26,19 @@ export default function SidebarSearch() {
           value={query}
           onValueChange={setQuery}
         />
-        {matches.length > 0 ? (
-          <NavList.Root aria-label="Projects">
-            {matches.map((project) => (
-              <NavList.Item
-                key={project}
-                selected={project === current}
-                onClick={() => setCurrent(project)}
-              >
-                {project}
-              </NavList.Item>
-            ))}
-          </NavList.Root>
-        ) : (
+      }
+      destinations={matches.map((project) => ({
+        label: project,
+        current: project === current,
+        onSelect: () => setCurrent(project),
+      }))}
+      footer={
+        matches.length === 0 && (
           <Text variant="caption" emphasis="muted">
             No projects match.
           </Text>
-        )}
-      </Column>
-    </Surface>
+        )
+      }
+    />
   );
 }

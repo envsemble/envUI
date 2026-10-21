@@ -1,0 +1,156 @@
+/* Drawer, the navigation drawer: a column of destinations, each a pill as wide as the drawer with
+   its icon, label and count, under the headings of their groups. It keeps its header and footer in
+   view and scrolls its list. Every placement is logical, so it follows the text direction. */
+.env-drawer {
+  /* The drawer is as wide as its longest destination, within these bounds. */
+  --env-drawer-min-width: 15rem;
+  --env-drawer-max-width: 20rem;
+  box-sizing: border-box;
+  inline-size: fit-content;
+  min-inline-size: var(--env-drawer-min-width);
+  max-inline-size: var(--env-drawer-max-width);
+  block-size: 100%;
+  min-block-size: 0;
+  padding: var(--env-space-3);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+.env-drawer-header,
+.env-drawer-footer {
+  flex: none;
+  min-inline-size: 0;
+}
+.env-drawer-footer {
+  margin-block-start: auto;
+}
+.env-drawer-list,
+.env-drawer-section > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.env-drawer-list {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  /* Room for the inset focus ring of an item at the list's scrolled edge. */
+  scroll-padding-block: var(--env-space-1);
+}
+.env-drawer-list li {
+  min-inline-size: 0;
+}
+/* A group sits a little apart from the destinations or group before and after it. */
+.env-drawer-section + li,
+.env-drawer-list > li + .env-drawer-section {
+  margin-block-start: var(--env-space-3);
+}
+/* A group's heading lines up with its destinations' icons and labels. */
+.env-drawer-heading {
+  display: block;
+  padding: var(--env-space-1) var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  overflow-wrap: anywhere;
+}
+
+.env-drawer-item {
+  /* The height the item draws at: the control height, or more under a coarse pointer. */
+  --env-drawer-item-height: var(--env-control-height);
+  --env-icon-size: var(--env-control-icon-size);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--env-drawer-item-height);
+  margin: 0;
+  padding: var(--env-space-1) var(--env-space-3);
+  border: 0;
+  border-radius: var(--env-radius-full);
+  background: transparent;
+  color: var(--env-color-fg-control);
+  font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-drawer-item > .env-icon {
+  flex: none;
+}
+.env-drawer-label {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+/* The count, at the item's end, in the counter badge's pill. */
+.env-drawer-count {
+  box-sizing: border-box;
+  flex: none;
+  margin-inline-start: auto;
+  min-inline-size: var(--env-counter-badge-height);
+  block-size: var(--env-counter-badge-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.env-drawer-item:not([data-current]) .env-icon {
+  color: var(--env-color-fg-muted);
+}
+.env-drawer-item:hover {
+  background: var(--env-color-bg-navigation-hover);
+}
+.env-drawer-item:active {
+  background: var(--env-color-bg-navigation-pressed);
+}
+.env-drawer-item[data-current] {
+  color: var(--env-color-fg-on-selected);
+  background: var(--env-color-bg-selected);
+}
+.env-drawer-item[data-current]:hover {
+  background: var(--env-color-bg-selected-hover);
+}
+.env-drawer-item[data-current]:active {
+  background: var(--env-color-bg-selected-pressed);
+}
+.env-drawer-item:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+/* Under a coarse pointer, items grow to the touch height in every scale, as buttons do. */
+@media (pointer: coarse) {
+  .env-drawer-item {
+    --env-drawer-item-height: max(var(--env-control-height), var(--env-control-height-touch));
+  }
+}
+/* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-drawer-item {
+    transition-property: background-color, color, transform;
+  }
+  .env-drawer-item:active {
+    transform: scale(0.98);
+  }
+}
+/* Forced colors: the system paints no fills, so the current item takes the selection colors. */
+@media (forced-colors: active) {
+  .env-drawer-item[data-current] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-drawer-item[data-current] :where(*) {
+    color: inherit;
+  }
+  .env-drawer-item[data-current]:focus-visible {
+    outline-color: HighlightText;
+  }
+  .env-drawer-count {
+    border: 1px solid CanvasText;
+  }
+}

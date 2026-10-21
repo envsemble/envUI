@@ -28,7 +28,7 @@ test('public composition owns spacing and content-fit sizing without documentati
       }
       const column = scope.getByTestId('layout-column');
       const columnWidth = (await column.boundingBox())!.width;
-      for (const selector of ['.env-button', '.env-nav-list-item', '.env-badge']) {
+      for (const selector of ['.env-button', '.env-badge']) {
         expect((await column.locator(selector).boundingBox())!.width).toBeLessThan(columnWidth);
       }
       const actionGroup = scope.getByTestId('stacked-actions');

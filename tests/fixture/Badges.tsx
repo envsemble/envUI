@@ -1,7 +1,7 @@
 import {
   Badge,
-  CounterBadge,
-  NavList,
+  NavigationDrawer,
+  Rail,
   Column,
   Surface,
   Theme,
@@ -46,15 +46,14 @@ export function BadgesFixture({ theme }: { theme: ThemeValue }) {
           </Column>
         </Surface>
       ))}
-      <NavList.Item
-        icon={<Inbox />}
-        end={<CounterBadge value={12} aria-label="12 unread" tone="accent" />}
-      >
-        Inbox
-      </NavList.Item>
-      <NavList.Item icon={<Inbox />} iconOnly aria-label="Inbox" end={<CounterBadge value={12} />}>
-        Inbox
-      </NavList.Item>
+      <NavigationDrawer
+        aria-label={`Badges ${theme}`}
+        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+      />
+      <Rail
+        aria-label={`Badges rail ${theme}`}
+        destinations={[{ label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 12 }]}
+      />
     </Theme>
   );
 }

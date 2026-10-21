@@ -20,7 +20,12 @@ export * from './actions/ConfirmButton.js';
 export * from './actions/CopyButton.js';
 export * from './actions/SearchTrigger.js';
 export * from './actions/SegmentedControl.js';
-export * as NavList from './navigation/NavList.js';
+export * from './navigation/Bar.js';
+export * from './navigation/Rail.js';
+// The navigation drawer takes the name Drawer once today's Drawer, the panel that slides over the
+// page, has become Sheet; until then it is NavigationDrawer.
+export * from './navigation/NavigationDrawer.js';
+export type { Destination, DrawerDestination } from './navigation/internal/Destinations.js';
 export * as Pager from './navigation/Pager.js';
 export * from './navigation/Tabs.js';
 export * from './content/Card.js';

@@ -25,8 +25,14 @@ const states: Record<string, [state: string, rest: string]> = {
     '.env-segmented-control-item >> nth=1',
   ],
   'the selected tab': ['[role=tab] >> nth=0', '[role=tab] >> nth=1'],
-  'the selected navigation item': ['[data-testid=nav-selected]', '[data-testid=nav]'],
-  'a disabled navigation item': ['[data-testid=nav-disabled]', '[data-testid=nav]'],
+  'the selected navigation item': [
+    '.env-drawer-item[data-current]',
+    '.env-drawer-item:not([data-current]) >> nth=0',
+  ],
+  'the current rail destination': [
+    '.env-rail-item[data-current] .env-rail-indicator',
+    '.env-rail-item:not([data-current]) .env-rail-indicator >> nth=0',
+  ],
   'a checked checkbox': [
     '.env-checkbox:has-text("Checked") >> nth=0',
     '.env-checkbox:has-text("Unchecked")',
@@ -182,7 +188,8 @@ test(
         .evaluate((element) => getComputedStyle(element).backgroundColor);
     for (const selector of [
       '.env-segmented-control-item[data-checked]',
-      '.env-nav-list-item[data-selected]',
+      '.env-drawer-item[data-current]',
+      '.env-rail-item[data-current] .env-rail-indicator',
       "[role=treeitem][aria-selected='true']",
       '.env-calendar-day[aria-selected=true] > .env-calendar-day-mark',
       '[data-part=hour] .env-time-list-row[data-centred]',
@@ -193,7 +200,7 @@ test(
       expect(await background(selector), selector).toBe(system.highlight);
     // Where the system forces colors, an unselected item paints no fill of its own.
     if (browserName !== 'webkit')
-      expect(await background('[data-testid=nav]')).not.toBe(system.highlight);
+      expect(await background('.env-drawer-item:not([data-current])')).not.toBe(system.highlight);
   },
 );
 
@@ -251,7 +258,7 @@ interface FocusCase {
 
 const focusCases: FocusCase[] = [
   { name: 'the selected tab', ring: '[role=tab][aria-selected=true]', over: 'fill' },
-  { name: 'the selected navigation item', ring: '[data-testid=nav-selected]', over: 'fill' },
+  { name: 'the selected navigation item', ring: '.env-drawer-item[data-current]', over: 'fill' },
   { name: 'the chosen segment', ring: '.env-segmented-control-item[data-checked]', over: 'canvas' },
   {
     // The ring goes around the tab's item, close button included.
@@ -382,6 +389,7 @@ const fillStates: Record<string, 'highlight' | 'outline' | 'dashed'> = {
   'the chosen segment': 'highlight',
   'the selected tab': 'highlight',
   'the selected navigation item': 'highlight',
+  'the current rail destination': 'highlight',
   'a switch that is on': 'highlight',
   'a selected table row': 'highlight',
   'the selected tree row': 'highlight',

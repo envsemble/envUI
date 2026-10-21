@@ -354,12 +354,8 @@ body:has(.density-fixture) {
   outline: 0.0625rem dashed var(--env-color-border-muted);
 }
 .density-sidebar {
-  display: grid;
-  gap: 0.125rem;
   inline-size: 13.75rem;
-}
-.density-sidebar > * {
-  inline-size: 100%;
+  min-inline-size: 0;
 }
 .density-menus {
   position: relative;
@@ -466,4 +462,16 @@ body:has(.density-fixture) {
   .fixture-container-probe {
     --fixture-in-probe: yes;
   }
+}
+/* Navigation: the drawer and the rail as tall as a short window, beside phone-wide bars. */
+.fixture-navigation-forms {
+  display: flex;
+  align-items: start;
+  gap: 1rem;
+  block-size: 26rem;
+}
+.fixture-navigation-bars {
+  display: grid;
+  gap: 1rem;
+  inline-size: 22rem;
 }

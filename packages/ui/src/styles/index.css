@@ -22,7 +22,9 @@
 @import './Toolbar.css' layer(env.components);
 @import './CopyButton.css' layer(env.components);
 @import './SegmentedControl.css' layer(env.components);
-@import './NavList.css' layer(env.components);
+@import './Bar.css' layer(env.components);
+@import './Rail.css' layer(env.components);
+@import './NavigationDrawer.css' layer(env.components);
 @import './Card.css' layer(env.components);
 @import './Disclosure.css' layer(env.components);
 @import './Badge.css' layer(env.components);
