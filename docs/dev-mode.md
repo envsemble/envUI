@@ -105,6 +105,8 @@ expect(results.flatMap((result) => result.problems)).toEqual([]);
 
 ## The 3D view
 
+Open dev mode on the application at the top of this page to try it.
+
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
 | Do this                       | To                                                                   |
