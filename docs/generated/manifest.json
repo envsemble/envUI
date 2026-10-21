@@ -1208,32 +1208,68 @@
         {
           "name": "ProjectSummary",
           "title": "Project summary",
-          "description": "- Content card (the default): any content, with an optional title row (`title`, `meta`), a `description` and `actions` in a strip along its bottom. - Feature card (`layout=\"feature\"`): an icon, a title, a description and one action, which stack in a narrow card. - Link card (`href`) and button card (`onClick`): the whole card is one native link or button.",
+          "description": "",
           "file": "docs/examples/card/ProjectSummary.tsx"
         },
         {
           "name": "ActionStrip",
-          "title": "Action strip",
-          "description": "`title`, `meta` and `actions` make a title row and a strip of controls along the bottom; `render` makes the card an article.",
+          "title": "Content card",
+          "description": "The default. `title` and `meta` make a title row, `description` a sentence under it, and `actions` a strip of controls along the bottom, in a fill of its own that sets it apart from the card's body in both themes. `render` makes the card an article.",
           "file": "docs/examples/card/ActionStrip.tsx"
         },
         {
+          "name": "FeatureCards",
+          "title": "Feature card",
+          "description": "`layout=\"feature\"` presents a feature with an icon at the start, its title and description, and one action at the end.",
+          "file": "docs/examples/card/FeatureCards.tsx"
+        },
+        {
           "name": "Destinations",
-          "title": "Link cards",
-          "description": "Each card is one link, named by its title and summary, in a grid of as many columns as fit.",
+          "title": "Link card",
+          "description": "With `href` the whole card is one native link, through the `LinkProvider`'s link component, named by its text: its title, then its summary.",
           "file": "docs/examples/card/Destinations.tsx"
         },
         {
           "name": "StartOptions",
-          "title": "Button cards",
-          "description": "A button card starts an action, here one way to start a project; a disabled one cannot be pressed.",
+          "title": "Button card",
+          "description": "With `onClick` the whole card is a native button with `type=\"button\"`, which can only hold phrasing content, such as spans. A disabled one cannot be pressed.",
           "file": "docs/examples/card/StartOptions.tsx"
         },
         {
-          "name": "FeatureCards",
-          "title": "Feature cards",
-          "description": "The feature layout presents a feature with an icon and one action, and stacks them when the card is narrow.",
-          "file": "docs/examples/card/FeatureCards.tsx"
+          "name": "MembersInList",
+          "title": "Do: Use a List for rows of similar items, each with a label, a description and an action.",
+          "description": "",
+          "file": "docs/examples/card/MembersInList.tsx"
+        },
+        {
+          "name": "MembersAsCards",
+          "title": "Don't: Don't stack cards for a list of similar rows: the repeated fills and corners crowd out the content.",
+          "description": "",
+          "file": "docs/examples/card/MembersAsCards.tsx"
+        },
+        {
+          "name": "OneCardSections",
+          "title": "Do: Group what belongs to one subject in one card, with Text for its parts.",
+          "description": "",
+          "file": "docs/examples/card/OneCardSections.tsx"
+        },
+        {
+          "name": "NestedCards",
+          "title": "Don't: Don't nest cards inside each other; the fills and corners stack up and blur what belongs together.",
+          "description": "",
+          "file": "docs/examples/card/NestedCards.tsx"
+        },
+        {
+          "name": "CardAnatomy",
+          "title": "Card anatomy",
+          "description": "",
+          "file": "docs/examples/card/CardAnatomy.tsx"
+        },
+        {
+          "name": "InviteFeature",
+          "title": "Invite feature",
+          "description": "",
+          "file": "docs/examples/card/InviteFeature.tsx"
         }
       ],
       "parts": {
@@ -1383,73 +1419,121 @@
         {
           "name": "CreateProject",
           "title": "Create project",
-          "description": "- IconButton shows only an icon, named by `aria-label`; it is Button with `iconOnly`, secondary by default. - ConfirmButton names the consequence on the first press and acts on the second, for an action that cannot be undone. - CopyButton copies a value and reports the result. - ButtonGroup connects buttons into one row or column.",
+          "description": "",
           "file": "docs/examples/button/CreateProject.tsx"
-        },
-        {
-          "name": "Variants",
-          "title": "Variants",
-          "description": "One primary action per group; the others step down in emphasis.",
-          "file": "docs/examples/button/Variants.tsx"
         },
         {
           "name": "Icons",
           "title": "Icons",
-          "description": "`startIcon` and `endIcon` add decorative icons beside the label. An icon-only button, IconButton or Button with `iconOnly`, needs an `aria-label`.",
+          "description": "",
           "file": "docs/examples/button/Icons.tsx"
-        },
-        {
-          "name": "QuietToolbar",
-          "title": "Ghost actions in chrome",
-          "description": "Ghost buttons suit an application's chrome, such as a sidebar toggle or a section's actions inside a surface: the icon color, with a state layer on hover and press.",
-          "file": "docs/examples/button/QuietToolbar.tsx"
-        },
-        {
-          "name": "ButtonLinks",
-          "title": "Destinations",
-          "description": "With `href` a button is a native link. Text buttons read as links; `underline` adds an underline.",
-          "file": "docs/examples/button/ButtonLinks.tsx"
-        },
-        {
-          "name": "PendingAction",
-          "title": "Pending work",
-          "description": "A pending button keeps its size, shows a spinner and ignores repeated presses until the work ends.",
-          "file": "docs/examples/button/PendingAction.tsx"
-        },
-        {
-          "name": "SayWhatWillHappen",
-          "title": "Say what will happen",
-          "description": "Put the outcome in the label when it is known. AnimatedNumber rolls a count that changes while choices are made.",
-          "file": "docs/examples/button/SayWhatWillHappen.tsx"
         },
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "ConfirmButton names the consequence on the first press and acts on the second. It disarms after a few seconds, when focus leaves and on <kbd>Esc</kbd>.",
+          "description": "",
           "file": "docs/examples/button/ConfirmInPlace.tsx"
         },
         {
           "name": "CopyValue",
-          "title": "Copy to the clipboard",
-          "description": "After a press the icon turns into a check, and Copied shows and is announced for about two seconds.",
+          "title": "Copy value",
+          "description": "",
           "file": "docs/examples/button/CopyValue.tsx"
-        },
-        {
-          "name": "CustomClipboard",
-          "title": "Your own clipboard",
-          "description": "`write` copies through the application's own clipboard, here a stand-in that takes a moment; the button shows the result as it does for the browser's.",
-          "file": "docs/examples/button/CustomClipboard.tsx"
         },
         {
           "name": "ConnectedButtons",
           "title": "Connected buttons",
-          "description": "ButtonGroup connects related actions in a row or a column. Prefer the same variant within a group; mix variants when related actions need different emphasis.",
+          "description": "",
           "file": "docs/examples/button/ConnectedButtons.tsx"
         },
         {
+          "name": "PendingAction",
+          "title": "Pending action",
+          "description": "While `pending` is true a spinner replaces the content at the same size; the button reports `aria-busy` and `aria-disabled`, and ignores activation, including form submission and navigation.",
+          "file": "docs/examples/button/PendingAction.tsx"
+        },
+        {
+          "name": "CustomClipboard",
+          "title": "Custom clipboard",
+          "description": "A CopyButton writes the text with the asynchronous Clipboard API, or with `write`, the application's own clipboard writer, such as a desktop shell's bridge; without clipboard access, such as on an insecure connection, it copies a selection of a hidden field instead, also inside a dialog. A `write` that rejects reports \"Couldn’t copy\". A function `value` runs at the press, and a promise keeps the button pending until it resolves. \"Copied\" (or \"Couldn’t copy\") shows in the tooltip and is announced for about two seconds, again for each press; <kbd>Esc</kbd> hides it. An icon-only CopyButton shows its name in a tooltip on hover and focus, also while disabled.",
+          "file": "docs/examples/button/CustomClipboard.tsx"
+        },
+        {
+          "name": "Variants",
+          "title": "Variants",
+          "description": "",
+          "file": "docs/examples/button/Variants.tsx"
+        },
+        {
+          "name": "QuietToolbar",
+          "title": "Quiet toolbar",
+          "description": "",
+          "file": "docs/examples/button/QuietToolbar.tsx"
+        },
+        {
+          "name": "ButtonLinks",
+          "title": "Button links",
+          "description": "",
+          "file": "docs/examples/button/ButtonLinks.tsx"
+        },
+        {
+          "name": "OnePrimaryAction",
+          "title": "Do: Use one primary button per group, and put it where the eye ends: at the end of a dialog's or a form's actions.",
+          "description": "",
+          "file": "docs/examples/button/OnePrimaryAction.tsx"
+        },
+        {
+          "name": "SeveralPrimaryActions",
+          "title": "Don't: Don't line up several primary buttons: none of them stands out, and people can't tell which one moves them on.",
+          "description": "",
+          "file": "docs/examples/button/SeveralPrimaryActions.tsx"
+        },
+        {
+          "name": "LinkInText",
+          "title": "Do: Use a Link for a destination inside a sentence.",
+          "description": "",
+          "file": "docs/examples/button/LinkInText.tsx"
+        },
+        {
+          "name": "ButtonInText",
+          "title": "Don't: Don't put a button in running text: it breaks the line and reads as an action.",
+          "description": "",
+          "file": "docs/examples/button/ButtonInText.tsx"
+        },
+        {
+          "name": "SayWhatWillHappen",
+          "title": "Say what will happen",
+          "description": "",
+          "file": "docs/examples/button/SayWhatWillHappen.tsx"
+        },
+        {
+          "name": "SpecificLabel",
+          "title": "Do: Name the action and what it affects, such as Remove Sam Lee.",
+          "description": "",
+          "file": "docs/examples/button/SpecificLabel.tsx"
+        },
+        {
+          "name": "VagueLabel",
+          "title": "Don't: Don't use a vague label such as OK or Submit when a specific verb fits.",
+          "description": "",
+          "file": "docs/examples/button/VagueLabel.tsx"
+        },
+        {
+          "name": "ButtonAnatomy",
+          "title": "Button anatomy",
+          "description": "",
+          "file": "docs/examples/button/ButtonAnatomy.tsx"
+        },
+        {
+          "name": "NarrowActions",
+          "title": "Narrow actions",
+          "description": "",
+          "file": "docs/examples/button/NarrowActions.tsx"
+        },
+        {
           "name": "FillSidebar",
-          "title": "Fill a sidebar",
-          "description": "With `fullWidth` a group fills its container: the labelled button takes the room the menu's chevron leaves.",
+          "title": "Fill sidebar",
+          "description": "",
           "file": "docs/examples/button/FillSidebar.tsx"
         }
       ],

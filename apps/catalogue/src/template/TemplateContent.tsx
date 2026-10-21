@@ -1,16 +1,17 @@
-import { Badge, Link, Stack, Text } from '@envsemble/envui';
+import { Badge, Link, Message, Stack, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {
   pageHref,
   referencePages,
   routeOfDocument,
-  sectionViews,
+  viewOfSection,
   type ReferencePage,
   type ReferenceView,
 } from '../navigation/DocumentationRoutes';
 import { routeHref } from '../navigation/Address';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
+import { ExchangeColumns, ExchangeSection } from './Exchanges';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
@@ -60,18 +61,26 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
  * When to use the page's subject and, when not, what to use or read instead; for a pattern or
  * template, also what it is built from.
  */
-function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
+function UseAndAvoid({
+  metadata,
+  path,
+  headings = ['When to use', 'When not to use'],
+}: {
+  metadata: DocumentationMetadata;
+  path: string;
+  headings?: [string, string];
+}) {
   // Pages of docs/ are one folder deep, so ../<path> reaches any of them from any page.
   const exportLink = (name: string) => {
     const page = pageOf(name);
     return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
   };
   const markdown = [
-    '### When to use',
+    `### ${headings[0]}`,
     '',
     ...metadata.useWhen.map((text) => `- ${text}`),
     '',
-    '### When not to use',
+    `### ${headings[1]}`,
     '',
     ...metadata.avoidWhen.map(({ text, use, see }) => {
       const target = see && documents.find((document) => document.id === see);
@@ -86,10 +95,31 @@ function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path
       ? ['', '### Built from', '', metadata.composes.map(exportLink).join(', ')]
       : []),
   ].join('\n');
-  return <Documentation markdown={markdown} path={path} />;
+  return headings[0] === 'When to use' ? (
+    <Documentation markdown={markdown} path={path} />
+  ) : (
+    <ExchangeColumns markdown={markdown} path={path} />
+  );
 }
 
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
+  if (reference.format === 'exchanges')
+    return (
+      <ExchangeSection
+        reference={reference}
+        section={section}
+        lead={
+          section.id === 'usage' &&
+          reference.metadata && (
+            <UseAndAvoid
+              metadata={reference.metadata}
+              path={reference.path}
+              headings={['Use it when', 'Use something else when']}
+            />
+          )
+        }
+      />
+    );
   return (
     <Stack render={<section />} gap={5} className="docs-template-section" data-section={section.id}>
       {section.blocks.map((block, index) =>
@@ -109,11 +139,11 @@ function Section({ reference, section }: { reference: Document; section: Documen
             name={block.name}
             title={block.heading}
           />
-        ) : (
+        ) : block.kind === 'specimen' ? (
           <Specimen key={block.name} page={reference.id} name={block.name} />
-        ),
+        ) : null,
       )}
-      {section.id === 'overview' && reference.metadata && (
+      {section.id === 'overview' && reference.metadata && !reference.format && (
         <UseAndAvoid metadata={reference.metadata} path={reference.path} />
       )}
     </Stack>
@@ -155,6 +185,39 @@ function Related({ reference }: { reference: Document }) {
   );
 }
 
+/**
+ * The last exchange of a page of exchanges, which leads to its props: the Props view lists them,
+ * generated from the TypeScript declarations.
+ */
+function PropsExchange({ reference }: { reference: Document }) {
+  const page = referencePages.find((item) => item.reference.id === reference.id);
+  const components = reference.metadata?.components ?? [];
+  if (!page || !components.length) return null;
+  const names = components.map((name) => `\`${name}\``);
+  const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names[0];
+  return (
+    <section className="docs-exchange" data-section="props">
+      <div className="docs-exchange-header">
+        <div className="docs-exchange-heading">
+          <Documentation markdown="## Props" path={reference.path} />
+        </div>
+        <Message from="self" className="docs-exchange-question" aria-label="Question on props">
+          Which props does {reference.title} take?
+        </Message>
+      </div>
+      <div className="docs-exchange-answer">
+        <Documentation
+          markdown={`The props reference lists every prop of ${list}, with its type, its default and what it does, generated from the TypeScript declarations.`}
+          path={reference.path}
+        />
+        <Text>
+          <Link href={pageHref(page, 'props')}>Open the props reference</Link>
+        </Text>
+      </div>
+    </section>
+  );
+}
+
 /** Sections in the template's order, then Related; the changelog follows the page navigation. */
 function Sections({
   reference,
@@ -163,13 +226,15 @@ function Sections({
   reference: Document;
   sections: DocumentationSection[];
 }) {
+  const exchanges = reference.format === 'exchanges';
   return (
-    <Stack gap={8} className="docs-article docs-template">
+    <Stack gap={8} className={`docs-article docs-template${exchanges ? ' docs-exchanges' : ''}`}>
       {sections
         .filter((section) => section.id !== 'changelog')
         .map((section) => (
           <Section key={section.id} reference={reference} section={section} />
         ))}
+      {exchanges && <PropsExchange reference={reference} />}
       {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
     </Stack>
   );
@@ -187,7 +252,7 @@ export function TemplateContent({ page, view }: { page: ReferencePage; view: Ref
     <Sections
       reference={page.reference}
       sections={(page.reference.sections ?? []).filter(
-        (section) => sectionViews[section.id] === view,
+        (section) => viewOfSection(page.reference, section.id) === view,
       )}
     />
   );
@@ -204,7 +269,7 @@ export function SingleViewContent({ document }: { document: Document }) {
  */
 export function PageChangelog({ document, view }: { document: Document; view?: ReferenceView }) {
   const changelog = document.sections?.find((section) => section.id === 'changelog');
-  if (!changelog || (view && sectionViews[changelog.id] !== view)) return null;
+  if (!changelog || (view && viewOfSection(document, changelog.id) !== view)) return null;
   return (
     <div className="docs-article docs-template docs-changelog">
       <Section reference={document} section={changelog} />

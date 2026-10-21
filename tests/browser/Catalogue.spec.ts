@@ -100,13 +100,13 @@ test('palette editing uses public controls and remains temporary and independent
   await expect.poll(canvasValue).toBe(initialLight);
 });
 
-test('live examples keep links in place, show their source, and matrices sit in the guidelines', async ({
+test('live examples keep links in place, show their source, and specimens show forced states', async ({
   page,
 }) => {
   await page.goto(`${offline}#/components/button/overview`);
   const hash = await page.evaluate(() => location.hash);
   // Links in an example keep their semantics without leaving the documentation.
-  const destinations = page.getByRole('group', { name: 'Destinations example', exact: true });
+  const destinations = page.getByRole('group', { name: 'Button links example', exact: true });
   await destinations.getByRole('link', { name: 'Read the guide', exact: true }).press('Enter');
   expect(await page.evaluate(() => location.hash)).toBe(hash);
   await destinations
@@ -114,15 +114,15 @@ test('live examples keep links in place, show their source, and matrices sit in 
     .click({ modifiers: ['Control'] });
   expect(await page.evaluate(() => location.hash)).toBe(hash);
   // Every example shows the source of its file, ready to copy.
-  const code = destinations.locator('xpath=following-sibling::details[1]');
+  const code = page.locator('[data-example="ButtonLinks"] ~ details').first();
   await code.locator('summary').click();
   await expect(code.locator('.env-code-block')).toContainText(
     "import { Button, Stack } from '@envsemble/envui';",
   );
   await expect(code.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible();
-  // Catalogue-only specimens, such as the forced interaction states, are in the guidelines.
-  await page.getByRole('tab', { name: 'Guidelines', exact: true }).click();
-  const disclosure = page.locator('.docs-preview details.env-disclosure');
+  // Catalogue-only specimens, such as the forced interaction states, sit in the exchange they
+  // illustrate on a page of exchanges, and in the guidelines on a page on the template.
+  const disclosure = page.locator('.docs-preview details.env-disclosure').first();
   await disclosure.locator('summary').focus();
   await disclosure.locator('summary').press('Enter');
   await expect(disclosure).toHaveAttribute('open', '');
@@ -133,6 +133,71 @@ test('live examples keep links in place, show their source, and matrices sit in 
   await expect(
     navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
   ).toBeVisible();
+});
+
+test('a page of exchanges asks its questions and numbers the parts of its anatomy', async ({
+  page,
+}) => {
+  await page.goto(`${offline}#/components/button/overview`);
+  // Every exchange is in the Overview; the props have a view of their own.
+  await expect(page.getByRole('tab')).toHaveText(['Overview', 'Props']);
+  await expect(page.locator('.docs-exchange-question').first()).toHaveText(
+    'What is a button, and what does it look like?',
+  );
+  // Do and don't figures carry their verdict and one sentence, with the code below.
+  const verdict = page.getByRole('figure', { name: /^Do Use one primary button per group/ });
+  await expect(verdict.locator('.docs-verdict-bar')).toHaveText('Do');
+  await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
+  // The anatomy numbers each part of the live button, in the light and the dark theme, beside
+  // the part it names, and keeps them there as the page narrows.
+  const stages = page.locator('.docs-anatomy-stage');
+  await expect(stages).toHaveCount(2);
+  const placement = () =>
+    stages.first().evaluate((stage) => {
+      const icon = stage.querySelector('.env-button > .env-icon')!.getBoundingClientRect();
+      const badge = [...stage.querySelectorAll('.docs-anatomy-badge')]
+        .find((item) => item.textContent === '2')!
+        .getBoundingClientRect();
+      return {
+        badges: stage.querySelectorAll('.docs-anatomy-badge').length,
+        offset: Math.round(badge.left + badge.width / 2 - (icon.left + icon.width / 2)),
+      };
+    });
+  await expect.poll(placement).toEqual({ badges: 4, offset: 0 });
+  await expect(stages.nth(1).locator('.docs-anatomy-badge')).toHaveCount(4);
+  await page.setViewportSize({ width: 420, height: 800 });
+  await expect.poll(placement).toEqual({ badges: 4, offset: 0 });
+  await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
+});
+
+test('every anatomy figure numbers each part its legend names, in both themes', async ({
+  page,
+}) => {
+  // A legend part the example doesn't render would leave its number off the figure.
+  const pages = references
+    .filter((reference) => reference.format === 'exchanges')
+    .map((reference) => ({
+      id: reference.id,
+      figures: (reference.sections ?? [])
+        .flatMap((section) => section.blocks)
+        .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
+    }));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const { id, figures } of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    const anatomy = page.locator('.docs-anatomy');
+    await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
+    for (const figure of await anatomy.all()) {
+      const legend = await figure.locator('.docs-anatomy-legend > li').count();
+      for (const stage of await figure.locator('.docs-anatomy-stage').all())
+        await expect(stage.locator('.docs-anatomy-badge'), `${id} numbers every part`).toHaveCount(
+          legend,
+        );
+    }
+  }
 });
 
 test('the props view links each source file at the revision the catalogue was built from', async ({
@@ -437,7 +502,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await page.route(source, (route) => route.abort());
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
   const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await entry.locator('.docs-live-example-code summary').click();
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.
   await expect(
@@ -498,7 +563,7 @@ test('an example that fails to render says so in place, and the rest of the page
   const variants = page.getByRole('group', { name: 'Variants example', exact: true });
   await expect(variants.getByRole('button').first()).toBeVisible();
   const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await entry.locator('.docs-live-example-code summary').click();
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
   await page
