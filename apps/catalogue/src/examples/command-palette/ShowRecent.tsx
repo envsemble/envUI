@@ -7,7 +7,7 @@ const documents = ['Roadmap.md', 'Pricing research.md', 'Launch checklist.md', '
 const recent = documents.slice(0, 3);
 
 export default function ShowRecent() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [query, setQuery] = useState('');
   const names = query
     ? documents.filter((name) => name.toLowerCase().includes(query.toLowerCase()))

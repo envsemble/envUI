@@ -7,6 +7,7 @@ import { Share } from '@envsemble/envui/icons/Share';
 export default function DisabledWithReason() {
   return (
     <Menu.Root
+      defaultOpen
       aria-label="Report actions"
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
     >

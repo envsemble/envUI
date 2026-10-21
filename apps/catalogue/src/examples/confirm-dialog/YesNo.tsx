@@ -3,6 +3,7 @@ import { Button, ConfirmDialog } from '@envsemble/envui';
 export default function YesNo() {
   return (
     <ConfirmDialog
+      defaultOpen
       trigger={<Button variant="secondary">Remove member</Button>}
       tone="danger"
       // Wrong: Yes and No make people read the question again to know what each does.

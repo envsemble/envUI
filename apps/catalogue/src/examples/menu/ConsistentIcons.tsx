@@ -6,7 +6,7 @@ import { Upload } from '@envsemble/envui/icons/Upload';
 
 export default function ConsistentIcons() {
   return (
-    <Menu.Root aria-label="New" trigger={<Button startIcon={<Add />}>New</Button>}>
+    <Menu.Root aria-label="New" defaultOpen trigger={<Button startIcon={<Add />}>New</Button>}>
       <Menu.Item icon={<NoteAdd />}>New document</Menu.Item>
       <Menu.Item icon={<CreateNewFolder />}>New folder</Menu.Item>
       <Menu.Item icon={<Upload />}>Upload files</Menu.Item>

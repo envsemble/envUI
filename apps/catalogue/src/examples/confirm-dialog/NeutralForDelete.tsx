@@ -3,6 +3,7 @@ import { Button, ConfirmDialog } from '@envsemble/envui';
 export default function NeutralForDelete() {
   return (
     <ConfirmDialog
+      defaultOpen
       trigger={<Button variant="secondary">Delete draft</Button>}
       // Wrong: a neutral confirmation starts on the confirm button, so a hurried Enter deletes.
       title="Delete the pricing page draft?"

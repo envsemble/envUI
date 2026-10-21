@@ -4,15 +4,17 @@ import { Button, Dialog, TextField } from '@envsemble/envui';
 
 export default function ErrorInSecondDialog() {
   const formId = useId();
-  const [email, setEmail] = useState('');
-  const [invalid, setInvalid] = useState(false);
+  // Shown open after a send with a mistyped address.
+  const [email, setEmail] = useState('sam.lee@example');
+  const [invalid, setInvalid] = useState(true);
   const invite = (event: FormEvent) => {
     event.preventDefault();
     // Wrong: the error opens a dialog over the dialog, away from the field it is about.
-    if (!email.includes('@')) setInvalid(true);
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) setInvalid(true);
   };
   return (
     <Dialog
+      defaultOpen
       trigger={<Button variant="secondary">Invite member</Button>}
       title="Invite member"
       closeLabel="Cancel"

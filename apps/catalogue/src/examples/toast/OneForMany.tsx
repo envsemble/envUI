@@ -1,16 +1,17 @@
-import { Button, Toast, useToast } from '@envsemble/envui';
+import { useEffect } from 'react';
+import { Button, Toast, useToast, type ToastNotification } from '@envsemble/envui';
 
 const people = ['Alex Morgan', 'Sam Lee', 'Priya Shah'];
+const sent: ToastNotification = { tone: 'success', message: `${people.length} invitations sent.` };
 
 function InviteButton() {
   const toast = useToast();
-  return (
-    <Button
-      onClick={() => toast.show({ tone: 'success', message: `${people.length} invitations sent.` })}
-    >
-      Invite 3 people
-    </Button>
-  );
+  // Shown at once here, as after a press, and kept until it is dismissed.
+  useEffect(() => {
+    const id = toast.show({ ...sent, duration: Infinity });
+    return () => toast.dismiss(id);
+  }, [toast]);
+  return <Button onClick={() => toast.show(sent)}>Invite 3 people</Button>;
 }
 
 export default function OneForMany() {

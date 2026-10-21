@@ -8,6 +8,7 @@ const final = false;
 export default function HiddenItem() {
   return (
     <Menu.Root
+      defaultOpen
       aria-label="Report actions"
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
     >

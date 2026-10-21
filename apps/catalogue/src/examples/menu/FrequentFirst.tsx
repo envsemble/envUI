@@ -9,6 +9,7 @@ export default function FrequentFirst() {
   return (
     <Menu.Root
       aria-label="Document actions"
+      defaultOpen
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
     >
       <Menu.Item icon={<Share />}>Share</Menu.Item>

@@ -4,6 +4,7 @@ import { Refresh } from '@envsemble/envui/icons/Refresh';
 export default function LongTooltip() {
   return (
     <Tooltip
+      defaultOpen
       // Wrong: a paragraph people must hold the pointer still to read.
       content={
         'Refreshes the list of members from the server. Members who joined in the last few ' +

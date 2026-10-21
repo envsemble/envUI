@@ -97,11 +97,11 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ## When to use
 
-```tsx do=OneForMany caption="One notification for an action on many items."
+```tsx do=OneForMany open caption="One notification for an action on many items."
 
 ```
 
-```tsx dont=OnePerItem caption="A notification for each item: they stack up and hide each other."
+```tsx dont=OnePerItem open caption="A notification for each item: they stack up and hide each other."
 
 ```
 
@@ -109,15 +109,29 @@ A danger notification stays until it is dismissed, and is announced at once.
 
 ### Content
 
-```tsx do=NameWhatHappened caption="Say what happened, and to what."
+```tsx do=NameWhatHappened open caption="Say what happened, and to what."
 
 ```
 
-```tsx dont=GenericSuccess caption="A message that only repeats the tone."
+```tsx dont=GenericSuccess open caption="A message that only repeats the tone."
 
 ```
 
 - Label an action with a short verb, such as Undo or Try again; one action at most.
+
+## Anatomy
+
+```tsx anatomy=ToastAnatomy open
+
+```
+
+1. **Notification** (`env-toast`)
+2. **Tone icon** (`env-toast-status-icon`, `tone`)
+3. **Message** (`env-toast-message`, `message`)
+4. **Action** (`env-toast-action`, `action`)
+5. **Dismiss button** (`env-toast-dismiss`, `dismissible`)
+
+Not shown: the count of hidden notifications, `env-toast-queued-count`.
 
 ## Accessibility
 

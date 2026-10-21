@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Dialog, Column, Text } from '@envsemble/envui';
 
 export default function ConfirmDelete() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [result, setResult] = useState('');
   return (
     <Column gap={4} align="start">

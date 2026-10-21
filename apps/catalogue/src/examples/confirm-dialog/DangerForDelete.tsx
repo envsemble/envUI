@@ -3,6 +3,7 @@ import { Button, ConfirmDialog } from '@envsemble/envui';
 export default function DangerForDelete() {
   return (
     <ConfirmDialog
+      defaultOpen
       trigger={<Button variant="secondary">Delete draft</Button>}
       // Focus starts on Cancel, so a hurried Enter doesn't delete.
       tone="danger"

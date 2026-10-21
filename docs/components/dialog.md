@@ -94,19 +94,19 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 ## When to use
 
-```tsx do=CancelAsCloseLabel caption="closeLabel=Cancel names the built-in button for a decision."
+```tsx do=CancelAsCloseLabel open caption="closeLabel=Cancel names the built-in button for a decision."
 
 ```
 
-```tsx dont=ExtraCancelButton caption="A Cancel of your own beside the built-in Close."
+```tsx dont=ExtraCancelButton open caption="A Cancel of your own beside the built-in Close."
 
 ```
 
-```tsx do=InviteMember caption="A field's error on the field."
+```tsx do=InviteMember open caption="A field's error on the field."
 
 ```
 
-```tsx dont=ErrorInSecondDialog caption="An error in a second dialog over the first."
+```tsx dont=ErrorInSecondDialog open caption="An error in a second dialog over the first."
 
 ```
 
@@ -114,13 +114,28 @@ While `pending`, nothing closes the dialog and its close button is disabled. Sub
 
 ### Content
 
-```tsx do=ConfirmDelete caption="Ask the question, and repeat its verb in the action."
+```tsx do=ConfirmDelete open caption="Ask the question, and repeat its verb in the action."
 
 ```
 
-```tsx dont=AreYouSure caption="Are you sure? with Yes and No: neither says what happens."
+```tsx dont=AreYouSure open caption="Are you sure? with Yes and No: neither says what happens."
 
 ```
+
+## Anatomy
+
+```tsx anatomy=DialogAnatomy open
+
+```
+
+1. **Dialog** (`env-dialog-popup`)
+2. **Title** (`env-dialog-title`, `title`)
+3. **Description** (`env-dialog-description`, `description`)
+4. **Content** (`env-text-field`, `children`)
+5. **Close button** (`env-dialog-actions > env-button:first-child`, `closeLabel`)
+6. **Action** (`env-dialog-actions > env-button:last-child`, `actions`)
+
+Not shown: the scrim behind a modal dialog, `env-dialog-backdrop`.
 
 ## Accessibility
 

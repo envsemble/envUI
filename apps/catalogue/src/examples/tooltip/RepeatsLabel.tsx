@@ -6,7 +6,7 @@ export default function RepeatsLabel() {
   return (
     <Row wrap gap={2}>
       {/* Wrong: the tooltips say what the labels already say. */}
-      <Tooltip content="Refresh">
+      <Tooltip content="Refresh" defaultOpen>
         <Button variant="secondary" startIcon={<Refresh />}>
           Refresh
         </Button>

@@ -3,7 +3,7 @@ import { Refresh } from '@envsemble/envui/icons/Refresh';
 
 export default function ShortName() {
   return (
-    <Tooltip content="Refresh members">
+    <Tooltip content="Refresh members" defaultOpen>
       <IconButton icon={<Refresh />} aria-label="Refresh members" />
     </Tooltip>
   );

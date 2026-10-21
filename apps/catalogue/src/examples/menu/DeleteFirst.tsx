@@ -9,6 +9,7 @@ export default function DeleteFirst() {
   return (
     <Menu.Root
       aria-label="Document actions"
+      defaultOpen
       trigger={<IconButton icon={<MoreVert />} aria-label="More actions" />}
     >
       {/* Wrong: Delete is the first item the keyboard highlights. */}
