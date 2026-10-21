@@ -27,11 +27,24 @@
   margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
 }
 
-/* Text sits close to the figure it introduces. */
+/* Text sits close to the figure it introduces, but not to a subsection that starts with its own
+   heading beside its figure. */
 .docs-figure-section
   > .env-markdown
-  + :is(.docs-live-example-entry, .docs-shared-row, .docs-anatomy, .docs-verdict, .docs-example) {
+  + :is(
+    .docs-live-example-entry,
+    .docs-shared-row:not(:has(> .docs-figure-split)),
+    .docs-anatomy,
+    .docs-verdict,
+    .docs-example
+  ) {
   margin-block-start: calc(var(--env-space-4) - var(--env-space-8));
+}
+
+/* A subsection that follows text, a list or a table in the same run of Markdown sits as far from
+   it as from a figure. */
+.docs-figure-section .env-markdown > h3:not(:first-child) {
+  margin-block-start: var(--env-space-8);
 }
 
 /* Lists side by side, such as what envUI provides and what you provide, in cells of one size. */
@@ -85,8 +98,8 @@
 /* Figures side by side are cells of one size: equal widths, and each figure's stage, caption and
    code lined up across the row on rows of their own, so the stages match the tallest. */
 /* A run is one column until all its figures fit side by side, so no row is left with an orphan:
-   pairs, and do and don't figures, two to a row from 38 rem, three from 58 rem, four as two rows
-   of two from 38 rem. */
+   two to a row from 38 rem for an even run, such as do and don't pairs, three from 58 rem for a run
+   of three. */
 .docs-figure-run {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -119,14 +132,16 @@
   min-inline-size: 0;
 }
 
+/* Even runs go two to a row, do and don't pairs included; a run of three goes three across once
+   they fit, and stays one column before that, so no row is left with an orphan. */
 @container (width >= 38rem) {
-  .docs-figure-run:is([data-count='2'], [data-count='4'], [data-verdicts]) {
+  .docs-figure-run:is([data-count='2'], [data-count='4'], [data-count='6'], [data-count='8']) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @container (width >= 58rem) {
-  .docs-figure-run[data-count='3']:not([data-verdicts]) {
+  .docs-figure-run[data-count='3'] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

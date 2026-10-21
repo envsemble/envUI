@@ -156,6 +156,28 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
   return callouts.sort((a, b) => a.number - b.number);
 }
 
+/** A subject at most this wide and tall, in CSS pixels, is small enough to show larger. */
+const smallSubject = { width: 240, height: 48 };
+
+/**
+ * Shows a small subject, such as a badge or a checkbox, half as large again, as far as its stage
+ * has room, so the callouts on its parts don't crowd. The callouts measure the enlarged parts.
+ */
+function enlarge(subject: HTMLElement) {
+  // The example's root, which sizes to its content when it is small.
+  const scaled = subject.firstElementChild;
+  if (!(scaled instanceof HTMLElement)) return;
+  const current = Number(scaled.style.getPropertyValue('zoom') || 1);
+  const box = scaled.getBoundingClientRect();
+  const width = box.width / current;
+  const height = box.height / current;
+  const small = width > 0 && width <= smallSubject.width && height <= smallSubject.height;
+  const zoom = small ? Math.max(1, Math.min(1.5, subject.clientWidth / width)) : 1;
+  if (Math.abs(zoom - current) < 0.01) return;
+  if (zoom === 1) scaled.style.removeProperty('zoom');
+  else scaled.style.setProperty('zoom', zoom.toFixed(2));
+}
+
 /**
  * The component in the theme the reader has chosen, following it as it changes, with its callouts
  * measured from its live parts.
@@ -182,6 +204,7 @@ function AnatomyStage({
       cancelAnimationFrame(frame);
       // Only a change of place re-renders the callouts.
       frame = requestAnimationFrame(() => {
+        enlarge(subjectElement);
         const next = measure(stageElement, subjectElement, legend);
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
