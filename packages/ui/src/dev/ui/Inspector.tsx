@@ -5,7 +5,6 @@
 
 import { useMemo, useState } from 'react';
 import { Badge } from '../../content/Badge.js';
-import { Code } from '../../content/Code.js';
 import { Text } from '../../foundations/Text.js';
 import { Tabs } from '../../navigation/Tabs.js';
 import { Tree, type TreeItem } from '../../navigation/Tree.js';
@@ -69,8 +68,11 @@ export function Inspector({ live, selected, onSelect, onTreeHover, onClose }: In
             content: full ? (
               <>
                 <Text variant="body-sm" emphasis="muted">
-                  What <Code>envui.layout.describe()</Code> returns. Try{' '}
-                  <Code>envui.layout.at(['22rem', '40rem', '60rem', '80rem'])</Code> in the console.
+                  What <code className="env-dev-code">envui.layout.describe()</code> returns. Try{' '}
+                  <code className="env-dev-code">
+                    envui.layout.at(['22rem', '40rem', '60rem', '80rem'])
+                  </code>{' '}
+                  in the console.
                 </Text>
                 <CopyReadout text={full.reading.text} />
                 <pre className="env-dev-readout">{full.reading.text}</pre>
@@ -194,7 +196,7 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
       <dl>
         <dt>Part</dt>
         <dd>
-          {node.part ? <Code>{node.part}</Code> : 'none'}
+          {node.part ? <code className="env-dev-code">{node.part}</code> : 'none'}
           {part ? ` · ${part.component}${part.root ? ' (root)' : ''}` : null}
         </dd>
         {part?.description ? (
@@ -231,10 +233,10 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
               const holds = conditionHolds(query.condition, width, snapshot.rootPx);
               return (
                 <li key={`${query.container}${query.condition}`}>
-                  <Code>
+                  <code className="env-dev-code">
                     {query.container ? `${query.container} ` : ''}
                     {query.condition}
-                  </Code>{' '}
+                  </code>{' '}
                   · {query.rules} {query.rules === 1 ? 'rule' : 'rules'}
                   {holds === null ? '' : holds ? ' · holds now' : ''}
                 </li>
@@ -265,7 +267,7 @@ function Details({ snapshot, node, live }: { snapshot: Snapshot; node: NodeData;
           <div className="env-dev-tokens">
             {tokens.map((token) => (
               <span key={token.name} style={{ display: 'contents' }}>
-                <Code>{token.name}</Code>
+                <code className="env-dev-code">{token.name}</code>
                 <span>{token.value || '(not set)'}</span>
               </span>
             ))}
