@@ -44,83 +44,21 @@ components:
 
 ## Overview
 
-A checkbox turns one choice on or off, independently of the choices beside it. It is a native `<input type="checkbox">` inside its `<label>`, so pressing the box or the label toggles it, and forms submit, validate and reset it as the platform does. A checkbox can also be mixed, for the parent of a group whose children are only partly chosen.
+A checkbox turns one choice on or off, on its own, and takes effect when a form is sent.
 
 ```tsx example=IncludeArchived
 
 ```
 
-## Anatomy
+### States
 
-1. **Box**: a square of the medium icon size, 1.125 rem (1 rem in the compact scale), with the smallest corners and a hairline border; checked and mixed boxes take the checkbox fill.
-2. **Mark**: a check mark while checked, or a short dash while mixed, in the on-fill color.
-3. **Label** (optional, `label`): the text beside the box, 0.75 rem from it, in the small body type. The whole label toggles the checkbox.
-
-## Variants and sizes
-
-- The label is 0.875 rem and wraps onto more lines when it runs out of room, also within a long word; the box stays centred beside it.
-- On touch screens the label and box are at least 2.75 rem tall.
-
-## States and behaviour
-
-- **Checked, unchecked and mixed**: `checked` and `onCheckedChange` control the checkbox, and `defaultChecked` starts an uncontrolled one. `"mixed"` shows the dash and reports the mixed state; a press calls `onCheckedChange` with `true`, and the checkbox stays mixed while the application keeps passing `"mixed"`.
-- **Hover, pressed and focus**: hover and press darken the border of an empty box and the fill of a checked one, with color tokens of their own, as [colors and themes](../foundations/colors.md) describes; keyboard focus shows a focus outline around the box. Without a reduced-motion preference the box shrinks slightly while it is pressed, and the mark pops in as it appears.
-- **Disabled**: the box takes the shared disabled opacity and the label the disabled text color; it cannot be focused or changed, and forms leave it out.
-- **In forms**: a checked checkbox submits its `name` with its `value` ("on" without one), and an unchecked one submits nothing. `required` asks for it to be checked. A form reset restores an uncontrolled checkbox's `defaultChecked`, also when that is mixed, and leaves a controlled one as the application holds it; a reset the application cancels changes nothing.
-- **Props**: `className` and `style` style the root, the label around the box and the text; `ref` and the other native props, such as `name` and `aria-describedby`, reach the native `<input>`, so a form library can register it.
+Pressing the box or its label toggles it. `checked="mixed"` shows a dash, for a parent whose children are only partly chosen.
 
 <!-- specimen: States -->
 
-## Content guidelines
-
-- Write the label as the choice it turns on, in sentence case without ending punctuation: "Include archived projects", "Mentions".
-- Phrase it positively, so checking means yes: "Send me a weekly digest", not "Don't send me a weekly digest".
-- Name a group of checkboxes with a heading or legend that says what they choose: "Send me an e-mail about".
-- Name a parent after the whole group: "All projects".
-
-## Do and don't
-
-### Do
-
-- Use checkboxes for choices that take effect when people save or send a form.
-- Derive a parent's state from its children: checked when all are, mixed when some are, unchecked when none are.
-- Group related checkboxes in a fieldset with a legend, or a group with a name.
-- Keep a visible label on every checkbox.
-
-### Don't
-
-- Don't use a checkbox for a setting that applies at once; use [Switch](../components/switch.md).
-- Don't use checkboxes for a single choice among options; use [Radio](../components/radio.md).
-- Don't disable a checkbox without saying why nearby.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                             | Action                                                           |
-| ----------------------------------------------- | ---------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves focus to the next or previous checkbox.                    |
-| <kbd>Space</kbd>                                | Checks or unchecks the focused checkbox, and checks a mixed one. |
-
-### envUI provides
-
-- A native checkbox inside its `<label>`, so its name is the label's text and pressing the label toggles it.
-- The mixed state as the native `indeterminate` state and `aria-checked="mixed"`, kept in step with `checked`.
-- The check mark hidden from assistive technology, and a box border with 3:1 contrast.
-- A focus outline around the box, and a 2.75 rem target on touch screens.
-
-### You provide
-
-- A `label`, or `aria-label` or `aria-labelledby` on a checkbox without one.
-- A name for a group of checkboxes, such as a fieldset with a legend.
-- The state of a parent, derived from its children.
-- Errors and descriptions where a choice is required; Checkbox has no error or description of its own, so link them with `aria-describedby`.
-
-## Examples
-
 ### Select all
 
-The parent is checked when every project is, mixed when some are, and checks or clears them all when pressed. The children line up with the parent's label.
+A parent is checked when every child is, mixed when some are, and checks or clears them all.
 
 ```tsx example=SelectAll
 
@@ -128,11 +66,83 @@ The parent is checked when every project is, mixed when some are, and checks or 
 
 ### In a form
 
-Checkboxes with the same `name` submit one entry for each checked value. A fieldset's legend names the group, and Reset returns every box to `defaultChecked`.
+A checked box submits its `name` with its `value`; an unchecked one submits nothing. A reset restores `defaultChecked`.
 
 ```tsx example=NotificationForm
 
 ```
+
+## When to use
+
+```tsx do=NamedGroup caption="Name a group with a legend, so each choice reads in context."
+
+```
+
+```tsx dont=UnnamedGroup caption="Checkboxes with no name for the group: mentions of what?"
+
+```
+
+```tsx do=DisabledWithReason caption="Say why a choice is unavailable, next to it."
+
+```
+
+```tsx dont=DisabledWithoutReason caption="A disabled checkbox that doesn’t say why."
+
+```
+
+- Derive a parent's state from its children; the checkbox doesn't.
+
+### Labels
+
+Write the label as the choice it turns on, in sentence case, so checking it means yes.
+
+```tsx do=PositiveLabel caption="A label that checking means yes to."
+
+```
+
+```tsx dont=NegativeLabel caption="A negative label: checking it means no."
+
+```
+
+## Anatomy
+
+```tsx anatomy=CheckboxAnatomy
+
+```
+
+1. **Checkbox** (`env-checkbox`)
+2. **Box** (`env-checkbox-box`)
+3. **Check** (`env-checkbox-indicator`)
+4. **Label** (`env-checkbox-label`, `label`)
+
+## Adapting to width
+
+The label wraps onto more lines, and the box stays centred beside it.
+
+```tsx example=LongLabel widths="14 30"
+
+```
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                         |
+| ----------------------------------------------- | ---------------------------------------------- |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves to the next or previous checkbox.        |
+| <kbd>Space</kbd>                                | Checks or unchecks it, and checks a mixed one. |
+
+### envUI provides
+
+- A native checkbox inside its `<label>`, named by the label's text.
+- The mixed state as `indeterminate` and `aria-checked="mixed"`.
+- A focus outline, and a 2.75 rem target on touch screens.
+
+### You provide
+
+- A `label`, or `aria-label` on a checkbox without one.
+- A name for a group, such as a fieldset's legend.
+- An error or description, linked with `aria-describedby`.
 
 ## Changelog
 
