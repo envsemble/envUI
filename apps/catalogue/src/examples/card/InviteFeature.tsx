@@ -5,6 +5,7 @@ export default function InviteFeature() {
   return (
     <Card
       layout="feature"
+      headingLevel={3}
       icon={<Groups />}
       title="Invite your team"
       description="Plans, comments and files stay in one shared workspace."

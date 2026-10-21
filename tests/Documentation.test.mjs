@@ -805,7 +805,7 @@ const exchangeBody = [
   '```',
   '',
   '1. **Track** (`env-switch`): the pill.',
-  '2. `env-switch-thumb`',
+  '2. `env-switch-input`',
   '',
   '## Adapting to width',
   '',
@@ -868,7 +868,7 @@ test('a page whose Overview opens with a question is read as exchanges', async (
     );
     assert.deepEqual(figure('Parts').legend, [
       { part: 'env-switch', text: '**Track** (`env-switch`): the pill.' },
-      { part: 'env-switch-thumb', text: '`env-switch-thumb`' },
+      { part: 'env-switch-input', text: '`env-switch-input`' },
     ]);
     assert.deepEqual(figure('Narrow').widths, [16, 30]);
 
@@ -882,14 +882,14 @@ test('a page whose Overview opens with a question is read as exchanges', async (
     );
     assert.match(
       compiled,
-      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-thumb`\n/,
+      /```\n\n1\. \*\*Track\*\* \(`env-switch`\): the pill\.\n2\. `env-switch-input`\n/,
     );
     assert.ok(compiled.indexOf('## Accessibility') < compiled.indexOf('## Props'));
   });
 });
 
 test('a page of exchanges rejects what breaks its form', async () => {
-  await templateFixture(async ({ page, read, examples }) => {
+  await templateFixture(async ({ page, read, examples, docs }) => {
     for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
       await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
     const rejects = async (body, pattern) => {
@@ -915,7 +915,7 @@ test('a page of exchanges rejects what breaks its form', async () => {
       /anatomy Parts takes no size/,
     );
     await rejects(
-      body.replace('2. `env-switch-thumb`', '2. The thumb.'),
+      body.replace('2. `env-switch-input`', '2. The thumb.'),
       /item 2 of the legend of anatomy Parts names no part/,
     );
     await rejects(
@@ -931,6 +931,41 @@ test('a page of exchanges rejects what breaks its form', async () => {
       /"## Variants" must come before "## Accessibility"/,
     );
     await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
+    // A legend names parts that exist, and a figure without one names a component with parts.
+    await rejects(
+      body.replace('2. `env-switch-input`', '2. `env-switch-knob`'),
+      /names env-switch-knob, which neither packages\/ui's CSS nor docs\/generated\/parts\.json has/,
+    );
+    const withoutLegend = body.replace(/1\. \*\*Track\*\*.*\n2\. `env-switch-input`\n/, '');
+    await rejects(
+      withoutLegend,
+      /anatomy Parts has no legend, and docs\/generated\/parts\.json lists no parts of Switch/,
+    );
+    await rejects(
+      withoutLegend.replace('anatomy=Parts', 'anatomy=Parts of=Toggle'),
+      /lists no parts of Toggle$/m,
+    );
+    await mkdir(join(docs, 'generated'), { recursive: true });
+    await writeFile(
+      join(docs, 'generated', 'parts.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        components: {
+          Switch: {
+            root: 'env-switch',
+            source: 'Switch.tsx',
+            parts: [{ class: 'env-switch-knob', description: 'The knob.' }],
+            states: [],
+          },
+        },
+        shared: {},
+      }),
+    );
+    await writeFile(
+      page,
+      switchFrontmatter + withoutLegend.replace('`env-switch-input`', '`env-switch-knob`'),
+    );
+    assert.doesNotThrow(read);
     // An old-template page that borrows an exchange section is told how exchanges begin.
     await rejects(
       switchBody.replace('## States and behaviour', '## When to use'),

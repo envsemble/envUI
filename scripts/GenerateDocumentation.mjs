@@ -579,6 +579,36 @@ const fileWords = (name) =>
     .replace(/(?<=[a-z\d])(?=[A-Z])/g, ' ')
     .replace(/ [A-Z](?=[a-z])/g, (word) => word.toLowerCase());
 
+const stylesDirectory = fileURLToPath(new URL('../packages/ui/src/styles/', import.meta.url));
+
+/**
+ * The part class names an anatomy legend may name: every `env-*` class of packages/ui's style
+ * sheets and of docs/generated/parts.json, and that file's components by export name, each with
+ * its parts, for a figure without a legend.
+ */
+export function readPartNames(directory = documentationDirectory) {
+  const classes = new Set();
+  if (existsSync(stylesDirectory))
+    for (const name of readdirSync(stylesDirectory).filter((file) => file.endsWith('.css')))
+      for (const [, found] of readFileSync(resolve(stylesDirectory, name), 'utf8').matchAll(
+        /\.(env-[\w-]+)/g,
+      ))
+        classes.add(found);
+  const file = resolve(directory, 'generated/parts.json');
+  const json = existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {};
+  const components = {};
+  for (const [group, entries] of [
+    ['components', json.components],
+    ['shared', json.shared],
+  ])
+    for (const [name, entry] of Object.entries(entries ?? {})) {
+      const parts = [entry.root, ...(entry.parts ?? []).map((part) => part.class)].filter(Boolean);
+      for (const part of parts) classes.add(part);
+      if (group === 'components') components[name] = parts;
+    }
+  return { classes, components };
+}
+
 /**
  * Whether a component page is written as exchanges: its first section, "## Overview", opens with a
  * question, a blockquote.
@@ -593,7 +623,7 @@ export function opensWithQuestion(tokens) {
  * The blocks of a component page written as exchanges: per section, its question and any
  * follow-up questions (blockquotes), Markdown, live figures with their legends, and specimens.
  */
-function readExchanges(document, body, { examples, specimens }) {
+function readExchanges(document, body, { examples, specimens, partNames }) {
   const tokens = marked.lexer(body);
   if (tokens.map((token) => token.raw).join('') !== body)
     throw new Error(`Could not split ${document.path} into sections.`);
@@ -675,6 +705,12 @@ function readExchanges(document, body, { examples, specimens }) {
           problems.push(
             `item ${index + 1} of the legend of anatomy ${legendOf.name} names no part, such as \`env-button\``,
           );
+        // Every class it names is one envUI styles or lists as a part.
+        for (const name of (part ?? '').replace(/::text$/, '').match(/env-[\w-]+/g) ?? [])
+          if (!partNames.classes.has(name))
+            problems.push(
+              `item ${index + 1} of the legend of anatomy ${legendOf.name} names ${name}, which neither packages/ui's CSS nor docs/generated/parts.json has`,
+            );
         return { part: part ?? '', text: item.text.replace(/\s+/g, ' ').trim() };
       });
       legendOf = undefined;
@@ -760,6 +796,16 @@ function readExchanges(document, body, { examples, specimens }) {
     }
     appendMarkdown(token.raw);
   }
+  // An anatomy figure without a legend numbers the parts parts.json lists for its component.
+  for (const section of sections)
+    for (const block of section.blocks)
+      if (block.role === 'anatomy' && !block.legend) {
+        const component = block.of ?? document.title;
+        if (!partNames.components[component]?.length)
+          problems.push(
+            `anatomy ${block.name} has no legend, and docs/generated/parts.json lists no parts of ${component}${block.of ? '' : '; write a legend or name the component with of="Name"'}`,
+          );
+      }
   if (asking) problems.push(`"## ${asking.title}" opens with its question, a "> …?" line`);
   for (const section of exchangeSections)
     if (section.required && !sections.some((item) => item.id === section.id))
@@ -965,6 +1011,7 @@ export function readDocumentation(
     examples = examplesDirectory,
     specimens = specimensDirectory,
     versions = directory === documentationDirectory ? libraryVersions() : undefined,
+    partNames = readPartNames(directory),
   } = {},
 ) {
   // Pages saved with CRLF line endings read as LF, as Git checks them out.
@@ -1092,6 +1139,7 @@ export function readDocumentation(
         document.sections = readExchanges(document, markdown, {
           examples: filesOf(examples, id),
           specimens: filesOf(specimens, id),
+          partNames,
         });
       } else if (template)
         document.sections = readTemplate(document, markdown, {

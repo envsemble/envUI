@@ -73,7 +73,14 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
   const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
   return (
-    <Disclosure title="Code" className="docs-live-example-code">
+    <Disclosure
+      title={
+        <>
+          Code<span className="docs-visually-hidden">, {name}.tsx</span>
+        </>
+      }
+      className="docs-live-example-code"
+    >
       <LoadBoundary
         what="code"
         modules={[`src/examples/${page}/${name}.tsx?raw`]}

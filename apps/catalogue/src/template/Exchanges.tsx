@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from 'react';
+import { Fragment, useId, type ReactNode } from 'react';
 import { Message, Stack, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -28,8 +28,14 @@ export function VerdictFigure({
 }) {
   const theme = useTheme();
   const label = verdict === 'do' ? 'Do' : 'Don’t';
+  const id = useId();
   return (
-    <figure className="docs-verdict" data-verdict={verdict} aria-label={`${label}: ${caption}`}>
+    // Named by its bar and its sentence, each read once.
+    <figure
+      className="docs-verdict"
+      data-verdict={verdict}
+      aria-labelledby={`${id}-verdict ${id}-caption`}
+    >
       <div className="docs-verdict-frame">
         <Stack
           render={<Theme {...theme} />}
@@ -40,12 +46,14 @@ export function VerdictFigure({
         >
           <ExampleRender page={page} name={name} />
         </Stack>
-        <div className="docs-verdict-bar">
+        <div className="docs-verdict-bar" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
           <span>{label}</span>
         </div>
       </div>
-      <figcaption className="docs-verdict-caption">{caption}</figcaption>
+      <figcaption className="docs-verdict-caption" id={`${id}-caption`}>
+        {caption}
+      </figcaption>
       <ExampleCode page={page} name={name} />
     </figure>
   );
@@ -264,11 +272,16 @@ export function ExchangeSection({
     } else if (group.kind === 'example')
       content.push(<Figure key={index} page={reference} block={group} />);
     else if (group.kind === 'specimen')
-      content.push(<Specimen key={index} page={reference.id} name={group.name} />);
+      content.push(<Specimen key={index} page={reference.id} name={group.name} headingLevel={3} />);
   });
   const [heading, first, ...followUps] = turns;
   const question = (text: string) => (
-    <Message from="self" className="docs-exchange-question">
+    // A Message is an article; the section it asks about names it.
+    <Message
+      from="self"
+      className="docs-exchange-question"
+      aria-label={`Question on ${section.title.toLowerCase()}`}
+    >
       {questionText(text)}
     </Message>
   );

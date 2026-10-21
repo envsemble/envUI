@@ -201,7 +201,7 @@ function PropsExchange({ reference }: { reference: Document }) {
         <div className="docs-exchange-heading">
           <Documentation markdown="## Props" path={reference.path} />
         </div>
-        <Message from="self" className="docs-exchange-question">
+        <Message from="self" className="docs-exchange-question" aria-label="Question on props">
           Which props does {reference.title} take?
         </Message>
       </div>

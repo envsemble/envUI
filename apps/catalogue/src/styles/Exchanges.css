@@ -5,6 +5,8 @@
 }
 
 .docs-exchange {
+  /* A link to a section stops below the sticky display controls. */
+  scroll-margin-block-start: var(--env-space-9);
   display: grid;
   gap: var(--env-space-6);
   min-inline-size: 0;
@@ -19,6 +21,8 @@
 
 /* The section's heading and its question share a row where there is room. */
 .docs-exchange-header {
+  /* The question keeps clear of the display controls in the window's top corner. */
+  padding-inline-end: var(--docs-controls-room, 0);
   display: flex;
   flex-wrap: wrap;
   align-items: end;
@@ -313,4 +317,14 @@
   .docs-verdict-stage {
     padding: var(--env-space-6) var(--env-space-4);
   }
+}
+
+/* Text for assistive technology alone, such as the file a Code disclosure shows. */
+.docs-visually-hidden {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

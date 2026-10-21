@@ -149,11 +149,12 @@ With `onClick` the whole card is a native button with `type="button"`, which can
 ```
 
 1. **Surface** (`env-card`, `background`, `padding`): the fill with 1.75 rem corners and padding that grows from 1.25 to 1.5 rem with the window, or a fixed step of the spacing scale.
-2. **Title** (`env-card-heading`, `title`): an `h3` in the title type; `headingLevel` sets another level for the page's outline.
-3. **Meta** (`env-card-meta`, `meta`): supporting text at the end of the title row, `env-card-header`, 0.75 rem from the title; the row wraps when it runs out of room.
-4. **Description** (`env-card-description`, `description`): a sentence under the title in muted text.
-5. **Content** (`env-card-body > env-text:last-child`, `children`): spaced 1 rem apart, in `env-card-body`.
-6. **Footer** (`env-card-footer`, `actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
+2. `env-card-header`
+3. **Title** (`env-card-heading`, `title`): an `h3` in the title type; `headingLevel` sets another level for the page's outline.
+4. **Meta** (`env-card-meta`, `meta`): supporting text at the end of the title row, 0.75 rem from the title; the row wraps when it runs out of room.
+5. **Description** (`env-card-description`, `description`): a sentence under the title in muted text.
+6. **Content** (`env-card-body > env-text:last-child`, `children`): spaced 1 rem apart, in `env-card-body`.
+7. **Footer** (`env-card-footer`, `actions`): a `footer` along the bottom, in the action strip's fill, with 0.75 rem block padding and the card's inline padding, its controls lined up at the end.
 
 The feature layout, `env-card-layout`, lays out an **icon** (`env-card-icon`), 1.5 rem in the muted color in a 2.75 rem box, the title, an `h2` in the headline type, the description in supporting text, more content 1 rem below, and the actions at the end.
 

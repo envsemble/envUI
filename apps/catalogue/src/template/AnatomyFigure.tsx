@@ -179,9 +179,13 @@ function AnatomyStage({
     let frame = 0;
     const update = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() =>
-        setCallouts(measure(stageElement, subjectElement, legend)),
-      );
+      // Only a change of place re-renders the callouts.
+      frame = requestAnimationFrame(() => {
+        const next = measure(stageElement, subjectElement, legend);
+        setCallouts((current) =>
+          JSON.stringify(current) === JSON.stringify(next) ? current : next,
+        );
+      });
     };
     update();
     // The callouts follow the figure as it resizes, its example loads and its fonts arrive.
@@ -189,7 +193,11 @@ function AnatomyStage({
     resize.observe(stageElement);
     resize.observe(subjectElement);
     const mutation = new MutationObserver(update);
-    mutation.observe(subjectElement, { childList: true, subtree: true, attributes: true });
+    mutation.observe(subjectElement, {
+      childList: true,
+      subtree: true,
+      attributeFilter: ['class', 'style'],
+    });
     void document.fonts?.ready.then(update);
     return () => {
       cancelAnimationFrame(frame);
@@ -205,8 +213,6 @@ function AnatomyStage({
       ref={stage}
       className="docs-anatomy-stage"
       data-theme={theme}
-      role="group"
-      aria-label={theme === 'light' ? 'Light theme' : 'Dark theme'}
     >
       {/* A picture of the parts: the live component neither takes focus nor changes under it. */}
       <div ref={subject} className="docs-anatomy-subject" inert>

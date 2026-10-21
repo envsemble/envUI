@@ -145,9 +145,9 @@ test('a page of exchanges asks its questions and numbers the parts of its anatom
     'What is a button, and what does it look like?',
   );
   // Do and don't figures carry their verdict and one sentence, with the code below.
-  const verdict = page.getByRole('figure', { name: /^Do: Use one primary button per group/ });
+  const verdict = page.getByRole('figure', { name: /^Do Use one primary button per group/ });
   await expect(verdict.locator('.docs-verdict-bar')).toHaveText('Do');
-  await expect(verdict.locator('details summary')).toHaveText('Code');
+  await expect(verdict.locator('details summary')).toHaveText('Code, OnePrimaryAction.tsx');
   // The anatomy numbers each part of the live button, in the light and the dark theme, beside
   // the part it names, and keeps them there as the page narrows.
   const stages = page.locator('.docs-anatomy-stage');
@@ -168,6 +168,36 @@ test('a page of exchanges asks its questions and numbers the parts of its anatom
   await page.setViewportSize({ width: 420, height: 800 });
   await expect.poll(placement).toEqual({ badges: 4, offset: 0 });
   await expect(page.locator('.docs-anatomy-legend > li')).toHaveCount(4);
+});
+
+test('every anatomy figure numbers each part its legend names, in both themes', async ({
+  page,
+}) => {
+  // A legend part the example doesn't render would leave its number off the figure.
+  const pages = references
+    .filter((reference) => reference.format === 'exchanges')
+    .map((reference) => ({
+      id: reference.id,
+      figures: (reference.sections ?? [])
+        .flatMap((section) => section.blocks)
+        .filter((block) => block.kind === 'example' && block.role === 'anatomy').length,
+    }));
+  expect(pages.length).toBeGreaterThan(0);
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const { id, figures } of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    const anatomy = page.locator('.docs-anatomy');
+    await expect(anatomy, `${id} shows its anatomy figures`).toHaveCount(figures);
+    for (const figure of await anatomy.all()) {
+      const legend = await figure.locator('.docs-anatomy-legend > li').count();
+      for (const stage of await figure.locator('.docs-anatomy-stage').all())
+        await expect(stage.locator('.docs-anatomy-badge'), `${id} numbers every part`).toHaveCount(
+          legend,
+        );
+    }
+  }
 });
 
 test('the props view links each source file at the revision the catalogue was built from', async ({
@@ -472,7 +502,7 @@ test('code that fails to load is asked for once, not on every render', async ({ 
   await page.route(source, (route) => route.abort());
   await page.goto(`${catalogueUrl}/#/components/button/overview`);
   const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await entry.locator('.docs-live-example-code summary').click();
   await expect(entry.getByText('The code could not load')).toBeVisible();
   // The example beside it is not loaded again.
   await expect(
@@ -533,7 +563,7 @@ test('an example that fails to render says so in place, and the rest of the page
   const variants = page.getByRole('group', { name: 'Variants example', exact: true });
   await expect(variants.getByRole('button').first()).toBeVisible();
   const entry = page.locator('.docs-live-example-entry').first();
-  await entry.getByText('Code', { exact: true }).click();
+  await entry.locator('.docs-live-example-code summary').click();
   await expect(entry.getByText('CreateProject.tsx', { exact: true })).toBeVisible();
   // And the navigation still leads elsewhere.
   await page

@@ -47,15 +47,15 @@ A component page reads as if its reader had asked an agent about the component: 
 
 After the `# Title`, a page has these `##` sections in this order. Omit an optional one where it doesn't apply. The build fails on another heading, a wrong order or a missing required section.
 
-| Section           | Required | The question it answers, and what the answer holds                                                                                                              |
-| ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview          | yes      | What is it, and what does it look like? What it is, its family, and at least one example; follow-ups on what it does on its own, such as pending or dismissing. |
-| Variants          |          | Which variants are there, and when do I use each? Variants, tones, layouts and sizes, as tables, examples and specimens.                                        |
-| When to use       | yes      | When should I use it, and when something else? Do and don't pairs and the rules they don't show; a follow-up on writing its labels and text.                    |
-| Anatomy           |          | What is it made of? An anatomy figure with its legend, and parts the figure can't show, such as a spinner while pending.                                        |
-| Adapting to width |          | How does it behave when space runs out? What it does in a narrow container, with an example at several widths.                                                  |
-| Accessibility     | yes      | How do I keep it accessible? A sentence or two, a `### Keyboard` table (Key, Action), and `### envUI provides` and `### You provide` lists.                     |
-| Changelog         |          | No question: releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                                                       |
+| Section           | Required | The question it answers, and what the answer holds                                                                                                                |
+| ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Overview          | yes      | What is it, and what does it look like? What it is, its family, and at least one example; follow-ups on what it does on its own, such as pending or dismissing.   |
+| Variants          |          | Which variants are there, and when do I use each? Variants, tones, layouts and sizes, as tables, examples and specimens.                                          |
+| When to use       | yes      | When should I use it, and when something else? Do and don't pairs and the rules they don't show; a follow-up on writing its labels and text.                      |
+| Anatomy           |          | What is it made of? An anatomy figure with its legend, and parts the figure can't show, such as a spinner while pending.                                          |
+| Adapting to width |          | How does it behave when space runs out? What it does in a narrow container, with an example at several widths.                                                    |
+| Accessibility     | yes      | How do I keep it accessible? A sentence or two, a `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists. |
+| Changelog         |          | No question: releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                                                         |
 
 The build adds **Props** and **Related** before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. In the catalogue every exchange is in the page's Overview view, which ends with a last exchange that leads to the Props view.
 
@@ -116,6 +116,8 @@ An ordered list right after an anatomy fence is its legend. Each item names its 
 - The first code span that starts with `env-` is the part; other code spans, such as props, are text. Start each item with the part's name in bold.
 - A part reference is a class name such as `env-card-heading`, or a selector of class names written without their dot, such as `env-button > env-icon:first-child` for a button's start icon. `::text` at the end points at the element's own text rather than its box, such as `env-button::text` for a label that has no element of its own.
 - An item that holds only the code span takes its description from `docs/generated/parts.json`. A fence without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names.
+- `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
+- The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a fence without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
 - Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. List parts the figure can't show, such as a spinner while pending or a focus ring, below the legend.
 
 ## Pages on the section template
@@ -149,6 +151,7 @@ An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small
 - Use neutral sample data, such as Alex Morgan, Sam Lee, Priya Shah, Northwind or example.com, and never a product name.
 - Keep state inside the example, and stand in for slow work with a timer.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
+- Start an example's own headings at level 3, since the page's sections are `h2`: set `headingLevel={3}` on a component that renders a heading of its own at level 2, such as a feature Card, and render other headings as `h3` or lower.
 
 Reference it from the Markdown with an empty fence. On a page of exchanges it is a [figure](#figures), anywhere in an answer; on a page on the section template it goes under `## Examples`, after its `###` heading and a sentence or two:
 
@@ -171,6 +174,8 @@ Some visual references are not examples: a matrix of every variant in every form
 ```md
 <!-- specimen: VariantMatrix -->
 ```
+
+On a page of exchanges a specimen's title is an `h3`, within its section, and its parts' titles `h4`; elsewhere they are `h2` and `h3`. The catalogue sets the level; a specimen's `Example` and `Specimen` take it from there.
 
 The visual baseline captures a page's specimens, and its first example when it has no specimen.
 
@@ -195,7 +200,7 @@ To convert a page on the section template into exchanges:
 2. Add the question under `## Overview`, and move each section's content into the exchange that answers it: Variants and sizes into Variants; States and behaviour into Overview follow-ups, or into Variants where a state belongs to one variant; Content guidelines into a follow-up under When to use; Do and don't into pairs under When to use, with the rules no picture needs as a list; Examples into the exchanges they illustrate, as figures with a caption or under a `###` subsection. Keep every claim, and check it against the code.
 3. Keep every heading another page links to, such as `#confirm-in-place`, as a `###` subsection: the build fails on a link to a heading that is gone.
 4. Write the new example files: the do and don't pairs, the anatomy example and, where the component adapts, an example for `widths`. Keep specimens where they show what code can't, such as forced hover and pressed states.
-5. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: the callouts on their parts, the pairs side by side and no figure overflowing. Update browser tests that visited the page's Guidelines or Accessibility view; on a page of exchanges, those headings are in its Overview.
+5. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: the callouts on their parts, one for each legend item in both themes, the pairs side by side and no figure overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's Guidelines or Accessibility view; on a page of exchanges, those headings are in its Overview.
 
 ### From the earliest pages
 

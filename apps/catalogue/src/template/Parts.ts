@@ -1,60 +1,49 @@
 /**
- * The public part names of envUI's components, from docs/generated/parts.json when it exists: per
- * component its root class, its parts with a short description each, and its state attributes.
- * Anatomy figures number parts by these class names and take a part's description from here when
- * their legend gives none. Without the file, figures number only the parts their legend names.
+ * The public part names of envUI's components, from docs/generated/parts.json: per component, by
+ * its export name, its root class, its parts with a short description each and its state
+ * attributes, and the groups of parts several components share. Anatomy figures number parts by
+ * these class names and take a part's description from here when their legend gives none; the
+ * build checks that every legend names a part that exists.
  */
 import type { AnatomyLegendItem } from '../DocumentationTypes';
 
-export interface ComponentParts {
+interface PartGroup {
   root: string;
-  parts: { className: string; description: string }[];
-  states: { attribute: string; values: string[] }[];
+  parts: { class: string; description: string }[];
+  states: { attribute: string; values: string[]; parts: string[] }[];
 }
 
-// A glob, so a checkout without the generated file builds and falls back.
-const files = import.meta.glob<unknown>('../../../../docs/generated/parts.json', {
+interface PartsFile {
+  schemaVersion: number;
+  components: Record<string, PartGroup & { source: string; uses?: string[] }>;
+  shared: Record<string, PartGroup & { usedBy: string[] }>;
+}
+
+// A glob, so a checkout without the generated file still builds; its figures then show the parts
+// their legends name, without descriptions from the file.
+const files = import.meta.glob<PartsFile>('../../../../docs/generated/parts.json', {
   eager: true,
   import: 'default',
 });
+const file: Partial<PartsFile> = Object.values(files)[0] ?? {};
+const components = file.components ?? {};
+const groups = [...Object.values(components), ...Object.values(file.shared ?? {})];
 
-/** The file's components by name; it may list them at its top or under `components`. */
-function readParts(): Record<string, ComponentParts> {
-  const json = Object.values(files)[0];
-  if (!json || typeof json !== 'object') return {};
-  const listed = (json as { components?: unknown }).components ?? json;
-  const entries = Array.isArray(listed)
-    ? listed.map((entry) => [(entry as { name?: string }).name ?? '', entry] as const)
-    : Object.entries(listed as Record<string, unknown>);
-  return Object.fromEntries(
-    entries.filter(
-      (entry): entry is readonly [string, ComponentParts] =>
-        Boolean(entry[0]) &&
-        typeof (entry[1] as ComponentParts)?.root === 'string' &&
-        Array.isArray((entry[1] as ComponentParts).parts),
-    ),
-  );
-}
-
-export const componentParts = readParts();
-
-/** The description parts.json gives a part, by its class name, on any component. */
+/** The description parts.json gives a part, by its class name, on any component or shared group. */
 export function partDescription(className: string): string | undefined {
-  for (const entry of Object.values(componentParts)) {
-    const part = entry.parts.find((item) => item.className === className);
+  for (const group of groups) {
+    const part = group.parts.find((item) => item.class === className);
     if (part) return part.description;
   }
   return undefined;
 }
 
-/** A legend of every part of a component, for an anatomy figure without one of its own. */
+/** A legend of every part of a component, its root first, for an anatomy figure without one. */
 export function legendOf(component: string): AnatomyLegendItem[] {
-  const entry = componentParts[component];
+  const entry = components[component];
   if (!entry) return [];
-  const parts = entry.parts.some((part) => part.className === entry.root)
-    ? entry.parts
-    : [{ className: entry.root, description: 'The root.' }, ...entry.parts];
-  return parts.map(({ className }) => ({ part: className, text: `\`${className}\`` }));
+  const names = [entry.root, ...entry.parts.map((part) => part.class)];
+  return [...new Set(names)].map((name) => ({ part: name, text: `\`${name}\`` }));
 }
 
 /**
