@@ -52,10 +52,10 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 | Width | Use for                                                                       |
 | ----- | ----------------------------------------------------------------------------- |
-| `md`  | A short summary, such as a document's last change. About 20 rem. The default. |
-| `lg`  | Richer details, such as a person with an avatar and a role. About 28 rem.     |
+| `md`  | A short summary, such as a document's last change. Up to 20 rem. The default. |
+| `lg`  | Richer details, such as a person with an avatar and a role. Up to 28 rem.     |
 
-- The card is at most the window's width less 2 rem, and as tall as the room beside the trigger allows; longer content scrolls.
+- The card is as wide as its content, from 12 rem up to its width, at most the room the window leaves it, and as tall as the room beside the trigger allows; longer content scrolls.
 - `side` places it below the trigger by default, or above, beside it, or at the inline start or end, which follow the text direction; `align` lines it up with the trigger's centre by default, or its start or end. It flips and shifts to stay 0.5 rem inside the window.
 
 ## States and behaviour

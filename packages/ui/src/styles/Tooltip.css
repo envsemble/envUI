@@ -5,7 +5,8 @@
   z-index: var(--env-z-tooltip);
 }
 .env-tooltip {
-  max-inline-size: min(18rem, calc(100vw - 2rem));
+  /* As wide as its text up to 18 rem, never wider than the room the positioner finds. */
+  max-inline-size: min(18rem, var(--available-width, calc(100vw - 2rem)));
   padding: var(--env-space-1) var(--env-space-2);
   /* Tooltips float over everything at elevation 2, as menus do: a shadow and a hairline edge, so the
      fill separates from a surface of its own color. On a light page the edge is the dark fill a step

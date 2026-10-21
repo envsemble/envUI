@@ -103,7 +103,7 @@
   --env-control-height: var(--env-control-height-sm);
   align-content: start;
   inline-size: auto;
-  max-inline-size: calc(100vw - 2rem);
+  max-inline-size: var(--available-width, calc(100vw - 2rem));
 }
 /* With a time, the time's wheels stand beside the calendar, in a column as tall as it: the column
    adds no height of its own to the row, so the calendar alone sets it, and the wheels sit in the

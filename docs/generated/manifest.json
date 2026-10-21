@@ -2326,8 +2326,6 @@
                 "vertical"
               ],
               "parts": [
-                "env-toolbar",
-                "env-toolbar-group",
                 "env-toolbar-separator"
               ]
             },
@@ -19109,7 +19107,7 @@
           "type": "'md' | 'lg'",
           "required": false,
           "default": "'md'",
-          "description": "md about 20 rem wide; lg about 28 rem."
+          "description": "The widest the card grows: md, 20 rem, or lg, 28 rem. It is as wide as its content from 12 rem up, and narrows to fit the window."
         },
         {
           "name": "open",
@@ -21456,7 +21454,7 @@
           "type": "'md' | 'lg'",
           "required": false,
           "default": "'md'",
-          "description": "The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. Both narrow to fit the window."
+          "description": "The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. It is as wide as its content from 12 rem up, and narrows to fit the window."
         }
       ],
       "native": [

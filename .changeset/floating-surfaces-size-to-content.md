@@ -1,0 +1,5 @@
+---
+'@envsemble/envui': patch
+---
+
+Popover and HoverCard size to their content, from 12 rem up to their `width`, which is now the widest they grow (md 20 rem, lg 28 rem), so a short note or a single field no longer sits in a wide empty card. Menus, tooltips, popovers, hover cards and the date, month and time pickers' popups are never wider than the room their positioner finds beside the trigger (`--available-width`), rather than the window less 2 rem, so they stay on screen in any frame.

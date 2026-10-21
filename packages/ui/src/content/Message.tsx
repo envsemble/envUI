@@ -71,12 +71,15 @@ export function Message({
 }: MessageProps) {
   return (
     <Grid
-      render={<article />}
       gap={2}
-      {...props}
-      className={classNames('env-message', className)}
-      data-from={from}
-      data-status={status}
+      render={
+        <article
+          {...props}
+          className={classNames('env-message', className)}
+          data-from={from}
+          data-status={status}
+        />
+      }
     >
       {(present(author) || present(meta)) && (
         <Row render={<header />} wrap className="env-message-header">

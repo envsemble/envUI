@@ -58,12 +58,12 @@ A popover is a floating panel that opens beside its trigger, for details people 
 
 ## Variants and sizes
 
-| Width | Use for                                                        |
-| ----- | -------------------------------------------------------------- |
-| `md`  | Details and a field or two: 20 rem wide. The default.          |
-| `lg`  | A longer form, or a field with actions beside it: 28 rem wide. |
+| Width | Use for                                                         |
+| ----- | --------------------------------------------------------------- |
+| `md`  | Details and a field or two: up to 20 rem wide. The default.     |
+| `lg`  | A longer form, or a field with actions beside it: up to 28 rem. |
 
-- Both widths narrow to the window less 2 rem, and keep 0.5 rem from its edges.
+- A popover is as wide as its content, from 12 rem up to its width, and never wider than the room beside its trigger: it keeps 0.5 rem from the window's edges.
 - A popover taller than the room beside its trigger scrolls inside its surface.
 - `side` places it below the trigger (the default), above it, to its left or right, or at the start or end of the line (`inline-start`, `inline-end`), which follow the text direction, and `align` lines it up with the trigger's start, centre (the default) or end. Where the window has no room, it flips to the other side.
 

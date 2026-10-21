@@ -48,7 +48,8 @@ export interface HoverCardProps
    */
   closeDelay?: number;
   /**
-   * md about 20 rem wide; lg about 28 rem.
+   * The widest the card grows: md, 20 rem, or lg, 28 rem. It is as wide as its content from 12 rem
+   * up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';

@@ -80,8 +80,8 @@ export interface PopoverProps
    */
   onOpenChange?: (open: boolean, details: PopoverOpenChangeDetails) => void;
   /**
-   * The popover's width: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form.
-   * Both narrow to fit the window.
+   * The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a
+   * longer form. It is as wide as its content from 12 rem up, and narrows to fit the window.
    * @default 'md'
    */
   width?: 'md' | 'lg';

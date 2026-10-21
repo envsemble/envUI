@@ -79,7 +79,7 @@ export interface PopupSurfaceProps {
   dir?: Direction;
   /** How far it floats above the page: 1, 2 (the default, as menus and popovers) or 3. */
   elevation?: 1 | 2 | 3;
-  /** Its width: md, 20 rem, or lg, 28 rem, both narrowing to fit the window; its content's without. */
+  /** The widest it grows, where its owner's style sheet reads it: md, 20 rem, or lg, 28 rem. */
   width?: 'md' | 'lg';
   /** The owner's popup class, such as env-popover, beside env-popup. */
   className?: string;

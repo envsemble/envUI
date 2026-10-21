@@ -12,7 +12,8 @@
   --env-menu-leading: 0rem;
   inline-size: max-content;
   min-inline-size: 12rem;
-  max-inline-size: min(22rem, calc(100vw - 2rem));
+  /* Never wider than the room the positioner finds in the window. */
+  max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
   /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
      default: a shadow and a hairline edge that forced colors keep once the shadow is gone. */
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));

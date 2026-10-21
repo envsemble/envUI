@@ -1,14 +1,19 @@
 /* A floating panel in the raised popup colors, with the menu's corners. Popover and HoverCard render on
    PopupSurface, which draws the look, the positioner's layer and the motion through env-popup. The
-   layout and the widths are Popover's and HoverCard's own. */
+   layout and the widths are Popover's and HoverCard's own: as wide as the content, from 12 rem up to
+   the width's 20 rem, or 28 rem for lg, and never wider than the room the positioner finds in the
+   window (--available-width), so it sizes to what it holds and stays on screen. */
 .env-popover,
 .env-hover-card {
-  inline-size: min(20rem, calc(100vw - 2rem));
+  --env-popover-room: var(--available-width, calc(100vw - 2rem));
+  inline-size: max-content;
+  min-inline-size: min(12rem, var(--env-popover-room));
+  max-inline-size: min(20rem, var(--env-popover-room));
   align-content: start;
 }
 .env-popover[data-width='lg'],
 .env-hover-card[data-width='lg'] {
-  inline-size: min(28rem, calc(100vw - 2rem));
+  max-inline-size: min(28rem, var(--env-popover-room));
 }
 .env-popover-title {
   margin: 0;
