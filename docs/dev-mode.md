@@ -8,146 +8,93 @@ aliases:
 
 # Dev mode
 
-Dev mode shows and checks how a page is laid out, while you develop it. For people it draws the page in 3D, with every layout node lifted by how deeply it is nested, and an inspector beside it. For agents, which can't look at the page, it writes the layout as text and lists the problems it measured, at any width, from the browser's console or a test.
+Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
 
-It reads the rendered page, so it only works in a browser, and it is for development only: it lives in its own entry point, `@envsemble/envui/dev`, which nothing else in envUI imports. An application's production build contains none of it unless the application imports it.
+This page runs the real dev mode, with `root` set to the application below. Its three fixed columns squeeze the cards at a narrow width; turn them off and the problems go.
 
-## Load it in development
+<!-- demo: DevModeDemo -->
 
-Load the entry point with a dynamic `import()` behind your bundler's development flag, so that production builds leave it out, and install it once the page has started:
+## Opening it
 
-```ts
-if (import.meta.env.DEV) {
-  void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode());
-}
-```
-
-`installDevMode()` adds three things to the page:
-
-- `window.envui.layout`, the readout below;
-- a small button in the bottom corner, named Dev mode, that opens the 3D view and the inspector over the page;
-- the shortcut Alt+Shift+D, which does the same, except while typing in a field.
-
-It takes these options:
-
-| Option     | Default | What it does                                                                                                                  |
-| ---------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `parts`    | fetched | The part names and descriptions, as `docs/generated/parts.json` holds them, or a URL to fetch them from. See [Parts](#parts). |
-| `button`   | `true`  | Show the button in the corner.                                                                                                |
-| `shortcut` | `true`  | Toggle dev mode with Alt+Shift+D.                                                                                             |
-| `open`     | `false` | Open the 3D view and the inspector at once.                                                                                   |
-| `root`     | found   | The element dev mode's view measures, or a selector for it. By default, the same root as the readout's.                       |
-
-It returns a handle with `open()`, `close()`, `toggle()`, `uninstall()`, `layout` and `ready`, a promise that settles once the parts' descriptions have loaded or failed to. Calling it again returns the same handle until it is uninstalled. `uninstall()` puts back a `window.envui.layout` the page had before, and does nothing a second time.
-
-## What it reads
-
-Dev mode reads the DOM, not the React tree:
-
-- **Layout nodes** are the elements with a `data-env-layout` attribute, which every primitive and scaffold renders on its root with its kind: `box`, `row`, `column`, `grid`, `scaffold`, `panes` or `page`. A node is inside the nearest node around it.
-- **Open overlays** are the dialogs, popovers, menus and tooltips that are open and float: a `dialog` that is open, an open `popover`, and envUI's popups. They are nodes at the top, after the page's, with the layout nodes inside them.
-- **Names.** A node is named by its part class (an `env-*` class, such as `env-card-actions`), else by its `data-env-name`, which a primitive's `name` prop sets, else by its kind. The readout writes a node as its kind and its name, `row "env-card-actions"`, or its kind alone when it has no other name.
-- **The root.** Everything is measured under one element: the outermost theme boundary that is the `env-window` container, else the first theme boundary, else the body. Open overlays count wherever they are in the document. Pass `root` to measure another element.
-- Dev mode's own UI is left out of everything it reads.
+The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, opens the 3D view with the inspector beside it, over the page. Escape closes it and gives focus back. The handle `installDevMode()` returns opens it from code too, with `open()`, `close()` and `toggle()`.
 
 ## The readout, for agents
 
-`window.envui.layout` has three functions. Each measures the page synchronously when it is called; none changes the page.
+`window.envui.layout` measures the page when it is called and leaves it as it was. An agent runs it from the browser's console or a test:
 
 ```js
-envui.layout.describe(); // the page as text: every node, then the problems
-envui.layout.check(); // the problems only, as a list; [] when there are none
+envui.layout.describe(); // the page as text: every layout node, then the problems
+envui.layout.check(); // the problems only; [] when there are none
 envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in turn
 ```
 
-Each takes an options object:
+| Option         | What it does                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------- |
+| `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body. |
+| `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`. |
+| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.      |
 
-| Option         | What it does                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------ |
-| `root`         | The element to measure, or a selector for it, in place of the default root.                |
-| `width`        | Measure at this width (`describe` and `check`): a px number or a length such as `'40rem'`. |
-| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.  |
+### describe()
 
-### At other widths
-
-`at(widths)` sets the root's inline size to each width in turn, `!important` in its style attribute, measures, and puts the root's own style back before the next width and before it returns. The browser lays the page out again synchronously, and container queries follow, so the page is measured as it would be at that width, without resizing the window and without waiting for a frame. What script decides on resize, such as a ResizeObserver's callback, runs only later and isn't part of the measurement, which is the point: envUI arranges with CSS, and the readout checks what CSS does.
-
-It returns one result per width:
-
-```ts
-interface LayoutAtResult {
-  width: string; // as given, such as '40rem'
-  windowClass: 'compact' | 'medium' | 'expanded' | 'large';
-  text: string; // as describe() returns it
-  problems: LayoutProblem[]; // as check() returns them
-}
-```
-
-A check at the four widths the docs use:
-
-```js
-envui.layout
-  .at(['22rem', '40rem', '60rem', '80rem'])
-  .flatMap(({ width, problems }) => problems.map((problem) => `${width}: ${problem.message}`));
-```
-
-### The text
-
-The first line describes the root: its size in rem and window class, the window's size and what 1 rem is. Then each node gets a line, indented by its nesting:
+One line per layout node, indented by nesting: its kind and name, its size and window class, the container and the thresholds its queries test, its display, gap and padding, and what scrolls or sticks. Siblings that read the same fold into one line. The application above at 40 rem:
 
 ```text
-root div.env-theme · 63×14.13rem · expanded · window 64×45rem · 1rem = 16px
-scaffold "app" · 63×14.13rem · expanded · container env-scaffold (queried at 37.5rem) · block
-  grid "frame" · 63×14.13rem · expanded · grid · gap 1rem · padding 1rem · columns 2 = 12 | 48rem
-    column "nav" · 12×12.13rem · compact · flex column · gap 0.5rem
-    page · 48×12.13rem · medium · flex column · gap 0.5rem
-      row "cards" · 48×2.31rem · medium · flex row wrap · gap 0.75rem
-        column "first" · 8×2.31rem · compact · block · padding 0.5rem
-        … and 2 more like "first" ("second", "third")
-      box "filters" · hidden (display: none) (1 node inside)
-
-open overlays (1):
-  menu "env-menu-popup" · 15×10rem · compact · flex column · at 3,4rem in the window · side bottom
+root div · 40×30rem · medium · window 89.19×50.56rem · 1rem = 16px
+scaffold "env-scaffold" · 40×30rem · medium · container env-scaffold (queried at 37.5, 52.5, 75rem) · grid · columns 2 = 5 | 35rem · rows 3 = 3.25 | 26.75 | 0rem · holds div.env-scaffold-rail: scrolls (everything fits) · holds div.env-scaffold-body: scrolls (content 35×34.81rem, at 0,0rem)
+  row "env-top-bar" · 35×3.25rem · compact · flex row · align center · gap 0.75rem · padding 0 1rem
+    row "env-top-bar-actions" · 2.5×2.5rem · compact · flex row · align center · gap 0.5rem
+  column "env-drawer" · hidden: inside div.env-scaffold-drawer, which is display: none (5 nodes inside)
+  column "env-rail" · 5×30rem · compact · flex column · align center · gap 1rem · padding 0.75 0rem
+    column "env-rail-list" · 5×16.63rem · compact · flex column · gap 0.25rem · scrolls (everything fits)
+      column "env-rail-item" · 5×4rem · compact · flex column · align center · gap 0.25rem · padding 0.25 0.25 0.5 0.25rem
+      … and 3 more like "env-rail-item" ("env-rail-item", "env-rail-item", "env-rail-item")
+  row "env-bar-list" · hidden: inside div.env-scaffold-bar, which is display: none (4 nodes inside)
+  page "env-page" · 35×34.81rem · compact · container env-page (queried at 37.5rem) · block · padding 2 1.5 3 1.5rem
+    column "env-page-header" · 32×5.06rem · compact · container env-page-header (queried at 37.5rem) · flex column · gap 0.75rem
+      row "env-page-header-row" · 32×5.06rem · compact · flex row wrap · align start · gap 1rem
+        column "env-page-header-heading" · 32×1.56rem · compact · flex column · gap 0.25rem
+          row "env-page-header-title-line" · 32×1.56rem · compact · flex row wrap · align center · gap 0.25 0.75rem
+        row "env-page-header-actions" · 32×2.5rem · compact · flex row wrap · align center · gap 0.5rem
+    column · 32×22.75rem · compact · flex column · gap 2rem
+      grid "projects" · 32×12.69rem · compact · grid · gap 1rem · columns 3 = 10 | 10 | 10rem
+        column "env-card" · 10×12.69rem · compact · flex column · gap 1rem · padding 1.5rem
+          row "env-card-header" · 7×4.75rem · compact · flex row wrap · align center · gap 0.75rem
+        … and 2 more like "env-card" ("env-card", "env-card")
+      grid "env-list" · 32×8rem · compact · grid · gap 0.13rem · columns 1 = 32rem · rows 2 = 3.95 | 3.95rem
+        row "env-list-item" · 32×3.94rem · compact · flex row wrap · align center · justify space-between · gap 0.75rem · padding 0.75 1.5rem
+        … and 1 more like "env-list-item" ("env-list-item")
 
 problems: none
 ```
 
-A line holds, where they apply:
+A layout node is an element with `data-env-layout`, which every primitive and scaffold renders, and every open dialog, popover, menu or tooltip, listed after the page. It is named by its part class, else by the `name` prop, else by its kind.
 
-- the node's size in rem, and the window class of its width: compact below 37.5rem, medium below 52.5rem, expanded below 75rem, large from 75rem;
-- whether it is a size container, with its name and the thresholds its container queries test, found by reading the page's `@container` rules for that name;
-- its display (flex row or column, wrapping, grid), alignment, gap and padding, and a grid's resolved columns and rows in rem;
-- whether it scrolls, with its content's size and how far it is scrolled;
-- whether it is sticky, the edge, the offset and what it sticks in, and whether it is stuck now; or absolute or fixed;
-- elements inside it that aren't nodes but scroll or stick, such as a component's scroll region or sticky header (`holds header.env-page-header: sticks top at 0rem in …`);
-- for an overlay, where it landed in the window and the side of its anchor it took;
-- why a hidden node isn't shown, and how many nodes are inside it, which aren't listed.
+### check()
 
-Siblings whose lines, and everything inside them, read the same apart from their names are folded into one line: `… and 2 more like "first"`.
+A list of problems, each a plain object. The same application at 22 rem:
 
-### The problems
-
-`check()` returns a list of problems, each a plain object:
-
-```ts
-interface LayoutProblem {
-  rule: ProblemRule; // what it is about, below
-  node: string; // the node, as the readout writes it: 'grid "cards"'
-  path: string; // from the top down to it: 'scaffold "app" > page > grid "cards"'
-  message: string; // what is wrong and what to do, in a sentence or two
+```json
+{
+  "rule": "text-squeezed",
+  "node": "column \"env-card\"",
+  "path": "scaffold \"env-scaffold\" > page \"env-page\" > column > grid \"projects\" > column \"env-card\"",
+  "message": "column \"env-card\": the text of p.env-card-description is squeezed to 3rem, about 6 characters a line, under the 8 a line can take. Give it room, or let it wrap below its neighbours."
 }
 ```
 
-| `rule`                  | What it finds                                                                                                                                                                                                                                                                |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `content-overflow`      | Content wider than a node that doesn't scroll. Only the deepest such node is reported; the nodes around it overflow because of it.                                                                                                                                           |
-| `child-overflow`        | A child that sticks out of a node that neither scrolls nor clips, and so spills over its neighbours.                                                                                                                                                                         |
-| `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                                                                                                                                                             |
-| `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, a border or a shadow. Layout never paints: the look belongs to a component. A component that paints through a primitive it renders, whose node carries the component's part class, is no fault. |
-| `sticky-without-scroll` | A sticky node, or a sticky element in one, whose scroll container (its nearest ancestor with `overflow` hidden, auto or scroll; `clip` makes none) never scrolls, so it never sticks.                                                                                        |
-| `text-squeezed`         | Text of its own, longer than `minTextChars`, that wraps in a box narrower than that many characters.                                                                                                                                                                         |
+| `rule`                  | What it finds                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------------- |
+| `content-overflow`      | Content wider than a node that doesn't scroll; only the deepest such node.                     |
+| `child-overflow`        | A child that spills out of a node that neither scrolls nor clips.                              |
+| `overlay-off-window`    | An open overlay that reaches outside the window.                                               |
+| `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, border or shadow. |
+| `sticky-without-scroll` | A sticky element whose scroll container never scrolls, so it never sticks.                     |
+| `text-squeezed`         | Text longer than `minTextChars` that wraps in a box narrower than that many characters.        |
+| `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads.         |
 
-An agent checking its work runs `envui.layout.at(['22rem', '40rem', '60rem', '80rem'])` and fixes every problem it returns, from the deepest node up. In a Playwright test:
+### at()
+
+`at(widths)` sets the root's inline size to each width in turn, measures, and puts it back, without resizing the window or waiting for a frame. Container queries follow; what script decides on resize doesn't. Each result is `{ width, windowClass, text, problems }`. Fix every problem it returns, from the deepest node up. In a Playwright test:
 
 ```ts
 const results = await page.evaluate(() =>
@@ -156,35 +103,59 @@ const results = await page.evaluate(() =>
 expect(results.flatMap((result) => result.problems)).toEqual([]);
 ```
 
-## The 3D view, for people
+## The 3D view
 
-The button in the corner, or Alt+Shift+D, opens dev mode over the page: the 3D view, with the inspector beside it. Focus moves into it and the page under it is inert; Escape, the button or the shortcut closes it and gives focus back to where it was. It updates as the page changes, scrolls and resizes, at most once an animation frame.
+Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-- **Planes.** Every visible node is a plane, lifted one level per step of nesting, so what is inside what reads as what is above what. Sticky, absolute and fixed nodes sit half a level higher; open overlays float two levels above the whole page. A plane shows only the part of its node that is visible inside what clips it.
-- **Surfaces.** Each plane carries what its node holds that isn't a node itself: the node's own paint and copies of its other children, with the nodes inside them left as empty space, since they have planes of their own. The copies keep the computed layout and look of the originals, but are only pictures: they don't respond.
-- **Padding and gaps.** A node's padding is hatched one way, the space between and around its children the other, and each child is outlined with dots.
-- **Color.** By kind (box, row, column, grid, scaffold and panes, page, overlay), or by the window class of each node's width. Coloured by window class, a solid outline is a size container and a dotted one is not, and hovering a node shows a ruler above it: the window classes, a dashed line at each threshold its container's queries test, its width now and how far it is from the next threshold. A red outline means the node has problems.
-- **Moving around.** Drag to turn and Shift+drag, or the middle button, to pan. The wheel scrolls the scroller under the pointer, on the page itself, and the planes follow; Ctrl+wheel zooms. Presets turn the view tilted, straight on, from the top, the left or the right, and Fit brings the whole page back into view.
-- **Levels.** From level and To level show a range of levels only, and the spacing sets the distance between them.
-- **Only the hovered.** Resting on a plane shows only it and what is inside it; moving off every plane shows everything again. Hovering a row of the inspector's tree does the same at once.
-- Clicking a plane selects its node in the inspector, and clicking it again clears the selection.
+| Do this                       | To                                                                   |
+| ----------------------------- | -------------------------------------------------------------------- |
+| Drag, Shift+drag, Ctrl+wheel  | Turn, pan and zoom; the wheel scrolls the page under the pointer.    |
+| Choose a preset, or Fit       | Look tilted, straight on, from the top or a side; bring it all back. |
+| Color by kind or window class | See what each node is, or which window class its width falls in.     |
+| Set From level and To level   | Show a range of levels, with the spacing between them.               |
+| Rest on a plane               | Show only it and what is inside it, with a ruler of its thresholds.  |
+| Click a plane                 | Select its node in the inspector.                                    |
+
+A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 
 ## The inspector
 
-The inspector has two tabs:
+- **Nodes**: the nodes as a tree, with problems counted and containers marked. A chosen node shows its part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
+- **Readout**: the text of `describe()`, kept current, with a copy button.
 
-- **Nodes**: the nodes as a tree, with each one's problems counted and the containers marked. Hovering a row highlights its plane; choosing one shows its details:
-  - its part class, and the component and description parts.json gives it;
-  - its size and window class, and its state attributes (`data-*`);
-  - its container, the queries that ask about it and whether each holds now;
-  - its problems;
-  - the `--env-*` tokens its styles use, with their values on it now, read from the style rules it matches;
-  - its line of the readout.
-- **Readout**: the text `envui.layout.describe()` returns, kept current, with a button that copies it.
+## Skeleton shift
 
-## Parts
+A skeleton should take the room its content will, so nothing moves when the content arrives. `envui.layout.skeletonShift(root, { tolerance })` shows `root` as a skeleton and loaded in turn, measures both and returns what moves or resizes by more than `tolerance` px (1 by default), as `skeleton-shift` problems. It also reports media without an aspect ratio, which has no size until it loads.
 
-A node's name is its part class whether or not anything else has loaded, so the readout reads the same before and after. The descriptions the inspector shows come from `docs/generated/parts.json`, which the package ships: its `components`, by export name, and its `shared` groups, each with a `root` class, `parts` (`{ class, description }`) and `states`. Dev mode fetches it from beside its own module, which works where the package's files are served as they are. Where the bundler moves them, as Vite's dependency optimizer does, hand the data in yourself, or a URL to it; without it, the inspector shows no descriptions. Dev mode's own classes, `env-dev-*`, are no part of the contract.
+```js
+envui.layout.skeletonShift('[data-testid="projects"]');
+// [{ rule: 'skeleton-shift', node: 'env-text', path: 'env-surface > env-text',
+//    message: 'It changes from 20rem×3.31rem to 20rem×1.31rem when the skeleton loads, …' }]
+```
+
+Run it on the loaded page. It can't see what real data changes, such as more items than placeholders.
+
+## Load it in development
+
+Import the entry point behind your bundler's development flag, so production builds leave it out:
+
+```ts
+if (import.meta.env.DEV) {
+  void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode());
+}
+```
+
+| Option     | Default | What it does                                                                       |
+| ---------- | ------- | ---------------------------------------------------------------------------------- |
+| `root`     | found   | The element the 3D view and the inspector show, or a selector; the readout's root. |
+| `parts`    | fetched | The parts' descriptions, `docs/generated/parts.json`'s content or a URL to it.     |
+| `button`   | `true`  | Show the Dev mode button in the corner.                                            |
+| `shortcut` | `true`  | Toggle dev mode with Alt+Shift+D.                                                  |
+| `open`     | `false` | Open the 3D view and the inspector at once.                                        |
+
+`installDevMode()` returns a handle with `open()`, `close()`, `toggle()`, `uninstall()`, `layout` and `ready`, which settles once the parts' descriptions have loaded. Calling it again returns the same handle.
+
+Dev mode fetches `parts.json` from beside its own module. Where the bundler moves the package's files, as Vite's dependency optimizer does, hand the data in yourself, or the inspector shows no descriptions:
 
 ```ts
 import parts from './parts.json'; // a copy of docs/generated/parts.json
@@ -192,9 +163,9 @@ import parts from './parts.json'; // a copy of docs/generated/parts.json
 installDevMode({ parts });
 ```
 
-## Limits
+### Limits
 
-- Dev mode measures the rendered page, so it says nothing about a page that hasn't rendered, and runs in a browser only. On the server, `installDevMode()` does nothing.
-- An overlay in the top layer, such as an open `popover` or modal `dialog`, shows above dev mode's view. While a modal dialog makes the rest of the page inert, dev mode's UI is inert too; the readout still works from the console.
-- The surfaces are copies frozen from computed styles: animations, canvases, videos and frames show as empty boxes of their size.
-- `at()` resizes the root, not the window: what depends on the window's own size, such as a viewport unit or a width media query, stays as it is. envUI uses container queries for width.
+- It measures only a rendered page in a browser; on the server, `installDevMode()` does nothing.
+- A modal dialog or open popover in the top layer shows above the 3D view and makes it inert; the readout still works.
+- The planes' pictures are copies frozen from computed styles: animations, canvases, videos and frames show as empty boxes.
+- `at()` resizes the root, not the window, so viewport units and width media queries stay as they are.
