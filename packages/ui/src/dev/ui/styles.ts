@@ -31,6 +31,9 @@ export const devStyles = /* css */ `
     pointer-events: auto;
     contain: strict;
   }
+  .env-dev-panel:focus {
+    outline: none;
+  }
   .env-dev-view {
     position: relative;
     overflow: hidden;

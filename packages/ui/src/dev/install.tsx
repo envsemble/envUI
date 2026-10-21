@@ -4,17 +4,17 @@
 import { createRoot, type Root } from 'react-dom/client';
 import { layout, type LayoutApi } from './api.js';
 import { devAttribute } from './measure.js';
-import { loadParts, setParts } from './parts.js';
+import { loadParts, setParts, type PartsFile } from './parts.js';
 import { DevMode, type DevModeController } from './ui/DevMode.js';
 import { devStyles } from './ui/styles.js';
 
 export interface DevModeOptions {
   /**
-   * The parts' names and descriptions, as docs/generated/parts.json holds them, or the URL to fetch
-   * them from. Without it, dev mode tries the copy beside it in the package, and names parts by
-   * their classes alone when that fails.
+   * The parts' descriptions: docs/generated/parts.json's content, or the URL to fetch it from.
+   * Without it, dev mode tries the copy beside it in the package, and goes without descriptions when
+   * that fails. Names don't depend on it.
    */
-  parts?: unknown;
+  parts?: PartsFile | string | URL;
   /** Show the toggle button in the corner. @default true */
   button?: boolean;
   /** Toggle dev mode with Alt+Shift+D; false turns the shortcut off. @default true */
@@ -29,6 +29,8 @@ export interface DevModeOptions {
 export interface DevModeHandle {
   /** The readout, also on the window as `envui.layout`. */
   layout: LayoutApi;
+  /** Settles once the parts' descriptions have loaded, or failed to. */
+  ready: Promise<void>;
   open(): void;
   close(): void;
   toggle(): void;
@@ -65,18 +67,27 @@ function isShortcut(event: KeyboardEvent): boolean {
  *     void import('@envsemble/envui/dev').then(({ installDevMode }) => installDevMode());
  *   }
  *
- * Calling it again returns the dev mode already installed.
+ * Calling it again returns the dev mode already installed, until it is uninstalled.
  */
 export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   if (installed) return installed;
   const noop = () => {};
   if (typeof document === 'undefined')
-    return { layout, open: noop, close: noop, toggle: noop, uninstall: noop };
+    return {
+      layout,
+      ready: Promise.resolve(),
+      open: noop,
+      close: noop,
+      toggle: noop,
+      uninstall: noop,
+    };
 
-  if (options.parts === undefined) void loadParts();
-  else if (typeof options.parts === 'string' || options.parts instanceof URL)
-    void loadParts(options.parts);
-  else setParts(options.parts);
+  const ready =
+    options.parts === undefined
+      ? loadParts().then(noop)
+      : typeof options.parts === 'string' || options.parts instanceof URL
+        ? loadParts(options.parts).then(noop)
+        : Promise.resolve(setParts(options.parts));
 
   const style = document.createElement('style');
   style.setAttribute(devAttribute, '');
@@ -113,15 +124,23 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
   };
   if (controller.shortcut) window.addEventListener('keydown', onKey);
 
-  const previous = window.envui;
-  window.envui = { ...previous, layout };
+  // The page's own `window.envui`, if it has one, stays the same object; a layout it held comes
+  // back on uninstall.
+  const envui = window.envui ?? (window.envui = {});
+  const hadLayout = Object.prototype.hasOwnProperty.call(envui, 'layout');
+  const previousLayout = envui.layout;
+  envui.layout = layout;
 
-  installed = {
+  let removed = false;
+  const handle: DevModeHandle = {
     layout,
+    ready,
     open: () => controller.setOpen(true),
     close: () => controller.setOpen(false),
     toggle: () => controller.setOpen(!controller.open),
     uninstall() {
+      if (removed) return;
+      removed = true;
       window.removeEventListener('keydown', onKey);
       // Unmounting while the app renders, as when an effect's cleanup uninstalls dev mode, waits
       // for that render to end.
@@ -130,12 +149,13 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
         host.remove();
       });
       style.remove();
-      if (window.envui?.layout === layout) {
-        const { layout: _layout, ...rest } = window.envui;
-        window.envui = Object.keys(rest).length ? rest : undefined;
+      if (envui.layout === layout) {
+        if (hadLayout) envui.layout = previousLayout;
+        else delete envui.layout;
       }
-      installed = null;
+      if (installed === handle) installed = null;
     },
   };
-  return installed;
+  installed = handle;
+  return handle;
 }

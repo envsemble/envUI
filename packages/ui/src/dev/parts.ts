@@ -1,145 +1,136 @@
 // Part names and their descriptions, from docs/generated/parts.json when the app hands it to dev
-// mode or dev mode can fetch it. Without it, a part is named by its class alone.
+// mode or dev mode can fetch it. Names never depend on it: a node is named by its part class
+// whether or not the descriptions have loaded, so the readout reads the same before and after.
 
-/** A part of a component: its class, the component it belongs to and what it is. */
+/** A part: its class, the component or shared group it belongs to, and what it is. */
 export interface PartInfo {
   /** The part's class name, such as `env-card-header`. */
   className: string;
-  /** The component it belongs to, such as `Card`. */
+  /** The component's export name, such as `Card`, or the shared group's, such as `ConnectedRows`. */
   component: string;
   /** What the part is, in a sentence. */
   description?: string;
-  /** Whether it is the component's root. */
+  /** Whether it is the root of its component or group. */
   root: boolean;
+  /** Whether it belongs to a shared group, anatomy several components render. */
+  shared: boolean;
 }
 
-/** A state attribute of a component, with the values it takes. */
+/** A state attribute, with the values it takes and the parts it goes on. */
 export interface StateAttribute {
   attribute: string;
   values: string[];
+  parts: string[];
 }
 
-/** The parts by class name, and the state attributes by component. */
+/** The parts by class name, and the state attributes by component or group. */
 export interface PartsIndex {
   byClass: Map<string, PartInfo>;
   states: Map<string, StateAttribute[]>;
 }
 
-type Loose = Record<string, unknown>;
-const isObject = (value: unknown): value is Loose =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-const text = (...values: unknown[]) =>
-  values.find((value): value is string => typeof value === 'string' && value.length > 0);
-
-/** A part given as a class name, or as an object with its class and description. */
-function partOf(
-  value: unknown,
-  fallbackClass?: string,
-): { className?: string; description?: string } {
-  if (typeof value === 'string')
-    return fallbackClass ? { className: fallbackClass, description: value } : { className: value };
-  if (!isObject(value)) return {};
-  return {
-    className: text(value.className, value.class, value.name, fallbackClass),
-    description: text(value.description, value.summary),
-  };
+/** One component or shared group of parts.json. */
+interface PartsEntry {
+  root: string;
+  parts: { class: string; description: string }[];
+  states?: { attribute: string; values: string[]; parts: string[] }[];
 }
 
-function statesOf(value: unknown): StateAttribute[] {
-  const values = (input: unknown) =>
-    Array.isArray(input) ? input.filter((item): item is string => typeof item === 'string') : [];
-  if (Array.isArray(value))
-    return value.flatMap((item) => {
-      if (typeof item === 'string') return [{ attribute: item, values: [] }];
-      if (!isObject(item)) return [];
-      const attribute = text(item.attribute, item.name);
-      return attribute ? [{ attribute, values: values(item.values) }] : [];
-    });
-  if (isObject(value))
-    return Object.entries(value).map(([attribute, item]) => ({ attribute, values: values(item) }));
-  return [];
+/** docs/generated/parts.json, as scripts/GenerateParts.mjs writes it. */
+export interface PartsFile {
+  schemaVersion: number;
+  components: Record<string, PartsEntry & { source: string; uses?: string[] }>;
+  shared?: Record<string, PartsEntry & { usedBy?: string[] }>;
 }
 
 /**
- * Indexes parts.json leniently: a list of components or an object of them by name, or either
- * under `components`; each with a root class (`root`, `rootClass` or `className`), its parts as
- * a list of classes or of `{ className, description }`, or an object from class to description,
- * and its state attributes (`states` or `stateAttributes`).
+ * Indexes parts.json: `components` by export name and `shared` groups by name, each with its root
+ * class, its parts (`{ class, description }`) and its states (`{ attribute, values, parts }`).
+ * Anything else is refused, so a changed format shows at once rather than as missing descriptions.
  */
-export function indexParts(data: unknown): PartsIndex {
+export function indexParts(data: PartsFile): PartsIndex {
+  if (typeof data !== 'object' || data === null || typeof data.components !== 'object')
+    throw new TypeError('Not docs/generated/parts.json: it has no components.');
   const index: PartsIndex = { byClass: new Map(), states: new Map() };
-  const source = isObject(data) && 'components' in data ? data.components : data;
-  const entries: [string | undefined, unknown][] = Array.isArray(source)
-    ? source.map((component) => [undefined, component])
-    : isObject(source)
-      ? Object.entries(source)
-      : [];
-  for (const [key, component] of entries) {
-    if (!isObject(component)) continue;
-    const name = text(component.name, component.component, key) ?? '';
-    const root = partOf(component.root ?? component.rootClass ?? component.className);
-    if (root.className)
-      index.byClass.set(root.className, {
-        className: root.className,
-        component: name,
-        description: root.description ?? text(component.description, component.summary),
-        root: true,
-      });
-    const parts = component.parts;
-    const list: { className?: string; description?: string }[] = Array.isArray(parts)
-      ? parts.map((part) => partOf(part))
-      : isObject(parts)
-        ? Object.entries(parts).map(([className, part]) => partOf(part, className))
-        : [];
-    for (const part of list)
-      if (part.className && !index.byClass.has(part.className))
-        index.byClass.set(part.className, {
-          className: part.className,
+  const add = (name: string, entry: PartsEntry, shared: boolean) => {
+    for (const part of entry.parts ?? [])
+      if (!index.byClass.has(part.class))
+        index.byClass.set(part.class, {
+          className: part.class,
           component: name,
           description: part.description,
-          root: false,
+          root: part.class === entry.root,
+          shared,
         });
-    const states = statesOf(component.states ?? component.stateAttributes);
-    if (states.length) index.states.set(name, states);
-  }
+    if (entry.states?.length)
+      index.states.set(
+        name,
+        entry.states.map(({ attribute, values, parts }) => ({ attribute, values, parts })),
+      );
+  };
+  for (const [name, entry] of Object.entries(data.components)) add(name, entry, false);
+  for (const [name, entry] of Object.entries(data.shared ?? {})) add(name, entry, true);
   return index;
 }
 
 let current: PartsIndex | null = null;
+const listeners = new Set<() => void>();
 
 /** The parts dev mode knows, or null before any are loaded. */
 export const knownParts = () => current;
 
-/** Replaces the parts dev mode knows. */
-export function setParts(data: unknown) {
+/** Replaces the parts dev mode knows, and tells those listening. */
+export function setParts(data: PartsFile | null) {
   current = data === null ? null : indexParts(data);
+  for (const listener of listeners) listener();
+}
+
+/** Calls a listener whenever the parts change; returns what stops it. */
+export function onPartsChange(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
 }
 
 /**
- * The part class of an element: of its `env-*` classes, the last one parts.json knows, or else the
- * last one; null when it has none.
+ * Classes that name no part of their own: the theme boundary and the helpers many components
+ * render through, which yield to a component's own class on the same element.
  */
-export function partClassOf(element: Element, parts: PartsIndex | null = current): string | null {
+const helpers = new Set([
+  'env-theme',
+  'env-surface',
+  'env-text',
+  'env-icon',
+  'env-prose',
+  'env-connected-rows',
+  'env-connected-row',
+]);
+
+/** Whether a class is a part class: `env-*`, but not the window's container or dev mode's own. */
+export const isPartClass = (name: string) =>
+  name.startsWith('env-') && name !== 'env-window' && !name.startsWith('env-dev');
+
+/**
+ * The part class of an element: its last `env-*` class that isn't a helper, else its last helper
+ * class; null when it has none. It never reads parts.json, so names don't change as it loads.
+ */
+export function partClassOf(element: Element): string | null {
   const classes = typeof element.className === 'string' ? element.className : null;
   const known = classes === null ? undefined : partCache.get(element);
-  if (known && known.classes === classes && known.parts === parts) return known.part;
-  let last: string | null = null;
-  let found: string | null = null;
+  if (known && known.classes === classes) return known.part;
+  let own: string | null = null;
+  let helper: string | null = null;
   for (const name of Array.from(element.classList)) {
-    if (!name.startsWith('env-')) continue;
-    last = name;
-    if (parts?.byClass.has(name)) found = name;
+    if (!isPartClass(name)) continue;
+    if (helpers.has(name)) helper = name;
+    else own = name;
   }
-  const part = found ?? last;
-  if (classes !== null) partCache.set(element, { classes, parts, part });
+  const part = own ?? helper;
+  if (classes !== null) partCache.set(element, { classes, part });
   return part;
 }
 
-/** Each element's part class, kept while its classes and the parts stay the same. */
-const partCache = new WeakMap<
-  Element,
-  { classes: string; parts: PartsIndex | null; part: string | null }
->();
+/** Each element's part class, kept while its classes stay the same. */
+const partCache = new WeakMap<Element, { classes: string; part: string | null }>();
 
 /**
  * Loads parts.json from a URL, or from where a package or a checkout keeps it beside this module.
@@ -158,7 +149,7 @@ export async function loadParts(source?: string | URL): Promise<boolean> {
     try {
       const response = await fetch(url);
       if (!response.ok) continue;
-      setParts(await response.json());
+      setParts((await response.json()) as PartsFile);
       return true;
     } catch {
       // Not there, or not JSON, such as an app's index page served for any path.

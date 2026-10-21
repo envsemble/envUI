@@ -54,6 +54,10 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   expect(
     await page.evaluate(() => document.querySelector('.env-theme')!.getBoundingClientRect().width),
   ).toBe(before);
+  // …and no style attribute it didn't have.
+  expect(
+    await page.evaluate(() => document.querySelector('.env-theme')!.hasAttribute('style')),
+  ).toBe(false);
 
   // An open overlay is listed with where it landed, and found off the window.
   await page.getByRole('button', { name: 'Open the popover' }).click();
@@ -66,7 +70,7 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   );
 });
 
-test('the toggle opens the 3D view and the inspector, and the shortcut closes them', async ({
+test('the toggle opens the 3D view and the inspector, which Escape and the shortcut close', async ({
   page,
 }) => {
   await open(page);
@@ -75,8 +79,13 @@ test('the toggle opens the 3D view and the inspector, and the shortcut closes th
   const panel = page.getByRole('region', { name: 'Dev mode' });
   await expect(panel).toBeVisible();
   await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  // Focus moves into the panel, and the page under it is inert.
+  const pageInert = () =>
+    page.evaluate(() => (document.querySelector('.env-theme') as HTMLElement).inert);
+  await expect(panel).toBeFocused();
+  expect(await pageInert()).toBe(true);
   // A plane for every shown node, each carrying copies of what the node holds.
-  await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(12);
+  await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(14);
   await expect(panel.locator('.env-dev-plane[data-problems]')).toHaveCount(2);
   await expect(panel.locator('.env-dev-surface').filter({ hasText: 'Painted' })).toHaveCount(1);
   // The inspector lists the nodes and shows the selected one.
@@ -90,6 +99,13 @@ test('the toggle opens the 3D view and the inspector, and the shortcut closes th
   );
   // The readout leaves dev mode's own UI out, also while it is open.
   expect(await page.evaluate(() => window.envui!.layout!.describe())).not.toContain('env-dev');
+  // Escape closes it and gives focus back; the shortcut opens and closes it too.
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeHidden();
+  await expect(toggle).toBeFocused();
+  expect(await pageInert()).toBe(false);
+  await page.keyboard.press('Alt+Shift+D');
+  await expect(panel).toBeFocused();
   await page.keyboard.press('Alt+Shift+D');
   await expect(panel).toBeHidden();
   await expect(toggle).toHaveAttribute('aria-pressed', 'false');

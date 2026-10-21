@@ -17,6 +17,8 @@ const styles = `
 .dev-painted { display: flex; gap: 0.5rem; background: rgb(255 0 0 / 0.2); }
 .dev-clip { overflow: hidden; block-size: 6rem; }
 .dev-sticky { position: sticky; top: 0; }
+.dev-clip-only { overflow: clip; block-size: 3rem; }
+.env-fixture-panel { background: rgb(0 0 255 / 0.1); }
 .dev-wide { display: grid; }
 .dev-wide-content { inline-size: 30rem; block-size: 1rem; }
 .dev-off-window { position: fixed; inset: auto; left: -4rem; top: 2rem; margin: 0; inline-size: 10rem; }
@@ -26,7 +28,7 @@ const styles = `
 export function DevModeFixture() {
   const popover = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const devMode = installDevMode({ parts: { components: [] } });
+    const devMode = installDevMode({ parts: { schemaVersion: 1, components: {} } });
     return () => devMode.uninstall();
   }, []);
   return (
@@ -44,6 +46,14 @@ export function DevModeFixture() {
               <h2 className="dev-sticky" data-env-layout="row" data-env-name="heading">
                 Heading
               </h2>
+            </div>
+            {/* overflow: clip makes no scroll container: the heading sticks in the document. */}
+            <div className="dev-clip-only" data-env-layout="column" data-env-name="clip-only">
+              <div className="dev-sticky" data-env-layout="row" data-env-name="sticks-on" />
+            </div>
+            {/* A component painting through a primitive it renders carries its part class. */}
+            <div className="env-fixture-panel" data-env-layout="column">
+              Panel
             </div>
             <div className="dev-cards" data-env-layout="row" data-env-name="cards">
               {['first', 'second', 'third'].map((name) => (

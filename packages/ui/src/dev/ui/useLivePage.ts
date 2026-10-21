@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { isDevElement, keyOf, layoutAttribute, measure, overlaySelector } from '../measure.js';
 import type { LayoutProblem, Snapshot } from '../model.js';
+import { onPartsChange } from '../parts.js';
 import { read, type Reading } from '../readout.js';
 
 export interface LivePage {
@@ -60,9 +61,10 @@ export function useLivePage(root: HTMLElement): LivePage {
     };
     /**
      * Marks the nodes an element is in as changed, so their surfaces are copied again: the
-     * nearest, whose content changed, and those around it, whose other content it may have moved.
+     * nearest, whose content changed, and, unless `nearestOnly`, those around it, whose other
+     * content it may have moved.
      */
-    const touch = (target: Node | null) => {
+    const touch = (target: Node | null, nearestOnly = false) => {
       for (
         let at = target instanceof Element ? target : target?.parentElement;
         at;
@@ -71,6 +73,7 @@ export function useLivePage(root: HTMLElement): LivePage {
         if (at.hasAttribute(layoutAttribute) || at.matches(overlaySelector)) {
           const key = keyOf(at);
           versions.set(key, (versions.get(key) ?? 0) + 1);
+          if (nearestOnly) return;
         }
       }
     };
@@ -95,14 +98,19 @@ export function useLivePage(root: HTMLElement): LivePage {
     resize.observe(root);
     const onScroll = (event: Event) => {
       if (event.target instanceof Element && isDevElement(event.target)) return;
-      touch(event.target instanceof Node ? event.target : null);
+      // A scroll moves only what is in the scroller: the node it is, or the node it is in. The
+      // nodes around keep their copies, and the planes inside follow their measured boxes.
+      touch(event.target instanceof Node ? event.target : null, true);
       schedule();
     };
     document.addEventListener('scroll', onScroll, { capture: true, passive: true });
     window.addEventListener('resize', schedule);
     document.addEventListener('toggle', schedule, true);
+    // Descriptions arriving change no names, but the inspector shows them.
+    const stopParts = onPartsChange(schedule);
     fullNow();
     return () => {
+      stopParts();
       mutations.disconnect();
       resize.disconnect();
       document.removeEventListener('scroll', onScroll, { capture: true });

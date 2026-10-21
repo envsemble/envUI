@@ -181,7 +181,9 @@ class Reader {
   check(node: NodeData) {
     const label = labelOf(node);
     const { rootPx } = this.snapshot;
-    if (layoutKinds.has(node.kind) && node.paints.length)
+    // A component may paint through a primitive it renders, which carries its part class; a
+    // layout node without one is the app's own, and never paints.
+    if (layoutKinds.has(node.kind) && node.part === null && node.paints.length)
       this.problem(
         node,
         'layout-paints',

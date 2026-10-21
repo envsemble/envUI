@@ -455,9 +455,11 @@ function stickyOf(
           : 'right';
   const offset = px(style.getPropertyValue(edge));
   let scroller: Element | null = null;
+  // It sticks in the nearest scroll container: overflow hidden, auto or scroll. `clip` makes none.
+  const container = (overflow: string) => overflow === 'hidden' || scrollsAlong(overflow);
   for (let at = element.parentElement; at && at !== document.body; at = at.parentElement) {
     const around = getComputedStyle(at);
-    if (around.overflowX !== 'visible' || around.overflowY !== 'visible') {
+    if (container(around.overflowX) || container(around.overflowY)) {
       scroller = at;
       break;
     }

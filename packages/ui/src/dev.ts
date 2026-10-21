@@ -3,5 +3,6 @@
 // No other entry point imports it, so an app's production build contains none of it unless the app
 // imports it; load it behind a development check, as docs/dev-mode.md shows.
 export { installDevMode, type DevModeHandle, type DevModeOptions } from './dev/install.js';
+export type { PartsFile } from './dev/parts.js';
 export { layout, type LayoutApi, type LayoutAtResult, type LayoutOptions } from './dev/api.js';
 export type { LayoutProblem, ProblemRule } from './dev/model.js';

@@ -88,11 +88,14 @@ function readSource() {
   };
   const classesOnElement = new Map();
   const statesOnElement = new Map();
+  // Dev mode (dev.ts and dev/) is development tooling: its own UI's classes are no contract.
   const files = project
     .getSourceFiles()
     .filter(
       (file) =>
-        !/[\\/](?:generated|icons)[\\/]/.test(relative(sourceDirectory, file.getFilePath())),
+        !/^dev(?:\.ts$|[\\/])|[\\/](?:generated|icons)[\\/]/.test(
+          relative(sourceDirectory, file.getFilePath()),
+        ),
     );
   for (const file of files) {
     const path = repositoryPath(file.getFilePath());
