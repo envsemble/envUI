@@ -109,14 +109,12 @@ test.describe('search', () => {
   });
 
   test('a link to a heading opens the view that shows it', async ({ page }) => {
-    // The Keyboard heading is in Dialog's Accessibility view, not its first.
-    const route = routeOfDocument('dialog', { section: 'keyboard' });
-    expect(route).toBe('components/dialog/accessibility?section=keyboard');
-    // An old link to the page, without a view, opens the same view.
-    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
-    expect(normalizeRoute('components/dialog/overview?section=keyboard')).toBe(route);
     // A page on the figure template shows every heading in its Overview, also for a link to an
-    // old view.
+    // old view or to the page without a view.
+    const route = routeOfDocument('dialog', { section: 'keyboard' });
+    expect(route).toBe('components/dialog/overview?section=keyboard');
+    expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
+    expect(normalizeRoute('components/dialog/accessibility?section=keyboard')).toBe(route);
     expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
       'components/button/overview?section=keyboard',
     );
@@ -204,14 +202,14 @@ test.describe('hosted build', () => {
       'aria-current',
       'page',
     );
-    await page.getByRole('tab', { name: 'Accessibility' }).click();
-    await expect(page).toHaveURL(`${siteUrl}/components/dialog/accessibility`);
+    await page.getByRole('tab', { name: 'Props' }).click();
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog/props`);
     await navigation.getByRole('link', { name: 'Changelog', exact: true }).click();
     await expect(page).toHaveURL(`${siteUrl}/changelog`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Changelog');
     await expect(page.getByRole('heading', { level: 2 }).first()).toBeVisible();
     await page.goBack();
-    await expect(page).toHaveURL(`${siteUrl}/components/dialog/accessibility`);
+    await expect(page).toHaveURL(`${siteUrl}/components/dialog/props`);
     await page.goBack();
     await page.goBack();
     await expect(page).toHaveURL(`${siteUrl}/`);

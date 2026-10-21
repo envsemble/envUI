@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Toast, useToast, Row } from '@envsemble/envui';
+import { Button, Toast, useToast } from '@envsemble/envui';
 import { Download } from '@envsemble/envui/icons/Download';
 
 function ExportButton() {
@@ -19,16 +19,14 @@ function ExportButton() {
     }, 2000);
   };
   return (
-    <Row wrap align="center" gap={4}>
-      <Button
-        variant="secondary"
-        startIcon={<Download />}
-        pending={exporting}
-        onClick={exportMembers}
-      >
-        Export members
-      </Button>
-    </Row>
+    <Button
+      variant="secondary"
+      startIcon={<Download />}
+      pending={exporting}
+      onClick={exportMembers}
+    >
+      Export members
+    </Button>
   );
 }
 

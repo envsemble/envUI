@@ -9,7 +9,7 @@ export default function DisabledReason() {
           Invite member
         </Button>
       </Tooltip>
-      {/* The tooltip isn't read by assistive technology, so the page says it too. */}
+      {/* Touch screens don't show tooltips, so the page says it too. */}
       <Text variant="body-sm">5 of 5 seats assigned</Text>
     </Column>
   );

@@ -1,4 +1,4 @@
-import { Avatar, AvatarButton, Menu, Column, Text } from '@envsemble/envui';
+import { Avatar, AvatarButton, Column, Menu, Row, Text } from '@envsemble/envui';
 import { Logout } from '@envsemble/envui/icons/Logout';
 import { ManageAccounts } from '@envsemble/envui/icons/ManageAccounts';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -6,7 +6,7 @@ import { Settings } from '@envsemble/envui/icons/Settings';
 export default function AccountMenu() {
   return (
     // The avatar sits at the end of a topbar, so the menu lines up with the trigger's end.
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <Row justify="end" style={{ inlineSize: 'min(100%, 20rem)' }}>
       <Menu.Root
         aria-label="Account"
         trigger={
@@ -31,6 +31,6 @@ export default function AccountMenu() {
         <Menu.Separator />
         <Menu.Item icon={<Logout />}>Sign out</Menu.Item>
       </Menu.Root>
-    </div>
+    </Row>
   );
 }
