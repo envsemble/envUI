@@ -511,6 +511,8 @@ Change by hand:
 
 Menu.Item with `href` closes the menu as it is followed, and a disabled one renders no link. The strings of OrganizationSwitcher, DocumentTabs, Breadcrumbs, Pagination, Pager, Table and Tree come from EnvUIProvider's `messages`; their `*Label` props still override them for one component.
 
+envUI draws no line that only divides. Menu.Separator (`env-menu-separator`) and Toolbar.Separator (`env-toolbar-separator`) are space, with no line, and keep their `separator` role. DocumentTabs' bar, a sticky PageHeader and the command palette's footer have no line under or over them. A docked panel's header takes the muted fill, `--env-color-bg-muted`, instead of a line once its content scrolls beneath it. Panes.Divider shows a short grip at rest instead of a line; its line still shows on hover, focus and while dragging. A rule (`hr`) in Markdown, RichText and the editors is three quiet dots in more space. Tables keep their row lines. No class, prop or token changes: where an application needs a line, draw it with its own `border` on the part's class, such as `.env-menu-separator { border-block-start: 1px solid var(--env-color-border-muted); }`.
+
 ### Overlays and feedback
 
 Status tones say `danger` where 0.x said `error`, popups and dialogs take a `width` of `md` or `lg`, and a panel at the edge of the window is a Sheet. `v1-structure` turns each literal `<Dialog placement="right">` into a Sheet, `v1-props` moves the literal values and `useToast().show({ … })` objects, and `v1-classes` the classes:
