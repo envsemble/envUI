@@ -54,3 +54,13 @@ export async function createMilestone(
   await delay(500);
   return { ...input, id: `ms-${Date.now()}` };
 }
+
+/** The workspace's latest activity as free text: its length and its paragraphs vary. */
+export async function fetchActivity(): Promise<string> {
+  await delay(1500);
+  return [
+    'Ada Park moved Quarterly report to review and asked Sam Rivera for the figures.',
+    'Website refresh has two new pages waiting for copy.',
+    'Pricing research gathered answers from 14 customers this week.',
+  ].join('\n\n');
+}

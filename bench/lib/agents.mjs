@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { delimiter, dirname, join } from 'node:path';
-import { npmCli } from './prepare.mjs';
 import { run } from './process.mjs';
 
 const isWindows = process.platform === 'win32';
@@ -18,7 +17,7 @@ function locate(command) {
   }
 }
 
-/** Git's folder of commands. Both agents use git, and Claude Code finds Git Bash through it. */
+/** Git's folder of commands. The agents use git, and Claude Code finds Git Bash through it. */
 function gitDir() {
   const git = locate('git');
   if (!git) return null;
@@ -29,8 +28,8 @@ function gitDir() {
 
 /**
  * Variables an agent keeps from the runner's environment: what Windows programs need to start,
- * and the user profile, where both CLIs keep their login (~/.claude/.credentials.json and
- * ~/.codex/auth.json). A custom config home is kept for the same reason.
+ * and the user profile, where the CLI keeps its login (~/.claude/.credentials.json). A custom
+ * config home is kept for the same reason.
  */
 const inherited = isWindows
   ? [
@@ -44,9 +43,8 @@ const inherited = isWindows
       'PROCESSOR_ARCHITECTURE',
       'USERPROFILE',
       'CLAUDE_CONFIG_DIR',
-      'CODEX_HOME',
     ]
-  : ['HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'TERM', 'CLAUDE_CONFIG_DIR', 'CODEX_HOME'];
+  : ['HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'TERM', 'CLAUDE_CONFIG_DIR'];
 
 /**
  * The environment an agent runs in, built from an allow-list rather than the runner's own
@@ -119,26 +117,21 @@ function envuiLookups(inputs) {
   return lookups;
 }
 
-function resolveCodexScript() {
-  if (process.env.CODEX_JS && existsSync(process.env.CODEX_JS)) return process.env.CODEX_JS;
-  const globalRoot = run(process.execPath, [npmCli(), 'root', '-g']);
-  const script = join(globalRoot, '@openai/codex/bin/codex.js');
-  if (!existsSync(script))
-    throw new Error('Codex CLI not found; install @openai/codex or set CODEX_JS.');
-  return script;
-}
-
 function resolveClaude() {
   const found = locate('claude');
   if (!found) throw new Error('Claude Code CLI not found on PATH.');
   return found;
 }
 
-export const agents = {
-  claude: {
-    label: 'Claude Code',
-    model: 'claude-opus-5-5',
-    effort: 'high',
+/**
+ * An agent that runs Claude Code with one model at one effort. Each agent in `agents` is one of
+ * these, so a run compares models under the same harness.
+ */
+function claudeCode({ label, model, effort }) {
+  return {
+    label,
+    model,
+    effort,
     version: () => run(resolveClaude(), ['--version']),
     /**
      * Headless and non-interactive. Permissions are skipped inside the throwaway workspace; user
@@ -221,96 +214,14 @@ export const agents = {
         events: events.length,
       };
     },
-  },
-  codex: {
-    label: 'Codex',
-    model: 'gpt-6-luna',
-    effort: 'high',
-    version: () => run(process.execPath, [resolveCodexScript(), '--version']),
-    /**
-     * `codex exec` with the workspace-write sandbox. User config is ignored (no MCP servers,
-     * plugins or model overrides). On Windows the unelevated sandbox is the one that can run
-     * headless. The npm cache and the run's temp folder are added as writable roots, so
-     * `npm install` and temp files work.
-     */
-    command({ model, effort, appDir, lastMessageFile, tmpDir, homeDir, npmCache, extraArgs = [] }) {
-      return {
-        file: process.execPath,
-        args: [
-          resolveCodexScript(),
-          'exec',
-          '--json',
-          '--ignore-user-config',
-          '--ephemeral',
-          '--sandbox',
-          'workspace-write',
-          '--model',
-          model,
-          '-c',
-          `model_reasoning_effort="${effort}"`,
-          '-c',
-          'sandbox_workspace_write.network_access=true',
-          ...(process.platform === 'win32' ? ['-c', 'windows.sandbox="unelevated"'] : []),
-          ...[npmCache, tmpDir].filter(Boolean).flatMap((dir) => ['--add-dir', dir]),
-          '--cd',
-          appDir,
-          '--output-last-message',
-          lastMessageFile,
-          ...extraArgs,
-          '-',
-        ],
-        env: agentEnv({ tmpDir, homeDir, npmCache }),
-      };
-    },
-    /** Sums token usage over turn.completed events; Codex reports no cost. */
-    parse(transcriptFile, { lastMessageFile } = {}) {
-      const events = readJsonLines(transcriptFile);
-      const turns = events.filter((event) => event.type === 'turn.completed');
-      const lastTurn = events.findLast((event) =>
-        ['turn.completed', 'turn.failed'].includes(event.type),
-      );
-      const tokens = { input: 0, cachedInput: 0, cacheWrite: 0, output: 0, reasoning: 0 };
-      for (const turn of turns) {
-        // OpenAI's input_tokens include cached ones; keep input as the uncached part, as for Claude.
-        tokens.input += Math.max(
-          0,
-          (turn.usage?.input_tokens ?? 0) -
-            (turn.usage?.cached_input_tokens ?? 0) -
-            (turn.usage?.cache_write_input_tokens ?? 0),
-        );
-        tokens.cachedInput += turn.usage?.cached_input_tokens ?? 0;
-        tokens.cacheWrite += turn.usage?.cache_write_input_tokens ?? 0;
-        tokens.output += turn.usage?.output_tokens ?? 0;
-        tokens.reasoning += turn.usage?.reasoning_output_tokens ?? 0;
-      }
-      const toolCalls = events.filter(
-        (event) =>
-          event.type === 'item.completed' &&
-          ['command_execution', 'file_change', 'mcp_tool_call', 'web_search'].includes(
-            event.item?.type,
-          ),
-      ).length;
-      const lookups = envuiLookups(
-        events
-          .filter((event) => event.type === 'item.completed')
-          .map((event) => event.item?.command ?? JSON.stringify(event.item?.changes ?? '')),
-      );
-      const errors = events
-        .filter((event) => event.type === 'error' || event.type === 'turn.failed')
-        .map((event) => String(event.message ?? event.error?.message ?? '').slice(0, 300));
-      const finalMessage =
-        lastMessageFile && existsSync(lastMessageFile) ? readFileSync(lastMessageFile, 'utf8') : '';
-      return {
-        completed: lastTurn?.type === 'turn.completed',
-        turns: turns.length,
-        toolCalls,
-        envuiLookups: lookups,
-        costUsd: undefined,
-        tokens,
-        errors,
-        finalMessage,
-        events: events.length,
-      };
-    },
-  },
+  };
+}
+
+/**
+ * The agents a run uses by default: Claude Code with Claude Haiku 5.5 at high effort and with
+ * Claude Opus 5.5 at low effort. Their names are the workspace and log names, `haiku-<task>`.
+ */
+export const agents = {
+  haiku: claudeCode({ label: 'Claude Code, Haiku 5.5', model: 'claude-haiku-5-5', effort: 'high' }),
+  opus: claudeCode({ label: 'Claude Code, Opus 5.5', model: 'claude-opus-5-5', effort: 'low' }),
 };

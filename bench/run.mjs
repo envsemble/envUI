@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 // envUI agent benchmark: runs coding agents on product tasks in a fixture app that uses envUI,
-// then scores how much of each result is built with envUI. See bench/README.md.
+// then scores how much of each result is built with envUI and how it lays out when rendered.
+// See bench/README.md.
 import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { agents } from './lib/agents.mjs';
+import { agentEnv, agents } from './lib/agents.mjs';
 import { auditMarkers, auditRun } from './lib/audit.mjs';
 import { conditions } from './lib/conditions/index.mjs';
 import { redactDeep, redactPaths } from './lib/paths.mjs';
@@ -21,23 +22,27 @@ import {
   writeJson,
 } from './lib/prepare.mjs';
 import { killStragglers, run, runWithTimeout } from './lib/process.mjs';
+import { checkRendered, openBrowser } from './lib/browser.mjs';
 import { aggregate, compactRun, renderSummary } from './lib/report.mjs';
-import { scoreRun } from './lib/score.mjs';
+import { scoreParts, scoreRun } from './lib/score.mjs';
 
 const benchDir = fileURLToPath(new URL('.', import.meta.url));
 const repoDir = resolve(benchDir, '..');
 const allTasks = JSON.parse(readFileSync(join(benchDir, 'tasks.json'), 'utf8')).tasks;
+/** Tasks that wait for an API envUI doesn't have yet; they run only when named in --tasks. */
+const pendingTasks = allTasks.filter((task) => task.pending);
 
 const usage = `Usage:
-  npm run bench -- [--condition baseline] [--agents claude,codex] [--tasks all|id,id]
+  npm run bench -- [--condition baseline] [--agents haiku,opus] [--tasks all|id,id]
                    [--fixture basic|hard] [--concurrency 4] [--timeout 12] [--run-id <id>]
                    [--workdir <dir>] [--tarball <file> --envui-commit <sha>] [--audit-path <dir>]
-                   [--build] [--no-save] [--dry-run] [--resume]
-  npm run bench -- rescore --run-id <id> [--workdir <dir>] [--no-save]
+                   [--build] [--no-browser] [--no-save] [--dry-run] [--resume]
+  npm run bench -- rescore --run-id <id> [--workdir <dir>] [--no-browser] [--no-save]
 
   --condition    one or more conditions, comma-separated (${Object.keys(conditions).join(', ')})
   --agents       ${Object.keys(agents).join(', ')}
-  --tasks        all, or task ids: ${allTasks.map((task) => task.id).join(', ')}
+  --tasks        all (without the pending tasks), or task ids: ${allTasks.map((task) => task.id).join(', ')}
+                 pending until envUI has their API: ${pendingTasks.map((task) => task.id).join(', ') || 'none'}
   --fixture      ${Object.keys(fixtures).join(', ')} (default basic)
   --timeout      minutes per run (default 12)
   --workdir      where workspaces, transcripts and caches go (default %TEMP%/agent-workspaces)
@@ -45,16 +50,17 @@ const usage = `Usage:
   --envui-commit the commit the tarball was built from, recorded in the results
   --audit-path   more folders, comma-separated, that agents must not touch (see the audit)
   --build        run npm run build:library before packing
+  --no-browser   skip the browser step: no rendered layout or rendered capabilities, scaled to 100
   --no-save      do not copy results.json and summary.md into bench/results/<run-id>/
   --dry-run      prepare one workspace per agent and print the commands without running agents
   --resume       finish a run whose runner stopped: keep finished runs, run the others again
-  --model-<agent> / --effort-<agent>  override an agent's model or effort, e.g. --model-codex gpt-6-luna`;
+  --model-<agent> / --effort-<agent>  override an agent's model or effort, e.g. --effort-opus medium`;
 
 const { values: options, positionals } = parseArgs({
   allowPositionals: true,
   options: {
     condition: { type: 'string', default: 'baseline' },
-    agents: { type: 'string', default: 'claude,codex' },
+    agents: { type: 'string', default: Object.keys(agents).join(',') },
     tasks: { type: 'string', default: 'all' },
     fixture: { type: 'string', default: 'basic' },
     concurrency: { type: 'string', default: '4' },
@@ -65,6 +71,7 @@ const { values: options, positionals } = parseArgs({
     'envui-commit': { type: 'string' },
     'audit-path': { type: 'string', default: '' },
     build: { type: 'boolean', default: false },
+    'no-browser': { type: 'boolean', default: false },
     'no-save': { type: 'boolean', default: false },
     'dry-run': { type: 'boolean', default: false },
     resume: { type: 'boolean', default: false },
@@ -91,11 +98,11 @@ const list = (value) =>
     .filter(Boolean);
 const workdir = resolve(options.workdir);
 const cacheDir = join(workdir, '_cache');
-// The agents' npm cache: inside the benchmark's folder, and writable in Codex's sandbox.
+// The agents' npm cache, inside the benchmark's folder.
 const npmCache = join(cacheDir, 'npm');
 
 function selectTasks() {
-  if (options.tasks === 'all') return allTasks;
+  if (options.tasks === 'all') return allTasks.filter((task) => !task.pending);
   return list(options.tasks).map((id) => {
     const task = allTasks.find((candidate) => candidate.id === id);
     if (!task) throw new Error(`Unknown task ${id}`);
@@ -143,7 +150,7 @@ async function resumeJob({ task, name }, logDir, context) {
   const meta = existsSync(metaFile) ? JSON.parse(await readFile(metaFile, 'utf8')) : null;
   if (meta?.baseCommit && finishedStatuses.includes(meta.status)) {
     meta.audit = auditRun({ files: transcriptFiles(logDir), audit: context.audit, name });
-    await scoreInto(meta, task);
+    await scoreInto(meta, task, context);
     log(`kept  ${name}: ${meta.status}, score ${meta.scoreDetail.score}`);
     return meta;
   }
@@ -222,9 +229,9 @@ async function runJob(job, context) {
     record.audit = auditRun({ files: transcriptFiles(logDir), audit: context.audit, name });
     if (record.audit.escaped)
       log(`ESCAPED ${name}: ${record.audit.hits.map((hit) => hit.marker).join(', ')}`);
-    await scoreInto(record, task);
+    await scoreInto(record, task, context);
     log(
-      `done  ${name}: ${record.status}, score ${record.scoreDetail?.score}, ${Math.round(outcome.durationMs / 1000)} s`,
+      `done  ${name}: ${record.status}, score ${record.scoreDetail?.score}${layoutNote(record)}, ${Math.round(outcome.durationMs / 1000)} s`,
     );
   } catch (error) {
     record.status = 'harness-error';
@@ -235,8 +242,35 @@ async function runJob(job, context) {
   return record;
 }
 
-async function scoreInto(record, task) {
+/** How the browser step went, for the log. */
+function layoutNote(record) {
+  const layout = record.scoreDetail?.layout;
+  if (layout?.harnessError) return ` (browser step failed: ${layout.harnessError})`;
+  if (!layout?.checked) return '';
+  return layout.rendered
+    ? ` (${layout.problemCount} layout problems)`
+    : ` (not rendered: ${layout.error})`;
+}
+
+/**
+ * Scores a run: statically, then, when it changed anything and the browser step is on, by
+ * rendering it at four widths.
+ */
+async function scoreInto(record, task, context) {
   const detail = scoreRun({ appDir: record.appDir, baseCommit: record.baseCommit, task });
+  if (detail.hasOutput && context.browser) {
+    // The result's dev server runs with the agent's environment, in the run's temp folder.
+    const tmpDir = record.tmpDir ?? join(context.runDir, '_tmp', record.name);
+    const rendered = await checkRendered({
+      browser: context.browser,
+      appDir: record.appDir,
+      tmpDir,
+      task,
+      env: agentEnv({ tmpDir, homeDir: join(tmpDir, 'home'), npmCache }),
+    });
+    await writeJson(join(record.logDir, 'rendered.json'), rendered);
+    scoreParts(detail, task, rendered);
+  }
   await writeFile(join(record.logDir, 'diff.patch'), detail.patch ?? '');
   delete detail.patch;
   await writeJson(join(record.logDir, 'score.json'), detail);
@@ -365,6 +399,7 @@ async function main() {
     pack = await packLibrary({ repoDir, cacheDir, build: options.build });
   }
   const templateDir = await ensureTemplate({ fixtureDirs, cacheDir, pack, npmCache, log });
+  const browser = options['no-browser'] || options['dry-run'] ? null : await openBrowser();
   const agentInfo = {};
   for (const agentName of agentNames) {
     let cliVersion = 'unknown';
@@ -399,12 +434,14 @@ async function main() {
     },
     auditPaths: list(options['audit-path']),
     audit,
+    browser,
   };
   log(`run ${runId}: ${jobs.length} runs in ${runDir}`);
   await mkdir(runDir, { recursive: true });
   await writeJson(join(runDir, 'run.json'), {
     ...context,
     audit: undefined,
+    browser: undefined,
     jobs: jobs.map((job) => ({
       task: job.task.id,
       agent: job.agentName,
@@ -412,7 +449,12 @@ async function main() {
       name: job.name,
     })),
   });
-  const records = await pool(jobs, context.settings.concurrency, (job) => runJob(job, context));
+  let records;
+  try {
+    records = await pool(jobs, context.settings.concurrency, (job) => runJob(job, context));
+  } finally {
+    await browser?.close();
+  }
   if (options['dry-run']) return;
   await writeJson(
     join(runDir, 'records.json'),
@@ -439,20 +481,28 @@ async function rescore() {
       `${context.conditionNames.length > 1 ? `${record.condition}-` : ''}${record.agent}-${record.task}`,
   );
   const audit = auditFor(runDir, names);
-  for (const [index, record] of records.entries()) {
-    if (!record.baseCommit) continue;
-    const task = allTasks.find((candidate) => candidate.id === record.task);
-    const agent = agents[record.agent];
-    record.name = names[index];
-    record.agentReport = agent.parse(join(record.logDir, 'transcript.jsonl'), {
-      lastMessageFile: join(record.logDir, 'last-message.txt'),
-    });
-    record.agentReport.model ??= context.agents[record.agent]?.model;
-    record.audit = auditRun({ files: transcriptFiles(record.logDir), audit, name: record.name });
-    await scoreInto(record, task);
-    log(
-      `rescored ${record.name}: ${record.scoreDetail.score}${record.audit.escaped ? ' (escaped)' : ''}`,
-    );
+  const browser = options['no-browser'] ? null : await openBrowser();
+  try {
+    for (const [index, record] of records.entries()) {
+      if (!record.baseCommit) continue;
+      const task = allTasks.find((candidate) => candidate.id === record.task);
+      const agent = agents[record.agent];
+      record.name = names[index];
+      // An agent the runner no longer has, such as one of an older run, keeps its earlier report.
+      if (agent) {
+        record.agentReport = agent.parse(join(record.logDir, 'transcript.jsonl'), {
+          lastMessageFile: join(record.logDir, 'last-message.txt'),
+        });
+        record.agentReport.model ??= context.agents[record.agent]?.model;
+      }
+      record.audit = auditRun({ files: transcriptFiles(record.logDir), audit, name: record.name });
+      await scoreInto(record, task, { browser, runDir });
+      log(
+        `rescored ${record.name}: ${record.scoreDetail.score}${layoutNote(record)}${record.audit.escaped ? ' (escaped)' : ''}`,
+      );
+    }
+  } finally {
+    await browser?.close();
   }
   await writeJson(
     join(runDir, 'records.json'),

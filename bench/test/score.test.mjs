@@ -179,21 +179,21 @@ export { Button } from '@envsemble/envui';
 export { EnvDialog as AppDialog };
 export * from './more';
 `,
-      'src/ui/more.ts': "export { Stack } from '@envsemble/envui';\nexport const local = 1;\n",
+      'src/ui/more.ts': "export { Column } from '@envsemble/envui';\nexport const local = 1;\n",
     });
   });
   after(() => app.cleanup());
 
   it('counts named imports from the barrel as envUI', () => {
     app.write({
-      'src/Feature.tsx': `import { AppDialog, Button, Stack } from './ui';
+      'src/Feature.tsx': `import { AppDialog, Button, Column } from './ui';
 
 export function Feature() {
   return (
-    <Stack gap={2}>
+    <Column gap={2}>
       <Button variant="primary">Delete</Button>
       <AppDialog open title="Delete?" />
-    </Stack>
+    </Column>
   );
 }
 `,
@@ -201,11 +201,11 @@ export function Feature() {
     const score = scoreRun({
       appDir: app.appDir,
       baseCommit: app.baseCommit,
-      task: task('Button', 'Dialog', 'Stack'),
+      task: task('Button', 'Dialog', 'Column'),
     });
-    assert.deepEqual(score.envui.exportsUsed, ['Button', 'Dialog', 'Stack']);
+    assert.deepEqual(score.envui.exportsUsed, ['Button', 'Column', 'Dialog']);
     assert.equal(score.coverage.ratio, 1);
-    assert.deepEqual(score.envui.jsxUses, { Stack: 1, Button: 1, Dialog: 1 });
+    assert.deepEqual(score.envui.jsxUses, { Column: 1, Button: 1, Dialog: 1 });
   });
 
   it('counts a namespace import of the barrel', () => {
