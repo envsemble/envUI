@@ -1,5 +1,5 @@
 import { Fragment, useId, type ReactNode } from 'react';
-import { Column, Message, Theme, useTheme } from '@envsemble/envui';
+import { Message, Column, Theme, useTheme } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { Close } from '@envsemble/envui/icons/Close';
 import type { DocumentationBlock, DocumentationSection } from '../DocumentationTypes';
@@ -39,7 +39,6 @@ export function VerdictFigure({
       <div className="docs-verdict-frame">
         <Column
           render={<Theme {...theme} />}
-          container="env-window"
           gap={0}
           className="docs-verdict-stage"
           data-example={name}

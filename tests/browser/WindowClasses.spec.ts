@@ -112,3 +112,177 @@ test('a date picker stacks its time under the calendar in a compact window', asy
     }).toPass();
   }
 });
+
+// With a document root that isn't themed, as in the fixture, each portal's boundary is outermost.
+// Fixed overlays still cover the viewport and stack over the page, popups follow their trigger, and
+// what a dialog holds lays out at the window's class. Each check runs as browsers do today, and
+// again as an engine whose container-type also contains layout would, which makes a container the
+// containing block of its fixed and absolute descendants: `contain: layout` on every container.
+for (const containsLayout of [false, true]) {
+  const as = containsLayout ? ', where a container contains layout' : '';
+  test.describe(`portals with an unthemed document root${as}`, () => {
+    /** Opens the page, scrolled, so a box placed against anything but the viewport shows. */
+    async function open(page: Page, address: string, { scroll = true } = {}) {
+      if (containsLayout)
+        await page.addInitScript(() => {
+          const contain = (node: Node) => {
+            if (!(node instanceof HTMLElement)) return;
+            for (const element of [node, ...node.querySelectorAll<HTMLElement>('*')])
+              if (getComputedStyle(element).containerType !== 'normal')
+                element.style.contain = 'layout';
+          };
+          new MutationObserver((records) =>
+            records.forEach((record) => record.addedNodes.forEach(contain)),
+          ).observe(document, { childList: true, subtree: true });
+        });
+      await page.goto(address);
+      await expect(page.locator('html')).not.toHaveClass(/env-theme/);
+      if (scroll)
+        await page.evaluate(() => {
+          document.body.style.minBlockSize = '300vh';
+          window.scrollTo(0, 400);
+        });
+    }
+
+    test(
+      'a dialog’s backdrop and positioner cover the viewport, over the page',
+      { tag: '@engines' },
+      async ({ page }) => {
+        await page.setViewportSize({ width: 1024, height: 700 });
+        await open(page, `${fixtureUrl}/?fixture=dialog-variants`);
+        await page.getByRole('button', { name: 'Open wide dialog' }).click();
+        const dialog = page.getByRole('dialog', { name: 'Wide details' });
+        await expect(dialog).toBeVisible();
+        for (const selector of ['.env-dialog-backdrop', '.env-dialog-positioner']) {
+          const box = await page.locator(selector).evaluate((element) => {
+            const { x, y, width, height } = element.getBoundingClientRect();
+            return { x, y, width, height };
+          });
+          expect(box, selector).toEqual({ x: 0, y: 0, width: 1024, height: 700 });
+        }
+        // The scrim is what shows at a corner, over the page, and the dialog over the scrim.
+        const top = await page.evaluate(() => {
+          const corner = document.elementFromPoint(4, 4);
+          const box = document.querySelector('[role="dialog"]')!.getBoundingClientRect();
+          const middle = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+          return {
+            scrim: corner?.closest('.env-dialog-backdrop') !== null,
+            dialog: middle?.closest('[role="dialog"]') !== null,
+          };
+        });
+        expect(top).toEqual({ scrim: true, dialog: true });
+        // A press on the scrim reaches it through the overlay's layer, and closes the dialog.
+        await page.mouse.click(4, 4);
+        await expect(dialog).toBeHidden();
+      },
+    );
+
+    test('a toast sits at the window’s edge', { tag: '@engines' }, async ({ page }) => {
+      await page.setViewportSize({ width: 1024, height: 700 });
+      await open(page, `${fixtureUrl}/?fixture=toast`);
+      await page.getByTestId('toast-queue-bottom').click();
+      const viewport = page.locator('.env-toast-viewport[data-placement="bottom-end"]');
+      await expect(viewport.locator('.env-toast').first()).toBeVisible();
+      await expect(async () => {
+        const box = (await viewport.boundingBox())!;
+        expect(box.y + box.height).toBeLessThanOrEqual(700);
+        expect(box.y + box.height).toBeGreaterThan(700 - 64);
+        expect(box.x + box.width).toBeLessThanOrEqual(1024);
+        expect(box.x + box.width).toBeGreaterThan(1024 - 64);
+      }).toPass();
+    });
+
+    test(
+      'a menu opens against its trigger, also in a grid body, where it takes no cell',
+      { tag: '@engines' },
+      async ({ page }) => {
+        await page.setViewportSize({ width: 1024, height: 700 });
+        await open(page, `${fixtureUrl}/?fixture=menus`, { scroll: false });
+        await page.evaluate(() => {
+          document.body.style.display = 'grid';
+          document.body.style.gap = '3rem';
+        });
+        const trigger = page
+          .getByTestId('menus-light')
+          .getByRole('button', { name: 'View options' });
+        await trigger.scrollIntoViewIfNeeded();
+        await page.evaluate(() => window.scrollBy(0, 40));
+        await trigger.click();
+        const menu = page.getByRole('menu', { name: 'View options' });
+        await expect(menu).toBeVisible();
+        await expect(async () => {
+          const button = (await trigger.boundingBox())!;
+          const box = (await menu.boundingBox())!;
+          // Below the trigger, a few pixels apart, or above it where there is no room below.
+          const gap =
+            box.y >= button.y
+              ? box.y - (button.y + button.height)
+              : button.y - (box.y + box.height);
+          expect(gap).toBeGreaterThanOrEqual(0);
+          expect(gap).toBeLessThan(16);
+          expect(box.x + box.width).toBeGreaterThan(button.x);
+          expect(box.x).toBeLessThan(button.x + button.width);
+        }).toPass();
+        // The portal's boundary is the window, at the window's width, and out of flow, so it takes
+        // no cell of the grid body.
+        const theme = menu.locator('xpath=ancestor::*[contains(@class, "env-popup-theme")][1]');
+        const style = await theme.evaluate((element) => {
+          const computed = getComputedStyle(element);
+          return {
+            position: computed.position,
+            containerName: computed.containerName,
+            width: element.getBoundingClientRect().width,
+          };
+        });
+        expect(style.position).toBe('absolute');
+        expect(style.containerName).toBe('env-window');
+        expect(style.width).toBeCloseTo(
+          await page.evaluate(() => document.documentElement.clientWidth),
+          0,
+        );
+      },
+    );
+
+    test('what a dialog holds lays out at the window’s class', async ({ page }) => {
+      for (const [width, expected] of [
+        [480, ''],
+        [1024, 'medium'],
+      ] as const) {
+        await page.setViewportSize({ width, height: 800 });
+        await open(page, `${fixtureUrl}/?fixture=dialog-variants`, { scroll: false });
+        await page.addStyleTag({
+          content:
+            '@layer env.components { @container env-window (width >= 37.5rem) { .env-dialog-popup { --window-probe: medium; } } }',
+        });
+        await page.getByRole('button', { name: 'Open top dialog' }).click();
+        const dialog = page.getByRole('dialog', { name: 'Search plans' });
+        await expect(dialog).toBeVisible();
+        expect(
+          await dialog.evaluate((element) =>
+            getComputedStyle(element).getPropertyValue('--window-probe'),
+          ),
+          `${width} px`,
+        ).toBe(expected);
+      }
+    });
+  });
+}
+
+test('under a themed document root, portals measure the root and keep their boxes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 700 });
+  await page.goto(`${fixtureUrl}/?fixture=menus`);
+  await page.evaluate(() => {
+    document.documentElement.classList.add('env-theme');
+    document.documentElement.dataset.envTheme = 'light';
+  });
+  await page.getByTestId('menus-light').getByRole('button', { name: 'View options' }).click();
+  const menu = page.getByRole('menu', { name: 'View options' });
+  await expect(menu).toBeVisible();
+  const theme = menu.locator('xpath=ancestor::*[contains(@class, "env-popup-theme")][1]');
+  expect(await theme.evaluate((element) => getComputedStyle(element).display)).toBe('contents');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).containerName)).toBe(
+    'env-window',
+  );
+});

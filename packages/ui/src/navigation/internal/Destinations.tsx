@@ -78,6 +78,28 @@ export type DrawerDestination = DestinationFields &
 /** The navigation forms, by the prefix of their part classes. */
 export type NavigationForm = 'bar' | 'rail' | 'drawer';
 
+/** The part classes of each form's destinations, written out so the part contract finds them. */
+const destinationClasses = {
+  bar: {
+    item: 'env-bar-item',
+    indicator: 'env-bar-indicator',
+    label: 'env-bar-label',
+    count: 'env-bar-count',
+  },
+  rail: {
+    item: 'env-rail-item',
+    indicator: 'env-rail-indicator',
+    label: 'env-rail-label',
+    count: 'env-rail-count',
+  },
+  drawer: {
+    item: 'env-drawer-item',
+    indicator: undefined,
+    label: 'env-drawer-label',
+    count: 'env-drawer-count',
+  },
+} as const;
+
 /** A run of destinations of one group, in the list's order: Drawer's sections. */
 export interface DestinationSection<Item> {
   /** The group's heading, or undefined for destinations outside any group. */
@@ -138,6 +160,7 @@ export function DestinationItem({
   destination: DrawerDestination;
 }) {
   const messages = useNavigationMessages();
+  const classes = destinationClasses[form];
   const { label, icon, count, current = false, href, onSelect } = destination;
   const shown = shownCount(count);
   const icons =
@@ -148,7 +171,7 @@ export function DestinationItem({
     );
   // The count is part of the item's name, so the badge that shows it is hidden.
   const badge = shown !== undefined && (
-    <span className={`env-${form}-count`} aria-hidden="true">
+    <span className={classes.count} aria-hidden="true">
       {shown}
     </span>
   );
@@ -160,7 +183,7 @@ export function DestinationItem({
     );
   const shared = {
     render: control,
-    className: `env-${form}-item`,
+    className: classes.item,
     'data-current': current ? '' : undefined,
     'aria-current': current ? ('page' as const) : undefined,
     'aria-label': countedName(label, count, messages),
@@ -168,16 +191,16 @@ export function DestinationItem({
   return form === 'drawer' ? (
     <Row {...shared} align="center" gap={3}>
       {icons}
-      <span className="env-drawer-label">{label}</span>
+      <span className={classes.label}>{label}</span>
       {badge}
     </Row>
   ) : (
     <Column {...shared} align="center" gap={1}>
-      <span className={`env-${form}-indicator`}>
+      <span className={classes.indicator}>
         {icons}
         {badge}
       </span>
-      <span className={`env-${form}-label`}>{label}</span>
+      <span className={classes.label}>{label}</span>
     </Column>
   );
 }

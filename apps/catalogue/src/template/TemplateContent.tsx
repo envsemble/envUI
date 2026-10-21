@@ -1,4 +1,4 @@
-import { Badge, Link, Message, Column, Text } from '@envsemble/envui';
+import { Badge, Column, Link, Message, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {

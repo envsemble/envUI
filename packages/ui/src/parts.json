@@ -4,7 +4,8 @@
     "Dialog": "env-dialog-popup",
     "Drawer": "env-drawer-popup",
     "ConfirmDialog": "env-dialog-popup",
-    "Textarea": "env-text-field"
+    "Textarea": "env-text-field",
+    "NavigationDrawer": "env-drawer"
   },
   "shared": {
     "ConnectedRows": {
@@ -44,7 +45,17 @@
     }
   },
   "placed": {
-    "env-connected-row": "ConnectedRows"
+    "env-connected-row": "ConnectedRows",
+    "env-overlay-theme": "Dialog",
+    "env-drawer": "NavigationDrawer",
+    "env-drawer-header": "NavigationDrawer",
+    "env-drawer-list": "NavigationDrawer",
+    "env-drawer-section": "NavigationDrawer",
+    "env-drawer-heading": "NavigationDrawer",
+    "env-drawer-item": "NavigationDrawer",
+    "env-drawer-label": "NavigationDrawer",
+    "env-drawer-count": "NavigationDrawer",
+    "env-drawer-footer": "NavigationDrawer"
   },
   "descriptions": {
     "AccountMenu": {
@@ -105,6 +116,15 @@
     "Badge": {
       "env-badge": "The badge: a small pill label.",
       "env-badge-label": "The badge's text."
+    },
+    "Bar": {
+      "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
+      "env-bar-list": "The row of destinations, which share the bar's width.",
+      "env-bar-item": "A destination: a link or button with its indicator above its label.",
+      "env-bar-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-bar-label": "A destination's label, under its indicator, cut short with an ellipsis.",
+      "env-bar-count": "A destination's count, on the icon's top end; 999+ above 999.",
+      "env-bar-more": "The last item past five destinations, which opens the rest in a menu."
     },
     "Breadcrumbs": {
       "env-breadcrumbs": "The breadcrumb navigation.",
@@ -289,7 +309,8 @@
       "env-dialog-heading": "The column with the title and the description.",
       "env-dialog-positioner": "The positioner that centres the dialog.",
       "env-dialog-surface": "The dialog's surface.",
-      "env-dialog-title": "The title."
+      "env-dialog-title": "The title.",
+      "env-overlay-theme": "The theme boundary that covers the window under a dialog, a sheet or the command palette, so they measure the window and cover the viewport."
     },
     "DiffStat": {
       "env-diff-stat": "The count of added and removed lines.",
@@ -437,16 +458,16 @@
       "env-month-picker-previous": "The button for the previous year.",
       "env-month-picker-year": "The year's grid of months."
     },
-    "NavList": {
-      "env-nav-list": "The navigation list.",
-      "env-nav-list-group": "A group of destinations.",
-      "env-nav-list-group-label": "A group's label.",
-      "env-nav-list-group-list": "A group's list of destinations.",
-      "env-nav-list-item": "One destination.",
-      "env-nav-list-item-dot": "The dot that marks a destination with news.",
-      "env-nav-list-item-end": "The end of a destination, for a count.",
-      "env-nav-list-skeleton": "The list's loading placeholder.",
-      "env-nav-list-skeleton-item": "One placeholder destination."
+    "NavigationDrawer": {
+      "env-drawer": "The navigation drawer: a nav landmark, a column with the header, the list and the footer.",
+      "env-drawer-header": "Content above the destinations, such as the application's name or a search trigger.",
+      "env-drawer-list": "The list of destinations and groups, which scrolls where the drawer is shorter.",
+      "env-drawer-section": "A group: its heading and the list of its destinations.",
+      "env-drawer-heading": "A group's heading, which names the group's list.",
+      "env-drawer-item": "A destination: a link or button as wide as the drawer, with its icon, label and count.",
+      "env-drawer-label": "A destination's label.",
+      "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
+      "env-drawer-footer": "Content below the destinations, at the bottom of the drawer."
     },
     "OrganizationSwitcher": {
       "env-organization-switcher": "The organization switcher's popup.",
@@ -531,6 +552,16 @@
     },
     "RadioGroup": {
       "env-radio-group": "The group of radios."
+    },
+    "Rail": {
+      "env-rail": "The navigation rail: a nav landmark, a narrow column with the header, the list and the footer.",
+      "env-rail-header": "Content above the destinations, such as a button that opens the drawer or the main action.",
+      "env-rail-list": "The list of destinations, one under another, which scrolls where the rail is shorter.",
+      "env-rail-item": "A destination: a link or button with its indicator above its label.",
+      "env-rail-indicator": "The pill around a destination's icon, filled while the destination is current.",
+      "env-rail-label": "A destination's short label, under its indicator.",
+      "env-rail-count": "A destination's count, on the icon's top end; 999+ above 999.",
+      "env-rail-footer": "Content at the bottom of the rail, such as the account's button."
     },
     "Rating": {
       "env-rating": "The rating.",

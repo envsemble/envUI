@@ -180,7 +180,6 @@ export function LiveExample({
           ))}
         </div>
       ) : (
-        // Each example is a window of its own, so it lays out at its frame's window class.
         <Column
           render={<Theme {...theme} />}
           container="env-window"
