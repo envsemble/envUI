@@ -8,7 +8,7 @@ export default function EmptyStatesAnatomy() {
       <PageHeader
         title="Projects"
         headingLevel={3}
-        toolbar={<SearchField aria-label="Search projects" defaultValue="roadmap" />}
+        toolbar={<SearchField label="Search projects" defaultValue="roadmap" />}
       />
       <EmptyState
         icon={<SearchOff />}
