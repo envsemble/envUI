@@ -19,12 +19,10 @@
           "pressed": { "$value": "{palette.neutral.8}" }
         },
         "default": {
-          "$root": { "$value": "{palette.neutral.4}" },
           "hover": { "$value": "{palette.neutral.8}" },
           "pressed": { "$value": "{palette.neutral.10}" }
         },
         "muted": {
-          "$root": { "$value": "{palette.neutral.2}" },
           "hover": { "$value": "{palette.neutral.6}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },

@@ -21,25 +21,25 @@
       "default": {
         "$root": {
           "$description": "The default surface: Surface, sidebars, standard menus.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.neutral.4}"
         },
         "hover": {
           "$description": "An interactive default surface, such as a card or a list row, under the pointer.",
-          "$value": "{palette.neutral.12}"
+          "$value": "{palette.neutral.8}"
         },
         "pressed": {
           "$description": "An interactive default surface while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.neutral.13}"
+          "$value": "{palette.neutral.10}"
         }
       },
       "muted": {
         "$root": {
           "$description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
-          "$value": "{palette.neutral.4}"
+          "$value": "{palette.neutral.2}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.neutral.8}"
+          "$value": "{palette.neutral.6}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
@@ -93,15 +93,15 @@
       "selected": {
         "$root": {
           "$description": "Selected navigation items, tree and table rows, Select options and drop targets; paired with fg.on-selected. A blue tint in light and a blue-gray in dark, distinct from the other items around it, at rest and under the pointer: ΔEOK 0.03 or more, 0.04 at high contrast.",
-          "$value": "{palette.blue.9}"
+          "$value": "{palette.blue.7}"
         },
         "hover": {
           "$description": "A selected item under the pointer: visibly deeper than the selection, and distinct from an unselected item under the pointer.",
-          "$value": "{palette.blue.13}"
+          "$value": "{palette.blue.9}"
         },
         "pressed": {
           "$description": "A selected item while pressed. Muted text and an inset focus ring keep their minimums on it.",
-          "$value": "{palette.blue.12}"
+          "$value": "{palette.blue.10}"
         }
       },
       "navigation": {
@@ -121,7 +121,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.08
+              "alpha": 0.06
             }
           },
           "hover": {
@@ -137,7 +137,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.25
+              "alpha": 0.29
             }
           }
         },
@@ -159,7 +159,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.09
+              "alpha": 0.1
             }
           }
         },
@@ -455,15 +455,15 @@
       "muted": {
         "$root": {
           "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
-          "$value": "{palette.neutral.65}"
+          "$value": "{palette.neutral.60}"
         },
         "hover": {
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.65}"
         },
         "pressed": {
           "$description": "Muted text while pressed.",
-          "$value": "{palette.neutral.75}"
+          "$value": "{palette.neutral.70}"
         }
       },
       "control": {
@@ -473,40 +473,40 @@
       "link": {
         "$root": {
           "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
-          "$value": "{palette.blue.60}"
+          "$value": "{palette.blue.55}"
         },
-        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.65}" },
-        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.70}" }
+        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.60}" },
+        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.65}" }
       },
       "link-on-tint": {
         "$root": {
           "$description": "Links and text buttons on a tint, where fg.link falls below 4.5:1: inside alerts, on bg.brand-muted, and in list rows and interactive table rows under the pointer or pressed. In light it is a grade darker than fg.link and darkens on hover and press; in dark it is fg.link at rest and lightens on hover and press, where fg.link darkens. Alerts and those rows point fg.link at it; an application puts it on bg.brand-muted.",
-          "$value": "{palette.blue.65}"
+          "$value": "{palette.blue.60}"
         },
         "hover": {
           "$description": "A link on a tint under the pointer.",
-          "$value": "{palette.blue.70}"
+          "$value": "{palette.blue.65}"
         },
         "pressed": {
           "$description": "A link on a tint while pressed.",
-          "$value": "{palette.blue.75}"
+          "$value": "{palette.blue.70}"
         }
       },
       "accent": {
         "$description": "Accent text and icons: the accent tone, outlined button labels, chips, the icon of a pager link.",
-        "$value": "{palette.blue.65}"
+        "$value": "{palette.blue.60}"
       },
       "on-selected": {
         "$description": "Text and indicators on bg.selected and its states.",
         "$value": "{palette.blue.65}"
       },
-      "success": { "$description": "Success text and icons.", "$value": "{palette.green.65}" },
-      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.65}" },
+      "success": { "$description": "Success text and icons.", "$value": "{palette.green.60}" },
+      "warning": { "$description": "Warning text and icons.", "$value": "{palette.amber.60}" },
       "danger": {
         "$description": "Danger text and icons, and field errors.",
-        "$value": "{palette.red.65}"
+        "$value": "{palette.red.60}"
       },
-      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.65}" },
+      "done": { "$description": "Done text and icons.", "$value": "{palette.violet.60}" },
       "on-emphasis": {
         "$description": "Text and icons on the emphasis fills: white in light, dark in dark.",
         "$value": "{palette.neutral.0}"
@@ -534,7 +534,7 @@
       "muted": {
         "$root": {
           "$description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
-          "$value": "{palette.neutral.14}"
+          "$value": "{palette.neutral.10}"
         },
         "hover": {
           "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
