@@ -523,12 +523,12 @@ export const tokens = {
       'dark-high-contrast': 'rgb(30 31 33 / 0.5)',
     },
   },
-  /** The muted surface: Surface background="muted", radio rows. Lighter than the default surface in both themes. */
+  /** The muted surface: Surface background="muted", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme. */
   'color.bg.muted': {
     cssVariable: '--env-color-bg-muted',
     type: 'color',
     values: {
-      light: '#f6f8fc',
+      light: '#e2e4e8',
       dark: '#343638',
       'light-high-contrast': '#f6f8fc',
       'dark-high-contrast': '#343638',
@@ -539,7 +539,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-hover',
     type: 'color',
     values: {
-      light: '#e8eaee',
+      light: '#dbdde1',
       dark: '#424447',
       'light-high-contrast': '#e8eaee',
       'dark-high-contrast': '#383a3d',
@@ -550,7 +550,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-muted-pressed',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#d5d7db',
       dark: '#4b4d51',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#424447',
@@ -594,7 +594,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.06)',
+      light: 'rgb(30 31 33 / 0.08)',
       dark: 'rgb(232 234 238 / 0.125)',
       'light-high-contrast': 'rgb(30 31 33 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
@@ -616,7 +616,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted-pressed',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.29)',
+      light: 'rgb(30 31 33 / 0.25)',
       dark: 'rgb(232 234 238 / 0.28)',
       'light-high-contrast': 'rgb(30 31 33 / 0.18)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.15)',
@@ -1188,7 +1188,7 @@ export const tokens = {
     cssVariable: '--env-color-border-muted',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1353,7 +1353,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link',
     type: 'color',
     values: {
-      light: '#0366da',
+      light: '#005cc8',
       dark: '#9fc1f8',
       'light-high-contrast': '#00377c',
       'dark-high-contrast': '#e0ebfd',
@@ -1397,7 +1397,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-hover',
     type: 'color',
     values: {
-      light: '#005cc8',
+      light: '#0053b5',
       dark: '#8ab3f5',
       'light-high-contrast': '#002f6d',
       'dark-high-contrast': '#eaf2ff',
@@ -1408,7 +1408,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-link-pressed',
     type: 'color',
     values: {
-      light: '#0053b5',
+      light: '#004aa2',
       dark: '#75a5f2',
       'light-high-contrast': '#00275c',
       'dark-high-contrast': '#f4f8ff',
@@ -1419,7 +1419,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted',
     type: 'color',
     values: {
-      light: '#5d6166',
+      light: '#54575c',
       dark: '#bdbfc3',
       'light-high-contrast': '#303234',
       'dark-high-contrast': '#e8eaee',
@@ -1430,7 +1430,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-hover',
     type: 'color',
     values: {
-      light: '#54575c',
+      light: '#4b4d51',
       dark: '#ccced2',
       'light-high-contrast': '#28292b',
       'dark-high-contrast': '#eff1f5',
@@ -1441,7 +1441,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-pressed',
     type: 'color',
     values: {
-      light: '#4b4d51',
+      light: '#424447',
       dark: '#dbdde1',
       'light-high-contrast': '#1e1f21',
       'dark-high-contrast': '#f6f8fc',
@@ -1684,7 +1684,7 @@ export const tokens = {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1704,7 +1704,7 @@ export const tokens = {
     cssVariable: '--env-elevation-2-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1724,7 +1724,7 @@ export const tokens = {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#121315',
       'dark-high-contrast': '#a1a4a9',

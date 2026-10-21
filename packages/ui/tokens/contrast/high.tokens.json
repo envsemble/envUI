@@ -22,6 +22,7 @@
         "pressed": { "$value": "{contrast-high.color.bg.default.pressed}" }
       },
       "muted": {
+        "$root": { "$value": "{contrast-high.color.bg.muted}" },
         "hover": { "$value": "{contrast-high.color.bg.muted.hover}" },
         "pressed": { "$value": "{contrast-high.color.bg.muted.pressed}" }
       },

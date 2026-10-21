@@ -1,0 +1,5 @@
+---
+'@envsemble/envui': patch
+---
+
+The light theme's backgrounds step apart more clearly, with the same white page, cool grays and blue. Cards and other muted surfaces (`--env-color-bg-muted`) are a gray step darker than the default surface rather than lighter, so a card stands apart from the page about four times as clearly as before and from a pane about twice as clearly, and list rows in a card take a white fill against it. The translucent neutral fill of secondary buttons, tab rails and chips (`--env-color-bg-neutral-muted`) is an 8% layer rather than 6%, its pressed state 25% rather than 29%, and dividers and popup edges (`--env-color-border-muted`) are a step darker. So that text keeps 4.5:1 on the grayer cards, link text (`--env-color-fg-link`, with its hover and pressed states) and muted text (`--env-color-fg-muted`, likewise) are one grade darker; the accent, primary, selection and focus blues are unchanged. The dark theme and both high-contrast themes are unchanged, and no token is renamed.

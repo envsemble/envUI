@@ -23,6 +23,7 @@
           "pressed": { "$value": "{palette.neutral.80}" }
         },
         "muted": {
+          "$root": { "$value": "{palette.neutral.82}" },
           "hover": { "$value": "{palette.neutral.80}" },
           "pressed": { "$value": "{palette.neutral.75}" }
         },

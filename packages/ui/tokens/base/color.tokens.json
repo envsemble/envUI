@@ -34,16 +34,16 @@
       },
       "muted": {
         "$root": {
-          "$description": "The muted surface: Surface background=\"muted\", radio rows. Lighter than the default surface in both themes.",
-          "$value": "{palette.neutral.2}"
+          "$description": "The muted surface: Surface background=\"muted\", radio rows. Grayer than the default surface in the light theme, so cards stand apart from a pane, and lighter than it in the dark theme.",
+          "$value": "{palette.neutral.8}"
         },
         "hover": {
           "$description": "An interactive muted surface under the pointer.",
-          "$value": "{palette.neutral.6}"
+          "$value": "{palette.neutral.10}"
         },
         "pressed": {
           "$description": "An interactive muted surface while pressed.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.12}"
         }
       },
       "raised": {
@@ -121,7 +121,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.06
+              "alpha": 0.08
             }
           },
           "hover": {
@@ -137,7 +137,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.29
+              "alpha": 0.25
             }
           }
         },
@@ -455,15 +455,15 @@
       "muted": {
         "$root": {
           "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
-          "$value": "{palette.neutral.60}"
+          "$value": "{palette.neutral.65}"
         },
         "hover": {
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
-          "$value": "{palette.neutral.65}"
+          "$value": "{palette.neutral.70}"
         },
         "pressed": {
           "$description": "Muted text while pressed.",
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.75}"
         }
       },
       "control": {
@@ -473,10 +473,10 @@
       "link": {
         "$root": {
           "$description": "Links and text buttons: at least 4.5:1 on every surface and row.",
-          "$value": "{palette.blue.55}"
+          "$value": "{palette.blue.60}"
         },
-        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.60}" },
-        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.65}" }
+        "hover": { "$description": "A link under the pointer.", "$value": "{palette.blue.65}" },
+        "pressed": { "$description": "A link while pressed.", "$value": "{palette.blue.70}" }
       },
       "link-on-tint": {
         "$root": {
@@ -534,7 +534,7 @@
       "muted": {
         "$root": {
           "$description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.14}"
         },
         "hover": {
           "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",
