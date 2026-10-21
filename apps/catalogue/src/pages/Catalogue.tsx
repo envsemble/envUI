@@ -1,5 +1,5 @@
 import { Text, Card, Column } from '@envsemble/envui';
-import { references, componentGroups } from '../Reference';
+import { references, componentGroups, componentGroupId } from '../Reference';
 import { getComponentIcon } from '../navigation/TopicIcons';
 import { pageHref, referencePages } from '../navigation/DocumentationRoutes';
 
@@ -8,7 +8,7 @@ export function Catalogue() {
     <Column gap={7}>
       {componentGroups.map((group) => (
         <Column render={<section />} gap={5} key={group}>
-          <Text render={<h3 />} variant="title">
+          <Text render={<h3 />} variant="title" id={componentGroupId(group)}>
             {group}
           </Text>
           <div className="docs-catalogue-grid">

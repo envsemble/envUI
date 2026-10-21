@@ -1,4 +1,4 @@
-import { Badge, Link, Column, Text } from '@envsemble/envui';
+import { Badge, Column, DescriptionList, Link, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {
@@ -257,15 +257,59 @@ export function SingleViewContent({ document }: { document: Document }) {
 }
 
 /**
- * A page's changelog, below the page navigation in smaller, quieter type than the guidance: on a
- * page with views it shows with the view that holds it, on a page with one view always.
+ * A changelog's entries, "- **1.0.0**: what changed", one per version, or nothing where it is
+ * written otherwise.
+ */
+function changelogEntries(markdown: string) {
+  const entries: { version: string; text: string }[] = [];
+  for (const line of markdown.split('\n')) {
+    if (!line.trim() || /^#{2,} /.test(line)) continue;
+    const entry = /^- \*\*([^*]+)\*\*:\s*(.*)$/.exec(line);
+    // A version listed twice in a row is one entry, each change a paragraph of its own.
+    if (entry && entries.at(-1)?.version === entry[1]) entries.at(-1)!.text += `\n\n${entry[2]}`;
+    else if (entry) entries.push({ version: entry[1], text: entry[2] });
+    else if (/^\s/.test(line) && entries.length) entries.at(-1)!.text += `\n${line.trim()}`;
+    else return undefined;
+  }
+  return entries.length ? entries : undefined;
+}
+
+/**
+ * A page's changelog, below the page navigation: quiet side information, each version a muted
+ * label beside what changed in it, in small muted type. On a page with views it shows with the
+ * view that holds it, on a page with one view always.
  */
 export function PageChangelog({ document, view }: { document: Document; view?: ReferenceView }) {
   const changelog = document.sections?.find((section) => section.id === 'changelog');
   if (!changelog || (view && viewOfSection(document, changelog.id) !== view)) return null;
+  const markdown = changelog.blocks
+    .map((block) => (block.kind === 'markdown' ? block.markdown : ''))
+    .join('\n');
+  const entries = changelogEntries(markdown);
   return (
-    <div className="docs-article docs-template docs-changelog">
-      <Section reference={document} section={changelog} />
-    </div>
+    <Column
+      render={<section />}
+      gap={3}
+      className="docs-changelog"
+      data-section={changelog.id}
+      aria-labelledby="changelog"
+    >
+      {entries ? (
+        <>
+          <Text render={<h2 />} variant="body-sm" id="changelog" className="docs-changelog-title">
+            {changelog.title}
+          </Text>
+          <DescriptionList.Root className="docs-changelog-entries">
+            {entries.map(({ version, text }, index) => (
+              <DescriptionList.Item key={`${index}-${version}`} label={version}>
+                <Documentation markdown={text} path={document.path} />
+              </DescriptionList.Item>
+            ))}
+          </DescriptionList.Root>
+        </>
+      ) : (
+        <Documentation markdown={markdown} path={document.path} />
+      )}
+    </Column>
   );
 }
