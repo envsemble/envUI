@@ -128,6 +128,12 @@
     --env-drawer-item-height: max(var(--env-control-height), var(--env-control-height-touch));
   }
 }
+/* Under a reduced-motion preference, fills change at once. */
+@media (prefers-reduced-motion: reduce) {
+  .env-drawer-item {
+    transition: none;
+  }
+}
 /* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
   .env-drawer-item {

@@ -105,6 +105,12 @@
   outline: 2px solid var(--env-color-border-focus);
   outline-offset: -2px;
 }
+/* Under a reduced-motion preference, fills change at once. */
+@media (prefers-reduced-motion: reduce) {
+  .env-rail-indicator {
+    transition: none;
+  }
+}
 /* Motion: the indicator settles slightly while it is held, only without a reduced-motion
    preference. */
 @media (prefers-reduced-motion: no-preference) {
