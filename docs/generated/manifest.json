@@ -29370,7 +29370,7 @@
       {
         "cssVariable": "--env-app-divider",
         "removed": true,
-        "note": "AppShell is gone: TopBar draws its own hairline, and Panes.Divider the line between panes."
+        "note": "AppShell is gone, and no line sets the frame's regions apart: the navigation sits on a pane of its own and the top bar on the page. Panes.Divider is the line between panes."
       },
       {
         "cssVariable": "--env-app-shell-block-size",

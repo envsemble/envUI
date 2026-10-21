@@ -1,5 +1,5 @@
-/* Drawer, the navigation drawer: a column of destinations, each a pill as wide as the drawer with
-   its icon, label and count, under the headings of their groups. It keeps its header and footer in
+/* Drawer, the navigation drawer: a column of destinations on a pane, rounded like a Surface, each a
+   pill as wide as the drawer with its icon, label and count, under the headings of their groups. It keeps its header and footer in
    view and scrolls its list. Every placement is logical, so it follows the text direction. */
 .env-drawer {
   /* The drawer is as wide as its longest destination, within these bounds. */
@@ -12,7 +12,10 @@
   block-size: 100%;
   min-block-size: 0;
   padding: var(--env-space-3);
-  background: var(--env-color-bg-page);
+  border-radius: var(--env-radius-surface);
+  /* On a surface, such as a Sheet's, the pane takes the surface's color rather than nesting a pane
+     in a pane. */
+  background: var(--env-surface-color, var(--env-color-bg-default));
   color: var(--env-color-fg-default);
 }
 .env-drawer-header,
@@ -146,8 +149,12 @@
     transform: scale(0.98);
   }
 }
-/* Forced colors: the system paints no fills, so the current item takes the selection colors. */
+/* Forced colors: the system paints no fills, so an edge draws the pane and the current item takes
+   the selection colors. */
 @media (forced-colors: active) {
+  .env-drawer {
+    border: 1px solid CanvasText;
+  }
   .env-drawer-item[data-current] {
     forced-color-adjust: none;
     background-color: Highlight;

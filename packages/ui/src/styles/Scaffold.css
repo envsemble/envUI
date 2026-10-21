@@ -17,6 +17,9 @@
      clear of where the document scrolls: the top bar region's height, which the Scaffold measures
      (--env-scaffold-top-bar-size), and the top bar height until script runs. */
   --env-scaffold-sticky-top: 0rem;
+  /* The room around a rail or a drawer, whose pane stands apart from the window's edges and the
+     body as a Surface does in a page. */
+  --env-scaffold-navigation-inset: var(--env-space-2);
   container: env-scaffold / inline-size;
   box-sizing: border-box;
   position: relative;
@@ -126,21 +129,23 @@
   min-block-size: 0;
   outline: none;
 }
-/* A rail or a drawer runs the full height at the start, or below a top bar across the window, and
-   scrolls on its own. Where the document scrolls it stays in view, as tall as the window, or as
-   the window under a top bar across it. */
+/* A rail or a drawer runs the full height at the start, or below a top bar across the window, with
+   room around its pane, and scrolls on its own. Where the document scrolls it stays in view, as
+   tall as the window, or as the window under a top bar across it. */
 .env-scaffold-rail,
 .env-scaffold-drawer {
   grid-column: 1;
   grid-row: 1 / -1;
   overflow-y: auto;
-  padding-block-start: env(safe-area-inset-top);
+  padding: var(--env-scaffold-navigation-inset);
+  padding-block-start: calc(var(--env-scaffold-navigation-inset) + env(safe-area-inset-top));
+  padding-block-end: max(var(--env-scaffold-navigation-inset), env(safe-area-inset-bottom));
 }
 .env-scaffold[data-top-bar-span='full']
   > .env-scaffold-navigation
   > :is(.env-scaffold-rail, .env-scaffold-drawer) {
   grid-row: 2 / -1;
-  padding-block-start: 0;
+  padding-block-start: var(--env-scaffold-navigation-inset);
 }
 .env-scaffold[data-scroll='document']
   > .env-scaffold-navigation

@@ -1,4 +1,4 @@
-/* TopBar: one row at the top bar height that never wraps, on the page's background with a hairline
+/* TopBar: one row at the top bar height that never wraps, on the page's background with no line
    below: start content, the title, which truncates first, and the actions at the end. */
 .env-top-bar {
   box-sizing: border-box;
@@ -7,7 +7,6 @@
   min-block-size: var(--env-top-bar-height);
   min-inline-size: 0;
   padding-inline: var(--env-space-4);
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
   color: var(--env-color-fg-default);
   white-space: nowrap;
@@ -31,7 +30,7 @@
   inset-block-start: 0;
   z-index: var(--env-z-sticky);
 }
-/* Page progress along the bar's bottom edge, over its hairline. */
+/* Page progress along the bar's bottom edge. */
 .env-top-bar-loading-bar {
   inset-block: auto 0;
 }
@@ -39,8 +38,7 @@
 /* A window title bar, for installed web apps and desktop shells that draw their own title bar while
    the system draws the window controls over the page (the Window Controls Overlay). The title bar
    area environment variables describe the part of the window's top edge that the window controls
-   leave free; the bar takes its height, and its hairline below, so the hairline runs under the
-   window controls too, and leaves room on either side. Outside such a window the variables are
+   leave free; the bar takes its height and leaves room on either side. Outside such a window the variables are
    undefined, and the bar falls back to --env-title-bar-height across the full width. Empty space
    drags the window, controls inside stay clickable, and they take the small control height. The
    title is centered in the window while the sides leave room for it. */
@@ -56,10 +54,7 @@
   column-gap: var(--env-space-3);
   min-block-size: 0;
   /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
-  block-size: max(
-    calc(env(titlebar-area-height, 0px) + var(--env-control-border-width)),
-    var(--env-title-bar-height)
-  );
+  block-size: max(env(titlebar-area-height, 0px), var(--env-title-bar-height));
   padding-left: calc(env(titlebar-area-x, 0px) + var(--env-top-bar-title-bar-left));
   padding-right: calc(
     100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
@@ -126,10 +121,10 @@
   -webkit-user-select: text;
   user-select: text;
 }
-/* Forced colors: the bar's edge stays visible. */
+/* Forced colors: the system paints no backgrounds, so an edge below sets the bar apart. */
 @media (forced-colors: active) {
   .env-top-bar {
-    border-block-end-color: CanvasText;
+    border-block-end: var(--env-control-border-width) solid CanvasText;
   }
 }
 
