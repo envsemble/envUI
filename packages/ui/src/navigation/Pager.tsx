@@ -3,7 +3,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
-import { Grid, Row } from '../foundations/Layout.js';
+import { Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
 import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
@@ -58,10 +58,10 @@ function PagerLink({
       className={classNames('env-pager-link', `env-pager-link-${direction}`, className)}
     >
       {isPrevious && symbol}
-      <Grid render={<span />} gap={1} className="env-pager-link-copy">
+      <span className="env-pager-link-copy">
         <span className="env-pager-link-label">{caption}</span>
         <span className="env-pager-link-title">{children}</span>
-      </Grid>
+      </span>
       {!isPrevious && symbol}
     </LinkComponent>
   );

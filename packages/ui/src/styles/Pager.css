@@ -28,6 +28,9 @@
     border-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-pager-link-copy {
+  display: grid;
+  gap: var(--env-space-1);
+  min-inline-size: 0;
   flex: 1 1 auto;
   overflow-wrap: anywhere;
 }
