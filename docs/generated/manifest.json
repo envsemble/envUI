@@ -25371,7 +25371,7 @@
         "type": "color",
         "description": "The translucent neutral fill of secondary buttons, tab rails, chips, switch tracks, meter tracks and skeletons: a layer of the text color, so it keeps its tone on every surface.",
         "values": {
-          "light": "rgb(30 31 33 / 0.06)",
+          "light": "rgb(30 31 33 / 0.09)",
           "dark": "rgb(232 234 238 / 0.125)",
           "light-high-contrast": "rgb(30 31 33 / 0.06)",
           "dark-high-contrast": "rgb(232 234 238 / 0.08)"
@@ -25984,7 +25984,7 @@
         "type": "color",
         "description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -26236,7 +26236,7 @@
         "type": "color",
         "description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
         "values": {
-          "light": "#5d6166",
+          "light": "#54575c",
           "dark": "#bdbfc3",
           "light-high-contrast": "#303234",
           "dark-high-contrast": "#e8eaee"
@@ -26248,7 +26248,7 @@
         "type": "color",
         "description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
         "values": {
-          "light": "#54575c",
+          "light": "#4b4d51",
           "dark": "#ccced2",
           "light-high-contrast": "#28292b",
           "dark-high-contrast": "#eff1f5"
@@ -26260,7 +26260,7 @@
         "type": "color",
         "description": "Muted text while pressed.",
         "values": {
-          "light": "#4b4d51",
+          "light": "#424447",
           "dark": "#dbdde1",
           "light-high-contrast": "#1e1f21",
           "dark-high-contrast": "#f6f8fc"
@@ -26455,7 +26455,7 @@
         "cssVariable": "--env-elevation-1-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -26477,7 +26477,7 @@
         "cssVariable": "--env-elevation-2-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#686b70",
           "dark-high-contrast": "#a1a4a9"
@@ -26499,7 +26499,7 @@
         "cssVariable": "--env-elevation-3-border",
         "type": "color",
         "values": {
-          "light": "#dbdde1",
+          "light": "#cfd1d5",
           "dark": "#5d6166",
           "light-high-contrast": "#121315",
           "dark-high-contrast": "#a1a4a9"

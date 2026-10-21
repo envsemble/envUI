@@ -121,7 +121,7 @@
             "$value": {
               "colorSpace": "oklch",
               "components": { "$ref": "#/palette/neutral/92/$value/components" },
-              "alpha": 0.06
+              "alpha": 0.09
             }
           },
           "hover": {
@@ -455,15 +455,15 @@
       "muted": {
         "$root": {
           "$description": "Supporting text, icons, field labels, descriptions and placeholders, row details, unchecked checkbox rings: every former synonym (muted, quiet, icon, field label, hint, placeholder, row detail).",
-          "$value": "{palette.neutral.60}"
+          "$value": "{palette.neutral.65}"
         },
         "hover": {
           "$description": "Muted text that responds to the pointer, such as a Disclosure summary, gains contrast.",
-          "$value": "{palette.neutral.65}"
+          "$value": "{palette.neutral.70}"
         },
         "pressed": {
           "$description": "Muted text while pressed.",
-          "$value": "{palette.neutral.70}"
+          "$value": "{palette.neutral.75}"
         }
       },
       "control": {
@@ -534,7 +534,7 @@
       "muted": {
         "$root": {
           "$description": "Decorative dividers and outlines that are not a control’s only boundary: table lines, title bars, Markdown rules, keyboard keys, and the hairline edge of every elevated popup, which the elevation shadow and the content already identify.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.14}"
         },
         "hover": {
           "$description": "A decorative outline under the pointer, such as a resize handle or a pager link.",

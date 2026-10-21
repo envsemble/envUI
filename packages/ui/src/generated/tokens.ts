@@ -594,7 +594,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-neutral-muted',
     type: 'color',
     values: {
-      light: 'rgb(30 31 33 / 0.06)',
+      light: 'rgb(30 31 33 / 0.09)',
       dark: 'rgb(232 234 238 / 0.125)',
       'light-high-contrast': 'rgb(30 31 33 / 0.06)',
       'dark-high-contrast': 'rgb(232 234 238 / 0.08)',
@@ -1188,7 +1188,7 @@ export const tokens = {
     cssVariable: '--env-color-border-muted',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1419,7 +1419,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted',
     type: 'color',
     values: {
-      light: '#5d6166',
+      light: '#54575c',
       dark: '#bdbfc3',
       'light-high-contrast': '#303234',
       'dark-high-contrast': '#e8eaee',
@@ -1430,7 +1430,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-hover',
     type: 'color',
     values: {
-      light: '#54575c',
+      light: '#4b4d51',
       dark: '#ccced2',
       'light-high-contrast': '#28292b',
       'dark-high-contrast': '#eff1f5',
@@ -1441,7 +1441,7 @@ export const tokens = {
     cssVariable: '--env-color-fg-muted-pressed',
     type: 'color',
     values: {
-      light: '#4b4d51',
+      light: '#424447',
       dark: '#dbdde1',
       'light-high-contrast': '#1e1f21',
       'dark-high-contrast': '#f6f8fc',
@@ -1684,7 +1684,7 @@ export const tokens = {
     cssVariable: '--env-elevation-1-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1704,7 +1704,7 @@ export const tokens = {
     cssVariable: '--env-elevation-2-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#686b70',
       'dark-high-contrast': '#a1a4a9',
@@ -1724,7 +1724,7 @@ export const tokens = {
     cssVariable: '--env-elevation-3-border',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#cfd1d5',
       dark: '#5d6166',
       'light-high-contrast': '#121315',
       'dark-high-contrast': '#a1a4a9',
