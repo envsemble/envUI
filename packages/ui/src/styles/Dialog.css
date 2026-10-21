@@ -13,7 +13,7 @@
   pointer-events: auto;
 }
 .env-surface.env-dialog-surface {
-  --env-surface-color: var(--env-color-bg-raised);
+  --env-surface-color: var(--env-color-bg-popup);
 }
 .env-dialog-popup {
   /* The positioner's inline gutters, as the popup's margins: the positioner is the env-window
