@@ -47,9 +47,24 @@
   max-inline-size: 100%;
   block-size: auto;
 }
+/* A rule is a break in the text, not a line: more space than between paragraphs around three quiet
+   dots, centered. Space alone would read as a gap in the layout, and the dots keep the break visible,
+   and selectable, in an editor. Assistive technology reads the separator, not the dots. */
 .env-prose hr {
+  overflow: visible;
+  block-size: auto;
   border: 0;
-  border-block-start: 0.0625rem solid var(--env-color-border-muted);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  line-height: 1;
+  text-align: center;
+}
+.env-prose > hr,
+.env-prose > hr + * {
+  margin-block-start: var(--env-space-5);
+}
+.env-prose hr::after {
+  content: '\2022\2003\2022\2003\2022' / '';
 }
 .env-prose table {
   inline-size: 100%;

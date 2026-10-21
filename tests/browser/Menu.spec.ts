@@ -105,6 +105,15 @@ test.describe('Submenus', () => {
     return menu;
   }
 
+  test('a separator is space, with no line', async ({ page }) => {
+    const menu = await openCompactOptions(page);
+    const separator = menu.getByRole('separator').first();
+    await expect(separator).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(separator).toHaveCSS('border-top-width', '0px');
+    // The scale's third space: 12 px, or 10 px in the compact scale.
+    expect((await separator.boundingBox())!.height).toBeGreaterThanOrEqual(10);
+  });
+
   test('a submenu opens beside its row on hover, with the rows of its menu', async ({ page }) => {
     const errors = collectErrors(page);
     const menu = await openCompactOptions(page);

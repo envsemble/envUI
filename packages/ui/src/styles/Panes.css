@@ -43,19 +43,22 @@
 .env-panes-main {
   grid-column: 1;
 }
-/* The divider shows only while the panes sit side by side. */
+/* The divider shows only while the panes sit side by side. At rest it draws no line between them, only
+   a short grip at its middle that says it moves; its line shows on hover, focus and while dragging. */
 .env-panes-divider {
   display: none;
   grid-column: 2;
   grid-row: 1;
 }
-/* Its resting line, under the line it shows on hover, focus and while dragging. */
 .env-panes-divider::before {
   content: '';
   position: absolute;
-  inset-block: 0;
-  inset-inline-start: 50%;
-  border-inline-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+  inset: 0;
+  inline-size: var(--env-space-1);
+  block-size: min(var(--env-space-7), 100%);
+  margin: auto;
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-border-muted);
 }
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
@@ -251,10 +254,11 @@
     display: none;
   }
 }
-/* Forced colors: the divider's resting line and the sheet's edge take the system's text color. */
+/* Forced colors: the divider's grip and the sheet's edge take the system's text color. */
 @media (forced-colors: active) {
   .env-panes-divider::before {
-    border-color: CanvasText;
+    forced-color-adjust: none;
+    background: CanvasText;
   }
   .env-panes-supporting {
     border-color: CanvasText;

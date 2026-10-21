@@ -2638,7 +2638,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "Content after the tabs, outside the strip that scrolls and on its hairline, such as a button that closes every tab or opens a new one."
+          "description": "Content after the tabs, outside the strip that scrolls and in line with it, such as a button that closes every tab or opens a new one."
         },
         {
           "name": "aria-label",
@@ -4196,7 +4196,7 @@
     "Menu.Root": {
       "kind": "component",
       "source": "packages/ui/src/navigation/Menu.tsx",
-      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, hairline separators and small keys for shortcuts.",
+      "description": "A list of actions and destinations that opens from a trigger; keyboard and focus follow the menu pattern. The popup is raised above the page, with rows of the scale's row height, separators of space and small keys for shortcuts.",
       "props": [
         {
           "name": "trigger",
@@ -8449,7 +8449,7 @@
     "Toolbar.Separator": {
       "kind": "component",
       "source": "packages/ui/src/actions/Toolbar.tsx",
-      "description": "A line between groups of a toolbar's controls, across the toolbar's direction.",
+      "description": "Space between groups of a toolbar's controls, with no line.",
       "props": [],
       "native": [
         "div"

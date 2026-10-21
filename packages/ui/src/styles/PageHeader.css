@@ -6,7 +6,8 @@
   container: env-page-header / inline-size;
 }
 /* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
-   across the page's gutters: under a Scaffold's top bar where the document scrolls. */
+   across the page's gutters: under a Scaffold's top bar where the document scrolls. Its background
+   and the space under its content set it apart, with no line. */
 .env-page-header[data-sticky] {
   /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
   --env-page-header-inset: var(--env-page-gutter, 0rem);
@@ -19,7 +20,6 @@
   margin-inline: calc(-1 * var(--env-page-header-inset));
   padding-block: var(--env-space-4);
   padding-inline: var(--env-page-header-inset);
-  border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
 }
 .env-page-header-start {
@@ -46,11 +46,5 @@
   .env-page-header-actions {
     flex: none;
     justify-content: flex-end;
-  }
-}
-/* Forced colors: the sticky header's edge stays visible. */
-@media (forced-colors: active) {
-  .env-page-header[data-sticky] {
-    border-block-end-color: CanvasText;
   }
 }

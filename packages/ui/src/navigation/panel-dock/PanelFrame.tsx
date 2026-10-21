@@ -70,7 +70,7 @@ export function PanelFrame({
   const [preview, setPreview] = useState<number>();
   // The block size of a PanelDock.Header sticking to the top of the content, in pixels.
   const [headerSize, setHeaderSize] = useState(0);
-  // Whether the content has scrolled from its top, where a hairline then marks the header, which
+  // Whether the content has scrolled from its top, where a fill then marks the header, which
   // takes it from the panel's context wherever it sits in the content.
   const [scrolled, setScrolled] = useState(false);
   const shownHeight = preview ?? height;

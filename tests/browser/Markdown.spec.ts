@@ -26,6 +26,23 @@ test('table regions are named after their heading, numbered where they share a n
   await expect(tasks.first()).toHaveClass(/env-checkbox-input/);
 });
 
+test('a rule is a quiet mark in more space, not a line', async ({ page }) => {
+  await page.goto(fixture);
+  const rule = page.getByTestId('english').locator('hr');
+  await expect(rule).toHaveCSS('border-top-width', '0px');
+  await expect(rule).toHaveCSS('border-bottom-width', '0px');
+  const mark = await rule.evaluate((element) => getComputedStyle(element, '::after').content);
+  expect(mark).toContain('•');
+  // The space around it is wider than between paragraphs.
+  const gaps = await rule.evaluate((element) => {
+    const before = element.previousElementSibling!.getBoundingClientRect();
+    const after = element.nextElementSibling!.getBoundingClientRect();
+    const own = element.getBoundingClientRect();
+    return [own.top - before.bottom, after.top - own.bottom];
+  });
+  for (const gap of gaps) expect(gap).toBe(24);
+});
+
 test(
   'inline code in a table cell breaks only where it would overflow, not inside its word',
   { tag: '@engines' },

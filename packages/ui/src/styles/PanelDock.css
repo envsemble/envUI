@@ -225,13 +225,13 @@
   min-inline-size: 0;
   margin-block-start: var(--env-space-1);
 }
-/* Once the content scrolls beneath it, a divider hairline sets the header apart, so text its edge
-   cuts reads as scrolled away rather than broken. */
+/* Once the content scrolls beneath it, the header takes the muted fill, which sets it apart without a
+   line, so text its edge cuts reads as scrolled away rather than broken. */
 .env-panel-dock-header {
-  transition: box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-panel-dock-header[data-scrolled] {
-  box-shadow: 0 0.0625rem 0 var(--env-color-border-muted);
+  background-color: var(--env-color-bg-muted);
 }
 
 /* Minimized panels wait as tabs along the bottom, at the inline end: a button that brings the
@@ -419,9 +419,14 @@
 }
 
 /* Forced colors: the system paints no fills or shadows, so the active panel’s edge takes the
-   selection color. */
+   selection color, and a line under the header stands in for its fill once the content scrolls
+   beneath it, overlapping the content so nothing moves. */
 @media (forced-colors: active) {
   .env-panel-dock-panel[data-active] {
     border-color: Highlight;
+  }
+  .env-panel-dock-header[data-scrolled] {
+    margin-block-end: calc(-1 * var(--env-control-border-width));
+    border-block-end: var(--env-control-border-width) solid CanvasText;
   }
 }
