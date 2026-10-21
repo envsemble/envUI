@@ -731,12 +731,12 @@ export const tokens = {
       'dark-high-contrast': '#303234',
     },
   },
-  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. */
+  /** Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light they are white, a step lighter than the panes they open over, as in dark they are a step lighter than the page; a popup the pane's gray would blend into it. */
   'color.bg.popup': {
     cssVariable: '--env-color-bg-popup',
     type: 'color',
     values: {
-      light: '#eff1f5',
+      light: '#ffffff',
       dark: '#343638',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#303234',
@@ -747,7 +747,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-popup-hover',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#eff1f5',
       dark: '#424447',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#383a3d',
@@ -758,7 +758,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-popup-pressed',
     type: 'color',
     values: {
-      light: '#d2d4d8',
+      light: '#e2e4e8',
       dark: '#4b4d51',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#424447',

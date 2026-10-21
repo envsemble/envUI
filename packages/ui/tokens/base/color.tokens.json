@@ -62,14 +62,11 @@
       },
       "popup": {
         "$root": {
-          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
-          "$value": "{palette.neutral.4}"
+          "$description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light they are white, a step lighter than the panes they open over, as in dark they are a step lighter than the page; a popup the pane's gray would blend into it.",
+          "$value": "{palette.neutral.0}"
         },
-        "hover": {
-          "$description": "A highlighted row in a popup.",
-          "$value": "{palette.neutral.10}"
-        },
-        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.13}" }
+        "hover": { "$description": "A highlighted row in a popup.", "$value": "{palette.neutral.4}" },
+        "pressed": { "$description": "A pressed row in a popup.", "$value": "{palette.neutral.8}" }
       },
       "field": { "$description": "Text fields and other inputs.", "$value": "{palette.neutral.0}" },
       "overlay": {
