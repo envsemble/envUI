@@ -1,12 +1,6 @@
 .env-pager {
   box-sizing: border-box;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: var(--env-space-4);
   inline-size: 100%;
-  min-inline-size: 0;
 }
 .env-pager > .env-pager-link {
   flex: 0 1 auto;
@@ -34,9 +28,6 @@
     border-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
 .env-pager-link-copy {
-  display: grid;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
   flex: 1 1 auto;
   overflow-wrap: anywhere;
 }

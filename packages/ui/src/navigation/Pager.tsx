@@ -3,6 +3,7 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { classNames } from '../internal/classNames.js';
+import { Grid, Row } from '../foundations/Layout.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
 import { useEnvUI, useMessages } from '../internal/EnvUIContext.js';
@@ -57,10 +58,10 @@ function PagerLink({
       className={classNames('env-pager-link', `env-pager-link-${direction}`, className)}
     >
       {isPrevious && symbol}
-      <span className="env-pager-link-copy">
+      <Grid render={<span />} gap={1} className="env-pager-link-copy">
         <span className="env-pager-link-label">{caption}</span>
         <span className="env-pager-link-title">{children}</span>
-      </span>
+      </Grid>
       {!isPrevious && symbol}
     </LinkComponent>
   );
@@ -125,15 +126,23 @@ function Root({
   if (!previous && !next && children == null) return null;
 
   return (
-    <nav
-      {...props}
-      aria-label={ariaLabel ?? messages.label}
-      className={classNames('env-pager', className)}
+    <Row
+      wrap
+      justify="center"
+      align="stretch"
+      gap={4}
+      render={
+        <nav
+          {...props}
+          aria-label={ariaLabel ?? messages.label}
+          className={classNames('env-pager', className)}
+        />
+      }
     >
       {previous && <Previous {...previous} />}
       {children}
       {next && <Next {...next} />}
-    </nav>
+    </Row>
   );
 }
 

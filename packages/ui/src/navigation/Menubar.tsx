@@ -17,6 +17,7 @@ import {
   type Ref,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
+import { Row } from '../foundations/Layout.js';
 import { setRef } from '../internal/setRef.js';
 import { MenuPopup } from './internal/MenuPopup.js';
 import { useDirection } from '../internal/useDirection.js';
@@ -270,6 +271,7 @@ function Root({
     <MenubarContext value={context}>
       <DirectionProvider direction={direction}>
         <BaseMenubar
+          render={<Row align="center" />}
           {...props}
           ref={setRoot}
           onFocus={(event) => {

@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useResize } from '../../internal/useResize.js';
+import { Column } from '../../foundations/Layout.js';
 import {
   PanelDockPanelContext,
   type PanelDockMode,
@@ -135,30 +136,34 @@ export function PanelFrame({
   }
 
   return (
-    <section
-      ref={frame}
-      id={frameId}
-      className="env-panel-dock-panel"
-      aria-label={panel.title}
-      tabIndex={-1}
-      inert={placement === 'hidden'}
-      data-panel-id={id}
-      data-mode={mode}
-      data-placement={placement}
-      data-active={panel.active || undefined}
-      data-resizing={preview !== undefined || undefined}
-      style={
-        {
-          '--env-panel-dock-panel-width': pixels(panel.preferredWidth),
-          '--env-panel-dock-panel-min-width': pixels(panel.minWidth),
-          '--env-panel-dock-panel-max-width': pixels(panel.maxWidth),
-          '--env-panel-dock-panel-height': pixels(shownHeight),
-        } as CSSProperties
+    <Column
+      render={
+        <section
+          ref={frame}
+          id={frameId}
+          className="env-panel-dock-panel"
+          aria-label={panel.title}
+          tabIndex={-1}
+          inert={placement === 'hidden'}
+          data-panel-id={id}
+          data-mode={mode}
+          data-placement={placement}
+          data-active={panel.active || undefined}
+          data-resizing={preview !== undefined || undefined}
+          style={
+            {
+              '--env-panel-dock-panel-width': pixels(panel.preferredWidth),
+              '--env-panel-dock-panel-min-width': pixels(panel.minWidth),
+              '--env-panel-dock-panel-max-width': pixels(panel.maxWidth),
+              '--env-panel-dock-panel-height': pixels(shownHeight),
+            } as CSSProperties
+          }
+          onPointerDownCapture={onActivate}
+          onFocus={noteFocus}
+          // Focus moving within the panel, or into a popup it opened, is followed by its focus event.
+          onBlur={() => onFocusWithin(null)}
+        />
       }
-      onPointerDownCapture={onActivate}
-      onFocus={noteFocus}
-      // Focus moving within the panel, or into a popup it opened, is followed by its focus event.
-      onBlur={() => onFocusWithin(null)}
     >
       {resizable && shownHeight !== undefined && (
         <div
@@ -182,6 +187,6 @@ export function PanelFrame({
       >
         <PanelDockPanelContext value={context}>{content}</PanelDockPanelContext>
       </div>
-    </section>
+    </Column>
   );
 }

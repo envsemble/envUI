@@ -1,16 +1,5 @@
 /* Toolbar: a row, or a column, of controls one tab stop apart from the page. The buttons inside take
    the ghost variant; groups sit side by side, with separators between them. */
-.env-toolbar,
-.env-toolbar-group {
-  display: flex;
-  align-items: center;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
-}
-.env-toolbar[data-orientation='vertical'],
-.env-toolbar-group[data-orientation='vertical'] {
-  flex-direction: column;
-}
 .env-toolbar-separator {
   flex: 0 0 auto;
   align-self: stretch;

@@ -6,6 +6,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { cloneElement, type ComponentPropsWithRef, type ReactElement, type ReactNode } from 'react';
 import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
+import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
 import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
@@ -161,7 +162,19 @@ export function Tabs({
   const list = (
     <DirectionProvider direction={scope.direction}>
       <BaseTabs.List
-        render={<Surface background="muted" radius="full" />}
+        render={
+          <Surface
+            background="muted"
+            radius="full"
+            render={
+              orientation === 'vertical' ? (
+                <Column align="stretch" gap={1} />
+              ) : (
+                <Row align="center" gap={1} />
+              )
+            }
+          />
+        }
         aria-label={label}
         data-size={size}
         className={classNames('env-tabs-list', listClassName)}
@@ -188,6 +201,7 @@ export function Tabs({
   );
   return (
     <BaseTabs.Root
+      render={<Column gap={4} />}
       {...props}
       ref={scope.ref}
       onFocus={(event) => {
@@ -202,7 +216,7 @@ export function Tabs({
       orientation={orientation}
     >
       {renderList ? renderList(list) : list}
-      <div className="env-tabs-panels">
+      <Grid className="env-tabs-panels">
         {items.map((item) => (
           <BaseTabs.Panel
             key={item.value}
@@ -213,7 +227,7 @@ export function Tabs({
             {item.content}
           </BaseTabs.Panel>
         ))}
-      </div>
+      </Grid>
     </BaseTabs.Root>
   );
 }

@@ -19,6 +19,7 @@ import { Tooltip } from '../feedback/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { classNames } from '../internal/classNames.js';
+import { Column, Row } from '../foundations/Layout.js';
 import { DirectedToolbarRoot } from '../internal/DirectedToolbarRoot.js';
 import { keyShortcuts, shortcutChords } from '../internal/shortcuts.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -56,6 +57,21 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
  */
 const DisabledContext = createContext(false);
 
+/** The toolbar's direction, which its groups follow. */
+const OrientationContext = createContext<'horizontal' | 'vertical'>('horizontal');
+
+/**
+ * A toolbar's or a group's line of controls: a Row, or a Column for a vertical toolbar, rendered as
+ * the element the application gives, if any.
+ */
+function lineOf(orientation: 'horizontal' | 'vertical', render: ReactElement | undefined) {
+  return orientation === 'vertical' ? (
+    <Column align="center" gap={1} render={render} />
+  ) : (
+    <Row align="center" gap={1} render={render} />
+  );
+}
+
 /**
  * A row, or a column, of controls for one subject, such as a text editor's formatting: one tab stop,
  * with the arrow keys moving between its controls (the APG toolbar pattern). Buttons the
@@ -67,6 +83,7 @@ function Root({
   disabled,
   loopFocus = true,
   className,
+  render,
   children,
   ...props
 }: RootProps) {
@@ -74,17 +91,20 @@ function Root({
   return (
     <DirectedToolbarRoot
       {...props}
+      render={lineOf(orientation, render)}
       orientation={orientation}
       disabled={disabled}
       loopFocus={loopFocus}
       className={classNames('env-toolbar', className)}
       data-size={size}
     >
-      <DisabledContext value={Boolean(disabled)}>
-        <ControlDefaults variant="ghost" size={size}>
-          {children}
-        </ControlDefaults>
-      </DisabledContext>
+      <OrientationContext value={orientation}>
+        <DisabledContext value={Boolean(disabled)}>
+          <ControlDefaults variant="ghost" size={size}>
+            {children}
+          </ControlDefaults>
+        </DisabledContext>
+      </OrientationContext>
     </DirectedToolbarRoot>
   );
 }
@@ -99,11 +119,13 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
 }
 
 /** Controls of a toolbar that belong together, such as the text styles. */
-function Group({ className, disabled, children, ...props }: GroupProps) {
+function Group({ className, disabled, render, children, ...props }: GroupProps) {
   const inherited = useContext(DisabledContext);
+  const orientation = useContext(OrientationContext);
   return (
     <BaseToolbar.Group
       {...props}
+      render={lineOf(orientation, render)}
       disabled={disabled}
       className={classNames('env-toolbar-group', className)}
     >

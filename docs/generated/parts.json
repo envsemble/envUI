@@ -4991,8 +4991,6 @@
             "vertical"
           ],
           "parts": [
-            "env-toolbar",
-            "env-toolbar-group",
             "env-toolbar-separator"
           ]
         },
