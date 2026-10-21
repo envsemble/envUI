@@ -16457,32 +16457,50 @@
         {
           "name": "AdvancedOptions",
           "title": "Advanced options",
-          "description": "Use this pattern to keep a page about its main task while the rest stays within reach: advanced options behind a disclosure, the long tail of a list behind \"Show all\", the details of a row in a sheet, rare actions in a menu, and the meaning of a term in a popover. Choose the component by how deep the content goes and whether people must act on it, and never hide what a task needs.",
+          "description": "Progressive disclosure keeps a page about its main task while the rest stays one step away: advanced options behind a Disclosure, the long tail of a list behind Show all, details in a sheet, rare actions in a menu. What a task needs is never hidden.",
           "file": "docs/examples/progressive-disclosure/AdvancedOptions.tsx"
         },
         {
           "name": "ShowMore",
           "title": "Show all",
-          "description": "The list shows its five most recent items; \"Show all 12\" shows the rest, and pressing it again hides them. The button keeps its place and focus; its label becomes \"Show fewer\", and `aria-expanded` says which state it is in.",
+          "description": "The button stays after the list and says what a press does, \"Show all 12\", then \"Show fewer\"; `aria-expanded` says the same.",
           "file": "docs/examples/progressive-disclosure/ShowMore.tsx"
         },
         {
           "name": "DetailsInSheet",
           "title": "Details in a sheet",
-          "description": "Each row opens its project's details in a Sheet over the list, so people keep their place; closing it returns focus to the row.",
+          "description": "The list stays in place under the Sheet, so people continue from the row they opened.",
           "file": "docs/examples/progressive-disclosure/DetailsInSheet.tsx"
         },
         {
           "name": "OverflowActions",
           "title": "Overflow actions",
-          "description": "Share and Edit stay visible; the actions used less often wait in a \"More actions\" menu.",
+          "description": "Share and Edit stay visible; the rest wait in a More actions menu, a destructive item last.",
           "file": "docs/examples/progressive-disclosure/OverflowActions.tsx"
         },
         {
           "name": "ExplainATerm",
           "title": "Explain a term",
-          "description": "A help button opens a Popover with a short definition and a link. The icon-only download button has a Tooltip that repeats its name.",
+          "description": "A help button opens a Popover with a short definition and a link; a Tooltip only repeats an icon-only control's name.",
           "file": "docs/examples/progressive-disclosure/ExplainATerm.tsx"
+        },
+        {
+          "name": "RequiredInView",
+          "title": "Do: What every export needs in view; only the optional settings behind the summary.",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/RequiredInView.tsx"
+        },
+        {
+          "name": "RequiredHidden",
+          "title": "Don't: A required field behind a closed summary: people submit without seeing it.",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/RequiredHidden.tsx"
+        },
+        {
+          "name": "DisclosureLayers",
+          "title": "Progressive disclosure anatomy",
+          "description": "",
+          "file": "docs/examples/progressive-disclosure/DisclosureLayers.tsx"
         }
       ]
     }
