@@ -66,7 +66,7 @@ The top bar sits at the top of an application or a screen, after Material's smal
 
 ```
 
-```tsx dont=ManyActions caption="Many actions: no room is left for the title."
+```tsx dont=ManyActions caption="Many actions: the title is cut down to nothing."
 
 ```
 
