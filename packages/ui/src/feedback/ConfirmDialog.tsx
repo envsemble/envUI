@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertDialog as BaseAlertDialog } from '@base-ui/react/alert-dialog';
+import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import {
   useEffect,
   useRef,
@@ -17,6 +18,7 @@ import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Alert } from './Alert.js';
 import { DialogClose, type DialogOpenChangeDetails } from './Dialog.js';
 import {
@@ -123,6 +125,11 @@ function reportNestedForm(form: HTMLFormElement | null) {
   );
 }
 
+/** The root of a ConfirmDialog in a contained PortalContainer: not modal, closed by its buttons. */
+function ContainedRoot(props: BaseAlertDialog.Root.Props) {
+  return <BaseDialog.Root {...props} modal={false} disablePointerDismissal />;
+}
+
 /**
  * Asks people to confirm an action whose consequence needs a sentence, such as deleting a project:
  * an alert dialog with a question, a description, Cancel and a confirm button that names the
@@ -148,6 +155,10 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const theme = useTheme();
   const messages = useMessages('confirmDialog', confirmDialog);
+  const portal = usePortalContainer();
+  // An alert dialog is always modal; a contained one is a dialog that isn't, with the alert
+  // dialog's role, and a press outside still doesn't close it.
+  const Root = portal.contained ? ContainedRoot : BaseAlertDialog.Root;
   const [ownOpen, setOwnOpen] = useState(defaultOpen);
   const isOpen = open ?? ownOpen;
   const [pending, setPending] = useState(false);
@@ -198,10 +209,10 @@ export function ConfirmDialog({
     setConfirmed((count) => count + 1);
   };
   return (
-    <BaseAlertDialog.Root
+    <Root
       open={isOpen}
       onOpenChange={(next, eventDetails) => {
-        if (!next && pending) {
+        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
           eventDetails.cancel();
           return;
         }
@@ -211,7 +222,7 @@ export function ConfirmDialog({
       }}
     >
       {trigger && <BaseAlertDialog.Trigger render={trigger} />}
-      <BaseAlertDialog.Portal>
+      <BaseAlertDialog.Portal container={portal.container}>
         <OverlayTheme {...theme}>
           <ResetControlDefaults>
             <DialogBackdrop />
@@ -224,8 +235,9 @@ export function ConfirmDialog({
                 data-width="md"
                 data-tone={tone}
                 aria-busy={pending || undefined}
-                initialFocus={tone === 'danger' ? cancel : confirm}
-                finalFocus={finalFocus}
+                role="alertdialog"
+                initialFocus={portal.contained ? false : tone === 'danger' ? cancel : confirm}
+                finalFocus={portal.contained ? false : finalFocus}
               >
                 <DialogContent>
                   <DialogHeader title={title} description={description} />
@@ -270,7 +282,7 @@ export function ConfirmDialog({
           </ResetControlDefaults>
         </OverlayTheme>
       </BaseAlertDialog.Portal>
-    </BaseAlertDialog.Root>
+    </Root>
   );
 }
 

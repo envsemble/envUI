@@ -5,6 +5,7 @@ import {
   useLayoutEffect,
   useState,
   type ComponentType,
+  type CSSProperties,
   type ReactElement,
   type ReactNode,
   type RefObject,
@@ -13,6 +14,11 @@ import { Theme, useTheme } from '../foundations/Theme.js';
 import { classNames } from './classNames.js';
 import { ResetControlDefaults } from './ControlDefaults.js';
 import { useEnvUI, type Direction } from './EnvUIContext.js';
+import {
+  containedCollisionAvoidance,
+  containedPopupStyle,
+  usePortalContainer,
+} from './PortalContainerContext.js';
 
 /** A side of the anchor; inline-start and inline-end follow the text direction. */
 export type PopupSide = 'top' | 'bottom' | 'left' | 'right' | 'inline-start' | 'inline-end';
@@ -38,7 +44,7 @@ type FocusTarget = boolean | RefObject<HTMLElement | null> | ((type: string) => 
  * Tooltip or PreviewCard.
  */
 export interface PopupParts {
-  Portal: ComponentType<{ children?: ReactNode }>;
+  Portal: ComponentType<{ container?: HTMLElement | null; children?: ReactNode }>;
   // Each Base UI positioner takes more than the props PopupSurface passes.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Positioner: ComponentType<any>;
@@ -170,8 +176,10 @@ export function PopupSurface({
   children,
 }: PopupSurfaceProps) {
   const theme = useTheme();
+  const { container, contained } = usePortalContainer();
+  const ownStyle = popupProps?.style as CSSProperties | undefined;
   return (
-    <Portal>
+    <Portal container={container}>
       <Directed dir={dir} anchor={anchor} trigger={trigger}>
         {(direction) => (
           <Theme {...theme} className="env-popup-theme" dir={direction}>
@@ -181,12 +189,14 @@ export function PopupSurface({
               sideOffset={sideOffset}
               {...(alignOffset !== undefined && { alignOffset })}
               collisionPadding={collisionPadding}
+              {...(contained && { collisionAvoidance: containedCollisionAvoidance })}
               {...(anchor !== undefined && { anchor })}
               className={classNames('env-popup-positioner', positionerClassName)}
             >
               <Popup
                 {...(layout && { render: layout })}
                 {...popupProps}
+                {...(contained && { style: { ...containedPopupStyle, ...ownStyle } })}
                 {...(initialFocus !== undefined && { initialFocus })}
                 {...(finalFocus !== undefined && { finalFocus })}
                 className={classNames('env-popup', className)}

@@ -15,6 +15,7 @@ import { setRef } from '../../internal/setRef.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useDirection } from '../../internal/useDirection.js';
 import { PopupSurface } from '../../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../../internal/PortalContainerContext.js';
 import { Grid, type SpaceStep } from '../../foundations/Layout.js';
 import { type ControlSize } from '../../foundations/Theme.js';
 import { IconButton } from '../../actions/Button.js';
@@ -224,6 +225,7 @@ export function PickerField({
     }
   }
 
+  const portal = usePortalContainer();
   const showClear = clearable && Boolean(serialized) && !disabled && !readOnly;
   const labelFloats = Boolean(serialized) || open;
 
@@ -239,7 +241,13 @@ export function PickerField({
   }
 
   return (
-    <BasePopover.Root open={open} onOpenChange={(next) => setOpen(next)}>
+    <BasePopover.Root
+      open={open}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details)) details.cancel();
+        else setOpen(next);
+      }}
+    >
       <FieldFrame
         id={id}
         label={

@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Grid } from '../foundations/Layout.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
@@ -91,6 +92,7 @@ export function HoverCard({
   ...popupProps
 }: HoverCardProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+  const portal = usePortalContainer();
   const open = controlledOpen ?? uncontrolledOpen;
   const openRef = useRef(open);
   // The card takes the text direction at its trigger.
@@ -109,7 +111,10 @@ export function HoverCard({
   return (
     <BasePreviewCard.Root
       open={open}
-      onOpenChange={(next, details) => setOpen(next, details.reason as PopoverOpenChangeReason)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details)) details.cancel();
+        else setOpen(next, details.reason as PopoverOpenChangeReason);
+      }}
     >
       {/* A Tooltip as the trigger, or around the HoverCard, shows no tooltip (see Tooltip). */}
       <HoverCardTriggerContext value={isTooltip(trigger.type)}>

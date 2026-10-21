@@ -3,6 +3,7 @@ components:
   - EnvUIProvider
   - useLocale
   - LinkProvider
+  - PortalContainer
   - createThemeBootstrapScript
   - Theme
   - ThemePreferenceProvider
@@ -11,6 +12,7 @@ components:
   - useThemePreference
 statuses: # Never released before 1.0, so beta until a release has used them.
   useLocale: beta
+  PortalContainer: beta
 exportAliases:
   EnvUIProvider:
     - i18n
@@ -35,6 +37,11 @@ exportAliases:
   LinkProvider:
     - router link
     - client-side navigation
+  PortalContainer:
+    - portal container
+    - shadow root
+    - iframe
+    - overlay preview
 ---
 
 # Install the private package
@@ -290,6 +297,32 @@ export function Localized({ children }: { children: ReactNode }) {
 The provider is a client component. A server component, such as a server layout, can render it with a `locale`, a `dir` and messages that are strings, but not with function messages: a function can't cross from the server to a client component. Pass those from a client component of the application's own, as above. A component with a built-in string reads it in a client module, so a server component renders it as before.
 
 The provider compares `messages` namespace by namespace, so an object written inline, as above, keeps the components that read it from rendering again as long as its strings and functions are the same ones. A function written inline is a new one at each render: define the functions once, outside the component or with `useMemo`, where the provider re-renders often.
+
+## Render overlays elsewhere
+
+envUI's popups, menus, tooltips, dialogs, sheets and toasts render in a portal at the end of the document's body. `PortalContainer` renders those inside it into another element, such as one in a shadow root or in an iframe's document, whose styles reach them there:
+
+```tsx
+'use client';
+
+import { PortalContainer } from '@envsemble/envui';
+import { useState, type ReactNode } from 'react';
+
+export function Preview({ children }: { children: ReactNode }) {
+  const [layer, setLayer] = useState<HTMLDivElement | null>(null);
+  return (
+    <div style={{ position: 'relative', contain: 'layout' }}>
+      <PortalContainer container={layer} contained>
+        {children}
+      </PortalContainer>
+      <div ref={setLayer} />
+    </div>
+  );
+}
+```
+
+- `container` is the element they render into. Pass `null` while it mounts, as above: they wait for it.
+- `contained` makes them part of the container rather than the window, for a preview of an interface with its overlays open, such as `defaultOpen` on a Menu.Root: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side, without flipping, at its content's size; and a press or <kbd>Esc</kbd> elsewhere in the page doesn't close them. Give the container layout containment, as above, so dialogs, sheets, toasts and scrims are placed inside it rather than over the window, and make it `inert` where it is only a picture.
 
 ## React Server Components
 

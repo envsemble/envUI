@@ -13,6 +13,7 @@ import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './ToastInternals.js';
 import type { ToastPlacement } from './ToastTypes.js';
+import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
@@ -58,6 +59,7 @@ export function ToastRegion({
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
+  const { container } = usePortalContainer();
   const messages = useMessages('toast', toastMessages);
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
@@ -206,7 +208,7 @@ export function ToastRegion({
     settle();
   }, [toastStore.toasts, hiddenCount, placement, settle]);
   return (
-    <BaseToast.Portal>
+    <BaseToast.Portal container={container}>
       <Theme {...theme} className="env-toast-portal-theme">
         <BaseToast.Viewport
           ref={attachViewport}
