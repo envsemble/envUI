@@ -6,6 +6,7 @@ import { classNames } from '../../internal/classNames.js';
 import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 import { Theme, type ThemeProps } from '../../foundations/Theme.js';
+import { SkeletonScope } from '../../foundations/SkeletonScope.js';
 
 /**
  * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
@@ -88,10 +89,18 @@ export function DialogActions({ children, ...props }: ComponentPropsWithRef<'div
 }
 
 /** The content column of a dialog: header, content and actions 1.5 rem apart. */
-export function DialogContent({ children }: { children: ReactNode }) {
+export function DialogContent({
+  skeleton = false,
+  children,
+}: {
+  skeleton?: boolean;
+  children: ReactNode;
+}) {
+  // A skeleton dialog keeps focus on its popup, the busy root, which closes with Escape; its
+  // content is inert.
   return (
-    <Column gap={5} className="env-dialog-content">
-      {children}
+    <Column gap={5} className="env-dialog-content" inert={skeleton || undefined}>
+      <SkeletonScope skeleton={skeleton}>{children}</SkeletonScope>
     </Column>
   );
 }

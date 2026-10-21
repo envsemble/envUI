@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Button,
   EmptyState,
-  LoadingState,
-  Skeleton,
   Column,
   Row,
   Surface,
   Table,
   Text,
+  placeholders,
 } from '@envsemble/envui';
 import { Upload } from '@envsemble/envui/icons/Upload';
 
@@ -37,8 +36,9 @@ export default function LoadFailed() {
           Upload document
         </Button>
       </Row>
-      {state === 'loaded' ? (
-        <Table.Root aria-label="Documents">
+      {state !== 'failed' ? (
+        // While the documents load, the same table is a skeleton over placeholder rows.
+        <Table.Root aria-label="Documents" skeleton={state === 'loading'}>
           <Table.Head>
             <Table.Row>
               <Table.HeaderCell>Name</Table.HeaderCell>
@@ -47,8 +47,8 @@ export default function LoadFailed() {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {documents.map((item) => (
-              <Table.Row key={item.name}>
+            {(state === 'loaded' ? documents : placeholders<Document>(3)).map((item, row) => (
+              <Table.Row key={item.name ?? row}>
                 <Table.Cell>{item.name}</Table.Cell>
                 <Table.Cell>{item.owner}</Table.Cell>
                 <Table.Cell numeric nowrap>
@@ -58,12 +58,6 @@ export default function LoadFailed() {
             ))}
           </Table.Body>
         </Table.Root>
-      ) : state === 'loading' ? (
-        <LoadingState label="Loading documents">
-          {documents.map((item) => (
-            <Skeleton key={item.name} height="2.5rem" />
-          ))}
-        </LoadingState>
       ) : (
         // In place of the table, in the space it takes. envUI has no region height for an
         // example: the surface gives the state that space.
@@ -89,7 +83,13 @@ export default function LoadFailed() {
   );
 }
 
-const documents = [
+interface Document {
+  name: string;
+  owner: string;
+  size: string;
+}
+
+const documents: Document[] = [
   { name: 'Launch brief', owner: 'Alex Morgan', size: '84 KB' },
   { name: 'Budget 2026', owner: 'Priya Shah', size: '310 KB' },
   { name: 'Meeting notes', owner: 'Sam Lee', size: '12 KB' },

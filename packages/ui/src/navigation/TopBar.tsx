@@ -7,8 +7,12 @@ import { topBar } from '../foundations/messages/topBar.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { useMessages } from '../internal/EnvUIContext.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
-export interface TopBarProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+export interface TopBarProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
+    SkeletonProps {
   /**
    * Content before the title, at the inline start: a navigation IconButton, such as one that opens
    * a navigation drawer, a back IconButton, or the application's mark.
@@ -67,6 +71,7 @@ export function TopBar({
   loading = false,
   loadingLabel,
   render,
+  skeleton = false,
   className,
   ...props
 }: TopBarProps) {
@@ -92,6 +97,7 @@ export function TopBar({
       gap={3}
       render={render}
       {...props}
+      {...skeletonAttributes(skeleton)}
       className={classNames('env-top-bar', className)}
       data-sticky={sticky ? '' : undefined}
       data-title-bar={titleBar ? '' : undefined}
@@ -99,12 +105,15 @@ export function TopBar({
     >
       {/* In a title bar, buttons that set no variant are ghost, and controls take the small
           height, as the window controls beside them. */}
-      {titleBar ? (
-        <ControlDefaults variant="ghost" size="sm">
-          {content}
-        </ControlDefaults>
-      ) : (
-        content
+      {inSkeleton(
+        skeleton,
+        titleBar ? (
+          <ControlDefaults variant="ghost" size="sm">
+            {content}
+          </ControlDefaults>
+        ) : (
+          content
+        ),
       )}
       <LoadingBar
         active={loading}

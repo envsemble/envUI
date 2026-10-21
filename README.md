@@ -41,9 +41,9 @@ Upgrading an application from envUI 0.x to 1.0? The `@envsemble/envui-codemods` 
 
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src
-npx @envsemble/envui-codemods@<version> v1-app-shell src
 npx @envsemble/envui-codemods@<version> v1-structure src
 npx @envsemble/envui-codemods@<version> v1-render src
+npx @envsemble/envui-codemods@<version> v1-stack src
 npx @envsemble/envui-codemods@<version> v1-props src
 npx @envsemble/envui-codemods@<version> v1-classes src
 ```

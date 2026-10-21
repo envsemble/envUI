@@ -42,8 +42,7 @@ composes:
   - Toast
   - useToast
   - EmptyState
-  - LoadingState
-  - Skeleton
+  - placeholders
   - Surface
   - Column
   - Row
@@ -77,7 +76,7 @@ Use this pattern to show records people compare, sort and act on: a table with a
 6. **Bulk bar:** above the table while rows are selected, the count, then the actions on the selection, each naming the count. Icon-only actions form a [Toolbar.Root](../components/toolbar.md) of `Toolbar.Button`s; labelled actions sit in a [Row](../components/row.md).
 7. **Row actions:** a [Menu](../components/menu.md) at the end of the row, opened by an [IconButton](../components/button.md) named for the row, with a [Tooltip](../components/tooltip.md).
 8. **Confirmation and undo:** a [ConfirmDialog](../components/confirm-dialog.md) for deleting, and a toast from [useToast](../components/toast.md) with "Undo" for archiving, as in [Confirmation and destructive actions](destructive-actions.md).
-9. **Loading and empty:** a [LoadingState](../components/skeleton.md) of Skeleton rows while the rows load, and an [EmptyState](../components/empty-state.md) in place of the table when there are none.
+9. **Loading and empty:** the table as a skeleton over placeholder rows while the rows load, through `skeleton` on Table.Root, and an [EmptyState](../components/empty-state.md) in place of the table when there are none.
 10. **Narrow screens:** `narrowLayout="stack"`, a `label` on every cell after the first, and a [Select](../components/select.md) with an IconButton that sort the rows while they stack.
 
 ## States and behaviour
@@ -88,7 +87,7 @@ Use this pattern to show records people compare, sort and act on: a table with a
 - **Selecting.** Each row's checkbox selects it, and the row shows it is selected. The header's checkbox is checked when every row is, `'mixed'` when some are, and a press on it selects all, or none once all are.
 - **Bulk actions.** The bulk bar shows while rows are selected and goes with the selection. Put the count in every action, "Archive 2 projects", "Delete 2 projects…". Archive acts at once with "Undo" in the toast; Delete asks first. When an action ends the selection, move focus to the header's checkbox.
 - **Row actions.** The name links to the record; the other actions wait in the row's menu. envUI has no danger tone for a menu item yet: label the item with the consequence, "Delete project…", put it last after a separator, and confirm it with a ConfirmDialog. After the delete, move focus to the next row's menu button, or, once the last row has gone, to the empty state's action.
-- **Loading.** The first load shows Skeleton rows in the shape of the table after 200 ms, as in [Loading](loading.md). A refresh keeps the rows in place.
+- **Loading.** The first load shows the table as a skeleton over placeholder rows after 200 ms, as in [Loading](loading.md). A refresh keeps the rows in place.
 - **Empty.** With no records, an EmptyState takes the table's place, with the first action; with no results from filters, see [Filtering and search](filtering.md).
 - **Narrow screens.** With `narrowLayout="stack"`, a table narrower than `stackBelow` shows each row as a block, its first cell first and the others with their labels. The header row is then hidden, so a Select of the columns and an IconButton for the order sort it, shown while `onStackedChange` reports the rows stacked.
 
@@ -161,7 +160,7 @@ The project's name is the row's link, and its other actions wait in a menu named
 
 ### Loading and empty
 
-Choosing a team loads its projects: Skeleton rows in the table's shape after 200 ms, then the table, or, for a team with none, an EmptyState in its place with "Create project".
+Choosing a team loads its projects: the table as a skeleton after 200 ms, then the table, or, for a team with none, an EmptyState in its place with "Create project".
 
 ```tsx example=EmptyAndLoading
 

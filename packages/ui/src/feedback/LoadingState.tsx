@@ -2,35 +2,38 @@
 
 import type { ComponentPropsWithRef } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { Grid } from '../foundations/Layout.js';
+import { Row } from '../foundations/Layout.js';
 import { useMessages } from '../internal/EnvUIContext.js';
 import { common } from '../foundations/messages/common.js';
+import { Spinner } from './Spinner.js';
 
-export interface LoadingStateProps extends ComponentPropsWithRef<'div'> {
+export interface LoadingStateProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   /**
-   * What is loading, such as Loading project, which names the region for assistive technology; an
-   * aria-label overrides it.
+   * What is loading, such as Loading project: shown beside the spinner, and read as the status.
    * @default 'Loading', or EnvUIProvider's messages.common.loading
    */
   label?: string;
 }
 
 /**
- * A region of placeholders for content that is loading, such as Skeletons in the shape of a card: a
- * status named by label and marked busy, which stacks its children 0.5 rem apart.
+ * Loading with no known shape: a spinner with a label that says what is loading, in a status
+ * region marked busy. Where the shape of what loads is known, render it as a skeleton instead,
+ * with `skeleton` on its surface.
  */
-export function LoadingState({ label, className, children, ...props }: LoadingStateProps) {
+export function LoadingState({ label, className, ...props }: LoadingStateProps) {
   const messages = useMessages('common', common);
   return (
-    <Grid
-      gap={2}
+    <Row
+      align="center"
+      justify="center"
+      gap={3}
       {...props}
       role="status"
-      aria-label={props['aria-label'] ?? label ?? messages.loading}
       aria-busy="true"
       className={classNames('env-loading-state', className)}
     >
-      {children}
-    </Grid>
+      <Spinner />
+      <span className="env-loading-state-label">{label ?? messages.loading}</span>
+    </Row>
   );
 }

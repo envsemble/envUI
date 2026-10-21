@@ -51,9 +51,29 @@
   );
   gap: var(--env-space-5) var(--env-stat-group-gap);
 }
-.env-stat-group > .env-stat {
+.env-stat-group > .env-stat,
+.env-stat-group > .env-skeleton-content > .env-stat {
   container-type: inline-size;
 }
-.env-stat-group > .env-stat .env-stat-value {
+.env-stat-group > .env-stat .env-stat-value,
+.env-stat-group > .env-skeleton-content > .env-stat .env-stat-value {
   font-size: clamp(1.25rem, 8.33cqi + 0.833rem, 1.75rem);
+}
+
+/* A description given as undefined, as over a placeholder item, takes no room outside a skeleton.
+   In one, a missing label, figure or description is a bar of about its usual length. */
+.env-stat-description:empty:not([data-env-skeleton] *) {
+  display: none;
+}
+[data-env-skeleton] :is(.env-stat-label, .env-stat-value, .env-stat-description) {
+  --env-skeleton-placeholder: inline-block;
+}
+[data-env-skeleton] .env-stat-label {
+  --env-skeleton-length: 6rem;
+}
+[data-env-skeleton] .env-stat-value {
+  --env-skeleton-length: 5rem;
+}
+[data-env-skeleton] .env-stat-description {
+  --env-skeleton-length: 8rem;
 }

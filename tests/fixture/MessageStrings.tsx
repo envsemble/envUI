@@ -14,7 +14,6 @@ import {
   Sheet,
   LoadingState,
   Progress,
-  Skeleton,
   Toast,
   useToast,
   ConfirmButton,
@@ -79,9 +78,7 @@ function FeedbackStrings() {
   return (
     <>
       <Alert onDismiss={() => {}}>Saved on this device.</Alert>
-      <LoadingState>
-        <Skeleton />
-      </LoadingState>
+      <LoadingState />
       <Progress label="Importing" value={null} />
       <Sheet title="Filters" defaultOpen modal={false} disablePointerDismissal>
         Filters

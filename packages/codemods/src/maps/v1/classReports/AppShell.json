@@ -24,10 +24,10 @@
     "report": "The page progress bar is a TopBar's loading, env-top-bar-loading-bar."
   },
   "env-app-navigation-placeholder": {
-    "report": "AppShellSkeleton is gone: placeholder items stand in for the navigation, with no class of their own."
+    "report": "AppShellSkeleton is gone: the navigation, with skeleton, stands in for itself over placeholders(count), with no class of its own."
   },
   "env-app-shell-skeleton": {
-    "report": "AppShellSkeleton is gone: wrap the frame in a LoadingState, whose class is env-loading-state."
+    "report": "AppShellSkeleton is gone: give the frame's parts skeleton, which marks each root with data-env-skeleton, and render them over placeholders(count)."
   },
   "env-app-toggle-icon": {
     "report": "The sidebar toggle is gone: the Scaffold shows the navigation form that fits its width."

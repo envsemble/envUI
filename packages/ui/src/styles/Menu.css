@@ -145,7 +145,8 @@
   background: var(--env-color-border-muted);
 }
 /* A group is its own set of rows below a small muted heading. */
-.env-menu > .env-menu-group:not(:first-child) {
+.env-menu > .env-menu-group:not(:first-child),
+.env-menu > .env-skeleton-content > .env-menu-group:not(:first-child) {
   margin-block-start: var(--env-space-1);
 }
 .env-menu-group-label {
@@ -184,7 +185,8 @@
   font: var(--env-type-h1);
 }
 /* The organizations follow the header directly, without a group's gap. */
-.env-menu > .env-organization-switcher-options:not(:first-child) {
+.env-menu > .env-organization-switcher-options:not(:first-child),
+.env-menu > .env-skeleton-content > .env-organization-switcher-options:not(:first-child) {
   margin-block-start: 0;
 }
 .env-organization-switcher-description {

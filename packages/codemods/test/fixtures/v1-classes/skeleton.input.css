@@ -1,0 +1,7 @@
+/* 0.7's Skeleton, which 1.0 replaces with the skeleton prop of its containers. */
+.profile .env-skeleton {
+  border-radius: 50%;
+}
+.env-skeleton-highlight {
+  opacity: 0.8;
+}

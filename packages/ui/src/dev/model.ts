@@ -150,7 +150,8 @@ export type ProblemRule =
   | 'overlay-off-window'
   | 'layout-paints'
   | 'sticky-without-scroll'
-  | 'text-squeezed';
+  | 'text-squeezed'
+  | 'skeleton-shift';
 
 /** A problem the readout measured. */
 export interface LayoutProblem {

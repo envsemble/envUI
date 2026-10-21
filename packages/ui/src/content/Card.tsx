@@ -11,6 +11,7 @@ import { Text } from '../foundations/Text.js';
 import { Column, Grid, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
+import { given, type SkeletonProps } from '../internal/skeleton.js';
 
 /**
  * A card's fill: muted, the standalone card fill; default, a quieter fill that groups content, as a
@@ -21,7 +22,7 @@ export type CardBackground = 'muted' | 'default' | 'page';
 /** The level of a card's heading, from h1 to h6. */
 export type CardHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
-interface CardSurfaceProps {
+interface CardSurfaceProps extends SkeletonProps {
   /**
    * The fill: muted, the standalone card fill; default, a quieter fill that groups content, such as
    * a section of a settings page; or page, the page's own color, for a card inside a pane.
@@ -42,7 +43,8 @@ interface CardSurfaceProps {
 interface CardContentOptions {
   /**
    * The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the
-   * headline type. headingLevel sets another level.
+   * headline type. headingLevel sets another level. Given as undefined, such as over a placeholder
+   * item, a skeleton shows a bar in its place.
    */
   title?: ReactNode;
   /**
@@ -129,6 +131,7 @@ export function Card(props: CardProps) {
 function InteractiveCard({
   background = 'muted',
   padding,
+  skeleton,
   className,
   style,
   children,
@@ -138,6 +141,7 @@ function InteractiveCard({
     <Surface
       background={background}
       padding={padding}
+      skeleton={skeleton}
       render={
         <Column
           gap={4}
@@ -154,9 +158,22 @@ function InteractiveCard({
   );
 }
 
-function ContentCard({
+function ContentCard(allProps: CardContentProps) {
+  // A slot given as undefined, as over a placeholder item, renders empty: a skeleton shows a bar
+  // there, and outside one it takes no room.
+  const slots = {
+    title: given(allProps, 'title'),
+    meta: given(allProps, 'meta'),
+    description: given(allProps, 'description'),
+  };
+  return <ContentCardLayout {...allProps} slots={slots} />;
+}
+
+function ContentCardLayout({
+  slots,
   background = 'muted',
   padding,
+  skeleton,
   title,
   headingLevel,
   meta,
@@ -169,12 +186,14 @@ function ContentCard({
   style,
   children,
   ...props
-}: CardContentProps) {
+}: CardContentProps & { slots: Record<'title' | 'meta' | 'description', boolean> }) {
   const feature = layout === 'feature';
+  const hasTitle = title != null || slots.title;
+  const hasMeta = meta != null || slots.meta;
   const hasActions = actions != null && actions !== false;
   const level = headingLevel ?? (feature ? 2 : 3);
   const Heading = `h${level}` as const;
-  const headingText = title != null && (
+  const headingText = hasTitle && (
     <Text
       render={<Heading />}
       variant={feature ? 'headline' : 'title'}
@@ -185,19 +204,19 @@ function ContentCard({
   );
   // The feature layout's title stands alone in its column unless a meta shares its row.
   const header =
-    feature && meta == null
+    feature && !hasMeta
       ? headingText
-      : (title != null || meta != null) && (
+      : (hasTitle || hasMeta) && (
           <Row wrap align="center" gap={3} className="env-card-header">
             {headingText}
-            {meta != null && (
+            {hasMeta && (
               <Text render={<span />} variant="body-sm" className="env-card-meta">
                 {meta}
               </Text>
             )}
           </Row>
         );
-  const descriptionText = description != null && (
+  const descriptionText = (description != null || slots.description) && (
     <Text
       variant={feature ? 'body-sm' : 'body'}
       emphasis={feature ? undefined : 'muted'}
@@ -260,6 +279,7 @@ function ContentCard({
     <Surface
       background={background}
       padding={padding}
+      skeleton={skeleton}
       render={
         <Column
           {...props}

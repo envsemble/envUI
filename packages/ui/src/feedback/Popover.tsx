@@ -12,6 +12,7 @@ import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 import { Grid } from '../foundations/Layout.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 
 const parts = {
   Portal: BasePopover.Portal,
@@ -41,7 +42,8 @@ export interface PopoverOpenChangeDetails {
 }
 
 export interface PopoverProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children' | 'defaultValue'>,
+    SkeletonProps {
   /**
    * The control that opens and closes the popover, such as a Button or an IconButton. It must take
    * a ref and props: it receives the press handler, aria-haspopup and aria-expanded.
@@ -103,6 +105,7 @@ export function Popover({
   defaultOpen = false,
   onOpenChange,
   width = 'md',
+  skeleton = false,
   className,
   ...popupProps
 }: PopoverProps) {
@@ -127,6 +130,7 @@ export function Popover({
         side={side}
         align={align}
         width={width}
+        skeleton={skeleton}
         className={classNames('env-popover', className)}
         layout={<Grid gap={3} padding={5} />}
         popupProps={{ ...popupProps, 'aria-label': title == null ? label : undefined }}

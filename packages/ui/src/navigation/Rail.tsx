@@ -3,6 +3,8 @@
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column } from '../foundations/Layout.js';
 import { classNames } from '../internal/classNames.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import {
   destinationKey,
   DestinationItem,
@@ -19,7 +21,7 @@ const railClasses: DestinationClasses = {
   count: 'env-rail-count',
 };
 
-export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'> {
+export interface RailProps extends Omit<ComponentPropsWithRef<'nav'>, 'children'>, SkeletonProps {
   /**
    * The application's destinations, the same array Bar and Drawer take, each an icon above a short
    * label. Groups don't show: the destinations follow one another in the array's order.
@@ -50,6 +52,7 @@ export function Rail({
   footer,
   'aria-label': label,
   'aria-labelledby': labelledBy,
+  skeleton = false,
   className,
   ...props
 }: RailProps) {
@@ -60,26 +63,32 @@ export function Rail({
       {...props}
       aria-label={label ?? (labelledBy === undefined ? messages.label : undefined)}
       aria-labelledby={labelledBy}
+      {...skeletonAttributes(skeleton)}
       className={classNames('env-rail', className)}
       align="center"
       gap={4}
     >
-      {header != null && (
-        <Column className="env-rail-header" align="center" gap={2}>
-          {header}
-        </Column>
-      )}
-      <Column render={<ul />} className="env-rail-list" align="stretch" gap={1}>
-        {destinations.map((destination) => (
-          <li key={destinationKey(destination)}>
-            <DestinationItem classes={railClasses} destination={destination} />
-          </li>
-        ))}
-      </Column>
-      {footer != null && (
-        <Column className="env-rail-footer" align="center" gap={2}>
-          {footer}
-        </Column>
+      {inSkeleton(
+        skeleton,
+        <>
+          {header != null && (
+            <Column className="env-rail-header" align="center" gap={2}>
+              {header}
+            </Column>
+          )}
+          <Column render={<ul />} className="env-rail-list" align="stretch" gap={1}>
+            {destinations.map((destination) => (
+              <li key={destinationKey(destination)}>
+                <DestinationItem classes={railClasses} destination={destination} />
+              </li>
+            ))}
+          </Column>
+          {footer != null && (
+            <Column className="env-rail-footer" align="center" gap={2}>
+              {footer}
+            </Column>
+          )}
+        </>,
       )}
     </Column>
   );

@@ -134,3 +134,10 @@
     forced-color-adjust: none;
   }
 }
+
+/* In a skeleton, every day and swatch is a cell of the skeleton's color, whatever its level: the
+   levels are data that hasn't loaded. */
+[data-env-skeleton] :is(.env-calendar-heatmap-day, .env-calendar-heatmap-swatch) {
+  forced-color-adjust: none;
+  background: var(--env-skeleton-color);
+}
