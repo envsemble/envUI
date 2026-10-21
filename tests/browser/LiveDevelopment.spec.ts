@@ -61,9 +61,9 @@ test('public component, stylesheet, new export and Markdown documentation update
         .getByRole('group', { name: 'Variants example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
-    // A guideline added to the Markdown shows in its view.
+    // A guideline added to the Markdown shows on the page.
     const editedDocumentation = originals[4].replace(
-      /## Content guidelines\r?\n/,
+      /### Labels\r?\n/,
       '$&\nLive documentation acceptance.\n',
     );
     expect(editedDocumentation).toContain('Live documentation acceptance.');
