@@ -11,7 +11,7 @@ export default function ConfirmDelete() {
         onOpenChange={setOpen}
         trigger={<Button variant="secondary">Delete project</Button>}
         title="Delete project?"
-        description="This deletes Northwind launch and its files for everyone in the workspace."
+        description="This deletes Northwind launch and its files for everyone. It can’t be undone."
         closeLabel="Cancel"
         actions={
           <Button

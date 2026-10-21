@@ -12125,56 +12125,68 @@
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "DialogClose is a button inside a dialog or a drawer that closes it, for actions other than the built-in close button, such as Don't save or Done.",
+          "description": "A dialog holds one task over the page: a decision, a short form, or details people read before they go on. Its actions end with the primary one, after a built-in close button.",
           "file": "docs/examples/dialog/ProjectDetails.tsx"
         },
         {
-          "name": "ConfirmDelete",
-          "title": "Confirm a destructive action",
-          "description": "The built-in close button reads Cancel, and the destructive action repeats the title's verb. Focus starts on Cancel.",
-          "file": "docs/examples/dialog/ConfirmDelete.tsx"
-        },
-        {
           "name": "RenameProject",
-          "title": "Pending work",
-          "description": "While the name saves, the dialog stays open: Cancel is disabled, and <kbd>Esc</kbd> and outside presses wait. The action submits the form, so <kbd>Enter</kbd> in the field saves too.",
+          "title": "Rename project",
+          "description": "While `pending`, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.",
           "file": "docs/examples/dialog/RenameProject.tsx"
         },
         {
-          "name": "InviteMember",
-          "title": "A form with validation",
-          "description": "Fields keep their floating labels and errors inside the dialog. An invalid address shows its error on the field and takes focus back to it; the invitation sends while the dialog is pending.",
-          "file": "docs/examples/dialog/InviteMember.tsx"
-        },
-        {
-          "name": "ChangeRole",
-          "title": "A choice",
-          "description": "RadioGroup rows hold a choice, which takes effect when people save it.",
-          "file": "docs/examples/dialog/ChangeRole.tsx"
-        },
-        {
-          "name": "RemoveWorkspace",
-          "title": "Typed confirmation",
-          "description": "For a consequence that is hard to recover from, people type the name of what they remove before the action becomes available.",
-          "file": "docs/examples/dialog/RemoveWorkspace.tsx"
-        },
-        {
           "name": "UnsavedChanges",
-          "title": "More actions that close",
-          "description": "DialogClose closes the dialog after its own `onClick`, without the dialog's open state in the application.",
+          "title": "Unsaved changes",
+          "description": "DialogClose closes the dialog after its own `onClick`, such as Don’t save.",
           "file": "docs/examples/dialog/UnsavedChanges.tsx"
         },
         {
           "name": "ReviewChanges",
           "title": "Wide content",
-          "description": "`width=\"lg\"` gives a table or a comparison 44 rem.",
+          "description": "",
           "file": "docs/examples/dialog/ReviewChanges.tsx"
         },
         {
           "name": "FindPlan",
           "title": "Near the top",
-          "description": "`placement=\"top\"` opens the dialog near the top of the window, so its results grow downward while the field stays in place. Choosing a result closes it.",
+          "description": "",
           "file": "docs/examples/dialog/FindPlan.tsx"
+        },
+        {
+          "name": "CancelAsCloseLabel",
+          "title": "Do: closeLabel=Cancel names the built-in button for a decision.",
+          "description": "",
+          "file": "docs/examples/dialog/CancelAsCloseLabel.tsx"
+        },
+        {
+          "name": "ExtraCancelButton",
+          "title": "Don't: A Cancel of your own beside the built-in Close.",
+          "description": "",
+          "file": "docs/examples/dialog/ExtraCancelButton.tsx"
+        },
+        {
+          "name": "InviteMember",
+          "title": "Do: A field's error on the field.",
+          "description": "",
+          "file": "docs/examples/dialog/InviteMember.tsx"
+        },
+        {
+          "name": "ErrorInSecondDialog",
+          "title": "Don't: An error in a second dialog over the first.",
+          "description": "",
+          "file": "docs/examples/dialog/ErrorInSecondDialog.tsx"
+        },
+        {
+          "name": "ConfirmDelete",
+          "title": "Do: Ask the question, and repeat its verb in the action.",
+          "description": "",
+          "file": "docs/examples/dialog/ConfirmDelete.tsx"
+        },
+        {
+          "name": "AreYouSure",
+          "title": "Don't: Are you sure? with Yes and No: neither says what happens.",
+          "description": "",
+          "file": "docs/examples/dialog/AreYouSure.tsx"
         }
       ],
       "parts": {
@@ -12467,14 +12479,50 @@
         {
           "name": "DeleteProject",
           "title": "Delete project",
-          "description": "ConfirmDialog asks one question before an action runs: a title that asks it, a description that says what confirming does, Cancel and a confirm button that names the consequence. It is an alert dialog, built on Base UI's alert dialog with Dialog's surface, heading and actions, so it interrupts: it traps focus and a press outside doesn't close it. `onConfirm` runs the action; when it returns a promise, the dialog waits for it, pending, and closes once it resolves.",
+          "description": "ConfirmDialog asks one question before an action runs, and names the consequence on its confirm button. A press outside doesn't close it.",
           "file": "docs/examples/confirm-dialog/DeleteProject.tsx"
         },
         {
           "name": "AsyncWithError",
-          "title": "An action that can fail",
-          "description": "The action takes a moment, and the dialog stays pending until it ends. The first attempt fails, and the dialog stays open with the error; the second succeeds and closes it.",
+          "title": "Async with error",
+          "description": "When `onConfirm` returns a promise, the dialog waits for it, pending, and stays open with `error` when it fails.",
           "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
+        },
+        {
+          "name": "FromMenu",
+          "title": "From menu",
+          "description": "Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` returns focus to the menu's button.",
+          "file": "docs/examples/confirm-dialog/FromMenu.tsx"
+        },
+        {
+          "name": "ArchiveProject",
+          "title": "Archive project",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/ArchiveProject.tsx"
+        },
+        {
+          "name": "DangerForDelete",
+          "title": "Do: tone=danger for an action that deletes.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/DangerForDelete.tsx"
+        },
+        {
+          "name": "NeutralForDelete",
+          "title": "Don't: A neutral deletion: focus starts on Delete, so a hurried Enter deletes.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/NeutralForDelete.tsx"
+        },
+        {
+          "name": "NameTheConsequence",
+          "title": "Do: Buttons that name what each choice does.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/NameTheConsequence.tsx"
+        },
+        {
+          "name": "YesNo",
+          "title": "Don't: Yes and No: people read the question again to choose.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/YesNo.tsx"
         }
       ],
       "parts": {
@@ -12560,14 +12608,26 @@
         {
           "name": "GoToDocument",
           "title": "Go to document",
-          "description": "Open it from a SearchTrigger: the trigger shows where search is, shows its shortcut, ⌘K or Ctrl+K, and presses itself when the shortcut is pressed, so its `onClick` is the one place that opens the palette. Closing the palette returns focus to the trigger.",
+          "description": "A command palette is a search field over a list, near the top of the window, for jumping to anything by name. The application owns the items, how they are filtered and ranked, and what choosing one does.",
           "file": "docs/examples/command-palette/GoToDocument.tsx"
         },
         {
           "name": "RunCommand",
-          "title": "Run a command",
-          "description": "Commands with shortcuts as Kbd keys and a Badge as end content, under one group, with a footer.",
+          "title": "Run command",
+          "description": "`end` holds a shortcut or a Badge; `hints` show the keys in the footer.",
           "file": "docs/examples/command-palette/RunCommand.tsx"
+        },
+        {
+          "name": "ShowRecent",
+          "title": "Do: Show recent items while the query is empty.",
+          "description": "",
+          "file": "docs/examples/command-palette/ShowRecent.tsx"
+        },
+        {
+          "name": "EmptyUntilTyped",
+          "title": "Don't: An empty list until people type.",
+          "description": "",
+          "file": "docs/examples/command-palette/EmptyUntilTyped.tsx"
         }
       ],
       "parts": {
@@ -12813,64 +12873,94 @@
       ],
       "examples": [
         {
-          "name": "AccountMenu",
-          "title": "Account menu",
-          "description": "The signed-in person's menu, with a header, the theme and the organizations, is AccountMenu, built from these parts.",
-          "file": "docs/examples/menu/AccountMenu.tsx"
-        },
-        {
           "name": "IconsAndShortcuts",
-          "title": "Actions with icons and shortcuts",
-          "description": "An icon-only trigger opens actions with icons, shortcut hints, a count and a disabled item whose description says why. Choosing an action runs `onClick` and closes the menu.",
+          "title": "Icons and shortcuts",
+          "description": "A menu shows a short list of actions or destinations from one control, on a temporary surface. Menu.Root opens Menu.Item rows from its `trigger`, and the other parts build the rest.",
           "file": "docs/examples/menu/IconsAndShortcuts.tsx"
         },
         {
-          "name": "Destinations",
-          "title": "Destinations",
-          "description": "Items with `href` are links through the `LinkProvider`. `target` and `rel` open one in a new tab, and its description says so.",
-          "file": "docs/examples/menu/Destinations.tsx"
+          "name": "ContextMenuForRows",
+          "title": "Context menu for rows",
+          "description": "ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>. Offer the same actions in a visible button too.",
+          "file": "docs/examples/menu/ContextMenuForRows.tsx"
+        },
+        {
+          "name": "AccountMenu",
+          "title": "Account menu",
+          "description": "An AvatarButton trigger and a Menu.Header with the account.",
+          "file": "docs/examples/menu/AccountMenu.tsx"
+        },
+        {
+          "name": "SwitchOrganization",
+          "title": "Switch organization",
+          "description": "OrganizationSwitcher shows the active organization and switches between the person's organizations; `onCreate` adds the create action.",
+          "file": "docs/examples/menu/SwitchOrganization.tsx"
+        },
+        {
+          "name": "FirstOrganization",
+          "title": "First organization",
+          "description": "Without organizations, the switcher is only the create action.",
+          "file": "docs/examples/menu/FirstOrganization.tsx"
         },
         {
           "name": "GroupsAndSeparators",
           "title": "Groups and separators",
-          "description": "Menu.Group puts related items under a small heading; Menu.Separator splits sets without one. Each set keeps the large outer corners.",
+          "description": "Menu.Group puts items under a heading; Menu.Separator splits sets without one.",
           "file": "docs/examples/menu/GroupsAndSeparators.tsx"
         },
         {
           "name": "Choices",
           "title": "Radio and checkbox items",
-          "description": "A radio item checks one choice and closes the menu; checkbox items toggle and keep it open, so several options can change.",
+          "description": "A Menu.RadioItem checks one choice and closes the menu; a Menu.CheckboxItem toggles and keeps it open. ThemeRadioGroup is the theme choice as radio items.",
           "file": "docs/examples/menu/Choices.tsx"
         },
         {
           "name": "Submenus",
           "title": "Submenus",
-          "description": "A submenu opens beside its row on hover, or with <kbd>→</kbd>, and choosing an item in it closes every menu.",
+          "description": "A Menu.Submenu row opens a nested menu beside it, on hover or with <kbd>→</kbd>.",
           "file": "docs/examples/menu/Submenus.tsx"
         },
         {
-          "name": "FileMenu",
-          "title": "A file menu",
-          "description": "A desktop file menu with shortcuts, a submenu and a group of choices. Labels line up whether a row has an icon, a check mark or neither.",
-          "file": "docs/examples/menu/FileMenu.tsx"
+          "name": "Destinations",
+          "title": "Destinations",
+          "description": "With `href`, an item is a link, through the `LinkProvider`.",
+          "file": "docs/examples/menu/Destinations.tsx"
         },
         {
-          "name": "ContextMenuForRows",
-          "title": "Context menu",
-          "description": "ContextMenu offers actions for the row under the pointer, or for the focused row with <kbd>Shift</kbd>+<kbd>F10</kbd>, and New document on the empty space. Each row's More actions button offers the same actions.",
-          "file": "docs/examples/menu/ContextMenuForRows.tsx"
+          "name": "FrequentFirst",
+          "title": "Do: Frequent actions first, and a destructive one last, apart.",
+          "description": "",
+          "file": "docs/examples/menu/FrequentFirst.tsx"
         },
         {
-          "name": "SwitchOrganization",
-          "title": "Organization switcher",
-          "description": "The shared switcher fits the context area of the application shell's sidebar. The active organization is checked, each one shows the person's role, and the create action ends the menu.",
-          "file": "docs/examples/menu/SwitchOrganization.tsx"
+          "name": "DeleteFirst",
+          "title": "Don't: Delete first, where the keyboard lands.",
+          "description": "",
+          "file": "docs/examples/menu/DeleteFirst.tsx"
         },
         {
-          "name": "FirstOrganization",
-          "title": "Before the first organization",
-          "description": "Without organizations, the switcher is only the create action, which here creates the first one.",
-          "file": "docs/examples/menu/FirstOrganization.tsx"
+          "name": "DisabledWithReason",
+          "title": "Do: Keep an unavailable item, disabled, with a description of why.",
+          "description": "",
+          "file": "docs/examples/menu/DisabledWithReason.tsx"
+        },
+        {
+          "name": "HiddenItem",
+          "title": "Don't: An item that disappears, so people wonder where it went.",
+          "description": "",
+          "file": "docs/examples/menu/HiddenItem.tsx"
+        },
+        {
+          "name": "ConsistentIcons",
+          "title": "Do: An icon on every item of a set, or on none.",
+          "description": "",
+          "file": "docs/examples/menu/ConsistentIcons.tsx"
+        },
+        {
+          "name": "MixedIcons",
+          "title": "Don't: An icon on one item only: it stands out for no reason.",
+          "description": "",
+          "file": "docs/examples/menu/MixedIcons.tsx"
         }
       ],
       "parts": {
