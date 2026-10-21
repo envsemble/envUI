@@ -1,12 +1,13 @@
 /**
- * The window classes, after Material's: ranges of a container's width at which arrangement may
- * change, each given by the width where it starts. compact is narrower than 37.5 rem, medium from
- * 37.5 rem, expanded from 52.5 rem and large from 75 rem (600, 840 and 1200 px at a 16 px root).
+ * The window classes: ranges of a container's width at which arrangement may change, each given by
+ * the width where it starts. compact is narrower than 37.5 rem, medium from 37.5 rem, expanded from
+ * 52.5 rem and large from 75 rem (600, 840 and 1200 px at a 16 px root).
  *
- * envUI measures them on a container, never on the viewport: the theme boundary is the `env-window`
- * container, so `@container env-window (width < 37.5rem)` is compact. CSS can't read a custom
- * property inside a query, so style sheets write these widths literally; the `--env-window-class-*`
- * tokens hold the same values.
+ * envUI measures them on a container, never on the viewport: the outermost theme boundary is the
+ * `env-window` container. Style sheets write compact first and switch up, as in
+ * `@container env-window (width >= 37.5rem)`, so content without a window stays compact. CSS can't
+ * read a custom property inside a query, so they write these widths literally; the
+ * `--env-window-class-*` tokens hold the same values.
  */
 export const windowClasses = {
   compact: '0rem',

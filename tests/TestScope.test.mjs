@@ -81,6 +81,7 @@ test('a component runs the spec of its name, or of the name its alias gives', ()
   assert.deepEqual(specs('packages/ui/src/foundations/Theme.tsx'), [
     'ThemeContrast',
     'ThemePreference',
+    'WindowClasses',
   ]);
   // Names match as written, whatever the file system: messages/table.ts is not about Table.
   assert.deepEqual(specs('packages/ui/src/foundations/messages/table.ts'), ['Messages']);

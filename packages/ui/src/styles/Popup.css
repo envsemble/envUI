@@ -2,8 +2,10 @@
    theme, their positioner's layer and, through env-popup, the popup colors, edge, shadow, corners
    and motion of an elevation. An owner's own class, such as env-popover, adds its layout and
    the inline sizes of its data-width. */
+/* A block of no height in the portal, so that where it is the outermost boundary it is the
+   env-window, as wide as the document's body, which the popup's window-class queries measure. */
 .env-popup-theme {
-  display: contents;
+  display: block;
 }
 .env-popup-positioner {
   /* The layer popups float on; an owner may raise its own. */

@@ -91,3 +91,30 @@ test('every rule of the primitives has zero specificity', () => {
     assert.match(selector, /^:where\([^()]*\)(?: > \*)?$/, selector);
   assert.doesNotMatch(css, /env-stack/);
 });
+
+test('render runs both event handlers, the element’s first, and gives both refs the node', () => {
+  const calls = [];
+  const element = Row({
+    onClick: () => calls.push('row'),
+    ref: (node) => calls.push(`row ref ${node}`),
+    render: h('footer', {
+      onClick: () => calls.push('footer'),
+      ref: (node) => calls.push(`footer ref ${node}`),
+    }),
+  });
+  element.props.onClick();
+  assert.deepEqual(calls, ['footer', 'row']);
+  const objectRef = { current: null };
+  const both = Column({
+    ref: objectRef,
+    render: h('section', { ref: (node) => calls.push(node) }),
+  });
+  const cleanup = both.props.ref('node');
+  assert.equal(objectRef.current, 'node');
+  assert.equal(calls.at(-1), 'node');
+  cleanup();
+  assert.equal(objectRef.current, null);
+  assert.equal(calls.at(-1), null);
+  // A single ref is passed on as it is.
+  assert.equal(Row({ ref: objectRef, render: h('div') }).props.ref, objectRef);
+});

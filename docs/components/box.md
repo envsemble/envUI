@@ -56,7 +56,8 @@ Box is a plain block: an inset (`padding`), a size container (`container`) or a 
 ## Variants and sizes
 
 - `padding` takes the steps of the spacing scale: `padding={4}` is 1 rem, `padding={5}` 1.5 rem, `padding={6}` 2 rem, smaller at the compact scale.
-- `container="summary"` makes the box an inline-size container named `summary`, for container queries in the application's style sheet, such as `@container summary (width < 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
+- `container="summary"` makes the box an inline-size container named `summary`, for container queries in the application's style sheet, such as `@container summary (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content, so give one in a flex row a width of its own.
+- `container="env-window"` makes the box a window of its own on purpose, such as a preview frame: what it holds lays out at the box's window class rather than the page's. The other `env-*` names are envUI's own; don't give them to your containers.
 - `name="invitation"` names the node for dev mode and the docs, as `data-env-name`. A component's part class names a node first.
 
 ## States and behaviour

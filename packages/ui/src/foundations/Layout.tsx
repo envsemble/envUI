@@ -23,8 +23,8 @@ export type LayoutJustify = 'start' | 'center' | 'end' | 'between';
 
 /**
  * A Grid's columns: a number of equal columns; a `grid-template-columns` template, such as
- * `'minmax(0, 2fr) minmax(0, 1fr)'`; or `{ min: '12rem' }`, as many columns as fit, each at least
- * that wide and sharing what is left.
+ * `'minmax(0, 2fr) minmax(0, 1fr)'`; or `{ min: '12rem' }`, as many equal columns as fit at that
+ * width or wider, also when fewer items than that fill them (auto-fill), so items keep one width.
  */
 export type GridColumns = number | string | { min: `${number}rem` };
 
@@ -49,8 +49,10 @@ type PrimitiveOptions<RenderedElement extends HTMLElement> = {
   name?: string;
   /**
    * Makes the element a size container of this name, for container queries on its inline size,
-   * such as container="filters" for `@container filters (width < 37.5rem)`. A container is as
-   * wide as its context gives it, never as its content.
+   * such as container="filters" for `@container filters (width >= 37.5rem)`. A container is as
+   * wide as its context gives it, never as its content. container="env-window" makes the element
+   * a window of its own on purpose, such as a preview frame, whose content lays out at its window
+   * class; other `env-*` names are envUI's own.
    */
   container?: string;
   /** The inset on every side, a step of the spacing scale. None by default. */
@@ -96,8 +98,9 @@ export type ColumnProps<RenderedElement extends HTMLElement = HTMLDivElement> = 
 interface GridOptions {
   /**
    * The columns: a number of equal columns, a `grid-template-columns` template, such as
-   * `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many columns as fit, each at least
-   * that wide. One column by default.
+   * `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many equal columns as fit at that
+   * width or wider, with empty columns where items run out, so every item keeps one width. One
+   * column by default.
    */
   columns?: GridColumns;
   /** The space between rows and columns, a step of the spacing scale. None by default. */

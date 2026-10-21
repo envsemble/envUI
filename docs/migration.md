@@ -352,18 +352,14 @@ Stack is gone: Row, Column, Grid and Box lay content out, thin wrappers over fle
 
 ### Window classes and container queries
 
-envUI responds to containers only, at Material's window classes: compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem. The viewport breakpoints are gone, and so is asking the viewport's width in script:
+envUI responds to containers only, at window classes: compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, which `windowClasses` and the `--env-window-class-*` tokens hold. The outermost theme boundary, the themed document root or the Theme around the application, is the `env-window` container that window-class queries measure:
 
-| Before                                                                | Now                                                                                                                                |
-| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `breakpoints`, `Breakpoint`, `breakpointQuery`                        | `windowClasses`, `WindowClass`: the width where each class starts, `{ compact: '0rem', medium: '37.5rem', … }`                     |
-| `useBreakpoint(breakpoint)`, `useMediaQuery(query)`                   | A container query in CSS, or `useContainerSize` on the element whose width decides, compared with a window class                   |
-| `--env-breakpoint-sm` … `-xl`                                         | `--env-window-class-medium`, `-expanded` and `-large`, for reference                                                               |
-| `@media (width < 48rem)` in an application's style sheet              | `@container env-window (width < 52.5rem)` or another window class: the theme boundary (`.env-theme`) is the `env-window` container |
-| Card's feature layout below 38 rem, PageHeader's actions below 32 rem | Below 37.5 rem of their own width, compact                                                                                         |
-| DatePicker's time below the calendar in a window below 32 rem         | In a compact `env-window`, below 37.5 rem                                                                                          |
+| 0.x                                                                   | 1.0                                                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `@media (width >= 48rem)` in an application's style sheet             | `@container env-window (width >= 52.5rem)`, or another window class, over a compact default |
+| Card's feature layout below 38 rem, PageHeader's actions below 32 rem | Below 37.5 rem of their own width, compact                                                  |
 
-Every theme boundary, the themed document root, a Theme and a dialog's portal, is now a size container, so its width comes from its context, never from its content: a Theme that is a flex item or sits in an `auto` grid track needs a width of its own, such as `flex: 1` or a `1fr` track. AppShell and Sidebar keep their `breakpoint` and `dockAt` values until Scaffold replaces them. Media queries that are not about width, such as `pointer`, `forced-colors` and `prefers-reduced-motion`, stay.
+The outermost boundary takes the whole width its parent gives it (`inline-size: 100%`), as a size container can't take its content's; override it with a class of your own where it shouldn't. A nested Theme is no container. Media queries that are not about width, such as `pointer`, `forced-colors` and `prefers-reduced-motion`, stay.
 
 ### The app frame
 
@@ -735,16 +731,13 @@ Removed, with what to use instead:
 | `--env-app-control-height`            | —                                       | The frame's rails line up on --env-control-height, which a title bar's small controls keep.                                                            |
 | `--env-app-divider`                   | —                                       | The frame's hairlines follow AppShell.Root's dividers prop.                                                                                            |
 | `--env-app-toggle-size`               | —                                       | SidebarTrigger is an IconButton: give it a size, or let a coarse pointer grow it to 44 px.                                                             |
-| `--env-breakpoint-lg`                 | `--env-window-class-expanded`           | Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem.                                                     |
-| `--env-breakpoint-md`                 | `--env-window-class-medium`             | Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem.                                                     |
-| `--env-breakpoint-sm`                 | `--env-window-class-medium`             | Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem.                                                     |
-| `--env-breakpoint-xl`                 | `--env-window-class-large`              | Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem.                                                     |
 | `--env-sidebar-collapsed-width`       | —                                       | A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it.                                      |
 | `--env-sidebar-content-width`         | —                                       | AppShell no longer measures its sidebar: Sidebar.Root's content width fits its content between minWidth and maxWidth.                                  |
 | `--env-sidebar-expanded-width`        | —                                       | AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable.                    |
 | `--env-sidebar-width`                 | —                                       | AppShell's sidebar widths were private and are gone: give Sidebar.Root a width, minWidth and maxWidth in rem, or make it resizable.                    |
 | `--env-split-view-gutter`             | —                                       | SplitPane has no gutter: its handle has a width of its own, and stacked panes have a hairline between them rather than a gap.                          |
 | `--env-split-view-size`               | —                                       | SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead. |
+| `--env-stack-gap`                     | —                                       | Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead.                |
 | `--member-identity-avatar-size`       | —                                       | Unused.                                                                                                                                                |
 | `--member-identity-copy-height`       | —                                       | Unused.                                                                                                                                                |
 | `--member-identity-email-line-height` | —                                       | Unused.                                                                                                                                                |

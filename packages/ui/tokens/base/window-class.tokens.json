@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "window-class": {
     "$type": "dimension",
-    "$description": "The window classes, after Material's: the container widths where each class starts, compact below medium. envUI measures them on a container, never on the viewport: the theme boundary is the env-window container. CSS can't read a custom property inside @container, so style sheets write the value itself; these tokens and the windowClasses constant hold the same widths.",
+    "$description": "The window classes: the container widths where each class starts, compact below medium. envUI measures them on a container, never on the viewport: the outermost theme boundary is the env-window container. CSS can't read a custom property inside @container, so style sheets write the value itself; these tokens and the windowClasses constant hold the same widths.",
     "medium": {
       "$description": "37.5 rem: where medium starts, such as a tablet held upright or a narrow desktop window; narrower is compact, such as a phone.",
       "$value": { "value": 37.5, "unit": "rem" }

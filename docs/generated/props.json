@@ -806,7 +806,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -1684,7 +1684,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -3778,7 +3778,7 @@
           "name": "columns",
           "type": "GridColumns",
           "required": false,
-          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many columns as fit, each at least that wide. One column by default."
+          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many equal columns as fit at that width or wider, with empty columns where items run out, so every item keeps one width. One column by default."
         },
         {
           "name": "gap",
@@ -3815,7 +3815,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -6768,7 +6768,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",

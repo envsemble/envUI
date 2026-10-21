@@ -56,13 +56,13 @@ Grid lays out its children in columns, a step of the spacing scale apart: a numb
 
 ## Variants and sizes
 
-| Columns                                   | Lays out                                                                                        |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `columns={3}`                             | Three equal columns, `repeat(3, minmax(0, 1fr))`, at every width.                               |
-| `columns={{ min: '14rem' }}`              | As many columns as fit, each at least 14 rem wide, sharing the rest; one in a narrow container. |
-| `columns="minmax(0, 2fr) minmax(0, 1fr)"` | A `grid-template-columns` template as it is, such as a main column twice as wide as the other.  |
+| Columns                                   | Lays out                                                                                       |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `columns={3}`                             | Three equal columns, `repeat(3, minmax(0, 1fr))`, at every width.                              |
+| `columns={{ min: '14rem' }}`              | As many equal columns as fit at 14 rem or wider; one in a narrow container.                    |
+| `columns="minmax(0, 2fr) minmax(0, 1fr)"` | A `grid-template-columns` template as it is, such as a main column twice as wide as the other. |
 
-- `{ min }` adapts to the grid's own width, so a grid of cards needs no container query: four columns on a wide page, one on a phone.
+- `{ min }` adapts to the grid's own width, so a grid of cards needs no container query: four columns on a wide page, one on a phone. With fewer items than columns fit, the rest stay empty, so every item keeps one width.
 - In a template, write `minmax(0, 1fr)` rather than `1fr`, so long content wraps instead of widening its column.
 - `align` sets where each child sits in its row: `stretch`, the default, makes children of one row as tall as each other; `start`, `center` and `end` keep each at its own height.
 - `container` makes the grid a size container of that name, for the application's own container queries, such as a template that changes at a [window class](../foundations/responsive.md).

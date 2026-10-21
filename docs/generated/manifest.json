@@ -9349,7 +9349,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -10227,7 +10227,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -12331,7 +12331,7 @@
           "name": "columns",
           "type": "GridColumns",
           "required": false,
-          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many columns as fit, each at least that wide. One column by default."
+          "description": "The columns: a number of equal columns, a `grid-template-columns` template, such as `'minmax(0, 2fr) minmax(0, 1fr)'`, or `{ min: '12rem' }`, as many equal columns as fit at that width or wider, with empty columns where items run out, so every item keeps one width. One column by default."
         },
         {
           "name": "gap",
@@ -12368,7 +12368,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -15325,7 +15325,7 @@
           "name": "container",
           "type": "string",
           "required": false,
-          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width < 37.5rem)`. A container is as wide as its context gives it, never as its content."
+          "description": "Makes the element a size container of this name, for container queries on its inline size, such as container=\"filters\" for `@container filters (width >= 37.5rem)`. A container is as wide as its context gives it, never as its content. container=\"env-window\" makes the element a window of its own on purpose, such as a preview frame, whose content lays out at its window class; other `env-*` names are envUI's own."
         },
         {
           "name": "padding",
@@ -21748,34 +21748,6 @@
         "note": "The height of the app frame's header or title bar, which the frame sets on the document."
       },
       {
-        "cssVariable": "--env-breakpoint-lg",
-        "use": "--env-window-class-expanded",
-        "removed": true,
-        "type": "dimension",
-        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-      },
-      {
-        "cssVariable": "--env-breakpoint-md",
-        "use": "--env-window-class-medium",
-        "removed": true,
-        "type": "dimension",
-        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-      },
-      {
-        "cssVariable": "--env-breakpoint-sm",
-        "use": "--env-window-class-medium",
-        "removed": true,
-        "type": "dimension",
-        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-      },
-      {
-        "cssVariable": "--env-breakpoint-xl",
-        "use": "--env-window-class-large",
-        "removed": true,
-        "type": "dimension",
-        "note": "Breakpoints are gone: query the env-window container at the window classes, 37.5, 52.5 and 75 rem."
-      },
-      {
         "cssVariable": "--env-sidebar-collapsed-width",
         "removed": true,
         "note": "A sidebar's rail is --env-control-height plus two --env-sidebar-inset wide; set --env-sidebar-inset to change it."
@@ -21804,6 +21776,11 @@
         "cssVariable": "--env-split-view-size",
         "removed": true,
         "note": "SplitPane sets --env-split-pane-size from size and unit, with the unit, such as 30% rather than 30: set size or defaultSize on SplitPane.Root instead."
+      },
+      {
+        "cssVariable": "--env-stack-gap",
+        "removed": true,
+        "note": "Stack is gone: Row and Column take gap as a step of the spacing scale, which they write as data-gap; set gap on your own class instead."
       },
       {
         "cssVariable": "--env-topbar-height",

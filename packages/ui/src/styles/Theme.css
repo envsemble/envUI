@@ -1,16 +1,25 @@
 /* The theme boundary's own type. Cascade layer env.base: envUI's components override it, and so
-   does an application's CSS outside cascade layers, whatever its specificity.
-
-   The theme boundary is also the env-window container: the window classes are measured on it, so
-   @container env-window (width < 37.5rem) is compact, wherever the boundary is placed. Its width is
-   what its context gives it, never its content's, as with any size container. A popup's boundary
-   has no box (display: contents), so its content queries the next env-window around it, such as a
-   themed document root. */
+   does an application's CSS outside cascade layers, whatever its specificity. */
 .env-theme {
-  container: env-window / inline-size;
   min-inline-size: 0;
   overflow-wrap: anywhere;
 }
+/* The outermost theme boundary is the env-window container, on which the window classes are
+   measured: a themed document root, the Theme around an application, or the portal of a popup or a
+   dialog where the document root isn't themed. A size container is as wide as its context makes it,
+   never as its content, so it takes the whole width it is given rather than collapse where its
+   parent sizes to content. A nested boundary, such as a dark island in a row, sizes as any element
+   and is no container; a region opts in with <Box container="env-window">. Zero specificity, so
+   any class overrides both. */
+:where(.env-theme):not(:where(.env-theme .env-theme)) {
+  container: env-window / inline-size;
+  inline-size: 100%;
+}
+/* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by
+   default) and every rem measure keeps its designed size. Its body takes the body type instead,
+   which an application's own body rule overrides, also for what lies outside envUI's boundaries.
+   Every boundary sets envUI's type again: a provider's or a Theme around content, and the one
+   around each popup. */
 .env-theme:not(html),
 html.env-theme > body {
   font: var(--env-type-body);

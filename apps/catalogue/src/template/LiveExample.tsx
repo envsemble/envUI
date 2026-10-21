@@ -101,8 +101,10 @@ export function LiveExample({ page, name, title }: { page: string; name: string;
     throw new Error(`No example file apps/catalogue/src/examples/${page}/${name}.tsx`);
   return (
     <Column gap={3} className="docs-live-example-entry">
+      {/* Each example is a window of its own, so it lays out at its frame's window class. */}
       <Column
         render={<Theme {...theme} />}
+        container="env-window"
         gap={0}
         role="group"
         aria-label={`${title} example`}

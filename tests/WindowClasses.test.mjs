@@ -65,12 +65,13 @@ test('windowClasses holds the widths of the window-class tokens, from compact up
   assert.ok(!tokens.some((token) => token.id.startsWith('breakpoint.')), 'no breakpoint tokens');
 });
 
-test('the theme boundary is the env-window container', () => {
+test('the outermost theme boundary is the env-window container, and takes its width', () => {
   assert.match(
     sheets['Theme.css'],
-    /\.env-theme \{\s*container: env-window \/ inline-size;/,
-    'Theme.css makes .env-theme the env-window container',
+    /:where\(\.env-theme\):not\(:where\(\.env-theme \.env-theme\)\) \{\s*container: env-window \/ inline-size;\s*inline-size: 100%;/,
+    'Theme.css makes the outermost .env-theme the env-window container, as wide as its context',
   );
+  assert.doesNotMatch(sheets['Popup.css'], /\.env-popup-theme \{\s*display: contents/);
 });
 
 test('no style sheet queries the viewport width outside the frame', () => {
@@ -90,7 +91,8 @@ test('container queries use the window classes, or a threshold a component owns'
         if (!widths.has(length) && !ownThresholds[file]?.includes(length))
           found.push(`${file}: ${condition.trim()}`);
   assert.deepEqual(found, []);
+  // Compact is the default and a query switches up, so a missing env-window means compact.
   for (const css of Object.values(sheets))
     for (const [, condition] of css.matchAll(/@container\s+env-window\b([^{]*)\{/g))
-      assert.match(condition, /\(width [<>]=? (?:37\.5|52\.5|75)rem\)/, condition);
+      assert.match(condition, /^\s*\(width >= (?:37\.5|52\.5|75)rem\)\s*$/, condition);
 });
