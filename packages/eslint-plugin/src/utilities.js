@@ -79,23 +79,6 @@ export function walk(node, visitorKeys, enter) {
   }
 }
 
-/**
- * The string pieces under a node: string literals, and the parts of template literals between their
- * expressions. `open` marks a template part that an expression continues.
- */
-export function stringParts(node, visitorKeys, { skip = () => false } = {}) {
-  const parts = [];
-  walk(node, visitorKeys, (child) => {
-    if (skip(child)) return false;
-    if (child.type === 'Literal' && typeof child.value === 'string')
-      parts.push({ node: child, text: child.value, open: false });
-    else if (child.type === 'TemplateElement')
-      parts.push({ node: child, text: child.value.cooked ?? child.value.raw, open: !child.tail });
-    return true;
-  });
-  return parts;
-}
-
 /** The name an import or export specifier refers to: an identifier, or a string literal name. */
 export function moduleExportName(node) {
   return node.type === 'Identifier' ? node.name : String(node.value);

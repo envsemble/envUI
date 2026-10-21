@@ -107,8 +107,7 @@ export default defineConfig(
   },
   {
     // Examples and templates are the code applications and agents copy, so they follow the rules
-    // envUI asks of applications: envUI's components over raw elements, no private classes and
-    // no raw colors.
+    // envUI asks of applications: envUI's components over raw elements and no raw colors.
     ...envui.configs.recommended,
     files: ['apps/catalogue/src/examples/**/*.{ts,tsx}'],
   },
