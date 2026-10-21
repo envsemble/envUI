@@ -16223,25 +16223,43 @@
         {
           "name": "SearchAndFilters",
           "title": "Search and filters",
-          "description": "Use this pattern to help people find items in a long list or table: a search field and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, the page says what was asked for and offers to clear it.",
+          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an EmptyState names the query and offers Clear filters, under the toolbar that stays.",
           "file": "docs/examples/filtering/SearchAndFilters.tsx"
         },
         {
           "name": "FilterPanel",
           "title": "Filters in a popover",
-          "description": "A Filters button opens a popover of checkboxes in two groups, Type and Edited by; each box filters the documents at once, and the button counts the filters in use.",
+          "description": "A Filters button, with a CounterBadge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
           "file": "docs/examples/filtering/FilterPanel.tsx"
         },
         {
           "name": "ActiveFilters",
           "title": "Filters in use",
-          "description": "Each filter in use is a token that removes it, with \"Add filter\" to choose another and \"Clear filters\" to remove them all. envUI has no removable token yet: each is a small secondary Button with a Close icon, named \"Remove filter\" and its text.",
+          "description": "Each filter in use is a token named after it, \"Status: Open\", that removes it, beside Add filter and Clear filters. envUI has no removable chip yet: each is a small secondary Button with a Close `endIcon`.",
           "file": "docs/examples/filtering/ActiveFilters.tsx"
         },
         {
+          "name": "AppliedAtOnce",
+          "title": "Do: Each choice filters at once, and a count says how many match.",
+          "description": "",
+          "file": "docs/examples/filtering/AppliedAtOnce.tsx"
+        },
+        {
+          "name": "WaitsForApply",
+          "title": "Don't: An Apply button for quick filters: nothing says what will match.",
+          "description": "",
+          "file": "docs/examples/filtering/WaitsForApply.tsx"
+        },
+        {
+          "name": "FilteringAnatomy",
+          "title": "Filtering and search anatomy",
+          "description": "",
+          "file": "docs/examples/filtering/FilteringAnatomy.tsx"
+        },
+        {
           "name": "NarrowFilters",
-          "title": "Narrow windows",
-          "description": "Where the example is compact, narrower than 37.5 rem, the Selects move into a Sheet opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.",
+          "title": "Narrow filters",
+          "description": "",
           "file": "docs/examples/filtering/NarrowFilters.tsx"
         }
       ]
