@@ -41,22 +41,22 @@
     .env-card[data-layout='feature'],
     .env-description-list[data-layout='auto'],
     .env-page-header,
-    .env-split-pane,
+    .env-panes,
     .env-stat-group,
     .env-document-tabs,
     .env-panel-dock,
-    .env-window-frame,
+    .env-scaffold,
     [data-env-skeleton],
     [data-env-container],
     :has(
       .env-card[data-layout='feature'],
       .env-description-list[data-layout='auto'],
       .env-page-header,
-      .env-split-pane,
+      .env-panes,
       .env-stat-group,
       .env-document-tabs,
       .env-panel-dock,
-      .env-window-frame,
+      .env-scaffold,
       [data-env-skeleton],
       [data-env-container]
     )
@@ -80,7 +80,7 @@
   border-radius: var(--env-radius-surface);
 }
 
-.docs-figures .docs-specimen-grid {
+.docs-figures :is(.docs-specimen-grid, .docs-matrix-scroll) {
   padding: var(--env-space-6);
 }
 
@@ -98,4 +98,71 @@
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
 :is(.docs-live-example, .docs-verdict-stage) > [data-env-layout='row']:not([data-justify]) {
   justify-content: center;
+}
+
+/* A grid of specimens on its stage: the whole grid centred, with even space on its four sides, in
+   columns of one width that stop growing at the specimen's width. */
+.docs-figures .docs-specimen-grid {
+  --docs-specimen-track: var(--docs-specimen-width);
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--docs-specimen-min)), var(--docs-specimen-track))
+  );
+  justify-content: center;
+}
+
+.docs-figures .docs-specimen-grid[data-size='wide'] {
+  --docs-specimen-track: 1fr;
+}
+
+.docs-figures .docs-specimen-grid > * {
+  max-inline-size: none;
+}
+
+/* Each specimen's content centred in its column, unless it fills the column, such as cards. */
+.docs-figures .docs-specimen-grid:not([data-size='card'], [data-size='wide']) > .docs-specimen {
+  align-items: center;
+  text-align: center;
+}
+
+/* A part that takes its width from its column, such as a text field, fills it. */
+.docs-figures
+  .docs-specimen
+  > :is(
+    .env-text-field,
+    .env-combobox,
+    .env-date-picker,
+    .env-time-picker,
+    .env-month-picker,
+    .env-slider,
+    .env-drop-zone,
+    .env-composer,
+    .env-color-picker
+  ) {
+  align-self: stretch;
+  text-align: start;
+}
+
+/* A matrix on its stage, such as forced states by variant: the table centred with even space on
+   its four sides, its columns after the label column of one width, each cell's content centred in
+   its column, and each label on the centre line of its row or column. */
+.docs-figures .docs-matrix {
+  table-layout: fixed;
+}
+
+.docs-figures .docs-matrix :is(th, td) {
+  padding: var(--env-space-3) var(--env-space-2);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.docs-figures .docs-matrix :is(thead th:first-child, tbody th) {
+  inline-size: 7rem;
+  text-align: start;
+}
+
+/* What a matrix cell shows sits in the middle of its column, also a control that is a block. */
+.docs-figures .docs-matrix td > * {
+  inline-size: fit-content;
+  margin-inline: auto;
 }

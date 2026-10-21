@@ -12,7 +12,9 @@ import {
   TextField,
   Menu,
   Menubar,
-  NavList,
+  Drawer,
+  Rail,
+  type Destination,
   Pagination,
   PanelDock,
   SearchField,
@@ -378,15 +380,10 @@ function TableSection() {
   );
 }
 
-function tabItems(kind: 'button' | 'navigation') {
+function tabItems(kind: 'button' | 'ghost') {
   return ['Overview', 'Activity', 'Settings'].map((name) => ({
     value: name.toLowerCase(),
-    button:
-      kind === 'button' ? (
-        <Button variant="secondary">{name}</Button>
-      ) : (
-        <NavList.Item>{name}</NavList.Item>
-      ),
+    button: <Button variant={kind === 'button' ? 'secondary' : 'ghost'}>{name}</Button>,
     content: <Text>{name} panel</Text>,
   }));
 }
@@ -396,33 +393,32 @@ function TabsSection() {
     <div className="density-columns">
       <Column title='Tabs (default size="lg")'>
         <Tabs aria-label="Tabs, Button" items={tabItems('button')} />
-        <Tabs aria-label="Tabs, NavList.Item" items={tabItems('navigation')} />
+        <Tabs aria-label="Tabs, ghost Button" items={tabItems('ghost')} />
       </Column>
       <Column title='Tabs size="sm"'>
         <Tabs aria-label="Small tabs, Button" size="sm" items={tabItems('button')} />
-        <Tabs aria-label="Small tabs, NavList.Item" size="sm" items={tabItems('navigation')} />
+        <Tabs aria-label="Small tabs, ghost Button" size="sm" items={tabItems('ghost')} />
       </Column>
     </div>
   );
 }
 
-function Sidebar({ label }: { label: string }) {
-  return (
-    <nav className="density-sidebar" aria-label={label}>
-      <NavList.Item icon={<Home />} selected>
-        Home
-      </NavList.Item>
-      <NavList.Item icon={<Inbox />}>Inbox</NavList.Item>
-      <NavList.Item icon={<Settings />}>Settings</NavList.Item>
-    </nav>
-  );
+const destinations: Destination[] = [
+  { label: 'Home', icon: <Home />, href: '#home', current: true },
+  { label: 'Inbox', icon: <Inbox />, href: '#inbox', count: 3 },
+  { label: 'Settings', icon: <Settings />, href: '#settings' },
+];
+
+function NavigationDrawer({ label }: { label: string }) {
+  return <Drawer className="density-drawer" aria-label={label} destinations={destinations} />;
 }
 
 function NavigationSection() {
   return (
     <div className="density-columns">
-      <Column title="NavList.Item and Breadcrumbs">
-        <Sidebar label="Navigation" />
+      <Column title="Drawer, Rail and Breadcrumbs">
+        <NavigationDrawer label="Navigation" />
+        <Rail aria-label="Rail navigation" destinations={destinations} />
         <Breadcrumbs
           aria-label="Location"
           items={[
@@ -461,7 +457,7 @@ function DesktopSection() {
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">
-          <Sidebar label="Sections" />
+          <NavigationDrawer label="Sections" />
           <FileTree label="Files" />
         </aside>
         <div className="density-app-main">

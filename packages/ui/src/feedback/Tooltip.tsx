@@ -50,7 +50,7 @@ export interface TooltipProps
   content: ReactNode;
   /**
    * The one control it describes, such as an IconButton, which takes the trigger's props and ref,
-   * and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Drawer or
+   * and the Tooltip's own native props and ref. Around a Menu.Root, Popover, Dialog, Sheet or
    * ConfirmDialog, the tooltip describes their `trigger`; around a HoverCard, it shows nothing. A disabled control
    * is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu
    * item, it is focusable and carries the control's name, role and state, reported disabled, so

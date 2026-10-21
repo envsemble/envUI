@@ -99,7 +99,10 @@ test('no English default is left under a provider that sets every message', asyn
     '⟦toast.hidden⟧',
     '⟦toast.regionBottomEnd⟧',
     '⟦toast.regionTopCenter⟧',
-    '⟦splitPane.resize⟧',
+    '⟦panes.resize⟧',
+    '⟦panes.back⟧',
+    '⟦scaffold.skipToContent⟧',
+    '⟦scaffold.skipToNavigation⟧',
   ])
     expect(found).toContain(marked);
   // CommandPalette says that nothing matches through its status.
@@ -132,17 +135,6 @@ test('the app parts take their names, labels and announcements from the provider
   ).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('alertdialog')).toBeHidden();
-  // The account menu, its submenus and the theme choices.
-  await root.getByRole('button', { name: 'Alex Morgan' }).click();
-  const account = page.getByRole('menu', { name: '⟦accountMenu.label⟧' });
-  await expect(account.getByRole('menuitem', { name: /⟦accountMenu.organization⟧/ })).toBeVisible();
-  await account.getByRole('menuitem', { name: '⟦accountMenu.theme⟧' }).hover();
-  await expect(
-    page.getByRole('menu', { name: '⟦accountMenu.theme⟧' }).getByRole('menuitemradio'),
-  ).toHaveText(['⟦themeToggle.system⟧', '⟦themeToggle.light⟧', '⟦themeToggle.dark⟧']);
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
-  await expect(account).toBeHidden();
 });
 
 test('messages written inline keep the context while they stay the same', async ({ page }) => {

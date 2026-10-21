@@ -1,8 +1,0 @@
-{
-  "@envsemble/envui": {
-    "WindowFrame": "WindowFrame.Root",
-    "WindowFrameProps": "WindowFrame.RootProps",
-    "TitleBar": "WindowFrame.TitleBar",
-    "TitleBarProps": "WindowFrame.TitleBarProps"
-  }
-}

@@ -11,7 +11,7 @@ import { TrendingDown } from '../icons/TrendingDown.js';
 import { TrendingFlat } from '../icons/TrendingFlat.js';
 import { TrendingUp } from '../icons/TrendingUp.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
-import { inSkeleton } from '../internal/inSkeleton.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type TrendTone = 'neutral' | 'success' | 'warning' | 'danger';

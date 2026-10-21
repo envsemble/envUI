@@ -10,7 +10,7 @@ import {
 import type { RowDensity } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
-import { inSkeleton } from '../internal/inSkeleton.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { Text } from '../foundations/Text.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { withDisplayName } from '../internal/withDisplayName.js';

@@ -9,15 +9,15 @@ import { Theme, type ThemeProps } from '../../foundations/Theme.js';
 import { SkeletonScope } from '../../foundations/SkeletonScope.js';
 
 /**
- * The parts Dialog, Drawer, CommandPalette and other modal surfaces share, inside a Base UI Dialog
+ * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
  * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
 
 /**
- * The theme boundary in a modal surface's portal: a layer fixed over the whole viewport, which lets
- * pointers through to its scrim and surface. Where the document root isn't themed it is the
- * outermost boundary, so the env-window container, at the window's own width.
+ * The theme boundary in a modal surface's portal. It has no box and is no container, so it starts
+ * no stacking context: the scrim and the surface's positioner keep their own layers, under what
+ * opens over them, and the positioner, fixed over the viewport, is the env-window container.
  */
 export function OverlayTheme({ className, ...props }: ThemeProps) {
   return <Theme {...props} className={classNames('env-overlay-theme', className)} />;
@@ -29,7 +29,7 @@ export function DialogBackdrop({ className }: { className?: string }) {
 }
 
 /**
- * The raised surface of a dialog or a drawer, for its popup's render: the elevation-3 edge and
+ * The raised surface of a dialog or a sheet, for its popup's render: the elevation-3 edge and
  * shadow, the body text and the scrolling that a dialog's content needs.
  */
 export function DialogSurface({ className, ...props }: SurfaceProps) {

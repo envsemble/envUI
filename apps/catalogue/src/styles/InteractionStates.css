@@ -50,18 +50,6 @@
   ) {
   color: var(--env-color-fg-danger);
 }
-.docs-preview .docs-force-hover.env-nav-list-item {
-  background: var(--env-color-bg-navigation-hover);
-}
-.docs-preview .docs-force-pressed.env-nav-list-item {
-  background: var(--env-color-bg-navigation-pressed);
-}
-.docs-preview .docs-force-hover.env-nav-list-item[data-selected] {
-  background: var(--env-color-bg-selected-hover);
-}
-.docs-preview .docs-force-pressed.env-nav-list-item[data-selected] {
-  background: var(--env-color-bg-selected-pressed);
-}
 .docs-preview .docs-force-focus {
   outline: 0.125rem solid var(--env-color-border-focus);
   outline-offset: 0.125rem;
@@ -69,7 +57,4 @@
 .docs-preview .docs-force-focus.env-button:where([data-variant='outline']) {
   outline-color: var(--env-color-border-focus);
   outline-offset: 0.0625rem;
-}
-.docs-preview .docs-force-focus.env-nav-list-item {
-  outline-offset: -0.125rem;
 }

@@ -5,7 +5,7 @@ import { Add } from '../../icons/Add.js';
 import { DecorativeIcon } from '../../internal/DecorativeIcon.js';
 import * as Menu from '../Menu.js';
 
-/** One organization in OrganizationSwitcher's menu or AccountMenu's organization submenu. */
+/** One organization in OrganizationSwitcher's menu. */
 export interface OrganizationOption {
   id: string;
   label: string;
@@ -13,8 +13,8 @@ export interface OrganizationOption {
 }
 
 /**
- * The organization rows OrganizationSwitcher and AccountMenu.OrganizationSubmenu share: one radio
- * item per organization, with its description at the end, and the create action after them.
+ * The organization rows of OrganizationSwitcher's menu: one radio item per organization, with its
+ * description at the end, and the create action after them.
  */
 export function OrganizationOptions({
   items,

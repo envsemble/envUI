@@ -5,9 +5,9 @@ import { Add } from '@envsemble/envui/icons/Add';
 export default function PageToolbar() {
   const [status, setStatus] = useState('open');
   return (
-    // Level 2 under this page's own heading; a page's own header keeps the default, 1.
+    // Level 3 under this section; a page's own header keeps the default, 1.
     <PageHeader
-      headingLevel={2}
+      headingLevel={3}
       title="Tasks"
       toolbar={
         // A page toolbar is a Row, not a Toolbar: the field keeps its arrow keys, and every

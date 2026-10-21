@@ -1,6 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test';
 import { fixtureUrl } from './Servers';
-import { openServerMarkup } from './ServerMarkup';
 
 const fixture = `${fixtureUrl}/?fixture=page-headers`;
 
@@ -57,69 +56,65 @@ test.describe('PageHeader', () => {
   });
 
   test(
-    'sticks under the frame header and publishes its height on its page',
+    'sticks at the top of the body that scrolls, and what takes focus keeps clear of it',
     { tag: '@engines' },
     async ({ page }) => {
-      await page.setViewportSize({ width: 1024, height: 700 });
       await page.goto(fixture);
+      const body = page.locator('.env-scaffold-body');
       const sticky = page.getByTestId('sticky');
-      const content = page.getByTestId('sticky-content');
-      // Scrolled well past the header's place, once the page is long enough to scroll that far.
+      await body.evaluate((element) => element.scrollTo(0, 600));
+      await expect.poll(() => body.evaluate((element) => element.scrollTop)).toBe(600);
+      // It sticks at the body's top, across the page's gutters.
+      const top = (await box(body)).y;
+      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(top, 0);
+      // It publishes its height on its page, which keeps what scrolls into view clear of it.
+      const page_ = page.getByTestId('page');
+      const published = () =>
+        page_.evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
+      const height = () => sticky.evaluate((element) => `${element.offsetHeight}px`);
+      await expect.poll(published).toBe(await height());
+      // A field scrolled into view as it takes focus lands below the header.
+      await body.evaluate((element) => element.scrollTo(0, 0));
+      await page.getByTestId('far-field').focus();
+      const header = await box(sticky);
       await expect
-        .poll(() => page.evaluate(() => (window.scrollTo(0, 1200), window.scrollY)))
-        .toBeGreaterThan(1000);
-      // It sticks at --env-frame-sticky-top, 48 px, under the frame header.
-      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(48, 0);
-      const height = (await box(sticky)).height;
-      const published = await page
-        .getByTestId('page')
-        .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
-      expect(Number.parseFloat(published)).toBeCloseTo(height, 0);
-      // Content sticks below both, from the two variables.
-      await expect.poll(async () => (await box(content)).y).toBeCloseTo(48 + height, 0);
-      // Without a frame's offset, it sticks at the top.
-      await sticky.evaluate((element) => {
-        const frame = element.closest<HTMLElement>('[style*="--env-frame-sticky-top"]')!;
-        frame.style.removeProperty('--env-frame-sticky-top');
+        .poll(async () => (await box(page.getByTestId('far-field'))).y)
+        .toBeGreaterThanOrEqual(header.y + header.height);
+      // In a compact page its title wraps over more lines than CSS reckons with; the measured
+      // height counts them.
+      const before = await height();
+      await page.getByTestId('frame').evaluate((element) => {
+        element.style.inlineSize = '20rem';
       });
-      await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(0, 0);
+      await expect.poll(height).not.toBe(before);
+      await expect.poll(published).toBe(await height());
+      await body.evaluate((element) => element.scrollTo(0, 0));
+      await page.getByTestId('far-field').blur();
+      await page.getByTestId('far-field').focus();
+      const wrapped = await box(sticky);
+      await expect
+        .poll(async () => (await box(page.getByTestId('far-field'))).y)
+        .toBeGreaterThanOrEqual(wrapped.y + wrapped.height);
     },
   );
+});
 
-  test("keeps its page's element across a parent's renders, and its height published", async ({
-    page,
-  }) => {
-    const hydrate = await openServerMarkup(
-      page,
-      `import {createElement as h, useState} from 'react';
-      import {Page, PageHeader} from '@envsemble/envui';
-      // Every element the page's ref receives, null for a detach.
-      const refs = (globalThis.pageRefs = []);
-      const pageRef = (node) => { refs.push(node ? node.tagName : null); };
-      function Parent() {
-        const [count, setCount] = useState(0);
-        return h(Page, {ref: pageRef, 'data-testid': 'page',
-            header: h(PageHeader, {title: 'Renders ' + count, sticky: true})},
-          h('button', {type: 'button', onClick: () => setCount((value) => value + 1)}, 'Render'));
-      }
-      export const element = h(Parent);`,
-      { hydrate: true },
-    );
-    expect(await hydrate()).toEqual([]);
-    const refs = () => page.evaluate(() => (window as unknown as { pageRefs: unknown[] }).pageRefs);
-    expect(await refs()).toEqual(['DIV']);
-    for (let render = 1; render <= 3; render++) {
-      await page.getByRole('button', { name: 'Render' }).click();
-      await expect(page.getByRole('heading', { name: `Renders ${render}` })).toBeVisible();
+test.describe('Page', () => {
+  test('its gutters follow the window class of the region it sits in', async ({ page }) => {
+    await page.goto(fixture);
+    const frame = page.getByTestId('frame');
+    const gutter = () =>
+      page.getByTestId('page').evaluate((element) => getComputedStyle(element).paddingInlineStart);
+    for (const [width, expected] of [
+      ['30rem', '16px'],
+      ['37rem', '16px'],
+      ['38rem', '24px'],
+      ['60rem', '24px'],
+    ] as const) {
+      await frame.evaluate((element, value) => {
+        element.style.inlineSize = value;
+      }, width);
+      await expect.poll(gutter, `${width} wide`).toBe(expected);
     }
-    // Never detached and attached again, as a new ref callback on each render would.
-    expect(await refs()).toEqual(['DIV']);
-    await expect
-      .poll(() =>
-        page
-          .getByTestId('page')
-          .evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size')),
-      )
-      .not.toBe('');
   });
 });

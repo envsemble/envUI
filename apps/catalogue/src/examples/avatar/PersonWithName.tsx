@@ -1,17 +1,14 @@
-import { Avatar, Text } from '@envsemble/envui';
-
-/** The avatar beside the name it pictures, centred on the two lines. */
-const person = { display: 'flex', alignItems: 'center', gap: '0.75rem' } as const;
+import { Avatar, Column, Row, Text } from '@envsemble/envui';
 
 export default function PersonWithName() {
   return (
-    <div style={person}>
+    <Row align="center" gap={3}>
       {/* The name is written beside it, so the avatar stays decorative. */}
       <Avatar name="Alex Morgan" size="lg" />
-      <div>
+      <Column>
         <Text>Alex Morgan</Text>
         <Text variant="body-sm">alex.morgan@example.com</Text>
-      </div>
-    </div>
+      </Column>
+    </Row>
   );
 }

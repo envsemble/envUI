@@ -16,7 +16,9 @@ export default function Conversation() {
     {
       id: 2,
       from: 'other',
-      text: 'Three items: the pricing page, the press kit and the support rota. Sam Lee owns the first two.',
+      text:
+        'Three items: the pricing page, the press kit and the support rota. ' +
+        'Sam Lee owns the first two.',
     },
   ]);
   const [replying, setReplying] = useState(false);

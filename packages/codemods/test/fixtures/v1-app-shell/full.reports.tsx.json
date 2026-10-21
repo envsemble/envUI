@@ -1,5 +1,0 @@
-[
-  "line 25: AppShell.Root: sidebarWidth and onSidebarWidthChange are in rem in 1.0, not pixels: divide by 16, or by the root font size.",
-  "line 26: AppShell.Root: sidebarWidth and onSidebarWidthChange are in rem in 1.0, not pixels: divide by 16, or by the root font size.",
-  "line 27: AppShell.Root: sidebarMinWidth and sidebarMaxWidth are minWidth and maxWidth in rem in 1.0: the codemod divides the expression by 16; check it."
-]

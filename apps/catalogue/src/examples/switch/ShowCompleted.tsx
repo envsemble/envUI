@@ -12,14 +12,12 @@ export default function ShowCompleted() {
   const [showCompleted, setShowCompleted] = useState(false);
   const shown = showCompleted ? tasks : tasks.filter((task) => !task.done);
   return (
-    <Column gap={3}>
-      <Column gap={4} align="start">
-        <Switch
-          label="Show completed tasks"
-          checked={showCompleted}
-          onCheckedChange={setShowCompleted}
-        />
-      </Column>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <Switch
+        label="Show completed tasks"
+        checked={showCompleted}
+        onCheckedChange={setShowCompleted}
+      />
       <List.Root aria-label="Tasks">
         {shown.map((task) => (
           <List.Item

@@ -1,105 +1,170 @@
-/* Drawer: a full-height panel at the start or end edge of the window, on the dialog surface
-   (DialogSurface). Its edges and slide follow the text direction; it takes the whole width of a
-   window too narrow to leave the page beside it, and keeps clear of the safe areas there. */
-.env-drawer-viewport {
+/* Drawer, the navigation drawer: a column of destinations, each a pill as wide as the drawer with
+   its icon, label and count, under the headings of their groups. It keeps its header and footer in
+   view and scrolls its list. Every placement is logical, so it follows the text direction. */
+.env-drawer {
+  /* The drawer is as wide as its longest destination, within these bounds. */
+  --env-drawer-min-width: 15rem;
+  --env-drawer-max-width: 20rem;
   box-sizing: border-box;
-  position: fixed;
-  inset: 0;
-  z-index: var(--env-z-modal);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  place-items: stretch end;
-  pointer-events: none;
-}
-.env-drawer-viewport[data-side='start'] {
-  place-items: stretch start;
-}
-.env-drawer-popup {
-  --env-drawer-width: 24rem;
-  box-sizing: border-box;
-  inline-size: min(var(--env-drawer-width), 100%);
+  inline-size: fit-content;
+  min-inline-size: var(--env-drawer-min-width);
+  max-inline-size: var(--env-drawer-max-width);
   block-size: 100%;
-  max-block-size: none;
-  border-block: 0;
-  padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
-  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
-  outline: none;
-  /* A swipe toward the edge moves the drawer with the finger: Base UI sets the movement, and its
-     own transform while the finger is down. */
-  --env-drawer-swipe: var(--drawer-swipe-movement-x, 0rem);
-  transform: translateX(var(--env-drawer-swipe));
-  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+  min-block-size: 0;
+  padding: var(--env-space-3);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
 }
-.env-drawer-popup[data-width='lg'] {
-  --env-drawer-width: 44rem;
+.env-drawer-header,
+.env-drawer-footer {
+  flex: none;
+  min-inline-size: 0;
 }
-/* The edge it slides from has no border; the safe area of that window edge pads it. */
-.env-drawer-popup[data-side='end'] {
-  border-inline-end: 0;
-  padding-inline-end: max(var(--env-space-5), env(safe-area-inset-right));
+.env-drawer-footer {
+  margin-block-start: auto;
 }
-.env-drawer-popup[data-side='start'] {
-  border-inline-start: 0;
-  padding-inline-start: max(var(--env-space-5), env(safe-area-inset-left));
+.env-drawer-list,
+.env-drawer-section > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.env-drawer-popup[data-side='end']:dir(rtl) {
-  padding-inline-end: max(var(--env-space-5), env(safe-area-inset-left));
+.env-drawer-list {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  /* Room for the inset focus ring of an item at the list's scrolled edge. */
+  scroll-padding-block: var(--env-space-1);
 }
-.env-drawer-popup[data-side='start']:dir(rtl) {
-  padding-inline-start: max(var(--env-space-5), env(safe-area-inset-right));
+.env-drawer-list li {
+  min-inline-size: 0;
 }
-/* Where a drawer would leave only a sliver of the page beside it, as on a phone, it takes the whole
-   width instead, with no border and clear of the safe areas on both sides, such as a phone's
-   rounded corners in landscape. */
-@media (max-width: 28rem) {
-  .env-drawer-popup[data-width='md'] {
-    inline-size: 100%;
-    border-inline: 0;
-    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
-  }
+/* A group sits a little apart from the destinations or group before and after it. */
+.env-drawer-section:not(:first-child) {
+  margin-block-start: var(--env-space-3);
 }
-@media (max-width: 48rem) {
-  .env-drawer-popup[data-width='lg'] {
-    inline-size: 100%;
-    border-inline: 0;
-    padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
-  }
+.env-drawer-section:not(:last-child) {
+  margin-block-end: var(--env-space-3);
+}
+/* A group's heading lines up with its destinations' icons and labels. */
+.env-drawer-heading {
+  display: block;
+  margin: 0;
+  padding: var(--env-space-1) var(--env-space-3);
+  color: var(--env-color-fg-muted);
+  font: var(--env-type-body-small);
+  overflow-wrap: anywhere;
 }
 
-/* Motion: the drawer fades and slides in from its edge. Movement only without a reduced-motion
-   preference, and none while a finger moves it. */
-.env-drawer-popup[data-starting-style],
-.env-drawer-popup[data-ending-style] {
-  opacity: 0;
+.env-drawer-item {
+  /* The height the item draws at: the control height, or more under a coarse pointer. */
+  --env-drawer-item-height: var(--env-control-height);
+  --env-icon-size: var(--env-control-icon-size);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--env-drawer-item-height);
+  margin: 0;
+  padding: var(--env-space-1) var(--env-space-3);
+  border: 0;
+  border-radius: var(--env-radius-full);
+  background: transparent;
+  color: var(--env-color-fg-control);
+  font: var(--env-body-font-weight) var(--env-font-size-body) / 1.4 var(--env-font-family);
+  text-align: start;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--env-motion-duration-fast) var(--env-motion-ease),
+    color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-drawer-popup[data-ending-style] {
-  transition-duration: var(--env-motion-duration-fast);
-  transition-timing-function: var(--env-motion-ease-exit);
+.env-drawer-item > .env-icon {
+  flex: none;
 }
-.env-drawer-popup[data-swiping] {
-  transition: none;
-  user-select: none;
+.env-drawer-label {
+  flex: 1 1 auto;
+  min-inline-size: 0;
 }
+/* The count, at the item's end, in the counter badge's pill. */
+.env-drawer-count {
+  box-sizing: border-box;
+  flex: none;
+  margin-inline-start: auto;
+  min-inline-size: var(--env-counter-badge-height);
+  block-size: var(--env-counter-badge-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--env-space-2);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-neutral-muted);
+  color: var(--env-color-fg-default);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.env-drawer-item:not([data-current]) .env-icon {
+  color: var(--env-color-fg-muted);
+}
+.env-drawer-item:hover {
+  background: var(--env-color-bg-navigation-hover);
+}
+.env-drawer-item:active {
+  background: var(--env-color-bg-navigation-pressed);
+}
+.env-drawer-item[data-current] {
+  color: var(--env-color-fg-on-selected);
+  background: var(--env-color-bg-selected);
+}
+.env-drawer-item[data-current]:hover {
+  background: var(--env-color-bg-selected-hover);
+}
+.env-drawer-item[data-current]:active {
+  background: var(--env-color-bg-selected-pressed);
+}
+.env-drawer-item:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+/* Under a coarse pointer, items grow to the touch height in every scale, as buttons do. */
+@media (pointer: coarse) {
+  .env-drawer-item {
+    --env-drawer-item-height: max(var(--env-control-height), var(--env-control-height-touch));
+  }
+}
+/* Under a reduced-motion preference, fills change at once. */
+@media (prefers-reduced-motion: reduce) {
+  .env-drawer-item {
+    transition: none;
+  }
+}
+/* Motion: an item settles slightly while it is held, only without a reduced-motion preference. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-drawer-popup {
-    --env-drawer-offset: 2rem;
-    transition:
-      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
-      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  .env-drawer-item {
+    transition-property: background-color, color, transform;
   }
-  .env-drawer-popup:is([data-side='start'], [data-side='end']:dir(rtl)) {
-    --env-drawer-offset: -2rem;
+  .env-drawer-item:active {
+    transform: scale(0.98);
   }
-  .env-drawer-popup[data-side='start']:dir(rtl) {
-    --env-drawer-offset: 2rem;
+}
+/* Forced colors: the system paints no fills, so the current item takes the selection colors. */
+@media (forced-colors: active) {
+  .env-drawer-item[data-current] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
   }
-  .env-drawer-popup[data-starting-style],
-  .env-drawer-popup[data-ending-style] {
-    transform: translateX(calc(var(--env-drawer-swipe) + var(--env-drawer-offset)));
+  .env-drawer-item[data-current] :where(*) {
+    color: inherit;
   }
-  .env-drawer-popup[data-ending-style] {
-    transition-duration: var(--env-motion-duration-fast);
-    transition-timing-function: var(--env-motion-ease-exit);
+  .env-drawer-item[data-current]:focus-visible {
+    outline-color: HighlightText;
+  }
+  .env-drawer-count {
+    border: 1px solid CanvasText;
+  }
+  /* The current item's colors are forced off, so its count takes the canvas's own. */
+  .env-drawer-item[data-current] .env-drawer-count {
+    background: Canvas;
+    color: CanvasText;
   }
 }

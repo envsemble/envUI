@@ -9,7 +9,7 @@
 // manifest.json lists every component page with its summary, aliases, when to use it and what to
 // use instead, its exports with their import path and props, its examples, and its parts (the
 // public part classes and state attributes); the other pages
-// (guides, foundations, patterns and templates); every runtime export; and the tokens. llms.txt is
+// (guides, foundations and patterns); every runtime export; and the tokens. llms.txt is
 // the llmstxt.org index of the documentation. Both are committed, so a change to a source shows up
 // in review, and the package build copies them to the package root beside llms-full.txt, every
 // compiled page in one file. The `npx --no envui agents` index and the `envui mcp` server read the
@@ -64,7 +64,6 @@ const pageKinds = {
   'Setup and workflows': 'guides',
   Foundations: 'foundations',
   Patterns: 'patterns',
-  Templates: 'templates',
 };
 
 /** Markdown reduced to one line of plain text: links keep their text, emphasis goes. */
@@ -113,8 +112,7 @@ function leadDescription(markdown) {
 }
 
 /**
- * The files a page shows of a kind, example or template, each with its title, what it shows and
- * its packaged path; a template's screen also with its frame and whether it is the page's main one.
+ * The example files a page shows, each with its title, what it shows and its packaged path.
  */
 function filesOf(document, kind) {
   const items = [];
@@ -131,16 +129,12 @@ function filesOf(document, kind) {
           before?.kind === 'markdown' ? before.markdown : '',
         ),
         file: `docs/examples/${document.id}/${block.name}.tsx`,
-        ...(kind === 'template' && { frame: block.frame, primary }),
       });
     });
   return items;
 }
 
-/** The scales every template is shown and tested in. */
-const templateScales = ['comfortable', 'compact'];
-
-/** A pattern or template page as the manifest lists it, from its frontmatter and files. */
+/** A pattern page as the manifest lists it, from its frontmatter and files. */
 function compositionEntry(document, kind, doc) {
   const { frontmatter } = document;
   return {
@@ -157,11 +151,6 @@ function compositionEntry(document, kind, doc) {
     composes: frontmatter.composes,
     related: document.related,
     doc,
-    ...(kind === 'template' && {
-      frame: frontmatter.frame,
-      scales: templateScales,
-      files: filesOf(document, 'template'),
-    }),
     examples: filesOf(document, 'example'),
   };
 }
@@ -259,14 +248,14 @@ export function buildManifest({
     (document) => !contributorPages.has(document.path),
   );
   const components = [];
-  const pages = { guides: [], foundations: [], patterns: [], templates: [] };
+  const pages = { guides: [], foundations: [], patterns: [] };
   const exportPages = new Map();
   const exportAliases = new Map();
   for (const document of documents) {
     if (document.id === 'index') continue;
     const doc = `docs/${document.path}`;
     const kind = pageKindOf(document.path);
-    if (kind === 'pattern' || kind === 'template') {
+    if (kind === 'pattern') {
       pages[`${kind}s`].push(compositionEntry(document, kind, doc));
       continue;
     }
@@ -328,12 +317,12 @@ export function buildManifest({
       ),
     });
   }
-  // Each component page leads to the patterns and templates that compose its exports.
+  // Each component page leads to the patterns that compose its exports.
   for (const component of components) {
     const names = new Set(component.exports.map((name) => name.split('.')[0]));
     const using = (list) =>
       list.filter((page) => page.composes.some((name) => names.has(name))).map(({ name }) => name);
-    component.usedIn = { patterns: using(pages.patterns), templates: using(pages.templates) };
+    component.usedIn = { patterns: using(pages.patterns) };
   }
   const exportIndex = Object.fromEntries(
     Object.entries(props.exports).map(([name, entry]) => [
@@ -427,13 +416,6 @@ export function renderLlmsText(manifest) {
       `Patterns: ${intent}`,
       manifest.patterns.filter((pattern) => pattern.intent === intent).map(page),
     );
-  section(
-    'Templates',
-    manifest.templates.map(
-      (template) =>
-        `${page(template)} (${template.frame === 'app' ? 'inside the app frame' : 'a whole screen'})`,
-    ),
-  );
   section('Optional', [
     '- [Full documentation](llms-full.txt): every page above in one file, with examples and props.',
     '- [Manifest](manifest.json): components, exports, props, examples, patterns and tokens as JSON.',
@@ -471,12 +453,10 @@ export function renderLlmsFull(
     const component = manifest.components.find((item) => item.page === document.id);
     const head = [`<!-- docs/${document.path} -->`, '', `# ${document.title}`, ''];
     if (document.summary) head.push(`> ${document.summary}`, '');
-    const composition = [...manifest.patterns, ...manifest.templates].find(
-      (item) => item.name === document.id,
-    );
+    const composition = manifest.patterns.find((item) => item.name === document.id);
     if (composition)
       head.push(
-        `Status: ${composition.status}. Since: ${composition.since}.${composition.intent ? ` Intent: ${composition.intent}.` : ''}${composition.frame ? ` Frame: ${composition.frame === 'app' ? 'inside the app frame' : 'a whole screen'}.` : ''} Built from: ${composition.composes.join(', ')}.`,
+        `Status: ${composition.status}. Since: ${composition.since}.${composition.intent ? ` Intent: ${composition.intent}.` : ''} Built from: ${composition.composes.join(', ')}.`,
         '',
       );
     if (component) {

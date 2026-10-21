@@ -1,13 +1,13 @@
-.env-app-shell-header {
-  block-size: var(--env-app-shell-header-height);
+.env-top-bar {
+  block-size: var(--env-top-bar-height);
 }
-.workspace .env-app-shell-main > .page {
-  padding-block-start: var(--env-frame-header-block-size);
+.workspace .env-scaffold-body > .page {
+  padding-block-start: var(--env-app-topbar-block-size);
 }
-.env-app-shell[data-compact] .env-sidebar {
+.env-app-shell[data-compact] .env-app-sidebar {
   inline-size: var(--env-sidebar-collapsed-width);
 }
-.env-sidebar-trigger .env-sidebar-trigger-mark svg {
+.env-app-sidebar-toggle .env-app-brand svg {
   inline-size: 1.25rem;
 }
 .env-app-context,
@@ -15,5 +15,5 @@
   opacity: 0.9;
 }
 .sticky-toolbar {
-  inset-block-start: var(--env-frame-sticky-top);
+  inset-block-start: var(--app-sticky-top);
 }

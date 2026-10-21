@@ -14,8 +14,6 @@
       "feedback/": "base",
       "forms/": "base",
       "navigation/": "base",
-      "navigation/app-shell/": "shell",
-      "navigation/sidebar/": "shell",
       "layout/": "composites",
       "forms/internal/markdown/": "composites",
       "navigation/panel-dock/": "shell",
@@ -36,7 +34,6 @@
       "navigation/LinkProvider.tsx": "foundations",
       "foundations/ThemePreference.tsx": "composites",
       "foundations/ThemeRadioGroup.tsx": "composites",
-      "navigation/WindowFrame.tsx": "shell",
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
@@ -75,7 +72,7 @@
       "feedback/CommandPalette.tsx": "composites",
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
-      "feedback/Drawer.tsx": "composites",
+      "feedback/Sheet.tsx": "composites",
       "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
       "feedback/LoadingState.tsx": "composites",
@@ -114,18 +111,20 @@
       "forms/Switch.tsx": "base",
       "forms/TextField.tsx": "base",
       "forms/Textarea.tsx": "base",
-      "navigation/AccountMenu.tsx": "composites",
       "navigation/Breadcrumbs.tsx": "composites",
       "navigation/ContextMenu.tsx": "base",
       "navigation/DocumentTabs.tsx": "composites",
       "navigation/Menu.tsx": "composites",
       "navigation/Menubar.tsx": "base",
-      "navigation/NavList.tsx": "base",
+      "navigation/Bar.tsx": "composites",
+      "navigation/Drawer.tsx": "base",
+      "navigation/Rail.tsx": "base",
       "navigation/OrganizationSwitcher.tsx": "composites",
       "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tabs.tsx": "composites",
+      "navigation/TopBar.tsx": "composites",
       "navigation/Tree.tsx": "composites",
       "internal/PopupSurface.tsx": "foundations",
       "messages.ts": "entries"
@@ -258,8 +257,8 @@
       "Alert": {
         "modules": ["feedback/internal/AlertDismiss.tsx"]
       },
-      "SplitPane": {
-        "modules": ["layout/internal/StackStyle.tsx"]
+      "Scaffold": {
+        "modules": ["layout/internal/useScrollKeys.ts"]
       },
       "List": {
         "modules": ["content/internal/ListBehavior.tsx"]
@@ -339,31 +338,10 @@
         "styles": ["ThemeToggle.css"],
         "modules": ["foundations/ThemePreferenceContext.ts"]
       },
-      "AppShell": {
-        "classes": ["env-app-shell"],
-        "styles": ["AppShellBase.css"],
-        "modules": [
-          "navigation/app-shell/FrameStore.ts",
-          "navigation/app-shell/persistence.ts",
-          "navigation/app-shell/useAppShell.ts",
-          "navigation/app-shell/FrameScroll.ts",
-          "navigation/app-shell/useFrameMetrics.ts"
-        ]
-      },
-      "Sidebar": {
-        "classes": ["env-sidebar"],
-        "modules": [
-          "navigation/sidebar/SidebarRegion.tsx",
-          "navigation/sidebar/SidebarDrawer.tsx",
-          "navigation/sidebar/SidebarTrigger.tsx",
-          "navigation/sidebar/useSidebar.ts",
-          "navigation/sidebar/SidebarScope.ts",
-          "navigation/sidebar/usePeek.ts"
-        ]
-      },
       "Breadcrumbs": {},
       "DocumentTabs": {},
-      "NavList": {},
+      "Bar": {},
+      "Rail": {},
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
@@ -383,9 +361,6 @@
         ]
       },
       "Tabs": {},
-      "WindowFrame": {
-        "modules": ["navigation/internal/TitleBarFrame.tsx"]
-      },
       "RichText": {
         "modules": [
           "rich-text/RichTextEditor.tsx",
@@ -464,6 +439,18 @@
       ],
       "rules": [
         {
+          "stylesheet": "Page.css",
+          "classes": [
+            "env-page-header",
+            "env-page-header-breadcrumbs",
+            "env-page-header-description",
+            "env-page-header-toolbar",
+            "env-page-header-actions"
+          ],
+          "properties": ["--env-page-sticky-*", "scroll-margin-block-start"],
+          "note": "A Page reckons the height of its sticky PageHeader from the rows the header has, read with :has(), so what scrolls into view in its content keeps clear of it; it never styles the header."
+        },
+        {
           "stylesheet": "ButtonGroup.css",
           "classes": ["env-button", "env-icon-button"],
           "properties": ["border-radius", "border-*-radius", "outline-offset"],
@@ -498,10 +485,23 @@
           "note": "A task list item lines its checkbox up with the item's text."
         },
         {
-          "stylesheet": "AppShell.css",
+          "stylesheet": "Scaffold.css",
           "classes": ["env-panel-dock"],
           "properties": ["container-type"],
-          "note": "A Main that scrolls places a PanelDock directly in it across its scrollport, so the dock stays over Main's visible area while Main scrolls; Main, its own element, becomes a size container only while it holds a dock."
+          "note": "A Scaffold's body places a PanelDock directly in it across its scrollport, so the dock stays over the body's visible area while it scrolls; the body, its own element, becomes a size container only while it holds a dock."
+        },
+        {
+          "stylesheet": "Scaffold.css",
+          "classes": [
+            "env-panes",
+            "env-panes-main",
+            "env-panes-list",
+            "env-panes-detail",
+            "env-panes-supporting",
+            "env-panes-scrim"
+          ],
+          "properties": ["z-index", "overflow"],
+          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its scrim to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
         }
       ]
     }

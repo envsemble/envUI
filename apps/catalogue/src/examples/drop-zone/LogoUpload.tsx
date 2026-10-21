@@ -18,7 +18,8 @@ export default function LogoUpload() {
   }, [logo]);
 
   return (
-    <Column gap={3}>
+    // As wide as a form column.
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <DropZone
         hidden={logo != null}
         inputRef={picker}

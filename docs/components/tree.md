@@ -20,7 +20,7 @@ useWhen:
   - Rows people preview with a click and open to keep with a double click, as in a desktop editor.
 avoidWhen:
   - text: An application's destinations, such as the pages in a sidebar, one or two levels deep.
-    use: NavList
+    use: Drawer
   - text: A flat list of items, each with its own actions.
     use: List
   - text: Records that share the same fields and that people compare.
@@ -28,11 +28,11 @@ avoidWhen:
   - text: Sections of content people show and hide in a page.
     use: Disclosure
 related:
-  - nav-list
+  - drawer
   - list
   - menu
   - document-tabs
-  - app-shell
+  - scaffold
   - accessibility
 components:
   - Tree
@@ -85,7 +85,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 - **Disabled rows**: `disabled` dims a row and reports `aria-disabled`; the keyboard still reaches it, but it neither opens nor expands.
 - **Context menu**: with `contextMenu` the tree opens a ContextMenu on right click, long press, <kbd>Shift</kbd>+<kbd>F10</kbd> and the <kbd>Menu</kbd> key, for the row under the pointer or the active row, or for the empty area with `null`. Right click makes its row active, and once the menu closes, focus returns to the tree.
 - **Keys for the application**: keys pressed with <kbd>Alt</kbd>, <kbd>Ctrl</kbd> or <kbd>⌘</kbd> are left to the application, such as <kbd>Alt</kbd>+<kbd>←</kbd> for going back.
-- **Size and scrolling**: the tree is as tall as its parent and scrolls itself, so give it a parent with a height, such as a `Sidebar.Content` with `fill`. Only the rows in view, eight more on either side and the active row are in the document; a row's height is measured from the density, enlarged text and coarse pointers, also inside a dialog that scales in.
+- **Size and scrolling**: the tree is as tall as its parent and scrolls itself, so give it a parent with a height, such as a navigation drawer or a pane. Only the rows in view, eight more on either side and the active row are in the document; a row's height is measured from the density, enlarged text and coarse pointers, also inside a dialog that scales in.
 
 ## Content guidelines
 
@@ -105,7 +105,7 @@ The application owns the data. It passes the visible rows in order, flattened, e
 
 ### Don't
 
-- Don't use a tree for an application's few destinations; use [NavList](../components/nav-list.md).
+- Don't use a tree for an application's few destinations; use [Drawer](../components/drawer.md).
 - Don't put buttons, links or fields inside rows; rows are not focusable, and their actions belong in the context menu and a toolbar.
 - Don't make a context menu the only way to reach an action.
 - Don't pass collapsed rows' descendants in `items`.

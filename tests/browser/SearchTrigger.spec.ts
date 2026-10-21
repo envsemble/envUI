@@ -91,7 +91,7 @@ test.describe('SearchTrigger', () => {
     expect(prevented).toBe(false);
   });
 
-  test('shows only its icon in a rail, with its name and keys in a tooltip at the inline end', async ({
+  test('iconOnly shows only its icon, with its name and keys in a tooltip at the side it names', async ({
     page,
   }) => {
     await onOther(page);

@@ -82,6 +82,12 @@ test('a skeleton is busy and inert, draws text as bars and shapes, and loads in 
     'inline-block',
   );
 
+  // A top bar's missing title is a bar too.
+  await expect(page.getByTestId('top-bar')).toHaveAttribute('aria-busy', 'true');
+  expect(
+    await style(page, '[data-testid="top-bar"] .env-top-bar-title', 'display', '::before'),
+  ).toBe('inline-block');
+
   // Loaded: the same components over the items, no longer a skeleton.
   await page.getByRole('button', { name: 'Load' }).click();
   await expect(projects).not.toHaveAttribute('data-env-skeleton');

@@ -1,6 +1,6 @@
 // The window classes: the constant holds the window-class tokens' widths, the theme boundary is the
 // env-window container, and the style sheets respond to containers at those widths. Width media
-// queries are left only in the frame's style sheets, which a later change removes with the frame.
+// queries are left nowhere.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -29,9 +29,6 @@ const sheets = Object.fromEntries(
     .map((file) => [file, readFileSync(join(styles, file), 'utf8')]),
 );
 
-/** The style sheets whose width media queries go with the app frame they belong to. */
-const frameSheets = ['AppShell.css', 'AppShellBase.css', 'Sidebar.css', 'Drawer.css'];
-
 /**
  * Container thresholds that are a component's own rather than a window class, each with why: a
  * window class would not fit them.
@@ -39,9 +36,6 @@ const frameSheets = ['AppShell.css', 'AppShellBase.css', 'Sidebar.css', 'Drawer.
 const ownThresholds = {
   // A label beside its value needs about 24 rem, whatever the window.
   'DescriptionList.css': ['24rem'],
-  // SplitPane and ListDetail stack at their stackBelow, 44 rem by default; Panes replaces them.
-  'SplitPane.css': ['44rem'],
-  'ListDetail.css': ['44rem'],
   // A stacking Table's region makes 37.5em its stackBelow through its font size, as em in a
   // container query is the container's own.
   'Table.css': ['37.5em'],
@@ -75,19 +69,32 @@ test('the outermost theme boundary is the env-window container, and takes its wi
     'Theme.css makes the outermost .env-theme the env-window container, as wide as its context',
   );
   // An outermost popup boundary is a box out of flow, which a grid or flex body gives no cell; an
-  // overlay's is a layer fixed over the viewport, and a toast's is no container.
+  // overlay's has no box, its positioner being the container, and a toast's is no container.
   assert.match(
     sheets['Popup.css'],
     /\.env-popup-theme:not\(\.env-theme \.env-popup-theme\) \{\s*display: block;\s*position: absolute;/,
   );
-  assert.match(sheets['Dialog.css'], /\.env-overlay-theme \{\s*position: fixed;\s*inset: 0;/);
+  assert.match(
+    sheets['Dialog.css'],
+    /\.env-overlay-theme \{\s*display: contents;\s*container-type: normal;/,
+  );
+  for (const [sheet, layer] of [
+    ['Dialog.css', 'env-dialog-positioner'],
+    ['CommandPalette.css', 'env-command-palette-positioner'],
+    ['Sheet.css', 'env-sheet-viewport'],
+  ])
+    assert.match(
+      sheets[sheet],
+      new RegExp(`\\.${layer} \\{[^}]*position: fixed;[^}]*container: env-window / inline-size;`),
+      `${layer} is the env-window container of its surface`,
+    );
   assert.match(sheets['Toast.css'], /\.env-toast-portal-theme \{\s*container-type: normal;/);
 });
 
-test('no style sheet queries the viewport width outside the frame', () => {
+test('no style sheet queries the viewport width', () => {
   const widthMedia = /@media[^{]*\b(?:min-|max-)?width\b/;
   const found = Object.entries(sheets)
-    .filter(([file, css]) => !frameSheets.includes(file) && widthMedia.test(css))
+    .filter(([, css]) => widthMedia.test(css))
     .map(([file]) => file);
   assert.deepEqual(found, []);
 });

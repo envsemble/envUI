@@ -273,7 +273,7 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 - **Behaviour isn't checked.** The browser step renders the app and measures its layout, but doesn't click or type. A capability built with the right component but wired wrongly still counts as covered.
 - **Rendered checks find elements by their text.** A capability described by what renders anchors on texts the prompt names, such as a destination's label; a result that renames them, or puts a label only in a tooltip, fails the check.
-- **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `AppShell` would have provided it. That is why the sidebar task lists only `AppShell` for the toggle.
+- **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `Scaffold` would have provided it. That is why the sidebar task lists only `Scaffold`, `Drawer` and `Rail` for the toggle.
 - **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code with Opus 5.5 at high effort scored 100 on every task. Judge a condition on the `hard` fixture (that baseline: Claude Code 92.6, Codex 50.5), on Haiku and Opus at low effort, on the layout tasks and on the docs-lookup numbers.
 - **One run per task and agent.** Repeat runs before trusting differences of a few points.
 

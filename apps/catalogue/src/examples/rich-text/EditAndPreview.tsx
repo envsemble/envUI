@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Column, Surface, Text } from '@envsemble/envui';
 import { RichText, RichTextEditor } from '@envsemble/envui/rich-text';
 
-const lastMeeting = `## Launch review
+const lastMeeting = `### Launch review
 
 Decisions from **Tuesday**:
 

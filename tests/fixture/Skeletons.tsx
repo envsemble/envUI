@@ -16,6 +16,7 @@ import {
   Surface,
   Table,
   Text,
+  TopBar,
   placeholders,
   useSkeleton,
 } from '@envsemble/envui';
@@ -162,6 +163,7 @@ export function SkeletonsFixture() {
       </Surface>
       <style>{`[data-env-skeleton] .fixture-shifts { padding-block: 1rem; }`}</style>
 
+      <TopBar skeleton data-testid="top-bar" title={items?.length ? 'Projects' : undefined} />
       <Card skeleton data-testid="card-skeleton" title="Title" description={undefined} />
 
       <Popover trigger={<Button>Open the popover</Button>} title="Details" skeleton>

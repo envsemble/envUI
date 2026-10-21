@@ -1,30 +1,36 @@
 {
+  "env-app-sidebar": {
+    "report": "The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer."
+  },
+  "env-app-navigation": {
+    "report": "The sidebar is gone: the navigation forms, in a Scaffold's navigation, have classes of their own."
+  },
+  "env-app-brand": {
+    "report": "The brand mark has no class of its own in 1.0: put it in a TopBar's start, and style your own element there."
+  },
   "env-app-context": {
-    "report": "The topbar's context has no class of its own in 1.0: it sits in Sidebar.Header after the SidebarTrigger, or in AppShell.Header's start; style your own element there."
+    "report": "The topbar's context has no class of its own in 1.0: it sits in a TopBar's start; style your own element there."
   },
   "env-app-actions": {
-    "report": "The topbar's actions have no class of their own in 1.0: they sit in AppShell.Header's end; style your own element there."
+    "report": "The topbar's actions are env-top-bar-actions in 1.0, a TopBar's actions."
   },
   "env-app-topbar-context": {
-    "report": "The split topbar is gone: the context sits in Sidebar.Header, which lines up with AppShell.Header."
+    "report": "The split topbar is gone: the context sits in a TopBar's start."
   },
   "env-app-topbar-page": {
-    "report": "The split topbar is gone: the title and actions are AppShell.Header's children and end."
+    "report": "The split topbar is gone: the title and actions are a TopBar's title and actions."
   },
   "env-app-loading-bar": {
-    "report": "The page progress bar is AppShell.Root's loading; it has no public class."
+    "report": "The page progress bar is a TopBar's loading, env-top-bar-loading-bar."
   },
   "env-app-navigation-placeholder": {
-    "report": "AppShellSkeleton is gone: NavList.Skeleton stands in for the navigation, and its placeholders have no public class."
+    "report": "AppShellSkeleton is gone: placeholder items stand in for the navigation, with no class of their own."
   },
   "env-app-shell-skeleton": {
-    "report": "AppShellSkeleton is gone: wrap the frame's parts in a LoadingState, whose class is env-loading-state."
-  },
-  "env-app-sidebar-backdrop": {
-    "report": "Below the breakpoint the sidebar is a Drawer, with the Drawer's own backdrop."
+    "report": "AppShellSkeleton is gone: wrap the frame in a LoadingState, whose class is env-loading-state."
   },
   "env-app-toggle-icon": {
-    "report": "SidebarTrigger is an IconButton; its icon has no public class."
+    "report": "The sidebar toggle is gone: the Scaffold shows the navigation form that fits its width."
   },
   "env-app-shell": {
     "attributes": [
@@ -37,6 +43,6 @@
       "data-topbar",
       "data-resizing"
     ],
-    "report": "AppShell.Root no longer marks the sidebar's state: select .env-sidebar[data-state='collapsed'], [data-rail] while it shows icons only and [data-peek] while it shows over the content; below the breakpoint the root has data-mobile and the sidebar is a drawer; the topbar's layout is data-header-span."
+    "report": "AppShell is gone: its frame is a Scaffold, env-scaffold, whose data-compact, data-medium, data-expanded and data-large name the navigation form each window class shows; nothing collapses."
   }
 }

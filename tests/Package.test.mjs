@@ -249,7 +249,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Button',
     'ButtonGroup',
     'IconButton',
-    'NavList',
+    'Bar',
+    'Rail',
+    'Drawer',
     'Pager',
     'Card',
     'Row',
@@ -324,7 +326,7 @@ test('installed declarations typecheck a React 19 consumer without source aliase
     join(consumerDirectory, 'Consumer.tsx'),
     `
     import { createRef } from 'react';
-    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, NavList, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
+    import { Theme, Button, ButtonGroup, ConfirmButton, IconButton, Bar, Rail, Drawer, Pager, Icon, TextField, ColorPicker, Textarea, Checkbox, Switch, Row, Column,
       EnvUIProvider, Toolbar, Field, CloseButton, RadioGroup, Radio, Select, Combobox, DatePicker, Calendar, Dialog, DialogClose, Toast, useToast,
       type ThemeValue, type ButtonProps, type ButtonGroupProps, type SelectItem, type ComboboxItem, type ToastManager } from '@envsemble/envui';
     import { Home } from '@envsemble/envui/icons/Home';
@@ -350,8 +352,9 @@ test('installed declarations typecheck a React 19 consumer without source aliase
       <EnvUIProvider locale="de-CH" dir="ltr" messages={{ common: { close: 'Schließen' }, toast: { hidden: ({ count }) => count + ' hidden' } }}><CloseButton ref={createRef<HTMLButtonElement>()} /></EnvUIProvider>
       <Toolbar.Root aria-label="Formatting"><Toolbar.Button icon={<Home />} label="Home" pressed shortcut="Ctrl+H" /><Toolbar.Separator /><Toolbar.Link href="/" icon={<Home />} label="Home" /></Toolbar.Root>
       <Field.Root name="project" invalid><Field.Label>Project</Field.Label><Field.Control size="sm" /><Field.Description>Shown to everyone</Field.Description><Field.Error>Enter a name</Field.Error></Field.Root>
-      <NavList.Item href="/" ref={createRef<HTMLAnchorElement>()}>Home</NavList.Item>
-      <NavList.Item ref={createRef<HTMLButtonElement>()}>Change view</NavList.Item>
+      <Bar ref={createRef<HTMLElement>()} destinations={[{ label: 'Home', icon: <Home />, href: '/', current: true }, { label: 'View', icon: <Home />, onSelect: () => undefined, count: 2 }]} />
+      <Rail aria-label="Places" destinations={[{ label: 'Home', icon: <Home />, href: '/' }]} header={<Home />} />
+      <Drawer destinations={[{ label: 'Guide', href: '/guide', group: 'Help' }]} footer={<Home />} />
       <Pager.Next {...pagerLinkProps} target="_blank" rel="noopener" />
       <Pager.Previous href="/previous">Previous guide</Pager.Previous>
       <Icon label="Custom" viewBox="0 0 1 1"><path d="M0 0L1 1" /></Icon><BarrelHome />
@@ -604,7 +607,7 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':where(.env-theme) .env-button',
     '.env-markdown > * + *',
     '.env-button + .env-button',
-    ":where(html:has(.env-app-shell[data-scroll='document']))",
+    ":where(html:has(.env-scaffold[data-scroll='document']))",
     ":where([data-env-layout='row'], [data-env-layout='column']) > *",
     ':where([data-env-layout][data-gap="4"])',
   ])
@@ -619,15 +622,15 @@ test('the CSS scope check accepts only selectors that match envUI elements', () 
     ':where(.env-theme) , body',
     ':where(.env-theme',
     ':where(html:has(body))',
-    ':where(html:has(.env-app-shell) body)',
-    ':where(html:has(.env-app-shell)) *',
-    ':where(html:has(.env-app-shell)) body',
-    ':where(html:has(.env-app-shell)) p',
-    ':where(html:has(.env-app-shell)) ~ div',
+    ':where(html:has(.env-scaffold) body)',
+    ':where(html:has(.env-scaffold)) *',
+    ':where(html:has(.env-scaffold)) body',
+    ':where(html:has(.env-scaffold)) p',
+    ':where(html:has(.env-scaffold)) ~ div',
     ':where(:where(html:has(.env-x))) input',
-    'html:has(.env-app-shell)',
-    'html:has(.env-app-shell) body',
-    'body:has(.env-app-shell)',
+    'html:has(.env-scaffold)',
+    'html:has(.env-scaffold) body',
+    'body:has(.env-scaffold)',
     '.env-theme:where(html) *',
     'html.env-theme body',
     'HTML.env-theme body',
@@ -740,7 +743,7 @@ test('the package includes scoped CSS, local fonts, branding and license notices
   }
 });
 
-test('the installed MCP server lists the templates and serves a screen from the package', async function () {
+test('the installed MCP server lists the patterns and serves an example from the package', async function () {
   const messages = [
     {
       jsonrpc: '2.0',
@@ -753,13 +756,13 @@ test('the installed MCP server lists the templates and serves a screen from the 
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
-      params: { name: 'list_templates', arguments: {} },
+      params: { name: 'list_patterns', arguments: {} },
     },
     {
       jsonrpc: '2.0',
       id: 3,
       method: 'tools/call',
-      params: { name: 'get_template', arguments: { name: 'sign-in-page', file: 'SignInPage' } },
+      params: { name: 'get_example', arguments: { component: 'app-frame', example: 'AppFrame' } },
     },
   ];
   // The server answers each line on stdin and ends when stdin closes.
@@ -781,18 +784,17 @@ test('the installed MCP server lists the templates and serves a screen from the 
       .map((message) => [message.id, message]),
   );
   const value = (id) => JSON.parse(answers.get(id).result.content[0].text);
-  const { templates } = value(2);
-  const signIn = templates.find((template) => template.name === 'sign-in-page');
-  assert.ok(signIn, `list_templates: ${templates.map((template) => template.name).join(', ')}`);
-  assert.equal(signIn.frame, 'none');
-  assert.deepEqual(signIn.files, ['SignInPage']);
-  const screen = value(3);
-  assert.equal(screen.template, 'sign-in-page');
-  assert.equal(
-    screen.source,
-    await readFile(join(installedDirectory, 'docs/examples/sign-in-page/SignInPage.tsx'), 'utf8'),
+  const { patterns } = value(2);
+  assert.ok(
+    patterns.some((pattern) => pattern.name === 'app-frame'),
+    `list_patterns: ${patterns.map((pattern) => pattern.name).join(', ')}`,
   );
-  assert.match(screen.source, /export default function SignInPage\(\)/);
+  const example = value(3);
+  assert.equal(
+    example.source,
+    await readFile(join(installedDirectory, 'docs/examples/app-frame/AppFrame.tsx'), 'utf8'),
+  );
+  assert.match(example.source, /export default function AppFrame\(\)/);
 });
 
 test('explicit official icons preserve filled geometry and accept custom SVG content', async function () {

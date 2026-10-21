@@ -27,12 +27,12 @@ avoidWhen:
   - text: Quick open of a document or a command by name.
     use: CommandPalette
   - text: An item's details, settings or filters in a full-height panel at the edge of the window.
-    use: Drawer
+    use: Sheet
   - text: Items people keep open and work on beside the page, such as drafts.
     use: PanelDock
 related:
   - button
-  - drawer
+  - sheet
   - popover
   - toast
   - command-palette
@@ -55,7 +55,7 @@ One component opens in two places:
 - **Centered** (the default): a modal in the middle of the window, for confirmations and short forms.
 - **Near the top** (`placement="top"`): a modal whose content grows downward without moving its field, for search-like tasks.
 
-A full-height panel at the edge of the window is a [Drawer](../components/drawer.md), which shares the dialog's surface, heading and actions.
+A panel at an edge of the window is a [Sheet](../components/sheet.md), which shares the dialog's surface, heading and actions.
 
 **DialogClose** is a button inside a dialog or a drawer that closes it, for actions other than the built-in close button, such as Don't save or Done.
 
@@ -66,7 +66,7 @@ A full-height panel at the edge of the window is a [Drawer](../components/drawer
 ## Anatomy
 
 1. **Backdrop** (modal dialogs): a translucent overlay over the page. A press on it closes the dialog.
-2. **Surface**: the dialog color with a hairline border, 1.75 rem corners and 1.5 rem padding, the raised surface Drawer, Popover and CommandPalette share. In the dark theme it keeps the pane color, so rows and fields inside keep their contrast. The ref and other `div` props, such as `id` and `className`, reach the surface.
+2. **Surface**: the dialog color with a hairline border, 1.75 rem corners and 1.5 rem padding, the raised surface Sheet, Popover and CommandPalette share. In the dark theme it keeps the pane color, so rows and fields inside keep their contrast. The ref and other `div` props, such as `id` and `className`, reach the surface.
 3. **Title** (`title`): an `h2` in the page heading type, 1.125 rem, which names the dialog.
 4. **Description** (optional, `description`): muted small text 0.5 rem under the title, which describes the dialog.
 5. **Content** (`children`): 1.5 rem below the title and description, and 1.5 rem above the actions.
@@ -123,7 +123,7 @@ A dialog taller than the window scrolls inside its surface, with its title and a
 - Set `pending` on the dialog and on the action that started its work, so people can't close it halfway through.
 - Compose forms in a dialog from envUI's fields, as on a page: TextField with its floating label and its error, Select with its label above, and RadioGroup rows for a choice.
 - Submit a form in a dialog from its primary action with `type="submit"` and the form's `form` id, so <kbd>Enter</kbd> in a field submits it too.
-- Use a [Drawer](../components/drawer.md) for details, settings, filters and inspectors beside the page.
+- Use a [Sheet](../components/sheet.md) for details, settings, filters and inspectors beside the page.
 
 ### Don't
 
@@ -231,7 +231,7 @@ DialogClose closes the dialog after its own `onClick`, without the dialog's open
 
 ## Changelog
 
-- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Drawer](../components/drawer.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog-popup`. The page is `dialog`, after the component.
+- **1.0.0**: `width` (`md` or `lg`) for `size`; the side panel, `placement="right"`, is [Sheet](../components/sheet.md); `onOpenChange` reports the reason; `initialFocus` and `finalFocus` take functions too; the surface's class is `env-dialog-popup`. The page is `dialog`, after the component.
 - **0.5.0**: `size="wide"`, also for side panels, and `placement="top"`. Dialogs share Popover's raised surface with a hairline border; in the dark theme they keep the pane color through `--env-color-bg-raised`. The title and description sit together above the content. A side panel takes the whole width of a narrow window, with its content clear of the safe areas.
 - **0.4.0**: Secondary buttons in dialogs and side panels, such as the close button, stay distinct on their surface.
 - **0.3.0**: Dialogs rise into place and side panels slide in, over a backdrop that fades in.

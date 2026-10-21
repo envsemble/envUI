@@ -1,0 +1,314 @@
+/* Scaffold: an application screen's invisible structure. Its root is the env-scaffold container and
+   a grid that never paints: the navigation column at the start, the top bar, the body and the bar
+   row at the bottom. Its regions respond to its width at the window classes, compact first, and
+   show the navigation form data-compact, data-medium, data-expanded or data-large names; a column
+   or a row with nothing in it takes no room. Every edge is logical, so it mirrors in right-to-left
+   text.
+
+   data-scroll says what scrolls. document, the default: the page, as on any website, so a phone
+   collapses its address bar, pull to refresh and a tap on the status bar work, and the browser
+   restores the scroll position. The Scaffold is at least as tall as the window; the top bar sticks
+   to the window's top, the bar to its bottom, and a rail or a drawer stays in view, as tall as the
+   window under a top bar across it. body: the Scaffold fills its container's height and the body
+   alone scrolls, under the top bar, for a preview, an embedded frame, a window with its own title
+   bar or Panes whose panes scroll on their own. */
+.env-scaffold {
+  /* The room a top bar takes at the top of the window, which sticky content in the body keeps
+     clear of where the document scrolls: the top bar region's height, which the Scaffold measures
+     (--env-scaffold-top-bar-size), and the top bar height until script runs. */
+  --env-scaffold-sticky-top: 0rem;
+  container: env-scaffold / inline-size;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-block-size: 100dvh;
+  /* The window's left and right safe areas, such as a phone's rounded corners in landscape. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+.env-scaffold[data-scroll='document']:has(> .env-scaffold-top-bar) {
+  --env-scaffold-sticky-top: var(
+    --env-scaffold-top-bar-size,
+    calc(var(--env-top-bar-height) + env(safe-area-inset-top))
+  );
+}
+/* Where the document scrolls, the sticky top bar and bar cover its top and bottom edges, so the
+   document keeps what scrolls into view, such as an element taking focus, clear of them (WCAG
+   2.4.11): its scroll padding is the bars' heights, which the Scaffold measures and sets on the
+   root element as --env-scaffold-scroll-top and --env-scaffold-scroll-bottom, a bar that hides
+   counting 0. Until script runs, these rules estimate them from the regions the Scaffold has; the
+   root element sits outside the theme, so the estimates spell out the top bar height (3.25 rem)
+   and a bar's (4.8 rem). A sticky PageHeader adds its own height through its Page content's scroll
+   margin. Zero specificity, so an application's own scroll padding wins. Where the body scrolls,
+   the bars sit outside its scrollport and take nothing from it. */
+:where(html:has(.env-scaffold[data-scroll='document'])) {
+  --env-scaffold-scroll-top-estimate: 0rem;
+  --env-scaffold-scroll-bottom-estimate: 0rem;
+  scroll-padding-block-start: var(
+    --env-scaffold-scroll-top,
+    var(--env-scaffold-scroll-top-estimate)
+  );
+  scroll-padding-block-end: var(
+    --env-scaffold-scroll-bottom,
+    var(--env-scaffold-scroll-bottom-estimate)
+  );
+}
+:where(html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-top-bar)) {
+  --env-scaffold-scroll-top-estimate: calc(3.25rem + env(safe-area-inset-top));
+}
+:where(
+  html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-navigation > .env-scaffold-bar)
+) {
+  --env-scaffold-scroll-bottom-estimate: calc(4.8rem + env(safe-area-inset-bottom));
+}
+/* The body scrolls: the Scaffold fills its container's height, the window's by default. Give it
+   another block-size with your own class, such as in a preview. */
+.env-scaffold[data-scroll='body'] {
+  block-size: 100dvh;
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+/* The skip links: hidden until focused, then over the scaffold's start corner. */
+.env-scaffold-skip-links {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-start: var(--env-space-2);
+  z-index: var(--env-z-overlay);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-2);
+}
+.env-scaffold-skip-link {
+  --env-scaffold-skip-link-hidden-size: 0.0625rem;
+}
+.env-scaffold-skip-link:not(:focus) {
+  position: absolute;
+  inline-size: var(--env-scaffold-skip-link-hidden-size);
+  block-size: var(--env-scaffold-skip-link-hidden-size);
+  min-inline-size: 0;
+  min-block-size: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The top bar region: above the body, beside the navigation at the start, or across the whole
+   width with topBarSpan="full". It keeps clear of the top safe area. */
+.env-scaffold-top-bar {
+  grid-row: 1;
+  grid-column: 2;
+  min-inline-size: 0;
+  padding-block-start: env(safe-area-inset-top);
+}
+.env-scaffold[data-top-bar-span='full'] > .env-scaffold-top-bar {
+  grid-column: 1 / -1;
+}
+.env-scaffold[data-scroll='document'] > .env-scaffold-top-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--env-z-sticky);
+}
+
+/* The navigation region holds the forms, each in a slot of its own, which the grid places. */
+.env-scaffold-navigation {
+  display: contents;
+}
+.env-scaffold-bar,
+.env-scaffold-rail,
+.env-scaffold-drawer {
+  display: none;
+  min-inline-size: 0;
+  min-block-size: 0;
+  outline: none;
+}
+/* A rail or a drawer runs the full height at the start, or below a top bar across the window, and
+   scrolls on its own. Where the document scrolls it stays in view, as tall as the window, or as
+   the window under a top bar across it. */
+.env-scaffold-rail,
+.env-scaffold-drawer {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  overflow-y: auto;
+  padding-block-start: env(safe-area-inset-top);
+}
+.env-scaffold[data-top-bar-span='full']
+  > .env-scaffold-navigation
+  > :is(.env-scaffold-rail, .env-scaffold-drawer) {
+  grid-row: 2 / -1;
+  padding-block-start: 0;
+}
+.env-scaffold[data-scroll='document']
+  > .env-scaffold-navigation
+  > :is(.env-scaffold-rail, .env-scaffold-drawer) {
+  box-sizing: border-box;
+  position: sticky;
+  inset-block-start: 0;
+  align-self: start;
+  block-size: 100dvh;
+}
+.env-scaffold[data-scroll='document'][data-top-bar-span='full']
+  > .env-scaffold-navigation
+  > :is(.env-scaffold-rail, .env-scaffold-drawer) {
+  inset-block-start: var(--env-scaffold-sticky-top);
+  block-size: calc(100dvh - var(--env-scaffold-sticky-top));
+}
+/* The bar runs across the bottom, clear of the bottom safe area, and sticks to the window's bottom
+   where the document scrolls. */
+.env-scaffold-bar {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  padding-block-end: env(safe-area-inset-bottom);
+}
+.env-scaffold[data-scroll='document'] > .env-scaffold-navigation > .env-scaffold-bar {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: var(--env-z-sticky);
+}
+
+/* The body: the page's main content, beside the navigation and below the top bar. It keeps clear
+   of the bottom safe area where no bar is below it. Where it scrolls, it has a stable gutter so the
+   layout stays in place as content starts or stops overflowing, and sticky content sticks to its
+   top; where the document scrolls, sticky content sticks under the top bar. */
+.env-scaffold-body {
+  grid-column: 2;
+  grid-row: 2;
+  min-inline-size: 0;
+  min-block-size: 0;
+  outline: none;
+  padding-block-end: env(safe-area-inset-bottom);
+}
+.env-scaffold[data-scroll='body'] > .env-scaffold-body {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.env-scaffold:not(:has(> .env-scaffold-top-bar)) > .env-scaffold-body {
+  grid-row: 1 / 3;
+}
+
+/* Each window class shows the form its attribute names, the body leaves the bottom safe area to a
+   bar below it, and the skip link to the navigation hides where no form shows. Ranges, so exactly
+   one window class applies at any width. */
+@container env-scaffold (width < 37.5rem) {
+  .env-scaffold[data-compact='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-compact='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-compact='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-compact='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+  .env-scaffold[data-compact='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    display: none;
+  }
+}
+@container env-scaffold (37.5rem <= width < 52.5rem) {
+  .env-scaffold[data-medium='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-medium='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-medium='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-medium='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+  .env-scaffold[data-medium='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    display: none;
+  }
+}
+@container env-scaffold (52.5rem <= width < 75rem) {
+  .env-scaffold[data-expanded='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-expanded='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-expanded='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-expanded='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+  .env-scaffold[data-expanded='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    display: none;
+  }
+}
+@container env-scaffold (width >= 75rem) {
+  .env-scaffold[data-large='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-large='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-large='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-large='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+  .env-scaffold[data-large='none'] .env-scaffold-skip-link[data-skip='navigation'] {
+    display: none;
+  }
+}
+
+/* Panes in a body where the document scrolls are as tall as their content, so a supporting sheet
+   placed against them would be as tall as the content too, under the window's edges. Here it is
+   the window's, as a Sheet is: fixed to the window at the modal layer, over a scrim fixed over the
+   whole window, top bar and bar included, scrolling inside itself and clear of the safe areas; a
+   bottom sheet as tall as the window allows, less the room Sheet leaves above one. The panes
+   don't scroll on their own there, so sticky content in them sticks to the window. Only places,
+   sizes and layers them; the selectors stay below Panes' side-by-side rules, which win. */
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes
+  > :is(.env-panes-main, .env-panes-list, .env-panes-detail) {
+  overflow: visible;
+}
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes[data-behavior='supporting']
+  > .env-panes-supporting {
+  position: fixed;
+  z-index: var(--env-z-modal);
+  padding-block-end: env(safe-area-inset-bottom);
+}
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes[data-behavior='supporting'][data-open]
+  > .env-panes-scrim[aria-hidden] {
+  position: fixed;
+  z-index: var(--env-z-overlay);
+}
+@container env-panes (width < 37.5rem) {
+  :where(.env-scaffold[data-scroll='document'])
+    .env-panes[data-behavior='supporting']
+    > .env-panes-supporting {
+    max-block-size: calc(100% - max(var(--env-space-8), env(safe-area-inset-top)));
+  }
+}
+@container env-panes (width >= 37.5rem) {
+  :where(.env-scaffold[data-scroll='document'])
+    .env-panes[data-behavior='supporting']
+    > .env-panes-supporting {
+    padding-block-start: env(safe-area-inset-top);
+    padding-inline-end: env(safe-area-inset-right);
+  }
+}
+
+/* A PanelDock placed directly in the body lies over the body's visible area and stays there while
+   it scrolls, taking no room in its flow; its negative margin lifts it by its own height, wherever
+   it sits among the body's children. Where the body scrolls, the body becomes a container of both
+   its sizes, which its row in the grid sets, and the dock sticks across its scrollport, as tall as
+   it. Where the document scrolls, the dock sticks across the window under the top bar. */
+.env-scaffold[data-scroll='body'] > .env-scaffold-body:has(> .env-panel-dock) {
+  container-type: size;
+}
+.env-scaffold[data-scroll='body'] > .env-scaffold-body > .env-panel-dock {
+  position: sticky;
+  inset-block: 0;
+  inset-inline: auto;
+  block-size: 100cqb;
+  margin-block-start: -100cqb;
+}
+.env-scaffold[data-scroll='document'] > .env-scaffold-body {
+  --env-scaffold-dock-size: calc(100dvh - var(--env-scaffold-sticky-top));
+}
+.env-scaffold[data-scroll='document'] > .env-scaffold-body > .env-panel-dock {
+  position: sticky;
+  inset-block: var(--env-scaffold-sticky-top) 0;
+  inset-inline: auto;
+  block-size: var(--env-scaffold-dock-size);
+  margin-block-start: calc(-1 * var(--env-scaffold-dock-size));
+}

@@ -16,15 +16,21 @@
         "to": [],
         "use": "RowProps, with wrap, align, justify and gap, or ColumnProps."
       },
-      "AppShell": { "to": ["AppShell.Root"] },
-      "AppShellProps": { "to": ["AppShell.RootProps"] },
+      "AppShell": {
+        "to": [],
+        "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+      },
+      "AppShellProps": {
+        "to": [],
+        "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+      },
       "AppShellSkeleton": {
         "to": [],
-        "use": "Render the frame's own parts as its loading state, with NavList.Skeleton in Sidebar.Content, inside a LoadingState; the v1-app-shell codemod rewrites it."
+        "use": "AppShellSkeleton is gone: render the frame's Scaffold with placeholder items in its navigation and page, inside a LoadingState."
       },
       "AppShellSkeletonProps": {
         "to": [],
-        "use": "AppShellSkeleton is gone: the frame's own parts, with NavList.Skeleton, are its loading state."
+        "use": "AppShellSkeleton is gone: the frame, a Scaffold, with placeholder items is its loading state."
       },
       "BrandLogo": {
         "to": [],
@@ -84,11 +90,11 @@
       "InputProps": { "to": ["TextFieldProps"] },
       "LoadingBar": {
         "to": [],
-        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+        "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
       "LoadingBarProps": {
         "to": [],
-        "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+        "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
@@ -116,8 +122,14 @@
       "MenubarMenuOpenChangeDetails": { "to": ["Menubar.MenuOpenChangeDetails"] },
       "MenubarMenuProps": { "to": ["Menubar.MenuProps"] },
       "MenubarProps": { "to": ["Menubar.RootProps"] },
-      "NavigationItem": { "to": ["NavList.Item"] },
-      "NavigationItemProps": { "to": ["NavList.ItemProps"] },
+      "NavigationItem": {
+        "to": [],
+        "use": "List the destinations in one array, each { label, icon, href or onSelect, count, group, current }, and pass it to Drawer, Rail or Bar, which render the items; selected is current, a count in end is count. No codemod rewrites it: rewrite each list by hand."
+      },
+      "NavigationItemProps": {
+        "to": [],
+        "use": "Destination, one item of the array that Bar, Rail and Drawer take, or DrawerDestination, whose icon is optional."
+      },
       "Notice": { "to": ["Alert"] },
       "NoticeProps": { "to": ["AlertProps"] },
       "NoticeTone": { "to": ["AlertTone"] },
@@ -185,8 +197,14 @@
         "use": "Text renders another element through render, such as render={<h2 />}."
       },
       "TextTone": { "to": ["TextEmphasis"] },
-      "TitleBar": { "to": ["WindowFrame.TitleBar"] },
-      "TitleBarProps": { "to": ["WindowFrame.TitleBarProps"] },
+      "TitleBar": {
+        "to": [],
+        "use": "TitleBar is gone: <TopBar titleBar start={…} title={…} actions={…} />, with its end content in actions."
+      },
+      "TitleBarProps": {
+        "to": [],
+        "use": "TopBarProps; TitleBar is gone: a TopBar with titleBar is the window's title bar."
+      },
       "Toast": {
         "to": [],
         "use": "Show notifications through useToast() inside Toast.Provider. The manual Toast is internal; the `Toast` export is now the namespace of Toast.Provider.",
@@ -200,19 +218,29 @@
       "ToastProviderProps": { "to": ["Toast.ProviderProps"] },
       "ToastVariant": { "to": ["ToastTone"] },
       "TreeOpenOptions": { "to": ["TreeActionOptions"] },
-      "WindowFrame": { "to": ["WindowFrame.Root"] },
-      "WindowFrameProps": { "to": ["WindowFrame.RootProps"] },
+      "WindowFrame": {
+        "to": [],
+        "use": "WindowFrame is gone: a window that draws its title bar is a Scaffold with topBarSpan=\"full\" and topBar={<TopBar titleBar … />}, and bodyRef for scrollRef, as the window frame pattern shows."
+      },
+      "WindowFrameProps": {
+        "to": [],
+        "use": "ScaffoldProps; WindowFrame is gone: a Scaffold with topBarSpan=\"full\" and a TopBar with titleBar frame the window."
+      },
       "getInitials": {
         "to": [],
         "use": "Avatar shows the initials itself with fallback=\"initials\"; derive initials in the application for custom layouts."
       },
+      "useAppShell": {
+        "to": [],
+        "use": "AppShell is gone: Scaffold's bodyRef is the element that scrolls the page, and sticky content sticks at the top of the body, at 0."
+      },
       "useLinkComponent": {
         "to": [],
-        "use": "Render envUI's Link, Button with href, NavList.Item or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
+        "use": "Render envUI's Link, Button with href, the destinations of Bar, Rail and Drawer, or Menu.Item with href, which use the LinkProvider's component; or read the router's link component in the application."
       },
       "useSidebarCompact": {
         "to": [],
-        "use": "useSidebar().isRail says whether the sidebar shows icons only; AppShell.Root's sidebarOpen and onSidebarOpenChange keep its state."
+        "use": "The sidebar is gone: Scaffold shows a navigation Rail of icons in a medium window, chosen by its width in CSS, with no state to read."
       }
     },
     "@envsemble/envui/theme-bootstrap": {

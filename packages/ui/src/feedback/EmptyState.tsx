@@ -3,7 +3,7 @@ import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Column, Grid } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
-import { inSkeleton } from '../internal/inSkeleton.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 

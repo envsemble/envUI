@@ -32,43 +32,65 @@ components:
 
 ## Overview
 
-CloseButton is an icon-only button with a cross, ghost by default, named "Close" in the language the [EnvUIProvider](../setup.md#locale-strings-and-direction) sets. It closes, dismisses or removes what it sits in, such as a tip, a panel or an item in a list. Under a coarse pointer, its hit area reaches the 2.75 rem touch size, also where its container draws it smaller.
+CloseButton is an icon-only button with a cross that closes, dismisses or removes what it sits in. Under a coarse pointer, its hit area reaches the 2.75 rem touch size.
 
 ```tsx example=DismissTip
 
 ```
 
-## Variants and sizes
+```tsx example=RemovePeople caption="Beside others like it, each button names what it removes."
 
-| Variant     | Use for                                                                                                   |
-| ----------- | --------------------------------------------------------------------------------------------------------- |
-| `ghost`     | An application's chrome and surfaces: the quiet icon, with a state layer on hover and press. The default. |
-| `secondary` | Where the button should read as a control of its own, such as over an image.                              |
+```
 
-- **Size**: `sm`, `md` or `lg`, as on every button: 2, 2.5 or 3 rem square in the comfortable scale; without it, the control height of its container.
-- **Icon**: a Close cross by default; `icon` takes another, such as a smaller cross.
+### Its name
 
-## States and behaviour
+`aria-label`, else EnvUIProvider's `messages.common.close`, else Close, in the language the [provider](../setup.md#locale-strings-and-direction) sets.
 
-- Hover, pressed, focus and disabled are Button's; `pending` replaces the icon with a spinner.
-- The name is `aria-label`, then EnvUIProvider's `messages.common.close`, then "Close".
-- Under a coarse pointer, the hit area grows to the touch size around the button without changing how it looks.
+```tsx example=ApplicationLabel
 
-## Content guidelines
+```
 
-- Keep the default name where one thing closes; name what it removes where several sit side by side, such as "Remove Alex Morgan".
+## Variants
 
-## Do and don't
+```tsx example=CloseVariants
 
-### Do
+```
 
-- Put it at the end of the header of what it closes, where people look for it.
-- Move focus somewhere sensible after the button disappears with what it closed.
+| Variant     | Use for                                            |
+| ----------- | -------------------------------------------------- |
+| `ghost`     | An application's chrome and surfaces. The default. |
+| `secondary` | A control of its own, such as over an image.       |
 
-### Don't
+Sizes are a button's, `sm`, `md` and `lg`; without one, the container's.
 
-- Don't use it for an action that cannot be undone; name the consequence with a ConfirmButton.
-- Don't put two close buttons on the same thing.
+## When to use
+
+```tsx do=CloseAtEnd caption="At the end of the header of what it closes, where people look for it."
+
+```
+
+```tsx dont=CloseAtStart caption="At the start: it reads as part of the content."
+
+```
+
+```tsx do=OneClose caption="One way to close, beside the actions."
+
+```
+
+```tsx dont=TwoCloses caption="A cross and a Close button: two ways to do one thing."
+
+```
+
+- Name what it removes where several sit together, such as Remove Alex Morgan.
+
+## Anatomy
+
+```tsx anatomy=CloseButtonAnatomy
+
+```
+
+1. **Button** (`env-close-button`)
+2. **Icon** (`env-close-button > env-icon`, `icon`)
 
 ## Accessibility
 
@@ -81,31 +103,13 @@ CloseButton is an icon-only button with a cross, ghost by default, named "Close"
 
 ### envUI provides
 
-- A native `<button>` named Close, or the provider's word for it, with the cross hidden from assistive technology.
+- A native `<button>` named Close, or the provider's word, with the cross hidden.
 - The touch-size hit area under a coarse pointer.
 
 ### You provide
 
-- What closing does, and where focus goes once the button is gone.
-- A specific `aria-label` where several close buttons sit together.
-
-## Examples
-
-### Remove items
-
-Beside others like it, each button names what it removes.
-
-```tsx example=RemovePeople
-
-```
-
-### The application's own name
-
-An EnvUIProvider's `messages` name every CloseButton inside it, in the reader's language.
-
-```tsx example=ApplicationLabel
-
-```
+- Where focus goes once the button is gone.
+- A specific `aria-label` where several sit together.
 
 ## Changelog
 

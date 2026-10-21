@@ -7,7 +7,7 @@ import { Grid, Row } from '../foundations/Layout.js';
 import { useLocale } from '../internal/EnvUIContext.js';
 
 /** What Meter and Progress share: a label, a range, an optional value text and native passthrough. */
-export interface BarProps
+export interface RangeBarProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-valuetext' | 'defaultValue'> {
   /** What the bar shows, such as Seats assigned; it is visible above the bar and names it. */
   label: ReactNode;
@@ -34,7 +34,7 @@ export interface BarProps
   'aria-valuetext'?: string;
 }
 
-export interface MeterProps extends BarProps {
+export interface MeterProps extends RangeBarProps {
   /**
    * The measurement, between min and max. A value outside the range shows, and is reported, as the
    * nearest end.

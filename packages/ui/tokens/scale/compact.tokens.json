@@ -33,9 +33,9 @@
     "row-padding-block-md": { "$value": { "value": 0.3125, "unit": "rem" } },
     "row-padding-block-lg": { "$value": { "value": 0.4375, "unit": "rem" } }
   },
-  "app-shell": {
+  "top-bar": {
     "$type": "dimension",
-    "header-height": { "$value": { "value": 2.625, "unit": "rem" } }
+    "height": { "$value": { "value": 2.625, "unit": "rem" } }
   },
   "counter-badge": {
     "$type": "dimension",

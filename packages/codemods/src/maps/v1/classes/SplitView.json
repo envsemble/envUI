@@ -1,4 +1,4 @@
 {
-  "env-split-view": "env-split-pane",
-  "env-split-view-divider": "env-split-pane-handle"
+  "env-split-view": "env-panes",
+  "env-split-view-divider": "env-panes-divider"
 }

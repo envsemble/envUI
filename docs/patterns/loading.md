@@ -21,11 +21,13 @@ useWhen:
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
+  - text: The application frame itself before the first page loads, which shows its own parts as skeletons.
+    use: Scaffold
 composes:
-  - AppShell
-  - Sidebar
-  - SidebarTrigger
-  - NavList
+  - Scaffold
+  - TopBar
+  - Rail
+  - Drawer
   - Page
   - PageHeader
   - Card
@@ -46,7 +48,7 @@ related:
   - spinner
   - progress
   - button
-  - app-shell
+  - scaffold
 ---
 
 # Loading
@@ -61,14 +63,14 @@ Use this pattern to tell people that something is on its way. Where the shape of
 
 ## Anatomy
 
-1. **The skeleton:** `skeleton` on the component that holds the content: Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, Dialog, Popover, HoverCard or Menu.Root. Everything inside follows it.
+1. **The skeleton:** `skeleton` on the component that holds the content: Surface, Card, List.Root and List.Item, Table.Root, Stat, Alert, Message, EmptyState, TopBar, Dialog, Sheet, Popover, HoverCard, Menu.Root or Panes.Supporting. Everything inside follows it.
 2. **Placeholder items:** `placeholders(count)` stands in for the items, so the page writes `items ?? placeholders(3)` and renders its normal components. A placeholder has only an `id`; `isPlaceholder(item)` tells one apart.
 3. **Missing text:** text given as undefined, such as `title={item.title}` over a placeholder, is a bar of its text style's usual length.
 4. **No known shape:** a [LoadingState](../components/spinner.md), a spinner with a label.
 5. **An update to what is shown:** a [Spinner](../components/spinner.md) beside it.
 6. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.
 7. **Measurable work:** [Progress](../components/progress.md) with a `value`.
-8. **A whole page:** the loading bar of [AppShell.Root](../components/app-shell.md), through `loading`.
+8. **A whole page:** the loading bar along the bottom edge of the [TopBar](../components/top-bar.md), through `loading`.
 
 ## States and behaviour
 
@@ -130,7 +132,7 @@ Each team's projects load the first time it is chosen: the list is a skeleton ov
 
 ### Page progress
 
-Choosing a page in the sidebar starts loading it: after 200 ms the bar along the header's bottom edge shows the next page is on its way, named by `loadingLabel`. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`.
+Choosing a page in the navigation starts loading it: the page on screen stays, and stays selected in the navigation, and after 200 ms the bar along the top bar's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the navigation selects it, and focus moves to the Scaffold's body, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The Scaffold sits in a box here, with `landmarks={false}` and a block size of its own; an application renders it at its root.
 
 ```tsx example=PageProgress
 

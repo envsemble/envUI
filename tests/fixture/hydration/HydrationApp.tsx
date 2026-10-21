@@ -17,8 +17,10 @@ import {
   Slider,
   DropZone,
   Tree,
-  WindowFrame,
   Menubar,
+  Panes,
+  readPanesSize,
+  TopBar,
   Menu,
   Table,
   Composer,
@@ -35,21 +37,7 @@ import {
   Pagination,
   DatePicker,
   Calendar,
-  SplitPane,
-  Sidebar,
-  SidebarTrigger,
-  NavList,
-  readAppShellCookie,
 } from '@envsemble/envui';
-
-/**
- * The frame state a server reads from the request's cookie, here a fixed Cookie header, so the
- * server and the browser render the same collapsed sidebar with its chosen width.
- */
-const frameState = readAppShellCookie(
-  'theme=dark; hydrated-frame=start.open%3D0%26start.width%3D18',
-  'hydrated-frame',
-);
 
 const treeItems = Array.from({ length: 40 }, (_, index) => ({
   id: `doc-${index}`,
@@ -81,7 +69,9 @@ export function HydrationApp() {
   return (
     <Theme theme="dark">
       <Toast.Provider>
-        <WindowFrame.TitleBar
+        <TopBar
+          titleBar
+          title="Hydrated title"
           start={
             <Menubar.Root aria-label="Hydrated menubar" accessKeys>
               <Menubar.Menu label="File" accessKey="F">
@@ -92,9 +82,7 @@ export function HydrationApp() {
               </Menubar.Menu>
             </Menubar.Root>
           }
-        >
-          Hydrated title
-        </WindowFrame.TitleBar>
+        />
         <TextField
           label="Hydrated input"
           value={name}
@@ -236,11 +224,23 @@ export function HydrationApp() {
           }}
           footer="Hydrated composer footer"
         />
-        <SplitPane.Root stackBelow="20rem">
-          <SplitPane.Pane label="Hydrated start">Hydrated start pane</SplitPane.Pane>
-          <SplitPane.ResizeHandle label="Hydrated split" />
-          <SplitPane.Pane>Hydrated end pane</SplitPane.Pane>
-        </SplitPane.Root>
+        <Panes.Root behavior="supporting" splitAt="medium">
+          <Panes.Main label="Hydrated main">Hydrated main pane</Panes.Main>
+          <Panes.Divider label="Hydrated split" />
+          <Panes.Supporting label="Hydrated supporting">Hydrated supporting pane</Panes.Supporting>
+        </Panes.Root>
+        {/* A width kept under `persist`, which the server read from the request's cookies and the
+            page passes on as it hydrates: the server's markup has it, and nothing moves. */}
+        <Panes.Root
+          behavior="supporting"
+          splitAt="medium"
+          persist="hydrated-kept-panes"
+          persistedSize={readPanesSize('theme=dark; hydrated-kept-panes=30', 'hydrated-kept-panes')}
+        >
+          <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
+          <Panes.Divider label="Hydrated kept split" />
+          <Panes.Supporting label="Hydrated kept supporting">Kept supporting pane</Panes.Supporting>
+        </Panes.Root>
         <div style={{ position: 'relative', blockSize: '24rem' }}>
           <PanelDock.Root
             panels={dockPanels}
@@ -312,19 +312,6 @@ export function HydrationApp() {
           total={30}
           onPageChange={setPage}
         />
-        <Sidebar.Provider
-          persist={{ key: 'hydrated-frame', storage: 'cookie' }}
-          initialState={frameState}
-        >
-          <SidebarTrigger data-testid="hydrated-sidebar-trigger" />
-          <Sidebar.Root label="Hydrated sidebar" resizable>
-            <Sidebar.Content>
-              <NavList.Root>
-                <NavList.Item href="#hydrated-home">Hydrated home</NavList.Item>
-              </NavList.Root>
-            </Sidebar.Content>
-          </Sidebar.Root>
-        </Sidebar.Provider>
         <output>{name}</output>
       </Toast.Provider>
     </Theme>

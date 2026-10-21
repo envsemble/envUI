@@ -1,0 +1,8 @@
+[
+  "line 17: env-navigation-item has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current.",
+  "line 17: env-navigation-selected has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current.",
+  "line 17: env-navigation-dot has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current.",
+  "line 70: env-navigation-item has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current.",
+  "line 70: env-navigation-icon-only has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current.",
+  "line 70: env-navigation-trailing has no 1.0 class: NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current."
+]

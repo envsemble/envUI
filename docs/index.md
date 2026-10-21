@@ -18,7 +18,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 - [Write a component page](component-pages.md) — The page template, frontmatter, generated props and example files, and how to convert a page.
 
-- [Write a pattern or template page](pattern-pages.md) — The frontmatter, sections and files of pattern and template pages, and the rules for template screens.
+- [Write a pattern page](pattern-pages.md) — The frontmatter, sections and files of pattern pages.
 
 ## Foundations
 
@@ -38,9 +38,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Row](components/row.md)
 - [Column](components/column.md)
 - [Grid](components/grid.md)
+- [Scaffold](components/scaffold.md)
+- [Panes](components/panes.md)
 - [Page](components/page.md)
 - [PageHeader](components/page-header.md)
-- [SplitPane](components/split-pane.md)
 - [Surface](components/surface.md)
 - [List](components/list.md)
 - [Card](components/card.md)
@@ -73,18 +74,17 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Navigation
 
-- [NavList](components/nav-list.md)
+- [Bar](components/bar.md)
+- [Rail](components/rail.md)
+- [Drawer](components/drawer.md)
 - [Tabs](components/tabs.md)
 - [Pager](components/pager.md)
-- [AppShell](components/app-shell.md)
-- [Sidebar](components/sidebar.md)
-- [WindowFrame](components/window-frame.md)
+- [TopBar](components/top-bar.md)
 - [Tree](components/tree.md)
 - [DocumentTabs](components/document-tabs.md)
 - [PanelDock](components/panel-dock.md)
 - [Breadcrumbs](components/breadcrumbs.md)
 - [Pagination](components/pagination.md)
-- [AccountMenu](components/account-menu.md)
 
 ## Content & guidance
 
@@ -111,7 +111,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)
 - [Dialog](components/dialog.md)
-- [Drawer](components/drawer.md)
+- [Sheet](components/sheet.md)
 - [ConfirmDialog](components/confirm-dialog.md)
 - [CommandPalette](components/command-palette.md)
 - [Menu](components/menu.md)
@@ -131,16 +131,9 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
 - [Navigation](patterns/navigation.md)
+- [App frame](patterns/app-frame.md)
+- [Account menu](patterns/account-menu.md)
+- [Window frame](patterns/window-frame.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)
-
-## Templates
-
-- [App frame with sidebar](templates/app-frame.md)
-- [Index page](templates/index-page.md)
-- [Details page](templates/details-page.md)
-- [Settings page](templates/settings-page.md)
-- [Dashboard](templates/dashboard-page.md)
-- [Sign-in page](templates/sign-in-page.md)
-- [Error and not-found pages](templates/error-pages.md)

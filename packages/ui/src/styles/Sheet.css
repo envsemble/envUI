@@ -1,0 +1,143 @@
+/* Sheet: a panel over the page at an edge of the window, on the dialog surface (DialogSurface). A
+   side sheet runs the full height at the start or the end edge, which follow the text direction; a
+   bottom sheet sits at the bottom edge, as tall as its content. Its widths follow the window
+   classes of the env-window container around it, compact first: a sheet that would leave only a
+   sliver of the page beside it takes the whole width, clear of the safe areas. */
+.env-sheet-viewport {
+  box-sizing: border-box;
+  position: fixed;
+  inset: 0;
+  z-index: var(--env-z-modal);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  place-items: stretch end;
+  /* The env-window container of the sheet and what it holds (see .env-overlay-theme in
+     Dialog.css): it has no inline padding, so it measures the whole window. */
+  container: env-window / inline-size;
+  pointer-events: none;
+}
+.env-sheet-viewport[data-side='start'] {
+  place-items: stretch start;
+}
+.env-sheet-viewport[data-side='bottom'] {
+  place-items: end center;
+  padding-block-start: max(var(--env-space-8), env(safe-area-inset-top));
+}
+.env-sheet-popup {
+  --env-sheet-width: 24rem;
+  --env-sheet-bottom-width: 40rem;
+  /* A swipe toward the edge moves the sheet with the finger: Base UI sets the movement, and its
+     own transform while the finger is down. */
+  --env-sheet-swipe-x: var(--drawer-swipe-movement-x, 0rem);
+  --env-sheet-swipe-y: var(--drawer-swipe-movement-y, 0rem);
+  box-sizing: border-box;
+  max-block-size: none;
+  outline: none;
+  transform: translate(var(--env-sheet-swipe-x), var(--env-sheet-swipe-y));
+  transition: opacity var(--env-motion-duration-medium) var(--env-motion-ease);
+}
+/* A side sheet: as tall as the window, and in a compact window as wide as it, with no border and
+   clear of the safe areas on both sides, such as a phone's rounded corners in landscape. */
+.env-sheet-popup:is([data-side='start'], [data-side='end']) {
+  inline-size: 100%;
+  block-size: 100%;
+  border-block-width: 0;
+  border-inline-width: 0;
+  padding-block-start: max(var(--env-space-5), env(safe-area-inset-top));
+  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+  padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+}
+.env-sheet-popup[data-width='custom']:not([data-side='bottom']) {
+  inline-size: min(var(--env-sheet-width), 100%);
+}
+/* A bottom sheet: as wide as the window up to 40 rem, as tall as its content, with its top corners
+   rounded, and clear of the safe area at the bottom. */
+.env-sheet-popup[data-side='bottom'] {
+  inline-size: min(var(--env-sheet-bottom-width), 100%);
+  max-block-size: 100%;
+  border-block-end-width: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  padding-block-end: max(var(--env-space-5), env(safe-area-inset-bottom));
+}
+/* From a medium window, a md side sheet leaves the page beside it; from an expanded one, a lg side
+   sheet does too. The edge it slides from has no border, and the safe area of that window edge
+   pads it. */
+@container env-window (width >= 37.5rem) {
+  .env-sheet-popup[data-width='md']:not([data-side='bottom']) {
+    inline-size: min(var(--env-sheet-width), 100%);
+  }
+  .env-sheet-popup[data-width='md'][data-side='end'] {
+    border-inline-start-width: var(--env-control-border-width);
+    padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
+  }
+  .env-sheet-popup[data-width='md'][data-side='start'] {
+    border-inline-end-width: var(--env-control-border-width);
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
+  }
+}
+@container env-window (width >= 52.5rem) {
+  .env-sheet-popup[data-width='lg']:not([data-side='bottom']) {
+    --env-sheet-width: 44rem;
+    inline-size: min(var(--env-sheet-width), 100%);
+  }
+  .env-sheet-popup[data-width='lg'][data-side='end'] {
+    border-inline-start-width: var(--env-control-border-width);
+    padding-inline: var(--env-space-5) max(var(--env-space-5), env(safe-area-inset-right));
+  }
+  .env-sheet-popup[data-width='lg'][data-side='start'] {
+    border-inline-end-width: var(--env-control-border-width);
+    padding-inline: max(var(--env-space-5), env(safe-area-inset-left)) var(--env-space-5);
+  }
+}
+/* In right-to-left text the end edge is the left one, so its safe area pads it. */
+.env-sheet-popup[data-side='end']:dir(rtl),
+.env-sheet-popup[data-side='start']:dir(rtl) {
+  padding-inline: max(var(--env-space-5), env(safe-area-inset-left), env(safe-area-inset-right));
+}
+
+/* Motion: the sheet fades and slides in from its edge. Movement only without a reduced-motion
+   preference, and none while a finger moves it. */
+.env-sheet-popup[data-starting-style],
+.env-sheet-popup[data-ending-style] {
+  opacity: 0;
+}
+.env-sheet-popup[data-ending-style] {
+  transition-duration: var(--env-motion-duration-fast);
+  transition-timing-function: var(--env-motion-ease-exit);
+}
+.env-sheet-popup[data-swiping] {
+  transition: none;
+  user-select: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .env-sheet-popup {
+    --env-sheet-offset-x: 2rem;
+    --env-sheet-offset-y: 0rem;
+    transition:
+      opacity var(--env-motion-duration-medium) var(--env-motion-ease),
+      transform var(--env-motion-duration-slow) var(--env-motion-ease-enter);
+  }
+  .env-sheet-popup:is([data-side='start'], [data-side='end']:dir(rtl)) {
+    --env-sheet-offset-x: -2rem;
+  }
+  .env-sheet-popup[data-side='start']:dir(rtl) {
+    --env-sheet-offset-x: 2rem;
+  }
+  .env-sheet-popup[data-side='bottom'] {
+    --env-sheet-offset-x: 0rem;
+    --env-sheet-offset-y: 2rem;
+  }
+  .env-sheet-popup[data-starting-style],
+  .env-sheet-popup[data-ending-style] {
+    transform: translate(
+      calc(var(--env-sheet-swipe-x) + var(--env-sheet-offset-x)),
+      calc(var(--env-sheet-swipe-y) + var(--env-sheet-offset-y))
+    );
+  }
+  .env-sheet-popup[data-ending-style] {
+    transition-duration: var(--env-motion-duration-fast);
+    transition-timing-function: var(--env-motion-ease-exit);
+  }
+}

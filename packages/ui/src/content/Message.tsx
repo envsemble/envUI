@@ -6,7 +6,7 @@ import { ControlDefaults } from '../internal/ControlDefaults.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { MessageStatusLabel } from './internal/MessageStatusLabel.js';
-import { inSkeleton } from '../internal/inSkeleton.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
 import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type MessageStatus = 'sending' | 'failed';

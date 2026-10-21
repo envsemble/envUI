@@ -11,12 +11,6 @@ export const transforms = {
       'Move imports from envUI 0.x to their 1.0 names: renamed exports, namespace parts, the DirectionLink split and removed exports.',
     extensions: scripts,
   },
-  'v1-app-shell': {
-    file: fileURLToPath(new URL('./transforms/v1-app-shell.mjs', import.meta.url)),
-    description:
-      "Rewrite 0.x's AppShell and AppShellSkeleton into the frame's parts: AppShell.Root, Sidebar.Root, SidebarTrigger, AppShell.Header and AppShell.Main, and useAppShell().closeNarrowSidebar into useSidebar().dismiss; what cannot move is reported.",
-    extensions: scripts,
-  },
   'v1-props': {
     file: fileURLToPath(new URL('./transforms/v1-props.mjs', import.meta.url)),
     description:

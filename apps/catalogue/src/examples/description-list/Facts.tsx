@@ -2,7 +2,7 @@ import { Badge, DescriptionList, Link } from '@envsemble/envui';
 
 export default function Facts() {
   return (
-    <DescriptionList.Root aria-label="Project details">
+    <DescriptionList.Root aria-label="Project details" style={{ inlineSize: 'min(100%, 26rem)' }}>
       <DescriptionList.Item label="Owner">Alex Morgan</DescriptionList.Item>
       <DescriptionList.Item label="Status">
         <Badge tone="success">Active</Badge>

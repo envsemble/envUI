@@ -150,11 +150,6 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/NavList.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 5
-    }
-  },
   "packages/ui/src/styles/Alert.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 3
@@ -224,11 +219,6 @@
       "count": 3
     },
     "unit-disallowed-list": {
-      "count": 2
-    }
-  },
-  "packages/ui/src/styles/WindowFrame.css": {
-    "declaration-property-unit-disallowed-list": {
       "count": 2
     }
   },

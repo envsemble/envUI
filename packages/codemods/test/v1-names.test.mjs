@@ -55,10 +55,19 @@ const reports = {
     `line 2: re-exports LoadingBar, which ${library} no longer exports: ${use('LoadingBar')}`,
     'line 3: re-exports MenuItemProps, which is Menu.ItemProps in 1.0 and cannot be re-exported by its old name: re-export the Menu namespace instead.',
   ],
-  // ActionGroup, FeatureCard, AppShellSkeleton and Stack used as elements are left to
-  // v1-structure, v1-app-shell and v1-stack, which rewrite each one; ActionCard used as a value is
-  // reported.
+  // ActionGroup, FeatureCard and Stack used as elements are left to v1-structure and v1-stack,
+  // which rewrite each one; ActionCard used as a value is reported.
   'later-transforms.tsx': removedFrom(1, ['ActionCard']),
+  // WindowFrame and TitleBar are gone: Scaffold and TopBar frame the window, by hand.
+  'shell.tsx': [
+    ...removedFrom(1, ['TitleBar', 'WindowFrame']),
+    ...removedFrom(2, ['TitleBarProps']),
+  ],
+  // NavList is gone in 1.0: a list of navigation items becomes an array of destinations by hand.
+  'nav-list.tsx': [
+    ...removedFrom(1, ['NavigationItem']),
+    ...removedFrom(2, ['NavigationItemProps']),
+  ],
   'removed.tsx': [
     ...removedFrom(1, [
       'getInitials',
@@ -88,7 +97,7 @@ const reports = {
     expectError(13, 'not exported by the installed 1.0'),
   ],
   'expect-error-unchanged.tsx': [
-    'line 2: dropped // @ts-expect-error -- Sidebar is not exported by the installed version, which expected an error from the 0.x names or from Sidebar, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Sidebar still has the error.',
+    'line 2: dropped // @ts-expect-error -- Tree is not exported by the installed version, which expected an error from the 0.x names or from Tree, which stays: TypeScript fails on a @ts-expect-error with no error below it, so put it back if Tree still has the error.',
   ],
   'literal-keys.tsx': [
     `line 5: ui.LoadingBar is no longer exported by ${library}: ${use('LoadingBar')}`,

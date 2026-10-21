@@ -22,6 +22,7 @@ export default function StartAndFooter() {
           : `${comments} ${comments === 1 ? 'comment' : 'comments'} added.`
       }
       onSubmit={() => setComments((count) => count + 1)}
+      style={{ inlineSize: 'min(100%, 32rem)' }}
     />
   );
 }

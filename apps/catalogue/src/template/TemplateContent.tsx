@@ -15,7 +15,6 @@ import { FigureSection, SectionColumns } from './Figures';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
-import { TemplatePreview } from './TemplatePreview';
 
 const statusTones = {
   experimental: 'warning',
@@ -137,13 +136,6 @@ function Section({ reference, section }: { reference: Document; section: Documen
             name={block.name}
             title={block.heading}
           />
-        ) : block.kind === 'template' ? (
-          <TemplatePreview
-            key={block.name}
-            page={reference.id}
-            name={block.name}
-            title={block.heading}
-          />
         ) : block.kind === 'specimen' ? (
           <Specimen key={block.name} page={reference.id} name={block.name} />
         ) : null,
@@ -259,7 +251,7 @@ export function TemplateContent({ page, view }: { page: ReferencePage; view: Ref
   );
 }
 
-/** A pattern or template page, which has one view: every section in the template's order. */
+/** A pattern page, which has one view: every section in the page's order. */
 export function SingleViewContent({ document }: { document: Document }) {
   return <Sections reference={document} sections={document.sections ?? []} />;
 }

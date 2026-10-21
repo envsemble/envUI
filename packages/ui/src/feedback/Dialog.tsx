@@ -21,8 +21,8 @@ import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 
 /**
- * Why a dialog or a drawer asks to open or close: its trigger, Escape, a press outside, focus
- * leaving a non-modal one, a close button, a swipe (drawers) or the application.
+ * Why a dialog or a sheet asks to open or close: its trigger, Escape, a press outside, focus
+ * leaving a non-modal one, a close button, a swipe (sheets) or the application.
  */
 export type DialogOpenChangeReason =
   | 'trigger-press'
@@ -92,7 +92,7 @@ export interface DialogProps
   /**
    * center for a modal in the middle of the window; top for a modal near the top of the window for
    * search-like tasks, so results grow downward without moving the field. For a panel at an edge
-   * of the window, use Drawer.
+   * of the window, use Sheet.
    * @default 'center'
    */
   placement?: 'center' | 'top';
@@ -146,7 +146,7 @@ export type DialogCloseProps = {
 } & Extract<ButtonProps, { href?: undefined }>;
 
 /**
- * A button inside a Dialog or a Drawer that closes it after its own onClick, for an action other
+ * A button inside a Dialog or a Sheet that closes it after its own onClick, for an action other
  * than the built-in close button, such as Don't save or Done. It takes Button's props and is
  * secondary by default.
  */

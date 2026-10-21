@@ -1,4 +1,0 @@
-[
-  "line 8: AppShell.Root: AppShell.Root has none of the props only 0.x's AppShell took, so the codemod can't tell a 0.x AppShell that v1-names renamed from a 1.0 one, and left it as it is: if it is 0.x's, put its page in AppShell.Main and add AppShell.SkipLinks and AppShell.Header, as the migration guide's app frame section shows.",
-  "line 12: AppShell.Root: AppShell.Root has none of the props only 0.x's AppShell took, so the codemod can't tell a 0.x AppShell that v1-names renamed from a 1.0 one, and left it as it is: if it is 0.x's, put its page in AppShell.Main and add AppShell.SkipLinks and AppShell.Header, as the migration guide's app frame section shows."
-]

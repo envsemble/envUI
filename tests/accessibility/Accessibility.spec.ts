@@ -10,11 +10,7 @@
  * Violations are keyed by page, theme, axe rule and a stable target: the catalogue region (the
  * specimen's heading, sidebar, header…) and the element's tag with its env-/docs- classes, counted.
  * React ids and child positions are left out so unrelated edits do not move the keys.
- *
- * A template page's previews are iframes of the frame route, left out of the page's scan: each
- * template screen is scanned alone at its frame route instead, in light and the comfortable scale
- * at the desktop and phone widths, under routes such as
- * frame:settings-page/SettingsPage?scale=comfortable&width=1280.
+
  */
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -29,7 +25,6 @@ import {
 } from '../browser/CatalogueThemes';
 import {
   documentationPages,
-  guidePages,
   overviewViews,
 } from '../../apps/catalogue/src/navigation/DocumentationRoutes';
 
@@ -84,41 +79,12 @@ const pages = documentationPages.map(({ path, title, views }) => {
     })),
   };
 });
-/** Every template screen, by its template page's path, with the routes of its frame scans. */
-const screens = guidePages
-  .filter((page) => page.section === 'Templates')
-  .flatMap(({ path, document }) =>
-    (document?.sections ?? []).flatMap((section) =>
-      section.blocks.flatMap((block) =>
-        block.kind === 'template'
-          ? [
-              {
-                path,
-                frame: `${document!.id}/${block.name}`,
-                scans: [
-                  { scale: 'comfortable', width: 1280, height: 800, themes: ['light'] },
-                  { scale: 'comfortable', width: 390, height: 844, themes: ['light'] },
-                ] as const,
-              },
-            ]
-          : [],
-      ),
-    ),
-  );
-const frameRoute = (frame: string, scale: string, width: number) =>
-  `frame:${frame}?scale=${scale}&width=${width}`;
 /** Every route scanned, with the themes it is scanned in. */
 const routes = new Map<string, Set<string>>([
   ...pages.flatMap((page) =>
     page.routes.map(({ route, themes }): [string, Set<string>] => [
       route,
       new Set(themes.map((theme) => theme.name)),
-    ]),
-  ),
-  ...screens.flatMap(({ frame, scans }) =>
-    scans.map(({ scale, width, themes }): [string, Set<string>] => [
-      frameRoute(frame, scale, width),
-      new Set(themes),
     ]),
   ),
 ]);
@@ -240,8 +206,6 @@ async function setTheme(page: Page, theme: CatalogueTheme) {
 
 async function scan(page: Page, route: string, theme: Theme): Promise<Scan> {
   const results = await new AxeBuilder({ page })
-    // Template previews are scanned alone, at their frame route.
-    .exclude('iframe.docs-template-frame')
     .options({
       runOnly: { type: 'tag', values: tags },
       ...(theme.endsWith('-hc') && { rules: highContrastRules }),
@@ -417,26 +381,6 @@ function record(testInfo: TestInfo, title: string, scans: Scan[]) {
         'Fix new violations. When the list is out of date, run `npm run test:a11y:update` and review its diff.',
       ].join('\n'),
     );
-}
-
-for (const { frame, scans: frameScans } of screens) {
-  test(`template ${frame} has no new accessibility violations`, async ({ page }, testInfo) => {
-    const scans: Scan[] = [];
-    for (const { scale, width, height, themes } of frameScans) {
-      await page.setViewportSize({ width, height });
-      for (const theme of themes) {
-        await page.goto(`${siteUrl}/?${new URLSearchParams({ frame, scale, theme })}`);
-        await page.locator('[data-template-frame]').waitFor();
-        await page
-          .getByText(/^Loading .*…$/)
-          .first()
-          .waitFor({ state: 'detached' });
-        await page.evaluate(() => document.fonts.ready);
-        scans.push(await scan(page, frameRoute(frame, scale, width), theme));
-      }
-    }
-    record(testInfo, `template ${frame}`, scans);
-  });
 }
 
 // Playwright requires the fixtures object as the first parameter, even when no fixture is used.

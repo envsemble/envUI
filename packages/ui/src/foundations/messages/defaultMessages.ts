@@ -1,7 +1,5 @@
 import { common } from './common.js';
-import { accountMenu } from './accountMenu.js';
 import { alert } from './alert.js';
-import { appShell } from './appShell.js';
 import { avatarGroup } from './avatarGroup.js';
 import { breadcrumbs } from './breadcrumbs.js';
 import { calendar } from './calendar.js';
@@ -26,22 +24,24 @@ import { markdown } from './markdown.js';
 import { markdownEditor } from './markdownEditor.js';
 import { message } from './message.js';
 import { monthPicker } from './monthPicker.js';
-import { navList } from './navList.js';
+import { navigation } from './navigation.js';
 import { organizationSwitcher } from './organizationSwitcher.js';
 import { pager } from './pager.js';
 import { pagination } from './pagination.js';
+import { panes } from './panes.js';
 import { panelDock } from './panelDock.js';
 import { rating } from './rating.js';
 import { relativeTime } from './relativeTime.js';
 import { richText } from './richText.js';
+import { scaffold } from './scaffold.js';
 import { searchField } from './searchField.js';
 import { searchTrigger } from './searchTrigger.js';
-import { splitPane } from './splitPane.js';
 import { table } from './table.js';
 import { textarea } from './textarea.js';
 import { timePicker } from './timePicker.js';
 import { themeToggle } from './themeToggle.js';
 import { toast } from './toast.js';
+import { topBar } from './topBar.js';
 import { tree } from './tree.js';
 
 /**
@@ -52,9 +52,7 @@ import { tree } from './tree.js';
  */
 export const defaultMessages = {
   common,
-  accountMenu,
   alert,
-  appShell,
   avatarGroup,
   breadcrumbs,
   calendar,
@@ -79,22 +77,24 @@ export const defaultMessages = {
   markdownEditor,
   message,
   monthPicker,
-  navList,
+  navigation,
   organizationSwitcher,
   pager,
   pagination,
+  panes,
   panelDock,
   rating,
   relativeTime,
   richText,
+  scaffold,
   searchField,
   searchTrigger,
-  splitPane,
   table,
   textarea,
   timePicker,
   themeToggle,
   toast,
+  topBar,
   tree,
 };
 

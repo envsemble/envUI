@@ -3,7 +3,8 @@ import { Link, Column, Text } from '@envsemble/envui';
 import { Markdown } from '@envsemble/envui/content';
 
 const text =
-  'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), or the [public changelog](https://example.com/changelog).';
+  'See the [launch plan](/documents/launch-plan) and the [pricing research](/documents/pricing), ' +
+  'or the [public changelog](https://example.com/changelog).';
 
 export default function OpenInPanel() {
   const [opened, setOpened] = useState('');

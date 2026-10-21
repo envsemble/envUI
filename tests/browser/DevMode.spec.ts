@@ -18,7 +18,7 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   // The tree: kinds and names, the container and the threshold its queries test, the resolved
   // grid columns, identical siblings folded, hidden nodes counted.
   expect(text).toMatch(
-    /^scaffold "app" · [\d.]+×[\d.]+rem · expanded · container env-scaffold \(queried at 37\.5rem\)/m,
+    /^scaffold "app" · [\d.]+×[\d.]+rem · expanded · container env-scaffold \(queried at 37\.5(?:, 52\.5, 75)?rem\)/m,
   );
   expect(text).toMatch(
     /^ {2}grid "frame" · .* · grid · gap 1rem · padding 1rem · columns 2 = 12 \| /m,

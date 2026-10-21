@@ -8,7 +8,6 @@ import type { ControlSize } from '../foundations/Theme.js';
 import { classNames } from '../internal/classNames.js';
 import { Column, Grid, Row } from '../foundations/Layout.js';
 import { useDirectionScope } from '../internal/useDirection.js';
-import * as NavList from './NavList.js';
 import { NavigationIconState } from '../MaterialSymbolState.js';
 import { Surface } from '../foundations/Surface.js';
 
@@ -16,8 +15,8 @@ export interface TabsItem {
   /** Unique, stable identifier shared by the tab and its panel. */
   value: string;
   /**
-   * The tab's control: a Button, an IconButton, a NavList.Item without href, or a component that
-   * forwards native button props and its ref. It keeps its own look; a link is not allowed.
+   * The tab's control: a Button, an IconButton, or a component that forwards native button props
+   * and its ref. It keeps its own look; a link is not allowed.
    */
   button: ReactElement<ComponentPropsWithRef<'button'>>;
   /** The panel's content, shown while the tab is selected. */
@@ -104,7 +103,7 @@ function TabButton({
   disabled: boolean;
 }) {
   if (button.type === 'a' || ('href' in button.props && button.props.href != null)) {
-    throw new Error('Tabs items must render buttons. Use NavList.Item without href.');
+    throw new Error('Tabs items must render buttons. Use a Button without href.');
   }
   const tabButton = cloneElement(button, {
     type: 'button',
@@ -115,15 +114,8 @@ function TabButton({
     'aria-selected': active,
     'aria-controls': props['aria-controls'],
   });
-  const render =
-    button.type === NavList.Item
-      ? cloneElement(tabButton as ReactElement<NavList.ItemProps>, {
-          selected: active,
-          'aria-current': false,
-        })
-      : tabButton;
   // Base UI composes the consumer's handlers and ref with its tab behavior.
-  const element = useRender({ render, props });
+  const element = useRender({ render: tabButton, props });
   return <NavigationIconState selected={active}>{element}</NavigationIconState>;
 }
 

@@ -1,19 +1,91 @@
 {
   "@envsemble/envui": {
     "AppShellSkeleton": {
-      "use": "Render the frame's own parts as its loading state, with NavList.Skeleton in Sidebar.Content, inside a LoadingState; the v1-app-shell codemod rewrites it."
+      "use": "AppShellSkeleton is gone: render the frame's Scaffold with placeholder items in its navigation and page, inside a LoadingState."
     },
     "AppShellSkeletonProps": {
-      "use": "AppShellSkeleton is gone: the frame's own parts, with NavList.Skeleton, are its loading state."
+      "use": "AppShellSkeleton is gone: the frame, a Scaffold, with placeholder items is its loading state."
     },
     "LoadingBar": {
-      "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+      "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
     },
     "LoadingBarProps": {
-      "use": "AppShell.Root's loading and loadingLabel props show page progress along the bottom edge of its header; Progress shows the progress of a task."
+      "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
     },
     "useSidebarCompact": {
-      "use": "useSidebar().isRail says whether the sidebar shows icons only; AppShell.Root's sidebarOpen and onSidebarOpenChange keep its state."
+      "use": "The sidebar is gone: Scaffold shows a navigation Rail of icons in a medium window, chosen by its width in CSS, with no state to read."
+    },
+    "AppShell": {
+      "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+    },
+    "AppShellProps": {
+      "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
+    },
+    "useAppShell": {
+      "use": "AppShell is gone: Scaffold's bodyRef is the element that scrolls the page, and sticky content sticks at the top of the body, at 0."
+    },
+    "readAppShellCookie": {
+      "use": "AppShell is gone: a Scaffold keeps no state, since its navigation forms never collapse, so nothing needs a cookie."
+    },
+    "AppShellState": {
+      "use": "AppShell is gone: a Scaffold keeps no state, since its navigation forms never collapse."
+    },
+    "PerSide": {
+      "use": "AppShell is gone: a Scaffold keeps no state per side."
+    },
+    "PersistOptions": {
+      "use": "AppShell is gone: a Scaffold keeps no state; Panes take persist as a localStorage key."
+    },
+    "SidebarSide": {
+      "use": "Sidebar is gone: the navigation forms sit at the start or the bottom, and side content goes in a Panes supporting pane."
+    },
+    "SidebarSnapshot": {
+      "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
+    },
+    "FrameStateProps": {
+      "use": "AppShell is gone: a Scaffold keeps no state, since its navigation forms never collapse."
+    },
+    "SidebarChangeReason": {
+      "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
+    },
+    "Sidebar": {
+      "use": "Sidebar is gone: pass the navigation forms to a Scaffold, navigation={{ bar, rail, drawer }}; side content that is not navigation goes in a Panes supporting pane."
+    },
+    "SidebarTrigger": {
+      "use": "SidebarTrigger is gone: the Scaffold shows the navigation form that fits its width; open other panels from an IconButton."
+    },
+    "SidebarTriggerProps": {
+      "use": "SidebarTrigger is gone: the Scaffold shows the navigation form that fits its width; open other panels from an IconButton."
+    },
+    "useSidebar": {
+      "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
+    },
+    "SplitView": {
+      "use": "SplitView is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+    },
+    "SplitViewProps": {
+      "use": "Panes.RootProps; SplitView is gone, and Panes.Root takes behavior, splitAt and sizes in rem."
+    },
+    "SplitPane": {
+      "use": "SplitPane is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+    },
+    "ListDetail": {
+      "use": "ListDetail is Panes with behavior=\"list-detail\": v1-structure rewrites its elements."
+    },
+    "WindowFrame": {
+      "use": "WindowFrame is gone: a window that draws its title bar is a Scaffold with topBarSpan=\"full\" and topBar={<TopBar titleBar … />}, and bodyRef for scrollRef, as the window frame pattern shows."
+    },
+    "WindowFrameProps": {
+      "use": "ScaffoldProps; WindowFrame is gone: a Scaffold with topBarSpan=\"full\" and a TopBar with titleBar frame the window."
+    },
+    "TitleBar": {
+      "use": "TitleBar is gone: <TopBar titleBar start={…} title={…} actions={…} />, with its end content in actions."
+    },
+    "TitleBarProps": {
+      "use": "TopBarProps; TitleBar is gone: a TopBar with titleBar is the window's title bar."
+    },
+    "AccountMenu": {
+      "use": "AccountMenu is gone: build the account menu from Menu.Root with an AvatarButton trigger, a Menu.Header with the Avatar and the name, and a Menu.Submenu around a ThemeRadioGroup, as the account menu pattern shows."
     }
   }
 }

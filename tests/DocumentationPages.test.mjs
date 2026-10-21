@@ -60,9 +60,9 @@ function moduleSpecifiers(source) {
 const props = readProps();
 const documents = readDocumentation();
 const components = documents.filter((document) => document.path.startsWith('components/'));
-/** Pages with the template's sections: component, pattern and template pages. */
+/** Pages with the template's sections: component and pattern pages. */
 const sectioned = documents.filter((document) => document.sections);
-/** Pattern and template pages, which list what they compose. */
+/** Pattern pages, which list what they compose. */
 const compositions = documents.filter((document) => document.frontmatter?.composes);
 
 test('every public export is documented on exactly one page', () => {
@@ -145,7 +145,7 @@ test('every example file is referenced once, by its page, and imports only publi
   for (const document of sectioned)
     for (const section of document.sections ?? [])
       for (const block of section.blocks)
-        if (block.kind === 'example' || block.kind === 'template') {
+        if (block.kind === 'example') {
           const key = `${document.id}/${block.name}`;
           referenced.set(key, (referenced.get(key) ?? 0) + 1);
         }
@@ -154,7 +154,7 @@ test('every example file is referenced once, by its page, and imports only publi
     assert.equal(
       referenced.get(key),
       1,
-      `examples/${key}.tsx must be on its page once, as an example or a template.`,
+      `examples/${key}.tsx must be on its page once, as an example.`,
     );
     const source = readFileSync(path, 'utf8');
     assert.match(
@@ -210,7 +210,7 @@ test('every specimen file is placed by its page', () => {
     );
 });
 
-/** The names a source imports from envUI's entries, icons apart: `import { Button, Stack } …`. */
+/** The names a source imports from envUI's entries, icons apart: `import { Button, Row } …`. */
 function envuiImports(source) {
   const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
   const names = [];
@@ -230,18 +230,18 @@ test('the import reader finds the runtime names a source takes from envUI', () =
   assert.deepEqual(
     envuiImports(
       [
-        "import { Button, type ButtonProps, Stack as Column } from '@envsemble/envui';",
+        "import { Button, type ButtonProps, Row as Line } from '@envsemble/envui';",
         "import type { Theme } from '@envsemble/envui';",
         "import { CodeBlock } from '@envsemble/envui/content';",
         "import { Close } from '@envsemble/envui/icons/Close';",
         "import { useState } from 'react';",
       ].join('\n'),
     ),
-    ['Button', 'Stack', 'CodeBlock'],
+    ['Button', 'Row', 'CodeBlock'],
   );
 });
 
-test('a pattern or template composes only exports, and every export its files import', () => {
+test('a pattern composes only exports, and every export its files import', () => {
   for (const document of compositions) {
     const { composes } = document.frontmatter;
     for (const name of composes) {
@@ -253,7 +253,7 @@ test('a pattern or template composes only exports, and every export its files im
     }
     for (const section of document.sections)
       for (const block of section.blocks) {
-        if (block.kind !== 'example' && block.kind !== 'template') continue;
+        if (block.kind !== 'example') continue;
         const source = readFileSync(
           join(examplesDirectory, document.id, `${block.name}.tsx`),
           'utf8',
@@ -275,11 +275,7 @@ test('every page an avoidWhen entry sends readers to is indexed', () => {
       if (see) assert.ok(ids.has(see) && see !== document.id, `${document.path} sees ${see}.`);
 });
 
-test('the docs publish at least 8 patterns and 6 templates', () => {
-  const count = (group) => documents.filter((document) => document.group === group).length;
-  const met = count('Patterns') >= 8 && count('Templates') >= 6;
-  assert.ok(
-    met,
-    `${count('Patterns')} patterns and ${count('Templates')} templates; 1.0 needs 8 and 6.`,
-  );
+test('the docs publish at least 8 patterns', () => {
+  const count = documents.filter((document) => document.group === 'Patterns').length;
+  assert.ok(count >= 8, `${count} patterns; 1.0 needs 8.`);
 });

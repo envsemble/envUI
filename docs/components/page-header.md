@@ -18,8 +18,8 @@ useWhen:
   - A page needs its trail, a status or a count beside its title, or a row of search and filters under it.
   - The page's heading should stay in view as the page scrolls.
 avoidWhen:
-  - text: The application's header across every page, with its sidebar toggle and account menu.
-    use: AppShell
+  - text: The application's bar across every page, with its name, search and account menu.
+    use: TopBar
   - text: The heading of a section inside a page, with its own actions.
     use: Row
   - text: A heading with metadata and actions around a block of content.
@@ -59,15 +59,14 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 ## Variants and sizes
 
 - **Control size**: `controlSize` gives the buttons and icon buttons in `actions` and `toolbar` that set no `size` the `md` height, 2.5 rem, by default, or `sm`, 2 rem, for a dense page, such as one in a small window. Fields take their own `size`: give a toolbar's fields the same one.
-- **Sticky**: `sticky` keeps the header in view at the top of the page, under the frame's header, with the page's background and a hairline under it.
+- **Sticky**: `sticky` keeps the header in view at the top of the area that scrolls, under a Scaffold's top bar where the document scrolls, with the page's background and a hairline under it.
 - **Heading level**: the title looks the same at every level; set `headingLevel` to 2 or lower for a header inside a pane or a dialog that sits under another heading.
-- A toolbar row that lines up with a sidebar's header takes the frame's header height: `min-block-size: var(--env-app-shell-header-height)` on the Row.
 
 ## States and behaviour
 
-- **Wrapping**: the header is a container. Below 32 rem of its own width, the actions move under the title and description and wrap, from the inline start; the meta wraps beside the title. The title wraps, balanced across its lines, and is never cut short.
+- **Wrapping**: the header is a container. Below 37.5 rem of its own width, a compact header, the actions move under the title and description and wrap, from the inline start; the meta wraps beside the title. The title wraps, balanced across its lines, and is never cut short.
 - **No overflow menu**: the header never hides actions on its own. A page with more actions than fit on a phone puts the rest in a [Menu](../components/menu.md) as its last action.
-- **Sticky**: the header sticks at `--env-frame-sticky-top`, the offset the app frame (AppShell.Root or WindowFrame.Root) publishes, and `0` outside one, and publishes its own height on its Page as `--env-page-header-block-size` while it is mounted. Content that sticks below both reads the two: `inset-block-start: calc(var(--env-frame-sticky-top, 0px) + var(--env-page-header-block-size, 0px))`. In a box of its own that scrolls, set `--env-frame-sticky-top: 0px` on the box.
+- **Sticky**: the header sticks at the top of the area that scrolls: under a Scaffold's top bar where the document scrolls (`--env-scaffold-sticky-top`), or at the top of a Scaffold's body that scrolls. As a Page's header, what scrolls into view in the page's content, such as a field taking focus, keeps clear of it by a scroll margin: the header measures its own height, so a title that wraps counts, and until script runs CSS reckons it from the rows the header has. Put content that should stay in view under it in its `toolbar`.
 
 ## Content guidelines
 
