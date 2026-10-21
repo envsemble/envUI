@@ -7,10 +7,12 @@ import {
   useState,
   type ComponentType,
   type MouseEvent,
+  type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { Disclosure, Column, Text, Theme, useTheme } from '@envsemble/envui';
 import { CodeBlock } from '@envsemble/envui/content';
+import type { StageFill } from '../DocumentationTypes';
 import { LoadBoundary, loadModule, reloadModule } from './LoadBoundary';
 import { OpenExample } from './OpenExample';
 
@@ -141,7 +143,16 @@ export function ExampleCode({ page, name }: { page: string; name: string }) {
  * An example file rendered live, loaded with the page and loaded again on a retry: the body of a
  * live example and of each figure of a page on the figure template.
  */
-export function ExampleRender({ page, name }: { page: string; name: string }) {
+export function ExampleRender({
+  page,
+  name,
+  fallback = <Text role="status">Loading example…</Text>,
+}: {
+  page: string;
+  name: string;
+  /** What shows while the file loads; a tile's tiny preview shows nothing. */
+  fallback?: ReactNode;
+}) {
   // A retry renders the example afresh from its file loaded again, and leaves its code as it is.
   const [, setAttempt] = useState(0);
   const path = examplePath(page, name);
@@ -157,7 +168,7 @@ export function ExampleRender({ page, name }: { page: string; name: string }) {
         setAttempt((count) => count + 1);
       }}
     >
-      <Suspense fallback={<Text role="status">Loading example…</Text>}>
+      <Suspense fallback={fallback}>
         {/* The example is looked up among module-level lazy components, not created here. */}
         {/* eslint-disable-next-line react-hooks/static-components */}
         <Example />
@@ -183,6 +194,7 @@ export function LiveExample({
   caption,
   widths,
   open = false,
+  stage,
 }: {
   page: string;
   name: string;
@@ -191,6 +203,8 @@ export function LiveExample({
   widths?: number[];
   /** Whether the example's overlays are shown open, as a picture. */
   open?: boolean;
+  /** The stage's fill, where the page's would hide the subject. */
+  stage?: StageFill;
 }) {
   const theme = useTheme();
   const render = open ? (
@@ -219,6 +233,7 @@ export function LiveExample({
                 container="env-window"
                 gap={0}
                 className="docs-live-example"
+                data-stage={stage}
                 tabIndex={0}
                 aria-label={`${width} rem wide`}
                 role="group"
@@ -242,6 +257,7 @@ export function LiveExample({
           aria-label={open ? `${title} example, shown open as a picture` : `${title} example`}
           className="docs-live-example"
           data-example={name}
+          data-stage={stage}
           {...keepLinksInPlace}
         >
           {render}

@@ -80,11 +80,11 @@ A popover is as wide as its content up to its width. `side` places it below its 
 
 ## When to use
 
-```tsx do=ShortHelp open caption="A few lines, which people read at a glance."
+```tsx do=ShortHelp open stage=raised caption="A few lines, which people read at a glance."
 
 ```
 
-```tsx dont=LongHelp open caption="Paragraphs of help: too much to read beside the page."
+```tsx dont=LongHelp open stage=raised caption="Paragraphs of help: too much to read beside the page."
 
 ```
 
@@ -95,7 +95,7 @@ A popover is as wide as its content up to its width. `side` places it below its 
 
 ## Anatomy
 
-```tsx anatomy=PopoverAnatomy open
+```tsx anatomy=PopoverAnatomy open stage=raised
 
 ```
 

@@ -85,14 +85,14 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 - **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a sentence between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
 - **Lists in columns**: two or more `###` subsections in a row that each hold only a list sit side by side, such as `### envUI provides` and `### You provide`.
-- **When to use** starts with the frontmatter's `useWhen` and `avoidWhen`, as two columns; write what follows them, not the same points again.
+- **When to use** starts with the frontmatter: `useWhen` as a short plain list under Use it when, then under Use something else a tile for each component or page an `avoidWhen` item names in `use` or `see`, its lead example small and inert on the dotted stage with its name and the item's text below. The tiles render once the section nears the viewport. A page with an open anatomy figure, such as Dialog or Menu, is shown by that figure instead; an alternative without an example shows a page icon on the same stage; an item that names nothing follows the tiles as a plain list. Four tiles go four across where they fit, else two by two, else one column; three, five, six and nine go in rows of three. Write what follows them, not the same points again.
 
 ### Layout: equal cells, spacing with rhythm
 
 - **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: an even run, do and don't pairs included, two to a row from 38 rem, and a run of three, do and don't figures included, three across from 58 rem; write two or three figures in a row, or four as two pairs, and never five.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, also where the last is only text, a list or a table, and one section further still. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 3 rem between sub-topics and 4 rem between sections.
 - **No separators.** Space, not lines, separates sections and sub-topics.
-- **One frame per figure.** A dotted stage is the figure's only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's frame holds its stage and its bar and is that figure's one frame. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
+- **One frame per figure.** A dotted stage is the figure's only frame: never put it inside another framed or filled box, such as a Surface or Card around a specimen grid, or a stage inside a stage. A do or don't figure's stage and its bar are one figure: two blocks joined as envUI's connected rows (`env-connected-rows`), with the outer corners rounded large and the inner ones small, and the small gap of a list's rows between them. A tile of When to use is its stage, with its name and line below it in no box. A catalogue browser test fails on a stage with a bordered, filled or shadowed ancestor in the article.
 
 ### Learn from Material's docs
 
@@ -109,14 +109,18 @@ A figure is an [example file](#examples) placed with an empty fence whose info s
 
 Under every figure the catalogue shows a closed Code toggle with the file's source and a copy button, so every figure can be copied as it is. Open code always spans the whole content column: a figure that shares its row, or sits beside text, opens its code below the row, across the column, so code never scrolls sideways in a narrow cell. Where the column is narrower than a 100-character line, the code soft-wraps instead of scrolling; keep example lines within the formatter's 100 characters. Attributes follow the name as `name="value"`; a value without spaces needs no quotes. Write a caption as one sentence, without double quotes inside.
 
-| Fence                            | Shows                                                                   | Attributes                                                    |
-| -------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- |
-| ` ```tsx example=Name `          | The example, live on the dotted stage.                                  | `caption`: a sentence below it. `widths`: see below.          |
-| ` ```tsx do=Name caption="…" `   | The example on the stage with a green Do bar, and the caption below.    | `caption`, required: what to do, as one sentence.             |
-| ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                          | `caption`, required: what not to do and why, as one sentence. |
-| ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts. | `of`: see below. `caption`: a sentence below it.              |
+| Fence                            | Shows                                                                     | Attributes                                                    |
+| -------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| ` ```tsx example=Name `          | The example, live on the dotted stage.                                    | `caption`: a sentence below it. `widths`: see below.          |
+| ` ```tsx do=Name caption="…" `   | The example on the stage joined to a green Do bar, and the caption below. | `caption`, required: what to do, as one sentence.             |
+| ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                            | `caption`, required: what not to do and why, as one sentence. |
+| ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts.   | `of`: see below. `caption`: a sentence below it.              |
 
 Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu open caption="…" `: see [open overlays](#open-overlays).
+
+### Stage fill
+
+`stage=raised` fills a figure's stage with the raised background instead of the page's; the dots and the frame stay. Use it only when the default doesn't show the subject clearly: when the subject has the page's color, such as an open menu or popover, white on white in the light theme. Check the figure in light and dark.
 
 ### Open overlays
 

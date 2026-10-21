@@ -4,17 +4,16 @@ import { documents, type Documentation as Document } from '../Reference';
 import {
   pageHref,
   referencePages,
-  routeOfDocument,
   viewOfSection,
   type ReferencePage,
   type ReferenceView,
 } from '../navigation/DocumentationRoutes';
-import { routeHref } from '../navigation/Address';
 import type { DocumentationMetadata, DocumentationSection } from '../DocumentationTypes';
-import { FigureSection, SectionColumns } from './Figures';
+import { FigureSection } from './Figures';
 import { LiveExample } from './LiveExample';
 import { PropsTables } from './PropsTables';
 import { Specimen } from './Specimen';
+import { pageOf, relatedHref, WhenToUse } from './WhenToUse';
 
 const statusTones = {
   experimental: 'warning',
@@ -22,15 +21,6 @@ const statusTones = {
   stable: 'success',
   deprecated: 'danger',
 } as const;
-
-/**
- * The page that documents a component, for the alternatives a page suggests and the exports a
- * pattern combines: a part such as Menu.Item is documented on the page of its namespace.
- */
-function pageOf(component: string) {
-  const namespace = component.split('.')[0];
-  return referencePages.find((page) => page.reference.metadata?.components.includes(namespace));
-}
 
 /** Status and first release under the title of a page on the template. */
 export function MetadataBadges({ metadata }: { metadata: DocumentationMetadata }) {
@@ -56,30 +46,24 @@ export function TemplateMeta({ page }: { page: ReferencePage }) {
   return <MetadataBadges metadata={page.reference.metadata!} />;
 }
 
+/** An export as a Markdown link to the page that documents it; pages of docs/ are one folder
+ * deep, so ../<path> reaches any of them from any page. */
+function exportLink(name: string) {
+  const page = pageOf(name);
+  return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
+}
+
 /**
  * When to use the page's subject and, when not, what to use or read instead; for a pattern or
  * template, also what it is built from.
  */
-function UseAndAvoid({
-  metadata,
-  path,
-  headings = ['When to use', 'When not to use'],
-}: {
-  metadata: DocumentationMetadata;
-  path: string;
-  headings?: [string, string];
-}) {
-  // Pages of docs/ are one folder deep, so ../<path> reaches any of them from any page.
-  const exportLink = (name: string) => {
-    const page = pageOf(name);
-    return page ? `[${name}](../${page.path}.md)` : `\`${name}\``;
-  };
+function UseAndAvoid({ metadata, path }: { metadata: DocumentationMetadata; path: string }) {
   const markdown = [
-    `### ${headings[0]}`,
+    '### When to use',
     '',
     ...metadata.useWhen.map((text) => `- ${text}`),
     '',
-    `### ${headings[1]}`,
+    '### When not to use',
     '',
     ...metadata.avoidWhen.map(({ text, use, see }) => {
       const target = see && documents.find((document) => document.id === see);
@@ -94,11 +78,7 @@ function UseAndAvoid({
       ? ['', '### Built from', '', metadata.composes.map(exportLink).join(', ')]
       : []),
   ].join('\n');
-  return headings[0] === 'When to use' ? (
-    <Documentation markdown={markdown} path={path} />
-  ) : (
-    <SectionColumns markdown={markdown} path={path} />
-  );
+  return <Documentation markdown={markdown} path={path} />;
 }
 
 function Section({ reference, section }: { reference: Document; section: DocumentationSection }) {
@@ -110,10 +90,10 @@ function Section({ reference, section }: { reference: Document; section: Documen
         lead={
           section.id === 'usage' &&
           reference.metadata && (
-            <UseAndAvoid
+            <WhenToUse
               metadata={reference.metadata}
               path={reference.path}
-              headings={['Use it when', 'Use something else when']}
+              exportLink={exportLink}
             />
           )
         }
@@ -145,14 +125,6 @@ function Section({ reference, section }: { reference: Document; section: Documen
       )}
     </Column>
   );
-}
-
-/** The address of a related page: a reference page's overview, or any other page's route. */
-function relatedHref(id: string) {
-  const page = referencePages.find((item) => item.reference.id === id);
-  if (page) return pageHref(page, 'overview');
-  const route = routeOfDocument(id);
-  return route && routeHref(route);
 }
 
 function Related({ reference }: { reference: Document }) {

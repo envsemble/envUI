@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Theme, useTheme } from '@envsemble/envui';
-import type { AnatomyLegendItem } from '../DocumentationTypes';
+import type { AnatomyLegendItem, StageFill } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
 import { OpenExample, openerBox } from './OpenExample';
@@ -220,11 +220,13 @@ function AnatomyStage({
   name,
   legend,
   open,
+  stage: fill,
 }: {
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
   open: boolean;
+  stage?: StageFill;
 }) {
   const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
@@ -266,7 +268,13 @@ function AnatomyStage({
     };
   }, [legend, open]);
   return (
-    <Theme {...theme} ref={stage} className="docs-anatomy-stage" data-example={name}>
+    <Theme
+      {...theme}
+      ref={stage}
+      className="docs-anatomy-stage"
+      data-example={name}
+      data-stage={fill}
+    >
       {/* A picture of the parts: the live component neither takes focus nor changes under it. */}
       <div ref={subject} className="docs-anatomy-subject" inert>
         {open ? (
@@ -328,6 +336,7 @@ export function AnatomyFigure({
   legend,
   of,
   open = false,
+  stage,
 }: {
   page: string;
   name: string;
@@ -337,11 +346,13 @@ export function AnatomyFigure({
   of?: string;
   /** Whether the example's overlays are shown open, their parts numbered too. */
   open?: boolean;
+  /** The stage's fill, where the page's would hide the subject. */
+  stage?: StageFill;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
     <figure className="docs-anatomy" aria-label={title}>
-      <AnatomyStage page={page} name={name} legend={items} open={open} />
+      <AnatomyStage page={page} name={name} legend={items} open={open} stage={stage} />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
         {items.length > 0 && (

@@ -550,11 +550,16 @@ const figurePattern =
   /^tsx\s+(example|do|dont|anatomy)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
 /** The attributes each kind of figure takes, and those it needs. */
 const figureAttributes = {
-  example: { allowed: ['caption', 'widths', 'open'], required: [] },
-  do: { allowed: ['caption', 'open'], required: ['caption'] },
-  dont: { allowed: ['caption', 'open'], required: ['caption'] },
-  anatomy: { allowed: ['caption', 'of', 'open'], required: [] },
+  example: { allowed: ['caption', 'widths', 'open', 'stage'], required: [] },
+  do: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
+  dont: { allowed: ['caption', 'open', 'stage'], required: ['caption'] },
+  anatomy: { allowed: ['caption', 'of', 'open', 'stage'], required: [] },
 };
+/**
+ * The fills a figure's stage takes besides the default, the page's: `stage="raised"` where the
+ * subject has the page's color, such as an open popup in the light theme, and would not show.
+ */
+const stageFills = ['raised'];
 /**
  * The attributes that are flags, written without a value: `open` shows the example's overlays
  * open on its stage, contained.
@@ -756,6 +761,13 @@ function readFigures(document, body, { examples, specimens, partNames }) {
         block.widths = widths;
       }
       if (attributes.of !== undefined) block.of = attributes.of;
+      if (typeof attributes.stage === 'string') {
+        if (stageFills.includes(attributes.stage)) block.stage = attributes.stage;
+        else
+          problems.push(
+            `${role} ${name} has stage="${attributes.stage}"; a stage takes ${stageFills.map((fill) => `"${fill}"`).join(' or ')}, or no stage for the page's color`,
+          );
+      }
       if (attributes.open === true) block.open = true;
       blocks.push(block);
       if (role === 'anatomy') legendOf = block;
@@ -1299,6 +1311,7 @@ export function compileDocument(document, documents, { props, examples = example
           `${block.role ?? 'example'}=${block.name}`,
           block.of && `of=${block.of}`,
           block.open && 'open',
+          block.stage && `stage=${block.stage}`,
           block.widths && `widths="${block.widths.join(' ')}"`,
           block.caption && `caption="${block.caption}"`,
         ]
