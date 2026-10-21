@@ -89,7 +89,7 @@ Choose the form that teaches each point best rather than a column of paragraphs:
 
 ### Layout: equal cells, spacing with rhythm
 
-- **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage.
+- **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: two to a row from 38 rem, three from 58 rem; write two or three figures in a row, or four as two pairs.
 - **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, and one section further still. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 3 rem between sub-topics and 4 rem between sections.
 - **No separators.** Space, not lines, separates sections and sub-topics.
 
