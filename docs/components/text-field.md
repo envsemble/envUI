@@ -122,7 +122,7 @@ A fixed Textarea scrolls, and its bottom edge resizes it by dragging or with the
 
 | Variant     | Use for                                                      |
 | ----------- | ------------------------------------------------------------ |
-| `outline`   | Forms, dialogs, panes and toolbars. The default.             |
+| `outline`   | In forms, dialogs, panes and toolbars. The default.          |
 | `floating`  | A long form on a page.                                       |
 | `underline` | A value in a document or a header, such as a title.          |
 | `ghost`     | A search in an application's chrome, such as atop a sidebar. |
