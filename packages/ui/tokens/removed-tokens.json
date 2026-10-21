@@ -114,13 +114,9 @@
     "--control-icon-size",
     "--control-target-min",
     "--elevation-0-border",
-    "--elevation-0-shadow",
     "--elevation-1-border",
-    "--elevation-1-shadow",
     "--elevation-2-border",
-    "--elevation-2-shadow",
     "--elevation-3-border",
-    "--elevation-3-shadow",
     "--field-floating-height",
     "--font-family",
     "--font-size-body",
@@ -1134,6 +1130,30 @@
     },
     "--env-window-frame-title-bar-right": {
       "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--elevation-0-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-1-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-2-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--elevation-3-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-0-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-1-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-2-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
+    },
+    "--env-elevation-3-shadow": {
+      "note": "envUI draws no shadows: a floating layer separates by its fill and its edge, --env-elevation-{level}-border, and a modal by its scrim as well. Delete the box-shadow; where your own floating layer relied on it, give it the level’s edge instead."
     }
   }
 }

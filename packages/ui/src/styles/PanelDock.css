@@ -4,14 +4,12 @@
    and lets presses through around its panels. State attributes come from PanelDock. */
 .env-panel-dock {
   --env-panel-dock-gap: var(--env-space-2);
-  /* Room around the row and the strip for the panels' shadows. */
+  /* Room around the row and the strip, between the panels and the region's edges. */
   --env-panel-dock-gutter: var(--env-space-5);
   --env-panel-dock-tab-height: var(--env-control-height-sm);
   /* The height of the header's small controls, which a coarse pointer raises to the touch height. */
   --env-panel-dock-control: var(--env-control-height-sm);
   --env-panel-dock-strip-size: 0rem;
-  --env-panel-dock-shadow: var(--env-elevation-2-shadow);
-  --env-panel-dock-active-shadow: var(--env-elevation-3-shadow);
   position: absolute;
   inset: 0;
   z-index: calc(var(--env-z-sticky) - 1);
@@ -73,7 +71,6 @@
   border-start-start-radius: var(--env-radius-surface);
   border-start-end-radius: var(--env-radius-surface);
   background: var(--env-panel-dock-panel-color);
-  box-shadow: var(--env-panel-dock-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   overflow-wrap: anywhere;
@@ -83,7 +80,6 @@
 /* The active panel is in front. */
 .env-panel-dock-panel[data-active] {
   z-index: calc(var(--env-z-raised) + 1);
-  box-shadow: var(--env-panel-dock-active-shadow);
 }
 .env-panel-dock-panel:focus-visible,
 .env-panel-dock-content:focus-visible {
@@ -101,7 +97,6 @@
   block-size: auto;
   border: 0;
   border-radius: 0;
-  box-shadow: none;
 }
 /* Minimized panels, and those a stacked dock leaves out, keep their content and its scroll
    positions out of sight: inert, invisible and out of the row. */
@@ -230,8 +225,8 @@
   min-inline-size: 0;
   margin-block-start: var(--env-space-1);
 }
-/* Once the content scrolls beneath it, a hairline in the panel's border color sets the header
-   apart, so text its edge cuts reads as scrolled away rather than broken. */
+/* Once the content scrolls beneath it, a divider hairline sets the header apart, so text its edge
+   cuts reads as scrolled away rather than broken. */
 .env-panel-dock-header {
   transition: box-shadow var(--env-motion-duration-fast) var(--env-motion-ease);
 }
@@ -267,7 +262,6 @@
   border-start-start-radius: var(--env-radius-sm);
   border-start-end-radius: var(--env-radius-sm);
   background: var(--env-color-bg-popup);
-  box-shadow: var(--env-panel-dock-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
   pointer-events: auto;

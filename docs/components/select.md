@@ -175,7 +175,7 @@ Name the select with a short noun, and say in a disabled option's label why it i
 ## Changelog
 
 - **1.0.0**: `options` is `items`, and `SelectOption` is `SelectItem`; `hint` is `description`; `variant="outlined"` is `variant="outline"`, which the codemods write. `className` and `style` style the field's root rather than the trigger, which takes `ref`. The trigger is a Button, the popup the shared popup and the options its rows: `env-dropdown-trigger` is `env-select-trigger`, `env-dropdown-options` `env-select-popup`, `env-dropdown-list` `env-select-list`, `env-dropdown-option` `env-select-item` and `env-dropdown-option-check` `env-select-item-indicator`.
-- **1.0.0**: The open list takes the level-2 elevation, with its shadow and border.
+- **1.0.0**: The open list takes the level-2 elevation edge, with no shadow.
 - **0.5.0**: `density="compact"`. The outlined trigger is the outlined Button style, and the open list takes the popup surface corners, with rounded options inset by its padding.
 - **0.4.0**: `variant`, secondary or outlined. The open list is a raised popup in its own color with a hairline border; options show only hover, press and selection, with stronger hover and pressed shades; the trigger settles like a button while pressed.
 - **0.3.0**: The open list grows from its trigger.

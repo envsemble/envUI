@@ -160,6 +160,5 @@
   border-radius: var(--env-radius-surface);
   background: var(--env-color-bg-popup);
   color: var(--env-color-fg-default);
-  box-shadow: var(--env-elevation-2-shadow);
   font: var(--env-type-body);
 }

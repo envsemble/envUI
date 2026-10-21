@@ -23,7 +23,6 @@
   border: 0.0625rem solid var(--env-elevation-3-border);
   border-radius: var(--env-radius-surface);
   background: var(--env-color-bg-popup);
-  box-shadow: var(--env-elevation-3-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body);
   overflow: hidden;

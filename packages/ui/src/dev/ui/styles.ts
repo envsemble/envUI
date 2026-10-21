@@ -18,7 +18,6 @@ export const devStyles = /* css */ `
     inset-block-end: var(--env-space-4);
     inset-inline-end: var(--env-space-4);
     pointer-events: auto;
-    box-shadow: var(--env-shadow-raised, 0 0.25rem 1rem rgb(0 0 0 / 0.2));
     border-radius: var(--env-radius-full);
   }
   .env-dev-panel {

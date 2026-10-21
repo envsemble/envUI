@@ -64,14 +64,15 @@
 .env-list > .env-list-item[data-selected][data-interactive] [data-row-target] {
   color: inherit;
 }
-/* A moving row is raised above the others, which make room for it. */
+/* A moving row is raised above the others, which make room for it, and takes the elevation edge as
+   a ring: envUI draws no shadows. */
 .env-list[data-reordering] > .env-list-item {
   position: relative;
   transition: translate var(--env-motion-duration-medium) var(--env-motion-ease);
 }
 .env-list > .env-list-item[data-moving] {
   z-index: var(--env-z-raised);
-  box-shadow: var(--env-elevation-2-shadow);
+  box-shadow: inset 0 0 0 var(--env-control-border-width) var(--env-elevation-2-border);
 }
 /* The row under the pointer follows it without delay. */
 .env-list > .env-list-item[data-moving='pointer'] {

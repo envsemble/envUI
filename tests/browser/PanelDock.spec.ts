@@ -314,7 +314,7 @@ test.describe('PanelDock', () => {
       // A shorter region holds the panel within its room without changing the chosen height.
       const entries = (await logOf(page)).length;
       await dock.frame.evaluate((element) => (element.style.blockSize = '30rem'));
-      // The room is the dock's height above the tabs, less the gutter for shadows.
+      // The room is the dock's height above the tabs, less the gutter.
       const shorter = await dock.root.evaluate(
         (element) =>
           element.clientHeight -
@@ -1238,7 +1238,7 @@ test('a hairline sets the header apart once the content scrolls beneath it, in b
     const header = panel.locator('.env-panel-dock-header');
     const border = await panel.evaluate((element) => {
       const probe = document.createElement('span');
-      probe.style.color = 'var(--env-elevation-2-border)';
+      probe.style.color = 'var(--env-color-border-muted)';
       element.append(probe);
       const color = getComputedStyle(probe).color;
       probe.remove();

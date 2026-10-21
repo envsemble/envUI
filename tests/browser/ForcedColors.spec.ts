@@ -432,12 +432,12 @@ test(
   },
 );
 
-/** The element that draws a popup's surface: its fill, edge and shadow. */
+/** The element that draws a popup's surface: its fill and edge. */
 const popupSurfaces =
   '.env-popup, .env-menu, .env-popover, .env-tooltip, .env-hover-card, .env-dialog-surface, .env-command-palette, .env-toast';
 
 test(
-  'every popup keeps a visible edge under forced colors, where its shadow is gone',
+  'every popup keeps a visible edge under forced colors, where its fill is gone',
   { tag: '@engines' },
   async ({ page }) => {
     await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });

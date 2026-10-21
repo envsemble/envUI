@@ -31,6 +31,8 @@ A relaxation recorded on the branch but not yet on the base can be undone there:
 
 Each component's CSS is a file of `src/styles`, which `index.css` imports into a cascade layer of `env`: `env.reset` for the box-sizing reset, `env.tokens` for Tokens.css and TokensHandwritten.css, `env.base` for the theme boundary's type, and `env.components` for the components; `env.utilities` is reserved for single-purpose classes. An application's CSS outside layers always wins, so a component needs no specificity hacks, such as `:where()` or a repeated class, to stay overridable; use them only to order rules within the components' layer. `tests/Layers.test.mjs` checks that the shipped style sheet is layered and that the library's custom properties take the prefix, and `tests/browser/CascadeLayers.spec.ts` that an application's rule wins. envUI's style sheets declare nothing `!important`; only a declaration that must beat a third-party style sheet outside layers would be.
 
+A component's style sheet draws no drop shadows: a popup, dialog, sheet, toast or tooltip separates by its fill, its edge, `--env-elevation-{level}-border`, and for a modal the scrim. Rings drawn with `box-shadow` stay: focus rings and halos with no offset or blur, inset edges and selection bars, and a hairline one pixel beside a box. `tests/NoShadows.test.mjs` rejects any other shadow in the shipped style sheet, dev mode's and the catalogue's.
+
 A component's style sheet also holds its motion and its forced-colors rules:
 
 - **Motion:** transitions and animations use the motion tokens. Fades always apply; movement, such as a press that settles or a popup that grows, only under `@media (prefers-reduced-motion: no-preference)`. Motion.css holds only the keyframes several components share.

@@ -103,7 +103,6 @@
   border: var(--env-control-border-width) solid var(--env-elevation-2-border);
   border-radius: var(--env-radius-sm);
   background: var(--env-color-bg-popup);
-  box-shadow: var(--env-elevation-2-shadow);
   color: var(--env-color-fg-default);
   font: var(--env-type-body-small);
   white-space: nowrap;
