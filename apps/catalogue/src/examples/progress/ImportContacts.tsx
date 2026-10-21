@@ -11,6 +11,7 @@ export default function ImportContacts() {
       max={total}
       valueText={`${imported} of ${total}`}
       aria-valuetext={`${imported} of ${total} contacts`}
+      style={{ inlineSize: 'min(100%, 20rem)' }}
     />
   );
 }

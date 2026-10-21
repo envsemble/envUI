@@ -11276,26 +11276,62 @@
         {
           "name": "FirstProject",
           "title": "First project",
-          "description": "An empty state takes the place of content that isn't there: it says why, such as no projects yet, no results for a search or a list that failed to load, and offers the action that resolves it. It has a decorative icon, a title as a real heading, a description and an action. Inside a card, panel or dialog it lines up with the start; in place of a page's or region's content it centres itself in the room it gets.",
+          "description": "An empty state takes the place of content that isn't there: it says why and offers the action that resolves it.",
           "file": "docs/examples/empty-state/FirstProject.tsx"
         },
         {
-          "name": "NoResults",
-          "title": "No results",
-          "description": "A search that matches nothing explains why and offers to clear the search; a status line announces the count, and clearing returns focus to the field.",
-          "file": "docs/examples/empty-state/NoResults.tsx"
+          "name": "InPlaceOfContent",
+          "title": "In place of content",
+          "description": "`align=\"center\"` centres the state in the height its region gives it.",
+          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
         },
         {
           "name": "LoadFailed",
           "title": "Failed to load",
-          "description": "An error state replaces the list that failed to load and is announced; Try again shows its progress until the list arrives.",
+          "description": "`tone=\"danger\"` shows the error icon and announces the state. Try again shows its progress.",
           "file": "docs/examples/empty-state/LoadFailed.tsx"
         },
         {
-          "name": "InPlaceOfContent",
-          "title": "In place of a page's content",
-          "description": "`align=\"center\"` centres the state in the height of the region it replaces, with a larger, quieter icon; `headingLevel={2}` fits it under the page's title.",
-          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
+          "name": "NoResults",
+          "title": "Do: No results: say so, and offer to clear the search.",
+          "description": "",
+          "file": "docs/examples/empty-state/NoResults.tsx"
+        },
+        {
+          "name": "FirstUseForNoResults",
+          "title": "Don't: The first-use state for a search that matched nothing.",
+          "description": "",
+          "file": "docs/examples/empty-state/FirstUseForNoResults.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action that resolves the state.",
+          "description": "",
+          "file": "docs/examples/empty-state/OneAction.tsx"
+        },
+        {
+          "name": "CompetingActions",
+          "title": "Don't: Several actions: none of them reads as the way forward.",
+          "description": "",
+          "file": "docs/examples/empty-state/CompetingActions.tsx"
+        },
+        {
+          "name": "SayWhatHappened",
+          "title": "Do: Say what happened, that work is safe, and what to do.",
+          "description": "",
+          "file": "docs/examples/empty-state/SayWhatHappened.tsx"
+        },
+        {
+          "name": "ErrorCode",
+          "title": "Don't: A code and an apology, with nothing to do next.",
+          "description": "",
+          "file": "docs/examples/empty-state/ErrorCode.tsx"
+        },
+        {
+          "name": "EmptyStateAnatomy",
+          "title": "EmptyState anatomy",
+          "description": "",
+          "file": "docs/examples/empty-state/EmptyStateAnatomy.tsx"
         }
       ],
       "parts": {
@@ -11402,28 +11438,46 @@
       ],
       "examples": [
         {
-          "name": "UpdatingPanel",
-          "title": "Updating panel",
-          "description": "For the work that follows a press, the button that started it shows a spinner itself with `pending`; see Button.",
-          "file": "docs/examples/spinner/UpdatingPanel.tsx"
+          "name": "LoadingPreview",
+          "title": "Loading preview",
+          "description": "A spinner shows work of unknown length in a small area, such as a preview on its way.",
+          "file": "docs/examples/spinner/LoadingPreview.tsx"
         },
         {
           "name": "Sizes",
           "title": "Sizes",
-          "description": "Small, medium and large spinners (`sm`, `md` and `lg`), each with its own label.",
+          "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
         },
         {
           "name": "UpdatingList",
-          "title": "A list that updates",
-          "description": "Choosing another view keeps the tasks shown while the new ones load. A small spinner beside the choice says they are updating, and the list reports `aria-busy`.",
+          "title": "Do: Keep the content in place, and the spinner beside what changes.",
+          "description": "",
           "file": "docs/examples/spinner/UpdatingList.tsx"
         },
         {
-          "name": "LoadingPreview",
-          "title": "Content on its way",
-          "description": "A large spinner in the middle of a preview's frame, which keeps its size while the file renders.",
-          "file": "docs/examples/spinner/LoadingPreview.tsx"
+          "name": "CoverContent",
+          "title": "Don't: Content hidden behind a spinner while it updates.",
+          "description": "",
+          "file": "docs/examples/spinner/CoverContent.tsx"
+        },
+        {
+          "name": "OneSpinner",
+          "title": "Do: One spinner for one piece of work.",
+          "description": "",
+          "file": "docs/examples/spinner/OneSpinner.tsx"
+        },
+        {
+          "name": "SpinnerPerRow",
+          "title": "Don't: A spinner on every row of one update.",
+          "description": "",
+          "file": "docs/examples/spinner/SpinnerPerRow.tsx"
+        },
+        {
+          "name": "SpinnerAnatomy",
+          "title": "Spinner anatomy",
+          "description": "",
+          "file": "docs/examples/spinner/SpinnerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -11864,26 +11918,56 @@
         {
           "name": "BlockedRelease",
           "title": "Blocked release",
-          "description": "An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warning and danger alerts interrupt only with `announce`.",
+          "description": "An alert is a message about a page or a section that stays above the content it concerns until it no longer applies.",
           "file": "docs/examples/alert/BlockedRelease.tsx"
+        },
+        {
+          "name": "SaveFailed",
+          "title": "Save failed",
+          "description": "`announce` reads a warning or danger alert at once, for one that appears because of something people just did. Info and success alerts are always read politely.",
+          "file": "docs/examples/alert/SaveFailed.tsx"
         },
         {
           "name": "Tones",
           "title": "Tones",
-          "description": "Info for something to know, success for a result that stays relevant, warning before a problem and danger after one.",
+          "description": "",
           "file": "docs/examples/alert/Tones.tsx"
-        },
-        {
-          "name": "SaveFailed",
-          "title": "Announce a failure",
-          "description": "A save that fails shows a danger alert with `announce`, so it is read at once. Dismissing it moves focus back to the button that saves.",
-          "file": "docs/examples/alert/SaveFailed.tsx"
         },
         {
           "name": "CustomIcon",
           "title": "Another icon, or none",
-          "description": "`icon` replaces the tone's icon with one that says more, and `icon={false}` leaves it out for a short message.",
+          "description": "`icon` replaces the tone's icon, and `icon={false}` leaves it out.",
           "file": "docs/examples/alert/CustomIcon.tsx"
+        },
+        {
+          "name": "OneAlert",
+          "title": "Do: One alert per situation, with its next step.",
+          "description": "",
+          "file": "docs/examples/alert/OneAlert.tsx"
+        },
+        {
+          "name": "StackedAlerts",
+          "title": "Don't: Several alerts about one situation.",
+          "description": "",
+          "file": "docs/examples/alert/StackedAlerts.tsx"
+        },
+        {
+          "name": "ProblemInTitle",
+          "title": "Do: The problem in the title, the next step in the action.",
+          "description": "",
+          "file": "docs/examples/alert/ProblemInTitle.tsx"
+        },
+        {
+          "name": "GenericTitle",
+          "title": "Don't: A title that only names the tone, and a vague action.",
+          "description": "",
+          "file": "docs/examples/alert/GenericTitle.tsx"
+        },
+        {
+          "name": "AlertAnatomy",
+          "title": "Alert anatomy",
+          "description": "",
+          "file": "docs/examples/alert/AlertAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13744,20 +13828,56 @@
         {
           "name": "SeatsAssigned",
           "title": "Seats assigned",
-          "description": "A meter shows a measurement within a known range as a labelled bar: the seats assigned of a plan, or the storage used of a quota. It is read-only, and assistive technology reads it as a meter named by its label, with its value and range. For how much of a task is done, use Progress, which shares its look.",
+          "description": "A meter shows a measurement within a known range, such as the seats assigned of a plan.",
           "file": "docs/examples/meter/SeatsAssigned.tsx"
         },
         {
+          "name": "PlanUsage",
+          "title": "Do: Say in text what a full meter means.",
+          "description": "",
+          "file": "docs/examples/meter/PlanUsage.tsx"
+        },
+        {
+          "name": "FullWithoutWords",
+          "title": "Don't: A full bar left to speak for itself: it has no warning color.",
+          "description": "",
+          "file": "docs/examples/meter/FullWithoutWords.tsx"
+        },
+        {
+          "name": "SameWidths",
+          "title": "Do: One width for meters people compare.",
+          "description": "",
+          "file": "docs/examples/meter/SameWidths.tsx"
+        },
+        {
+          "name": "MixedWidths",
+          "title": "Don't: Bars of different lengths, side by side.",
+          "description": "",
+          "file": "docs/examples/meter/MixedWidths.tsx"
+        },
+        {
           "name": "StorageQuota",
-          "title": "Units in words",
-          "description": "The value shows the abbreviation, and `aria-valuetext` reads the unit in words.",
+          "title": "Do: The value as people count it, with its unit.",
+          "description": "",
           "file": "docs/examples/meter/StorageQuota.tsx"
         },
         {
-          "name": "PlanUsage",
-          "title": "Limits of a plan",
-          "description": "Meters of one plan side by side, each with its own range. The text below says what the full one means.",
-          "file": "docs/examples/meter/PlanUsage.tsx"
+          "name": "PercentOfStorage",
+          "title": "Don't: A percentage, where people count an amount.",
+          "description": "",
+          "file": "docs/examples/meter/PercentOfStorage.tsx"
+        },
+        {
+          "name": "MeterAnatomy",
+          "title": "Meter anatomy",
+          "description": "",
+          "file": "docs/examples/meter/MeterAnatomy.tsx"
+        },
+        {
+          "name": "LongLabel",
+          "title": "Long label",
+          "description": "",
+          "file": "docs/examples/meter/LongLabel.tsx"
         }
       ],
       "parts": {
@@ -13856,26 +13976,62 @@
         {
           "name": "UploadingFile",
           "title": "Uploading file",
-          "description": "Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, AppShell.Root's `loading` shows a bar along its header.",
+          "description": "Progress shows how much of a task is done, such as an upload.",
           "file": "docs/examples/progress/UploadingFile.tsx"
         },
         {
-          "name": "ImportContacts",
-          "title": "Items done of a total",
-          "description": "`max` is the number of items, and the value counts them; `aria-valuetext` reads it with its unit.",
-          "file": "docs/examples/progress/ImportContacts.tsx"
-        },
-        {
           "name": "PreparingExport",
-          "title": "Amount unknown",
-          "description": "`value={null}` shows a sweeping indicator while the task runs and its amount is still unknown.",
+          "title": "Preparing export",
+          "description": "With `value={null}`, the indicator sweeps while the amount of work is unknown.",
           "file": "docs/examples/progress/PreparingExport.tsx"
         },
         {
           "name": "ExportMembers",
-          "title": "From preparing to done",
-          "description": "The export starts with an unknown amount, shows the share done once it is known, and ends with a status message in place of the bar. The button stays pending meanwhile.",
+          "title": "Export members",
+          "description": "Start with `value={null}`, show the share once it is known, and replace the bar with the result.",
           "file": "docs/examples/progress/ExportMembers.tsx"
+        },
+        {
+          "name": "SetupSteps",
+          "title": "Steps",
+          "description": "`segments` splits the track into equal steps that fill in turn.",
+          "file": "docs/examples/progress/SetupSteps.tsx"
+        },
+        {
+          "name": "OneBarForBatch",
+          "title": "Do: One bar for one task, however many items it covers.",
+          "description": "",
+          "file": "docs/examples/progress/OneBarForBatch.tsx"
+        },
+        {
+          "name": "BarPerFile",
+          "title": "Don't: A bar for every file of one upload.",
+          "description": "",
+          "file": "docs/examples/progress/BarPerFile.tsx"
+        },
+        {
+          "name": "ImportContacts",
+          "title": "Do: Name the task, and count items where people count them.",
+          "description": "",
+          "file": "docs/examples/progress/ImportContacts.tsx"
+        },
+        {
+          "name": "VagueLabel",
+          "title": "Don't: A label that doesn't say what is running.",
+          "description": "",
+          "file": "docs/examples/progress/VagueLabel.tsx"
+        },
+        {
+          "name": "ProgressAnatomy",
+          "title": "Progress anatomy",
+          "description": "",
+          "file": "docs/examples/progress/ProgressAnatomy.tsx"
+        },
+        {
+          "name": "LongTaskName",
+          "title": "Long task name",
+          "description": "",
+          "file": "docs/examples/progress/LongTaskName.tsx"
         }
       ],
       "parts": {
