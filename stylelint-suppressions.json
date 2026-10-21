@@ -222,11 +222,6 @@
       "count": 2
     }
   },
-  "packages/ui/src/styles/WindowFrame.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 2
-    }
-  },
   "packages/ui/src/styles/Toast.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 10

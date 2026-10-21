@@ -1,5 +1,3 @@
-'use client';
-
 import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { Column, Row } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
