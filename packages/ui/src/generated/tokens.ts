@@ -28,18 +28,6 @@ export interface TokenDefinition {
 
 /** Every token, by its DTCG path. */
 export const tokens = {
-  /** The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it. */
-  'app-shell.header-height': {
-    cssVariable: '--env-app-shell-header-height',
-    type: 'dimension',
-    values: {
-      light: '3.25rem',
-      dark: '3.25rem',
-      'light-high-contrast': '3.25rem',
-      'dark-high-contrast': '3.25rem',
-    },
-    scales: { compact: '2.625rem' },
-  },
   'body.font-weight': {
     cssVariable: '--env-body-font-weight',
     type: 'fontWeight',
@@ -380,7 +368,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(255 228 226 / 0.22)',
     },
   },
-  /** The default surface: Surface, sidebars, standard menus. */
+  /** The default surface: Surface, navigation, standard menus. */
   'color.bg.default': {
     cssVariable: '--env-color-bg-default',
     type: 'color',
@@ -699,7 +687,7 @@ export const tokens = {
       'dark-high-contrast': 'rgb(30 31 33 / 0.55)',
     },
   },
-  /** The lighter scrim behind a drawer, such as the app shell’s sidebar over a narrow window: the dark page color at 30%. */
+  /** The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%. */
   'color.bg.overlay.muted': {
     cssVariable: '--env-color-bg-overlay-muted',
     type: 'color',
@@ -2284,6 +2272,18 @@ export const tokens = {
     },
     scales: { compact: '2rem' },
   },
+  /** TopBar's height: a single row that holds controls of the control height with space around them. */
+  'top-bar.height': {
+    cssVariable: '--env-top-bar-height',
+    type: 'dimension',
+    values: {
+      light: '3.25rem',
+      dark: '3.25rem',
+      'light-high-contrast': '3.25rem',
+      'dark-high-contrast': '3.25rem',
+    },
+    scales: { compact: '2.625rem' },
+  },
   /** A tree row's block padding at density lg: the row density's in the comfortable scale. */
   'tree.row-padding-block-lg': {
     cssVariable: '--env-tree-row-padding-block-lg',
@@ -2495,7 +2495,7 @@ export const tokens = {
     type: 'number',
     values: { light: '0', dark: '0', 'light-high-contrast': '0', 'dark-high-contrast': '0' },
   },
-  /** Modal layers over their scrim: dialogs, drawers and the command palette. */
+  /** Modal layers over their scrim: dialogs, sheets and the command palette. */
   'z.modal': {
     cssVariable: '--env-z-modal',
     type: 'number',
@@ -2512,7 +2512,7 @@ export const tokens = {
     type: 'number',
     values: { light: '90', dark: '90', 'light-high-contrast': '90', 'dark-high-contrast': '90' },
   },
-  /** A collapsed sidebar that opens over the content without docking, above the frame's sticky parts. */
+  /** A supporting pane that opens over its main pane as a sheet, and the scrim behind it, above the sticky parts. */
   'z.peek': {
     cssVariable: '--env-z-peek',
     type: 'number',
@@ -2535,7 +2535,7 @@ export const tokens = {
     type: 'number',
     values: { light: '1', dark: '1', 'light-high-contrast': '1', 'dark-high-contrast': '1' },
   },
-  /** The frame's sticky and fixed parts that content scrolls under: the app header and the sidebar columns. */
+  /** Sticky parts that content scrolls under: a sticky TopBar or PageHeader. */
   'z.sticky': {
     cssVariable: '--env-z-sticky',
     type: 'number',

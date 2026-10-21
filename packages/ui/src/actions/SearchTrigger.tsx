@@ -13,7 +13,6 @@ import { useMessages } from '../internal/EnvUIContext.js';
 import { setRef } from '../internal/setRef.js';
 import { formatShortcut, useApplePlatform, useShortcut } from '../internal/useShortcut.js';
 import { searchTrigger } from '../foundations/messages/searchTrigger.js';
-import { useSidebarRail } from '../navigation/internal/SidebarCompact.js';
 
 export interface SearchTriggerProps
   extends Omit<ComponentPropsWithRef<'button'>, 'children' | 'aria-label'> {
@@ -38,12 +37,12 @@ export interface SearchTriggerProps
   listen?: boolean;
   /**
    * Show only the search icon, in a ghost IconButton with the label and shortcut in a tooltip.
-   * @default true inside a sidebar showing icons only, else false
+   * @default false
    */
   iconOnly?: boolean;
   /**
    * The side of the trigger the icon-only tooltip opens on.
-   * @default 'inline-end' inside a sidebar showing icons only, else 'bottom'
+   * @default 'bottom'
    */
   tooltipSide?: PopupSide;
   /**
@@ -51,7 +50,7 @@ export interface SearchTriggerProps
    * @default the container's control height, md unless the container sets another
    */
   size?: ControlSize;
-  /** Fill the width of the container, such as at the top of a sidebar. */
+  /** Fill the width of the container, such as at the top of a navigation drawer. */
   fullWidth?: boolean;
 }
 
@@ -74,8 +73,7 @@ export function SearchTrigger({
 }: SearchTriggerProps) {
   const messages = useMessages('searchTrigger', searchTrigger);
   const label = ownLabel ?? messages.label;
-  const inRail = useSidebarRail();
-  const iconOnly = ownIconOnly ?? inRail;
+  const iconOnly = ownIconOnly ?? false;
   const apple = useApplePlatform();
   const display = shortcut ? formatShortcut(shortcut, apple) : undefined;
   const element = useRef<HTMLButtonElement | null>(null);
@@ -100,7 +98,7 @@ export function SearchTrigger({
       // so it doesn't describe the button too.
       <TooltipDescribesContext value={false}>
         <Tooltip
-          side={tooltipSide ?? (inRail ? 'inline-end' : 'bottom')}
+          side={tooltipSide ?? 'bottom'}
           content={
             display ? (
               <span className="env-search-trigger-tooltip">

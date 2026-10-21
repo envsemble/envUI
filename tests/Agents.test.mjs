@@ -133,8 +133,7 @@ test('the manifest has every component page, export, example and token', () => {
   assert.equal(menu.entry.name, 'Menu.Item');
   for (const page of manifest.patterns)
     assert.ok(manifest.intents.includes(page.intent), page.name);
-  for (const page of manifest.templates) assert.ok(page.frame && page.files.length > 0, page.name);
-  // A component page leads to the patterns and templates that compose it.
+  // A component page leads to the patterns that compose it.
   assert.ok(
     manifest.components
       .find((item) => item.name === 'Skeleton')
@@ -501,8 +500,6 @@ test('envui mcp answers every tool over stdio from the installed files', async (
       'get_example',
       'list_patterns',
       'get_pattern',
-      'list_templates',
-      'get_template',
       'get_tokens',
       'plan',
     ],
@@ -514,7 +511,7 @@ test('envui mcp answers every tool over stdio from the installed files', async (
   }
 
   const found = await server.call('search', { query: 'sidebar toggle', limit: 3 });
-  assert.equal(found.results[0].name, 'Sidebar');
+  assert.equal(found.results[0].name, 'Drawer');
   assert.equal((await server.call('search', { query: 'modal' })).results[0].name, 'Dialog');
   assert.equal(
     (await server.call('search', { query: 'muted text', kind: 'token' })).results[0].name,
@@ -605,20 +602,6 @@ test('envui mcp answers every tool over stdio from the installed files', async (
     (await server.call('list_patterns', {})).patterns.map((pattern) => pattern.name),
     manifest.patterns.map((pattern) => pattern.name),
   );
-  const { templates } = await server.call('list_templates', {});
-  assert.deepEqual(
-    templates.map((template) => template.name),
-    manifest.templates.map((template) => template.name),
-  );
-  assert.ok(templates.some((template) => template.name === 'sign-in-page'));
-  const signIn = await server.call('get_template', { name: 'login page', file: 'SignInPage' });
-  assert.equal(signIn.template, 'sign-in-page');
-  assert.equal(signIn.frame, 'none');
-  assert.equal(
-    signIn.source,
-    readFileSync(join(examplesDirectory, 'sign-in-page/SignInPage.tsx'), 'utf8'),
-  );
-
   const spacing = await server.call('get_tokens', { prefix: 'space.' });
   assert.ok(spacing.total >= 5);
   assert.ok(spacing.tokens.every((token) => token.id.startsWith('space.')));
@@ -776,7 +759,7 @@ test('search finds exports without a component page by name', () => {
 
 test('search and plan rank by names, aliases and situations', () => {
   const top = (query) => search(manifest, query, { kinds: ['component'], limit: 1 })[0]?.name;
-  assert.equal(top('hamburger'), 'Sidebar');
+  assert.equal(top('hamburger'), 'Drawer');
   assert.equal(top('dropdown'), 'Select');
   assert.equal(top('toggle switch'), 'Switch');
   assert.equal(top('snackbar'), 'Toast');
@@ -793,17 +776,17 @@ test('search and plan rank by names, aliases and situations', () => {
     assert.ok(candidate.matched.length && candidate.parts.length, candidate.component);
     assert.equal(new Set(candidate.parts).size, candidate.parts.length, 'parts once each');
   }
-  // Structure words lead to templates and patterns, not to Pager or Pagination.
-  const signIn = plan(manifest, 'a sign-in page');
-  assert.deepEqual(signIn.candidates, []);
-  assert.equal(signIn.templates[0]?.name, 'sign-in-page');
-  assert.ok(signIn.next.some((step) => /Start from get_template sign-in-page/.test(step)));
+  // Structure words lead to patterns, not to Pager or Pagination.
+  const frame = plan(manifest, 'an app frame page');
+  assert.ok(!frame.candidates.some((item) => /^Pag/.test(item.component)));
+  assert.equal(frame.patterns[0]?.name, 'app-frame');
+  assert.ok(frame.next.some((step) => /Read the app-frame pattern/.test(step)));
   // A part a chosen component also matches stays with it.
   assert.deepEqual(
-    plan(manifest, 'add a collapsible sidebar with a toggle').candidates.map(
+    plan(manifest, 'add a collapsible sidebar with navigation links').candidates.map(
       (item) => item.component,
     ),
-    ['Sidebar'],
+    ['Drawer'],
   );
   const form = plan(manifest, 'a sign-in form with email and password');
   assert.ok(form.candidates.some((item) => item.component === 'TextField'));
@@ -913,7 +896,7 @@ test('plan leaves out what a part does not ask for', () => {
 test('plan finds the right component for paraphrases the benchmark does not use', () => {
   const names = (description) =>
     plan(manifest, description).candidates.map((item) => item.component);
-  assert.deepEqual(names('a sidebar with links'), ['NavList']);
+  assert.deepEqual(names('a sidebar with links'), ['Drawer']);
   assert.deepEqual(names('let users switch between light and dark themes'), ['ThemeToggle']);
   assert.deepEqual(names('a theme switcher in the header'), ['ThemeToggle']);
   assert.deepEqual(names('a dark mode toggle'), ['ThemeToggle']);
@@ -974,12 +957,12 @@ const corpus = [
     [],
     ['SegmentedControl'],
   ],
-  ['a Dark Mode switch in the header', ['ThemeToggle'], ['AppShell'], ['Switch']],
+  ['a Dark Mode switch in the header', ['ThemeToggle'], ['TopBar'], ['Switch']],
   ['a form with a postal code field', [], ['TextField', 'Column', 'Field'], ['Code']],
-  ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
+  ['A top bar with the product name', [], ['TopBar'], ['Menubar']],
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],
-  ['A header with the page title', [], ['AppShell', 'PageHeader'], ['PanelDock']],
+  ['A header with the page title', [], ['TopBar', 'PageHeader'], ['PanelDock']],
   ['Add a "Delete" button and a confirm dialog', ['Button', 'ConfirmDialog'], ['Dialog'], []],
   ['show the account details', [], [], ['Disclosure']],
   ['a toggle for the newsletter', ['Switch'], [], ['ThemeToggle']],
@@ -1041,32 +1024,8 @@ test('plan never drops words silently', () => {
     for (const part of candidate.parts) assert.doesNotMatch(part, /\s{2,}|^\s|\s$/, part);
 });
 
-test('the pattern and template tools answer from the manifest', () => {
-  // A template stands in until the template pages land: a copy of the loading pattern's lead
-  // example as its screen, inside the app frame.
-  const screen = manifest.patterns[0].examples[0];
-  const template = {
-    name: 'stand-in-page',
-    title: 'Stand-in page',
-    group: 'Templates',
-    status: 'beta',
-    since: '1.0.0',
-    summary: 'A screen to start from.',
-    aliases: ['placeholder screen'],
-    useWhen: ['A screen.'],
-    avoidWhen: [],
-    composes: ['Button'],
-    related: [],
-    doc: manifest.patterns[0].doc,
-    frame: 'app',
-    scales: ['comfortable', 'compact'],
-    files: [
-      { ...screen, name: 'StandInPage', title: 'Stand-in page', frame: 'app', primary: true },
-    ],
-    examples: [],
-  };
-  const withTemplate = { ...manifest, version: '1.0.0', templates: [template] };
-  const server = createServer({ root: packageRoot, manifest: withTemplate });
+test('the pattern tools answer from the manifest', () => {
+  const server = createServer({ root: packageRoot, manifest });
   const call = (name, args) => {
     const { result } = server.handle({
       jsonrpc: '2.0',
@@ -1125,70 +1084,9 @@ test('the pattern and template tools answer from the manifest', () => {
     example.source,
     readFileSync(join(examplesDirectory, 'loading/RefreshInPlace.tsx'), 'utf8'),
   );
-
-  // Templates: the list, one by alias, and a screen's source with where it renders.
-  assert.deepEqual(call('list_templates', {}).value.templates, [
-    {
-      name: 'stand-in-page',
-      title: 'Stand-in page',
-      summary: 'A screen to start from.',
-      status: 'beta',
-      frame: 'app',
-      composes: ['Button'],
-      files: ['StandInPage'],
-      doc: template.doc,
-    },
-  ]);
-  assert.equal(
-    call('get_template', { name: 'placeholder screen' }).value.requested,
-    'placeholder screen',
-  );
-  const file = call('get_template', { name: 'stand-in-page', file: 'stand-in page' }).value;
-  assert.equal(file.template, 'stand-in-page');
-  assert.equal(file.name, 'StandInPage');
-  assert.equal(file.frame, 'app');
-  assert.equal(file.source, readFileSync(join(packageRoot, screen.file), 'utf8'));
-  assert.equal(file.requested, undefined);
-  assert.equal(
-    call('get_template', { name: 'placeholder screen', file: 'StandInPage' }).value.requested,
-    'placeholder screen',
-  );
-  assert.match(
-    call('get_template', { name: 'stand-in-page', file: 'Other' }).error,
-    /no file "Other". Its files: StandInPage/,
-  );
-  assert.deepEqual(
-    call('get_example', { component: 'stand-in-page' }).value.examples.map((item) => item.name),
-    ['StandInPage'],
-  );
-  // A manifest without templates says so.
-  const installed = createServer({
-    root: packageRoot,
-    manifest: { ...manifest, version: '1.0.0', templates: [] },
-  });
-  const { result } = installed.handle({
-    jsonrpc: '2.0',
-    id: 1,
-    method: 'tools/call',
-    params: { name: 'get_template', arguments: { name: 'settings-page' } },
-  });
-  assert.equal(result.isError, true);
-  // plan points at a template that matches.
-  const planned = plan(withTemplate, 'a stand-in page');
-  assert.ok(planned.templates.some((item) => item.name === 'stand-in-page'));
 });
 
-// Runs once the settings-page template and the settings pattern are written.
-const settingsMissing = [
-  !manifest.templates.some((item) => item.name === 'settings-page') && 'settings-page template',
-  !manifest.patterns.some((item) => item.name === 'settings') && 'settings pattern',
-].filter(Boolean);
-test(
-  'plan leads a settings page to its template and pattern',
-  { skip: settingsMissing.length > 0 && `${settingsMissing.join(' and ')} not written yet` },
-  () => {
-    const result = plan(manifest, 'a settings page with notification toggles');
-    assert.ok(result.templates.some((item) => item.name === 'settings-page'));
-    assert.ok(result.patterns.some((item) => item.name === 'settings'));
-  },
-);
+test('plan leads a settings page to its pattern', () => {
+  const result = plan(manifest, 'a settings page with notification toggles');
+  assert.ok(result.patterns.some((item) => item.name === 'settings'));
+});

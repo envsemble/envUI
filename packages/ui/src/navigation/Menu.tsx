@@ -4,6 +4,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   useId,
   useRef,
+  type AriaAttributes,
   type ComponentPropsWithRef,
   type CSSProperties,
   type MouseEvent,
@@ -201,6 +202,16 @@ interface ItemSharedProps extends ItemContentProps {
    * @default false
    */
   disabled?: boolean;
+  /**
+   * Marks a destination as the page shown now, such as aria-current="page" on the current one of a
+   * Bar's destinations that its More menu holds.
+   */
+  'aria-current'?: AriaAttributes['aria-current'];
+  /**
+   * The item's accessible name, where its label and end content don't say it as wanted, such as
+   * Inbox, 3 new for a destination whose count shows as a badge.
+   */
+  'aria-label'?: string;
   /** Class of the item's row. */
   className?: string;
 }
@@ -246,6 +257,8 @@ function Item({
   shortcut,
   end,
   disabled,
+  'aria-current': ariaCurrent,
+  'aria-label': ariaLabel,
   className,
   ...props
 }: ItemProps) {
@@ -269,6 +282,8 @@ function Item({
         // The link component comes from LinkProvider and keeps its identity between renders.
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
+        aria-current={ariaCurrent}
+        aria-label={ariaLabel}
         {...accessibility}
       >
         {content}
@@ -280,6 +295,8 @@ function Item({
       className={itemClassName}
       disabled={disabled}
       onClick={props.href === undefined ? props.onClick : preventActivation}
+      aria-current={ariaCurrent}
+      aria-label={ariaLabel}
       {...accessibility}
     >
       {content}

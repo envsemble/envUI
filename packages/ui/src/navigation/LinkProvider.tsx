@@ -9,9 +9,9 @@ export type { LinkComponentProps };
 
 export interface LinkProviderProps {
   /**
-   * Renders every envUI destination (Button, Link, NavList.Item, Card, Pager links and menu
-   * links with href). It must render an anchor and forward native props and ref, for example a
-   * router's link that navigates on the client.
+   * Renders every envUI destination (Button, Link, the destinations of Bar, Rail and Drawer, Card,
+   * Pager links and menu links with href). It must render an anchor and forward native props and
+   * ref, for example a router's link that navigates on the client.
    */
   component: ComponentType<LinkComponentProps>;
   children: ReactNode;

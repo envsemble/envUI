@@ -139,11 +139,12 @@ export function parseTarget(name) {
  * The new name of an `env-*` class or custom property name (without its `--`), or the name itself.
  * An entry renames its old name and every name that continues it with a hyphen; the longest entry
  * wins. A name that already continues the entry's new name is left alone, so `env-counter-badge`
- * does not become `env-counter-badge-badge` on a second run.
+ * does not become `env-counter-badge-badge` on a second run. An `exact` entry, a class the map's
+ * `reusedClasses` lists, renames its old name alone.
  */
 export function renameClass(name, classes) {
-  for (const { from, to } of classes) {
-    if (name !== from && !name.startsWith(`${from}-`)) continue;
+  for (const { from, to, exact } of classes) {
+    if (name !== from && (exact || !name.startsWith(`${from}-`))) continue;
     if (to.startsWith(`${from}-`) && (name === to || name.startsWith(`${to}-`))) return name;
     return to + name.slice(from.length);
   }
@@ -222,14 +223,18 @@ export function validateMap(map) {
     }
   }
   const classes = [];
+  const reusedClassNames = Array.isArray(map.reusedClasses) ? map.reusedClasses : [];
   for (const [from, to] of entriesOf(map.classes)) {
     if (!className.test(from) || from.endsWith('-'))
       problems.push(`classes: ${from} is not an env- class name.`);
     if (typeof to !== 'string' || !className.test(to) || to.endsWith('-'))
       problems.push(`classes: ${from} must map to an env- class name.`);
     else if (to === from) problems.push(`classes: ${from} maps to itself.`);
-    classes.push({ from, to });
+    classes.push({ from, to, exact: reusedClassNames.includes(from) });
   }
+  for (const name of reusedClassNames)
+    if (!Object.hasOwn(map.classes ?? {}, name))
+      problems.push(`reusedClasses: ${name} is no class that classes renames.`);
   const sorted = sortClasses(classes);
   for (const { from, to } of sorted) {
     if (typeof to === 'string' && renameClass(to, sorted) !== to)
@@ -566,7 +571,7 @@ function validateStructureCase(at, each) {
 }
 
 /** Transforms of their own that rewrite a structure entry, instead of its cases. */
-export const structureTransforms = ['v1-app-shell'];
+export const structureTransforms = [];
 
 /** Problems with the `structure` section: per entry point and component, its cases. */
 function validateStructure(structure) {
@@ -584,8 +589,7 @@ function validateStructure(structure) {
         problems.push(`${where} needs a "report" for the uses it can't rewrite.`);
         continue;
       }
-      // An element a transform of its own rewrites, such as AppShell's one-to-many parts, has its
-      // reports here and no cases.
+      // An element a transform of its own rewrites has its reports here and no cases.
       if (rule.transform !== undefined) {
         if (!structureTransforms.includes(rule.transform))
           problems.push(`${where}: "transform" must be one of ${structureTransforms.join(', ')}.`);
@@ -740,8 +744,14 @@ export function normalizeMap(map) {
     attributes: rule.attributes,
     report: rule.report,
   }));
+  // 0.x classes that 1.0 uses again for something else, such as env-bar, are renamed alone.
+  const reusedClasses = new Set(Array.isArray(map.reusedClasses) ? map.reusedClasses : []);
   const classes = sortClasses([
-    ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
+    ...entriesOf(map.classes).map(([from, to]) => ({
+      from,
+      to,
+      ...(reusedClasses.has(from) && { exact: true }),
+    })),
     ...classReports
       .filter((rule) => !rule.within && !rule.attributes)
       .map(({ name }) => ({ from: name, to: name })),

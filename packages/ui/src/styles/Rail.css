@@ -1,0 +1,143 @@
+/* Rail, the navigation rail: a narrow column of destinations, each its icon in a pill-shaped
+   indicator above a short label, with an optional header and footer. The current destination fills
+   its indicator; the count sits on the icon's top end. Every placement is logical. */
+.env-rail {
+  --env-rail-width: 5rem;
+  --env-rail-indicator-width: 3.5rem;
+  --env-rail-indicator-height: 2rem;
+  /* The count's pill on the icon: as tall as it is wide for one digit. */
+  --env-rail-count-size: 1rem;
+  box-sizing: border-box;
+  inline-size: var(--env-rail-width);
+  block-size: 100%;
+  min-block-size: 0;
+  padding-block: var(--env-space-3);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+}
+.env-rail-header,
+.env-rail-footer {
+  flex: none;
+  inline-size: 100%;
+}
+.env-rail-footer {
+  margin-block-start: auto;
+}
+.env-rail-list {
+  inline-size: 100%;
+  min-block-size: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.env-rail-item {
+  --env-icon-size: var(--env-control-icon-size);
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  padding: var(--env-space-1) var(--env-space-1) var(--env-space-2);
+  border: 0;
+  border-radius: var(--env-radius-md);
+  background: transparent;
+  color: var(--env-color-fg-control);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1.3 var(--env-font-family);
+  text-align: center;
+  text-decoration: none;
+}
+.env-rail-indicator {
+  position: relative;
+  flex: none;
+  inline-size: var(--env-rail-indicator-width);
+  block-size: var(--env-rail-indicator-height);
+  display: grid;
+  place-items: center;
+  border-radius: var(--env-radius-full);
+  transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
+}
+.env-rail-label {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+/* The count, on the icon's top end, in the accent counter badge's pill. */
+.env-rail-count {
+  box-sizing: border-box;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(50% + var(--env-space-1));
+  min-inline-size: var(--env-rail-count-size);
+  block-size: var(--env-rail-count-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--env-space-1);
+  border-radius: var(--env-radius-full);
+  background: var(--env-color-bg-accent-emphasis);
+  color: var(--env-color-fg-on-emphasis);
+  font: var(--env-font-weight-medium) var(--env-font-size-caption) / 1 var(--env-font-family);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.env-rail-item:not([data-current]) .env-icon {
+  color: var(--env-color-fg-muted);
+}
+.env-rail-item:hover .env-rail-indicator {
+  background: var(--env-color-bg-navigation-hover);
+}
+.env-rail-item:active .env-rail-indicator {
+  background: var(--env-color-bg-navigation-pressed);
+}
+.env-rail-item[data-current] {
+  color: var(--env-color-fg-default);
+}
+.env-rail-item[data-current] .env-rail-indicator {
+  color: var(--env-color-fg-on-selected);
+  background: var(--env-color-bg-selected);
+}
+.env-rail-item[data-current]:hover .env-rail-indicator {
+  background: var(--env-color-bg-selected-hover);
+}
+.env-rail-item[data-current]:active .env-rail-indicator {
+  background: var(--env-color-bg-selected-pressed);
+}
+.env-rail-item:focus-visible {
+  outline: 2px solid var(--env-color-border-focus);
+  outline-offset: -2px;
+}
+/* Under a reduced-motion preference, fills change at once. */
+@media (prefers-reduced-motion: reduce) {
+  .env-rail-indicator {
+    transition: none;
+  }
+}
+/* Motion: the indicator settles slightly while it is held, only without a reduced-motion
+   preference. */
+@media (prefers-reduced-motion: no-preference) {
+  .env-rail-indicator {
+    transition-property: background-color, transform;
+  }
+  .env-rail-item:active .env-rail-indicator {
+    transform: scale(0.96);
+  }
+}
+/* Forced colors: the system paints no fills, so the current indicator takes the selection colors
+   and the count an outline. */
+@media (forced-colors: active) {
+  .env-rail-item[data-current] .env-rail-indicator {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    color: HighlightText;
+  }
+  .env-rail-item[data-current] .env-rail-indicator :where(*) {
+    color: inherit;
+  }
+  .env-rail-count {
+    border: 1px solid CanvasText;
+  }
+  /* The current indicator's colors are forced off, so its count takes the canvas's own. */
+  .env-rail-item[data-current] .env-rail-count {
+    background: Canvas;
+    color: CanvasText;
+  }
+}

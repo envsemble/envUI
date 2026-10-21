@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button, Dialog, SearchTrigger, Column, TextField } from '@envsemble/envui';
 // Internal: the rail context a sidebar showing icons only provides.
-import { SidebarRailContext } from '../../packages/ui/src/navigation/internal/SidebarCompact.js';
 
 /**
  * Search triggers, mounted with ?fixture=search-triggers: a labelled one that listens for Mod+K, an
@@ -47,11 +46,15 @@ export function SearchTriggersFixture() {
           }
         }}
       />
-      <SidebarRailContext value>
-        <div data-testid="rail">
-          <SearchTrigger label="Rail search" listen={false} onClick={record('rail')} />
-        </div>
-      </SidebarRailContext>
+      <div data-testid="rail">
+        <SearchTrigger
+          label="Rail search"
+          iconOnly
+          tooltipSide="inline-end"
+          listen={false}
+          onClick={record('rail')}
+        />
+      </div>
       <output data-testid="search-log">{log.join(',')}</output>
     </Column>
   );

@@ -130,14 +130,8 @@ test('live examples keep links in place, show their source, and specimens show f
   }));
   expect(widths.panel).toBe(widths.column);
   // Catalogue-only specimens, such as the forced interaction states, sit in the section they
-  // illustrate on the figure template, and in the guidelines on the section template.
+  // illustrate on the figure template.
   await expect(page.getByRole('region', { name: 'Button interaction states' })).toBeVisible();
-  await page.goto(`${offline}#/components/nav-list/guidelines`);
-  const navigationDisclosure = page.locator('.docs-preview details.env-disclosure');
-  await navigationDisclosure.locator('summary').click();
-  await expect(
-    navigationDisclosure.getByRole('region', { name: 'Navigation item interaction states' }),
-  ).toBeVisible();
 });
 
 test('a component page shows plain sections, equal cells and the parts of its anatomy', async ({
@@ -184,10 +178,14 @@ test('a component page shows plain sections, equal cells and the parts of its an
   await expect(stages).toHaveCount(1);
   const placement = () =>
     stages.evaluate((stage) => {
-      const icon = stage.querySelector('.env-button > .env-icon')!.getBoundingClientRect();
-      const badge = [...stage.querySelectorAll('.docs-anatomy-badge')]
-        .find((item) => item.textContent === '2')!
-        .getBoundingClientRect();
+      // Until the example and its badges render, there is nothing to place: poll again.
+      const iconElement = stage.querySelector('.env-button > .env-icon');
+      const badgeElement = [...stage.querySelectorAll('.docs-anatomy-badge')].find(
+        (item) => item.textContent === '2',
+      );
+      if (!iconElement || !badgeElement) return null;
+      const icon = iconElement.getBoundingClientRect();
+      const badge = badgeElement.getBoundingClientRect();
       return {
         badges: stage.querySelectorAll('.docs-anatomy-badge').length,
         // Centred on the icon, give or take the rounding of a centred stage.
@@ -431,24 +429,6 @@ test('in the hosted build, an example whose file is missing offers a reload, whi
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
 });
 
-test("in the hosted build, a template page's previews load in the site's own frames", async ({
-  page,
-}) => {
-  // The previews are iframes of the site's frame route, ?frame=, so the site's framing headers in
-  // _headers must allow its own origin: X-Frame-Options DENY left them blank.
-  requireSite();
-  await serveSite(page);
-  await page.goto(`${siteUrl}/templates/index-page`);
-  const frames = page.locator('iframe.docs-template-frame');
-  await expect(frames.first()).toBeVisible();
-  for (const frame of await frames.all()) {
-    await frame.scrollIntoViewIfNeeded();
-    await expect(
-      page.frameLocator(`iframe[title="${await frame.getAttribute('title')}"]`).locator('main'),
-    ).toBeVisible();
-  }
-});
-
 /**
  * Opens the overview of the hosted build, then the Button page with every file under /assets/ that
  * the overview had not loaded failing, chosen by when it is asked for rather than by
@@ -564,12 +544,12 @@ test('a retry returns focus once, and later updates leave focus where it is', as
   await page.keyboard.press('Enter');
   await expect(hero.getByRole('button', { name: 'Create project', exact: true })).toBeVisible();
   expect(await hero.evaluate((group) => group.contains(document.activeElement))).toBe(true);
-  // Focus leaves for the page; the theme changes with a click that moves no focus.
-  await page.evaluate(() => {
-    (document.activeElement as HTMLElement | null)?.blur();
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  });
-  const scrolled = await page.evaluate(() => window.scrollY);
+  // Focus leaves for the page; the theme changes with a click that moves no focus. The frame's
+  // body scrolls, not the document.
+  const body = page.locator('#docs-main');
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await body.evaluate((element) => element.scrollTo(0, element.scrollHeight));
+  const scrolled = await body.evaluate((element) => element.scrollTop);
   expect(scrolled).toBeGreaterThan(1000);
   await page
     .locator('.docs-page-controls')
@@ -577,7 +557,7 @@ test('a retry returns focus once, and later updates leave focus where it is', as
     .evaluate((toggle: HTMLElement) => toggle.click());
   await expect(page.locator('.docs-app')).toHaveAttribute('data-env-theme', 'dark');
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
-  expect(await page.evaluate(() => window.scrollY)).toBe(scrolled);
+  expect(await body.evaluate((element) => element.scrollTop)).toBe(scrolled);
 });
 
 test('an example that fails to render says so in place, and the rest of the page works', async ({
@@ -616,6 +596,25 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
+test('the navigation shows the current page, and focus moves to the page only on a route change', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(`${catalogueUrl}/#/components/tree/overview`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  // The current page's link is scrolled into view as the navigation mounts.
+  const current = navigation.locator('[aria-current="page"]');
+  await expect(current).toHaveText(/Tree/);
+  await expect(current).toBeInViewport();
+  // The first page loaded leaves focus at the start of the document.
+  const main = page.getByRole('main');
+  await expect(main).not.toBeFocused();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main).toBeFocused();
+});
+
 test('a page that fails to render says so, and the navigation leads to the others', async ({
   page,
 }) => {
@@ -633,8 +632,9 @@ test('a page that fails to render says so, and the navigation leads to the other
   // A link to the overview would lead here again; the overview offers a reload instead.
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
-  // The page failed as it opened, so focus stays where the route put it.
-  await expect(main).toBeFocused();
+  // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
+  // the document, as on any page that loads.
+  await expect(main).not.toBeFocused();
   const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
@@ -733,17 +733,18 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
 
   for (const width of [1920, 960, 390]) {
     await page.setViewportSize({ width, height: 1400 });
+    // The content fills the frame's body, which fills the window below the top bar.
     const canvas = await page.locator('.docs-main').evaluate((main) => {
-      const rect = main.getBoundingClientRect();
+      const body = main.closest('.env-scaffold-body')!;
       return {
-        height: rect.height,
-        bottom: rect.bottom + window.scrollY,
-        documentHeight: document.documentElement.scrollHeight,
+        height: main.getBoundingClientRect().height,
+        body: body.clientHeight,
+        bottom: body.getBoundingClientRect().bottom,
         background: getComputedStyle(main).backgroundImage,
       };
     });
-    expect(canvas.height).toBeGreaterThanOrEqual(1400);
-    expect(Math.abs(canvas.bottom - canvas.documentHeight)).toBeLessThan(1);
+    expect(canvas.height).toBeGreaterThanOrEqual(canvas.body - 1);
+    expect(Math.abs(canvas.bottom - 1400)).toBeLessThan(1);
     expect(canvas.background).toBe('none');
   }
 

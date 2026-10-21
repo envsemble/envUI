@@ -74,6 +74,7 @@ Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled
 | A page's search, filters and primary action | [PageHeader](../components/page-header.md)'s `toolbar`, a Row |
 | A section's heading with its actions        | `<Row wrap align="center" justify="between">`                 |
 | A table's search and actions                | A Row above the table, in the size of its rows                |
+| Actions in a window's title bar             | A TopBar with `titleBar`: its `actions`, small ghost buttons  |
 
 ```tsx example=PageToolbar caption="A page's toolbar: a Row in PageHeader's toolbar, not a Toolbar."
 

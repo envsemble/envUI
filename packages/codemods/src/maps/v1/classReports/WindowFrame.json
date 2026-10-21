@@ -1,0 +1,5 @@
+{
+  "env-title-bar": {
+    "report": "TitleBar is gone: a TopBar with titleBar is the window's title bar, .env-top-bar[data-title-bar], with the parts env-top-bar-start, env-top-bar-title and env-top-bar-actions."
+  }
+}

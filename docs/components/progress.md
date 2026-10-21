@@ -22,15 +22,15 @@ avoidWhen:
     use: Spinner
   - text: Content of a known shape while it loads, such as a card or a list.
     use: Skeleton
-  - text: Loading a page or a route of an application, along the topbar.
-    use: AppShell
+  - text: Loading a page or a route of an application, along the top bar.
+    use: TopBar
   - text: Saying that a task finished or failed.
     use: Toast
 related:
   - meter
   - spinner
   - skeleton
-  - app-shell
+  - scaffold
   - toast
 components:
   - Progress
@@ -42,7 +42,7 @@ components:
 
 Progress shows how much of a task is done as a labelled bar, such as an upload or an import. With `value={null}` it shows that the task runs while its amount is still unknown. Assistive technology reads it as a progress bar named by its label, with its value and range.
 
-Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, AppShell.Root's `loading` shows a bar along its header.
+Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, TopBar's `loading` shows a bar along its bottom edge.
 
 ```tsx example=UploadingFile
 
@@ -137,6 +137,6 @@ The export starts with an unknown amount, shows the share done once it is known,
 ## Changelog
 
 - **1.0.0**: The classes are `env-progress*`; `segments` splits the track into steps; an indeterminate bar is read as Loading, and sweeps toward the end of the line also in right-to-left text; without `aria-valuetext` the formatted value stays; `className`, `style`, `ref` and data attributes reach the root.
-- **1.0.0**: `LoadingBar` is no longer exported: AppShell.Root's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
+- **1.0.0**: `LoadingBar` is no longer exported: TopBar's `loading` and `loadingLabel` show page progress, and Progress shows a task's.
 - **0.4.0**: The track uses the translucent neutral fill, so it stays visible on panes, rows and cards.
 - **0.2.0**: Progress.

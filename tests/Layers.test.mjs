@@ -90,6 +90,7 @@ test("the library's custom properties take the --env- prefix", async () => {
     '--available-width',
     '--transform-origin',
     '--drawer-swipe-movement-x',
+    '--drawer-swipe-movement-y',
   ]);
   const problems = [];
   for (const file of await readdir(styles)) {

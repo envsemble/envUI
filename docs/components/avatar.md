@@ -33,7 +33,7 @@ related:
   - menu
   - list
   - tooltip
-  - app-shell
+  - scaffold
   - combobox
 components:
   - Avatar

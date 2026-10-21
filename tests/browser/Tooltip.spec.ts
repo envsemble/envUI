@@ -474,17 +474,17 @@ test.describe('Tooltip', () => {
 
   test('a tooltip stays open while the pointer moves onto it', async ({ page }) => {
     await page.clock.install();
-    await page.goto(`${fixtureUrl}/?fixture=navigation`);
-    const item = page.getByTestId('navigation-icons-light').getByTestId('icon-only-navigation');
+    await page.goto(tooltips);
+    const item = page.getByRole('button', { name: 'Archive', exact: true });
     const tooltip = page.locator('.env-tooltip');
     await item.hover();
-    await expect(tooltip).toHaveText('Home overview');
+    await expect(tooltip).toHaveText('Moves it out of the list');
     await expect(page.locator('.env-tooltip-positioner')).not.toHaveCSS('pointer-events', 'none');
     // Hovering the tooltip itself keeps it, so its text can be read or magnified (WCAG 1.4.13).
     const box = (await tooltip.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
     await page.clock.runFor(600);
-    await expect(tooltip).toHaveText('Home overview');
+    await expect(tooltip).toHaveText('Moves it out of the list');
     await page.mouse.move(0, 0);
     await expect(tooltip).toHaveCount(0);
   });

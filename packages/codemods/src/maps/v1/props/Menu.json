@@ -60,17 +60,6 @@
         "to": "triggerClassName",
         "report": "OrganizationSwitcher's className styled the trigger, which triggerClassName does in 1.0: className, style and ref go to the menu popup, as on Menu.Root."
       }
-    },
-    "AccountMenu.OrganizationSubmenu": {
-      "items": {
-        "report": "Each of AccountMenu.OrganizationSubmenu's items names its organization with label in 1.0, where it was name: the codemod renames it in an array written in the prop, and TypeScript points at the others.",
-        "each": {
-          "name": {
-            "to": "label",
-            "report": "An organization's name is label in 1.0."
-          }
-        }
-      }
     }
   }
 }

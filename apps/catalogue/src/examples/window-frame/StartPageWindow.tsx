@@ -1,45 +1,33 @@
-import { Button, Menu, Menubar, Column, Text, WindowFrame } from '@envsemble/envui';
+import type { CSSProperties } from 'react';
+import { Button, Column, EmptyState, Page, Scaffold, TopBar } from '@envsemble/envui';
+import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 
-const recent = ['Roadmap', 'Pricing research', 'Launch checklist', 'Interview notes', 'Budget'];
-
-/** Stands in for the window, which WindowFrame fills. */
-const frame = {
-  position: 'relative',
-  blockSize: '16rem',
-  overflow: 'hidden',
-  borderRadius: '1.75rem',
-  transform: 'translateZ(0)',
-} as const;
+/** Stands in for the window: a Scaffold fills its container, the window's height by default. */
+const preview: CSSProperties = { blockSize: '20rem' };
 
 export default function StartPageWindow() {
   return (
-    <div style={frame}>
-      <WindowFrame.Root>
-        <WindowFrame.TitleBar
-          start={
-            <Menubar.Root aria-label="Start page menu">
-              <Menubar.Menu label="File">
-                <Menu.Item shortcut="Ctrl+O">Open…</Menu.Item>
-              </Menubar.Menu>
-            </Menubar.Root>
-          }
-          end={<Button variant="secondary">Share</Button>}
-        >
-          Northwind
-        </WindowFrame.TitleBar>
-        <WindowFrame.Content>
-          <Column gap={2} style={{ padding: '1.5rem' }}>
-            <Text render={<h3 />} variant="headline">
-              Recent documents
-            </Text>
-            {recent.map((name) => (
-              <Text key={name} emphasis="muted">
-                {name}
-              </Text>
-            ))}
-          </Column>
-        </WindowFrame.Content>
-      </WindowFrame.Root>
-    </div>
+    // A window without navigation: the title bar across the top, and the body scrolling below it,
+    // so the window controls drawn over the title bar never cover a scrollbar.
+    <Scaffold
+      scroll="body"
+      landmarks={false}
+      style={preview}
+      topBarSpan="full"
+      topBar={<TopBar titleBar title="Northwind Notes" />}
+    >
+      <Page width="sm">
+        <Column align="center">
+          <EmptyState
+            align="center"
+            icon={<NoteAdd />}
+            title="Start writing"
+            description="Your notes stay on this device until you share them."
+            headingLevel={2}
+            action={<Button>New note</Button>}
+          />
+        </Column>
+      </Page>
+    </Scaffold>
   );
 }

@@ -3,7 +3,7 @@
 // a response collects the headers of every rule matching its path, in order. `! Name` removes a
 // header an earlier rule set. In a pattern, `*` matches any run of characters and `:name` one path
 // segment. The tests serve the hosted build with these headers, so a header that breaks the site,
-// such as framing that blocks the template previews, fails them as it would fail the site.
+// such as framing that blocks the site's own frames, fails them as it would fail the site.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 

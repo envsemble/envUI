@@ -9,7 +9,10 @@ import { renameInStyles } from '../src/transforms/v1-classes.mjs';
 import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const { classes } = loadMap();
-const entries = Object.entries(map.classes).filter(([from]) => !from.startsWith('$'));
+const reusedClasses = new Set(map.reusedClasses ?? []);
+const entries = Object.entries(map.classes).filter(
+  ([from]) => !from.startsWith('$') && !reusedClasses.has(from),
+);
 
 for (const fixture of fixtures('v1-classes')) {
   test(`v1-classes: ${fixture.name}`, () => {
@@ -48,10 +51,17 @@ test('renameClass prefers the longest entry', () => {
   assert.equal(renameClass('env-date-time-field', classes), 'env-date-picker');
   assert.equal(renameClass('env-date-time-field-icon', classes), 'env-date-picker-icon');
   assert.equal(renameClass('env-date-time-well', classes), 'env-date-picker-control');
-  assert.equal(renameClass('env-navigation-item', classes), 'env-nav-list-item');
-  assert.equal(renameClass('env-navigation-dot', classes), 'env-nav-list-item-dot');
   assert.equal(renameClass('env-direction-links', classes), 'env-pager');
   assert.equal(renameClass('env-direction-link-label', classes), 'env-pager-link-label');
+});
+
+test('renameClass renames a class that 1.0 uses again alone, and leaves the names that continue it', () => {
+  // env-bar was 0.x's Meter and Progress; in 1.0 it is the navigation Bar, whose parts stay.
+  assert.equal(renameClass('env-bar', classes), 'env-meter');
+  assert.equal(renameClass('env-bar-track', classes), 'env-meter-track');
+  assert.equal(renameClass('env-bar-item', classes), 'env-bar-item');
+  assert.equal(renameClass('env-bar-more', classes), 'env-bar-more');
+  assert.equal(renameClass('env-bar-count', classes), 'env-bar-count');
 });
 
 test('renameClass leaves names that already continue the new name', () => {
@@ -128,21 +138,29 @@ test("v1-classes renames the custom properties of 1.0's development in style she
   block-size: var(--env-topbar-height);
 }
 `;
+  // A name 1.0 renames is rewritten; one 1.0 removed, as Scaffold publishes no sticky offset,
+  // stays and is reported.
+  const styles = runTransform(v1Classes, 'styles.css', css);
   assert.equal(
-    runTransform(v1Classes, 'styles.css', css).output,
+    styles.output,
     `.a {
-  inset-block-start: var(--env-frame-sticky-top);
-  block-size: var(--env-app-shell-header-height);
+  inset-block-start: var(--env-app-sticky-top);
+  block-size: var(--env-top-bar-height);
 }
 `,
   );
-  const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-app-topbar-block-size');
-export const a = <div style={{ '--env-app-topbar-block-size': '4rem', top: 'var(--env-app-sticky-top)' }} />;
+  assert.deepEqual(
+    styles.reports.map((report) => report.split(':')[0]),
+    ['line 2'],
+  );
+  const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-topbar-height');
+export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
 `;
   assert.equal(
     runTransform(v1Classes, 'a.tsx', tsx).output,
-    `const top = getComputedStyle(root).getPropertyValue('--env-frame-header-block-size');
-export const a = <div style={{ '--env-frame-header-block-size': '4rem', top: 'var(--env-frame-sticky-top)' }} />;
+    // A declaration of a name that becomes a token with others stays, and is reported.
+    `const top = getComputedStyle(root).getPropertyValue('--env-top-bar-height');
+export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
 `,
   );
 });

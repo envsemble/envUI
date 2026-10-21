@@ -18,12 +18,12 @@ avoidWhen:
   - text: The next step of a flow, which should read as an action.
     use: Button
   - text: Destinations in an application's navigation, such as a sidebar.
-    use: NavList
+    use: Drawer
   - text: Previous and next pages of a sequence.
     use: Pager
 related:
   - button
-  - nav-list
+  - drawer
   - pager
   - setup
 components:

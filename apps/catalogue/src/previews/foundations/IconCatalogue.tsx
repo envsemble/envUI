@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { Button, Card, SearchField, Column, Row, Switch, Text, Drawer } from '@envsemble/envui';
+import { Button, Card, SearchField, Column, Row, Switch, Text, Sheet } from '@envsemble/envui';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -159,7 +159,7 @@ export function IconCatalogue({
           </Button>
         </Row>
       )}
-      <Drawer
+      <Sheet
         id={detailsId}
         className="docs-icon-details"
         title={selectedName ?? 'Icon details'}
@@ -180,7 +180,7 @@ export function IconCatalogue({
             onRequestUsage={onRequestUsage}
           />
         )}
-      </Drawer>
+      </Sheet>
     </Example>
   );
 }

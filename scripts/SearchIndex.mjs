@@ -23,7 +23,7 @@ export const tokensFile = fileURLToPath(
 );
 
 /**
- * @typedef {'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'template' | 'guide' | 'page'} SearchKind
+ * @typedef {'component' | 'export' | 'prop' | 'token' | 'foundation' | 'pattern' | 'guide' | 'page'} SearchKind
  * @typedef {{
  *   id: string;
  *   kind: SearchKind;
@@ -51,7 +51,6 @@ export const cataloguePages = [
     title: 'Design tokens',
     aliases: ['token reference', 'CSS custom properties', 'CSS variables'],
   },
-  { page: 'templates', title: 'Templates', aliases: ['page templates'] },
   { page: 'changelog', title: 'Changelog', aliases: ['release notes', 'releases', 'versions'] },
 ];
 
@@ -62,11 +61,9 @@ const kindOfGroup = (group) =>
     ? 'foundation'
     : group === 'Patterns'
       ? 'pattern'
-      : group === 'Templates'
-        ? 'template'
-        : group === 'Setup and workflows'
-          ? 'guide'
-          : 'component';
+      : group === 'Setup and workflows'
+        ? 'guide'
+        : 'component';
 
 /** Every export a page documents, with namespaces expanded to their parts. */
 function documentedExports(names, props) {
@@ -149,7 +146,7 @@ export function searchDocuments({ documents, props, tokens }) {
     const frontmatter = document.frontmatter ?? {};
     const exports = documentedExports(frontmatter.components ?? [], props);
     for (const name of exports) homes.set(name, document);
-    // A pattern or template is found by what it composes and, a pattern, by what people are doing.
+    // A pattern is found by what it composes and by what people are doing.
     const composition = [...(frontmatter.composes ?? []), frontmatter.intent ?? ''];
     results.push({
       id: `page:${document.id}`,
@@ -158,11 +155,9 @@ export function searchDocuments({ documents, props, tokens }) {
       detail:
         kind === 'pattern'
           ? `Pattern · ${frontmatter.intent}`
-          : kind === 'template'
-            ? 'Template'
-            : kind === 'guide'
-              ? 'Guide'
-              : document.group,
+          : kind === 'guide'
+            ? 'Guide'
+            : document.group,
       aliases: (frontmatter.aliases ?? []).join('\n'),
       keywords: [...exports, ...composition].join(' ').trim(),
       owner: '',

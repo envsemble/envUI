@@ -25,7 +25,7 @@ avoidWhen:
   - text: Rows of data that people sort, select or compare.
     use: Table
   - text: Two panes people resize, or a list beside its detail.
-    use: SplitPane
+    use: Panes
 related:
   - column
   - row

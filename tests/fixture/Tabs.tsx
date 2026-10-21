@@ -7,7 +7,6 @@ import {
   Menu,
   Menubar,
   Slider,
-  NavList,
   Surface,
   Tabs,
   Text,
@@ -160,7 +159,7 @@ const emphasis = {
   important: { variant: 'primary', tone: 'accent' },
   text: { variant: 'text' },
 } as const;
-const tabStateVariants = ['primary', 'secondary', 'outlined', 'important', 'navigation'] as const;
+const tabStateVariants = ['primary', 'secondary', 'outlined', 'important'] as const;
 
 /**
  * Tabs built from each kind of button used as a tab, in both scales on the canvas: the first tab is
@@ -177,12 +176,7 @@ export function TabStatesFixture({ theme }: { theme: ThemeValue }) {
               aria-label={`${variant} tabs, ${scale} ${theme}`}
               items={['Summary', 'Details'].map((label) => ({
                 value: label.toLowerCase(),
-                button:
-                  variant === 'navigation' ? (
-                    <NavList.Item>{label}</NavList.Item>
-                  ) : (
-                    <Button {...emphasis[variant]}>{label}</Button>
-                  ),
+                button: <Button {...emphasis[variant]}>{label}</Button>,
                 content: null,
               }))}
             />

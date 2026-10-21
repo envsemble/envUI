@@ -20,7 +20,7 @@
       },
       "default": {
         "$root": {
-          "$description": "The default surface: Surface, sidebars, standard menus.",
+          "$description": "The default surface: Surface, navigation, standard menus.",
           "$value": "{palette.neutral.4}"
         },
         "hover": {
@@ -82,7 +82,7 @@
           }
         },
         "muted": {
-          "$description": "The lighter scrim behind a drawer, such as the app shell’s sidebar over a narrow window: the dark page color at 30%.",
+          "$description": "The lighter scrim behind a sheet that leaves the page usable, such as a supporting pane over its main pane: the dark page color at 30%.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/neutral/92/$value/components" },

@@ -75,7 +75,7 @@ export interface OrganizationSwitcherProps {
   style?: CSSProperties;
 }
 
-/** Shows the active organization and switches between the person's organizations; fits AppShell's context area. */
+/** Shows the active organization and switches between the person's organizations; fits a top bar or the top of a navigation drawer. */
 export function OrganizationSwitcher({
   items,
   value,

@@ -1,7 +1,7 @@
-import { TextField, Sidebar } from '@envsemble/envui';
+import { TextField, Tree } from '@envsemble/envui';
 
 export const form = (
-  <Sidebar>
+  <Tree>
     <TextField label="Name" />
-  </Sidebar>
+  </Tree>
 );

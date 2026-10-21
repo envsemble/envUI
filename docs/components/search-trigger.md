@@ -24,7 +24,7 @@ related:
   - text-field
   - kbd
   - button
-  - app-shell
+  - scaffold
 components:
   - SearchTrigger
 ---
@@ -49,10 +49,10 @@ The most recently mounted trigger that is visible takes the key, never one behin
 
 ```
 
-| Form                   | Use for                                                      |
-| ---------------------- | ------------------------------------------------------------ |
-| Labelled               | A sidebar or a header with room. The default.                |
-| Icon only (`iconOnly`) | A phone's top bar, a crowded header or an icon-only sidebar. |
+| Form                   | Use for                                            |
+| ---------------------- | -------------------------------------------------- |
+| Labelled               | The navigation or a header with room. The default. |
+| Icon only (`iconOnly`) | A phone's top bar, a crowded header or a Rail.     |
 
 It takes its container's control height unless `size` sets one.
 

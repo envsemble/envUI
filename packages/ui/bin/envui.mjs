@@ -68,7 +68,7 @@ Where envUI is installed in a folder above, as in a workspace, use the path to i
 npx --no envui mcp (cmd /c npx --no envui mcp on Windows).
 Docs: node_modules/@envsemble/envui/docs/agent-tooling.md
 Tools: search, list_components, get_component, get_props, get_example, list_patterns,
-list_templates, get_tokens and plan.`);
+get_pattern, get_tokens and plan.`);
       return 0;
     }
     return import('./mcp.mjs').then(({ runMcp }) => runMcp()).then(() => 0);

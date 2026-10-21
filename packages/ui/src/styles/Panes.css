@@ -1,0 +1,266 @@
+/* Panes: two panes side by side, and how they behave in less room. Its root is the env-panes
+   container and a grid that never paints: supporting Panes put the main pane, the divider and the
+   supporting pane in its three columns, list-detail Panes the list, the divider and the detail. A
+   column with nothing in it takes no room. Below data-split-at, compact first, supporting Panes
+   show the supporting pane as a sheet over the main one while data-open, a bottom sheet in a
+   compact width and a side sheet from a medium one, and list-detail Panes show one pane at a time:
+   the detail while data-open, else the list. From data-split-at the panes sit side by side, the
+   resized one --env-panes-size wide, and the other never under 16 rem. Every edge is logical, so it
+   mirrors in right-to-left text. */
+.env-panes {
+  --env-panes-size: 22.5rem;
+  /* The room the other pane keeps beside the resized one, and the page left beside a side sheet. */
+  --env-panes-other-min: 16rem;
+  --env-panes-sheet-room: 3.5rem;
+  container: env-panes / inline-size;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  /* As tall as its container where that has a height, such as a Scaffold's body, so each pane
+     scrolls on its own; else as tall as its content. */
+  block-size: 100%;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+.env-panes[data-behavior='supporting'] {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+.env-panes[data-behavior='list-detail'] {
+  grid-template-columns: auto auto minmax(0, 1fr);
+}
+.env-panes-main,
+.env-panes-supporting,
+.env-panes-list,
+.env-panes-detail {
+  box-sizing: border-box;
+  grid-row: 1;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: auto;
+  outline: none;
+}
+.env-panes-main {
+  grid-column: 1;
+}
+/* The divider shows only while the panes sit side by side. */
+.env-panes-divider {
+  display: none;
+  grid-column: 2;
+  grid-row: 1;
+}
+/* Its resting line, under the line it shows on hover, focus and while dragging. */
+.env-panes-divider::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  border-inline-start: var(--env-control-border-width) solid var(--env-color-border-muted);
+}
+
+/* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
+   while open, as wide as the panes and at most 85% of their height, over a scrim that closes it,
+   with its close button at the top end. Inside a Scaffold whose document scrolls, Scaffold.css
+   makes it the window's. */
+.env-panes-supporting {
+  position: absolute;
+  inset-inline: 0;
+  inset-block: auto 0;
+  z-index: var(--env-z-peek);
+  display: none;
+  max-block-size: 85%;
+  border: var(--env-control-border-width) solid var(--env-elevation-3-border);
+  border-block-end-width: 0;
+  border-start-start-radius: var(--env-radius-surface);
+  border-start-end-radius: var(--env-radius-surface);
+  box-shadow: var(--env-elevation-3-shadow);
+  background: var(--env-color-bg-raised);
+  overscroll-behavior: contain;
+}
+.env-panes[data-behavior='supporting'][data-open] > .env-panes-supporting {
+  display: block;
+}
+/* The sheet's close button stays at its top end as the sheet scrolls; side by side it hides. */
+.env-panes-close {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--env-z-raised);
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--env-space-2);
+  background: var(--env-color-bg-raised);
+}
+.env-panes-scrim {
+  display: none;
+}
+.env-panes[data-behavior='supporting'][data-open] > .env-panes-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--env-z-peek) - 1);
+  display: block;
+  background: var(--env-color-bg-overlay-muted);
+}
+/* From a medium width, still below data-split-at: a side sheet at the end, as tall as the panes,
+   or the window's inside a Scaffold whose document scrolls (Scaffold.css). */
+@container env-panes (width >= 37.5rem) {
+  .env-panes > .env-panes-supporting {
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: min(var(--env-panes-size), 100% - var(--env-panes-sheet-room));
+    max-block-size: none;
+    border-width: 0;
+    border-inline-start-width: var(--env-control-border-width);
+    border-radius: 0;
+  }
+}
+
+/* List-detail, below data-split-at: one pane at a time across the whole width, the detail while
+   open with the back button at its start, else the list. */
+.env-panes-list,
+.env-panes-detail {
+  grid-column: 1 / -1;
+}
+.env-panes[data-behavior='list-detail'][data-open] > .env-panes-list,
+.env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
+  display: none;
+}
+.env-panes-back {
+  padding-block: var(--env-space-2);
+  padding-inline: var(--env-space-3);
+}
+/* The back arrow points toward the inline start, so it turns in right-to-left text. */
+.env-panes-back .env-icon:dir(rtl) {
+  transform: scaleX(-1);
+}
+/* From data-split-at: medium from 37.5 rem, expanded from 52.5 rem and large from 75 rem. */
+@container env-panes (width >= 37.5rem) {
+  /* The panes sit side by side, the resized one --env-panes-size wide. */
+  .env-panes:is([data-split-at='medium'])[data-behavior] > .env-panes-divider {
+    display: block;
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-supporting {
+    position: static;
+    display: block;
+    grid-column: 3;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    max-block-size: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] > .env-panes-scrim {
+    display: none;
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
+    display: none;
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-list {
+    display: block;
+    grid-column: 1;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-detail {
+    display: block;
+    grid-column: 3;
+  }
+  .env-panes:is([data-split-at='medium'])[data-behavior='list-detail']
+    > .env-panes-detail
+    > .env-panes-back {
+    display: none;
+  }
+}
+@container env-panes (width >= 52.5rem) {
+  /* The panes sit side by side, the resized one --env-panes-size wide. */
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior]
+    > .env-panes-divider {
+    display: block;
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
+    > .env-panes-supporting {
+    position: static;
+    display: block;
+    grid-column: 3;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    max-block-size: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
+    > .env-panes-scrim {
+    display: none;
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
+    display: none;
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
+    > .env-panes-list {
+    display: block;
+    grid-column: 1;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
+    > .env-panes-detail {
+    display: block;
+    grid-column: 3;
+  }
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
+    > .env-panes-detail
+    > .env-panes-back {
+    display: none;
+  }
+}
+@container env-panes (width >= 75rem) {
+  /* The panes sit side by side, the resized one --env-panes-size wide. */
+  .env-panes:is([data-split-at])[data-behavior] > .env-panes-divider {
+    display: block;
+  }
+  .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-supporting {
+    position: static;
+    display: block;
+    grid-column: 3;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+    max-block-size: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .env-panes:is([data-split-at])[data-behavior='supporting'] > .env-panes-scrim {
+    display: none;
+  }
+  .env-panes:is([data-split-at])[data-behavior='supporting']
+    > .env-panes-supporting
+    > .env-panes-close {
+    display: none;
+  }
+  .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-list {
+    display: block;
+    grid-column: 1;
+    inline-size: min(var(--env-panes-size), 100cqi - var(--env-panes-other-min));
+  }
+  .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-detail {
+    display: block;
+    grid-column: 3;
+  }
+  .env-panes:is([data-split-at])[data-behavior='list-detail']
+    > .env-panes-detail
+    > .env-panes-back {
+    display: none;
+  }
+}
+/* Forced colors: the divider's resting line and the sheet's edge take the system's text color. */
+@media (forced-colors: active) {
+  .env-panes-divider::before {
+    border-color: CanvasText;
+  }
+  .env-panes-supporting {
+    border-color: CanvasText;
+  }
+}

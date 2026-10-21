@@ -115,7 +115,6 @@ export const siteSections = [
   'Foundations',
   'Components',
   'Patterns',
-  'Templates',
   'Contributing',
   'Changelog',
 ] as const;
@@ -125,9 +124,9 @@ export type SiteSection = (typeof siteSections)[number];
 const contributingDocuments = new Set(['library-development', 'component-pages', 'pattern-pages']);
 
 /**
- * A page with one view: a guide, pattern or template page of docs/, such as the migration guide, or
+ * A page with one view: a guide or pattern page of docs/, such as the migration guide, or
  * a page of the catalogue's own, such as the token reference. `document` is the page of docs/ it
- * shows; a pattern or template page shows every section of the page template, in order.
+ * shows; a pattern page shows every section of the page template, in order.
  */
 export interface StandalonePage {
   path: string;
@@ -138,11 +137,11 @@ export interface StandalonePage {
 }
 
 /**
- * The guides, patterns and templates of docs/, each at a path of its section. The setup guide and
+ * The guides and patterns of docs/, each at a path of its section. The setup guide and
  * the index stay on the overview's Get started view.
  */
 export const guidePages: StandalonePage[] = documents.flatMap((document): StandalonePage[] => {
-  if (document.group === 'Patterns' || document.group === 'Templates')
+  if (document.group === 'Patterns')
     return [
       {
         path: `${document.group.toLowerCase()}/${document.id}`,
@@ -159,7 +158,7 @@ export const guidePages: StandalonePage[] = documents.flatMap((document): Standa
   return [{ path, title: document.title, section, summary: document.summary, document }];
 });
 
-/** The catalogue's own pages: the token reference, templates and the changelog. */
+/** The catalogue's own pages: the token reference and the changelog. */
 export const tokensPage: StandalonePage = {
   path: 'foundations/tokens',
   title: 'Design tokens',
@@ -167,24 +166,13 @@ export const tokensPage: StandalonePage = {
   summary:
     'Every token as a CSS custom property, with its value in each theme and scale, generated from the token source.',
 };
-export const templatesPage: StandalonePage = {
-  path: 'templates',
-  title: 'Templates',
-  section: 'Templates',
-  summary: 'Whole pages composed from envUI, to start an application from.',
-};
 export const changelogPage: StandalonePage = {
   path: 'changelog',
   title: 'Changelog',
   section: 'Changelog',
   summary: 'What changed in each release of @envsemble/envui.',
 };
-export const standalonePages: StandalonePage[] = [
-  ...guidePages,
-  tokensPage,
-  templatesPage,
-  changelogPage,
-];
+export const standalonePages: StandalonePage[] = [...guidePages, tokensPage, changelogPage];
 
 export function findStandalonePage(path: string) {
   return standalonePages.find((page) => page.path === path);
@@ -194,8 +182,6 @@ export function findStandalonePage(path: string) {
 export const pagesOf = (section: SiteSection) =>
   standalonePages
     .filter((page) => page.section === section)
-    // The Templates overview comes before the template pages it introduces.
-    .sort((a, b) => Number(b === templatesPage) - Number(a === templatesPage))
     .map(({ path, title }) => ({ path, title, views: [] as readonly ViewOption[] }));
 
 /**
@@ -213,7 +199,6 @@ export const documentationPages: { path: string; title: string; views: readonly 
     .filter((page) => page.section === 'Components')
     .map((page) => ({ path: page.path, title: page.reference.title, views: page.views })),
   ...pagesOf('Patterns'),
-  ...pagesOf('Templates'),
   ...pagesOf('Contributing'),
   ...pagesOf('Changelog'),
 ];
@@ -251,7 +236,6 @@ export function routeOfDocument(
     return `overview/get-started?${new URLSearchParams({ section: section ?? (id === 'setup' ? 'setup' : 'documentation') })}`;
   if (id === 'overview') return homeRoute;
   if (id === 'tokens') return `${tokensPage.path}${query}`;
-  if (id === 'templates') return templatesPage.path;
   if (id === 'changelog') return changelogPage.path;
   const guide = guidePages.find((page) => page.document?.id === id);
   return guide && `${guide.path}${query}`;
@@ -288,6 +272,12 @@ export function normalizeRoute(route: string): string {
     contributing: pagesOf('Contributing')[0]?.path,
   }[originalPath];
   if (first) return normalizeRoute(`${first}${rest}`);
+  // The templates are gone: the app frame is a pattern now, and the other screens open the overview.
+  if (originalPath === 'templates/app-frame') return `patterns/app-frame${rest}`;
+  if (/^templates(?:\/|$)/.test(originalPath)) return `${homeRoute}${rest}`;
+  // The app frame's components became patterns and scaffolds.
+  if (/^components\/(window-frame|account-menu)(?:\/|$)/.test(originalPath))
+    return `patterns/${originalPath.split('/')[1]}${rest}`;
   if (findStandalonePage(originalPath)) return `${originalPath}${rest}`;
   if (/^getting-started(?:\/|$)/.test(originalPath)) {
     return `overview/get-started${search.size ? `?${search}` : ''}`;
@@ -323,8 +313,10 @@ export function normalizeRoute(route: string): string {
     .replace(/^components\/notices(?=\/|$)/, 'components/alert')
     .replace(/^components\/heatmap(?=\/|$)/, 'components/calendar-heatmap')
     .replace(/^components\/rows(?=\/|$)/, 'components/list')
-    .replace(/^components\/split-view(?=\/|$)/, 'components/split-pane')
-    .replace(/^components\/navigation(?=\/|$)/, 'components/nav-list')
+    .replace(/^components\/(split-view|split-pane|list-detail)(?=\/|$)/, 'components/panes')
+    .replace(/^components\/app-shell(?=\/|$)/, 'components/scaffold')
+    .replace(/^components\/sidebar(?=\/|$)/, 'components/drawer')
+    .replace(/^components\/(navigation|nav-list)(?=\/|$)/, 'components/drawer')
     .replace(/^components\/direction-links(?=\/|$)/, 'components/pager')
     .replace(/^foundations\/motion(?=\/|$)/, 'foundations/accessibility');
   const page = findReferencePage(path);

@@ -9,7 +9,6 @@
 @import './TokensHandwritten.css' layer(env.tokens);
 @import './Surface.css' layer(env.components);
 @import './Theme.css' layer(env.base);
-@import './AppShellBase.css' layer(env.base);
 @import './Icon.css' layer(env.components);
 @import './Popup.css' layer(env.components);
 @import './ListRow.css' layer(env.components);
@@ -22,7 +21,9 @@
 @import './Toolbar.css' layer(env.components);
 @import './CopyButton.css' layer(env.components);
 @import './SegmentedControl.css' layer(env.components);
-@import './NavList.css' layer(env.components);
+@import './Bar.css' layer(env.components);
+@import './Rail.css' layer(env.components);
+@import './Drawer.css' layer(env.components);
 @import './Card.css' layer(env.components);
 @import './Disclosure.css' layer(env.components);
 @import './Badge.css' layer(env.components);
@@ -44,8 +45,9 @@
 @import './Layout.css' layer(env.components);
 @import './Page.css' layer(env.components);
 @import './PageHeader.css' layer(env.components);
-@import './SplitPane.css' layer(env.components);
-@import './ListDetail.css' layer(env.components);
+@import './Scaffold.css' layer(env.components);
+@import './Panes.css' layer(env.components);
+@import './TopBar.css' layer(env.components);
 @import './Checkbox.css' layer(env.components);
 @import './Switch.css' layer(env.components);
 @import './Radio.css' layer(env.components);
@@ -66,7 +68,7 @@
 @import './DropZone.css' layer(env.components);
 @import './ConnectedRows.css' layer(env.components);
 @import './Dialog.css' layer(env.components);
-@import './Drawer.css' layer(env.components);
+@import './Sheet.css' layer(env.components);
 @import './Toast.css' layer(env.components);
 @import './Alert.css' layer(env.components);
 @import './Popover.css' layer(env.components);
@@ -78,14 +80,10 @@
 @import './Rating.css' layer(env.components);
 @import './ColorSwatch.css' layer(env.components);
 @import './Menu.css' layer(env.components);
-@import './AccountMenu.css' layer(env.components);
 @import './Menubar.css' layer(env.components);
 @import './Tree.css' layer(env.components);
 @import './DocumentTabs.css' layer(env.components);
 @import './CommandPalette.css' layer(env.components);
-@import './WindowFrame.css' layer(env.components);
-@import './AppShell.css' layer(env.components);
-@import './Sidebar.css' layer(env.components);
 @import './PanelDock.css' layer(env.components);
 @import './Composer.css' layer(env.components);
 @import './Message.css' layer(env.components);

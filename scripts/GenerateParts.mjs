@@ -193,7 +193,27 @@ function readSource() {
         .map((imported) => repositoryPath(imported.getFilePath())),
     ]),
   );
-  return { classes, states, imports, warnings };
+  // The components each file imports as values, by their module: the names it imports, or every
+  // export of the module for a namespace import, such as Bar's `import * as Menu`.
+  const renders = new Map(
+    files.map((file) => [
+      repositoryPath(file.getFilePath()),
+      file
+        .getImportDeclarations()
+        .filter(
+          (declaration) => !declaration.isTypeOnly() && declaration.getModuleSpecifierSourceFile(),
+        )
+        .map((declaration) => ({
+          source: repositoryPath(declaration.getModuleSpecifierSourceFile().getFilePath()),
+          names: declaration
+            .getNamedImports()
+            .filter((specifier) => !specifier.isTypeOnly())
+            .map((specifier) => specifier.getName()),
+          namespace: declaration.getNamespaceImport() !== undefined,
+        })),
+    ]),
+  );
+  return { classes, states, imports, renders, warnings };
 }
 
 /** The values a JSX data attribute takes: its literal, or the string values of its type. */
@@ -284,7 +304,7 @@ export function buildParts({
   source = readPartsSource(),
   props = JSON.parse(readFileSync(propsFile, 'utf8')),
 } = {}) {
-  const { classes, states: sourceStates, imports, warnings } = readSource();
+  const { classes, states: sourceStates, imports, renders, warnings } = readSource();
   const styleStates = readStyles();
   const problems = [...warnings];
 
@@ -342,6 +362,11 @@ export function buildParts({
   const componentSources = new Set(
     [...groups.values()].map((group) => group.source).filter(Boolean),
   );
+  // The groups whose parts each component module renders, by the module.
+  const groupsBySource = new Map();
+  for (const group of groups.values())
+    if (group.source && (members.get(group.name)?.length ?? 0) > 0)
+      groupsBySource.set(group.source, [...(groupsBySource.get(group.source) ?? []), group.name]);
   const reachable = (start) => {
     const found = new Set([start]);
     const queue = [start];
@@ -386,9 +411,15 @@ export function buildParts({
     );
     const uses = new Set();
     if (group.source)
-      for (const file of reachable(group.source))
+      for (const file of reachable(group.source)) {
         for (const other of filesOf.get(file) ?? [])
           if (groups.get(other).source !== group.source) uses.add(other);
+        // The components its files import and render, such as Bar's Menu and CounterBadge.
+        for (const { source: next, names, namespace } of renders.get(file) ?? [])
+          if (next !== group.source)
+            for (const other of groupsBySource.get(next) ?? [])
+              if (namespace || names.includes(other)) uses.add(other);
+      }
     for (const name of uses) usedBy.set(name, new Set([...(usedBy.get(name) ?? []), group.name]));
     const entry = {
       root: rootClass,

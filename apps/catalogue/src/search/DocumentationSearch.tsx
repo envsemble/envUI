@@ -7,7 +7,6 @@ import { Palette } from '@envsemble/envui/icons/Palette';
 import { Category } from '@envsemble/envui/icons/Category';
 import { Pattern } from '@envsemble/envui/icons/Pattern';
 import { Article } from '@envsemble/envui/icons/Article';
-import { ViewQuilt } from '@envsemble/envui/icons/ViewQuilt';
 import { routeOfDocument } from '../navigation/DocumentationRoutes';
 import { navigate, routeHref } from '../navigation/Address';
 import { canRetryLoad, reloadModule, reloadPage } from '../template/LoadBoundary';
@@ -41,7 +40,6 @@ const groups: Record<SearchResult['kind'], string> = {
   export: 'Components',
   foundation: 'Foundations',
   pattern: 'Patterns',
-  template: 'Templates',
   guide: 'Pages',
   page: 'Pages',
   prop: 'Props',
@@ -52,7 +50,6 @@ const icons: Record<SearchResult['kind'], ReactNode> = {
   export: <Extension />,
   foundation: <Category />,
   pattern: <Pattern />,
-  template: <ViewQuilt />,
   guide: <Article />,
   page: <Article />,
   prop: <DataObject />,

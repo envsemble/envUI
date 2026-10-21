@@ -168,10 +168,6 @@ test('a server component imports envUI and renders it on the server', () => {
   // The server writes the application's contrast into the script, which sets it before paint.
   assert.ok(result.bootstrapContrastScript.includes('r.setAttribute("data-env-contrast","high")'));
   assert.equal(result.relativeTime, '3 hours ago');
-  // The frame's cookie is read on the server, for AppShell.Root's initialState.
-  assert.deepEqual(result.appShellCookie, {
-    result: { start: { open: false }, end: { open: true, width: 21.5 } },
-  });
   assert.deepEqual(result.diffLines, { result: { additions: 2, deletions: 1 } });
   assert.ok(
     result.richTextExtensions.result?.includes('envReference'),

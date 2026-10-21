@@ -112,7 +112,7 @@ TypeScript declarations provide the complete public API.
 
 - [Surface](../components/surface.md)
 - [Button](../components/button.md)
-- [NavList](../components/nav-list.md)
+- [Drawer](../components/drawer.md)
 - [ColorPicker](../components/color-picker.md)
 - [Accessibility](../foundations/accessibility.md)
 - [Badge](../components/badge.md)

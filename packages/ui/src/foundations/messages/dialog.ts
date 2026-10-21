@@ -1,5 +1,5 @@
 /**
- * The English defaults of the `dialog` messages: Dialog and Drawer. EnvUIProvider's
+ * The English defaults of the `dialog` messages: Dialog and Sheet. EnvUIProvider's
  * `messages.dialog` overrides any of them.
  */
 export const dialog = {

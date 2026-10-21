@@ -43,7 +43,7 @@ avoidWhen:
     use: Stat
 related:
   - card
-  - nav-list
+  - drawer
   - button
   - stat
   - code
@@ -123,6 +123,12 @@ CounterBadge takes `neutral` or `accent`, for a count that needs attention.
 ```
 
 - Show `99+` beyond two digits, with the full count in `aria-label`.
+
+### In navigation
+
+```tsx example=NavigationCounts caption="Bar, Rail and Drawer show a destination's count themselves, from a number, not a CounterBadge."
+
+```
 
 ## Anatomy
 
