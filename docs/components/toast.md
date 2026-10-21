@@ -44,115 +44,15 @@ components:
 
 ## Overview
 
-A toast is a brief notification at the edge of the window: feedback after an action, such as Changes saved, an undo, or a failure people can try again. It appears at once, is announced, and closes after five seconds unless its tone is danger or it has an action.
-
-Put one **Toast.Provider** near the root of the application. Any component inside it calls **useToast** for `show`, `dismiss` and `clear`; `show` takes the notification's `message`, `tone`, `action`, `placement`, `dismissible` and `duration`, and returns its id.
+A toast is brief feedback after an action, at the edge of the window. Put one **Toast.Provider** near the root of the application; any component inside it calls **useToast** to `show` a notification.
 
 ```tsx example=SaveChanges
 
 ```
 
-## Anatomy
-
-1. **Region**: one per placement, fixed 1 rem from the window's edges and clear of the safe areas, such as a phone's notch. Notifications stack 0.5 rem apart; a stack taller than the window scrolls inside its region.
-2. **Notification**: at least 3 rem tall, with 0.5 rem corners and 0.5 and 0.75 rem padding, in the tone's strong fill with light text. It fits its content, up to 28 rem.
-3. **Status icon** (success, info and danger): a 1.125 rem check, info or warning icon before the message.
-4. **Message** (`message`): 0.875 rem text, up to 24 rem wide and three lines. A longer message is cut off; its full text stays in its title and its announcement.
-5. **Action** (optional, `action`): a primary Button with the action's `label`.
-6. **Dismiss button** (unless `dismissible` is false): a round 2.5 rem CloseButton, named Dismiss notification in the provider's language, that shows its fill on hover and press.
-7. **Hidden count**: a CounterBadge, such as +2, for the notifications beyond `visibleLimit`, above the stack at the bottom end and below it, centred, at the top center.
-
-## Variants and sizes
-
-| Tone      | Use for                                                                                                                      |
-| --------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `neutral` | Routine feedback without a status, such as Files archived. It has no icon.                                                   |
-| `success` | An action that worked, such as Invitation sent.                                                                              |
-| `info`    | Something worth noticing that needs no action, such as a new version or a finished export.                                   |
-| `danger`  | An action that failed, such as a save that didn't reach the server. It stays until it is dismissed and is announced at once. |
-
-- **Placements**: `bottom-end` (default) suits most feedback; notifications stack upward from the bottom corner at the end of the line, the right in left-to-right text and the left in right-to-left text, the newest at the bottom. `top-center` suits applications whose bottom corner is taken, such as by a composer or docked panels; notifications stack downward from the top, the newest at the top. `defaultPlacement` on Toast.Provider sets the placement, and a notification's `placement` overrides it. Each placement has its own region, stack and limit.
-- **Limit**: `visibleLimit` (3) is the number of notifications each placement shows at once, a positive integer. Danger notifications always show, and take their places first.
-- **Size**: a notification is at least 3 rem tall and fits its content up to 28 rem, or the window's width less the region's insets. On touch screens its dismiss button is 2.75 rem.
-
-## States and behaviour
-
-- **Showing**: `show` adds the notification at once, at the bottom of the bottom-end stack or the top of the top-center stack, and the others glide to their new place. It fades in and, without a reduced-motion preference, arrives from its edge; with one, it only fades and the others move at once.
-- **Duration**: neutral, success and info notifications without an action close after 5 seconds. Danger notifications and notifications with an action stay until they are dismissed. `duration` sets the milliseconds instead, and `Infinity` or `0` keeps a notification until it is dismissed.
-- **Pausing**: the time counts only while a notification is visible. Hovering it or focusing it with the keyboard pauses that notification; focusing the region with <kbd>F6</kbd> pauses every notification in it; leaving the window or hiding the page pauses them all.
-- **Limit**: past `visibleLimit`, the newest notifications stay visible and older ones wait behind the hidden count. They come back as newer ones close, each with its full duration again, and fade in.
-- **Dismissing**: the dismiss button, <kbd>Esc</kbd> in a notification, swiping it down or toward the end of the line (to the right, or to the left in right-to-left text) by touch or with the mouse, `dismiss(id)` and `clear()` close notifications. A closing notification steps out of the stack at once and fades where it was, so the others move once.
-- **Actions**: pressing an action runs its `onClick`, and the notification stays. Dismiss it there with the id `show` returned once the action has run, as an undo does.
-- **Theme**: the regions render in a portal at the end of the document, in the theme of the place the provider is rendered.
-- **Language**: the regions' names, the dismiss button's name and the hidden count come from `EnvUIProvider`'s `messages.toast`, in English by default.
-
-## Content guidelines
-
-- Say what happened, with what it happened to, in a short sentence: "Invitation sent to Sam Lee." "Northwind launch archived."
-- For an error, say what failed and what people can do: "Changes couldn't be saved. Check your connection and try again."
-- Label an action with a short verb for what it does, such as Undo, Try again or View. One action at most.
-- Keep the message to a sentence or two; it shows at most three lines.
-- Don't start with "Success" or "Error"; the tone's color and icon say so.
-
-## Do and don't
-
-### Do
-
-- Put one Toast.Provider near the root of the application, and show notifications from anywhere inside it.
-- Show a notification for the result of an action people started, and keep the feedback on the control while the work runs, with its `pending` state.
-- Offer Undo for an action that takes effect at once, and dismiss the notification when it runs.
-- Show one notification for an action on many items, such as "4 invitations sent".
-
-### Don't
-
-- Don't ask for a decision in a toast; use [Dialog](../components/dialog.md).
-- Don't use a toast for a message about the page that lasts, such as a plan's limit; use [Alert](../components/alert.md).
-- Don't put the only way to reach something in a notification that closes by itself; keep it in the page too.
-- Don't show a toast for a field's error; show it on the field with `error`.
-
-## Accessibility
-
-### Keyboard
-
-| Key                                                        | Action                                                                                                                                                                                                                                                                                         |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>F6</kbd>                                              | Moves focus to a region that shows notifications, the bottom-end one first; pressed again while both placements show notifications, to the other. Its notifications pause while focus is in the region.                                                                                        |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>            | In a region, moves focus through its notifications, newest first, and their action and dismiss buttons. Tab past the last one, or Shift+Tab on the region, returns focus to where it was before <kbd>F6</kbd>. Without <kbd>F6</kbd>, Tab reaches the notifications after the end of the page. |
-| <kbd>Esc</kbd>                                             | With focus in a notification, dismisses it. Focus moves to the next notification, or back to where it was before <kbd>F6</kbd>.                                                                                                                                                                |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on the action         | Runs the action; the notification stays until it is dismissed.                                                                                                                                                                                                                                 |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on the dismiss button | Dismisses the notification. Focus moves to the next notification, or back to where it was before <kbd>F6</kbd>.                                                                                                                                                                                |
-
-### envUI provides
-
-- A region for each placement, named Notifications and Top notifications, and a polite status beside it that reads each new notification without moving focus.
-- Each notification as a non-modal `dialog` named by its message; a danger notification as an `alert`, announced once and at once as it appears, outside any polite region, and never waiting behind the hidden count.
-- The hidden count as a status, such as "2 older notifications hidden".
-- <kbd>F6</kbd> to reach the notifications, and focus that moves to the next notification as one closes and returns to where it was as people leave.
-- Time to read and act: timers that pause on hover, keyboard focus and while the window is in the background, and notifications with an action or a danger tone that stay until they are dismissed.
-- A dismiss button named Dismiss notification, with a focus ring in the notification's text color, and text at least 4.5:1 on every fill.
-- Fades only, with a reduced-motion preference.
-
-### You provide
-
-- One Toast.Provider around the components that call `useToast`.
-- A message that makes sense on its own, read out of context.
-- Dismissing a notification once its action has run, with `dismiss(id)`.
-- Another way to reach what a notification offers, such as the archived project in its list, since notifications close.
-- A `duration` long enough to read the message, or none, for a notification people need to act on.
-
-## Examples
-
-### Tones
-
-Each tone has its fill and icon. The danger notification stays until it is dismissed; the others close after five seconds.
-
-```tsx example=Tones
-
-```
-
 ### Undo an action
 
-Archiving takes effect at once, and the notification offers Undo. The action restores the project and dismisses the notification with the id `show` returned.
+A notification with an action stays until it is dismissed. Dismiss it with the id `show` returned once the action has run.
 
 ```tsx example=UndoArchive
 
@@ -160,7 +60,7 @@ Archiving takes effect at once, and the notification offers Undo. The action res
 
 ### Try again after an error
 
-The first attempt fails. The error stays until it is dismissed, and Try again dismisses it and publishes again.
+A danger notification stays until it is dismissed, and is announced at once.
 
 ```tsx example=RetryAfterError
 
@@ -168,19 +68,80 @@ The first attempt fails. The error stays until it is dismissed, and Try again di
 
 ### Work that finished elsewhere
 
-`duration: Infinity` keeps a notification until people dismiss it, for work that ends while they may be looking elsewhere.
+`duration: Infinity` keeps a notification until people dismiss it.
 
 ```tsx example=ExportReady
 
 ```
 
+## Variants
+
+```tsx example=Tones
+
+```
+
+| Tone      | Use for                                                |
+| --------- | ------------------------------------------------------ |
+| `neutral` | Routine feedback, such as Files archived. The default. |
+| `success` | An action that worked, such as Invitation sent.        |
+| `info`    | Something worth noticing that needs no action.         |
+| `danger`  | An action that failed. It stays until it is dismissed. |
+
 ### Top center and a limit
 
-`defaultPlacement="top-center"` stacks notifications downward from the top. With `visibleLimit={2}`, a third reminder hides the oldest behind a count until a newer one closes.
+`top-center` suits an application whose bottom corner is taken. `visibleLimit` hides older notifications behind a count.
 
 ```tsx example=TopCenter
 
 ```
+
+## When to use
+
+```tsx do=OneForMany caption="One notification for an action on many items."
+
+```
+
+```tsx dont=OnePerItem caption="A notification for each item: they stack up and hide each other."
+
+```
+
+- Keep what a notification offers reachable in the page too: it closes by itself.
+
+### Content
+
+```tsx do=NameWhatHappened caption="Say what happened, and to what."
+
+```
+
+```tsx dont=GenericSuccess caption="A message that only repeats the tone."
+
+```
+
+- Label an action with a short verb, such as Undo or Try again; one action at most.
+
+## Accessibility
+
+### Keyboard
+
+| Key                                             | Action                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------- |
+| <kbd>F6</kbd>                                   | Moves focus to the notifications, and pauses them.                        |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> | Moves through the notifications and their buttons, then back to the page. |
+| <kbd>Esc</kbd>                                  | Dismisses the focused notification.                                       |
+| <kbd>Enter</kbd>, <kbd>Space</kbd>              | Runs the action, or dismisses with the dismiss button.                    |
+
+### envUI provides
+
+- A named region per placement, and a polite announcement of each notification.
+- A danger notification as an `alert`, announced at once and never hidden behind the count.
+- Timers that pause on hover, on focus and while the window is in the background.
+- Fades only, under reduced motion.
+
+### You provide
+
+- One Toast.Provider around the components that call `useToast`.
+- A message that makes sense read on its own.
+- `dismiss(id)` once an action has run.
 
 ## Changelog
 

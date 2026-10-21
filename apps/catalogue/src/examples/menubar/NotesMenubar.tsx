@@ -18,7 +18,7 @@ export default function NotesMenubar() {
     editTarget.current instanceof HTMLTextAreaElement ? editTarget.current : note.current;
 
   return (
-    <Column gap={3}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
       {/* Stands in for the application's window. */}
       <Surface background="default" padding={3}>
         <Column gap={3}>

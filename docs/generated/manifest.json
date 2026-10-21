@@ -11697,38 +11697,62 @@
         {
           "name": "SaveChanges",
           "title": "Save changes",
-          "description": "Put one Toast.Provider near the root of the application. Any component inside it calls useToast for `show`, `dismiss` and `clear`; `show` takes the notification's `message`, `tone`, `action`, `placement`, `dismissible` and `duration`, and returns its id.",
+          "description": "A toast is brief feedback after an action, at the edge of the window. Put one Toast.Provider near the root of the application; any component inside it calls useToast to `show` a notification.",
           "file": "docs/examples/toast/SaveChanges.tsx"
         },
         {
-          "name": "Tones",
-          "title": "Tones",
-          "description": "Each tone has its fill and icon. The danger notification stays until it is dismissed; the others close after five seconds.",
-          "file": "docs/examples/toast/Tones.tsx"
-        },
-        {
           "name": "UndoArchive",
-          "title": "Undo an action",
-          "description": "Archiving takes effect at once, and the notification offers Undo. The action restores the project and dismisses the notification with the id `show` returned.",
+          "title": "Undo archive",
+          "description": "A notification with an action stays until it is dismissed. Dismiss it with the id `show` returned once the action has run.",
           "file": "docs/examples/toast/UndoArchive.tsx"
         },
         {
           "name": "RetryAfterError",
-          "title": "Try again after an error",
-          "description": "The first attempt fails. The error stays until it is dismissed, and Try again dismisses it and publishes again.",
+          "title": "Retry after error",
+          "description": "A danger notification stays until it is dismissed, and is announced at once.",
           "file": "docs/examples/toast/RetryAfterError.tsx"
         },
         {
           "name": "ExportReady",
-          "title": "Work that finished elsewhere",
-          "description": "`duration: Infinity` keeps a notification until people dismiss it, for work that ends while they may be looking elsewhere.",
+          "title": "Export ready",
+          "description": "`duration: Infinity` keeps a notification until people dismiss it.",
           "file": "docs/examples/toast/ExportReady.tsx"
+        },
+        {
+          "name": "Tones",
+          "title": "Tones",
+          "description": "",
+          "file": "docs/examples/toast/Tones.tsx"
         },
         {
           "name": "TopCenter",
           "title": "Top center and a limit",
-          "description": "`defaultPlacement=\"top-center\"` stacks notifications downward from the top. With `visibleLimit={2}`, a third reminder hides the oldest behind a count until a newer one closes.",
+          "description": "`top-center` suits an application whose bottom corner is taken. `visibleLimit` hides older notifications behind a count.",
           "file": "docs/examples/toast/TopCenter.tsx"
+        },
+        {
+          "name": "OneForMany",
+          "title": "Do: One notification for an action on many items.",
+          "description": "",
+          "file": "docs/examples/toast/OneForMany.tsx"
+        },
+        {
+          "name": "OnePerItem",
+          "title": "Don't: A notification for each item: they stack up and hide each other.",
+          "description": "",
+          "file": "docs/examples/toast/OnePerItem.tsx"
+        },
+        {
+          "name": "NameWhatHappened",
+          "title": "Do: Say what happened, and to what.",
+          "description": "",
+          "file": "docs/examples/toast/NameWhatHappened.tsx"
+        },
+        {
+          "name": "GenericSuccess",
+          "title": "Don't: A message that only repeats the tone.",
+          "description": "",
+          "file": "docs/examples/toast/GenericSuccess.tsx"
         }
       ],
       "parts": {
@@ -13145,14 +13169,44 @@
         {
           "name": "NotesMenubar",
           "title": "Notes menubar",
-          "description": "- Menubar.Root is the row, named by `aria-label`. - Menubar.Menu is one trigger and its menu, holding Menu.Item, Menu.Submenu, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem and Menu.Separator.",
+          "description": "A menubar holds an application's commands as a desktop window does: a row of menus, such as File, Edit and View. After a command, focus returns to where it was, so Copy acts on the field people were in.",
           "file": "docs/examples/menubar/NotesMenubar.tsx"
         },
         {
           "name": "InTitleBar",
-          "title": "In a title bar",
-          "description": "A window that draws its own title bar holds the menubar at the start of `WindowFrame.TitleBar`, beside the document's name and its actions.",
+          "title": "In title bar",
+          "description": "",
           "file": "docs/examples/menubar/InTitleBar.tsx"
+        },
+        {
+          "name": "StandardOrder",
+          "title": "Do: Menus in the order people expect: File, Edit, View, your own, then Help.",
+          "description": "",
+          "file": "docs/examples/menubar/StandardOrder.tsx"
+        },
+        {
+          "name": "UnusualOrder",
+          "title": "Don't: Help first and File in the middle.",
+          "description": "",
+          "file": "docs/examples/menubar/UnusualOrder.tsx"
+        },
+        {
+          "name": "OneWordNames",
+          "title": "Do: One word per menu.",
+          "description": "",
+          "file": "docs/examples/menubar/OneWordNames.tsx"
+        },
+        {
+          "name": "LongMenuNames",
+          "title": "Don't: Long menu names that crowd the bar.",
+          "description": "",
+          "file": "docs/examples/menubar/LongMenuNames.tsx"
+        },
+        {
+          "name": "MenubarAnatomy",
+          "title": "Menubar anatomy",
+          "description": "",
+          "file": "docs/examples/menubar/MenubarAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13323,32 +13377,62 @@
         {
           "name": "IconActions",
           "title": "Icon actions",
-          "description": "While it is open, a control with a name of its own is described by the tooltip, so assistive technology reads the tooltip after the name; a tooltip that only repeats the name adds nothing. Touch screens don't show tooltips, so the control's accessible name or the page says what matters.",
+          "description": "A tooltip is a short label beside a control, shown while the pointer rests on it or it has keyboard focus.",
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
           "name": "MenuTrigger",
           "title": "Menu trigger",
-          "description": "An icon-only button that opens a menu or a popover has a tooltip too: the Tooltip is the menu's `trigger`, and passes the menu button's props and ref on to the IconButton. A press opens the menu and closes the tooltip, which stays closed while the menu is open.",
+          "description": "A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Drawer or ConfirmDialog, and stays closed while their popup is open.",
           "file": "docs/examples/tooltip/MenuTrigger.tsx"
         },
         {
-          "name": "DisabledReason",
-          "title": "Disabled control",
-          "description": "A disabled button keeps its tooltip, through a focusable wrapper. The text below the button says the same for people who can't see the tooltip.",
-          "file": "docs/examples/tooltip/DisabledReason.tsx"
-        },
-        {
           "name": "ShortcutHints",
-          "title": "Keyboard shortcuts",
-          "description": "The tooltip shows the shortcut after the name, below the toolbar; `aria-keyshortcuts` gives it to assistive technology.",
+          "title": "Shortcut hints",
+          "description": "Write the shortcut after the name, and give the control `aria-keyshortcuts`.",
           "file": "docs/examples/tooltip/ShortcutHints.tsx"
         },
         {
           "name": "RailOfIcons",
           "title": "Beside a rail",
-          "description": "`side=\"inline-end\"` opens each tooltip beside a vertical rail of icon buttons, toward the content, also in right-to-left text.",
+          "description": "",
           "file": "docs/examples/tooltip/RailOfIcons.tsx"
+        },
+        {
+          "name": "IconOnlyNamed",
+          "title": "Do: Name an icon-only control.",
+          "description": "",
+          "file": "docs/examples/tooltip/IconOnlyNamed.tsx"
+        },
+        {
+          "name": "RepeatsLabel",
+          "title": "Don't: A tooltip that repeats a visible label.",
+          "description": "",
+          "file": "docs/examples/tooltip/RepeatsLabel.tsx"
+        },
+        {
+          "name": "DisabledReason",
+          "title": "Do: Say why a control is disabled in the page too.",
+          "description": "",
+          "file": "docs/examples/tooltip/DisabledReason.tsx"
+        },
+        {
+          "name": "ReasonOnlyInTooltip",
+          "title": "Don't: The reason only in a tooltip, which touch screens never show.",
+          "description": "",
+          "file": "docs/examples/tooltip/ReasonOnlyInTooltip.tsx"
+        },
+        {
+          "name": "ShortName",
+          "title": "Do: A few words, the same as the control’s accessible name.",
+          "description": "",
+          "file": "docs/examples/tooltip/ShortName.tsx"
+        },
+        {
+          "name": "LongTooltip",
+          "title": "Don't: A paragraph people must hold the pointer still to read.",
+          "description": "",
+          "file": "docs/examples/tooltip/LongTooltip.tsx"
         }
       ],
       "parts": {
