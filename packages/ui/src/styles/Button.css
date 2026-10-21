@@ -116,10 +116,14 @@
   cursor: pointer;
 }
 
+.env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
+  margin-inline: calc(-1 * var(--env-space-1));
+}
+
 /* A Link in running text has no padding, so it takes no margin back either: the spaces and the
    punctuation beside it stay clear. */
-.env-button:where([data-variant='text']):not(.env-icon-button, .env-link, [data-full-width]) {
-  margin-inline: calc(-1 * var(--env-space-1));
+.env-button.env-link {
+  margin-inline: 0;
 }
 
 .env-button:where([data-variant='text'])[data-underline] {

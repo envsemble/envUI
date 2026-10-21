@@ -51,7 +51,7 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 ## Variants
 
-### Forms by window class
+### Navigation by window class
 
 | Window class | Width of the Scaffold | Form     |
 | ------------ | --------------------- | -------- |
