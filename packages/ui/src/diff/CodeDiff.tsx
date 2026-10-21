@@ -4,6 +4,7 @@ import { parseDiffFromFile, preloadHighlighter, registerCustomTheme } from '@pie
 import { File, FileDiff } from '@pierre/diffs/react';
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -170,7 +171,10 @@ export function CodeDiff({
     };
   }, [lang, attempt]);
 
-  useEffect(() => {
+  // Split and unified are different markup from Diffs, which CSS can't switch between, so the
+  // width is measured: as the diff loads, before it paints, so it never shows the other layout
+  // first, and again as the root resizes.
+  useLayoutEffect(() => {
     const root = rootRef.current;
     if (!root || layout !== 'auto' || !loaded) {
       setWide(false);
@@ -178,6 +182,14 @@ export function CodeDiff({
     }
     const rem =
       Number.parseFloat(getComputedStyle(root.ownerDocument.documentElement).fontSize) || 16;
+    const style = getComputedStyle(root);
+    setWide(
+      root.clientWidth -
+        (Number.parseFloat(style.paddingLeft) || 0) -
+        (Number.parseFloat(style.paddingRight) || 0) >=
+        SPLIT_FROM_REM * rem,
+    );
+    if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(([entry]) => {
       if (entry) setWide(entry.contentRect.width >= SPLIT_FROM_REM * rem);
     });
