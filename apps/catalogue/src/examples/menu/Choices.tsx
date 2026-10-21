@@ -40,8 +40,8 @@ export default function Choices() {
         </Menu.Group>
       </Menu.Root>
       <Text variant="body-sm">
-        Sorted by {sortLabels[sort]}; hidden files {hiddenFiles ? 'shown' : 'hidden'}; extensions{' '}
-        {extensions ? 'shown' : 'hidden'}.
+        {`Sorted by ${sortLabels[sort]}; hidden files ${hiddenFiles ? 'shown' : 'hidden'}; `}
+        {`extensions ${extensions ? 'shown' : 'hidden'}.`}
       </Text>
     </Column>
   );

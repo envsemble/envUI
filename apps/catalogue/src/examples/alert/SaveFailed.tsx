@@ -19,7 +19,7 @@ export default function SaveFailed() {
   };
 
   return (
-    <Column gap={3}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 32rem)' }}>
       {status === 'failed' && (
         <Alert tone="danger" title="Couldn’t save the draft" announce onDismiss={dismiss}>
           The connection dropped while saving. Your changes are still in the editor; try again in a

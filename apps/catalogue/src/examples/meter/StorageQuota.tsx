@@ -15,6 +15,7 @@ export default function StorageQuota() {
       valueText={`${used} GB of ${quota} GB`}
       // Units in words, so a screen reader doesn't read the abbreviation.
       aria-valuetext={`${used} gigabytes of ${quota}`}
+      style={{ inlineSize: 'min(100%, 20rem)' }}
     />
   );
 }

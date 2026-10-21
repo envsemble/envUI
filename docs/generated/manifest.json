@@ -11282,26 +11282,62 @@
         {
           "name": "FirstProject",
           "title": "First project",
-          "description": "An empty state takes the place of content that isn't there: it says why, such as no projects yet, no results for a search or a list that failed to load, and offers the action that resolves it. It has a decorative icon, a title as a real heading, a description and an action. Inside a card, panel or dialog it lines up with the start; in place of a page's or region's content it centres itself in the room it gets.",
+          "description": "An empty state takes the place of content that isn't there: it says why and offers the action that resolves it.",
           "file": "docs/examples/empty-state/FirstProject.tsx"
         },
         {
-          "name": "NoResults",
-          "title": "No results",
-          "description": "A search that matches nothing explains why and offers to clear the search; a status line announces the count, and clearing returns focus to the field.",
-          "file": "docs/examples/empty-state/NoResults.tsx"
+          "name": "InPlaceOfContent",
+          "title": "In place of content",
+          "description": "`align=\"center\"` centres the state in the height its region gives it.",
+          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
         },
         {
           "name": "LoadFailed",
           "title": "Failed to load",
-          "description": "An error state replaces the list that failed to load and is announced; Try again shows its progress until the list arrives.",
+          "description": "`tone=\"danger\"` shows the error icon and announces the state. Try again shows its progress.",
           "file": "docs/examples/empty-state/LoadFailed.tsx"
         },
         {
-          "name": "InPlaceOfContent",
-          "title": "In place of a page's content",
-          "description": "`align=\"center\"` centres the state in the height of the region it replaces, with a larger, quieter icon; `headingLevel={2}` fits it under the page's title.",
-          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
+          "name": "NoResults",
+          "title": "Do: No results: say so, and offer to clear the search.",
+          "description": "",
+          "file": "docs/examples/empty-state/NoResults.tsx"
+        },
+        {
+          "name": "FirstUseForNoResults",
+          "title": "Don't: The first-use state for a search that matched nothing.",
+          "description": "",
+          "file": "docs/examples/empty-state/FirstUseForNoResults.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action that resolves the state.",
+          "description": "",
+          "file": "docs/examples/empty-state/OneAction.tsx"
+        },
+        {
+          "name": "CompetingActions",
+          "title": "Don't: Several actions: none of them reads as the way forward.",
+          "description": "",
+          "file": "docs/examples/empty-state/CompetingActions.tsx"
+        },
+        {
+          "name": "SayWhatHappened",
+          "title": "Do: Say what happened, that work is safe, and what to do.",
+          "description": "",
+          "file": "docs/examples/empty-state/SayWhatHappened.tsx"
+        },
+        {
+          "name": "ErrorCode",
+          "title": "Don't: A code and an apology, with nothing to do next.",
+          "description": "",
+          "file": "docs/examples/empty-state/ErrorCode.tsx"
+        },
+        {
+          "name": "EmptyStateAnatomy",
+          "title": "EmptyState anatomy",
+          "description": "",
+          "file": "docs/examples/empty-state/EmptyStateAnatomy.tsx"
         }
       ],
       "parts": {
@@ -11404,28 +11440,46 @@
       ],
       "examples": [
         {
-          "name": "UpdatingPanel",
-          "title": "Updating panel",
-          "description": "For the work that follows a press, the button that started it shows a spinner itself with `pending`; see Button.",
-          "file": "docs/examples/spinner/UpdatingPanel.tsx"
+          "name": "LoadingPreview",
+          "title": "Loading preview",
+          "description": "A spinner shows work of unknown length in a small area, such as a preview on its way.",
+          "file": "docs/examples/spinner/LoadingPreview.tsx"
         },
         {
           "name": "Sizes",
           "title": "Sizes",
-          "description": "Small, medium and large spinners (`sm`, `md` and `lg`), each with its own label.",
+          "description": "",
           "file": "docs/examples/spinner/Sizes.tsx"
         },
         {
           "name": "UpdatingList",
-          "title": "A list that updates",
-          "description": "Choosing another view keeps the tasks shown while the new ones load. A small spinner beside the choice says they are updating, and the list reports `aria-busy`.",
+          "title": "Do: Keep the content in place, and the spinner beside what changes.",
+          "description": "",
           "file": "docs/examples/spinner/UpdatingList.tsx"
         },
         {
-          "name": "LoadingPreview",
-          "title": "Content on its way",
-          "description": "A large spinner in the middle of a preview's frame, which keeps its size while the file renders.",
-          "file": "docs/examples/spinner/LoadingPreview.tsx"
+          "name": "CoverContent",
+          "title": "Don't: Content hidden behind a spinner while it updates.",
+          "description": "",
+          "file": "docs/examples/spinner/CoverContent.tsx"
+        },
+        {
+          "name": "OneSpinner",
+          "title": "Do: One spinner for one piece of work.",
+          "description": "",
+          "file": "docs/examples/spinner/OneSpinner.tsx"
+        },
+        {
+          "name": "SpinnerPerRow",
+          "title": "Don't: A spinner on every row of one update.",
+          "description": "",
+          "file": "docs/examples/spinner/SpinnerPerRow.tsx"
+        },
+        {
+          "name": "SpinnerAnatomy",
+          "title": "Spinner anatomy",
+          "description": "",
+          "file": "docs/examples/spinner/SpinnerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -11643,38 +11697,62 @@
         {
           "name": "SaveChanges",
           "title": "Save changes",
-          "description": "Put one Toast.Provider near the root of the application. Any component inside it calls useToast for `show`, `dismiss` and `clear`; `show` takes the notification's `message`, `tone`, `action`, `placement`, `dismissible` and `duration`, and returns its id.",
+          "description": "A toast is brief feedback after an action, at the edge of the window. Put one Toast.Provider near the root of the application; any component inside it calls useToast to `show` a notification.",
           "file": "docs/examples/toast/SaveChanges.tsx"
         },
         {
-          "name": "Tones",
-          "title": "Tones",
-          "description": "Each tone has its fill and icon. The danger notification stays until it is dismissed; the others close after five seconds.",
-          "file": "docs/examples/toast/Tones.tsx"
-        },
-        {
           "name": "UndoArchive",
-          "title": "Undo an action",
-          "description": "Archiving takes effect at once, and the notification offers Undo. The action restores the project and dismisses the notification with the id `show` returned.",
+          "title": "Undo archive",
+          "description": "A notification with an action stays until it is dismissed. Dismiss it with the id `show` returned once the action has run.",
           "file": "docs/examples/toast/UndoArchive.tsx"
         },
         {
           "name": "RetryAfterError",
-          "title": "Try again after an error",
-          "description": "The first attempt fails. The error stays until it is dismissed, and Try again dismisses it and publishes again.",
+          "title": "Retry after error",
+          "description": "A danger notification stays until it is dismissed, and is announced at once.",
           "file": "docs/examples/toast/RetryAfterError.tsx"
         },
         {
           "name": "ExportReady",
-          "title": "Work that finished elsewhere",
-          "description": "`duration: Infinity` keeps a notification until people dismiss it, for work that ends while they may be looking elsewhere.",
+          "title": "Export ready",
+          "description": "`duration: Infinity` keeps a notification until people dismiss it.",
           "file": "docs/examples/toast/ExportReady.tsx"
+        },
+        {
+          "name": "Tones",
+          "title": "Tones",
+          "description": "",
+          "file": "docs/examples/toast/Tones.tsx"
         },
         {
           "name": "TopCenter",
           "title": "Top center and a limit",
-          "description": "`defaultPlacement=\"top-center\"` stacks notifications downward from the top. With `visibleLimit={2}`, a third reminder hides the oldest behind a count until a newer one closes.",
+          "description": "`top-center` suits an application whose bottom corner is taken. `visibleLimit` hides older notifications behind a count.",
           "file": "docs/examples/toast/TopCenter.tsx"
+        },
+        {
+          "name": "OneForMany",
+          "title": "Do: One notification for an action on many items.",
+          "description": "",
+          "file": "docs/examples/toast/OneForMany.tsx"
+        },
+        {
+          "name": "OnePerItem",
+          "title": "Don't: A notification for each item: they stack up and hide each other.",
+          "description": "",
+          "file": "docs/examples/toast/OnePerItem.tsx"
+        },
+        {
+          "name": "NameWhatHappened",
+          "title": "Do: Say what happened, and to what.",
+          "description": "",
+          "file": "docs/examples/toast/NameWhatHappened.tsx"
+        },
+        {
+          "name": "GenericSuccess",
+          "title": "Don't: A message that only repeats the tone.",
+          "description": "",
+          "file": "docs/examples/toast/GenericSuccess.tsx"
         }
       ],
       "parts": {
@@ -11859,26 +11937,56 @@
         {
           "name": "BlockedRelease",
           "title": "Blocked release",
-          "description": "An alert is a message about a page or a section that stays in place, above the content it concerns, until it no longer applies. Its tone sets the tint, the border and the icon; the text stays in the primary text color, so the message reads the same in every tone. An alert can hold an action for the next step and a dismiss button, and it chooses its live role by tone: info and success alerts are polite status messages, and warning and danger alerts interrupt only with `announce`.",
+          "description": "An alert is a message about a page or a section that stays above the content it concerns until it no longer applies.",
           "file": "docs/examples/alert/BlockedRelease.tsx"
+        },
+        {
+          "name": "SaveFailed",
+          "title": "Save failed",
+          "description": "`announce` reads a warning or danger alert at once, for one that appears because of something people just did. Info and success alerts are always read politely.",
+          "file": "docs/examples/alert/SaveFailed.tsx"
         },
         {
           "name": "Tones",
           "title": "Tones",
-          "description": "Info for something to know, success for a result that stays relevant, warning before a problem and danger after one.",
+          "description": "",
           "file": "docs/examples/alert/Tones.tsx"
-        },
-        {
-          "name": "SaveFailed",
-          "title": "Announce a failure",
-          "description": "A save that fails shows a danger alert with `announce`, so it is read at once. Dismissing it moves focus back to the button that saves.",
-          "file": "docs/examples/alert/SaveFailed.tsx"
         },
         {
           "name": "CustomIcon",
           "title": "Another icon, or none",
-          "description": "`icon` replaces the tone's icon with one that says more, and `icon={false}` leaves it out for a short message.",
+          "description": "`icon` replaces the tone's icon, and `icon={false}` leaves it out.",
           "file": "docs/examples/alert/CustomIcon.tsx"
+        },
+        {
+          "name": "OneAlert",
+          "title": "Do: One alert per situation, with its next step.",
+          "description": "",
+          "file": "docs/examples/alert/OneAlert.tsx"
+        },
+        {
+          "name": "StackedAlerts",
+          "title": "Don't: Several alerts about one situation.",
+          "description": "",
+          "file": "docs/examples/alert/StackedAlerts.tsx"
+        },
+        {
+          "name": "ProblemInTitle",
+          "title": "Do: The problem in the title, the next step in the action.",
+          "description": "",
+          "file": "docs/examples/alert/ProblemInTitle.tsx"
+        },
+        {
+          "name": "GenericTitle",
+          "title": "Don't: A title that only names the tone, and a vague action.",
+          "description": "",
+          "file": "docs/examples/alert/GenericTitle.tsx"
+        },
+        {
+          "name": "AlertAnatomy",
+          "title": "Alert anatomy",
+          "description": "",
+          "file": "docs/examples/alert/AlertAnatomy.tsx"
         }
       ],
       "parts": {
@@ -12008,56 +12116,68 @@
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "DialogClose is a button inside a dialog or a drawer that closes it, for actions other than the built-in close button, such as Don't save or Done.",
+          "description": "A dialog holds one task over the page: a decision, a short form, or details people read before they go on. Its actions end with the primary one, after a built-in close button.",
           "file": "docs/examples/dialog/ProjectDetails.tsx"
         },
         {
-          "name": "ConfirmDelete",
-          "title": "Confirm a destructive action",
-          "description": "The built-in close button reads Cancel, and the destructive action repeats the title's verb. Focus starts on Cancel.",
-          "file": "docs/examples/dialog/ConfirmDelete.tsx"
-        },
-        {
           "name": "RenameProject",
-          "title": "Pending work",
-          "description": "While the name saves, the dialog stays open: Cancel is disabled, and <kbd>Esc</kbd> and outside presses wait. The action submits the form, so <kbd>Enter</kbd> in the field saves too.",
+          "title": "Rename project",
+          "description": "While `pending`, nothing closes the dialog and its close button is disabled. Submit a form from its primary action, so <kbd>Enter</kbd> in a field submits it too.",
           "file": "docs/examples/dialog/RenameProject.tsx"
         },
         {
-          "name": "InviteMember",
-          "title": "A form with validation",
-          "description": "Fields keep their floating labels and errors inside the dialog. An invalid address shows its error on the field and takes focus back to it; the invitation sends while the dialog is pending.",
-          "file": "docs/examples/dialog/InviteMember.tsx"
-        },
-        {
-          "name": "ChangeRole",
-          "title": "A choice",
-          "description": "RadioGroup rows hold a choice, which takes effect when people save it.",
-          "file": "docs/examples/dialog/ChangeRole.tsx"
-        },
-        {
-          "name": "RemoveWorkspace",
-          "title": "Typed confirmation",
-          "description": "For a consequence that is hard to recover from, people type the name of what they remove before the action becomes available.",
-          "file": "docs/examples/dialog/RemoveWorkspace.tsx"
-        },
-        {
           "name": "UnsavedChanges",
-          "title": "More actions that close",
-          "description": "DialogClose closes the dialog after its own `onClick`, without the dialog's open state in the application.",
+          "title": "Unsaved changes",
+          "description": "DialogClose closes the dialog after its own `onClick`, such as Don’t save.",
           "file": "docs/examples/dialog/UnsavedChanges.tsx"
         },
         {
           "name": "ReviewChanges",
           "title": "Wide content",
-          "description": "`width=\"lg\"` gives a table or a comparison 44 rem.",
+          "description": "",
           "file": "docs/examples/dialog/ReviewChanges.tsx"
         },
         {
           "name": "FindPlan",
           "title": "Near the top",
-          "description": "`placement=\"top\"` opens the dialog near the top of the window, so its results grow downward while the field stays in place. Choosing a result closes it.",
+          "description": "",
           "file": "docs/examples/dialog/FindPlan.tsx"
+        },
+        {
+          "name": "CancelAsCloseLabel",
+          "title": "Do: closeLabel=Cancel names the built-in button for a decision.",
+          "description": "",
+          "file": "docs/examples/dialog/CancelAsCloseLabel.tsx"
+        },
+        {
+          "name": "ExtraCancelButton",
+          "title": "Don't: A Cancel of your own beside the built-in Close.",
+          "description": "",
+          "file": "docs/examples/dialog/ExtraCancelButton.tsx"
+        },
+        {
+          "name": "InviteMember",
+          "title": "Do: A field's error on the field.",
+          "description": "",
+          "file": "docs/examples/dialog/InviteMember.tsx"
+        },
+        {
+          "name": "ErrorInSecondDialog",
+          "title": "Don't: An error in a second dialog over the first.",
+          "description": "",
+          "file": "docs/examples/dialog/ErrorInSecondDialog.tsx"
+        },
+        {
+          "name": "ConfirmDelete",
+          "title": "Do: Ask the question, and repeat its verb in the action.",
+          "description": "",
+          "file": "docs/examples/dialog/ConfirmDelete.tsx"
+        },
+        {
+          "name": "AreYouSure",
+          "title": "Don't: Are you sure? with Yes and No: neither says what happens.",
+          "description": "",
+          "file": "docs/examples/dialog/AreYouSure.tsx"
         }
       ],
       "parts": {
@@ -12355,14 +12475,50 @@
         {
           "name": "DeleteProject",
           "title": "Delete project",
-          "description": "ConfirmDialog asks one question before an action runs: a title that asks it, a description that says what confirming does, Cancel and a confirm button that names the consequence. It is an alert dialog, built on Base UI's alert dialog with Dialog's surface, heading and actions, so it interrupts: it traps focus and a press outside doesn't close it. `onConfirm` runs the action; when it returns a promise, the dialog waits for it, pending, and closes once it resolves.",
+          "description": "ConfirmDialog asks one question before an action runs, and names the consequence on its confirm button. A press outside doesn't close it.",
           "file": "docs/examples/confirm-dialog/DeleteProject.tsx"
         },
         {
           "name": "AsyncWithError",
-          "title": "An action that can fail",
-          "description": "The action takes a moment, and the dialog stays pending until it ends. The first attempt fails, and the dialog stays open with the error; the second succeeds and closes it.",
+          "title": "Async with error",
+          "description": "When `onConfirm` returns a promise, the dialog waits for it, pending, and stays open with `error` when it fails.",
           "file": "docs/examples/confirm-dialog/AsyncWithError.tsx"
+        },
+        {
+          "name": "FromMenu",
+          "title": "From menu",
+          "description": "Without a `trigger`, open it with `open` and `onOpenChange`; `finalFocus` returns focus to the menu's button.",
+          "file": "docs/examples/confirm-dialog/FromMenu.tsx"
+        },
+        {
+          "name": "ArchiveProject",
+          "title": "Archive project",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/ArchiveProject.tsx"
+        },
+        {
+          "name": "DangerForDelete",
+          "title": "Do: tone=danger for an action that deletes.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/DangerForDelete.tsx"
+        },
+        {
+          "name": "NeutralForDelete",
+          "title": "Don't: A neutral deletion: focus starts on Delete, so a hurried Enter deletes.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/NeutralForDelete.tsx"
+        },
+        {
+          "name": "NameTheConsequence",
+          "title": "Do: Buttons that name what each choice does.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/NameTheConsequence.tsx"
+        },
+        {
+          "name": "YesNo",
+          "title": "Don't: Yes and No: people read the question again to choose.",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/YesNo.tsx"
         }
       ],
       "parts": {
@@ -12443,14 +12599,26 @@
         {
           "name": "GoToDocument",
           "title": "Go to document",
-          "description": "Open it from a SearchTrigger: the trigger shows where search is, shows its shortcut, ⌘K or Ctrl+K, and presses itself when the shortcut is pressed, so its `onClick` is the one place that opens the palette. Closing the palette returns focus to the trigger.",
+          "description": "A command palette is a search field over a list, near the top of the window, for jumping to anything by name. The application owns the items, how they are filtered and ranked, and what choosing one does.",
           "file": "docs/examples/command-palette/GoToDocument.tsx"
         },
         {
           "name": "RunCommand",
-          "title": "Run a command",
-          "description": "Commands with shortcuts as Kbd keys and a Badge as end content, under one group, with a footer.",
+          "title": "Run command",
+          "description": "`end` holds a shortcut or a Badge; `hints` show the keys in the footer.",
           "file": "docs/examples/command-palette/RunCommand.tsx"
+        },
+        {
+          "name": "ShowRecent",
+          "title": "Do: Show recent items while the query is empty.",
+          "description": "",
+          "file": "docs/examples/command-palette/ShowRecent.tsx"
+        },
+        {
+          "name": "EmptyUntilTyped",
+          "title": "Don't: An empty list until people type.",
+          "description": "",
+          "file": "docs/examples/command-palette/EmptyUntilTyped.tsx"
         }
       ],
       "parts": {
@@ -12694,64 +12862,94 @@
       ],
       "examples": [
         {
-          "name": "AccountMenu",
-          "title": "Account menu",
-          "description": "The signed-in person's menu, with a header, the theme and the organizations, is the account menu pattern, built from these parts.",
-          "file": "docs/examples/menu/AccountMenu.tsx"
-        },
-        {
           "name": "IconsAndShortcuts",
-          "title": "Actions with icons and shortcuts",
-          "description": "An icon-only trigger opens actions with icons, shortcut hints, a count and a disabled item whose description says why. Choosing an action runs `onClick` and closes the menu.",
+          "title": "Icons and shortcuts",
+          "description": "A menu shows a short list of actions or destinations from one control, on a temporary surface. Menu.Root opens Menu.Item rows from its `trigger`, and the other parts build the rest.",
           "file": "docs/examples/menu/IconsAndShortcuts.tsx"
         },
         {
-          "name": "Destinations",
-          "title": "Destinations",
-          "description": "Items with `href` are links through the `LinkProvider`. `target` and `rel` open one in a new tab, and its description says so.",
-          "file": "docs/examples/menu/Destinations.tsx"
+          "name": "ContextMenuForRows",
+          "title": "Context menu for rows",
+          "description": "ContextMenu opens a menu for an area on right click, long press, the <kbd>Menu</kbd> key or <kbd>Shift</kbd>+<kbd>F10</kbd>. Offer the same actions in a visible button too.",
+          "file": "docs/examples/menu/ContextMenuForRows.tsx"
+        },
+        {
+          "name": "AccountMenu",
+          "title": "Account menu",
+          "description": "An AvatarButton trigger and a Menu.Header with the account. The full menu, with the theme and the organizations, is the account menu pattern.",
+          "file": "docs/examples/menu/AccountMenu.tsx"
+        },
+        {
+          "name": "SwitchOrganization",
+          "title": "Switch organization",
+          "description": "OrganizationSwitcher shows the active organization and switches between the person's organizations; `onCreate` adds the create action. It fits a navigation Drawer's `header`.",
+          "file": "docs/examples/menu/SwitchOrganization.tsx"
+        },
+        {
+          "name": "FirstOrganization",
+          "title": "First organization",
+          "description": "Without organizations, the switcher is only the create action.",
+          "file": "docs/examples/menu/FirstOrganization.tsx"
         },
         {
           "name": "GroupsAndSeparators",
           "title": "Groups and separators",
-          "description": "Menu.Group puts related items under a small heading; Menu.Separator splits sets without one. Each set keeps the large outer corners.",
+          "description": "Menu.Group puts items under a heading; Menu.Separator splits sets without one.",
           "file": "docs/examples/menu/GroupsAndSeparators.tsx"
         },
         {
           "name": "Choices",
           "title": "Radio and checkbox items",
-          "description": "A radio item checks one choice and closes the menu; checkbox items toggle and keep it open, so several options can change.",
+          "description": "A Menu.RadioItem checks one choice and closes the menu; a Menu.CheckboxItem toggles and keeps it open. ThemeRadioGroup is the theme choice as radio items.",
           "file": "docs/examples/menu/Choices.tsx"
         },
         {
           "name": "Submenus",
           "title": "Submenus",
-          "description": "A submenu opens beside its row on hover, or with <kbd>→</kbd>, and choosing an item in it closes every menu.",
+          "description": "A Menu.Submenu row opens a nested menu beside it, on hover or with <kbd>→</kbd>.",
           "file": "docs/examples/menu/Submenus.tsx"
         },
         {
-          "name": "FileMenu",
-          "title": "A file menu",
-          "description": "A desktop file menu with shortcuts, a submenu and a group of choices. Labels line up whether a row has an icon, a check mark or neither.",
-          "file": "docs/examples/menu/FileMenu.tsx"
+          "name": "Destinations",
+          "title": "Destinations",
+          "description": "With `href`, an item is a link, through the `LinkProvider`.",
+          "file": "docs/examples/menu/Destinations.tsx"
         },
         {
-          "name": "ContextMenuForRows",
-          "title": "Context menu",
-          "description": "ContextMenu offers actions for the row under the pointer, or for the focused row with <kbd>Shift</kbd>+<kbd>F10</kbd>, and New document on the empty space. Each row's More actions button offers the same actions.",
-          "file": "docs/examples/menu/ContextMenuForRows.tsx"
+          "name": "FrequentFirst",
+          "title": "Do: Frequent actions first, and a destructive one last, apart.",
+          "description": "",
+          "file": "docs/examples/menu/FrequentFirst.tsx"
         },
         {
-          "name": "SwitchOrganization",
-          "title": "Organization switcher",
-          "description": "The shared switcher fits a navigation Drawer's `header`. The active organization is checked, each one shows the person's role, and the create action ends the menu.",
-          "file": "docs/examples/menu/SwitchOrganization.tsx"
+          "name": "DeleteFirst",
+          "title": "Don't: Delete first, where the keyboard lands.",
+          "description": "",
+          "file": "docs/examples/menu/DeleteFirst.tsx"
         },
         {
-          "name": "FirstOrganization",
-          "title": "Before the first organization",
-          "description": "Without organizations, the switcher is only the create action, which here creates the first one.",
-          "file": "docs/examples/menu/FirstOrganization.tsx"
+          "name": "DisabledWithReason",
+          "title": "Do: Keep an unavailable item, disabled, with a description of why.",
+          "description": "",
+          "file": "docs/examples/menu/DisabledWithReason.tsx"
+        },
+        {
+          "name": "HiddenItem",
+          "title": "Don't: An item that disappears, so people wonder where it went.",
+          "description": "",
+          "file": "docs/examples/menu/HiddenItem.tsx"
+        },
+        {
+          "name": "ConsistentIcons",
+          "title": "Do: An icon on every item of a set, or on none.",
+          "description": "",
+          "file": "docs/examples/menu/ConsistentIcons.tsx"
+        },
+        {
+          "name": "MixedIcons",
+          "title": "Don't: An icon on one item only: it stands out for no reason.",
+          "description": "",
+          "file": "docs/examples/menu/MixedIcons.tsx"
         }
       ],
       "parts": {
@@ -13048,14 +13246,44 @@
         {
           "name": "NotesMenubar",
           "title": "Notes menubar",
-          "description": "- Menubar.Root is the row, named by `aria-label`. - Menubar.Menu is one trigger and its menu, holding Menu.Item, Menu.Submenu, Menu.Group, Menu.RadioGroup, Menu.CheckboxItem and Menu.Separator.",
+          "description": "A menubar holds an application's commands as a desktop window does: a row of menus, such as File, Edit and View. After a command, focus returns to where it was, so Copy acts on the field people were in.",
           "file": "docs/examples/menubar/NotesMenubar.tsx"
         },
         {
           "name": "InTitleBar",
-          "title": "In a title bar",
-          "description": "A window that draws its own title bar holds the menubar at the start of a TopBar with `titleBar`, beside the document's name and its actions, as the window frame pattern shows.",
+          "title": "In title bar",
+          "description": "A TopBar with `titleBar` holds the menubar at its start, as the window frame pattern shows.",
           "file": "docs/examples/menubar/InTitleBar.tsx"
+        },
+        {
+          "name": "StandardOrder",
+          "title": "Do: Menus in the order people expect: File, Edit, View, your own, then Help.",
+          "description": "",
+          "file": "docs/examples/menubar/StandardOrder.tsx"
+        },
+        {
+          "name": "UnusualOrder",
+          "title": "Don't: Help first and File in the middle.",
+          "description": "",
+          "file": "docs/examples/menubar/UnusualOrder.tsx"
+        },
+        {
+          "name": "OneWordNames",
+          "title": "Do: One word per menu.",
+          "description": "",
+          "file": "docs/examples/menubar/OneWordNames.tsx"
+        },
+        {
+          "name": "LongMenuNames",
+          "title": "Don't: Long menu names that crowd the bar.",
+          "description": "",
+          "file": "docs/examples/menubar/LongMenuNames.tsx"
+        },
+        {
+          "name": "MenubarAnatomy",
+          "title": "Menubar anatomy",
+          "description": "",
+          "file": "docs/examples/menubar/MenubarAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13227,32 +13455,62 @@
         {
           "name": "IconActions",
           "title": "Icon actions",
-          "description": "While it is open, a control with a name of its own is described by the tooltip, so assistive technology reads the tooltip after the name; a tooltip that only repeats the name adds nothing. Touch screens don't show tooltips, so the control's accessible name or the page says what matters.",
+          "description": "A tooltip is a short label beside a control, shown while the pointer rests on it or it has keyboard focus.",
           "file": "docs/examples/tooltip/IconActions.tsx"
         },
         {
           "name": "MenuTrigger",
           "title": "Menu trigger",
-          "description": "An icon-only button that opens a menu or a popover has a tooltip too: the Tooltip is the menu's `trigger`, and passes the menu button's props and ref on to the IconButton. A press opens the menu and closes the tooltip, which stays closed while the menu is open.",
+          "description": "A Tooltip can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and stays closed while their popup is open.",
           "file": "docs/examples/tooltip/MenuTrigger.tsx"
         },
         {
-          "name": "DisabledReason",
-          "title": "Disabled control",
-          "description": "A disabled button keeps its tooltip, through a focusable wrapper. The text below the button says the same for people who can't see the tooltip.",
-          "file": "docs/examples/tooltip/DisabledReason.tsx"
-        },
-        {
           "name": "ShortcutHints",
-          "title": "Keyboard shortcuts",
-          "description": "The tooltip shows the shortcut after the name, below the toolbar; `aria-keyshortcuts` gives it to assistive technology.",
+          "title": "Shortcut hints",
+          "description": "Write the shortcut after the name, and give the control `aria-keyshortcuts`.",
           "file": "docs/examples/tooltip/ShortcutHints.tsx"
         },
         {
           "name": "RailOfIcons",
           "title": "Beside a rail",
-          "description": "`side=\"inline-end\"` opens each tooltip beside a vertical rail of icon buttons, toward the content, also in right-to-left text.",
+          "description": "",
           "file": "docs/examples/tooltip/RailOfIcons.tsx"
+        },
+        {
+          "name": "IconOnlyNamed",
+          "title": "Do: Name an icon-only control.",
+          "description": "",
+          "file": "docs/examples/tooltip/IconOnlyNamed.tsx"
+        },
+        {
+          "name": "RepeatsLabel",
+          "title": "Don't: A tooltip that repeats a visible label.",
+          "description": "",
+          "file": "docs/examples/tooltip/RepeatsLabel.tsx"
+        },
+        {
+          "name": "DisabledReason",
+          "title": "Do: Say why a control is disabled in the page too.",
+          "description": "",
+          "file": "docs/examples/tooltip/DisabledReason.tsx"
+        },
+        {
+          "name": "ReasonOnlyInTooltip",
+          "title": "Don't: The reason only in a tooltip, which touch screens never show.",
+          "description": "",
+          "file": "docs/examples/tooltip/ReasonOnlyInTooltip.tsx"
+        },
+        {
+          "name": "ShortName",
+          "title": "Do: A few words, the same as the control’s accessible name.",
+          "description": "",
+          "file": "docs/examples/tooltip/ShortName.tsx"
+        },
+        {
+          "name": "LongTooltip",
+          "title": "Don't: A paragraph people must hold the pointer still to read.",
+          "description": "",
+          "file": "docs/examples/tooltip/LongTooltip.tsx"
         }
       ],
       "parts": {
@@ -13725,20 +13983,56 @@
         {
           "name": "SeatsAssigned",
           "title": "Seats assigned",
-          "description": "A meter shows a measurement within a known range as a labelled bar: the seats assigned of a plan, or the storage used of a quota. It is read-only, and assistive technology reads it as a meter named by its label, with its value and range. For how much of a task is done, use Progress, which shares its look.",
+          "description": "A meter shows a measurement within a known range, such as the seats assigned of a plan.",
           "file": "docs/examples/meter/SeatsAssigned.tsx"
         },
         {
+          "name": "PlanUsage",
+          "title": "Do: Say in text what a full meter means.",
+          "description": "",
+          "file": "docs/examples/meter/PlanUsage.tsx"
+        },
+        {
+          "name": "FullWithoutWords",
+          "title": "Don't: A full bar left to speak for itself: it has no warning color.",
+          "description": "",
+          "file": "docs/examples/meter/FullWithoutWords.tsx"
+        },
+        {
+          "name": "SameWidths",
+          "title": "Do: One width for meters people compare.",
+          "description": "",
+          "file": "docs/examples/meter/SameWidths.tsx"
+        },
+        {
+          "name": "MixedWidths",
+          "title": "Don't: Bars of different lengths, side by side.",
+          "description": "",
+          "file": "docs/examples/meter/MixedWidths.tsx"
+        },
+        {
           "name": "StorageQuota",
-          "title": "Units in words",
-          "description": "The value shows the abbreviation, and `aria-valuetext` reads the unit in words.",
+          "title": "Do: The value as people count it, with its unit.",
+          "description": "",
           "file": "docs/examples/meter/StorageQuota.tsx"
         },
         {
-          "name": "PlanUsage",
-          "title": "Limits of a plan",
-          "description": "Meters of one plan side by side, each with its own range. The text below says what the full one means.",
-          "file": "docs/examples/meter/PlanUsage.tsx"
+          "name": "PercentOfStorage",
+          "title": "Don't: A percentage, where people count an amount.",
+          "description": "",
+          "file": "docs/examples/meter/PercentOfStorage.tsx"
+        },
+        {
+          "name": "MeterAnatomy",
+          "title": "Meter anatomy",
+          "description": "",
+          "file": "docs/examples/meter/MeterAnatomy.tsx"
+        },
+        {
+          "name": "LongLabel",
+          "title": "Long label",
+          "description": "",
+          "file": "docs/examples/meter/LongLabel.tsx"
         }
       ],
       "parts": {
@@ -13834,26 +14128,62 @@
         {
           "name": "UploadingFile",
           "title": "Uploading file",
-          "description": "Progress shares its look with Meter, which shows a measurement within a range. For loading a page or a route, TopBar's `loading` shows a bar along its bottom edge.",
+          "description": "Progress shows how much of a task is done, such as an upload.",
           "file": "docs/examples/progress/UploadingFile.tsx"
         },
         {
-          "name": "ImportContacts",
-          "title": "Items done of a total",
-          "description": "`max` is the number of items, and the value counts them; `aria-valuetext` reads it with its unit.",
-          "file": "docs/examples/progress/ImportContacts.tsx"
-        },
-        {
           "name": "PreparingExport",
-          "title": "Amount unknown",
-          "description": "`value={null}` shows a sweeping indicator while the task runs and its amount is still unknown.",
+          "title": "Preparing export",
+          "description": "With `value={null}`, the indicator sweeps while the amount of work is unknown.",
           "file": "docs/examples/progress/PreparingExport.tsx"
         },
         {
           "name": "ExportMembers",
-          "title": "From preparing to done",
-          "description": "The export starts with an unknown amount, shows the share done once it is known, and ends with a status message in place of the bar. The button stays pending meanwhile.",
+          "title": "Export members",
+          "description": "Start with `value={null}`, show the share once it is known, and replace the bar with the result.",
           "file": "docs/examples/progress/ExportMembers.tsx"
+        },
+        {
+          "name": "SetupSteps",
+          "title": "Steps",
+          "description": "`segments` splits the track into equal steps that fill in turn.",
+          "file": "docs/examples/progress/SetupSteps.tsx"
+        },
+        {
+          "name": "OneBarForBatch",
+          "title": "Do: One bar for one task, however many items it covers.",
+          "description": "",
+          "file": "docs/examples/progress/OneBarForBatch.tsx"
+        },
+        {
+          "name": "BarPerFile",
+          "title": "Don't: A bar for every file of one upload.",
+          "description": "",
+          "file": "docs/examples/progress/BarPerFile.tsx"
+        },
+        {
+          "name": "ImportContacts",
+          "title": "Do: Name the task, and count items where people count them.",
+          "description": "",
+          "file": "docs/examples/progress/ImportContacts.tsx"
+        },
+        {
+          "name": "VagueLabel",
+          "title": "Don't: A label that doesn't say what is running.",
+          "description": "",
+          "file": "docs/examples/progress/VagueLabel.tsx"
+        },
+        {
+          "name": "ProgressAnatomy",
+          "title": "Progress anatomy",
+          "description": "",
+          "file": "docs/examples/progress/ProgressAnatomy.tsx"
+        },
+        {
+          "name": "LongTaskName",
+          "title": "Long task name",
+          "description": "",
+          "file": "docs/examples/progress/LongTaskName.tsx"
         }
       ],
       "parts": {

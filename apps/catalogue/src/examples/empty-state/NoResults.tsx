@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { Button, EmptyState, List, SearchField, Column, Text } from '@envsemble/envui';
+import { Button, Column, EmptyState, List, SearchField, Text } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
-const projects = ['Northwind launch', 'Pricing research', 'Quarterly planning', 'Support handbook'];
+const projects = ['Northwind launch', 'Pricing research', 'Quarterly planning'];
 
 export default function NoResults() {
   const [query, setQuery] = useState('Roadmap');
@@ -16,14 +16,8 @@ export default function NoResults() {
     field.current?.focus();
   };
   return (
-    <Column gap={3} style={{ inlineSize: 'min(100%, 28rem)' }}>
-      <SearchField
-        ref={field}
-        label="Search projects"
-        placeholder="Search by name"
-        value={query}
-        onValueChange={setQuery}
-      />
+    <Column gap={3} style={{ inlineSize: 'min(100%, 22rem)' }}>
+      <SearchField ref={field} label="Search projects" value={query} onValueChange={setQuery} />
       <Text variant="caption" emphasis="muted" role="status">
         {matches.length === 1 ? '1 project' : `${matches.length} projects`}
       </Text>
@@ -38,7 +32,7 @@ export default function NoResults() {
           icon={<SearchOff />}
           headingLevel={3}
           title="No matching projects"
-          description={`No project names contain “${query.trim()}”. Check the spelling or clear the search.`}
+          description="Check the spelling or clear the search."
           action={
             <Button variant="secondary" onClick={clear}>
               Clear search

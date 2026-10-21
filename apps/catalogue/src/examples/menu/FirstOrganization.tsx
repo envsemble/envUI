@@ -5,7 +5,7 @@ export default function FirstOrganization() {
   const [organizations, setOrganizations] = useState<OrganizationSwitcherItem[]>([]);
   const [currentId, setCurrentId] = useState<string | null>(null);
   return (
-    // As wide as the context area of an application shell's sidebar.
+    // As wide as a navigation Drawer's header.
     <div style={{ inlineSize: 'min(100%, 14rem)' }}>
       <OrganizationSwitcher
         items={organizations}
