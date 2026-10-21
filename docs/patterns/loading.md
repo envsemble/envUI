@@ -17,7 +17,7 @@ useWhen:
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
-  - text: The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.
+  - text: The application frame itself before the first page loads, which shows its own parts as skeletons.
     use: Scaffold
 composes:
   - Scaffold

@@ -24,8 +24,8 @@ const barLimit = 5;
 /** The part classes of the bar's destinations. */
 const barClasses: DestinationClasses = {
   item: 'env-bar-item',
-  indicator: 'env-bar-indicator',
-  label: 'env-bar-label',
+  indicator: 'env-bar-icon',
+  label: 'env-bar-text',
   count: 'env-bar-count',
 };
 
@@ -66,6 +66,12 @@ export function Bar({
   );
   const restShown = shownCount(restCount);
   const restCurrent = rest.some((destination) => destination.current);
+  const restName = countedName(messages.more, restCount, messages) ?? messages.more;
+  // As on the destinations, the current state is an attribute of the item, and its name says it.
+  const moreState = {
+    'data-current': restCurrent ? '' : undefined,
+    'aria-label': restCurrent ? messages.moreCurrent({ name: restName }) : restName,
+  };
   return (
     <nav
       {...props}
@@ -88,12 +94,11 @@ export function Bar({
                 <Column
                   render={<ActionElement />}
                   className="env-bar-item env-bar-more"
-                  data-current={restCurrent ? '' : undefined}
-                  aria-label={countedName(messages.more, restCount, messages)}
+                  {...moreState}
                   align="center"
                   gap={1}
                 >
-                  <span className="env-bar-indicator">
+                  <span className="env-bar-icon">
                     <DecorativeIcon>
                       <MoreHoriz />
                     </DecorativeIcon>
@@ -103,18 +108,20 @@ export function Bar({
                       </span>
                     )}
                   </span>
-                  <span className="env-bar-label">{messages.more}</span>
+                  <span className="env-bar-text">{messages.more}</span>
                 </Column>
               }
             >
               {rest.map((destination) => {
                 const count = shownCount(destination.count);
+                // Named as the other destinations are, such as Inbox, 3 new, with the badge hidden.
                 const shared = {
                   icon: destination.icon,
                   'aria-current': destination.current ? ('page' as const) : undefined,
+                  'aria-label': countedName(destination.label, destination.count, messages),
                   end:
                     count === undefined ? undefined : (
-                      <CounterBadge value={count} aria-label={messages.count({ count })} />
+                      <CounterBadge value={count} aria-hidden="true" />
                     ),
                   children: destination.label,
                 };

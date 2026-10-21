@@ -50,6 +50,7 @@
         }
       ],
       "uses": [
+        "CloseButton",
         "Icon"
       ]
     },
@@ -160,7 +161,11 @@
           "description": "The tooltip that names the account."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Avatar",
+        "Tooltip"
+      ]
     },
     "AvatarGroup": {
       "root": "env-avatar-group",
@@ -205,6 +210,10 @@
             "env-avatar-group"
           ]
         }
+      ],
+      "uses": [
+        "Avatar",
+        "Tooltip"
       ]
     },
     "Badge": {
@@ -264,16 +273,12 @@
           "description": "A destination's count, on the icon's top end; 999+ above 999."
         },
         {
-          "class": "env-bar-indicator",
+          "class": "env-bar-icon",
           "description": "The pill around a destination's icon, filled while the destination is current."
         },
         {
           "class": "env-bar-item",
           "description": "A destination: a link or button with its indicator above its label."
-        },
-        {
-          "class": "env-bar-label",
-          "description": "A destination's label, under its indicator, cut short with an ellipsis."
         },
         {
           "class": "env-bar-list",
@@ -282,22 +287,25 @@
         {
           "class": "env-bar-more",
           "description": "The last item past five destinations, which opens the rest in a menu."
+        },
+        {
+          "class": "env-bar-text",
+          "description": "A destination's label, under its indicator, cut short with an ellipsis."
         }
       ],
       "states": [
         {
           "attribute": "data-current",
-          "values": [
-            ""
-          ],
+          "values": [],
           "parts": [
-            "env-bar-item",
-            "env-bar-more"
+            "env-bar-item"
           ]
         }
       ],
       "uses": [
-        "Icon"
+        "CounterBadge",
+        "Icon",
+        "Menu"
       ]
     },
     "Breadcrumbs": {
@@ -351,6 +359,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -438,7 +447,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Spinner"
       ]
     },
     "ButtonGroup": {
@@ -521,6 +531,10 @@
             "env-calendar-day"
           ]
         }
+      ],
+      "uses": [
+        "Icon",
+        "IconButton"
       ]
     },
     "CalendarHeatmap": {
@@ -623,6 +637,7 @@
       ],
       "uses": [
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -698,7 +713,9 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Surface",
+        "Text"
       ]
     },
     "Checkbox": {
@@ -740,7 +757,11 @@
           "description": "The button that closes a dialog, panel or message."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Icon",
+        "IconButton"
+      ]
     },
     "Code": {
       "root": "env-code",
@@ -780,6 +801,10 @@
             "env-code-block"
           ]
         }
+      ],
+      "uses": [
+        "Icon",
+        "IconButton"
       ]
     },
     "CodeDiff": {
@@ -791,7 +816,14 @@
           "description": "The diff of two versions of code."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Button",
+        "EmptyState",
+        "Icon",
+        "LoadingState",
+        "Skeleton"
+      ]
     },
     "ColorPicker": {
       "root": "env-color-picker",
@@ -852,6 +884,10 @@
             "env-color-picker"
           ]
         }
+      ],
+      "uses": [
+        "Text",
+        "TextField"
       ]
     },
     "ColorSwatch": {
@@ -986,10 +1022,15 @@
         }
       ],
       "uses": [
+        "CloseButton",
+        "Field",
         "Icon",
+        "IconButton",
         "ListRow",
         "Popup",
-        "TextField"
+        "Spinner",
+        "TextField",
+        "Theme"
       ]
     },
     "CommandPalette": {
@@ -1073,7 +1114,10 @@
       "uses": [
         "Dialog",
         "Icon",
-        "ListRow"
+        "Kbd",
+        "ListRow",
+        "Surface",
+        "Theme"
       ]
     },
     "Composer": {
@@ -1135,6 +1179,8 @@
         }
       ],
       "uses": [
+        "Icon",
+        "IconButton",
         "TextField",
         "Textarea"
       ]
@@ -1152,7 +1198,10 @@
           "description": "The announcement of the confirming state."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Button"
+      ]
     },
     "ConfirmDialog": {
       "root": "env-dialog-popup",
@@ -1165,7 +1214,11 @@
       ],
       "states": [],
       "uses": [
-        "Dialog"
+        "Alert",
+        "Button",
+        "Dialog",
+        "Surface",
+        "Theme"
       ]
     },
     "CopyButton": {
@@ -1187,7 +1240,10 @@
       ],
       "states": [],
       "uses": [
+        "Button",
+        "Icon",
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -1318,9 +1374,14 @@
         }
       ],
       "uses": [
+        "Button",
+        "Calendar",
+        "Field",
         "Icon",
+        "IconButton",
         "Popup",
         "TextField",
+        "Theme",
         "TimeList"
       ]
     },
@@ -1475,6 +1536,11 @@
             "env-dialog-popup"
           ]
         }
+      ],
+      "uses": [
+        "Button",
+        "Surface",
+        "Theme"
       ]
     },
     "DiffStat": {
@@ -1631,7 +1697,9 @@
         }
       ],
       "uses": [
-        "Icon"
+        "CloseButton",
+        "Icon",
+        "Menu"
       ]
     },
     "Drawer": {
@@ -1757,7 +1825,9 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Field",
+        "Icon",
+        "Spinner"
       ]
     },
     "EmptyState": {
@@ -1796,7 +1866,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Text"
       ]
     },
     "Field": {
@@ -1851,6 +1922,9 @@
             "env-field-control"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ]
     },
     "HoverCard": {
@@ -1874,7 +1948,8 @@
         }
       ],
       "uses": [
-        "Popup"
+        "Popup",
+        "Theme"
       ]
     },
     "Icon": {
@@ -1927,7 +2002,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Spinner"
       ]
     },
     "Kbd": {
@@ -1979,6 +2055,9 @@
             "env-link"
           ]
         }
+      ],
+      "uses": [
+        "Button"
       ]
     },
     "List": {
@@ -2084,7 +2163,9 @@
         }
       ],
       "uses": [
-        "ConnectedRows"
+        "ConnectedRows",
+        "Icon",
+        "IconButton"
       ]
     },
     "LoadingState": {
@@ -2117,6 +2198,11 @@
       ],
       "states": [],
       "uses": [
+        "Checkbox",
+        "Code",
+        "CodeBlock",
+        "Kbd",
+        "Link",
         "Prose"
       ]
     },
@@ -2135,11 +2221,17 @@
       ],
       "states": [],
       "uses": [
+        "Button",
+        "Dialog",
         "EditorChrome",
+        "Field",
         "Icon",
         "Markdown",
+        "Tabs",
+        "Text",
         "TextField",
-        "Textarea"
+        "Textarea",
+        "Toolbar"
       ]
     },
     "Menu": {
@@ -2256,7 +2348,9 @@
       ],
       "uses": [
         "Icon",
-        "Popup"
+        "Kbd",
+        "Popup",
+        "Theme"
       ]
     },
     "Menubar": {
@@ -2314,7 +2408,8 @@
       ],
       "uses": [
         "Menu",
-        "Popup"
+        "Popup",
+        "Theme"
       ]
     },
     "Message": {
@@ -2382,7 +2477,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Spinner"
       ]
     },
     "MessageList": {
@@ -2396,7 +2492,8 @@
       ],
       "states": [],
       "uses": [
-        "Icon"
+        "Icon",
+        "Spinner"
       ]
     },
     "Meter": {
@@ -2485,10 +2582,14 @@
         }
       ],
       "uses": [
+        "Button",
         "DatePicker",
+        "Field",
         "Icon",
+        "IconButton",
         "Popup",
-        "TextField"
+        "TextField",
+        "Theme"
       ]
     },
     "OrganizationSwitcher": {
@@ -2549,7 +2650,9 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Button",
+        "Icon",
+        "Menu"
       ]
     },
     "Page": {
@@ -2647,6 +2750,9 @@
             "env-page-header"
           ]
         }
+      ],
+      "uses": [
+        "Text"
       ]
     },
     "Pager": {
@@ -2726,6 +2832,11 @@
             "env-pagination"
           ]
         }
+      ],
+      "uses": [
+        "Icon",
+        "IconButton",
+        "Tooltip"
       ]
     },
     "PanelDock": {
@@ -2923,7 +3034,10 @@
         }
       ],
       "uses": [
-        "Icon"
+        "CloseButton",
+        "Icon",
+        "IconButton",
+        "Tooltip"
       ]
     },
     "Panes": {
@@ -3012,6 +3126,8 @@
         }
       ],
       "uses": [
+        "Button",
+        "Icon",
         "ResizeHandle"
       ]
     },
@@ -3040,7 +3156,8 @@
         }
       ],
       "uses": [
-        "Popup"
+        "Popup",
+        "Theme"
       ]
     },
     "Progress": {
@@ -3239,6 +3356,9 @@
             "env-rating-star"
           ]
         }
+      ],
+      "uses": [
+        "Icon"
       ]
     },
     "RelativeTime": {
@@ -3253,6 +3373,7 @@
       "states": [],
       "uses": [
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -3306,7 +3427,13 @@
         }
       ],
       "uses": [
+        "Button",
+        "Checkbox",
+        "Code",
+        "CodeBlock",
+        "Field",
         "Icon",
+        "Link",
         "Prose",
         "TextField"
       ]
@@ -3359,13 +3486,19 @@
         }
       ],
       "uses": [
+        "Button",
+        "Checkbox",
+        "Dialog",
         "EditorChrome",
+        "Field",
         "Icon",
         "ListRow",
         "Listbox",
         "Prose",
         "RichText",
-        "TextField"
+        "Text",
+        "TextField",
+        "Toolbar"
       ]
     },
     "Scaffold": {
@@ -3497,6 +3630,9 @@
             "env-scaffold"
           ]
         }
+      ],
+      "uses": [
+        "Button"
       ]
     },
     "SearchTrigger": {
@@ -3532,7 +3668,12 @@
         }
       ],
       "uses": [
+        "Button",
+        "Icon",
+        "IconButton",
+        "Kbd",
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -3596,6 +3737,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Theme",
         "Tooltip"
       ]
     },
@@ -3675,10 +3817,13 @@
         }
       ],
       "uses": [
+        "Button",
+        "Field",
         "Icon",
         "ListRow",
         "Popup",
-        "TextField"
+        "TextField",
+        "Theme"
       ]
     },
     "Sheet": {
@@ -3741,7 +3886,10 @@
         }
       ],
       "uses": [
-        "Dialog"
+        "CloseButton",
+        "Dialog",
+        "Surface",
+        "Theme"
       ]
     },
     "Skeleton": {
@@ -3820,6 +3968,7 @@
         }
       ],
       "uses": [
+        "Field",
         "Icon",
         "TextField"
       ]
@@ -3910,7 +4059,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Surface"
       ]
     },
     "Surface": {
@@ -4229,6 +4379,9 @@
             "env-tabs-panel"
           ]
         }
+      ],
+      "uses": [
+        "Surface"
       ]
     },
     "Text": {
@@ -4410,6 +4563,7 @@
         }
       ],
       "uses": [
+        "Field",
         "Icon"
       ]
     },
@@ -4432,6 +4586,7 @@
         }
       ],
       "uses": [
+        "Field",
         "Icon",
         "TextField"
       ]
@@ -4487,7 +4642,12 @@
           "description": "The button that switches between light and dark."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Icon",
+        "IconButton",
+        "Theme"
+      ]
     },
     "TimePicker": {
       "root": "env-time-picker",
@@ -4504,10 +4664,14 @@
       ],
       "states": [],
       "uses": [
+        "Button",
         "DatePicker",
+        "Field",
         "Icon",
+        "IconButton",
         "Popup",
         "TextField",
+        "Theme",
         "TimeList"
       ]
     },
@@ -4622,7 +4786,11 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Button",
+        "CloseButton",
+        "CounterBadge",
+        "Icon",
+        "Theme"
       ]
     },
     "Toolbar": {
@@ -4674,6 +4842,12 @@
             "env-toolbar"
           ]
         }
+      ],
+      "uses": [
+        "Button",
+        "IconButton",
+        "Kbd",
+        "Tooltip"
       ]
     },
     "Tooltip": {
@@ -4710,7 +4884,8 @@
         }
       ],
       "uses": [
-        "Popup"
+        "Popup",
+        "Theme"
       ]
     },
     "TopBar": {

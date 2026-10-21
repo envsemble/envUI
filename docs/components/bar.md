@@ -50,9 +50,9 @@ Bar is Material's navigation bar: the application's main destinations side by si
 1. **Bar** (`env-bar`): a `nav` landmark as wide as its container, with a hairline at its top, which keeps clear of a phone's home indicator.
 2. **List** (`env-bar-list`): the destinations, which share the width equally.
 3. **Item** (`env-bar-item`): a link or button, with its indicator above its label.
-4. **Indicator** (`env-bar-indicator`): a 4 by 2 rem pill around the 1 rem icon, filled while the destination is current. A Material Symbol shows filled while current and outlined otherwise.
+4. **Indicator** (`env-bar-icon`): a 4 by 2 rem pill around the 1 rem icon, filled while the destination is current. A Material Symbol shows filled while current and outlined otherwise.
 5. **Count** (`env-bar-count`, optional, `count`): an accent pill on the icon's top end; 999+ above 999.
-6. **Label** (`env-bar-label`): 0.75 rem text on one line, cut short with an ellipsis.
+6. **Label** (`env-bar-text`): 0.75 rem text on one line, cut short with an ellipsis.
 7. **More** (`env-bar-more`): past five destinations, the fifth place opens the rest in a [Menu](../components/menu.md).
 
 ## Variants and sizes
@@ -67,7 +67,7 @@ Bar is Material's navigation bar: the application's main destinations side by si
 - **Hover and press**: the indicator takes the navigation hover and pressed fills, and settles slightly while held, without a reduced-motion preference.
 - **Links and buttons**: with `href` a destination is a native link through the `LinkProvider`'s link component, and `onSelect` runs as it is followed; without `href` it is a button that runs `onSelect`.
 - **Counts**: a count of 0 shows nothing. The count is part of the destination's name, such as "Inbox, 4 new", from `messages.navigation.itemCount`, so the pill is hidden from assistive technology.
-- **More**: its menu lists the remaining destinations with their icons and counts; the current one reports `aria-current="page"`. <kbd>Esc</kbd> closes it and returns focus to More.
+- **More**: its menu lists the remaining destinations with their icons and counts, each named with its count as the others are; the current one reports `aria-current="page"`. More is named with the sum of their counts, and says when it holds the current page, such as "More, 5 new, current page inside", from `messages.navigation.moreCurrent`. <kbd>Esc</kbd> closes it and returns focus to More.
 
 ## Content guidelines
 

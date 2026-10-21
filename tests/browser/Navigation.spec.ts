@@ -82,6 +82,8 @@ test('Drawer heads each run of a group, and Rail and Bar keep the order without 
   const rail = scope.getByRole('navigation', { name: 'Mail rail' });
   await expect(rail.locator('.env-rail-label')).toHaveText(order);
   await expect(rail.getByRole('heading')).toHaveCount(0);
+  // The drawer's group headings are headings, at level 2 by default.
+  await expect(drawer.getByRole('heading', { level: 2 })).toHaveText(['Folders', 'Account']);
   await expect(rail.locator('[class*="heading"]')).toHaveCount(0);
   // The drawer keeps its header and footer, and its list takes the height between.
   const box = (locator: Locator) => locator.evaluate((element) => element.getBoundingClientRect());
@@ -99,10 +101,14 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
     .getByRole('listitem')
     .evaluateAll((items) => items.map((item) => item.getBoundingClientRect().width));
   for (const width of widths) expect(Math.abs(width - widths[0])).toBeLessThan(1);
+  // Five destinations fit without More.
+  const five = scope.getByRole('navigation', { name: 'Five bar' });
+  await expect(five.getByRole('listitem')).toHaveCount(5);
+  await expect(five.locator('.env-bar-more')).toHaveCount(0);
 
   const bar = scope.getByRole('navigation', { name: 'Many bar' });
   await expect(bar.getByRole('listitem')).toHaveCount(5);
-  await expect(bar.locator('.env-bar-label')).toHaveText([
+  await expect(bar.locator('.env-bar-text')).toHaveText([
     'Home',
     'Inbox',
     'Drafts',
@@ -110,7 +116,10 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
     'More',
   ]);
   // More holds the current destination and counts what it holds: Labels, 4, and Archive, 1.
-  const more = bar.getByRole('button', { name: 'More, 5 new', exact: true });
+  const more = bar.getByRole('button', {
+    name: 'More, 5 new, current page inside',
+    exact: true,
+  });
   await expect(more).toHaveAttribute('data-current', '');
   await expect(more).not.toHaveAttribute('aria-current');
   await more.click();
@@ -118,7 +127,7 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
   await expect(menu.getByRole('menuitem')).toHaveCount(3);
   const labels = menu.getByRole('menuitem', { name: /Labels/ });
   await expect(labels).toHaveAttribute('aria-current', 'page');
-  await expect(labels).toHaveAccessibleName('Labels 4 new');
+  await expect(labels).toHaveAccessibleName('Labels, 4 new');
   await expect(menu.getByRole('menuitem', { name: /Archive/ })).toHaveAttribute('href', '#archive');
   await menu.getByRole('menuitem', { name: /Trash/ }).focus();
   await page.keyboard.press('Escape');
@@ -147,6 +156,39 @@ test(
     );
     await expect(page.getByTestId('navigation-light').getByTestId('current')).toHaveText(
       'Starred, Labels',
+    );
+  },
+);
+
+test(
+  'More opens from the keyboard, and the arrow keys move through its destinations',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.goto(`${fixtureUrl}/?fixture=navigation`);
+    const bar = page.getByTestId('navigation-light').getByRole('navigation', { name: 'Many bar' });
+    // Tab reaches More after the four destinations before it.
+    await bar.getByRole('link', { name: 'Sent', exact: true }).focus();
+    await page.keyboard.press('Tab');
+    const more = bar.locator('.env-bar-more');
+    await expect(more).toBeFocused();
+    await expect(more).toHaveAttribute('aria-haspopup', 'menu');
+    await page.keyboard.press('Enter');
+    const menu = page.getByRole('menu', { name: 'More' });
+    await expect(menu).toBeVisible();
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    const items = menu.getByRole('menuitem');
+    await expect(items.first()).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(items.nth(1)).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(items.last()).toBeFocused();
+    // Enter selects a destination without href, and the menu closes.
+    await page.keyboard.press('Home');
+    await expect(items.first()).toHaveAccessibleName('Labels, 4 new');
+    await page.keyboard.press('Enter');
+    await expect(menu).toBeHidden();
+    await expect(page.getByTestId('navigation-light').getByTestId('current')).toHaveText(
+      'Inbox, Labels',
     );
   },
 );

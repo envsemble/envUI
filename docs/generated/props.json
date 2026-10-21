@@ -2702,6 +2702,13 @@
           "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
         },
         {
+          "name": "headingLevel",
+          "type": "2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "2",
+          "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -3945,6 +3952,12 @@
           "type": "AriaAttributes['aria-current']",
           "required": false,
           "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "The item's accessible name, where its label and end content don't say it as wanted, such as Inbox, 3 new for a destination whose count shows as a badge."
         },
         {
           "name": "className",

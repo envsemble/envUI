@@ -30,6 +30,12 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
   /** Content below the destinations, at the bottom of the drawer, such as the account's menu. */
   footer?: ReactNode;
   /**
+   * The level of the groups' headings, which assistive technology lists with the page's headings:
+   * one below the heading the drawer sits under, such as 3 in a drawer under an h2.
+   * @default 2
+   */
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
+  /**
    * Names the navigation landmark, such as Main or Project; give each landmark of a page its own.
    * @default messages.navigation.label, Main
    */
@@ -37,13 +43,22 @@ export interface DrawerProps extends Omit<ComponentPropsWithRef<'nav'>, 'childre
 }
 
 /** A group's heading and its destinations, a list of its own named by the heading. */
-function Section({ group, items }: { group: string; items: DrawerDestination[] }) {
+function Section({
+  group,
+  items,
+  level,
+}: {
+  group: string;
+  items: DrawerDestination[];
+  level: 2 | 3 | 4 | 5 | 6;
+}) {
   const headingId = useId();
+  const Heading = `h${level}` as const;
   return (
     <Column render={<li />} className="env-drawer-section" align="stretch" gap={1}>
-      <span className="env-drawer-heading" id={headingId}>
+      <Heading className="env-drawer-heading" id={headingId}>
         {group}
-      </span>
+      </Heading>
       <Column render={<ul />} aria-labelledby={headingId} align="stretch" gap={1}>
         {items.map((destination) => (
           <li key={destinationKey(destination)}>
@@ -65,6 +80,7 @@ export function Drawer({
   destinations,
   header,
   footer,
+  headingLevel = 2,
   'aria-label': label,
   'aria-labelledby': labelledBy,
   className,
@@ -99,6 +115,7 @@ export function Drawer({
               key={`${index}-${section.group}`}
               group={section.group}
               items={section.items}
+              level={headingLevel}
             />
           ),
         )}

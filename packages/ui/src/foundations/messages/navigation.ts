@@ -7,10 +7,13 @@ export const navigation = {
   label: 'Main',
   /** Names a destination with a count, such as Inbox, 3 new. */
   itemCount: ({ label, count }: { label: string; count: string }) => `${label}, ${count} new`,
-  /** Says a count on its own, such as 3 new, beside a destination in the Bar's More menu. */
-  count: ({ count }: { count: string }) => `${count} new`,
   /** Labels the Bar's last item, which opens the destinations that don't fit in a menu. */
   more: 'More',
+  /**
+   * Names the Bar's More item while its menu holds the current destination, after its name with any
+   * count, such as More, 5 new, current page inside.
+   */
+  moreCurrent: ({ name }: { name: string }) => `${name}, current page inside`,
 };
 
 export type NavigationMessages = typeof navigation;

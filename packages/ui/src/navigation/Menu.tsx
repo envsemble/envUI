@@ -206,6 +206,11 @@ interface ItemSharedProps extends ItemContentProps {
    * Bar's destinations that its More menu holds.
    */
   'aria-current'?: AriaAttributes['aria-current'];
+  /**
+   * The item's accessible name, where its label and end content don't say it as wanted, such as
+   * Inbox, 3 new for a destination whose count shows as a badge.
+   */
+  'aria-label'?: string;
   /** Class of the item's row. */
   className?: string;
 }
@@ -252,6 +257,7 @@ function Item({
   end,
   disabled,
   'aria-current': ariaCurrent,
+  'aria-label': ariaLabel,
   className,
   ...props
 }: ItemProps) {
@@ -276,6 +282,7 @@ function Item({
         // eslint-disable-next-line react-hooks/static-components
         render={<LinkComponent href={props.href} target={props.target} rel={props.rel} />}
         aria-current={ariaCurrent}
+        aria-label={ariaLabel}
         {...accessibility}
       >
         {content}
@@ -288,6 +295,7 @@ function Item({
       disabled={disabled}
       onClick={props.href === undefined ? props.onClick : preventActivation}
       aria-current={ariaCurrent}
+      aria-label={ariaLabel}
       {...accessibility}
     >
       {content}

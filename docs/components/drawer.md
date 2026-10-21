@@ -63,7 +63,7 @@ Drawer is Material's navigation drawer: a column at the window's start with ever
 2. **Header** (`env-drawer-header`, optional, `header`): content above the destinations, such as the application's name or a search trigger.
 3. **List** (`env-drawer-list`): the destinations and groups, which scroll where the drawer is shorter, while the header and footer stay.
 4. **Group** (`env-drawer-section`): each run of destinations of one `group`, 0.75 rem apart from what is around it, a list named by its heading.
-5. **Heading** (`env-drawer-heading`): the group's name in small muted text, in line with the labels' padding.
+5. **Heading** (`env-drawer-heading`): the group's name in small muted text, in line with the labels' padding; an `h2`, or the level `headingLevel` gives.
 6. **Item** (`env-drawer-item`): a pill as wide as the drawer, at the control height, with its icon, label and count. A Material Symbol shows filled while current and outlined otherwise.
 7. **Label** (`env-drawer-label`): the destination's name, which wraps.
 8. **Count** (`env-drawer-count`, optional, `count`): a counter badge's pill at the item's end; 999+ above 999.

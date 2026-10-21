@@ -5745,16 +5745,12 @@
               "description": "A destination's count, on the icon's top end; 999+ above 999."
             },
             {
-              "class": "env-bar-indicator",
+              "class": "env-bar-icon",
               "description": "The pill around a destination's icon, filled while the destination is current."
             },
             {
               "class": "env-bar-item",
               "description": "A destination: a link or button with its indicator above its label."
-            },
-            {
-              "class": "env-bar-label",
-              "description": "A destination's label, under its indicator, cut short with an ellipsis."
             },
             {
               "class": "env-bar-list",
@@ -5763,17 +5759,18 @@
             {
               "class": "env-bar-more",
               "description": "The last item past five destinations, which opens the rest in a menu."
+            },
+            {
+              "class": "env-bar-text",
+              "description": "A destination's label, under its indicator, cut short with an ellipsis."
             }
           ],
           "states": [
             {
               "attribute": "data-current",
-              "values": [
-                ""
-              ],
+              "values": [],
               "parts": [
-                "env-bar-item",
-                "env-bar-more"
+                "env-bar-item"
               ]
             }
           ]
@@ -13464,7 +13461,7 @@
           "use": "EmptyState"
         },
         {
-          "text": "The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.",
+          "text": "The application frame itself before the first page loads, which shows its own parts as skeletons.",
           "use": "Scaffold"
         }
       ],
@@ -16947,6 +16944,13 @@
           "description": "Content below the destinations, at the bottom of the drawer, such as the account's menu."
         },
         {
+          "name": "headingLevel",
+          "type": "2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "2",
+          "description": "The level of the groups' headings, which assistive technology lists with the page's headings: one below the heading the drawer sits under, such as 3 in a drawer under an h2."
+        },
+        {
           "name": "aria-label",
           "type": "string",
           "required": false,
@@ -18204,6 +18208,12 @@
           "type": "AriaAttributes['aria-current']",
           "required": false,
           "description": "Marks a destination as the page shown now, such as aria-current=\"page\" on the current one of a Bar's destinations that its More menu holds."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "The item's accessible name, where its label and end content don't say it as wanted, such as Inbox, 3 new for a destination whose count shows as a badge."
         },
         {
           "name": "className",

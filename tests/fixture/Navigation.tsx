@@ -101,6 +101,7 @@ export function NavigationFixture({ theme }: { theme: ThemeValue }) {
         <Rail aria-label="Mail rail" destinations={mailDestinations} />
         <div className="fixture-navigation-bars">
           <Bar aria-label="Mail bar" destinations={mailDestinations.slice(0, 4)} />
+          <Bar aria-label="Five bar" destinations={mailDestinations.slice(0, 5)} />
           <Bar aria-label="Many bar" destinations={manyDestinations} />
           <Bar destinations={linked} />
         </div>
