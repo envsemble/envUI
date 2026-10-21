@@ -40,9 +40,11 @@
   min-inline-size: 0;
 }
 /* A group sits a little apart from the destinations or group before and after it. */
-.env-drawer-section + li,
-.env-drawer-list > li + .env-drawer-section {
+.env-drawer-section:not(:first-child) {
   margin-block-start: var(--env-space-3);
+}
+.env-drawer-section:not(:last-child) {
+  margin-block-end: var(--env-space-3);
 }
 /* A group's heading lines up with its destinations' icons and labels. */
 .env-drawer-heading {
