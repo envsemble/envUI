@@ -54,8 +54,14 @@
           "name": "announce",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "The alert appeared because of something that just happened and should interrupt: warning and danger alerts take the alert role. Info and success alerts are always polite status messages."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -301,6 +307,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -743,10 +756,17 @@
           "description": ""
         },
         {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        },
+        {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level."
+          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
@@ -2398,6 +2418,13 @@
           "required": false,
           "default": "false",
           "description": "Work started from the dialog is in progress. Escape, outside presses and the close buttons cannot dismiss it until pending returns to false. The built-in close button is disabled and the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too. Set pending on the action that started the work as well."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -2714,6 +2741,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -2876,15 +2910,20 @@
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "4",
           "description": "The title's heading level in the page outline; 4 by default. The appearance stays the same."
         },
         {
           "name": "align",
           "type": "'start' | 'center'",
           "required": false,
-          "default": "'start'",
           "description": "`start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the place of a page's or region's content: a larger icon, centred text and action, centred vertically in the height the application gives it."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3348,6 +3387,13 @@
           "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when hover, focus or Esc opens or closes the card."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3523,13 +3569,13 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row."
+          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A short fact in muted text below the label, such as who changed the item and when."
+          "description": "A short fact in muted text below the label, such as who changed the item and when. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "action",
@@ -3568,6 +3614,13 @@
           "required": false,
           "default": "the label's text",
           "description": "The row's label as plain text, for its drag handle's name and the reorder announcements where `label` isn't a string."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3594,6 +3647,13 @@
           "type": "(from: number, to: number) => void",
           "required": false,
           "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item, such as `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3606,14 +3666,14 @@
     "LoadingState": {
       "kind": "component",
       "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "description": "A region of placeholders for content that is loading, such as Skeletons in the shape of a card: a status named by label and marked busy, which stacks its children 0.5 rem apart.",
+      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project, which names the region for assistive technology; an aria-label overrides it."
+          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
         }
       ],
       "native": [
@@ -4194,6 +4254,13 @@
           "type": "string",
           "required": false,
           "description": "Class of the menu popup. ref, style, data attributes and the other native props go to the popup too; the trigger is the element you pass."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -4477,10 +4544,17 @@
           "type": "ReactNode",
           "required": true,
           "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
-        "article"
+        "element"
       ],
       "entries": [
         "@envsemble/envui"
@@ -5570,6 +5644,13 @@
           "type": "string",
           "required": true,
           "description": "Names the pane's region, such as Details or Projects."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -5647,11 +5728,48 @@
           "required": false,
           "default": "'md'",
           "description": "The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. It is as wide as its content from 12 rem up, and narrows to fit the window."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
         "div"
       ],
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "PortalContainer": {
+      "kind": "component",
+      "source": "packages/ui/src/foundations/PortalContainer.tsx",
+      "description": "Renders envUI's overlays inside it, popups, dialogs, sheets and toasts, into another element than the document's body, and with `contained`, as part of that element.",
+      "props": [
+        {
+          "name": "container",
+          "type": "HTMLElement | null",
+          "required": true,
+          "description": "The element that envUI's popups, dialogs, sheets and toasts inside render into, in place of the document's body, such as an element in a shadow root or in an iframe's document. Pass null while the element mounts: overlays wait for it."
+        },
+        {
+          "name": "contained",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "native": [],
       "entries": [
         "@envsemble/envui"
       ]
@@ -5861,6 +5979,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -6610,6 +6735,13 @@
           "description": "Receives the value of the option people choose."
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the list starts open, such as in a picture of the open list."
+        },
+        {
           "name": "name",
           "type": "string",
           "required": false,
@@ -6792,43 +6924,17 @@
           "required": false,
           "default": "false",
           "description": "Work started from the sheet is in progress: Escape, outside presses, swipes and the close button cannot dismiss it until pending returns to false, and the sheet reports busy."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
         "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Skeleton": {
-      "kind": "component",
-      "source": "packages/ui/src/feedback/Skeleton.tsx",
-      "description": "A placeholder in the shape of content that is loading, such as a line of text or a row: a block with rounded corners on the neutral fill, which pulses unless people prefer reduced motion. It is hidden from assistive technology; put placeholders in a LoadingState, which names the region.",
-      "props": [
-        {
-          "name": "width",
-          "type": "CSSProperties['width']",
-          "required": false,
-          "description": "The placeholder's width, as a CSS length, such as 38% or 12rem, for the content it stands for. Without it, the placeholder fills the width of its container."
-        },
-        {
-          "name": "height",
-          "type": "CSSProperties['height']",
-          "required": false,
-          "default": "0.8rem",
-          "description": "The placeholder's height, as a CSS length, such as 1.25rem for a heading or 3.5rem for a row."
-        },
-        {
-          "name": "emphasis",
-          "type": "'muted' | 'default'",
-          "required": false,
-          "default": "'muted'",
-          "description": "How strong the fill is: muted, the neutral fill, or default, one step stronger, for a placeholder that stands out among the others, such as a title."
-        }
-      ],
-      "native": [
-        "span"
       ],
       "entries": [
         "@envsemble/envui"
@@ -7005,6 +7111,13 @@
           "required": false,
           "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
           "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -7042,6 +7155,13 @@
           "type": "Trend",
           "required": false,
           "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -7076,6 +7196,13 @@
           "required": false,
           "default": "'xl'",
           "description": "The corner radius: xl, the large 1.75 rem corners of panes; sm, 0.5 rem for small blocks; full, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "render",
@@ -7382,6 +7509,13 @@
           "required": false,
           "default": "false",
           "description": "People can resize the columns with a handle at the end of each header cell but the last, which moves the boundary to the next column and keeps the table's width. Needs columnWidths or defaultColumnWidths."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -8366,6 +8500,13 @@
           "required": false,
           "default": "400",
           "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the tooltip starts open, such as in a picture of the interface; it then closes as an opened one does."
         }
       ],
       "native": [
@@ -8431,6 +8572,13 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, such as render={<header />} for a bar outside a Scaffold, which then is the page's banner; a div by default, as Scaffold's top bar region is the banner."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -8577,6 +8725,24 @@
         "@envsemble/envui/dev"
       ]
     },
+    "isPlaceholder": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/placeholders.ts",
+      "description": "Whether an item is one of the stand-ins that `placeholders()` returns, by its id, so it holds after the items are serialized, such as from a server component to a client one.",
+      "signature": "(item: unknown): boolean",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "placeholders": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/placeholders.ts",
+      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders<Project>(3)`. Each item has only an `id`, `envui-placeholder-0`, `envui-placeholder-1` and so on, for keys; its other fields are undefined, which the type says, and the components render missing text as bars of a default length for its text style.",
+      "signature": "<Item = object>(count: number): Placeholder<Item>[]",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
     "readPanesSize": {
       "kind": "function",
       "source": "packages/ui/src/layout/panesSize.ts",
@@ -8609,6 +8775,15 @@
       "source": "packages/ui/src/internal/EnvUIContext.ts",
       "description": "The locale of the nearest EnvUIProvider, for formatting in step with envUI, or undefined where no provider sets one: the runtime's locale applies then.",
       "signature": "(): string | undefined",
+      "entries": [
+        "@envsemble/envui"
+      ]
+    },
+    "useSkeleton": {
+      "kind": "function",
+      "source": "packages/ui/src/foundations/SkeletonScope.tsx",
+      "description": "Whether the component is inside a skeleton: a surface with `skeleton` around it. A component of the application's own reads it to give its skeleton a look of its own, such as a chart's.",
+      "signature": "(): boolean",
       "entries": [
         "@envsemble/envui"
       ]

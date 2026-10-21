@@ -61,11 +61,11 @@ Open it from a [SearchTrigger](../components/search-trigger.md), which shows the
 
 ## When to use
 
-```tsx do=ShowRecent caption="Show recent items while the query is empty."
+```tsx do=ShowRecent open caption="Show recent items while the query is empty."
 
 ```
 
-```tsx dont=EmptyUntilTyped caption="An empty list until people type."
+```tsx dont=EmptyUntilTyped open caption="An empty list until people type."
 
 ```
 
@@ -77,6 +77,20 @@ Open it from a [SearchTrigger](../components/search-trigger.md), which shows the
 - Name commands with a verb and what they act on, such as Invite people.
 - Use `description` for what tells similar items apart, such as a folder.
 - Show key hints only for keys the application handles.
+
+## Anatomy
+
+```tsx anatomy=CommandPaletteAnatomy open
+
+```
+
+1. **Palette** (`env-command-palette`)
+2. **Search field** (`env-command-palette-input`, `placeholder`)
+3. **Group heading** (`env-command-palette-heading`)
+4. **Item** (`env-command-palette-item`, `items`)
+5. **Key hints** (`env-command-palette-footer`, `hints`)
+
+Not shown: the message for no matches, `env-command-palette-status`.
 
 ## Accessibility
 

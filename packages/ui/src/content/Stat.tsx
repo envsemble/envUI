@@ -11,6 +11,8 @@ import { TrendingDown } from '../icons/TrendingDown.js';
 import { TrendingFlat } from '../icons/TrendingFlat.js';
 import { TrendingUp } from '../icons/TrendingUp.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 
 export type TrendTone = 'neutral' | 'success' | 'warning' | 'danger';
 
@@ -31,7 +33,7 @@ export interface Trend {
   tone?: TrendTone;
 }
 
-export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
+export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'>, SkeletonProps {
   /** What the figure measures, such as Active projects, in muted text above it. */
   label: ReactNode;
   /**
@@ -64,34 +66,47 @@ const trendTones: Record<Trend['direction'], TrendTone> = {
  * A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and
  * description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.
  */
-function Root({ label, value, description, trend, className, ...props }: RootProps) {
+function Root(allProps: RootProps) {
+  const { label, value, description, trend, skeleton = false, className, ...props } = allProps;
+  // A description given as undefined, as over a placeholder item, is a bar in a skeleton.
+  const hasDescription = description != null || given(allProps, 'description');
   return (
-    <Grid gap={1} {...props} className={classNames('env-stat', className)}>
-      <div className="env-stat-label">{label}</div>
-      <div className="env-stat-value">{value}</div>
-      {(trend != null || description != null) && (
-        <Row wrap align="center" className="env-stat-footer">
-          {trend != null && (
-            <Row
-              render={<span />}
-              align="center"
-              gap={1}
-              className="env-stat-trend"
-              data-direction={trend.direction}
-              data-tone={trend.tone ?? trendTones[trend.direction]}
-            >
-              <DecorativeIcon>{trendIcons[trend.direction]}</DecorativeIcon>
-              <span>{trend.label}</span>
+    <Grid
+      gap={1}
+      {...props}
+      {...skeletonAttributes(skeleton)}
+      className={classNames('env-stat', className)}
+    >
+      {inSkeleton(
+        skeleton,
+        <>
+          <div className="env-stat-label">{label}</div>
+          <div className="env-stat-value">{value}</div>
+          {(trend != null || hasDescription) && (
+            <Row wrap align="center" className="env-stat-footer">
+              {trend != null && (
+                <Row
+                  render={<span />}
+                  align="center"
+                  gap={1}
+                  className="env-stat-trend"
+                  data-direction={trend.direction}
+                  data-tone={trend.tone ?? trendTones[trend.direction]}
+                >
+                  <DecorativeIcon>{trendIcons[trend.direction]}</DecorativeIcon>
+                  <span>{trend.label}</span>
+                </Row>
+              )}
+              {hasDescription && <span className="env-stat-description">{description}</span>}
             </Row>
           )}
-          {description != null && <span className="env-stat-description">{description}</span>}
-        </Row>
+        </>,
       )}
     </Grid>
   );
 }
 
-export interface GroupProps extends ComponentPropsWithRef<'div'> {
+export interface GroupProps extends ComponentPropsWithRef<'div'>, SkeletonProps {
   /**
    * The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its
    * stats stand apart; page or raised where those fit.
@@ -111,7 +126,7 @@ export interface GroupProps extends ComponentPropsWithRef<'div'> {
  * space runs out. Use the muted background for a group on a pane. A group named with aria-label or
  * aria-labelledby is exposed as a group, so assistive technology announces the name.
  */
-function Group({ background = 'default', padding, className, ...props }: GroupProps) {
+function Group({ background = 'default', padding, skeleton, className, ...props }: GroupProps) {
   const labelled = props['aria-label'] !== undefined || props['aria-labelledby'] !== undefined;
   return (
     <Surface
@@ -119,6 +134,7 @@ function Group({ background = 'default', padding, className, ...props }: GroupPr
       {...props}
       background={background}
       padding={padding}
+      skeleton={skeleton}
       className={classNames('env-stat-group', className)}
       render={<Grid />}
     />

@@ -35,7 +35,7 @@
 }
 
 /* A part that takes its width from its container, such as a size container (a primitive with
-   `container` too), a strip of tabs, a window or skeleton bars, has none of its own and would collapse if centred: an example that is
+   `container` too), a strip of tabs, a window or a skeleton, has none of its own and would collapse if centred: an example that is
    or holds one fills the stage, unless it sets its width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
   > :where(
@@ -48,7 +48,7 @@
     .env-document-tabs,
     .env-panel-dock,
     .env-scaffold,
-    .env-skeleton,
+    [data-env-skeleton],
     [data-env-container],
     :has(
       .env-card[data-layout='feature'],
@@ -60,7 +60,7 @@
       .env-document-tabs,
       .env-panel-dock,
       .env-scaffold,
-      .env-skeleton,
+      [data-env-skeleton],
       [data-env-container]
     )
   ),
@@ -217,4 +217,55 @@
 .docs-foundation-stage > * {
   inline-size: min(100%, var(--docs-example-width));
   min-inline-size: 0;
+}
+
+/* A figure that shows its overlays open (`open` on its fence): a room as wide as the stage, with
+   what opens them in its middle, that grows to hold them. Its padding and height are measured
+   (OpenExample.tsx). Its dialogs, sheets and toasts, and their scrims, are placed on the stage,
+   which its layout containment makes their containing block, and clips them to its corners.
+   The room stacks its overlays below the callouts of an anatomy figure. */
+.docs-open-example {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  justify-self: stretch;
+  box-sizing: border-box;
+  inline-size: 100%;
+}
+
+:is(.docs-live-example, .docs-verdict-stage):has(.docs-open-example) {
+  contain: layout;
+  overflow: clip;
+}
+
+/* In an anatomy figure the room places them, so they keep clear of the stage's padding, where the
+   callouts go; the scrim, which would fill only the room, is left out. */
+.docs-anatomy-subject .docs-open-example {
+  contain: layout;
+}
+
+.docs-anatomy-subject .docs-overlay-layer :is(.env-dialog-backdrop, .env-sheet-backdrop) {
+  display: none;
+}
+
+/* Toasts, which an anatomy figure shows without what raised them, sit in its middle. */
+.docs-anatomy-subject .docs-overlay-layer .env-toast-viewport {
+  inset: 0;
+  inline-size: fit-content;
+  block-size: fit-content;
+  margin: auto;
+}
+
+/* The layer envUI's overlays render into, through PortalContainer, over the room. */
+.docs-overlay-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A picture: the overlays are shown in place, without the motion that brings them in. */
+.docs-overlay-layer * {
+  transition: none;
+  animation: none;
 }

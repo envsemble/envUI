@@ -42,8 +42,7 @@ composes:
   - Toast
   - useToast
   - EmptyState
-  - LoadingState
-  - Skeleton
+  - placeholders
   - Surface
   - Column
   - Row
@@ -91,7 +90,7 @@ The name links to the record; the other actions wait in a [Menu](../components/m
 
 ### Loading and empty
 
-The first load shows the table's shape after 200 ms, as in [Loading](loading.md); with no records, an [EmptyState](../components/empty-state.md) takes its place.
+The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in [Loading](loading.md); with no records, an [EmptyState](../components/empty-state.md) takes its place.
 
 ```tsx example=EmptyAndLoading
 

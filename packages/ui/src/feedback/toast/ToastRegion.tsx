@@ -13,6 +13,7 @@ import { ToastBody } from './ToastBody.js';
 import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './ToastInternals.js';
 import type { ToastPlacement } from './ToastTypes.js';
+import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
@@ -58,6 +59,7 @@ export function ToastRegion({
 }) {
   const toastStore = BaseToast.useToastManager<ToastEntry>();
   const theme = useTheme();
+  const { container, contained } = usePortalContainer();
   const messages = useMessages('toast', toastMessages);
   const viewport = useRef<HTMLDivElement | null>(null);
   const positions = useRef(new Map<string, number>());
@@ -205,8 +207,72 @@ export function ToastRegion({
     hiddenIds.current = hidden;
     settle();
   }, [toastStore.toasts, hiddenCount, placement, settle]);
+  const regionLabel =
+    placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter;
+  // In a contained PortalContainer the notices are a picture of the region, part of the container:
+  // without Base UI's viewport, whose window-wide F6 would take the page's F6 for a region that is
+  // only shown. They keep their look, action, dismiss button and duration.
+  if (contained)
+    return (
+      <BaseToast.Portal container={container}>
+        <Theme {...theme} className="env-toast-portal-theme">
+          <div
+            ref={attachViewport}
+            className="env-toast-viewport"
+            data-placement={placement}
+            role="region"
+            aria-label={regionLabel}
+          >
+            {hiddenCount > 0 && (
+              <CounterBadge
+                className="env-toast-queued-count"
+                data-toast-id="queued"
+                value={`+${hiddenCount}`}
+                aria-label={messages.hidden({ count: hiddenCount })}
+              />
+            )}
+            {toastStore.toasts
+              .filter((toast) => toast.transitionStatus !== 'ending')
+              .map((toast) => {
+                const entry = toast.data!;
+                return (
+                  <div
+                    key={toast.id}
+                    data-toast-id={toast.id}
+                    className="env-toast"
+                    data-tone={entry.tone}
+                    data-limited={limited.has(toast.id) || undefined}
+                    role={entry.tone === 'danger' ? 'alert' : 'status'}
+                  >
+                    <ToastBody
+                      tone={entry.tone}
+                      message={<div className="env-toast-message">{entry.message}</div>}
+                      action={
+                        entry.action && (
+                          <Button className="env-toast-action" onClick={entry.action.onClick}>
+                            {entry.action.label}
+                          </Button>
+                        )
+                      }
+                      dismiss={
+                        entry.dismissible !== false && (
+                          <CloseButton
+                            className="env-toast-dismiss"
+                            aria-label={messages.dismiss}
+                            onClick={() => toastStore.close(toast.id)}
+                          />
+                        )
+                      }
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </Theme>
+      </BaseToast.Portal>
+    );
   return (
-    <BaseToast.Portal>
+    <BaseToast.Portal container={container}>
       <Theme {...theme} className="env-toast-portal-theme">
         <BaseToast.Viewport
           ref={attachViewport}
@@ -215,9 +281,7 @@ export function ToastRegion({
           // The region announces nothing itself: a danger notice is an alert of its own, and the
           // others are read by the status below, so no notice is read twice.
           aria-live="off"
-          aria-label={
-            placement === 'bottom-end' ? messages.regionBottomEnd : messages.regionTopCenter
-          }
+          aria-label={regionLabel}
           onFocusCapture={(event) => {
             // F6 focuses the viewport itself. Focus inside a toast pauses only that toast.
             controller.setViewportFocused(

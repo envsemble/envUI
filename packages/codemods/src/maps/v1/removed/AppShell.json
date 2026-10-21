@@ -1,10 +1,10 @@
 {
   "@envsemble/envui": {
     "AppShellSkeleton": {
-      "use": "AppShellSkeleton is gone: render the frame's Scaffold with placeholder items in its navigation and page, inside a LoadingState."
+      "use": "AppShellSkeleton is gone: render the frame's Scaffold with skeleton on its TopBar, Drawer, Rail or Bar and its page's surfaces, over placeholders(count)."
     },
     "AppShellSkeletonProps": {
-      "use": "AppShellSkeleton is gone: the frame, a Scaffold, with placeholder items is its loading state."
+      "use": "AppShellSkeleton is gone: the frame, a Scaffold, with skeleton on its parts over placeholders(count), is its loading state."
     },
     "LoadingBar": {
       "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
@@ -61,13 +61,13 @@
       "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
     },
     "SplitView": {
-      "use": "SplitView is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+      "use": "SplitView is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's split panes section shows."
     },
     "SplitViewProps": {
       "use": "Panes.RootProps; SplitView is gone, and Panes.Root takes behavior, splitAt and sizes in rem."
     },
     "SplitPane": {
-      "use": "SplitPane is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+      "use": "SplitPane is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's split panes section shows."
     },
     "ListDetail": {
       "use": "ListDetail is Panes with behavior=\"list-detail\": v1-structure rewrites its elements."
@@ -86,6 +86,12 @@
     },
     "AccountMenu": {
       "use": "AccountMenu is gone: build the account menu from Menu.Root with an AvatarButton trigger, a Menu.Header with the Avatar and the name, and a Menu.Submenu around a ThemeRadioGroup, as the account menu pattern shows."
+    },
+    "AppShellContextValue": {
+      "use": "AppShell is gone, with its context: a Scaffold keeps no state, and bodyRef is the element that scrolls the body with scroll=\"body\"."
+    },
+    "SidebarApi": {
+      "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
     }
   }
 }

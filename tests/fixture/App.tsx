@@ -78,8 +78,10 @@ import { DescriptionListsFixture } from './DescriptionLists.js';
 import { ContainerSizeFixture } from './ContainerSize.js';
 import { SearchTriggersFixture } from './SearchTriggers.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
+import { PortalContainersFixture } from './PortalContainers.js';
 import { ListsFixture } from './Lists.js';
 import { DevModeFixture } from './DevMode.js';
+import { SkeletonsFixture } from './Skeletons.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -99,6 +101,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,
   stacking: StackingFixture,
+  'portal-containers': PortalContainersFixture,
   'responsive-hooks': ResponsiveHooksFixture,
   primitives: PrimitivesFixture,
   'message-strings': MessageStringsFixture,
@@ -119,6 +122,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
   'dev-mode': DevModeFixture,
+  skeletons: SkeletonsFixture,
 };
 
 export default function App() {

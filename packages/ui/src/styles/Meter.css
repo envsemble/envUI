@@ -107,3 +107,12 @@
       Canvas;
   }
 }
+
+/* In a skeleton, a meter's or a progress bar's track is a bar of the skeleton's color, with no
+   value in it. */
+[data-env-skeleton] :is(.env-meter-track, .env-progress-track) {
+  background: var(--env-skeleton-color);
+}
+[data-env-skeleton] :is(.env-meter-indicator, .env-progress-indicator) {
+  visibility: hidden;
+}

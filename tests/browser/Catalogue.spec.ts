@@ -830,3 +830,98 @@ test('offline theme toggle switches the whole page and keeps the canvas full hei
   await expect(app).toHaveAttribute('data-env-theme', 'dark');
   await expect(panes).toHaveCount(0);
 });
+
+test('figures with open overlays keep them in their stages, inert, and leave the page alone', async ({
+  page,
+}) => {
+  test.slow();
+  const pages = references
+    .filter((reference) =>
+      (reference.sections ?? []).some((section) =>
+        section.blocks.some((block) => block.kind === 'example' && block.open),
+      ),
+    )
+    .map(({ id }) => id);
+  expect(pages).toEqual(expect.arrayContaining(['dialog', 'menu', 'tooltip', 'toast', 'select']));
+  await page.goto(`${catalogueUrl}/#/overview`);
+  for (const id of pages) {
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, `/components/${id}/overview`);
+    const rooms = page.locator('.docs-open-example');
+    await expect(rooms.first()).toBeVisible();
+    await expect(page.getByText(/^Loading example/)).toHaveCount(0);
+    // Every open figure shows an overlay, inside its stage, and is a picture: inert.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() =>
+            [...document.querySelectorAll<HTMLElement>('.docs-open-example')].flatMap((room) => {
+              const stage = room
+                .closest('.docs-live-example, .docs-verdict-stage, .docs-anatomy-stage')!
+                .getBoundingClientRect();
+              const surfaces = [
+                ...room.querySelectorAll(
+                  '.env-popup, .env-dialog-popup, .env-sheet-popup, .env-command-palette, .env-toast',
+                ),
+              ];
+              const name = room.dataset.openExample;
+              if (!room.inert) return [`${name} is not inert`];
+              if (!surfaces.length) return [`${name} shows no overlay`];
+              return surfaces
+                .map((surface) => surface.getBoundingClientRect())
+                .filter(
+                  (box) =>
+                    box.left < stage.left - 1 ||
+                    box.right > stage.right + 1 ||
+                    box.top < stage.top - 1 ||
+                    box.bottom > stage.bottom + 1,
+                )
+                .map(() => `${name} reaches past its stage`);
+            }),
+          ),
+        { message: `${id}: open figures` },
+      )
+      .toEqual([]);
+    // No figure took focus or locked the page.
+    expect(
+      await page.evaluate(() => ({
+        focusInFigure: !!document.activeElement?.closest('.docs-open-example'),
+        locked: [document.documentElement, document.body].some(
+          (element) => getComputedStyle(element).overflow === 'hidden',
+        ),
+        hidden: !!document.querySelector('main [aria-hidden="true"] .docs-figures'),
+      })),
+      id,
+    ).toEqual({ focusInFigure: false, locked: false, hidden: false });
+  }
+  // The page still scrolls with the wheel.
+  const scroller = page.locator('.env-scaffold-body');
+  const before = await scroller.evaluate((element) => element.scrollTop);
+  await page.mouse.move(700, 400);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).not.toBe(before);
+});
+
+test('F6 on the Toast page reaches a notification raised there, past the figures @engines', async ({
+  page,
+}) => {
+  await page.goto(`${catalogueUrl}/#/components/toast/overview`);
+  await expect(page.locator('.docs-open-example .env-toast').first()).toBeVisible();
+  // While no notification of the page is open, F6 is the browser's: the figures' notices, which
+  // are pictures, don't take it.
+  await page.evaluate(() =>
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'F6') document.body.dataset.f6Prevented = String(event.defaultPrevented);
+    }),
+  );
+  await page.keyboard.press('F6');
+  await expect(page.locator('body')).toHaveAttribute('data-f6-prevented', 'false');
+  await page.getByRole('button', { name: 'Save changes' }).first().click();
+  const live = page
+    .locator('.env-toast-viewport:not(.docs-open-example .env-toast-viewport)')
+    .filter({ has: page.locator('.env-toast') });
+  await expect(live).toHaveCount(1);
+  await page.keyboard.press('F6');
+  await expect(live).toBeFocused();
+});

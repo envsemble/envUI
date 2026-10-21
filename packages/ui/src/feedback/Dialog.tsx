@@ -18,6 +18,12 @@ import {
   OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 
 /**
  * Why a dialog or a sheet asks to open or close: its trigger, Escape, a press outside, focus
@@ -48,7 +54,9 @@ export type DialogFocusTarget =
       interaction: 'mouse' | 'touch' | 'pen' | 'keyboard' | '',
     ) => HTMLElement | boolean | void | null);
 
-export interface DialogProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+export interface DialogProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
+    SkeletonProps {
   /** Whether the dialog is open, for a dialog the application controls with onOpenChange. */
   open?: boolean;
   /**
@@ -176,28 +184,30 @@ export function Dialog({
   initialFocus,
   finalFocus,
   pending = false,
+  skeleton = false,
   className,
   ...popupProps
 }: DialogProps) {
   const theme = useTheme();
   const messages = useMessages('dialog', dialog);
   const closeLabel = ownCloseLabel ?? messages.close;
+  const portal = usePortalContainer();
   return (
     <BaseDialog.Root
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, eventDetails) => {
-        if (!next && pending) {
+        if ((!next && pending) || keepsOpen(portal, next, eventDetails)) {
           eventDetails.cancel();
           return;
         }
         onOpenChange?.(next, { reason: eventDetails.reason as DialogOpenChangeReason });
       }}
-      modal={modal}
+      modal={containedModal(portal, modal)}
       disablePointerDismissal={disablePointerDismissal}
     >
       {trigger && <BaseDialog.Trigger render={trigger} />}
-      <BaseDialog.Portal>
+      <BaseDialog.Portal container={portal.container}>
         <OverlayTheme {...theme}>
           <ResetControlDefaults>
             {modal && <DialogBackdrop />}
@@ -208,11 +218,12 @@ export function Dialog({
                 className={classNames('env-dialog-popup', className)}
                 data-placement={placement}
                 data-width={width}
-                aria-busy={pending || undefined}
-                initialFocus={initialFocus}
-                finalFocus={finalFocus}
+                aria-busy={pending || skeleton || undefined}
+                data-env-skeleton={skeleton ? '' : undefined}
+                initialFocus={portal.contained ? false : initialFocus}
+                finalFocus={portal.contained ? false : finalFocus}
               >
-                <DialogContent>
+                <DialogContent skeleton={skeleton}>
                   <DialogHeader title={title} description={description} />
                   {children}
                   <DialogActions>

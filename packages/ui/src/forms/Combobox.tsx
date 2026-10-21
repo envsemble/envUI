@@ -18,6 +18,7 @@ import { setRef } from '../internal/setRef.js';
 import { useDirection } from '../internal/useDirection.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { PopupSurface } from '../internal/PopupSurface.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import { Column, Grid } from '../foundations/Layout.js';
 import { ListRow } from '../internal/ListRow.js';
 import { type ControlSize } from '../foundations/Theme.js';
@@ -320,6 +321,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
   const [inputText, setInputText] = useState(() => singleItem?.label ?? '');
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const popupOpen = open ?? uncontrolledOpen;
+  const portal = usePortalContainer();
   // The chips' arrow keys and the popup follow the text direction, read as the popup opens or
   // closes and as the field takes focus.
   const [direction, readDirection] = useDirection(inputRef, popupOpen);
@@ -446,7 +448,10 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
         // the Combobox's implementation.
         autoHighlight={'always' as never}
         open={popupOpen}
-        onOpenChange={changeOpen}
+        onOpenChange={(next, details) => {
+          if (keepsOpen(portal, next, details)) details.cancel();
+          else changeOpen(next);
+        }}
         name={name}
         form={form}
         required={required}

@@ -1,7 +1,7 @@
 {
   "@envsemble/envui": {
     "ListDetail.Root": {
-      "report": "ListDetail is Panes.Root with behavior=\"list-detail\" in 1.0, where detailShown is open and onBack onOpenChange: rewrite one that spreads props by hand, as the migration guide's panes section shows.",
+      "report": "ListDetail is Panes.Root with behavior=\"list-detail\" in 1.0, where detailShown is open and onBack onOpenChange: rewrite one that spreads props by hand, as the migration guide's split panes section shows.",
       "cases": [
         {
           "element": "Panes.Root",

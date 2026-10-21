@@ -45,6 +45,7 @@ export interface MenuPopupProps {
   popupRef?: Ref<HTMLDivElement>;
   /** More props for the popup element, such as style and data attributes. */
   popupProps?: Record<string, unknown>;
+  skeleton?: boolean;
   children?: ReactNode;
 }
 
@@ -65,6 +66,7 @@ export function MenuPopup({
   className,
   popupRef,
   popupProps,
+  skeleton,
   children,
 }: MenuPopupProps) {
   return (
@@ -82,6 +84,7 @@ export function MenuPopup({
       className={classNames('env-menu', className)}
       positionerClassName="env-menu-positioner"
       popupProps={{ ...popupProps, ref: popupRef, render: renderMenuPopup(label) }}
+      skeleton={skeleton}
     >
       {children}
     </PopupSurface>

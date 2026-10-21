@@ -23,6 +23,7 @@ import { useFormatters } from '../../internal/useFormatters.js';
 import { useHydrated } from '../../internal/useHydrated.js';
 import { useReorder, type Announcement, type ReorderHandlers } from '../../internal/useReorder.js';
 import type { RootProps } from '../List.js';
+import { usePortalContainer } from '../../internal/PortalContainerContext.js';
 
 /**
  * The client side of List, as ActionElement is Button's: List.Root and List.Item stay server
@@ -46,14 +47,15 @@ const ReorderContext = createContext<Reorder | null>(null);
  */
 function Announcer({ announcement }: { announcement: Announcement }) {
   const hydrated = useHydrated();
-  if (!hydrated) return null;
+  const { container } = usePortalContainer();
+  if (!hydrated || container === null) return null;
   const shown = announcement.count % 2;
   return createPortal(
     <div className="env-list-announcer">
       <div role="status">{shown === 1 ? announcement.text : ''}</div>
       <div role="status">{shown === 0 ? announcement.text : ''}</div>
     </div>,
-    document.body,
+    container ?? document.body,
   );
 }
 

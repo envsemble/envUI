@@ -68,9 +68,27 @@ const reports = {
     ...removedFrom(1, ['NavigationItem']),
     ...removedFrom(2, ['NavigationItemProps']),
   ],
+  // 1.0.0-prerelease.0's frame, navigation and viewport breakpoints are reported, by hand; its
+  // Drawer, Sheet now, is no 0.x name, so the import of Drawer stays for v1-structure to report.
+  'prerelease.tsx': [
+    ...removedFrom(1, ['AccountMenu', 'AppShell', 'ListDetail', 'NavList', 'Sidebar', 'SplitPane']),
+    ...removedFrom(2, ['breakpoints', 'useBreakpoint', 'useMediaQuery', 'WindowFrame']),
+  ],
   'removed.tsx': [
-    ...removedFrom(1, ['getInitials', 'LoadingBar', 'useLinkComponent', 'useSidebarCompact']),
-    ...removedFrom(2, ['LoadingBarProps', 'MenuDensity', 'SurfaceDensity', 'ToastProps']),
+    ...removedFrom(1, [
+      'getInitials',
+      'LoadingBar',
+      'Skeleton',
+      'useLinkComponent',
+      'useSidebarCompact',
+    ]),
+    ...removedFrom(2, [
+      'LoadingBarProps',
+      'MenuDensity',
+      'SkeletonProps',
+      'SurfaceDensity',
+      'ToastProps',
+    ]),
   ],
   'shadowing-namespace.tsx': [
     'line 20: a local Menu shadows the import here: wrote EnvMenu.Item, with Menu also imported as EnvMenu.',

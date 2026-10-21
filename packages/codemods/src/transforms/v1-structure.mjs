@@ -52,6 +52,22 @@ const intrinsic = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 /** Text that reads the same as a JSX child: one line, no braces, tags or entities, no edge spaces. */
 const plainText = /^[^{}<>&\s](?:[^{}<>&\n]*[^{}<>&\s])?$/;
 
+/**
+ * Whether a case changes the element, or may change its children; a case that only reports, such
+ * as one for the prerelease's Drawer or LoadingState's children, changes nothing.
+ */
+const rewrites = (each) =>
+  Boolean(
+    each.element ||
+      each.props ||
+      each.add ||
+      each.content ||
+      each.wrap ||
+      each.wrapChildren ||
+      each.lift ||
+      Object.values(each.children ?? {}).some((child) => child.add),
+  );
+
 /** The JSX name for a dotted name, such as `Stack` or `ui.Stack`. */
 function jsxName(j, name) {
   const [first, ...rest] = name.split('.');
@@ -400,7 +416,8 @@ export default function transform(file, api, options = {}) {
     }
     for (const [node, message] of reports) reporter.warn(node, message);
     if (chosen.report) reporter.warn(path.node, `${where}: ${chosen.report}`);
-    changed = true;
+    // A case that only reports, such as the prerelease's Drawer, leaves the file as it is.
+    if (rewrites(chosen)) changed = true;
   }
 
   if (changed) {

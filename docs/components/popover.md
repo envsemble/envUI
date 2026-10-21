@@ -80,11 +80,11 @@ A popover is as wide as its content up to its width. `side` places it below its 
 
 ## When to use
 
-```tsx do=ShortHelp caption="A few lines, which people read at a glance."
+```tsx do=ShortHelp open caption="A few lines, which people read at a glance."
 
 ```
 
-```tsx dont=LongHelp caption="Paragraphs of help: too much to read beside the page."
+```tsx dont=LongHelp open caption="Paragraphs of help: too much to read beside the page."
 
 ```
 
@@ -92,6 +92,17 @@ A popover is as wide as its content up to its width. `side` places it below its 
 - Give every popover a `title`, or an `aria-label` where a title would repeat its trigger.
 - Name an icon-only trigger after what the popover holds, such as About billing periods.
 - Keep what matters reachable elsewhere: a popover is out of sight until opened.
+
+## Anatomy
+
+```tsx anatomy=PopoverAnatomy open
+
+```
+
+1. **Popover** (`env-popover`)
+2. **Title** (`env-popover-title`, `title`)
+3. **Content** (`env-popover > env-text`, `children`)
+4. **Trigger** (`env-icon-button`, `trigger`)
 
 ## Accessibility
 

@@ -16,10 +16,16 @@ import { classNames } from '../internal/classNames.js';
 import { Grid } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import type { PopupSide } from '../internal/PopupSurface.js';
+import {
+  containedModal,
+  keepsOpen,
+  usePortalContainer,
+} from '../internal/PortalContainerContext.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
 import { Kbd } from '../content/Kbd.js';
 import { useLinkComponent } from '../internal/LinkContext.js';
+import type { SkeletonProps } from '../internal/skeleton.js';
 import { MenuPopup, menuPopupInlineInset, menuPopupInset } from './internal/MenuPopup.js';
 import { setRef } from '../internal/setRef.js';
 import { withDisplayName } from '../internal/withDisplayName.js';
@@ -34,7 +40,8 @@ const menuParts = {
 };
 
 export interface RootProps
-  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'> {
+  extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'aria-label' | 'role' | 'onToggle'>,
+    SkeletonProps {
   /**
    * The control that opens the menu, such as a Button or an AvatarButton; it receives the menu
    * button semantics and ref, so it must accept native props and a ref.
@@ -91,16 +98,22 @@ function Root({
   open,
   defaultOpen,
   onOpenChange,
+  skeleton = false,
   className,
   ref,
   ...popupProps
 }: RootProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const portal = usePortalContainer();
   return (
     <BaseMenu.Root
       open={open}
       defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, triggerRef.current)) details.cancel();
+        else onOpenChange?.(next);
+      }}
+      modal={containedModal(portal, true)}
     >
       <BaseMenu.Trigger ref={triggerRef} render={trigger} />
       {/* Base UI names the menu after its trigger; the menu's own label replaces that name. */}
@@ -114,6 +127,7 @@ function Root({
         className={className}
         popupRef={ref}
         popupProps={popupProps}
+        skeleton={skeleton}
       >
         {children}
       </MenuPopup>
@@ -368,11 +382,16 @@ function Submenu({
   const closeReason = useRef<string | null>(null);
   const { content, accessibility } = useMenuItemContent({ icon, children: label, description });
   const textLabel = typeof label === 'string' ? label : undefined;
+  const portal = usePortalContainer();
   return (
     <BaseMenu.SubmenuRoot
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, trigger.current)) {
+          details.cancel();
+          return;
+        }
         closeReason.current = next ? null : details.reason;
         onOpenChange?.(next);
       }}

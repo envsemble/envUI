@@ -165,7 +165,8 @@ before(
       h(ui.Calendar, { 'aria-label': 'Planning', defaultValue: '2026-03-09', locale: 'en-GB', weekStart: 1 }),
       h(ui.Dialog, { title: 'Example', open: false, trigger: h(ui.Button, null, 'Open') }),
       h(ui.Toast.Provider, null, 'Managed notifications'),
-      h(ui.LoadingState, null, h(ui.Skeleton, { width: '38%' }))
+      h(ui.LoadingState, { label: 'Loading projects' }),
+      h(ui.Card, { skeleton: true, title: ui.placeholders(1)[0].title }, h(ui.Text))
     ));
     console.log(JSON.stringify({
       exports: Object.keys(ui), themeBootstrapExports: Object.keys(themeBootstrap), html,
@@ -260,7 +261,9 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'List',
     'Disclosure',
     'EmptyState',
-    'Skeleton',
+    'placeholders',
+    'isPlaceholder',
+    'useSkeleton',
     'LoadingState',
     'TextField',
     'ColorPicker',
@@ -457,7 +460,11 @@ test('public components import and render on a server with no DOM globals', func
   assert.match(ssr.html, /role="grid"/);
   assert.match(ssr.html, /aria-selected="true"[^>]*data-date="2026-03-09"/);
   assert.match(ssr.html, /role="status"/);
-  assert.match(ssr.html, /aria-hidden="true" class="env-skeleton"/);
+  assert.match(ssr.html, /<span class="env-loading-state-label">Loading projects<\/span>/);
+  assert.match(
+    ssr.html,
+    /class="env-card env-surface"[^>]* data-env-skeleton="" aria-busy="true"[^>]*><div class="env-skeleton-content" inert=""><div class="env-card-header"[^>]*><h3 class="env-text env-card-heading" data-variant="title"><\/h3>/,
+  );
 });
 
 /** The index of the parenthesis that closes the group opening at index, or -1. */

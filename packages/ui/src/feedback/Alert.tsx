@@ -3,6 +3,8 @@ import { classNames } from '../internal/classNames.js';
 import { Grid, Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { AlertDismiss } from './internal/AlertDismiss.js';
+import { inSkeleton } from '../foundations/inSkeleton.js';
+import { given, skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { CheckCircle } from '../icons/CheckCircle.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 import { Info } from '../icons/Info.js';
@@ -11,7 +13,9 @@ import { Warning } from '../icons/Warning.js';
 /** What an alert means: info, success, warning or danger. */
 export type AlertTone = 'info' | 'success' | 'warning' | 'danger';
 
-export interface AlertProps extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'> {
+export interface AlertProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'title' | 'children'>,
+    SkeletonProps {
   /**
    * What the message means: info, success, warning or danger, for an error or a failure. Sets the
    * tint, the border and the icon; info and success alerts are also status messages.
@@ -51,18 +55,23 @@ const toneIcons: Record<AlertTone, ReactNode> = {
  * An inline banner for a page- or section-level message, in its tone. It stays a server component:
  * its dismiss button is a CloseButton, a client leaf named in the provider's language.
  */
-export function Alert({
-  tone = 'info',
-  title,
-  children,
-  icon,
-  action,
-  onDismiss,
-  dismissLabel,
-  announce = false,
-  className,
-  ...props
-}: AlertProps) {
+export function Alert(allProps: AlertProps) {
+  const {
+    tone = 'info',
+    title,
+    children,
+    icon,
+    action,
+    onDismiss,
+    dismissLabel,
+    announce = false,
+    skeleton = false,
+    className,
+    ...props
+  } = allProps;
+  // A title or message given as undefined, as over a placeholder item, is a bar in a skeleton.
+  const hasTitle = title != null || given(allProps, 'title');
+  const hasMessage = children != null || given(allProps, 'children');
   const role = tone === 'info' || tone === 'success' ? 'status' : announce ? 'alert' : undefined;
   const symbol = icon === undefined ? toneIcons[tone] : icon;
   return (
@@ -74,27 +83,33 @@ export function Alert({
       render={
         <div
           {...props}
+          {...skeletonAttributes(skeleton)}
           role={role}
           className={classNames('env-alert', className)}
           data-tone={tone}
         />
       }
     >
-      {symbol !== false && symbol != null && (
-        <span className="env-alert-icon">
-          <DecorativeIcon>{symbol}</DecorativeIcon>
-        </span>
+      {inSkeleton(
+        skeleton,
+        <>
+          {symbol !== false && symbol != null && (
+            <span className="env-alert-icon">
+              <DecorativeIcon>{symbol}</DecorativeIcon>
+            </span>
+          )}
+          <Grid gap={1} className="env-alert-content">
+            {hasTitle && <div className="env-alert-title">{title}</div>}
+            {hasMessage && <div className="env-alert-message">{children}</div>}
+            {action != null && (
+              <Row wrap gap={2} className="env-alert-action">
+                {action}
+              </Row>
+            )}
+          </Grid>
+          {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
+        </>,
       )}
-      <Grid gap={1} className="env-alert-content">
-        {title != null && <div className="env-alert-title">{title}</div>}
-        {children != null && <div className="env-alert-message">{children}</div>}
-        {action != null && (
-          <Row wrap gap={2} className="env-alert-action">
-            {action}
-          </Row>
-        )}
-      </Grid>
-      {onDismiss && <AlertDismiss label={dismissLabel} onDismiss={onDismiss} />}
     </Grid>
   );
 }

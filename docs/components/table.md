@@ -36,7 +36,7 @@ related:
   - checkbox
   - pagination
   - empty-state
-  - skeleton
+  - loading
   - typography
 components:
   - Table
@@ -83,6 +83,10 @@ With `resizableColumns` and column widths in percent, the boundary at the end of
 ```tsx example=StickyHeader
 
 ```
+
+### Loading
+
+`skeleton` on `Table.Root` shows the table as its own skeleton until its rows arrive; render its rows over placeholder items, as [Loading](../patterns/loading.md) shows.
 
 ## Variants
 

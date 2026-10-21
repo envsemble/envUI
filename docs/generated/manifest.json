@@ -410,7 +410,8 @@
       "parts": {},
       "usedIn": {
         "patterns": [
-          "forms"
+          "forms",
+          "loading"
         ]
       }
     },
@@ -902,6 +903,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -1244,7 +1260,10 @@
         "paper",
         "well",
         "region",
-        "toolbar"
+        "toolbar",
+        "skeleton",
+        "placeholder",
+        "loading"
       ],
       "useWhen": [
         "A region needs a background, an inset and corners, such as a detail pane or a side panel.",
@@ -1281,7 +1300,10 @@
         "colors"
       ],
       "exports": [
-        "Surface"
+        "Surface",
+        "placeholders",
+        "isPlaceholder",
+        "useSkeleton"
       ],
       "examples": [
         {
@@ -1295,6 +1317,12 @@
           "title": "Toolbar",
           "description": "",
           "file": "docs/examples/surface/Toolbar.tsx"
+        },
+        {
+          "name": "SurfaceLoading",
+          "title": "Surface loading",
+          "description": "A pane that is a skeleton until its project arrives; its Text, given no text, is a bar of the text style's length.",
+          "file": "docs/examples/surface/SurfaceLoading.tsx"
         },
         {
           "name": "BlockOnPane",
@@ -1354,11 +1382,27 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
         "patterns": [
           "settings",
+          "loading",
           "empty-states",
           "data-tables"
         ]
@@ -1686,6 +1730,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -1767,6 +1826,12 @@
           "title": "Project summary",
           "description": "A card groups content about one subject on a rounded surface.",
           "file": "docs/examples/card/ProjectSummary.tsx"
+        },
+        {
+          "name": "CardLoading",
+          "title": "Card loading",
+          "description": "`skeleton` shows the card as its own skeleton until its content arrives: text becomes bars and controls filled shapes. Render it over placeholder items, as Loading shows; a title or description given as undefined is a bar of its usual length.",
+          "file": "docs/examples/card/CardLoading.tsx"
         },
         {
           "name": "ActionStrip",
@@ -1881,6 +1946,17 @@
               ]
             },
             {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-card",
+                "env-card-description",
+                "env-card-header",
+                "env-card-heading",
+                "env-card-meta"
+              ]
+            },
+            {
               "attribute": "data-interactive",
               "values": [
                 ""
@@ -1903,7 +1979,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "loading"
+        ]
       }
     },
     {
@@ -2325,6 +2403,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -2635,6 +2728,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -4537,6 +4645,12 @@
           "title": "Select anatomy",
           "description": "",
           "file": "docs/examples/select/SelectAnatomy.tsx"
+        },
+        {
+          "name": "SelectListAnatomy",
+          "title": "Select anatomy",
+          "description": "",
+          "file": "docs/examples/select/SelectListAnatomy.tsx"
         }
       ],
       "parts": {
@@ -4730,6 +4844,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -4975,6 +5104,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -5111,6 +5255,12 @@
           "title": "Combobox anatomy",
           "description": "",
           "file": "docs/examples/combobox/ComboboxAnatomy.tsx"
+        },
+        {
+          "name": "ComboboxListAnatomy",
+          "title": "Combobox anatomy",
+          "description": "",
+          "file": "docs/examples/combobox/ComboboxListAnatomy.tsx"
         },
         {
           "name": "WrappingChips",
@@ -5355,6 +5505,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -5721,6 +5886,21 @@
             }
           ]
         },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
+        },
         "TimeList": {
           "shared": true,
           "root": "env-time-list",
@@ -5975,6 +6155,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         },
         "TimeList": {
           "shared": true,
@@ -6268,6 +6463,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -6776,8 +6986,30 @@
               "parts": [
                 "env-bar-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-bar"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -6919,8 +7151,30 @@
               "parts": [
                 "env-rail-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-rail"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -7093,8 +7347,30 @@
               "parts": [
                 "env-drawer-item"
               ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-drawer"
+              ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -7641,6 +7917,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -8570,6 +8861,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -9729,7 +10035,7 @@
         "checkbox",
         "pagination",
         "empty-state",
-        "skeleton",
+        "loading",
         "typography"
       ],
       "exports": [
@@ -10006,6 +10312,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -10061,7 +10382,7 @@
         "list",
         "card",
         "stat",
-        "skeleton"
+        "loading"
       ],
       "exports": [
         "DescriptionList",
@@ -10739,6 +11060,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11125,6 +11461,7 @@
       },
       "usedIn": {
         "patterns": [
+          "loading",
           "app-frame",
           "account-menu",
           "data-tables"
@@ -11281,6 +11618,16 @@
           ],
           "states": [
             {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-message",
+                "env-message-author",
+                "env-message-header",
+                "env-message-meta"
+              ]
+            },
+            {
               "attribute": "data-from",
               "values": [
                 "other",
@@ -11317,6 +11664,21 @@
             {
               "class": "env-message-list",
               "description": "The list of messages."
+            }
+          ],
+          "states": []
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
             }
           ],
           "states": []
@@ -11489,6 +11851,13 @@
               ]
             },
             {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-stat-description"
+              ]
+            },
+            {
               "attribute": "data-tone",
               "values": [
                 "danger",
@@ -11501,6 +11870,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11772,6 +12156,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11805,8 +12204,8 @@
       ],
       "avoidWhen": [
         {
-          "text": "Content that is on its way, which keeps its layout while it loads.",
-          "use": "Skeleton"
+          "text": "Content that is on its way, which keeps its layout while it loads, as a skeleton.",
+          "use": "Surface"
         },
         {
           "text": "A message about a page or section that still has its content.",
@@ -11823,7 +12222,6 @@
       ],
       "related": [
         "loading",
-        "skeleton",
         "alert",
         "toast",
         "card",
@@ -11929,6 +12327,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -11957,12 +12370,14 @@
         "busy indicator",
         "throbber",
         "circular progress",
-        "loading"
+        "loading",
+        "LoadingState",
+        "loading state"
       ],
       "useWhen": [
         "Work of unknown length in a small area, such as a list that updates after a filter changes.",
         "An update to content already shown, beside the content, which stays in place meanwhile.",
-        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`)."
+        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with a label beside it (`LoadingState`)."
       ],
       "avoidWhen": [
         {
@@ -11970,8 +12385,8 @@
           "use": "Button"
         },
         {
-          "text": "Content of a known shape while it loads, such as a card or a list.",
-          "use": "Skeleton"
+          "text": "Content of a known shape while it loads, such as a card or a list, which shows itself as a skeleton with `skeleton`.",
+          "use": "Surface"
         },
         {
           "text": "A task whose completion can be measured, such as an upload.",
@@ -11983,14 +12398,16 @@
         }
       ],
       "related": [
-        "skeleton",
+        "loading",
+        "surface",
         "progress",
         "button",
         "scaffold",
         "accessibility"
       ],
       "exports": [
-        "Spinner"
+        "Spinner",
+        "LoadingState"
       ],
       "examples": [
         {
@@ -11998,6 +12415,12 @@
           "title": "Loading preview",
           "description": "A spinner shows work of unknown length in a small area, such as a preview on its way.",
           "file": "docs/examples/spinner/LoadingPreview.tsx"
+        },
+        {
+          "name": "SearchingDocuments",
+          "title": "Searching documents",
+          "description": "LoadingState puts a label beside the spinner that says what is loading, for loading whose shape isn't known; where it is known, show the component itself as a skeleton.",
+          "file": "docs/examples/spinner/SearchingDocuments.tsx"
         },
         {
           "name": "Sizes",
@@ -12062,113 +12485,6 @@
               ]
             }
           ]
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "loading"
-        ]
-      }
-    },
-    {
-      "name": "Skeleton",
-      "page": "skeleton",
-      "doc": "docs/components/skeleton.md",
-      "category": "Feedback & overlays",
-      "status": "stable",
-      "since": "0.1.0",
-      "summary": "Placeholders in the shape of content that is loading, in a LoadingState that names the region once.",
-      "aliases": [
-        "placeholder",
-        "loading placeholder",
-        "content placeholder",
-        "skeleton screen",
-        "shimmer",
-        "ghost",
-        "LoadingState",
-        "loading state",
-        "loading"
-      ],
-      "useWhen": [
-        "Content of a known shape while it loads, such as a card, a list or a summary.",
-        "The first load of a region, so the page keeps its layout when the content arrives."
-      ],
-      "avoidWhen": [
-        {
-          "text": "An update to content already shown, or content whose shape isn't known.",
-          "use": "Spinner"
-        },
-        {
-          "text": "A task whose completion can be measured, such as an upload.",
-          "use": "Progress"
-        },
-        {
-          "text": "Content that is empty or failed to load.",
-          "use": "EmptyState"
-        },
-        {
-          "text": "The application frame before the first page loads.",
-          "use": "Scaffold"
-        }
-      ],
-      "related": [
-        "spinner",
-        "progress",
-        "empty-state",
-        "card",
-        "scaffold"
-      ],
-      "exports": [
-        "Skeleton",
-        "LoadingState"
-      ],
-      "examples": [
-        {
-          "name": "ProjectSummary",
-          "title": "Project summary",
-          "description": "Put a region's skeletons in a LoadingState. It names the region once, such as Loading project, and marks it busy, while each skeleton is hidden from assistive technology.",
-          "file": "docs/examples/skeleton/ProjectSummary.tsx"
-        },
-        {
-          "name": "MemberRows",
-          "title": "Rows of a list",
-          "description": "An avatar and two lines per row. The round avatar is a square skeleton with a 50% radius, and each row's name takes the default emphasis.",
-          "file": "docs/examples/skeleton/MemberRows.tsx"
-        },
-        {
-          "name": "SettingsRows",
-          "title": "Rows of settings",
-          "description": "Placeholders as tall as the rows that replace them.",
-          "file": "docs/examples/skeleton/SettingsRows.tsx"
-        },
-        {
-          "name": "LoadThenShow",
-          "title": "From placeholders to content",
-          "description": "Choosing another project shows placeholders in the card's place until it loads; focus stays on the choice.",
-          "file": "docs/examples/skeleton/LoadThenShow.tsx"
-        }
-      ],
-      "parts": {
-        "Skeleton": {
-          "root": "env-skeleton",
-          "parts": [
-            {
-              "class": "env-skeleton",
-              "description": "A loading placeholder shape."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-emphasis",
-              "values": [
-                "default",
-                "muted"
-              ],
-              "parts": [
-                "env-skeleton"
-              ]
-            }
-          ]
         },
         "LoadingState": {
           "root": "env-loading-state",
@@ -12176,6 +12492,10 @@
             {
               "class": "env-loading-state",
               "description": "The spinner with a label."
+            },
+            {
+              "class": "env-loading-state-label",
+              "description": "The label that says what is loading."
             }
           ],
           "states": []
@@ -12183,9 +12503,7 @@
       },
       "usedIn": {
         "patterns": [
-          "loading",
-          "empty-states",
-          "data-tables"
+          "loading"
         ]
       }
     },
@@ -12307,6 +12625,12 @@
           "title": "Don't: A message that only repeats the tone.",
           "description": "",
           "file": "docs/examples/toast/GenericSuccess.tsx"
+        },
+        {
+          "name": "ToastAnatomy",
+          "title": "Toast anatomy",
+          "description": "",
+          "file": "docs/examples/toast/ToastAnatomy.tsx"
         }
       ],
       "parts": {
@@ -12578,6 +12902,14 @@
           ],
           "states": [
             {
+              "attribute": "data-env-skeleton",
+              "values": [],
+              "parts": [
+                "env-alert-message",
+                "env-alert-title"
+              ]
+            },
+            {
               "attribute": "data-tone",
               "values": [
                 "danger",
@@ -12590,6 +12922,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12732,6 +13079,12 @@
           "title": "Don't: Are you sure? with Yes and No: neither says what happens.",
           "description": "",
           "file": "docs/examples/dialog/AreYouSure.tsx"
+        },
+        {
+          "name": "DialogAnatomy",
+          "title": "Dialog anatomy",
+          "description": "",
+          "file": "docs/examples/dialog/DialogAnatomy.tsx"
         }
       ],
       "parts": {
@@ -12793,6 +13146,15 @@
               ]
             },
             {
+              "attribute": "data-env-skeleton",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-dialog-popup"
+              ]
+            },
+            {
               "attribute": "data-placement",
               "values": [
                 "center",
@@ -12832,6 +13194,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -12922,6 +13299,12 @@
           "title": "Don't: Apply: people can't tell what they will see.",
           "description": "",
           "file": "docs/examples/sheet/VagueAction.tsx"
+        },
+        {
+          "name": "SheetAnatomy",
+          "title": "Sheet anatomy",
+          "description": "",
+          "file": "docs/examples/sheet/SheetAnatomy.tsx"
         }
       ],
       "parts": {
@@ -12945,6 +13328,15 @@
             {
               "attribute": "data-ending-style",
               "values": [],
+              "parts": [
+                "env-sheet-popup"
+              ]
+            },
+            {
+              "attribute": "data-env-skeleton",
+              "values": [
+                ""
+              ],
               "parts": [
                 "env-sheet-popup"
               ]
@@ -12983,6 +13375,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13085,6 +13492,12 @@
           "title": "Don't: Yes and No: people read the question again to choose.",
           "description": "",
           "file": "docs/examples/confirm-dialog/YesNo.tsx"
+        },
+        {
+          "name": "ConfirmDialogAnatomy",
+          "title": "ConfirmDialog anatomy",
+          "description": "",
+          "file": "docs/examples/confirm-dialog/ConfirmDialogAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13094,6 +13507,21 @@
             {
               "class": "env-confirm-dialog-form",
               "description": "The form that holds the dialog's fields and its confirming action."
+            }
+          ],
+          "states": []
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
             }
           ],
           "states": []
@@ -13185,6 +13613,12 @@
           "title": "Don't: An empty list until people type.",
           "description": "",
           "file": "docs/examples/command-palette/EmptyUntilTyped.tsx"
+        },
+        {
+          "name": "CommandPaletteAnatomy",
+          "title": "CommandPalette anatomy",
+          "description": "",
+          "file": "docs/examples/command-palette/CommandPaletteAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13326,6 +13760,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13516,6 +13965,12 @@
           "title": "Don't: An icon on one item only: it stands out for no reason.",
           "description": "",
           "file": "docs/examples/menu/MixedIcons.tsx"
+        },
+        {
+          "name": "MenuAnatomy",
+          "title": "Menu anatomy",
+          "description": "",
+          "file": "docs/examples/menu/MenuAnatomy.tsx"
         }
       ],
       "parts": {
@@ -13742,6 +14197,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -13960,6 +14430,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -14077,6 +14562,12 @@
           "title": "Don't: A paragraph people must hold the pointer still to read.",
           "description": "",
           "file": "docs/examples/tooltip/LongTooltip.tsx"
+        },
+        {
+          "name": "TooltipAnatomy",
+          "title": "Tooltip anatomy",
+          "description": "",
+          "file": "docs/examples/tooltip/TooltipAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14167,6 +14658,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -14268,6 +14774,12 @@
           "title": "Don't: Paragraphs of help: too much to read beside the page.",
           "description": "",
           "file": "docs/examples/popover/LongHelp.tsx"
+        },
+        {
+          "name": "PopoverAnatomy",
+          "title": "Popover anatomy",
+          "description": "",
+          "file": "docs/examples/popover/PopoverAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14349,6 +14861,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -14436,6 +14963,12 @@
           "title": "Don't: A card that only repeats what the link says.",
           "description": "",
           "file": "docs/examples/hover-card/RepeatsTrigger.tsx"
+        },
+        {
+          "name": "HoverCardAnatomy",
+          "title": "HoverCard anatomy",
+          "description": "",
+          "file": "docs/examples/hover-card/HoverCardAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14513,6 +15046,21 @@
               ]
             }
           ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
         }
       },
       "usedIn": {
@@ -14692,8 +15240,8 @@
           "use": "Spinner"
         },
         {
-          "text": "Content of a known shape while it loads, such as a card or a list.",
-          "use": "Skeleton"
+          "text": "Content of a known shape while it loads, such as a card or a list, as a skeleton.",
+          "use": "Surface"
         },
         {
           "text": "Loading a page or a route of an application, along the top bar.",
@@ -14707,7 +15255,7 @@
       "related": [
         "meter",
         "spinner",
-        "skeleton",
+        "loading",
         "scaffold",
         "toast"
       ],
@@ -14847,6 +15395,7 @@
         "EnvUIProvider",
         "useLocale",
         "LinkProvider",
+        "PortalContainer",
         "createThemeBootstrapScript",
         "Theme",
         "ThemePreferenceProvider",
@@ -14872,20 +15421,22 @@
       "related": [
         "index",
         "setup",
-        "scale",
-        "bar",
-        "rail",
-        "drawer",
-        "panes",
-        "column",
-        "row",
-        "grid",
-        "box",
+        "loading",
         "app-frame",
         "scaffold",
         "top-bar",
         "account-menu",
+        "bar",
+        "rail",
+        "drawer",
         "window-frame",
+        "column",
+        "row",
+        "grid",
+        "box",
+        "panes",
+        "scale",
+        "spinner",
         "colors"
       ]
     },
@@ -15567,7 +16118,11 @@
         "busy state",
         "progress",
         "pending",
-        "placeholder"
+        "placeholder",
+        "placeholders",
+        "skeleton",
+        "skeleton screen",
+        "shimmer"
       ],
       "useWhen": [
         "A page, a region or the result of an action takes long enough that people would notice.",
@@ -15577,10 +16132,6 @@
         {
           "text": "Content that turned out empty, or that failed to load.",
           "use": "EmptyState"
-        },
-        {
-          "text": "The application frame itself before the first page loads, which shows its own parts as skeletons.",
-          "use": "Scaffold"
         }
       ],
       "composes": [
@@ -15590,20 +16141,24 @@
         "Drawer",
         "Page",
         "PageHeader",
-        "LoadingState",
-        "Skeleton",
+        "Card",
+        "Grid",
+        "List",
+        "placeholders",
         "Spinner",
         "Button",
         "Progress",
-        "List",
         "SegmentedControl",
         "TextField",
         "Column",
         "Row",
-        "Text"
+        "Text",
+        "LoadingState",
+        "Avatar"
       ],
       "related": [
-        "skeleton",
+        "surface",
+        "card",
         "spinner",
         "progress",
         "button",
@@ -15612,34 +16167,70 @@
       "doc": "docs/patterns/loading.md",
       "examples": [
         {
+          "name": "CardsLoading",
+          "title": "Cards loading",
+          "description": "Loading shows that something is on its way, in the place and the shape of what is coming. Where the shape is known, the page renders its own components as skeletons over placeholder items, so its code is the same loading and loaded.",
+          "file": "docs/examples/loading/CardsLoading.tsx"
+        },
+        {
           "name": "SkeletonList",
           "title": "Skeleton list",
-          "description": "Here each team's projects load the first time it is chosen: skeletons in the shape of the rows stand in for them, once the load has taken 200 ms.",
+          "description": "`items ?? placeholders<Item>(3)` gives the components stand-ins to render; text given as undefined is a bar of its text style's length. Show the skeleton once a load has taken 200 ms.",
           "file": "docs/examples/loading/SkeletonList.tsx"
         },
         {
-          "name": "PageProgress",
-          "title": "Page progress",
-          "description": "Choosing a page in the navigation starts loading it: the page on screen stays, and stays selected in the navigation, and after 200 ms the bar along the top bar's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the navigation selects it, and focus moves to the Scaffold's body, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The Scaffold sits in a box here, with `landmarks={false}` and a block size of its own; an application renders it at its root.",
-          "file": "docs/examples/loading/PageProgress.tsx"
-        },
-        {
-          "name": "RefreshInPlace",
-          "title": "Refresh in place",
-          "description": "The activity stays while it refreshes; a small Spinner beside its heading says it is updating.",
-          "file": "docs/examples/loading/RefreshInPlace.tsx"
+          "name": "SearchResultsLoading",
+          "title": "No known shape",
+          "description": "LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.",
+          "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
           "name": "PendingButton",
-          "title": "Pending button",
+          "title": "An action",
           "description": "The button that saves shows the work in progress; the outcome is announced once it is done.",
           "file": "docs/examples/loading/PendingButton.tsx"
         },
         {
           "name": "UploadProgress",
-          "title": "Upload progress",
-          "description": "Progress measures each file and says what has been sent, in megabytes.",
+          "title": "Measurable work",
+          "description": "Progress measures each file and says what has been sent.",
           "file": "docs/examples/loading/UploadProgress.tsx"
+        },
+        {
+          "name": "PageProgress",
+          "title": "A whole page",
+          "description": "After 200 ms the bar along the top bar's bottom edge shows the next page is on its way, named by `loadingLabel`.",
+          "file": "docs/examples/loading/PageProgress.tsx"
+        },
+        {
+          "name": "SkeletonInPlace",
+          "title": "Do: The content's own components as a skeleton, where it will appear.",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonInPlace.tsx"
+        },
+        {
+          "name": "SpinnerInPlace",
+          "title": "Don't: A spinner for content of a known shape: the page jumps when it lands.",
+          "description": "",
+          "file": "docs/examples/loading/SpinnerInPlace.tsx"
+        },
+        {
+          "name": "RefreshInPlace",
+          "title": "Do: Content that refreshes stays, with a Spinner beside it.",
+          "description": "",
+          "file": "docs/examples/loading/RefreshInPlace.tsx"
+        },
+        {
+          "name": "SkeletonOnRefresh",
+          "title": "Don't: Content turned back into a skeleton to refresh: people lose their place.",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonOnRefresh.tsx"
+        },
+        {
+          "name": "SkeletonAnatomy",
+          "title": "Loading anatomy",
+          "description": "",
+          "file": "docs/examples/loading/SkeletonAnatomy.tsx"
         }
       ]
     },
@@ -15682,8 +16273,7 @@
         "Select",
         "List",
         "Table",
-        "LoadingState",
-        "Skeleton",
+        "placeholders",
         "Badge",
         "Button",
         "Surface",
@@ -16320,8 +16910,7 @@
         "Toast",
         "useToast",
         "EmptyState",
-        "LoadingState",
-        "Skeleton",
+        "placeholders",
         "Surface",
         "Column",
         "Row",
@@ -16358,7 +16947,7 @@
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "The first load shows the table's shape after 200 ms, as in Loading; with no records, an EmptyState takes its place.",
+          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an EmptyState takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
         },
         {
@@ -16560,8 +17149,14 @@
           "name": "announce",
           "type": "boolean",
           "required": false,
-          "default": "false",
           "description": "The alert appeared because of something that just happened and should interrupt: warning and danger alerts take the alert role. Info and success alerts are always polite status messages."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -16807,6 +17402,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -17249,10 +17851,17 @@
           "description": ""
         },
         {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        },
+        {
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level."
+          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
@@ -18904,6 +19513,13 @@
           "required": false,
           "default": "false",
           "description": "Work started from the dialog is in progress. Escape, outside presses and the close buttons cannot dismiss it until pending returns to false. The built-in close button is disabled and the dialog reports busy; a DialogClose stays enabled and runs its onClick, so disable it too. Set pending on the action that started the work as well."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19220,6 +19836,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19382,15 +20005,20 @@
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "4",
           "description": "The title's heading level in the page outline; 4 by default. The appearance stays the same."
         },
         {
           "name": "align",
           "type": "'start' | 'center'",
           "required": false,
-          "default": "'start'",
           "description": "`start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the place of a page's or region's content: a larger icon, centred text and action, centred vertically in the height the application gives it."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -19864,6 +20492,13 @@
           "type": "(open: boolean, details: PopoverOpenChangeDetails) => void",
           "required": false,
           "description": "Called with the new state, and why, when hover, focus or Esc opens or closes the card."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20043,13 +20678,13 @@
           "name": "label",
           "type": "ReactNode",
           "required": true,
-          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row."
+          "description": "The row's main text, such as an item's name; a link marked `data-row-target` in an interactive row. Undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "description",
           "type": "ReactNode",
           "required": false,
-          "description": "A short fact in muted text below the label, such as who changed the item and when."
+          "description": "A short fact in muted text below the label, such as who changed the item and when. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "action",
@@ -20088,6 +20723,13 @@
           "required": false,
           "default": "the label's text",
           "description": "The row's label as plain text, for its drag handle's name and the reorder announcements where `label` isn't a string."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20114,6 +20756,13 @@
           "type": "(from: number, to: number) => void",
           "required": false,
           "description": "Makes the rows reorderable: each row gets a drag handle at its start, moved by dragging it, by pressing it or by keyboard, and the list calls this with the row's index and the index it is dropped at. The application moves the item in its own state; nothing moves until it does. The rows are the list's children, directly or in arrays and fragments: List.Item elements, or elements of a row component that passes the props it doesn't use on to its List.Item, such as `function SlideRow({ slide, ...props }) { return <List.Item {...props} label={slide} />; }`."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20126,22 +20775,22 @@
     "LoadingState": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A region of placeholders for content that is loading, such as Skeletons in the shape of a card: a status named by label and marked busy, which stacks its children 0.5 rem apart.",
+      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
           "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project, which names the region for assistive technology; an aria-label overrides it."
+          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
         }
       ],
       "native": [
         "div"
       ],
       "status": "stable",
-      "page": "skeleton",
-      "doc": "docs/components/skeleton.md"
+      "page": "spinner",
+      "doc": "docs/components/spinner.md"
     },
     "Markdown": {
       "kind": "component",
@@ -20714,6 +21363,13 @@
           "type": "string",
           "required": false,
           "description": "Class of the menu popup. ref, style, data attributes and the other native props go to the popup too; the trigger is the element you pass."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -20997,10 +21653,17 @@
           "type": "ReactNode",
           "required": true,
           "description": "The message. Plain text keeps its line breaks; formatted content, such as Markdown, fills the width of a message from someone else."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
-        "article"
+        "element"
       ],
       "status": "stable",
       "page": "message",
@@ -22090,6 +22753,13 @@
           "type": "string",
           "required": true,
           "description": "Names the pane's region, such as Details or Projects."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -22167,6 +22837,13 @@
           "required": false,
           "default": "'md'",
           "description": "The widest the popover grows: md, 20 rem, for details and a field or two; lg, 28 rem, for a longer form. It is as wide as its content from 12 rem up, and narrows to fit the window."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -22175,6 +22852,42 @@
       "status": "stable",
       "page": "popover",
       "doc": "docs/components/popover.md"
+    },
+    "PortalContainer": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "Renders envUI's overlays inside it, popups, dialogs, sheets and toasts, into another element than the document's body, and with `contained`, as part of that element.",
+      "props": [
+        {
+          "name": "container",
+          "type": "HTMLElement | null",
+          "required": true,
+          "description": "The element that envUI's popups, dialogs, sheets and toasts inside render into, in place of the document's body, such as an element in a shadow root or in an iframe's document. Pass null while the element mounts: overlays wait for it."
+        },
+        {
+          "name": "contained",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the overlays belong to the container rather than the window, as in a preview of an interface: a modal one neither locks the page's scroll, traps focus nor hides the rest of the page; a dialog takes no focus as it opens; a popup opens on its own side without flipping and sizes to its content; toasts are shown without the page's F6 shortcut; and a press or Esc outside the container and the overlay's trigger doesn't close them, while the trigger and the overlay's own controls do. Make the container a containing block, such as with `contain: layout`, to keep fixed overlays, such as dialogs and their scrims, inside it, and give it or an ancestor `container-type: inline-size`: a popup is at most as wide as that size container, or else as the window. A ContextMenu, which opens at the pointer, renders into the container but is otherwise as it is anywhere."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "native": [],
+      "aliases": [
+        "portal container",
+        "shadow root",
+        "iframe",
+        "overlay preview"
+      ],
+      "status": "beta",
+      "page": "setup",
+      "doc": "docs/setup.md"
     },
     "Progress": {
       "kind": "component",
@@ -22381,6 +23094,13 @@
           "required": false,
           "default": "messages.navigation.label, Main",
           "description": "Names the navigation landmark, such as Main or Project; give each landmark of a page its own."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23130,6 +23850,13 @@
           "description": "Receives the value of the option people choose."
         },
         {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the list starts open, such as in a picture of the open list."
+        },
+        {
           "name": "name",
           "type": "string",
           "required": false,
@@ -23312,6 +24039,13 @@
           "required": false,
           "default": "false",
           "description": "Work started from the sheet is in progress: Escape, outside presses, swipes and the close button cannot dismiss it until pending returns to false, and the sheet reports busy."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23320,39 +24054,6 @@
       "status": "beta",
       "page": "sheet",
       "doc": "docs/components/sheet.md"
-    },
-    "Skeleton": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A placeholder in the shape of content that is loading, such as a line of text or a row: a block with rounded corners on the neutral fill, which pulses unless people prefer reduced motion. It is hidden from assistive technology; put placeholders in a LoadingState, which names the region.",
-      "props": [
-        {
-          "name": "width",
-          "type": "CSSProperties['width']",
-          "required": false,
-          "description": "The placeholder's width, as a CSS length, such as 38% or 12rem, for the content it stands for. Without it, the placeholder fills the width of its container."
-        },
-        {
-          "name": "height",
-          "type": "CSSProperties['height']",
-          "required": false,
-          "default": "0.8rem",
-          "description": "The placeholder's height, as a CSS length, such as 1.25rem for a heading or 3.5rem for a row."
-        },
-        {
-          "name": "emphasis",
-          "type": "'muted' | 'default'",
-          "required": false,
-          "default": "'muted'",
-          "description": "How strong the fill is: muted, the neutral fill, or default, one step stronger, for a placeholder that stands out among the others, such as a title."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "status": "stable",
-      "page": "skeleton",
-      "doc": "docs/components/skeleton.md"
     },
     "Slider": {
       "kind": "component",
@@ -23525,6 +24226,13 @@
           "required": false,
           "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
           "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23562,6 +24270,13 @@
           "type": "Trend",
           "required": false,
           "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -23596,6 +24311,13 @@
           "required": false,
           "default": "'xl'",
           "description": "The corner radius: xl, the large 1.75 rem corners of panes; sm, 0.5 rem for small blocks; full, fully rounded ends for a toolbar or a bar of filters; or none, square, for a region that meets the edges of its container."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         },
         {
           "name": "render",
@@ -23902,6 +24624,13 @@
           "required": false,
           "default": "false",
           "description": "People can resize the columns with a handle at the end of each header cell but the last, which moves the boundary to the next column and keeps the table's width. Needs columnWidths or defaultColumnWidths."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -24897,6 +25626,13 @@
           "required": false,
           "default": "400",
           "description": "Milliseconds the pointer rests on the control before the tooltip opens; keyboard focus opens it at once."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Whether the tooltip starts open, such as in a picture of the interface; it then closes as an opened one does."
         }
       ],
       "native": [
@@ -24962,6 +25698,13 @@
           "type": "ReactElement",
           "required": false,
           "description": "The element to render, such as render={<header />} for a bar outside a Scaffold, which then is the page's banner; a div by default, as Scaffold's top bar region is the banner."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -25110,6 +25853,24 @@
       "page": "dev-mode",
       "doc": "docs/dev-mode.md"
     },
+    "isPlaceholder": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether an item is one of the stand-ins that `placeholders()` returns, by its id, so it holds after the items are serialized, such as from a server component to a client one.",
+      "signature": "(item: unknown): boolean",
+      "status": "beta",
+      "page": "surface",
+      "doc": "docs/components/surface.md"
+    },
+    "placeholders": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Stand-in items for data that is loading, so the page renders its normal components over them while a surface around them is a skeleton: `items ?? placeholders<Project>(3)`. Each item has only an `id`, `envui-placeholder-0`, `envui-placeholder-1` and so on, for keys; its other fields are undefined, which the type says, and the components render missing text as bars of a default length for its text style.",
+      "signature": "<Item = object>(count: number): Placeholder<Item>[]",
+      "status": "beta",
+      "page": "surface",
+      "doc": "docs/components/surface.md"
+    },
     "readPanesSize": {
       "kind": "function",
       "import": "@envsemble/envui",
@@ -25148,6 +25909,15 @@
       "status": "beta",
       "page": "setup",
       "doc": "docs/setup.md"
+    },
+    "useSkeleton": {
+      "kind": "function",
+      "import": "@envsemble/envui",
+      "description": "Whether the component is inside a skeleton: a surface with `skeleton` around it. A component of the application's own reads it to give its skeleton a look of its own, such as a chart's.",
+      "signature": "(): boolean",
+      "status": "beta",
+      "page": "surface",
+      "doc": "docs/components/surface.md"
     },
     "useTheme": {
       "kind": "function",
@@ -25916,9 +26686,9 @@
         "id": "color.bg.popup",
         "cssVariable": "--env-color-bg-popup",
         "type": "color",
-        "description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2.",
+        "description": "Popups over the page: menus, Select lists, popovers, the composer. They take elevation 2. In light they are white, a step lighter than the panes they open over, as in dark they are a step lighter than the page; a popup the pane's gray would blend into it.",
         "values": {
-          "light": "#eff1f5",
+          "light": "#ffffff",
           "dark": "#343638",
           "light-high-contrast": "#ffffff",
           "dark-high-contrast": "#303234"
@@ -25930,7 +26700,7 @@
         "type": "color",
         "description": "A highlighted row in a popup.",
         "values": {
-          "light": "#dbdde1",
+          "light": "#eff1f5",
           "dark": "#424447",
           "light-high-contrast": "#eff1f5",
           "dark-high-contrast": "#383a3d"
@@ -25942,7 +26712,7 @@
         "type": "color",
         "description": "A pressed row in a popup.",
         "values": {
-          "light": "#d2d4d8",
+          "light": "#e2e4e8",
           "dark": "#4b4d51",
           "light-high-contrast": "#e2e4e8",
           "dark-high-contrast": "#424447"
@@ -28829,10 +29599,20 @@
         "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
       },
       {
+        "cssVariable": "--env-app-shell-header-divider",
+        "removed": true,
+        "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+      },
+      {
         "cssVariable": "--env-app-shell-header-height",
         "use": "--env-top-bar-height",
         "type": "dimension",
         "note": "AppShell is gone; TopBar's height."
+      },
+      {
+        "cssVariable": "--env-app-shell-loading-bar-offset",
+        "removed": true,
+        "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
       },
       {
         "cssVariable": "--env-app-sticky-top",
@@ -28848,6 +29628,26 @@
         "cssVariable": "--env-app-topbar-block-size",
         "removed": true,
         "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+      },
+      {
+        "cssVariable": "--env-breakpoint-lg",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-md",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-sm",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-xl",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
       },
       {
         "cssVariable": "--env-frame-header-block-size",
@@ -28885,6 +29685,11 @@
         "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
       },
       {
+        "cssVariable": "--env-split-pane-handle",
+        "removed": true,
+        "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+      },
+      {
         "cssVariable": "--env-split-pane-size",
         "removed": true,
         "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
@@ -28909,6 +29714,26 @@
         "use": "--env-top-bar-height",
         "type": "dimension",
         "note": "TopBar's height."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-end",
+        "use": "--env-top-bar-title-bar-end",
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-left",
+        "removed": true,
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-right",
+        "removed": true,
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-start",
+        "use": "--env-top-bar-title-bar-start",
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
       },
       {
         "cssVariable": "--field-floating-height",

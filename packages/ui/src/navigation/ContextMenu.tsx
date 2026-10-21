@@ -14,6 +14,7 @@ import {
   type TouchEvent,
 } from 'react';
 import { MenuPopup } from './internal/MenuPopup.js';
+import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 
 /** The Base UI parts of a context menu's popup. */
 const contextMenuParts = {
@@ -100,6 +101,7 @@ export function ContextMenu({
   style,
 }: ContextMenuProps) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const portal = usePortalContainer();
   const open = controlledOpen ?? uncontrolledOpen;
   const [target, setTarget] = useState<Element | null>(null);
   const [keyboardAnchor, setKeyboardAnchor] = useState<ReturnType<typeof elementAnchor> | null>(
@@ -176,7 +178,14 @@ export function ContextMenu({
   const anchor =
     controlledOpen !== undefined && anchorPoint ? pointAnchor(anchorPoint) : keyboardAnchor;
   return (
-    <BaseContextMenu.Root open={open} onOpenChange={(next) => setOpen(next)} disabled={disabled}>
+    <BaseContextMenu.Root
+      open={open}
+      onOpenChange={(next, details) => {
+        if (keepsOpen(portal, next, details, region.current)) details.cancel();
+        else setOpen(next);
+      }}
+      disabled={disabled}
+    >
       <BaseContextMenu.Trigger
         ref={region}
         render={children}

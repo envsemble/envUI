@@ -37,6 +37,14 @@
       ],
       "states": [
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-alert-message",
+            "env-alert-title"
+          ]
+        },
+        {
           "attribute": "data-tone",
           "values": [
             "danger",
@@ -51,7 +59,8 @@
       ],
       "uses": [
         "CloseButton",
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "AnimatedNumber": {
@@ -300,12 +309,20 @@
           "parts": [
             "env-bar-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-bar"
+          ]
         }
       ],
       "uses": [
         "CounterBadge",
         "Icon",
-        "Menu"
+        "Menu",
+        "Skeleton"
       ]
     },
     "Breadcrumbs": {
@@ -359,6 +376,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -637,6 +655,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -690,6 +709,17 @@
           ],
           "parts": [
             "env-card"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-card",
+            "env-card-description",
+            "env-card-header",
+            "env-card-heading",
+            "env-card-meta"
           ]
         },
         {
@@ -821,8 +851,7 @@
         "Button",
         "EmptyState",
         "Icon",
-        "LoadingState",
-        "Skeleton"
+        "LoadingState"
       ]
     },
     "ColorPicker": {
@@ -1028,6 +1057,7 @@
         "IconButton",
         "ListRow",
         "Popup",
+        "Skeleton",
         "Spinner",
         "TextField",
         "Theme"
@@ -1116,6 +1146,7 @@
         "Icon",
         "Kbd",
         "ListRow",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1217,6 +1248,7 @@
         "Alert",
         "Button",
         "Dialog",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1243,6 +1275,7 @@
         "Button",
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -1380,6 +1413,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme",
         "TimeList"
@@ -1498,6 +1532,15 @@
           ]
         },
         {
+          "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-dialog-popup"
+          ]
+        },
+        {
           "attribute": "data-placement",
           "values": [
             "center",
@@ -1539,6 +1582,7 @@
       ],
       "uses": [
         "Button",
+        "Skeleton",
         "Surface",
         "Theme"
       ]
@@ -1750,10 +1794,18 @@
           "parts": [
             "env-drawer-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-drawer"
+          ]
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "DropZone": {
@@ -1867,6 +1919,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Text"
       ]
     },
@@ -1949,6 +2002,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2165,7 +2219,9 @@
       "uses": [
         "ConnectedRows",
         "Icon",
-        "IconButton"
+        "IconButton",
+        "Skeleton",
+        "Text"
       ]
     },
     "LoadingState": {
@@ -2175,9 +2231,16 @@
         {
           "class": "env-loading-state",
           "description": "The spinner with a label."
+        },
+        {
+          "class": "env-loading-state-label",
+          "description": "The label that says what is loading."
         }
       ],
-      "states": []
+      "states": [],
+      "uses": [
+        "Spinner"
+      ]
     },
     "Markdown": {
       "root": "env-markdown",
@@ -2350,6 +2413,7 @@
         "Icon",
         "Kbd",
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2409,6 +2473,7 @@
       "uses": [
         "Menu",
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -2447,6 +2512,16 @@
       ],
       "states": [
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-message",
+            "env-message-author",
+            "env-message-header",
+            "env-message-meta"
+          ]
+        },
+        {
           "attribute": "data-from",
           "values": [
             "other",
@@ -2478,6 +2553,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Spinner"
       ]
     },
@@ -2493,6 +2569,7 @@
       "states": [],
       "uses": [
         "Icon",
+        "Skeleton",
         "Spinner"
       ]
     },
@@ -2588,6 +2665,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme"
       ]
@@ -3133,7 +3211,8 @@
         "Button",
         "CloseButton",
         "Icon",
-        "ResizeHandle"
+        "ResizeHandle",
+        "Skeleton"
       ]
     },
     "Popover": {
@@ -3162,6 +3241,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -3319,10 +3399,18 @@
           "parts": [
             "env-rail-item"
           ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-rail"
+          ]
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "Rating": {
@@ -3378,6 +3466,7 @@
       "states": [],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3697,6 +3786,7 @@
         "IconButton",
         "Kbd",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3761,6 +3851,7 @@
       "uses": [
         "Icon",
         "Popup",
+        "Skeleton",
         "Theme",
         "Tooltip"
       ]
@@ -3846,6 +3937,7 @@
         "Icon",
         "ListRow",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme"
       ]
@@ -3871,6 +3963,15 @@
         {
           "attribute": "data-ending-style",
           "values": [],
+          "parts": [
+            "env-sheet-popup"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [
+            ""
+          ],
           "parts": [
             "env-sheet-popup"
           ]
@@ -3912,30 +4013,9 @@
       "uses": [
         "CloseButton",
         "Dialog",
+        "Skeleton",
         "Surface",
         "Theme"
-      ]
-    },
-    "Skeleton": {
-      "root": "env-skeleton",
-      "source": "packages/ui/src/feedback/Skeleton.tsx",
-      "parts": [
-        {
-          "class": "env-skeleton",
-          "description": "A loading placeholder shape."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-emphasis",
-          "values": [
-            "default",
-            "muted"
-          ],
-          "parts": [
-            "env-skeleton"
-          ]
-        }
       ]
     },
     "Slider": {
@@ -4070,6 +4150,13 @@
           ]
         },
         {
+          "attribute": "data-env-skeleton",
+          "values": [],
+          "parts": [
+            "env-stat-description"
+          ]
+        },
+        {
           "attribute": "data-tone",
           "values": [
             "danger",
@@ -4084,6 +4171,7 @@
       ],
       "uses": [
         "Icon",
+        "Skeleton",
         "Surface"
       ]
     },
@@ -4119,6 +4207,9 @@
             "env-surface"
           ]
         }
+      ],
+      "uses": [
+        "Skeleton"
       ]
     },
     "Switch": {
@@ -4320,7 +4411,8 @@
         }
       ],
       "uses": [
-        "Icon"
+        "Icon",
+        "Skeleton"
       ]
     },
     "Tabs": {
@@ -4421,6 +4513,13 @@
             "muted",
             "subtle"
           ],
+          "parts": [
+            "env-text"
+          ]
+        },
+        {
+          "attribute": "data-env-skeleton",
+          "values": [],
           "parts": [
             "env-text"
           ]
@@ -4690,6 +4789,7 @@
         "Icon",
         "IconButton",
         "Popup",
+        "Skeleton",
         "TextField",
         "Theme",
         "TimeList"
@@ -4905,6 +5005,7 @@
       ],
       "uses": [
         "Popup",
+        "Skeleton",
         "Theme"
       ]
     },
@@ -4963,7 +5064,8 @@
         }
       ],
       "uses": [
-        "LoadingBar"
+        "LoadingBar",
+        "Skeleton"
       ]
     },
     "Tree": {
@@ -5390,6 +5492,55 @@
       ],
       "usedBy": [
         "Panes"
+      ]
+    },
+    "Skeleton": {
+      "root": null,
+      "parts": [
+        {
+          "class": "env-skeleton-content",
+          "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+        },
+        {
+          "class": "env-skeleton-status",
+          "description": "The visually hidden status beside a skeleton list, which says what is loading."
+        }
+      ],
+      "states": [],
+      "usedBy": [
+        "Alert",
+        "Bar",
+        "Breadcrumbs",
+        "CalendarHeatmap",
+        "Combobox",
+        "CommandPalette",
+        "ConfirmDialog",
+        "CopyButton",
+        "DatePicker",
+        "Dialog",
+        "Drawer",
+        "EmptyState",
+        "HoverCard",
+        "List",
+        "Menu",
+        "Menubar",
+        "Message",
+        "MessageList",
+        "MonthPicker",
+        "Panes",
+        "Popover",
+        "Rail",
+        "RelativeTime",
+        "SearchTrigger",
+        "SegmentedControl",
+        "Select",
+        "Sheet",
+        "Stat",
+        "Surface",
+        "Table",
+        "TimePicker",
+        "Tooltip",
+        "TopBar"
       ]
     },
     "TimeList": {
