@@ -45,7 +45,7 @@ related:
 
 The window frame is for an installed application that draws its own title bar: a [Scaffold](../components/scaffold.md) with `topBarSpan="full"` and `scroll="body"`, a [TopBar](../components/top-bar.md) with `titleBar` across the top, and the content scrolling below it, where the window controls never cover a scrollbar.
 
-```tsx example=StartPageWindow
+```tsx example=StartPageWindow stage=shaded
 
 ```
 
@@ -59,7 +59,7 @@ In a browser tab the title bar area is undefined, and the TopBar falls back to i
 
 A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose header sticks at the top of the body.
 
-```tsx example=WithMenubar
+```tsx example=WithMenubar stage=shaded
 
 ```
 
@@ -67,17 +67,17 @@ A [Menubar](../components/menubar.md) in the TopBar's `start`, and a page whose 
 
 The Scaffold's navigation runs below the title bar, which spans the window.
 
-```tsx example=WithNavigation
+```tsx example=WithNavigation stage=shaded
 
 ```
 
 ## When to use
 
-```tsx do=QuietTitleBar caption="The title and the menubar, with empty space to drag the window by."
+```tsx do=QuietTitleBar stage=shaded caption="The title and the menubar, with empty space to drag the window by."
 
 ```
 
-```tsx dont=CrowdedTitleBar caption="The page's actions in the title bar: no room is left to drag the window."
+```tsx dont=CrowdedTitleBar stage=shaded caption="The page's actions in the title bar: no room is left to drag the window."
 
 ```
 
@@ -90,7 +90,7 @@ The Scaffold's navigation runs below the title bar, which spans the window.
 
 ## Anatomy
 
-```tsx anatomy=WindowFrameAnatomy
+```tsx anatomy=WindowFrameAnatomy stage=shaded
 
 ```
 

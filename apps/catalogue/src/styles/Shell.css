@@ -34,8 +34,9 @@ body {
   block-size: auto;
   color: var(--env-color-fg-default);
 }
-/* The navigation at the start of a wide window: a pane of its own width, which scrolls on its own.
-   In the sheet of a narrower window it takes the sheet's width. */
+/* The navigation at the start of a wide window: a Drawer of its own width on the navigation's
+   background, flush with the window's edges and the body, which scrolls on its own. In the sheet
+   of a narrower window it takes the sheet's width and color. */
 .docs-sidebar {
   inline-size: 15rem;
   min-block-size: 100%;

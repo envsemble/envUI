@@ -56,7 +56,7 @@ related:
 
 The app frame is one [Scaffold](../components/scaffold.md) at the application's root, around the router's outlet: a [TopBar](../components/top-bar.md) with the name, search and the [account menu](account-menu.md), one array of destinations, and the page in the body.
 
-```tsx example=AppFrame
+```tsx example=AppFrame stage=shaded
 
 ```
 
@@ -66,7 +66,7 @@ The app frame is one [Scaffold](../components/scaffold.md) at the application's 
 
 With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides the bar, and a menu button in the top bar opens the same Drawer in a [Sheet](../components/sheet.md).
 
-```tsx example=MenuOnPhones
+```tsx example=MenuOnPhones stage=shaded
 
 ```
 
@@ -74,17 +74,17 @@ With many destinations, or none with icons, `forms={{ compact: 'none' }}` hides 
 
 Side content that is not navigation goes in a supporting pane of [Panes](../components/panes.md), in the body.
 
-```tsx example=WithDetails
+```tsx example=WithDetails stage=shaded
 
 ```
 
 ## When to use
 
-```tsx do=DestinationsInNavigation caption="Every destination in the navigation, and the page's own action in its header."
+```tsx do=DestinationsInNavigation stage=shaded caption="Every destination in the navigation, and the page's own action in its header."
 
 ```
 
-```tsx dont=DestinationsInTopBar caption="More destinations in the top bar: people look for them in two places."
+```tsx dont=DestinationsInTopBar stage=shaded caption="More destinations in the top bar: people look for them in two places."
 
 ```
 
@@ -98,7 +98,7 @@ Side content that is not navigation goes in a supporting pane of [Panes](../comp
 
 ## Anatomy
 
-```tsx anatomy=AppFrameAnatomy
+```tsx anatomy=AppFrameAnatomy stage=shaded
 
 ```
 
@@ -115,7 +115,7 @@ Not shown: the [CommandPalette](../components/command-palette.md) the search ope
 
 The bar on a compact width, the rail on a medium one and the drawer from expanded, from the one array.
 
-```tsx example=FrameByWidth widths="24 44 60"
+```tsx example=FrameByWidth stage=shaded widths="24 44 60"
 
 ```
 
