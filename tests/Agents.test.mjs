@@ -835,7 +835,11 @@ const planned = {
 
 test('plan covers the capabilities of the benchmark tasks, and suggests few others', () => {
   const tasks = JSON.parse(readFileSync(join(repository, 'bench/tasks.json'), 'utf8'));
-  const list = tasks.tasks ?? tasks;
+  // The tasks scored by envUI's exports: not those described by what renders, such as the layout
+  // tasks, nor those that wait for an API envUI doesn't have yet.
+  const list = (tasks.tasks ?? tasks).filter(
+    (task) => !task.pending && task.capabilities.every((capability) => capability.envui),
+  );
   assert.deepEqual(Object.keys(planned).sort(), list.map((task) => task.id).sort());
   let suggested = 0;
   let relevant = 0;

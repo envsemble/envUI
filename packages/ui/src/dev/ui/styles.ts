@@ -245,6 +245,12 @@ export const devStyles = /* css */ `
     inset-block-start: -1.5rem;
     border-inline-start: 2px solid var(--env-color-border-focus);
   }
+  /* Inline code in dev mode's own panels: the Code component lives in the content entry, whose
+     optional peers an app may not have installed. */
+  .env-dev-code {
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 0.9em;
+  }
   .env-dev-inspector {
     display: grid;
     grid-template-rows: minmax(0, 1fr);
