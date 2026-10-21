@@ -102,7 +102,7 @@ test('Bar shows five destinations at most, and opens the rest from More', async 
 
   const bar = scope.getByRole('navigation', { name: 'Many bar' });
   await expect(bar.getByRole('listitem')).toHaveCount(5);
-  await expect(bar.locator('.env-bar-label')).toHaveText([
+  await expect(bar.locator('.env-bar-text')).toHaveText([
     'Home',
     'Inbox',
     'Drafts',

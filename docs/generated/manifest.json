@@ -5645,16 +5645,12 @@
               "description": "A destination's count, on the icon's top end; 999+ above 999."
             },
             {
-              "class": "env-bar-indicator",
+              "class": "env-bar-icon",
               "description": "The pill around a destination's icon, filled while the destination is current."
             },
             {
               "class": "env-bar-item",
               "description": "A destination: a link or button with its indicator above its label."
-            },
-            {
-              "class": "env-bar-label",
-              "description": "A destination's label, under its indicator, cut short with an ellipsis."
             },
             {
               "class": "env-bar-list",
@@ -5663,6 +5659,10 @@
             {
               "class": "env-bar-more",
               "description": "The last item past five destinations, which opens the rest in a menu."
+            },
+            {
+              "class": "env-bar-text",
+              "description": "A destination's label, under its indicator, cut short with an ellipsis."
             }
           ],
           "states": [

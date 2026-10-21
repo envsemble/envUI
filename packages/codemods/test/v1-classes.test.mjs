@@ -9,7 +9,10 @@ import { renameInStyles } from '../src/transforms/v1-classes.mjs';
 import { applyTransform, encodings, fixtures, map, runTransform } from './helpers.mjs';
 
 const { classes } = loadMap();
-const entries = Object.entries(map.classes).filter(([from]) => !from.startsWith('$'));
+const reusedClasses = new Set(map.reusedClasses ?? []);
+const entries = Object.entries(map.classes).filter(
+  ([from]) => !from.startsWith('$') && !reusedClasses.has(from),
+);
 
 for (const fixture of fixtures('v1-classes')) {
   test(`v1-classes: ${fixture.name}`, () => {
@@ -50,6 +53,15 @@ test('renameClass prefers the longest entry', () => {
   assert.equal(renameClass('env-date-time-well', classes), 'env-date-picker-control');
   assert.equal(renameClass('env-direction-links', classes), 'env-pager');
   assert.equal(renameClass('env-direction-link-label', classes), 'env-pager-link-label');
+});
+
+test('renameClass renames a class that 1.0 uses again alone, and leaves the names that continue it', () => {
+  // env-bar was 0.x's Meter and Progress; in 1.0 it is the navigation Bar, whose parts stay.
+  assert.equal(renameClass('env-bar', classes), 'env-meter');
+  assert.equal(renameClass('env-bar-track', classes), 'env-meter-track');
+  assert.equal(renameClass('env-bar-item', classes), 'env-bar-item');
+  assert.equal(renameClass('env-bar-more', classes), 'env-bar-more');
+  assert.equal(renameClass('env-bar-count', classes), 'env-bar-count');
 });
 
 test('renameClass leaves names that already continue the new name', () => {

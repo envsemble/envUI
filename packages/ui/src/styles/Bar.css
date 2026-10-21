@@ -2,8 +2,8 @@
    icon in a pill-shaped indicator above its label. The current destination fills its indicator; the
    count sits on the icon's top end. It keeps clear of a phone's home indicator. */
 .env-bar {
-  --env-bar-indicator-width: 4rem;
-  --env-bar-indicator-height: 2rem;
+  --env-bar-icon-width: 4rem;
+  --env-bar-icon-height: 2rem;
   /* The count's pill on the icon: as tall as it is wide for one digit. */
   --env-bar-count-size: 1rem;
   box-sizing: border-box;
@@ -41,17 +41,17 @@
   text-align: center;
   text-decoration: none;
 }
-.env-bar-indicator {
+.env-bar-icon {
   position: relative;
   flex: none;
-  inline-size: min(var(--env-bar-indicator-width), 100%);
-  block-size: var(--env-bar-indicator-height);
+  inline-size: min(var(--env-bar-icon-width), 100%);
+  block-size: var(--env-bar-icon-height);
   display: grid;
   place-items: center;
   border-radius: var(--env-radius-full);
   transition: background-color var(--env-motion-duration-fast) var(--env-motion-ease);
 }
-.env-bar-label {
+.env-bar-text {
   max-inline-size: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -79,24 +79,24 @@
 .env-bar-item:not([data-current]) .env-icon {
   color: var(--env-color-fg-muted);
 }
-.env-bar-item:hover .env-bar-indicator,
-.env-bar-more[aria-expanded='true'] .env-bar-indicator {
+.env-bar-item:hover .env-bar-icon,
+.env-bar-more[aria-expanded='true'] .env-bar-icon {
   background: var(--env-color-bg-navigation-hover);
 }
-.env-bar-item:active .env-bar-indicator {
+.env-bar-item:active .env-bar-icon {
   background: var(--env-color-bg-navigation-pressed);
 }
 .env-bar-item[data-current] {
   color: var(--env-color-fg-default);
 }
-.env-bar-item[data-current] .env-bar-indicator {
+.env-bar-item[data-current] .env-bar-icon {
   color: var(--env-color-fg-on-selected);
   background: var(--env-color-bg-selected);
 }
-.env-bar-item[data-current]:hover .env-bar-indicator {
+.env-bar-item[data-current]:hover .env-bar-icon {
   background: var(--env-color-bg-selected-hover);
 }
-.env-bar-item[data-current]:active .env-bar-indicator {
+.env-bar-item[data-current]:active .env-bar-icon {
   background: var(--env-color-bg-selected-pressed);
 }
 .env-bar-item:focus-visible {
@@ -105,29 +105,29 @@
 }
 /* Under a reduced-motion preference, fills change at once. */
 @media (prefers-reduced-motion: reduce) {
-  .env-bar-indicator {
+  .env-bar-icon {
     transition: none;
   }
 }
 /* Motion: the indicator settles slightly while it is held, only without a reduced-motion
    preference. */
 @media (prefers-reduced-motion: no-preference) {
-  .env-bar-indicator {
+  .env-bar-icon {
     transition-property: background-color, transform;
   }
-  .env-bar-item:active .env-bar-indicator {
+  .env-bar-item:active .env-bar-icon {
     transform: scale(0.96);
   }
 }
 /* Forced colors: the system paints no fills, so the current indicator takes the selection colors
    and the count an outline. */
 @media (forced-colors: active) {
-  .env-bar-item[data-current] .env-bar-indicator {
+  .env-bar-item[data-current] .env-bar-icon {
     forced-color-adjust: none;
     background-color: Highlight;
     color: HighlightText;
   }
-  .env-bar-item[data-current] .env-bar-indicator :where(*) {
+  .env-bar-item[data-current] .env-bar-icon :where(*) {
     color: inherit;
   }
   .env-bar-count {

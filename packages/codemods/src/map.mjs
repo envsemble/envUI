@@ -139,11 +139,12 @@ export function parseTarget(name) {
  * The new name of an `env-*` class or custom property name (without its `--`), or the name itself.
  * An entry renames its old name and every name that continues it with a hyphen; the longest entry
  * wins. A name that already continues the entry's new name is left alone, so `env-counter-badge`
- * does not become `env-counter-badge-badge` on a second run.
+ * does not become `env-counter-badge-badge` on a second run. An `exact` entry, a class the map's
+ * `reusedClasses` lists, renames its old name alone.
  */
 export function renameClass(name, classes) {
-  for (const { from, to } of classes) {
-    if (name !== from && !name.startsWith(`${from}-`)) continue;
+  for (const { from, to, exact } of classes) {
+    if (name !== from && (exact || !name.startsWith(`${from}-`))) continue;
     if (to.startsWith(`${from}-`) && (name === to || name.startsWith(`${to}-`))) return name;
     return to + name.slice(from.length);
   }
@@ -222,14 +223,18 @@ export function validateMap(map) {
     }
   }
   const classes = [];
+  const reusedClassNames = Array.isArray(map.reusedClasses) ? map.reusedClasses : [];
   for (const [from, to] of entriesOf(map.classes)) {
     if (!className.test(from) || from.endsWith('-'))
       problems.push(`classes: ${from} is not an env- class name.`);
     if (typeof to !== 'string' || !className.test(to) || to.endsWith('-'))
       problems.push(`classes: ${from} must map to an env- class name.`);
     else if (to === from) problems.push(`classes: ${from} maps to itself.`);
-    classes.push({ from, to });
+    classes.push({ from, to, exact: reusedClassNames.includes(from) });
   }
+  for (const name of reusedClassNames)
+    if (!Object.hasOwn(map.classes ?? {}, name))
+      problems.push(`reusedClasses: ${name} is no class that classes renames.`);
   const sorted = sortClasses(classes);
   for (const { from, to } of sorted) {
     if (typeof to === 'string' && renameClass(to, sorted) !== to)
@@ -740,8 +745,14 @@ export function normalizeMap(map) {
     attributes: rule.attributes,
     report: rule.report,
   }));
+  // 0.x classes that 1.0 uses again for something else, such as env-bar, are renamed alone.
+  const reusedClasses = new Set(Array.isArray(map.reusedClasses) ? map.reusedClasses : []);
   const classes = sortClasses([
-    ...entriesOf(map.classes).map(([from, to]) => ({ from, to })),
+    ...entriesOf(map.classes).map(([from, to]) => ({
+      from,
+      to,
+      ...(reusedClasses.has(from) && { exact: true }),
+    })),
     ...classReports
       .filter((rule) => !rule.within && !rule.attributes)
       .map(({ name }) => ({ from: name, to: name })),

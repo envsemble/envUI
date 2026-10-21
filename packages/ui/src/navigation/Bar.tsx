@@ -24,8 +24,8 @@ const barLimit = 5;
 /** The part classes of the bar's destinations. */
 const barClasses: DestinationClasses = {
   item: 'env-bar-item',
-  indicator: 'env-bar-indicator',
-  label: 'env-bar-label',
+  indicator: 'env-bar-icon',
+  label: 'env-bar-text',
   count: 'env-bar-count',
 };
 
@@ -93,7 +93,7 @@ export function Bar({
                   align="center"
                   gap={1}
                 >
-                  <span className="env-bar-indicator">
+                  <span className="env-bar-icon">
                     <DecorativeIcon>
                       <MoreHoriz />
                     </DecorativeIcon>
@@ -103,7 +103,7 @@ export function Bar({
                       </span>
                     )}
                   </span>
-                  <span className="env-bar-label">{messages.more}</span>
+                  <span className="env-bar-text">{messages.more}</span>
                 </Column>
               }
             >
