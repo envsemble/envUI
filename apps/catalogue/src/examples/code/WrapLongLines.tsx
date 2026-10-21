@@ -1,7 +1,10 @@
 import { CodeBlock } from '@envsemble/envui/content';
 
+const description =
+  'Long lines wrap when reading them matters more than keeping the source layout. ' +
+  'Copying keeps the original line breaks.';
 const settings = `{
-  "description": "Long lines wrap when reading them matters more than keeping the source layout. Copying keeps the original line breaks.",
+  "description": "${description}",
   "notifications": true
 }`;
 

@@ -4,7 +4,10 @@ import { Avatar, Row } from '@envsemble/envui';
 const picture =
   'data:image/svg+xml,' +
   encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#2f6f62"/><circle cx="32" cy="26" r="12" fill="#f2d3b8"/><path d="M10 64c2-14 11-21 22-21s20 7 22 21z" fill="#f2d3b8"/></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+      '<rect width="64" height="64" fill="#2f6f62"/>' +
+      '<circle cx="32" cy="26" r="12" fill="#f2d3b8"/>' +
+      '<path d="M10 64c2-14 11-21 22-21s20 7 22 21z" fill="#f2d3b8"/></svg>',
   );
 
 export default function Fallbacks() {
