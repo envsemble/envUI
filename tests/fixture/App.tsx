@@ -14,6 +14,7 @@ import { ColorPickerFixture } from './ColorPicker.js';
 import { MarkdownEditingFixture, MarkdownExtensionsFixture } from './MarkdownEditing.js';
 import { AdoptionFixture } from './Adoption.js';
 import { ScaffoldFixture, ScrollKeysFixture } from './Scaffolds.js';
+import { ScaffoldPanesFixture } from './ScaffoldPanes.js';
 import { PanesFixture } from './Panes.js';
 import { CodeBlockFixture } from './CodeBlocks.js';
 import { MarkdownFixture } from './Markdowns.js';
@@ -93,6 +94,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   'markdown-tables': MarkdownFixture,
   scaffold: ScaffoldFixture,
   'scroll-keys': ScrollKeysFixture,
+  'scaffold-panes': ScaffoldPanesFixture,
   panes: PanesFixture,
   density: DensityFixture,
   'choice-controls': ChoiceControlsFixture,

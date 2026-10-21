@@ -3,6 +3,7 @@ import { fixtureUrl } from './Servers';
 
 const scaffold = (query = '') => `${fixtureUrl}/?fixture=scaffold${query}`;
 const scrollKeys = `${fixtureUrl}/?fixture=scroll-keys`;
+const scaffoldPanes = `${fixtureUrl}/?fixture=scaffold-panes`;
 
 const box = async (locator: Locator) => (await locator.boundingBox())!;
 
@@ -294,6 +295,67 @@ test.describe('Scaffold document scroll', { tag: '@engines' }, () => {
     expect(rail.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
     expect(rail.y + rail.height).toBeCloseTo(700, 0);
   });
+});
+
+test.describe('Scaffold document scroll, focus', { tag: '@engines' }, () => {
+  /** Where the focused element sits against the top bar, the sticky header and the bar. */
+  const placement = (page: Page) =>
+    page.evaluate(() => {
+      const active = document.activeElement!;
+      const box = active.getBoundingClientRect();
+      const top = document.querySelector('.env-scaffold-top-bar')!.getBoundingClientRect();
+      const header = document.querySelector('.env-page-header')!.getBoundingClientRect();
+      const slot = document.querySelector('.env-scaffold-bar');
+      const bar =
+        slot && getComputedStyle(slot).display !== 'none'
+          ? slot.getBoundingClientRect().top
+          : window.innerHeight;
+      return {
+        name: active.textContent,
+        clearOfTop: box.top >= Math.max(top.bottom, header.bottom) - 0.5,
+        clearOfBottom: box.bottom <= bar + 0.5,
+      };
+    });
+
+  for (const [width, windowClass] of [
+    [480, 'compact, with the bar at the bottom'],
+    [1100, 'expanded, with the drawer'],
+  ] as const)
+    test(`Tab keeps focus clear of the bars and the sticky header, ${windowClass}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 640 });
+      await page.goto(scaffoldPanes);
+      const first = page.getByRole('button', { name: 'Message 1', exact: true });
+      await first.focus();
+      // The document scrolls, and its scroll padding is the bars' heights.
+      const padding = await page.evaluate(() => {
+        const style = getComputedStyle(document.documentElement);
+        return [style.scrollPaddingTop, style.scrollPaddingBottom];
+      });
+      const topBar = await box(page.locator('.env-scaffold-top-bar'));
+      expect(Number.parseFloat(padding[0])).toBeCloseTo(topBar.height, 0);
+      if (width === 480)
+        expect(Number.parseFloat(padding[1])).toBeCloseTo(
+          (await box(page.locator('.env-scaffold-bar'))).height,
+          0,
+        );
+      else expect(padding[1]).toBe('0px');
+      for (let step = 2; step <= 40; step++) {
+        await page.keyboard.press('Tab');
+        await expect
+          .poll(() => placement(page))
+          .toEqual({ name: `Message ${step}`, clearOfTop: true, clearOfBottom: true });
+      }
+      // The document scrolled to keep focus in view.
+      expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBeGreaterThan(0);
+      for (let step = 39; step >= 1; step--) {
+        await page.keyboard.press('Shift+Tab');
+        await expect
+          .poll(() => placement(page))
+          .toEqual({ name: `Message ${step}`, clearOfTop: true, clearOfBottom: true });
+      }
+    });
 });
 
 test.describe('Scaffold body scroll', { tag: '@engines' }, () => {

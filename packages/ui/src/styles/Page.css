@@ -40,13 +40,13 @@
 }
 
 /* A sticky header covers the top of the area that scrolls, so what scrolls into view below it, such
-   as an element taking focus or an anchor's target, keeps clear of it (WCAG 2.4.11), and of a
-   Scaffold's top bar above it where the document scrolls. The header publishes its height as
+   as an element taking focus or an anchor's target, keeps clear of it (WCAG 2.4.11); a Scaffold
+   whose document scrolls keeps the top bar above it clear with the document's scroll padding, which
+   adds to this margin. The header publishes its height as
    --env-page-header-block-size once script runs, so a title that wraps counts; until then, as in
    the server's markup, the height is reckoned from the rows it has, a title line, then its
    breadcrumbs, description, toolbar and, in a compact page, actions under the title. */
 .env-page:has(> .env-page-header[data-sticky]) {
-  --env-page-sticky-top: var(--env-scaffold-sticky-top, 0rem);
   --env-page-sticky-title: max(1.4 * var(--env-font-size-heading), var(--env-control-height));
   --env-page-sticky-small-line: calc(1.4 * var(--env-type-body-small-font-size));
   --env-page-sticky-breadcrumbs: 0rem;
@@ -70,8 +70,7 @@
 }
 .env-page:has(> .env-page-header[data-sticky]) > .env-page-content * {
   scroll-margin-block-start: calc(
-    var(--env-page-sticky-top) +
-      var(
+    var(
         --env-page-header-block-size,
         2 * var(--env-space-4) + var(--env-page-sticky-title) + var(--env-page-sticky-breadcrumbs) +
           var(--env-page-sticky-description) + var(--env-page-sticky-toolbar) +

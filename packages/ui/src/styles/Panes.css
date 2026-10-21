@@ -60,7 +60,8 @@
 
 /* Supporting, below data-split-at: the supporting pane is a modal bottom sheet over the main pane
    while open, as wide as the panes and at most 85% of their height, over a scrim that closes it,
-   with its close button at the top end. */
+   with its close button at the top end. Inside a Scaffold whose document scrolls, Scaffold.css
+   makes it the window's. */
 .env-panes-supporting {
   position: absolute;
   inset-inline: 0;
@@ -99,7 +100,8 @@
   display: block;
   background: var(--env-color-bg-overlay-muted);
 }
-/* From a medium width, still below data-split-at: a side sheet at the end, as tall as the panes. */
+/* From a medium width, still below data-split-at: a side sheet at the end, as tall as the panes,
+   or the window's inside a Scaffold whose document scrolls (Scaffold.css). */
 @container env-panes (width >= 37.5rem) {
   .env-panes > .env-panes-supporting {
     inset-block: 0;

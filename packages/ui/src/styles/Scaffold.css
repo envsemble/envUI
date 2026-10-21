@@ -14,8 +14,8 @@
    bar or Panes whose panes scroll on their own. */
 .env-scaffold {
   /* The room a top bar takes at the top of the window, which sticky content in the body keeps
-     clear of where the document scrolls: the top bar height, an estimate where a top bar wraps or
-     is the window's title bar. */
+     clear of where the document scrolls: the top bar region's height, which the Scaffold measures
+     (--env-scaffold-top-bar-size), and the top bar height until script runs. */
   --env-scaffold-sticky-top: 0rem;
   container: env-scaffold / inline-size;
   box-sizing: border-box;
@@ -29,7 +29,39 @@
   padding-right: env(safe-area-inset-right);
 }
 .env-scaffold[data-scroll='document']:has(> .env-scaffold-top-bar) {
-  --env-scaffold-sticky-top: calc(var(--env-top-bar-height) + env(safe-area-inset-top));
+  --env-scaffold-sticky-top: var(
+    --env-scaffold-top-bar-size,
+    calc(var(--env-top-bar-height) + env(safe-area-inset-top))
+  );
+}
+/* Where the document scrolls, the sticky top bar and bar cover its top and bottom edges, so the
+   document keeps what scrolls into view, such as an element taking focus, clear of them (WCAG
+   2.4.11): its scroll padding is the bars' heights, which the Scaffold measures and sets on the
+   root element as --env-scaffold-scroll-top and --env-scaffold-scroll-bottom, a bar that hides
+   counting 0. Until script runs, these rules estimate them from the regions the Scaffold has; the
+   root element sits outside the theme, so the estimates spell out the top bar height (3.25 rem)
+   and a bar's (4.8 rem). A sticky PageHeader adds its own height through its Page content's scroll
+   margin. Zero specificity, so an application's own scroll padding wins. Where the body scrolls,
+   the bars sit outside its scrollport and take nothing from it. */
+:where(html:has(.env-scaffold[data-scroll='document'])) {
+  --env-scaffold-scroll-top-estimate: 0rem;
+  --env-scaffold-scroll-bottom-estimate: 0rem;
+  scroll-padding-block-start: var(
+    --env-scaffold-scroll-top,
+    var(--env-scaffold-scroll-top-estimate)
+  );
+  scroll-padding-block-end: var(
+    --env-scaffold-scroll-bottom,
+    var(--env-scaffold-scroll-bottom-estimate)
+  );
+}
+:where(html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-top-bar)) {
+  --env-scaffold-scroll-top-estimate: calc(3.25rem + env(safe-area-inset-top));
+}
+:where(
+  html:has(.env-scaffold[data-scroll='document'] > .env-scaffold-navigation > .env-scaffold-bar)
+) {
+  --env-scaffold-scroll-bottom-estimate: calc(4.8rem + env(safe-area-inset-bottom));
 }
 /* The body scrolls: the Scaffold fills its container's height, the window's by default. Give it
    another block-size with your own class, such as in a preview. */
@@ -211,6 +243,47 @@
   }
   .env-scaffold[data-large='none'] .env-scaffold-skip-link[data-skip='navigation'] {
     display: none;
+  }
+}
+
+/* Panes in a body where the document scrolls are as tall as their content, so a supporting sheet
+   placed against them would be as tall as the content too, under the window's edges. Here it is
+   the window's, as a Sheet is: fixed to the window at the modal layer, over a scrim fixed over the
+   whole window, top bar and bar included, scrolling inside itself and clear of the safe areas; a
+   bottom sheet as tall as the window allows, less the room Sheet leaves above one. The panes
+   don't scroll on their own there, so sticky content in them sticks to the window. Only places,
+   sizes and layers them; the selectors stay below Panes' side-by-side rules, which win. */
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes
+  > :is(.env-panes-main, .env-panes-list, .env-panes-detail) {
+  overflow: visible;
+}
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes[data-behavior='supporting']
+  > .env-panes-supporting {
+  position: fixed;
+  z-index: var(--env-z-modal);
+  padding-block-end: env(safe-area-inset-bottom);
+}
+:where(.env-scaffold[data-scroll='document'])
+  .env-panes[data-behavior='supporting'][data-open]
+  > .env-panes-scrim[aria-hidden] {
+  position: fixed;
+  z-index: var(--env-z-overlay);
+}
+@container env-panes (width < 37.5rem) {
+  :where(.env-scaffold[data-scroll='document'])
+    .env-panes[data-behavior='supporting']
+    > .env-panes-supporting {
+    max-block-size: calc(100% - max(var(--env-space-8), env(safe-area-inset-top)));
+  }
+}
+@container env-panes (width >= 37.5rem) {
+  :where(.env-scaffold[data-scroll='document'])
+    .env-panes[data-behavior='supporting']
+    > .env-panes-supporting {
+    padding-block-start: env(safe-area-inset-top);
+    padding-inline-end: env(safe-area-inset-right);
   }
 }
 

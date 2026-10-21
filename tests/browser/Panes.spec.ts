@@ -2,6 +2,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 
 const panes = (query = '') => `${fixtureUrl}/?fixture=panes${query}`;
+const scaffoldPanes = `${fixtureUrl}/?fixture=scaffold-panes`;
 
 const box = async (locator: Locator) => (await locator.boundingBox())!;
 
@@ -169,6 +170,14 @@ test.describe('Panes, supporting', () => {
         'aria-valuetext',
         '20.5 rem',
       );
+      // A width the server read from the cookie renders at once, and a double click returns to the
+      // default at once, not to it.
+      await page.goto(panes('&width=60rem&persist=fixture-kept&kept=30'));
+      const kept = page.getByRole('separator', { name: 'Resize details' });
+      await expect(kept).toHaveAttribute('aria-valuetext', '30 rem');
+      await kept.dblclick();
+      await expect(kept).toHaveAttribute('aria-valuetext', '22.5 rem');
+      await page.goto(panes('&width=60rem&persist=fixture-panes'));
       // A double click returns it to the default and forgets it.
       await page.getByRole('separator', { name: 'Resize details' }).dblclick();
       await expect(page.getByRole('separator', { name: 'Resize details' })).toHaveAttribute(
@@ -186,6 +195,98 @@ test.describe('Panes, supporting', () => {
     const supporting = await box(root.getByRole('region', { name: 'Details' }));
     expect(supporting.x).toBeLessThan(main.x);
   });
+});
+
+test.describe('Panes in a Scaffold whose document scrolls', { tag: '@engines' }, () => {
+  for (const [width, side] of [
+    [480, 'bottom'],
+    [820, 'end'],
+  ] as const)
+    test(`the sheet is the window's, over the bars, at the ${side}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 640 });
+      await page.goto(scaffoldPanes);
+      await expect(page.getByRole('button', { name: 'Message 60', exact: true })).toBeAttached();
+      // Far down a long main pane, the button that opens the sheet is out of view.
+      await expect
+        .poll(() =>
+          page.evaluate(() => {
+            window.scrollTo(0, 600);
+            return document.scrollingElement!.scrollTop;
+          }),
+        )
+        .toBe(600);
+      await page.getByRole('button', { name: 'Message 40', exact: true }).focus();
+      const scrolled = await page.evaluate(() => document.scrollingElement!.scrollTop);
+      await page
+        .getByRole('main')
+        .getByRole('button', { name: 'Show details' })
+        .evaluate((button: HTMLElement) => button.click());
+      const sheet = page.getByRole('dialog', { name: 'Details' });
+      await expect(sheet).toBeVisible();
+      await expect(sheet).toHaveAttribute('aria-modal', 'true');
+      await expect(sheet).toHaveCSS('position', 'fixed');
+      // What a fixed box covers: the window, less the room the page keeps for its scrollbar.
+      const view = await page.evaluate(() => {
+        const probe = document.createElement('div');
+        probe.style.cssText = 'position: fixed; inset: 0; pointer-events: none';
+        document.body.append(probe);
+        const { width, height } = probe.getBoundingClientRect();
+        probe.remove();
+        return { width, height };
+      });
+      const placed = await box(sheet);
+      if (side === 'bottom') {
+        // At the window's bottom, across it, shorter than it.
+        expect(placed.y + placed.height).toBeCloseTo(view.height, 0);
+        expect(placed.width).toBeCloseTo(view.width, 0);
+        expect(placed.height).toBeLessThan(view.height);
+      } else {
+        // At the window's end, as tall as it.
+        expect(placed.x + placed.width).toBeCloseTo(view.width, 0);
+        expect(placed.y).toBeCloseTo(0, 0);
+        expect(placed.height).toBeCloseTo(view.height, 0);
+      }
+      // The scrim covers the window, the top bar included, which is inert with the navigation.
+      const top = await box(page.locator('.env-scaffold-top-bar'));
+      expect(
+        await page.evaluate(
+          ({ x, y }) => document.elementFromPoint(x, y)?.classList.contains('env-panes-scrim'),
+          { x: top.x + 4, y: top.y + top.height / 2 },
+        ),
+      ).toBe(true);
+      expect(
+        await page
+          .locator('.env-scaffold-top-bar')
+          .evaluate((region) => region.closest('[inert]') !== null),
+      ).toBe(true);
+      expect(
+        await page
+          .locator('.env-scaffold-navigation > :not([style*="none"])')
+          .first()
+          .evaluate((slot) => slot.closest('[inert]') !== null),
+      ).toBe(true);
+      // The sheet scrolls inside itself while the page stays where it was.
+      const inside = await sheet.evaluate((element) => {
+        element.scrollTop = element.scrollHeight;
+        return {
+          scrolled: element.scrollTop > 0,
+          overflow: element.scrollHeight > element.clientHeight,
+        };
+      });
+      expect(inside).toEqual({ scrolled: true, overflow: true });
+      await page.mouse.wheel(0, 600);
+      expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBe(scrolled);
+      // Escape closes it, and the page is live again where it was.
+      await page.keyboard.press('Escape');
+      await expect(sheet).toBeHidden();
+      expect(
+        await page
+          .locator('.env-scaffold-top-bar')
+          .evaluate((region) => region.closest('[inert]') !== null),
+      ).toBe(false);
+      expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('');
+      expect(await page.evaluate(() => document.scrollingElement!.scrollTop)).toBe(scrolled);
+    });
 });
 
 test.describe('Panes, list-detail', () => {

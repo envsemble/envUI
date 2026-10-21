@@ -8,8 +8,8 @@ const projects = ['Northwind launch', 'Website refresh', 'Annual report'];
 /**
  * Panes in a frame whose width the test sets, mounted with ?fixture=panes: supporting Panes with a
  * divider and a button that opens the supporting pane, and list-detail Panes whose list opens a
- * project. ?split= sets splitAt, ?persist= the cookie, ?size= the default size and ?dir=rtl
- * mirrors them.
+ * project. ?split= sets splitAt, ?persist= the cookie, ?kept= the width the server read from it,
+ * ?size= the default size and ?dir=rtl mirrors them.
  */
 export function PanesFixture() {
   const query = params();
@@ -40,6 +40,7 @@ export function PanesFixture() {
           onOpenChange={setOpen}
           persist={query.get('persist') ?? undefined}
           defaultSize={query.get('size') ? Number(query.get('size')) : undefined}
+          persistedSize={query.get('kept') ? Number(query.get('kept')) : undefined}
           onSizeChange={(size, { committed }) =>
             setSizes((current) => [...current, `${size}${committed ? '!' : ''}`])
           }

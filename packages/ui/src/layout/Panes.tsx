@@ -81,8 +81,8 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
    */
   size?: number;
   /**
-   * The resized pane's width in rem until people choose one with Panes.Divider, or one is stored
-   * under `persist`.
+   * The resized pane's width in rem until people choose one with Panes.Divider, or one is kept
+   * under `persist`, and the width a double click on the divider returns it to.
    * @default 22.5
    */
   defaultSize?: number;
@@ -103,12 +103,17 @@ export interface RootProps extends Omit<ComponentPropsWithRef<'div'>, 'children'
   maxSize?: number;
   /**
    * Keeps the width people choose in a cookie of this name, for Panes the application doesn't
-   * control; a double click on the divider forgets it. Read it on the server with
-   * `readPanesSize(cookieHeader, key)` and pass it as `defaultSize`, so the server's markup has it
-   * and nothing moves as the page hydrates. Without that, the kept width applies after the first
-   * render.
+   * control; a double click on the divider forgets it and returns to `defaultSize`. Read it on the
+   * server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so the server's
+   * markup has it and nothing moves as the page hydrates. Without that, the kept width applies
+   * after the first render.
    */
   persist?: string;
+  /**
+   * The width kept under `persist`, in rem, as the server read it from the request's cookies with
+   * `readPanesSize`: the first render uses it, on the server and in the browser alike.
+   */
+  persistedSize?: number;
   /**
    * A name for this node, such as "inbox", which dev mode and the docs show; it renders as
    * `data-env-name`.
@@ -213,6 +218,7 @@ function Root({
   minSize = 16,
   maxSize = 40,
   persist,
+  persistedSize,
   name,
   className,
   style,
@@ -225,11 +231,16 @@ function Root({
     (value: number) => round(Math.min(max, Math.max(min, value))),
     [min, max],
   );
-  // A size chosen by resizing, or read from storage; until then the default applies.
-  const [chosenSize, setChosenSize] = useState<number>();
-  const size = clamp(controlledSize ?? chosenSize ?? defaultSize);
+  // A size chosen by resizing or read from the cookie, or 'default' once a double click forgot it;
+  // until then the width the server read, else the default, applies.
+  const [chosenSize, setChosenSize] = useState<number | 'default'>();
+  const size = clamp(
+    controlledSize ??
+      (chosenSize === 'default' ? defaultSize : (chosenSize ?? persistedSize ?? defaultSize)),
+  );
   useLayoutEffect(() => {
-    setChosenSize(persist ? readPanesSize(document.cookie, persist) : undefined);
+    const kept = persist ? readPanesSize(document.cookie, persist) : undefined;
+    if (kept !== undefined) setChosenSize(kept);
   }, [persist]);
 
   const latest = useRef({ size, controlledSize, onSizeChange, persist, defaultSize, clamp });
@@ -247,7 +258,8 @@ function Root({
     const current = latest.current;
     const value = current.clamp(current.defaultSize);
     if (current.controlledSize === undefined) {
-      setChosenSize(undefined);
+      // The default, also where the width the server read came from the cookie just forgotten.
+      setChosenSize('default');
       if (current.persist) writePanesSize(current.persist, undefined);
     }
     current.onSizeChange?.(value, { committed: true });
@@ -313,9 +325,11 @@ function Main({ label, className, ...props }: PaneProps) {
 /**
  * The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it
  * is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet
- * in a compact one. As a sheet it is a dialog with a close button: the rest of the Panes is inert,
- * focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim
- * closes it, which returns focus to where it was.
+ * in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet
+ * is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet
+ * it is a modal dialog with a close button: everything else on the page is inert, focus moves into
+ * it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which
+ * returns focus to where it was.
  */
 function Supporting({ label, className, onKeyDown, ref, id, children, ...props }: NamedPaneProps) {
   const { open, close, closeLabel, resizedId } = usePanes('Supporting');
@@ -331,15 +345,18 @@ function Supporting({ label, className, onKeyDown, ref, id, children, ...props }
       setSheet(false);
       return;
     }
-    const check = () => setSheet(getComputedStyle(element).position === 'absolute');
+    const check = () => {
+      const { position } = getComputedStyle(element);
+      setSheet(position === 'absolute' || position === 'fixed');
+    };
     check();
     const observer = new ResizeObserver(check);
     if (element.parentElement) observer.observe(element.parentElement);
     return () => observer.disconnect();
   }, [open]);
-  // As a sheet, the rest of the Panes is inert and focus moves in; as it closes, focus goes back to
-  // where it was. A sheet that becomes a pane beside the main one, as the Panes widen, keeps focus
-  // where it is.
+  // As a sheet, everything else on the page is inert, so aria-modal holds, and focus moves in; as it
+  // closes, focus goes back to where it was. A sheet that becomes a pane beside the main one, as
+  // the Panes widen, keeps focus where it is. A sheet fixed to the window keeps the page still.
   const openRef = useRef(open);
   openRef.current = open;
   useLayoutEffect(() => {
@@ -349,17 +366,36 @@ function Supporting({ label, className, onKeyDown, ref, id, children, ...props }
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement ? active : null;
     if (!element.contains(active)) element.focus();
-    const others = [...(element.parentElement?.children ?? [])].filter(
-      (other): other is HTMLElement =>
-        other instanceof HTMLElement &&
-        other !== element &&
-        !other.inert &&
-        // The scrim stays live: a press on it closes the sheet.
-        !other.classList.contains('env-panes-scrim'),
-    );
+    const others: HTMLElement[] = [];
+    for (let node: Element = element; node.parentElement && node !== document.body; ) {
+      for (const other of node.parentElement.children)
+        if (
+          other instanceof HTMLElement &&
+          other !== node &&
+          !other.inert &&
+          // The scrim stays live, as a press on it closes the sheet, and so do live regions, such
+          // as toasts, which announce what happens meanwhile.
+          !other.classList.contains('env-panes-scrim') &&
+          !other.hasAttribute('aria-live')
+        )
+          others.push(other);
+      node = node.parentElement;
+    }
     for (const other of others) other.inert = true;
+    const html = document.documentElement;
+    const still = getComputedStyle(element).position === 'fixed';
+    const kept = { overflow: html.style.overflow, gutter: html.style.scrollbarGutter };
+    if (still) {
+      // The page keeps its scrollbar's room, so nothing moves.
+      html.style.scrollbarGutter = 'stable';
+      html.style.overflow = 'hidden';
+    }
     return () => {
       for (const other of others) other.inert = false;
+      if (still) {
+        html.style.overflow = kept.overflow;
+        html.style.scrollbarGutter = kept.gutter;
+      }
       const target = returnFocus.current;
       returnFocus.current = null;
       if (openRef.current) return;

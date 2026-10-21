@@ -5506,7 +5506,7 @@
           "type": "number",
           "required": false,
           "default": "22.5",
-          "description": "The resized pane's width in rem until people choose one with Panes.Divider, or one is stored under `persist`."
+          "description": "The resized pane's width in rem until people choose one with Panes.Divider, or one is kept under `persist`, and the width a double click on the divider returns it to."
         },
         {
           "name": "onSizeChange",
@@ -5532,7 +5532,13 @@
           "name": "persist",
           "type": "string",
           "required": false,
-          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `defaultSize`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
+          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it and returns to `defaultSize`. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
+        },
+        {
+          "name": "persistedSize",
+          "type": "number",
+          "required": false,
+          "description": "The width kept under `persist`, in rem, as the server read it from the request's cookies with `readPanesSize`: the first render uses it, on the server and in the browser alike."
         },
         {
           "name": "name",
@@ -5557,7 +5563,7 @@
     "Panes.Supporting": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. As a sheet it is a dialog with a close button: the rest of the Panes is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which returns focus to where it was.",
+      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Inside a Scaffold whose document scrolls, the sheet is the window's, as Sheet is: fixed to the window over a scrim, scrolling inside itself while the page stays. As a sheet it is a modal dialog with a close button: everything else on the page is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which returns focus to where it was.",
       "props": [
         {
           "name": "label",
@@ -8574,7 +8580,7 @@
     "readPanesSize": {
       "kind": "function",
       "source": "packages/ui/src/layout/panesSize.ts",
-      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `defaultSize`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" defaultSize={readPanesSize(cookieHeader, 'inbox') ?? 22.5}> Returns undefined where no width is kept under the key.",
+      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `persistedSize`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" persistedSize={readPanesSize(cookieHeader, 'inbox')}> Returns undefined where no width is kept under the key.",
       "signature": "(cookies: string | null | undefined, key: string): number | undefined",
       "entries": [
         "@envsemble/envui"

@@ -1,10 +1,10 @@
 /**
  * The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's
- * on the server, or from `document.cookie`. Render Panes.Root with it as `defaultSize`, on the
+ * on the server, or from `document.cookie`. Render Panes.Root with it as `persistedSize`, on the
  * server and in the browser alike, so the server's markup has the width people chose and nothing
  * moves as the page hydrates:
  *
- *   <Panes.Root persist="inbox" defaultSize={readPanesSize(cookieHeader, 'inbox') ?? 22.5}>
+ *   <Panes.Root persist="inbox" persistedSize={readPanesSize(cookieHeader, 'inbox')}>
  *
  * Returns undefined where no width is kept under the key.
  */

@@ -235,7 +235,7 @@ export function HydrationApp() {
           behavior="supporting"
           splitAt="medium"
           persist="hydrated-kept-panes"
-          defaultSize={readPanesSize('theme=dark; hydrated-kept-panes=30', 'hydrated-kept-panes')}
+          persistedSize={readPanesSize('theme=dark; hydrated-kept-panes=30', 'hydrated-kept-panes')}
         >
           <Panes.Main label="Hydrated kept main">Kept main pane</Panes.Main>
           <Panes.Divider label="Hydrated kept split" />

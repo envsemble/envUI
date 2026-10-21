@@ -489,6 +489,19 @@
           "classes": ["env-panel-dock"],
           "properties": ["container-type"],
           "note": "A Scaffold's body places a PanelDock directly in it across its scrollport, so the dock stays over the body's visible area while it scrolls; the body, its own element, becomes a size container only while it holds a dock."
+        },
+        {
+          "stylesheet": "Scaffold.css",
+          "classes": [
+            "env-panes",
+            "env-panes-main",
+            "env-panes-list",
+            "env-panes-detail",
+            "env-panes-supporting",
+            "env-panes-scrim"
+          ],
+          "properties": ["z-index", "overflow"],
+          "note": "Where the document scrolls, Panes in the body are as tall as their content, so a Scaffold fixes their supporting sheet and its scrim to the window at the modal layers, as a Sheet is, and lets the panes grow with the page rather than scroll; it never restyles them."
         }
       ]
     }
