@@ -9,6 +9,7 @@ const projects = [
 /** As many columns of at least 14 rem as fit. */
 const grid = {
   display: 'grid',
+  inlineSize: '100%',
   gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 14rem), 1fr))',
   gap: '1rem',
 } as const;

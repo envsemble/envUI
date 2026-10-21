@@ -22,7 +22,7 @@ const entries = [...elements.roles, ...elements.elements];
 const isName = (value) => /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(value);
 const oldMainNames = renames.modules['@envsemble/envui'];
 
-test('the plugin names itself and turns every rule on in the recommended config', () => {
+test('the plugin names itself and turns every rule on in the recommended config, the layout rule as a warning', () => {
   assert.deepEqual(plugin.meta, {
     name: manifest.name,
     version: manifest.version,
@@ -34,7 +34,8 @@ test('the plugin names itself and turns every rule on in the recommended config'
     Object.keys(recommended.rules).sort(),
     Object.keys(plugin.rules).map((name) => `envui/${name}`),
   );
-  for (const severity of Object.values(recommended.rules)) assert.equal(severity, 'error');
+  for (const [rule, severity] of Object.entries(recommended.rules))
+    assert.equal(severity, rule === 'envui/no-hand-rolled-layout' ? 'warn' : 'error', rule);
 });
 
 test('the mapping table has unique entries that name envUI 1.0 components', () => {

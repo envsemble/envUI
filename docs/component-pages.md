@@ -1,6 +1,6 @@
 # Write a component page
 
-Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. A page is written as [exchanges](#exchanges): questions someone might ask an agent about the component, each answered with prose and live figures. [Button](components/button.md) and [Card](components/card.md) are the model pages; read them before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
+Every component has one page in `docs/components/`, named after the component in kebab case and the singular: `text-field.md` for TextField, `button.md` for Button and its family. The same Markdown feeds the catalogue, the package and agents, so a page is written once. A page is on the [figure template](#sections): ordinary sections of live figures and a few short sentences, visual first. [Button](components/button.md) and [Card](components/card.md) are the model pages; read them before writing another. Pattern and template pages use the same template with their own frontmatter: [write a pattern or template page](pattern-pages.md).
 
 ## Frontmatter
 
@@ -41,88 +41,112 @@ components: # The exports the page documents; each export has exactly one page.
 
 Register the page in [the index](index.md) under its group, with only its title and path: `- [TextField](components/text-field.md)`. The index orders the pages; the summary comes from the frontmatter.
 
-## Exchanges
+## Sections
 
-A component page reads as if its reader had asked an agent about the component: a fixed sequence of exchanges, each a question and its answer. It is a reference page, not a chat: one question per section, plus follow-ups where a topic needs them, and no conversation running through them. The questions are illustrative; write them as someone would ask, and the answers so they are accurate.
+A component page is a reference page in the traditional style: ordinary headings, short direct text and live figures, in a fixed order so readers and agents know where to look. After the `# Title`, a page has these `##` sections in this order. Omit an optional one where it doesn't apply. The build fails on another heading, a wrong order or a missing required section. A component page with a `## When to use` section is on this template; one without is on the [section template](#pages-on-the-section-template).
 
-After the `# Title`, a page has these `##` sections in this order. Omit an optional one where it doesn't apply. The build fails on another heading, a wrong order or a missing required section.
+| Section           | Required | Holds                                                                                                                 |
+| ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| Overview          | yes      | What it is in one sentence, its family as figures, and `###` subsections on what it does on its own, such as pending. |
+| Variants          |          | Variants, tones, layouts and sizes: a table of the values, examples and specimens.                                    |
+| When to use       | yes      | Do and don't pairs and the few rules they don't show; a `### Labels` or `### Content` subsection on writing its text. |
+| Anatomy           |          | An anatomy figure with its legend, and one sentence naming parts the figure can't show.                               |
+| Adapting to width |          | A sentence and an example at several widths.                                                                          |
+| Accessibility     | yes      | A `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists.     |
+| Changelog         |          | Releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                          |
 
-| Section           | Required | The question it answers, and what the answer holds                                                                                                                |
-| ----------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview          | yes      | What is it, and what does it look like? What it is, its family, and at least one example; follow-ups on what it does on its own, such as pending or dismissing.   |
-| Variants          |          | Which variants are there, and when do I use each? Variants, tones, layouts and sizes, as tables, examples and specimens.                                          |
-| When to use       | yes      | When should I use it, and when something else? Do and don't pairs and the rules they don't show; a follow-up on writing its labels and text.                      |
-| Anatomy           |          | What is it made of? An anatomy figure with its legend, and parts the figure can't show, such as a spinner while pending.                                          |
-| Adapting to width |          | How does it behave when space runs out? What it does in a narrow container, with an example at several widths.                                                    |
-| Accessibility     | yes      | How do I keep it accessible? A sentence or two, a `### Keyboard` table (Key, Action) where it handles keys, and `### envUI provides` and `### You provide` lists. |
-| Changelog         |          | No question: releases that changed the component, newest first, such as `- **0.6.0**: The quiet variant.`                                                         |
+The build adds **Props** and **Related** before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. In the catalogue every section is in the page's Overview view, which ends with a Props section that leads to the Props view. Don't use blockquotes: the build rejects them. Write a point as a sentence, or a judgment as a do and don't pair.
 
-The build adds **Props** and **Related** before Changelog; don't write them, and don't list props anywhere, as [Props](#props) describes. In the catalogue every exchange is in the page's Overview view, which ends with a last exchange that leads to the Props view.
+### Write little
 
-### Questions
+The docs are mainly visual. Let the figures, the do and don't pairs and the anatomy teach, and write a sentence or two around them:
 
-Each section opens with its question, a blockquote of one sentence that ends with a question mark, right after the heading:
+- **Show, then say little.** Cut every sentence a figure already shows, such as what a variant looks like, its colors or its corners. A sentence beside a figure says what the figure can't: the prop that makes it, or the rule it illustrates.
+- **Say each thing once.** Each kind of information has one place on a page, in the table below; don't repeat it in a caption, a legend, a list and another section.
+- **Short over complete.** Leave out what the generated props reference holds, such as each prop's values and defaults, and what the code does for itself, such as an exact delay or padding, unless a reader chooses it.
 
-```md
-## Variants
+| Information                                   | Its one place                                                                                           |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| What it is                                    | One sentence at the start of Overview.                                                                  |
+| What it looks like                            | Figures, with no sentence describing them.                                                              |
+| When to use it, and what to use instead       | The frontmatter's `useWhen` and `avoidWhen`, which When to use shows first.                             |
+| A judgment, such as one primary button        | A do and don't pair whose captions are the rule. A pair never pictures a `useWhen` or `avoidWhen` item. |
+| Rules no picture shows                        | A short list after the pairs, two or three items at most.                                               |
+| Variants, tones and sizes                     | One table of the values and what each is for.                                                           |
+| What it does on its own, such as pending      | A `###` subsection of Overview, a sentence beside its figure.                                           |
+| Its parts and their class names               | The anatomy legend, names only.                                                                         |
+| How it adapts to width                        | A sentence and an example at several widths.                                                            |
+| Keys, roles and what the application must add | Accessibility.                                                                                          |
+| Props                                         | The generated Props view; never in prose.                                                               |
+| Releases                                      | Changelog.                                                                                              |
 
-> Which variants are there, and when do I use each?
-```
+Choose the form that teaches each point best rather than a column of paragraphs: a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a table for values, a short list for rules. The catalogue lays out some patterns for you:
 
-The catalogue shows it as a compact Message at the inline end of the heading's row, and the answer below across the full width. Another blockquote later in a section is a follow-up question, such as `> Which sizes are there?` under Variants, with its own answer below it. Don't use blockquotes for anything else on these pages. A page is read as exchanges when its `## Overview` opens with a question; a page whose Overview doesn't is on the [section template](#pages-on-the-section-template).
-
-### Answers
-
-Answer in plain, direct sentences, and choose the form that teaches each point best rather than a column of paragraphs: a table for values and what each is for, a live example for how it looks and behaves, a do and don't pair for a judgment, an anatomy figure for parts, an example at several widths for how it adapts, a list for rules. Keep paragraphs short; the catalogue keeps prose to a readable measure and gives figures the full width. The catalogue also lays out some patterns for you:
-
-- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family.
+- **Figures in a row**: figures that follow each other with only blank lines between them sit side by side, such as a do and a don't, or the members of a family. Put a sentence between figures that should not share a row.
 - **A subsection beside its figure**: a `###` subsection of text, with no table or list at its start, followed by exactly one figure, sits beside that figure on a wide page, such as each kind of card under Variants.
 - **Lists in columns**: two or more `###` subsections in a row that each hold only a list sit side by side, such as `### envUI provides` and `### You provide`.
 - **When to use** starts with the frontmatter's `useWhen` and `avoidWhen`, as two columns; write what follows them, not the same points again.
 
+### Layout: equal cells, spacing with rhythm
+
+- **Cells that share a row are one size.** Figures side by side take equal widths, and their stages are as tall as the tallest, with their captions and Code toggles lined up across the row. Never put cells of different sizes side by side: an example at several widths shows one frame to a row, each centred on its own stage. A row of figures stays one column until all of them fit side by side, so no row is left with an orphan: two to a row from 38 rem, three from 58 rem; write two or three figures in a row, or four as two pairs.
+- **Related things sit close, unrelated things apart.** A heading sits close to its first content, text close to the figure it introduces, and a figure's stage, caption and Code toggle close together. One sub-topic, such as a `###` subsection or the next figure after a caption, sits clearly apart from the last, and one section further still. The catalogue spaces them with the spacing tokens: 1 rem for what belongs together, 3 rem between sub-topics and 4 rem between sections.
+- **No separators.** Space, not lines, separates sections and sub-topics.
+
+### Learn from Material's docs
+
+Material Design 3's component pages, such as [buttons](https://m3.material.io/components/buttons/guidelines) and [cards](https://m3.material.io/components/cards/guidelines), are the reference for explaining visually. Borrow their approach, not their layout, which the fixed sections replace, and copy none of their text or images:
+
+- A figure for each point, with one sentence under it that states the point rather than describing the picture.
+- Do and don't figures on the same situation, each with a one-sentence caption, and a third figure where two dos make the point, such as a button that fits its label and one that stretches.
+- An anatomy figure with a numbered legend of part names only; guidance on a part goes in its own figure or pair.
+- Short paragraphs beside figures, and accessibility as what people do with assistive technology, a keyboard table and how to label.
+
 ## Figures
 
-A figure is an [example file](#examples) placed with an empty fence whose info string names its kind and file. Under every figure the catalogue shows a closed Code disclosure with the file's source and a copy button, so every figure can be copied as it is. Attributes follow the name as `name="value"`; a value without spaces needs no quotes. Write a caption as one sentence, without double quotes inside.
+A figure is an [example file](#examples) placed with an empty fence whose info string names its kind and file. Every figure sits on the same dotted stage, in the theme the reader has chosen, centred horizontally and vertically, so a reader can always tell an example from the page around it; a specimen on a page on the figure template sits on it too. The stage is the catalogue's (`apps/catalogue/src/styles/Stage.css`), not envUI's.
 
-| Fence                            | Shows                                                                             | Attributes                                                    |
-| -------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| ` ```tsx example=Name `          | The example, live in a hairline frame.                                            | `caption`: a sentence below it. `widths`: see below.          |
-| ` ```tsx do=Name caption="…" `   | The example on a quiet stage with a green Do bar, and the caption below.          | `caption`, required: what to do, as one sentence.             |
-| ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                                    | `caption`, required: what not to do and why, as one sentence. |
-| ` ```tsx anatomy=Name `          | The example in the light and the dark theme, with numbered callouts on its parts. | `of`: see below. `caption`: a sentence below it.              |
+Under every figure the catalogue shows a closed Code toggle with the file's source and a copy button, so every figure can be copied as it is. Open code always spans the whole content column: a figure that shares its row, or sits beside text, opens its code below the row, across the column, so code never scrolls sideways in a narrow cell. Where the column is narrower than a 100-character line, the code soft-wraps instead of scrolling; keep example lines within the formatter's 100 characters. Attributes follow the name as `name="value"`; a value without spaces needs no quotes. Write a caption as one sentence, without double quotes inside.
+
+| Fence                            | Shows                                                                   | Attributes                                                    |
+| -------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- |
+| ` ```tsx example=Name `          | The example, live on the dotted stage.                                  | `caption`: a sentence below it. `widths`: see below.          |
+| ` ```tsx do=Name caption="…" `   | The example on the stage with a green Do bar, and the caption below.    | `caption`, required: what to do, as one sentence.             |
+| ` ```tsx dont=Name caption="…" ` | The same with a red Don't bar.                                          | `caption`, required: what not to do and why, as one sentence. |
+| ` ```tsx anatomy=Name `          | The example in the reader's theme, with numbered callouts on its parts. | `of`: see below. `caption`: a sentence below it.              |
 
 ### Examples at several widths
 
-`widths="16 30"` shows the example in a frame of each width in rem, side by side and labelled, where it responds to that width: its container queries see the frame. Choose widths on either side of where the component changes, such as `widths="24 44"` around a card's 38 rem. Where the frames don't fit, the strip scrolls.
+`widths="16 30"` shows the example in a frame of each width in rem, one to a row, each centred on its own stage with its width outlined and labelled, where it responds to that width: its container queries see the frame. Choose widths on either side of where the component changes, such as `widths="24 40"` around a card's 38 rem. Where a frame is wider than the page, its stage scrolls.
 
 ### Do and don't pairs
 
-Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture stay a list below the pairs.
+Put a `do` fence and a `dont` fence after each other, so they sit side by side; write two pairs one after the other, and they line up two to a row. Make both examples show the same situation, so the only difference is the point: the same dialog's actions with one primary button and with three. A caption is the rule in a few words, such as "One primary button per group, at the end of its actions."; don't repeat it in a list below. Each is a whole example file an application could copy, the don't included. Avoid a don't that the accessibility scan would flag, such as a button inside a link; say that in a rule instead. Rules that don't need a picture stay a list below the pairs.
 
 ### Anatomy figures
 
-An ordered list right after an anatomy fence is its legend. Each item names its part by class name in a code span, and the catalogue puts that item's number on the part, measured from the live component in each theme; the callouts follow the figure as it resizes.
+An ordered list right after an anatomy fence is its legend. Each item names its part by class name in a code span, and the catalogue puts that item's number on the part, measured from the live component in the theme the reader has chosen; the callouts follow the figure as it resizes and as the theme changes. The legend holds names only: what a part looks like is in the figure, and what it does belongs in the section that covers it.
 
 ````md
 ```tsx anatomy=CardAnatomy
 
 ```
 
-1. **Surface** (`env-card`, `background`, `padding`): the fill with 1.75 rem corners.
-2. **Title** (`env-card-heading`, `title`): an `h3` in the title type.
+1. **Surface** (`env-card`)
+2. **Title** (`env-card-heading`, `title`)
 3. `env-card-footer`
 ````
 
-- The first code span that starts with `env-` is the part; other code spans, such as props, are text. Start each item with the part's name in bold.
+- The first code span that starts with `env-` is the part; a second code span may name the prop that fills it. Start each item with the part's name in bold, and write nothing after the parentheses.
 - A part reference is a class name such as `env-card-heading`, or a selector of class names written without their dot, such as `env-button > env-icon:first-child` for a button's start icon. `::text` at the end points at the element's own text rather than its box, such as `env-button::text` for a label that has no element of its own.
 - An item that holds only the code span takes its description from `docs/generated/parts.json`. A fence without a list numbers every part `parts.json` lists for the page's component, or for the one `of="Name"` names.
 - `docs/generated/parts.json` is generated from the library: under `components`, each component by its export name, with its `root` class, its `parts` (`class` and `description`) and its `states` (`attribute`, `values` and the `parts` that carry it); under `shared`, the groups of parts several components share, such as `ConnectedRows`. Read a component's entry there before writing its legend.
 - The build fails on a legend class that neither packages/ui's CSS nor `parts.json` has, and on a fence without a legend whose component has no parts there. A part the example doesn't render leaves its number off the figure, which the catalogue's browser test that counts every anatomy figure's callouts catches.
-- Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. List parts the figure can't show, such as a spinner while pending or a focus ring, below the legend.
+- Make the anatomy example small and complete, with every part the legend names present once: the root first, then the parts in reading order. Name parts the figure can't show in one sentence below it, such as "Not shown: the spinner, `env-button-spinner`."
 
 ## Pages on the section template
 
-Pages not yet converted to exchanges are on an earlier template: after the `# Title`, these `##` sections in this order, with Overview, Accessibility and Examples required.
+Pages not yet converted to the figure template are on an earlier template: after the `# Title`, these `##` sections in this order, with Overview, Accessibility and Examples required.
 
 | Section              | Required | Holds                                                                                                       |
 | -------------------- | -------- | ----------------------------------------------------------------------------------------------------------- |
@@ -150,10 +174,11 @@ An example is a file in `apps/catalogue/src/examples/<page>/<Name>.tsx`: a small
 - No catalogue classes (`docs-*`) or helpers. Lay out with envUI's components; where envUI has no layout for it yet, a short inline style with a comment is fine.
 - Use neutral sample data, such as Alex Morgan, Sam Lee, Priya Shah, Northwind or example.com, and never a product name.
 - Keep state inside the example, and stand in for slow work with a timer.
+- Keep it small: the stage centres the example at its own width. Give the root a width where it should be wider than its content, such as `inlineSize: '100%'` on a grid of cards. A root that is or holds a size container, such as a feature card or a page header, fills the stage, since centred it would have no width.
 - Name the file after what it shows, such as `ConfirmInPlace.tsx`.
 - Start an example's own headings at level 3, since the page's sections are `h2`: set `headingLevel={3}` on a component that renders a heading of its own at level 2, such as a feature Card, and render other headings as `h3` or lower.
 
-Reference it from the Markdown with an empty fence. On a page of exchanges it is a [figure](#figures), anywhere in an answer; on a page on the section template it goes under `## Examples`, after its `###` heading and a sentence or two:
+Reference it from the Markdown with an empty fence. On a page on the figure template it is a [figure](#figures), anywhere in a section; on a page on the section template it goes under `## Examples`, after its `###` heading and a sentence or two:
 
 ````md
 ### Confirm in place
@@ -175,7 +200,7 @@ Some visual references are not examples: a matrix of every variant in every form
 <!-- specimen: VariantMatrix -->
 ```
 
-On a page of exchanges a specimen's title is an `h3`, within its section, and its parts' titles `h4`; elsewhere they are `h2` and `h3`. The catalogue sets the level; a specimen's `Example` and `Specimen` take it from there.
+On a page on the figure template, keep a specimen only where it shows what an example can't, such as forced hover and pressed looks or every size side by side; a matrix that repeats the variants an example already shows goes. Give it a `###` heading and its sentence in the Markdown before it, so the text sits next to the figure; the specimen itself takes no title there, and its parts' titles are `h4`. Elsewhere a specimen's title is an `h2` and its parts' `h3`. The catalogue sets the level; a specimen's `Example` and `Specimen` take it from there.
 
 The visual baseline captures a page's specimens, and its first example when it has no specimen.
 
@@ -192,15 +217,15 @@ Native DOM props are summarised by element, so document only the props envUI dec
 
 ## Convert a page
 
-### To exchanges
+### To the figure template
 
-To convert a page on the section template into exchanges:
+To convert a page on the section template to the figure template:
 
 1. Read the component's source, its CSS for the part class names, and its browser tests in `tests/browser`.
-2. Add the question under `## Overview`, and move each section's content into the exchange that answers it: Variants and sizes into Variants; States and behaviour into Overview follow-ups, or into Variants where a state belongs to one variant; Content guidelines into a follow-up under When to use; Do and don't into pairs under When to use, with the rules no picture needs as a list; Examples into the exchanges they illustrate, as figures with a caption or under a `###` subsection. Keep every claim, and check it against the code.
+2. Move each section's content into the section of the figure template that holds it: Variants and sizes into Variants; States and behaviour into `###` subsections of Overview, or into Variants where a state belongs to one variant; Content guidelines into a `### Labels` or `### Content` subsection of When to use; Do and don't into pairs under When to use, with the rules no picture needs as a short list; Examples into the sections they illustrate, as figures with a caption or under a `###` subsection. Keep what a reader needs, check it against the code, and drop what a figure, the props reference or another section already says.
 3. Keep every heading another page links to, such as `#confirm-in-place`, as a `###` subsection: the build fails on a link to a heading that is gone.
 4. Write the new example files: the do and don't pairs, the anatomy example and, where the component adapts, an example for `widths`. Keep specimens where they show what code can't, such as forced hover and pressed states.
-5. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: the callouts on their parts, one for each legend item in both themes, the pairs side by side and no figure overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's Guidelines or Accessibility view; on a page of exchanges, those headings are in its Overview.
+5. Cut the page down: each thing once, in its place in [the table](#write-little), and no sentence a figure already shows. Run `npm run check`, and look at the page in the catalogue at a narrow and a wide width, in light and dark: cells that share a row of one size, the callouts on their parts, one for each legend item, figures centred on their stages, open code across the column and nothing overflowing. Check the outline too, in the browser's accessibility tree or with a headings list: one `h2` per section and nothing else at that level, so no specimen or example adds an `h2` of its own. Update browser tests that visited the page's Guidelines or Accessibility view; on the figure template, those headings are in its Overview.
 
 ### From the earliest pages
 
@@ -208,7 +233,7 @@ Pages written before the template have `## React usage` and `### Props & contrac
 
 1. Read the component's source and its browser tests in `tests/browser`.
 2. Move what the props table says into TSDoc on the props, then run `npm run docs:props`.
-3. Write the exchanges. Keep the old page's guidance, and check each claim against the code.
+3. Write the sections of the figure template. Keep the guidance a reader needs, and check each claim against the code.
 4. Turn the preview's specimens into example files, or into specimens where they only serve review. Remove the page's case from `apps/catalogue/src/previews/ComponentPreview.tsx` and its preview function.
 5. Take the page out of `unconverted` in `tests/DocumentationPages.test.mjs`.
 6. Update browser tests that visited the old preview, then run `npm run typecheck`, `npm test`, the Chromium tests, and `npm run test:a11y:update` and `npm run test:visual:update`; review the changed images and accessibility entries.

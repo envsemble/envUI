@@ -115,7 +115,8 @@ test.describe('search', () => {
     // An old link to the page, without a view, opens the same view.
     expect(normalizeRoute('components/dialog?section=keyboard')).toBe(route);
     expect(normalizeRoute('components/dialog/overview?section=keyboard')).toBe(route);
-    // A page of exchanges shows every heading in its Overview, also for a link to an old view.
+    // A page on the figure template shows every heading in its Overview, also for a link to an
+    // old view.
     expect(normalizeRoute('components/button/accessibility?section=keyboard')).toBe(
       'components/button/overview?section=keyboard',
     );

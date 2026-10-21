@@ -12,7 +12,7 @@ const sizes: readonly { size: ControlSize; caption: string }[] = [
 /** The three sizes of Button and IconButton, which every control of a size shares. */
 export default function Sizes() {
   return (
-    <Example title="Sizes" size="collection">
+    <Example size="collection">
       <SpecimenGrid size="compact">
         {sizes.map(({ size, caption }) => (
           <Specimen key={size} title={size} caption={caption}>
