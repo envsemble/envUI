@@ -4,6 +4,13 @@
     "$type": "color",
     "$description": "The light scheme’s high-contrast values: text 70 grades from what it sits on, boundaries and indicators 50. contrast/high.tokens.json points the roles here; color-scheme/dark-contrast-high.tokens.json holds the dark values. Internal: never CSS.",
     "color": {
+      "list-item": {
+        "bg": {
+          "$root": { "$value": "{palette.neutral.4}" },
+          "hover": { "$value": "{palette.neutral.8}" },
+          "pressed": { "$value": "{palette.neutral.10}" }
+        }
+      },
       "bg": {
         "selected": {
           "$root": { "$value": "{palette.blue.11}" },
@@ -28,6 +35,7 @@
           "pressed": { "$value": "{palette.neutral.8}" }
         },
         "raised": {
+          "$root": { "$value": "{palette.neutral.0}" },
           "hover": { "$value": "{palette.neutral.4}" },
           "pressed": { "$value": "{palette.neutral.8}" }
         },

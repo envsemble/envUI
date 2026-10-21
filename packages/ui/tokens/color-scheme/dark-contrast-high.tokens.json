@@ -4,6 +4,13 @@
     "$type": "color",
     "$description": "The dark scheme’s high-contrast values. Internal: never CSS.",
     "color": {
+      "list-item": {
+        "bg": {
+          "$root": { "$value": "{palette.neutral.82}" },
+          "hover": { "$value": "{palette.neutral.80}" },
+          "pressed": { "$value": "{palette.neutral.75}" }
+        }
+      },
       "bg": {
         "selected": {
           "$root": { "$value": "{palette.slate.86}" },
@@ -28,6 +35,7 @@
           "pressed": { "$value": "{palette.neutral.75}" }
         },
         "raised": {
+          "$root": { "$value": "{palette.neutral.88}" },
           "hover": { "$value": "{palette.neutral.84}" },
           "pressed": { "$value": "{palette.neutral.80}" }
         },
