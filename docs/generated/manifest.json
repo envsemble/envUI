@@ -15404,32 +15404,44 @@
         {
           "name": "UndoInstead",
           "title": "Undo instead",
-          "description": "Use this pattern to choose how much friction a destructive action needs. Asking \"Are you sure?\" before everything trains people to confirm without reading. Act at once when the action can be undone, ask in place when little is at stake, and keep a dialog, and a typed name, for what can't be undone or reaches other people.",
+          "description": "A destructive action gets only as much friction as it needs: asking \"Are you sure?\" before everything trains people to confirm without reading. Archiving here happens at once, and a toast from useToast offers Undo.",
           "file": "docs/examples/destructive-actions/UndoInstead.tsx"
         },
         {
           "name": "ConfirmInPlace",
           "title": "Confirm in place",
-          "description": "Removing an attachment is small and quick to redo, so the button asks in place: the first press says \"Remove file?\", the second removes it.",
+          "description": "The first press names the consequence in the button, \"Remove file?\"; the second removes. It disarms after four seconds, on blur and with <kbd>Esc</kbd>.",
           "file": "docs/examples/destructive-actions/ConfirmInPlace.tsx"
         },
         {
           "name": "ConfirmDelete",
           "title": "Confirm from a menu",
-          "description": "\"Delete document…\" in a row's menu opens a ConfirmDialog that names the document. Cancel returns focus to the menu button; after the delete, focus moves to the next row's menu button.",
+          "description": "The dialog opens with focus on Cancel, so a hurried <kbd>Enter</kbd> doesn't delete. Pass the menu button as `finalFocus`; after the delete, move focus to the next row.",
           "file": "docs/examples/destructive-actions/ConfirmDelete.tsx"
         },
         {
           "name": "TypeToConfirm",
           "title": "Type to confirm",
-          "description": "Deleting a project with all its documents can't be undone, so the dialog asks for the project's name. The confirm button stays enabled, and a wrong name keeps the dialog open with an error. Focus opens on Cancel; Enter in the field confirms as the button does.",
+          "description": "The confirm button stays enabled: a wrong name keeps the dialog open, shows the field's error and moves focus to it.",
           "file": "docs/examples/destructive-actions/TypeToConfirm.tsx"
         },
         {
           "name": "BulkDelete",
           "title": "Bulk delete",
-          "description": "The count of the selection is in the button, the question and the confirm button. After the delete, the button has gone with the selection, so focus moves into the list.",
+          "description": "The count is in the button, the question and the confirm button: \"Delete 2 documents…\".",
           "file": "docs/examples/destructive-actions/BulkDelete.tsx"
+        },
+        {
+          "name": "DangerKeptForDelete",
+          "title": "Do: The danger tone only on what deletes or ends something.",
+          "description": "",
+          "file": "docs/examples/destructive-actions/DangerKeptForDelete.tsx"
+        },
+        {
+          "name": "DangerEverywhere",
+          "title": "Don't: Every action in the danger tone: none of them stands out.",
+          "description": "",
+          "file": "docs/examples/destructive-actions/DangerEverywhere.tsx"
         }
       ]
     },
