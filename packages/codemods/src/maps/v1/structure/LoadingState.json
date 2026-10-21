@@ -1,0 +1,16 @@
+{
+  "@envsemble/envui": {
+    "LoadingState": {
+      "report": "LoadingState takes no children in 1.0: it is a spinner with its label.",
+      "cases": [
+        {
+          "children": {
+            "*": {
+              "report": "LoadingState takes no children in 1.0: it is a spinner with its label. Where the shape of what loads is known, render the content itself with skeleton on its surface, over placeholders(count), instead."
+            }
+          }
+        }
+      ]
+    }
+  }
+}

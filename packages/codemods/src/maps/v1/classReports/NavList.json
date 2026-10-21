@@ -1,5 +1,8 @@
 {
   "env-navigation": {
     "report": "NavList is gone in 1.0: Bar, Rail and Drawer render destinations from an array, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current."
+  },
+  "env-nav-list": {
+    "report": "NavList is gone, with NavList.Skeleton: Bar, Rail and Drawer render the destinations, as env-bar-item, env-rail-item and env-drawer-item, the current one with data-current; a form with skeleton is its own skeleton."
   }
 }

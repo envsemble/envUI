@@ -10,6 +10,8 @@ const dialog = map.structure['@envsemble/envui'].Dialog;
 const card = map.structure['@envsemble/envui'].Card;
 const listDetail = map.structure['@envsemble/envui']['ListDetail.Root'];
 const actionCard = map.structure['@envsemble/envui'].ActionCard;
+const drawer = map.structure['@envsemble/envui'].Drawer;
+const loadingState = map.structure['@envsemble/envui'].LoadingState;
 
 /** The fixtures that run with a map of the tests' own, for rules the v1 map has no entry for. */
 const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
@@ -17,6 +19,11 @@ const maps = { 'wrap.tsx': join(packageDirectory, 'test/maps/structure.json') };
 /** What each fixture reports, in line order; a fixture that is not listed reports nothing. */
 const reports = {
   'list-contrast.tsx': [`line 6: List.Root: ${listRoot.report}`],
+  // Reported and left as they are: the prerelease's Drawer and a LoadingState's child.
+  'prerelease.tsx': [
+    `line 9: Drawer: ${drawer.cases[0].report}`,
+    `line 15: LoadingState: ${loadingState.cases[0].children['*'].report}`,
+  ],
   'dialog-drawer.tsx': [`line 11: Dialog: ${dialog.report}`],
   'list-detail.tsx': [
     `line 6: ListDetail.Root: its spread props may set what decides its 1.0 form, so it stays. ${listDetail.report}`,
@@ -43,7 +50,7 @@ for (const fixture of fixtures('v1-structure')) {
     const result = runTransform(v1Structure, fixture.path, fixture.input, options);
     assert.equal(result.output, fixture.output);
     assert.deepEqual(result.reports, reports[fixture.name] ?? []);
-    // A second run changes nothing more, and reports only the elements it could not rewrite.
+    // A second run changes nothing more, and reports again what it could not rewrite or only reports.
     const again = runTransform(v1Structure, fixture.path, result.output, options);
     assert.equal(again.output, result.output);
     assert.deepEqual(
@@ -54,7 +61,9 @@ for (const fixture of fixtures('v1-structure')) {
           report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
           report.endsWith(card.report) ||
-          report.endsWith(listDetail.report),
+          report.endsWith(listDetail.report) ||
+          report.endsWith(drawer.cases[0].report) ||
+          report.endsWith(loadingState.cases[0].children['*'].report),
       ),
     );
   });

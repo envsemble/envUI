@@ -1334,11 +1334,19 @@
       "kind": "removed",
       "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
     },
+    "--env-app-shell-header-divider": {
+      "kind": "removed",
+      "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+    },
     "--env-app-shell-header-height": {
       "kind": "renamed",
       "token": "top-bar.height",
       "cssVariable": "--env-top-bar-height",
       "note": "AppShell is gone; TopBar's height."
+    },
+    "--env-app-shell-loading-bar-offset": {
+      "kind": "removed",
+      "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
     },
     "--env-app-sticky-top": {
       "kind": "removed",
@@ -1351,6 +1359,22 @@
     "--env-app-topbar-block-size": {
       "kind": "removed",
       "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+    },
+    "--env-breakpoint-lg": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-md": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-sm": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+    },
+    "--env-breakpoint-xl": {
+      "kind": "removed",
+      "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
     },
     "--env-frame-header-block-size": {
       "kind": "removed",
@@ -1380,6 +1404,10 @@
       "kind": "removed",
       "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
     },
+    "--env-split-pane-handle": {
+      "kind": "removed",
+      "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+    },
     "--env-split-pane-size": {
       "kind": "removed",
       "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
@@ -1401,6 +1429,24 @@
       "token": "top-bar.height",
       "cssVariable": "--env-top-bar-height",
       "note": "TopBar's height."
+    },
+    "--env-window-frame-title-bar-end": {
+      "kind": "renamed",
+      "cssVariable": "--env-top-bar-title-bar-end",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+    },
+    "--env-window-frame-title-bar-left": {
+      "kind": "removed",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-right": {
+      "kind": "removed",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+    },
+    "--env-window-frame-title-bar-start": {
+      "kind": "renamed",
+      "cssVariable": "--env-top-bar-title-bar-start",
+      "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
     },
     "--field-floating-height": { "kind": "prefixed", "cssVariable": "--env-field-floating-height" },
     "--font-family": { "kind": "prefixed", "cssVariable": "--env-font-family" },

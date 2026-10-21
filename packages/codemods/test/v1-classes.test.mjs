@@ -73,10 +73,13 @@ test('renameClass leaves names that already continue the new name', () => {
 
 test('v1-classes renames every class entry in style sheets and class names', () => {
   for (const [from, to] of entries) {
-    const css = `.${from}, .${from}-part, [class~='${from}'] { --${from}-part: var(--${from}); }\n`;
+    // A custom property of the class's name that the tokens section lists, such as the prerelease's
+    // --env-split-pane-handle, takes the token entry's rename or report instead.
+    const token = Object.hasOwn(map.tokens, `--${from}`);
+    const css = `.${from}, .${from}-part, [class~='${from}'] { --${from}-part: var(--${token ? 'env-space-1' : from}); }\n`;
     assert.equal(
       runTransform(v1Classes, 'styles.css', css).output,
-      `.${to}, .${to}-part, [class~='${to}'] { --${to}-part: var(--${to}); }\n`,
+      `.${to}, .${to}-part, [class~='${to}'] { --${to}-part: var(--${token ? 'env-space-1' : to}); }\n`,
       from,
     );
     const tsx = `export const element = <div className="${from} ${from}-part" />;\n`;

@@ -1,0 +1,46 @@
+/* Part classes of 1.0.0-prerelease.0 that 1.0 renames, or has none for. */
+.env-top-bar > .env-top-bar-title {
+  font-weight: var(--env-font-weight-strong);
+}
+.env-top-bar-start,
+.env-top-bar-actions {
+  gap: var(--env-space-2);
+}
+.env-scaffold-body .env-scaffold-skip-links .env-scaffold-skip-link {
+  color: var(--env-color-fg-link);
+}
+.env-top-bar-loading-bar {
+  block-size: 2px;
+}
+.env-app-shell[data-mobile] {
+  block-size: 100dvh;
+}
+.env-sidebar[data-state='collapsed'] .env-sidebar-trigger {
+  color: var(--env-color-fg-muted);
+}
+.env-nav-list-item[data-selected] {
+  font-weight: var(--env-font-weight-strong);
+}
+.env-panes[data-stacked] .env-panes-divider {
+  display: none;
+}
+.env-panes[data-detail-shown] .env-panes-back,
+.env-panes-list,
+.env-panes-detail {
+  padding: var(--env-space-2);
+}
+.env-top-bar .env-top-bar-title {
+  padding-inline-start: var(--env-top-bar-title-bar-start);
+}
+.env-scaffold-body {
+  overscroll-behavior: contain;
+}
+.env-account-menu-trigger,
+.env-drawer-popup[data-side='end'],
+.env-table-stack-probe {
+  outline: 1px solid var(--env-color-border-default);
+}
+.x {
+  max-inline-size: var(--env-breakpoint-md);
+  border-block-end: var(--env-app-shell-header-divider);
+}

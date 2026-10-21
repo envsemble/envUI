@@ -61,13 +61,13 @@
       "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
     },
     "SplitView": {
-      "use": "SplitView is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+      "use": "SplitView is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's split panes section shows."
     },
     "SplitViewProps": {
       "use": "Panes.RootProps; SplitView is gone, and Panes.Root takes behavior, splitAt and sizes in rem."
     },
     "SplitPane": {
-      "use": "SplitPane is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's panes section shows."
+      "use": "SplitPane is gone: two panes side by side are Panes.Root with behavior=\"supporting\", Panes.Main, an optional Panes.Divider and Panes.Supporting, as the migration guide's split panes section shows."
     },
     "ListDetail": {
       "use": "ListDetail is Panes with behavior=\"list-detail\": v1-structure rewrites its elements."
@@ -86,6 +86,12 @@
     },
     "AccountMenu": {
       "use": "AccountMenu is gone: build the account menu from Menu.Root with an AvatarButton trigger, a Menu.Header with the Avatar and the name, and a Menu.Submenu around a ThemeRadioGroup, as the account menu pattern shows."
+    },
+    "AppShellContextValue": {
+      "use": "AppShell is gone, with its context: a Scaffold keeps no state, and bodyRef is the element that scrolls the body with scroll=\"body\"."
+    },
+    "SidebarApi": {
+      "use": "Sidebar is gone: a Scaffold keeps no state, since its navigation forms never collapse."
     }
   }
 }

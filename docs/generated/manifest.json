@@ -15420,22 +15420,22 @@
       "related": [
         "index",
         "setup",
-        "scale",
-        "bar",
-        "rail",
-        "drawer",
-        "panes",
-        "column",
-        "row",
-        "grid",
-        "box",
         "loading",
-        "spinner",
         "app-frame",
         "scaffold",
         "top-bar",
         "account-menu",
+        "bar",
+        "rail",
+        "drawer",
         "window-frame",
+        "column",
+        "row",
+        "grid",
+        "box",
+        "panes",
+        "scale",
+        "spinner",
         "colors"
       ]
     },
@@ -29378,10 +29378,20 @@
         "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
       },
       {
+        "cssVariable": "--env-app-shell-header-divider",
+        "removed": true,
+        "note": "AppShell is gone: a TopBar draws no divider of its own; give it a border with your own class."
+      },
+      {
         "cssVariable": "--env-app-shell-header-height",
         "use": "--env-top-bar-height",
         "type": "dimension",
         "note": "AppShell is gone; TopBar's height."
+      },
+      {
+        "cssVariable": "--env-app-shell-loading-bar-offset",
+        "removed": true,
+        "note": "AppShell is gone: TopBar's loading bar runs along its bottom edge."
       },
       {
         "cssVariable": "--env-app-sticky-top",
@@ -29397,6 +29407,26 @@
         "cssVariable": "--env-app-topbar-block-size",
         "removed": true,
         "note": "TopBar is --env-top-bar-height tall; the Scaffold measures its top bar region and sets --env-scaffold-sticky-top from it."
+      },
+      {
+        "cssVariable": "--env-breakpoint-lg",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-md",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-sm",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
+      },
+      {
+        "cssVariable": "--env-breakpoint-xl",
+        "removed": true,
+        "note": "The viewport breakpoints are gone: envUI responds to containers at window classes, compact below 37.5 rem, medium from 37.5, expanded from 52.5 and large from 75 rem, as @container env-window (width >= 37.5rem); --env-window-class-medium, -expanded and -large hold the thresholds."
       },
       {
         "cssVariable": "--env-frame-header-block-size",
@@ -29434,6 +29464,11 @@
         "note": "AppShell and Sidebar are gone: the navigation forms, Bar, Rail and Drawer, size themselves; side content goes in a Panes supporting pane."
       },
       {
+        "cssVariable": "--env-split-pane-handle",
+        "removed": true,
+        "note": "SplitPane is gone: Panes.Divider, env-panes-divider, is the divider that resizes the panes."
+      },
+      {
         "cssVariable": "--env-split-pane-size",
         "removed": true,
         "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."
@@ -29458,6 +29493,26 @@
         "use": "--env-top-bar-height",
         "type": "dimension",
         "note": "TopBar's height."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-end",
+        "use": "--env-top-bar-title-bar-end",
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-left",
+        "removed": true,
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-right",
+        "removed": true,
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls through --env-top-bar-title-bar-start and -end."
+      },
+      {
+        "cssVariable": "--env-window-frame-title-bar-start",
+        "use": "--env-top-bar-title-bar-start",
+        "note": "WindowFrame is gone: a TopBar with titleBar keeps clear of the window's controls at the start."
       },
       {
         "cssVariable": "--field-floating-height",

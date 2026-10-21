@@ -1,0 +1,13 @@
+/* Part classes of 1.0.0-prerelease.0, run through every transform in order. */
+.env-app-shell-header { color: red; }
+.env-sidebar-content { color: red; }
+.env-nav-list-item[data-selected] { color: red; }
+.env-split-pane-handle { color: red; }
+.env-list-detail-back { color: red; }
+.env-window-frame-title-bar { color: red; }
+.env-account-menu-trigger { color: red; }
+.env-drawer-popup { color: red; }
+.env-table-stack-probe { color: red; }
+.env-stack[data-direction='row'] { color: red; }
+.env-skeleton { color: red; }
+.x { inline-size: var(--env-breakpoint-md); top: var(--env-frame-sticky-top); }
