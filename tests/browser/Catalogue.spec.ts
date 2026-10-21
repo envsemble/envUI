@@ -202,6 +202,8 @@ test('a component page shows plain sections, equal cells and the parts of its an
 });
 
 test('every anatomy figure numbers each part its legend names', async ({ page }) => {
+  // It visits every page on the figure template, a number that grows as pages are converted.
+  test.setTimeout(90_000);
   // A legend part the example doesn't render would leave its number off the figure.
   const pages = references
     .filter((reference) => reference.format === 'figures')
@@ -230,6 +232,8 @@ test('every anatomy figure numbers each part its legend names', async ({ page })
 });
 
 test('every dotted stage is the only frame of its figure', async ({ page }) => {
+  // It visits every page on the figure template, a number that grows as pages are converted.
+  test.setTimeout(90_000);
   // One frame per figure: no stage sits inside another framed or filled box in the article, such
   // as a specimen wrapped in a Surface or a stage inside another stage. A do or don't figure's own
   // frame, which holds its stage and its verdict bar, is the figure's one frame.

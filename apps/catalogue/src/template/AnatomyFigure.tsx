@@ -3,6 +3,7 @@ import { Theme, useTheme } from '@envsemble/envui';
 import type { AnatomyLegendItem } from '../DocumentationTypes';
 import { Documentation } from '../pages/Documentation';
 import { ExampleCode, ExampleRender } from './LiveExample';
+import { OpenExample, openerBox } from './OpenExample';
 import { legendOf, partDescription, partSelector } from './Parts';
 
 /** A callout's number, where it sits and the part it points at, in the stage's coordinates. */
@@ -67,7 +68,9 @@ function spread(positions: number[], min: number, max: number) {
 
 /**
  * Places a numbered callout on each part found in the subject: on the side of the component the
- * part is nearest to, the root at the start, with a line to the part and its box outlined.
+ * part is nearest to, the root at the start, with a line to the part and its box outlined. In a
+ * figure of an open popup, the callouts keep clear of what opens it, such as a select's field: no
+ * callout sits over it, or reaches a part across it.
  */
 function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegendItem[]) {
   const origin = stage.getBoundingClientRect();
@@ -91,6 +94,32 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
     right: Math.max(...found.map(({ box }) => box.right)),
     bottom: Math.max(...found.map(({ box }) => box.bottom)),
   };
+  const opener = openerBox(subject);
+  const avoid: Box | undefined = opener && {
+    left: opener.left - origin.left,
+    top: opener.top - origin.top,
+    right: opener.right - origin.left,
+    bottom: opener.bottom - origin.top,
+  };
+  // The callouts sit outside the parts and what opens them.
+  const reachOuter: Box = avoid
+    ? {
+        left: Math.min(outer.left, avoid.left),
+        top: Math.min(outer.top, avoid.top),
+        right: Math.max(outer.right, avoid.right),
+        bottom: Math.max(outer.bottom, avoid.bottom),
+      }
+    : outer;
+  /** Whether what opens the popup lies between a part and a side. */
+  const blocked = (side: Side, box: Box) => {
+    if (!avoid) return false;
+    const across = avoid.left < box.right && avoid.right > box.left;
+    const along = avoid.top < box.bottom && avoid.bottom > box.top;
+    if (side === 'top') return across && avoid.bottom <= box.top + 1;
+    if (side === 'bottom') return across && avoid.top >= box.bottom - 1;
+    if (side === 'left') return along && avoid.right <= box.left + 1;
+    return along && avoid.left >= box.right - 1;
+  };
   const placed = found.map(({ number, box }) => {
     const root =
       box.left - outer.left < 1 &&
@@ -98,12 +127,16 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
       outer.right - box.right < 1 &&
       outer.bottom - box.bottom < 1;
     // The nearest side, with the sides above and below preferred by a few pixels.
-    const distances: [Side, number][] = [
-      ['top', box.top - outer.top],
-      ['bottom', outer.bottom - box.bottom],
-      ['left', box.left - outer.left + 6],
-      ['right', outer.right - box.right + 6],
-    ];
+    const distances = (
+      [
+        ['top', box.top - reachOuter.top],
+        ['bottom', reachOuter.bottom - box.bottom],
+        ['left', box.left - reachOuter.left + 6],
+        ['right', reachOuter.right - box.right + 6],
+      ] as [Side, number][]
+    ).filter(
+      ([side], _, all) => !blocked(side, box) || all.every(([other]) => blocked(other, box)),
+    );
     const side: Side = root
       ? rtl
         ? 'right'
@@ -129,12 +162,12 @@ function measure(stage: HTMLElement, subject: HTMLElement, legend: AnatomyLegend
         Math.min(Math.max(value, low + 2), Math.max(high - 2, low + 2));
       const badge =
         side === 'top'
-          ? { x: at, y: outer.top - reach }
+          ? { x: at, y: reachOuter.top - reach }
           : side === 'bottom'
-            ? { x: at, y: outer.bottom + reach }
+            ? { x: at, y: reachOuter.bottom + reach }
             : side === 'left'
-              ? { x: outer.left - reach, y: at }
-              : { x: outer.right + reach, y: at };
+              ? { x: reachOuter.left - reach, y: at }
+              : { x: reachOuter.right + reach, y: at };
       const anchor =
         side === 'top'
           ? { x: clamp(at, box.left, box.right), y: box.top }
@@ -186,10 +219,12 @@ function AnatomyStage({
   page,
   name,
   legend,
+  open,
 }: {
   page: string;
   name: string;
   legend: AnatomyLegendItem[];
+  open: boolean;
 }) {
   const theme = useTheme();
   const stage = useRef<HTMLDivElement>(null);
@@ -204,7 +239,8 @@ function AnatomyStage({
       cancelAnimationFrame(frame);
       // Only a change of place re-renders the callouts.
       frame = requestAnimationFrame(() => {
-        enlarge(subjectElement);
+        // Open overlays take the room they need; they are never small.
+        if (!open) enlarge(subjectElement);
         const next = measure(stageElement, subjectElement, legend);
         setCallouts((current) =>
           JSON.stringify(current) === JSON.stringify(next) ? current : next,
@@ -228,12 +264,18 @@ function AnatomyStage({
       resize.disconnect();
       mutation.disconnect();
     };
-  }, [legend]);
+  }, [legend, open]);
   return (
     <Theme {...theme} ref={stage} className="docs-anatomy-stage" data-example={name}>
       {/* A picture of the parts: the live component neither takes focus nor changes under it. */}
       <div ref={subject} className="docs-anatomy-subject" inert>
-        <ExampleRender page={page} name={name} />
+        {open ? (
+          <OpenExample name={name}>
+            <ExampleRender page={page} name={name} />
+          </OpenExample>
+        ) : (
+          <ExampleRender page={page} name={name} />
+        )}
       </div>
       <svg className="docs-anatomy-lines" aria-hidden="true">
         {callouts.map(({ number, badge, anchor, box }) => (
@@ -285,6 +327,7 @@ export function AnatomyFigure({
   caption,
   legend,
   of,
+  open = false,
 }: {
   page: string;
   name: string;
@@ -292,11 +335,13 @@ export function AnatomyFigure({
   caption?: string;
   legend?: AnatomyLegendItem[];
   of?: string;
+  /** Whether the example's overlays are shown open, their parts numbered too. */
+  open?: boolean;
 }) {
   const [items] = useState(() => (legend?.length ? legend : legendOf(of ?? '')));
   return (
     <figure className="docs-anatomy" aria-label={title}>
-      <AnatomyStage page={page} name={name} legend={items} />
+      <AnatomyStage page={page} name={name} legend={items} open={open} />
       <figcaption className="docs-anatomy-caption">
         {caption && <p className="docs-figure-caption">{caption}</p>}
         {items.length > 0 && (

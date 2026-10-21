@@ -7,6 +7,7 @@ import { Documentation } from '../pages/Documentation';
 import type { Documentation as Document } from '../Reference';
 import { AnatomyFigure } from './AnatomyFigure';
 import { CodeSlot, ExampleCode, ExampleRender, keepLinksInPlace, LiveExample } from './LiveExample';
+import { OpenExample } from './OpenExample';
 import { Specimen } from './Specimen';
 
 type ExampleBlock = Extract<DocumentationBlock, { kind: 'example' }>;
@@ -20,11 +21,14 @@ export function VerdictFigure({
   name,
   verdict,
   caption,
+  open = false,
 }: {
   page: string;
   name: string;
   verdict: 'do' | 'dont';
   caption: string;
+  /** Whether the example's overlays are shown open, as a picture. */
+  open?: boolean;
 }) {
   const theme = useTheme();
   const label = verdict === 'do' ? 'Do' : 'Don’t';
@@ -44,7 +48,13 @@ export function VerdictFigure({
           data-example={name}
           {...keepLinksInPlace}
         >
-          <ExampleRender page={page} name={name} />
+          {open ? (
+            <OpenExample name={name}>
+              <ExampleRender page={page} name={name} />
+            </OpenExample>
+          ) : (
+            <ExampleRender page={page} name={name} />
+          )}
         </Column>
         <div className="docs-verdict-bar" id={`${id}-verdict`}>
           {verdict === 'do' ? <Check /> : <Close />}
@@ -68,6 +78,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         name={block.name}
         verdict={block.role}
         caption={block.caption ?? ''}
+        open={block.open}
       />
     );
   if (block.role === 'anatomy')
@@ -79,6 +90,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
         caption={block.caption}
         legend={block.legend}
         of={block.of ?? page.title}
+        open={block.open}
       />
     );
   return (
@@ -88,6 +100,7 @@ function Figure({ page, block }: { page: Document; block: ExampleBlock }) {
       title={block.heading}
       caption={block.caption}
       widths={block.widths}
+      open={block.open}
     />
   );
 }
