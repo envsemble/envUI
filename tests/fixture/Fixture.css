@@ -358,7 +358,7 @@ body:has(.density-fixture) {
   inline-size: 15rem;
   outline: 0.0625rem dashed var(--env-color-border-muted);
 }
-.density-sidebar {
+.density-drawer {
   inline-size: 13.75rem;
   min-inline-size: 0;
 }

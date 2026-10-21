@@ -12132,7 +12132,7 @@
         {
           "name": "SwitchOrganization",
           "title": "Organization switcher",
-          "description": "The shared switcher fits the context area of the application shell's sidebar. The active organization is checked, each one shows the person's role, and the create action ends the menu.",
+          "description": "The shared switcher fits a navigation Drawer's `header`. The active organization is checked, each one shows the person's role, and the create action ends the menu.",
           "file": "docs/examples/menu/SwitchOrganization.tsx"
         },
         {

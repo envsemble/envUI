@@ -72,7 +72,7 @@ function linkBelow(from, installed, depth = 4) {
 }
 
 /**
- * An alias written as code, such as `ToastProvider`, `MenuItem` or `Sidebar.Item`: an agent would
+ * An alias written as code, such as `ToastProvider`, `MenuItem` or `Pager.Next`: an agent would
  * import it. Plain words and acronyms, such as "toast" or "CTA", are not.
  */
 const codeLike = (alias) =>

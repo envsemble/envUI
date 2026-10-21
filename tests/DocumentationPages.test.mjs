@@ -210,7 +210,7 @@ test('every specimen file is placed by its page', () => {
     );
 });
 
-/** The names a source imports from envUI's entries, icons apart: `import { Button, Stack } …`. */
+/** The names a source imports from envUI's entries, icons apart: `import { Button, Row } …`. */
 function envuiImports(source) {
   const file = ts.createSourceFile('Example.tsx', source, ts.ScriptTarget.Latest, true);
   const names = [];
@@ -230,14 +230,14 @@ test('the import reader finds the runtime names a source takes from envUI', () =
   assert.deepEqual(
     envuiImports(
       [
-        "import { Button, type ButtonProps, Stack as Column } from '@envsemble/envui';",
+        "import { Button, type ButtonProps, Row as Line } from '@envsemble/envui';",
         "import type { Theme } from '@envsemble/envui';",
         "import { CodeBlock } from '@envsemble/envui/content';",
         "import { Close } from '@envsemble/envui/icons/Close';",
         "import { useState } from 'react';",
       ].join('\n'),
     ),
-    ['Button', 'Stack', 'CodeBlock'],
+    ['Button', 'Row', 'CodeBlock'],
   );
 });
 

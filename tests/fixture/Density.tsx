@@ -409,15 +409,15 @@ const destinations: Destination[] = [
   { label: 'Settings', icon: <Settings />, href: '#settings' },
 ];
 
-function Sidebar({ label }: { label: string }) {
-  return <Drawer className="density-sidebar" aria-label={label} destinations={destinations} />;
+function NavigationDrawer({ label }: { label: string }) {
+  return <Drawer className="density-drawer" aria-label={label} destinations={destinations} />;
 }
 
 function NavigationSection() {
   return (
     <div className="density-columns">
       <Column title="Drawer, Rail and Breadcrumbs">
-        <Sidebar label="Navigation" />
+        <NavigationDrawer label="Navigation" />
         <Rail aria-label="Rail navigation" destinations={destinations} />
         <Breadcrumbs
           aria-label="Location"
@@ -457,7 +457,7 @@ function DesktopSection() {
       </div>
       <div className="density-app-body">
         <aside className="density-app-side">
-          <Sidebar label="Sections" />
+          <NavigationDrawer label="Sections" />
           <FileTree label="Files" />
         </aside>
         <div className="density-app-main">

@@ -248,7 +248,7 @@ ContextMenu offers actions for the row under the pointer, or for the focused row
 
 ### Organization switcher
 
-The shared switcher fits the context area of the application shell's sidebar. The active organization is checked, each one shows the person's role, and the create action ends the menu.
+The shared switcher fits a navigation Drawer's `header`. The active organization is checked, each one shows the person's role, and the create action ends the menu.
 
 ```tsx example=SwitchOrganization
 
