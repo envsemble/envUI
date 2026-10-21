@@ -49,15 +49,15 @@
       "raised": {
         "$root": {
           "$description": "A raised surface: Surface background=\"raised\", dialogs, rows on a contrasting surface, outlined buttons.",
-          "$value": "{palette.neutral.2}"
+          "$value": "{palette.neutral.0}"
         },
         "hover": {
           "$description": "An interactive raised surface under the pointer.",
-          "$value": "{palette.neutral.10}"
+          "$value": "{palette.neutral.6}"
         },
         "pressed": {
           "$description": "An interactive raised surface while pressed.",
-          "$value": "{palette.neutral.13}"
+          "$value": "{palette.neutral.10}"
         }
       },
       "popup": {

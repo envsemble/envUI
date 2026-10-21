@@ -781,7 +781,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised',
     type: 'color',
     values: {
-      light: '#f6f8fc',
+      light: '#ffffff',
       dark: '#28292b',
       'light-high-contrast': '#ffffff',
       'dark-high-contrast': '#28292b',
@@ -792,7 +792,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-hover',
     type: 'color',
     values: {
-      light: '#dbdde1',
+      light: '#e8eaee',
       dark: '#383a3d',
       'light-high-contrast': '#eff1f5',
       'dark-high-contrast': '#303234',
@@ -803,7 +803,7 @@ export const tokens = {
     cssVariable: '--env-color-bg-raised-pressed',
     type: 'color',
     values: {
-      light: '#d2d4d8',
+      light: '#dbdde1',
       dark: '#424447',
       'light-high-contrast': '#e2e4e8',
       'dark-high-contrast': '#383a3d',

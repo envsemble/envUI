@@ -74,9 +74,9 @@
   --env-color-bg-popup: #ffffff;
   --env-color-bg-popup-hover: #eff1f5;
   --env-color-bg-popup-pressed: #e2e4e8;
-  --env-color-bg-raised: #f6f8fc;
-  --env-color-bg-raised-hover: #dbdde1;
-  --env-color-bg-raised-pressed: #d2d4d8;
+  --env-color-bg-raised: #ffffff;
+  --env-color-bg-raised-hover: #e8eaee;
+  --env-color-bg-raised-pressed: #dbdde1;
   --env-color-bg-selected: #d2e1fc;
   --env-color-bg-selected-hover: #bfd5fb;
   --env-color-bg-selected-pressed: #c3d8fc;
