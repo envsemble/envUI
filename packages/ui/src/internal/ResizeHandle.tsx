@@ -6,7 +6,7 @@ import { useResize, type ResizeOptions } from './useResize.js';
 
 export type ResizeHandleProps = ResizeOptions &
   Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'children'> & {
-    /** The handle's name, such as Resize sidebar. */
+    /** The handle's name, such as Resize panes. */
     label: string;
   };
 
@@ -14,8 +14,8 @@ export type ResizeHandleProps = ResizeOptions &
  * A window splitter's handle on useResize: a focusable separator, named by its label, that shows a
  * line on hover, keyboard focus and while dragging. The owner places it on the edge it moves.
  *
- *   <ResizeHandle axis="inline" label="Resize sidebar" value={width} min={200} max={480}
- *     onChange={(next) => setWidth(next)} className="env-app-sidebar-resize" />
+ *   <ResizeHandle axis="inline" label="Resize panes" value={width} min={16} max={40} unit="rem"
+ *     onChange={(next) => setWidth(next)} className="env-panes-divider" />
  */
 export function ResizeHandle({
   axis,

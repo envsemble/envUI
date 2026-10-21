@@ -28,18 +28,6 @@ export interface TokenDefinition {
 
 /** Every token, by its DTCG path. */
 export const tokens = {
-  /** The app frame's header bar, a single row that holds controls of the control height with space around them; sticky content and the sidebar headers line up with it. */
-  'app-shell.header-height': {
-    cssVariable: '--env-app-shell-header-height',
-    type: 'dimension',
-    values: {
-      light: '3.25rem',
-      dark: '3.25rem',
-      'light-high-contrast': '3.25rem',
-      'dark-high-contrast': '3.25rem',
-    },
-    scales: { compact: '2.625rem' },
-  },
   'body.font-weight': {
     cssVariable: '--env-body-font-weight',
     type: 'fontWeight',
@@ -2283,6 +2271,18 @@ export const tokens = {
       'dark-high-contrast': '2.5rem',
     },
     scales: { compact: '2rem' },
+  },
+  /** TopBar's height: a single row that holds controls of the control height with space around them. */
+  'top-bar.height': {
+    cssVariable: '--env-top-bar-height',
+    type: 'dimension',
+    values: {
+      light: '3.25rem',
+      dark: '3.25rem',
+      'light-high-contrast': '3.25rem',
+      'dark-high-contrast': '3.25rem',
+    },
+    scales: { compact: '2.625rem' },
   },
   /** A tree row's block padding at density lg: the row density's in the comfortable scale. */
   'tree.row-padding-block-lg': {

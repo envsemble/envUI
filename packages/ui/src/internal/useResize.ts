@@ -25,8 +25,8 @@ export interface ResizeOptions {
   step?: number;
   /** How far Page Up and Page Down, and an arrow key with Shift, move it; ten steps by default. */
   largeStep?: number;
-  /** The size's unit: px, or % of the handle's parent element. */
-  unit?: 'px' | '%';
+  /** The size's unit: px, % of the handle's parent element, or rem, of the root's font size. */
+  unit?: 'px' | '%' | 'rem';
   /**
    * Whether the size grows toward the start of the axis: a panel docked at the bottom grows up as
    * its top edge moves up, and a pane at the inline end grows as its start edge moves toward the
@@ -131,7 +131,12 @@ export function useResize({
     const drawn = box ? (axis === 'inline' ? box.width : box.height) : 0;
     const laid = parent ? (axis === 'inline' ? parent.offsetWidth : parent.offsetHeight) : 0;
     const layoutPerScreen = drawn > 0 && laid > 0 ? laid / drawn : 1;
-    const perPixel = (unit === '%' ? (extent > 0 ? 100 / extent : 0) : 1) * layoutPerScreen;
+    // A rem follows the root's font size, read as the drag starts.
+    const remPixels = () =>
+      Number.parseFloat(getComputedStyle(event.currentTarget.ownerDocument.documentElement).fontSize) ||
+      16;
+    const perUnit = unit === '%' ? (extent > 0 ? 100 / extent : 0) : unit === 'rem' ? 1 / remPixels() : 1;
+    const perPixel = perUnit * layoutPerScreen;
     drag.current = {
       pointerId: event.pointerId,
       start: position(event),

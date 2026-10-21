@@ -1,21 +1,17 @@
 /* PageHeader: a page's title row, with an optional trail above it, a description under it, actions
    at its end and a toolbar row below. It responds to its own width at the window classes, compact
    first: in a compact header the actions wrap under the title, and from a medium one, 37.5 rem,
-   they sit at the end of the title row. */
+   they sit at the end of the title row. Row and Column lay its parts out. */
 .env-page-header {
   container: env-page-header / inline-size;
-  display: flex;
-  flex-direction: column;
-  gap: var(--env-space-3);
-  min-inline-size: 0;
 }
-/* A sticky header stays at the top of the page, under the frame's header, over the content that
-   scrolls under it, across the page's gutters. */
+/* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
+   across the page's gutters. */
 .env-page-header[data-sticky] {
   /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
   --env-page-header-inset: var(--env-page-gutter, 0rem);
   position: sticky;
-  inset-block-start: var(--env-frame-sticky-top, 0);
+  inset-block-start: 0;
   z-index: calc(var(--env-z-sticky) - 1);
   margin-block-start: calc(-1 * var(--env-space-4));
   margin-inline: calc(-1 * var(--env-page-header-inset));
@@ -24,55 +20,22 @@
   border-block-end: var(--env-control-border-width) solid var(--env-color-border-muted);
   background: var(--env-color-bg-page);
 }
-.env-page-header-breadcrumbs {
-  min-inline-size: 0;
-}
-.env-page-header-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--env-space-4);
-}
 .env-page-header-start {
-  display: flex;
   flex: none;
-  align-items: center;
 }
 .env-page-header-heading {
-  display: flex;
   flex: 1 1 auto;
-  flex-direction: column;
-  gap: var(--env-space-1);
-  min-inline-size: 0;
 }
 .env-page-header-title-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   gap: var(--env-space-1) var(--env-space-3);
-  min-inline-size: 0;
 }
 /* The title wraps, balanced across its lines, and is never cut short. */
 .env-page-header-title {
   text-wrap: balance;
 }
-.env-page-header-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--env-space-2);
-}
+/* In a compact header the actions take a row of their own under the title. */
 .env-page-header-actions {
-  display: flex;
   flex: 1 1 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--env-space-2);
-  max-inline-size: 100%;
-}
-.env-page-header-toolbar {
-  min-inline-size: 0;
 }
 @container env-page-header (width >= 37.5rem) {
   .env-page-header-row {

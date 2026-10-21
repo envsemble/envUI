@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import {
   Button,
   DialogClose,
-  Drawer,
+  Sheet,
   Link,
   Column,
   Row,
@@ -12,25 +12,25 @@ import {
 } from '@envsemble/envui';
 
 /**
- * Drawers at both edges, named by a title or by aria-label, one whose first element is a field, and
- * one in right-to-left text.
+ * Side sheets at both edges, named by a title or by aria-label, one whose first element is a field,
+ * one in right-to-left text, and a bottom sheet.
  */
-export function DrawersFixture() {
+export function SheetsFixture() {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<DialogOpenChangeReason | ''>('');
   const main = useRef<HTMLElement>(null);
   return (
     <Column gap={4} className="fixture-section">
       <Row wrap gap={3}>
-        <Drawer
+        <Sheet
           title="Filters"
           description="Narrow the list."
           trigger={<Button variant="secondary">Open filters</Button>}
           actions={<DialogClose variant="primary">Apply</DialogClose>}
         >
           <TextField label="Owner" name="owner" />
-        </Drawer>
-        <Drawer
+        </Sheet>
+        <Sheet
           side="start"
           aria-label="Navigation"
           width="min(18rem, 100vw - 2rem)"
@@ -42,11 +42,11 @@ export function DrawersFixture() {
               <Link href="#people">People</Link>
             </Column>
           </nav>
-        </Drawer>
+        </Sheet>
         <Button variant="secondary" onClick={() => setOpen(true)}>
           Open controlled
         </Button>
-        <Drawer
+        <Sheet
           title="Controlled"
           width="lg"
           open={open}
@@ -59,22 +59,29 @@ export function DrawersFixture() {
         >
           <Text>Opened by the application.</Text>
           <Button onClick={() => setOpen(false)}>Done</Button>
-        </Drawer>
-        <Drawer
+        </Sheet>
+        <Sheet
           title="Search"
           closeButton={false}
           trigger={<Button variant="secondary">Open search</Button>}
         >
           <TextField label="Query" name="query" />
-        </Drawer>
+        </Sheet>
       </Row>
+      <Sheet
+        side="bottom"
+        title="Choices"
+        trigger={<Button variant="secondary">Open choices</Button>}
+      >
+        <Text>Choose how to share.</Text>
+      </Sheet>
       <div dir="rtl">
-        <Drawer title="Details" trigger={<Button variant="secondary">Open details rtl</Button>}>
+        <Sheet title="Details" trigger={<Button variant="secondary">Open details rtl</Button>}>
           <Text>In right-to-left text.</Text>
-        </Drawer>
+        </Sheet>
       </div>
-      <main ref={main} tabIndex={-1} data-testid="drawer-main">
-        <output data-testid="drawer-reason">{reason}</output>
+      <main ref={main} tabIndex={-1} data-testid="sheet-main">
+        <output data-testid="sheet-reason">{reason}</output>
       </main>
     </Column>
   );

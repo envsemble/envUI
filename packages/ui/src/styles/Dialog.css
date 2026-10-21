@@ -1,6 +1,6 @@
-/* Dialogs and drawers share one surface (DialogSurface): the popover's look at elevation 3, a
+/* Dialogs and sheets share one surface (DialogSurface): the popover's look at elevation 3, a
    shadow and a hairline edge, plus text and action geometry. Dialog adds its corners, widths,
-   placements and motion; Drawer its edge geometry, in Drawer.css. */
+   placements and motion; Sheet its edge geometry, in Sheet.css. */
 .env-dialog-surface {
   border: 0.0625rem solid var(--env-elevation-3-border);
   box-shadow: var(--env-elevation-3-shadow);

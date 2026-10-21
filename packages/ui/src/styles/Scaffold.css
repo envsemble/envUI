@@ -1,0 +1,149 @@
+/* Scaffold: an application screen's invisible structure. Its root is the env-scaffold container and
+   a grid that never paints: the navigation column at the start, the top bar, the body and the bar
+   row at the bottom. Its regions respond to its width at the window classes, compact first, and
+   show the navigation form data-compact, data-medium, data-expanded or data-large names; a column
+   or a row with nothing in it takes no room. Every edge is logical, so it mirrors in right-to-left
+   text. */
+.env-scaffold {
+  container: env-scaffold / inline-size;
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  /* It fills its container's height, the window's by default; the body scrolls inside it. Give it
+     another block-size with your own class, such as in a preview. */
+  block-size: 100dvh;
+  min-block-size: 0;
+  overflow: hidden;
+  /* The window's left and right safe areas, such as a phone's rounded corners in landscape. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* The skip links: hidden until focused, then over the scaffold's start corner. */
+.env-scaffold-skip-links {
+  position: absolute;
+  inset-block-start: var(--env-space-2);
+  inset-inline-start: var(--env-space-2);
+  z-index: var(--env-z-overlay);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--env-space-2);
+}
+.env-scaffold-skip-link:not(:focus) {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  min-inline-size: 0;
+  min-block-size: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The top bar region: above the body, beside the navigation at the start, or across the whole
+   width with topBarSpan="full". It keeps clear of the top safe area. */
+.env-scaffold-top-bar {
+  grid-row: 1;
+  grid-column: 2;
+  min-inline-size: 0;
+  padding-block-start: env(safe-area-inset-top);
+}
+.env-scaffold[data-top-bar-span='full'] > .env-scaffold-top-bar {
+  grid-column: 1 / -1;
+}
+
+/* The navigation region holds the forms, each in a slot of its own, which the grid places. */
+.env-scaffold-navigation {
+  display: contents;
+}
+.env-scaffold-bar,
+.env-scaffold-rail,
+.env-scaffold-drawer {
+  display: none;
+  min-inline-size: 0;
+  min-block-size: 0;
+  outline: none;
+}
+/* A rail or a drawer runs the full height at the start, or below a top bar across the window, and
+   scrolls on its own. */
+.env-scaffold-rail,
+.env-scaffold-drawer {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  overflow-y: auto;
+  padding-block-start: env(safe-area-inset-top);
+}
+.env-scaffold[data-top-bar-span='full'] > .env-scaffold-navigation > :is(.env-scaffold-rail, .env-scaffold-drawer) {
+  grid-row: 2 / -1;
+  padding-block-start: 0;
+}
+/* The bar runs across the bottom, clear of the bottom safe area. */
+.env-scaffold-bar {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  padding-block-end: env(safe-area-inset-bottom);
+}
+
+/* The body: the page's main content, beside the navigation and below the top bar. It scrolls, with
+   a stable gutter so the layout stays in place as content starts or stops overflowing, and sticky
+   content sticks to its top. It keeps clear of the bottom safe area where no bar is below it. */
+.env-scaffold-body {
+  grid-column: 2;
+  grid-row: 2;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  outline: none;
+  padding-block-end: env(safe-area-inset-bottom);
+}
+.env-scaffold:not(:has(> .env-scaffold-top-bar)) > .env-scaffold-body {
+  grid-row: 1 / 3;
+}
+
+/* Each window class shows the form its attribute names, and the body leaves the bottom safe area to
+   a bar below it. Ranges, so exactly one window class applies at any width. */
+@container env-scaffold (width < 37.5rem) {
+  .env-scaffold[data-compact='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-compact='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-compact='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-compact='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+}
+@container env-scaffold (37.5rem <= width < 52.5rem) {
+  .env-scaffold[data-medium='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-medium='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-medium='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-medium='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+}
+@container env-scaffold (52.5rem <= width < 75rem) {
+  .env-scaffold[data-expanded='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-expanded='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-expanded='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-expanded='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+}
+@container env-scaffold (width >= 75rem) {
+  .env-scaffold[data-large='bar'] > .env-scaffold-navigation > .env-scaffold-bar,
+  .env-scaffold[data-large='rail'] > .env-scaffold-navigation > .env-scaffold-rail,
+  .env-scaffold[data-large='drawer'] > .env-scaffold-navigation > .env-scaffold-drawer {
+    display: block;
+  }
+  .env-scaffold[data-large='bar'] > .env-scaffold-body {
+    padding-block-end: 0;
+  }
+}

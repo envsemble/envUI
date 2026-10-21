@@ -4,7 +4,7 @@ import { createContext, isValidElement } from 'react';
 
 /**
  * Marks the envUI components that take their control as an element `trigger`, which a Tooltip
- * around them moves onto: Menu.Root, Popover, Dialog, Drawer, ConfirmDialog and HoverCard. An
+ * around them moves onto: Menu.Root, Popover, Dialog, Sheet, ConfirmDialog and HoverCard. An
  * explicit marker, so a Tooltip never moves onto the `trigger` prop of another component.
  */
 const triggerOwnerKey = Symbol.for('envui.triggerOwner');

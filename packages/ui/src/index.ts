@@ -4,11 +4,12 @@ export * from './foundations/Text.js';
 export * from './foundations/Surface.js';
 export * from './foundations/windowClasses.js';
 export * from './foundations/useContainerSize.js';
-// PageContext stays internal: a sticky PageHeader publishes its height on its Page through it.
-export { Page, type PageProps, type PageWidth } from './layout/Page.js';
+export * from './layout/Scaffold.js';
+export * as Panes from './layout/Panes.js';
+export type { PanesBehavior, PanesSplitAt } from './layout/Panes.js';
+export * from './layout/Page.js';
 export * from './layout/PageHeader.js';
-export * as SplitPane from './layout/SplitPane.js';
-export * as ListDetail from './layout/ListDetail.js';
+export * from './navigation/TopBar.js';
 export * from './foundations/EnvUIProvider.js';
 export * from './actions/Button.js';
 export * from './actions/CloseButton.js';
@@ -50,7 +51,7 @@ export * from './forms/Slider.js';
 export * from './forms/DropZone.js';
 export * from './feedback/Dialog.js';
 export * from './feedback/ConfirmDialog.js';
-export * from './feedback/Drawer.js';
+export * from './feedback/Sheet.js';
 export * from './feedback/CommandPalette.js';
 export * from './feedback/Alert.js';
 export * from './feedback/Popover.js';
@@ -105,22 +106,6 @@ export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
 export * from './navigation/OrganizationSwitcher.js';
-export * as AccountMenu from './navigation/AccountMenu.js';
-export * as AppShell from './navigation/app-shell/AppShell.js';
-export * from './navigation/app-shell/useAppShell.js';
-export {
-  readAppShellCookie,
-  type AppShellState,
-  type PerSide,
-  type PersistOptions,
-  type SidebarSide,
-  type SidebarSnapshot,
-} from './navigation/app-shell/persistence.js';
-export type { FrameStateProps, SidebarChangeReason } from './navigation/app-shell/FrameStore.js';
-export * as Sidebar from './navigation/sidebar/Sidebar.js';
-export * from './navigation/sidebar/SidebarTrigger.js';
-export * from './navigation/sidebar/useSidebar.js';
-export * as WindowFrame from './navigation/WindowFrame.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
 export * as PanelDock from './navigation/panel-dock/PanelDock.js';

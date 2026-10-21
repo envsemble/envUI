@@ -1,0 +1,128 @@
+/* TopBar: one row at the top bar height that never wraps, on the page's background with a hairline
+   below: start content, the title, which truncates first, and the actions at the end. */
+.env-top-bar {
+  box-sizing: border-box;
+  position: relative;
+  flex-wrap: nowrap;
+  min-block-size: var(--env-top-bar-height);
+  min-inline-size: 0;
+  padding-inline: var(--env-space-4);
+  border-block-end: 0.0625rem solid var(--env-color-border-muted);
+  background: var(--env-color-bg-page);
+  color: var(--env-color-fg-default);
+  white-space: nowrap;
+}
+.env-top-bar-start,
+.env-top-bar-actions {
+  flex: 0 0 auto;
+}
+/* The title takes the room left and truncates first. */
+.env-top-bar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  font: var(--env-type-body);
+  font-weight: var(--env-font-weight-semibold);
+  text-overflow: ellipsis;
+}
+/* A sticky bar stays at the top of the area that scrolls, over the content under it. */
+.env-top-bar[data-sticky] {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--env-z-sticky);
+}
+/* Page progress along the bar's bottom edge, over its hairline. */
+.env-top-bar-loading-bar {
+  inset-block: auto 0;
+}
+
+/* A window title bar, for installed web apps and desktop shells that draw their own title bar while
+   the system draws the window controls over the page (the Window Controls Overlay). The title bar
+   area environment variables describe the part of the window's top edge that the window controls
+   leave free; the bar takes its height, and its hairline below, so the hairline runs under the
+   window controls too, and leaves room on either side. Outside such a window the variables are
+   undefined, and the bar falls back to --env-title-bar-height across the full width. Empty space
+   drags the window, controls inside stay clickable, and they take the small control height. The
+   title is centered in the window while the sides leave room for it. */
+.env-top-bar[data-title-bar] {
+  --env-control-height: var(--env-control-height-sm);
+  /* Inner padding at the inline start and end; the window controls add to the side they occupy. */
+  --env-top-bar-title-bar-start: var(--env-space-3);
+  --env-top-bar-title-bar-end: var(--env-space-3);
+  --env-top-bar-title-bar-left: var(--env-top-bar-title-bar-start);
+  --env-top-bar-title-bar-right: var(--env-top-bar-title-bar-end);
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+  column-gap: var(--env-space-3);
+  min-block-size: 0;
+  /* The window reports a smaller height once the page is zoomed in; the small controls still fit. */
+  block-size: max(calc(env(titlebar-area-height, 0px) + 0.0625rem), var(--env-title-bar-height));
+  padding-left: calc(env(titlebar-area-x, 0px) + var(--env-top-bar-title-bar-left));
+  padding-right: calc(
+    100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) +
+      var(--env-top-bar-title-bar-right)
+  );
+  font: var(--env-type-body-small);
+  -webkit-app-region: drag;
+  app-region: drag;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.env-top-bar[data-title-bar]:dir(rtl) {
+  --env-top-bar-title-bar-left: var(--env-top-bar-title-bar-end);
+  --env-top-bar-title-bar-right: var(--env-top-bar-title-bar-start);
+}
+/* The three sections keep their grid columns whichever the bar holds. */
+.env-top-bar[data-title-bar] > .env-top-bar-start {
+  grid-column: 1;
+}
+.env-top-bar[data-title-bar] > .env-top-bar-title {
+  grid-column: 2;
+  font: inherit;
+  text-align: center;
+}
+.env-top-bar[data-title-bar] > .env-top-bar-actions {
+  grid-column: 3;
+  justify-content: end;
+}
+/* Controls, and the box around a text field's input, whose label and padding take presses too. */
+.env-top-bar[data-title-bar]
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    label,
+    summary,
+    iframe,
+    [role='button'],
+    [role='link'],
+    [role='menubar'],
+    [role='menuitem'],
+    [role='combobox'],
+    [role='tablist'],
+    [role='tab'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    [role='slider'],
+    [role='textbox'],
+    [role='searchbox'],
+    [tabindex],
+    [contenteditable],
+    :has(> input, > textarea)
+  ) {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.env-top-bar[data-title-bar] :is(input, textarea, [contenteditable]) {
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* Forced colors: the bar's edge stays visible. */
+@media (forced-colors: active) {
+  .env-top-bar {
+    border-block-end-color: CanvasText;
+  }
+}

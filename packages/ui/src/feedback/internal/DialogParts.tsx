@@ -7,7 +7,7 @@ import { Column, Row } from '../../foundations/Layout.js';
 import { Surface, type SurfaceProps } from '../../foundations/Surface.js';
 
 /**
- * The parts Dialog, Drawer, CommandPalette and other modal surfaces share, inside a Base UI Dialog
+ * The parts Dialog, Sheet, CommandPalette and other modal surfaces share, inside a Base UI Dialog
  * or Drawer root: the scrim, the raised surface, the heading block and the actions row. Each owner
  * adds its own class for its placement and motion.
  */
@@ -18,7 +18,7 @@ export function DialogBackdrop({ className }: { className?: string }) {
 }
 
 /**
- * The raised surface of a dialog or a drawer, for its popup's render: the elevation-3 edge and
+ * The raised surface of a dialog or a sheet, for its popup's render: the elevation-3 edge and
  * shadow, the body text and the scrolling that a dialog's content needs.
  */
 export function DialogSurface({ className, ...props }: SurfaceProps) {
