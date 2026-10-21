@@ -36,6 +36,9 @@ export type ExportEntry =
   | (ExportBase & { kind: 'namespace'; parts: string[] })
   | (ExportBase & { kind: 'function'; signature: string });
 
+/** A fill a figure's stage takes instead of the page's. */
+export type StageFill = 'raised';
+
 export type DocumentationBlock =
   | { kind: 'markdown'; markdown: string }
   /**
@@ -56,6 +59,8 @@ export type DocumentationBlock =
       of?: string;
       /** Whether the figure shows the example's overlays open, contained in its stage. */
       open?: boolean;
+      /** The stage's fill where the page's own would hide the subject: `raised`. */
+      stage?: StageFill;
       /** An anatomy figure's legend: each numbered part by its class name, and what it is. */
       legend?: AnatomyLegendItem[];
     }

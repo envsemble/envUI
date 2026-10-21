@@ -60,11 +60,11 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ## When to use
 
-```tsx do=NameAndFacts open caption="The name, then one or two facts that help decide."
+```tsx do=NameAndFacts open stage=raised caption="The name, then one or two facts that help decide."
 
 ```
 
-```tsx dont=RepeatsTrigger open caption="A card that only repeats what the link says."
+```tsx dont=RepeatsTrigger open stage=raised caption="A card that only repeats what the link says."
 
 ```
 
@@ -74,7 +74,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ## Anatomy
 
-```tsx anatomy=HoverCardAnatomy open
+```tsx anatomy=HoverCardAnatomy open stage=raised
 
 ```
 
