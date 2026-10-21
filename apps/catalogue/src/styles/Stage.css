@@ -40,6 +40,7 @@
   > :where(
     .env-card[data-layout='feature'],
     .env-description-list[data-layout='auto'],
+    .env-page,
     .env-page-header,
     .env-panes,
     .env-stat-group,
@@ -51,6 +52,7 @@
     :has(
       .env-card[data-layout='feature'],
       .env-description-list[data-layout='auto'],
+      .env-page,
       .env-page-header,
       .env-panes,
       .env-stat-group,
@@ -68,9 +70,12 @@
   inline-size: 100%;
 }
 
-/* A width frame keeps its own width on the stage; the example fills it. */
+/* A width frame keeps its own width on the stage; the example fills it. It is a window of its own,
+   the env-window container, so what the example holds lays out at the frame's width: container
+   queries without a name, such as a Page's gutters, and those on the window see the frame. */
 .docs-width-box {
   display: grid;
+  container: env-window / inline-size;
 }
 
 .docs-live-example,
@@ -113,6 +118,29 @@
 
 .docs-figures .docs-specimen-grid[data-size='wide'] {
   --docs-specimen-track: 1fr;
+}
+
+/* Four specimens never leave one alone on a row: four across where they fit, else two pairs, else
+   one column. Each step switches at the width its columns need, as runs of figures do. */
+.docs-figures .docs-specimen-grid:has(> :nth-child(4):last-child) {
+  --docs-specimen-gap: var(--env-space-6);
+  --docs-specimen-four: calc(4 * var(--docs-specimen-min) + 3 * var(--docs-specimen-gap));
+  --docs-specimen-two: calc(2 * var(--docs-specimen-min) + var(--docs-specimen-gap));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      max(
+        clamp(
+          calc(25% - 0.75 * var(--docs-specimen-gap) - 0.01rem),
+          (var(--docs-specimen-four) - 100%) * 999,
+          calc(50% - 0.5 * var(--docs-specimen-gap) - 0.01rem)
+        ),
+        clamp(0rem, (var(--docs-specimen-two) - 100%) * 999, 100%)
+      ),
+      1fr
+    )
+  );
+  column-gap: var(--docs-specimen-gap);
 }
 
 .docs-figures .docs-specimen-grid > * {

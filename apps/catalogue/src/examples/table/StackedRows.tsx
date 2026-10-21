@@ -31,36 +31,34 @@ const tones = { Shipped: 'accent', Processing: 'warning', Delivered: 'success' }
 
 export default function StackedRows() {
   return (
-    // As narrow as a phone or a side panel, so the rows stack.
-    <div style={{ inlineSize: 'min(100%, 22rem)' }}>
-      <Table.Root aria-label="Orders" narrowLayout="stack">
-        <Table.Head>
-          <Table.Row>
-            <Table.HeaderCell>Order</Table.HeaderCell>
-            <Table.HeaderCell>Ship to</Table.HeaderCell>
-            <Table.HeaderCell numeric>Items</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
+    // Below stackBelow, 36 rem of the table's region, each row becomes a block.
+    <Table.Root aria-label="Orders" narrowLayout="stack">
+      <Table.Head>
+        <Table.Row>
+          <Table.HeaderCell>Order</Table.HeaderCell>
+          <Table.HeaderCell>Ship to</Table.HeaderCell>
+          <Table.HeaderCell numeric>Items</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
+        {orders.map((order) => (
+          <Table.Row key={order.id}>
+            {/* The first cell titles the stacked row. */}
+            <Table.Cell>
+              Order {order.id} · {order.customer}
+              <Text variant="caption">Placed {order.placed}</Text>
+            </Table.Cell>
+            <Table.Cell label="Ship to">{order.address}</Table.Cell>
+            <Table.Cell label="Items" numeric>
+              {order.items}
+            </Table.Cell>
+            <Table.Cell label="Status">
+              <Badge tone={tones[order.status]}>{order.status}</Badge>
+            </Table.Cell>
           </Table.Row>
-        </Table.Head>
-        <Table.Body>
-          {orders.map((order) => (
-            <Table.Row key={order.id}>
-              {/* The first cell titles the stacked row. */}
-              <Table.Cell>
-                Order {order.id} · {order.customer}
-                <Text variant="caption">Placed {order.placed}</Text>
-              </Table.Cell>
-              <Table.Cell label="Ship to">{order.address}</Table.Cell>
-              <Table.Cell label="Items" numeric>
-                {order.items}
-              </Table.Cell>
-              <Table.Cell label="Status">
-                <Badge tone={tones[order.status]}>{order.status}</Badge>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
-    </div>
+        ))}
+      </Table.Body>
+    </Table.Root>
   );
 }

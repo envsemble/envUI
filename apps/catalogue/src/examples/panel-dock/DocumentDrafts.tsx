@@ -70,7 +70,7 @@ function panelFor(document: Document, mode: PanelDockMode, active = false): Docu
     label: document.label,
     mode,
     active,
-    // The application keeps each panel's height, in pixels; this one leaves the page's buttons in view.
+    // The application keeps each panel's height, in pixels; this one leaves the buttons in view.
     height: 320,
     icon: <Description />,
     tooltip: `${document.title} · ${document.editor}`,

@@ -34,54 +34,71 @@ components:
 
 ## Overview
 
-TopBar is the bar at the top of an application or a screen, after Material's small top app bar: start content, such as a navigation or back button or the application's mark, the title, and the actions at the end, in one row at the top bar height that never wraps. It is built from Row, and goes in a [Scaffold](scaffold.md)'s top bar region, which is the banner landmark.
+The top bar sits at the top of an application or a screen, after Material's small top app bar: start content, the title and the actions, in one row. It goes in a [Scaffold](scaffold.md)'s top bar region, which is the banner landmark.
 
 ```tsx example=AppTopBar
 
 ```
 
+### Page progress
+
+`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it.
+
+```tsx example=LoadingPage
+
+```
+
+## Variants
+
+### Title bar
+
+`titleBar` makes the bar the window's own title bar in an installed web app: empty space drags the window, the title is centred and the controls are small. Put it in a Scaffold with `topBarSpan="full"`.
+
+```tsx example=TitleBar
+
+```
+
+`sticky` keeps a bar outside a Scaffold at the top as the document scrolls, and `render={<header />}` makes it the page's banner.
+
+## When to use
+
+```tsx do=FewActions caption="Two or three actions, the account last."
+
+```
+
+```tsx dont=ManyActions caption="Many actions: the title is cut down to nothing."
+
+```
+
+- The title names the application or the section; the page's own title and actions go in its [PageHeader](page-header.md).
+- The navigation goes in the Scaffold's navigation region, not in the top bar.
+
 ## Anatomy
 
-1. **Bar** (`env-top-bar`): a Row at the top bar height, 3.25 rem, on the page's background with a hairline below.
-2. **Start** (`env-top-bar-start`, `start`): a Row of what comes before the title.
-3. **Title** (`env-top-bar-title`, `title`): the title, which takes the room left and truncates first. It is no heading.
-4. **Actions** (`env-top-bar-actions`, `actions`): a Row of actions at the end.
-5. **Page progress** (`env-top-bar-loading-bar`, `loading`): a thin bar along the bottom edge.
+```tsx anatomy=TopBarAnatomy
 
-## Variants and sizes
+```
 
-| Prop       | Use for                                                                                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `sticky`   | A bar in a page whose document scrolls: it sticks at the top. In a Scaffold the region sticks where the document scrolls. |
-| `titleBar` | The window's own title bar, in an installed web app that draws one (Window Controls Overlay).                             |
-| `loading`  | Page progress along the bottom edge while the next page loads.                                                            |
+1. **Bar** (`env-top-bar`)
+2. **Start** (`env-top-bar-start`, `start`)
+3. **Title** (`env-top-bar-title`, `title`)
+4. **Actions** (`env-top-bar-actions`, `actions`)
 
-- The top bar height is `--env-top-bar-height`: 3.25 rem, 2.625 rem in the compact scale, and the touch height and a little more under a coarse pointer.
-- With `titleBar` the bar takes the title bar area the window leaves free, its controls take the small height and buttons that set no variant are ghost; empty space drags the window, and the title is centred in the window. Put it in a Scaffold with `topBarSpan="full"`.
-- `render={<header />}` makes a bar outside a Scaffold the page's banner.
+Not shown: the page progress, `env-top-bar-loading-bar`.
 
-## States and behaviour
+## Adapting to width
 
-- **Loading**: `loading` shows the bar after a short delay, so quick loads never flash it, then completes and fades out; `loadingLabel` names it, such as the page it loads.
-- **Narrow**: the title truncates before the start content and the actions shrink; keep the actions few, or move them to a menu.
+The bar never wraps: the title is cut short first, and the start content and actions keep their size.
 
-## Do and don't
+```tsx example=TitleFirstToGo widths="20 40"
 
-### Do
-
-- Name the application or the section in the title, and the page in its PageHeader.
-- Keep two or three actions at the end, the account menu last.
-
-### Don't
-
-- Don't put the page's own actions in the top bar; they go in its PageHeader.
-- Don't put a second navigation in the top bar; the Scaffold shows the navigation.
+```
 
 ## Accessibility
 
 ### envUI provides
 
-- A plain element, so a Scaffold's top bar region, the banner, names it; `render` gives it another element.
+- A plain element, which the Scaffold's banner region names; `render` gives it another element.
 - The page progress as a named progress bar while it shows.
 - In a title bar, controls that stay clickable where the window drags.
 
@@ -89,24 +106,6 @@ TopBar is the bar at the top of an application or a screen, after Material's sma
 
 - Names for icon-only buttons, such as Search or Back to projects.
 - A `loadingLabel` that names what loads, in the application's language.
-
-## Examples
-
-### Page progress
-
-`loading` while the next page loads, named by `loadingLabel`.
-
-```tsx example=LoadingPage
-
-```
-
-### The window's title bar
-
-`titleBar` with a menubar at the start and an action at the end.
-
-```tsx example=TitleBar
-
-```
 
 ## Changelog
 

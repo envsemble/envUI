@@ -27,14 +27,13 @@ export default function NarrowRegion() {
   // The page beneath is out of reach while a panel fills the stacked dock.
   const covered = stacked && panels.some((panel) => panel.mode !== 'minimized');
   return (
-    // As narrow as a phone: below stackBelow, 40 rem, one panel at a time fills the region.
+    // Below stackBelow, 40 rem of the dock's own width, one panel at a time fills the region.
     <Surface
       background="muted"
       padding={0}
       style={{
         position: 'relative',
         blockSize: '26rem',
-        inlineSize: 'min(100%, 24rem)',
         overflow: 'hidden',
       }}
     >

@@ -39,59 +39,85 @@ components:
 
 ## Overview
 
-Panes is invisible structure for two panes side by side, after Material's supporting pane and list-detail patterns. It never paints, except the supporting pane while it is a sheet. Its own width decides how the panes sit, in CSS: it is the `env-panes` container, and from `splitAt`, `expanded` (52.5 rem) by default, the panes sit side by side. In less room they behave as `behavior` says, and `open` says what shows.
+Panes is the invisible structure of two panes side by side, after Material's supporting pane and list-detail layouts. Its own width decides how they sit: side by side from `splitAt`, and in less room as `behavior` says.
 
-- **supporting**: Panes.Main and Panes.Supporting, such as a document and its details. In less room the supporting pane is a sheet over the main one while `open`: a side sheet at the end in a medium width, a bottom sheet in a compact one. It is modal: a dialog with a close button, with everything else on the page inert; focus moves into it and stays, and Escape, the close button or a press on the scrim close it. Inside a [Scaffold](scaffold.md) whose document scrolls, where the panes are as tall as their content, the sheet is the window's, as [Sheet](sheet.md) is: fixed to the window over a scrim that covers the bars too, scrolling inside itself while the page stays still.
-- **list-detail**: Panes.List and Panes.Detail, such as messages and the one chosen. In less room one shows at a time, the detail while `open`, with a back button to the list.
-
-Here the supporting pane; narrow the window to see it become a sheet.
+`behavior="supporting"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`.
 
 ```tsx example=SupportingPane
 
 ```
 
-Each pane scrolls on its own when Panes has a height, as in a Scaffold whose body scrolls (`scroll="body"`), where Panes fills it; where the Scaffold's document scrolls, the page scrolls the panes with it. An optional Panes.Divider between the panes resizes the supporting pane or the list.
+`behavior="list-detail"`: a list and the item chosen from it. In less room one pane shows at a time, the detail while `open`, with a back button to the list.
+
+```tsx example=ListAndDetail
+
+```
+
+Each pane scrolls on its own when Panes has a height, as in a [Scaffold](scaffold.md) whose body scrolls; where the document scrolls, the page scrolls the panes with it.
+
+## Variants
+
+| `splitAt`            | Side by side from | Use for                                             |
+| -------------------- | ----------------- | --------------------------------------------------- |
+| `medium`             | 37.5 rem          | A main pane that reads well narrow, such as a list. |
+| `expanded` (default) | 52.5 rem          | Most panes.                                         |
+| `large`              | 75 rem            | A wide main pane, such as a table or a canvas.      |
+
+### Resizable
+
+Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
+
+```tsx example=ResizableDetails
+
+```
+
+## When to use
+
+```tsx do=DetailsButton caption="A button in the main pane that opens the details where there is no room."
+
+```
+
+```tsx dont=NoWayToDetails caption="No button: in less room, the details can't be reached."
+
+```
+
+```tsx do=BackToInbox caption="A backLabel that names where the back button goes."
+
+```
+
+```tsx dont=GenericBack caption="Back alone: people can't tell where it leads."
+
+```
+
+- The application's navigation goes in the [Scaffold](scaffold.md), not in a supporting pane.
+- Show the next level in the detail rather than nesting Panes in a pane.
 
 ## Anatomy
 
-1. **Root** (`env-panes`, `behavior`, `splitAt`, `open`): a grid of the panes and the divider; `data-behavior`, `data-split-at` and `data-open` carry the props for CSS, and `--env-panes-size` the resized pane's width. `name` renders as `data-env-name`.
-2. **Main** (`env-panes-main`) or **List** (`env-panes-list`): the pane at the start; `label` makes it a named region.
-3. **Divider** (`env-panes-divider`, optional): a separator between the panes that resizes the supporting pane or the list, side by side only.
-4. **Supporting** (`env-panes-supporting`) or **Detail** (`env-panes-detail`): the pane at the end, a named region, and the supporting pane a modal dialog while it is a sheet, with its close button (`env-panes-close`, `closeLabel`) at its top end. The detail starts with its back button (`env-panes-back`), which shows only one pane at a time.
-5. **Scrim** (`env-panes-scrim`, supporting): behind the supporting sheet, which a press on it closes.
+```tsx anatomy=PanesAnatomy
 
-## Variants and sizes
+```
 
-| `splitAt`            | Side by side from | Use for                                                         |
-| -------------------- | ----------------- | --------------------------------------------------------------- |
-| `medium`             | 37.5 rem          | Panes whose main pane reads well narrow, such as a short list.  |
-| `expanded` (default) | 52.5 rem          | Most panes: a document and its details, a list and its detail.  |
-| `large`              | 75 rem            | A wide main pane, such as a table or a canvas, beside its pane. |
+1. **Root** (`env-panes`)
+2. **List** (`env-panes-list`)
+3. **Divider** (`env-panes-divider`)
+4. **Detail** (`env-panes-detail`)
 
-- The resized pane, the supporting pane or the list, is `defaultSize` wide, 22.5 rem, between `minSize`, 16 rem, and `maxSize`, 40 rem, and never leaves the other pane less than 16 rem. `size` and `onSizeChange` control it, and `persist` keeps the width people choose in a cookie of that name. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `persistedSize`, so the server's markup has it and nothing moves as the page hydrates; without that, the kept width applies after the first render. A double click on the divider returns to `defaultSize` at once and forgets the kept width. A divider never starts a drag wider than the room allows: a size larger than fits starts from the width that shows.
-- The supporting sheet is as wide as the supporting pane in a medium width, at most the width less 3.5 rem, and as wide as the panes in a compact one, at most 85% of their height.
+The supporting behavior has `env-panes-main` and `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet; the detail's back button is `env-panes-back`.
 
-## States and behaviour
+## Adapting to width
 
-- **Nothing measured**: which arrangement shows is CSS alone, from the Panes' own width, so the server's markup is right before any script runs, and Panes in a narrow column of a wide window behave as narrow.
-- **open**: the application keeps it, since it knows when an item is chosen or a button pressed. Side by side both panes show, whatever it is. `onOpenChange(false)` comes from Escape, the close button and the scrim, for the supporting sheet, and from the back button, for the detail.
-- **Focus**: as the supporting sheet opens, focus moves into it, Tab stays in it while everything else on the page is inert, the top bar and the navigation included, and as it closes focus returns to where it was. A sheet that becomes a pane beside the main one, as the panes widen, leaves focus where it is. As the detail opens one pane at a time, focus moves to its back button, and back on the list's current row, the element with `aria-current`, as it closes; focus elsewhere on the page stays.
-- **Divider**: the pointer drags it, measuring nothing until it does; the arrow keys move it 1 rem, 5 with Shift, Home and End to the ends, and a double click returns it to `defaultSize`. It shows only while the panes sit side by side.
-- **Direction**: everything is logical, so the panes mirror in right-to-left text.
+Only CSS decides how the panes sit, from their own width. A supporting pane becomes a side sheet in a medium width and a bottom sheet in a compact one; press Details to open it.
 
-## Do and don't
+```tsx example=SupportingByWidth widths="24 44 60"
 
-### Do
+```
 
-- Name each pane with `label` where it is a region people jump to, such as Inbox and the chosen message.
-- Give the detail's back button a `backLabel` that names where it goes, such as Inbox.
-- Open the supporting pane from a button in the main pane, so people find it where there is no room.
+A list and its detail show one at a time in less room: choose a message, and Inbox returns to the list.
 
-### Don't
+```tsx example=ListDetailByWidth widths="24 60"
 
-- Don't use Panes for content that should stack, such as cards; use [Grid](grid.md).
-- Don't put an application's navigation in a supporting pane; the Scaffold shows it.
-- Don't nest Panes in a pane; show the next level in the detail.
+```
 
 ## Accessibility
 
@@ -107,34 +133,16 @@ Each pane scrolls on its own when Panes has a height, as in a Scaffold whose bod
 
 ### envUI provides
 
-- Named regions for the panes with a `label`; the supporting pane and the list always have one.
-- The divider as a focusable `separator` with its value in rem, named by `label`, and `aria-controls` naming the pane it resizes.
-- Hidden panes, the back button out of its time and the scrim out of the accessibility tree, by CSS.
-- Focus moved and returned as the sheet and the detail open and close.
+- Named regions for the panes with a `label`.
+- The supporting sheet as a modal dialog: focus moves in and stays, the rest of the page is inert, and focus returns as it closes.
+- Focus on the back button as the detail opens alone, and on the list's current row as it closes.
+- The divider as a focusable `separator` with its value in rem.
 
 ### You provide
 
 - The `label`s and the `backLabel`, in the application's language.
-- `aria-current` on the list's current row, where focus returns.
+- `open`, and `aria-current` on the list's current row.
 - The button that opens the supporting pane in less room.
-
-## Examples
-
-### List and detail
-
-The inbox: side by side from an expanded width, the message alone with a back button in less room.
-
-```tsx example=ListAndDetail
-
-```
-
-### Resizable details
-
-`splitAt="medium"` and a divider; the width people choose is kept with `persist`.
-
-```tsx example=ResizableDetails
-
-```
 
 ## Changelog
 

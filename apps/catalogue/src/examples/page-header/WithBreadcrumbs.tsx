@@ -3,9 +3,9 @@ import { Share } from '@envsemble/envui/icons/Share';
 
 export default function WithBreadcrumbs() {
   return (
-    // Level 2 under this page's own heading; a page's own header keeps the default, 1.
+    // Level 3 inside these docs; a page's own header keeps the default, 1.
     <PageHeader
-      headingLevel={2}
+      headingLevel={3}
       title="Northwind launch"
       description="Press kit, venue and invitations for the spring launch."
       breadcrumbs={

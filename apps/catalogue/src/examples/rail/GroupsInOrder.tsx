@@ -5,7 +5,7 @@ import { Label } from '@envsemble/envui/icons/Label';
 import { Send } from '@envsemble/envui/icons/Send';
 import { Star } from '@envsemble/envui/icons/Star';
 
-// The same array a Drawer takes: the rail shows the grouped destinations in order, without headings.
+// The same array a Drawer takes: the rail shows grouped destinations in order, without headings.
 const destinations: Destination[] = [
   { label: 'Inbox', icon: <Inbox />, href: '/inbox', count: 12, current: true },
   { label: 'Sent', icon: <Send />, href: '/sent' },
