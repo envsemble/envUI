@@ -2320,6 +2320,8 @@
                 "vertical"
               ],
               "parts": [
+                "env-toolbar",
+                "env-toolbar-group",
                 "env-toolbar-separator"
               ]
             },
@@ -12941,7 +12943,7 @@
         {
           "name": "RenameInPlace",
           "title": "A small form",
-          "description": "A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width gives the field room.",
+          "description": "A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width lets the field grow to 28 rem.",
           "file": "docs/examples/popover/RenameInPlace.tsx"
         },
         {

@@ -105,12 +105,19 @@
   border-color: var(--env-color-border-default-pressed);
 }
 
+/* Text: a label in the link color. Its hit area and focus ring reach 0.25 rem past the label on
+   each side, so the ring never touches the letters, and a negative margin takes that back, so the
+   label lines up with the text around it as a bare label would. */
 .env-button:where([data-variant='text']) {
-  padding-inline: 0;
+  padding-inline: var(--env-space-1);
   border: 0;
   background: transparent;
   color: var(--env-color-fg-link);
   cursor: pointer;
+}
+
+.env-button:where([data-variant='text']):not(.env-icon-button, [data-full-width]) {
+  margin-inline: calc(-1 * var(--env-space-1));
 }
 
 .env-button:where([data-variant='text'])[data-underline] {
@@ -276,6 +283,12 @@
    on a solid fill the inset ring would match the fill, so an inner ring in the label color shows it. */
 .env-button:is([data-variant='primary']):focus-visible {
   box-shadow: inset 0 0 0 var(--env-button-focus-inner-ring, 0) currentColor;
+}
+
+/* A ghost button shows no shape until hover, so its ring traces the edge its state layer fills,
+   rather than floating past an outline nobody sees. */
+.env-button:where([data-variant='ghost']):focus-visible {
+  outline-offset: 0;
 }
 
 .env-button:where([data-variant='outline']):focus-visible {

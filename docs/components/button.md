@@ -112,6 +112,8 @@ CopyButton copies its `value` and shows Copied, or Couldn’t copy, for about tw
 
 `accent` is for a rare, consequential action; `danger` for one that deletes or ends something. Without a `variant`, a button takes its container's, such as ghost in a Toolbar.
 
+Keyboard focus draws a ring 2 px outside a button, or on the edge of a ghost button's state layer. A text button's hit area and ring reach 0.25 rem past its label, which a negative margin takes back, so its label lines up with the text around it.
+
 ```tsx example=QuietToolbar caption="Ghost buttons in an application's chrome."
 
 ```
