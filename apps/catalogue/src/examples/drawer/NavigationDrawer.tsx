@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Drawer, Link, Stack, Text } from '@envsemble/envui';
+import { Button, Drawer, Link, Column, Text } from '@envsemble/envui';
 import { Menu } from '@envsemble/envui/icons/Menu';
 
 const sections = ['Overview', 'Projects', 'People', 'Settings'];
@@ -8,7 +8,7 @@ export default function NavigationDrawer() {
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState('Overview');
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <Drawer
         side="start"
         aria-label="Navigation"
@@ -22,7 +22,7 @@ export default function NavigationDrawer() {
         }
       >
         <nav aria-label="Sections">
-          <Stack gap={3}>
+          <Column gap={3}>
             {sections.map((section) => (
               <Link
                 key={section}
@@ -38,10 +38,10 @@ export default function NavigationDrawer() {
                 {section}
               </Link>
             ))}
-          </Stack>
+          </Column>
         </nav>
       </Drawer>
       <Text>Showing {current}.</Text>
-    </Stack>
+    </Column>
   );
 }

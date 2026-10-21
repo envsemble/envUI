@@ -25,7 +25,7 @@ avoidWhen:
   - text: A panel docked at an edge of the window over the page.
     use: PanelDock
   - text: Content that simply follows, without a handle.
-    use: Stack
+    use: Column
   - text: Columns of a table that people resize.
     use: Table
 related:

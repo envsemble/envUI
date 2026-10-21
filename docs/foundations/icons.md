@@ -15,15 +15,15 @@ aliases:
 ## React usage
 
 ```tsx
-import { Icon, Stack } from '@envsemble/envui';
+import { Column, Icon } from '@envsemble/envui';
 import { Home } from '@envsemble/envui/icons/Home';
 
-<Stack>
+<Column gap={4}>
   <Home filled label="Home" />
   <Icon viewBox="0 0 24 24" label="Custom mark">
     <path d="M12 2 22 12 12 22 2 12Z" />
   </Icon>
-</Stack>;
+</Column>;
 ```
 
 ### Props & contracts

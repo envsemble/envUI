@@ -1,8 +1,8 @@
-import { Button, Stack } from '@envsemble/envui';
+import { Button, Row } from '@envsemble/envui';
 
 export default function Variants() {
   return (
-    <Stack direction="row" wrap align="center" gap={4}>
+    <Row wrap align="center" gap={4}>
       <Button>Continue</Button>
       <Button variant="primary" tone="accent">
         Confirm
@@ -14,6 +14,6 @@ export default function Variants() {
       </Button>
       <Button variant="text">Learn more</Button>
       <Button variant="ghost">Settings</Button>
-    </Stack>
+    </Row>
   );
 }

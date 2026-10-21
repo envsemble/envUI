@@ -14,10 +14,10 @@ import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { ListRow } from '../internal/ListRow.js';
 import { useLocale, useMessages } from '../internal/EnvUIContext.js';
 import { commandPalette } from '../foundations/messages/commandPalette.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { useTheme } from '../foundations/Theme.js';
 import { Search } from '../icons/Search.js';
 import { Kbd } from '../content/Kbd.js';
-import { DialogBackdrop } from './internal/DialogParts.js';
+import { DialogBackdrop, OverlayTheme } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
 export interface CommandPaletteItem {
@@ -198,7 +198,7 @@ export function CommandPalette({
   return (
     <BaseDialog.Root open={open} onOpenChange={(next) => onOpenChange(next)}>
       <BaseDialog.Portal>
-        <Theme {...theme}>
+        <OverlayTheme {...theme}>
           <ResetControlDefaults>
             <DialogBackdrop />
             <div className="env-command-palette-positioner">
@@ -299,7 +299,7 @@ export function CommandPalette({
               </BaseDialog.Popup>
             </div>
           </ResetControlDefaults>
-        </Theme>
+        </OverlayTheme>
       </BaseDialog.Portal>
     </BaseDialog.Root>
   );

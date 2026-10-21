@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { Badge, Button, Select, Stack, Surface, Text, TextField } from '@envsemble/envui';
+import { Badge, Button, Select, Column, Row, Surface, Text, TextField } from '@envsemble/envui';
 
 interface Profile {
   name: string;
@@ -88,13 +88,13 @@ export default function SaveSection() {
       render={<form noValidate aria-labelledby={`${id}-heading`} onSubmit={submit} />}
     >
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
-        <Stack direction="row" wrap align="center" gap={3}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
+        <Row wrap align="center" gap={3}>
           <Text render={<h3 id={`${id}-heading`} />} variant="title">
             Profile
           </Text>
           {changed && <Badge tone="warning">Unsaved changes</Badge>}
-        </Stack>
+        </Row>
         <TextField
           ref={nameField}
           label="Display name"
@@ -125,18 +125,18 @@ export default function SaveSection() {
           value={draft.timeZone}
           onValueChange={(timeZone) => edit({ timeZone })}
         />
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit" pending={saving}>
             Save profile
           </Button>
           <Button variant="secondary" onClick={cancel}>
             Cancel
           </Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {status}
         </Text>
-      </Stack>
+      </Column>
     </Surface>
   );
 }

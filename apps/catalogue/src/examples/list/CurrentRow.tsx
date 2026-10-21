@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Link, List, Stack, Text } from '@envsemble/envui';
+import { Avatar, Link, List, Column, Text } from '@envsemble/envui';
 
 const people = [
   { id: 'alex', name: 'Alex Morgan', role: 'Design lead' },
@@ -11,7 +11,7 @@ export default function CurrentRow() {
   const [current, setCurrent] = useState('sam');
   const person = people.find((each) => each.id === current);
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <List.Root aria-label="People">
         {people.map(({ id, name, role }) => (
           <List.Item
@@ -41,6 +41,6 @@ export default function CurrentRow() {
       <Text variant="caption" emphasis="muted" role="status">
         Showing {person?.name}
       </Text>
-    </Stack>
+    </Column>
   );
 }

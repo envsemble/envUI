@@ -31,7 +31,8 @@ composes:
   - TextField
   - Toast
   - useToast
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - feedback

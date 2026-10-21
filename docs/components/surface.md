@@ -24,13 +24,13 @@ avoidWhen:
   - text: Rows of items that people scan, each with a label, a description and actions.
     use: List
   - text: Space between children without a background.
-    use: Stack
+    use: Column
   - text: Content over the page that people dismiss, such as a form in a window.
     use: Dialog
   - text: A floating panel that opens from a button.
     use: Popover
 related:
-  - stack
+  - column
   - card
   - list
   - spacing
@@ -43,7 +43,7 @@ components:
 
 ## Overview
 
-A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a [Stack](../components/stack.md), through `render` on the same element or inside it. Card and other containers build on Surface.
+A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a [Column](../components/column.md) or a [Row](../components/row.md), through `render` on the same element or inside it. Card and other containers build on Surface.
 
 ```tsx example=DetailPane
 
@@ -54,7 +54,7 @@ A surface gives a region a background, an inset on every side and rounded corner
 1. **Background** (`background`): the fill, with no border.
 2. **Inset** (`padding`): the space between the edge and the content, the same on every side.
 3. **Corners** (`radius`): the radius of all four corners.
-4. **Content**: the surface's children, laid out by what they are rendered with, such as a Stack.
+4. **Content**: the surface's children, laid out by what they are rendered with, such as a Column.
 
 ## Variants and sizes
 
@@ -76,7 +76,7 @@ A surface gives a region a background, an inset on every side and rounded corner
 ## States and behaviour
 
 - A surface has no hover, pressed, focus or disabled state, and does nothing on its own. Interactive containers, such as a Card with `href`, add their own states.
-- `render` renders another element for its meaning, such as `render={<section />}` or `render={<aside />}`, or draws the surface onto another component, such as a Stack, without a wrapper.
+- `render` renders another element for its meaning, such as `render={<section />}` or `render={<aside />}`, or draws the surface onto another component, such as a Column, without a wrapper.
 
 ## Content guidelines
 
@@ -87,13 +87,13 @@ A surface gives a region a background, an inset on every side and rounded corner
 
 ### Do
 
-- Lay out a surface's content with a Stack through `render`, so the surface and its layout are one element.
+- Lay out a surface's content with a Column or a Row through `render`, so the surface and its layout are one element.
 - Use `full` corners and controls of size `sm` for a toolbar that floats over dense content.
 - Use the background roles for what they mean: `default` for panes, `raised` for a block that stands out on a pane.
 
 ### Don't
 
-- Don't add margins to a surface's children for space between them; lay them out with a [Stack](../components/stack.md).
+- Don't add margins to a surface's children for space between them; lay them out with a [Column](../components/column.md).
 - Don't build a card from a surface by hand; use [Card](../components/card.md), which has its layout, actions and interactive states.
 - Don't tell regions apart by their background alone; the fills are close in contrast, so give each region a heading or a label.
 - Don't give a surface `role="toolbar"` unless you add arrow-key navigation; a group of controls with an accessible name keeps them all in the tab order.

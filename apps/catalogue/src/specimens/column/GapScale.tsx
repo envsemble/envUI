@@ -1,4 +1,4 @@
-import { Stack, Surface, Text, type SpaceStep } from '@envsemble/envui';
+import { Column, Surface, Text, type SpaceStep } from '@envsemble/envui';
 import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 
 const steps: { step: SpaceStep; rem: string }[] = [
@@ -20,14 +20,14 @@ export default function GapScale() {
       <SpecimenGrid size="compact">
         {steps.map(({ step, rem }) => (
           <Specimen key={step} title={`gap={${step}}`} caption={rem}>
-            <Stack gap={step}>
+            <Column gap={step}>
               <Surface background="muted" radius="sm" padding={2}>
                 <Text>First</Text>
               </Surface>
               <Surface background="muted" radius="sm" padding={2}>
                 <Text>Second</Text>
               </Surface>
-            </Stack>
+            </Column>
           </Specimen>
         ))}
       </SpecimenGrid>

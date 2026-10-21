@@ -736,29 +736,28 @@ test("every export has a status, a guide's exports stable unless its statuses sa
   );
   for (const name of ['EnvUIProvider', 'useTheme', 'Text', 'Icon'])
     assert.equal(manifest.exports[name].status, 'stable', name);
-  // Hooks first released in 1.0 are beta through their pages' statuses.
-  for (const name of ['useContainerSize', 'useBreakpoint', 'breakpointQuery', 'useMediaQuery'])
+  // Exports first released in 1.0 are beta through their pages' statuses.
+  for (const name of ['useContainerSize', 'useLocale'])
     assert.equal(manifest.exports[name].status, 'beta', name);
-  assert.equal(manifest.exports.useLocale.status, 'beta');
   const directory = mkdtempSync(join(workDirectory, 'docs-'));
   cpSync(documentationDirectory, directory, { recursive: true });
-  const responsive = join(directory, 'foundations', 'responsive.md');
+  const setup = join(directory, 'setup.md');
   const withStatuses = (statusLines) =>
     writeFileSync(
-      responsive,
-      readFileSync(join(documentationDirectory, 'foundations', 'responsive.md'), 'utf8').replace(
+      setup,
+      readFileSync(join(documentationDirectory, 'setup.md'), 'utf8').replace(
         /^statuses:.*\n(?: {2}.*\n)*/m,
         `statuses:\n${statusLines}`,
       ),
     );
-  withStatuses('  useContainerSize: beta\n');
+  withStatuses('  useLocale: beta\n');
   const changed = buildManifest({ directory });
-  assert.equal(changed.exports.useContainerSize.status, 'beta');
-  assert.equal(changed.exports.useMediaQuery.status, 'stable');
-  withStatuses('  useMediaQuery: stable\n');
+  assert.equal(changed.exports.useLocale.status, 'beta');
+  assert.equal(changed.exports.LinkProvider.status, 'stable');
+  withStatuses('  LinkProvider: stable\n');
   assert.throws(
     () => readDocumentation(directory, { props, versions: undefined }),
-    /statuses of useMediaQuery repeats the default status of a guide's exports/,
+    /statuses of LinkProvider repeats the default status of a guide's exports/,
   );
 });
 
@@ -879,7 +878,7 @@ test('plan covers the capabilities of the benchmark tasks, and suggests few othe
     assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
   }
   // Recall is the list above: 30 of the 43 capabilities. Precision is the share of candidates the
-  // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Stack,
+  // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Column,
   // Badge and the like count against it although they fit, so it understates.
   const recall = Object.values(planned).flat().length;
   assert.ok(recall >= 30, `benchmark recall ${recall} of 43`);
@@ -972,7 +971,7 @@ const corpus = [
     ['SegmentedControl'],
   ],
   ['a Dark Mode switch in the header', ['ThemeToggle'], ['AppShell'], ['Switch']],
-  ['a form with a postal code field', [], ['TextField', 'Stack', 'Field'], ['Code']],
+  ['a form with a postal code field', [], ['TextField', 'Column', 'Field'], ['Code']],
   ['A top bar with the product name', [], ['AppShell'], ['Menubar']],
   ['pick a date range for the report', [], ['DatePicker'], ['Slider']],
   ['a remember me checkbox on the sign-in form', ['Checkbox'], [], ['ThemePreferenceProvider']],

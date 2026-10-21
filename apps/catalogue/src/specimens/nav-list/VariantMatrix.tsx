@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavList, Stack } from '@envsemble/envui';
+import { NavList, Row } from '@envsemble/envui';
 import { Apps } from '@envsemble/envui/icons/Apps';
 import { Home } from '@envsemble/envui/icons/Home';
 import { Example } from '../../previews/Example';
@@ -47,7 +47,7 @@ export default function VariantMatrix() {
                 <th scope="row">{size}</th>
                 {forms.map((form) => (
                   <td key={form.value}>
-                    <Stack direction="row" wrap align="center" gap={4}>
+                    <Row wrap align="center" gap={4}>
                       {destinations.map((destination) => {
                         const props = {
                           size,
@@ -72,7 +72,7 @@ export default function VariantMatrix() {
                           </NavList.Item>
                         );
                       })}
-                    </Stack>
+                    </Row>
                   </td>
                 ))}
               </tr>

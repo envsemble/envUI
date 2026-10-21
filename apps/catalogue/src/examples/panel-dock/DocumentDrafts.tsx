@@ -4,7 +4,8 @@ import {
   IconButton,
   Menu,
   PanelDock,
-  Stack,
+  Column,
+  Row,
   Surface,
   Text,
   Textarea,
@@ -106,7 +107,7 @@ function DocumentWindow({
         }
       />
       {/* The body's inset lines up with the header's title. */}
-      <Stack gap={4} style={{ padding: '0 1.5rem 1.5rem' }}>
+      <Column gap={4} style={{ padding: '0 1.5rem 1.5rem' }}>
         <Text emphasis="muted">{document.summary}</Text>
         <Textarea
           label="Draft"
@@ -114,7 +115,7 @@ function DocumentWindow({
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
-      </Stack>
+      </Column>
     </>
   );
 }
@@ -156,12 +157,12 @@ export default function DocumentDrafts() {
       padding={0}
       style={{ position: 'relative', blockSize: '34rem', overflow: 'hidden' }}
     >
-      <Stack gap={4} inert={covered} style={{ padding: '2rem' }}>
+      <Column gap={4} inert={covered} style={{ padding: '2rem' }}>
         <Text render={<h3 />} variant="title">
           Documents
         </Text>
         <Text emphasis="muted">Open documents to work on them beside the page.</Text>
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           {documents.map((document) => (
             <Button
               key={document.id}
@@ -172,8 +173,8 @@ export default function DocumentDrafts() {
               {document.label ?? document.title}
             </Button>
           ))}
-        </Stack>
-      </Stack>
+        </Row>
+      </Column>
       <PanelDock.Root
         panels={panels}
         onModeChange={(id, mode) =>

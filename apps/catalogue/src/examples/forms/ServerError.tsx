@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Alert, Button, Stack, Text, TextField, Textarea } from '@envsemble/envui';
+import { Alert, Button, Column, Row, Text, TextField, Textarea } from '@envsemble/envui';
 
 export default function ServerError() {
   const [saving, setSaving] = useState(false);
@@ -31,7 +31,7 @@ export default function ServerError() {
   return (
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         {failed && (
           <Alert ref={alert} tabIndex={-1} tone="danger" title="Your changes weren’t saved">
             Check your connection and try again. What you entered is still here.
@@ -45,15 +45,15 @@ export default function ServerError() {
           rows={3}
           defaultValue="Results and highlights for the first quarter of 2026."
         />
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit" pending={saving}>
             Save changes
           </Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {saved}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

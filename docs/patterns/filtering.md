@@ -26,7 +26,8 @@ avoidWhen:
     see: data-tables
 composes:
   - PageHeader
-  - Stack
+  - Column
+  - Row
   - SearchField
   - Select
   - Combobox
@@ -43,7 +44,7 @@ composes:
   - List
   - Text
   - EmptyState
-  - useBreakpoint
+  - useContainerSize
 related:
   - data-tables
   - empty-states
@@ -65,7 +66,7 @@ Use this pattern to help people find items in a long list or table: a search fie
 
 ## Anatomy
 
-1. **Toolbar:** the `toolbar` of the page's [PageHeader](../components/page-header.md), a [Stack](../components/stack.md) row that wraps, with `controlSize="sm"` on the header and `size="sm"` on its fields. It is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search field its arrow keys.
+1. **Toolbar:** the `toolbar` of the page's [PageHeader](../components/page-header.md), a [Row](../components/row.md) that wraps, with `controlSize="sm"` on the header and `size="sm"` on its fields. It is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search field its arrow keys.
 2. **Search:** a [SearchField](../components/text-field.md) with a `label` that names what it searches, "Search projects".
 3. **Filters:** a [Select](../components/select.md) with `variant="outline"` per filter of one value, with an option for all, such as "Any status". For a filter of several values, use a [Combobox](../components/combobox.md) with `multiple`, or Checkboxes.
 4. **More filters:** a "Filters" [Button](../components/button.md), with a [CounterBadge](../components/badge.md) of the filters in use, that opens a [Popover](../components/popover.md) of [Checkboxes](../components/checkbox.md) in groups, or a [Drawer](../components/drawer.md) on narrow screens.
@@ -82,7 +83,7 @@ Use this pattern to help people find items in a long list or table: a search fie
 - **No results.** The EmptyState names the query, "No project names contain “roadmap”", and offers "Clear filters". The toolbar stays above it, so people can change one filter instead.
 - **A popover of filters.** Its checkboxes apply as they change, and it stays open until people close it, with <kbd>Esc</kbd>, a press outside or <kbd>Tab</kbd> past its last control; the list behind it changes as they go. The Filters button counts the filters in use.
 - **Filter tokens.** Each filter in use shows as a token named after it, "Status: Open". Pressing it removes the filter; focus moves to the next token, to the previous one when it was the last, or to "Add filter" when none is left. "Add filter" offers only the fields not yet filtered, since a field takes one value at a time. envUI has no removable token, or chip, yet: each is a `Button variant="secondary" size="sm"` with a Close `endIcon`.
-- **Narrow windows.** Below the `md` breakpoint, from [useBreakpoint](../foundations/responsive.md), the filters move into a Drawer opened by the Filters button, and the search stays in view. The drawer's filters apply at once too; its primary button closes it and says how many results it shows. The page behind a modal drawer is hidden from assistive technology, so the drawer has its own count in a `role="status"` element, which announces each change.
+- **Narrow windows.** Where the results are compact, narrower than the `medium` [window class](../foundations/responsive.md), measured with useContainerSize, the filters move into a Drawer opened by the Filters button, and the search stays in view. The drawer's filters apply at once too; its primary button closes it and says how many results it shows. The page behind a modal drawer is hidden from assistive technology, so the drawer has its own count in a `role="status"` element, which announces each change.
 
 ## Content guidelines
 
@@ -150,7 +151,7 @@ Each filter in use is a token that removes it, with "Add filter" to choose anoth
 
 ### Narrow windows
 
-Below the `md` breakpoint the Selects move into a Drawer opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.
+Where the example is compact, narrower than 37.5 rem, the Selects move into a Drawer opened by a Filters button, and the search stays in the toolbar. Narrow the window to see it.
 
 ```tsx example=NarrowFilters
 

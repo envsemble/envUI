@@ -1,4 +1,4 @@
-import { Text, Button, IconButton, Stack, Kbd } from '@envsemble/envui';
+import { Text, Button, IconButton, Column, Row, Kbd } from '@envsemble/envui';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { TokenValue } from './TokenValue';
 import { Example } from '../Example';
@@ -7,10 +7,10 @@ export function AccessibilityPreview() {
   return (
     <>
       <Example title="Keyboard focus">
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button className="docs-force-focus">Visible focus</Button>
           <IconButton icon={<ChevronRight />} aria-label="Next item" />
-        </Stack>
+        </Row>
         <Text emphasis="muted">
           Use <Kbd>Tab</Kbd> and <Kbd keys={['Shift', 'Tab']} /> to move between controls.{' '}
           <Kbd>Enter</Kbd> activates links; <Kbd>Enter</Kbd> or <Kbd>Space</Kbd> activates buttons.
@@ -32,7 +32,7 @@ export function AccessibilityPreview() {
         </Text>
       </Example>
       <Example title="Motion defaults">
-        <Stack className="docs-facts">
+        <Column gap={4} className="docs-facts">
           <Text variant="body-sm">
             Fast transitions{' '}
             <code>
@@ -51,7 +51,7 @@ export function AccessibilityPreview() {
               <TokenValue token="--env-motion-ease" />
             </code>
           </Text>
-        </Stack>
+        </Column>
         <Text variant="caption" className="docs-caption">
           Motion supports a state change. Keep it brief and respect reduced motion.
         </Text>

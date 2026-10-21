@@ -1,4 +1,4 @@
-import { Badge, Link, Stack, Text } from '@envsemble/envui';
+import { Badge, Link, Column, Text } from '@envsemble/envui';
 import { Documentation } from '../pages/Documentation';
 import { documents, type Documentation as Document } from '../Reference';
 import {
@@ -121,7 +121,12 @@ function Section({ reference, section }: { reference: Document; section: Documen
       />
     );
   return (
-    <Stack render={<section />} gap={5} className="docs-template-section" data-section={section.id}>
+    <Column
+      render={<section />}
+      gap={5}
+      className="docs-template-section"
+      data-section={section.id}
+    >
       {section.blocks.map((block, index) =>
         block.kind === 'markdown' ? (
           <Documentation key={index} markdown={block.markdown} path={reference.path} />
@@ -146,7 +151,7 @@ function Section({ reference, section }: { reference: Document; section: Documen
       {section.id === 'overview' && reference.metadata && !reference.format && (
         <UseAndAvoid metadata={reference.metadata} path={reference.path} />
       )}
-    </Stack>
+    </Column>
   );
 }
 
@@ -166,7 +171,7 @@ function Related({ reference }: { reference: Document }) {
   });
   if (!related.length) return null;
   return (
-    <Stack render={<section />} gap={4}>
+    <Column render={<section />} gap={4}>
       <Text render={<h2 />} variant="headline">
         Related
       </Text>
@@ -181,7 +186,7 @@ function Related({ reference }: { reference: Document }) {
           </li>
         ))}
       </ul>
-    </Stack>
+    </Column>
   );
 }
 
@@ -221,7 +226,7 @@ function Sections({
 }) {
   const figures = reference.format === 'figures';
   return (
-    <Stack
+    <Column
       gap={figures ? 9 : 8}
       className={`docs-article docs-template${figures ? ' docs-figures' : ''}`}
     >
@@ -232,7 +237,7 @@ function Sections({
         ))}
       {figures && <PropsSection reference={reference} />}
       {sections.some((section) => section.id === 'overview') && <Related reference={reference} />}
-    </Stack>
+    </Column>
   );
 }
 
@@ -240,9 +245,9 @@ function Sections({
 export function TemplateContent({ page, view }: { page: ReferencePage; view: ReferenceView }) {
   if (view === 'props')
     return (
-      <Stack gap={7} className="docs-article docs-template">
+      <Column gap={7} className="docs-article docs-template">
         <PropsTables reference={page.reference} />
-      </Stack>
+      </Column>
     );
   return (
     <Sections

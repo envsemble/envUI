@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, List, Stack } from '@envsemble/envui';
+import { Button, Checkbox, List, Column } from '@envsemble/envui';
 
 const files = [
   { name: 'Roadmap.md', size: '12 KB' },
@@ -10,7 +10,7 @@ const files = [
 export default function CheckedRows() {
   const [checked, setChecked] = useState<string[]>(['Pricing research.md']);
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <List.Root aria-label="Files">
         {files.map(({ name, size }) => (
           <List.Item
@@ -34,6 +34,6 @@ export default function CheckedRows() {
       <Button variant="secondary" disabled={checked.length === 0}>
         Download {checked.length} {checked.length === 1 ? 'file' : 'files'}
       </Button>
-    </Stack>
+    </Column>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Slider, Stack, Text } from '@envsemble/envui';
+import { Slider, Column, Text } from '@envsemble/envui';
 
 export default function SaveOnRelease() {
   const [volume, setVolume] = useState(60);
@@ -8,7 +8,7 @@ export default function SaveOnRelease() {
   useEffect(() => () => clearTimeout(saving.current), []);
   return (
     // As wide as a form column.
-    <Stack gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
+    <Column gap={3} style={{ inlineSize: 'min(100%, 24rem)' }}>
       <Slider
         label="Notification volume"
         value={volume}
@@ -26,6 +26,6 @@ export default function SaveOnRelease() {
       <Text variant="body-sm" role="status">
         {status}
       </Text>
-    </Stack>
+    </Column>
   );
 }

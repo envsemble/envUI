@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AppShell, Button, EmptyState, Page, Stack, Text } from '@envsemble/envui';
+import { AppShell, Button, EmptyState, Page, Column, Text } from '@envsemble/envui';
 import { Code } from '@envsemble/envui/content';
 import { Refresh } from '@envsemble/envui/icons/Refresh';
 import { Warning } from '@envsemble/envui/icons/Warning';
@@ -18,7 +18,7 @@ export default function ErrorPage() {
   return (
     <AppShell.Main ref={main}>
       {/* envUI has no centred full-viewport layout yet: this column centres the message. */}
-      <Stack
+      <Column
         justify="center"
         style={{ minBlockSize: '100dvh', paddingBlock: 'var(--env-space-7)' }}
       >
@@ -31,18 +31,18 @@ export default function ErrorPage() {
             title="Something went wrong"
             description="Northwind couldn’t load. Nothing you saved is lost. Try again, and if it keeps happening, contact support and quote the reference."
             action={
-              <Stack align="center" gap={4}>
+              <Column align="center" gap={4}>
                 <Button startIcon={<Refresh />} onClick={() => window.location.reload()}>
                   Try again
                 </Button>
                 <Text variant="body-sm" emphasis="muted">
                   Reference <Code>{reference}</Code>
                 </Text>
-              </Stack>
+              </Column>
             }
           />
         </Page>
-      </Stack>
+      </Column>
     </AppShell.Main>
   );
 }

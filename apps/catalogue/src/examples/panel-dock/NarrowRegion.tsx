@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   PanelDock,
-  Stack,
+  Column,
   Surface,
   Text,
   type PanelDockMode,
@@ -38,11 +38,11 @@ export default function NarrowRegion() {
         overflow: 'hidden',
       }}
     >
-      <Stack gap={2} inert={covered} style={{ padding: '1.5rem' }}>
+      <Column gap={2} inert={covered} style={{ padding: '1.5rem' }}>
         <Text render={<h3 />} variant="title">
           Messages
         </Text>
-      </Stack>
+      </Column>
       <PanelDock.Root
         panels={panels}
         onModeChange={changeMode}

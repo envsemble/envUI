@@ -50,50 +50,6 @@ export const tokens = {
       'dark-high-contrast': '400',
     },
   },
-  /** 64 rem: a tablet held sideways or a laptop. */
-  'breakpoint.lg': {
-    cssVariable: '--env-breakpoint-lg',
-    type: 'dimension',
-    values: {
-      light: '64rem',
-      dark: '64rem',
-      'light-high-contrast': '64rem',
-      'dark-high-contrast': '64rem',
-    },
-  },
-  /** 48 rem: a tablet held upright, and the default line between a phone's layout and a wider one. */
-  'breakpoint.md': {
-    cssVariable: '--env-breakpoint-md',
-    type: 'dimension',
-    values: {
-      light: '48rem',
-      dark: '48rem',
-      'light-high-contrast': '48rem',
-      'dark-high-contrast': '48rem',
-    },
-  },
-  /** 40 rem: a large phone held sideways, or a narrow window. */
-  'breakpoint.sm': {
-    cssVariable: '--env-breakpoint-sm',
-    type: 'dimension',
-    values: {
-      light: '40rem',
-      dark: '40rem',
-      'light-high-contrast': '40rem',
-      'dark-high-contrast': '40rem',
-    },
-  },
-  /** 80 rem: a desktop window. */
-  'breakpoint.xl': {
-    cssVariable: '--env-breakpoint-xl',
-    type: 'dimension',
-    values: {
-      light: '80rem',
-      dark: '80rem',
-      'light-high-contrast': '80rem',
-      'dark-high-contrast': '80rem',
-    },
-  },
   /** The blue fill, one of the hues an avatar takes from its name, and the fill of an avatar with hue="blue". */
   'color.avatar.bg': {
     cssVariable: '--env-color-avatar-bg',
@@ -2498,6 +2454,39 @@ export const tokens = {
         'letter-spacing': '0rem',
         'line-height': '1.4em',
       },
+    },
+  },
+  /** 52.5 rem: where expanded starts, such as a tablet held sideways. */
+  'window-class.expanded': {
+    cssVariable: '--env-window-class-expanded',
+    type: 'dimension',
+    values: {
+      light: '52.5rem',
+      dark: '52.5rem',
+      'light-high-contrast': '52.5rem',
+      'dark-high-contrast': '52.5rem',
+    },
+  },
+  /** 75 rem: where large starts, such as a desktop window. */
+  'window-class.large': {
+    cssVariable: '--env-window-class-large',
+    type: 'dimension',
+    values: {
+      light: '75rem',
+      dark: '75rem',
+      'light-high-contrast': '75rem',
+      'dark-high-contrast': '75rem',
+    },
+  },
+  /** 37.5 rem: where medium starts, such as a tablet held upright or a narrow desktop window; narrower is compact, such as a phone. */
+  'window-class.medium': {
+    cssVariable: '--env-window-class-medium',
+    type: 'dimension',
+    values: {
+      light: '37.5rem',
+      dark: '37.5rem',
+      'light-high-contrast': '37.5rem',
+      'dark-high-contrast': '37.5rem',
     },
   },
   /** The flow of a page or a component; a part drawn behind its siblings takes calc(var(--env-z-base) - 1). */

@@ -8,10 +8,6 @@
   color-scheme: light;
   --env-app-shell-header-height: 3.25rem;
   --env-body-font-weight: var(--env-font-weight-regular);
-  --env-breakpoint-lg: 64rem;
-  --env-breakpoint-md: 48rem;
-  --env-breakpoint-sm: 40rem;
-  --env-breakpoint-xl: 80rem;
   --env-color-avatar-bg: #005cc8;
   --env-color-avatar-bg-amber: #8a5504;
   --env-color-avatar-bg-green: #176f35;
@@ -248,6 +244,9 @@
   --env-type-h2-font-weight: var(--env-font-weight-medium);
   --env-type-h2-letter-spacing: 0rem;
   --env-type-h2-line-height: 1.4em;
+  --env-window-class-expanded: 52.5rem;
+  --env-window-class-large: 75rem;
+  --env-window-class-medium: 37.5rem;
   --env-z-base: 0;
   --env-z-modal: 100;
   --env-z-overlay: 90;

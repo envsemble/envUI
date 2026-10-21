@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button, Dialog, DialogClose, Stack, Text } from '@envsemble/envui';
+import { Button, Dialog, DialogClose, Column, Text } from '@envsemble/envui';
 
 export default function UnsavedChanges() {
   const [result, setResult] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         trigger={<Button variant="secondary">Close editor</Button>}
         title="Save changes to Launch plan?"
@@ -20,6 +20,6 @@ export default function UnsavedChanges() {
         }
       />
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

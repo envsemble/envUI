@@ -2,8 +2,21 @@
    theme, their positioner's layer and, through env-popup, the popup colors, edge, shadow, corners
    and motion of an elevation. An owner's own class, such as env-popover, adds its layout and
    the inline sizes of its data-width. */
+/* The theme boundary of a popup's portal. Under a themed document root it has no box: the popup
+   measures the root, the window. Where it is the outermost boundary it is the env-window container
+   (Theme.css): a box of no height at the start of the document, out of flow, so it takes no cell
+   or gap of a grid or flex body, and as wide as the window. It is the positioner's containing
+   block at the document's origin, where the document was before, so Base UI and Floating UI place
+   the popup as they did and it scrolls with the page; it starts no stacking context, so the
+   positioner's z-index orders the popup against the page as before. */
 .env-popup-theme {
   display: contents;
+}
+.env-popup-theme:not(.env-theme .env-popup-theme) {
+  display: block;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
 }
 .env-popup-positioner {
   /* The layer popups float on; an owner may raise its own. */

@@ -1,4 +1,4 @@
-import { Button, Link, Stack, Tabs, Text } from '@envsemble/envui';
+import { Button, Link, Column, Tabs, Text } from '@envsemble/envui';
 import { Markdown, type MarkdownLinkProps } from '@envsemble/envui/content';
 import { documents } from '../Reference';
 import { currentRouteQuery, useViewTabs } from '../navigation/useDocumentationRoute';
@@ -44,14 +44,14 @@ export function GettingStarted() {
     documents.find((document) => document.id === query.get('document')) ??
     documents.find((document) => document.id === 'index')!;
   return (
-    <Stack gap={7} className="docs-article">
-      <Stack render={<section />} id="setup">
+    <Column gap={7} className="docs-article">
+      <Column gap={4} render={<section />} id="setup">
         <Text render={<h2 />} variant="headline">
           {setup.title}
         </Text>
         <Documentation document={setup} />
-      </Stack>
-      <Stack render={<section />} id="local-development">
+      </Column>
+      <Column gap={4} render={<section />} id="local-development">
         <Text render={<h2 />} variant="headline">
           Agent guidance
         </Text>
@@ -89,13 +89,13 @@ export function GettingStarted() {
             },
           ]}
         />
-      </Stack>
-      <Stack render={<section />} id="documentation">
+      </Column>
+      <Column gap={4} render={<section />} id="documentation">
         <Text render={<h2 />} variant="headline">
           {selectedDocument.title}
         </Text>
         <Documentation document={selectedDocument} />
-      </Stack>
-    </Stack>
+      </Column>
+    </Column>
   );
 }

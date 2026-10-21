@@ -1,7 +1,7 @@
 import { createElement, type ComponentPropsWithRef, type ReactNode } from 'react';
 import { classNames } from '../internal/classNames.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
-import { Stack } from '../foundations/Layout.js';
+import { Column } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { Error as ErrorIcon } from '../icons/Error.js';
 
@@ -58,13 +58,13 @@ export function EmptyState({
       data-align={align}
     >
       {stateIcon != null && <DecorativeIcon>{stateIcon}</DecorativeIcon>}
-      <Stack gap={2} className="env-empty-state-description">
+      <Column gap={2} className="env-empty-state-description">
         <Text render={createElement(`h${headingLevel}`)} variant="title">
           {title}
         </Text>
         {description != null && <Text variant="body-sm">{description}</Text>}
         {children}
-      </Stack>
+      </Column>
       {action}
     </div>
   );

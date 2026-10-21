@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, Text } from '@envsemble/envui';
+import { Column, Text } from '@envsemble/envui';
 import { RichText } from '@envsemble/envui/rich-text';
 
 // Saved Markdown, as RichTextEditor writes it: a reference keeps its ID, label and destination.
@@ -11,7 +11,7 @@ const saved = `[reference id="person%3Apriya" label="Priya%20Shah" kind="person"
 export default function SavedContent() {
   const [opened, setOpened] = useState('');
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <RichText
         onReferenceClick={(reference, event) => {
           // The application resolves the ID and opens the record itself.
@@ -28,6 +28,6 @@ export default function SavedContent() {
       <Text variant="body-sm" role="status">
         {opened}
       </Text>
-    </Stack>
+    </Column>
   );
 }

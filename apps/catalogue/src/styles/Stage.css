@@ -33,8 +33,8 @@
   max-inline-size: 100%;
 }
 
-/* A part that takes its width from its container, such as a size container, a strip of tabs, a
-   window or skeleton bars, has none of its own and would collapse if centred: an example that is
+/* A part that takes its width from its container, such as a size container (a primitive with
+   `container` too), a strip of tabs, a window or skeleton bars, has none of its own and would collapse if centred: an example that is
    or holds one fills the stage, unless it sets its width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
   > :where(
@@ -47,6 +47,7 @@
     .env-panel-dock,
     .env-window-frame,
     .env-skeleton,
+    [data-env-container],
     :has(
       .env-card[data-layout='feature'],
       .env-description-list[data-layout='auto'],
@@ -56,7 +57,8 @@
       .env-document-tabs,
       .env-panel-dock,
       .env-window-frame,
-      .env-skeleton
+      .env-skeleton,
+      [data-env-container]
     )
   ),
 /* A strip of document tabs lays out its bar straight on the stage, its root being contents. */
@@ -94,7 +96,6 @@
 }
 
 /* A row of items centres them on the stage, also once it wraps, unless the example aligns it. */
-:is(.docs-live-example, .docs-verdict-stage)
-  > .env-stack[data-direction='row']:not([data-justify]) {
+:is(.docs-live-example, .docs-verdict-stage) > [data-env-layout='row']:not([data-justify]) {
   justify-content: center;
 }

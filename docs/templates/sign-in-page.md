@@ -23,7 +23,7 @@ avoidWhen:
 composes:
   - AppShell
   - Page
-  - Stack
+  - Column
   - Surface
   - Text
   - TextField
@@ -54,8 +54,8 @@ The screen people see before the application opens: the application's name, an e
 ## Anatomy
 
 1. **Main:** [AppShell.Main](../components/app-shell.md) on its own, without a Root: the page's `main` landmark.
-2. **Column:** a [Stack](../components/stack.md) as tall as the window that centres a [Page](../components/page.md) of `width="sm"`, which keeps the form to a readable width with the page gutter on a phone.
-3. **Panel:** a [Surface](../components/surface.md) `background="muted"`, rendered as a Stack, that holds everything below, so its edges line up.
+2. **Column:** a [Column](../components/column.md) as tall as the window that centres a [Page](../components/page.md) of `width="sm"`, which keeps the form to a readable width with the page gutter on a phone.
+3. **Panel:** a [Surface](../components/surface.md) `background="muted"`, rendered as a Column, that holds everything below, so its edges line up.
 4. **Heading:** a [Text](../foundations/typography.md) `variant="headline"` rendered as the page's `h1`, "Sign in to Northwind", with a muted line under it.
 5. **Form:** a native `form` with `noValidate`:
    - **Error summary** (after a refused submit with several errors): an [Alert](../components/alert.md) `tone="danger"` titled "There is a problem", its title a level-2 heading, listing each error as a [Link](../components/link.md) to its field;

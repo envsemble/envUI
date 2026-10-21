@@ -1,4 +1,4 @@
-import { Rating, Stack, Text } from '@envsemble/envui';
+import { Rating, Column, Text } from '@envsemble/envui';
 
 const reviews = [
   {
@@ -16,16 +16,16 @@ const reviews = [
 
 export default function ReviewList() {
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       {reviews.map((review) => (
-        <Stack render={<article />} gap={1} key={review.author}>
+        <Column render={<article />} gap={1} key={review.author}>
           <Text render={<h3 />} variant="body-sm">
             {review.author}
           </Text>
           <Rating value={review.rating} />
           <Text>{review.text}</Text>
-        </Stack>
+        </Column>
       ))}
-    </Stack>
+    </Column>
   );
 }

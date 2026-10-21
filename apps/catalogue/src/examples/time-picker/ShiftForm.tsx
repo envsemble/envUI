@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Stack, Text, TimePicker } from '@envsemble/envui';
+import { Button, Column, Row, Text, TimePicker } from '@envsemble/envui';
 
 export default function ShiftForm() {
   const [error, setError] = useState<string>();
@@ -22,19 +22,19 @@ export default function ShiftForm() {
       }}
       style={{ inlineSize: 'min(100%, 16rem)' }}
     >
-      <Stack>
+      <Column gap={4}>
         <TimePicker label="From" name="from" defaultValue="09:00" required />
         <TimePicker label="To" name="to" defaultValue="17:00" required error={error} />
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button type="submit">Save shift</Button>
           <Button type="reset" variant="secondary">
             Reset
           </Button>
-        </Stack>
+        </Row>
         <Text variant="caption" emphasis="muted" role="status">
           {sent}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

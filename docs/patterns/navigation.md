@@ -44,7 +44,8 @@ composes:
   - DescriptionList
   - Badge
   - Button
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - filtering

@@ -1,10 +1,10 @@
 import { useId } from 'react';
-import { Radio, RadioGroup, Stack, Text } from '@envsemble/envui';
+import { Radio, RadioGroup, Column, Text } from '@envsemble/envui';
 
 export default function InheritedAccess() {
   const reason = useId();
   return (
-    <Stack gap={3} align="start">
+    <Column gap={3} align="start">
       <RadioGroup
         label="Access"
         name="inherited-access"
@@ -18,6 +18,6 @@ export default function InheritedAccess() {
       <Text id={reason} variant="body-sm">
         This folder takes its access from Northwind launch. Change it there.
       </Text>
-    </Stack>
+    </Column>
   );
 }

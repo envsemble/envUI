@@ -6,7 +6,7 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Stack,
+  Column,
   Text,
   Drawer,
 } from '@envsemble/envui';
@@ -36,7 +36,7 @@ export default function FilterPanel() {
       (owner === 'anyone' || project.owner === owner),
   );
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Drawer
         trigger={
           <Button variant="secondary" startIcon={<FilterList />}>
@@ -62,7 +62,7 @@ export default function FilterPanel() {
           </>
         }
       >
-        <Stack gap={5}>
+        <Column gap={5}>
           <RadioGroup
             orientation="vertical"
             label="Status"
@@ -81,7 +81,7 @@ export default function FilterPanel() {
             value={owner}
             onValueChange={(value) => setOwner(value ?? 'anyone')}
           />
-        </Stack>
+        </Column>
       </Drawer>
       {/* The list takes the width of a column of the page. */}
       {shown.length > 0 ? (
@@ -93,6 +93,6 @@ export default function FilterPanel() {
       ) : (
         <Text emphasis="muted">No projects match these filters.</Text>
       )}
-    </Stack>
+    </Column>
   );
 }

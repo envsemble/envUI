@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { OrganizationSwitcher, Stack, Text } from '@envsemble/envui';
+import { OrganizationSwitcher, Column, Text } from '@envsemble/envui';
 
 const organizations = [
   { id: 'northwind', label: 'Northwind Labs', description: 'Admin' },
@@ -12,7 +12,7 @@ export default function SwitchOrganization() {
   const [message, setMessage] = useState('');
   return (
     // As wide as the context area of an application shell's sidebar.
-    <Stack align="start" style={{ inlineSize: 'min(100%, 14rem)' }}>
+    <Column gap={4} align="start" style={{ inlineSize: 'min(100%, 14rem)' }}>
       <OrganizationSwitcher
         items={organizations}
         value={currentId}
@@ -25,6 +25,6 @@ export default function SwitchOrganization() {
       <Text variant="body-sm" role="status">
         {message}
       </Text>
-    </Stack>
+    </Column>
   );
 }

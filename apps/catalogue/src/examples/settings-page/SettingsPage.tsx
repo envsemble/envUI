@@ -13,7 +13,8 @@ import {
   Radio,
   RadioGroup,
   Sidebar,
-  Stack,
+  Column,
+  Row,
   Surface,
   Switch,
   Text,
@@ -94,7 +95,7 @@ export default function SettingsPage() {
       }
     >
       {/* envUI has no responsive columns yet: the navigation and the sections share a row. */}
-      <Stack direction="row" align="start" gap={8}>
+      <Row align="start" gap={8}>
         {/* A sidebar of the page's own, inside Main: it keeps its own state and leaves the frame's
             sidebar, skip links and shortcut alone. Its provider hides it below the lg breakpoint,
             where the sections follow each other; above it, it sticks below the frame's sticky
@@ -132,7 +133,7 @@ export default function SettingsPage() {
           </Sidebar.Root>
         </Sidebar.Provider>
         {/* envUI has no responsive columns yet: the sections take the rest of the row. */}
-        <Stack gap={8} style={{ flex: '1 1 0', minInlineSize: 0 }}>
+        <Column gap={8} style={{ flex: '1 1 0', minInlineSize: 0 }}>
           <Section id={`${id}-profile`} title="Profile" headingRef={heading('profile')}>
             <ProfileForm />
           </Section>
@@ -155,8 +156,8 @@ export default function SettingsPage() {
           <Section id={`${id}-danger-zone`} title="Danger zone" headingRef={heading('danger-zone')}>
             <DangerZone />
           </Section>
-        </Stack>
-      </Stack>
+        </Column>
+      </Row>
     </Page>
   );
 }
@@ -176,15 +177,15 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <Stack render={<section id={id} aria-labelledby={`${id}-heading`} />} gap={4}>
-      <Stack gap={1}>
+    <Column render={<section id={id} aria-labelledby={`${id}-heading`} />} gap={4}>
+      <Column gap={1}>
         <Text ref={headingRef} id={`${id}-heading`} tabIndex={-1} variant="title" render={<h2 />}>
           {title}
         </Text>
         {description && <Text emphasis="muted">{description}</Text>}
-      </Stack>
+      </Column>
       {children}
-    </Stack>
+    </Column>
   );
 }
 
@@ -264,7 +265,7 @@ function ProfileForm() {
   return (
     <Surface background="muted" render={<form noValidate aria-label="Profile" onSubmit={submit} />}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         {listed.length > 1 && (
           // envUI has no error summary yet: a danger Alert lists each error as a link to its field.
           <Alert
@@ -277,7 +278,7 @@ function ProfileForm() {
               </span>
             }
           >
-            <Stack render={<ul />} gap={1}>
+            <Column render={<ul />} gap={1}>
               {listed.map((field) => (
                 <li key={field}>
                   <Link
@@ -291,13 +292,13 @@ function ProfileForm() {
                   </Link>
                 </li>
               ))}
-            </Stack>
+            </Column>
           </Alert>
         )}
-        <Stack direction="row" align="center" gap={3}>
+        <Row align="center" gap={3}>
           <Avatar name={saved.name} size="lg" fallback="initials" />
           {changed && <Badge tone="warning">Unsaved changes</Badge>}
-        </Stack>
+        </Row>
         <TextField
           ref={refs.name}
           id={`${id}-name`}
@@ -321,7 +322,7 @@ function ProfileForm() {
           error={errors.email}
           onValueChange={(value) => edit('email', value)}
         />
-        <Stack direction="row" wrap align="center" gap={3}>
+        <Row wrap align="center" gap={3}>
           {/* Never disabled: Save says what is wrong, and pending ignores presses while saving. */}
           <Button type="submit" pending={saving}>
             Save profile
@@ -333,8 +334,8 @@ function ProfileForm() {
           <Text role="status" emphasis="muted">
             {status}
           </Text>
-        </Stack>
-      </Stack>
+        </Row>
+      </Column>
     </Surface>
   );
 }
@@ -392,7 +393,7 @@ function Appearance() {
   // This sample only keeps the choice.
   const [scale, setScale] = useState<'comfortable' | 'compact'>('comfortable');
   return (
-    <Stack gap={6}>
+    <Column gap={6}>
       <RadioGroup
         label="Theme"
         name="theme"
@@ -425,7 +426,7 @@ function Appearance() {
           description="Smaller controls and text, to see more at once."
         />
       </RadioGroup>
-    </Stack>
+    </Column>
   );
 }
 
@@ -438,7 +439,7 @@ function DangerZone() {
   const field = useRef<HTMLInputElement>(null);
   const matches = typed.trim() === workspaceName;
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <List.Root aria-label="Danger zone">
         <List.Item
           label="Delete this workspace"
@@ -497,7 +498,7 @@ function DangerZone() {
           }}
         />
       </ConfirmDialog>
-    </Stack>
+    </Column>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Page, SegmentedControl, Stack, Surface, Text, type PageWidth } from '@envsemble/envui';
+import { Page, SegmentedControl, Column, Surface, Text, type PageWidth } from '@envsemble/envui';
 
 const widths: readonly PageWidth[] = ['sm', 'md', 'lg', 'full'];
 
@@ -13,7 +13,7 @@ const uses: Record<PageWidth, string> = {
 export default function Widths() {
   const [width, setWidth] = useState<PageWidth>('sm');
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <SegmentedControl
         aria-label="Page width"
         value={width}
@@ -27,6 +27,6 @@ export default function Widths() {
           </Surface>
         </Page>
       </Surface>
-    </Stack>
+    </Column>
   );
 }

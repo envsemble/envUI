@@ -1,5 +1,5 @@
 import { Component, useState, type ErrorInfo, type ReactNode } from 'react';
-import { Button, EmptyState, Stack, Text } from '@envsemble/envui';
+import { Button, EmptyState, Column, Text } from '@envsemble/envui';
 
 /**
  * Catches a page that fails to render and shows a danger EmptyState in its place, so the frame
@@ -55,13 +55,13 @@ function Report({ broken }: { broken: boolean }) {
 export default function ErrorBoundary() {
   const [broken, setBroken] = useState(false);
   return (
-    <Stack gap={4} align="start">
+    <Column gap={4} align="start">
       <Button variant="secondary" onClick={() => setBroken(true)}>
         Break the page
       </Button>
       <PageErrorBoundary onRetry={() => setBroken(false)}>
         <Report broken={broken} />
       </PageErrorBoundary>
-    </Stack>
+    </Column>
   );
 }

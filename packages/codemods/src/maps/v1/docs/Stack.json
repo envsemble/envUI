@@ -1,3 +1,4 @@
 {
-  "layout": "stack"
+  "layout": "column",
+  "stack": "column"
 }

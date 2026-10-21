@@ -33,7 +33,8 @@ composes:
   - Badge
   - Button
   - Surface
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - loading

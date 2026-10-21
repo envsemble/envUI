@@ -7,7 +7,8 @@ import {
   PageHeader,
   SearchField,
   Select,
-  Stack,
+  Column,
+  Row,
   Text,
 } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -33,14 +34,14 @@ export default function NoResults() {
   };
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       {/* The toolbar stays with the empty state, so people can change what they asked for. */}
       <PageHeader
         headingLevel={3}
         title="Projects"
         controlSize="sm"
         toolbar={
-          <Stack direction="row" wrap align="center" gap={3}>
+          <Row wrap align="center" gap={3}>
             <SearchField
               ref={search}
               label="Search projects"
@@ -56,7 +57,7 @@ export default function NoResults() {
               value={status}
               onValueChange={setStatus}
             />
-          </Stack>
+          </Row>
         }
       />
       <Text role="status" variant="body-sm" emphasis="muted">
@@ -88,7 +89,7 @@ export default function NoResults() {
           }
         />
       )}
-    </Stack>
+    </Column>
   );
 }
 

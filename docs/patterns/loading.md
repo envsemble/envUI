@@ -34,7 +34,8 @@ composes:
   - List
   - SegmentedControl
   - TextField
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - skeleton

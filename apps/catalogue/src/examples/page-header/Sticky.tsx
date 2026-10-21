@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Button, Page, PageHeader, Stack, Text } from '@envsemble/envui';
+import { Button, Page, PageHeader, Column, Text } from '@envsemble/envui';
 
 const sections = ['Summary', 'Revenue', 'Costs', 'Outlook'];
 
@@ -28,9 +28,9 @@ export default function Sticky() {
           />
         }
       >
-        <Stack gap={6}>
+        <Column gap={6}>
           {sections.map((section) => (
-            <Stack key={section} gap={2} render={<section />}>
+            <Column key={section} gap={2} render={<section />}>
               <Text variant="title" render={<h3 />}>
                 {section}
               </Text>
@@ -38,9 +38,9 @@ export default function Sticky() {
                 The header stays at the top of the page as it scrolls, and publishes its height as
                 --env-page-header-block-size for content that sticks below it.
               </Text>
-            </Stack>
+            </Column>
           ))}
-        </Stack>
+        </Column>
       </Page>
     </div>
   );

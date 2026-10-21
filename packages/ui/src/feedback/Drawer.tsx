@@ -17,7 +17,7 @@ import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
 import { useEnvUI, useMessages, type Direction } from '../internal/EnvUIContext.js';
 import { dialog } from '../foundations/messages/dialog.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { useTheme } from '../foundations/Theme.js';
 import type {
   DialogFocusTarget,
   DialogOpenChangeDetails,
@@ -29,6 +29,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogSurface,
+  OverlayTheme,
 } from './internal/DialogParts.js';
 import { ResetControlDefaults } from '../internal/ControlDefaults.js';
 
@@ -211,7 +212,7 @@ export function Drawer({
     >
       {trigger && <BaseDrawer.Trigger ref={triggerRef} render={trigger} />}
       <BaseDrawer.Portal>
-        <Theme {...theme} dir={provided ?? read}>
+        <OverlayTheme {...theme} dir={provided ?? read}>
           <ResetControlDefaults>
             {modal && <DialogBackdrop className="env-drawer-backdrop" />}
             <BaseDrawer.Viewport className="env-drawer-viewport" data-side={side}>
@@ -253,7 +254,7 @@ export function Drawer({
               </BaseDrawer.Popup>
             </BaseDrawer.Viewport>
           </ResetControlDefaults>
-        </Theme>
+        </OverlayTheme>
       </BaseDrawer.Portal>
     </BaseDrawer.Root>
   );

@@ -5,7 +5,8 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Stack,
+  Column,
+  Row,
   Text,
   TextField,
   Textarea,
@@ -48,7 +49,7 @@ export default function CreateProject() {
     // noValidate: the form checks its own fields and words its own errors.
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         <TextField
           ref={nameField}
           label="Project name"
@@ -78,18 +79,18 @@ export default function CreateProject() {
           <Radio value="private" label="Private" description="Only the people you invite." />
         </RadioGroup>
         {/* The primary action comes first, at the start, after the last field. */}
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit" pending={creating}>
             Create project
           </Button>
           <Button variant="secondary" href="/projects">
             Cancel
           </Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {status}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

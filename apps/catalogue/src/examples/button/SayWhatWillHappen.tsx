@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatedNumber, Button, Checkbox, Stack } from '@envsemble/envui';
+import { AnimatedNumber, Button, Checkbox, Column, Row } from '@envsemble/envui';
 
 const filters = [
   { id: 'garden', label: 'Garden', matching: 0.4 },
@@ -14,8 +14,8 @@ export default function SayWhatWillHappen() {
     1280,
   );
   return (
-    <Stack>
-      <Stack gap={3}>
+    <Column gap={4}>
+      <Column gap={3}>
         {filters.map((filter) => (
           <Checkbox
             key={filter.id}
@@ -28,12 +28,12 @@ export default function SayWhatWillHappen() {
             }
           />
         ))}
-      </Stack>
-      <Stack direction="row" wrap align="center" gap={4}>
+      </Column>
+      <Row wrap align="center" gap={4}>
         <Button>
           Show <AnimatedNumber value={homes} /> homes
         </Button>
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }

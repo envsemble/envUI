@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Composer, Stack, Text } from '@envsemble/envui';
+import { Composer, Column, Text } from '@envsemble/envui';
 
 export default function PendingSend() {
   const [sending, setSending] = useState(false);
@@ -17,7 +17,7 @@ export default function PendingSend() {
   };
 
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Composer
         aria-label="Reply to Priya Shah"
         placeholder="Write a reply"
@@ -28,6 +28,6 @@ export default function PendingSend() {
       <Text variant="caption" emphasis="muted" role="status">
         {log.length > 0 && `${log.length} ${log.length === 1 ? 'reply' : 'replies'} sent.`}
       </Text>
-    </Stack>
+    </Column>
   );
 }

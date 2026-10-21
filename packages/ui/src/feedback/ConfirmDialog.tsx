@@ -11,7 +11,7 @@ import {
   type RefObject,
 } from 'react';
 import { Button } from '../actions/Button.js';
-import { Theme, useTheme } from '../foundations/Theme.js';
+import { useTheme } from '../foundations/Theme.js';
 import { confirmDialog } from '../foundations/messages/confirmDialog.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogSurface,
+  OverlayTheme,
 } from './internal/DialogParts.js';
 
 export interface ConfirmDialogProps
@@ -211,7 +212,7 @@ export function ConfirmDialog({
     >
       {trigger && <BaseAlertDialog.Trigger render={trigger} />}
       <BaseAlertDialog.Portal>
-        <Theme {...theme}>
+        <OverlayTheme {...theme}>
           <ResetControlDefaults>
             <DialogBackdrop />
             <div className="env-dialog-positioner" data-placement="center">
@@ -267,7 +268,7 @@ export function ConfirmDialog({
               </BaseAlertDialog.Popup>
             </div>
           </ResetControlDefaults>
-        </Theme>
+        </OverlayTheme>
       </BaseAlertDialog.Portal>
     </BaseAlertDialog.Root>
   );

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Dialog, Stack, Text, TextField } from '@envsemble/envui';
+import { Button, Dialog, Column, Text, TextField } from '@envsemble/envui';
 
 const workspace = 'Northwind';
 
@@ -8,7 +8,7 @@ export default function RemoveWorkspace() {
   const [typed, setTyped] = useState('');
   const [result, setResult] = useState('');
   return (
-    <Stack align="start">
+    <Column gap={4} align="start">
       <Dialog
         open={open}
         onOpenChange={(next) => {
@@ -42,6 +42,6 @@ export default function RemoveWorkspace() {
         />
       </Dialog>
       <Text role="status">{result}</Text>
-    </Stack>
+    </Column>
   );
 }

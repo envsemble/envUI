@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button, Checkbox, Disclosure, Select, Stack, Text, TextField } from '@envsemble/envui';
+import {
+  Button,
+  Checkbox,
+  Disclosure,
+  Select,
+  Column,
+  Row,
+  Text,
+  TextField,
+} from '@envsemble/envui';
 
 export default function AdvancedOptions() {
   const [format, setFormat] = useState<string | null>('csv');
@@ -37,7 +46,7 @@ export default function AdvancedOptions() {
   return (
     <form noValidate onSubmit={submit}>
       {/* envUI has no form column yet: one column, kept to a width that reads easily. */}
-      <Stack gap={5} style={{ maxInlineSize: '32rem' }}>
+      <Column gap={5} style={{ maxInlineSize: '32rem' }}>
         <Select
           label="Format"
           name="format"
@@ -47,7 +56,7 @@ export default function AdvancedOptions() {
         />
         {/* Settings most people leave alone wait behind a disclosure; nothing required is in it. */}
         <Disclosure title="Advanced options" open={advanced} onOpenChange={setAdvanced}>
-          <Stack gap={4}>
+          <Column gap={4}>
             <Checkbox name="archived" label="Include archived projects" />
             <TextField
               ref={fileNameField}
@@ -67,15 +76,15 @@ export default function AdvancedOptions() {
                 }
               }}
             />
-          </Stack>
+          </Column>
         </Disclosure>
-        <Stack direction="row" wrap gap={3}>
+        <Row wrap gap={3}>
           <Button type="submit">Export report</Button>
-        </Stack>
+        </Row>
         <Text role="status" emphasis="muted">
           {status}
         </Text>
-      </Stack>
+      </Column>
     </form>
   );
 }

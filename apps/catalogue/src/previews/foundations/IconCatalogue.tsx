@@ -1,5 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
-import { Button, Card, SearchField, Stack, Switch, Text, Drawer } from '@envsemble/envui';
+import { Button, Card, SearchField, Column, Row, Switch, Text, Drawer } from '@envsemble/envui';
 // This offline browser consumes the full public catalogue. Products use per-icon imports.
 import * as symbols from '@envsemble/envui/icons';
 import { Example } from '../Example';
@@ -63,20 +63,20 @@ function IconDetails({
   const Symbol = symbols[name];
 
   return (
-    <Stack gap={5}>
-      <Stack gap={3}>
+    <Column gap={5}>
+      <Column gap={3}>
         <Text variant="caption">Material Symbols Rounded · {filled ? 'Filled' : 'Outline'}</Text>
         <div className="docs-icon-detail-preview">
           <Symbol filled={filled} width="4rem" height="4rem" />
         </div>
-      </Stack>
+      </Column>
       <Text variant="caption">Inherits the surrounding text color.</Text>
       {onRequestUsage && (
         <Button variant="secondary" onClick={() => onRequestUsage(name, filled)}>
           View usage
         </Button>
       )}
-    </Stack>
+    </Column>
   );
 }
 
@@ -143,7 +143,7 @@ export function IconCatalogue({
         <Text>No matching icons. Try another name.</Text>
       )}
       {pageCount > 1 && (
-        <Stack direction="row" wrap align="center" gap={4}>
+        <Row wrap align="center" gap={4}>
           <Button variant="secondary" disabled={page === 0} onClick={() => setPage(page - 1)}>
             Previous
           </Button>
@@ -157,7 +157,7 @@ export function IconCatalogue({
           >
             Next
           </Button>
-        </Stack>
+        </Row>
       )}
       <Drawer
         id={detailsId}

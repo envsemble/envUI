@@ -50,7 +50,7 @@ related:
   - date-picker
   - composer
   - markdown
-  - stack
+  - column
   - accessibility
 components:
   - TextField

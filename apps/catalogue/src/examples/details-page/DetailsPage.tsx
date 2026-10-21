@@ -15,7 +15,8 @@ import {
   PageHeader,
   Progress,
   RelativeTime,
-  Stack,
+  Column,
+  Row,
   Surface,
   Tabs,
   Text,
@@ -121,8 +122,8 @@ export default function DetailsPage() {
       </Text>
       {/* envUI has no responsive columns yet: the main column and the panel share a row and wrap,
           the main column first, when the row is narrower than about 56 rem. */}
-      <Stack direction="row" wrap align="start" gap={8}>
-        <Stack gap={4} style={{ flex: '1 1 32rem', minInlineSize: 0 }}>
+      <Row wrap align="start" gap={8}>
+        <Column gap={4} style={{ flex: '1 1 32rem', minInlineSize: 0 }}>
           <Tabs
             aria-label="Project views"
             items={[
@@ -131,23 +132,23 @@ export default function DetailsPage() {
               { value: 'files', button: <Button>Files</Button>, content: <Files /> },
             ]}
           />
-        </Stack>
+        </Column>
         <Surface
           background="muted"
           render={<aside aria-labelledby={`${id}-details`} />}
           // envUI has no responsive columns yet: the panel is 20 to 28 rem beside the main column.
           style={{ flex: '1 1 20rem', maxInlineSize: '28rem' }}
         >
-          <Stack gap={5}>
+          <Column gap={5}>
             <Text id={`${id}-details`} variant="title" render={<h2 />}>
               Details
             </Text>
             <DescriptionList.Root layout="stacked" aria-labelledby={`${id}-details`}>
               <DescriptionList.Item label="Owner">
-                <Stack direction="row" align="center" gap={2}>
+                <Row align="center" gap={2}>
                   <Avatar name={project.owner} size="sm" fallback="initials" />
                   {project.owner}
-                </Stack>
+                </Row>
               </DescriptionList.Item>
               <DescriptionList.Item label="Status">
                 {archived ? (
@@ -170,7 +171,7 @@ export default function DetailsPage() {
               valueText={`${done} of ${project.tasks.length}`}
               aria-valuetext={`${done} of ${project.tasks.length} tasks done`}
             />
-            <Stack gap={2}>
+            <Column gap={2}>
               <Text variant="body-sm" emphasis="muted" render={<h3 />}>
                 Members
               </Text>
@@ -178,10 +179,10 @@ export default function DetailsPage() {
                 people={project.members.map((name) => ({ name, fallback: 'initials' }))}
                 max={4}
               />
-            </Stack>
-          </Stack>
+            </Column>
+          </Column>
         </Surface>
-      </Stack>
+      </Row>
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}
@@ -201,14 +202,14 @@ export default function DetailsPage() {
 
 function Overview() {
   return (
-    <Stack gap={6}>
-      <Stack gap={2}>
+    <Column gap={6}>
+      <Column gap={2}>
         <Text variant="title" render={<h2 />}>
           About this project
         </Text>
         <Text>{project.description}</Text>
-      </Stack>
-      <Stack gap={3}>
+      </Column>
+      <Column gap={3}>
         <Text variant="title" render={<h2 />}>
           Tasks
         </Text>
@@ -222,14 +223,14 @@ function Overview() {
             />
           ))}
         </List.Root>
-      </Stack>
-    </Stack>
+      </Column>
+    </Column>
   );
 }
 
 function Activity() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Text variant="title" render={<h2 />}>
         Activity
       </Text>
@@ -243,13 +244,13 @@ function Activity() {
           />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }
 
 function Files() {
   return (
-    <Stack gap={3}>
+    <Column gap={3}>
       <Text variant="title" render={<h2 />}>
         Files
       </Text>
@@ -264,7 +265,7 @@ function Files() {
           />
         ))}
       </List.Root>
-    </Stack>
+    </Column>
   );
 }
 

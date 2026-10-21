@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Checkbox, ConfirmDialog, List, Stack, Text } from '@envsemble/envui';
+import { Button, Checkbox, ConfirmDialog, List, Column, Row, Text } from '@envsemble/envui';
 
 /** "1 document", "3 documents": the count belongs in every label of the flow. */
 const documentCount = (count: number) => (count === 1 ? '1 document' : `${count} documents`);
@@ -21,12 +21,12 @@ export default function BulkDelete() {
     setSelected((current) => (checked ? [...current, id] : current.filter((item) => item !== id)));
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       {/* The bar shows the selection and what can be done with it; the button names the count. */}
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text role="status">{count ? `${count} selected` : result}</Text>
         {count > 0 && (
-          <Stack direction="row" wrap gap={3}>
+          <Row wrap gap={3}>
             <Button variant="secondary" size="sm" onClick={() => setSelected([])}>
               Clear selection
             </Button>
@@ -42,9 +42,9 @@ export default function BulkDelete() {
             >
               {`Delete ${documentCount(count)}…`}
             </Button>
-          </Stack>
+          </Row>
         )}
-      </Stack>
+      </Row>
       <List.Root ref={list} aria-label="Documents" tabIndex={-1}>
         {documents.map((item) => (
           <List.Item
@@ -78,7 +78,7 @@ export default function BulkDelete() {
           setSelected([]);
         }}
       />
-    </Stack>
+    </Column>
   );
 }
 

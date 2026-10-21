@@ -1,4 +1,4 @@
-import { Button, Combobox, Surface, type ComboboxGroup, Stack } from '@envsemble/envui';
+import { Button, Combobox, Surface, type ComboboxGroup, Row } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { Folder } from '@envsemble/envui/icons/Folder';
 
@@ -28,7 +28,7 @@ export default function SmallToolbar() {
       radius="full"
       role="group"
       aria-label="Document toolbar"
-      render={<Stack direction="row" wrap align="center" gap={4} />}
+      render={<Row wrap align="center" gap={4} />}
     >
       <Combobox
         size="sm"

@@ -27,7 +27,7 @@ import {
   EnvUIProvider,
   SearchField,
   SplitPane,
-  Stack,
+  Column,
   Textarea,
   ThemePreferenceProvider,
   ThemeToggle,
@@ -176,7 +176,7 @@ export function MessageStringsFixture() {
   return (
     <ThemePreferenceProvider storageKey="fixture-messages-theme">
       <EnvUIProvider messages={pseudoMessages} locale="en-XA">
-        <Stack gap={4} data-testid="messages">
+        <Column gap={4} data-testid="messages">
           <CloseButton />
           <ConfirmButton confirmLabel="Remove?" onConfirm={() => {}}>
             Remove
@@ -265,7 +265,7 @@ export function MessageStringsFixture() {
             onConfirm={() => {}}
           />
           <InlineMessages />
-        </Stack>
+        </Column>
       </EnvUIProvider>
     </ThemePreferenceProvider>
   );

@@ -1,12 +1,12 @@
-import { Button, Stack, TextField } from '@envsemble/envui';
+import { Button, Column, Row, TextField } from '@envsemble/envui';
 
 export default function ExplainWhatIsMissing() {
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       <TextField label="Project name" error="Enter a name for the project." />
-      <Stack direction="row" justify="end">
+      <Row gap={4} justify="end">
         <Button>Create project</Button>
-      </Stack>
-    </Stack>
+      </Row>
+    </Column>
   );
 }

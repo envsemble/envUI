@@ -36,7 +36,8 @@ composes:
   - Link
   - Select
   - TextField
-  - Stack
+  - Column
+  - Row
   - Text
 related:
   - loading

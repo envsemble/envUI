@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Progress, Stack, Text } from '@envsemble/envui';
+import { Button, Progress, Column, Text } from '@envsemble/envui';
 
 const files = [
   { name: 'annual-review.pdf', size: 6 },
@@ -29,14 +29,14 @@ export default function UploadProgress() {
     }, 300);
   };
   return (
-    <Stack gap={5}>
-      <Stack align="start">
+    <Column gap={5}>
+      <Column gap={4} align="start">
         <Button variant="secondary" onClick={upload}>
           Upload 2 files
         </Button>
-      </Stack>
+      </Column>
       {sent && (
-        <Stack gap={4}>
+        <Column gap={4}>
           {files.map((file, index) => (
             // The value says how far it is; valueText says it in the units people think in.
             <Progress
@@ -46,11 +46,11 @@ export default function UploadProgress() {
               valueText={`${sent[index]} of ${file.size} MB`}
             />
           ))}
-        </Stack>
+        </Column>
       )}
       <Text role="status" emphasis="muted">
         {done ? 'Uploaded 2 files.' : ''}
       </Text>
-    </Stack>
+    </Column>
   );
 }

@@ -4,7 +4,8 @@ import {
   EmptyState,
   LoadingState,
   Skeleton,
-  Stack,
+  Column,
+  Row,
   Surface,
   Table,
   Text,
@@ -26,16 +27,16 @@ export default function LoadFailed() {
   };
 
   return (
-    <Stack gap={4}>
+    <Column gap={4}>
       {/* The heading and the page's action stay whatever the table's state. */}
-      <Stack direction="row" wrap align="center" justify="between" gap={3}>
+      <Row wrap align="center" justify="between" gap={3}>
         <Text render={<h3 ref={heading} tabIndex={-1} />} variant="title">
           Documents
         </Text>
         <Button variant="secondary" size="sm" startIcon={<Upload />} href="/documents/upload">
           Upload document
         </Button>
-      </Stack>
+      </Row>
       {state === 'loaded' ? (
         <Table.Root aria-label="Documents">
           <Table.Head>
@@ -84,7 +85,7 @@ export default function LoadFailed() {
           />
         </Surface>
       )}
-    </Stack>
+    </Column>
   );
 }
 

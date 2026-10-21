@@ -6,7 +6,8 @@ import {
   Page,
   PageHeader,
   SearchField,
-  Stack,
+  Column,
+  Row,
   Text,
 } from '@envsemble/envui';
 
@@ -24,16 +25,16 @@ const trail = [
 export function PageHeadersFixture() {
   const [width, setWidth] = useState('48rem');
   return (
-    <Stack gap={5}>
+    <Column gap={5}>
       <section aria-label="Responsive" className="fixture-section">
-        <Stack direction="row" gap={2}>
+        <Row gap={2}>
           <Button variant="secondary" onClick={() => setWidth('48rem')}>
             Wide header
           </Button>
           <Button variant="secondary" onClick={() => setWidth('20rem')}>
             Narrow header
           </Button>
-        </Stack>
+        </Row>
         <div style={{ inlineSize: width }}>
           <PageHeader
             data-testid="responsive"
@@ -58,10 +59,10 @@ export function PageHeadersFixture() {
           controlSize="sm"
           actions={<Button>Invite</Button>}
           toolbar={
-            <Stack direction="row" wrap align="center" justify="between">
+            <Row gap={4} wrap align="center" justify="between">
               <SearchField label="Search members" size="sm" />
               <Button variant="secondary">Export</Button>
-            </Stack>
+            </Row>
           }
         />
       </section>
@@ -96,6 +97,6 @@ export function PageHeadersFixture() {
           </div>
         </Page>
       </div>
-    </Stack>
+    </Column>
   );
 }
