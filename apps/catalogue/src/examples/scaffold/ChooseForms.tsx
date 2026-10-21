@@ -11,6 +11,7 @@ export default function ChooseForms() {
     // An application with a drawer only: it shows from medium, and a compact width shows none,
     // where the application opens its navigation from the top bar instead.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       forms={{ compact: 'none' }}

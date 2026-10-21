@@ -1077,28 +1077,25 @@
       "note": "Internal to the 0.7 card. Set a card's padding with its padding prop."
     },
     "--app-sticky-top": {
-      "note": "Scaffold's body scrolls under its top bar, so sticky content sticks at the top of the body, inset-block-start: 0; no frame publishes where it sticks."
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\"; no frame publishes where it sticks."
     },
     "--env-app-sticky-top": {
-      "note": "Scaffold's body scrolls under its top bar, so sticky content sticks at the top of the body, inset-block-start: 0; no frame publishes where it sticks."
+      "note": "Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\"; no frame publishes where it sticks."
     },
     "--env-app-topbar-block-size": {
-      "note": "Scaffold's top bar sits above the body that scrolls, so nothing needs its height; TopBar is --env-top-bar-height tall."
+      "note": "TopBar is --env-top-bar-height tall, which --env-scaffold-sticky-top reads; nothing measures it."
     },
     "--env-frame-sticky-top": {
-      "note": "AppShell and WindowFrame are gone: Scaffold's body scrolls under its top bar, so sticky content sticks at the top of the body, inset-block-start: 0."
+      "note": "AppShell and WindowFrame are gone: Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\"; no frame publishes where it sticks."
     },
     "--env-frame-header-block-size": {
-      "note": "AppShell and WindowFrame are gone: Scaffold's top bar sits above the body that scrolls, so nothing needs its height."
+      "note": "AppShell and WindowFrame are gone: TopBar is --env-top-bar-height tall, which --env-scaffold-sticky-top reads; nothing measures it."
     },
     "--env-app-shell-block-size": {
       "note": "AppShell is gone: Scaffold fills 100dvh; give it another block-size with your own class."
     },
     "--env-sidebar-inset": {
       "note": "Sidebar is gone: the navigation forms, Bar, Rail and Drawer, keep their own insets."
-    },
-    "--env-page-header-block-size": {
-      "note": "PageHeader no longer measures itself: put content that should stay in view under a sticky header in its toolbar."
     },
     "--env-split-pane-size": {
       "note": "SplitPane is gone: Panes takes the resized pane's size in rem, as size or defaultSize on Panes.Root."

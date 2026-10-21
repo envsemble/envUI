@@ -55,6 +55,7 @@ export default function PrimaryNavigation() {
 
   return (
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       bodyRef={main}

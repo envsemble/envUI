@@ -3,6 +3,7 @@ import { Column, Row } from '../foundations/Layout.js';
 import { Text } from '../foundations/Text.js';
 import { classNames } from '../internal/classNames.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
+import { StickyHeaderSize } from './internal/StickyHeaderSize.js';
 
 export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'title'> {
   /** The page's title. It wraps, balanced across its lines, and is never cut short. */
@@ -22,8 +23,8 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
   /** Beside the title, wrapping with it: Badges, such as a status, or a count. */
   meta?: ReactNode;
   /**
-   * The page's actions, at the end of the title row: its primary action last. Below 32 rem of the
-   * header's own width they move under the title and wrap.
+   * The page's actions, at the end of the title row: its primary action last. Below 37.5 rem of
+   * the header's own width, a compact one, they move under the title and wrap.
    */
   actions?: ReactNode;
   /**
@@ -32,9 +33,11 @@ export interface PageHeaderProps extends Omit<ComponentPropsWithRef<'div'>, 'tit
    */
   toolbar?: ReactNode;
   /**
-   * Keeps the header in view at the top of the area that scrolls, such as a Scaffold's body, over
-   * the content that scrolls under it. Nothing measures it: as a Page's header, what scrolls into
-   * view below it, such as a field taking focus, keeps clear of the rows it has.
+   * Keeps the header in view at the top of the area that scrolls, over the content that scrolls
+   * under it: under a Scaffold's top bar where the document scrolls, or at the top of a Scaffold's
+   * body that scrolls. As a Page's header, what scrolls into view below it, such as a field taking
+   * focus, keeps clear of it: the header measures its height, which CSS reckons from its rows until
+   * script runs.
    */
   sticky?: boolean;
   /**
@@ -73,6 +76,7 @@ export function PageHeader({
       className={classNames('env-page-header', className)}
       data-sticky={sticky ? '' : undefined}
     >
+      {sticky && <StickyHeaderSize />}
       {breadcrumbs != null && <div className="env-page-header-breadcrumbs">{breadcrumbs}</div>}
       <Row wrap gap={4} align="start" className="env-page-header-row">
         {start != null && (

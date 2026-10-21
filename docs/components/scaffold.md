@@ -1,6 +1,6 @@
 ---
 title: Scaffold
-summary: The invisible structure of an application's screen, with a top bar region, the navigation and a body that scrolls, which shows the navigation form that fits its own width.
+summary: The invisible structure of an application's screen, with a top bar region, the navigation and the body, which shows the navigation form that fits its own width and keeps the bars in view as the page scrolls.
 status: beta
 since: 1.0.0
 category: Layout & surfaces
@@ -17,7 +17,7 @@ aliases:
   - WindowFrame
 useWhen:
   - An application's screen, with a top bar, its navigation and the page people are on.
-  - A window without navigation, such as a start page, with its title bar above a body that scrolls.
+  - A window without navigation, such as a start page, with its title bar above the body.
 avoidWhen:
   - text: A readable column for a page's content, with its gutters.
     use: Page
@@ -41,7 +41,7 @@ components:
 
 ## Overview
 
-Scaffold is the invisible structure of an application's screen, after Material's scaffold: a top bar region, a navigation region and the body. It never paints; the components in its regions do. It owns the scrolling, so the body scrolls under the top bar while the navigation stays in place, and it changes arrangement by its own width, in CSS, so the server's markup is right before any script runs and nothing is measured.
+Scaffold is the invisible structure of an application's screen, after Material's scaffold: a top bar region, a navigation region and the body. It never paints; the components in its regions do. The document scrolls, as on any website, while the top bar, the bar and the rail or drawer stay in view; `scroll="body"` scrolls the body alone instead. It changes arrangement by its own width, in CSS, so the server's markup is right before any script runs and nothing is measured.
 
 The application gives it the navigation forms it wants, each the same destinations in another component: `navigation={{ bar, rail, drawer }}`. The Scaffold shows one at a time, by the window class of its own width: the bar at the bottom of a compact width, the rail at the start of a medium one and the drawer at the start from expanded.
 
@@ -53,11 +53,11 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 ## Anatomy
 
-1. **Root** (`env-scaffold`): a grid that fills its container's height, `100dvh` by default, and the `env-scaffold` size container; `data-compact`, `data-medium`, `data-expanded` and `data-large` name the form each window class shows. `name` renders as `data-env-name`.
-2. **Skip links** (`env-scaffold-skip-links`): Skip to content, then Skip to navigation where a form shows; hidden until focused, the first tab stops.
+1. **Root** (`env-scaffold`): a grid at least as tall as the window, or with `scroll="body"` as tall as its container, `100dvh` by default, and the `env-scaffold` size container; `data-scroll` says what scrolls, and `data-compact`, `data-medium`, `data-expanded` and `data-large` name the form each window class shows. `name` renders as `data-env-name`.
+2. **Skip links** (`env-scaffold-skip-links`): Skip to content, then Skip to navigation, which hides where no form shows; hidden until focused, the first tab stops. Not rendered with `landmarks={false}`.
 3. **Top bar** (`env-scaffold-top-bar`, `topBar`): the banner landmark, above the body and beside the navigation, or across the whole width with `topBarSpan="full"`. Usually a [TopBar](top-bar.md).
-4. **Navigation** (`env-scaffold-navigation`, `navigation`): a slot for each form, `env-scaffold-bar` across the bottom and `env-scaffold-rail` and `env-scaffold-drawer` at the start, each as tall as the screen and scrolling on its own.
-5. **Body** (`env-scaffold-body`, `children`): the main landmark, `bodyId` (`main` by default), which scrolls with a stable gutter.
+4. **Navigation** (`env-scaffold-navigation`, `navigation`): a slot for each form, `env-scaffold-bar` across the bottom and `env-scaffold-rail` and `env-scaffold-drawer` at the start, each as tall as the window and scrolling on its own.
+5. **Body** (`env-scaffold-body`, `children`): the main landmark, `bodyId` (`main` by default, or an id of its own with `landmarks={false}`); with `scroll="body"` it scrolls, with a stable gutter.
 
 ## Variants and sizes
 
@@ -74,11 +74,13 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 ## States and behaviour
 
-- **Scrolling**: the body scrolls, not the document. The top bar and the navigation stay in place, sticky content in the body, such as a sticky PageHeader, sticks at the body's top, and each region keeps its own scroll position. The Scaffold fills its container, so a preview or an embedded application gives it a block size of its own, such as `style={{ blockSize: '24rem' }}`.
-- **Keyboard scrolling**: with focus on the document, Page Up, Page Down, Space, Home, End and the arrows scroll the body as they would the document; fields, widgets that use the keys, and what scrolls by itself keep them.
+- **Scrolling, `scroll="document"`** (the default): the document scrolls, as on any website. A phone collapses its address bar as people scroll, pull to refresh and a tap on the status bar work, the browser restores the scroll position as people go back, and the keyboard scrolls as it always does. The Scaffold is at least as tall as the window; the top bar sticks to the window's top, the bar to its bottom, and the rail or the drawer stays in view, as tall as the window, or under a top bar across it. Sticky content in the body, such as a sticky PageHeader, sticks under the top bar, `--env-scaffold-sticky-top` below the window's top: the top bar height, an estimate where a top bar wraps or is a window's title bar.
+- **Scrolling, `scroll="body"`**: the body alone scrolls, under the top bar, with the navigation in place and each region keeping its own scroll position. The Scaffold fills its container, `100dvh` by default, so a preview or an embedded application gives it a block size of its own, such as `style={{ blockSize: '24rem' }}`. Use it for a preview or an embedded frame, a window that draws its own title bar, and a body of [Panes](panes.md) whose panes scroll on their own. It costs a phone its address bar collapsing, pull to refresh, the tap on the status bar and the browser's scroll restoration; read and restore the position on `bodyRef` yourself.
+- **Keyboard scrolling**: with `scroll="body"`, with focus on the document, Page Up, Page Down, Space, Home, End and the arrows scroll the body as they would the document; fields, widgets that use the keys, and what scrolls by itself keep them.
+- **Focus as the form changes**: when the Scaffold's width changes the form that shows, focus in the form that hid moves to the current item of the form that shows, else its first; focus elsewhere stays.
 - **Arrangement**: only CSS decides which form shows, by container queries on the Scaffold's own width at 37.5, 52.5 and 75 rem; a Scaffold in a narrow frame shows the bar however wide the window is.
 - **Safe areas**: the top bar keeps clear of the top safe area, the bar or else the body of the bottom one, and the Scaffold of the left and right ones, under `viewport-fit=cover`.
-- **PanelDock**: a PanelDock placed directly in the body lies over the body's visible area and stays there as it scrolls.
+- **PanelDock**: a PanelDock placed directly in the body lies over the body's visible area, under the top bar, and stays there as the page scrolls.
 - **Toasts** keep their own viewport; a floating button or a bottom action bar goes in the body.
 
 ## Do and don't
@@ -99,17 +101,17 @@ Render one Scaffold at the application's root, around the router's outlet, with 
 
 ### Keyboard
 
-| Key                                                         | Action                                                                   |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------ |
-| <kbd>Tab</kbd> on a fresh page                              | Shows Skip to content, then Skip to navigation.                          |
-| <kbd>Enter</kbd> on a skip link                             | Moves focus to the body, or to the navigation form that shows.           |
-| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd>  | Scroll the body, with focus on the document as with focus in the body.   |
-| <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> | Scroll the body, unless a field or a widget that uses the key has focus. |
+| Key                                                         | Action                                                                            |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| <kbd>Tab</kbd> on a fresh page                              | Shows Skip to content, then Skip to navigation.                                   |
+| <kbd>Enter</kbd> on a skip link                             | Moves focus to the body, or to the navigation form that shows.                    |
+| <kbd>Page Up</kbd>, <kbd>Page Down</kbd>, <kbd>Space</kbd>  | Scroll the page; with `scroll="body"`, the body, also with focus on the document. |
+| <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>↑</kbd>, <kbd>↓</kbd> | The same, unless a field or a widget that uses the key has focus.                 |
 
 ### envUI provides
 
-- The landmarks: the top bar region is the banner and the body the main; `landmarks={false}` renders divs, for a preview inside another page's main.
-- The skip links, named in the provider's language, which move focus without scrolling the body under the top bar.
+- The landmarks: the top bar region is the banner and the body the main; `landmarks={false}` renders divs and no skip links, for a preview inside another page's main.
+- The skip links, named in the provider's language, which move focus without scrolling the page under the top bar.
 - Only the form that shows is in the accessibility tree and the tab order; the others are `display: none`.
 
 ### You provide
@@ -129,4 +131,4 @@ An application with a drawer only, which a compact width replaces with none: `fo
 
 ## Changelog
 
-- **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and a body that scrolls.
+- **1.0.0**: Scaffold, which replaces AppShell and WindowFrame: a top bar region, the navigation forms by window class, and the body, with the document or the body scrolling.

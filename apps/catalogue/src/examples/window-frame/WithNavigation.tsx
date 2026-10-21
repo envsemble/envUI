@@ -10,6 +10,7 @@ export default function WithNavigation() {
   return (
     // The title bar runs across the window, above the navigation, as the window controls need.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBarSpan="full"

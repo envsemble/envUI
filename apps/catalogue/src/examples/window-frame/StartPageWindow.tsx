@@ -10,6 +10,7 @@ export default function StartPageWindow() {
     // A window without navigation: the title bar across the top, and the body scrolling below it,
     // so the window controls drawn over the title bar never cover a scrollbar.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBarSpan="full"

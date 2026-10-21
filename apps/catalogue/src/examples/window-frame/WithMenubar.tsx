@@ -7,6 +7,7 @@ const preview: CSSProperties = { blockSize: '18rem' };
 export default function WithMenubar() {
   return (
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBarSpan="full"

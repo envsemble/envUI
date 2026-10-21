@@ -27,6 +27,7 @@ export default function WithDetails() {
     // Side content that is not navigation goes in a supporting pane in the body: Panes fill the
     // Scaffold's body, and each pane scrolls on its own.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBar={<TopBar title="Documents" />}

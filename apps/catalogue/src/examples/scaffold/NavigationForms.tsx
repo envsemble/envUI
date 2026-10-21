@@ -35,6 +35,7 @@ export default function NavigationForms() {
     // The Scaffold shows the form for its own width: the bar in a compact width, the rail in a
     // medium one and the drawer from expanded.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBar={

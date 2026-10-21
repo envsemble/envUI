@@ -67,14 +67,14 @@ export function PageHeadersFixture() {
         />
       </section>
       <div className="fixture-scaffold-frame" data-testid="frame">
-        <Scaffold landmarks={false}>
+        <Scaffold scroll="body" landmarks={false}>
           <Page
             data-testid="page"
             width="md"
             header={
               <PageHeader
                 data-testid="sticky"
-                title="Annual report"
+                title="Annual report for the board and every shareholder"
                 sticky
                 actions={<Button>Share</Button>}
                 toolbar={<Button variant="secondary">Filter</Button>}

@@ -42,7 +42,10 @@ body:has(> #root > .env-theme > .env-scaffold) {
   block-size: 30rem;
   border: 0.0625rem solid var(--env-color-border-muted);
 }
-.fixture-scaffold-frame > .env-scaffold {
+.fixture-scaffold-frame[data-scroll='document'] {
+  block-size: auto;
+}
+.fixture-scaffold-frame:not([data-scroll='document']) > .env-scaffold {
   block-size: 100%;
 }
 .fixture-destinations {

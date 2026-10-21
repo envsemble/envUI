@@ -98,6 +98,54 @@ test.describe('Scaffold', () => {
     await page.goto(scaffold('&landmarks=off'));
     await expect(page.getByRole('banner')).toHaveCount(0);
     await expect(page.getByRole('main')).toHaveCount(0);
+    // Without landmarks, as a preview inside another page, it has no skip links, and its body an
+    // id of its own.
+    await expect(page.locator('.env-scaffold-skip-link')).toHaveCount(0);
+    const id = await page.locator('.env-scaffold-body').getAttribute('id');
+    expect(id).toBeTruthy();
+    expect(id).not.toBe('main');
+  });
+
+  test('the skip link to the navigation hides where no form shows', async ({ page }) => {
+    await page.goto(
+      scaffold(
+        `&width=30rem&forms=${encodeURIComponent(JSON.stringify({ compact: 'none', medium: 'none' }))}`,
+      ),
+    );
+    const toNavigation = page.locator('.env-scaffold-skip-link[data-skip="navigation"]');
+    await expect
+      .poll(() => toNavigation.evaluate((link) => getComputedStyle(link).display))
+      .toBe('none');
+    await page.getByRole('button', { name: 'Width 45rem' }).click();
+    await expect
+      .poll(() => toNavigation.evaluate((link) => getComputedStyle(link).display))
+      .toBe('none');
+    await page.getByRole('button', { name: 'Width 60rem' }).click();
+    await expect
+      .poll(() => toNavigation.evaluate((link) => getComputedStyle(link).display))
+      .not.toBe('none');
+  });
+
+  test('focus in a form that hides goes to the current item of the form that shows', async ({
+    page,
+  }) => {
+    await page.goto(scaffold('&width=45rem'));
+    const frame = page.getByTestId('frame');
+    await page.getByTestId('rail-form').getByRole('button', { name: 'Inbox' }).focus();
+    // Narrower, the bar shows instead of the rail: focus goes to its current destination.
+    await frame.evaluate((element) => {
+      element.style.inlineSize = '30rem';
+    });
+    await expect(
+      page.getByTestId('bar-form').getByRole('button', { name: 'Settings' }),
+    ).toBeFocused();
+    // Focus elsewhere stays where it is as the form changes.
+    await page.getByRole('button', { name: 'Search' }).focus();
+    await frame.evaluate((element) => {
+      element.style.inlineSize = '60rem';
+    });
+    await expect.poll(() => shownForms(page)).toEqual(['drawer']);
+    await expect(page.getByRole('button', { name: 'Search' })).toBeFocused();
   });
 
   test('the body scrolls under the top bar, which stays in place', async ({ page }) => {
@@ -193,6 +241,60 @@ async function openScrollKeys(page: Page) {
   );
   return () => page.evaluate(() => document.body.dataset.taken);
 }
+
+/** Scrolls the document once the page has rendered, and waits until it has. */
+async function scrollDocument(page: Page, top: number) {
+  await expect(page.getByTestId('page-start')).toBeAttached();
+  await expect
+    .poll(() =>
+      page.evaluate((to) => {
+        window.scrollTo(0, to);
+        return document.scrollingElement!.scrollTop;
+      }, top),
+    )
+    .toBe(top);
+}
+
+test.describe('Scaffold document scroll', { tag: '@engines' }, () => {
+  test('the document scrolls, with the top bar, the drawer and a sticky header kept in view', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1100, height: 700 });
+    await page.goto(scaffold('&width=60rem&scroll=document&header=sticky'));
+    const body = page.locator('.env-scaffold-body');
+    const bar = page.locator('.env-top-bar');
+    const drawer = page.getByTestId('drawer-form').locator('xpath=..');
+    const header = page.locator('.env-page-header');
+    await expect(body).toHaveCSS('overflow-y', 'visible');
+    // The Scaffold is at least as tall as the window, and grows with its content.
+    expect((await box(page.locator('.env-scaffold'))).height).toBeGreaterThan(700);
+    await scrollDocument(page, 2000);
+    const top = await box(bar);
+    expect(top.y).toBeCloseTo(0, 0);
+    // The drawer stays in view, as tall as the window.
+    const side = await box(drawer);
+    expect(side.y).toBeCloseTo(0, 0);
+    expect(side.height).toBeCloseTo(700, 0);
+    // A sticky page header sits under the top bar.
+    expect((await box(header)).y).toBeCloseTo(top.y + top.height, 0);
+  });
+
+  test('the bar sticks to the bottom, and a top bar across the width keeps the rail under it', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1100, height: 700 });
+    await page.goto(scaffold('&width=30rem&scroll=document'));
+    await scrollDocument(page, 1500);
+    const bar = await box(page.getByTestId('bar-form').locator('xpath=..'));
+    expect(bar.y + bar.height).toBeCloseTo(700, 0);
+    await page.goto(scaffold('&width=45rem&scroll=document&span=full'));
+    await scrollDocument(page, 1500);
+    const top = await box(page.locator('.env-top-bar'));
+    const rail = await box(page.getByTestId('rail-form').locator('xpath=..'));
+    expect(rail.y).toBeGreaterThanOrEqual(top.y + top.height - 1);
+    expect(rail.y + rail.height).toBeCloseTo(700, 0);
+  });
+});
 
 test.describe('Scaffold body scroll', { tag: '@engines' }, () => {
   test('the keyboard scrolls the body as it would the document', async ({ page }) => {

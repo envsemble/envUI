@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useId,
   useState,
   type ComponentPropsWithRef,
@@ -64,12 +65,24 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    */
   topBarSpan?: 'body' | 'full';
   /**
+   * What scrolls. document: the page, as on any website, so a phone collapses its address bar,
+   * pull to refresh and a tap on the status bar work and the browser restores the scroll position;
+   * the top bar and the bar stick to the window's edges and the rail or the drawer stays in view,
+   * in a Scaffold at least as tall as the window. body: the body alone, under the top bar, in a
+   * Scaffold that fills its container's height, 100dvh unless a class gives it another, with the
+   * keyboard scrolling the body as it would the document: for a preview or an embedded frame, a
+   * window with its own title bar, or a body of Panes whose panes scroll on their own.
+   * @default 'document'
+   */
+  scroll?: 'document' | 'body';
+  /**
    * The body's id, the target of the skip link to the content.
-   * @default 'main'
+   * @default 'main', or an id of its own where `landmarks` is false
    */
   bodyId?: string;
   /**
-   * The body's element, which scrolls: read or restore its scroll position on it.
+   * The body's element: with `scroll="body"` the element that scrolls, to read or restore its
+   * scroll position on.
    */
   bodyRef?: Ref<HTMLElement>;
   /**
@@ -83,8 +96,8 @@ export interface ScaffoldProps extends Omit<ComponentPropsWithRef<'div'>, 'child
    */
   skipNavigationLabel?: string;
   /**
-   * false renders the regions without landmarks, a div for the banner and the main, for a preview
-   * of an application inside another page's main content.
+   * false renders the regions without landmarks, a div for the banner and the main, and no skip
+   * links, for a preview of an application inside another page's main content.
    * @default true
    */
   landmarks?: boolean;
@@ -133,6 +146,19 @@ export function resolveNavigationForms(
   return resolved;
 }
 
+/** The element of a navigation form to put focus on: its current item, else its first one. */
+function entryOf(form: HTMLElement) {
+  const focusable = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const current = form.querySelector<HTMLElement>('[aria-current]:not([aria-current="false"])');
+  return (
+    (current?.matches(focusable) ? current : current?.querySelector<HTMLElement>(focusable)) ??
+    form.querySelector<HTMLElement>(focusable)
+  );
+}
+
+/** Whether a navigation form's slot shows at the Scaffold's width, as CSS decided. */
+const showing = (slot: Element) => getComputedStyle(slot).display !== 'none';
+
 /** Moves focus to a region without scrolling it under the top bar, as a skip link does. */
 function focusRegion(target: HTMLElement) {
   // A region that takes no focus takes it for as long as it keeps it, so a press inside it later
@@ -148,16 +174,17 @@ function focusRegion(target: HTMLElement) {
  * The invisible structure of an application's screen, after Material's: a top bar region, a
  * navigation region and the body. It never paints. It shows one navigation form at a time by its
  * own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one
- * and a Drawer at the start from expanded. It fills its container's height, 100dvh by default,
- * and the body scrolls under the top bar, with the keyboard scrolling it as it would the document.
- * Skip links to the body and the navigation come first.
+ * and a Drawer at the start from expanded. The document scrolls by default, with the top bar, the
+ * bar and the rail or the drawer kept in view; `scroll="body"` scrolls the body alone. Skip links
+ * to the body and the navigation come first.
  */
 export function Scaffold({
   topBar,
   navigation,
   forms,
   topBarSpan = 'body',
-  bodyId = 'main',
+  scroll = 'document',
+  bodyId,
   bodyRef,
   skipLabel,
   skipNavigationLabel,
@@ -169,7 +196,9 @@ export function Scaffold({
   ...props
 }: ScaffoldProps) {
   const messages = useMessages('scaffold', scaffold);
-  const navigationId = `${useId()}-navigation`;
+  const id = useId();
+  const navigationId = `${id}-navigation`;
+  const mainId = bodyId ?? (landmarks ? 'main' : `${id}-body`);
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
   const [body, setBody] = useState<HTMLElement | null>(null);
   const attachRoot = useCallback(
@@ -186,13 +215,59 @@ export function Scaffold({
     },
     [bodyRef],
   );
-  // The body scrolls rather than the document, so the keyboard scrolls the body as it would the
+  // Where the body scrolls rather than the document, the keyboard scrolls the body as it would the
   // document, also before anything in it has focus.
-  useScrollKeys(root, body);
+  useScrollKeys(scroll === 'body' ? root : null, body);
 
   const resolved = resolveNavigationForms(navigation, forms);
   const shown = new Set(Object.values(resolved));
   const hasNavigation = shown.has('bar') || shown.has('rail') || shown.has('drawer');
+
+  // When the Scaffold's width changes the form that shows, focus in the form that hid goes to the
+  // form that shows now, on its current item. Focus elsewhere stays where it is.
+  useEffect(() => {
+    if (!root || !hasNavigation) return;
+    const document = root.ownerDocument;
+    const region = () => document.getElementById(navigationId);
+    // The slot of the form that last had focus, until focus or a press goes elsewhere.
+    let focused: HTMLElement | null = null;
+    const slotOf = (node: EventTarget | null) => {
+      const slot =
+        node instanceof Element ? node.closest<HTMLElement>('[data-navigation-form]') : null;
+      return slot && slot.parentElement === region() ? slot : null;
+    };
+    const onFocusIn = (event: FocusEvent) => {
+      focused = slotOf(event.target);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!(event.target instanceof Node) || !focused?.contains(event.target)) focused = null;
+    };
+    const observer = new ResizeObserver(() => {
+      if (!focused || showing(focused)) return;
+      const active = document.activeElement;
+      // Focus that moved on, rather than left with the form as it hid, stays where it is.
+      if (active && active !== document.body && !focused.contains(active)) {
+        focused = null;
+        return;
+      }
+      const next = [...(region()?.children ?? [])].find(
+        (slot): slot is HTMLElement => slot instanceof HTMLElement && showing(slot),
+      );
+      focused = next ?? null;
+      if (!next) return;
+      const entry = entryOf(next);
+      if (entry) entry.focus();
+      else focusRegion(next);
+    });
+    root.addEventListener('focusin', onFocusIn);
+    document.addEventListener('pointerdown', onPointerDown, true);
+    observer.observe(root);
+    return () => {
+      root.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('pointerdown', onPointerDown, true);
+      observer.disconnect();
+    };
+  }, [root, hasNavigation, navigationId]);
   // Every form that shows at some window class is rendered; CSS shows the one for the Scaffold's
   // width, and the others are display: none, out of the tab order and the accessibility tree.
   const slot = (form: NavigationForm) =>
@@ -228,31 +303,36 @@ export function Scaffold({
       data-env-layout="scaffold"
       data-env-name={name}
       data-top-bar-span={topBarSpan}
+      data-scroll={scroll}
       data-compact={resolved.compact}
       data-medium={resolved.medium}
       data-expanded={resolved.expanded}
       data-large={resolved.large}
     >
-      <div className="env-scaffold-skip-links">
-        <Button
-          href={`#${bodyId}`}
-          variant="secondary"
-          className="env-scaffold-skip-link"
-          onClick={skipToBody}
-        >
-          {skipLabel ?? messages.skipToContent}
-        </Button>
-        {hasNavigation && (
+      {landmarks && (
+        <div className="env-scaffold-skip-links">
           <Button
-            href={`#${navigationId}`}
+            href={`#${mainId}`}
             variant="secondary"
             className="env-scaffold-skip-link"
-            onClick={skipToNavigation}
+            onClick={skipToBody}
           >
-            {skipNavigationLabel ?? messages.skipToNavigation}
+            {skipLabel ?? messages.skipToContent}
           </Button>
-        )}
-      </div>
+          {hasNavigation && (
+            // Hidden where the Scaffold's width shows no navigation form.
+            <Button
+              href={`#${navigationId}`}
+              variant="secondary"
+              className="env-scaffold-skip-link"
+              data-skip="navigation"
+              onClick={skipToNavigation}
+            >
+              {skipNavigationLabel ?? messages.skipToNavigation}
+            </Button>
+          )}
+        </div>
+      )}
       {topBar != null && <Banner className="env-scaffold-top-bar">{topBar}</Banner>}
       {hasNavigation && (
         <div id={navigationId} className="env-scaffold-navigation">
@@ -261,7 +341,7 @@ export function Scaffold({
           {slot('bar')}
         </div>
       )}
-      <Main ref={attachBody} id={bodyId} tabIndex={-1} className="env-scaffold-body">
+      <Main ref={attachBody} id={mainId} tabIndex={-1} className="env-scaffold-body">
         {children}
       </Main>
     </div>

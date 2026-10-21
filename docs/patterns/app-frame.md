@@ -62,7 +62,7 @@ Use this pattern to frame every screen of an application: a [Scaffold](../compon
 
 ## Anatomy
 
-1. **Frame:** a Scaffold at the root; its body scrolls under the top bar, and its skip links come first.
+1. **Frame:** a Scaffold at the root; the document scrolls with the top bar and the navigation kept in view, and its skip links come first.
 2. **Top bar:** a TopBar with the application's name as its `title`, and a SearchTrigger `iconOnly` and the account menu in its `actions`.
 3. **Navigation:** one array of destinations, `{ label, icon, href, current }`, given to `<Bar>`, `<Rail>` and `<Drawer>` in the Scaffold's `navigation`; a `group` heads a run of them in the Drawer.
 4. **Body:** the page, a [Page](../components/page.md) with its [PageHeader](../components/page-header.md), or [Panes](../components/panes.md) for side content.

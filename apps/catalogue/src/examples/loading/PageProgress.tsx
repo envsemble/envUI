@@ -62,6 +62,7 @@ export default function PageProgress() {
   }));
   return (
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBar={

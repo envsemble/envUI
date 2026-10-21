@@ -1,5 +1,5 @@
 [
-  "line 5: --env-app-topbar-block-size is removed in 1.0: Scaffold's top bar sits above the body that scrolls, so nothing needs its height; TopBar is --env-top-bar-height tall.",
+  "line 5: --env-app-topbar-block-size is removed in 1.0: TopBar is --env-top-bar-height tall, which --env-scaffold-sticky-top reads; nothing measures it.",
   "line 7: env-app-sidebar has no 1.0 class: The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer.",
   "line 7: .env-app-shell[data-compact] matches nothing in 1.0: AppShell is gone: its frame is a Scaffold, env-scaffold, whose data-compact, data-medium, data-expanded and data-large name the navigation form each window class shows; nothing collapses.",
   "line 8: --env-sidebar-collapsed-width is removed in 1.0: Sidebar is gone: Rail, the navigation form for medium windows, has a width of its own.",
@@ -7,5 +7,5 @@
   "line 10: env-app-brand has no 1.0 class: The brand mark has no class of its own in 1.0: put it in a TopBar's start, and style your own element there.",
   "line 13: env-app-context has no 1.0 class: The topbar's context has no class of its own in 1.0: it sits in a TopBar's start; style your own element there.",
   "line 14: env-app-sidebar-backdrop has no 1.0 class: The sidebar is gone, with its toggle, its resize handle and its drawer: the navigation forms in a Scaffold's navigation have classes of their own, in the slots env-scaffold-bar, env-scaffold-rail and env-scaffold-drawer.",
-  "line 18: --app-sticky-top is removed in 1.0: Scaffold's body scrolls under its top bar, so sticky content sticks at the top of the body, inset-block-start: 0; no frame publishes where it sticks."
+  "line 18: --app-sticky-top is removed in 1.0: Sticky content in a Scaffold's body sticks under its top bar, --env-scaffold-sticky-top below the window's top, where the document scrolls, and at the top of the body with scroll=\"body\"; no frame publishes where it sticks."
 ]

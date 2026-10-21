@@ -50,11 +50,11 @@ TopBar is the bar at the top of an application or a screen, after Material's sma
 
 ## Variants and sizes
 
-| Prop       | Use for                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------- |
-| `sticky`   | A bar in a page whose document scrolls: it sticks at the top. A Scaffold's body scrolls under it. |
-| `titleBar` | The window's own title bar, in an installed web app that draws one (Window Controls Overlay).     |
-| `loading`  | Page progress along the bottom edge while the next page loads.                                    |
+| Prop       | Use for                                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `sticky`   | A bar in a page whose document scrolls: it sticks at the top. In a Scaffold the region sticks where the document scrolls. |
+| `titleBar` | The window's own title bar, in an installed web app that draws one (Window Controls Overlay).                             |
+| `loading`  | Page progress along the bottom edge while the next page loads.                                                            |
 
 - The top bar height is `--env-top-bar-height`: 3.25 rem, 2.625 rem in the compact scale, and the touch height and a little more under a coarse pointer.
 - With `titleBar` the bar takes the title bar area the window leaves free, its controls take the small height and buttons that set no variant are ghost; empty space drags the window, and the title is centred in the window. Put it in a Scaffold with `topBarSpan="full"`.

@@ -50,7 +50,7 @@ Use this pattern to frame a window that draws its own title bar, as an installed
 
 ## Anatomy
 
-1. **Frame:** a Scaffold with `topBarSpan="full"`, which fills the window; its body scrolls.
+1. **Frame:** a Scaffold with `topBarSpan="full"` and `scroll="body"`, which fills the window; its body scrolls.
 2. **Title bar:** a TopBar with `titleBar` in the Scaffold's `topBar`: it takes the title bar area the window leaves free, empty space drags the window, its title is centred and its controls are small; a [Menubar](../components/menubar.md) can sit in its `start`.
 3. **Navigation** (optional): the Scaffold's navigation forms, below the title bar.
 4. **Content:** a [Page](../components/page.md) in the body, with its PageHeader, which can stick at the body's top.

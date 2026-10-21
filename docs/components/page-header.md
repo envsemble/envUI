@@ -59,14 +59,14 @@ PageHeader is the heading of a page: its title, with an optional trail above it,
 ## Variants and sizes
 
 - **Control size**: `controlSize` gives the buttons and icon buttons in `actions` and `toolbar` that set no `size` the `md` height, 2.5 rem, by default, or `sm`, 2 rem, for a dense page, such as one in a small window. Fields take their own `size`: give a toolbar's fields the same one.
-- **Sticky**: `sticky` keeps the header in view at the top of the area that scrolls, such as a Scaffold's body, with the page's background and a hairline under it.
+- **Sticky**: `sticky` keeps the header in view at the top of the area that scrolls, under a Scaffold's top bar where the document scrolls, with the page's background and a hairline under it.
 - **Heading level**: the title looks the same at every level; set `headingLevel` to 2 or lower for a header inside a pane or a dialog that sits under another heading.
 
 ## States and behaviour
 
-- **Wrapping**: the header is a container. Below 32 rem of its own width, the actions move under the title and description and wrap, from the inline start; the meta wraps beside the title. The title wraps, balanced across its lines, and is never cut short.
+- **Wrapping**: the header is a container. Below 37.5 rem of its own width, a compact header, the actions move under the title and description and wrap, from the inline start; the meta wraps beside the title. The title wraps, balanced across its lines, and is never cut short.
 - **No overflow menu**: the header never hides actions on its own. A page with more actions than fit on a phone puts the rest in a [Menu](../components/menu.md) as its last action.
-- **Sticky**: the header sticks at the top of the area that scrolls, such as a Scaffold's body. Nothing measures it: as a Page's header, what scrolls into view in the page's content, such as a field taking focus, keeps clear of it by a scroll margin that CSS reckons from the rows it has. Put content that should stay in view under it in its `toolbar`.
+- **Sticky**: the header sticks at the top of the area that scrolls: under a Scaffold's top bar where the document scrolls (`--env-scaffold-sticky-top`), or at the top of a Scaffold's body that scrolls. As a Page's header, what scrolls into view in the page's content, such as a field taking focus, keeps clear of it by a scroll margin: the header measures its own height, so a title that wraps counts, and until script runs CSS reckons it from the rows the header has. Put content that should stay in view under it in its `toolbar`.
 
 ## Content guidelines
 

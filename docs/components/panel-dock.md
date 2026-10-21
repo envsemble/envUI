@@ -108,7 +108,7 @@ The application owns the panels: which exist, their order and mode, which one is
 ### Do
 
 - Put the dock in a positioned container with a height, such as the area below a header, beside page content that scrolls on its own.
-- In a [Scaffold](../components/scaffold.md), put the dock directly in its body: it lies over the body's visible area and stays there while the body scrolls, with no positioning of your own.
+- In a [Scaffold](../components/scaffold.md), put the dock directly in its body: it lies over the body's visible area and stays there as the page or the body scrolls, with no positioning of your own.
 - Keep each panel's work, such as a draft, in the panel's own state; the dock keeps it mounted.
 - Make the content beneath inert while a panel fills the region: while a panel is maximized, or while the dock stacks and a panel is not minimized.
 - Activate a panel when it opens, and keep at most one panel maximized.

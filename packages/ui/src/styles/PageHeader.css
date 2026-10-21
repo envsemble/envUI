@@ -6,12 +6,14 @@
   container: env-page-header / inline-size;
 }
 /* A sticky header stays at the top of the area that scrolls, over the content that scrolls under it,
-   across the page's gutters. */
+   across the page's gutters: under a Scaffold's top bar where the document scrolls. */
 .env-page-header[data-sticky] {
   /* Inside a Page it reaches across the page's gutters, so content never shows beside it. */
   --env-page-header-inset: var(--env-page-gutter, 0rem);
+  /* Under a Scaffold's top bar where the document scrolls, else at the top. */
+  --env-page-header-sticky-top: var(--env-scaffold-sticky-top, 0rem);
   position: sticky;
-  inset-block-start: 0;
+  inset-block-start: var(--env-page-header-sticky-top);
   z-index: calc(var(--env-z-sticky) - 1);
   margin-block-start: calc(-1 * var(--env-space-4));
   margin-inline: calc(-1 * var(--env-page-header-inset));

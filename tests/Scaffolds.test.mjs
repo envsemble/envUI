@@ -110,11 +110,20 @@ test('Scaffold renders its regions and forms, which CSS shows by its width', () 
   assert.doesNotMatch(markup, /env-scaffold-rail/);
 });
 
-test('Scaffold without landmarks renders divs, and without navigation no skip link to it', () => {
+test('Scaffold without landmarks renders divs, no skip links and a body id of its own', () => {
   const markup = renderToString(h(Scaffold, { landmarks: false, topBar: 'Top' }, 'Body'));
   assert.doesNotMatch(markup, /<header|<main/);
-  assert.equal(markup.match(/env-scaffold-skip-link"/g)?.length, 1);
+  assert.doesNotMatch(markup, /env-scaffold-skip-link/);
+  assert.doesNotMatch(markup, /id="main"/);
+  assert.match(markup, /<div id="[^"]+-body" tabindex="-1" class="env-scaffold-body">Body<\/div>/);
   assert.doesNotMatch(markup, /env-scaffold-navigation/);
+});
+
+test('Scaffold without navigation renders no skip link to it, and scrolls the document', () => {
+  const markup = renderToString(h(Scaffold, { topBar: 'Top' }, 'Body'));
+  assert.equal(markup.match(/env-scaffold-skip-link"/g)?.length, 1);
+  assert.match(markup, /data-scroll="document"/);
+  assert.match(renderToString(h(Scaffold, { scroll: 'body' }, 'Body')), /data-scroll="body"/);
 });
 
 test('Scaffold shows each form in one range of its own width, with no width media query', () => {

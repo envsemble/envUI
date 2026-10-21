@@ -241,7 +241,8 @@ export function MessageStringsFixture() {
             <Panes.Detail>End</Panes.Detail>
           </Panes.Root>
           <Scaffold
-            landmarks={false}
+            scroll="body"
+            bodyId="message-strings-body"
             navigation={{ rail: <nav aria-label="Rail" /> }}
             style={{ blockSize: '6rem' }}
           >

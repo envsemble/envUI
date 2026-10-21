@@ -34,6 +34,7 @@ export default function MenuOnPhones() {
     // Many destinations without icons: a drawer from medium, and on a phone none in the Scaffold,
     // but a menu button in the top bar that opens the same drawer in a sheet.
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       forms={{ compact: 'none', medium: 'drawer' }}

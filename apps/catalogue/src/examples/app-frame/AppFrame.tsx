@@ -90,6 +90,7 @@ export default function AppFrame() {
 
   return (
     <Scaffold
+      scroll="body"
       landmarks={false}
       style={preview}
       topBar={

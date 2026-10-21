@@ -67,20 +67,54 @@ test.describe('PageHeader', () => {
       // It sticks at the body's top, across the page's gutters.
       const top = (await box(body)).y;
       await expect.poll(async () => (await box(sticky)).y).toBeCloseTo(top, 0);
-      // Nothing measures it: no height is published on the page.
+      // It publishes its height on its page, which keeps what scrolls into view clear of it.
       const page_ = page.getByTestId('page');
-      expect(
-        await page_.evaluate((element) =>
-          element.style.getPropertyValue('--env-page-header-block-size'),
-        ),
-      ).toBe('');
-      // A field scrolled into view as it takes focus lands below the header, from its rows alone.
+      const published = () =>
+        page_.evaluate((element) => element.style.getPropertyValue('--env-page-header-block-size'));
+      const height = () => sticky.evaluate((element) => `${element.offsetHeight}px`);
+      await expect.poll(published).toBe(await height());
+      // A field scrolled into view as it takes focus lands below the header.
       await body.evaluate((element) => element.scrollTo(0, 0));
       await page.getByTestId('far-field').focus();
       const header = await box(sticky);
       await expect
         .poll(async () => (await box(page.getByTestId('far-field'))).y)
         .toBeGreaterThanOrEqual(header.y + header.height);
+      // In a compact page its title wraps over more lines than CSS reckons with; the measured
+      // height counts them.
+      const before = await height();
+      await page.getByTestId('frame').evaluate((element) => {
+        element.style.inlineSize = '20rem';
+      });
+      await expect.poll(height).not.toBe(before);
+      await expect.poll(published).toBe(await height());
+      await body.evaluate((element) => element.scrollTo(0, 0));
+      await page.getByTestId('far-field').blur();
+      await page.getByTestId('far-field').focus();
+      const wrapped = await box(sticky);
+      await expect
+        .poll(async () => (await box(page.getByTestId('far-field'))).y)
+        .toBeGreaterThanOrEqual(wrapped.y + wrapped.height);
     },
   );
+});
+
+test.describe('Page', () => {
+  test('its gutters follow the window class of the region it sits in', async ({ page }) => {
+    await page.goto(fixture);
+    const frame = page.getByTestId('frame');
+    const gutter = () =>
+      page.getByTestId('page').evaluate((element) => getComputedStyle(element).paddingInlineStart);
+    for (const [width, expected] of [
+      ['30rem', '16px'],
+      ['37rem', '16px'],
+      ['38rem', '24px'],
+      ['60rem', '24px'],
+    ] as const) {
+      await frame.evaluate((element, value) => {
+        element.style.inlineSize = value;
+      }, width);
+      await expect.poll(gutter, `${width} wide`).toBe(expected);
+    }
+  });
 });

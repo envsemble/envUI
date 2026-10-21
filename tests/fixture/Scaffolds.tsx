@@ -1,5 +1,14 @@
 import { createElement, useState, type CSSProperties } from 'react';
-import { IconButton, Menu, Menubar, Scaffold, TopBar, type ScaffoldForms } from '@envsemble/envui';
+import {
+  IconButton,
+  Menu,
+  Menubar,
+  Page,
+  PageHeader,
+  Scaffold,
+  TopBar,
+  type ScaffoldForms,
+} from '@envsemble/envui';
 import { Menu as MenuIcon } from '@envsemble/envui/icons/Menu';
 import { Search } from '@envsemble/envui/icons/Search';
 import { Settings } from '@envsemble/envui/icons/Settings';
@@ -11,7 +20,9 @@ function Destinations({ form }: { form: string }) {
   return (
     <nav aria-label={`Main ${form}`} data-testid={`${form}-form`} className="fixture-destinations">
       <button type="button">Inbox</button>
-      <button type="button">Settings</button>
+      <button type="button" aria-current="page">
+        Settings
+      </button>
     </nav>
   );
 }
@@ -40,13 +51,16 @@ function TallPage({ paragraphs = 200 }: { paragraphs?: number }) {
  * A Scaffold in a frame whose width the test sets, mounted with ?fixture=scaffold: a TopBar,
  * stand-ins for the three navigation forms and a long body. ?forms= takes the forms per window
  * class as JSON, ?only= gives only the forms it lists, comma-separated, ?span=full puts the top bar
- * across the width, ?landmarks=off renders no landmarks and ?dir=rtl mirrors it.
+ * across the width, ?landmarks=off renders no landmarks and ?dir=rtl mirrors it. The body scrolls,
+ * in a frame of a fixed height; ?scroll=document lets the document scroll, with the Scaffold at
+ * least as tall as the window, and ?header=sticky puts the page in a Page with a sticky header.
  */
 export function ScaffoldFixture() {
   const query = params();
   const [width, setWidth] = useState(query.get('width') ?? '80rem');
   const forms = query.get('forms') ? (JSON.parse(query.get('forms')!) as ScaffoldForms) : undefined;
   const only = query.get('only')?.split(',');
+  const scroll = query.get('scroll') === 'document' ? 'document' : 'body';
   const given = only
     ? Object.fromEntries(Object.entries(navigation).filter(([form]) => only.includes(form)))
     : navigation;
@@ -62,10 +76,12 @@ export function ScaffoldFixture() {
       <div
         className="fixture-scaffold-frame"
         data-testid="frame"
+        data-scroll={scroll}
         style={{ inlineSize: width } as CSSProperties}
       >
         <Scaffold
           className="fixture-scaffold"
+          scroll={scroll}
           name="app"
           topBarSpan={query.get('span') === 'full' ? 'full' : 'body'}
           landmarks={query.get('landmarks') !== 'off'}
@@ -84,7 +100,13 @@ export function ScaffoldFixture() {
             />
           }
         >
-          <TallPage />
+          {query.get('header') === 'sticky' ? (
+            <Page header={<PageHeader title="Messages" sticky />}>
+              <TallPage />
+            </Page>
+          ) : (
+            <TallPage />
+          )}
         </Scaffold>
       </div>
     </div>
@@ -149,6 +171,7 @@ function NotesMenubar() {
 export function ScrollKeysFixture() {
   return (
     <Scaffold
+      scroll="body"
       topBarSpan="full"
       forms={{ compact: 'drawer', medium: 'drawer' }}
       navigation={{
