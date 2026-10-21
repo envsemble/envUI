@@ -17,13 +17,14 @@
 /* The direct children of a row or column keep no margins along it, so the gap alone spaces them,
    and shrink rather than widen it; also through a skeleton's content wrapper, which has no box. */
 :where([data-env-layout='row'], [data-env-layout='column']) > *,
-:where([data-env-layout='row'], [data-env-layout='column']) > :where(.env-skeleton-content) > * {
+:where([data-env-layout='row'] > .env-skeleton-content) > *,
+:where([data-env-layout='column'] > .env-skeleton-content) > * {
   margin-block: 0;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
 :where([data-env-layout='row']) > *,
-:where([data-env-layout='row']) > :where(.env-skeleton-content) > * {
+:where([data-env-layout='row'] > .env-skeleton-content) > * {
   margin-inline: 0;
 }
 /* A grid is one column until columns sets --env-grid-columns: a count of equal columns, a
@@ -37,7 +38,7 @@
   grid-template-columns: var(--env-grid-columns, minmax(0, 1fr));
 }
 :where([data-env-layout='grid']) > *,
-:where([data-env-layout='grid']) > :where(.env-skeleton-content) > * {
+:where([data-env-layout='grid'] > .env-skeleton-content) > * {
   min-inline-size: 0;
 }
 :where([data-env-layout][data-align='start']) {
