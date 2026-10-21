@@ -5,10 +5,10 @@ import { TokenValue } from './TokenValue';
 const stackingLevels = [
   ['base', 'The flow of a page or a component'],
   ['raised', 'A part over its siblings, such as a sticky table header'],
-  ['sticky', 'The app header and the sidebar columns'],
-  ['peek', 'A collapsed sidebar opened over the content'],
+  ['sticky', 'The top bar and the navigation that content scrolls under'],
+  ['peek', 'A pane over the content that does not dock, such as a sheet'],
   ['overlay', 'The scrim behind a modal layer'],
-  ['modal', 'Dialogs, drawers and the command palette'],
+  ['modal', 'Dialogs, sheets and the command palette'],
   ['popover', 'Menus, popovers and select lists'],
   ['toast', 'Notifications'],
   ['tooltip', 'Tooltips'],
