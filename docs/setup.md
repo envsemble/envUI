@@ -311,6 +311,7 @@ What a server component passes to a client component must be serializable: strin
 - `@envsemble/envui/diff` when the feature shows code diffs.
 - `@envsemble/envui/rich-text` when the feature needs formatted editing or rendering.
 - `@envsemble/envui/messages` for `defaultMessages`, envUI's English strings by namespace, for applications that extract or translate them.
+- `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
 
 The content, rich-text and diff entries depend on Shiki, the Pierre code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs @pierre/theme react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.

@@ -34,43 +34,10 @@ async function message(code) {
 
 const passes = async (code) => assert.deepEqual(await lint(code), [], code);
 
-test('selectors of envUI classes are reported', async () => {
-  assert.deepEqual(
-    await lint(
-      [
-        '.card > .env-card-title { margin: 0; }',
-        ':global(.env-dialog) .actions { gap: 1rem; }',
-        '.list:has(.env-row-selected), .item:not(.env-row) { margin: 0; }',
-        '[class*="env-button"] { margin: 0; }',
-        "[class^='env-menu'] { margin: 0; }",
-        '@scope (.env-dialog) to (.env-dialog-body) { p { margin: 0; } }',
-        '.toolbar { & .env-icon-button { margin: 0; } }',
-      ].join('\n'),
-    ),
-    [
-      { rule: 'envui/no-private-classes', text: '.env-card-title' },
-      { rule: 'envui/no-private-classes', text: '.env-dialog' },
-      { rule: 'envui/no-private-classes', text: '.env-row-selected' },
-      { rule: 'envui/no-private-classes', text: '.env-row' },
-      { rule: 'envui/no-private-classes', text: '[class*="env-button' },
-      { rule: 'envui/no-private-classes', text: "[class^='env-menu" },
-      { rule: 'envui/no-private-classes', text: '.env-dialog' },
-      { rule: 'envui/no-private-classes', text: '.env-dialog-body' },
-      { rule: 'envui/no-private-classes', text: '.env-icon-button' },
-    ],
-  );
-  const warning = await message('.env-button-primary { opacity: 0.8; }');
-  assert.equal(
-    warning.text,
-    ".env-button-primary styles envUI's private markup, which can change in any envUI release. Use the component's props and envUI's tokens, or style a class of your own. (envui/no-private-classes)",
-  );
-  assert.equal(
-    warning.url,
-    'https://github.com/envsemble/envUI/blob/main/packages/stylelint-config/README.md#envuino-private-classes',
-  );
-});
-
-test("the theme boundary, the theme attribute and the application's own classes pass", async () => {
+test("envUI's part classes and state attributes, the theme boundary and the application's own classes pass", async () => {
+  await passes('.card > .env-card-title { margin: 0; }');
+  await passes('.list:has(.env-list-item[data-selected]) { margin: 0; }');
+  await passes('@scope (.env-dialog) to (.env-dialog-body) { p { margin: 0; } }');
   await passes('.env-theme { --env-font-size-body: 1.0625rem; }');
   await passes("[data-env-theme='dark'] .card { margin: 0; }");
   await passes('.my-env-banner, .environment { margin: 0; }');
@@ -234,14 +201,6 @@ test('a disable comment with a reason lets one line through', async () => {
   await passes(
     '/* stylelint-disable-next-line color-no-hex -- the logo keeps its brand color */\n.logo { fill: #0b57d0; }',
   );
-});
-
-test('the config validates its plugin rule options', async () => {
-  const { results } = await stylelint.lint({
-    code: '.a {}',
-    config: { ...config, rules: { 'envui/no-private-classes': [true, { allowed: ['x'] }] } },
-  });
-  assert.equal(results[0].invalidOptionWarnings.length, 1);
 });
 
 test("the token names are the library's when the repository has its token list", () => {

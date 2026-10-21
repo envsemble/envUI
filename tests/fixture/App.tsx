@@ -88,6 +88,7 @@ import { SearchTriggersFixture } from './SearchTriggers.js';
 import { AccountMenuShellFixture, AccountMenusFixture } from './AccountMenus.js';
 import { ConfirmDialogsFixture } from './ConfirmDialogs.js';
 import { ListsFixture } from './Lists.js';
+import { DevModeFixture } from './DevMode.js';
 import {
   ThemeContrastFixture,
   ThemeContrastNestedFixture,
@@ -134,6 +135,7 @@ const standaloneFixtures: Record<string, () => ReactNode> = {
   lists: ListsFixture,
   'time-pickers': TimePickersFixture,
   'month-pickers': MonthPickersFixture,
+  'dev-mode': DevModeFixture,
 };
 
 export default function App() {

@@ -4,7 +4,7 @@ Read this page when a task authorizes changes inside envUI. First inspect [compo
 
 ## Public API and source ownership
 
-Keep authored components in their existing family under `packages/ui/src`, named React exports in PascalCase files, and shared styles in `src/styles`. Add public exports to `index.ts`, `content.ts` or `rich-text.ts` according to the feature. Applications use those public entries and installed declarations; avoid private component imports, private-DOM selectors and copied component CSS.
+Keep authored components in their existing family under `packages/ui/src`, named React exports in PascalCase files, and shared styles in `src/styles`. Add public exports to `index.ts`, `content.ts` or `rich-text.ts` according to the feature. Applications use those public entries and installed declarations, and may style a component's part classes and state attributes; avoid private component imports, component tokens and copied component CSS.
 
 The catalogue owns routes, page grids, specimen state and token measurement. Reusable UI behavior belongs in the package. Icons and brand wrappers are generated from their existing pinned inputs.
 
@@ -44,9 +44,19 @@ Keep examples, behavior and contracts in the Markdown page and its example files
 
 The skills contain routing and workflow instructions. Move conditional component details into their owning documentation page. Improve that page when integration reveals a gap rather than adding another guide.
 
+## Part names
+
+A component's part classes (`env-<component>-<part>`) and state attributes (`data-*`) are public and versioned; its component tokens, the custom properties it declares for itself such as `--env-card-padding`, are private. `npm run docs:parts` (`scripts/GenerateParts.mjs`) writes the contract to `docs/generated/parts.json`, which the manifest, the docs' anatomy figures and dev mode read:
+
+- It derives the classes from the source: the `env-*` literals in `className`, `classNames(…)`, a `class` property or a variable named for a class, with a class built from a value, such as `` `env-avatar-fallback-${fallback}` ``, expanded over the value's type. A class belongs to the exported component whose name, in kebab case, starts it: `env-card-header` to Card.
+- It derives the states from the `data-*` attributes set in JSX on an element with a part class, with the values of the attribute's type, and from the `[data-*]` selectors the style sheets put on a part class, which add the states Base UI sets.
+- `packages/ui/src/parts.json` holds what can't be derived: a one-line description of every part, by component, the `roots` of components whose root isn't `env-<name>`, the `shared` anatomy several components render, by class prefix, and the classes no prefix `placed`. A new part needs its description there, and the generation fails without it.
+
+Commit `parts.json` with the change, then run `npm run docs:manifest`. `npm run docs:check` fails while it is stale, and when a part, state attribute or value that the integration branch lists has gone without a changeset that names it, the class or the attribute: a rename or removal is a `major` change with a migration note.
+
 ## Agent files and skills
 
-The files agents read come from the documentation's sources, as [For agents](agent-tooling.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
+The files agents read come from the documentation's sources, as [For agents](agent-tooling.md) describes. `npm run docs:manifest` (`scripts/GenerateManifest.mjs`) writes `docs/generated/manifest.json` and `docs/generated/llms.txt` from the index, the pages' frontmatter, the example files, `docs/generated/props.json`, `docs/generated/parts.json` and the token list. Commit them with the change: `npm run docs:check` and `npm test` fail while they are stale, so run it after `npm run docs:props`, `npm run docs:parts` or `npm run tokens:build` too. The library build copies both to the package root, the manifest with the version, and writes `llms-full.txt` beside them.
 
 The `envui` command is plain JavaScript in `packages/ui/bin`, run as it is from the installed package: `agents.mjs` renders the AGENTS.md index, `mcp.mjs` is the MCP server and `catalog.mjs` the lookups and ranking they share. It uses Node's own modules only, so installing envUI adds no dependency for it. `tests/Agents.test.mjs` holds the index to its 8 KB budget and calls every MCP tool over stdio.
 
@@ -58,7 +68,7 @@ The skills' source is `.agents/skills/`; each folder holds one `SKILL.md`, and t
 
 A change that people using envUI notice carries a changeset: a Markdown file in `.changeset/` that names the version bump and holds the changelog entry. Run `npm run changeset`, select `@envsemble/envui` and the bump, and write the entry as it should read in the changelog: what changed for someone using the package and, for a breaking change, how to migrate. Commit it with the change. Tests, tooling and catalogue-only changes need none.
 
-- `major`: a breaking change, such as a removed or renamed component, prop or value.
+- `major`: a breaking change, such as a removed or renamed component, prop, value, part class or state attribute.
 - `minor`: a new component, prop, variant or token.
 - `patch`: a fix that keeps the API.
 

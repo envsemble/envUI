@@ -20,7 +20,8 @@
       "forms/internal/markdown/": "composites",
       "navigation/panel-dock/": "shell",
       "diff/": "composites",
-      "rich-text/": "composites"
+      "rich-text/": "composites",
+      "dev/": "shell"
     },
     "modules": {
       "index.ts": "entries",
@@ -28,6 +29,7 @@
       "diff.ts": "entries",
       "rich-text.ts": "entries",
       "theme-bootstrap.ts": "entries",
+      "dev.ts": "entries",
       "icons/index.ts": "entries",
       "Icon.tsx": "foundations",
       "MaterialSymbolState.tsx": "foundations",
@@ -195,6 +197,7 @@
     "$comment": "Every module is a component named after its file, owning the classes that start with env-<file name in kebab case> and the stylesheet of the same name. An entry below adds classes (prefixes), stylesheets and other modules to a component; slots are classes another module may emit inside the component when it imports one of the component's modules. A class belongs to the component with the longest matching prefix. A stylesheet listed for a component holds that component's own rules, never rules that restyle another component.",
     "shared": {
       "env-theme": "The theme boundary, which every popup and provider sets.",
+      "env-window": "The theme boundary's container name, which dialogs, sheets and menus query when nothing nearer applies.",
       "env-text": "The text style helper.",
       "env-surface": "The surface helper, which components render through Surface.",
       "env-connected-rows": "The shared connected-row corners (ConnectedRows.css) of List and row radios.",
@@ -203,6 +206,26 @@
       "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document."
     },
     "components": {
+      "dev": {
+        "classes": ["env-dev"],
+        "modules": [
+          "dev/api.ts",
+          "dev/install.tsx",
+          "dev/measure.ts",
+          "dev/model.ts",
+          "dev/parts.ts",
+          "dev/queries.ts",
+          "dev/readout.ts",
+          "dev/ui/DevMode.tsx",
+          "dev/ui/Inspector.tsx",
+          "dev/ui/View3D.tsx",
+          "dev/ui/styles.ts",
+          "dev/ui/surfaces.ts",
+          "dev/ui/useLivePage.ts",
+          "dev/units.ts",
+          "dev/usedTokens.ts"
+        ]
+      },
       "Button": {
         "classes": ["env-icon-button"]
       },

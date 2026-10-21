@@ -55,7 +55,7 @@ after(async () => {
   if (consumerDirectory) await rm(consumerDirectory, { recursive: true, force: true });
 });
 
-test('the package ships the config, its plugin, its token names and its documentation, and nothing else', () => {
+test('the package ships the config, its token names and its documentation, and nothing else', () => {
   const files = packed.files.map(({ path }) => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(files, [
     'CHANGELOG.md',
@@ -63,7 +63,6 @@ test('the package ships the config, its plugin, its token names and its document
     'data/tokens.json',
     'index.js',
     'package.json',
-    'plugins/no-private-classes.js',
     'tokens.js',
   ]);
 });
@@ -85,7 +84,6 @@ test('an application extends the installed config by name', async () => {
   assert.deepEqual(JSON.parse(run([script], consumerDirectory)), [
     'color-no-hex',
     'declaration-property-value-allowed-list',
-    'envui/no-private-classes',
     'unit-disallowed-list',
   ]);
 });
