@@ -89,7 +89,7 @@ export default function NotesMenubar() {
             label="Note"
             rows={4}
             wrap={wordWrap ? 'soft' : 'off'}
-            defaultValue="Ship the pricing page on Friday. Ask Sam Lee to review the copy and Priya Shah to check the numbers."
+            defaultValue="Ship the pricing page on Friday. Ask Sam Lee to review the copy."
           />
         </Column>
       </Surface>

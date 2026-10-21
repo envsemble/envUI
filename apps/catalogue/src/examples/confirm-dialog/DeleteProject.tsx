@@ -9,7 +9,7 @@ export default function DeleteProject() {
         trigger={<Button variant="secondary">Delete project</Button>}
         tone="danger"
         title="Delete Northwind launch?"
-        description="This deletes the project and its files for everyone in the workspace. It can't be undone."
+        description="This deletes the project and its files for everyone. It can’t be undone."
         confirmLabel="Delete project"
         onConfirm={() => setResult('Northwind launch deleted')}
       />
