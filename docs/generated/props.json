@@ -4941,7 +4941,7 @@
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The page's actions, at the end of the title row: its primary action last. Below 32 rem of the header's own width they move under the title and wrap."
+          "description": "The page's actions, at the end of the title row: its primary action last. Below 37.5 rem of the header's own width, a compact one, they move under the title and wrap."
         },
         {
           "name": "toolbar",
@@ -4954,7 +4954,7 @@
           "type": "boolean",
           "required": false,
           "default": "false",
-          "description": "Keeps the header in view at the top of the area that scrolls, such as a Scaffold's body, over the content that scrolls under it. Nothing measures it: as a Page's header, what scrolls into view below it, such as a field taking focus, keeps clear of the rows it has."
+          "description": "Keeps the header in view at the top of the area that scrolls, over the content that scrolls under it: under a Scaffold's top bar where the document scrolls, or at the top of a Scaffold's body that scrolls. As a Page's header, what scrolls into view below it, such as a field taking focus, keeps clear of it: the header measures its height, which CSS reckons from its rows until script runs."
         },
         {
           "name": "controlSize",
@@ -5453,7 +5453,7 @@
     "Panes.Root": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own when Panes has a height, as in a Scaffold's body; an optional Panes.Divider resizes them.",
+      "description": "Two panes side by side, after Material's pane patterns, and how they behave in less room: a main pane with a supporting pane that becomes a sheet over it, or a list and its detail, one at a time. Invisible structure that never paints, except the supporting pane while it is a sheet, which is modal. Its own width decides, in CSS: it is the env-panes container. Each pane scrolls on its own when Panes has a height, as in a Scaffold's body that scrolls; an optional Panes.Divider resizes them.",
       "props": [
         {
           "name": "behavior",
@@ -5479,7 +5479,14 @@
           "name": "onOpenChange",
           "type": "(open: boolean) => void",
           "required": false,
-          "description": "Called with false when people close what `open` shows below `splitAt`: Escape or a press on the scrim closes the supporting sheet, and the back button returns from the detail to the list. Set `open` from it."
+          "description": "Called with false when people close what `open` shows below `splitAt`: Escape, the close button or a press on the scrim closes the supporting sheet, and the back button returns from the detail to the list. Set `open` from it."
+        },
+        {
+          "name": "closeLabel",
+          "type": "string",
+          "required": false,
+          "default": "'Close', or EnvUIProvider's messages.panes.close",
+          "description": "The name of the supporting sheet's close button, which shows only while the pane is a sheet."
         },
         {
           "name": "backLabel",
@@ -5525,7 +5532,7 @@
           "name": "persist",
           "type": "string",
           "required": false,
-          "description": "Keeps the width people choose under this localStorage key, for Panes the application doesn't control; a double click on the divider forgets it. It is read after the first render, so the server's markup and hydration agree."
+          "description": "Keeps the width people choose in a cookie of this name, for Panes the application doesn't control; a double click on the divider forgets it. Read it on the server with `readPanesSize(cookieHeader, key)` and pass it as `defaultSize`, so the server's markup has it and nothing moves as the page hydrates. Without that, the kept width applies after the first render."
         },
         {
           "name": "name",
@@ -5550,7 +5557,7 @@
     "Panes.Supporting": {
       "kind": "component",
       "source": "packages/ui/src/layout/Panes.tsx",
-      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. Opening it moves focus into it, and Escape or a press on the scrim closes it, which returns focus to where it was.",
+      "description": "The supporting pane, at the end, such as details or filters for the main pane. Below `splitAt` it is a modal sheet over the main pane while `open`: a side sheet in a medium width, a bottom sheet in a compact one. As a sheet it is a dialog with a close button: the rest of the Panes is inert, focus moves into it and Tab stays in it, and Escape, the close button or a press on the scrim closes it, which returns focus to where it was.",
       "props": [
         {
           "name": "label",
@@ -6234,7 +6241,7 @@
     "Scaffold": {
       "kind": "component",
       "source": "packages/ui/src/layout/Scaffold.tsx",
-      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one and a Drawer at the start from expanded. It fills its container's height, 100dvh by default, and the body scrolls under the top bar, with the keyboard scrolling it as it would the document. Skip links to the body and the navigation come first.",
+      "description": "The invisible structure of an application's screen, after Material's: a top bar region, a navigation region and the body. It never paints. It shows one navigation form at a time by its own width, CSS only: a Bar at the bottom of a compact window, a Rail at the start of a medium one and a Drawer at the start from expanded. The document scrolls by default, with the top bar, the bar and the rail or the drawer kept in view; `scroll=\"body\"` scrolls the body alone. Skip links to the body and the navigation come first.",
       "props": [
         {
           "name": "topBar",
@@ -6263,17 +6270,24 @@
           "description": "body: the top bar sits above the body, beside the rail or drawer, which run the full height. full: the top bar runs across the whole width, above the navigation, as a window's title bar must."
         },
         {
+          "name": "scroll",
+          "type": "'document' | 'body'",
+          "required": false,
+          "default": "'document'",
+          "description": "What scrolls. document: the page, as on any website, so a phone collapses its address bar, pull to refresh and a tap on the status bar work and the browser restores the scroll position; the top bar and the bar stick to the window's edges and the rail or the drawer stays in view, in a Scaffold at least as tall as the window. body: the body alone, under the top bar, in a Scaffold that fills its container's height, 100dvh unless a class gives it another, with the keyboard scrolling the body as it would the document: for a preview or an embedded frame, a window with its own title bar, or a body of Panes whose panes scroll on their own."
+        },
+        {
           "name": "bodyId",
           "type": "string",
           "required": false,
-          "default": "'main'",
+          "default": "'main', or an id of its own where `landmarks` is false",
           "description": "The body's id, the target of the skip link to the content."
         },
         {
           "name": "bodyRef",
           "type": "Ref<HTMLElement>",
           "required": false,
-          "description": "The body's element, which scrolls: read or restore its scroll position on it."
+          "description": "The body's element: with `scroll=\"body\"` the element that scrolls, to read or restore its scroll position on."
         },
         {
           "name": "skipLabel",
@@ -6294,7 +6308,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "false renders the regions without landmarks, a div for the banner and the main, for a preview of an application inside another page's main content."
+          "description": "false renders the regions without landmarks, a div for the banner and the main, and no skip links, for a preview of an application inside another page's main content."
         },
         {
           "name": "name",
@@ -8555,6 +8569,15 @@
       "signature": "(options?: DevModeOptions): DevModeHandle",
       "entries": [
         "@envsemble/envui/dev"
+      ]
+    },
+    "readPanesSize": {
+      "kind": "function",
+      "source": "packages/ui/src/layout/panesSize.ts",
+      "description": "The width Panes keeps under its `persist` key, read from a Cookie header, such as the request's on the server, or from `document.cookie`. Render Panes.Root with it as `defaultSize`, on the server and in the browser alike, so the server's markup has the width people chose and nothing moves as the page hydrates: <Panes.Root persist=\"inbox\" defaultSize={readPanesSize(cookieHeader, 'inbox') ?? 22.5}> Returns undefined where no width is kept under the key.",
+      "signature": "(cookies: string | null | undefined, key: string): number | undefined",
+      "entries": [
+        "@envsemble/envui"
       ]
     },
     "resolveNavigationForms": {

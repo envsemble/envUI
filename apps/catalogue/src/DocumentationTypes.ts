@@ -94,7 +94,7 @@ export interface DocumentationSection {
   anchors?: string[];
 }
 
-/** A component, pattern or template page's frontmatter beyond its title, summary and category. */
+/** A component or pattern page's frontmatter beyond its title, summary and category. */
 export interface DocumentationMetadata {
   status: 'experimental' | 'beta' | 'stable' | 'deprecated';
   /** The status of an export that differs from the page's. */
@@ -104,11 +104,11 @@ export interface DocumentationMetadata {
   useWhen: string[];
   /** Situations that call for something else, with the component to use or the page to read. */
   avoidWhen: { text: string; use?: string; see?: string }[];
-  /** The exports a component page documents; none on a pattern or template page. */
+  /** The exports a component page documents; none on a pattern page. */
   components: string[];
   /** What people are doing, which groups a pattern page. */
   intent?: string;
-  /** The exports a pattern or template page combines. */
+  /** The exports a pattern page combines. */
   composes?: string[];
 }
 
@@ -126,6 +126,6 @@ export interface DocumentationEntry {
   format?: 'exchanges';
   /** The sections of a page on the template; absent on pages not on it, such as guides. */
   sections?: DocumentationSection[];
-  /** The exports a template page documents, with namespaces expanded to their parts. */
+  /** The exports a page on the template documents, with namespaces expanded to their parts. */
   props?: Record<string, ExportEntry>;
 }

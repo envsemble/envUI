@@ -148,10 +148,14 @@ test('a page of exchanges asks its questions and numbers the parts of its anatom
   await expect(stages).toHaveCount(2);
   const placement = () =>
     stages.first().evaluate((stage) => {
-      const icon = stage.querySelector('.env-button > .env-icon')!.getBoundingClientRect();
-      const badge = [...stage.querySelectorAll('.docs-anatomy-badge')]
-        .find((item) => item.textContent === '2')!
-        .getBoundingClientRect();
+      // Until the example and its badges render, there is nothing to place: poll again.
+      const iconElement = stage.querySelector('.env-button > .env-icon');
+      const badgeElement = [...stage.querySelectorAll('.docs-anatomy-badge')].find(
+        (item) => item.textContent === '2',
+      );
+      if (!iconElement || !badgeElement) return null;
+      const icon = iconElement.getBoundingClientRect();
+      const badge = badgeElement.getBoundingClientRect();
       return {
         badges: stage.querySelectorAll('.docs-anatomy-badge').length,
         offset: Math.round(badge.left + badge.width / 2 - (icon.left + icon.width / 2)),
@@ -550,6 +554,25 @@ test('an example that fails to render says so in place, and the rest of the page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Badge');
 });
 
+test('the navigation shows the current page, and focus moves to the page only on a route change', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(`${catalogueUrl}/#/components/tree/overview`);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tree');
+  const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
+  // The current page's link is scrolled into view as the navigation mounts.
+  const current = navigation.locator('[aria-current="page"]');
+  await expect(current).toHaveText(/Tree/);
+  await expect(current).toBeInViewport();
+  // The first page loaded leaves focus at the start of the document.
+  const main = page.getByRole('main');
+  await expect(main).not.toBeFocused();
+  await navigation.getByRole('link', { name: 'Button', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
+  await expect(main).toBeFocused();
+});
+
 test('a page that fails to render says so, and the navigation leads to the others', async ({
   page,
 }) => {
@@ -567,8 +590,9 @@ test('a page that fails to render says so, and the navigation leads to the other
   // A link to the overview would lead here again; the overview offers a reload instead.
   await expect(main.getByRole('link', { name: 'Return to overview' })).toHaveCount(0);
   await expect(main.getByRole('button', { name: 'Reload the page', exact: true })).toBeVisible();
-  // The page failed as it opened, so focus stays where the route put it.
-  await expect(main).toBeFocused();
+  // The page failed as it opened, the first the catalogue loaded, so focus stays at the start of
+  // the document, as on any page that loads.
+  await expect(main).not.toBeFocused();
   const navigation = page.getByRole('navigation', { name: 'Documentation' }).first();
   await navigation.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');

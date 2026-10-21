@@ -8,6 +8,6 @@ Drawer, the panel that slides in over the page, is Sheet, after Material's side 
 
 - Its widths follow the window classes of the `env-window` container instead of the viewport: a `md` side sheet takes the whole width of a compact window, below 37.5 rem, and a `lg` one of a compact or medium window, below 52.5 rem.
 - The part classes `env-drawer-popup`, `env-drawer-viewport` and `env-drawer-backdrop` are `env-sheet-popup`, `env-sheet-viewport` and `env-sheet-backdrop`, with the same state attributes, `data-side`, `data-width`, `data-starting-style`, `data-ending-style` and `data-swiping`.
-- `v1-names` renames `Drawer` and `DrawerProps` to `Sheet` and `SheetProps`, and `v1-structure` turns a 0.x `<Dialog placement="right">` into a Sheet; run them once, over code from before, as code written since may use the navigation Drawer.
+- `v1-structure` turns a 0.x `<Dialog placement="right">` into a Sheet. 0.x had no Drawer, so no codemod renames one: rename `Drawer` and `DrawerProps` from the prerelease to `Sheet` and `SheetProps` by hand.
 
 Migration guide: [Overlays and feedback](https://github.com/envsemble/envUI/blob/main/docs/migration.md#overlays-and-feedback).

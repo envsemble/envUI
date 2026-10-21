@@ -255,7 +255,7 @@ export function TemplateContent({ page, view }: { page: ReferencePage; view: Ref
   );
 }
 
-/** A pattern or template page, which has one view: every section in the template's order. */
+/** A pattern page, which has one view: every section in the page's order. */
 export function SingleViewContent({ document }: { document: Document }) {
   return <Sections reference={document} sections={document.sections ?? []} />;
 }

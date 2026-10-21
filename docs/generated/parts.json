@@ -3053,6 +3053,10 @@
           "description": "The button back to the list, when one pane shows at a time."
         },
         {
+          "class": "env-panes-close",
+          "description": "The supporting sheet's close button, which shows only while the pane is a sheet."
+        },
+        {
           "class": "env-panes-detail",
           "description": "The detail pane of list-detail panes."
         },
@@ -3127,6 +3131,7 @@
       ],
       "uses": [
         "Button",
+        "CloseButton",
         "Icon",
         "ResizeHandle"
       ]
@@ -3618,6 +3623,25 @@
             "env-scaffold-bar",
             "env-scaffold-drawer",
             "env-scaffold-rail"
+          ]
+        },
+        {
+          "attribute": "data-scroll",
+          "values": [
+            "body",
+            "document"
+          ],
+          "parts": [
+            "env-scaffold"
+          ]
+        },
+        {
+          "attribute": "data-skip",
+          "values": [
+            "navigation"
+          ],
+          "parts": [
+            "env-scaffold-skip-link"
           ]
         },
         {

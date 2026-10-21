@@ -189,11 +189,6 @@ body {
   padding: var(--env-space-5) var(--docs-gutter) var(--env-space-6);
   border-block-start: 0.0625rem solid var(--env-color-border-muted);
 }
-/* A page that has nothing to show yet, such as the templates. */
-.docs-placeholder {
-  display: grid;
-  min-block-size: 22rem;
-}
 .docs-token-color {
   display: inline-flex;
   align-items: center;

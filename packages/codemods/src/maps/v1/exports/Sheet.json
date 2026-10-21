@@ -1,6 +1,0 @@
-{
-  "@envsemble/envui": {
-    "Drawer": "Sheet",
-    "DrawerProps": "SheetProps"
-  }
-}

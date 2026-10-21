@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Drawer, Link, SearchTrigger, type DrawerDestination } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
 import { Home } from '@envsemble/envui/icons/Home';
@@ -31,9 +32,9 @@ interface NavigationProps {
 
 /**
  * The catalogue's destinations, one group per section of the site, in order: Get started,
- * Foundations, Components, Patterns, Contributing and Changelog. Drawer has one level of
- * groups, so the kinds of components and the intents of patterns fold into their sections, in the
- * order the index gives them; the overview lists them by kind. `onChoose` runs as a destination is
+ * Foundations, a group per kind of component, in the index's order, Patterns, Contributing and
+ * Changelog. Drawer has one level of groups, so the intents of patterns
+ * fold into their section, in the order the index gives them. `onChoose` runs as a destination is
  * followed, such as to close the sheet the navigation sits in.
  */
 export function documentationDestinations(
@@ -89,7 +90,7 @@ export function documentationDestinations(
         .map((component) => {
           const Icon = getComponentIcon(component.group);
           return destination(
-            'Components',
+            kind,
             component.title,
             pageHref(referencePages.find((entry) => entry.reference === component)!),
             <Icon />,
@@ -129,8 +130,16 @@ export function DocumentationNavigation({
   inSheet = false,
   onChoose,
 }: NavigationProps & { onSearch: () => void; inSheet?: boolean; onChoose?: () => void }) {
+  // The current page's link shows as the navigation mounts, as on a page opened deep in the list.
+  const drawer = useRef<HTMLElement>(null);
+  useEffect(() => {
+    drawer.current
+      ?.querySelector('[aria-current="page"]')
+      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, []);
   return (
     <Drawer
+      ref={drawer}
       aria-label="Documentation"
       className="docs-sidebar"
       data-in-sheet={inSheet || undefined}

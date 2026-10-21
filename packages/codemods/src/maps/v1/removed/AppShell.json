@@ -16,10 +16,10 @@
       "use": "The sidebar is gone: Scaffold shows a navigation Rail of icons in a medium window, chosen by its width in CSS, with no state to read."
     },
     "AppShell": {
-      "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame template show."
+      "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
     },
     "AppShellProps": {
-      "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame template show."
+      "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
     },
     "useAppShell": {
       "use": "AppShell is gone: Scaffold's bodyRef is the element that scrolls the page, and sticky content sticks at the top of the body, at 0."

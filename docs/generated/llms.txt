@@ -31,8 +31,8 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Row](docs/components/row.md): Row lays out content side by side with even gaps, and wraps when it doesn't fit, such as a form's actions.
 - [Column](docs/components/column.md): Column lays out content one under another with even gaps, such as a heading, text and a form.
 - [Grid](docs/components/grid.md): Grid lays out content in columns, a set number, a template or as many as fit, with even gaps.
-- [Scaffold](docs/components/scaffold.md): The invisible structure of an application's screen, with a top bar region, the navigation and a body that scrolls, which shows the navigation form that fits its own width. Also: resolveNavigationForms. Parts: `.env-scaffold`.
-- [Panes](docs/components/panes.md): Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room. Parts: `.env-panes`.
+- [Scaffold](docs/components/scaffold.md): The invisible structure of an application's screen, with a top bar region, the navigation and the body, which shows the navigation form that fits its own width and keeps the bars in view as the page scrolls. Also: resolveNavigationForms. Parts: `.env-scaffold`.
+- [Panes](docs/components/panes.md): Two panes side by side, after Material's pane patterns, that behave as a main pane with a supporting sheet or as a list and its detail when there is less room. Also: readPanesSize. Parts: `.env-panes`.
 - [Page](docs/components/page.md): The invisible column a page's content sits in, centered at a readable width with the page gutter by window class, and the page's header at its top. Parts: `.env-page`.
 - [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top. Parts: `.env-page-header`.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Parts: `.env-surface`.

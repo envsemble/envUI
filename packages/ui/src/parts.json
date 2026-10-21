@@ -525,6 +525,7 @@
       "env-panes-detail": "The detail pane of list-detail panes.",
       "env-panes-divider": "The divider that resizes the panes.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
+      "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
       "env-panes-scrim": "The scrim behind the supporting sheet."
     },
     "Popover": {

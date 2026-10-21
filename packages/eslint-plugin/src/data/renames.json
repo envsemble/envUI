@@ -18,11 +18,11 @@
       },
       "AppShell": {
         "to": [],
-        "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame template show."
+        "use": "AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
       },
       "AppShellProps": {
         "to": [],
-        "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame template show."
+        "use": "ScaffoldProps and TopBarProps; AppShell is gone. Build the frame on Scaffold: topBar={<TopBar … />}, the navigation forms in navigation={{ bar, rail, drawer }} and the page as its children, as the migration guide's app frame section and the app frame pattern show."
       },
       "AppShellSkeleton": {
         "to": [],

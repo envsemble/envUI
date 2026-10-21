@@ -42,6 +42,9 @@ function Catalogue() {
   // A destination chosen in the navigation's sheet sends focus to the page, not back to the button.
   const choseDestination = useRef(false);
   const mainElement = useRef<HTMLElement>(null);
+  // The first page loaded leaves focus at the start of the document, as any page does; a route
+  // change after it moves focus to the page.
+  const firstLoad = useRef(true);
   const routePath = route.split('?')[0];
   const routeSegments = routePath.split('/');
   const page = findReferencePage(routePath);
@@ -73,7 +76,8 @@ function Catalogue() {
     document.title = title === 'envUI' ? 'envUI' : `${title} · envUI`;
     // Moving between a page's views keeps focus on its tabs, where the reader is.
     if (reachedFromTabs()) return;
-    mainElement.current?.focus({ preventScroll: true });
+    if (firstLoad.current) firstLoad.current = false;
+    else mainElement.current?.focus({ preventScroll: true });
     const section = new URLSearchParams(contentRoute.split('?')[1]).get('section');
     if (section) return revealSection(section);
     mainElement.current?.scrollTo({ top: 0 });
@@ -121,6 +125,9 @@ function Catalogue() {
   return (
     <Scaffold
       className="docs-frame"
+      // The body scrolls rather than the document: the frame scrolls it to a page's top or a
+      // section as routes change, and the live examples in it keep their place.
+      scroll="body"
       bodyId="docs-main"
       bodyRef={mainElement}
       // The navigation is at the start of a wide window, and in a sheet that the top bar opens in a
