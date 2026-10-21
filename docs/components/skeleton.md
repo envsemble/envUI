@@ -25,13 +25,13 @@ avoidWhen:
   - text: Content that is empty or failed to load.
     use: EmptyState
   - text: The application frame before the first page loads.
-    use: AppShell
+    use: Scaffold
 related:
   - spinner
   - progress
   - empty-state
   - card
-  - app-shell
+  - scaffold
 components:
   - Skeleton
   - LoadingState

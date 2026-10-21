@@ -22,7 +22,7 @@ avoidWhen:
 composes:
   - Page
   - PageHeader
-  - Sidebar
+  - Panes
   - NavList
   - Column
   - Row
@@ -46,7 +46,7 @@ related:
   - forms
   - destructive-actions
   - app-frame
-  - sidebar
+  - panes
 ---
 
 # Settings page
@@ -62,8 +62,8 @@ A settings page inside the [app frame](app-frame.md): the person's profile, thei
 ## Anatomy
 
 1. **Page:** a [Page](../components/page.md) of `width="lg"` with a [PageHeader](../components/page-header.md), "Settings", and a one-line description.
-2. **Columns:** a [Row](../components/row.md), with the navigation and the sections side by side from the `lg` breakpoint up.
-3. **On this page:** a [Sidebar.Root](../components/sidebar.md) of the page's own, labelled "Settings sections", with `collapsible="none"` and `mobile="none"`, in a `Sidebar.Provider` with `breakpoint="lg"`, holding a [NavList](../components/nav-list.md) of the sections. It sticks below `--env-frame-sticky-top` as the sections scroll. Each item moves focus to its section's heading, and the current one has `aria-current="location"`.
+2. **Panes:** supporting [Panes](../components/panes.md), with the sections in the main pane and the navigation in the supporting pane, side by side from an expanded width, 52.5 rem of their own.
+3. **On this page:** the supporting pane of [Panes](../components/panes.md), beside the sections from an expanded width and hidden in less room, holding a `nav` labelled "Settings sections" with a [NavList](../components/nav-list.md) of the sections. It sticks at the top of the Scaffold's body as the sections scroll. Each item moves focus to its section's heading, and the current one has `aria-current="location"`.
 4. **Sections:** a `section` named by its `h2`, a [Text](../foundations/typography.md) `variant="title"`, with a muted line where the section applies at once:
    - **Profile:** a `form` on a muted [Surface](../components/surface.md): an [Avatar](../components/avatar.md) with the person's initials, a "Unsaved changes" [Badge](../components/badge.md) while edits wait, the name and email address [TextField](../components/text-field.md)s, then Save profile and Cancel [Button](../components/button.md)s and a status line;
    - **Notifications:** [List](../components/list.md) rows that don't wrap, each with a [Switch](../components/switch.md) named by the row's title and described by its detail, which stays beside the text at every width;
@@ -79,7 +79,7 @@ A settings page inside the [app frame](app-frame.md): the person's profile, thei
 - **Appearance:** the theme applies at once, to the whole application. The density is one for the application: store it and pass it to the root provider's `scale`. In the sample the density choice is only kept: the preview's scale comes from its address, so choosing Compact changes nothing on the page.
 - **Danger zone:** the dialog names the workspace and the consequence, and starts on Cancel. Delete workspace, or Enter in the name field, deletes it only when the name matches; otherwise the field shows "Enter Northwind to confirm" and keeps focus.
 - **When a change fails:** put the switch or choice back and say so in a toast with "Try again"; the profile keeps its edits and shows an [Alert](../components/alert.md) above the fields.
-- **Widths:** from the `lg` breakpoint, 64 rem, the navigation sits beside the sections and sticks as they scroll; below it, on a tablet and a phone, it hides and the sections follow each other.
+- **Widths:** from an expanded width of the Panes, 52.5 rem, the navigation sits beside the sections and sticks as they scroll; below it, on a tablet and a phone, it hides and the sections follow each other.
 
 ### Connect your data
 
@@ -105,19 +105,19 @@ A settings page inside the [app frame](app-frame.md): the person's profile, thei
 
 - Don't put a Save button under switches, or a switch in a form that waits for Save.
 - Don't disable Save profile until the fields are valid.
-- Don't add a second frame or skip link for the page's navigation; the Sidebar inside Main keeps to itself.
+- Don't add a second frame or skip link for the page's navigation; the supporting pane keeps to the page.
 
 ## Accessibility
 
 ### Landmarks and headings
 
-- The frame's `nav` "Primary", a second `nav` "Settings sections" for the page's navigation from the `lg` breakpoint up, and one `main`.
+- The frame's `nav` "Primary", a second `nav` "Settings sections" for the page's navigation from an expanded width, and one `main`.
 - One `h1`, "Settings", in the PageHeader; each section has an `h2`, and the error summary's title is a level-3 heading.
 - Each section is a region named by its heading, and the profile form is named "Profile".
 
 ### envUI provides
 
-- A Sidebar inside Main that keeps its own state, with no skip link or shortcut of its own.
+- The sections' navigation in a named region of its own, with no skip link or shortcut of its own.
 - A NavList item that reports `aria-current="page"` while selected, or the value you pass in `aria-current`.
 - Switches, radios and fields with their labels, descriptions, errors and `aria-invalid`.
 - A ConfirmDialog that is a form: focus starts on Cancel, Enter in its field confirms through `onConfirm`, and focus returns to the button that opened it.

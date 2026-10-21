@@ -18,11 +18,10 @@ avoidWhen:
   - text: Content that turned out empty, or that failed to load.
     use: EmptyState
   - text: The application frame itself before the first page loads, which its own parts show with NavList.Skeleton.
-    use: AppShell
+    use: Scaffold
 composes:
-  - AppShell
-  - Sidebar
-  - SidebarTrigger
+  - Scaffold
+  - TopBar
   - NavList
   - Page
   - PageHeader
@@ -42,7 +41,7 @@ related:
   - spinner
   - progress
   - button
-  - app-shell
+  - scaffold
 ---
 
 # Loading
@@ -61,7 +60,7 @@ Here each team's projects load the first time it is chosen: skeletons in the sha
 
 Choose one indicator by what is loading:
 
-1. **A whole page or route:** the loading bar along the bottom edge of the frame's header, through `loading` on [AppShell.Root](../components/app-shell.md). It appears after 200 ms, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
+1. **A whole page or route:** the loading bar along the bottom edge of the top bar, through `loading` on [TopBar](../components/top-bar.md). It appears after 200 ms, creeps toward the end without implying a completion time, and completes and fades out when the work ends. `loadingLabel` names it, "Loading page" by default.
 2. **Content whose shape is known:** [Skeleton](../components/skeleton.md) placeholders in a `LoadingState`, which names the region once with its `label`.
 3. **A small area, or an update to content already shown:** a [Spinner](../components/spinner.md) with a `label`, beside what it updates.
 4. **The result of an action:** `pending` on the [Button](../components/button.md) that started it.
@@ -101,7 +100,7 @@ Choose one indicator by what is loading:
 
 ### Focus and keyboard
 
-Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading or to the frame's `AppShell.Main`.
+Loading never moves focus. A pending button stays where it is in the tab order, so people go on from it as they would. Don't disable the control that started the work: a disabled button loses focus. Use `pending`, or keep it enabled and ignore presses while the work runs. When content replaces its placeholders, focus stays where it was; move it only when people asked for the content, such as a page they opened, and then to its heading or to the Scaffold's body.
 
 ### envUI provides
 
@@ -122,7 +121,7 @@ Loading never moves focus. A pending button stays where it is in the tab order, 
 
 ### Page progress
 
-Choosing a page in the sidebar starts loading it: the page on screen stays, and stays selected in the sidebar, and after 200 ms the bar along the header's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the sidebar selects it, and focus moves to `AppShell.Main`, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The frame sits in a box here, with `landmarks={false}` and `scroll="main"`; an application renders it at its root.
+Choosing a page in the navigation starts loading it: the page on screen stays, and stays selected in the navigation, and after 200 ms the bar along the top bar's bottom edge shows the next one is on its way, named by `loadingLabel`. When the page arrives, the bar completes and fades, the navigation selects it, and focus moves to the Scaffold's body, which takes focus without being a tab stop, unless people have moved focus elsewhere in the meantime. The Scaffold sits in a box here, with `landmarks={false}` and a block size of its own; an application renders it at its root.
 
 ```tsx example=PageProgress
 

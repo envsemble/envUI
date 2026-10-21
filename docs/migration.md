@@ -34,7 +34,6 @@ envUI 1.0 renames components, compound parts, classes and documentation pages, a
 ```sh
 npx @envsemble/envui-codemods@<version> v1-names src --dry   # the files that would change, and the reports
 npx @envsemble/envui-codemods@<version> v1-names src
-npx @envsemble/envui-codemods@<version> v1-app-shell src
 npx @envsemble/envui-codemods@<version> v1-structure src
 npx @envsemble/envui-codemods@<version> v1-render src
 npx @envsemble/envui-codemods@<version> v1-stack src
@@ -53,8 +52,7 @@ export default defineConfig(envui.configs.recommended);
 ```
 
 - `v1-names` rewrites imports and references from `@envsemble/envui` and `@envsemble/envui/theme-bootstrap`: renamed components and types (`Input` is `TextField`), namespace parts (`MenuItem` is `Menu.Item`, `<Menu>` is `<Menu.Root>`), `DirectionLink` by its literal `direction` (`Pager.Previous` or `Pager.Next`), re-exports, `defaultThemeStorageKey`, which becomes `'env-theme'`, and `<Theme theme={useTheme()}>`, which becomes `<Theme {...useTheme()}>`. Other `useTheme()` calls, imported by name or through a namespace import, become `useTheme().theme`, the color scheme they returned in 0.x, unless the file already reads them as `{ theme, contrast }`.
-- `v1-app-shell` rewrites 0.x's AppShell, which `v1-names` names `AppShell.Root`, into the frame's parts, and AppShellSkeleton into the same parts in a LoadingState, as [the app frame](#the-app-frame) lists. The navigation's NavList items, also those behind a condition or from a `map`, go into a `NavList.Root`.
-- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, which `v1-stack` then makes a Row or a Column, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, SplitView becomes a SplitPane, as [split panes](#split-panes) lists, and WindowFrame its parts, as [the shell](#shell-dock-editors-and-code) lists.
+- `v1-structure` rewrites elements whose 1.0 form is another element or shape: ActionGroup becomes a Stack, which `v1-stack` then makes a Row or a Column, as [the vocabulary](#variants-tones-and-render) lists, ActionCard and FeatureCard become a Card, as [content and display](#content-and-display) lists, ListDetail becomes list-detail Panes, as [panes](#panes) lists, and a `<Dialog placement="right">` a Sheet, as [overlays](#overlays-and-feedback) lists. AppShell, SplitView and WindowFrame are not mechanical: [the app frame](#the-app-frame), [panes](#panes) and [the shell](#shell-dock-editors-and-code) show them before and after.
 - `v1-render` turns a literal `as` into `render`, `as="h2"` into `render={<h2 />}`, and a ternary of element names into a ternary of elements, `as={section ? 'h2' : 'h1'}` into `render={section ? <h2 /> : <h1 />}`.
 - `v1-stack` rewrites Stack into the [layout primitives](#layout-primitives): `<Stack direction="row">` becomes `<Row>` and any other Stack a `<Column>`, with `gap={4}`, Stack's default, where it set none.
 - `v1-props` moves the props that 1.0 removed, renamed or changed, as [scale and density](#scale-and-density) and [the vocabulary](#variants-tones-and-render) list them. A value that is a conditional of literals has each literal mapped, also in nested ternaries and beside `&&`, `||` and `??`: `tone={failed ? 'error' : 'info'}` becomes `tone={failed ? 'danger' : 'info'}`, and a value that 1.0 drops as the default becomes `undefined`, so `size={large ? 'large' : 'standard'}` on an Avatar becomes `size={large ? 'lg' : undefined}`.
@@ -63,13 +61,13 @@ export default defineConfig(envui.configs.recommended);
 
 Change by hand what the codemods report, each with its file and line:
 
-- removed exports: `LoadingBar` and `LoadingBarProps` (AppShell's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact` (`useSidebar().isRail`), `PanelDockControls` and `PanelDockControlsProps` (PanelDock.Header's own controls), `BrandLogo`, `BrandLogoProps`, `EnvUILogo` and `EnvUILogoProps` (envUI ships no logos), and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`). ActionGroup, ActionCard, FeatureCard and AppShellSkeleton are reported only where they are used other than as elements, such as passed as a value: `v1-structure` and `v1-app-shell` rewrite their elements;
+- removed exports: `LoadingBar` and `LoadingBarProps` (TopBar's `loading` prop, or Progress), the manual `Toast` (`useToast()` inside `Toast.Provider`), `ToastProps` (`ToastNotification`), `getInitials`, `useLinkComponent`, `useSidebarCompact` (the navigation forms show their own), `PanelDockControls` and `PanelDockControlsProps` (PanelDock.Header's own controls), `BrandLogo`, `BrandLogoProps`, `EnvUILogo` and `EnvUILogoProps` (envUI ships no logos), and the `MenuDensity` and `SurfaceDensity` types (menus have one anatomy; give controls a `size` or a Theme a `scale`). ActionGroup, ActionCard and FeatureCard are reported only where they are used other than as elements, such as passed as a value: `v1-structure` rewrites their elements; AppShell, AppShellSkeleton, SplitView, WindowFrame and TitleBar are reported wherever they are used, as [the app frame](#the-app-frame) says;
 - a `DirectionLink` whose `direction` is computed or spread, or that is used outside JSX;
 - re-exports of namespace parts, and names destructured from a namespace import, `useTheme` among them;
 - a `useTheme()` call that is returned, as by a hook that wraps it, or passed as the `value` of what may be a context provider, directly or through a variable: whether its readers expect the scheme or the object is out of the file's sight;
 - each `require()` and `import()` of `@envsemble/envui`, which the codemods do not follow;
 - a `variant`, `tone`, `corners` or Text `variant` whose value is an expression other than a conditional of literals, such as a variable or a lookup object, which keeps or takes its new name and may need its values mapped, and a conditional with a value that maps to two props, such as `variant={featured ? 'important' : 'secondary'}`; an `as` that is an expression other than a ternary of element names, or beside a `render`, and a converted one beside a spread;
-- in AppShell's `navigation`, NavList items beside other content, or an expression the codemod can't see into, such as `navigation={links}`: put the NavList items in a `NavList.Root`; an ActionGroup whose `stacked` is an expression or that spreads props, and a child of a stacked one that is not a Button or that spreads props, whose width the codemod can't set;
+- an ActionGroup whose `stacked` is an expression or that spreads props, and a child of a stacked one that is not a Button or that spreads props, whose width the codemod can't set;
 - a modifier class in a `className`, such as `env-button-important`, which the component's props set in 1.0;
 - a local that shadows a namespace or a new name: the codemod writes a second import under an alias, such as `Menu as EnvMenu`, which you may rename;
 - comments the codemod drops: a `@ts-expect-error` above an import whose names change, which TypeScript would report once the 0.x name it expected an error from is gone; a disable comment of an import that is removed with nothing in its place; and comments on a removed import name that no namespace import takes the place of.
@@ -82,36 +80,35 @@ The codemods also leave class names built at run time, CSS-in-JS outside a tagge
 
 Components take the names other libraries and the ARIA patterns use, and compound components are namespaces of parts, `Menu.Root` and `Menu.Item`. `v1-names` renames every export below, with its props types, and `v1-classes` the classes; nothing is exported under a 0.x name but `Row`, which is a [layout primitive](#layout-primitives) now.
 
-| 0.x                                                                                                                                                                    | 1.0                                                                                                                                                                                      |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Input`, `InputProps`                                                                                                                                                  | `TextField`, `TextFieldProps`                                                                                                                                                            |
-| `Notice`, `NoticeProps`, `NoticeTone`                                                                                                                                  | `Alert`, `AlertProps`, `AlertTone`                                                                                                                                                       |
-| `Counter`, `CounterProps`                                                                                                                                              | `CounterBadge`, `CounterBadgeProps`                                                                                                                                                      |
-| `DiffCount`, `DiffCountProps`                                                                                                                                          | `DiffStat`, `DiffStatProps`                                                                                                                                                              |
-| `Heatmap`, `HeatmapProps`, `HeatmapDay`, `HeatmapCell`                                                                                                                 | `CalendarHeatmap`, `CalendarHeatmapProps`, `CalendarHeatmapDay`, `CalendarHeatmapCell`                                                                                                   |
-| `DateTimeField`, `DateTimeFieldProps`                                                                                                                                  | `DatePicker`, `DatePickerProps`                                                                                                                                                          |
-| `DisclosureNote`, `DisclosureNoteProps`                                                                                                                                | `Disclosure`, `DisclosureProps`                                                                                                                                                          |
-| `FileDropzone`, `FileDropzoneProps`                                                                                                                                    | `DropZone`, `DropZoneProps`                                                                                                                                                              |
-| `OrganizationMenu`, `OrganizationMenuProps`, `OrganizationMenuOrganization`                                                                                            | `OrganizationSwitcher`, `OrganizationSwitcherProps`, `OrganizationSwitcherItem`                                                                                                          |
-| `GroupedRows`, `GroupedRowsProps`, `Row`, `RowProps`                                                                                                                   | `List.Root`, `List.RootProps`, `List.Item`, `List.ItemProps`                                                                                                                             |
-| `NavigationItem`, `NavigationItemProps`                                                                                                                                | `NavList.Item`, `NavList.ItemProps`, inside a `NavList.Root`                                                                                                                             |
-| `Menu`, `MenuItem`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem`, `MenuSeparator`, `MenuHeader`, `MenuSubmenu`                                   | `Menu.Root`, `Menu.Item`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem`, `Menu.Separator`, `Menu.Header`, `Menu.Submenu`                                        |
-| `MenuProps`, `MenuItemProps`, `MenuGroupProps`, `MenuRadioGroupProps`, `MenuRadioItemProps`, `MenuCheckboxItemProps`, `MenuHeaderProps`, `MenuSubmenuProps`            | `Menu.RootProps`, `Menu.ItemProps`, `Menu.GroupProps`, `Menu.RadioGroupProps`, `Menu.RadioItemProps`, `Menu.CheckboxItemProps`, `Menu.HeaderProps`, `Menu.SubmenuProps`                  |
-| `Menubar`, `MenubarProps`, `MenubarMenu`, `MenubarMenuProps`, `MenubarMenuOpenChangeDetails`                                                                           | `Menubar.Root`, `Menubar.RootProps`, `Menubar.Menu`, `Menubar.MenuProps`, `Menubar.MenuOpenChangeDetails`                                                                                |
-| `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell`, `TableCell`, `TableSortDirection`                                                                    | `Table.Root`, `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell`, `Table.Cell`, `Table.SortDirection`                                                                           |
-| `TableProps`, `TableHeadProps`, `TableBodyProps`, `TableRowProps`, `TableHeaderCellProps`, `TableCellProps`                                                            | `Table.RootProps`, `Table.HeadProps`, `Table.BodyProps`, `Table.RowProps`, `Table.HeaderCellProps`, `Table.CellProps`                                                                    |
-| `Stat`, `StatProps`, `StatGroup`, `StatGroupProps`, `StatTrend`, `StatTrendTone`                                                                                       | `Stat.Root`, `Stat.RootProps`, `Stat.Group`, `Stat.GroupProps`, `Stat.Trend`, `Stat.TrendTone`                                                                                           |
-| `DirectionLinks`, `DirectionLinksProps`, `<DirectionLink direction="previous">`, `<DirectionLink direction="next">`, `DirectionLinkProps`, `DirectionLinksDestination` | `Pager.Root`, `Pager.RootProps`, `Pager.Previous`, `Pager.Next`, `Pager.LinkProps`                                                                                                       |
-| `ToastProvider`, `ToastProviderProps`                                                                                                                                  | `Toast.Provider`, `Toast.ProviderProps`                                                                                                                                                  |
-| `WindowFrame`, `WindowFrameProps`                                                                                                                                      | `WindowFrame.Root`, `WindowFrame.RootProps`; the other parts are in [the shell](#shell-dock-editors-and-code)                                                                            |
-| `AppShell`, `AppShellProps`, `PanelDock`, `SplitView`, `ClickableCard`, `InfoChip` and the other types                                                                 | As [the app frame](#the-app-frame), [the shell](#shell-dock-editors-and-code), [split panes](#split-panes), [content and display](#content-and-display) and the other sections list them |
-| `env-notice`, `env-counter`, `env-heatmap`, `env-date-time-field`, `env-file-dropzone`, `env-navigation-item`                                                          | `env-alert`, `env-counter-badge`, `env-calendar-heatmap`, `env-date-picker`, `env-drop-zone`, `env-nav-list-item`, with their parts: `env-notice-title` is `env-alert-title`             |
-| `env-disclosure-note`, `env-disclosure-content`                                                                                                                        | `env-disclosure`, `env-disclosure-panel`                                                                                                                                                 |
-| `env-grouped-rows`, `env-row`                                                                                                                                          | `env-list`, `env-list-item`                                                                                                                                                              |
-| `env-direction-links`, `env-direction-link`                                                                                                                            | `env-pager`, `env-pager-link`                                                                                                                                                            |
-| `env-organization-trigger`, `env-organization-menu-detail`                                                                                                             | `env-organization-switcher-trigger`, `env-organization-switcher-description`                                                                                                             |
+| 0.x                                                                                                                                                                    | 1.0                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Input`, `InputProps`                                                                                                                                                  | `TextField`, `TextFieldProps`                                                                                                                                                |
+| `Notice`, `NoticeProps`, `NoticeTone`                                                                                                                                  | `Alert`, `AlertProps`, `AlertTone`                                                                                                                                           |
+| `Counter`, `CounterProps`                                                                                                                                              | `CounterBadge`, `CounterBadgeProps`                                                                                                                                          |
+| `DiffCount`, `DiffCountProps`                                                                                                                                          | `DiffStat`, `DiffStatProps`                                                                                                                                                  |
+| `Heatmap`, `HeatmapProps`, `HeatmapDay`, `HeatmapCell`                                                                                                                 | `CalendarHeatmap`, `CalendarHeatmapProps`, `CalendarHeatmapDay`, `CalendarHeatmapCell`                                                                                       |
+| `DateTimeField`, `DateTimeFieldProps`                                                                                                                                  | `DatePicker`, `DatePickerProps`                                                                                                                                              |
+| `DisclosureNote`, `DisclosureNoteProps`                                                                                                                                | `Disclosure`, `DisclosureProps`                                                                                                                                              |
+| `FileDropzone`, `FileDropzoneProps`                                                                                                                                    | `DropZone`, `DropZoneProps`                                                                                                                                                  |
+| `OrganizationMenu`, `OrganizationMenuProps`, `OrganizationMenuOrganization`                                                                                            | `OrganizationSwitcher`, `OrganizationSwitcherProps`, `OrganizationSwitcherItem`                                                                                              |
+| `GroupedRows`, `GroupedRowsProps`, `Row`, `RowProps`                                                                                                                   | `List.Root`, `List.RootProps`, `List.Item`, `List.ItemProps`                                                                                                                 |
+| `NavigationItem`, `NavigationItemProps`                                                                                                                                | `NavList.Item`, `NavList.ItemProps`, inside a `NavList.Root`                                                                                                                 |
+| `Menu`, `MenuItem`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem`, `MenuSeparator`, `MenuHeader`, `MenuSubmenu`                                   | `Menu.Root`, `Menu.Item`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem`, `Menu.Separator`, `Menu.Header`, `Menu.Submenu`                            |
+| `MenuProps`, `MenuItemProps`, `MenuGroupProps`, `MenuRadioGroupProps`, `MenuRadioItemProps`, `MenuCheckboxItemProps`, `MenuHeaderProps`, `MenuSubmenuProps`            | `Menu.RootProps`, `Menu.ItemProps`, `Menu.GroupProps`, `Menu.RadioGroupProps`, `Menu.RadioItemProps`, `Menu.CheckboxItemProps`, `Menu.HeaderProps`, `Menu.SubmenuProps`      |
+| `Menubar`, `MenubarProps`, `MenubarMenu`, `MenubarMenuProps`, `MenubarMenuOpenChangeDetails`                                                                           | `Menubar.Root`, `Menubar.RootProps`, `Menubar.Menu`, `Menubar.MenuProps`, `Menubar.MenuOpenChangeDetails`                                                                    |
+| `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeaderCell`, `TableCell`, `TableSortDirection`                                                                    | `Table.Root`, `Table.Head`, `Table.Body`, `Table.Row`, `Table.HeaderCell`, `Table.Cell`, `Table.SortDirection`                                                               |
+| `TableProps`, `TableHeadProps`, `TableBodyProps`, `TableRowProps`, `TableHeaderCellProps`, `TableCellProps`                                                            | `Table.RootProps`, `Table.HeadProps`, `Table.BodyProps`, `Table.RowProps`, `Table.HeaderCellProps`, `Table.CellProps`                                                        |
+| `Stat`, `StatProps`, `StatGroup`, `StatGroupProps`, `StatTrend`, `StatTrendTone`                                                                                       | `Stat.Root`, `Stat.RootProps`, `Stat.Group`, `Stat.GroupProps`, `Stat.Trend`, `Stat.TrendTone`                                                                               |
+| `DirectionLinks`, `DirectionLinksProps`, `<DirectionLink direction="previous">`, `<DirectionLink direction="next">`, `DirectionLinkProps`, `DirectionLinksDestination` | `Pager.Root`, `Pager.RootProps`, `Pager.Previous`, `Pager.Next`, `Pager.LinkProps`                                                                                           |
+| `ToastProvider`, `ToastProviderProps`                                                                                                                                  | `Toast.Provider`, `Toast.ProviderProps`                                                                                                                                      |
+| `AppShell`, `AppShellProps`, `PanelDock`, `SplitView`, `ClickableCard`, `InfoChip` and the other types                                                                 | As [the app frame](#the-app-frame), [the shell](#shell-dock-editors-and-code), [panes](#panes), [content and display](#content-and-display) and the other sections list them |
+| `env-notice`, `env-counter`, `env-heatmap`, `env-date-time-field`, `env-file-dropzone`, `env-navigation-item`                                                          | `env-alert`, `env-counter-badge`, `env-calendar-heatmap`, `env-date-picker`, `env-drop-zone`, `env-nav-list-item`, with their parts: `env-notice-title` is `env-alert-title` |
+| `env-disclosure-note`, `env-disclosure-content`                                                                                                                        | `env-disclosure`, `env-disclosure-panel`                                                                                                                                     |
+| `env-grouped-rows`, `env-row`                                                                                                                                          | `env-list`, `env-list-item`                                                                                                                                                  |
+| `env-direction-links`, `env-direction-link`                                                                                                                            | `env-pager`, `env-pager-link`                                                                                                                                                |
+| `env-organization-trigger`, `env-organization-menu-detail`                                                                                                             | `env-organization-switcher-trigger`, `env-organization-switcher-description`                                                                                                 |
 
-The documentation pages are named after their component, in the singular: `notices` is `alert`, `badges` and `chips` are `badge`, `buttons` is `button`, `heatmap` is `calendar-heatmap`, `cards` is `card`, `date-time-field` is `date-picker`, `dialogs` is `dialog`, `disclosures` is `disclosure`, `file-dropzone` is `drop-zone`, `keyboard` is `kbd`, `rows` is `list`, `messages` is `message`, `meters` is `meter`, `navigation` is `nav-list`, `direction-links` is `pager`, `loading` is `skeleton`, `split-view` is `split-pane`, `layout` is `stack`, `stats` is `stat`, `tables` is `table`, `fields` is `text-field` and `toasts` is `toast`, under `docs/components/` and the catalogue's `components/` routes.
+The documentation pages are named after their component, in the singular: `notices` is `alert`, `badges` and `chips` are `badge`, `buttons` is `button`, `heatmap` is `calendar-heatmap`, `cards` is `card`, `date-time-field` is `date-picker`, `dialogs` is `dialog`, `disclosures` is `disclosure`, `file-dropzone` is `drop-zone`, `keyboard` is `kbd`, `rows` is `list`, `messages` is `message`, `meters` is `meter`, `navigation` is `nav-list`, `direction-links` is `pager`, `loading` is `skeleton`, `split-view` is `panes`, `layout` is `column`, `stats` is `stat`, `tables` is `table`, `fields` is `text-field` and `toasts` is `toast`, under `docs/components/` and the catalogue's `components/` routes.
 
 ### Scale and density
 
@@ -219,7 +216,7 @@ Change by hand what the codemods can't see:
 
 Change by hand:
 
-- the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing`, and an organization's `name` and `detail` where `v1-props` can't read the items, such as a variable, which it reports, on OrganizationSwitcher and AccountMenu.OrganizationSubmenu; TypeScript reports each one;
+- the fields of the data these components take, which are not props: a TreeItem's `detail` and `trailing`, and an organization's `name` and `detail` where `v1-props` can't read the items, such as a variable, which it reports, on OrganizationSwitcher; TypeScript reports each one;
 - a `contrast` on List.Root whose value is an expression, which `v1-structure` reports;
 - the count in an icon-only NavList.Item's `aria-label`, such as "Inbox, 12 unread": the item says its end content in its name now, as "Inbox, 12 new" for a bare count from `messages.navList.itemCount`, or "Inbox, 12 unread" for a CounterBadge with that `aria-label`, so name it "Inbox";
 - a style for DocumentTabs' tab fill or close button: each tab and its close button sit side by side in an `env-document-tabs-item`, which carries the fill, the active indicator and `data-active`, while the tab, `env-document-tabs-tab`, carries `data-tab-id` and `data-preview`, so a selector such as `.env-document-tabs-tab:hover .env-document-tabs-close`, which `v1-classes` reports, matches nothing: write `.env-document-tabs-item:hover .env-document-tabs-close`; the close button is out of the tab order and hidden from assistive technology, and Delete, Backspace or the tab's context menu closes a tab from the keyboard;
@@ -232,32 +229,34 @@ Menu.Item with `href` closes the menu as it is followed, and a disabled one rend
 
 ### Overlays and feedback
 
-Status tones say `danger` where 0.x said `error`, popups and dialogs take a `width` of `md` or `lg`, and a panel at the edge of the window is a Drawer. `v1-structure` turns each literal `<Dialog placement="right">` into a Drawer, `v1-props` moves the literal values and `useToast().show({ … })` objects, and `v1-classes` the classes:
+Status tones say `danger` where 0.x said `error`, popups and dialogs take a `width` of `md` or `lg`, and a panel at the edge of the window is a Sheet. `v1-structure` turns each literal `<Dialog placement="right">` into a Sheet, `v1-props` moves the literal values and `useToast().show({ … })` objects, and `v1-classes` the classes:
 
-| 0.x                                                                                                                            | 1.0                                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| Alert and EmptyState `tone="error"`                                                                                            | `tone="danger"`                                                                                 |
-| `useToast().show({ variant })`: `neutral`, `success`, `info`, `error`                                                          | `tone`: `neutral`, `success`, `info`, `danger`                                                  |
-| `ToastVariant`                                                                                                                 | `ToastTone`                                                                                     |
-| Toast `placement` and Toast.Provider `defaultPlacement`: `bottom-right`                                                        | `bottom-end`, which is the left in right-to-left text                                           |
-| `<Dialog placement="right">`                                                                                                   | `<Drawer side="end">`, with the same title, content, actions and focus props                    |
-| Dialog `size`: `standard`, `wide`                                                                                              | `width`: `md` (the default), `lg`                                                               |
-| Popover and HoverCard `width`: `standard`, `wide`                                                                              | `md` (the default), `lg`                                                                        |
-| Spinner `size`: `small`, `standard`, `large`                                                                                   | `sm`, `md` (the default), `lg`                                                                  |
-| CommandPalette `query`, `onQueryChange`, `onSelect`, `closeOnSelect`                                                           | `inputValue`, `onInputValueChange`, `onAction`, `closeOnAction`                                 |
-| `CommandPaletteSelectOptions`                                                                                                  | `CommandPaletteActionOptions`                                                                   |
-| `CommandPaletteItem` `detail`, `trailing`                                                                                      | `description`, `end`                                                                            |
-| The manual `Toast` and `ToastProps`                                                                                            | Removed: `useToast()` inside `Toast.Provider`, and `ToastNotification`                          |
-| `env-modal-pane`                                                                                                               | `env-dialog-popup`; a Drawer's surface is `env-drawer-popup`, and both are `env-dialog-surface` |
-| `env-bar*`                                                                                                                     | `env-meter*`; a Progress's are `env-progress*`                                                  |
-| `env-empty-copy`, `env-empty-state-error`, `env-empty-state-center`                                                            | `env-empty-state-description`, `[data-tone='danger']`, `[data-align='center']`                  |
-| `env-toast-{variant}`, `env-toast-viewport-{placement}`                                                                        | `.env-toast[data-tone]`, `.env-toast-viewport[data-placement]`                                  |
-| `env-spinner-{size}`                                                                                                           | `.env-spinner[data-size]`                                                                       |
-| `env-popover-theme`, `env-popover-positioner`, `env-tooltip-theme`, `env-tooltip-positioner` on Popover, HoverCard and Tooltip | `env-popup-theme`, `env-popup-positioner`; HoverCard's surface is `env-hover-card`              |
+| 0.x                                                                                                                            | 1.0                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| Alert and EmptyState `tone="error"`                                                                                            | `tone="danger"`                                                                               |
+| `useToast().show({ variant })`: `neutral`, `success`, `info`, `error`                                                          | `tone`: `neutral`, `success`, `info`, `danger`                                                |
+| `ToastVariant`                                                                                                                 | `ToastTone`                                                                                   |
+| Toast `placement` and Toast.Provider `defaultPlacement`: `bottom-right`                                                        | `bottom-end`, which is the left in right-to-left text                                         |
+| `<Dialog placement="right">`                                                                                                   | `<Sheet side="end">`, with the same title, content, actions and focus props                   |
+| Dialog `size`: `standard`, `wide`                                                                                              | `width`: `md` (the default), `lg`                                                             |
+| Popover and HoverCard `width`: `standard`, `wide`                                                                              | `md` (the default), `lg`                                                                      |
+| Spinner `size`: `small`, `standard`, `large`                                                                                   | `sm`, `md` (the default), `lg`                                                                |
+| CommandPalette `query`, `onQueryChange`, `onSelect`, `closeOnSelect`                                                           | `inputValue`, `onInputValueChange`, `onAction`, `closeOnAction`                               |
+| `CommandPaletteSelectOptions`                                                                                                  | `CommandPaletteActionOptions`                                                                 |
+| `CommandPaletteItem` `detail`, `trailing`                                                                                      | `description`, `end`                                                                          |
+| The manual `Toast` and `ToastProps`                                                                                            | Removed: `useToast()` inside `Toast.Provider`, and `ToastNotification`                        |
+| `env-modal-pane`                                                                                                               | `env-dialog-popup`; a Sheet's surface is `env-sheet-popup`, and both are `env-dialog-surface` |
+| `env-bar*`                                                                                                                     | `env-meter*`; a Progress's are `env-progress*`                                                |
+| `env-empty-copy`, `env-empty-state-error`, `env-empty-state-center`                                                            | `env-empty-state-description`, `[data-tone='danger']`, `[data-align='center']`                |
+| `env-toast-{variant}`, `env-toast-viewport-{placement}`                                                                        | `.env-toast[data-tone]`, `.env-toast-viewport[data-placement]`                                |
+| `env-spinner-{size}`                                                                                                           | `.env-spinner[data-size]`                                                                     |
+| `env-popover-theme`, `env-popover-positioner`, `env-tooltip-theme`, `env-tooltip-positioner` on Popover, HoverCard and Tooltip | `env-popup-theme`, `env-popup-positioner`; HoverCard's surface is `env-hover-card`            |
+
+The panel at the edge of the window was Drawer in 1.0.0-prerelease.0; it is Sheet now, with the same props, and `side="bottom"` for a bottom sheet. `v1-names` renames `Drawer` and `DrawerProps` to `Sheet` and `SheetProps`, and the elements with them; its classes are `env-sheet-popup`, `env-sheet-viewport` and `env-sheet-backdrop`, where they were `env-drawer-*`, which no codemod renames, as the navigation Drawer may take them. The name Drawer is the navigation drawer's now: run `v1-names` over code from before, once.
 
 Change these by hand where the codemods report them:
 
-- a Dialog `placement` that is an expression; a `placement="right"` Dialog becomes a Drawer only when the value is a literal;
+- a Dialog `placement` that is an expression; a `placement="right"` Dialog becomes a Sheet only when the value is a literal;
 - a `show()` argument that isn't an object literal, such as a variable holding the notification, whose `variant` becomes `tone`;
 - the fields of `CommandPaletteItem` objects, `detail` and `trailing`, which the codemods can't tell apart from other objects; the type checker reports them where the array is typed;
 - an `env-bar` selector of a Progress, which the codemods rename to `env-meter`: rename it to `env-progress`;
@@ -266,10 +265,10 @@ Change these by hand where the codemods report them:
 Behaviour that changes without a rename:
 
 - A danger toast is an alert as it appears and is never hidden behind the count of older notifications; the other notices are read by a polite status beside the regions, which are named Notifications and Top notifications where they were Bottom right notifications and Top center notifications.
-- A Drawer's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the drawer that takes Tab, such as that button, as it did in the side panel.
-- `onOpenChange` of Dialog, Drawer, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
+- A Sheet's close button is a CloseButton, named Close in the provider's language, where the side panel's was an icon button named by `closeLabel`; `closeLabel` still names it. Focus starts on the first element in the sheet that takes Tab, such as that button, as it did in the side panel.
+- `onOpenChange` of Dialog, Sheet, Popover and HoverCard receives the reason as its second argument, such as `escape-key`; a handler that takes one argument is unaffected.
 - A disabled control inside a Tooltip is reached by its wrapper, which takes its role and name and `aria-disabled`.
-- A Tooltip passes its native props and `ref` on to its control, so it can be the `trigger` of a Menu.Root, Popover, Dialog, Drawer or ConfirmDialog, and goes to their trigger when it wraps one. Untyped 0.x code that gave a Tooltip `className`, `style`, data attributes or handlers had them dropped; in 1.0 they reach the control, so remove them or move a popup class to `popupClassName`, which adds a class to the tooltip's popup. It stays closed while the control's menu or popover is open. Around a HoverCard, or as its trigger, it shows no tooltip.
+- A Tooltip passes its native props and `ref` on to its control, so it can be the `trigger` of a Menu.Root, Popover, Dialog, Sheet or ConfirmDialog, and goes to their trigger when it wraps one. Untyped 0.x code that gave a Tooltip `className`, `style`, data attributes or handlers had them dropped; in 1.0 they reach the control, so remove them or move a popup class to `popupClassName`, which adds a class to the tooltip's popup. It stays closed while the control's menu or popover is open. Around a HoverCard, or as its trigger, it shows no tooltip.
 - CommandPalette's options take ListRow's anatomy, with the description under the label, and its result count is announced.
 
 ### Content and display
@@ -314,21 +313,48 @@ Change these by hand where the codemods report them, or where they can't see the
 
 Behaviour that changes without a rename: a link card's accessible name is its text; Card takes `headingLevel` and `description`; Rating's number, DiffStat's and AvatarGroup's counts, AnimatedNumber and CalendarHeatmap's months, weekdays, dates and values follow EnvUIProvider's `locale`; buttons in Message's `actions` without a variant are small ghost buttons; an unchosen segment's count is muted text at 4.5:1 instead of 80% opacity; CopyButton takes `write`, a clipboard writer of the application's own.
 
-### Split panes
+### Panes
 
-0.6's SplitView, which 0.7 removed, is SplitPane in 1.0, a compound component whose panes and handle are parts, and ListDetail builds a list beside its detail on it. `v1-names` and `v1-structure` rewrite it:
+SplitView (0.6), and SplitPane and ListDetail (1.0.0-prerelease.0), are gone: [Panes](https://github.com/envsemble/envUI/blob/main/docs/components/panes.md) is one scaffold for two panes side by side, after Material's pane patterns, with two behaviors in less room: `supporting`, where the side pane becomes a sheet over the main one, and `list-detail`, where one pane shows at a time with a back button. CSS decides which arrangement shows, from the Panes' own width at a window class, so nothing measures it. `v1-structure` rewrites ListDetail:
 
-| 0.x                                    | 1.0                                                                                                                                   |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `<SplitView start={a} end={b} />`      | `<SplitPane.Root><SplitPane.Pane>{a}</SplitPane.Pane><SplitPane.ResizeHandle /><SplitPane.Pane>{b}</SplitPane.Pane></SplitPane.Root>` |
-| `resizeLabel`                          | `label` on `SplitPane.ResizeHandle`                                                                                                   |
-| `storageKey`                           | `persist`                                                                                                                             |
-| `SplitViewProps`                       | `SplitPane.RootProps`                                                                                                                 |
-| `.env-split-view`, `-pane`, `-divider` | `.env-split-pane`, `.env-split-pane-pane`, `.env-split-pane-handle`                                                                   |
+| Before                                                         | Now                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `<ListDetail.Root detailShown={d} onBack={f} backLabel="All">` | `<Panes.Root behavior="list-detail" open={d} onOpenChange={f} backLabel="All">`                         |
+| `ListDetail.List`, `ListDetail.Detail`                         | `Panes.List`, `Panes.Detail`                                                                            |
+| ListDetail's handle, always there                              | `<Panes.Divider label="Resize project list" />` between the list and the detail, where it should resize |
+| `stackBelow="44rem"`                                           | `splitAt`: `medium` (37.5 rem), `expanded` (52.5 rem, the default) or `large` (75 rem)                  |
+| `defaultListSize`, `minListSize`, `maxListSize` in %           | `defaultSize`, `minSize`, `maxSize` in rem: 22.5, 16 and 40 by default                                  |
+| `resizeLabel`                                                  | `label` on Panes.Divider                                                                                |
+| SplitPane, SplitView: two panes and a handle                   | By hand: `behavior="supporting"`, `Panes.Main`, an optional `Panes.Divider` and `Panes.Supporting`      |
+| `onStackedChange`                                              | None: CSS decides; open the supporting pane from a button in the main pane                              |
+| `.env-split-pane`, `-pane`, `-handle`; `.env-list-detail*`     | `.env-panes`, `.env-panes-main` and the other panes, `.env-panes-divider`, `.env-panes-back`            |
 
-`size`, `defaultSize`, `minSize` and `maxSize` keep their percentages, now of the split pane's whole width; `onSizeChange` receives `{ committed }` as its second argument; `stackBelow` and `onStackedChange` are unchanged. Change by hand a SplitView that spreads props, which `v1-structure` reports. A list beside its detail that stacked with `onStackedChange` and showed one pane at a time is ListDetail now, with `detailShown`, `onBack` and `backLabel`.
+Before and after, a document with its details beside it:
 
-In style sheets, `v1-classes` renames the classes and reports what 1.0 has no counterpart for: `--env-split-view-gutter`, as the handle has a width of its own; `--env-split-view-size`, which was unitless and is `--env-split-pane-size` with its unit now, set from `size`; a pane's `[data-pane]`, as the panes have none; and the root's `[data-resizing]`, as the handle has `data-dragging` while it moves. Stacked panes have a hairline between them rather than the gutter's gap.
+```tsx
+// Before
+<SplitPane.Root defaultSize={70} stackBelow="44rem">
+  <SplitPane.Pane label="Document">{document}</SplitPane.Pane>
+  <SplitPane.ResizeHandle label="Resize details" />
+  <SplitPane.Pane label="Details">{details}</SplitPane.Pane>
+</SplitPane.Root>;
+
+// Now: in less room the details are a sheet the button opens.
+const [open, setOpen] = useState(false);
+<Panes.Root behavior="supporting" open={open} onOpenChange={setOpen} defaultSize={20}>
+  <Panes.Main label="Document">
+    <Button onClick={() => setOpen(true)}>Details</Button>
+    {document}
+  </Panes.Main>
+  <Panes.Divider label="Resize details" />
+  <Panes.Supporting label="Details">{details}</Panes.Supporting>
+</Panes.Root>;
+```
+
+- `size` and `onSizeChange` are the resized pane's width in rem, the supporting pane or the list, and `onSizeChange` receives `{ committed }`; `persist` keeps the width as before, under a new value, so a stored percentage is read as rem once: clear it, or use another key.
+- The exports that go: `SplitView` and `SplitViewProps`, `SplitPane` and `ListDetail`, each with its parts; `v1-names` reports SplitView and SplitPane where they are used. The pages `split-view` and `split-pane` are `panes`.
+- A vertical split pane has no counterpart: lay two regions out one under the other with a Column, each with its own height.
+- In style sheets, `v1-classes` renames `.env-split-view` to `.env-panes` and its divider to `.env-panes-divider`, and reports a pane, which is `.env-panes-main`, `-supporting`, `-list` or `-detail` now.
 
 ### Layout primitives
 
@@ -363,65 +389,103 @@ The outermost boundary takes the whole width its parent gives it (`inline-size: 
 
 ### The app frame
 
-AppShell is made of parts in 1.0: `AppShell.Root` lays out `AppShell.Header`, `AppShell.Main`, the sidebars and an `AppShell.Aside`, and keeps the sidebars' state per side; [Sidebar](components/sidebar.md) and `SidebarTrigger` are the sidebar and its button. `v1-names` renames the exports, and `v1-app-shell` rewrites an AppShell element's props into its parts, placed by its `topbar`:
+AppShell, its parts and Sidebar are gone, with SidebarTrigger, useAppShell, useSidebar and readAppShellCookie: an app frame is an arrangement every application makes its own, so envUI gives its pieces and a [pattern](https://github.com/envsemble/envUI/blob/main/docs/templates/app-frame.md) rather than a component. [Scaffold](https://github.com/envsemble/envUI/blob/main/docs/components/scaffold.md) is the invisible structure: a top bar region, the navigation and a body that scrolls. It shows one navigation form at a time by its own width, the navigation Bar at the bottom of a compact window, the Rail at the start of a medium one and the Drawer from expanded, each with the same destinations. [TopBar](https://github.com/envsemble/envUI/blob/main/docs/components/top-bar.md) is the bar at the top. No codemod rewrites an app frame: `v1-names` reports each of these names where it is used, and the rest is by hand.
 
-| 0.x                                                                                                                                                                                           | 1.0                                                                                                                                                                                                              |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `<AppShell …>{children}</AppShell>`                                                                                                                                                           | `<AppShell.Root …><AppShell.SkipLinks />…<AppShell.Main>{children}</AppShell.Main></AppShell.Root>`                                                                                                              |
-| `topbar="split"` (default), `"full"`                                                                                                                                                          | `headerSpan="main"`, `"full"`                                                                                                                                                                                    |
-| `brand={mark}`                                                                                                                                                                                | split: `<Sidebar.Header><SidebarTrigger mark={mark} /></Sidebar.Header>`; full: `<AppShell.Header start={<SidebarTrigger mark={mark} />}>`                                                                       |
-| `context={x}`                                                                                                                                                                                 | split: in `Sidebar.Header` after the trigger; full: in the header's `start`                                                                                                                                      |
-| `title={x}`, `actions={y}`                                                                                                                                                                    | `<AppShell.Header end={y}>{x}</AppShell.Header>`                                                                                                                                                                 |
-| `navigation={items}`, `navigationLabel="L"`                                                                                                                                                   | `<Sidebar.Root label="L"><Sidebar.Content><NavList.Root>{items}</NavList.Root></Sidebar.Content></Sidebar.Root>`                                                                                                 |
-| `sidebarContent={x}`                                                                                                                                                                          | a second `<Sidebar.Content fill>{x}</Sidebar.Content>`                                                                                                                                                           |
-| `dividers`, `titleBar`, `loading`, `loadingLabel`, `className`                                                                                                                                | the same props on `AppShell.Root`                                                                                                                                                                                |
-| `storageKey="k"`                                                                                                                                                                              | `persist="k"`; the stored format changes, so the preference resets once                                                                                                                                          |
-| `defaultCollapsed={b}`, `collapsed={c}`, `onCollapsedChange={f}`                                                                                                                              | `defaultSidebarOpen={!b}`, `sidebarOpen={!c}`, `onSidebarOpenChange={(open) => f(!open)}`                                                                                                                        |
-| `expandLabel`, `collapseLabel`                                                                                                                                                                | on `SidebarTrigger`                                                                                                                                                                                              |
-| `resizable`, `resizeLabel`, `sidebarMinWidth`, `sidebarMaxWidth`                                                                                                                              | on `Sidebar.Root`; the widths in rem (a literal is divided by 16)                                                                                                                                                |
-| `AppShellSkeleton`                                                                                                                                                                            | the same parts with `<NavList.Skeleton items={n} />` in `Sidebar.Content`, inside a `LoadingState`                                                                                                               |
-| `const { closeNarrowSidebar } = useAppShell()`                                                                                                                                                | `const { dismiss: closeNarrowSidebar } = useSidebar()`                                                                                                                                                           |
-| `useSidebarCompact()`                                                                                                                                                                         | `useSidebar().isRail`                                                                                                                                                                                            |
-| `AppShellProps`, `AppShellSkeletonProps`                                                                                                                                                      | `AppShell.RootProps`; the skeleton's props have no counterpart                                                                                                                                                   |
-| `env-app-topbar`, `env-app-sidebar`, `env-app-navigation`, `env-app-sidebar-content`, `env-app-content`, `env-app-sidebar-toggle`, `env-app-brand`, `env-app-title`, `env-app-sidebar-resize` | `env-app-shell-header`, `env-sidebar`, `env-sidebar-content`, `env-sidebar-content`, `env-app-shell-main`, `env-sidebar-trigger`, `env-sidebar-trigger-mark`, `env-app-shell-header-title`, `env-sidebar-handle` |
-| `.env-app-shell[data-collapsed]`                                                                                                                                                              | `.env-sidebar[data-state='collapsed']`                                                                                                                                                                           |
-| `.env-app-shell[data-compact]`, `[data-expanded-overlay]`, `[data-narrow]`                                                                                                                    | `.env-sidebar[data-rail]`, `.env-sidebar[data-peek]`, `.env-app-shell[data-mobile]`                                                                                                                              |
+Before, a 0.x AppShell and the AppShell of 1.0.0-prerelease.0:
 
-Change by hand what the codemods report or can't see:
+```tsx
+// 0.x
+<AppShell
+  brand={<Mark />}
+  title="Northwind"
+  actions={<AccountMenu … />}
+  navigation={items}
+  navigationLabel="Primary"
+  storageKey="app.frame"
+>
+  {page}
+</AppShell>
 
-- **`sidebarWidth` and `onSidebarWidthChange`** move to `AppShell.Root` in rem, not pixels; `sidebarMinWidth` and `sidebarMaxWidth` that are expressions are reported.
-- **An AppShell with spread props**, which `v1-app-shell` reports: move its props into the parts as the table shows.
-- **Measuring the topbar**, as with a hidden element the height of `--topbar-height`: read `useAppShell().getStickyTop()`, or stick content at `var(--env-frame-sticky-top)`. The custom properties `--env-app-sticky-top` and `--app-sticky-top` are `--env-frame-sticky-top`, `--env-app-topbar-block-size` is `--env-frame-header-block-size`, and `--env-topbar-height` and `--topbar-height` are `--env-app-shell-header-height`; `v1-classes` rewrites them (the token list below).
-- **`env-app-context`, `env-app-actions`, `env-app-topbar-context`, `env-app-topbar-page`, `env-app-loading-bar` and the navigation placeholders** have no 1.0 class; `v1-classes` reports them.
-- **Phones**: the sidebar is a drawer below 48 rem (40 rem before), and the hamburger is `SidebarTrigger`, named Open navigation; a phone's top bar is `<AppShell.Header mobileOnly>`.
-- **The shortcut**: an application's own Mod+B handler can go: `shortcut="mod+b"` on `AppShell.Root`.
+// 1.0.0-prerelease.0
+<AppShell.Root persist="app.frame">
+  <AppShell.SkipLinks />
+  <Sidebar.Root label="Primary" collapsible="rail">
+    <Sidebar.Header>
+      <SidebarTrigger mark={<Mark />} />
+    </Sidebar.Header>
+    <Sidebar.Content>
+      <NavList.Root>{items}</NavList.Root>
+    </Sidebar.Content>
+  </Sidebar.Root>
+  <AppShell.Header end={account}>Northwind</AppShell.Header>
+  <AppShell.Main>{page}</AppShell.Main>
+</AppShell.Root>
+```
+
+Now:
+
+```tsx
+<Scaffold
+  topBar={<TopBar title="Northwind" actions={account} />}
+  navigation={{
+    bar: <Bar destinations={destinations} />,
+    rail: <Rail destinations={destinations} />,
+    drawer: <Drawer destinations={destinations} />,
+  }}
+>
+  {page}
+</Scaffold>
+```
+
+| Before                                                                  | Now                                                                                                        |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `AppShell.Root`, `AppShell.Main`                                        | `Scaffold`, whose children are the body, the `main` landmark (`bodyId`, `bodyRef`)                         |
+| `AppShell.SkipLinks`                                                    | Built in: Skip to content and Skip to navigation                                                           |
+| `AppShell.Header`, 0.x `title`, `actions`, `brand`, `context`           | `topBar={<TopBar start={…} title={…} actions={…} />}`                                                      |
+| `headerSpan="full"`, 0.x `topbar="full"`                                | `topBarSpan="full"`                                                                                        |
+| `titleBar`                                                              | `<TopBar titleBar>` in a Scaffold with `topBarSpan="full"`                                                 |
+| `loading`, `loadingLabel`                                               | On TopBar                                                                                                  |
+| `scroll="document"`, `scroll="main"`                                    | The body always scrolls; `--env-frame-sticky-top` is 0, so sticky content sticks at `inset-block-start: 0` |
+| `Sidebar.Root` with a NavList, collapsing to a rail, a drawer on phones | `navigation={{ bar, rail, drawer }}`, the forms by window class; `forms` changes them                      |
+| `breakpoint`, `dockAt`, the 40, 48, 64 and 80 rem breakpoints           | The window classes of the Scaffold's own width: 37.5, 52.5 and 75 rem                                      |
+| `persist`, `readAppShellCookie`, `shortcut`, `sidebarOpen`              | None: a form never collapses, so there is no state to keep                                                 |
+| `AppShell.Aside`, an end Sidebar                                        | A supporting pane of [Panes](#panes) in the body                                                           |
+| `useAppShell().getScrollElement()`                                      | `bodyRef`, the body that scrolls                                                                           |
+| `env-app-shell`, `-header`, `-header-title`, `-main`, `-skip-links`     | `env-scaffold`, `env-top-bar`, `env-top-bar-title`, `env-scaffold-body`, `env-scaffold-skip-links`         |
+
+- **The exports that go**: `AppShell` with its parts and `AppShellProps`, `AppShellSkeleton` and `AppShellSkeletonProps`, `Sidebar` with its parts, `SidebarTrigger` and `SidebarTriggerProps`, `useSidebar`, `useAppShell`, `readAppShellCookie`, and the types `AppShellState`, `PerSide`, `PersistOptions`, `SidebarSide`, `SidebarSnapshot`, `FrameStateProps` and `SidebarChangeReason`. `v1-names` reports each one where it is used. The pages `app-shell` and `sidebar` are `scaffold` now.
+- **Scrolling**: the body scrolls, not the document, so a Scaffold works at any size inside any container. Restore and read scroll positions on `bodyRef`, not `window`; `window.scrollTo` no longer scrolls the page.
+- **AccountMenu** is gone; the [account menu](https://github.com/envsemble/envUI/blob/main/docs/patterns/account-menu.md) pattern builds it from Menu, AvatarButton and Avatar, with a `Menu.Submenu` around a ThemeRadioGroup for the theme.
+- **PageHeader's sticky height**: a sticky PageHeader no longer publishes `--env-page-header-block-size`, and sticks at the top of the body; what takes focus in its Page keeps clear of it by a scroll margin. Put content that should stay in view under it in its `toolbar`.
+- **Page**: its gutter follows the window class of the region it sits in, 1 rem in a compact one and 1.5 rem from medium, where it grew with the viewport from 1 to 2 rem.
+- **The tokens**: `--env-app-shell-header-height` is `--env-top-bar-height`, which `v1-classes` rewrites; the frame's own custom properties have no counterpart, as [tokens](#tokens) lists.
 
 ### Shell, dock, editors and code
 
-TitleBar and WindowFrame are one namespace, and PanelDock is another; the editors take the field vocabulary. `v1-names` renames the exports, `v1-structure` rewrites WindowFrame's props into its parts, `v1-props` moves the literal props and values, and `v1-classes` renames the classes:
+TitleBar and WindowFrame are gone: a window that draws its own title bar is a Scaffold with a `<TopBar titleBar>` across its whole width, as the [window frame](https://github.com/envsemble/envUI/blob/main/docs/patterns/window-frame.md) pattern shows. PanelDock is a namespace; the editors take the field vocabulary. `v1-names` renames the exports and reports TitleBar and WindowFrame, `v1-props` moves the literal props and values, and `v1-classes` renames the classes:
 
-| 0.x                                                                      | 1.0                                                                                                                  |
-| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `<TitleBar start end>`, `TitleBarProps`                                  | `<WindowFrame.TitleBar start end>`, `WindowFrame.TitleBarProps`                                                      |
-| `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<WindowFrame.Root>{bar}<WindowFrame.Content ref={ref}>…</WindowFrame.Content></WindowFrame.Root>`                   |
-| `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                                 |
-| PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                                   |
-| PanelDock.Root `showLabel`, which names a tab's button                   | `openLabel`                                                                                                          |
-| RichTextEditor `hint`                                                    | `description`                                                                                                        |
-| RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                      |
-| `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `env-window-frame-title-bar*`, `--env-window-frame-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name |
-| `env-panel-dock-chip*`                                                   | `env-panel-dock-tab*`                                                                                                |
-| `env-code-copy-status`                                                   | `env-code-block-copy-status`                                                                                         |
-| Code `appearance`: `dark`, `subtle`                                      | Removed in 0.7, with the subtle inline code: inline code takes the code theme of the app theme                       |
-| Markdown `inlineCode`: `dark`, `subtle`                                  | Removed in 0.7, as Code's `appearance`                                                                               |
-| CodeBlock `theme`: `light`, `dark`                                       | Removed in 0.7: a code block takes the code theme of the app theme, Pierre Light or Pierre Dark                      |
-| `env-code-subtle`                                                        | Removed: Code has one look                                                                                           |
-| `env-markdown-toolbar`, `env-markdown-editor-status`                     | `env-editor-toolbar`, `env-editor-status`                                                                            |
+| 0.x                                                                      | 1.0                                                                                                              |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `<TitleBar start end>{title}</TitleBar>`, `TitleBarProps`                | `<TopBar titleBar start={start} title={title} actions={end} />`, `TopBarProps`                                   |
+| `<WindowFrame titleBar={bar} scrollRef={ref}>…</WindowFrame>`            | `<Scaffold topBarSpan="full" topBar={bar} bodyRef={ref}>…</Scaffold>`                                            |
+| `PanelDock`, `PanelDockHeader`, `PanelDockProps`, `PanelDockHeaderProps` | `PanelDock.Root`, `PanelDock.Header`, `PanelDock.RootProps`, `PanelDock.HeaderProps`                             |
+| PanelDock.Header `controls={null}`                                       | `controls={false}`                                                                                               |
+| PanelDock.Root `showLabel`, which names a tab's button                   | `openLabel`                                                                                                      |
+| RichTextEditor `hint`                                                    | `description`                                                                                                    |
+| RichTextEditor `variant`: `outlined`, `plain`, `quiet`                   | `outline`, `underline`, `ghost`                                                                                  |
+| `env-title-bar*`, `--env-title-bar-start`, `--env-title-bar-end`         | `.env-top-bar[data-title-bar]`, `--env-top-bar-title-bar-start`, `-end`; `--env-title-bar-height` keeps its name |
+| `env-panel-dock-chip*`                                                   | `env-panel-dock-tab*`                                                                                            |
+| `env-code-copy-status`                                                   | `env-code-block-copy-status`                                                                                     |
+| Code `appearance`: `dark`, `subtle`                                      | Removed in 0.7, with the subtle inline code: inline code takes the code theme of the app theme                   |
+| Markdown `inlineCode`: `dark`, `subtle`                                  | Removed in 0.7, as Code's `appearance`                                                                           |
+| CodeBlock `theme`: `light`, `dark`                                       | Removed in 0.7: a code block takes the code theme of the app theme, Pierre Light or Pierre Dark                  |
+| `env-code-subtle`                                                        | Removed: Code has one look                                                                                       |
+| `env-markdown-toolbar`, `env-markdown-editor-status`                     | `env-editor-toolbar`, `env-editor-status`                                                                        |
 
 Change by hand what the codemods report or can't see:
 
+- **WindowFrame, `WindowFrameProps`, TitleBar and `TitleBarProps`** are gone, and `v1-names` reports them where they are used: build the window frame from a Scaffold and a TopBar, as the table shows.
 - **PanelDockControls** is internal. Drop a `controls={<PanelDockControls …/>}`, which `v1-props` reports, and name the window controls through EnvUIProvider's `messages.panelDock` (`minimize`, `maximize`, `restore`, `close`), which also names the list of tabs and a tab's buttons.
-- **A WindowFrame element with spread props**, which `v1-structure` reports: put its title bar first among its children and its content in `WindowFrame.Content`.
 - **Buttons in a title bar or a panel header** that set no variant are ghost, at the small height in a title bar. An icon-only `variant="text"` button there took the quiet icon color from the container and shows the link color now: drop its variant.
 - **`[data-chips]`** on PanelDock's root is `[data-tabs]`, which `v1-classes` reports but doesn't rename.
 - **`env-markdown` on rich text**: RichText's root and RichTextEditor's document no longer carry it; select them by `env-prose`, their shared typography, or by `env-rich-text` and `env-rich-text-document`. Markdown keeps `env-markdown` beside `env-prose`.

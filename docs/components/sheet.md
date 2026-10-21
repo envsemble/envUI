@@ -66,11 +66,11 @@ Here a side sheet at the end edge holds the filters of a list, and a DialogClose
 | `start`         | Panels about what sits at the start of the page, such as a tree's options.    |
 | `bottom`        | A short set of choices or actions, as tall as its content.                    |
 
-| Width          | Size                      | Use for                                                                                   |
-| -------------- | ------------------------- | ----------------------------------------------------------------------------------------- |
-| `md` (default) | 24 rem                    | Details, settings and filters.                                                            |
-| `lg`           | 44 rem                    | Tables, comparisons and longer forms.                                                     |
-| A CSS length   | As given, such as `20rem` | A side sheet the application sizes itself.                                                |
+| Width          | Size                      | Use for                                    |
+| -------------- | ------------------------- | ------------------------------------------ |
+| `md` (default) | 24 rem                    | Details, settings and filters.             |
+| `lg`           | 44 rem                    | Tables, comparisons and longer forms.      |
+| A CSS length   | As given, such as `20rem` | A side sheet the application sizes itself. |
 
 | `modal`          | Use for                                                         |
 | ---------------- | --------------------------------------------------------------- |
@@ -119,12 +119,12 @@ Here a side sheet at the end edge holds the filters of a list, and a DialogClose
 
 ### Keyboard
 
-| Key                                                                       | Action                                                                                                                                                                       |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger                       | Opens the sheet and moves focus into it.                                                                                                                                    |
+| Key                                                                       | Action                                                                                                                                                                     |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger                       | Opens the sheet and moves focus into it.                                                                                                                                   |
 | <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                           | Moves focus to the next or previous element in the sheet. A modal sheet keeps focus inside, from its last element to its first; a non-modal one lets it go on to the page. |
-| <kbd>Esc</kbd>                                                            | Closes the sheet, or first closes what is open inside it. Does nothing while `pending`.                                                                                     |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on the close button or a DialogClose | Closes the sheet; focus returns to the trigger or `finalFocus`.                                                                                                             |
+| <kbd>Esc</kbd>                                                            | Closes the sheet, or first closes what is open inside it. Does nothing while `pending`.                                                                                    |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on the close button or a DialogClose | Closes the sheet; focus returns to the trigger or `finalFocus`.                                                                                                            |
 
 ### envUI provides
 

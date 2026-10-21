@@ -21,7 +21,7 @@ avoidWhen:
   - text: Confirming a sensitive action again inside the application.
     use: ConfirmDialog
 composes:
-  - AppShell
+  - Scaffold
   - Page
   - Column
   - Surface
@@ -38,7 +38,7 @@ related:
   - text-field
   - alert
   - button
-  - app-shell
+  - scaffold
 ---
 
 # Sign-in page
@@ -53,7 +53,7 @@ The screen people see before the application opens: the application's name, an e
 
 ## Anatomy
 
-1. **Main:** [AppShell.Main](../components/app-shell.md) on its own, without a Root: the page's `main` landmark.
+1. **Main:** a [Scaffold](../components/scaffold.md) with only a body: the page's `main` landmark, which fills the window and scrolls.
 2. **Column:** a [Column](../components/column.md) as tall as the window that centres a [Page](../components/page.md) of `width="sm"`, which keeps the form to a readable width with the page gutter on a phone.
 3. **Panel:** a [Surface](../components/surface.md) `background="muted"`, rendered as a Column, that holds everything below, so its edges line up.
 4. **Heading:** a [Text](../foundations/typography.md) `variant="headline"` rendered as the page's `h1`, "Sign in to Northwind", with a muted line under it.
@@ -110,7 +110,7 @@ The screen people see before the application opens: the application's name, an e
 
 ### Landmarks and headings
 
-- One `main` landmark, AppShell.Main, and no banner or navigation: the screen has nothing to navigate to before people sign in.
+- One `main` landmark, the Scaffold's body, and no banner or navigation: the screen has nothing to navigate to before people sign in.
 - One `h1`, "Sign in to Northwind". The error summary's and the refusal's titles are level-2 headings.
 - The order of focus follows the screen: email address, password, Show password, Keep me signed in, Sign in, Forgot your password?, Continue with single sign-on and the caption's links.
 

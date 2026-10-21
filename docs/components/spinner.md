@@ -24,13 +24,13 @@ avoidWhen:
     use: Skeleton
   - text: A task whose completion can be measured, such as an upload.
     use: Progress
-  - text: Loading a page or a route of an application, along the frame's header.
-    use: AppShell
+  - text: Loading a page or a route of an application, along the top bar.
+    use: TopBar
 related:
   - skeleton
   - progress
   - button
-  - app-shell
+  - scaffold
   - accessibility
 components:
   - Spinner

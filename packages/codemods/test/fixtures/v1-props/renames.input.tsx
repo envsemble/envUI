@@ -1,5 +1,4 @@
 import {
-  AccountMenu,
   AnimatedNumber,
   Avatar,
   Card,
@@ -33,13 +32,6 @@ export function Renames({ people, organizations, panels, price, name }) {
         className="org-trigger"
       />
       <OrganizationSwitcher items={organizations} value={null} onValueChange={() => {}} />
-      <AccountMenu.Root name="Alex Morgan">
-        <AccountMenu.OrganizationSubmenu
-          items={[{ id: 'contoso', name }]}
-          value={null}
-          onValueChange={() => {}}
-        />
-      </AccountMenu.Root>
       <PanelDock.Root
         panels={panels}
         onModeChange={() => {}}

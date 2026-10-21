@@ -36,7 +36,7 @@ avoidWhen:
   - text: Choosing one of a few filters or modes that stays selected.
     use: SegmentedControl
 related:
-  - app-shell
+  - scaffold
   - tabs
   - menu
   - breadcrumbs
@@ -53,7 +53,7 @@ components:
 
 ## Overview
 
-A navigation list holds an application's destinations, such as the pages in a sidebar. Each item is a native link that routes through `LinkProvider`, or a button that changes the view, and the current destination is selected. The list adds no landmark of its own: it goes in a `nav` element, or in a region that already is one, such as a Sidebar.Root.
+A navigation list holds an application's destinations, such as the pages in a sidebar. Each item is a native link that routes through `LinkProvider`, or a button that changes the view, and the current destination is selected. The list adds no landmark of its own: it goes in a `nav` element, or in a region that already is one, such as a Scaffold's navigation drawer.
 
 The `NavList` namespace has four parts:
 
@@ -62,7 +62,7 @@ The `NavList` namespace has four parts:
 - **NavList.Group** puts related items under a small heading, inside NavList.Root.
 - **NavList.Skeleton** stands in for a list's items while the navigation loads.
 
-Items also stand on their own, such as the buttons of Tabs. In a [Sidebar](../components/sidebar.md) they follow its rail.
+Items also stand on their own, such as the buttons of Tabs.
 
 ```tsx example=SidebarNavigation
 
@@ -152,7 +152,7 @@ Items also stand on their own, such as the buttons of Tabs. In a [Sidebar](../co
 
 ### You provide
 
-- A `nav` landmark around the list, named with `aria-label` where the page has more than one, unless the list sits in one already, such as a Sidebar.Root.
+- A `nav` landmark around the list, named with `aria-label` where the page has more than one, unless the list sits in one already, such as a Scaffold's navigation drawer.
 - `selected` on the current destination, and the routing behind `href`, through `LinkProvider`.
 - An `aria-label` on every icon-only item that names its destination; leave the count out, which the item adds.
 - An `aria-label` on end content whose number alone doesn't say what it counts, such as "4 unread" on a CounterBadge, for a labelled item, whose name its content gives.

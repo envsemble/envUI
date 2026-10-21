@@ -1,12 +1,13 @@
-import { PanelDock, WindowFrame } from '@envsemble/envui';
+import { PanelDock, TitleBar, WindowFrame } from '@envsemble/envui';
+import type { TitleBarProps } from '@envsemble/envui';
 
-export function Workspace({ panels, ...props }: PanelDock.RootProps<never> & { bar: WindowFrame.TitleBarProps }) {
+export function Workspace({ panels, ...props }: PanelDock.RootProps<never> & { bar: TitleBarProps }) {
   const header: Partial<PanelDock.HeaderProps> = {};
   return (
-    <WindowFrame.Root titleBar={<WindowFrame.TitleBar>Notes</WindowFrame.TitleBar>}>
+    <WindowFrame titleBar={<TitleBar>Notes</TitleBar>}>
       <PanelDock.Root {...props} panels={panels}>
         {(panel) => <PanelDock.Header {...header} title={panel.title} />}
       </PanelDock.Root>
-    </WindowFrame.Root>
+    </WindowFrame>
   );
 }

@@ -24,7 +24,7 @@ avoidWhen:
   - text: A form whose submission failed.
     see: forms
 composes:
-  - AppShell
+  - Scaffold
   - Page
   - EmptyState
   - Button
@@ -54,8 +54,8 @@ The pages people see when what they asked for isn't there: an address with no pa
 
 1. **Not found** (`NotFoundPage`, inside the frame): a [Page](../components/page.md) of `width="md"` with an [EmptyState](../components/empty-state.md) `align="center"` and `headingLevel={1}`, "Page not found", that shows the address in [Code](../components/code.md), with "Go to home" and, where the application has a search page, "Search" [Button](../components/button.md) links in a [Row](../components/row.md).
 2. **No access** (`NoAccessPage`, inside the frame): the same EmptyState, "You don't have access to this project", naming the owner, with a "Request access" Button, a status [Text](../foundations/typography.md) and a [Link](../components/link.md) back to the list.
-3. **Failed to load** (`ErrorPage`, a whole screen): [AppShell.Main](../components/app-shell.md) on its own, a Column as tall as the window that centres a Page of `width="sm"`, and an EmptyState with `tone="danger"`, "Something went wrong", "Try again" and a reference in Code to quote to support.
-4. **Error boundary** (the example below): a React error boundary around the page inside AppShell.Main that shows a danger EmptyState in the page's place.
+3. **Failed to load** (`ErrorPage`, a whole screen): a [Scaffold](../components/scaffold.md) with only a body, a Column as tall as the body that centres a Page of `width="sm"`, and an EmptyState with `tone="danger"`, "Something went wrong", "Try again" and a reference in Code to quote to support.
+4. **Error boundary** (the example below): a React error boundary around the page inside the Scaffold's body that shows a danger EmptyState in the page's place.
 
 ## States and behaviour
 
@@ -97,7 +97,7 @@ The pages people see when what they asked for isn't there: an address with no pa
 ### Landmarks and headings
 
 - Not found and no access: the frame's `nav` "Primary" and one `main`, with the EmptyState's title as the page's `h1`.
-- Failed to load: one `main`, AppShell.Main, without a banner or navigation, and the title as the `h1`.
+- Failed to load: one `main`, the Scaffold's body, without a banner or navigation, and the title as the `h1`.
 - The boundary's fallback inside a page takes the level under the page's heading, here an `h2`.
 
 ### envUI provides
@@ -111,7 +111,7 @@ The pages people see when what they asked for isn't there: an address with no pa
 - The `h1` through `headingLevel={1}` where the EmptyState is the page.
 - `document.title` for each, such as "Page not found – Northwind".
 - The status that confirms a request, with `tabIndex={-1}`, and moving focus to it once the request is sent.
-- Focus on Main as the failed-load screen mounts: AppShell.Main has `tabIndex={-1}`, so `focus()` on its ref works, and a screen reader reads the screen that replaced the application.
+- Focus on the body as the failed-load screen mounts: the Scaffold's body has `tabIndex={-1}`, so `focus()` on its `bodyRef` works, and a screen reader reads the screen that replaced the application.
 - The error boundary itself.
 
 ## Examples

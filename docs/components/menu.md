@@ -26,7 +26,7 @@ useWhen:
   - Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher).
 avoidWhen:
   - text: The signed-in person's menu, with its header and theme submenu.
-    use: AccountMenu
+    see: account-menu
   - text: Choosing a value for a form field.
     use: Select
   - text: An application menubar, such as File, Edit and View.
@@ -51,7 +51,7 @@ related:
   - kbd
   - tooltip
   - avatar
-  - app-shell
+  - scaffold
 components:
   - Menu
   - ContextMenu
@@ -79,7 +79,7 @@ The family shares the parts and their look:
 - **OrganizationSwitcher** shows the active organization in the application shell's context area and switches between the person's organizations.
 - **ThemeRadioGroup** is the theme choice, System, Light and Dark, as radio items in any menu, such as a View menu or a display menu.
 
-The signed-in person's menu, with a header, the theme and the organizations, is [AccountMenu](../components/account-menu.md), built from these parts.
+The signed-in person's menu, with a header, the theme and the organizations, is the [account menu](../patterns/account-menu.md) pattern, built from these parts.
 
 ```tsx example=AccountMenu
 

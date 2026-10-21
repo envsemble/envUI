@@ -30,7 +30,7 @@ related:
   - tabs
   - tree
   - menu
-  - app-shell
+  - scaffold
   - panel-dock
   - accessibility
 components:

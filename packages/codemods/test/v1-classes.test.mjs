@@ -128,21 +128,29 @@ test("v1-classes renames the custom properties of 1.0's development in style she
   block-size: var(--env-topbar-height);
 }
 `;
+  // A name 1.0 renames is rewritten; one 1.0 removed, as Scaffold publishes no sticky offset,
+  // stays and is reported.
+  const styles = runTransform(v1Classes, 'styles.css', css);
   assert.equal(
-    runTransform(v1Classes, 'styles.css', css).output,
+    styles.output,
     `.a {
-  inset-block-start: var(--env-frame-sticky-top);
-  block-size: var(--env-app-shell-header-height);
+  inset-block-start: var(--env-app-sticky-top);
+  block-size: var(--env-top-bar-height);
 }
 `,
   );
-  const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-app-topbar-block-size');
-export const a = <div style={{ '--env-app-topbar-block-size': '4rem', top: 'var(--env-app-sticky-top)' }} />;
+  assert.deepEqual(
+    styles.reports.map((report) => report.split(':')[0]),
+    ['line 2'],
+  );
+  const tsx = `const top = getComputedStyle(root).getPropertyValue('--env-topbar-height');
+export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
 `;
   assert.equal(
     runTransform(v1Classes, 'a.tsx', tsx).output,
-    `const top = getComputedStyle(root).getPropertyValue('--env-frame-header-block-size');
-export const a = <div style={{ '--env-frame-header-block-size': '4rem', top: 'var(--env-frame-sticky-top)' }} />;
+    // A declaration of a name that becomes a token with others stays, and is reported.
+    `const top = getComputedStyle(root).getPropertyValue('--env-top-bar-height');
+export const a = <div style={{ '--env-topbar-height': '4rem', top: 'var(--env-app-sticky-top)' }} />;
 `,
   );
 });

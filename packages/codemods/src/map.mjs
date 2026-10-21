@@ -566,7 +566,7 @@ function validateStructureCase(at, each) {
 }
 
 /** Transforms of their own that rewrite a structure entry, instead of its cases. */
-export const structureTransforms = ['v1-app-shell'];
+export const structureTransforms = [];
 
 /** Problems with the `structure` section: per entry point and component, its cases. */
 function validateStructure(structure) {
@@ -584,8 +584,7 @@ function validateStructure(structure) {
         problems.push(`${where} needs a "report" for the uses it can't rewrite.`);
         continue;
       }
-      // An element a transform of its own rewrites, such as AppShell's one-to-many parts, has its
-      // reports here and no cases.
+      // An element a transform of its own rewrites has its reports here and no cases.
       if (rule.transform !== undefined) {
         if (!structureTransforms.includes(rule.transform))
           problems.push(`${where}: "transform" must be one of ${structureTransforms.join(', ')}.`);
