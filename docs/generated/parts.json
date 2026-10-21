@@ -5164,7 +5164,7 @@
       "parts": [
         {
           "class": "env-connected-rows",
-          "description": "Rows joined into one block: lists and vertical radio groups."
+          "description": "Rows joined into one block, a small gap apart, with large outer and small inner corners."
         },
         {
           "class": "env-connected-row",

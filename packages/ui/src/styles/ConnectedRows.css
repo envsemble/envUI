@@ -1,4 +1,6 @@
-/* Private connected-row geometry shared across list, radio and select semantics. */
+/* Connected rows: blocks joined into one, with large outer corners on the first and last and small
+   inner corners between them, whatever the rows hold, such as a list's items, a vertical radio
+   group's options or a figure and its caption bar. The owner sets the small gap between them. */
 .env-connected-rows > .env-connected-row {
   border-radius: var(--env-radius-row-inner);
 }

@@ -29,8 +29,8 @@ export function DialogBackdrop({ className }: { className?: string }) {
 }
 
 /**
- * The raised surface of a dialog or a sheet, for its popup's render: the elevation-3 edge and
- * shadow, the body text and the scrolling that a dialog's content needs.
+ * The raised surface of a dialog or a sheet, for its popup's render: the elevation-3 edge, the body
+ * text and the scrolling that a dialog's content needs.
  */
 export function DialogSurface({ className, ...props }: SurfaceProps) {
   return (
