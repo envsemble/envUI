@@ -94,14 +94,26 @@
         {
           "name": "InsetRegion",
           "title": "Inset region",
-          "description": "Box is a plain block: an inset (`padding`), a size container (`container`) or a named node (`name`), with no gap, no flex and no grid. It is one of envUI's layout primitives, with Row, Column and Grid: it sizes to its content, never paints and has no role or keyboard behaviour of its own. Where its children need space between them, use a Column or a Row instead, or inside it.",
+          "description": "Box is a plain block for an inset, a size container or a name, with no layout of its own. Like Row, Column and Grid, it sizes to its content and never paints.",
           "file": "docs/examples/box/InsetRegion.tsx"
         },
         {
           "name": "SizeContainer",
-          "title": "A size container",
-          "description": "`container` names the box for the application's own container queries.",
+          "title": "Size container",
+          "description": "`container=\"summary\"` makes the box a size container that the application's style sheet can query, such as `@container summary (width >= 37.5rem)`. Give one in a flex row a width of its own: a container takes its width from its context, never from its content.",
           "file": "docs/examples/box/SizeContainer.tsx"
+        },
+        {
+          "name": "OneInset",
+          "title": "Do: One inset on the region, and a Column inside for the gaps.",
+          "description": "",
+          "file": "docs/examples/box/OneInset.tsx"
+        },
+        {
+          "name": "BoxPerChild",
+          "title": "Don't: A padded box around each child: every gap is different.",
+          "description": "",
+          "file": "docs/examples/box/BoxPerChild.tsx"
         }
       ],
       "parts": {},
@@ -169,13 +181,25 @@
         {
           "name": "FormActions",
           "title": "Form actions",
-          "description": "A row of actions, such as a form's Cancel and Save, is a Row with `wrap`, `align=\"center\"` and `justify=\"end\"`.",
+          "description": "Row lays out its children side by side, the same step of the spacing scale apart. Like Column, Grid and Box, it sizes to its content and never paints.",
           "file": "docs/examples/row/FormActions.tsx"
         },
         {
+          "name": "WrappingActions",
+          "title": "Do: wrap, so an action that doesn't fit moves to the next line.",
+          "description": "",
+          "file": "docs/examples/row/WrappingActions.tsx"
+        },
+        {
+          "name": "SqueezedActions",
+          "title": "Don't: No wrap in a narrow pane: the labels break inside their buttons.",
+          "description": "",
+          "file": "docs/examples/row/SqueezedActions.tsx"
+        },
+        {
           "name": "SectionHeading",
-          "title": "A heading and its actions",
-          "description": "`justify=\"between\"` puts the heading at the start and the action at the end; with `wrap`, the action moves under the heading when there isn't room.",
+          "title": "Section heading",
+          "description": "",
           "file": "docs/examples/row/SectionHeading.tsx"
         }
       ],
@@ -259,26 +283,26 @@
         {
           "name": "ProjectDetails",
           "title": "Project details",
-          "description": "Column lays out its children one under another, with the same space between each, a step of the spacing scale, so the parent owns the spacing and the children need no margins. Nest columns to give sections more space than the content inside them. It is one of envUI's layout primitives, with Row, Grid and Box: a flex column that sizes to its content, never paints and has no role or keyboard behaviour of its own.",
+          "description": "Column lays out its children one under another, the same step of the spacing scale apart, so the children need no margins. Like Row, Grid and Box, it sizes to its content and never paints.",
           "file": "docs/examples/column/ProjectDetails.tsx"
         },
         {
-          "name": "NestedSpacing",
-          "title": "Spacing sections and their content",
-          "description": "A larger gap between sections and a smaller one inside them group what belongs together.",
-          "file": "docs/examples/column/NestedSpacing.tsx"
-        },
-        {
           "name": "CenteredContent",
-          "title": "Centred content",
-          "description": "`align=\"center\"` keeps each child at its own width in the middle of the column.",
+          "title": "Alignment",
+          "description": "`align` keeps each child at its own width, at the `start`, `center` or `end`; the default, `stretch`, makes each as wide as the column. Buttons, chips and badges keep their own width in any case.",
           "file": "docs/examples/column/CenteredContent.tsx"
         },
         {
-          "name": "StackedActions",
-          "title": "Stacked actions",
-          "description": "In a narrow pane, a column of buttons with `fullWidth` gives each label the whole width.",
-          "file": "docs/examples/column/StackedActions.tsx"
+          "name": "NestedSpacing",
+          "title": "Do: A larger gap between sections and a smaller one inside them.",
+          "description": "",
+          "file": "docs/examples/column/NestedSpacing.tsx"
+        },
+        {
+          "name": "OneGapForAll",
+          "title": "Don't: One gap for everything: the sections run together.",
+          "description": "",
+          "file": "docs/examples/column/OneGapForAll.tsx"
         }
       ],
       "parts": {},
@@ -355,14 +379,32 @@
         {
           "name": "ProjectCards",
           "title": "Project cards",
-          "description": "Grid lays out its children in columns, a step of the spacing scale apart: a number of equal columns, a column template, or as many columns as fit at a minimum width, which needs no width of the window to adapt. It is one of envUI's layout primitives, with Row, Column and Box: a CSS grid that sizes to its content, never paints and has no role or keyboard behaviour of its own.",
+          "description": "Grid lays out its children in columns, the same step of the spacing scale apart. Like Row, Column and Box, it sizes to its content and never paints.",
           "file": "docs/examples/grid/ProjectCards.tsx"
         },
         {
           "name": "MainAndDetails",
-          "title": "A main column and its details",
-          "description": "A template gives the main column twice the width of its details.",
+          "title": "Main and details",
+          "description": "",
           "file": "docs/examples/grid/MainAndDetails.tsx"
+        },
+        {
+          "name": "FittingColumns",
+          "title": "Do: A minimum width, so the grid fits the columns to its own width.",
+          "description": "",
+          "file": "docs/examples/grid/FittingColumns.tsx"
+        },
+        {
+          "name": "FixedColumns",
+          "title": "Don't: Three columns in a narrow pane: each card is squeezed.",
+          "description": "",
+          "file": "docs/examples/grid/FixedColumns.tsx"
+        },
+        {
+          "name": "ColumnsThatFit",
+          "title": "Columns that fit",
+          "description": "",
+          "file": "docs/examples/grid/ColumnsThatFit.tsx"
         }
       ],
       "parts": {},
@@ -424,14 +466,44 @@
         {
           "name": "NavigationForms",
           "title": "Navigation forms",
-          "description": "The application gives it the navigation forms it wants, each the same destinations in another component: `navigation={{ bar, rail, drawer }}`. The Scaffold shows one at a time, by the window class of its own width: the bar at the bottom of a compact width, the rail at the start of a medium one and the drawer at the start from expanded.",
+          "description": "Scaffold is the invisible structure of an application's screen: a top bar, the navigation and the body. It never paints; the components in its regions do. It shows the navigation form that fits its own width, the Bar, the Rail or the Drawer, so give it all three with the same destinations.",
           "file": "docs/examples/scaffold/NavigationForms.tsx"
         },
         {
           "name": "ChooseForms",
-          "title": "Choosing the forms",
-          "description": "An application with a drawer only, which a compact width replaces with none: `forms={{ compact: 'none' }}`.",
+          "title": "Navigation by window class",
+          "description": "| Window class | Width of the Scaffold | Form | | ------------ | --------------------- | -------- | | compact | below 37.5 rem | `bar` | | medium | 37.5 to 52.5 rem | `rail` | | expanded | 52.5 to 75 rem | `drawer` | | large | from 75 rem | `drawer` | `forms` changes the form of a window class, or shows `none`. Where a window class asks for a form the application didn't give, the nearest given one shows.",
           "file": "docs/examples/scaffold/ChooseForms.tsx"
+        },
+        {
+          "name": "TitleBarAcross",
+          "title": "A title bar across",
+          "description": "`topBarSpan=\"full\"` runs the top bar across the whole width, above the rail or the drawer, as a window's title bar needs.",
+          "file": "docs/examples/scaffold/TitleBarAcross.tsx"
+        },
+        {
+          "name": "ActionsInPageHeader",
+          "title": "Do: The page's title and actions in its PageHeader.",
+          "description": "",
+          "file": "docs/examples/scaffold/ActionsInPageHeader.tsx"
+        },
+        {
+          "name": "ActionsInTopBar",
+          "title": "Don't: The page's title and action in the top bar: the page has no heading.",
+          "description": "",
+          "file": "docs/examples/scaffold/ActionsInTopBar.tsx"
+        },
+        {
+          "name": "ScaffoldAnatomy",
+          "title": "Scaffold anatomy",
+          "description": "",
+          "file": "docs/examples/scaffold/ScaffoldAnatomy.tsx"
+        },
+        {
+          "name": "FormsByWidth",
+          "title": "Forms by width",
+          "description": "",
+          "file": "docs/examples/scaffold/FormsByWidth.tsx"
         }
       ],
       "parts": {
@@ -652,20 +724,62 @@
         {
           "name": "SupportingPane",
           "title": "Supporting pane",
-          "description": "Here the supporting pane; narrow the window to see it become a sheet.",
+          "description": "`behavior=\"supporting\"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`.",
           "file": "docs/examples/panes/SupportingPane.tsx"
         },
         {
           "name": "ListAndDetail",
           "title": "List and detail",
-          "description": "The inbox: side by side from an expanded width, the message alone with a back button in less room.",
+          "description": "",
           "file": "docs/examples/panes/ListAndDetail.tsx"
         },
         {
           "name": "ResizableDetails",
-          "title": "Resizable details",
-          "description": "`splitAt=\"medium\"` and a divider; the width people choose is kept with `persist`.",
+          "title": "Resizable",
+          "description": "Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.",
           "file": "docs/examples/panes/ResizableDetails.tsx"
+        },
+        {
+          "name": "DetailsButton",
+          "title": "Do: A button in the main pane that opens the details where there is no room.",
+          "description": "",
+          "file": "docs/examples/panes/DetailsButton.tsx"
+        },
+        {
+          "name": "NoWayToDetails",
+          "title": "Don't: No button: in less room, the details can't be reached.",
+          "description": "",
+          "file": "docs/examples/panes/NoWayToDetails.tsx"
+        },
+        {
+          "name": "BackToInbox",
+          "title": "Do: A backLabel that names where the back button goes.",
+          "description": "",
+          "file": "docs/examples/panes/BackToInbox.tsx"
+        },
+        {
+          "name": "GenericBack",
+          "title": "Don't: Back alone: people can't tell where it leads.",
+          "description": "",
+          "file": "docs/examples/panes/GenericBack.tsx"
+        },
+        {
+          "name": "PanesAnatomy",
+          "title": "Panes anatomy",
+          "description": "",
+          "file": "docs/examples/panes/PanesAnatomy.tsx"
+        },
+        {
+          "name": "SupportingByWidth",
+          "title": "Supporting by width",
+          "description": "",
+          "file": "docs/examples/panes/SupportingByWidth.tsx"
+        },
+        {
+          "name": "ListDetailByWidth",
+          "title": "List detail by width",
+          "description": "",
+          "file": "docs/examples/panes/ListDetailByWidth.tsx"
         }
       ],
       "parts": {
@@ -849,20 +963,38 @@
         {
           "name": "WithHeader",
           "title": "With header",
-          "description": "Page is the column a page's content sits in: invisible structure that never paints. It is centered in the space it has, grows to its readable `width` at most, pads its inline edges with the page gutter, which follows the window class of the region it sits in, and puts its `header`, usually a PageHeader, at its top. It adds no landmark: it goes in a Scaffold's body, which is the main, and the content inside it lays itself out, with the layout primitives, such as Row, Column and Grid, and the components.",
+          "description": "Page is the column a page's content sits in: a readable width, the page gutter and the page's header at its top. It never paints and adds no landmark; it goes in a Scaffold's body, which is the main.",
           "file": "docs/examples/page/WithHeader.tsx"
-        },
-        {
-          "name": "Gutters",
-          "title": "Gutters",
-          "description": "The gutter, which follows the window class of the region the page sits in.",
-          "file": "docs/examples/page/Gutters.tsx"
         },
         {
           "name": "Widths",
           "title": "Widths",
-          "description": "The four widths, in a muted surface that shows the space around the column.",
+          "description": "",
           "file": "docs/examples/page/Widths.tsx"
+        },
+        {
+          "name": "HeaderInPage",
+          "title": "Do: The heading in header, in the page's column and gutter.",
+          "description": "",
+          "file": "docs/examples/page/HeaderInPage.tsx"
+        },
+        {
+          "name": "HeaderOutside",
+          "title": "Don't: A PageHeader outside the page: it doesn't line up with the content.",
+          "description": "",
+          "file": "docs/examples/page/HeaderOutside.tsx"
+        },
+        {
+          "name": "PageAnatomy",
+          "title": "Page anatomy",
+          "description": "",
+          "file": "docs/examples/page/PageAnatomy.tsx"
+        },
+        {
+          "name": "Gutters",
+          "title": "Gutters",
+          "description": "",
+          "file": "docs/examples/page/Gutters.tsx"
         }
       ],
       "parts": {
@@ -967,25 +1099,55 @@
         {
           "name": "WithBreadcrumbs",
           "title": "With breadcrumbs",
-          "description": "PageHeader is the heading of a page: its title, with an optional trail above it, a description under it, something before it, such as an avatar, meta beside it, such as a status, the page's actions at the end of the row and an optional toolbar row of search and filters below. It responds to its own width, so it wraps the same way in a wide window and in a narrow pane, and it can stick to the top of the page as the page scrolls. Put it in a Page's `header`.",
+          "description": "A page header holds a page's title, with an optional trail, description, meta and the page's actions. Put it in a Page's `header`.",
           "file": "docs/examples/page-header/WithBreadcrumbs.tsx"
         },
         {
           "name": "WithToolbar",
-          "title": "Search and filters",
-          "description": "A toolbar row under the title holds the search field and a view switch, with small controls.",
+          "title": "With toolbar",
+          "description": "`toolbar` adds a row below the title for search, filters and view switches. `controlSize=\"sm\"` gives the buttons in `actions` and `toolbar` the small height of a dense page.",
           "file": "docs/examples/page-header/WithToolbar.tsx"
         },
         {
           "name": "Sticky",
           "title": "Sticky",
-          "description": "The header stays at the top as the page scrolls under it.",
+          "description": "With `sticky`, the header stays at the top of the area that scrolls, under a Scaffold's top bar. What takes focus in the page keeps clear of it.",
           "file": "docs/examples/page-header/Sticky.tsx"
         },
         {
+          "name": "PageActions",
+          "title": "Do: Actions for this page, with the primary one last.",
+          "description": "",
+          "file": "docs/examples/page-header/PageActions.tsx"
+        },
+        {
+          "name": "FrameActions",
+          "title": "Don't: The account and sign-out in a page's header: they belong to the frame.",
+          "description": "",
+          "file": "docs/examples/page-header/FrameActions.tsx"
+        },
+        {
+          "name": "NameTheContent",
+          "title": "Do: A title that names what the page holds.",
+          "description": "",
+          "file": "docs/examples/page-header/NameTheContent.tsx"
+        },
+        {
+          "name": "InstructionAsTitle",
+          "title": "Don't: An instruction as the title, and a description that repeats it.",
+          "description": "",
+          "file": "docs/examples/page-header/InstructionAsTitle.tsx"
+        },
+        {
+          "name": "PageHeaderAnatomy",
+          "title": "PageHeader anatomy",
+          "description": "",
+          "file": "docs/examples/page-header/PageHeaderAnatomy.tsx"
+        },
+        {
           "name": "InANarrowPane",
-          "title": "In a narrow pane",
-          "description": "In a side panel the actions move under the title and wrap; an avatar leads the title.",
+          "title": "In ANarrow pane",
+          "description": "",
           "file": "docs/examples/page-header/InANarrowPane.tsx"
         }
       ],
@@ -1123,20 +1285,38 @@
         {
           "name": "DetailPane",
           "title": "Detail pane",
-          "description": "A surface gives a region a background, an inset on every side and rounded corners, and nothing else: it has no border, no gaps between its children and no behaviour. Lay out what it holds with a Column or a Row, through `render` on the same element or inside it. Card and other containers build on Surface.",
+          "description": "A surface gives a region a background, an inset and rounded corners, and nothing else. Lay out what it holds with a Column or a Row through `render`, so the surface and its layout are one element.",
           "file": "docs/examples/surface/DetailPane.tsx"
-        },
-        {
-          "name": "RaisedOnPane",
-          "title": "A raised block on a pane",
-          "description": "`background=\"raised\"` sets a block apart on a pane; `sm` corners suit its smaller size.",
-          "file": "docs/examples/surface/RaisedOnPane.tsx"
         },
         {
           "name": "Toolbar",
           "title": "Toolbar",
-          "description": "A pill surface holds controls over dense content, with controls of size `sm`. `render` lays them out as a row, and `role=\"group\"` with a label names them together. For a toolbar the arrow keys move through, render the surface as a Toolbar.",
+          "description": "",
           "file": "docs/examples/surface/Toolbar.tsx"
+        },
+        {
+          "name": "RaisedOnPane",
+          "title": "Do: One block on a pane, set apart by its fill and corners.",
+          "description": "",
+          "file": "docs/examples/surface/RaisedOnPane.tsx"
+        },
+        {
+          "name": "NestedSurfaces",
+          "title": "Don't: A surface in a surface in a surface: the fills stack up.",
+          "description": "",
+          "file": "docs/examples/surface/NestedSurfaces.tsx"
+        },
+        {
+          "name": "NamedRegions",
+          "title": "Do: A heading that names each region.",
+          "description": "",
+          "file": "docs/examples/surface/NamedRegions.tsx"
+        },
+        {
+          "name": "FillsOnly",
+          "title": "Don't: Regions told apart by their fills alone, which are close in contrast.",
+          "description": "",
+          "file": "docs/examples/surface/FillsOnly.tsx"
         }
       ],
       "parts": {
@@ -1251,44 +1431,80 @@
         {
           "name": "SettingsRows",
           "title": "Settings rows",
-          "description": "A list is a column of connected rows on the shared row fill: the first and last rows keep large outer corners, and rows join with small inner ones. List.Root is a native `<ul>` and each List.Item an `<li>` with a title, an optional muted detail and an action at its end. A row can open what it names: with `interactive`, it reacts to hover, presses and keyboard focus like a clickable card, and the link marked `data-row-target` covers the row. A row can be the current one (`selected`), lead with an avatar or a checkbox (`start`), and, with `onReorder` on the list, be moved by its handle.",
+          "description": "A list is a column of connected rows, each with a label, a description and an action at its end.",
           "file": "docs/examples/list/SettingsRows.tsx"
         },
         {
           "name": "OpenFromRow",
-          "title": "Rows that open something",
-          "description": "Each title link covers its row, so a press anywhere on the row opens the plan; the More actions button stays above it and names its row.",
+          "title": "Open from row",
+          "description": "With `interactive`, the link marked `data-row-target` covers its row. The row's other controls take `position: relative` to stay above it.",
           "file": "docs/examples/list/OpenFromRow.tsx"
         },
         {
-          "name": "OnAPane",
-          "title": "Rows on a pane",
-          "description": "A muted Surface that holds only the list puts the rows on a pane of their own, in the raised row fill.",
-          "file": "docs/examples/list/OnAPane.tsx"
-        },
-        {
           "name": "CurrentRow",
-          "title": "The current row",
-          "description": "An avatar leads each row, and choosing a person marks their row as the current one, as for a list beside the person's details.",
+          "title": "Current row",
+          "description": "`selected` marks the row whose details show beside the list, with `aria-current`.",
           "file": "docs/examples/list/CurrentRow.tsx"
         },
         {
           "name": "CheckedRows",
           "title": "Checked rows",
-          "description": "A checkbox in the start slot chooses rows for an action on several at once, and a checked row takes the selected fill.",
+          "description": "A checkbox in `start` chooses rows for an action on several at once.",
           "file": "docs/examples/list/CheckedRows.tsx"
         },
         {
           "name": "Reorder",
-          "title": "Put in order",
-          "description": "With `onReorder`, each row gets a handle: drag it, or press <kbd>Space</kbd> on it and move the row with the arrow keys. The list reports the move, and the application moves the item.",
+          "title": "Reorder",
+          "description": "`onReorder` gives each row a handle: drag it, or press <kbd>Space</kbd> and move the row with the arrow keys. The list reports the move, and the application moves the item.",
           "file": "docs/examples/list/Reorder.tsx"
         },
         {
+          "name": "OnAPane",
+          "title": "On APane",
+          "description": "",
+          "file": "docs/examples/list/OnAPane.tsx"
+        },
+        {
           "name": "ExtraContent",
-          "title": "More content in a row",
-          "description": "Children follow the title and the detail, such as a Badge with the item's status.",
+          "title": "Extra content",
+          "description": "",
           "file": "docs/examples/list/ExtraContent.tsx"
+        },
+        {
+          "name": "OneTarget",
+          "title": "Do: One link per row, which covers the row.",
+          "description": "",
+          "file": "docs/examples/list/OneTarget.tsx"
+        },
+        {
+          "name": "SeveralTargets",
+          "title": "Don't: Several links in a row: a press could open any of them.",
+          "description": "",
+          "file": "docs/examples/list/SeveralTargets.tsx"
+        },
+        {
+          "name": "SameActions",
+          "title": "Do: The same kind of action at the end of every row.",
+          "description": "",
+          "file": "docs/examples/list/SameActions.tsx"
+        },
+        {
+          "name": "MixedActions",
+          "title": "Don't: A different action on each row: people can't scan them.",
+          "description": "",
+          "file": "docs/examples/list/MixedActions.tsx"
+        },
+        {
+          "name": "ListAnatomy",
+          "title": "List anatomy",
+          "description": "",
+          "file": "docs/examples/list/ListAnatomy.tsx"
+        },
+        {
+          "name": "NarrowRows",
+          "title": "Narrow rows",
+          "description": "",
+          "file": "docs/examples/list/NarrowRows.tsx"
         }
       ],
       "parts": {
@@ -6472,14 +6688,50 @@
         {
           "name": "PhoneDestinations",
           "title": "Phone destinations",
-          "description": "Bar is Material's navigation bar: the application's main destinations side by side across the bottom of a compact window, each an icon above its label. It is one of three navigation forms that take the same array of destinations, with Rail and Drawer; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`.",
+          "description": "The navigation bar holds an application's main destinations across the bottom of a compact window. It takes the same destinations as Rail and Drawer, and Scaffold shows the form that fits the width.",
           "file": "docs/examples/bar/PhoneDestinations.tsx"
         },
         {
           "name": "MoreDestinations",
-          "title": "More than five destinations",
-          "description": "Seven destinations: the bar shows four and More, whose menu holds the current one, so More takes the current fill.",
+          "title": "More destinations",
+          "description": "Past five destinations, the fifth place is More, which opens the rest in a menu and takes the current fill when it holds the current page.",
           "file": "docs/examples/bar/MoreDestinations.tsx"
+        },
+        {
+          "name": "ShortLabels",
+          "title": "Do: One short word for each destination.",
+          "description": "",
+          "file": "docs/examples/bar/ShortLabels.tsx"
+        },
+        {
+          "name": "LongLabels",
+          "title": "Don't: Long labels: each shares a fifth of a phone and is cut short.",
+          "description": "",
+          "file": "docs/examples/bar/LongLabels.tsx"
+        },
+        {
+          "name": "OneCurrent",
+          "title": "Do: One current destination, the page people are on.",
+          "description": "",
+          "file": "docs/examples/bar/OneCurrent.tsx"
+        },
+        {
+          "name": "TwoCurrent",
+          "title": "Don't: Two current destinations: people can't tell where they are.",
+          "description": "",
+          "file": "docs/examples/bar/TwoCurrent.tsx"
+        },
+        {
+          "name": "BarAnatomy",
+          "title": "Bar anatomy",
+          "description": "",
+          "file": "docs/examples/bar/BarAnatomy.tsx"
+        },
+        {
+          "name": "SharedWidth",
+          "title": "Shared width",
+          "description": "",
+          "file": "docs/examples/bar/SharedWidth.tsx"
         }
       ],
       "parts": {
@@ -6581,14 +6833,44 @@
         {
           "name": "TabletDestinations",
           "title": "Tablet destinations",
-          "description": "Rail is Material's navigation rail: a narrow column at the window's start with the application's destinations one under another, each an icon above a short label. It is one of three navigation forms that take the same array of destinations, with Bar and Drawer; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`.",
+          "description": "The navigation rail holds an application's main destinations in a narrow column at the start of a medium window. It takes the same destinations as Bar and Drawer, and Scaffold shows the form that fits the width.",
           "file": "docs/examples/rail/TabletDestinations.tsx"
         },
         {
           "name": "GroupsInOrder",
           "title": "Groups in order",
-          "description": "The same array as a drawer's: the rail shows the grouped destinations in order, without their headings.",
+          "description": "A destination's `group` shows no heading in the rail: grouped destinations follow one another in the array's order.",
           "file": "docs/examples/rail/GroupsInOrder.tsx"
+        },
+        {
+          "name": "ActionAtTheTop",
+          "title": "Do: The main action in the header, above the destinations.",
+          "description": "",
+          "file": "docs/examples/rail/ActionAtTheTop.tsx"
+        },
+        {
+          "name": "ActionAtTheBottom",
+          "title": "Don't: The main action below the destinations, where people don't look for it.",
+          "description": "",
+          "file": "docs/examples/rail/ActionAtTheBottom.tsx"
+        },
+        {
+          "name": "OneWordLabels",
+          "title": "Do: One short word for each destination.",
+          "description": "",
+          "file": "docs/examples/rail/OneWordLabels.tsx"
+        },
+        {
+          "name": "PhraseLabels",
+          "title": "Don't: Phrases: they wrap over several lines in the narrow rail.",
+          "description": "",
+          "file": "docs/examples/rail/PhraseLabels.tsx"
+        },
+        {
+          "name": "RailAnatomy",
+          "title": "Rail anatomy",
+          "description": "",
+          "file": "docs/examples/rail/RailAnatomy.tsx"
         }
       ],
       "parts": {
@@ -6715,20 +6997,50 @@
         {
           "name": "AppDestinations",
           "title": "App destinations",
-          "description": "Drawer is Material's navigation drawer: a column at the window's start with every destination as a row of icon, label and count, under the headings of their groups. It is one of three navigation forms that take the same array of destinations, with Bar and Rail; Scaffold shows the one that suits the window's width. Each destination is a link with `href`, through the `LinkProvider`'s link component, or a button that runs `onSelect`.",
+          "description": "The navigation drawer holds an application's destinations in a column at the start of an expanded or larger window, with group headings and counts. It takes the same destinations as Bar and Rail, and Scaffold shows the form that fits the width.",
           "file": "docs/examples/drawer/AppDestinations.tsx"
         },
         {
+          "name": "GuideSections",
+          "title": "Guide sections",
+          "description": "A `DrawerDestination` may leave its icon out, for the sections of a guide or of the settings; the Bar and the Rail need icons.",
+          "file": "docs/examples/drawer/GuideSections.tsx"
+        },
+        {
           "name": "OneListThreeForms",
-          "title": "One list, three forms",
-          "description": "The same array passed to the Drawer, the Rail and the Bar: the drawer heads the groups, the rail and the bar keep their order.",
+          "title": "One list three forms",
+          "description": "The application passes the same destinations to each form, and a group is a heading in the drawer only.",
           "file": "docs/examples/drawer/OneListThreeForms.tsx"
         },
         {
-          "name": "GuideSections",
-          "title": "Sections of a guide",
-          "description": "Without icons, a drawer lists the pages of a guide under their headings.",
-          "file": "docs/examples/drawer/GuideSections.tsx"
+          "name": "IconsForAll",
+          "title": "Do: An icon on every destination, or on none.",
+          "description": "",
+          "file": "docs/examples/drawer/IconsForAll.tsx"
+        },
+        {
+          "name": "IconsForSome",
+          "title": "Don't: Icons on some destinations: the labels don't line up.",
+          "description": "",
+          "file": "docs/examples/drawer/IconsForSome.tsx"
+        },
+        {
+          "name": "GroupsTogether",
+          "title": "Do: A group's destinations next to each other.",
+          "description": "",
+          "file": "docs/examples/drawer/GroupsTogether.tsx"
+        },
+        {
+          "name": "GroupsApart",
+          "title": "Don't: A group split up: its heading shows twice.",
+          "description": "",
+          "file": "docs/examples/drawer/GroupsApart.tsx"
+        },
+        {
+          "name": "DrawerAnatomy",
+          "title": "Drawer anatomy",
+          "description": "",
+          "file": "docs/examples/drawer/DrawerAnatomy.tsx"
         }
       ],
       "parts": {
@@ -6850,38 +7162,74 @@
         {
           "name": "ProjectViews",
           "title": "Project views",
-          "description": "The tabs are `items`, each a `value`, a `button`, the panel's `content` and whether it is `disabled`. Tabs owns the selection, the keyboard and the panels' transitions; the application owns anything else, such as keeping the selected tab in the URL.",
+          "description": "Tabs switch between panels of related content in one place. Each item gives a `button`, which becomes the tab, and the panel's `content`; the selected tab keeps its button's look.",
           "file": "docs/examples/tabs/ProjectViews.tsx"
         },
         {
           "name": "ManualActivation",
           "title": "Manual activation",
-          "description": "With `activation=\"manual\"` the arrow keys move focus and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, so a report loads only when chosen.",
+          "description": "By default the arrow keys select the tab they reach. With `activation=\"manual\"` they only move focus and <kbd>Enter</kbd> or <kbd>Space</kbd> selects, for a panel that loads when it shows.",
           "file": "docs/examples/tabs/ManualActivation.tsx"
         },
         {
           "name": "SmallRail",
           "title": "Small rail",
-          "description": "`size=\"sm\"` makes the rail as tall as a small control, for a toolbar or a bar; a CounterBadge fits inside a tab.",
+          "description": "",
           "file": "docs/examples/tabs/SmallRail.tsx"
-        },
-        {
-          "name": "FillARegion",
-          "title": "Fill a region",
-          "description": "With `fill` the selected panel takes the height left below the rail, here a region 16 rem tall.",
-          "file": "docs/examples/tabs/FillARegion.tsx"
         },
         {
           "name": "VerticalList",
           "title": "Vertical list",
-          "description": "A vertical rail of ghost Button tabs with icons, with ↑ and ↓; the Tabs is laid out as a row to put the panels beside it.",
+          "description": "",
           "file": "docs/examples/tabs/VerticalList.tsx"
         },
         {
+          "name": "FillARegion",
+          "title": "Fill ARegion",
+          "description": "",
+          "file": "docs/examples/tabs/FillARegion.tsx"
+        },
+        {
           "name": "ListBesideAHeading",
-          "title": "List beside a heading",
-          "description": "`renderList` places the rail beside a heading inside a Card, and the panels follow below.",
+          "title": "List beside AHeading",
+          "description": "",
           "file": "docs/examples/tabs/ListBesideAHeading.tsx"
+        },
+        {
+          "name": "RelatedViews",
+          "title": "Do: Tabs for views of one subject, in any order.",
+          "description": "",
+          "file": "docs/examples/tabs/RelatedViews.tsx"
+        },
+        {
+          "name": "StepsAsTabs",
+          "title": "Don't: Steps that go in order: nothing leads to the next one.",
+          "description": "",
+          "file": "docs/examples/tabs/StepsAsTabs.tsx"
+        },
+        {
+          "name": "ShortTabNames",
+          "title": "Do: One or two words each, parallel.",
+          "description": "",
+          "file": "docs/examples/tabs/ShortTabNames.tsx"
+        },
+        {
+          "name": "WordyTabNames",
+          "title": "Don't: Phrases of different shapes: hard to scan.",
+          "description": "",
+          "file": "docs/examples/tabs/WordyTabNames.tsx"
+        },
+        {
+          "name": "TabsAnatomy",
+          "title": "Tabs anatomy",
+          "description": "",
+          "file": "docs/examples/tabs/TabsAnatomy.tsx"
+        },
+        {
+          "name": "ScrollingRail",
+          "title": "Scrolling rail",
+          "description": "",
+          "file": "docs/examples/tabs/ScrollingRail.tsx"
         }
       ],
       "parts": {
@@ -7027,25 +7375,55 @@
         {
           "name": "PreviousAndNext",
           "title": "Previous and next",
-          "description": "Pager.Previous and Pager.Next also stand alone, where the application places a single link itself.",
+          "description": "A pager links a page of an ordered sequence, such as a guide, to the pages before and after it, after the page's content.",
           "file": "docs/examples/pager/PreviousAndNext.tsx"
         },
         {
           "name": "StepThroughAGuide",
-          "title": "Step through a guide",
-          "description": "On the first page only the next link shows; the previous link joins it from the second page on.",
+          "title": "Step through AGuide",
+          "description": "At either end of the sequence, leave out the missing destination: a single link stays centred.",
           "file": "docs/examples/pager/StepThroughAGuide.tsx"
         },
         {
           "name": "ComposedParts",
-          "title": "Compose the parts",
-          "description": "Pager.Previous and Pager.Next as children of Pager.Root make the same pair, here without icons.",
+          "title": "Composed parts",
+          "description": "Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and also stand alone.",
           "file": "docs/examples/pager/ComposedParts.tsx"
         },
         {
+          "name": "TitlesOnly",
+          "title": "Do: The destination's title, as its page heading reads.",
+          "description": "",
+          "file": "docs/examples/pager/TitlesOnly.tsx"
+        },
+        {
+          "name": "DirectionInTitles",
+          "title": "Don't: Next or Back in the title: the label already says it.",
+          "description": "",
+          "file": "docs/examples/pager/DirectionInTitles.tsx"
+        },
+        {
+          "name": "IconsOnBoth",
+          "title": "Do: An icon on both links, or on neither.",
+          "description": "",
+          "file": "docs/examples/pager/IconsOnBoth.tsx"
+        },
+        {
+          "name": "IconOnOne",
+          "title": "Don't: An icon on one link only: the pair stops reading as one.",
+          "description": "",
+          "file": "docs/examples/pager/IconOnOne.tsx"
+        },
+        {
+          "name": "PagerAnatomy",
+          "title": "Pager anatomy",
+          "description": "",
+          "file": "docs/examples/pager/PagerAnatomy.tsx"
+        },
+        {
           "name": "LongTitles",
-          "title": "Long titles in a narrow column",
-          "description": "Where the pair doesn't fit side by side, each link takes a row of its own, and titles wrap between words.",
+          "title": "Long titles",
+          "description": "",
           "file": "docs/examples/pager/LongTitles.tsx"
         }
       ],
@@ -7136,20 +7514,44 @@
         {
           "name": "AppTopBar",
           "title": "App top bar",
-          "description": "TopBar is the bar at the top of an application or a screen, after Material's small top app bar: start content, such as a navigation or back button or the application's mark, the title, and the actions at the end, in one row at the top bar height that never wraps. It is built from Row, and goes in a Scaffold's top bar region, which is the banner landmark.",
+          "description": "The top bar sits at the top of an application or a screen, after Material's small top app bar: start content, the title and the actions, in one row. It goes in a Scaffold's top bar region, which is the banner landmark.",
           "file": "docs/examples/top-bar/AppTopBar.tsx"
         },
         {
           "name": "LoadingPage",
-          "title": "Page progress",
-          "description": "`loading` while the next page loads, named by `loadingLabel`.",
+          "title": "Loading page",
+          "description": "`loading` shows a thin bar along the bottom edge while the next page loads, after a short delay so quick loads never flash it.",
           "file": "docs/examples/top-bar/LoadingPage.tsx"
         },
         {
           "name": "TitleBar",
-          "title": "The window's title bar",
-          "description": "`titleBar` with a menubar at the start and an action at the end.",
+          "title": "Title bar",
+          "description": "`titleBar` makes the bar the window's own title bar in an installed web app: empty space drags the window, the title is centred and the controls are small. Put it in a Scaffold with `topBarSpan=\"full\"`.",
           "file": "docs/examples/top-bar/TitleBar.tsx"
+        },
+        {
+          "name": "FewActions",
+          "title": "Do: Two or three actions, the account last.",
+          "description": "",
+          "file": "docs/examples/top-bar/FewActions.tsx"
+        },
+        {
+          "name": "ManyActions",
+          "title": "Don't: Many actions: no room is left for the title.",
+          "description": "",
+          "file": "docs/examples/top-bar/ManyActions.tsx"
+        },
+        {
+          "name": "TopBarAnatomy",
+          "title": "TopBar anatomy",
+          "description": "",
+          "file": "docs/examples/top-bar/TopBarAnatomy.tsx"
+        },
+        {
+          "name": "TitleFirstToGo",
+          "title": "Title first to go",
+          "description": "",
+          "file": "docs/examples/top-bar/TitleFirstToGo.tsx"
         }
       ],
       "parts": {
@@ -7306,26 +7708,62 @@
         {
           "name": "FileTree",
           "title": "File tree",
-          "description": "The application owns the data. It passes the visible rows in order, flattened, each with its `depth`, and updates them when a row expands or collapses; it also owns the selection and what opening a row does. The tree owns focus, keyboard navigation, type-ahead, scrolling and an optional context menu.",
+          "description": "A tree shows a hierarchy that people expand and collapse, such as folders and files. The application passes the visible rows in order, each with its `depth`, and owns expansion and selection; the tree owns focus, the keys and scrolling.",
           "file": "docs/examples/tree/FileTree.tsx"
         },
         {
           "name": "ContextMenuActions",
-          "title": "Actions in a context menu",
-          "description": "Right-click a row, or press <kbd>Shift</kbd>+<kbd>F10</kbd>, for its actions, and the empty area for New document. The buttons above the tree offer the same actions.",
+          "title": "Context menu actions",
+          "description": "With `contextMenu`, right click, a long press, <kbd>Shift</kbd>+<kbd>F10</kbd> or the <kbd>Menu</kbd> key open a menu for a row, or for the empty area. Offer the same actions in visible controls.",
           "file": "docs/examples/tree/ContextMenuActions.tsx"
-        },
-        {
-          "name": "RowDensity",
-          "title": "Row density",
-          "description": "`density=\"md\"` gives the rows more room than the default `sm`, here with counts at the end, a detail and a disabled mailbox. Only the padding changes; the text and icons stay the same.",
-          "file": "docs/examples/tree/RowDensity.tsx"
         },
         {
           "name": "ThousandsOfRows",
           "title": "Thousands of rows",
-          "description": "Expanding every folder makes over 10,000 rows; only those in view are in the document.",
+          "description": "The tree is as tall as its parent and renders only the rows in view, so give it a parent with a height.",
           "file": "docs/examples/tree/ThousandsOfRows.tsx"
+        },
+        {
+          "name": "RowDensity",
+          "title": "Row density",
+          "description": "",
+          "file": "docs/examples/tree/RowDensity.tsx"
+        },
+        {
+          "name": "TellKindsApart",
+          "title": "Do: Icons that tell folders and documents apart.",
+          "description": "",
+          "file": "docs/examples/tree/TellKindsApart.tsx"
+        },
+        {
+          "name": "OneIconForAll",
+          "title": "Don't: One icon for every row: only the chevrons tell folders apart.",
+          "description": "",
+          "file": "docs/examples/tree/OneIconForAll.tsx"
+        },
+        {
+          "name": "NamesWithPathInTitle",
+          "title": "Do: Short names, with the full path in title.",
+          "description": "",
+          "file": "docs/examples/tree/NamesWithPathInTitle.tsx"
+        },
+        {
+          "name": "PathsAsNames",
+          "title": "Don't: Paths as labels: they repeat the folder and lose the name.",
+          "description": "",
+          "file": "docs/examples/tree/PathsAsNames.tsx"
+        },
+        {
+          "name": "TreeAnatomy",
+          "title": "Tree anatomy",
+          "description": "",
+          "file": "docs/examples/tree/TreeAnatomy.tsx"
+        },
+        {
+          "name": "NarrowTree",
+          "title": "Narrow tree",
+          "description": "",
+          "file": "docs/examples/tree/NarrowTree.tsx"
         }
       ],
       "parts": {
@@ -7475,20 +7913,38 @@
         {
           "name": "OpenDocuments",
           "title": "Open documents",
-          "description": "DocumentTabs is the strip of open documents above an editor: one tab per document, the active one marked, each with a close button. People switch with a click or the arrow keys, close with the button, a middle click, <kbd>Delete</kbd> or <kbd>Backspace</kbd>, or from a tab's context menu, keep a preview tab with a double click, and, with `onCloseAll`, close all tabs from that menu too. The strip renders only the tabs: the application owns the open documents, the active one and its panel.",
+          "description": "Document tabs are the strip of open documents above an editor, one tab per document, each with a close button. The application owns the documents, the active one and its panel; the strip renders the tabs.",
           "file": "docs/examples/document-tabs/OpenDocuments.tsx"
         },
         {
-          "name": "ManyTabs",
-          "title": "Many open documents",
-          "description": "In a narrow pane the strip scrolls sideways, the active tab stays in view, and tabs fade at an edge they run past. Drag a tab to reorder it: a line shows where it will land, and near an edge the strip scrolls with it.",
-          "file": "docs/examples/document-tabs/ManyTabs.tsx"
+          "name": "CloseAllButton",
+          "title": "Close all button",
+          "description": "`end` puts the application's own content after the tabs, outside the strip that scrolls.",
+          "file": "docs/examples/document-tabs/CloseAllButton.tsx"
         },
         {
-          "name": "CloseAllButton",
-          "title": "Buttons after the tabs",
-          "description": "`end` puts the application's own content after the tabs, outside the strip that scrolls and on its hairline, such as a button that opens a new document and one that closes them all.",
-          "file": "docs/examples/document-tabs/CloseAllButton.tsx"
+          "name": "NameAsLabel",
+          "title": "Do: The document's name as the label, its location as the title.",
+          "description": "",
+          "file": "docs/examples/document-tabs/NameAsLabel.tsx"
+        },
+        {
+          "name": "PathAsLabel",
+          "title": "Don't: Locations as labels: every tab starts the same, and names are cut off.",
+          "description": "",
+          "file": "docs/examples/document-tabs/PathAsLabel.tsx"
+        },
+        {
+          "name": "DocumentTabsAnatomy",
+          "title": "DocumentTabs anatomy",
+          "description": "",
+          "file": "docs/examples/document-tabs/DocumentTabsAnatomy.tsx"
+        },
+        {
+          "name": "ManyTabs",
+          "title": "Many tabs",
+          "description": "",
+          "file": "docs/examples/document-tabs/ManyTabs.tsx"
         }
       ],
       "parts": {
@@ -7670,25 +8126,43 @@
         {
           "name": "DocumentDrafts",
           "title": "Document drafts",
-          "description": "- PanelDock.Root lays out the panels and their tabs and renders each panel's content from `children`. - PanelDock.Header is a panel's sticky header: the title and metadata, the application's actions and the window controls, Minimize, Maximize or Restore, and Close, which `controls={false}` leaves out.",
+          "description": "The application owns the panels, their order, modes, the active one and their heights; the dock asks for changes through its callbacks. PanelDock.Header is each panel's sticky header, with the title, the application's actions and the window controls.",
           "file": "docs/examples/panel-dock/DocumentDrafts.tsx"
         },
         {
           "name": "MaximizedPanel",
           "title": "Maximized panel",
-          "description": "A maximized panel fills the region behind the open panels, which keep their modes; Restore returns it to the row.",
+          "description": "",
           "file": "docs/examples/panel-dock/MaximizedPanel.tsx"
         },
         {
           "name": "MinimizeWhatDoesNotFit",
-          "title": "Minimize what does not fit",
-          "description": "With `overflow=\"minimize\"` three panels that can't sit side by side at 20 rem make room: the one active longest ago waits as a tab. It comes back once the region widens.",
+          "title": "Make room",
+          "description": "Open panels take `preferredWidth`, 32 rem, and shrink to `minWidth`, 20 rem; then the row scrolls sideways. With `overflow=\"minimize\"` the dock asks to minimize the panel active longest ago instead, and opens it again once there is room.",
           "file": "docs/examples/panel-dock/MinimizeWhatDoesNotFit.tsx"
+        },
+        {
+          "name": "ShortTabLabels",
+          "title": "Do: A short tab label, with the full title as its tooltip.",
+          "description": "",
+          "file": "docs/examples/panel-dock/ShortTabLabels.tsx"
+        },
+        {
+          "name": "LongTabLabels",
+          "title": "Don't: Long titles on the tabs: they truncate and crowd the strip.",
+          "description": "",
+          "file": "docs/examples/panel-dock/LongTabLabels.tsx"
+        },
+        {
+          "name": "PanelDockAnatomy",
+          "title": "PanelDock anatomy",
+          "description": "",
+          "file": "docs/examples/panel-dock/PanelDockAnatomy.tsx"
         },
         {
           "name": "NarrowRegion",
           "title": "Narrow region",
-          "description": "Below `stackBelow` one panel at a time fills the region, here the active conversation, and its tab shows the other.",
+          "description": "",
           "file": "docs/examples/panel-dock/NarrowRegion.tsx"
         }
       ],
@@ -7945,26 +8419,50 @@
         {
           "name": "DocumentTrail",
           "title": "Document trail",
-          "description": "Breadcrumbs show the path from the top level to the current page, such as a workspace, its folders and the document open in them. Earlier levels are links with `href`, through the `LinkProvider`'s link component, or buttons with `onClick` for applications without URLs; the current page is last, in the primary text color, and never a link. The trail is a navigation landmark around an ordered list, and it supplements the main navigation rather than replacing it.",
+          "description": "Breadcrumbs show the path from the top level to the current page, such as a workspace, its folders and the document open in them. Earlier levels are links, or buttons with `onClick`; the current page is last, and never a link.",
           "file": "docs/examples/breadcrumbs/DocumentTrail.tsx"
         },
         {
           "name": "WithoutUrls",
-          "title": "Applications without URLs",
-          "description": "Levels with `onClick` are buttons. Pressing one shortens the trail, and focus moves to the folder's title, since the pressed level becomes the current page.",
+          "title": "Without urls",
+          "description": "Levels with `onClick` are buttons. Pressing one shortens the trail, and the application moves focus, here to the folder's title.",
           "file": "docs/examples/breadcrumbs/WithoutUrls.tsx"
         },
         {
+          "name": "LevelWithoutPage",
+          "title": "Level without page",
+          "description": "An entry without `href` or `onClick` is plain text, for a level that can't be opened.",
+          "file": "docs/examples/breadcrumbs/LevelWithoutPage.tsx"
+        },
+        {
           "name": "OneLine",
-          "title": "One line in a header bar",
-          "description": "With `wrap={false}` the trail stays on one line beside a status and an action; the current page is cut short first.",
+          "title": "One line",
+          "description": "",
           "file": "docs/examples/breadcrumbs/OneLine.tsx"
         },
         {
-          "name": "LevelWithoutPage",
-          "title": "A level without a page",
-          "description": "An entry without `href` or `onClick` is plain text, for a level that can't be opened.",
-          "file": "docs/examples/breadcrumbs/LevelWithoutPage.tsx"
+          "name": "RecognisedTop",
+          "title": "Do: Start at the level people know as the top, such as the workspace.",
+          "description": "",
+          "file": "docs/examples/breadcrumbs/RecognisedTop.tsx"
+        },
+        {
+          "name": "AddressAsTrail",
+          "title": "Don't: The address as the trail: a domain and ids people don't know.",
+          "description": "",
+          "file": "docs/examples/breadcrumbs/AddressAsTrail.tsx"
+        },
+        {
+          "name": "BreadcrumbsAnatomy",
+          "title": "Breadcrumbs anatomy",
+          "description": "",
+          "file": "docs/examples/breadcrumbs/BreadcrumbsAnatomy.tsx"
+        },
+        {
+          "name": "WrappingTrail",
+          "title": "Wrapping trail",
+          "description": "",
+          "file": "docs/examples/breadcrumbs/WrappingTrail.tsx"
         }
       ],
       "parts": {
@@ -8126,26 +8624,50 @@
         {
           "name": "PagesOfAList",
           "title": "Pages of AList",
-          "description": "The application owns the page, the loading and the scroll position. Pagination reports the page a press asks for through `onPageChange`, shows a spinner on the button pressed while the page loads, announces the new range and keeps focus on the button, so people who page from the keyboard stay in place.",
+          "description": "Pagination shows which items of a long list are on screen, such as 1–60 of 245, and moves a page back or forward. The application owns the page and its loading; while `pending`, the button pressed shows a spinner and focus stays on it.",
           "file": "docs/examples/pagination/PagesOfAList.tsx"
         },
         {
           "name": "WithoutATotal",
-          "title": "Without a known total",
-          "description": "A list read in batches shows the items on the page; `hasNextPage` says when the list ends.",
+          "title": "Without ATotal",
+          "description": "Without `total`, the range shows only the page's items, and `hasNextPage` says when the list ends.",
           "file": "docs/examples/pagination/WithoutATotal.tsx"
         },
         {
+          "name": "ApplicationStrings",
+          "title": "Application strings",
+          "description": "`messages.pagination` on EnvUIProvider sets the names and the range for every pager inside it, and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` set them for one pager.",
+          "file": "docs/examples/pagination/ApplicationStrings.tsx"
+        },
+        {
           "name": "SmallToolbar",
-          "title": "In a small toolbar",
-          "description": "`size=\"sm\"` gives the buttons the small control height, as the field beside the pager has, and the field shrinks first. The text variant keeps the toolbar quiet.",
+          "title": "Small toolbar",
+          "description": "",
           "file": "docs/examples/pagination/SmallToolbar.tsx"
         },
         {
-          "name": "ApplicationStrings",
-          "title": "The application's own strings",
-          "description": "EnvUIProvider's `messages.pagination` sets the strings of every pager inside it, in the reader's language, and its `locale` formats the numbers; `previousLabel`, `nextLabel` and `formatRange` set them for one pager. A pager in a language other than the page's takes `lang`, so assistive technology reads it in that language.",
-          "file": "docs/examples/pagination/ApplicationStrings.tsx"
+          "name": "MatchingSize",
+          "title": "Do: The size of the fields beside it.",
+          "description": "",
+          "file": "docs/examples/pagination/MatchingSize.tsx"
+        },
+        {
+          "name": "MismatchedSize",
+          "title": "Don't: A larger size than the field beside it: the row doesn't line up.",
+          "description": "",
+          "file": "docs/examples/pagination/MismatchedSize.tsx"
+        },
+        {
+          "name": "PaginationAnatomy",
+          "title": "Pagination anatomy",
+          "description": "",
+          "file": "docs/examples/pagination/PaginationAnatomy.tsx"
+        },
+        {
+          "name": "ToolbarRow",
+          "title": "Toolbar row",
+          "description": "",
+          "file": "docs/examples/pagination/ToolbarRow.tsx"
         }
       ],
       "parts": {
@@ -9221,55 +9743,85 @@
         {
           "name": "ProjectStatus",
           "title": "Project status",
-          "description": "- Table.Root renders the table and its scroll region, and holds what applies to every row: its name, density, sticky header, column widths and narrow layout. - Table.Head and Table.Body hold the header rows and the data rows. - Table.Row is a row, which can highlight on hover or be selected. - Table.HeaderCell heads a column, or a row with `scope=\"row\"`, and can sort its column. - Table.Cell is a data cell, with a `label` that names its value while rows stack.",
+          "description": "A table shows records that share the same fields in rows and columns, for data people compare, sort and scan. Its parts are the native table elements, on a rounded surface inside a focusable region that scrolls sideways where the columns don't fit.",
           "file": "docs/examples/table/ProjectStatus.tsx"
         },
         {
-          "name": "NumericColumns",
-          "title": "Numbers and totals",
-          "description": "`numeric` cells use tabular figures aligned to the end, so amounts compare down the column. A header cell with `scope=\"row\"` heads the totals row.",
-          "file": "docs/examples/table/NumericColumns.tsx"
-        },
-        {
           "name": "SortableColumns",
-          "title": "Sort by a column",
-          "description": "A header with `onSortChange` becomes a sort button. The application keeps the order, sorts the rows and gives each sortable header its `sortDirection`.",
+          "title": "Sortable columns",
+          "description": "A header with `onSortChange` becomes a sort button. The application sorts the rows and gives each sortable header its `sortDirection`.",
           "file": "docs/examples/table/SortableColumns.tsx"
         },
         {
           "name": "SelectRows",
           "title": "Select rows",
-          "description": "A Checkbox in the first cell selects the row; `selected` reports it and takes the selection colors. Every row gets `selected`, `true` or `false`.",
+          "description": "`selected` reports a row's state and takes the selection colors; a Checkbox labelled with the row's name selects it. Pass `selected={false}` to the other rows.",
           "file": "docs/examples/table/SelectRows.tsx"
-        },
-        {
-          "name": "RowDensity",
-          "title": "Row density",
-          "description": "`density` changes only the rows' padding, from `xs` to `lg`; the text stays the same. Buttons in the cells take the small control height at every density.",
-          "file": "docs/examples/table/RowDensity.tsx"
-        },
-        {
-          "name": "StickyHeader",
-          "title": "Sticky header",
-          "description": "The header row stays in view while the rows scroll beneath it. The region needs a height, here from the layout around it.",
-          "file": "docs/examples/table/StickyHeader.tsx"
         },
         {
           "name": "ResizableColumns",
           "title": "Resizable columns",
-          "description": "Drag the boundary at the end of a header, or focus it and press <kbd>←</kbd> or <kbd>→</kbd>; double-click it to restore the starting widths. A name too long for its column ends with an ellipsis.",
+          "description": "With `resizableColumns` and column widths in percent, the boundary at the end of a header drags, or moves with the arrow keys; a double click restores the starting widths.",
           "file": "docs/examples/table/ResizableColumns.tsx"
         },
         {
+          "name": "StickyHeader",
+          "title": "Sticky header",
+          "description": "`stickyHeader` keeps the header row in view while the rows scroll beneath it; give the region a height.",
+          "file": "docs/examples/table/StickyHeader.tsx"
+        },
+        {
+          "name": "RowDensity",
+          "title": "Row density",
+          "description": "",
+          "file": "docs/examples/table/RowDensity.tsx"
+        },
+        {
+          "name": "NumericColumns",
+          "title": "Numeric columns",
+          "description": "",
+          "file": "docs/examples/table/NumericColumns.tsx"
+        },
+        {
+          "name": "NumbersAligned",
+          "title": "Do: numeric, so the digits line up down the column.",
+          "description": "",
+          "file": "docs/examples/table/NumbersAligned.tsx"
+        },
+        {
+          "name": "NumbersUnaligned",
+          "title": "Don't: Numbers aligned to the start: they can't be compared at a glance.",
+          "description": "",
+          "file": "docs/examples/table/NumbersUnaligned.tsx"
+        },
+        {
+          "name": "NamedStates",
+          "title": "Do: A Badge that names each state.",
+          "description": "",
+          "file": "docs/examples/table/NamedStates.tsx"
+        },
+        {
+          "name": "ColorOnly",
+          "title": "Don't: States told apart by color alone.",
+          "description": "",
+          "file": "docs/examples/table/ColorOnly.tsx"
+        },
+        {
+          "name": "TableAnatomy",
+          "title": "Table anatomy",
+          "description": "",
+          "file": "docs/examples/table/TableAnatomy.tsx"
+        },
+        {
           "name": "StackedRows",
-          "title": "Stack rows in a narrow container",
-          "description": "In a region narrower than `stackBelow`, each row becomes a block titled by its first cell, with the other cells' labels beside their values.",
+          "title": "Stacked rows",
+          "description": "",
           "file": "docs/examples/table/StackedRows.tsx"
         },
         {
           "name": "SortWhileStacked",
-          "title": "Sort while rows stack",
-          "description": "The header row is hidden while rows stack, so `onStackedChange` shows a Select for the order meanwhile. The table and the Select share the same sort state.",
+          "title": "Sort while stacked",
+          "description": "",
           "file": "docs/examples/table/SortWhileStacked.tsx"
         }
       ],
@@ -12342,20 +12894,32 @@
         {
           "name": "FilterPanel",
           "title": "Filter panel",
-          "description": "Here a side sheet at the end edge holds the filters of a list, and a DialogClose shows the result and closes it. Its `side` is logical: `end`, the default, is the right edge in left-to-right text and the left in right-to-left text, `start` the other, and `bottom` the bottom edge. It shares Dialog's surface, title, description and actions, and DialogClose closes it as it closes a dialog.",
+          "description": "A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it.",
           "file": "docs/examples/sheet/FilterPanel.tsx"
         },
         {
           "name": "InspectorPanel",
-          "title": "Inspector beside the page",
-          "description": "A non-modal sheet with `disablePointerDismissal` stays open while people choose another row, and shows that row. `finalFocus` returns focus to the row the sheet showed last.",
+          "title": "Inspector panel",
+          "description": "With `modal={false}` the page stays usable beside the sheet; `disablePointerDismissal` keeps it open while people choose another row, and `finalFocus` returns focus to the row it showed last.",
           "file": "docs/examples/sheet/InspectorPanel.tsx"
         },
         {
           "name": "ShareChoices",
-          "title": "Choices from the bottom",
-          "description": "A bottom sheet holds a short set of choices, as tall as its content; choosing one closes it.",
+          "title": "Share choices",
+          "description": "`side=\"bottom\"` holds a short set of choices, as tall as its content.",
           "file": "docs/examples/sheet/ShareChoices.tsx"
+        },
+        {
+          "name": "ResultAsAction",
+          "title": "Do: A primary action named after its result.",
+          "description": "",
+          "file": "docs/examples/sheet/ResultAsAction.tsx"
+        },
+        {
+          "name": "VagueAction",
+          "title": "Don't: Apply: people can't tell what they will see.",
+          "description": "",
+          "file": "docs/examples/sheet/VagueAction.tsx"
         }
       ],
       "parts": {
@@ -13670,26 +14234,38 @@
         {
           "name": "DocumentDetails",
           "title": "Document details",
-          "description": "A popover is a floating panel that opens beside its trigger, for details people ask for or a small form that changes something nearby. It moves focus into itself as it opens, and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it, so people return to what they were doing. Popover is built on Base UI's popover; it is not modal, so the rest of the page stays usable.",
+          "description": "A popover is a floating panel beside its trigger, for details people ask for or a small form that changes something nearby. It takes focus as it opens and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it; it isn't modal, so the page stays usable.",
           "file": "docs/examples/popover/DocumentDetails.tsx"
         },
         {
           "name": "RenameInPlace",
-          "title": "A small form",
-          "description": "A function child receives `close`: the form renames the document and closes the popover, and Cancel closes it without a change. The `lg` width lets the field grow to 28 rem.",
+          "title": "Rename in place",
+          "description": "A function child receives `close`, to close the popover once its action is done.",
           "file": "docs/examples/popover/RenameInPlace.tsx"
         },
         {
           "name": "FilterTasks",
-          "title": "Controlled filters",
-          "description": "`open` and `onOpenChange` control the popover: it starts from the filters in use each time it opens, and Apply closes it. The trigger counts the filters applied.",
+          "title": "Filter tasks",
+          "description": "`open` and `onOpenChange` control the popover, here starting from the filters in use each time it opens.",
           "file": "docs/examples/popover/FilterTasks.tsx"
         },
         {
           "name": "FieldHelp",
-          "title": "Help beside a value",
-          "description": "An icon-only trigger, named after what it explains, opens the popover to its right with `side=\"right\"`.",
+          "title": "Field help",
+          "description": "",
           "file": "docs/examples/popover/FieldHelp.tsx"
+        },
+        {
+          "name": "ShortHelp",
+          "title": "Do: A few lines, which people read at a glance.",
+          "description": "",
+          "file": "docs/examples/popover/ShortHelp.tsx"
+        },
+        {
+          "name": "LongHelp",
+          "title": "Don't: Paragraphs of help: too much to read beside the page.",
+          "description": "",
+          "file": "docs/examples/popover/LongHelp.tsx"
         }
       ],
       "parts": {
@@ -13832,20 +14408,32 @@
         {
           "name": "DocumentPreview",
           "title": "Document preview",
-          "description": "A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. It stays open while the pointer moves onto it, so its text can be read and selected. Focus stays on the trigger, and the card is not a dialog. HoverCard is built on Base UI's preview card.",
+          "description": "A hover card shows supplementary details beside its trigger, usually a link, once the pointer rests on it or keyboard focus reaches it, like a preview of the page the link leads to. Focus stays on the trigger, and the card stays open while the pointer moves onto it.",
           "file": "docs/examples/hover-card/DocumentPreview.tsx"
         },
         {
           "name": "PersonDetails",
-          "title": "A person's details",
-          "description": "The `lg` card has room for an avatar beside the name and a role, and a line about the person.",
+          "title": "Person details",
+          "description": "",
           "file": "docs/examples/hover-card/PersonDetails.tsx"
         },
         {
           "name": "Placement",
-          "title": "Above the trigger",
-          "description": "`side=\"top\"` and `align=\"start\"` open the card above the link, lined up with its start, such as for a link near the bottom of a pane.",
+          "title": "Placement",
+          "description": "",
           "file": "docs/examples/hover-card/Placement.tsx"
+        },
+        {
+          "name": "NameAndFacts",
+          "title": "Do: The name, then one or two facts that help decide.",
+          "description": "",
+          "file": "docs/examples/hover-card/NameAndFacts.tsx"
+        },
+        {
+          "name": "RepeatsTrigger",
+          "title": "Don't: A card that only repeats what the link says.",
+          "description": "",
+          "file": "docs/examples/hover-card/RepeatsTrigger.tsx"
         }
       ],
       "parts": {
