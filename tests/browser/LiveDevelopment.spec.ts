@@ -58,7 +58,7 @@ test('public component, stylesheet, new export and Markdown documentation update
     await writeFile(example, editedExample);
     await expect(
       page
-        .getByRole('group', { name: 'Appearances example', exact: true })
+        .getByRole('group', { name: 'Variants example', exact: true })
         .getByTestId('live-new-component'),
     ).toHaveText('New shared component');
     // A guideline added to the Markdown shows in its view.
@@ -68,10 +68,6 @@ test('public component, stylesheet, new export and Markdown documentation update
     );
     expect(editedDocumentation).toContain('Live documentation acceptance.');
     await writeFile(documentation, editedDocumentation);
-    await page
-      .locator('.docs-page-header')
-      .getByRole('tab', { name: 'Guidelines', exact: true })
-      .click();
     await expect(page.getByText('Live documentation acceptance.', { exact: true })).toBeVisible();
     expect(await page.evaluate(() => (window as unknown as { liveProof: string }).liveProof)).toBe(
       'same-document',
