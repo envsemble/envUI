@@ -67,14 +67,18 @@ export function Alert({
   const symbol = icon === undefined ? toneIcons[tone] : icon;
   return (
     <Grid
-      {...props}
       columns="auto minmax(0, 1fr) auto"
       align="start"
       gap={3}
       padding={4}
-      role={role}
-      className={classNames('env-alert', className)}
-      data-tone={tone}
+      render={
+        <div
+          {...props}
+          role={role}
+          className={classNames('env-alert', className)}
+          data-tone={tone}
+        />
+      }
     >
       {symbol !== false && symbol != null && (
         <span className="env-alert-icon">
