@@ -68,4 +68,6 @@ test('a part or state that goes is reported until a changeset names it', () => {
   );
   const recorded = removedParts(before, after, 'Card drops `env-card-meta` and `data-layout`.');
   assert.ok(recorded.every((item) => item.recorded));
+  // A longer name that starts with the class doesn't name it.
+  assert.ok(!removedParts(before, after, 'Renames env-card-meta-text.')[0].recorded);
 });

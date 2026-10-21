@@ -446,7 +446,13 @@ export function removedParts(before, after, changesets = '') {
   const now = contractNames(after);
   const removed = [];
   for (const [label, name] of contractNames(before))
-    if (!now.has(label)) removed.push({ label, name, recorded: changesets.includes(name) });
+    if (!now.has(label))
+      removed.push({
+        label,
+        name,
+        // The whole name, so a changeset about env-card-header doesn't record env-card.
+        recorded: new RegExp(`(?<![\w-])${name}(?![\w-])`).test(changesets),
+      });
   return removed;
 }
 
