@@ -34,23 +34,59 @@ components:
 
 ## Overview
 
-Link is a native `<a>` for a destination inside running text. It takes the font of the text around it, the link color and, by default, an underline, so it stands out from the words beside it. Links render through the `LinkProvider`'s link component, so the application's router handles them.
+Link is a native `<a>` for a destination inside running text. It renders through the `LinkProvider`'s link component, so the application's router handles it.
 
 ```tsx example=InRunningText
 
 ```
 
-## States and behaviour
+### Disabled
 
-- Hover and pressed change only the text color, by the shared rule in [colors and themes](../foundations/colors.md); keyboard focus shows the shared focus ring.
-- A `disabled` link has no destination: it cannot be focused or followed and reports `aria-disabled`.
-- Link is Button's text variant with an underline by default. For a link that should look like a button, use Button with `href`.
+A `disabled` link has no destination: it can't be focused or followed.
 
-## Content guidelines
+## Variants
 
-- Make the link text say where it goes, such as "project guide", not "click here" or a bare address.
-- Link the words that name the destination, not a whole sentence.
-- Keep the underline in running text; turn it off only where the context already marks the words as links, such as a short list of destinations.
+```tsx example=WithoutUnderline caption="underline={false}, for a short list that already reads as links."
+
+```
+
+| Underline           | Use for                                               |
+| ------------------- | ----------------------------------------------------- |
+| On                  | Running text. The default.                            |
+| `underline={false}` | A list of destinations, where the context marks them. |
+
+For a link that should look like a button, use Button with `href`.
+
+## When to use
+
+```tsx do=UnderlinedInText caption="The underline in running text."
+
+```
+
+```tsx dont=NoUnderlineInText caption="No underline in a sentence: only its color tells it apart."
+
+```
+
+### Labels
+
+```tsx do=NamesDestination caption="Words that name the destination."
+
+```
+
+```tsx dont=ClickHere caption="Click here: it says nothing out of context."
+
+```
+
+- Link a few words, not a whole sentence.
+
+## Anatomy
+
+```tsx anatomy=LinkAnatomy
+
+```
+
+1. **Link** (`env-link`, `href`)
+2. **Label** (`env-link::text`, `children`)
 
 ## Accessibility
 
@@ -63,24 +99,14 @@ Link is a native `<a>` for a destination inside running text. It takes the font 
 
 ### envUI provides
 
-- A native `<a>` with the link role, rendered through `LinkProvider` so modifier clicks and middle clicks behave as the browser's.
-- An underline by default, so the link is not told apart by color alone.
-- The shared focus ring, and `aria-disabled` with no destination while disabled.
+- A native `<a>`, so modifier and middle clicks behave as the browser's.
+- An underline by default, so color isn't the only cue.
+- The shared focus ring, and `aria-disabled` while disabled.
 
 ### You provide
 
 - Link text that names the destination.
-- The router link through `LinkProvider`, described in [setup](../setup.md).
-
-## Examples
-
-### Without an underline
-
-Where the context already marks the words as links, `underline={false}` leaves the link color alone.
-
-```tsx example=WithoutUnderline
-
-```
+- The router link through `LinkProvider`, as [setup](../setup.md) describes.
 
 ## Changelog
 

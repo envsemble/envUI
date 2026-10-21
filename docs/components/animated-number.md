@@ -39,77 +39,57 @@ components:
 
 ## Overview
 
-AnimatedNumber shows a number inside text and rolls it to its new value when it changes: in from below when it grows and from above when it shrinks. The movement draws the eye to a count that other controls change, such as the number of results on the button that shows them. The text is always the current value, so accessible names and copied text never hold a number on its way.
+AnimatedNumber shows a number in text and rolls it to its new value: up as it grows, down as it shrinks. Its text is always the current value.
 
 ```tsx example=ShowResults
 
 ```
 
+### A formatted value
+
+`formatValue` writes the value, such as a currency. By default it follows EnvUIProvider's `locale`.
+
+```tsx example=CustomFormat
+
+```
+
+### Reduced motion
+
+With a reduced-motion preference, the new value only fades in.
+
+## When to use
+
+```tsx do=SeatsLeft caption="Roll the one number a choice changes."
+
+```
+
+```tsx dont=EveryNumberRolls caption="Several numbers rolling at once: none of them draws the eye."
+
+```
+
+- Don't roll counts that change on their own, such as a live total.
+- Keep the words in the same sentence, and match them to the number: 1 seat, 3 seats.
+
 ## Anatomy
 
-1. **Container**: an inline `span` that keeps the line box of the text around it and clips the rolling value to it. The ref and other `span` props reach it.
-2. **Value** (`value`, written by `formatValue`): the current number, in tabular figures and the type of the text around it.
+```tsx anatomy=AnimatedNumberAnatomy
 
-## Variants and sizes
+```
 
-- AnimatedNumber takes the font, size and color of the text around it, such as a button's label or a heading.
-- Digits use tabular figures, so the number's width changes only with its count of digits, and the text around it doesn't shift as it rolls.
-
-## States and behaviour
-
-- **Rolling**: when `value` changes, the new value rolls in from 0.6 em below as it grows, or from above as it shrinks, and fades in, in 0.24 seconds. The first render and a render with the same value don't move.
-- **Reduced motion**: with a reduced-motion preference, the new value only fades in, in 0.16 seconds.
-- **Format**: `formatValue` writes the value, such as a currency or a percentage; by default it is the number format of EnvUIProvider's `locale`, or else the browser's, such as 1,280.
-- The new value replaces the old at once in the text; only its look moves.
-
-## Content guidelines
-
-- Keep the words around the number in the same sentence, and match their number: "1 task", "24 tasks".
-- Put the outcome in a label when it is known: "Show 33 tasks", not "Show results".
-- Format the value as it is meant: a currency, a percentage, or a count with the locale's separators.
-
-## Do and don't
-
-### Do
-
-- Use it where a count changes because of something people do nearby.
-- Pass a `formatValue` that fits the value's unit and the reader's locale.
-
-### Don't
-
-- Don't animate counts that change on their own, such as a live total ticking up; the movement distracts.
-- Don't animate several numbers side by side that change together; animate the one that matters.
-- Don't use it for figures that don't change; use plain text.
+1. **Number** (`env-animated-number`)
+2. **Value** (`env-animated-number-value`, `value`)
 
 ## Accessibility
 
 ### envUI provides
 
-- The current value as the text at every moment, so a button's accessible name and copied text are never a number on its way.
-- A fade instead of the roll with a reduced-motion preference.
+- The current value as the text at every moment, so names and copied text never hold a number on its way.
+- A fade instead of the roll with reduced motion.
 
 ### You provide
 
-- An announcement where the change matters and focus is elsewhere, such as a status region around the sentence; AnimatedNumber isn't a live region.
-- A `formatValue` that writes the number in the reader's language.
-
-## Examples
-
-### Seats left
-
-The sentence is a status region, so the new count is announced as people change it.
-
-```tsx example=SeatsLeft
-
-```
-
-### A formatted value
-
-`formatValue` writes the price as a currency; it rolls up for yearly billing and down for monthly.
-
-```tsx example=CustomFormat
-
-```
+- A status region where the change must be announced; AnimatedNumber isn't one.
+- A `formatValue` in the reader's language.
 
 ## Changelog
 

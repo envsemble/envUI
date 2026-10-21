@@ -52,167 +52,23 @@ components:
 
 ## Overview
 
-RichTextEditor is a labelled field for formatted text that people edit as it looks: headings, emphasis, lists, task lists, quotes, code, links and tables, with a formatting toolbar and the usual keyboard shortcuts. Its value is Markdown, so applications save and diff plain text. It is built on Tiptap, which owns the document, the selection, undo and paste; envUI gives it the field, the toolbar and its looks.
-
-The family comes from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked installed as described in [setup](../setup.md):
-
-- **RichTextEditor** edits the Markdown, with references people insert by typing a trigger such as @, optional slash commands, attachments the application uploads and links from its own picker.
-- **RichText** shows saved Markdown read-only with the editor's own schema, so it looks the same and its references work the same. It renders on a server too.
-- **createRichTextExtensions** returns the Tiptap extensions both share, for other Tiptap integrations that need the same schema.
+RichTextEditor is a field for formatted text that people edit as it looks; its value is Markdown. RichText shows saved Markdown the same way. Both come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, as [setup](../setup.md) describes.
 
 ```tsx example=EditAndPreview
 
 ```
 
-## Anatomy
-
-1. **Label** (`label`): above the toolbar; it names the document.
-2. **Toolbar** (`toolbar`): the Toolbar MarkdownEditor shares, icon buttons named "Rich text formatting", the commands in order, then Undo, Redo and, with `onUpload`, Attach files, each named in a tooltip. It scrolls sideways where it doesn't fit.
-3. **Document**: the editing area, at least 10 rem tall and growing with its content, with 1 rem padding, in the field's control box: outlined, with the field border, 1 rem corners and the field background, as a text area. Task items show envUI's checkboxes beside their text.
-4. **References**: the trigger and the label, such as @Priya Shah, on the field background with 0.25 rem corners; a link or a button where they lead somewhere.
-5. **Suggestions**: a list on the popup surface under the caret while people type after a trigger, its options as rows, 12 to 24 rem wide, scrolling beyond 18 rem.
-6. **Description** (`description`) and **error** (`error`): below the document, the error with its icon.
-7. **Status**: below the document, a message about an upload or a link, such as "Uploading attachments…"; hidden while empty.
-
-The parts are 0.75 rem apart. Insert link opens a dialog with Text and URL or path fields, unless the application brings its own picker.
-
-## Variants and sizes
-
-The document takes a text area's variants, which the field draws:
-
-- **`outline`**, the default, puts the document in a bordered box on the field background, for a form, a dialog or a pane.
-- **`underline`** drops the border and the fill, with an underline while the document has focus, for a document that is the page's content, such as notes in a detail view.
-- **`ghost`** shows only the text at rest, with a soft fill under the pointer and while it has focus, for notes in a quiet panel.
-
-| Command         | Toolbar button | Does                                                       |
-| --------------- | -------------- | ---------------------------------------------------------- |
-| `heading`       | Heading        | Turns the paragraph into a level 2 heading, and back.      |
-| `bold`          | Bold           | Bold text.                                                 |
-| `italic`        | Italic         | Italic text.                                               |
-| `strike`        | Strikethrough  | Struck-through text.                                       |
-| `bullet-list`   | Bulleted list  | A bulleted list.                                           |
-| `numbered-list` | Numbered list  | A numbered list.                                           |
-| `task-list`     | Task list      | A list of tasks with checkboxes.                           |
-| `quote`         | Quote          | A quote.                                                   |
-| `inline-code`   | Inline code    | Code within a line.                                        |
-| `code-block`    | Code block     | A block of code.                                           |
-| `link`          | Insert link    | Links the selection, or inserts a link at the caret.       |
-| `table`         | Insert table   | A table of three rows and three columns with a header row. |
-
-<!-- specimen: States -->
-
-- `toolbar` takes the commands to show, in order, or `false` for none. Keep to what the content needs, such as bold, italic and links for a comment.
-- Text in the document is 0.9375 rem, and 1 rem on touch screens, so mobile browsers don't zoom the page when it takes focus.
-- The editor fills the width of its container; the document grows with its content, so give a long document room or let the page scroll.
-
-## States and behaviour
-
-- **Markdown values**: `value` and `onValueChange` control the editor, or `defaultValue` starts it. `onValueChange` receives Markdown after every edit, normalized by the schema, so it can differ from the Markdown it was given, such as `*` for `_` around italics. A new `value` from outside, such as another draft, replaces the document and keeps the caret where it can.
-- **Markdown it keeps**: headings, bold, italic, strikethrough, inline code, code blocks, bulleted, numbered and task lists, quotes, links, images, ordinary tables and references. Raw HTML in the Markdown shows as text, on a server and in the browser alike. Syntax outside the schema, such as footnotes or merged table cells, needs an extension or the Markdown component.
-- **Styles**: in the editor, code blocks keep their lines and scroll sideways. The editor's base styles come from envUI's style sheet, in its cascade layer, so the editor adds no style element of its own and an application's CSS overrides them.
-- **Typing Markdown**: Markdown typed into the document formats as it goes, such as `## ` for a heading, `- ` for a list or `**bold**`.
-- **Toolbar state**: the buttons of formatting at the caret show as pressed and report `aria-pressed`; Undo and Redo are unavailable while there is nothing to undo or redo.
-- **References**: typing a source's trigger, such as @, at the start of a line or after a space opens its suggestions, filtered by what follows. While the lookup runs, the list says "Loading suggestions…"; it says "No results" when nothing matches and "Suggestions could not load. Try typing again." when the lookup fails. Choosing an option inserts the reference and a space. The list sits in the editor, above what the editor is in, such as a Dialog, and closes as focus leaves the document, also with <kbd>Tab</kbd>. A reference with `href` is a link, which the editor never follows while it is editable; without one, `onReferenceClick` makes it a button. The Markdown keeps its ID, label, kind, destination and trigger.
-- **Slash commands**: with `slashCommands`, typing / at the start of a line or after a space offers Heading, the three lists, Quote, Code block and Insert table, then the application's commands, filtered by what follows. A / reference source can't be used beside them, and two sources can't share a trigger.
-- **Links**: Insert link opens a dialog for the text and the URL, or calls `onRequestLink` for the application's own picker. A selection becomes a link to the URL; at the caret, the link's text is inserted. Only relative paths and http, https, mailto and tel URLs are accepted: the dialog says "Enter a valid URL or relative path." for another, and an application's picker that returns one gets the same message in the status. Clicking a link calls `onLinkClick`; the editor never follows it while editable.
-- **Attachments**: with `onUpload`, Attach files opens the file picker, filtered by `accept`, for one or, by default, several files. While they upload, the status says "Uploading attachments…" and the toolbar waits. Images become Markdown images with the label as their alternative text; other files become references. A failed upload shows its message in the status, and an upload that finishes after the document changed is not inserted: the status asks people to attach the files again.
-- **Read only**: `readOnly` keeps the document as it is: the toolbar is disabled and the document can't be focused, but its links and references can, and a form still submits the value.
-- **Disabled**: `disabled` makes the editor unavailable: the document's box takes the shared disabled opacity while the label keeps the text color; it can't be edited or focused, the toolbar is disabled and a form leaves its value out. Becoming read-only or disabled closes open suggestions and cancels an upload or a link request.
-- **Invalid**: while `error` is set, the document reports `aria-invalid`, its box takes the error color, as a text field does, and the message shows below it.
-- **Form submission**: with `name`, the Markdown is submitted with the form; `form` names a form the editor sits outside of. A form's reset returns an uncontrolled editor to `defaultValue`.
-- **Theme**: the suggestions take the theme of the editor, also inside a scoped Theme.
-- **Controlled updates**: a new `value` is applied once React has committed, as the document renders its references and tasks itself, so a controlled editor raises no warning.
-- **RichText**: renders the Markdown with the same schema and envUI's own parts: links through `LinkProvider`, inline code and code blocks as Code and CodeBlock, and tasks as disabled checkboxes named by their text. Unsafe links show as text and unsafe images as their alternative text. `onReferenceClick` and `onLinkClick` receive activations; call `preventDefault` to stop the browser following them.
-- **Server rendering**: RichText renders on a server. RichTextEditor renders its field there and its document once it runs in the browser.
-
-## Content guidelines
-
-- Name the document in the label, such as "Meeting notes" or "Release notes", and put lasting guidance in the description.
-- Use the placeholder for what to write and how to insert what the editor offers, such as "Type @ to mention someone, or # for a topic".
-- Name each reference source after what it lists, such as People or Topics; the name is the suggestion list's accessible name.
-- Name slash commands after the block they add, such as "Meeting agenda".
-- Give image attachments a label that describes the image; it becomes the alternative text.
-- Write an error that says how to fix the document, such as "Write what changed before publishing."
-
-## Do and don't
-
-### Do
-
-- Save the Markdown from `onValueChange`, and show it again with RichText and the same `extensions`.
-- Keep `references`, `extensions` and `slashCommands` arrays the same between renders, such as at module scope; a new array starts a new editing session and loses undo.
-- Resolve reference IDs in the application: envUI saves them and hands them back, but gives `id` and `kind` no meaning.
-- Use the signal in reference lookups and uploads to cancel work that is no longer needed.
-- Change the document from outside through `ref.editor`, Tiptap's command API.
-
-### Don't
-
-- Don't use RichTextEditor where people should see and edit Markdown source; use [MarkdownEditor](../components/markdown.md).
-- Don't use the same trigger for two reference sources, or / for a source beside slash commands; the editor throws.
-- Don't rely on RichText to show any Markdown: it shows what its schema keeps. Use [Markdown](../components/markdown.md) for Markdown from elsewhere.
-- Don't expect the editor to follow links or references; navigation belongs to `onLinkClick` and `onReferenceClick`.
-
-## Accessibility
-
-### Keyboard
-
-<kbd>Ctrl</kbd> is <kbd>⌘</kbd> and <kbd>Alt</kbd> is <kbd>⌥</kbd> on a Mac.
-
-| Key                                                                                      | Action                                                                                                                                                               |
-| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                                          | Moves focus to the toolbar, which is one tab stop, then to the document and on. Outside a list, <kbd>Tab</kbd> in the document moves focus on rather than indenting. |
-| <kbd>←</kbd>, <kbd>→</kbd> in the toolbar                                                | Moves between its buttons, wrapping at the ends and skipping unavailable ones.                                                                                       |
-| <kbd>Enter</kbd> or <kbd>Space</kbd> on a toolbar button                                 | Applies its formatting or runs it, such as Insert link.                                                                                                              |
-| <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>Ctrl</kbd>+<kbd>I</kbd>, <kbd>Ctrl</kbd>+<kbd>E</kbd> | Bold, italic and inline code.                                                                                                                                        |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>                                            | Strikethrough.                                                                                                                                                       |
-| <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd> to <kbd>6</kbd>                              | A heading of that level.                                                                                                                                             |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>7</kbd>, <kbd>8</kbd> or <kbd>9</kbd>              | A numbered list, a bulleted list or a task list.                                                                                                                     |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>                                            | A quote.                                                                                                                                                             |
-| <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd>                                              | A code block.                                                                                                                                                        |
-| <kbd>Ctrl</kbd>+<kbd>Z</kbd>                                                             | Undoes the last change.                                                                                                                                              |
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd> or <kbd>Ctrl</kbd>+<kbd>Y</kbd>            | Redoes it.                                                                                                                                                           |
-| <kbd>Shift</kbd>+<kbd>Enter</kbd>                                                        | A line break within the paragraph.                                                                                                                                   |
-| <kbd>Tab</kbd> in a list item                                                            | Indents the item under the one above; where it can't be indented, moves focus on.                                                                                    |
-| <kbd>Shift</kbd>+<kbd>Tab</kbd> in a list item                                           | Outdents the item, or turns a top-level item into a paragraph, and keeps focus in the document.                                                                      |
-| <kbd>Enter</kbd> in an empty list item                                                   | Ends the list.                                                                                                                                                       |
-| A reference trigger, such as <kbd>@</kbd>, or <kbd>/</kbd> with slash commands           | Opens the suggestions, filtered by what follows.                                                                                                                     |
-| <kbd>↓</kbd>, <kbd>↑</kbd> in the suggestions                                            | Highlights the next or previous option, wrapping at the ends.                                                                                                        |
-| <kbd>Tab</kbd> in the suggestions                                                        | Closes them and moves focus on.                                                                                                                                      |
-| <kbd>Enter</kbd> in the suggestions                                                      | Inserts the highlighted option.                                                                                                                                      |
-| <kbd>Esc</kbd> in the suggestions                                                        | Closes them and keeps what was typed.                                                                                                                                |
-| <kbd>Esc</kbd> in the link dialog                                                        | Closes it and returns focus to the document.                                                                                                                         |
-| <kbd>Enter</kbd> on a reference or a link in RichText or a read-only editor              | Activates it, and <kbd>Space</kbd> a reference that is a button.                                                                                                     |
-
-### envUI provides
-
-- The document as a `textbox` with `aria-multiline`, named by the label or `aria-label`, described by the description and the error, and reporting `aria-invalid`, `aria-readonly` and `aria-disabled`.
-- A toolbar named "Rich text formatting" with one tab stop and arrow keys, each button named, with its name also in a tooltip, `aria-pressed` for formatting at the caret, and unavailable buttons left out of the arrow-key order.
-- Suggestions as a listbox named by the source's `label`, with `aria-expanded`, `aria-controls`, `aria-autocomplete` and `aria-activedescendant` on the document while it is open, so screen readers announce the highlighted option; `aria-busy` and a status while it loads, finds nothing or fails.
-- A status that announces upload progress and failures and rejected links.
-- The link dialog with labelled fields, which returns focus to the document when it closes.
-- Task items as envUI checkboxes named by their text, unavailable while the editor is read-only or disabled; in RichText, links through `LinkProvider`, task items as disabled checkboxes and references as links or buttons, and in the editor, references with a destination as links through `LinkProvider`.
-- Raw HTML kept as text and unsafe URLs refused, in the editor and in RichText.
-
-### You provide
-
-- A visible `label`, or an `aria-label`, that names the document.
-- A `label` for each reference source, which names its suggestion list.
-- Labels for image attachments that work as alternative text.
-- The lookups, uploads, permissions, navigation and saving behind references, attachments and links.
-- The words in the page's language, through EnvUIProvider's `messages`: `richText` for the toolbar's and lists' names, the suggestions' states, the attach button and the status messages, `editor` for the formatting commands, also in the slash menu, and `linkDialog` for the link dialog.
-
-## Examples
-
 ### Show saved content
 
-RichText shows saved Markdown read-only. The application opens references and links through `onReferenceClick` and `onLinkClick`.
+RichText shows saved Markdown read-only, also on a server. `onReferenceClick` and `onLinkClick` open references and links.
 
 ```tsx example=SavedContent
 
 ```
 
-### Mention people and topics
+### References
 
-Each reference source has a trigger, a name for its list and a lookup. Here a timer stands in for a search on a server, which the signal cancels when the query changes.
+Typing a source's trigger, such as @, opens its suggestions. The Markdown keeps each reference's ID; resolving it is the application's.
 
 ```tsx example=References
 
@@ -220,7 +76,7 @@ Each reference source has a trigger, a name for its list and a lookup. Here a ti
 
 ### Slash commands
 
-`slashCommands` adds a menu of blocks on /, and the application's own commands after them.
+`slashCommands` offers blocks on /, then the application's own commands.
 
 ```tsx example=SlashCommands
 
@@ -228,7 +84,7 @@ Each reference source has a trigger, a name for its list and a lookup. Here a ti
 
 ### Attachments and links
 
-`onUpload` makes Attach files upload through the application, and `onRequestLink` replaces the link dialog with the application's own picker.
+`onUpload` adds Attach files, and `onRequestLink` replaces the link dialog with the application's picker.
 
 ```tsx example=UploadsAndLinks
 
@@ -244,11 +100,105 @@ Each reference source has a trigger, a name for its list and a lookup. Here a ti
 
 ### In a form
 
-With `name`, the form submits the Markdown. `error` says what to fix.
+With `name`, a form submits the Markdown; `error` says what to fix.
 
 ```tsx example=ReleaseNotesForm
 
 ```
+
+### Markdown it keeps
+
+Headings, emphasis, strikethrough, code, lists and task lists, quotes, links, images, simple tables and references. Raw HTML shows as text; other syntax, such as footnotes, needs an extension or [Markdown](../components/markdown.md).
+
+## Variants
+
+| Variant     | Use for                                               |
+| ----------- | ----------------------------------------------------- |
+| `outline`   | A form, a dialog or a pane. The default.              |
+| `underline` | A document that is the page's content, such as notes. |
+| `ghost`     | Notes in a quiet panel: only the text at rest.        |
+
+`toolbar` takes the commands to show, in order, or `false` for none.
+
+<!-- specimen: States -->
+
+## When to use
+
+```tsx do=FewCommands caption="The commands the content needs, such as three for a comment."
+
+```
+
+```tsx dont=EveryCommand caption="Every command for a comment: the toolbar outweighs the text."
+
+```
+
+- Keep `references`, `extensions` and `slashCommands` the same between renders, such as at module scope: a new array starts a new session and loses undo.
+- Show saved Markdown with RichText and the same `extensions`.
+
+### Content
+
+```tsx do=PlaceholderSaysHow caption="A label that names the document, and a placeholder that says how to start."
+
+```
+
+```tsx dont=VaguePlaceholder caption="Text and Enter text here: neither says what to write."
+
+```
+
+- Give image attachments a label that describes the image: it becomes the alternative text.
+
+## Anatomy
+
+```tsx anatomy=RichTextAnatomy
+
+```
+
+1. **Editor** (`env-rich-text-editor`)
+2. **Toolbar** (`env-editor-toolbar`, `toolbar`)
+3. **Document** (`env-rich-text-editor-content`)
+4. **Reference** (`env-rich-text-reference`)
+5. **Task** (`env-rich-text-task`)
+6. **Description** (`env-field-description`, `description`)
+
+Not shown: the suggestions, `env-rich-text-suggestions`, and the status, `env-editor-status`.
+
+## Accessibility
+
+### Keyboard
+
+On Apple keyboards, <kbd>⌘</kbd> replaces <kbd>Ctrl</kbd> and <kbd>⌥</kbd> replaces <kbd>Alt</kbd>.
+
+| Key                                                                         | Action                                                 |
+| --------------------------------------------------------------------------- | ------------------------------------------------------ |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd>                             | Moves to the toolbar, one tab stop, then the document. |
+| <kbd>←</kbd>, <kbd>→</kbd>                                                  | Moves between toolbar buttons.                         |
+| <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>I</kbd>, <kbd>E</kbd>                    | Bold, italic, inline code.                             |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>                               | Strikethrough.                                         |
+| <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd> to <kbd>6</kbd>                 | A heading of that level.                               |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>7</kbd>, <kbd>8</kbd>, <kbd>9</kbd>   | A numbered, bulleted or task list.                     |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>                               | A quote.                                               |
+| <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd>                                 | A code block.                                          |
+| <kbd>Ctrl</kbd>+<kbd>Z</kbd>                                                | Undoes.                                                |
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Y</kbd> | Redoes.                                                |
+| <kbd>Tab</kbd>, <kbd>Shift</kbd>+<kbd>Tab</kbd> in a list item              | Indents or outdents it.                                |
+| A trigger, such as <kbd>@</kbd> or <kbd>/</kbd>                             | Opens the suggestions.                                 |
+| <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>Enter</kbd> in the suggestions             | Highlights an option, and inserts it.                  |
+| <kbd>Esc</kbd>                                                              | Closes the suggestions or the link dialog.             |
+
+### envUI provides
+
+- The document as a multiline `textbox`, named by the label and described by the description and the error.
+- A named toolbar with one tab stop, a tooltip on each button and `aria-pressed` for formatting at the caret.
+- Suggestions as a listbox named by the source's `label`, with the highlighted option announced.
+- A status for uploads, failures and refused links.
+- Raw HTML kept as text, and unsafe URLs refused.
+
+### You provide
+
+- A `label` that names the document, and one for each reference source.
+- Labels for image attachments.
+- Lookups, uploads, navigation and saving.
+- Translated words through EnvUIProvider's `messages`.
 
 ## Changelog
 

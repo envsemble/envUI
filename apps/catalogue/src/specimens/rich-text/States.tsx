@@ -6,7 +6,7 @@ const notes = 'Send the **press kit** to Priya Shah by Friday.';
 /** The editor's looks and states, for review. */
 export default function States() {
   return (
-    <Example title="Editor states" size="collection">
+    <Example size="collection">
       <SpecimenGrid size="card">
         <Specimen title="Outline">
           <RichTextEditor label="Outline notes" defaultValue={notes} toolbar={false} />

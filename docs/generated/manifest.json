@@ -2007,20 +2007,56 @@
         {
           "name": "DismissTip",
           "title": "Dismiss tip",
-          "description": "CloseButton is an icon-only button with a cross, ghost by default, named \"Close\" in the language the EnvUIProvider sets. It closes, dismisses or removes what it sits in, such as a tip, a panel or an item in a list. Under a coarse pointer, its hit area reaches the 2.75 rem touch size, also where its container draws it smaller.",
+          "description": "CloseButton is an icon-only button with a cross that closes, dismisses or removes what it sits in. Under a coarse pointer, its hit area reaches the 2.75 rem touch size.",
           "file": "docs/examples/close-button/DismissTip.tsx"
         },
         {
           "name": "RemovePeople",
-          "title": "Remove items",
-          "description": "Beside others like it, each button names what it removes.",
+          "title": "Remove people",
+          "description": "",
           "file": "docs/examples/close-button/RemovePeople.tsx"
         },
         {
           "name": "ApplicationLabel",
-          "title": "The application's own name",
-          "description": "An EnvUIProvider's `messages` name every CloseButton inside it, in the reader's language.",
+          "title": "Application label",
+          "description": "`aria-label`, else EnvUIProvider's `messages.common.close`, else Close, in the language the provider sets.",
           "file": "docs/examples/close-button/ApplicationLabel.tsx"
+        },
+        {
+          "name": "CloseVariants",
+          "title": "Close variants",
+          "description": "",
+          "file": "docs/examples/close-button/CloseVariants.tsx"
+        },
+        {
+          "name": "CloseAtEnd",
+          "title": "Do: At the end of the header of what it closes, where people look for it.",
+          "description": "",
+          "file": "docs/examples/close-button/CloseAtEnd.tsx"
+        },
+        {
+          "name": "CloseAtStart",
+          "title": "Don't: At the start: it reads as part of the content.",
+          "description": "",
+          "file": "docs/examples/close-button/CloseAtStart.tsx"
+        },
+        {
+          "name": "OneClose",
+          "title": "Do: One way to close, beside the actions.",
+          "description": "",
+          "file": "docs/examples/close-button/OneClose.tsx"
+        },
+        {
+          "name": "TwoCloses",
+          "title": "Don't: A cross and a Close button: two ways to do one thing.",
+          "description": "",
+          "file": "docs/examples/close-button/TwoCloses.tsx"
+        },
+        {
+          "name": "CloseButtonAnatomy",
+          "title": "CloseButton anatomy",
+          "description": "",
+          "file": "docs/examples/close-button/CloseButtonAnatomy.tsx"
         }
       ],
       "parts": {
@@ -2084,14 +2120,50 @@
         {
           "name": "InSidebar",
           "title": "In sidebar",
-          "description": "Here a trigger fills the width at the top of a sidebar and opens a CommandPalette.",
+          "description": "SearchTrigger is the button that opens an application's search. It looks like a search field and presses itself on its shortcut, ⌘K on Apple platforms and Ctrl+K elsewhere, so `onClick` is the one place search opens.",
           "file": "docs/examples/search-trigger/InSidebar.tsx"
         },
         {
           "name": "IconOnly",
           "title": "Icon only",
-          "description": "In a narrow header, the trigger shows only its icon, with the label and the keys in its tooltip. It doesn't listen, since the sidebar's trigger already opens the same search.",
+          "description": "",
           "file": "docs/examples/search-trigger/IconOnly.tsx"
+        },
+        {
+          "name": "UsualShortcut",
+          "title": "Do: The platform's usual shortcut for search.",
+          "description": "",
+          "file": "docs/examples/search-trigger/UsualShortcut.tsx"
+        },
+        {
+          "name": "EditorShortcut",
+          "title": "Don't: A shortcut that editors need, such as Ctrl+B for bold.",
+          "description": "",
+          "file": "docs/examples/search-trigger/EditorShortcut.tsx"
+        },
+        {
+          "name": "ButtonLabel",
+          "title": "Do: Search, or what it searches where there are several.",
+          "description": "",
+          "file": "docs/examples/search-trigger/ButtonLabel.tsx"
+        },
+        {
+          "name": "TypingLabel",
+          "title": "Don't: A placeholder's words: people expect to type, but it is a button.",
+          "description": "",
+          "file": "docs/examples/search-trigger/TypingLabel.tsx"
+        },
+        {
+          "name": "SearchTriggerAnatomy",
+          "title": "SearchTrigger anatomy",
+          "description": "",
+          "file": "docs/examples/search-trigger/SearchTriggerAnatomy.tsx"
+        },
+        {
+          "name": "NarrowSidebar",
+          "title": "Narrow sidebar",
+          "description": "",
+          "file": "docs/examples/search-trigger/NarrowSidebar.tsx"
         }
       ],
       "parts": {
@@ -2253,38 +2325,56 @@
         {
           "name": "FormattingToolbar",
           "title": "Formatting toolbar",
-          "description": "`Toolbar.Button` is an icon-only button named by its `label`, which a tooltip shows with its `shortcut`. With `pressed` it is a toggle, such as Bold, drawn selected and announced as pressed. Buttons inside a toolbar take the `ghost` variant unless they set another, also a Button of the application's own, such as a menu's trigger; such a button keeps a tab stop of its own, outside the arrow keys' path. The default stays in the toolbar: the buttons of a popover, menu or dialog opened from it take their own.",
+          "description": "A toolbar holds the controls for one subject, such as an editor's formatting, as one tab stop that the arrow keys move through. `Toolbar.Button` is an icon button named by its `label`, which a tooltip shows with its `shortcut`; with `pressed` it is a toggle.",
           "file": "docs/examples/toolbar/FormattingToolbar.tsx"
-        },
-        {
-          "name": "ViewControls",
-          "title": "Diagram controls",
-          "description": "A pill Surface rendered as the toolbar floats it over a diagram, with small buttons and a link to help.",
-          "file": "docs/examples/toolbar/ViewControls.tsx"
         },
         {
           "name": "DrawingTools",
           "title": "Drawing tools",
-          "description": "A vertical toolbar of toggles, where one tool stays chosen.",
+          "description": "",
           "file": "docs/examples/toolbar/DrawingTools.tsx"
         },
         {
+          "name": "ViewControls",
+          "title": "View controls",
+          "description": "",
+          "file": "docs/examples/toolbar/ViewControls.tsx"
+        },
+        {
           "name": "PageToolbar",
-          "title": "Page toolbar",
-          "description": "A page's search and filter under its title, with the primary action at the end of the row: a Row in PageHeader's `toolbar`, not a Toolbar.",
+          "title": "Layouts",
+          "description": "Not every bar of controls is a Toolbar. A bar with a field, a Select or labelled actions is a Row, where every control keeps its tab stop and fields keep their arrow keys. | Bar | Build it with | | ------------------------------------------- | ------------------------------------------------------------- | | Icon commands, such as formatting or tools | `Toolbar.Root` with `Toolbar.Button`s | | A page's search, filters and primary action | PageHeader's `toolbar`, a Row | | A section's heading with its actions | `<Row wrap align=\"center\" justify=\"between\">` | | A table's search and actions | A Row above the table, in the size of its rows |",
           "file": "docs/examples/toolbar/PageToolbar.tsx"
         },
         {
-          "name": "SectionToolbar",
-          "title": "Section toolbar",
-          "description": "A section's heading and count at the start and its actions at the end, wrapping when there isn't room.",
-          "file": "docs/examples/toolbar/SectionToolbar.tsx"
+          "name": "GroupedControls",
+          "title": "Do: Related controls in groups, with separators between them.",
+          "description": "",
+          "file": "docs/examples/toolbar/GroupedControls.tsx"
         },
         {
-          "name": "TableToolbar",
-          "title": "Table toolbar",
-          "description": "Small controls above a table of small rows, so the bar and the rows share one density.",
-          "file": "docs/examples/toolbar/TableToolbar.tsx"
+          "name": "UngroupedControls",
+          "title": "Don't: Controls in no order: people search the whole row.",
+          "description": "",
+          "file": "docs/examples/toolbar/UngroupedControls.tsx"
+        },
+        {
+          "name": "SameIconPressed",
+          "title": "Do: A toggle keeps its icon, pressed or not.",
+          "description": "",
+          "file": "docs/examples/toolbar/SameIconPressed.tsx"
+        },
+        {
+          "name": "IconSwapsPressed",
+          "title": "Don't: A pressed toggle that changes its icon: people lose track of what it does.",
+          "description": "",
+          "file": "docs/examples/toolbar/IconSwapsPressed.tsx"
+        },
+        {
+          "name": "ToolbarAnatomy",
+          "title": "Toolbar anatomy",
+          "description": "",
+          "file": "docs/examples/toolbar/ToolbarAnatomy.tsx"
         }
       ],
       "parts": {
@@ -2395,14 +2485,44 @@
         {
           "name": "InRunningText",
           "title": "In running text",
-          "description": "Link is a native `<a>` for a destination inside running text. It takes the font of the text around it, the link color and, by default, an underline, so it stands out from the words beside it. Links render through the `LinkProvider`'s link component, so the application's router handles them.",
+          "description": "Link is a native `<a>` for a destination inside running text. It renders through the `LinkProvider`'s link component, so the application's router handles it.",
           "file": "docs/examples/link/InRunningText.tsx"
         },
         {
           "name": "WithoutUnderline",
-          "title": "Without an underline",
-          "description": "Where the context already marks the words as links, `underline={false}` leaves the link color alone.",
+          "title": "Without underline",
+          "description": "",
           "file": "docs/examples/link/WithoutUnderline.tsx"
+        },
+        {
+          "name": "UnderlinedInText",
+          "title": "Do: The underline in running text.",
+          "description": "",
+          "file": "docs/examples/link/UnderlinedInText.tsx"
+        },
+        {
+          "name": "NoUnderlineInText",
+          "title": "Don't: No underline in a sentence: only its color tells it apart.",
+          "description": "",
+          "file": "docs/examples/link/NoUnderlineInText.tsx"
+        },
+        {
+          "name": "NamesDestination",
+          "title": "Do: Words that name the destination.",
+          "description": "",
+          "file": "docs/examples/link/NamesDestination.tsx"
+        },
+        {
+          "name": "ClickHere",
+          "title": "Don't: Click here: it says nothing out of context.",
+          "description": "",
+          "file": "docs/examples/link/ClickHere.tsx"
+        },
+        {
+          "name": "LinkAnatomy",
+          "title": "Link anatomy",
+          "description": "",
+          "file": "docs/examples/link/LinkAnatomy.tsx"
         }
       ],
       "parts": {
@@ -8107,44 +8227,74 @@
         {
           "name": "EditAndPreview",
           "title": "Edit and preview",
-          "description": "- RichTextEditor edits the Markdown, with references people insert by typing a trigger such as @, optional slash commands, attachments the application uploads and links from its own picker. - RichText shows saved Markdown read-only with the editor's own schema, so it looks the same and its references work the same. It renders on a server too. - createRichTextExtensions returns the Tiptap extensions both share, for other Tiptap integrations that need the same schema.",
+          "description": "RichTextEditor is a field for formatted text that people edit as it looks; its value is Markdown. RichText shows saved Markdown the same way. Both come from the optional `@envsemble/envui/rich-text` entry, which needs Tiptap and marked, as setup describes.",
           "file": "docs/examples/rich-text/EditAndPreview.tsx"
         },
         {
           "name": "SavedContent",
-          "title": "Show saved content",
-          "description": "RichText shows saved Markdown read-only. The application opens references and links through `onReferenceClick` and `onLinkClick`.",
+          "title": "Saved content",
+          "description": "RichText shows saved Markdown read-only, also on a server. `onReferenceClick` and `onLinkClick` open references and links.",
           "file": "docs/examples/rich-text/SavedContent.tsx"
         },
         {
           "name": "References",
-          "title": "Mention people and topics",
-          "description": "Each reference source has a trigger, a name for its list and a lookup. Here a timer stands in for a search on a server, which the signal cancels when the query changes.",
+          "title": "References",
+          "description": "Typing a source's trigger, such as @, opens its suggestions. The Markdown keeps each reference's ID; resolving it is the application's.",
           "file": "docs/examples/rich-text/References.tsx"
         },
         {
           "name": "SlashCommands",
           "title": "Slash commands",
-          "description": "`slashCommands` adds a menu of blocks on /, and the application's own commands after them.",
+          "description": "`slashCommands` offers blocks on /, then the application's own commands.",
           "file": "docs/examples/rich-text/SlashCommands.tsx"
         },
         {
           "name": "UploadsAndLinks",
-          "title": "Attachments and links",
-          "description": "`onUpload` makes Attach files upload through the application, and `onRequestLink` replaces the link dialog with the application's own picker.",
+          "title": "Uploads and links",
+          "description": "`onUpload` adds Attach files, and `onRequestLink` replaces the link dialog with the application's picker.",
           "file": "docs/examples/rich-text/UploadsAndLinks.tsx"
         },
         {
           "name": "EditorCommands",
-          "title": "Commands from outside",
+          "title": "Editor commands",
           "description": "`ref.editor` is the Tiptap editor, so the application can change the document with its commands.",
           "file": "docs/examples/rich-text/EditorCommands.tsx"
         },
         {
           "name": "ReleaseNotesForm",
-          "title": "In a form",
-          "description": "With `name`, the form submits the Markdown. `error` says what to fix.",
+          "title": "Release notes form",
+          "description": "With `name`, a form submits the Markdown; `error` says what to fix.",
           "file": "docs/examples/rich-text/ReleaseNotesForm.tsx"
+        },
+        {
+          "name": "FewCommands",
+          "title": "Do: The commands the content needs, such as three for a comment.",
+          "description": "",
+          "file": "docs/examples/rich-text/FewCommands.tsx"
+        },
+        {
+          "name": "EveryCommand",
+          "title": "Don't: Every command for a comment: the toolbar outweighs the text.",
+          "description": "",
+          "file": "docs/examples/rich-text/EveryCommand.tsx"
+        },
+        {
+          "name": "PlaceholderSaysHow",
+          "title": "Do: A label that names the document, and a placeholder that says how to start.",
+          "description": "",
+          "file": "docs/examples/rich-text/PlaceholderSaysHow.tsx"
+        },
+        {
+          "name": "VaguePlaceholder",
+          "title": "Don't: Text and Enter text here: neither says what to write.",
+          "description": "",
+          "file": "docs/examples/rich-text/VaguePlaceholder.tsx"
+        },
+        {
+          "name": "RichTextAnatomy",
+          "title": "RichText anatomy",
+          "description": "",
+          "file": "docs/examples/rich-text/RichTextAnatomy.tsx"
         }
       ],
       "parts": {
@@ -8418,32 +8568,62 @@
         {
           "name": "ProjectNote",
           "title": "Project note",
-          "description": "MarkdownEditor writes such a string: a native textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with Markdown. Both come from `@envsemble/envui/content`.",
+          "description": "Markdown renders a Markdown string in envUI's typography, and MarkdownEditor writes one. Both come from `@envsemble/envui/content`.",
           "file": "docs/examples/markdown/ProjectNote.tsx"
         },
         {
           "name": "EditDescription",
-          "title": "Write and preview",
-          "description": "MarkdownEditor with a label and a description grows with its text; the Preview tab renders it two heading levels down, as the page that shows it will.",
+          "title": "Edit description",
+          "description": "MarkdownEditor is a textarea with a formatting toolbar, undo and redo, and a Preview tab that renders with `previewProps`.",
           "file": "docs/examples/markdown/EditDescription.tsx"
         },
         {
           "name": "OpenInPanel",
-          "title": "Open links in a panel",
-          "description": "`renderLink` opens document links in a panel with a plain click, and leaves modified clicks and other links to the browser.",
+          "title": "Open in panel",
+          "description": "`renderLink` renders links, such as to open some in a panel; modified clicks stay the browser's.",
           "file": "docs/examples/markdown/OpenInPanel.tsx"
         },
         {
           "name": "CustomElements",
-          "title": "Render an element your way",
-          "description": "`components` replaces how an element renders: here a quote becomes an Alert.",
+          "title": "Custom elements",
+          "description": "`components` replaces how an element renders, here a quote as an Alert; `remarkPlugins` and `rehypePlugins` extend the rest.",
           "file": "docs/examples/markdown/CustomElements.tsx"
         },
         {
           "name": "LinkPicker",
-          "title": "An application's link picker",
-          "description": "`onRequestLink` lets the application choose the link, here after a pause that stands in for its picker, with a shorter toolbar.",
+          "title": "Link picker",
+          "description": "",
           "file": "docs/examples/markdown/LinkPicker.tsx"
+        },
+        {
+          "name": "WithToolbar",
+          "title": "Do: A toolbar, so people needn't know the syntax.",
+          "description": "",
+          "file": "docs/examples/markdown/WithToolbar.tsx"
+        },
+        {
+          "name": "WithoutToolbar",
+          "title": "Don't: No toolbar: only people who know Markdown can format.",
+          "description": "",
+          "file": "docs/examples/markdown/WithoutToolbar.tsx"
+        },
+        {
+          "name": "LinkNamesDestination",
+          "title": "Do: Link text that names the destination.",
+          "description": "",
+          "file": "docs/examples/markdown/LinkNamesDestination.tsx"
+        },
+        {
+          "name": "ClickHere",
+          "title": "Don't: Click here: out of context, it says nothing.",
+          "description": "",
+          "file": "docs/examples/markdown/ClickHere.tsx"
+        },
+        {
+          "name": "MarkdownEditorAnatomy",
+          "title": "Markdown anatomy",
+          "description": "",
+          "file": "docs/examples/markdown/MarkdownEditorAnatomy.tsx"
         }
       ],
       "parts": {
@@ -8572,34 +8752,70 @@
       ],
       "examples": [
         {
-          "name": "InstallSteps",
-          "title": "Install steps",
-          "description": "- Code is inline code inside a sentence, from `@envsemble/envui/content`. - CodeBlock shows source of several lines, highlighted for its `language`, with an optional label and copy button, from `@envsemble/envui/content`. - CodeDiff shows the changes between two versions of a file, rendered by Diffs, and countDiffLines counts the lines they add and remove, from `@envsemble/envui/diff`.",
-          "file": "docs/examples/code/InstallSteps.tsx"
-        },
-        {
           "name": "HighlightedSource",
           "title": "Highlighted source",
-          "description": "`language` highlights the source, and the label names the file. Copying writes the original string.",
+          "description": "Code shows source as selectable text that never runs: inline in a sentence, as a block, or as a diff. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.",
           "file": "docs/examples/code/HighlightedSource.tsx"
         },
         {
-          "name": "WrapLongLines",
-          "title": "Wrap long lines",
-          "description": "With `wrap` long lines wrap inside the block; copying keeps their original line breaks.",
-          "file": "docs/examples/code/WrapLongLines.tsx"
+          "name": "InlineCode",
+          "title": "Inline code",
+          "description": "Code sits inside a sentence, for a command, a value or a file name.",
+          "file": "docs/examples/code/InlineCode.tsx"
         },
         {
           "name": "PlainOutput",
-          "title": "Plain text",
-          "description": "Without a language, such as for a command's output, the source stays plain text.",
+          "title": "Plain output",
+          "description": "envUI picks the code theme from the app theme, with every token at 4.5:1 contrast, or 7:1 under high contrast. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {
           "name": "SettingsDiff",
-          "title": "Code diff",
-          "description": "CodeDiff shows what a draft changes in a file, and countDiffLines counts its lines for a DiffStat beside the title.",
+          "title": "Settings diff",
+          "description": "CodeDiff shows what changed between two versions of a file; `countDiffLines` counts the lines for a DiffStat.",
           "file": "docs/examples/code/SettingsDiff.tsx"
+        },
+        {
+          "name": "WrapLongLines",
+          "title": "Wrap long lines",
+          "description": "",
+          "file": "docs/examples/code/WrapLongLines.tsx"
+        },
+        {
+          "name": "CommandToCopy",
+          "title": "Do: Commands exactly as people type them, with copyable.",
+          "description": "",
+          "file": "docs/examples/code/CommandToCopy.tsx"
+        },
+        {
+          "name": "CommandWithPrompt",
+          "title": "Don't: A prompt such as $: it is copied with the command.",
+          "description": "",
+          "file": "docs/examples/code/CommandWithPrompt.tsx"
+        },
+        {
+          "name": "ExactValue",
+          "title": "Do: Exact values in Code, the sentence around them in plain text.",
+          "description": "",
+          "file": "docs/examples/code/ExactValue.tsx"
+        },
+        {
+          "name": "SentenceAsCode",
+          "title": "Don't: A whole sentence in Code: it reads as a value to type.",
+          "description": "",
+          "file": "docs/examples/code/SentenceAsCode.tsx"
+        },
+        {
+          "name": "CodeBlockAnatomy",
+          "title": "Code anatomy",
+          "description": "",
+          "file": "docs/examples/code/CodeBlockAnatomy.tsx"
+        },
+        {
+          "name": "DiffColumns",
+          "title": "Diff columns",
+          "description": "",
+          "file": "docs/examples/code/DiffColumns.tsx"
         }
       ],
       "parts": {
@@ -8734,50 +8950,68 @@
         {
           "name": "ProjectStatus",
           "title": "Project status",
-          "description": "- CounterBadge shows a count, such as unread messages beside a navigation item, with a full name for assistive technology. - DiffStat shows the size of a change in one pill, such as +12 −3, with additions in the success tone and deletions in the danger tone.",
+          "description": "A badge is a small, static pill that names a state or a fact beside the content it describes.",
           "file": "docs/examples/badge/ProjectStatus.tsx"
-        },
-        {
-          "name": "Tones",
-          "title": "Tones",
-          "description": "Each tone carries a meaning; the word says it too.",
-          "file": "docs/examples/badge/Tones.tsx"
-        },
-        {
-          "name": "Emphasis",
-          "title": "Emphasis",
-          "description": "Soft badges suit most states; a solid badge stands out for the one state that must, and outline badges mark names and categories.",
-          "file": "docs/examples/badge/Emphasis.tsx"
-        },
-        {
-          "name": "NeutralMetadata",
-          "title": "Neutral metadata",
-          "description": "A neutral badge holds a fact about the content beside it, such as the plan a card describes or its seats, in place of 0.x's InfoChip.",
-          "file": "docs/examples/badge/NeutralMetadata.tsx"
-        },
-        {
-          "name": "WithIcon",
-          "title": "With an icon",
-          "description": "A decorative icon before the label repeats the state at a glance.",
-          "file": "docs/examples/badge/WithIcon.tsx"
-        },
-        {
-          "name": "NavigationCounts",
-          "title": "Counts in navigation",
-          "description": "A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.",
-          "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
           "name": "CountsInButtons",
           "title": "Counts in buttons",
-          "description": "In a button, a CounterBadge keeps its own pill and a DiffStat sits on a pill toward the canvas; on a primary button they take the button's text color as an outlined pill.",
+          "description": "",
           "file": "docs/examples/badge/CountsInButtons.tsx"
         },
         {
           "name": "ChangeSize",
-          "title": "The size of a change",
-          "description": "DiffStat beside each changed file, read as \"124 added lines and 37 removed lines\".",
+          "title": "Change size",
+          "description": "",
           "file": "docs/examples/badge/ChangeSize.tsx"
+        },
+        {
+          "name": "Emphasis",
+          "title": "Emphasis",
+          "description": "",
+          "file": "docs/examples/badge/Emphasis.tsx"
+        },
+        {
+          "name": "Tones",
+          "title": "Tones",
+          "description": "",
+          "file": "docs/examples/badge/Tones.tsx"
+        },
+        {
+          "name": "SoftInLists",
+          "title": "Do: Soft badges in a list, and solid only for the state that must stand out.",
+          "description": "",
+          "file": "docs/examples/badge/SoftInLists.tsx"
+        },
+        {
+          "name": "SolidEverywhere",
+          "title": "Don't: Solid badges everywhere: none of them stands out.",
+          "description": "",
+          "file": "docs/examples/badge/SolidEverywhere.tsx"
+        },
+        {
+          "name": "ShortState",
+          "title": "Do: One or two words, in sentence case.",
+          "description": "",
+          "file": "docs/examples/badge/ShortState.tsx"
+        },
+        {
+          "name": "SentenceInBadge",
+          "title": "Don't: A sentence: it drops below the title and stops reading as a state.",
+          "description": "",
+          "file": "docs/examples/badge/SentenceInBadge.tsx"
+        },
+        {
+          "name": "BadgeAnatomy",
+          "title": "Badge anatomy",
+          "description": "",
+          "file": "docs/examples/badge/BadgeAnatomy.tsx"
+        },
+        {
+          "name": "LongState",
+          "title": "Long state",
+          "description": "",
+          "file": "docs/examples/badge/LongState.tsx"
         }
       ],
       "parts": {
@@ -9256,20 +9490,50 @@
         {
           "name": "Facts",
           "title": "Facts",
-          "description": "DescriptionList shows the facts about one thing as labels and their values: a `dl` whose items are its terms with their values. Labels are muted and line up in a column as wide as the longest; below 24 rem of the list's own width, each label moves above its value, so a list in a sidebar or on a phone needs no other layout.",
+          "description": "DescriptionList shows the facts about one thing as labels and their values.",
           "file": "docs/examples/description-list/Facts.tsx"
         },
         {
           "name": "Stacked",
           "title": "Stacked",
-          "description": "Contact details with long values put each label above its value.",
+          "description": "",
           "file": "docs/examples/description-list/Stacked.tsx"
         },
         {
-          "name": "WithControls",
-          "title": "With controls",
-          "description": "Settings of one item, each a small control beside its label.",
-          "file": "docs/examples/description-list/WithControls.tsx"
+          "name": "ControlsAligned",
+          "title": "Do: With controls, each label sits on its control's line.",
+          "description": "",
+          "file": "docs/examples/description-list/ControlsAligned.tsx"
+        },
+        {
+          "name": "ControlsUnaligned",
+          "title": "Don't: Without controls: labels sit higher than the controls beside them.",
+          "description": "",
+          "file": "docs/examples/description-list/ControlsUnaligned.tsx"
+        },
+        {
+          "name": "ShortLabels",
+          "title": "Do: Short nouns as labels, and a dash for a value not set.",
+          "description": "",
+          "file": "docs/examples/description-list/ShortLabels.tsx"
+        },
+        {
+          "name": "WordyLabels",
+          "title": "Don't: Questions, colons and empty values.",
+          "description": "",
+          "file": "docs/examples/description-list/WordyLabels.tsx"
+        },
+        {
+          "name": "DescriptionListAnatomy",
+          "title": "DescriptionList anatomy",
+          "description": "",
+          "file": "docs/examples/description-list/DescriptionListAnatomy.tsx"
+        },
+        {
+          "name": "FactsAtWidths",
+          "title": "Facts at widths",
+          "description": "",
+          "file": "docs/examples/description-list/FactsAtWidths.tsx"
         }
       ],
       "parts": {
@@ -9394,26 +9658,50 @@
         {
           "name": "ShortcutsInText",
           "title": "Shortcuts in text",
-          "description": "Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bottom edge that sits on the baseline of the text around it. With `keys` it shows keys pressed together, such as Ctrl+P, as one key cap each, joined by a plus. Kbd only shows keys; the application handles the shortcut.",
+          "description": "Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only shows them: the application handles the shortcut.",
           "file": "docs/examples/kbd/ShortcutsInText.tsx"
         },
         {
           "name": "KeyHints",
           "title": "Key hints",
-          "description": "A footer that names the keys a list handles, one hint after another.",
+          "description": "",
           "file": "docs/examples/kbd/KeyHints.tsx"
         },
         {
           "name": "ShortcutSequence",
-          "title": "A sequence of shortcuts",
-          "description": "Each step of a sequence is a Kbd of its own, with \"then\" between them; `keys` is only for keys pressed together.",
+          "title": "Do: A sequence as one Kbd per step, with then between them.",
+          "description": "",
           "file": "docs/examples/kbd/ShortcutSequence.tsx"
         },
         {
+          "name": "SequenceAsOne",
+          "title": "Don't: A sequence in one keys list: it reads as four keys pressed at once.",
+          "description": "",
+          "file": "docs/examples/kbd/SequenceAsOne.tsx"
+        },
+        {
+          "name": "SayWhatItDoes",
+          "title": "Do: Say what the keys do, in a sentence.",
+          "description": "",
+          "file": "docs/examples/kbd/SayWhatItDoes.tsx"
+        },
+        {
+          "name": "KeysAlone",
+          "title": "Don't: A key and a word: people have to guess the rest.",
+          "description": "",
+          "file": "docs/examples/kbd/KeysAlone.tsx"
+        },
+        {
           "name": "PlatformKeys",
-          "title": "The reader's platform",
-          "description": "Apple keyboards name the Command key where others use Ctrl. Pass the keys of the reader's platform; Kbd shows what it is given.",
+          "title": "Content",
+          "description": "",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
+        },
+        {
+          "name": "KbdAnatomy",
+          "title": "Kbd anatomy",
+          "description": "",
+          "file": "docs/examples/kbd/KbdAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9499,20 +9787,32 @@
         {
           "name": "ShowResults",
           "title": "Show results",
-          "description": "AnimatedNumber shows a number inside text and rolls it to its new value when it changes: in from below when it grows and from above when it shrinks. The movement draws the eye to a count that other controls change, such as the number of results on the button that shows them. The text is always the current value, so accessible names and copied text never hold a number on its way.",
+          "description": "AnimatedNumber shows a number in text and rolls it to its new value: up as it grows, down as it shrinks. Its text is always the current value.",
           "file": "docs/examples/animated-number/ShowResults.tsx"
         },
         {
+          "name": "CustomFormat",
+          "title": "Custom format",
+          "description": "`formatValue` writes the value, such as a currency. By default it follows EnvUIProvider's `locale`.",
+          "file": "docs/examples/animated-number/CustomFormat.tsx"
+        },
+        {
           "name": "SeatsLeft",
-          "title": "Seats left",
-          "description": "The sentence is a status region, so the new count is announced as people change it.",
+          "title": "Do: Roll the one number a choice changes.",
+          "description": "",
           "file": "docs/examples/animated-number/SeatsLeft.tsx"
         },
         {
-          "name": "CustomFormat",
-          "title": "A formatted value",
-          "description": "`formatValue` writes the price as a currency; it rolls up for yearly billing and down for monthly.",
-          "file": "docs/examples/animated-number/CustomFormat.tsx"
+          "name": "EveryNumberRolls",
+          "title": "Don't: Several numbers rolling at once: none of them draws the eye.",
+          "description": "",
+          "file": "docs/examples/animated-number/EveryNumberRolls.tsx"
+        },
+        {
+          "name": "AnimatedNumberAnatomy",
+          "title": "AnimatedNumber anatomy",
+          "description": "",
+          "file": "docs/examples/animated-number/AnimatedNumberAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9603,26 +9903,50 @@
         {
           "name": "ReviewScore",
           "title": "Review score",
-          "description": "A rating shows a score people gave as stars, such as 4.5 out of 5, filled to the value in half steps. It is read-only: it displays a rating and never asks for one. The stars are one image named by the rating, so assistive technology reads it once, such as \"4.5 out of 5 stars\"; `showValue` adds the number before them for people who scan.",
+          "description": "A rating shows a score people gave as stars, in half steps. It only shows a rating; it never asks for one.",
           "file": "docs/examples/rating/ReviewScore.tsx"
         },
         {
+          "name": "ApplicationLabel",
+          "title": "Application label",
+          "description": "`messages.rating.label` on EnvUIProvider writes the name, and the provider's locale the number, such as 4,5 in German.",
+          "file": "docs/examples/rating/ApplicationLabel.tsx"
+        },
+        {
           "name": "Scales",
-          "title": "Half stars and other scales",
-          "description": "The stars fill to the value in half steps. `max` sets another scale, such as ten stars.",
+          "title": "Scales",
+          "description": "",
           "file": "docs/examples/rating/Scales.tsx"
         },
         {
+          "name": "WhoRated",
+          "title": "Do: Say whose rating it is and how many people gave it.",
+          "description": "",
+          "file": "docs/examples/rating/WhoRated.tsx"
+        },
+        {
+          "name": "UnsourcedStars",
+          "title": "Don't: Stars with no source: people can't tell how much they count.",
+          "description": "",
+          "file": "docs/examples/rating/UnsourcedStars.tsx"
+        },
+        {
           "name": "ReviewList",
-          "title": "A list of reviews",
-          "description": "In a list of individual reviews the stars are enough; the reviewer's name says whose rating it is.",
+          "title": "Do: Stars alone beside one reviewer's words.",
+          "description": "",
           "file": "docs/examples/rating/ReviewList.tsx"
         },
         {
-          "name": "ApplicationLabel",
-          "title": "The application's own name",
-          "description": "`messages.rating.label` on EnvUIProvider writes the accessible name, in the reader's language; the provider's locale writes the number, such as 4,5 with a decimal comma in German.",
-          "file": "docs/examples/rating/ApplicationLabel.tsx"
+          "name": "RepeatedRating",
+          "title": "Don't: The rating said again in text: it is read twice.",
+          "description": "",
+          "file": "docs/examples/rating/RepeatedRating.tsx"
+        },
+        {
+          "name": "RatingAnatomy",
+          "title": "Rating anatomy",
+          "description": "",
+          "file": "docs/examples/rating/RatingAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9722,32 +10046,56 @@
         {
           "name": "DraftSaved",
           "title": "Draft saved",
-          "description": "`formatRelativeTime` returns the same text as a string, for places that take only text, such as an option label or an accessible name. It runs anywhere, also on a server.",
+          "description": "RelativeTime shows a moment relative to now, such as 3 hours ago, and keeps it current while the page stays open.",
           "file": "docs/examples/relative-time/DraftSaved.tsx"
         },
         {
           "name": "PastAndComing",
-          "title": "Past and coming moments",
-          "description": "Past moments read \"ago\" and coming ones \"in\"; the unit grows with the distance, from minutes to years.",
+          "title": "Past and coming",
+          "description": "",
           "file": "docs/examples/relative-time/PastAndComing.tsx"
+        },
+        {
+          "name": "VersionLabels",
+          "title": "Version labels",
+          "description": "`formatRelativeTime` returns the same text as a string, for an option label or a name. It doesn't update by itself.",
+          "file": "docs/examples/relative-time/VersionLabels.tsx"
         },
         {
           "name": "Formats",
           "title": "Formats",
-          "description": "`short` and `narrow` shorten the words for tight spaces.",
+          "description": "",
           "file": "docs/examples/relative-time/Formats.tsx"
         },
         {
+          "name": "EventFirst",
+          "title": "Do: Put the event first, so the time never stands alone.",
+          "description": "",
+          "file": "docs/examples/relative-time/EventFirst.tsx"
+        },
+        {
+          "name": "TimeAlone",
+          "title": "Don't: A time on its own: people can't tell what happened.",
+          "description": "",
+          "file": "docs/examples/relative-time/TimeAlone.tsx"
+        },
+        {
           "name": "ExactDateNearby",
-          "title": "The exact date nearby",
-          "description": "Where the date shows beside it, the relative time needs no tooltip.",
+          "title": "Do: Show the date where it matters, with the relative time beside it.",
+          "description": "",
           "file": "docs/examples/relative-time/ExactDateNearby.tsx"
         },
         {
-          "name": "VersionLabels",
-          "title": "Text for an option label",
-          "description": "`formatRelativeTime` returns the same text as a string, for places that take only text. The string doesn't update by itself.",
-          "file": "docs/examples/relative-time/VersionLabels.tsx"
+          "name": "DateOnlyInTooltip",
+          "title": "Don't: The date only in the tooltip: keyboards and screen readers never reach it.",
+          "description": "",
+          "file": "docs/examples/relative-time/DateOnlyInTooltip.tsx"
+        },
+        {
+          "name": "RelativeTimeAnatomy",
+          "title": "RelativeTime anatomy",
+          "description": "",
+          "file": "docs/examples/relative-time/RelativeTimeAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9886,20 +10234,50 @@
         {
           "name": "VisibilityHelp",
           "title": "Visibility help",
-          "description": "A disclosure is a one-line summary that shows and hides the details below it. It is the native `<details>` element with its `<summary>`, so opening, closing, the keyboard and what assistive technology hears are the platform's. It suits guidance and settings that most people don't need; what they need to complete a task stays visible.",
+          "description": "A disclosure is a one-line summary that shows and hides the details below it, on the native `<details>` element. Finding text in a closed panel opens it, where the browser supports it.",
           "file": "docs/examples/disclosure/VisibilityHelp.tsx"
         },
         {
           "name": "FrequentQuestions",
-          "title": "Questions, one open at a time",
-          "description": "Disclosures with the same `name` act as one group: opening an answer closes the one that was open.",
+          "title": "Frequent questions",
+          "description": "Disclosures that share a `name` open one at a time, where the browser supports it.",
           "file": "docs/examples/disclosure/FrequentQuestions.tsx"
         },
         {
           "name": "OpenOnError",
-          "title": "Open on an error",
-          "description": "Advanced settings stay closed until a field in them has an error; `open` and `onOpenChange` then open the disclosure so the error shows.",
+          "title": "Open on error",
+          "description": "`open` and `onOpenChange` control it, such as to open it when a field inside has an error.",
           "file": "docs/examples/disclosure/OpenOnError.tsx"
+        },
+        {
+          "name": "OptionalHelp",
+          "title": "Do: Optional guidance in a disclosure, and what the task needs in sight.",
+          "description": "",
+          "file": "docs/examples/disclosure/OptionalHelp.tsx"
+        },
+        {
+          "name": "HiddenRules",
+          "title": "Don't: Rules people need, hidden: they find them only after an error.",
+          "description": "",
+          "file": "docs/examples/disclosure/HiddenRules.tsx"
+        },
+        {
+          "name": "SayWhatItHolds",
+          "title": "Do: A summary that says what the details hold.",
+          "description": "",
+          "file": "docs/examples/disclosure/SayWhatItHolds.tsx"
+        },
+        {
+          "name": "VagueSummary",
+          "title": "Don't: More or Show details: people open it to find out.",
+          "description": "",
+          "file": "docs/examples/disclosure/VagueSummary.tsx"
+        },
+        {
+          "name": "DisclosureAnatomy",
+          "title": "Disclosure anatomy",
+          "description": "",
+          "file": "docs/examples/disclosure/DisclosureAnatomy.tsx"
         }
       ],
       "parts": {
@@ -9984,56 +10362,68 @@
         {
           "name": "PersonWithName",
           "title": "Person with name",
-          "description": "- AvatarButton is an avatar as a button, such as the account menu's trigger, with a halo on hover, press and while its menu is open, and the name in a tooltip. - AvatarGroup overlaps the avatars of a set of people, with a chip that counts the people it doesn't show and lists them in its tooltip.",
+          "description": "An avatar is a round picture of a person or an organization. Beside a visible name it is decorative; with `named` it is an image named after them.",
           "file": "docs/examples/avatar/PersonWithName.tsx"
         },
         {
-          "name": "Colors",
-          "title": "Colors",
-          "description": "The eight colors of an avatar without a picture, with initials and with the default person picture; each holds white at 4.5:1 or more.",
-          "file": "docs/examples/avatar/Colors.tsx"
-        },
-        {
-          "name": "Sizes",
-          "title": "Sizes",
-          "description": "Four sizes, from a compact row to a profile page; each is named here, with no name beside it.",
-          "file": "docs/examples/avatar/Sizes.tsx"
-        },
-        {
-          "name": "Fallbacks",
-          "title": "Pictures and fallbacks",
-          "description": "A picture covers the circle. One that fails to load shows the default person picture, and an organization shows its initials.",
-          "file": "docs/examples/avatar/Fallbacks.tsx"
-        },
-        {
-          "name": "ColorsFromNames",
-          "title": "Colors from names",
-          "description": "Each name chooses its color, the same wherever the name appears.",
-          "file": "docs/examples/avatar/ColorsFromNames.tsx"
-        },
-        {
-          "name": "OwnColor",
-          "title": "An organization's own color",
-          "description": "`hue` sets the color, such as an organization's own, instead of the one its name would choose.",
-          "file": "docs/examples/avatar/OwnColor.tsx"
-        },
-        {
           "name": "AccountButton",
-          "title": "Account menu",
-          "description": "AvatarButton opens the account menu; its tooltip shows the name and the e-mail address, and its halo stays while the menu is open.",
+          "title": "Account button",
+          "description": "",
           "file": "docs/examples/avatar/AccountButton.tsx"
         },
         {
           "name": "ProjectMembers",
-          "title": "Members in a row",
-          "description": "Groups on List rows show three or two avatars and count the rest, also people who are counted in `total` but not passed. The ring takes the row's fill.",
+          "title": "Project members",
+          "description": "",
           "file": "docs/examples/avatar/ProjectMembers.tsx"
         },
         {
           "name": "PressableAvatars",
           "title": "Pressable avatars",
-          "description": "With `onPersonClick` every avatar is a button named after the person; a person with `href` is a link. The chip lists the people it hides.",
+          "description": "With `onPersonClick` each avatar in a group is a button; a person with `href` is a link. The count lists the people it hides.",
           "file": "docs/examples/avatar/PressableAvatars.tsx"
+        },
+        {
+          "name": "Sizes",
+          "title": "Sizes",
+          "description": "",
+          "file": "docs/examples/avatar/Sizes.tsx"
+        },
+        {
+          "name": "Fallbacks",
+          "title": "Pictures and fallbacks",
+          "description": "Without a picture, or while it loads or after it fails, an avatar shows the default person picture; `fallback=\"initials\"` shows initials, for an organization.",
+          "file": "docs/examples/avatar/Fallbacks.tsx"
+        },
+        {
+          "name": "NamesBeside",
+          "title": "Do: The name beside the avatar, wherever there is room.",
+          "description": "",
+          "file": "docs/examples/avatar/NamesBeside.tsx"
+        },
+        {
+          "name": "AvatarsAlone",
+          "title": "Don't: Avatars alone: people must hover each one to learn who it is.",
+          "description": "",
+          "file": "docs/examples/avatar/AvatarsAlone.tsx"
+        },
+        {
+          "name": "RoleAsBadge",
+          "title": "Do: A role in a Badge, beside the name.",
+          "description": "",
+          "file": "docs/examples/avatar/RoleAsBadge.tsx"
+        },
+        {
+          "name": "RoleAsColor",
+          "title": "Don't: A role in the avatar's color: nobody can read it.",
+          "description": "",
+          "file": "docs/examples/avatar/RoleAsColor.tsx"
+        },
+        {
+          "name": "AvatarAnatomy",
+          "title": "Avatar anatomy",
+          "description": "",
+          "file": "docs/examples/avatar/AvatarAnatomy.tsx"
         }
       ],
       "parts": {
@@ -10237,26 +10627,56 @@
         {
           "name": "Conversation",
           "title": "Conversation",
-          "description": "MessageList is a log, so assistive technology politely announces messages as they arrive. A Composer below the list writes the next message.",
+          "description": "A message is one entry of a conversation, such as a chat message or a comment, in a MessageList that announces new messages politely. A Composer below writes the next one.",
           "file": "docs/examples/message/Conversation.tsx"
         },
         {
           "name": "DeliveryStatus",
           "title": "Delivery status",
-          "description": "A message that couldn't be sent says so and offers Retry; while it is sent again it shows Sending.",
+          "description": "`status` shows Sending, or Not sent; offer Retry beside a message that failed.",
           "file": "docs/examples/message/DeliveryStatus.tsx"
         },
         {
           "name": "FormattedAnswer",
-          "title": "A formatted answer",
-          "description": "Markdown inside a message from someone else keeps the full width. A CopyButton in `actions` copies the answer.",
+          "title": "Formatted answer",
+          "description": "",
           "file": "docs/examples/message/FormattedAnswer.tsx"
         },
         {
           "name": "CommentThread",
-          "title": "A comment thread",
-          "description": "Comments by several people read best at full width: each is `from=\"other\"`, with its author and a RelativeTime in the header.",
+          "title": "Do: Comments by others, each with its author, at full width.",
+          "description": "",
           "file": "docs/examples/message/CommentThread.tsx"
+        },
+        {
+          "name": "SelfForOthers",
+          "title": "Don't: self for someone else, to put them on a side: self means you.",
+          "description": "",
+          "file": "docs/examples/message/SelfForOthers.tsx"
+        },
+        {
+          "name": "AuthorWhereNeeded",
+          "title": "Do: An author where it tells people apart.",
+          "description": "",
+          "file": "docs/examples/message/AuthorWhereNeeded.tsx"
+        },
+        {
+          "name": "AuthorEverywhere",
+          "title": "Don't: Your own name on your own messages.",
+          "description": "",
+          "file": "docs/examples/message/AuthorEverywhere.tsx"
+        },
+        {
+          "name": "MessageAnatomy",
+          "title": "Message anatomy",
+          "description": "",
+          "file": "docs/examples/message/MessageAnatomy.tsx"
+        },
+        {
+          "name": "BubbleWidth",
+          "title": "Bubble width",
+          "description": "",
+          "file": "docs/examples/message/BubbleWidth.tsx"
         }
       ],
       "parts": {
@@ -10399,26 +10819,62 @@
         {
           "name": "ProjectHealth",
           "title": "Project health",
-          "description": "- Stat.Root is one figure with its `label`, an optional `trend` and an optional `description`. It has no surface of its own. - Stat.Group puts stats on one surface, a pane by default, in as many even columns as fit.",
+          "description": "A stat is a labelled key figure, with how it changed. Stat.Group puts a few on one surface.",
           "file": "docs/examples/stat/ProjectHealth.tsx"
         },
         {
           "name": "TrendTones",
-          "title": "Good news and bad news",
-          "description": "Fewer risks take the success tone, a higher error rate the danger tone, and a rising cost that stays within budget the warning tone.",
+          "title": "Trend tones",
+          "description": "A trend's `tone` replaces the default where a rise is bad news, or a fall good news.",
           "file": "docs/examples/stat/TrendTones.tsx"
         },
         {
           "name": "OnAPane",
-          "title": "On a pane",
-          "description": "On a pane, the group takes the muted background and a smaller padding; the heading names the group.",
+          "title": "Backgrounds",
+          "description": "Stat.Group is `default` on the page, and `muted` on a pane; `page` and `raised` where they fit.",
           "file": "docs/examples/stat/OnAPane.tsx"
         },
         {
           "name": "InACard",
-          "title": "One figure in a card",
-          "description": "A stat on its own has no surface; a Card gives it one.",
+          "title": "One figure",
+          "description": "A Stat.Root has no surface; a Card gives one figure a frame.",
           "file": "docs/examples/stat/InACard.tsx"
+        },
+        {
+          "name": "TrendInWords",
+          "title": "Do: Say the change in words, with its period.",
+          "description": "",
+          "file": "docs/examples/stat/TrendInWords.tsx"
+        },
+        {
+          "name": "TrendWithoutWords",
+          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
+          "description": "",
+          "file": "docs/examples/stat/TrendWithoutWords.tsx"
+        },
+        {
+          "name": "BadNewsTone",
+          "title": "Do: A rise that is bad news in the danger tone.",
+          "description": "",
+          "file": "docs/examples/stat/BadNewsTone.tsx"
+        },
+        {
+          "name": "DefaultToneForBadNews",
+          "title": "Don't: A rising error rate in the default success tone.",
+          "description": "",
+          "file": "docs/examples/stat/DefaultToneForBadNews.tsx"
+        },
+        {
+          "name": "StatAnatomy",
+          "title": "Stat anatomy",
+          "description": "",
+          "file": "docs/examples/stat/StatAnatomy.tsx"
+        },
+        {
+          "name": "GroupColumns",
+          "title": "Group columns",
+          "description": "",
+          "file": "docs/examples/stat/GroupColumns.tsx"
         }
       ],
       "parts": {
@@ -10542,26 +10998,62 @@
         {
           "name": "Deployments",
           "title": "Deployments",
-          "description": "A calendar heatmap shows a value for each day as a shade of one tone: weeks are columns and weekdays rows, with month names above and a legend below. Higher values stand out more in both themes. Every day is a cell named with its date and value, shown in a tooltip on hover and focus, and the grid is one tab stop that the arrow keys move through. The application passes the values by day; dates are calendar days, independent of time zones.",
+          "description": "A calendar heatmap shows a value for each day as a shade of one tone, weeks as columns. Each day is named with its date and value, shown in a tooltip.",
           "file": "docs/examples/calendar-heatmap/Deployments.tsx"
         },
         {
           "name": "ColorByRank",
           "title": "Color by rank",
-          "description": "`thresholds` from quantiles of the active days make each step hold about as many days, so a few very busy days don't leave the rest pale.",
+          "description": "`thresholds` sets where each step starts, such as quantiles of the data, so a few very busy days don't leave the rest pale.",
           "file": "docs/examples/calendar-heatmap/ColorByRank.tsx"
         },
         {
+          "name": "CustomTooltip",
+          "title": "Custom tooltip",
+          "description": "`formatTooltip` lays out the tooltip; the day's name keeps its date and value.",
+          "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
+        },
+        {
           "name": "ApplicationStrings",
-          "title": "The application's own strings",
-          "description": "EnvUIProvider's messages write the legend in the application's words, in the reader's language, and its locale names the months, weekdays and dates; `weekStart={1}` starts the weeks on Monday.",
+          "title": "Application strings",
+          "description": "EnvUIProvider's `locale` names the months, weekdays and dates, and `messages.calendarHeatmap` writes the legend. `weekStart={1}` starts weeks on Monday.",
           "file": "docs/examples/calendar-heatmap/ApplicationStrings.tsx"
         },
         {
-          "name": "CustomTooltip",
-          "title": "A tooltip of your own",
-          "description": "`formatTooltip` lays out the tooltip; the day's accessible name keeps its date and value.",
-          "file": "docs/examples/calendar-heatmap/CustomTooltip.tsx"
+          "name": "IncidentsInDanger",
+          "title": "Do: A tone that says what more means: danger for incidents.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/IncidentsInDanger.tsx"
+        },
+        {
+          "name": "IncidentsInSuccess",
+          "title": "Don't: Incidents in the success tone: a bad week reads as a good one.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/IncidentsInSuccess.tsx"
+        },
+        {
+          "name": "FiveLevels",
+          "title": "Do: Five steps, which people can tell apart.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/FiveLevels.tsx"
+        },
+        {
+          "name": "TenLevels",
+          "title": "Don't: Ten steps: neighbouring shades look the same.",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/TenLevels.tsx"
+        },
+        {
+          "name": "HeatmapAnatomy",
+          "title": "CalendarHeatmap anatomy",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/HeatmapAnatomy.tsx"
+        },
+        {
+          "name": "ScrollingWeeks",
+          "title": "Scrolling weeks",
+          "description": "",
+          "file": "docs/examples/calendar-heatmap/ScrollingWeeks.tsx"
         }
       ],
       "parts": {

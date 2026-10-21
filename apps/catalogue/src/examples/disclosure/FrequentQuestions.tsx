@@ -21,7 +21,7 @@ export default function FrequentQuestions() {
       {questions.map(({ question, answer }, index) => (
         // A shared name lets one answer stay open at a time, where the browser supports it; the
         // first starts open.
-        <Disclosure key={question} name="plan-questions" title={question} open={index === 0}>
+        <Disclosure key={question} name="plan-questions" title={question} defaultOpen={index === 0}>
           <Text>{answer}</Text>
         </Disclosure>
       ))}

@@ -4,7 +4,7 @@ import { Example, Specimen, SpecimenGrid } from '../../previews/Example';
 /** Every hue an avatar without a picture takes, with initials and with the default person picture. */
 export default function Hues() {
   return (
-    <Example title="Colors" size="collection">
+    <Example size="collection">
       <SpecimenGrid size="compact">
         {avatarHues.map((hue) => (
           <Specimen
