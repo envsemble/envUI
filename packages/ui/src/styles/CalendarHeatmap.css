@@ -26,7 +26,12 @@
   --env-calendar-heatmap-tone: var(--env-color-fg-done);
 }
 /* Narrow containers scroll the weeks sideways inside the heatmap. */
+/* A reversed row, so its scroll origin is its end: it starts at the most recent weeks, also in the
+   server's markup, and keeps them in view as the weeks grow. The weeks sit at the inline start
+   where they fit. */
 .env-calendar-heatmap-scroll {
+  display: flex;
+  flex-direction: row-reverse;
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-x: auto;
@@ -34,6 +39,8 @@
   scrollbar-width: thin;
 }
 .env-calendar-heatmap-grid {
+  flex: none;
+  margin-inline-end: auto;
   border-collapse: separate;
   border-spacing: var(--env-calendar-heatmap-gap);
   font: inherit;
