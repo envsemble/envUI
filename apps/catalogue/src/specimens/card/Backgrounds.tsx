@@ -6,7 +6,7 @@ const backgrounds = ['muted', 'default', 'page'] as const;
 /** Content and link cards on each background, on a pane, and a disabled link card. */
 export default function Backgrounds() {
   return (
-    <Example title="Backgrounds" size="collection">
+    <Example size="collection">
       <Surface background="default">
         <SpecimenGrid size="card">
           {backgrounds.map((background) => (

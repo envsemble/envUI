@@ -87,7 +87,18 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
       ? loadParts().then(noop)
       : typeof options.parts === 'string' || options.parts instanceof URL
         ? loadParts(options.parts).then(noop)
-        : Promise.resolve(setParts(options.parts));
+        : // Parts handed over in the wrong shape don't stop dev mode: it runs without descriptions.
+          Promise.resolve(options.parts)
+            .then((parts) => {
+              setParts(parts);
+            })
+            .catch((error: unknown) => {
+              // eslint-disable-next-line no-console
+              console.warn(
+                'envUI dev mode: the parts given are not docs/generated/parts.json.',
+                error,
+              );
+            });
 
   const style = document.createElement('style');
   style.setAttribute(devAttribute, '');

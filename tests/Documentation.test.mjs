@@ -766,13 +766,11 @@ test('pattern and template pages are validated as their kind', async () => {
   });
 });
 
-/** A Switch page written as exchanges: a question per section, live figures and a legend. */
-const exchangeBody = [
+/** A Switch page on the figure template: short text, live figures and a legend. */
+const figureBody = [
   '# Switch',
   '',
   '## Overview',
-  '',
-  '> What is a switch, and what does it look like?',
   '',
   'Turns a setting on or off.',
   '',
@@ -782,8 +780,6 @@ const exchangeBody = [
   '',
   '## When to use',
   '',
-  '> When should I use a switch?',
-  '',
   '```tsx do=Instant caption="Use a switch for a setting that applies at once."',
   '',
   '```',
@@ -792,13 +788,11 @@ const exchangeBody = [
   '',
   '```',
   '',
-  '> How do I label it?',
+  '### Labels',
   '',
   'Name the setting, not the action.',
   '',
   '## Anatomy',
-  '',
-  '> What is a switch made of?',
   '',
   '```tsx anatomy=Parts',
   '',
@@ -809,15 +803,11 @@ const exchangeBody = [
   '',
   '## Adapting to width',
   '',
-  '> How does it behave when narrow?',
-  '',
   '```tsx example=Narrow widths="16 30"',
   '',
   '```',
   '',
   '## Accessibility',
-  '',
-  '> How do I keep it accessible?',
   '',
   '### envUI provides',
   '',
@@ -833,30 +823,19 @@ const exchangeBody = [
   '',
 ].join('\n');
 
-test('a page whose Overview opens with a question is read as exchanges', async () => {
+test('a component page with a When to use section is on the figure template', async () => {
   await templateFixture(async ({ page, read, examples }) => {
     for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
       await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
-    await writeFile(page, switchFrontmatter + exchangeBody);
+    await writeFile(page, switchFrontmatter + figureBody);
     const documents = read();
     const switchPage = documents[1];
-    assert.equal(switchPage.format, 'exchanges');
+    assert.equal(switchPage.format, 'figures');
     assert.deepEqual(
       switchPage.sections.map((section) => section.id),
       ['overview', 'usage', 'anatomy', 'width', 'accessibility', 'changelog'],
     );
     const blocks = switchPage.sections.flatMap((section) => section.blocks);
-    assert.deepEqual(
-      blocks.filter((block) => block.kind === 'question').map((block) => block.text),
-      [
-        'What is a switch, and what does it look like?',
-        'When should I use a switch?',
-        'How do I label it?',
-        'What is a switch made of?',
-        'How does it behave when narrow?',
-        'How do I keep it accessible?',
-      ],
-    );
     const figure = (name) => blocks.find((block) => block.name === name);
     assert.deepEqual(
       [figure('Instant').role, figure('Instant').caption],
@@ -872,9 +851,9 @@ test('a page whose Overview opens with a question is read as exchanges', async (
     ]);
     assert.deepEqual(figure('Narrow').widths, [16, 30]);
 
-    // The packaged page keeps the questions, the figures' kinds and attributes, and the legend.
+    // The packaged page keeps the figures' kinds and attributes, and the legend.
     const compiled = compileDocument(switchPage, documents, { props: switchProps, examples });
-    assert.match(compiled, /^> When should I use a switch\?$/m);
+    assert.match(compiled, /^### Labels$/m);
     assert.ok(
       compiled.includes(
         `\`\`\`tsx do=Instant caption="Use a switch for a setting that applies at once."\n${switchExample}\`\`\``,
@@ -888,7 +867,7 @@ test('a page whose Overview opens with a question is read as exchanges', async (
   });
 });
 
-test('a page of exchanges rejects what breaks its form', async () => {
+test('a page on the figure template rejects what breaks its form', async () => {
   await templateFixture(async ({ page, read, examples, docs }) => {
     for (const name of ['Instant', 'OnSubmit', 'Parts', 'Narrow'])
       await writeFile(join(examples, 'switch', `${name}.tsx`), switchExample);
@@ -896,14 +875,10 @@ test('a page of exchanges rejects what breaks its form', async () => {
       await writeFile(page, switchFrontmatter + body);
       assert.throws(read, pattern);
     };
-    const body = exchangeBody;
+    const body = figureBody;
     await rejects(
-      body.replace('> How does it behave when narrow?\n\n', ''),
-      /"## Adapting to width" opens with its question/,
-    );
-    await rejects(
-      body.replace('> How do I label it?', '> How do I label it.'),
-      /ends with a question mark/,
+      body.replace('Name the setting, not the action.', '> How do I label it?'),
+      /When to use has a blockquote/,
     );
     await rejects(
       body.replace(' caption="Use a switch for a setting that applies at once."', ''),
@@ -920,14 +895,14 @@ test('a page of exchanges rejects what breaks its form', async () => {
     );
     await rejects(
       body.replace('## Adapting to width', '## Width'),
-      /not a section of a page of exchanges/,
+      /not a section of a component page/,
     );
     await rejects(
       body.replace(/## When to use[\s\S]*?(?=## Anatomy)/, ''),
-      /"## When to use" is required/,
+      /a page on the figure template has a "## When to use" section/,
     );
     await rejects(
-      body.replace('## Changelog', '## Variants\n\n> Which variants are there?\n\n## Changelog'),
+      body.replace('## Changelog', '## Variants\n\nOne size.\n\n## Changelog'),
       /"## Variants" must come before "## Accessibility"/,
     );
     await rejects(body.replace('example=Basic', 'example=Missing'), /has no file/);
@@ -966,10 +941,10 @@ test('a page of exchanges rejects what breaks its form', async () => {
       switchFrontmatter + withoutLegend.replace('`env-switch-input`', '`env-switch-knob`'),
     );
     assert.doesNotThrow(read);
-    // An old-template page that borrows an exchange section is told how exchanges begin.
+    // A section-template page that borrows a figure-template section is told what makes one.
     await rejects(
-      switchBody.replace('## States and behaviour', '## When to use'),
-      /opens its "## Overview" with its question/,
+      switchBody.replace('## States and behaviour', '## Adapting to width'),
+      /a page on the figure template has a "## When to use" section/,
     );
   });
 });
