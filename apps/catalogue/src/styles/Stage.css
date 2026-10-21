@@ -125,10 +125,20 @@
   text-align: center;
 }
 
-/* A part that takes its width from its column, such as a field, fills it. */
+/* A part that takes its width from its column, such as a text field, fills it. */
 .docs-figures
   .docs-specimen
-  > :is(.env-field, .env-slider, .env-drop-zone, .env-composer, .env-color-picker) {
+  > :is(
+    .env-text-field,
+    .env-combobox,
+    .env-date-picker,
+    .env-time-picker,
+    .env-month-picker,
+    .env-slider,
+    .env-drop-zone,
+    .env-composer,
+    .env-color-picker
+  ) {
   align-self: stretch;
   text-align: start;
 }
