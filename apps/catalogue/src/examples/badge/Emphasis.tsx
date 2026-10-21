@@ -7,10 +7,7 @@ export default function Emphasis() {
       <Badge tone="danger" variant="solid">
         Overdue
       </Badge>
-      <Badge tone="accent" variant="outline">
-        Design
-      </Badge>
-      <Badge variant="outline">Shared drafts</Badge>
+      <Badge variant="outline">Design</Badge>
     </Row>
   );
 }

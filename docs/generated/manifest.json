@@ -8572,34 +8572,70 @@
       ],
       "examples": [
         {
-          "name": "InstallSteps",
-          "title": "Install steps",
-          "description": "- Code is inline code inside a sentence, from `@envsemble/envui/content`. - CodeBlock shows source of several lines, highlighted for its `language`, with an optional label and copy button, from `@envsemble/envui/content`. - CodeDiff shows the changes between two versions of a file, rendered by Diffs, and countDiffLines counts the lines they add and remove, from `@envsemble/envui/diff`.",
-          "file": "docs/examples/code/InstallSteps.tsx"
-        },
-        {
           "name": "HighlightedSource",
           "title": "Highlighted source",
-          "description": "`language` highlights the source, and the label names the file. Copying writes the original string.",
+          "description": "Code shows source as selectable text that never runs: inline in a sentence, as a block, or as a diff. Code and CodeBlock come from `@envsemble/envui/content`, CodeDiff from `@envsemble/envui/diff`.",
           "file": "docs/examples/code/HighlightedSource.tsx"
         },
         {
-          "name": "WrapLongLines",
-          "title": "Wrap long lines",
-          "description": "With `wrap` long lines wrap inside the block; copying keeps their original line breaks.",
-          "file": "docs/examples/code/WrapLongLines.tsx"
+          "name": "InlineCode",
+          "title": "Inline code",
+          "description": "Code sits inside a sentence, for a command, a value or a file name.",
+          "file": "docs/examples/code/InlineCode.tsx"
         },
         {
           "name": "PlainOutput",
-          "title": "Plain text",
-          "description": "Without a language, such as for a command's output, the source stays plain text.",
+          "title": "Plain output",
+          "description": "envUI picks the code theme from the app theme, with every token at 4.5:1 contrast, or 7:1 under high contrast. A block shows its plain source first and colors it once the highlighter loads.",
           "file": "docs/examples/code/PlainOutput.tsx"
         },
         {
           "name": "SettingsDiff",
-          "title": "Code diff",
-          "description": "CodeDiff shows what a draft changes in a file, and countDiffLines counts its lines for a DiffStat beside the title.",
+          "title": "Settings diff",
+          "description": "CodeDiff shows what changed between two versions of a file; `countDiffLines` counts the lines for a DiffStat.",
           "file": "docs/examples/code/SettingsDiff.tsx"
+        },
+        {
+          "name": "WrapLongLines",
+          "title": "Wrap long lines",
+          "description": "",
+          "file": "docs/examples/code/WrapLongLines.tsx"
+        },
+        {
+          "name": "CommandToCopy",
+          "title": "Do: Commands exactly as people type them, with copyable.",
+          "description": "",
+          "file": "docs/examples/code/CommandToCopy.tsx"
+        },
+        {
+          "name": "CommandWithPrompt",
+          "title": "Don't: A prompt such as $: it is copied with the command.",
+          "description": "",
+          "file": "docs/examples/code/CommandWithPrompt.tsx"
+        },
+        {
+          "name": "ExactValue",
+          "title": "Do: Exact values in Code, the sentence around them in plain text.",
+          "description": "",
+          "file": "docs/examples/code/ExactValue.tsx"
+        },
+        {
+          "name": "SentenceAsCode",
+          "title": "Don't: A whole sentence in Code: it reads as a value to type.",
+          "description": "",
+          "file": "docs/examples/code/SentenceAsCode.tsx"
+        },
+        {
+          "name": "CodeBlockAnatomy",
+          "title": "Code anatomy",
+          "description": "",
+          "file": "docs/examples/code/CodeBlockAnatomy.tsx"
+        },
+        {
+          "name": "DiffColumns",
+          "title": "Diff columns",
+          "description": "",
+          "file": "docs/examples/code/DiffColumns.tsx"
         }
       ],
       "parts": {
@@ -8734,50 +8770,68 @@
         {
           "name": "ProjectStatus",
           "title": "Project status",
-          "description": "- CounterBadge shows a count, such as unread messages beside a navigation item, with a full name for assistive technology. - DiffStat shows the size of a change in one pill, such as +12 −3, with additions in the success tone and deletions in the danger tone.",
+          "description": "A badge is a small, static pill that names a state or a fact beside the content it describes.",
           "file": "docs/examples/badge/ProjectStatus.tsx"
-        },
-        {
-          "name": "Tones",
-          "title": "Tones",
-          "description": "Each tone carries a meaning; the word says it too.",
-          "file": "docs/examples/badge/Tones.tsx"
-        },
-        {
-          "name": "Emphasis",
-          "title": "Emphasis",
-          "description": "Soft badges suit most states; a solid badge stands out for the one state that must, and outline badges mark names and categories.",
-          "file": "docs/examples/badge/Emphasis.tsx"
-        },
-        {
-          "name": "NeutralMetadata",
-          "title": "Neutral metadata",
-          "description": "A neutral badge holds a fact about the content beside it, such as the plan a card describes or its seats, in place of 0.x's InfoChip.",
-          "file": "docs/examples/badge/NeutralMetadata.tsx"
-        },
-        {
-          "name": "WithIcon",
-          "title": "With an icon",
-          "description": "A decorative icon before the label repeats the state at a glance.",
-          "file": "docs/examples/badge/WithIcon.tsx"
-        },
-        {
-          "name": "NavigationCounts",
-          "title": "Counts in navigation",
-          "description": "A CounterBadge as a NavList.Item's `end` content, with an `aria-label` that says what it counts; the accent tone marks the count that needs attention.",
-          "file": "docs/examples/badge/NavigationCounts.tsx"
         },
         {
           "name": "CountsInButtons",
           "title": "Counts in buttons",
-          "description": "In a button, a CounterBadge keeps its own pill and a DiffStat sits on a pill toward the canvas; on a primary button they take the button's text color as an outlined pill.",
+          "description": "",
           "file": "docs/examples/badge/CountsInButtons.tsx"
         },
         {
           "name": "ChangeSize",
-          "title": "The size of a change",
-          "description": "DiffStat beside each changed file, read as \"124 added lines and 37 removed lines\".",
+          "title": "Change size",
+          "description": "",
           "file": "docs/examples/badge/ChangeSize.tsx"
+        },
+        {
+          "name": "Emphasis",
+          "title": "Emphasis",
+          "description": "",
+          "file": "docs/examples/badge/Emphasis.tsx"
+        },
+        {
+          "name": "Tones",
+          "title": "Tones",
+          "description": "",
+          "file": "docs/examples/badge/Tones.tsx"
+        },
+        {
+          "name": "SoftInLists",
+          "title": "Do: Soft badges in a list, and solid only for the state that must stand out.",
+          "description": "",
+          "file": "docs/examples/badge/SoftInLists.tsx"
+        },
+        {
+          "name": "SolidEverywhere",
+          "title": "Don't: Solid badges everywhere: none of them stands out.",
+          "description": "",
+          "file": "docs/examples/badge/SolidEverywhere.tsx"
+        },
+        {
+          "name": "ShortState",
+          "title": "Do: One or two words, in sentence case.",
+          "description": "",
+          "file": "docs/examples/badge/ShortState.tsx"
+        },
+        {
+          "name": "SentenceInBadge",
+          "title": "Don't: A sentence: it drops below the title and stops reading as a state.",
+          "description": "",
+          "file": "docs/examples/badge/SentenceInBadge.tsx"
+        },
+        {
+          "name": "BadgeAnatomy",
+          "title": "Badge anatomy",
+          "description": "",
+          "file": "docs/examples/badge/BadgeAnatomy.tsx"
+        },
+        {
+          "name": "LongState",
+          "title": "Long state",
+          "description": "",
+          "file": "docs/examples/badge/LongState.tsx"
         }
       ],
       "parts": {
@@ -9398,26 +9452,50 @@
         {
           "name": "ShortcutsInText",
           "title": "Shortcuts in text",
-          "description": "Kbd shows a keyboard key as a key cap: a small, bordered label with a heavier bottom edge that sits on the baseline of the text around it. With `keys` it shows keys pressed together, such as Ctrl+P, as one key cap each, joined by a plus. Kbd only shows keys; the application handles the shortcut.",
+          "description": "Kbd shows a key as a key cap, or with `keys`, keys pressed together. It only shows them: the application handles the shortcut.",
           "file": "docs/examples/kbd/ShortcutsInText.tsx"
         },
         {
           "name": "KeyHints",
           "title": "Key hints",
-          "description": "A footer that names the keys a list handles, one hint after another.",
+          "description": "",
           "file": "docs/examples/kbd/KeyHints.tsx"
         },
         {
           "name": "ShortcutSequence",
-          "title": "A sequence of shortcuts",
-          "description": "Each step of a sequence is a Kbd of its own, with \"then\" between them; `keys` is only for keys pressed together.",
+          "title": "Do: A sequence as one Kbd per step, with then between them.",
+          "description": "",
           "file": "docs/examples/kbd/ShortcutSequence.tsx"
         },
         {
+          "name": "SequenceAsOne",
+          "title": "Don't: A sequence in one keys list: it reads as four keys pressed at once.",
+          "description": "",
+          "file": "docs/examples/kbd/SequenceAsOne.tsx"
+        },
+        {
+          "name": "SayWhatItDoes",
+          "title": "Do: Say what the keys do, in a sentence.",
+          "description": "",
+          "file": "docs/examples/kbd/SayWhatItDoes.tsx"
+        },
+        {
+          "name": "KeysAlone",
+          "title": "Don't: A key and a word: people have to guess the rest.",
+          "description": "",
+          "file": "docs/examples/kbd/KeysAlone.tsx"
+        },
+        {
           "name": "PlatformKeys",
-          "title": "The reader's platform",
-          "description": "Apple keyboards name the Command key where others use Ctrl. Pass the keys of the reader's platform; Kbd shows what it is given.",
+          "title": "Content",
+          "description": "",
           "file": "docs/examples/kbd/PlatformKeys.tsx"
+        },
+        {
+          "name": "KbdAnatomy",
+          "title": "Kbd anatomy",
+          "description": "",
+          "file": "docs/examples/kbd/KbdAnatomy.tsx"
         }
       ],
       "parts": {
