@@ -1064,6 +1064,10 @@
           "description": "The check of a chosen option."
         },
         {
+          "class": "env-combobox-label",
+          "description": "The label."
+        },
+        {
           "class": "env-combobox-leading",
           "description": "The leading icon of the well."
         },
@@ -1392,6 +1396,10 @@
         {
           "class": "env-date-picker-icon",
           "description": "The calendar icon."
+        },
+        {
+          "class": "env-date-picker-label",
+          "description": "The label."
         },
         {
           "class": "env-date-picker-native",
@@ -3842,6 +3850,10 @@
           "description": "The check of the chosen option."
         },
         {
+          "class": "env-select-label",
+          "description": "The label."
+        },
+        {
           "class": "env-select-list",
           "description": "The list of options."
         },
@@ -4460,6 +4472,10 @@
         {
           "class": "env-text-field-input",
           "description": "The input."
+        },
+        {
+          "class": "env-text-field-label",
+          "description": "The label."
         },
         {
           "class": "env-text-field-prefix",

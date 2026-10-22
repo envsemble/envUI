@@ -51,7 +51,13 @@ export function Textarea({
   return (
     <FieldFrame
       id={id}
-      label={label != null ? <label htmlFor={id}>{label}</label> : null}
+      label={
+        label != null ? (
+          <label htmlFor={id} className="env-text-field-label">
+            {label}
+          </label>
+        ) : null
+      }
       description={description}
       error={error}
       floatingLabel

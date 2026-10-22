@@ -149,7 +149,7 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 1. **Field** (`env-date-picker`)
 2. **Control** (`env-date-picker-control`)
-3. **Label** (`env-date-picker-control > label`, `label`)
+3. **Label** (`env-date-picker-label`, `label`)
 4. **Value** (`env-date-picker-value`)
 5. **Clear** (`env-date-picker-clear`, `clearable`)
 6. **Calendar icon** (`env-date-picker-icon`)

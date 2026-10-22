@@ -108,7 +108,7 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 1. **Field** (`env-month-picker`)
 2. **Control** (`env-date-picker-control`)
-3. **Label** (`env-date-picker-control > label`, `label`)
+3. **Label** (`env-date-picker-label`, `label`)
 4. **Value** (`env-date-picker-value`)
 5. **Clear** (`env-date-picker-clear`, `clearable`)
 6. **Calendar icon** (`env-date-picker-icon`)
