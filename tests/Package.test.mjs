@@ -319,6 +319,65 @@ test('a packed consumer resolves compiled public exports and its own React insta
   );
 });
 
+test('a packed consumer imports the dev entry, which types its readout and does nothing on a server', async function () {
+  const dev = await runConsumer(
+    'DevConsumer.mjs',
+    `
+    import * as dev from '@envsemble/envui/dev';
+    const handle = dev.installDevMode();
+    await handle.ready;
+    handle.open();
+    handle.uninstall();
+    console.log(JSON.stringify({
+      exports: Object.keys(dev).sort(),
+      module: import.meta.resolve('@envsemble/envui/dev'),
+      same: handle.layout === dev.layout,
+      layout: Object.keys(dev.layout).sort(),
+    }));
+  `,
+  );
+  assert.deepEqual(dev.exports, ['installDevMode', 'layout']);
+  assert.match(dev.module, /\/node_modules\/@envsemble\/envui\/dist\/dev\.js$/);
+  assert.equal(dev.same, true);
+  assert.deepEqual(dev.layout, ['at', 'check', 'describe', 'skeletonShift']);
+  assert.ok(packedFiles.includes('docs/generated/parts.json'), 'Dev mode reads parts.json.');
+
+  await writeFile(
+    join(consumerDirectory, 'DevConsumer.tsx'),
+    `
+    import { installDevMode, layout, type DevModeHandle, type LayoutAtResult, type LayoutProblem, type PartsFile } from '@envsemble/envui/dev';
+    const parts: PartsFile = { schemaVersion: 1, components: {} };
+    const handle: DevModeHandle = installDevMode({ parts, root: '#app', button: false, shortcut: false });
+    const results: LayoutAtResult[] = layout.at(['22rem', 960]);
+    const problems: LayoutProblem[] = window.envui?.layout?.check() ?? [];
+    // @ts-expect-error at() takes px numbers or lengths, not options.
+    layout.at({ width: '40rem' });
+    void [handle, results, problems];
+  `,
+  );
+  await writeFile(
+    join(consumerDirectory, 'tsconfig.dev.json'),
+    JSON.stringify({
+      compilerOptions: {
+        target: 'ES2022',
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        jsx: 'react-jsx',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        types: ['react', 'react-dom'],
+        lib: ['ES2022', 'DOM'],
+      },
+      include: ['DevConsumer.tsx'],
+    }),
+  );
+  run(consumerRequire.resolve('typescript/bin/tsc'), [
+    '--project',
+    join(consumerDirectory, 'tsconfig.dev.json'),
+  ]);
+});
+
 test('installed declarations typecheck a React 19 consumer without source aliases', async function () {
   await writeFile(
     join(consumerDirectory, 'Consumer.tsx'),
