@@ -204,13 +204,22 @@ body {
    destinations in columns, as many as fit and wrapping onto more rows in a narrow page, and the
    version. Its links are quiet text that comes forward when hovered. */
 .docs-footer {
+  container: docs-footer / inline-size;
+  background: var(--env-color-bg-default);
+}
+.docs-footer-inner {
   inline-size: min(100%, var(--docs-content-width));
   margin-inline: auto;
-  padding: var(--env-space-6) var(--docs-gutter) var(--env-space-8);
+  padding: var(--env-space-7) var(--docs-gutter) var(--env-space-8);
 }
 .docs-footer-brand {
   display: block;
+  flex: none;
   inline-size: 4.5rem;
+}
+.docs-footer-columns {
+  flex: 1;
+  min-inline-size: 0;
 }
 .docs-footer-brand svg {
   display: block;
@@ -235,9 +244,14 @@ body {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
-/* In a compact page the columns pair up two to a row, so none runs long on its own. */
+/* In a compact page the wordmark sits above the columns, and the columns pair up two to a row,
+   so none runs long on its own. */
 @container docs-footer (width < 37.5rem) {
+  .docs-footer-inner {
+    flex-direction: column;
+  }
   .docs-footer-columns {
+    align-self: stretch;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--env-space-5);
   }

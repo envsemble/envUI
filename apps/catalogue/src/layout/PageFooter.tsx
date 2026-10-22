@@ -1,6 +1,5 @@
-import { Column, Grid, Link, Text } from '@envsemble/envui';
+import { Column, Grid, Link, Row, Text } from '@envsemble/envui';
 import { EnvUILogo } from '../brand/EnvUILogo';
-import { documentedVersion as version } from '../generated/Documentation';
 import { componentGroupId, componentGroups } from '../Reference';
 import { homeRoute, routeHref } from '../navigation/Address';
 import { routeOfDocument } from '../navigation/DocumentationRoutes';
@@ -74,14 +73,14 @@ const columns: { title: string; links: FooterLink[] }[] = [
 ];
 
 /**
- * The foot of every page: the wordmark, the catalogue's main destinations in columns that wrap
- * onto more rows in a narrow page, and the version this catalogue documents. It is set apart by
- * space alone, and its links are quiet text until hovered.
+ * The foot of every page, on the navigation's pane color: the wordmark in a column of its own,
+ * then the catalogue's main destinations in columns that wrap onto more rows in a narrow page.
+ * Its links are quiet text until hovered.
  */
 export function PageFooter() {
   return (
-    <Column render={<footer />} container="docs-footer" gap={7} className="docs-footer">
-      <Column gap={3} align="start">
+    <footer className="docs-footer">
+      <Row gap={7} align="start" className="docs-footer-inner">
         <Link
           href={routeHref(homeRoute)}
           underline={false}
@@ -90,41 +89,37 @@ export function PageFooter() {
         >
           <EnvUILogo />
         </Link>
-        <Text variant="body-sm">
-          React components, layout and tokens, documented for people and agents.
-        </Text>
-      </Column>
-      <Grid
-        render={<nav aria-label="Footer" />}
-        columns={{ min: '9rem' }}
-        gap={6}
-        className="docs-footer-columns"
-      >
-        {columns.map(({ title, links }) => (
-          <Column key={title} gap={3} align="start">
-            <Text
-              render={<h2 />}
-              variant="body-sm"
-              emphasis="default"
-              className="docs-footer-title"
-            >
-              {title}
-            </Text>
-            <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
-              {links.map((link) => (
-                <li key={link.label}>
-                  <Text variant="body-sm">
-                    <Link href={link.href} underline={false}>
-                      {link.label}
-                    </Link>
-                  </Text>
-                </li>
-              ))}
+        <Grid
+          render={<nav aria-label="Footer" />}
+          columns={{ min: '9rem' }}
+          gap={6}
+          className="docs-footer-columns"
+        >
+          {columns.map(({ title, links }) => (
+            <Column key={title} gap={3} align="start">
+              <Text
+                render={<h2 />}
+                variant="body-sm"
+                emphasis="default"
+                className="docs-footer-title"
+              >
+                {title}
+              </Text>
+              <Column render={<ul />} gap={2} align="start" className="docs-footer-links">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Text variant="body-sm">
+                      <Link href={link.href} underline={false}>
+                        {link.label}
+                      </Link>
+                    </Text>
+                  </li>
+                ))}
+              </Column>
             </Column>
-          </Column>
-        ))}
-      </Grid>
-      <Text variant="caption">envUI {version} · @envsemble/envui</Text>
-    </Column>
+          ))}
+        </Grid>
+      </Row>
+    </footer>
   );
 }
