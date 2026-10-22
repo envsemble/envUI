@@ -77,11 +77,11 @@
   pointer-events: auto;
   outline: none;
 }
-/* The active panel is in front, and its edge is the stronger default border, the one cue that
-   tells it from the panels beside it. */
+/* The active panel is in front, and its edge takes the accent, the one cue that tells it from the
+   panels beside it; under high contrast the others' edge is already the default border. */
 .env-panel-dock-panel[data-active] {
   z-index: calc(var(--env-z-raised) + 1);
-  border-color: var(--env-color-border-default);
+  border-color: var(--env-color-border-accent-emphasis);
 }
 .env-panel-dock-panel:focus-visible,
 .env-panel-dock-content:focus-visible {
