@@ -733,13 +733,14 @@
         "Panes.List",
         "Panes.Detail",
         "Panes.Divider",
+        "Panes.Trigger",
         "readPanesSize"
       ],
       "examples": [
         {
           "name": "SupportingPane",
           "title": "Supporting pane",
-          "description": "`behavior=\"supporting\"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`.",
+          "description": "`behavior=\"supporting\"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`, which Panes.Trigger in the main pane opens; the trigger hides while the panes sit side by side.",
           "file": "docs/examples/panes/SupportingPane.tsx"
         },
         {
@@ -836,6 +837,10 @@
             {
               "class": "env-panes-supporting",
               "description": "The supporting pane, a sheet over the main pane in less room."
+            },
+            {
+              "class": "env-panes-trigger",
+              "description": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
             }
           ],
           "states": [
@@ -3373,6 +3378,10 @@
               "description": "The input."
             },
             {
+              "class": "env-text-field-label",
+              "description": "The label."
+            },
+            {
               "class": "env-text-field-prefix",
               "description": "Fixed text before the input."
             },
@@ -4590,6 +4599,10 @@
               "description": "The check of the chosen option."
             },
             {
+              "class": "env-select-label",
+              "description": "The label."
+            },
+            {
               "class": "env-select-list",
               "description": "The list of options."
             },
@@ -5242,6 +5255,10 @@
               "description": "The check of a chosen option."
             },
             {
+              "class": "env-combobox-label",
+              "description": "The label."
+            },
+            {
               "class": "env-combobox-leading",
               "description": "The leading icon of the well."
             },
@@ -5594,6 +5611,12 @@
           "title": "DatePicker anatomy",
           "description": "",
           "file": "docs/examples/date-picker/DatePickerAnatomy.tsx"
+        },
+        {
+          "name": "DatePickerPopupAnatomy",
+          "title": "DatePicker anatomy",
+          "description": "",
+          "file": "docs/examples/date-picker/DatePickerPopupAnatomy.tsx"
         }
       ],
       "parts": {
@@ -5627,6 +5650,10 @@
             {
               "class": "env-date-picker-icon",
               "description": "The calendar icon."
+            },
+            {
+              "class": "env-date-picker-label",
+              "description": "The label."
             },
             {
               "class": "env-date-picker-native",
@@ -6000,6 +6027,12 @@
           "title": "TimePicker anatomy",
           "description": "",
           "file": "docs/examples/time-picker/TimePickerAnatomy.tsx"
+        },
+        {
+          "name": "TimePickerPopupAnatomy",
+          "title": "TimePicker anatomy",
+          "description": "",
+          "file": "docs/examples/time-picker/TimePickerPopupAnatomy.tsx"
         }
       ],
       "parts": {
@@ -6268,6 +6301,12 @@
           "title": "MonthPicker anatomy",
           "description": "",
           "file": "docs/examples/month-picker/MonthPickerAnatomy.tsx"
+        },
+        {
+          "name": "MonthPickerPopupAnatomy",
+          "title": "MonthPicker anatomy",
+          "description": "",
+          "file": "docs/examples/month-picker/MonthPickerPopupAnatomy.tsx"
         }
       ],
       "parts": {
@@ -14647,7 +14686,7 @@
         {
           "name": "TextDetails",
           "title": "Text details",
-          "description": "A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too.",
+          "description": "A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't.",
           "file": "docs/examples/hover-card/TextDetails.tsx"
         },
         {
@@ -17073,16 +17112,16 @@
           "file": "docs/examples/progressive-disclosure/ExplainATerm.tsx"
         },
         {
-          "name": "RequiredInView",
-          "title": "Do: What every export needs in view; only the optional settings behind the summary.",
+          "name": "OneLevel",
+          "title": "Do: One level: every optional setting behind one summary.",
           "description": "",
-          "file": "docs/examples/progressive-disclosure/RequiredInView.tsx"
+          "file": "docs/examples/progressive-disclosure/OneLevel.tsx"
         },
         {
-          "name": "RequiredHidden",
-          "title": "Don't: A required field behind a closed summary: people submit without seeing it.",
+          "name": "NestedDisclosures",
+          "title": "Don't: A disclosure in a disclosure: the last setting is two presses away, and easy to miss.",
           "description": "",
-          "file": "docs/examples/progressive-disclosure/RequiredHidden.tsx"
+          "file": "docs/examples/progressive-disclosure/NestedDisclosures.tsx"
         },
         {
           "name": "DisclosureLayers",
@@ -20384,7 +20423,7 @@
           "name": "trigger",
           "type": "ReactElement",
           "required": true,
-          "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; a link or another control keeps its own look."
+          "description": "The element that opens the card on hover and keyboard focus; it receives the ref. Text, such as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or another control keeps its own look."
         },
         {
           "name": "children",
@@ -22400,7 +22439,8 @@
         "Panes.Supporting",
         "Panes.List",
         "Panes.Detail",
-        "Panes.Divider"
+        "Panes.Divider",
+        "Panes.Trigger"
       ],
       "status": "beta",
       "page": "panes",
@@ -22614,6 +22654,69 @@
       ],
       "native": [
         "div"
+      ],
+      "status": "beta",
+      "page": "panes",
+      "doc": "docs/components/panes.md"
+    },
+    "Panes.Trigger": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "The button that opens the supporting pane while it is a sheet, below `splitAt`; place it in the main pane. It hides while the panes sit side by side, where the supporting pane shows anyway, and says whether the sheet is open with aria-expanded. It takes Button's props.",
+      "props": [
+        {
+          "name": "variant",
+          "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
+          "required": false,
+          "default": "'primary'",
+          "description": "The emphasis: primary for the main action of a view, secondary and outline for the rest, ghost for an application's chrome, such as a toolbar, and text for a link-like action. Without it, the button takes the variant its container gives where that variant takes its tone, such as ghost in a toolbar, and else primary."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'danger' | 'accent'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "The meaning: neutral for most actions; accent, on a primary button only, for a rare consequential action, with 0.5 rem corners; danger for an action that deletes or ends something. Secondary buttons are always neutral."
+        },
+        {
+          "name": "underline",
+          "type": "boolean",
+          "required": false,
+          "description": "Show an underline for the text variant; defaults to false."
+        },
+        {
+          "name": "size",
+          "type": "'sm' | 'md' | 'lg'",
+          "required": false,
+          "description": "The height, as on every control: sm, md or lg in the current scale, such as sm for an action in a table cell or lg for the main call to action of a page. Without it, the button takes the control height of its container, md unless the container sets another. A button beside a field takes the field's size."
+        },
+        {
+          "name": "fullWidth",
+          "type": "boolean",
+          "required": false,
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
+        },
+        {
+          "name": "startIcon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon before the label, such as an Add icon."
+        },
+        {
+          "name": "endIcon",
+          "type": "ReactNode",
+          "required": false,
+          "description": "A decorative icon after the label, such as a ChevronRight for a next step."
+        },
+        {
+          "name": "pending",
+          "type": "boolean",
+          "required": false,
+          "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
+        }
+      ],
+      "native": [
+        "button"
       ],
       "status": "beta",
       "page": "panes",
