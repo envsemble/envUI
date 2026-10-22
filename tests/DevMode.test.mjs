@@ -430,3 +430,110 @@ test('no entry point but dev reaches dev mode, so production builds contain none
     assert.doesNotMatch(result.outputFiles[0].text, /data-env-dev|installDevMode/, entry);
   }
 });
+
+test('the dev entry imports none of the optional peers, so it loads without them', async () => {
+  // The content entry's stacks, such as code highlighting, are optional peers an app may not have;
+  // the inspector once reached one through Code.
+  const { peerDependenciesMeta } = JSON.parse(
+    await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
+  );
+  const optional = Object.keys(peerDependenciesMeta).filter(
+    (name) => peerDependenciesMeta[name].optional,
+  );
+  assert.ok(optional.length > 0);
+  const result = await build({
+    absWorkingDir: repository,
+    entryPoints: [join(repository, 'packages/ui/src/dev.ts')],
+    bundle: true,
+    write: false,
+    metafile: true,
+    format: 'esm',
+    platform: 'neutral',
+    packages: 'external',
+    loader: { '.css': 'empty', '.woff2': 'empty' },
+    logLevel: 'error',
+  });
+  const packages = new Set(
+    Object.values(result.metafile.inputs).flatMap(({ imports }) =>
+      imports.filter((entry) => entry.external).map((entry) => entry.path),
+    ),
+  );
+  const reached = [...packages].filter((path) =>
+    optional.some((name) => path === name || path.startsWith(`${name}/`)),
+  );
+  assert.deepEqual(reached, [], 'the dev entry imports optional peers');
+});
+
+test('installDevMode() warns about parts in the wrong shape and installs all the same', async () => {
+  // The installer alone, with a stand-in for its UI and React's root, on a stand-in document.
+  const installer = join(repository, '.cache/unit/DevModeInstall.mjs');
+  await build({
+    absWorkingDir: repository,
+    entryPoints: [join(repository, 'packages/ui/src/dev/install.tsx')],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    jsx: 'automatic',
+    packages: 'external',
+    outfile: installer,
+    logLevel: 'error',
+    plugins: [
+      {
+        name: 'stand-ins',
+        setup(builder) {
+          builder.onResolve({ filter: /^(\.\/ui\/DevMode\.js|react-dom\/client)$/ }, (args) => ({
+            path: args.path,
+            namespace: 'stand-in',
+          }));
+          builder.onLoad({ filter: /.*/, namespace: 'stand-in' }, (args) => ({
+            contents:
+              args.path === 'react-dom/client'
+                ? 'export const createRoot = () => ({ render() {}, unmount() {} });'
+                : 'export const DevMode = () => null;',
+            loader: 'js',
+          }));
+        },
+      },
+    ],
+  });
+  const element = () => ({
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    },
+    remove() {},
+  });
+  const appended = [];
+  const listeners = [];
+  globalThis.document = {
+    createElement: element,
+    head: { append: (node) => appended.push(node) },
+    body: { append: (node) => appended.push(node) },
+  };
+  globalThis.window = {
+    addEventListener: (type) => listeners.push(type),
+    removeEventListener() {},
+    setTimeout: (run) => run(),
+  };
+  const warn = console.warn;
+  const warnings = [];
+  console.warn = (...args) => warnings.push(args.map(String).join(' '));
+  try {
+    const { installDevMode } = await import(pathToFileURL(installer).href);
+    const handle = installDevMode({ parts: [{ name: 'Card' }] });
+    await handle.ready;
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /the parts given are not docs\/generated\/parts\.json/);
+    // It installed all the same: the readout on the window, its style sheet, host and shortcut.
+    assert.equal(window.envui.layout, handle.layout);
+    assert.equal(appended.length, 2);
+    assert.ok(appended.some((node) => 'data-env-dev-host' in node.attributes));
+    assert.deepEqual(listeners, ['keydown']);
+    handle.uninstall();
+    assert.equal(window.envui.layout, undefined);
+  } finally {
+    console.warn = warn;
+    delete globalThis.document;
+    delete globalThis.window;
+  }
+});

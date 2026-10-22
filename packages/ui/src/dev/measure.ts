@@ -130,11 +130,12 @@ function isOpenOverlay(element: Element): boolean {
       return false;
     }
   }
-  for (let at: Element | null = element; at && at !== document.body; at = at.parentElement) {
-    const position = getComputedStyle(at).position;
-    if (position === 'fixed' || position === 'absolute') return true;
-  }
-  return false;
+  // Floating is the element's own position, or its positioner's: Base UI places a popup in a
+  // positioner, its parent. A listbox or menu inside some other floating box is no overlay.
+  const floats = (at: Element) => ['fixed', 'absolute'].includes(getComputedStyle(at).position);
+  if (floats(element)) return true;
+  const parent = element.parentElement;
+  return parent !== null && parent.matches('[role="presentation"]') && floats(parent);
 }
 
 function overlayKind(element: Element): OverlayKind {
@@ -564,6 +565,8 @@ function squeezedText(
   if (text.length <= minTextChars || style.whiteSpace === 'nowrap' || style.whiteSpace === 'pre')
     return null;
   const lineHeight = px(style.lineHeight) || fontSize * 1.4;
-  if (element.clientHeight < lineHeight * 1.5) return null;
+  // The content's height, without the padding, holds the lines.
+  const height = element.clientHeight - px(style.paddingTop) - px(style.paddingBottom);
+  if (height < lineHeight * 1.5) return null;
   return { chars: Math.max(1, Math.floor(width / charWidth)), width };
 }

@@ -773,6 +773,12 @@ test('a page on the figure template rejects what breaks its form', async () => {
     );
     await rejects(body.replace('anatomy=Parts', 'anatomy=Parts of'), /has of without a value/);
     await rejects(body.replace('stage=raised', 'stage=dark'), /has stage="dark"/);
+    // A double quote inside a caption, escaped or not, is pointed at rather than called malformed.
+    for (const quote of ['"', '\\"'])
+      await rejects(
+        body.replace('applies at once.', `says ${quote}Save${quote}.`),
+        /the caption of the fence `tsx do=Instant caption="Use a switch for a setting that says "Save"\."` has a double quote inside it, at `"Save"\."`/,
+      );
     await rejects(
       body.replace('2. `env-switch-input`', '2. The thumb.'),
       /item 2 of the legend of anatomy Parts names no part/,

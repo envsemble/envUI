@@ -28,6 +28,13 @@ ruleTester.run('no-hand-rolled-layout', rule, {
     'function Item({ row }) { return <div style={row} />; }',
     "const display = { display: 'grid' }; <div style={{ display: 'block', [key]: 1 }} />",
     'const styles = { toolbar: base }; <div style={styles.toolbar} />',
+    // A constant passed to a call is an argument the call may change, not the style itself.
+    "const config = { display: 'flex' }; <div style={css(config)} />",
+    "const styles = { bar: { display: 'grid' } }; <div style={css(styles.bar)} />",
+    "const config = { display: 'flex' }; <div style={useMemo(() => build(config), [])} />",
+    // A string that isn't a constant, or a constant that isn't a layout display.
+    "let d = 'flex'; d = 'block'; <div style={{ display: d }} />",
+    "const d = 'block'; <div style={{ display: d }} />",
   ],
   invalid: [
     {
@@ -118,6 +125,23 @@ ruleTester.run('no-hand-rolled-layout', rule, {
     {
       code: `const bar = { inlineSize: '100%', display: 'grid' };
 <div style={{ ...bar, padding: 0 }} />;`,
+      errors: [layout('grid', 'grid')],
+    },
+    {
+      code: `const row = { display: 'flex' };
+<div style={open ? row : undefined} />;`,
+      errors: [layout('row', 'flex')],
+    },
+    // A constant string, reported where the style names it, also for the direction.
+    {
+      code: `const d = 'flex';
+const direction = 'column';
+<div style={{ display: d, flexDirection: direction }} />;`,
+      errors: [{ ...layout('column', 'flex'), line: 3, column: 24 }],
+    },
+    {
+      code: `const display = wide ? 'grid' : 'block';
+<div style={{ display }} />;`,
       errors: [layout('grid', 'grid')],
     },
   ],

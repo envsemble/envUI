@@ -3491,6 +3491,13 @@
           "parts": [
             "env-rich-text-task"
           ]
+        },
+        {
+          "attribute": "data-reference-id",
+          "values": [],
+          "parts": [
+            "env-rich-text-reference"
+          ]
         }
       ],
       "uses": [

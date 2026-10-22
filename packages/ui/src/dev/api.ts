@@ -40,7 +40,11 @@ export interface LayoutApi {
   describe(options?: LayoutOptions): string;
   /** The problems only; an empty list when there are none. */
   check(options?: LayoutOptions): LayoutProblem[];
-  /** The readout and problems at each width in turn; the root is put back after each. */
+  /**
+   * The readout and problems at each width in turn; the root's inline style is put back after
+   * each. Only the root is resized: open overlays stay where they were placed for the real window,
+   * which the readout's window and `overlay-off-window` still refer to.
+   */
   at(
     widths: readonly (number | string)[],
     options?: Omit<LayoutOptions, 'width'>,

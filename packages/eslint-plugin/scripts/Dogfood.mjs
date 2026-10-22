@@ -1,6 +1,6 @@
 // Counts what the recommended config reports in envUI's own catalogue and test fixture, without
-// enforcing it: they render raw elements on purpose. The counts show how
-// the rules behave on real envUI code, and what is left of the old names after the renames.
+// enforcing it: they render raw elements on purpose. The counts show how the rules behave on real
+// envUI code, and what is left of the old names after the renames.
 //
 //   node scripts/Dogfood.mjs [directory …]   default: apps/catalogue/src tests/fixture
 

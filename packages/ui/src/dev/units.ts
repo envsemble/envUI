@@ -1,18 +1,19 @@
 // Lengths for the readout: rem as the reader's unit, window classes by width.
 
-/** One of Material's window classes: a range of widths at which arrangement may change. */
-export type WindowClass = 'compact' | 'medium' | 'expanded' | 'large';
+import {
+  windowClasses as windowClassStarts,
+  type WindowClass,
+} from '../foundations/windowClasses.js';
+
+export type { WindowClass };
 
 /**
- * The window classes by the width in rem where each begins: compact below 37.5, medium below 52.5,
- * expanded below 75 and large from 75 (600, 840 and 1200 px at a 16 px root font).
+ * The window classes by the width in rem where each begins, from the library's own thresholds in
+ * foundations/windowClasses.ts: compact, medium from 37.5, expanded from 52.5, large from 75.
  */
-export const windowClasses: readonly { name: WindowClass; from: number }[] = [
-  { name: 'compact', from: 0 },
-  { name: 'medium', from: 37.5 },
-  { name: 'expanded', from: 52.5 },
-  { name: 'large', from: 75 },
-];
+export const windowClasses: readonly { name: WindowClass; from: number }[] = (
+  Object.entries(windowClassStarts) as [WindowClass, string][]
+).map(([name, from]) => ({ name, from: Number.parseFloat(from) }));
 
 /** The window class of a width in rem. */
 export function windowClassOf(widthRem: number): WindowClass {

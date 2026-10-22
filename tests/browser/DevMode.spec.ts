@@ -110,3 +110,29 @@ test('the toggle opens the 3D view and the inspector, which Escape and the short
   await expect(panel).toBeHidden();
   await expect(toggle).toHaveAttribute('aria-pressed', 'false');
 });
+
+test('the readout counts rem from the root font size, also when it is not 16px', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 720 });
+  await open(page);
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '20px';
+  });
+  const results = await page.evaluate(() => window.envui!.layout!.at(['22rem', '40rem', 800]));
+  // 40rem is 800px at 20px a rem: the same width and window class, and the scaffold's 37.5rem
+  // query holds at both.
+  expect(results.map(({ width, windowClass }) => `${width} ${windowClass}`)).toEqual([
+    '22rem compact',
+    '40rem medium',
+    '800 medium',
+  ]);
+  expect(results[0].text).toMatch(/· 1rem = 20px$/m);
+  expect(results[0].text).toMatch(/^scaffold "app" · 22×[\d.]+rem · compact/m);
+  for (const result of results.slice(1)) {
+    expect(result.text).toMatch(/^scaffold "app" · 40×[\d.]+rem · medium/m);
+    expect(result.text).toMatch(
+      /^ {2}grid "frame" · .* · gap 1rem · padding 1rem · columns 2 = 12 \| /m,
+    );
+  }
+});

@@ -5,6 +5,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconButton } from '../../actions/Button.js';
+import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ThemeValue } from '../../foundations/Theme.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
 import { resolveRoot } from '../measure.js';
@@ -22,6 +23,11 @@ export interface DevModeController {
   /** The shortcut as people read it, such as Alt+Shift+D, or null without one. */
   shortcut: string | null;
   root?: Element | string;
+  /**
+   * The element dev mode renders into. Its own popups, such as a tooltip, portal into it too, so
+   * they stay dev mode's and the readout leaves them out.
+   */
+  host: HTMLElement;
 }
 
 /** The page's theme, so dev mode's UI matches it. */
@@ -36,20 +42,22 @@ export function DevMode({ controller }: { controller: DevModeController }) {
   const [open, setOpen] = useState(controller.open);
   useEffect(() => controller.subscribe(setOpen), [controller]);
   return (
-    <Theme theme={pageTheme()} className="env-dev">
-      {open ? <Panel controller={controller} /> : null}
-      {controller.button ? (
-        <IconButton
-          className="env-dev-toggle"
-          variant={open ? 'primary' : 'secondary'}
-          icon={<ViewInAr />}
-          aria-label="Dev mode"
-          aria-pressed={open}
-          title={controller.shortcut ? `Dev mode (${controller.shortcut})` : 'Dev mode'}
-          onClick={() => controller.setOpen(!open)}
-        />
-      ) : null}
-    </Theme>
+    <PortalContainer container={controller.host}>
+      <Theme theme={pageTheme()} className="env-dev">
+        {open ? <Panel controller={controller} /> : null}
+        {controller.button ? (
+          <IconButton
+            className="env-dev-toggle"
+            variant={open ? 'primary' : 'secondary'}
+            icon={<ViewInAr />}
+            aria-label="Dev mode"
+            aria-pressed={open}
+            title={controller.shortcut ? `Dev mode (${controller.shortcut})` : 'Dev mode'}
+            onClick={() => controller.setOpen(!open)}
+          />
+        ) : null}
+      </Theme>
+    </PortalContainer>
   );
 }
 

@@ -8,7 +8,7 @@ aliases:
 
 # Dev mode
 
-Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
+Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, changing nothing but the root's width while `at()` measures, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
 
 This page runs the real dev mode, with `root` set to the application below. Its three fixed columns squeeze the cards at a narrow width; turn them off and the problems go.
 
@@ -20,7 +20,7 @@ The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, o
 
 ## The readout, for agents
 
-`window.envui.layout` measures the page when it is called and leaves it as it was. An agent runs it from the browser's console or a test:
+`window.envui.layout` measures the page when it is called and leaves it as it was. An agent runs it from the browser's console or a test; code imports the same object as `layout` from `@envsemble/envui/dev`, which works without `installDevMode()`:
 
 ```js
 envui.layout.describe(); // the page as text: every layout node, then the problems
@@ -28,11 +28,11 @@ envui.layout.check(); // the problems only; [] when there are none
 envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in turn
 ```
 
-| Option         | What it does                                                                                   |
-| -------------- | ---------------------------------------------------------------------------------------------- |
-| `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body. |
-| `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`. |
-| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.      |
+| Option         | What it does                                                                                                          |
+| -------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
+| `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
+| `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
 
 ### describe()
 
@@ -94,7 +94,7 @@ A list of problems, each a plain object. The same application at 22 rem:
 
 ### at()
 
-`at(widths)` sets the root's inline size to each width in turn, measures, and puts it back, without resizing the window or waiting for a frame. Container queries follow; what script decides on resize doesn't. Each result is `{ width, windowClass, text, problems }`. Fix every problem it returns, from the deepest node up. In a Playwright test:
+`at(widths)` sets the root's inline size to each width in turn, with an inline style, measures, and puts the style back as it was, without resizing the window or waiting for a frame. Container queries follow; what script decides on resize doesn't. Each result is `{ width, windowClass, text, problems }`. Fix every problem it returns, from the deepest node up. In a Playwright test:
 
 ```ts
 const results = await page.evaluate(() =>
@@ -168,6 +168,6 @@ installDevMode({ parts });
 ### Limits
 
 - It measures only a rendered page in a browser; on the server, `installDevMode()` does nothing.
-- A modal dialog or open popover in the top layer shows above the 3D view and makes it inert; the readout still works.
+- A modal `<dialog>` or an open `popover` in the top layer shows above the 3D view and makes it inert; the readout still works. envUI's dialogs and popups, built on Base UI, aren't in the top layer: the 3D view covers them like the rest of the page.
 - The planes' pictures are copies frozen from computed styles: animations, canvases, videos and frames show as empty boxes.
-- `at()` resizes the root, not the window, so viewport units and width media queries stay as they are.
+- `at()` resizes the root, not the window, so viewport units and width media queries stay as they are. Open overlays stay where they were placed for the real window, so the window in the first line and `overlay-off-window` are the real window's; check overlays at a real window size, such as with Playwright's `setViewportSize`.

@@ -20,21 +20,28 @@ function propertyName(property) {
 
 /**
  * The static strings a style value can take, each with its node: a string literal, a template
- * literal without expressions, and both branches of a condition or a logical expression, as in
- * `open ? 'flex' : 'none'` or `wide && 'grid'`.
+ * literal without expressions, both branches of a condition or a logical expression, as in
+ * `open ? 'flex' : 'none'` or `wide && 'grid'`, and the string a `const` of the file holds, as in
+ * `display: d` with `const d = 'flex'`, reported where the style names it.
  */
-function staticStrings(node) {
+function staticStrings(sourceCode, node, seen = new Set()) {
   if (!node) return [];
+  const strings = (child) => staticStrings(sourceCode, child, seen);
   if (node.type === 'Literal' && typeof node.value === 'string')
     return [{ node, value: node.value }];
   if (node.type === 'TemplateLiteral' && node.expressions.length === 0)
     return [{ node, value: node.quasis[0].value.cooked ?? '' }];
   if (node.type === 'ConditionalExpression')
-    return [...staticStrings(node.consequent), ...staticStrings(node.alternate)];
-  if (node.type === 'LogicalExpression')
-    return [...staticStrings(node.left), ...staticStrings(node.right)];
+    return [...strings(node.consequent), ...strings(node.alternate)];
+  if (node.type === 'LogicalExpression') return [...strings(node.left), ...strings(node.right)];
   if (node.type === 'TSAsExpression' || node.type === 'TSSatisfiesExpression')
-    return staticStrings(node.expression);
+    return strings(node.expression);
+  if (node.type === 'Identifier') {
+    const init = constantInit(sourceCode, node);
+    if (!init || seen.has(init)) return [];
+    seen.add(init);
+    return strings(init).map(({ value }) => ({ node, value }));
+  }
   return [];
 }
 
@@ -51,11 +58,8 @@ function unwrap(node) {
   return current;
 }
 
-/**
- * The object literal a `const` of the file holds, when a name refers to one, as in
- * `const row = { display: 'flex' } as const`.
- */
-function constantObject(sourceCode, identifier) {
+/** The value a `const` of the file holds, when a name refers to one, without `as const`. */
+function constantInit(sourceCode, identifier) {
   const variable = resolveVariable(sourceCode, identifier, identifier.name);
   const definition = variable?.defs.length === 1 ? variable.defs[0] : undefined;
   if (
@@ -64,7 +68,15 @@ function constantObject(sourceCode, identifier) {
     definition.node.id.type !== 'Identifier'
   )
     return null;
-  const init = unwrap(definition.node.init);
+  return unwrap(definition.node.init) ?? null;
+}
+
+/**
+ * The object literal a `const` of the file holds, when a name refers to one, as in
+ * `const row = { display: 'flex' } as const`.
+ */
+function constantObject(sourceCode, identifier) {
+  const init = constantInit(sourceCode, identifier);
   return init?.type === 'ObjectExpression' ? init : null;
 }
 
@@ -79,10 +91,10 @@ function findProperty(object, names) {
  * The primitive that replaces a flex container: Column when the object's flex direction is a
  * column, Row when it is a row or left out, and either when it is computed.
  */
-function flexPrimitive(object) {
+function flexPrimitive(sourceCode, object) {
   const direction = findProperty(object, ['flexDirection', 'flex-direction']);
   if (!direction) return 'row';
-  const values = staticStrings(direction.value).map(({ value }) => value.trim());
+  const values = staticStrings(sourceCode, direction.value).map(({ value }) => value.trim());
   if (values.length === 0) return 'rowOrColumn';
   const columns = values.filter((value) => value.startsWith('column')).length;
   if (columns === values.length) return 'column';
@@ -122,41 +134,59 @@ export default {
       checked.add(object);
       const display = findProperty(object, ['display']);
       if (!display) return;
-      for (const { node, value } of staticStrings(display.value)) {
+      for (const { node, value } of staticStrings(sourceCode, display.value)) {
         const kind = layoutDisplays.get(value.trim().toLowerCase());
         if (!kind) continue;
         context.report({
           node,
-          messageId: kind === 'grid' ? 'grid' : flexPrimitive(object),
+          messageId: kind === 'grid' ? 'grid' : flexPrimitive(sourceCode, object),
           data: { display: value.trim() },
         });
       }
     }
 
     /**
+     * Checks the object a constant of the same file holds where a style takes it as it is:
+     * style={row} with `const row = { display: 'flex' }`, style={styles.toolbar} with
+     * `const styles = { toolbar: { display: 'flex' } }`, either branch of a condition, and a
+     * spread into a style object. A constant passed to a call, as in style={css(config)}, is an
+     * argument the call may turn into anything, and is not checked.
+     */
+    function visitDirect(node) {
+      const value = unwrap(node);
+      if (value?.type === 'Identifier') {
+        const object = constantObject(sourceCode, value);
+        if (object) checkObject(object);
+      } else if (
+        value?.type === 'MemberExpression' &&
+        !value.computed &&
+        value.object.type === 'Identifier'
+      ) {
+        const object = constantObject(sourceCode, value.object);
+        const member = object && findProperty(object, [value.property.name]);
+        const memberValue = member && unwrap(member.value);
+        if (memberValue?.type === 'ObjectExpression') checkObject(memberValue);
+      } else if (value?.type === 'ConditionalExpression') {
+        visitDirect(value.consequent);
+        visitDirect(value.alternate);
+      } else if (value?.type === 'LogicalExpression') {
+        visitDirect(value.left);
+        visitDirect(value.right);
+      }
+    }
+
+    /**
      * Checks every object literal in a style value, through conditions, spreads and calls, such
-     * as useMemo(() => ({ display: 'grid' }), []), and the object a constant of the same file
-     * holds: style={row} with `const row = { display: 'flex' }`, and style={styles.toolbar} with
-     * `const styles = { toolbar: { display: 'flex' } }`.
+     * as useMemo(() => ({ display: 'grid' }), []), with the constants spread into it, and the
+     * constants the style takes as they are (visitDirect).
      */
     function visit(root) {
+      visitDirect(root);
       walk(root, visitorKeys, (node) => {
-        if (node.type === 'ObjectExpression') checkObject(node);
-        else if (node.type === 'Identifier') {
-          const object = constantObject(sourceCode, node);
-          if (object) checkObject(object);
-        } else if (node.type === 'Property' && !node.computed) {
-          // A key is a name, not a variable.
-          visit(node.value);
-          return false;
-        } else if (node.type === 'MemberExpression' && !node.computed) {
-          const object =
-            node.object.type === 'Identifier' ? constantObject(sourceCode, node.object) : null;
-          const member = object && findProperty(object, [node.property.name]);
-          const value = member && unwrap(member.value);
-          if (value?.type === 'ObjectExpression') checkObject(value);
-          if (node.object.type !== 'Identifier') visit(node.object);
-          return false;
+        if (node.type === 'ObjectExpression') {
+          checkObject(node);
+          for (const property of node.properties)
+            if (property.type === 'SpreadElement') visitDirect(property.argument);
         }
         return true;
       });
