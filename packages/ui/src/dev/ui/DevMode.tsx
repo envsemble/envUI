@@ -14,6 +14,7 @@ import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
 import { realSize, type FrameSize } from './FrameHandle.js';
 import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
+import { containWheel } from './scrolling.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
 
@@ -125,6 +126,8 @@ function Panel({
   const panel = useRef<HTMLDivElement>(null);
   // While the panel covers the page, the page is inert and focus is in the panel.
   useLayoutEffect(() => cover(root, panel.current, returnFocus), [root, returnFocus]);
+  // The wheel over the panel scrolls what in it scrolls, never the page under it.
+  useEffect(() => (panel.current ? containWheel(panel.current) : undefined), []);
   // The frame resizes the root as at() does, and puts its style back on a reset and as dev mode
   // closes; the page re-lays out under the panel and the live page measures it again.
   useLayoutEffect(
@@ -167,6 +170,7 @@ function Panel({
         onFrameChange={setFrame}
         editorTheme={editorTheme}
         onClose={() => controller.setOpen(false)}
+        root={root}
       />
       {sides.inspector ? (
         <Inspector

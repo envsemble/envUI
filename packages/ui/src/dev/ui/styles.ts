@@ -370,16 +370,22 @@ export const devStyles = /* css */ `
     flex: 1 1 auto;
     min-block-size: 0;
   }
+  /* The inspector's column scrolls what its tab holds, the readout too, and keeps the wheel at its
+     ends from scrolling the page under dev mode. */
   .env-dev-tab-panel {
     flex: 1 1 auto;
     min-block-size: 0;
     padding: var(--env-space-3);
     overflow: auto;
+    overscroll-behavior: contain;
   }
   .env-dev-tokens {
     font: var(--env-type-body-small);
   }
+  /* As tall as its text: a flex item that scrolls would shrink to nothing in a short column. It
+     scrolls its long lines sideways. */
   .env-dev-readout {
+    flex: none;
     margin: 0;
     padding: var(--env-space-2) var(--env-space-3);
     overflow: auto;

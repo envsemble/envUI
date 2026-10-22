@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { fixtureUrl } from './Servers';
 // The type brings dev mode's `window.envui` with it.
 import type { LayoutProblem } from '@envsemble/envui/dev';
@@ -382,3 +382,171 @@ test('the readout counts rem from the root font size, also when it is not 16px',
     );
   }
 });
+
+test(
+  'in a short window the wheel scrolls the tree to its last node, the inspector and the device menu, and the page once dev mode closes',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 300 });
+    await open(page);
+    const scrollY = () => page.evaluate(() => document.scrollingElement!.scrollTop);
+    await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'Dev mode' });
+    /** Where an element's scroll is: its offset and the most it takes. */
+    const scroll = (locator: Locator) =>
+      locator.evaluate((element) => [
+        element.scrollTop,
+        element.scrollHeight - element.clientHeight,
+      ]);
+    /** Turns the wheel down over the visible middle of an element, more than it can scroll. */
+    const wheelOver = async (locator: Locator) => {
+      const box = (await locator.boundingBox())!;
+      await page.mouse.move(box.x + box.width / 2, (box.y + Math.min(box.y + box.height, 300)) / 2);
+      for (let turn = 0; turn < 12; turn += 1) await page.mouse.wheel(0, 200);
+    };
+    /** Scrolled to its end, which is further than it shows. */
+    const atEnd = async (locator: Locator) => {
+      await expect
+        .poll(async () => {
+          const [top, most] = await scroll(locator);
+          return most > 0 && top >= most - 1;
+        })
+        .toBe(true);
+    };
+
+    // The tree scrolls itself, to its last node.
+    const tree = panel.getByRole('tree', { name: 'Layout nodes' });
+    await wheelOver(tree);
+    await atEnd(tree);
+    await expect(tree.getByRole('treeitem', { name: /box "hidden"/ })).toBeInViewport();
+    // The inspector's column scrolls the details, and the readout.
+    await tree.getByRole('treeitem', { name: /row "painted"/ }).click();
+    const tabPanel = panel.locator('.env-dev-tab-panel');
+    await expect(tabPanel.getByRole('region', { name: 'Details of row "painted"' })).toBeVisible();
+    await wheelOver(tabPanel);
+    await atEnd(tabPanel);
+    await panel.getByRole('tab', { name: 'Readout' }).click();
+    await expect(tabPanel.locator('pre')).toContainText('problems (2):');
+    await tabPanel.evaluate((element) => element.scrollTo(0, 0));
+    await wheelOver(tabPanel);
+    await atEnd(tabPanel);
+    // The device menu, taller than the window, scrolls to its last device.
+    await panel.getByRole('button', { name: 'Device' }).click();
+    const menu = page.getByRole('menu', { name: 'Device' });
+    await wheelOver(menu);
+    await atEnd(menu);
+    await expect(menu.getByRole('menuitemradio').last()).toBeInViewport();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    // The wheel past the columns' ends, or where nothing in dev mode scrolls, leaves the page under
+    // it where it was.
+    await wheelOver(panel.getByRole('heading', { name: 'Nodes' }));
+    await wheelOver(panel.getByRole('toolbar', { name: '3D view' }));
+    expect(await scrollY()).toBe(0);
+
+    // Closed, dev mode leaves nothing that stops the page scrolling.
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    expect(
+      await page.evaluate(() =>
+        [document.documentElement, document.body, document.querySelector('.env-theme')!].map(
+          (element) => {
+            const style = getComputedStyle(element);
+            return `${style.overflow} ${style.pointerEvents} ${style.touchAction} ${(element as HTMLElement).inert}`;
+          },
+        ),
+      ),
+    ).toEqual(Array(3).fill('visible auto auto false'));
+    await page.mouse.move(640, 150);
+    await page.mouse.wheel(0, 200);
+    await expect.poll(scrollY).toBeGreaterThan(0);
+  },
+);
+
+test(
+  'the wheel in the 3D view scrolls what is under the pointer in the root, and Ctrl+wheel zooms',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    // The page is the root, inside a scaffold that scrolls; its clipped column scrolls too.
+    await page.goto(`${fixtureUrl}/?fixture=dev-mode&root=.dev-page`);
+    await page.waitForFunction(() => window.envui?.layout !== undefined);
+    await page.evaluate(() => {
+      const style = document.createElement('style');
+      style.textContent = `.dev-scaffold { block-size: 20rem; overflow: auto; }
+        .dev-clip { overflow: auto; }`;
+      // After the fixture's own style sheet, so these rules win.
+      document.body.append(style);
+      const tall = (rem: number) => {
+        const spacer = document.createElement('div');
+        spacer.style.flex = `none`;
+        spacer.style.blockSize = `${rem}rem`;
+        return spacer;
+      };
+      document.querySelector('.dev-clip')!.append(tall(20));
+      document.querySelector('.dev-page')!.append(tall(40));
+    });
+    const scaffold = page.locator('.dev-scaffold');
+    const root = page.locator('.dev-page');
+    const clip = page.locator('.dev-clip');
+    const scrollTop = (locator: Locator) => locator.evaluate((element) => element.scrollTop);
+    await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'Dev mode' });
+    const scene = panel.locator('.env-dev-scene');
+    const zoom = async () =>
+      Number(/scale\(([\d.]+)\)/.exec((await scene.getAttribute('style')) ?? '')?.[1]);
+    const plane = (name: string) =>
+      panel
+        .locator('.env-dev-plane[data-plane]')
+        .filter({ has: page.locator(':scope > .env-dev-name', { hasText: name }) });
+    await panel.getByRole('button', { name: 'Straight on' }).click();
+    /**
+     * Rests the pointer on a plane, near its bottom edge, clear of the planes above it; again
+     * while the planes still move to where the page now is.
+     */
+    const restOn = (name: string) =>
+      expect(async () => {
+        const box = (await plane(name).boundingBox())!;
+        await page.mouse.move(box.x + 6, box.y + box.height - 4);
+        await page.mouse.move(box.x + 8, box.y + box.height - 6);
+        await expect(plane(name)).toHaveAttribute('data-hovered', '', { timeout: 500 });
+      }).toPass();
+
+    // Over a node in a scroller, the wheel scrolls it.
+    await restOn('column "clipped"');
+    await page.mouse.wheel(0, 100);
+    await expect.poll(() => scrollTop(clip)).toBeGreaterThan(0);
+    // Over a node nothing in the root scrolls, the wheel zooms; what is outside the root stays.
+    const before = await zoom();
+    await restOn('row "painted"');
+    await page.mouse.wheel(0, 100);
+    await expect.poll(zoom).toBeLessThan(before);
+    expect(await scrollTop(scaffold)).toBe(0);
+    // Ctrl+wheel zooms anywhere.
+    const out = await zoom();
+    await restOn('column "clipped"');
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(0, -100);
+    await page.keyboard.up('Control');
+    await expect.poll(zoom).toBeGreaterThan(out);
+
+    // With a height from a device, the root scrolls in it, as a window would.
+    await panel.getByRole('button', { name: 'Device' }).click();
+    await page.getByRole('menuitemradio', { name: /^iPhone SE/ }).click();
+    await expect(root).toHaveCSS('overflow-y', 'auto');
+    await panel.getByRole('button', { name: 'Fit' }).click();
+    await restOn('row "painted"');
+    await page.mouse.wheel(0, 200);
+    await expect.poll(() => scrollTop(root)).toBeGreaterThan(0);
+    expect(await scrollTop(scaffold)).toBe(0);
+
+    // Closed, the root is as it was, and the page scrolls again.
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
+    const box = (await scaffold.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.wheel(0, 200);
+    await expect.poll(() => scrollTop(scaffold)).toBeGreaterThan(0);
+  },
+);
