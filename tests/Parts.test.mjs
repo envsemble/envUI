@@ -40,12 +40,25 @@ test('shared anatomy lists the components that render it', () => {
   assert.ok(component('Select').uses.includes('ListRow'));
 });
 
-test('a part or state that goes is reported until a changeset names it', () => {
+test('a state set through a class name held in a variable is on that part', () => {
+  // Reference.tsx sets `const className = 'env-rich-text-reference'` and then
+  // `<span className={className} data-reference-id={…}>`.
+  assert.deepEqual(state(component('RichText'), 'data-reference-id'), {
+    attribute: 'data-reference-id',
+    values: [],
+    parts: ['env-rich-text-reference'],
+  });
+});
+
+const major = (text) => `---\n'@envsemble/envui': major\n---\n\n${text}\n`;
+const minor = (text) => `---\n'@envsemble/envui': minor\n---\n\n${text}\n`;
+
+test('a part or state that goes is reported until a major changeset names it', () => {
   const before = {
     components: {
       Card: {
         parts: [{ class: 'env-card' }, { class: 'env-card-meta' }],
-        states: [{ attribute: 'data-layout', values: ['feature', 'stack'] }],
+        states: [{ attribute: 'data-layout', values: ['feature', 'stack'], parts: ['env-card'] }],
       },
     },
     shared: {},
@@ -54,7 +67,7 @@ test('a part or state that goes is reported until a changeset names it', () => {
     components: {
       Card: {
         parts: [{ class: 'env-card' }],
-        states: [{ attribute: 'data-layout', values: ['stack'] }],
+        states: [{ attribute: 'data-layout', values: ['stack'], parts: ['env-card'] }],
       },
     },
     shared: {},
@@ -67,8 +80,68 @@ test('a part or state that goes is reported until a changeset names it', () => {
       ["Card: [data-layout='feature']", false],
     ],
   );
-  const recorded = removedParts(before, after, 'Card drops `env-card-meta` and `data-layout`.');
+  const recorded = removedParts(before, after, [
+    major('Card drops `env-card-meta` and `data-layout="feature"`.'),
+  ]);
   assert.ok(recorded.every((item) => item.recorded));
   // A longer name that starts with the class doesn't name it.
-  assert.ok(!removedParts(before, after, 'Renames env-card-meta-text.')[0].recorded);
+  assert.ok(!removedParts(before, after, [major('Renames env-card-meta-text.')])[0].recorded);
+  // A value needs its attribute and the value named, not the attribute alone.
+  const value = (changesets) =>
+    removedParts(before, after, changesets).find((item) => item.name === 'data-layout').recorded;
+  assert.equal(value([major('Card drops `data-layout`.')]), false);
+  assert.equal(value([major('Card drops `data-layout`.'), major('Lists lose `feature`.')]), false);
+  assert.equal(value([major("Card's `data-layout` no longer takes `feature`.")]), true);
+  // Only a major changeset of @envsemble/envui records a removal.
+  const meta = (changesets) => removedParts(before, after, changesets)[0].recorded;
+  assert.equal(meta([minor('Card drops `env-card-meta`.')]), false);
+  assert.equal(meta(['Card drops `env-card-meta`.']), false);
+  assert.equal(
+    meta([`---\n'@envsemble/envui-codemods': major\n---\n\nCard drops \`env-card-meta\`.\n`]),
+    false,
+  );
+  assert.equal(
+    meta([
+      `---\n"@envsemble/envui-codemods": minor\n"@envsemble/envui": major\n---\n\nCard drops \`env-card-meta\`.\n`,
+    ]),
+    true,
+  );
+});
+
+test('a part that moves to another group, or a value list that becomes free-form, is not gone', () => {
+  const before = {
+    components: {
+      Menu: {
+        parts: [{ class: 'env-menu' }, { class: 'env-menu-row' }],
+        states: [
+          { attribute: 'data-tone', values: ['danger', 'neutral'], parts: ['env-menu-row'] },
+          { attribute: 'data-size', values: ['small'], parts: ['env-menu'] },
+        ],
+      },
+    },
+    shared: {},
+  };
+  const after = {
+    components: {
+      Menu: {
+        parts: [{ class: 'env-menu' }],
+        states: [{ attribute: 'data-size', values: [], parts: ['env-menu'] }],
+      },
+    },
+    shared: {
+      ListRow: {
+        parts: [{ class: 'env-menu-row' }],
+        states: [
+          { attribute: 'data-tone', values: ['danger', 'neutral'], parts: ['env-menu-row'] },
+        ],
+      },
+    },
+  };
+  assert.deepEqual(removedParts(before, after), []);
+  // A value the moved part no longer takes is still gone.
+  after.shared.ListRow.states[0].values = ['neutral'];
+  assert.deepEqual(
+    removedParts(before, after).map(({ label }) => label),
+    ["Menu: [data-tone='danger']"],
+  );
 });

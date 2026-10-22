@@ -142,7 +142,7 @@ export const colorGroups: [string, [string, string][]][] = [
   ],
 ];
 
-/** Each editable row targets the semantic role, or the component token, that the part paints. */
+/** Each editable row targets the semantic role, or the system token named for a component, that the part paints. */
 export function colorVariable(token: string) {
   return `--env-color-${token}`;
 }

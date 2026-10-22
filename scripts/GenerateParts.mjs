@@ -6,7 +6,8 @@
 //   node scripts/GenerateParts.mjs --check [--base <ref>]
 //                                            fail when it differs from its sources, or when a part
 //                                            or state the base branch lists has gone without a
-//                                            changeset that names it. The base is --base, else
+//                                            major changeset of @envsemble/envui that names it
+//                                            (a value with its attribute). The base is --base, else
 //                                            ENVUI_BASE, else the first of the check tiers' default
 //                                            bases whose merge-base has the file.
 //
@@ -88,6 +89,15 @@ function readSource() {
   };
   const classesOnElement = new Map();
   const statesOnElement = new Map();
+  // The elements whose class name reads a variable, by the variable's declaration, such as
+  // `const className = 'env-x'` before `<span className={className}>`.
+  const elementsOfVariable = new Map();
+  const elementsOf = (node) => {
+    const element = elementOf(node);
+    if (element) return [element];
+    const declaration = node.getFirstAncestor(Node.isVariableDeclaration);
+    return declaration ? [...(elementsOfVariable.get(declaration) ?? [])] : [];
+  };
   // Dev mode (dev.ts and dev/) is development tooling: its own UI's classes are no contract.
   const files = project
     .getSourceFiles()
@@ -103,8 +113,18 @@ function readSource() {
     file.forEachDescendant((node) => {
       if (Node.isJsxAttribute(node)) {
         const name = node.getNameNode().getText();
-        if (isClassName(name) && node.getInitializer()) anchors.push(node.getInitializer());
-        else if (name.startsWith('data-')) {
+        if (isClassName(name) && node.getInitializer()) {
+          anchors.push(node.getInitializer());
+          const element = node.getParent().getParent();
+          for (const identifier of node.getInitializer().getDescendants())
+            if (Node.isIdentifier(identifier))
+              for (const declaration of identifier.getSymbol()?.getDeclarations() ?? [])
+                if (Node.isVariableDeclaration(declaration))
+                  elementsOfVariable.set(
+                    declaration,
+                    new Set([...(elementsOfVariable.get(declaration) ?? []), element]),
+                  );
+        } else if (name.startsWith('data-')) {
           const element = node.getParent().getParent();
           const list = statesOnElement.get(element) ?? [];
           list.push({ attribute: name, values: attributeValues(node), path });
@@ -126,8 +146,7 @@ function readSource() {
       const entry = classes.get(name) ?? { files: new Set() };
       entry.files.add(path);
       classes.set(name, entry);
-      const element = elementOf(node);
-      if (element) {
+      for (const element of elementsOf(node)) {
         const set = classesOnElement.get(element) ?? new Set();
         set.add(name);
         classesOnElement.set(element, set);
@@ -461,35 +480,89 @@ export function readParts(file = partsFile) {
   return JSON.parse(readFileSync(file, 'utf8'));
 }
 
-/** Every part class and every state attribute value of a contract, as `Group: name` lines. */
+/**
+ * Every part class and every state attribute value of a contract, as `Group: name` labels, with the
+ * class or attribute each names, the value of a state value, and the parts that carry a state.
+ */
 function contractNames(parts) {
   const names = new Map();
   for (const kind of ['components', 'shared'])
     for (const [group, entry] of Object.entries(parts?.[kind] ?? {})) {
-      for (const part of entry.parts) names.set(`${group}: .${part.class}`, part.class);
+      for (const part of entry.parts)
+        names.set(`${group}: .${part.class}`, { name: part.class, part: part.class });
       for (const state of entry.states) {
-        names.set(`${group}: [${state.attribute}]`, state.attribute);
+        const carried = { name: state.attribute, attribute: state.attribute, parts: state.parts };
+        names.set(`${group}: [${state.attribute}]`, carried);
         for (const value of state.values)
-          names.set(`${group}: [${state.attribute}='${value}']`, state.attribute);
+          names.set(`${group}: [${state.attribute}='${value}']`, { ...carried, value });
       }
     }
   return names;
 }
 
+/** Each class of a contract, and the values each class's state attributes take (null: any). */
+function contractClasses(parts) {
+  const classes = new Set();
+  const states = new Map();
+  for (const kind of ['components', 'shared'])
+    for (const entry of Object.values(parts?.[kind] ?? {})) {
+      for (const part of entry.parts) classes.add(part.class);
+      for (const state of entry.states)
+        for (const part of state.parts ?? []) {
+          const key = `${part} ${state.attribute}`;
+          const known = states.get(key);
+          states.set(
+            key,
+            known === null || !state.values.length
+              ? null
+              : new Set([...(known ?? []), ...state.values]),
+          );
+        }
+    }
+  return { classes, states };
+}
+
+/** Whether a changeset's front matter makes it a major change of @envsemble/envui. */
+const isMajor = (changeset) =>
+  /^---\r?\n[\s\S]*?^\s*['"]?@envsemble\/envui['"]?\s*:\s*major\s*$[\s\S]*?^---/m.test(changeset);
+/** Whether a text names a name whole, so a changeset about env-card-header doesn't name env-card. */
+const names = (text, name) =>
+  new RegExp(String.raw`(?<![\w-])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\w-])`).test(
+    text,
+  );
+
 /**
  * What a contract lost against an older one: each part, state attribute or value that is gone,
- * with whether a changeset names it (the class, or the attribute for a state). Pure, for the tests.
+ * with whether a major changeset of @envsemble/envui names it: the class; the attribute; or, for a
+ * value, the attribute and the value. A part that moved to another group, or a state value whose
+ * attribute now takes any value, is not gone. Pure, for the tests; `changesets` is the text of each
+ * pending changeset.
  */
-export function removedParts(before, after, changesets = '') {
+export function removedParts(before, after, changesets = []) {
   const now = contractNames(after);
+  const kept = contractClasses(after);
+  const major = (Array.isArray(changesets) ? changesets : [changesets]).filter(isMajor);
+  /** Whether a part, attribute or value is still there, in this group or another. */
+  const stays = (item) => {
+    if (item.part) return kept.classes.has(item.part);
+    return (item.parts ?? []).some((part) => {
+      const values = kept.states.get(`${part} ${item.attribute}`);
+      if (values === undefined) return false;
+      return item.value === undefined || values === null || values.has(item.value);
+    });
+  };
   const removed = [];
-  for (const [label, name] of contractNames(before))
-    if (!now.has(label))
+  for (const [label, item] of contractNames(before))
+    if (!now.has(label) && !stays(item))
       removed.push({
         label,
-        name,
-        // The whole name, so a changeset about env-card-header doesn't record env-card.
-        recorded: new RegExp(String.raw`(?<![\w-])${name}(?![\w-])`).test(changesets),
+        name: item.name,
+        recorded: major.some(
+          (text) =>
+            names(text, item.name) &&
+            // A value takes its attribute and the value; "" is the attribute set without one.
+            (item.value === undefined || item.value === '' || names(text, item.value)),
+        ),
       });
   return removed;
 }
@@ -525,13 +598,12 @@ function baseParts(base) {
   return { ref: undefined, parts: undefined, skipped };
 }
 
-/** The pending changesets' text, which a removal must name. */
+/** The pending changesets' text, one per changeset, of which a major one must name a removal. */
 function pendingChangesets() {
-  if (!existsSync(changesetDirectory)) return '';
+  if (!existsSync(changesetDirectory)) return [];
   return readdirSync(changesetDirectory)
     .filter((name) => name.endsWith('.md') && name !== 'README.md')
-    .map((name) => readFileSync(resolve(changesetDirectory, name), 'utf8'))
-    .join('\n');
+    .map((name) => readFileSync(resolve(changesetDirectory, name), 'utf8'));
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -566,16 +638,16 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const unrecorded = removed.filter((item) => !item.recorded);
       if (removed.length)
         console.log(
-          `Gone since ${base.ref}:\n${removed.map((item) => `  ${item.label}${item.recorded ? ' (in a changeset)' : ''}`).join('\n')}`,
+          `Gone since ${base.ref}:\n${removed.map((item) => `  ${item.label}${item.recorded ? ' (in a major changeset)' : ''}`).join('\n')}`,
         );
       if (unrecorded.length) {
         console.error(
-          `Part classes and state attributes are public: a part or state that goes is a breaking change. Name each one above that no changeset mentions in a major changeset, with what replaces it.`,
+          `Part classes and state attributes are public: a part or state that goes is a breaking change. Name each one above that no major changeset of @envsemble/envui names (a value with its attribute) in such a changeset, with what replaces it.`,
         );
         process.exit(1);
       }
       console.log(
-        `${partsPath} matches its sources, and every part or state gone since ${base.ref} is in a changeset.`,
+        `${partsPath} matches its sources, and every part or state gone since ${base.ref} is in a major changeset.`,
       );
     }
   } else {

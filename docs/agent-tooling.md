@@ -90,7 +90,7 @@ A name an agent passes to `get_example` resolves in a fixed order: a pattern's o
 A component's part classes (`env-<component>-<part>`) and state attributes (`data-*`) are public and versioned: an application's CSS may target them, and a release that renames or removes one is a major release with a migration note. Component tokens, the custom properties a component declares for itself such as `--env-card-padding`, are private and may change in any release; applications rely on the system tokens and the part names. `docs/generated/parts.json` holds the contract, and each component's `parts` in the manifest holds its share, keyed by export:
 
 - `root`: the class on the component's outermost element, or `null` when it renders none of its own.
-- `parts`: every part class, root first, each with `class` and a one-line `description`.
+- `parts`: every part class of its own, each with `class` and a one-line `description`, the root first. A root that belongs to another component or shared group, such as ConfirmDialog's `env-dialog-popup`, is listed there and not here.
 - `states`: each state attribute with the `values` it takes (`""` is an attribute set without a value; an empty list, one that takes any value or is selected by its presence alone) and the `parts` it is set on.
 - Anatomy several components render, such as the row of menu, select and combobox options, is listed under its own name with `shared: true`.
 

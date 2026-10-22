@@ -1,5 +1,6 @@
-// Stylelint config for applications built with envUI: colors and stacking order from tokens, and rem for everything that follows the reader's font size, with
-// px only for hairlines. See README.md.
+// Stylelint config for applications built with envUI: colors and stacking order from tokens,
+// and rem for everything that follows the reader's font size, with px only for hairlines.
+// See README.md.
 import { colorTokenSuggestion, stackingAdvice } from './tokens.js';
 
 const documentation =
