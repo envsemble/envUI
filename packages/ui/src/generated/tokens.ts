@@ -148,6 +148,17 @@ export const tokens = {
       'dark-high-contrast': '#ffffff',
     },
   },
+  /** The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted. */
+  'color.bg.accent.badge': {
+    cssVariable: '--env-color-bg-accent-badge',
+    type: 'color',
+    values: {
+      light: 'rgb(0 92 200 / 0.05)',
+      dark: 'rgb(159 193 248 / 0.14)',
+      'light-high-contrast': 'rgb(0 55 124 / 0.08)',
+      'dark-high-contrast': 'rgb(205 222 252 / 0.1)',
+    },
+  },
   /** A solid accent fill, such as a solid accent badge; paired with fg.on-emphasis. */
   'color.bg.accent.emphasis': {
     cssVariable: '--env-color-bg-accent-emphasis',
@@ -159,7 +170,7 @@ export const tokens = {
       'dark-high-contrast': '#cddefc',
     },
   },
-  /** The translucent accent tint of badges and info alerts. */
+  /** The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge. */
   'color.bg.accent.muted': {
     cssVariable: '--env-color-bg-accent-muted',
     type: 'color',

@@ -226,11 +226,19 @@
           "$value": "{palette.blue.60}"
         },
         "muted": {
-          "$description": "The translucent accent tint of badges and info alerts.",
+          "$description": "The translucent accent tint of info alerts, and of soft accent badges in dark and at high contrast; in light they take color.bg.accent.badge.",
           "$value": {
             "colorSpace": "oklch",
             "components": { "$ref": "#/palette/blue/60/$value/components" },
             "alpha": 0.12
+          }
+        },
+        "badge": {
+          "$description": "The tint of a soft accent badge. In light it is the accent blue at 5%, fainter than color.bg.accent.muted, so the blue text keeps 4.5:1 over it on list rows and muted surfaces; in dark and at high contrast it is color.bg.accent.muted.",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": { "$ref": "#/palette/blue/60/$value/components" },
+            "alpha": 0.05
           }
         },
         "subtle": {

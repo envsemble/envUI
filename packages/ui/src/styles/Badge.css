@@ -29,7 +29,7 @@
 }
 .env-badge[data-tone='accent'] {
   --env-badge-tone: var(--env-color-fg-accent);
-  --env-badge-tint: var(--env-color-bg-accent-muted);
+  --env-badge-tint: var(--env-color-bg-accent-badge);
   --env-badge-fill: var(--env-color-bg-accent-emphasis);
   --env-badge-edge: var(--env-color-border-accent);
 }

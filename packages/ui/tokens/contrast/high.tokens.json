@@ -68,6 +68,7 @@
       "accent": {
         "emphasis": { "$value": "{contrast-high.color.bg.accent.emphasis}" },
         "muted": { "$value": "{contrast-high.color.bg.accent.muted}" },
+        "badge": { "$value": "{contrast-high.color.bg.accent.muted}" },
         "subtle": {
           "hover": { "$value": "{contrast-high.color.bg.accent.subtle.hover}" },
           "pressed": { "$value": "{contrast-high.color.bg.accent.subtle.pressed}" }

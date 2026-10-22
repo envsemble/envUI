@@ -922,6 +922,48 @@
         "high": 1.5
       }
     },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-default": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-muted": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-page": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-popup": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-raised": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
+    "--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-list-item-bg": {
+      "kind": "text",
+      "minimum": {
+        "standard": 4.5,
+        "high": 7
+      }
+    },
     "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-default": {
       "kind": "text",
       "minimum": {
@@ -930,20 +972,6 @@
       }
     },
     "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-page": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-popup": {
-      "kind": "text",
-      "minimum": {
-        "standard": 4.5,
-        "high": 7
-      }
-    },
-    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-raised": {
       "kind": "text",
       "minimum": {
         "standard": 4.5,
@@ -3066,6 +3094,8 @@
     "--elevation-2-border on --color-bg-raised",
     "--elevation-3-border on --color-bg-overlay over --color-bg-page",
     "--elevation-3-border on --color-bg-raised",
+    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-popup",
+    "--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-raised",
     "badge-outline-important on --color-bg-important-strong",
     "badge-outline-primary on --color-bg-brand-emphasis",
     "heatmap-accent-lowest on --color-bg-neutral-muted over --color-bg-page"
