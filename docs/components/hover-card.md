@@ -45,7 +45,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ### Text with more details
 
-A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too.
+A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too; envUI warns in the console while developing when it isn't.
 
 ```tsx example=TextDetails
 
@@ -107,9 +107,10 @@ A trigger that is text rather than a link, such as a span or Text, takes a quiet
 ### You provide
 
 - A trigger that works on its own, such as a link to a page with the same details.
+- `tabIndex={0}` on a text trigger, so keyboard focus reaches it.
 - Headings and emphasis inside the card, such as Text in the title type.
 
 ## Changelog
 
-- **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
+- **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`, and one without `tabIndex` gets a warning while developing. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
 - **0.6.0**: HoverCard.
