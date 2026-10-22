@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef } from 'react';
-import { classNames } from '../internal/classNames.js';
+import { SpinnerArc } from './internal/SpinnerArc.js';
 import { SpinnerLabel } from './internal/SpinnerLabel.js';
 
 export interface SpinnerProps extends Omit<ComponentPropsWithRef<'span'>, 'children'> {
@@ -39,37 +39,28 @@ export function Spinner({
   className,
   ...props
 }: SpinnerProps) {
-  // The drawing is decoration: the span carries the name, or hides the whole spinner.
-  const arc = (
-    <svg viewBox="0 0 48 48" focusable="false" aria-hidden="true">
-      <circle className="env-spinner-arc" cx="24" cy="24" r="20" />
-    </svg>
-  );
   if (showLabel)
     return (
       // A status region marked busy, which the label names as it shows.
-      <span
+      <SpinnerArc
         {...props}
+        size={size}
         role="status"
         aria-busy="true"
-        className={classNames('env-spinner', className)}
-        data-size={size}
+        className={className}
         data-show-label=""
       >
-        {arc}
         <SpinnerLabel label={label} />
-      </span>
+      </SpinnerArc>
     );
   return (
-    <span
+    <SpinnerArc
       {...props}
+      size={size}
       role={label ? 'progressbar' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
-      className={classNames('env-spinner', className)}
-      data-size={size}
-    >
-      {arc}
-    </span>
+      className={className}
+    />
   );
 }

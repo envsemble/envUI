@@ -3940,9 +3940,7 @@
       "states": [
         {
           "attribute": "data-show-label",
-          "values": [
-            ""
-          ],
+          "values": [],
           "parts": [
             "env-spinner"
           ]

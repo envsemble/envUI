@@ -41,7 +41,7 @@ test('with showLabel, a busy status shows the label beside the arc', () => {
   const markup = renderToStaticMarkup(h(Spinner, { label: 'Loading project', showLabel: true }));
   assert.match(
     markup,
-    /^<span role="status" aria-busy="true" class="env-spinner" data-size="md" data-show-label="">/,
+    /^<span role="status" aria-busy="true" data-show-label="" class="env-spinner" data-size="md">/,
   );
   assert.doesNotMatch(markup, /aria-label|progressbar/);
   assert.match(markup, /<svg [^>]*aria-hidden="true">/);
