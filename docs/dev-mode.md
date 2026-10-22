@@ -109,26 +109,33 @@ Open dev mode on the application at the top of this page to try it.
 
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-The toolbar over the view turns it and chooses what the planes show; the panel under it sets their colors and levels.
+The toolbar over the view turns it, chooses what the planes show and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
 
-| Do this                              | To                                                                         |
-| ------------------------------------ | -------------------------------------------------------------------------- |
-| Drag, Shift+drag, Ctrl+wheel         | Turn, pan and zoom; the wheel scrolls the page under the pointer.          |
-| A view in the toolbar, or Fit        | Look tilted, straight on, from the top or a side; bring it all back.       |
-| Names, Padding and gaps              | Show or hide the planes' names, and the hatching of padding and gaps.      |
-| Click a plane, or a node in the tree | Select the node; the inspector shows it.                                   |
-| Only the selected                    | Show only the selected node and what is inside it.                         |
-| Rest on a plane                      | See its size and container; colored by window class, a ruler of its width. |
-| Color by kind or window class        | See what each node is, or which window class its width falls in.           |
-| Set Spacing, From level and To level | Show a range of levels, with the spacing between them.                     |
+| Do this                                   | To                                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| Drag, Shift+drag, Ctrl+wheel              | Turn, pan and zoom; the wheel scrolls the page under the pointer.          |
+| A view in the toolbar, or Fit             | Look tilted, straight on, from the top or a side; bring it all back.       |
+| Names, Padding and gaps                   | Show or hide the planes' names, and the hatching of padding and gaps.      |
+| Click a plane, or a node in the tree      | Select the node; the inspector shows it.                                   |
+| Only the selected                         | Show only the selected node and what is inside it.                         |
+| Color by window class                     | Color each node by the window class its width falls in, not by its kind.   |
+| Rest on a plane                           | See its size and container; colored by window class, a ruler of its width. |
+| View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                     |
+| Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                  |
+
+### The responsive frame
+
+A frame above the planes marks the page's width, labelled in rem, px and window class. Drag a handle on its left or right edge to lay the page out at another width, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. A handle snaps to the window class boundaries; with focus on it, the arrow keys step by 1 rem and Shift+arrow by 5 rem. View settings sets the four widths the docs check at, one in each window class. The inspector and the readout follow the width. The frame's ×, a double-click on a handle or Real width in View settings brings back the real width, and closing dev mode does too.
 
 A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 
 ## The node tree and the inspector
 
 - **Nodes**, the sidebar beside the view: the nodes as a tree, with problems counted and containers marked. Hovering a node lights up its plane; clicking it selects it.
-- **Details**, in the inspector across the view: the selected node's part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
-- **Readout**, beside Details: the text of `describe()`, kept current, with a copy button.
+- **Details**, a tab of the inspector across the view: the selected node's part, component and description, its size, window class and `data-*` states, its container and which queries hold, its problems, the `--env-*` tokens its styles use with their values, and its line of the readout.
+- **Readout**, the inspector's other tab: the text of `describe()`, kept current, with a copy button.
+
+Each side column has a button that hides it, and closing both of the inspector's tabs hides it too; the toolbar's Nodes and Inspector buttons show them again.
 
 ## Skeleton shift
 
