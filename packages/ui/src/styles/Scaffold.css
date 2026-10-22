@@ -64,11 +64,14 @@
   --env-scaffold-scroll-bottom-estimate: calc(4.8rem + env(safe-area-inset-bottom));
 }
 /* The body scrolls: the Scaffold fills its container's height, the window's by default. Give it
-   another block-size with your own class, such as in a preview. */
+   another block-size with your own class, such as in a preview. The frame clips rather than hides
+   what overflows it: it is no scroll container, so focus and scrollIntoView scroll the body and
+   never the frame, and accessibility checkers judge what lies below the fold by the body's scroll
+   rather than as cut off. */
 .env-scaffold[data-scroll='body'] {
   block-size: 100dvh;
   min-block-size: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 /* The skip links: hidden until focused, then over the scaffold's start corner. */
