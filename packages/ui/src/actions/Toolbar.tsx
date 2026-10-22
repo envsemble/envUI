@@ -133,7 +133,7 @@ function Group({ className, disabled, render, children, ...props }: GroupProps) 
 
 export type SeparatorProps = ComponentPropsWithRef<'div'>;
 
-/** Space between groups of a toolbar's controls, with no line. */
+/** A line between groups of a toolbar's controls, across the toolbar's direction. */
 function Separator({ className, ...props }: SeparatorProps) {
   return (
     <BaseToolbar.Separator {...props} className={classNames('env-toolbar-separator', className)} />

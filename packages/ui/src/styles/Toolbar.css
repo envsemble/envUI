@@ -1,15 +1,16 @@
 /* Toolbar: a row, or a column, of controls one tab stop apart from the page. The buttons inside take
-   the ghost variant; groups sit side by side, a separator apart. A separator is space alone, with
-   no line. */
+   the ghost variant; groups sit side by side, with separators between them. */
 .env-toolbar-separator {
   flex: 0 0 auto;
   align-self: stretch;
+  margin: var(--env-space-1);
+  border: 0 solid var(--env-color-border-muted);
 }
 .env-toolbar-separator[data-orientation='vertical'] {
-  inline-size: var(--env-space-4);
+  border-inline-start-width: var(--env-control-border-width);
 }
 .env-toolbar-separator[data-orientation='horizontal'] {
-  block-size: var(--env-space-4);
+  border-block-start-width: var(--env-control-border-width);
 }
 /* A pressed toggle, such as Bold while the selection is bold, takes the selected fill. */
 .env-toolbar-button[aria-pressed='true'] {
