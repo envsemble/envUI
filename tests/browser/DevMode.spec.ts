@@ -74,7 +74,7 @@ test('the toggle opens the 3D view and the inspector, which Escape and the short
   page,
 }) => {
   await open(page);
-  const toggle = page.getByRole('button', { name: 'Dev mode' });
+  const toggle = page.getByRole('button', { name: 'Dev mode', exact: true });
   await toggle.click();
   const panel = page.getByRole('region', { name: 'Dev mode' });
   await expect(panel).toBeVisible();
@@ -121,7 +121,7 @@ test(
   { tag: '@engines' },
   async ({ page }) => {
     await open(page);
-    await page.getByRole('button', { name: 'Dev mode' }).click();
+    await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
     const panel = page.getByRole('region', { name: 'Dev mode' });
     const toolbar = panel.getByRole('toolbar', { name: '3D view' });
     const scene = panel.locator('.env-dev-scene');
@@ -155,7 +155,7 @@ test(
 
 test('"only the selected" shows the selected node and what is inside it', async ({ page }) => {
   await open(page);
-  await page.getByRole('button', { name: 'Dev mode' }).click();
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
   const panel = page.getByRole('region', { name: 'Dev mode' });
   const planes = panel.locator('.env-dev-plane[data-plane]');
   const only = panel.getByRole('button', { name: 'Only the selected' });
@@ -179,6 +179,119 @@ test('"only the selected" shows the selected node and what is inside it', async 
   await only.click();
   await expect(only).toHaveAttribute('aria-pressed', 'false');
   await expect(planes).toHaveCount(14);
+});
+
+test(
+  'the frame lays the page out at another width, not the viewport',
+  { tag: '@engines' },
+  async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await open(page);
+    await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'Dev mode' });
+    const root = page.locator('.env-theme').first();
+    const view = panel.locator('.env-dev-view');
+    const scene = panel.locator('.env-dev-scene');
+    const handle = panel.getByRole('slider', { name: 'Page width, right edge' });
+    const label = panel.locator('.env-dev-frame-label');
+    const rootWidth = () => root.evaluate((element) => element.getBoundingClientRect().width);
+    const realWidth = await rootWidth();
+    const viewBox = await view.boundingBox();
+    await expect(handle).toHaveAttribute('aria-valuenow', String(Math.round(realWidth)));
+
+    // A width from View settings: the page is laid out at 22rem, and the planes follow; the window
+    // and the view keep their size.
+    await panel.getByRole('button', { name: 'View settings' }).click();
+    await page.getByRole('button', { name: '22rem' }).click();
+    await page.keyboard.press('Escape');
+    await expect.poll(rootWidth).toBe(352);
+    await expect(scene).toHaveCSS('width', '352px');
+    await expect(label).toHaveText('22rem · 352px · compact');
+    await expect(handle).toHaveAttribute('aria-valuetext', '22rem · 352px · compact');
+    expect(page.viewportSize()).toEqual({ width: 1280, height: 720 });
+    expect(await view.boundingBox()).toEqual(viewBox);
+    // The inspector's readout follows the width.
+    await panel.getByRole('tab', { name: 'Readout' }).click();
+    await expect(panel.getByRole('tabpanel', { name: 'Readout' }).locator('pre')).toContainText(
+      'scaffold "app" · 22×',
+    );
+
+    // The arrow keys on a handle step by 1rem, with Shift by 5rem, across window classes.
+    await handle.focus();
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(rootWidth).toBe(368);
+    for (let step = 0; step < 3; step++) await page.keyboard.press('Shift+ArrowRight');
+    await expect(label).toHaveText('38rem · 608px · medium');
+    // Dragging the right edge to the left narrows it.
+    const box = (await handle.boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 - 40, box.y + box.height / 2, { steps: 5 });
+    await page.mouse.up();
+    await expect.poll(rootWidth).toBeLessThan(608);
+
+    // Back to the real width: the root's style is as it was.
+    await panel.getByRole('button', { name: 'Back to the real width' }).click();
+    await expect.poll(rootWidth).toBe(realWidth);
+    expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
+    // Closing dev mode with a width set puts it back too.
+    await handle.focus();
+    await page.keyboard.press('Shift+ArrowLeft');
+    await expect.poll(rootWidth).toBeLessThan(realWidth);
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    expect(await rootWidth()).toBe(realWidth);
+    expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
+  },
+);
+
+test('the side columns hide and show, and the view takes their room', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+  const panel = page.getByRole('region', { name: 'Dev mode' });
+  const toolbar = panel.getByRole('toolbar', { name: '3D view' });
+  const tree = panel.getByRole('complementary', { name: 'Layout nodes' });
+  const inspector = panel.getByRole('complementary', { name: 'Dev mode inspector' });
+  const view = panel.locator('.env-dev-view');
+  const width = async () => (await view.boundingBox())!.width;
+  const both = await width();
+  await toolbar.getByRole('button', { name: 'Nodes', exact: true }).click();
+  await expect(tree).toBeHidden();
+  await expect(toolbar.getByRole('button', { name: 'Nodes', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  await inspector.getByRole('button', { name: 'Hide the inspector' }).click();
+  await expect(inspector).toBeHidden();
+  expect(await width()).toBe(page.viewportSize()!.width);
+  await toolbar.getByRole('button', { name: 'Nodes', exact: true }).click();
+  await toolbar.getByRole('button', { name: 'Inspector', exact: true }).click();
+  await expect(tree).toBeVisible();
+  await expect(inspector).toBeVisible();
+  expect(await width()).toBe(both);
+  // The inspector's two documents close one by one, and closing the last hides it.
+  await inspector.getByRole('tab', { name: 'Details' }).click();
+  await page.keyboard.press('Delete');
+  await expect(inspector.getByRole('tab')).toHaveCount(1);
+  await expect(inspector.getByRole('tabpanel', { name: 'Readout' })).toBeVisible();
+  await page.keyboard.press('Delete');
+  await expect(inspector).toBeHidden();
+  await toolbar.getByRole('button', { name: 'Inspector', exact: true }).click();
+  await expect(inspector.getByRole('tab')).toHaveCount(2);
+});
+
+test('the legend floats over the view, with no pane behind it', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+  const panel = page.getByRole('region', { name: 'Dev mode' });
+  const legend = panel.locator('.env-dev-view').getByRole('group', { name: 'Legend' });
+  await expect(legend).toContainText('scaffold');
+  await expect(legend).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(legend).toHaveCSS('border-style', 'none');
+  await expect(legend).toHaveCSS('pointer-events', 'none');
+  // Colored by window class, it names the classes.
+  await panel.getByRole('button', { name: 'Color by window class' }).click();
+  await expect(legend).toContainText('compact < 37.5');
 });
 
 test('the readout counts rem from the root font size, also when it is not 16px', async ({
