@@ -42,7 +42,7 @@ components:
 
 A sheet is a panel at an edge of the window, over the page or beside it, after Material's side and bottom sheets: an item's details, filters, an inspector or a short set of choices. It shares Dialog's surface, title, description and actions, and DialogClose closes it.
 
-```tsx example=FilterPanel
+```tsx example=FilterPanel open
 
 ```
 
@@ -58,7 +58,7 @@ With `modal={false}` the page stays usable beside the sheet; `disablePointerDism
 
 `side="bottom"` holds a short set of choices, as tall as its content.
 
-```tsx example=ShareChoices
+```tsx example=ShareChoices open
 
 ```
 

@@ -1,7 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import {
   Bar,
-  Button,
   Column,
   Drawer,
   Panes,
@@ -41,9 +40,7 @@ export default function WithDetails() {
         <Panes.Main label="Quarterly report">
           <Column gap={3} padding={4} align="start">
             <Text>Revenue grew in every region.</Text>
-            <Button variant="secondary" onClick={() => setDetails(true)}>
-              Details
-            </Button>
+            <Panes.Trigger variant="secondary">Details</Panes.Trigger>
           </Column>
         </Panes.Main>
         <Panes.Supporting label="Details">

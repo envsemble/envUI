@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Column, Panes, Text } from '@envsemble/envui';
+import { Column, Panes, Text } from '@envsemble/envui';
 import { Info } from '@envsemble/envui/icons/Info';
 
 export default function DetailsButton() {
@@ -17,9 +17,9 @@ export default function DetailsButton() {
           <Text variant="title" render={<h3 />}>
             Quarterly report
           </Text>
-          <Button variant="secondary" startIcon={<Info />} onClick={() => setOpen(true)}>
+          <Panes.Trigger variant="secondary" startIcon={<Info />}>
             Details
-          </Button>
+          </Panes.Trigger>
         </Column>
       </Panes.Main>
       <Panes.Supporting label="Details">

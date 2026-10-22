@@ -132,7 +132,7 @@ Name the select with a short noun, and say in a disabled option's label why it i
 ```
 
 1. **Select** (`env-select`)
-2. **Label** (`env-select > div`, `label`)
+2. **Label** (`env-select-label`, `label`)
 3. **Trigger** (`env-select-trigger`)
 4. **Value** (`env-select-trigger > span::text`)
 5. **Chevron** (`env-select-icon`)

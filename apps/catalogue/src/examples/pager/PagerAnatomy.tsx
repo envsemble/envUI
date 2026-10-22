@@ -6,6 +6,7 @@ export default function PagerAnatomy() {
   return (
     <Pager.Root
       aria-label="Guide pages"
+      style={{ inlineSize: 'min(100%, 30rem)' }}
       previous={{ href: '/guide/install', children: 'Install the app', icon: <ArrowBack /> }}
       next={{ href: '/guide/invite', children: 'Invite your team', icon: <ArrowForward /> }}
     />

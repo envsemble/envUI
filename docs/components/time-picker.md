@@ -108,13 +108,20 @@ The same value on a 12-hour and a 24-hour clock; the value stays `HH:mm` on the 
 
 1. **Field** (`env-time-picker`)
 2. **Control** (`env-date-picker-control`)
-3. **Label** (`env-date-picker-control > label`, `label`)
+3. **Label** (`env-date-picker-label`, `label`)
 4. **Value** (`env-date-picker-value`)
 5. **Clear** (`env-date-picker-clear`, `clearable`)
 6. **Clock icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-Not shown: the popup, `env-time-picker-popup`, with a wheel each for the hours, the minutes and, on a 12-hour clock, AM and PM.
+```tsx anatomy=TimePickerPopupAnatomy open stage=raised
+
+```
+
+1. **Popup** (`env-time-picker-popup`)
+2. **Column** (`env-time-list-column`)
+3. **Time** (`env-time-list-row[data-centred]`)
+4. **Actions** (`env-date-picker-actions`)
 
 ## Accessibility
 

@@ -9,10 +9,14 @@
    dialog where the document root isn't themed. A size container is as wide as its context makes it,
    never as its content, so it takes the whole width it is given rather than collapse where its
    parent sizes to content. A nested boundary, such as a dark island in a row, sizes as any element
-   and is no container; a region opts in with <Box container="env-window">. Zero specificity, so
-   any class overrides both. */
+   and is no container; a region opts in with <Box container="env-window">. It is a block, also
+   where it renders an inline element, whose inline size would be ignored and whose queries would
+   match nothing, and its padding is inside that width, so it never overflows its parent. Zero
+   specificity, so any class overrides them. */
 :where(.env-theme):not(:where(.env-theme .env-theme)) {
   container: env-window / inline-size;
+  display: block;
+  box-sizing: border-box;
   inline-size: 100%;
 }
 /* A themed document root keeps the browser's font size, so 1 rem stays the reader's size (16 px by

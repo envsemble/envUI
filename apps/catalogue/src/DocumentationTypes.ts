@@ -59,6 +59,8 @@ export type DocumentationBlock =
       of?: string;
       /** Whether the figure shows the example's overlays open, contained in its stage. */
       open?: boolean;
+      /** Whether an anatomy figure shows its subject half as large again where its stage has room. */
+      enlarge?: boolean;
       /** The stage's fill where the page's own would hide the subject: `raised` or `shaded`. */
       stage?: StageFill;
       /** An anatomy figure's legend: each numbered part by its class name, and what it is. */

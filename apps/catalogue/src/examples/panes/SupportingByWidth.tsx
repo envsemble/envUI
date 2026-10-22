@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Column, DescriptionList, Panes, Text } from '@envsemble/envui';
+import { Column, DescriptionList, Panes, Text } from '@envsemble/envui';
 import { Info } from '@envsemble/envui/icons/Info';
 
 export default function SupportingByWidth() {
@@ -19,9 +19,9 @@ export default function SupportingByWidth() {
             Quarterly report
           </Text>
           <Text>Revenue grew in every region.</Text>
-          <Button variant="secondary" startIcon={<Info />} onClick={() => setOpen(true)}>
+          <Panes.Trigger variant="secondary" startIcon={<Info />}>
             Details
-          </Button>
+          </Panes.Trigger>
         </Column>
       </Panes.Main>
       <Panes.Supporting label="Details">

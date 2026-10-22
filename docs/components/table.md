@@ -135,7 +135,7 @@ Density changes only the rows' padding; controls in cells keep the small height.
 
 ## Anatomy
 
-```tsx anatomy=TableAnatomy
+```tsx anatomy=TableAnatomy enlarge
 
 ```
 
@@ -144,8 +144,8 @@ Density changes only the rows' padding; controls in cells keep the small height.
 3. **Header row** (`env-table-head`)
 4. **Header cell** (`env-table-header-cell`)
 5. **Sort button** (`env-table-sort-button`, `onSortChange`)
-6. **Row** (`env-table-body > env-table-row`)
-7. **Cell** (`env-table-cell`)
+6. **Row** (`env-table-body > env-table-row:last-child`)
+7. **Cell** (`env-table-cell:last-child`)
 
 Not shown: a resize handle, `env-table-column-resize`, and a stacked cell's label, `env-table-cell-label`.
 

@@ -163,9 +163,11 @@
 .env-panes[data-behavior='list-detail']:not([data-open]) > .env-panes-detail {
   display: none;
 }
+/* The back button keeps clear of the pane's corner: its label lines up 1 rem in, where a pane's
+   content usually starts, as a text button's label sits on its text's edge. */
 .env-panes-back {
-  padding-block: var(--env-space-2);
-  padding-inline: var(--env-space-3);
+  padding-block: var(--env-space-3) var(--env-space-2);
+  padding-inline: var(--env-space-4);
 }
 /* The back arrow points toward the inline start, so it turns in right-to-left text. */
 .env-panes-back .env-icon:dir(rtl) {
@@ -200,6 +202,10 @@
   .env-panes:is([data-split-at='medium'])[data-behavior='supporting']
     > .env-panes-supporting
     > .env-panes-close {
+    display: none;
+  }
+  /* Side by side, the supporting pane shows: the button that opens it as a sheet hides. */
+  .env-panes:is([data-split-at='medium'])[data-behavior='supporting'] .env-panes-trigger {
     display: none;
   }
   .env-panes:is([data-split-at='medium'])[data-behavior='list-detail'] > .env-panes-list {
@@ -253,6 +259,11 @@
     > .env-panes-close {
     display: none;
   }
+  /* Side by side, the supporting pane shows: the button that opens it as a sheet hides. */
+  .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='supporting']
+    .env-panes-trigger {
+    display: none;
+  }
   .env-panes:is([data-split-at='medium'], [data-split-at='expanded'])[data-behavior='list-detail']
     > .env-panes-list {
     display: block;
@@ -300,6 +311,10 @@
   .env-panes:is([data-split-at])[data-behavior='supporting']
     > .env-panes-supporting
     > .env-panes-close {
+    display: none;
+  }
+  /* Side by side, the supporting pane shows: the button that opens it as a sheet hides. */
+  .env-panes:is([data-split-at])[data-behavior='supporting'] .env-panes-trigger {
     display: none;
   }
   .env-panes:is([data-split-at])[data-behavior='list-detail'] > .env-panes-list {

@@ -38,12 +38,23 @@ export function markText<Component extends object>(component: Component): Compon
 interface TextLikeProps {
   children?: ReactNode;
   render?: unknown;
+  className?: unknown;
 }
 
-/** Whether an element is text: an inline text element, or Text that renders one or a p. */
+/**
+ * Whether an element is text: an inline text element, or Text that renders one or a p. Text that
+ * a server component rendered reaches a client component as the element it renders, so a p with
+ * the env-text class is Text too.
+ */
 function isTextElement(element: ReactElement<TextLikeProps>): boolean {
   const { type } = element;
-  if (typeof type === 'string') return textTags.has(type);
+  if (typeof type === 'string')
+    return (
+      textTags.has(type) ||
+      (type === 'p' &&
+        typeof element.props.className === 'string' &&
+        /(?:^|\s)env-text(?:\s|$)/.test(element.props.className))
+    );
   if ((typeof type !== 'function' && typeof type !== 'object') || type === null) return false;
   if ((type as unknown as Record<symbol, unknown>)[textKey] !== true) return false;
   const render = element.props.render;

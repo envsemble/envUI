@@ -124,5 +124,5 @@ The text rounds to the nearest unit and stays a count: 1 day ago, never yesterda
 
 ## Changelog
 
-- **1.0.0**: RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
+- **1.0.0**: RelativeTime's time, which shows the full date in a tooltip, takes the quiet dotted underline, `env-hover-detail`, that marks text with more on hover. RelativeTime takes EnvUIProvider's `locale` and `messages.relativeTime.now`. `formatRelativeTime` runs in React Server Components; RelativeTime is a client component.
 - **0.6.0**: RelativeTime and `formatRelativeTime`, with `format`, `locale`, `nowLabel`, `now` and `tooltip`, kept current by one shared clock.

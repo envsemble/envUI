@@ -255,6 +255,7 @@ export function PickerField({
             <label
               htmlFor={id}
               id={labelId}
+              className="env-date-picker-label"
               onPointerDown={() => {
                 labelPressOpen.current = open;
               }}

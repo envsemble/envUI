@@ -78,12 +78,12 @@ Past five destinations, the fifth place is More, which opens the rest in a menu 
 
 ## Anatomy
 
-```tsx anatomy=BarAnatomy
+```tsx anatomy=BarAnatomy enlarge
 
 ```
 
 1. **Bar** (`env-bar`)
-2. **Item** (`env-bar-item`)
+2. **Item** (`env-bar li:nth-child(2) > env-bar-item`)
 3. **Indicator** (`env-bar-icon`)
 4. **Count** (`env-bar-count`, `count`)
 5. **Label** (`env-bar-text`)

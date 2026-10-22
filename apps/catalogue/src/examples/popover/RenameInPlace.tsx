@@ -8,6 +8,8 @@ export default function RenameInPlace() {
     <Column gap={3} align="start">
       <Text>{name}</Text>
       <Popover
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         aria-label="Rename document"
         width="lg"
         trigger={

@@ -6,6 +6,8 @@ export default function FieldHelp() {
     <Row wrap align="center" gap={4}>
       <Text render={<span />}>Billing period: monthly</Text>
       <Popover
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         title="Billing periods"
         side="right"
         align="start"

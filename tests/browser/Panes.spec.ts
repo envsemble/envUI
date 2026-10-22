@@ -88,7 +88,10 @@ test.describe('Panes, supporting', () => {
       const close = supporting.getByRole('button', { name: 'Close' });
       await expect(supporting).toBeHidden();
       await expect(root.getByRole('separator')).toBeHidden();
+      // Panes.Trigger opens the sheet, and says whether it is open and which pane it opens.
       const show = root.getByRole('button', { name: 'Show details' });
+      await expect(show).toHaveAttribute('aria-expanded', 'false');
+      await expect(show).toHaveAttribute('aria-controls', (await supporting.getAttribute('id'))!);
       // From the keyboard, as WebKit focuses no button that a press activates.
       await show.focus();
       await page.keyboard.press('Enter');
@@ -98,6 +101,7 @@ test.describe('Panes, supporting', () => {
       await expect(sheet).toBeVisible();
       await expect(sheet).toHaveAttribute('aria-modal', 'true');
       await expect(sheet).toBeFocused();
+      await expect(show).toHaveAttribute('aria-expanded', 'true');
       await expect(sheet).toHaveCSS('position', 'absolute');
       await expect(main).toHaveJSProperty('inert', true);
       const placed = await box(sheet);
@@ -144,6 +148,8 @@ test.describe('Panes, supporting', () => {
       await expect(close).toBeHidden();
       await expect(main).toHaveJSProperty('inert', false);
       await expect(root.locator('.env-panes-scrim')).toBeHidden();
+      // The trigger hides while the supporting pane shows beside the main one.
+      await expect(show).toBeHidden();
     },
   );
 
@@ -169,6 +175,7 @@ test.describe('Panes, supporting', () => {
     await expect(
       page.getByTestId('supporting').getByRole('region', { name: 'Details' }),
     ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Show details' })).toBeHidden();
     await page.goto(panes('&width=60rem&split=large'));
     await expect(
       page.getByTestId('supporting').getByRole('region', { name: 'Details' }),
