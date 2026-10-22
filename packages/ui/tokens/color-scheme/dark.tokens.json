@@ -131,6 +131,7 @@
             "alpha": 0.14
           }
         },
+        "badge": { "$value": "{color.bg.accent.muted}" },
         "subtle": {
           "$root": { "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0 } },
           "hover": {

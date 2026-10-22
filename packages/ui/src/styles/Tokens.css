@@ -17,6 +17,7 @@
   --env-color-avatar-bg-violet: #7a3fc8;
   --env-color-avatar-fg: #ffffff;
   --env-color-avatar-figure: #ffffff;
+  --env-color-bg-accent-badge: rgb(0 92 200 / 0.05);
   --env-color-bg-accent-emphasis: #005cc8;
   --env-color-bg-accent-muted: rgb(0 92 200 / 0.12);
   --env-color-bg-accent-subtle: transparent;
@@ -256,6 +257,7 @@
 
 .env-theme[data-env-theme='dark'] {
   color-scheme: dark;
+  --env-color-bg-accent-badge: var(--env-color-bg-accent-muted);
   --env-color-bg-accent-emphasis: #9fc1f8;
   --env-color-bg-accent-muted: rgb(159 193 248 / 0.14);
   --env-color-bg-accent-subtle: transparent;
@@ -395,6 +397,7 @@
   --env-color-avatar-bg-slate: #3c4e69;
   --env-color-avatar-bg-teal: #03593f;
   --env-color-avatar-bg-violet: #6725b4;
+  --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-emphasis: #00377c;
   --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
   --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -520,6 +523,7 @@
     --env-color-avatar-bg-slate: #3c4e69;
     --env-color-avatar-bg-teal: #03593f;
     --env-color-avatar-bg-violet: #6725b4;
+    --env-color-bg-accent-badge: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-emphasis: #00377c;
     --env-color-bg-accent-muted: rgb(0 55 124 / 0.08);
     --env-color-bg-accent-subtle-hover: rgb(0 55 124 / 0.14);
@@ -646,6 +650,7 @@
   --env-color-avatar-bg-slate: #3c4e69;
   --env-color-avatar-bg-teal: #03593f;
   --env-color-avatar-bg-violet: #6725b4;
+  --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-emphasis: #cddefc;
   --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
   --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);
@@ -771,6 +776,7 @@
     --env-color-avatar-bg-slate: #3c4e69;
     --env-color-avatar-bg-teal: #03593f;
     --env-color-avatar-bg-violet: #6725b4;
+    --env-color-bg-accent-badge: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-emphasis: #cddefc;
     --env-color-bg-accent-muted: rgb(205 222 252 / 0.1);
     --env-color-bg-accent-subtle-hover: rgb(224 235 253 / 0.14);

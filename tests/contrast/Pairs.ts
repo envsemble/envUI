@@ -53,6 +53,10 @@ const alertTones = ['accent', 'success', 'warning', 'danger'] as const;
 const toneText = (tone: (typeof tones)[number]) =>
   tone === 'neutral' ? '--env-color-fg-muted' : `--env-color-fg-${tone}`;
 
+/** The tint of a soft badge: the tone's muted fill, and for the accent a tint of its own. */
+const badgeTint = (tone: (typeof tones)[number]) =>
+  tone === 'accent' ? '--env-color-bg-accent-badge' : `--env-color-bg-${tone}-muted`;
+
 // Surfaces, by role.
 const page = '--env-color-bg-page'; // the app frame, title bars, Surface background="page"
 const surface = '--env-color-bg-default'; // Surface's default, sidebars, standard menus
@@ -582,21 +586,24 @@ export const pairs: readonly ContrastPair[] = merged([
           [`--env-color-bg-${tone}-muted`, surface],
         ])),
     // A soft badge's text over its tint wherever a badge sits: list rows, muted and raised
-    // surfaces, and popups. The accent blue over its tint on a light row measures 4.14:1, and the
-    // blue stays as it is, so its row and muted pairs wait for a decision on the accent badge.
+    // surfaces, and popups. The accent badge takes a tint of its own, bg.accent.badge, fainter in
+    // light than the info alert's, so the blue keeps 4.5:1 over it on a light row; it is measured on
+    // the page and default surface too, which the tone's tint pairs above measure for the others.
     ...(tone === 'neutral'
       ? []
       : text(
           toneText(tone),
           [
             ...(tone === 'accent'
-              ? []
-              : [
-                  [`--env-color-bg-${tone}-muted`, row],
-                  [`--env-color-bg-${tone}-muted`, muted],
-                ]),
-            [`--env-color-bg-${tone}-muted`, raised],
-            [`--env-color-bg-${tone}-muted`, popup],
+              ? [
+                  [badgeTint(tone), page],
+                  [badgeTint(tone), surface],
+                ]
+              : []),
+            [badgeTint(tone), row],
+            [badgeTint(tone), muted],
+            [badgeTint(tone), raised],
+            [badgeTint(tone), popup],
           ],
           'A soft badge on a row, a muted or raised surface or a popup',
         )),
@@ -1932,6 +1939,12 @@ export const renamed: readonly { from: string; to: string; rationale: string }[]
     rationale:
       'The inset ring of a hovered navigation item, on the bg.navigation role; the 0.7 name is its alias.',
   },
+  ...(['raised', 'popup'] as const).map((layer) => ({
+    from: `--env-color-fg-accent on --env-color-bg-accent-muted over --env-color-bg-${layer}`,
+    to: `--env-color-fg-accent on --env-color-bg-accent-badge over --env-color-bg-${layer}`,
+    rationale:
+      'A soft accent badge takes a tint of its own, bg.accent.badge: fainter than bg.accent.muted in light, so the blue keeps 4.5:1 on a light row, and the same in dark and at high contrast.',
+  })),
   ...prefixedPairs.map(([from, to]) => ({
     from,
     to,
