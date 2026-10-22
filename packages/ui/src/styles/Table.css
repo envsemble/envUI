@@ -93,6 +93,11 @@
 .env-table :is(.env-table-cell, .env-table-header-cell)[data-numeric] {
   font-variant-numeric: tabular-nums;
 }
+/* A number never breaks at its separators, such as $4,687.50 after the comma: where the columns
+   keep their widths, its column stays as wide as it, and the region scrolls. */
+.env-table:not([data-fixed-layout]) .env-table-cell[data-numeric] {
+  white-space: nowrap;
+}
 .env-table :is(.env-table-cell, .env-table-header-cell)[data-nowrap] {
   white-space: nowrap;
 }

@@ -9,6 +9,12 @@
   padding: var(--env-space-2);
   margin: calc(-1 * var(--env-space-2));
 }
+/* The row of buttons is as wide as its buttons, at least the toolbar's width, so where they don't
+   fit the toolbar scrolls the whole row rather than the buttons spilling out of it. */
+.env-editor-toolbar > .env-toolbar {
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
 .env-editor-status:empty {
   position: absolute;
   inline-size: 0.0625rem;
