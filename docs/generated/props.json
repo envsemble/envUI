@@ -8238,7 +8238,7 @@
     "Toolbar.Separator": {
       "kind": "component",
       "source": "packages/ui/src/actions/Toolbar.tsx",
-      "description": "Space between groups of a toolbar's controls, with no line.",
+      "description": "A line between groups of a toolbar's controls, across the toolbar's direction.",
       "props": [],
       "native": [
         "div"

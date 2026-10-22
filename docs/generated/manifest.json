@@ -25355,7 +25355,7 @@
     "Toolbar.Separator": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Space between groups of a toolbar's controls, with no line.",
+      "description": "A line between groups of a toolbar's controls, across the toolbar's direction.",
       "props": [],
       "native": [
         "div"
