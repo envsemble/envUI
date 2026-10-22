@@ -821,13 +821,13 @@ test('the manifest file is what the generator writes', () => {
  * fails the test.
  */
 const planned = {
-  sidebar: ['collapsible-sidebar', 'nav-links'],
+  sidebar: ['full-list', 'phone-bar'],
   'settings-form': ['text-field', 'time-zone', 'form-actions'],
   // Its empty state is a pattern, scored by what a search brings: the plan covers the rest.
   'projects-table': ['table', 'sortable-headers', 'search'],
   'confirm-delete': ['delete-action', 'confirmation'],
   'save-toast': ['toast', 'name-field', 'save-button'],
-  'page-header': ['breadcrumbs', 'actions'],
+  'page-header': ['header', 'breadcrumbs', 'actions'],
   'command-palette': ['palette'],
   'tabs-counts': ['tabs'],
   'account-menu': ['avatar', 'menu', 'menu-items'],
@@ -872,11 +872,11 @@ test('plan covers the capabilities of the benchmark tasks, and suggests few othe
     // Code and file names in a prompt are the application's, never a part to build.
     assert.ok(!result.uncovered.some((part) => /\.tsx?\b|`/.test(part)), task.id);
   }
-  // Recall is the list above: 29 of the 42 capabilities named by exports. Precision is the share of candidates the
+  // Recall is the list above: 30 of the 46 capabilities named by exports. Precision is the share of candidates the
   // tasks list as a way to build them: 26 of 46 when this was written, a floor of one half. Column,
   // Badge and the like count against it although they fit, so it understates.
   const recall = Object.values(planned).flat().length;
-  assert.ok(recall >= 29, `benchmark recall ${recall} of 42`);
+  assert.ok(recall >= 30, `benchmark recall ${recall} of 46`);
   assert.ok(relevant / suggested >= 0.5, `benchmark precision ${relevant} of ${suggested}`);
 });
 

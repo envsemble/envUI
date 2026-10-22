@@ -273,7 +273,7 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 - **Behaviour is barely checked.** The browser step renders the app and measures its layout; it types only a check's `search`, and never clicks. A capability built with the right component but wired wrongly still counts as covered.
 - **Rendered checks find elements by their text.** A capability described by what renders anchors on texts the prompt names, such as a destination's label; a result that renames them, or puts a label only in a tooltip, fails the check.
-- **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `Scaffold` would have provided it. That is why the sidebar task lists only `Scaffold`, `Drawer` and `Rail` for the toggle.
+- **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `Scaffold` would have provided it. That is why the sidebar task's switch counts only through Scaffold's `forms`.
 - **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code with Opus 5.5 at high effort scored 100 on every task. Judge a condition on the `hard` fixture (that baseline: Claude Code 92.6, Codex 50.5), on Haiku and Opus at low effort, on the layout tasks and on the docs-lookup numbers.
 - **One run per task and agent.** Repeat runs before trusting differences of a few points.
 
@@ -327,7 +327,7 @@ Rendered checks are measured by the browser step at their widths (`at`, all four
 | `busy`      | something visible is `aria-busy="true"`                                                                |
 | `appears`   | after the `search`, a visible element of each of its `roles` (`heading`, `button`) wasn't there before |
 
-A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card and Surface and `placeholders()`. The scorer sees a prop on a component imported by name, not on a namespace's part such as `List.Item`, so a list's skeleton counts through `placeholders()`. `activity-loading` needs only `showLabel` on Spinner, which envUI has, and runs.
+A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card, Surface and the parts of List and Table, and `placeholders()`. `activity-loading` needs only `showLabel` on Spinner, which envUI has, and runs.
 
 If the task needs mocked data or an API call, add it to `fixtures/basic/src/api.ts` or `fixtures/basic/src/data/`. The hard fixture inherits it. That changes the template hash, and the next run reinstalls the template. Check that the task still makes sense in the hard fixture, whose projects page already has a toolbar (Refresh, Share) and a share modal.
 
