@@ -316,16 +316,16 @@ Add an entry to `tasks.json` with:
 
 Rendered checks are measured by the browser step at their widths (`at`, all four by default), loaded or while loading (`state: "loading"`), or after a search: with `search`, the step types its text into the page's search field (a search input or searchbox, or a field named, labelled or with a placeholder containing "search") once the page has loaded, waits for the DOM to settle, and measures then; without a search field the check fails. An anchor is a visible element that holds a text (`text`), case-insensitively, or has it as its `aria-label`; with `within`, the nearest element around it matching that selector, and with `up`, that many levels above, such as `{ "text": "Quarterly report", "within": "h1, h2, h3, h4, h5, h6, [role=heading]", "up": 1 }` for the pane that holds the selected project's heading.
 
-| Check       | Passes when                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------ |
-| `visible`   | every `text` has a visible anchor                                                                      |
-| `relation`  | anchor `a` is `left-of`, `right-of`, `above`, `below` or `beside` anchor `b`                           |
-| `exclusive` | exactly one of the `anchors` is visible, as when one pane shows at a time                              |
-| `columns`   | the anchors of `text` sit in at least `min` and at most `max` columns, counted by their left edges     |
-| `size`      | the anchor's width is within `minWidth` and `maxWidth`, in rem                                         |
-| `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)          |
-| `busy`      | something visible is `aria-busy="true"`                                                                |
-| `appears`   | after the `search`, a visible element of each of its `roles` (`heading`, `button`) wasn't there before |
+| Check       | Passes when                                                                                                                                                                          |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `visible`   | every `text` has a visible anchor                                                                                                                                                    |
+| `relation`  | anchor `a` is `left-of`, `right-of`, `above`, `below` or `beside` anchor `b`                                                                                                         |
+| `exclusive` | exactly one of the `anchors` is visible, as when one pane shows at a time                                                                                                            |
+| `columns`   | the anchors of `text` sit in at least `min` and at most `max` columns, counted by their left edges                                                                                   |
+| `size`      | the anchor's width is within `minWidth` and `maxWidth`, in rem                                                                                                                       |
+| `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)                                                                                        |
+| `busy`      | something visible is `aria-busy="true"`                                                                                                                                              |
+| `appears`   | after the `search`, a visible element of each of its `roles` (`heading`, `button`) wasn't there before; what the search field brings itself, such as its clear button, doesn't count |
 
 A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card, Surface and the parts of List and Table, and `placeholders()`. `activity-loading` needs only `showLabel` on Spinner, which envUI has, and runs.
 
