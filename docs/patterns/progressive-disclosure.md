@@ -116,15 +116,15 @@ A help button opens a Popover with a short definition and a link; a Tooltip only
 
 ## When to use
 
-```tsx do=RequiredInView caption="What every export needs in view; only the optional settings behind the summary."
+```tsx do=OneLevel caption="One level: every optional setting behind one summary."
 
 ```
 
-```tsx dont=RequiredHidden caption="A required field behind a closed summary: people submit without seeing it."
+```tsx dont=NestedDisclosures caption="A disclosure in a disclosure: the last setting is two presses away, and easy to miss."
 
 ```
 
-- Don't nest disclosures, or put a menu in a popover in a sheet.
+- One step away at most: don't put a menu in a popover in a sheet either.
 - Nothing to act on in a Tooltip or a HoverCard; what a HoverCard shows must be reachable without hover, as it never opens on touch.
 - Several Disclosures with a shared `name` stand in for an accordion; put a heading above the stack, as their summaries aren't headings.
 
