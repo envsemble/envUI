@@ -138,15 +138,18 @@ test('every highlighted token is readable on its code background, in code blocks
       const target = targets[contrast];
       const theme = await codeTheme(scheme, contrast);
       const colors = codeColors(scheme, contrast);
-      // Code sits on the page, a pane or card, a raised surface or a popup, as the tokens give them;
-      // inline code's layer is the neutral muted fill.
+      // Code sits on the page, a pane or card, a raised surface, a popup, a muted fill or a list
+      // item, as the tokens give them; inline code's layer is the neutral muted fill.
       const tokenTheme = `${scheme}${contrast === 'high' ? '-high-contrast' : ''}`;
       const value = (id) => tokens[id].values[tokenTheme];
       assert.deepEqual(
         [...colors.surfaces].sort(),
         [
           ...new Set(
-            ['page', 'default', 'raised', 'popup'].map((name) => value(`color.bg.${name}`)),
+            [
+              ...['page', 'default', 'raised', 'popup', 'muted'].map((name) => `color.bg.${name}`),
+              'color.list-item.bg',
+            ].map(value),
           ),
         ].sort(),
         `${scheme} ${contrast}: update the surfaces in CodeColors.ts to the color tokens`,

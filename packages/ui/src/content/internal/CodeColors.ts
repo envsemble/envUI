@@ -20,8 +20,10 @@ export interface CodeLayer {
 /** The colors code takes around its tokens, in one app theme and contrast. */
 interface CodeColors {
   /**
-   * The surfaces code may sit on: the page, a pane or card (also the raised fill) and a popup, as
-   * the color tokens give them. Text in code reaches the contrast's target over each of them.
+   * The surfaces code may sit on at rest, as the color tokens give them: the page, a pane or card
+   * (also the raised fill), a popup, the muted fill of muted cards and surfaces, and a list item's.
+   * Text in code reaches the contrast's target over each of them. Hover and pressed fills are
+   * passing states and left out; so is the selected fill, which holds a row's own text.
    */
   surfaces: readonly string[];
   /**
@@ -31,7 +33,7 @@ interface CodeColors {
    * than every surface: over a lighter one, no token could reach 7:1.
    */
   block: CodeLayer;
-  /** Inline code: the neutral muted fill (`--env-color-bg-neutral-muted`), a stronger layer. */
+  /** Inline code: the neutral muted fill (`--env-color-bg-neutral-muted`). */
   inline: CodeLayer;
   /**
    * Diffs: the muted canvas of the themes' own design system (`bgColor-muted`), opaque, since
@@ -55,14 +57,14 @@ const dark = '#e8eaee';
 const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
   light: {
     standard: {
-      surfaces: ['#ffffff', '#eff1f5'],
+      surfaces: ['#ffffff', '#eff1f5', '#e2e4e8'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.1 },
       diff: '#f6f8fa',
       foreground: '#1f2328',
     },
     high: {
-      surfaces: ['#ffffff', '#eff1f5'],
+      surfaces: ['#ffffff', '#eff1f5', '#f6f8fc'],
       block: { color: light, alpha: 0.06 },
       inline: { color: light, alpha: 0.06 },
       diff: '#e7ecf0',
@@ -78,7 +80,7 @@ const colors: Record<ThemeValue, Record<CodeContrast, CodeColors>> = {
       foreground: '#b2c0cd',
     },
     high: {
-      surfaces: ['#1e1f21', '#28292b', '#303234'],
+      surfaces: ['#1e1f21', '#28292b', '#303234', '#343638'],
       block: { color: '#0a0c10', alpha: 1 },
       inline: { color: dark, alpha: 0.08 },
       diff: '#0a0c10',

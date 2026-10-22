@@ -27,7 +27,7 @@
   color: var(--env-code-foreground-now, var(--env-code-foreground));
 }
 /* Inline code: the neutral muted fill, a layer of the text color, so it stands apart from the
-   page, panes, cards and popups alike, as code blocks do with a fainter layer. */
+   page, panes, cards, muted fills and popups alike, as code blocks do with a layer of their own. */
 .env-code {
   padding: 0.125em 0.375em;
   border-radius: var(--env-radius-sm);
