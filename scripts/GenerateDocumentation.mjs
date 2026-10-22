@@ -548,6 +548,30 @@ function headingProblems(token) {
  */
 const figurePattern =
   /^tsx\s+(example|do|dont|anatomy)=(\S+)((?:\s+[a-z]+(?:=(?:"[^"]*"|[^\s"]+))?)*)\s*$/;
+/**
+ * Where a figure fence that doesn't parse has a double quote inside a value, such as
+ * `caption="Label it "Save"."`: the attribute and the text from the stray quote on. A value can't
+ * hold one, escaped or not, since Markdown unescapes `\"` in a fence's info string.
+ */
+export function strayQuote(info) {
+  const head = info.match(/^tsx\s+(?:example|do|dont|anatomy)=\S+/);
+  if (!head) return undefined;
+  const rest = info.slice(head[0].length).trimEnd();
+  const attribute = /\s+([a-z]+)(?:=(?:"[^"]*"|[^\s"]+))?/y;
+  let key;
+  let index = 0;
+  for (let match; (match = attribute.exec(rest)); index = attribute.lastIndex) key = match[1];
+  const left = rest.slice(index);
+  if (
+    !key ||
+    !left ||
+    /^\s/.test(left) ||
+    (!rest.slice(0, index).endsWith('"') && !left.startsWith('"'))
+  )
+    return undefined;
+  const quote = left.startsWith('"') ? index : rest.lastIndexOf('"', index - 1);
+  return { key, from: rest.slice(quote) };
+}
 /** The attributes each kind of figure takes, and those it needs. */
 const figureAttributes = {
   example: { allowed: ['caption', 'widths', 'open', 'stage'], required: [] },
@@ -699,6 +723,13 @@ function readFigures(document, body, { examples, specimens, partNames }) {
     legendOf = undefined;
     if (token.type === 'code' && /^tsx\s+(?:example|do|dont|anatomy)=/.test(token.lang ?? '')) {
       const match = (token.lang ?? '').match(figurePattern);
+      const quote = match ? undefined : strayQuote(token.lang);
+      if (quote) {
+        problems.push(
+          `the ${quote.key} of the fence \`${token.lang}\` has a double quote inside it, at \`${quote.from}\`: a value can't hold ", escaped or not, so rephrase it or use ' or “ ”`,
+        );
+        continue;
+      }
       if (!match) {
         problems.push(
           `the fence \`${token.lang}\` is malformed: write \`tsx example=Name\`, \`tsx do=Name caption="…"\`, \`tsx dont=Name caption="…"\` or \`tsx anatomy=Name\`, with attributes as name="value" and flags, such as open, as their name alone`,
