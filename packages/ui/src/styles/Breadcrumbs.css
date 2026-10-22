@@ -40,8 +40,8 @@
 .env-breadcrumbs-text:focus-visible,
 .env-breadcrumbs-current:focus-visible {
   outline: 0.125rem solid var(--env-color-border-focus);
-  /* Clear of the label's first and last letters, as on a text button. */
-  outline-offset: 0.125rem;
+  /* Clear of the label's first and last letters, as on a text button: half the smallest space. */
+  outline-offset: calc(var(--env-space-1) / 2);
 }
 .env-breadcrumbs-text {
   color: var(--env-color-fg-muted);
@@ -58,7 +58,7 @@
 }
 .env-breadcrumbs-separator {
   /* Room for the focus ring of the level on either side. */
-  margin-inline: 0.125rem;
+  margin-inline: calc(var(--env-space-1) / 2);
   color: var(--env-color-fg-muted);
 }
 .env-breadcrumbs-separator:dir(rtl) {
