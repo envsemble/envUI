@@ -56,7 +56,7 @@ A component's part classes (`env-<component>-<part>`) and state attributes (`dat
 - It derives the states from the `data-*` attributes set in JSX on an element with a part class, with the values of the attribute's type, and from the `[data-*]` selectors the style sheets put on a part class, which add the states Base UI sets.
 - `packages/ui/src/parts.json` holds what can't be derived: a one-line description of every part, by component, the `roots` of components whose root isn't `env-<name>`, the `shared` anatomy several components render, by class prefix, and the classes no prefix `placed`. A new part needs its description there, and the generation fails without it.
 
-Commit `parts.json` with the change, then run `npm run docs:manifest`. `npm run docs:check` fails while it is stale, and when a part, state attribute or value that the integration branch lists has gone without a changeset that names it, the class or the attribute: a rename or removal is a `major` change with a migration note.
+Commit `docs/generated/parts.json` with the change, then run `npm run docs:manifest`. `npm run docs:check` fails while it is stale, and when a part, state attribute or value that the integration branch lists has gone without a `major` changeset of `@envsemble/envui` that names it: the class, the attribute, or a value with its attribute. A rename or removal is a `major` change with a migration note. A part that moves to another component or shared group, or a state that comes to take any value, is not gone.
 
 ## Agent files and skills
 
