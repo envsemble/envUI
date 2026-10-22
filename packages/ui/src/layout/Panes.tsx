@@ -12,10 +12,11 @@ import {
   type ComponentPropsWithRef,
   type CSSProperties,
   type KeyboardEvent,
+  type MouseEvent,
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Button, IconButton } from '../actions/Button.js';
+import { Button, IconButton, type ButtonAppearanceProps } from '../actions/Button.js';
 import { panes } from '../foundations/messages/panes.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
@@ -160,6 +161,8 @@ interface PanesContextValue {
   behavior: PanesBehavior;
   open: boolean;
   close: () => void;
+  /** Opens the supporting pane, or the detail. */
+  show: () => void;
   backLabel: string | undefined;
   closeLabel: string | undefined;
   size: number;
@@ -276,6 +279,7 @@ function Root({
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;
   const close = useCallback(() => onOpenChangeRef.current?.(false), []);
+  const show = useCallback(() => onOpenChangeRef.current?.(true), []);
   const resizedId = `${useId()}-resized`;
   const listRef = useRef<HTMLDivElement>(null);
   const context = useMemo<PanesContextValue>(
@@ -283,6 +287,7 @@ function Root({
       behavior,
       open,
       close,
+      show,
       backLabel,
       closeLabel,
       size,
@@ -293,7 +298,7 @@ function Root({
       resizedId,
       listRef,
     }),
-    [behavior, open, close, backLabel, closeLabel, size, min, max, change, reset, resizedId],
+    [behavior, open, close, show, backLabel, closeLabel, size, min, max, change, reset, resizedId],
   );
   return (
     <PanesContext value={context}>
@@ -604,6 +609,31 @@ function Divider({ label, className, onDoubleClick, ...props }: DividerProps) {
   );
 }
 
+/** Panes.Trigger's props: a Button's, as a native button. */
+export type TriggerProps = ButtonAppearanceProps &
+  ComponentPropsWithRef<'button'> & { href?: undefined };
+
+/**
+ * The button that opens the supporting pane while it is a sheet, below `splitAt`; place it in the
+ * main pane. It hides while the panes sit side by side, where the supporting pane shows anyway,
+ * and says whether the sheet is open with aria-expanded. It takes Button's props.
+ */
+function Trigger({ className, onClick, ...props }: TriggerProps) {
+  const { open, show, resizedId } = usePanes('Trigger');
+  return (
+    <Button
+      {...props}
+      className={classNames('env-panes-trigger', className)}
+      aria-expanded={open}
+      aria-controls={resizedId}
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event);
+        if (!event.defaultPrevented) show();
+      }}
+    />
+  );
+}
+
 // Each part is named for React DevTools by a pure call, so a bundler drops the parts an
 // application leaves unused.
 const RootPart = /* @__PURE__ */ withDisplayName(Root, 'Panes.Root');
@@ -612,6 +642,7 @@ const SupportingPart = /* @__PURE__ */ withDisplayName(Supporting, 'Panes.Suppor
 const ListPart = /* @__PURE__ */ withDisplayName(List, 'Panes.List');
 const DetailPart = /* @__PURE__ */ withDisplayName(Detail, 'Panes.Detail');
 const DividerPart = /* @__PURE__ */ withDisplayName(Divider, 'Panes.Divider');
+const TriggerPart = /* @__PURE__ */ withDisplayName(Trigger, 'Panes.Trigger');
 export {
   RootPart as Root,
   MainPart as Main,
@@ -619,4 +650,5 @@ export {
   ListPart as List,
   DetailPart as Detail,
   DividerPart as Divider,
+  TriggerPart as Trigger,
 };

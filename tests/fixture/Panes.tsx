@@ -49,9 +49,7 @@ export function PanesFixture() {
           data-testid="supporting"
         >
           <Panes.Main label="Document">
-            <Button variant="secondary" onClick={() => setOpen(true)}>
-              Show details
-            </Button>
+            <Panes.Trigger variant="secondary">Show details</Panes.Trigger>
             <Text>The document, which scrolls on its own.</Text>
             <div style={{ blockSize: '40rem' }} />
           </Panes.Main>

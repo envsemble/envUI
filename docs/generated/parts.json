@@ -3114,6 +3114,10 @@
         {
           "class": "env-panes-supporting",
           "description": "The supporting pane, a sheet over the main pane in less room."
+        },
+        {
+          "class": "env-panes-trigger",
+          "description": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
         }
       ],
       "states": [
