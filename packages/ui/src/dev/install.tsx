@@ -116,6 +116,7 @@ export function installDevMode(options: DevModeOptions = {}): DevModeHandle {
     button: options.button ?? true,
     shortcut: options.shortcut === false ? null : 'Alt+Shift+D',
     root: options.root,
+    host,
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);

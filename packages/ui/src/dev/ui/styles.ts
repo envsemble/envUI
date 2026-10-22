@@ -13,6 +13,10 @@ export const devStyles = /* css */ `
   .env-dev {
     display: contents;
   }
+  /* Dev mode's own popups portal into the host, beside its UI, and take the pointer there. */
+  [data-env-dev-host] > :not(.env-dev) {
+    pointer-events: auto;
+  }
   .env-dev-toggle {
     position: fixed;
     inset-block-end: var(--env-space-4);
