@@ -72,8 +72,15 @@
         },
         {
           "id": "empty-state",
-          "label": "empty state",
-          "envui": ["Column", "Text"]
+          "label": "an empty state with a heading and an action when nothing matches",
+          "rendered": [
+            {
+              "check": "appears",
+              "search": "zzzz no such project",
+              "roles": ["heading", "button"],
+              "at": ["80rem", "22rem"]
+            }
+          ]
         },
         {
           "id": "clear-action",

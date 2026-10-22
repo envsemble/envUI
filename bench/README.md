@@ -271,7 +271,7 @@ The transcript tells whether the agent read envUI's own material. "Read envUI do
 
 ### Limits
 
-- **Behaviour isn't checked.** The browser step renders the app and measures its layout, but doesn't click or type. A capability built with the right component but wired wrongly still counts as covered.
+- **Behaviour is barely checked.** The browser step renders the app and measures its layout; it types only a check's `search`, and never clicks. A capability built with the right component but wired wrongly still counts as covered.
 - **Rendered checks find elements by their text.** A capability described by what renders anchors on texts the prompt names, such as a destination's label; a result that renames them, or puts a label only in a tooltip, fails the check.
 - **Coverage is by export name.** Using envUI's `Button` for a toggle covers "toggle button" even if `Scaffold` would have provided it. That is why the sidebar task lists only `Scaffold`, `Drawer` and `Rail` for the toggle.
 - **The basic fixture has little headroom.** It is small, already uses envUI, and envUI is the only UI package installed. Agents that look in `node_modules` find the shipped docs and skills there. In its baseline, Claude Code with Opus 5.5 at high effort scored 100 on every task. Judge a condition on the `hard` fixture (that baseline: Claude Code 92.6, Codex 50.5), on Haiku and Opus at low effort, on the layout tasks and on the docs-lookup numbers.
@@ -314,17 +314,18 @@ Add an entry to `tasks.json` with:
 - a `prompt` that doesn't name envUI components;
 - `capabilities`, each with the envUI exports that provide it (`envui`), or with checks of what renders (`rendered`) when the task is about arrangement rather than a component.
 
-Rendered checks are measured by the browser step at their widths (`at`, all four by default), loaded or while loading (`state: "loading"`). An anchor is a visible element that holds a text (`text`), case-insensitively, or has it as its `aria-label`; with `within`, the nearest element around it matching that selector, and with `up`, that many levels above, such as `{ "text": "Quarterly report", "within": "h1, h2, h3, h4, h5, h6, [role=heading]", "up": 1 }` for the pane that holds the selected project's heading.
+Rendered checks are measured by the browser step at their widths (`at`, all four by default), loaded or while loading (`state: "loading"`), or after a search: with `search`, the step types its text into the page's search field (a search input or searchbox, or a field named, labelled or with a placeholder containing "search") once the page has loaded, waits for the DOM to settle, and measures then; without a search field the check fails. An anchor is a visible element that holds a text (`text`), case-insensitively, or has it as its `aria-label`; with `within`, the nearest element around it matching that selector, and with `up`, that many levels above, such as `{ "text": "Quarterly report", "within": "h1, h2, h3, h4, h5, h6, [role=heading]", "up": 1 }` for the pane that holds the selected project's heading.
 
-| Check       | Passes when                                                                                        |
-| ----------- | -------------------------------------------------------------------------------------------------- |
-| `visible`   | every `text` has a visible anchor                                                                  |
-| `relation`  | anchor `a` is `left-of`, `right-of`, `above`, `below` or `beside` anchor `b`                       |
-| `exclusive` | exactly one of the `anchors` is visible, as when one pane shows at a time                          |
-| `columns`   | the anchors of `text` sit in at least `min` and at most `max` columns, counted by their left edges |
-| `size`      | the anchor's width is within `minWidth` and `maxWidth`, in rem                                     |
-| `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)      |
-| `busy`      | something visible is `aria-busy="true"`                                                            |
+| Check       | Passes when                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------ |
+| `visible`   | every `text` has a visible anchor                                                                      |
+| `relation`  | anchor `a` is `left-of`, `right-of`, `above`, `below` or `beside` anchor `b`                           |
+| `exclusive` | exactly one of the `anchors` is visible, as when one pane shows at a time                              |
+| `columns`   | the anchors of `text` sit in at least `min` and at most `max` columns, counted by their left edges     |
+| `size`      | the anchor's width is within `minWidth` and `maxWidth`, in rem                                         |
+| `centered`  | the anchor's margins to the window's edges differ by at most `tolerance` rem (1.5 by default)          |
+| `busy`      | something visible is `aria-busy="true"`                                                                |
+| `appears`   | after the `search`, a visible element of each of its `roles` (`heading`, `button`) wasn't there before |
 
 A task that waits for an envUI API that doesn't exist yet has `pending`, saying what it waits for. `--tasks all` leaves it out; name it in `--tasks` to run it. No task waits now: `card-skeletons` and `loading-skeletons` check the skeleton API, `skeleton` on Card and Surface and `placeholders()`. The scorer sees a prop on a component imported by name, not on a namespace's part such as `List.Item`, so a list's skeleton counts through `placeholders()`. `activity-loading` needs only `showLabel` on Spinner, which envUI has, and runs.
 
