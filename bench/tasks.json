@@ -1,20 +1,35 @@
 {
-  "$comment": "Benchmark tasks. Prompts are phrased as a product engineer would ask and never name envUI components. Each capability lists the envUI exports that provide it (any one covers it; 'Component.prop' means that component used with that prop), or, under 'rendered', checks of what the browser step renders: a capability is covered when every check passes at its widths ('at', all four by default), in its state ('loaded' by default, or 'loading', right after the app first renders). Anchors find visible elements by their text or aria-label, case-insensitively, or the nearest element around it that matches 'within', and 'up' levels above that. A task with 'pending' runs only when named in --tasks: it waits for an envUI API that doesn't exist yet.",
+  "$comment": "Benchmark tasks. Prompts are phrased as a product engineer would ask and never name envUI components. Each capability lists the envUI exports that provide it (any one covers it; 'Component.prop' means that component used with that prop, and 'Namespace.Part.prop' that prop on a namespace's part, such as 'Table.HeaderCell.onSortChange'), or, under 'rendered', checks of what the browser step renders: a capability is covered when every check passes at its widths ('at', all four by default), in its state ('loaded' by default, or 'loading', right after the app first renders). Anchors find visible elements by their text or aria-label, case-insensitively, or the nearest element around it that matches 'within', and 'up' levels above that. A task with 'pending' runs only when named in --tasks: it waits for an envUI API that doesn't exist yet.",
   "tasks": [
     {
       "id": "sidebar",
-      "title": "Collapsible sidebar with a toggle",
-      "prompt": "Add a collapsible sidebar to the app with navigation links for Projects, Members and Settings; Projects is the current page. Put a button at the top that collapses and expands the sidebar, and remember whether it was collapsed between visits.",
+      "title": "Navigation that narrows to an icon strip",
+      "prompt": "Add navigation down the left side of the app to three destinations, Projects, Members and Settings, each with an icon; Projects is the current page, and the projects page stays the content. Put a button at the top that narrows the navigation from a list with full labels to a strip of icons and back, and remember the choice between visits. On a phone-sized window the navigation is a bar along the bottom instead.",
       "capabilities": [
         {
-          "id": "collapsible-sidebar",
-          "label": "collapsible sidebar and its toggle",
-          "envui": ["Scaffold", "Drawer", "Rail"]
+          "id": "frame",
+          "label": "the app frame that places the navigation and the content",
+          "envui": ["Scaffold"]
         },
         {
-          "id": "nav-links",
-          "label": "sidebar navigation links",
+          "id": "full-list",
+          "label": "the navigation as a list with full labels",
           "envui": ["Drawer"]
+        },
+        {
+          "id": "icon-strip",
+          "label": "the navigation as a narrow strip of icons",
+          "envui": ["Rail"]
+        },
+        {
+          "id": "switch",
+          "label": "the button switches the form the frame shows",
+          "envui": ["Scaffold.forms"]
+        },
+        {
+          "id": "phone-bar",
+          "label": "a bar along the bottom on a phone",
+          "envui": ["Bar"]
         }
       ]
     },
@@ -63,7 +78,7 @@
         {
           "id": "sortable-headers",
           "label": "sortable column headers",
-          "envui": ["Table.onSort"]
+          "envui": ["Table.HeaderCell.onSortChange"]
         },
         {
           "id": "search",
@@ -114,7 +129,7 @@
         {
           "id": "toast",
           "label": "managed toast",
-          "envui": ["useToast", "Toast", "ToastRegion"]
+          "envui": ["useToast", "Toast"]
         },
         {
           "id": "name-field",
@@ -134,6 +149,11 @@
       "prompt": "Give the projects page a proper page header: breadcrumbs (Home > Projects), the page title with the number of projects shown next to it, and two actions on the right, 'Export' and 'New project' (they can just log to the console for now).",
       "capabilities": [
         {
+          "id": "header",
+          "label": "page header",
+          "envui": ["PageHeader"]
+        },
+        {
           "id": "breadcrumbs",
           "label": "breadcrumbs",
           "envui": ["Breadcrumbs"]
@@ -151,7 +171,7 @@
         {
           "id": "action-group",
           "label": "grouped actions",
-          "envui": ["ActionGroup", "ButtonGroup"]
+          "envui": ["PageHeader.actions", "ButtonGroup"]
         }
       ]
     },
@@ -278,7 +298,14 @@
         {
           "id": "placeholders",
           "label": "the list itself as a skeleton over placeholder rows",
-          "envui": ["placeholders", "Surface.skeleton", "Card.skeleton"]
+          "envui": [
+            "placeholders",
+            "List.Root.skeleton",
+            "List.Item.skeleton",
+            "Table.Root.skeleton",
+            "Surface.skeleton",
+            "Card.skeleton"
+          ]
         },
         {
           "id": "error-message",
@@ -520,6 +547,11 @@
               "at": ["22rem"]
             }
           ]
+        },
+        {
+          "id": "panes",
+          "label": "list and detail panes",
+          "envui": ["Panes"]
         }
       ]
     },

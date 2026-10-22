@@ -343,6 +343,13 @@ export function analyzeSource(fileName, text, { reexports } = {}) {
         }
       }
 
+    // A prop on a namespace's part, such as <Table.HeaderCell onSortChange>, counts as
+    // `Table.HeaderCell.onSortChange`, through a named or a namespace import.
+    const owner = ts.isPropertyAccessExpression(tagName) && resolveReference(tagName.expression);
+    if (owner)
+      for (const name of attributes.keys())
+        result.usedProps.add(`${owner}.${tagName.name.text}.${name}`);
+
     const reference = resolveReference(tagName);
     if (reference) {
       result.jsxUses[reference] = (result.jsxUses[reference] ?? 0) + 1;

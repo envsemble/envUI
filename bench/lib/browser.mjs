@@ -212,6 +212,15 @@ function markPresent(roles) {
   }
 }
 
+/** Marks the elements of the given roles inside envUI's field around the search input as present. */
+function markInField(input, roles) {
+  const field = input.closest('.env-field');
+  if (!field) return;
+  for (const selector of roles)
+    for (const element of field.querySelectorAll(selector))
+      element.setAttribute('data-bench-before', '');
+}
+
 /**
  * Measures the page at the window's current width: dev mode's `layout.at()` at that width, the
  * page's own horizontal overflow, and the task's rendered checks. Returns plain data.
@@ -686,6 +695,8 @@ async function measureSearched({ page, checks, run, outcome }) {
       continue;
     }
     await page.evaluate(waitForQuiet, { quiet: timeouts.quiet, limit: timeouts.quiet * 10 });
+    // What the field itself brought, such as envUI's clear button, is not what the search brought.
+    await field.evaluate(markInField, roles).catch(() => {});
     for (const width of layoutWidths) {
       const atWidth = here.filter((check) => check.at.includes(width));
       if (!atWidth.length) continue;
