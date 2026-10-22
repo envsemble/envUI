@@ -149,14 +149,8 @@ test('validateMap reports malformed maps', () => {
 
 test('a reported class is kept by the class renames that a shorter entry would make', () => {
   const { classes, classReports } = loadMap();
-  assert.equal(
-    renameClass('env-organization-menu-radio-dot', classes),
-    'env-organization-menu-radio-dot',
-  );
-  assert.equal(
-    renameClass('env-organization-menu-option', classes),
-    'env-organization-switcher-option',
-  );
+  assert.equal(renameClass('env-app-topbar-context', classes), 'env-app-topbar-context');
+  assert.equal(renameClass('env-app-topbar-actions', classes), 'env-top-bar-actions');
   assert.ok(classReports.some((rule) => rule.within === 'env-document-tabs-tab'));
 });
 

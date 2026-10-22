@@ -7,7 +7,6 @@ import {
   Heatmap,
   Input,
   Notice,
-  OrganizationMenu,
 } from '@envsemble/envui';
 import type {
   CounterProps,
@@ -21,14 +20,7 @@ import type {
   InputProps,
   NoticeProps,
   NoticeTone,
-  OrganizationMenuOrganization,
-  OrganizationMenuProps,
 } from '@envsemble/envui';
-
-const organizations: OrganizationMenuOrganization[] = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-];
 
 export const fields = { Input, DateTimeField, FileDropzone };
 
@@ -44,7 +36,6 @@ export interface ProfileFormProps {
   heatmap?: HeatmapProps;
   days?: HeatmapDay[];
   cell?: HeatmapCell;
-  switcher?: OrganizationMenuProps;
 }
 
 type DiffComponent = typeof DiffCount;
@@ -52,7 +43,6 @@ type DiffComponent = typeof DiffCount;
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
     <form>
-      <OrganizationMenu organizations={organizations} />
       <Notice tone={tone} title="Profile">
         Alex Morgan updated the profile.
       </Notice>

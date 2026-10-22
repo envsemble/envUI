@@ -149,9 +149,18 @@
       "Notice": { "to": ["Alert"] },
       "NoticeProps": { "to": ["AlertProps"] },
       "NoticeTone": { "to": ["AlertTone"] },
-      "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
-      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
-      "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
+      "OrganizationMenu": {
+        "to": [],
+        "use": "OrganizationMenu, OrganizationSwitcher in 1.0.0-prerelease.0, is gone: the organization switcher pattern builds it from a Menu.Root whose trigger is a secondary Button naming the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each description, and a Menu.Item that creates one; no codemod rewrites it."
+      },
+      "OrganizationMenuOrganization": {
+        "to": [],
+        "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
+      },
+      "OrganizationMenuProps": {
+        "to": [],
+        "use": "Menu.RootProps; OrganizationSwitcher is gone: the organization switcher pattern builds it from Menu.Root, Menu.RadioGroup and Button."
+      },
       "PanelDock": { "to": ["PanelDock.Root"] },
       "PanelDockControls": {
         "to": [],

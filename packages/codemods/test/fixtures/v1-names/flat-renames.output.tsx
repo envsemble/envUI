@@ -7,7 +7,6 @@ import {
   CalendarHeatmap,
   TextField,
   Alert,
-  OrganizationSwitcher,
 } from '@envsemble/envui';
 import type {
   BadgeProps,
@@ -21,14 +20,7 @@ import type {
   TextFieldProps,
   AlertProps,
   AlertTone,
-  OrganizationSwitcherItem,
-  OrganizationSwitcherProps,
 } from '@envsemble/envui';
-
-const organizations: OrganizationSwitcherItem[] = [
-  { id: 'northwind', name: 'Northwind Labs' },
-  { id: 'contoso', name: 'Contoso' },
-];
 
 export const fields = { Input: TextField, DateTimeField: DatePicker, FileDropzone: DropZone };
 
@@ -44,7 +36,6 @@ export interface ProfileFormProps {
   heatmap?: CalendarHeatmapProps;
   days?: CalendarHeatmapDay[];
   cell?: CalendarHeatmapCell;
-  switcher?: OrganizationSwitcherProps;
 }
 
 type DiffComponent = typeof DiffStat;
@@ -52,7 +43,6 @@ type DiffComponent = typeof DiffStat;
 export function ProfileForm({ name, start, upload, tone }: ProfileFormProps) {
   return (
     <form>
-      <OrganizationSwitcher organizations={organizations} />
       <Alert tone={tone} title="Profile">
         Alex Morgan updated the profile.
       </Alert>

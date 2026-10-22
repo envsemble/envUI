@@ -360,7 +360,7 @@ const elementValue = (value) =>
  * replace them, or `to`, the name it takes in 1.0, with `values` for the literals that change. A
  * rule with neither is report-only: the prop keeps its name and value, and every use is reported.
  * `each` holds the rules for the properties of each object in an array the prop takes, such as an
- * organization's `name`; a rule with `each` alone reports only a value it can't read.
+ * option's `leading`; a rule with `each` alone reports only a value it can't read.
  */
 function validatePropRules(where, names) {
   const problems = [];

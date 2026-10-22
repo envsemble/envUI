@@ -287,7 +287,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Badge',
     'DiffStat',
     'CalendarHeatmap',
-    'OrganizationSwitcher',
     'Menu',
     'ContextMenu',
     'Menubar',

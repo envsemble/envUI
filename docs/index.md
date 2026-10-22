@@ -131,6 +131,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Navigation](patterns/navigation.md)
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
+- [Organization switcher](patterns/organization-switcher.md)
 - [Window frame](patterns/window-frame.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)

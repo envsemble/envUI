@@ -141,7 +141,7 @@ ruleTester.run('no-renamed-exports', rule, {
       code: "import { NavigationItem, OrganizationMenu, ToastProvider } from '@envsemble/envui';",
       errors: [
         internal('NavigationItem'),
-        renamed('OrganizationMenu', 'OrganizationSwitcher'),
+        internal('OrganizationMenu'),
         renamed('ToastProvider', 'Toast.Provider'),
       ],
     },

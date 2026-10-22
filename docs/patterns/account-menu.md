@@ -19,7 +19,7 @@ avoidWhen:
   - text: The application's places, such as Projects and Settings.
     see: navigation
   - text: Switching organizations from a control of its own, such as at the top of the navigation.
-    use: OrganizationSwitcher
+    see: organization-switcher
 composes:
   - Menu
   - AvatarButton

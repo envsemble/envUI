@@ -446,17 +446,6 @@
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
       "env-drawer-footer": "Content below the destinations, at the bottom of the drawer."
     },
-    "OrganizationSwitcher": {
-      "env-organization-switcher": "The organization switcher's popup.",
-      "env-organization-switcher-create": "The item that creates an organization.",
-      "env-organization-switcher-description": "An organization's description.",
-      "env-organization-switcher-header": "The header of the popup.",
-      "env-organization-switcher-heading": "The heading of the popup.",
-      "env-organization-switcher-option": "One organization.",
-      "env-organization-switcher-options": "The list of organizations.",
-      "env-organization-switcher-trigger": "The button that opens the switcher.",
-      "env-organization-switcher-trigger-label": "The current organization's name in the trigger."
-    },
     "Page": {
       "env-page": "The page: a readable width and the gutter; it never paints.",
       "env-page-content": "The page's content at its width."

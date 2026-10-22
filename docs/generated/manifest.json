@@ -319,6 +319,7 @@
           "navigation",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
           "filtering",
           "data-tables",
@@ -2464,6 +2465,7 @@
           "navigation",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
           "filtering",
           "data-tables",
@@ -13329,7 +13331,7 @@
       "category": "Feedback & overlays",
       "status": "stable",
       "since": "0.3.0",
-      "summary": "Actions, destinations and the shared organization switcher, opened from a trigger or a right click.",
+      "summary": "Actions and destinations, opened from a trigger or a right click.",
       "aliases": [
         "dropdown menu",
         "context menu",
@@ -13341,7 +13343,6 @@
         "submenu",
         "MenuItem",
         "OrganizationMenu",
-        "organization switcher",
         "theme menu",
         "theme choice"
       ],
@@ -13350,7 +13351,7 @@
         "A few destinations that share a trigger, such as the account pages behind the avatar.",
         "Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.",
         "Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).",
-        "Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher)."
+        "Switching between the organizations a person belongs to, as the organization switcher pattern shows."
       ],
       "avoidWhen": [
         {
@@ -13410,7 +13411,6 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem",
         "ContextMenu",
-        "OrganizationSwitcher",
         "ThemeRadioGroup"
       ],
       "examples": [
@@ -13429,20 +13429,8 @@
         {
           "name": "AccountMenu",
           "title": "Account menu",
-          "description": "An AvatarButton trigger and a Menu.Header with the account. The full menu, with the theme and the organizations, is the account menu pattern.",
+          "description": "An AvatarButton trigger and a Menu.Header with the account. The full menu, with the theme and the organizations, is the account menu pattern, and a switch between organizations of its own the organization switcher.",
           "file": "docs/examples/menu/AccountMenu.tsx"
-        },
-        {
-          "name": "SwitchOrganization",
-          "title": "Switch organization",
-          "description": "OrganizationSwitcher shows the active organization and switches between the person's organizations; `onCreate` adds the create action. It fits a navigation Drawer's `header`.",
-          "file": "docs/examples/menu/SwitchOrganization.tsx"
-        },
-        {
-          "name": "FirstOrganization",
-          "title": "First organization",
-          "description": "Without organizations, the switcher is only the create action.",
-          "file": "docs/examples/menu/FirstOrganization.tsx"
         },
         {
           "name": "GroupsAndSeparators",
@@ -13624,63 +13612,6 @@
             }
           ]
         },
-        "OrganizationSwitcher": {
-          "root": "env-organization-switcher",
-          "parts": [
-            {
-              "class": "env-organization-switcher",
-              "description": "The organization switcher's popup."
-            },
-            {
-              "class": "env-organization-switcher-create",
-              "description": "The item that creates an organization."
-            },
-            {
-              "class": "env-organization-switcher-description",
-              "description": "An organization's description."
-            },
-            {
-              "class": "env-organization-switcher-header",
-              "description": "The header of the popup."
-            },
-            {
-              "class": "env-organization-switcher-heading",
-              "description": "The heading of the popup."
-            },
-            {
-              "class": "env-organization-switcher-option",
-              "description": "One organization."
-            },
-            {
-              "class": "env-organization-switcher-options",
-              "description": "The list of organizations."
-            },
-            {
-              "class": "env-organization-switcher-trigger",
-              "description": "The button that opens the switcher."
-            },
-            {
-              "class": "env-organization-switcher-trigger-label",
-              "description": "The current organization's name in the trigger."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-checked",
-              "values": [],
-              "parts": [
-                "env-organization-switcher-option"
-              ]
-            },
-            {
-              "attribute": "data-highlighted",
-              "values": [],
-              "parts": [
-                "env-organization-switcher-create"
-              ]
-            }
-          ]
-        },
         "Popup": {
           "shared": true,
           "root": "env-popup",
@@ -13757,6 +13688,7 @@
           "destructive-actions",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
           "filtering",
           "data-tables",
@@ -14959,6 +14891,7 @@
       "related": [
         "index",
         "setup",
+        "organization-switcher",
         "key-figures",
         "loading",
         "app-frame",
@@ -16257,7 +16190,7 @@
         },
         {
           "text": "Switching organizations from a control of its own, such as at the top of the navigation.",
-          "use": "OrganizationSwitcher"
+          "see": "organization-switcher"
         }
       ],
       "composes": [
@@ -16309,6 +16242,83 @@
           "title": "Don't: The same icon for everyone: nothing says who is signed in.",
           "description": "",
           "file": "docs/examples/account-menu/GenericTrigger.tsx"
+        }
+      ]
+    },
+    {
+      "name": "organization-switcher",
+      "title": "Organization switcher",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.",
+      "aliases": [
+        "OrganizationSwitcher",
+        "OrganizationMenu",
+        "organization switcher",
+        "organization menu",
+        "workspace switcher",
+        "team switcher",
+        "tenant switcher",
+        "switch organization"
+      ],
+      "useWhen": [
+        "People belong to several organizations, and switch between them from a control of its own, such as at the top of the navigation drawer."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The person's own things, such as account settings and Sign out, where a submenu can hold the organizations too.",
+          "see": "account-menu"
+        },
+        {
+          "text": "The application's places, such as Projects and Settings.",
+          "see": "navigation"
+        }
+      ],
+      "composes": [
+        "Menu",
+        "Button",
+        "Column",
+        "Text"
+      ],
+      "related": [
+        "menu",
+        "account-menu",
+        "navigation",
+        "drawer"
+      ],
+      "doc": "docs/patterns/organization-switcher.md",
+      "examples": [
+        {
+          "name": "SwitchOrganization",
+          "title": "Switch organization",
+          "description": "The organization switcher is a Menu opened from a secondary Button that names the active organization: a radio group of the person's organizations, each with their role as its description, and an action that creates one. It fits the `header` of a navigation Drawer or the start of the TopBar.",
+          "file": "docs/examples/organization-switcher/SwitchOrganization.tsx"
+        },
+        {
+          "name": "FirstOrganization",
+          "title": "Before the first organization",
+          "description": "Without organizations, the switcher is only the create action, a Button of its own.",
+          "file": "docs/examples/organization-switcher/FirstOrganization.tsx"
+        },
+        {
+          "name": "CurrentName",
+          "title": "Do: The trigger names the active organization.",
+          "description": "",
+          "file": "docs/examples/organization-switcher/CurrentName.tsx"
+        },
+        {
+          "name": "GenericLabel",
+          "title": "Don't: A generic label: nothing says where people are.",
+          "description": "",
+          "file": "docs/examples/organization-switcher/GenericLabel.tsx"
+        },
+        {
+          "name": "OrganizationSwitcherAnatomy",
+          "title": "Organization switcher anatomy",
+          "description": "",
+          "file": "docs/examples/organization-switcher/OrganizationSwitcherAnatomy.tsx"
         }
       ]
     },
@@ -21405,102 +21415,6 @@
       "status": "beta",
       "page": "month-picker",
       "doc": "docs/components/month-picker.md"
-    },
-    "OrganizationSwitcher": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Shows the active organization and switches between the person's organizations; fits a top bar or the top of a navigation drawer.",
-      "props": [
-        {
-          "name": "items",
-          "type": "readonly OrganizationSwitcherItem[]",
-          "required": true,
-          "description": "Organizations the signed-in person belongs to, in display order."
-        },
-        {
-          "name": "value",
-          "type": "string | null",
-          "required": true,
-          "description": "The active organization's id, or null before one is chosen."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": true,
-          "description": "Called with the id of the organization chosen, unless it is the active one; the application switches and reports progress."
-        },
-        {
-          "name": "onCreate",
-          "type": "() => void",
-          "required": false,
-          "description": "Offers creating an organization at the end of the menu, or as the only action without organizations."
-        },
-        {
-          "name": "heading",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.heading",
-          "description": "Heading inside the menu."
-        },
-        {
-          "name": "createLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
-          "description": "Label of the create action."
-        },
-        {
-          "name": "placeholder",
-          "type": "string",
-          "required": false,
-          "default": "'Choose organization', or EnvUIProvider's messages.organizationSwitcher.placeholder",
-          "description": "Trigger text while no organization is active."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Prevents opening, for example while a switch is in progress."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.label",
-          "description": "Accessible name of the menu."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Class of the menu popup, beside env-organization-switcher; ref and style go to the popup too. Without organizations there is no popup."
-        },
-        {
-          "name": "triggerClassName",
-          "type": "string",
-          "required": false,
-          "description": "Class of the trigger button, or of the create button without organizations."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The menu popup's ref; the trigger is a Button of its own."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "The menu popup's inline style."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "menu",
-      "doc": "docs/components/menu.md"
     },
     "Page": {
       "kind": "component",

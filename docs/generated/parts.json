@@ -2595,69 +2595,6 @@
         "Theme"
       ]
     },
-    "OrganizationSwitcher": {
-      "root": "env-organization-switcher",
-      "source": "packages/ui/src/navigation/OrganizationSwitcher.tsx",
-      "parts": [
-        {
-          "class": "env-organization-switcher",
-          "description": "The organization switcher's popup."
-        },
-        {
-          "class": "env-organization-switcher-create",
-          "description": "The item that creates an organization."
-        },
-        {
-          "class": "env-organization-switcher-description",
-          "description": "An organization's description."
-        },
-        {
-          "class": "env-organization-switcher-header",
-          "description": "The header of the popup."
-        },
-        {
-          "class": "env-organization-switcher-heading",
-          "description": "The heading of the popup."
-        },
-        {
-          "class": "env-organization-switcher-option",
-          "description": "One organization."
-        },
-        {
-          "class": "env-organization-switcher-options",
-          "description": "The list of organizations."
-        },
-        {
-          "class": "env-organization-switcher-trigger",
-          "description": "The button that opens the switcher."
-        },
-        {
-          "class": "env-organization-switcher-trigger-label",
-          "description": "The current organization's name in the trigger."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-checked",
-          "values": [],
-          "parts": [
-            "env-organization-switcher-option"
-          ]
-        },
-        {
-          "attribute": "data-highlighted",
-          "values": [],
-          "parts": [
-            "env-organization-switcher-create"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Icon",
-        "Menu"
-      ]
-    },
     "Page": {
       "root": "env-page",
       "source": "packages/ui/src/layout/Page.tsx",

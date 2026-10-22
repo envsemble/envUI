@@ -61,7 +61,7 @@
     "Breadcrumb": ["Breadcrumbs"],
     "Breadcrumbs": ["Breadcrumbs"],
     "Avatar": ["Avatar", "AvatarButton"],
-    "Menu": ["Menu", "ContextMenu", "OrganizationSwitcher"],
+    "Menu": ["Menu", "ContextMenu"],
     "MenuItem": ["Menu"],
     "Badge": ["Badge"],
     "Pill": ["Badge", "InfoChip"],

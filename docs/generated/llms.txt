@@ -104,7 +104,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Sheet](docs/components/sheet.md): A panel that slides in over the page from the end, the start or the bottom edge of the window, for filters, details, an inspector or a short set of choices. Parts: `.env-sheet-popup`.
 - [ConfirmDialog](docs/components/confirm-dialog.md): An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish. Parts: `.env-dialog-popup`.
 - [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks. Parts: `.env-command-palette`.
-- [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher, ThemeRadioGroup. Parts: `.env-menu`, `.env-organization-switcher`.
+- [Menu](docs/components/menu.md): Actions and destinations, opened from a trigger or a right click. Also: ContextMenu, ThemeRadioGroup. Parts: `.env-menu`.
 - [Menubar](docs/components/menubar.md): A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys. Parts: `.env-menubar`.
 - [Tooltip](docs/components/tooltip.md): A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled. Parts: `.env-tooltip`.
 - [Popover](docs/components/popover.md): A floating panel beside its trigger for details or a small form; Esc or a press outside closes it. Parts: `.env-popover`.
@@ -130,6 +130,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
 - [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
 - [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
+- [Organization switcher](docs/patterns/organization-switcher.md): Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
 - [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 - [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.

@@ -106,7 +106,6 @@ export * from './foundations/ThemeRadioGroup.js';
 export * as Menu from './navigation/Menu.js';
 export * from './navigation/ContextMenu.js';
 export * as Menubar from './navigation/Menubar.js';
-export * from './navigation/OrganizationSwitcher.js';
 export * from './navigation/Tree.js';
 export * from './navigation/DocumentTabs.js';
 export * as PanelDock from './navigation/panel-dock/PanelDock.js';

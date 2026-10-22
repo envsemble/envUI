@@ -47,8 +47,7 @@ const reports = {
   // Data a prop takes, such as Combobox's items, is renamed in an array written in the prop and
   // reported where the codemod can't read it.
   'renames.tsx': [
-    `line 27: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
-    `line 34: OrganizationSwitcher's items has entries the codemod can't read: ${report('OrganizationSwitcher', 'items')}`,
+    `line 26: Combobox's items has entries the codemod can't read: ${report('Combobox', 'items')}`,
   ],
   'panel-dock.tsx': [
     `line 8: PanelDock.Header's controls has a value the codemod can't move: ${report('PanelDock.Header', 'controls')}`,

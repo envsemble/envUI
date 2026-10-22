@@ -11,7 +11,6 @@ import {
   LinkProvider,
   Menu,
   Meter,
-  OrganizationSwitcher,
   SearchField,
   Spinner,
   Theme,
@@ -50,7 +49,6 @@ export function AdoptionFixture() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [action, setAction] = useState('');
-  const [organizationId, setOrganizationId] = useState('northwind');
   const [presses, setPresses] = useState(0);
   const [confirmed, setConfirmed] = useState(0);
   const [homes, setHomes] = useState(3);
@@ -109,26 +107,6 @@ export function AdoptionFixture() {
             </Menu.Item>
           </Menu.Root>
           <output data-testid="menu-action">{action}</output>
-          <OrganizationSwitcher
-            items={[
-              { id: 'northwind', label: 'Northwind Labs', description: 'Admin' },
-              { id: 'contoso', label: 'Contoso', description: 'Member' },
-            ]}
-            value={organizationId}
-            onValueChange={(id) => {
-              setOrganizationId(id);
-              setAction(`Selected ${id}`);
-            }}
-            onCreate={() => setAction('Create organization')}
-          />
-          <div data-testid="no-organization">
-            <OrganizationSwitcher
-              items={[]}
-              value={null}
-              onValueChange={() => undefined}
-              onCreate={() => setAction('Create first organization')}
-            />
-          </div>
           <div className="fixture-toolbar" data-testid="compact-label-toolbar">
             <TextField showLabel label="Project filter" data-testid="compact-label" />
             <Button>Apply</Button>

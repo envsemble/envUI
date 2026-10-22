@@ -38,8 +38,8 @@ li.env-navigation-item.env-navigation-selected .env-navigation-dot {
 .env-drop-zone-border,
 .env-disclosure > .env-disclosure-panel,
 .env-diff-stat-additions,
-.env-organization-switcher-option,
-.env-organization-switcher-trigger-label,
+.env-organization-menu-option,
+.env-organization-trigger-label,
 .env-pager {
   outline: none;
 }
