@@ -150,6 +150,20 @@ test('the pulse runs in step across the page, and stays still with reduced motio
   // The surface over placeholders and the card that is a skeleton itself, started at once.
   await expect.poll(async () => (await animations()).length).toBeGreaterThanOrEqual(2);
   expect(new Set(await animations())).toEqual(new Set([0]));
+  // A control's shape takes the pulse's color as it is: no transition of its own starts again on
+  // every frame of the pulse and lags behind it.
+  expect(
+    await page.evaluate(
+      () =>
+        document
+          .getAnimations()
+          .filter(
+            (animation) =>
+              animation instanceof CSSTransition &&
+              (animation.effect as KeyframeEffect | null)?.target?.closest('[data-env-skeleton]'),
+          ).length,
+    ),
+  ).toBe(0);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect.poll(async () => (await animations()).length).toBe(0);
 });
