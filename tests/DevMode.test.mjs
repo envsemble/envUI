@@ -431,16 +431,13 @@ test('no entry point but dev reaches dev mode, so production builds contain none
   }
 });
 
-test('the dev entry imports none of the optional peers, so it loads without them', async () => {
-  // The content entry's stacks, such as code highlighting, are optional peers an app may not have;
-  // the inspector once reached one through Code.
-  const { peerDependenciesMeta } = JSON.parse(
+test('the dev entry imports no library beyond React and Base UI, so it loads without the others', async () => {
+  // The content, rich-text and diff entries' libraries, such as code highlighting, are installed by
+  // the applications that use those entries; the inspector once reached one through Code.
+  const { dependencies, peerDependencies } = JSON.parse(
     await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
   );
-  const optional = Object.keys(peerDependenciesMeta).filter(
-    (name) => peerDependenciesMeta[name].optional,
-  );
-  assert.ok(optional.length > 0);
+  const declared = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
   const result = await build({
     absWorkingDir: repository,
     entryPoints: [join(repository, 'packages/ui/src/dev.ts')],
@@ -458,10 +455,10 @@ test('the dev entry imports none of the optional peers, so it loads without them
       imports.filter((entry) => entry.external).map((entry) => entry.path),
     ),
   );
-  const reached = [...packages].filter((path) =>
-    optional.some((name) => path === name || path.startsWith(`${name}/`)),
+  const reached = [...packages].filter(
+    (path) => !declared.some((name) => path === name || path.startsWith(`${name}/`)),
   );
-  assert.deepEqual(reached, [], 'the dev entry imports optional peers');
+  assert.deepEqual(reached, [], 'the dev entry imports libraries envUI does not declare');
 });
 
 test('installDevMode() warns about parts in the wrong shape and installs all the same', async () => {
