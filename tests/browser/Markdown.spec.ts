@@ -20,6 +20,8 @@ test('table regions are named after their heading, numbered where they share a n
     'Prices table 2',
     'Prices table 3',
   ]);
+  // Without a heading, a table is named after its first column.
+  await expectNames(page.getByTestId('narrow').getByRole('region'), ['Setting table']);
   const tasks = english.getByRole('checkbox');
   await expectNames(tasks, ['Completed task', 'Incomplete task']);
   // Tasks are envUI checkboxes, not small native boxes.

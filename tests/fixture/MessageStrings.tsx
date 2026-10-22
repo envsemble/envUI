@@ -115,9 +115,10 @@ function ShellAndEditorStrings() {
         </PanelDock.Root>
       </div>
       <CodeBlock copyable>npm run build</CodeBlock>
+      {/* The empty first header leaves the table no name of its own: messages.markdown.table. */}
       <Markdown>
         {[
-          '| Plan | Seats |',
+          '|      | Seats |',
           '| ---- | ----- |',
           '| Team | 5 |',
           '',
