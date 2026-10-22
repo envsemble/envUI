@@ -4,6 +4,9 @@
 // reads as what is above what. Sticky and floating nodes sit half a level higher, open overlays
 // above the whole page. Each plane carries the node's surfaces. The planes are drawn from the
 // measured boxes: the page itself can't be tilted, since scroll containers flatten 3D.
+//
+// Over the view float a toolbar, with the view directions and what the planes show, and a panel
+// with the colors and the levels.
 
 import {
   memo,
@@ -13,17 +16,25 @@ import {
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
+  type ReactNode,
   type RefObject,
 } from 'react';
-import { Button } from '../../actions/Button.js';
+import { IconButton } from '../../actions/Button.js';
 import { SegmentedControl } from '../../actions/SegmentedControl.js';
+import * as Toolbar from '../../actions/Toolbar.js';
+import { Popover } from '../../feedback/Popover.js';
 import { Slider } from '../../forms/Slider.js';
-import { Switch } from '../../forms/Switch.js';
+import { Column, Grid, Row } from '../../foundations/Layout.js';
 import { Text } from '../../foundations/Text.js';
+import { FilterAlt } from '../../icons/FilterAlt.js';
+import { Info } from '../../icons/Info.js';
+import { Label } from '../../icons/Label.js';
+import { Padding } from '../../icons/Padding.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
+import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -36,17 +47,13 @@ interface Camera {
 }
 
 const tilted = { rx: 38, ry: -22 };
-const presets: [string, number, number][] = [
-  ['Tilted', tilted.rx, tilted.ry],
-  ['Straight on', 0, 0],
-  ['From the top', -70, 0],
-  ['From the left', 0, 70],
-  ['From the right', 0, -70],
+const presets: { label: string; icon: ReactNode; rx: number; ry: number }[] = [
+  { label: 'Tilted', icon: <ViewTilted />, ...tilted },
+  { label: 'Straight on', icon: <ViewFront />, rx: 0, ry: 0 },
+  { label: 'From the top', icon: <ViewTop />, rx: -70, ry: 0 },
+  { label: 'From the left', icon: <ViewLeft />, rx: 0, ry: 70 },
+  { label: 'From the right', icon: <ViewRight />, rx: 0, ry: -70 },
 ];
-/** Resting on a plane this long, with "only the hovered" on, shows only it and what is in it. */
-const focusAfter = 250;
-/** Off every plane this long, everything shows again. */
-const unfocusAfter = 400;
 
 type CachedSurface = { signature: string; element: HTMLElement; restore: () => void };
 
@@ -54,7 +61,7 @@ export interface View3DProps {
   live: LivePage;
   selected: number | null;
   onSelect: (key: number | null) => void;
-  /** The node hovered in the inspector's tree. */
+  /** The node hovered in the tree. */
   treeHover: number | null;
 }
 
@@ -88,6 +95,16 @@ function scrollerAt(element: HTMLElement, dx: number, dy: number): HTMLElement |
   return page instanceof HTMLElement && can(page) ? page : null;
 }
 
+/** A secondary label, quiet and small. */
+const Quiet = ({ children }: { children: ReactNode }) => (
+  <Text variant="body-sm" render={<span />}>
+    {children}
+  </Text>
+);
+
+/** The floating controls take the pointer and the wheel for themselves, not for the view. */
+const keepPointer = (event: ReactPointerEvent) => event.stopPropagation();
+
 export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   const snapshot = live.geometry;
   const problemsByKey = live.full?.problemsByKey;
@@ -97,14 +114,14 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   const [colorBy, setColorBy] = useState<'kind' | 'window'>('kind');
   const [names, setNames] = useState(true);
   const [showSpacing, setShowSpacing] = useState(true);
-  const [onlyHovered, setOnlyHovered] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [onlySelected, setOnlySelected] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [focus, setFocus] = useState<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const view = useRef<HTMLDivElement>(null);
   const scene = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
+  // Where the pointer is in the view, where the hover card goes.
+  const pointer = useRef({ x: 0, y: 0 });
   const camera = useRef<Camera>({ ...tilted, zoom: 0.6, px: 0, py: 0 });
   const fitted = useRef(false);
   const surfaces = useRef(new Map<number, CachedSurface>()).current;
@@ -112,7 +129,6 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   hoveredRef.current = hovered;
   const snapshotRef = useRef(snapshot);
   snapshotRef.current = snapshot;
-  const timers = useRef({ focus: 0, unfocus: 0 });
 
   const maxLevel = Math.ceil(Math.max(0, ...(snapshot?.nodes ?? []).map((node) => node.level)));
   const top = Math.min(to ?? maxLevel, maxLevel);
@@ -171,7 +187,7 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
       applyCamera();
     };
     const wheel = (event: WheelEvent) => {
-      if ((event.target as Element).closest('.env-dev-controls')) return;
+      if ((event.target as Element).closest('.env-dev-float')) return;
       event.preventDefault();
       const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1;
       const dx = (event.shiftKey ? event.deltaY : event.deltaX) * unit;
@@ -192,15 +208,8 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const current = timers.current;
-    return () => {
-      window.clearTimeout(current.focus);
-      window.clearTimeout(current.unfocus);
-    };
-  }, []);
-
-  const focused = onlyHovered ? (treeHover ?? focus) : null;
+  // With "only the selected" on, the view shows the selected node and what is inside it.
+  const focused = onlySelected ? selected : null;
   const shownKeys = useMemo(
     () => (snapshot && focused !== null ? subtreeOf(snapshot, focused) : null),
     [snapshot, focused],
@@ -223,20 +232,6 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
   const hoveredNode =
     hovered === null ? undefined : snapshot.nodes.find((node) => node.key === hovered);
 
-  const hoverPlane = (key: number | null) => {
-    if (key === hoveredRef.current) return;
-    setHovered(key);
-    const current = timers.current;
-    window.clearTimeout(current.focus);
-    if (!onlyHovered) return;
-    if (key === null) {
-      current.unfocus = window.setTimeout(() => setFocus(null), unfocusAfter);
-      return;
-    }
-    window.clearTimeout(current.unfocus);
-    if (key !== focus) current.focus = window.setTimeout(() => setFocus(key), focusAfter);
-  };
-
   return (
     <div
       ref={view}
@@ -246,18 +241,20 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
       onPointerDown={drag.down}
       onPointerMove={(event) => {
         drag.move(event);
+        const room = event.currentTarget.getBoundingClientRect();
+        pointer.current = { x: event.clientX - room.left + 14, y: event.clientY - room.top + 14 };
         if (card.current) {
-          const room = event.currentTarget.getBoundingClientRect();
-          card.current.style.left = `${event.clientX - room.left + 14}px`;
-          card.current.style.top = `${event.clientY - room.top + 14}px`;
+          card.current.style.left = `${pointer.current.x}px`;
+          card.current.style.top = `${pointer.current.y}px`;
         }
         if (drag.active()) return;
         const plane = (event.target as Element).closest<HTMLElement>('[data-plane]');
-        hoverPlane(plane ? Number(plane.dataset.plane) : null);
+        const key = plane ? Number(plane.dataset.plane) : null;
+        if (key !== hoveredRef.current) setHovered(key);
       }}
       onPointerUp={drag.up}
       onPointerCancel={drag.up}
-      onPointerLeave={() => hoverPlane(null)}
+      onPointerLeave={() => setHovered(null)}
     >
       <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
@@ -315,100 +312,120 @@ export function View3D({ live, selected, onSelect, treeHover }: View3DProps) {
         ) : null}
       </div>
 
-      <div
-        className="env-dev-controls"
-        data-collapsed={collapsed ? '' : undefined}
-        onPointerDown={(event) => event.stopPropagation()}
+      <Toolbar.Root
+        aria-label="3D view"
+        className="env-dev-float env-dev-toolbar"
+        onPointerDown={keepPointer}
       >
-        <div className="env-dev-controls-head">
-          <Text variant="title">3D view</Text>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setCollapsed((value) => !value)}
-            aria-expanded={!collapsed}
-          >
-            {collapsed ? 'Show controls' : 'Hide controls'}
-          </Button>
-        </div>
-        <div className="env-dev-presets">
-          {presets.map(([label, rx, ry]) => (
-            <Button
+        <Toolbar.Group aria-label="Views">
+          {presets.map(({ label, icon, rx, ry }) => (
+            <Toolbar.Button
               key={label}
-              variant="outline"
-              size="sm"
+              icon={icon}
+              label={label}
               onClick={() => {
                 camera.current = { ...camera.current, rx, ry };
                 applyCamera();
               }}
-            >
-              {label}
-            </Button>
+            />
           ))}
-          <Button variant="outline" size="sm" onClick={fit}>
-            Fit
-          </Button>
-        </div>
-        <SegmentedControl
-          aria-label="Color by"
-          size="sm"
-          fullWidth
-          value={colorBy}
-          onValueChange={(value) => setColorBy(value as 'kind' | 'window')}
-          items={[
-            { value: 'kind', label: 'Color by kind' },
-            { value: 'window', label: 'By window class' },
-          ]}
-        />
-        {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
-        <Slider
-          label="Spacing between levels"
-          min={0}
-          max={160}
-          value={spacing}
-          onValueChange={setSpacing}
-          formatValue={(value) => `${value} px`}
-        />
-        <Slider
-          label="From level"
-          min={0}
-          max={Math.max(1, maxLevel)}
-          value={Math.min(from, maxLevel)}
-          onValueChange={(value) => {
-            setFrom(value);
-            if (value > top) setTo(value);
-          }}
-        />
-        <Slider
-          label="To level"
-          min={0}
-          max={Math.max(1, maxLevel)}
-          value={top}
-          onValueChange={(value) => {
-            setTo(value);
-            if (value < from) setFrom(value);
-          }}
-        />
-        <div className="env-dev-switches">
-          <Switch label="Names" checked={names} onCheckedChange={setNames} />
-          <Switch label="Padding and gaps" checked={showSpacing} onCheckedChange={setShowSpacing} />
-          <Switch label="Only the hovered" checked={onlyHovered} onCheckedChange={setOnlyHovered} />
-        </div>
-        <Text variant="caption" emphasis="muted">
-          Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
-          zooms. Click a plane to select it.
-        </Text>
-      </div>
+          <Toolbar.Button icon={<ViewFit />} label="Fit" onClick={fit} />
+        </Toolbar.Group>
+        <Toolbar.Separator />
+        <Toolbar.Group aria-label="Show">
+          <Toolbar.Button
+            icon={<Label />}
+            label="Names"
+            pressed={names}
+            onClick={() => setNames((value) => !value)}
+          />
+          <Toolbar.Button
+            icon={<Padding />}
+            label="Padding and gaps"
+            pressed={showSpacing}
+            onClick={() => setShowSpacing((value) => !value)}
+          />
+          <Toolbar.Button
+            icon={<FilterAlt />}
+            label="Only the selected"
+            pressed={onlySelected}
+            onClick={() => setOnlySelected((value) => !value)}
+          />
+        </Toolbar.Group>
+        <Toolbar.Separator />
+        <Popover
+          title="Moving around"
+          side="bottom"
+          trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
+        >
+          <Text variant="body-sm" emphasis="default">
+            Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
+            zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
+            and what is inside it.
+          </Text>
+        </Popover>
+      </Toolbar.Root>
 
-      <div ref={card} className="env-dev-card" hidden={!hoveredNode || dragging}>
-        {hoveredNode ? (
+      <Column gap={2} className="env-dev-float env-dev-levels" onPointerDown={keepPointer}>
+        <Row gap={3} align="center" wrap>
+          <Quiet>Color by</Quiet>
+          <SegmentedControl
+            aria-label="Color by"
+            size="sm"
+            value={colorBy}
+            onValueChange={(value) => setColorBy(value as 'kind' | 'window')}
+            items={[
+              { value: 'kind', label: 'Kind' },
+              { value: 'window', label: 'Window class' },
+            ]}
+          />
+          {colorBy === 'window' ? <WindowLegend rootPx={snapshot.rootPx} /> : <KindLegend />}
+        </Row>
+        <Grid columns={3} gap={5}>
+          <Slider
+            label={<Quiet>Spacing</Quiet>}
+            min={0}
+            max={160}
+            value={spacing}
+            onValueChange={setSpacing}
+            formatValue={(value) => `${value} px`}
+          />
+          <Slider
+            label={<Quiet>From level</Quiet>}
+            min={0}
+            max={Math.max(1, maxLevel)}
+            value={Math.min(from, maxLevel)}
+            onValueChange={(value) => {
+              setFrom(value);
+              if (value > top) setTo(value);
+            }}
+          />
+          <Slider
+            label={<Quiet>To level</Quiet>}
+            min={0}
+            max={Math.max(1, maxLevel)}
+            value={top}
+            onValueChange={(value) => {
+              setTo(value);
+              if (value < from) setFrom(value);
+            }}
+          />
+        </Grid>
+      </Column>
+
+      {hoveredNode && !dragging ? (
+        <div
+          ref={card}
+          className="env-dev-card"
+          style={{ left: pointer.current.x, top: pointer.current.y }}
+        >
           <HoverCard
             snapshot={snapshot}
             node={hoveredNode}
             problems={problemsByKey?.get(hoveredNode.key) ?? []}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -633,7 +650,7 @@ function HoverCard({
   const thresholds = thresholdsFor(queries);
   return (
     <>
-      <Text variant="title">{labelOf(node)}</Text>
+      <strong>{labelOf(node)}</strong>
       <span>
         {width}×{toRem(node.size.h, snapshot.rootPx)}rem · {windowClassOf(width)} · level{' '}
         {node.level}
@@ -652,49 +669,61 @@ function HoverCard({
   );
 }
 
+/** One entry of a legend: a swatch drawn as a plane is, and its name. */
+function Swatch({
+  plane,
+  title,
+  children,
+}: {
+  plane: Record<`data-${string}`, string>;
+  title?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Row gap={1} align="center" render={<span title={title} />}>
+      <i className="env-dev-plane env-dev-swatch" {...plane} />
+      {children}
+    </Row>
+  );
+}
+
 function KindLegend() {
   const kinds = ['box', 'row', 'column', 'grid', 'scaffold', 'page', 'overlay'];
   return (
-    <div className="env-dev-legend">
+    <Row gap={2} wrap className="env-dev-legend">
       {kinds.map((kind) => (
-        <span key={kind} className="env-dev-plane-swatch" data-kind={kind}>
-          <i
-            className="env-dev-plane"
-            data-kind={kind}
-            data-overlay={kind === 'overlay' ? '' : undefined}
-            style={{ position: 'static' }}
-          />
+        <Swatch
+          key={kind}
+          plane={{ 'data-kind': kind, ...(kind === 'overlay' && { 'data-overlay': '' }) }}
+        >
           {kind}
-        </span>
+        </Swatch>
       ))}
-    </div>
+    </Row>
   );
 }
 
 function WindowLegend({ rootPx }: { rootPx: number }) {
   return (
-    <div className="env-dev-legend">
+    <Row gap={2} wrap className="env-dev-legend">
       {windowClasses.map((windowClass, index) => {
         const next = windowClasses[index + 1];
         const range = next
-          ? `${windowClass.from ? `${windowClass.from}–` : '< '}${next.from}rem`
-          : `≥ ${windowClass.from}rem`;
+          ? `${windowClass.from ? `${windowClass.from}–` : '< '}${next.from}`
+          : `≥ ${windowClass.from}`;
         return (
-          <span
+          <Swatch
             key={windowClass.name}
-            className="env-dev-ruler-band"
-            data-window={windowClass.name}
-            style={{ position: 'static' }}
-            title={`${round((next?.from ?? windowClass.from) * rootPx)}px`}
+            plane={{ 'data-window': windowClass.name, 'data-container': '' }}
+            title={`${range}rem, ${round((next?.from ?? windowClass.from) * rootPx)}px`}
           >
-            {windowClass.name} {range}
-          </span>
+            {windowClass.name} <span className="env-dev-quiet">{range}</span>
+          </Swatch>
         );
       })}
-      <Text variant="caption" emphasis="muted">
-        A solid outline is a container; a dotted one is not, and its width decides nothing.
-      </Text>
-    </div>
+      <Swatch plane={{ 'data-window': 'none', 'data-container': '' }}>container</Swatch>
+      <Swatch plane={{ 'data-window': 'none' }}>not a container</Swatch>
+    </Row>
   );
 }
 

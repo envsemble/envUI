@@ -1,7 +1,8 @@
 'use client';
 
-// Dev mode's UI: a toggle in the corner and, while open, the 3D view and the inspector over the
-// page. It is made of envUI's components, inside its own Theme, and the readout leaves it out.
+// Dev mode's UI: a toggle in the corner and, while open, over the page, the node tree, the 3D view
+// and the inspector side by side. It is made of envUI's components, inside its own Theme at the
+// compact scale of a desktop tool, and the readout leaves it out.
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IconButton } from '../../actions/Button.js';
@@ -9,7 +10,7 @@ import { PortalContainer } from '../../foundations/PortalContainer.js';
 import { Theme, type ThemeValue } from '../../foundations/Theme.js';
 import { ViewInAr } from '../../icons/ViewInAr.js';
 import { resolveRoot } from '../measure.js';
-import { Inspector } from './Inspector.js';
+import { Inspector, NodeTree } from './Inspector.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
 
@@ -43,7 +44,7 @@ export function DevMode({ controller }: { controller: DevModeController }) {
   useEffect(() => controller.subscribe(setOpen), [controller]);
   return (
     <PortalContainer container={controller.host}>
-      <Theme theme={pageTheme()} className="env-dev">
+      <Theme theme={pageTheme()} scale="compact" className="env-dev">
         {open ? <Panel controller={controller} /> : null}
         {controller.button ? (
           <IconButton
@@ -101,14 +102,9 @@ function Panel({ controller }: { controller: DevModeController }) {
         controller.setOpen(false);
       }}
     >
+      <NodeTree live={live} selected={selected} onSelect={setSelected} onTreeHover={setTreeHover} />
       <View3D live={live} selected={selected} onSelect={setSelected} treeHover={treeHover} />
-      <Inspector
-        live={live}
-        selected={selected}
-        onSelect={setSelected}
-        onTreeHover={setTreeHover}
-        onClose={() => controller.setOpen(false)}
-      />
+      <Inspector live={live} selected={selected} onClose={() => controller.setOpen(false)} />
     </div>
   );
 }
