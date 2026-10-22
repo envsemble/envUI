@@ -8,7 +8,7 @@
     "--avatar-group-ring": {
       "kind": "renamed",
       "cssVariable": "--env-avatar-group-ring",
-      "note": "The ring color an application sets for an avatar group on a fill that is not an envUI surface."
+      "note": "In 0.x, the ring color an application set for an avatar group on a fill that was not an envUI surface."
     },
     "--body-font-weight": { "kind": "prefixed", "cssVariable": "--env-body-font-weight" },
     "--color-accent": {
@@ -40,14 +40,14 @@
       "token": "color.avatar.bg",
       "cssVariable": "--env-color-avatar-bg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-avatar-figure": {
       "kind": "alias",
       "token": "color.avatar.figure",
       "cssVariable": "--env-color-avatar-figure",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-bg-accent-emphasis": {
       "kind": "prefixed",
@@ -795,7 +795,7 @@
       "token": "color.avatar.fg",
       "cssVariable": "--env-color-avatar-fg",
       "component": "Avatars",
-      "note": "A component token now."
+      "note": "A system token named for avatars now."
     },
     "--color-on-calendar-selected": {
       "kind": "alias",
@@ -962,7 +962,7 @@
       "token": "color.list-item.bg",
       "cssVariable": "--env-color-list-item-bg",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-alternate": {
       "kind": "alias",
@@ -981,14 +981,14 @@
       "token": "color.list-item.bg.hover",
       "cssVariable": "--env-color-list-item-bg-hover",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-pressed": {
       "kind": "alias",
       "token": "color.list-item.bg.pressed",
       "cssVariable": "--env-color-list-item-bg-pressed",
       "component": "List rows",
-      "note": "A component token: the default surface in light, the muted one in dark."
+      "note": "A system token named for list rows: the default surface in light, the muted one in dark."
     },
     "--color-row-selected-hover": {
       "kind": "alias",

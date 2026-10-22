@@ -9,7 +9,7 @@ type TokenValue = Token['values']['light'];
 
 /**
  * The groups of the reference, by the first part of the tokens' names, in order. The color roles
- * are color.bg, color.fg and color.border; the other colors are component tokens.
+ * are color.bg, color.fg and color.border; the other colors are system tokens named for a component.
  */
 const tokenGroups: { title: string; prefixes: string[]; component?: boolean }[] = [
   { title: 'Color roles', prefixes: ['color'] },
