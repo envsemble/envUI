@@ -372,6 +372,8 @@ The first prerelease of envUI 1.0, published under the `prerelease` dist-tag; 1.
 
   Migration guide: [Shell, dock, editors and code](https://github.com/envsemble/envUI/blob/main/docs/migration.md#shell-dock-editors-and-code).
 
+- The content, rich-text and diff entries' libraries (Shiki, the Pierre themes, react-markdown, remark-gfm, marked, Tiptap and Diffs) are no longer peer dependencies. GitHub Packages drops the field that marked them optional, so npm installed all of them in every application. An application importing one of these entries installs its libraries itself, with the commands in [Setup](https://github.com/envsemble/envUI/blob/main/docs/setup.md#public-entry-points); one using only the main entry installs none of them.
+
 ### Minor Changes
 
 - AccountMenu and ThemeRadioGroup.
