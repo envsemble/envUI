@@ -400,7 +400,7 @@ export const pairs: readonly ContrastPair[] = merged([
   ...nonText(
     '--env-color-border-muted',
     [page, surface, muted],
-    'Decorative lines: table lines, quote bars, keyboard keys',
+    'Hairlines between list items: table rows, Markdown rules, menu separators, accordion items',
     {
       contrast: 'high',
       rationale:

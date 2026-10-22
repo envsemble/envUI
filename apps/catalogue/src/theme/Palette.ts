@@ -136,7 +136,7 @@ export const colorGroups: [string, [string, string][]][] = [
   [
     'Content & loading',
     [
-      ['border-muted', 'Table lines and quote bars'],
+      ['border-muted', 'Table, Markdown and menu hairlines'],
       ['bg-neutral-muted', 'Loading placeholders'],
     ],
   ],

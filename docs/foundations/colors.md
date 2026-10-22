@@ -70,7 +70,7 @@ Tokens are named `--env-color-{bg|fg|border}-{role}[-{emphasis}][-{state}]`, emp
 - **Backgrounds:** `bg-page`; `bg-default`, `bg-muted` and `bg-raised`, the surfaces; `bg-popup`, `bg-field`, `bg-selected`; `bg-overlay`, the scrim behind dialogs.
 - **Fills:** `bg-neutral-muted`, a translucent layer of the text color under secondary buttons, chips, switch tracks and skeletons; `bg-neutral-subtle`, the state layer of controls without a fill; `emphasis` and `strong` solid fills.
 - **Text:** `fg-default`, `fg-muted` for supporting text and icons, `fg-control`, `fg-link`, `fg-on-selected`, and one per tone.
-- **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for table lines, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
+- **Borders:** `border-default`, the only boundary of a control, at least 3:1; `border-muted` for the hairlines between a list's items, quote bars and other decorative edges; `border-focus`; `border-media`, the inner edge of images.
 
 The colors come from an internal palette of ten hues in grades from 0 to 100, where the grade difference alone sets the contrast: 50 grades apart give at least 4.5:1. The 0.7 names are gone; the [migration guide](../migration.md#tokens) lists what replaces each.
 
@@ -80,12 +80,12 @@ The colors come from an internal palette of ten hues in grades from 0 to 100, wh
 - **Selection** stays apart from every other item, at rest and under the pointer, and carries a second cue: its label color, a check or a bar.
 - **High contrast** moves text to 7:1 and boundaries, indicators and focus rings to 4.5:1. A nested Theme and envUI's popups take the contrast and theme of where they open.
 - **Elevation** 0–3 is an edge, not a shadow: envUI draws no shadows, so a floating layer separates by its background and its edge, and a modal by its scrim as well. Popups float at 2, dialogs, sheets and the command palette at 3.
-- **No dividing lines:** envUI draws no line that only divides. Sections, list rows, menu groups, title bars and Markdown rules separate by space and background; tables keep their row lines, and controls and floating layers their edges.
+- **Hairlines separate a list's items, never regions:** Markdown rules, menu separators, table rows and accordion items take a hairline across their container's full width, never inset from its edges. Regions, such as a top bar, a footer, a sticky header, a tab bar and two panes, separate by space and background instead; controls and floating layers keep their edges.
 - **Forced colors** take system colors, such as `Highlight` and `GrayText`, for every state a fill carried.
 
 ## Guidelines
 
-- Choose the role for what an element is, not the color it should have: `fg-muted` for any supporting text, `border-muted` for a table line. Separate groups by space or a background, not a line.
+- Choose the role for what an element is, not the color it should have: `fg-muted` for any supporting text, `border-muted` for the line between a list's items. Separate regions by space or a background, not a line.
 - Use one role in both themes; the themes give it its grade.
 - Disabled controls take 0.48 opacity, which WCAG exempts from contrast.
 - Wrap the application's own portal content in `<Theme {...useTheme()}>`, so it takes the theme and contrast of where it opens.
