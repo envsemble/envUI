@@ -32,11 +32,12 @@
 }
 
 /* A stage of another fill, where the page's own would hide the subject (`stage="raised"`): an open
-   popup is white in the light theme, the page's color, so there the stage takes the raised fill. In
-   the dark theme a popup is a step lighter than the page and shows on it, so the stage stays the
+   popup is white in the light theme, the page's color, so there the stage takes the pane fill,
+   which stays a step from white under high contrast too, where the raised fill is white. In the
+   dark theme a popup is a step lighter than the page and shows on it, so the stage stays the
    page's. The dots and the frame stay. */
 .env-theme {
-  --docs-stage-raised: var(--env-color-bg-raised);
+  --docs-stage-raised: var(--env-color-bg-default);
 }
 .env-theme[data-env-theme='dark'] {
   --docs-stage-raised: var(--env-color-bg-page);
