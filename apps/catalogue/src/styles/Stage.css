@@ -40,9 +40,13 @@
    the frame stay. */
 .env-theme {
   --docs-stage-raised: var(--env-color-bg-default);
+  /* A shade below the darker of the two: the navigation's in the light themes, the page's in the
+     dark ones, high contrast included. */
+  --docs-stage-shaded: oklch(from var(--env-color-bg-default) calc(l - 0.05) c h);
 }
 .env-theme[data-env-theme='dark'] {
   --docs-stage-raised: var(--env-color-bg-page);
+  --docs-stage-shaded: oklch(from var(--env-color-bg-page) calc(l - 0.05) c h);
 }
 :is(
   .docs-live-example,
@@ -51,16 +55,6 @@
   .docs-when-stage
 )[data-stage='raised'] {
   background-color: var(--docs-stage-raised);
-}
-
-/* A shade below the darker of the two: the navigation's in the light themes, the page's in the
-   dark ones, high contrast included. */
-.env-theme {
-  --docs-stage-shaded: oklch(from var(--env-color-bg-default) calc(l - 0.05) c h);
-}
-
-.env-theme[data-env-theme='dark'] {
-  --docs-stage-shaded: oklch(from var(--env-color-bg-page) calc(l - 0.05) c h);
 }
 
 :is(
