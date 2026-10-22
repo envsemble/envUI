@@ -111,7 +111,7 @@ Open dev mode on the application at the top of this page to try it.
 
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-The toolbar over the view turns it, chooses what the planes show, sets the page's size and theme, and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
+The toolbar over the view turns it, chooses what the planes show, sets the page's size and dev mode's theme, and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
 
 | Do this                                   | To                                                                         |
 | ----------------------------------------- | -------------------------------------------------------------------------- |
@@ -123,7 +123,7 @@ The toolbar over the view turns it, chooses what the planes show, sets the page'
 | Color by window class                     | Color each node by the window class its width falls in, not by its kind.   |
 | Rest on a plane                           | See its size and container; colored by window class, a ruler of its width. |
 | Device, Rotate                            | Lay the page out at a phone's, tablet's or screen's size; swap its sides.  |
-| Page theme                                | Show the page light or dark, with high contrast or without.                |
+| Dev mode theme                            | Show dev mode itself light or dark, or as the page is, with high contrast. |
 | View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                     |
 | Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                  |
 
@@ -133,9 +133,9 @@ A frame above the planes marks the page's size, labelled in px and rem with its 
 
 Device lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Rotate swaps the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle or the page's own size in Device brings it back, and closing dev mode does too.
 
-### The page's theme
+### Dev mode's theme
 
-Page theme switches the page under dev mode to light or dark, with or without high contrast, by setting the theme boundary around the root, and keeps it there when the application renders again; the planes and the readout follow. Dev mode's own UI keeps the theme the page had as it opened. The page's own theme comes back from the menu or as dev mode closes. Popups an application portals elsewhere keep their own theme.
+Dev mode's own UI, its toolbar, side columns, popovers and the view's background, takes the page's theme as it opens. Dev mode theme in the toolbar sets it to light or dark instead, with or without high contrast, and remembers the choice in this browser across reloads; Same as the page goes back. The page keeps its own theme, and the planes show it as it is.
 
 A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 

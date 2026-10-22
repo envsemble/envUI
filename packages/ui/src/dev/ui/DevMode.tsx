@@ -13,7 +13,7 @@ import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
 import { realSize, type FrameSize } from './FrameHandle.js';
-import { holdTheme, themeBoundaryOf, themeOf, type PageTheme } from './pageTheme.js';
+import { loadEditorTheme, saveEditorTheme, type EditorTheme } from './editorTheme.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
 
@@ -44,21 +44,35 @@ function pageTheme(): ThemeValue {
 
 export function DevMode({ controller }: { controller: DevModeController }) {
   const [open, setOpen] = useState(controller.open);
-  // Dev mode's own UI takes the page's theme as it opens, and keeps it while the page's theme is
-  // switched from dev mode, so its controls stay where the eye left them.
-  const [theme, setTheme] = useState(pageTheme);
+  // Dev mode's own UI takes the theme chosen in its toolbar, or by default the page's theme as it
+  // opens. The page keeps its own.
+  const [editor, setEditor] = useState(loadEditorTheme);
+  const [page, setPage] = useState(pageTheme);
   useEffect(
     () =>
       controller.subscribe((next) => {
-        if (next) setTheme(pageTheme());
+        if (next) setPage(pageTheme());
         setOpen(next);
       }),
     [controller],
   );
+  const editorTheme = {
+    value: editor,
+    onChange: (next: EditorTheme) => {
+      if (next.theme === 'page') setPage(pageTheme());
+      setEditor(next);
+      saveEditorTheme(next);
+    },
+  };
   return (
     <PortalContainer container={controller.host}>
-      <Theme theme={theme} scale="compact" className="env-dev">
-        {open ? <Panel controller={controller} /> : null}
+      <Theme
+        theme={editor.theme === 'page' ? page : editor.theme}
+        contrast={editor.contrast}
+        scale="compact"
+        className="env-dev"
+      >
+        {open ? <Panel controller={controller} editorTheme={editorTheme} /> : null}
         {controller.button ? (
           <IconButton
             className="env-dev-toggle"
@@ -90,7 +104,13 @@ function cover(root: HTMLElement, element: HTMLElement | null, returnFocus: HTML
   };
 }
 
-function Panel({ controller }: { controller: DevModeController }) {
+function Panel({
+  controller,
+  editorTheme,
+}: {
+  controller: DevModeController;
+  editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
+}) {
   const [root] = useState(() => resolveRoot(controller.root));
   // Where focus was as it opened, to give it back as it closes.
   const [returnFocus] = useState(() =>
@@ -102,10 +122,6 @@ function Panel({ controller }: { controller: DevModeController }) {
   const [sides, setSides] = useState({ tree: true, inspector: true });
   // The size the responsive frame lays the page out at.
   const [frame, setFrame] = useState<FrameSize>(realSize);
-  // The page's theme as dev mode switches it, or null for the page's own.
-  const [boundary] = useState(() => themeBoundaryOf(root));
-  const [look, setLook] = useState<PageTheme | null>(null);
-  const { refresh } = live;
   const panel = useRef<HTMLDivElement>(null);
   // While the panel covers the page, the page is inert and focus is in the panel.
   useLayoutEffect(() => cover(root, panel.current, returnFocus), [root, returnFocus]);
@@ -118,17 +134,6 @@ function Panel({ controller }: { controller: DevModeController }) {
         : resizeRoot(root, frame.width, frame.height),
     [root, frame.width, frame.height],
   );
-  // The page's theme holds until dev mode goes back to the page's own or closes; the planes copy
-  // the page again in its new colors.
-  useLayoutEffect(() => {
-    if (!boundary || !look) return;
-    return holdTheme(boundary, look);
-  }, [boundary, look]);
-  const firstLook = useRef(true);
-  useEffect(() => {
-    if (firstLook.current) firstLook.current = false;
-    else refresh();
-  }, [look, refresh]);
   return (
     <div
       ref={panel}
@@ -160,11 +165,7 @@ function Panel({ controller }: { controller: DevModeController }) {
         onSidesChange={setSides}
         frame={frame}
         onFrameChange={setFrame}
-        pageTheme={
-          boundary
-            ? { value: look ?? themeOf(boundary), own: look === null, onChange: setLook }
-            : null
-        }
+        editorTheme={editorTheme}
         onClose={() => controller.setOpen(false)}
       />
       {sides.inspector ? (

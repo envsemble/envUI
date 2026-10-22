@@ -267,40 +267,45 @@ test(
   },
 );
 
-test("dev mode switches the page's theme, and gives it back as it closes", async ({ page }) => {
+test("dev mode's own theme switches, persists and leaves the page's alone", async ({ page }) => {
   await open(page);
-  const toggle = page.getByRole('button', { name: 'Dev mode', exact: true });
-  await toggle.click();
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
   const panel = page.getByRole('region', { name: 'Dev mode' });
+  const editor = page.locator('.env-dev');
   const boundary = page.locator('.env-theme:not([data-env-dev] *)').first();
-  const ownTheme = await boundary.getAttribute('data-env-theme');
-  const ownContrast = await boundary.getAttribute('data-env-contrast');
-  const devTheme = await page.locator('.env-dev').getAttribute('data-env-theme');
-  const surfaces = panel.locator('.env-dev-surface');
-  const surfaceColor = () =>
-    surfaces.evaluateAll((elements) =>
-      elements.map((element) => getComputedStyle(element).color).join(),
+  const pageAttributes = () =>
+    boundary.evaluate((element) =>
+      ['data-env-theme', 'data-env-contrast'].map((name) => element.getAttribute(name)).join(),
     );
-  const before = await surfaceColor();
+  const pageBefore = await pageAttributes();
+  const pageTheme = await boundary.getAttribute('data-env-theme');
+  const other = pageTheme === 'dark' ? 'Light' : 'Dark';
+  // By default dev mode takes the page's theme.
+  await expect(editor).toHaveAttribute('data-env-theme', pageTheme!);
 
-  await panel.getByRole('button', { name: 'Page theme' }).click();
-  await page.getByRole('menuitemradio', { name: 'Dark' }).click();
-  await expect(boundary).toHaveAttribute('data-env-theme', 'dark');
-  await panel.getByRole('button', { name: 'Page theme' }).click();
+  await panel.getByRole('button', { name: 'Dev mode theme' }).click();
+  await page.getByRole('menuitemradio', { name: other }).click();
+  await expect(editor).toHaveAttribute('data-env-theme', other.toLowerCase());
+  await panel.getByRole('button', { name: 'Dev mode theme' }).click();
   await page.getByRole('menuitemcheckbox', { name: 'High contrast' }).click();
-  await expect(boundary).toHaveAttribute('data-env-contrast', 'high');
+  await expect(editor).toHaveAttribute('data-env-contrast', 'high');
   // The check item leaves its menu open; Escape closes the menu first.
   await page.keyboard.press('Escape');
   await expect(page.getByRole('menu')).toBeHidden();
-  // Dev mode's own UI keeps its theme, and the planes copy the page again in its new colors.
-  await expect(page.locator('.env-dev')).toHaveAttribute('data-env-theme', devTheme!);
-  await expect.poll(surfaceColor).not.toBe(before);
+  // The page keeps its own theme.
+  expect(await pageAttributes()).toBe(pageBefore);
 
-  // Closing dev mode gives the page its own theme back.
-  await page.keyboard.press('Escape');
-  await expect(panel).toBeHidden();
-  expect(await boundary.getAttribute('data-env-theme')).toBe(ownTheme);
-  expect(await boundary.getAttribute('data-env-contrast')).toBe(ownContrast);
+  // The choice outlasts a reload.
+  await page.reload();
+  await page.waitForFunction(() => window.envui?.layout !== undefined);
+  await page.getByRole('button', { name: 'Dev mode', exact: true }).click();
+  await expect(editor).toHaveAttribute('data-env-theme', other.toLowerCase());
+  await expect(editor).toHaveAttribute('data-env-contrast', 'high');
+  expect(await pageAttributes()).toBe(pageBefore);
+  // Same as the page goes back to the page's theme.
+  await panel.getByRole('button', { name: 'Dev mode theme' }).click();
+  await page.getByRole('menuitemradio', { name: 'Same as the page' }).click();
+  await expect(editor).toHaveAttribute('data-env-theme', pageTheme!);
 });
 
 test('the side columns hide and show, and the view takes their room', async ({ page }) => {

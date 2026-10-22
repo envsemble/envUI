@@ -48,7 +48,7 @@ import { round, toRem, windowClasses, windowClassOf } from '../units.js';
 import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
 import { deviceGroups } from './devices.js';
 import { FrameHandle, realSize, type FrameEdge, type FrameSize } from './FrameHandle.js';
-import type { PageTheme } from './pageTheme.js';
+import type { EditorTheme } from './editorTheme.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -84,13 +84,8 @@ export interface View3DProps {
   /** The size the responsive frame lays the page out at. */
   frame: FrameSize;
   onFrameChange: (frame: FrameSize) => void;
-  /** The inspected page's theme, which dev mode can switch, or null where it has no theme. */
-  pageTheme: {
-    value: PageTheme;
-    /** Whether it is the page's own, not one dev mode set. */
-    own: boolean;
-    onChange: (theme: PageTheme | null) => void;
-  } | null;
+  /** The theme of dev mode's own UI, which its toolbar switches; the page keeps its own. */
+  editorTheme: { value: EditorTheme; onChange: (theme: EditorTheme) => void };
   onClose: () => void;
 }
 
@@ -143,7 +138,7 @@ export function View3D({
   onSidesChange,
   frame,
   onFrameChange,
-  pageTheme,
+  editorTheme,
   onClose,
 }: View3DProps) {
   const snapshot = live.geometry;
@@ -334,7 +329,7 @@ export function View3D({
             origin={origin}
             z={(node.level - from) * spacing}
             element={snapshot.elements?.[node.index]}
-            version={(live.versions.get(node.key) ?? 0) + live.epoch}
+            version={live.versions.get(node.key) ?? 0}
             surfaces={surfaces}
             rootPx={snapshot.rootPx}
             names={names}
@@ -427,7 +422,7 @@ export function View3D({
             })
           }
         />
-        {pageTheme ? <PageThemeMenu {...pageTheme} /> : null}
+        <EditorThemeMenu {...editorTheme} />
         <Toolbar.Separator />
         <Popover
           title="View settings"
@@ -660,30 +655,31 @@ function DeviceMenu({
   );
 }
 
-/** The inspected page's theme: light or dark, with high contrast, or the page's own. */
-function PageThemeMenu({
+/** The theme of dev mode's own UI: the page's, light or dark, with or without high contrast. */
+function EditorThemeMenu({
   value,
-  own,
   onChange,
 }: {
-  value: PageTheme;
-  own: boolean;
-  onChange: (theme: PageTheme | null) => void;
+  value: EditorTheme;
+  onChange: (theme: EditorTheme) => void;
 }) {
   return (
     <Menu.Root
-      aria-label="Page theme"
+      aria-label="Dev mode theme"
       trigger={
-        <Tooltip content="Page theme">
-          <IconButton icon={<Contrast />} aria-label="Page theme" />
+        <Tooltip content="Dev mode theme">
+          <IconButton icon={<Contrast />} aria-label="Dev mode theme" />
         </Tooltip>
       }
     >
       <Menu.RadioGroup
-        label="Page theme"
+        label="Dev mode theme"
         value={value.theme}
-        onValueChange={(theme) => onChange({ ...value, theme: theme as PageTheme['theme'] })}
+        onValueChange={(theme) => onChange({ ...value, theme: theme as EditorTheme['theme'] })}
       >
+        <Menu.RadioItem value="page" description="As the page is now">
+          Same as the page
+        </Menu.RadioItem>
         <Menu.RadioItem value="light" icon={<LightMode />}>
           Light
         </Menu.RadioItem>
@@ -691,16 +687,13 @@ function PageThemeMenu({
           Dark
         </Menu.RadioItem>
       </Menu.RadioGroup>
+      <Menu.Separator />
       <Menu.CheckboxItem
         checked={value.contrast === 'high'}
         onCheckedChange={(high) => onChange({ ...value, contrast: high ? 'high' : 'standard' })}
       >
         High contrast
       </Menu.CheckboxItem>
-      <Menu.Separator />
-      <Menu.Item disabled={own} onClick={() => onChange(null)}>
-        The page&apos;s own theme
-      </Menu.Item>
     </Menu.Root>
   );
 }
