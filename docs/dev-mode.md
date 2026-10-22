@@ -26,12 +26,14 @@ The Dev mode button in the corner of the page, or Alt+Shift+D outside a field, o
 envui.layout.describe(); // the page as text: every layout node, then the problems
 envui.layout.check(); // the problems only; [] when there are none
 envui.layout.at(['22rem', '40rem', '60rem', '80rem']); // both, at each width in turn
+envui.layout.at([{ width: 393, height: 852 }]); // or at a width and height, such as a phone's
 ```
 
 | Option         | What it does                                                                                                          |
 | -------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `root`         | The element to measure, or a selector; by default the outermost theme boundary, else the body.                        |
 | `width`        | Measure at this width, `describe` and `check` only: a px number or a length such as `'40rem'`; `em` is read as `rem`. |
+| `height`       | Measure at this height too, as `width` takes it; the root takes the height and scrolls what is taller.                |
 | `minTextChars` | The fewest characters a line of text may hold before it counts as squeezed; 8 by default.                             |
 
 ### describe()
@@ -94,7 +96,7 @@ A list of problems, each a plain object. The same application at 22 rem:
 
 ### at()
 
-`at(widths)` sets the root's inline size to each width in turn, with an inline style, measures, and puts the style back as it was, without resizing the window or waiting for a frame. Container queries follow; what script decides on resize doesn't. Each result is `{ width, windowClass, text, problems }`. Fix every problem it returns, from the deepest node up. In a Playwright test:
+`at(sizes)` sets the root's inline size to each width in turn, with an inline style, measures, and puts the style back as it was, without resizing the window or waiting for a frame. A size can be `{ width, height }`: the root then takes the height as its block size too, and scrolls what is taller, as a window of that size would. Container queries follow; what script decides on resize doesn't. Each result is `{ width, height, windowClass, text, problems }`, `height` only where one was asked. Fix every problem it returns, from the deepest node up. In a Playwright test:
 
 ```ts
 const results = await page.evaluate(() =>
@@ -109,7 +111,7 @@ Open dev mode on the application at the top of this page to try it.
 
 Every visible layout node is a plane, lifted one level per step of nesting; sticky, absolute and fixed nodes sit half a level higher, and open overlays float above the page. Each plane carries a picture of what its node holds, with padding and gaps hatched and each child outlined.
 
-The toolbar over the view turns it, chooses what the planes show and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
+The toolbar over the view turns it, chooses what the planes show, sets the page's size and theme, and hides the side columns; View settings holds the spacing and levels. A legend in the corner says what the colors mean.
 
 | Do this                                   | To                                                                         |
 | ----------------------------------------- | -------------------------------------------------------------------------- |
@@ -120,12 +122,20 @@ The toolbar over the view turns it, chooses what the planes show and hides the s
 | Only the selected                         | Show only the selected node and what is inside it.                         |
 | Color by window class                     | Color each node by the window class its width falls in, not by its kind.   |
 | Rest on a plane                           | See its size and container; colored by window class, a ruler of its width. |
+| Device, Rotate                            | Lay the page out at a phone's, tablet's or screen's size; swap its sides.  |
+| Page theme                                | Show the page light or dark, with high contrast or without.                |
 | View settings: spacing, from and to level | Show a range of levels, with the spacing between them.                     |
 | Nodes, Inspector                          | Hide or show the side columns; the view takes their room.                  |
 
 ### The responsive frame
 
-A frame above the planes marks the page's width, labelled in rem, px and window class. Drag a handle on its left or right edge to lay the page out at another width, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. A handle snaps to the window class boundaries; with focus on it, the arrow keys step by 1 rem and Shift+arrow by 5 rem. View settings sets the four widths the docs check at, one in each window class. The inspector and the readout follow the width. The frame's ×, a double-click on a handle or Real width in View settings brings back the real width, and closing dev mode does too.
+A frame above the planes marks the page's size, labelled in px and rem with its window class and the device it came from. Drag a handle on its left, right or bottom edge, or a bottom corner, to lay the page out at another size, as a browser's responsive mode does: dev mode resizes the page's root, as `at()` does, measures it again and rebuilds the planes, while the window and the view keep their size. Given a height, the root takes it and scrolls what is taller, as a window would; a page shorter than the frame leaves the rest of it empty. A width snaps to the window class boundaries; with focus on an edge's handle, the arrow keys step by 1 rem and Shift+arrow by 5 rem.
+
+Device lists common phones, tablets, laptops and screens at their CSS viewport sizes; dragging afterwards makes the frame a free one, Responsive. Rotate swaps the width and the height. The inspector and the readout follow the size. The frame's ×, a double-click on a handle or the page's own size in Device brings it back, and closing dev mode does too.
+
+### The page's theme
+
+Page theme switches the page under dev mode to light or dark, with or without high contrast, by setting the theme boundary around the root, and keeps it there when the application renders again; the planes and the readout follow. Dev mode's own UI keeps the theme the page had as it opened. The page's own theme comes back from the menu or as dev mode closes. Popups an application portals elsewhere keep their own theme.
 
 A red outline marks a node with problems; coloured by window class, a solid outline is a size container.
 
