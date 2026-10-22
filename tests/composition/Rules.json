@@ -470,6 +470,11 @@
           "note": "A code diff pads its loading state."
         },
         {
+          "stylesheet": "Editor.css",
+          "classes": ["env-toolbar"],
+          "note": "An editor's formatting toolbar sizes its row of buttons to the buttons, so where they don't fit the toolbar scrolls the row rather than the buttons spilling out of it."
+        },
+        {
           "stylesheet": "Composer.css",
           "classes": ["env-icon-button"],
           "note": "A leading icon button lines its icon up with the composer's inset."

@@ -37,8 +37,8 @@ export default function ResizableColumns() {
           <Table.Row key={entry.id}>
             {/* A name too long for its column ends with an ellipsis. */}
             <Table.Cell nowrap>{entry.name}</Table.Cell>
-            <Table.Cell>{entry.owner}</Table.Cell>
-            <Table.Cell>{entry.updated}</Table.Cell>
+            <Table.Cell nowrap>{entry.owner}</Table.Cell>
+            <Table.Cell nowrap>{entry.updated}</Table.Cell>
             <Table.Cell numeric>{entry.pages}</Table.Cell>
           </Table.Row>
         ))}

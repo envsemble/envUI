@@ -38,7 +38,7 @@ export default function StickyHeader() {
         <Table.Body>
           {months.map((row) => (
             <Table.Row key={row.month}>
-              <Table.Cell>{row.month}</Table.Cell>
+              <Table.Cell nowrap>{row.month}</Table.Cell>
               <Table.Cell numeric>{number.format(row.orders)}</Table.Cell>
               <Table.Cell numeric>{money.format(row.revenue)}</Table.Cell>
               <Table.Cell numeric>{row.refunds}</Table.Cell>

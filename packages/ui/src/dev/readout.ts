@@ -3,6 +3,7 @@
 
 import type {
   Box,
+  ChildData,
   LayoutProblem,
   NodeData,
   ProblemRule,
@@ -227,7 +228,7 @@ class Reader {
     if (!clips) {
       for (const child of node.kids) {
         if (child.detached) continue;
-        const past = sidesPast(node.box, child.box);
+        const past = sidesPast(node.box, child.box, child.outset);
         if (!past.length) continue;
         spills = true;
         this.spilling.add(node.index);
@@ -238,7 +239,8 @@ class Reader {
         );
       }
     }
-    const wider = node.scrollSize.w - node.scrollSize.clientW;
+    // What a negative margin inside sets out past the node widens its content by design too.
+    const wider = node.scrollSize.w - node.scrollSize.clientW - (node.outsetInside ?? 0);
     if (!spills && wider > 1)
       this.overflowing.set(
         node.index,
@@ -312,13 +314,16 @@ class Reader {
   }
 }
 
-/** How far a child reaches past each side of its parent, where it does by more than 1 px. */
-function sidesPast(parent: Box, child: Box): [number, string][] {
+/**
+ * How far a child reaches past each side of its parent, beyond what its negative margins set it out
+ * by, where it does by more than 1 px.
+ */
+function sidesPast(parent: Box, child: Box, outset?: ChildData['outset']): [number, string][] {
   const sides: [number, string][] = [
-    [parent.x - child.x, 'left'],
-    [child.x + child.w - (parent.x + parent.w), 'right'],
-    [parent.y - child.y, 'top'],
-    [child.y + child.h - (parent.y + parent.h), 'bottom'],
+    [parent.x - child.x - (outset?.left ?? 0), 'left'],
+    [child.x + child.w - (parent.x + parent.w) - (outset?.right ?? 0), 'right'],
+    [parent.y - child.y - (outset?.top ?? 0), 'top'],
+    [child.y + child.h - (parent.y + parent.h) - (outset?.bottom ?? 0), 'bottom'],
   ];
   return sides.filter(([distance]) => distance > 1);
 }

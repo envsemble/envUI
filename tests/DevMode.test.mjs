@@ -396,6 +396,60 @@ test('the readout finds what paints, spills, overflows, never sticks, leaves the
   assert.equal(reading.problemsByNode[1].length, 1);
 });
 
+test('what is set out on purpose, or out of the flow, neither spills nor overflows', () => {
+  const kid = (label, at, more = {}) => ({ label, box: at, node: false, detached: false, ...more });
+  const none = { left: 0, right: 0, top: 0, bottom: 0 };
+  const reading = read(
+    snapshot([
+      [node('page', 'page', box(0, 0, 352, 480), { display: 'block' }), null],
+      // A text button's hit area, set out 4 px past the row by its negative margin.
+      [
+        node('row', 'links', box(0, 0, 352, 40), {
+          kids: [kid('a.env-button', box(300, 0, 56, 40), { outset: { ...none, right: 4 } })],
+        }),
+        0,
+      ],
+      // A child out of the flow, such as a resize handle across the edge, never spills.
+      [
+        node('column', 'panel', box(0, 48, 352, 96), {
+          kids: [kid('div.env-handle', box(0, 42, 352, 12), { detached: true })],
+        }),
+        0,
+      ],
+      // Content 3 px wider by a hit area inside, and 16 px wider than that by something else.
+      [
+        node('row', 'start', box(0, 160, 18, 24), {
+          scrollSize: { w: 21, clientW: 18, h: 24, clientH: 24 },
+          outsetInside: 3,
+        }),
+        0,
+      ],
+      [
+        node('row', 'wide', box(0, 200, 160, 24), {
+          scrollSize: { w: 179, clientW: 160, h: 24, clientH: 24 },
+          outsetInside: 3,
+        }),
+        0,
+      ],
+      // Set out by 4 px, and sticking out 20 px.
+      [
+        node('row', 'spills', box(0, 240, 352, 40), {
+          kids: [
+            kid('button.env-button', box(300, 240, 72, 40), { outset: { ...none, right: 4 } }),
+          ],
+        }),
+        0,
+      ],
+    ]),
+  );
+  assert.deepEqual(
+    reading.problems.map(({ rule, node }) => `${rule} ${node}`),
+    ['child-overflow row "spills"', 'content-overflow row "wide"'],
+  );
+  assert.match(reading.problems[0].message, /sticks out 1rem past its right/);
+  assert.match(reading.problems[1].message, /its content is 1rem wider than it/);
+});
+
 test('no entry point but dev reaches dev mode, so production builds contain none of it', async () => {
   // Every entry point the package exports, but dev and the one-icon pattern, which the barrel covers.
   const { exports } = JSON.parse(

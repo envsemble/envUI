@@ -68,6 +68,15 @@ test('the readout describes and checks the layout nodes, also at other widths', 
     await page.evaluate(() => document.querySelector('.env-theme')!.hasAttribute('style')),
   ).toBe(false);
 
+  // A dialog, in its positioner fixed over the window, is an open overlay.
+  await page.getByRole('button', { name: 'Open the dialog' }).click();
+  await expect(page.getByRole('dialog', { name: 'Details' })).toBeVisible();
+  expect(await page.evaluate(() => window.envui!.layout!.describe())).toMatch(
+    /open overlays \(1\):\n {2}dialog\b/,
+  );
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+
   // An open overlay is listed with where it landed, and found off the window.
   await page.getByRole('button', { name: 'Open the popover' }).click();
   const withOverlay = await page.evaluate(() => window.envui!.layout!.describe());
@@ -94,7 +103,7 @@ test('the toggle opens the 3D view and the inspector, which Escape and the short
   await expect(panel).toBeFocused();
   expect(await pageInert()).toBe(true);
   // A plane for every shown node, each carrying copies of what the node holds.
-  await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(14);
+  await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(15);
   await expect(panel.locator('.env-dev-plane[data-problems]')).toHaveCount(2);
   await expect(panel.locator('.env-dev-surface').filter({ hasText: 'Painted' })).toHaveCount(1);
   // The tree, in its sidebar, lists the nodes; the inspector shows the selected one.
@@ -134,7 +143,7 @@ test(
     const panel = page.getByRole('region', { name: 'Dev mode' });
     const toolbar = panel.getByRole('toolbar', { name: '3D view' });
     const scene = panel.locator('.env-dev-scene');
-    await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(14);
+    await expect(panel.locator('.env-dev-plane[data-plane]')).toHaveCount(15);
     const turn = (rx: number, ry: number) => `rotateX(${rx}deg) rotateY(${ry}deg)`;
     // Each view is an icon button named by its label, which its tooltip shows.
     const views: [string, string][] = [
@@ -168,12 +177,12 @@ test('"only the selected" shows the selected node and what is inside it', async 
   const panel = page.getByRole('region', { name: 'Dev mode' });
   const planes = panel.locator('.env-dev-plane[data-plane]');
   const only = panel.getByRole('button', { name: 'Only the selected' });
-  await expect(planes).toHaveCount(14);
+  await expect(planes).toHaveCount(15);
   // On, with nothing selected, every plane shows, also under the pointer.
   await only.click();
   await expect(only).toHaveAttribute('aria-pressed', 'true');
   await planes.first().hover({ force: true });
-  await expect(planes).toHaveCount(14);
+  await expect(planes).toHaveCount(15);
   // Selecting the cards' row shows it and its three cards; another node, that one alone.
   await panel.getByRole('treeitem', { name: /row "cards"/ }).click();
   await expect(planes).toHaveCount(4);
@@ -182,12 +191,12 @@ test('"only the selected" shows the selected node and what is inside it', async 
   await expect(planes).toHaveCount(1);
   // Clicking the selected row again clears the selection, and everything shows.
   await panel.getByRole('treeitem', { name: /row "painted"/ }).click();
-  await expect(planes).toHaveCount(14);
+  await expect(planes).toHaveCount(15);
   // Off, the selection no longer filters.
   await panel.getByRole('treeitem', { name: /row "cards"/ }).click();
   await only.click();
   await expect(only).toHaveAttribute('aria-pressed', 'false');
-  await expect(planes).toHaveCount(14);
+  await expect(planes).toHaveCount(15);
 });
 
 test(

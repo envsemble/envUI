@@ -43,7 +43,7 @@ export default function RowDensity() {
         <Table.Body>
           {reports.map((report) => (
             <Table.Row key={report.id}>
-              <Table.Cell>{report.name}</Table.Cell>
+              <Table.Cell nowrap>{report.name}</Table.Cell>
               <Table.Cell nowrap>{report.owner}</Table.Cell>
               <Table.Cell numeric>{report.pages}</Table.Cell>
               <Table.Cell align="end">

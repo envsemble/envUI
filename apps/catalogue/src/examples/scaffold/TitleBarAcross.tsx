@@ -22,7 +22,7 @@ export default function TitleBarAcross() {
       scroll="body"
       landmarks={false}
       topBarSpan="full"
-      forms={{ compact: 'drawer', medium: 'drawer' }}
+      forms={{ compact: 'none', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" />}
       navigation={{ drawer: <Drawer destinations={destinations} /> }}

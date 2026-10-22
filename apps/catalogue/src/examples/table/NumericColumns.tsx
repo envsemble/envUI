@@ -27,7 +27,7 @@ export default function NumericColumns() {
         {invoices.map((invoice) => (
           <Table.Row key={invoice.number}>
             <Table.Cell nowrap>{invoice.number}</Table.Cell>
-            <Table.Cell>{invoice.client}</Table.Cell>
+            <Table.Cell nowrap>{invoice.client}</Table.Cell>
             <Table.Cell numeric>{hours.format(invoice.hours)}</Table.Cell>
             <Table.Cell numeric>{money.format(invoice.amount)}</Table.Cell>
           </Table.Row>

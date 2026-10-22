@@ -21,7 +21,7 @@ export default function TopBarOnThePage() {
     <Scaffold
       scroll="body"
       landmarks={false}
-      forms={{ compact: 'drawer', medium: 'drawer' }}
+      forms={{ compact: 'none', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" background="page" />}
       navigation={{ drawer: <Drawer destinations={destinations} /> }}

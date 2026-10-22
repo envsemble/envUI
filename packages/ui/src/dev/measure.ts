@@ -131,11 +131,15 @@ function isOpenOverlay(element: Element): boolean {
     }
   }
   // Floating is the element's own position, or its positioner's: Base UI places a popup in a
-  // positioner, its parent. A listbox or menu inside some other floating box is no overlay.
-  const floats = (at: Element) => ['fixed', 'absolute'].includes(getComputedStyle(at).position);
-  if (floats(element)) return true;
+  // positioner, its parent, and a dialog or a command palette sits in a positioner fixed over the
+  // window. A listbox or menu inside some other floating box is no overlay.
+  const position = (at: Element) => getComputedStyle(at).position;
+  if (['fixed', 'absolute'].includes(position(element))) return true;
   const parent = element.parentElement;
-  return parent !== null && parent.matches('[role="presentation"]') && floats(parent);
+  if (parent === null) return false;
+  if (parent.matches('[role="presentation"]') && ['fixed', 'absolute'].includes(position(parent)))
+    return true;
+  return element.matches('[role="dialog"], [role="alertdialog"]') && position(parent) === 'fixed';
 }
 
 function overlayKind(element: Element): OverlayKind {
@@ -364,15 +368,26 @@ export function measure(root: HTMLElement, options: MeasureOptions = {}): Snapsh
         null;
     node.kids = layoutChildrenOf(element).map((child): ChildData => {
       const childIndex = indexOf.get(child);
+      const childStyle = getComputedStyle(child);
+      const rect = child.getBoundingClientRect();
+      const turned = transformReach(child, childStyle, rect);
+      const outset = (margin: string, reach: number) => Math.max(0, -px(margin)) + reach;
       return {
         label:
           childIndex === undefined ? describeElement(child) : labelFor(nodes, childIndex, child),
-        box: toBox(child.getBoundingClientRect()),
+        box: toBox(rect),
         node: childIndex !== undefined,
         detached:
-          getComputedStyle(child).position === 'fixed' ||
+          childStyle.position === 'fixed' ||
+          childStyle.position === 'absolute' ||
           overlaySet.has(child) ||
           child.matches('dialog, [popover]'),
+        outset: {
+          left: outset(childStyle.marginLeft, turned.x),
+          right: outset(childStyle.marginRight, turned.x),
+          top: outset(childStyle.marginTop, turned.y),
+          bottom: outset(childStyle.marginBottom, turned.y),
+        },
       };
     });
     // One level per step of nesting, and half a level more for what sticks or floats.
@@ -524,9 +539,13 @@ function measureInner(
   const scopes = [root, ...overlays.filter((overlay) => !root.contains(overlay))];
   for (const scope of scopes) {
     for (const element of Array.from(scope.getElementsByTagName('*'))) {
-      if (indexOf.has(element) || !(element instanceof HTMLElement)) continue;
       const style = getComputedStyle(element);
       if (style.display === 'none' || style.display === 'contents') continue;
+      const outset = outsetOf(element, style);
+      if (outset > 0)
+        for (let at = nearestNode(element); at !== null; at = nodes[at].parent)
+          nodes[at].outsetInside = Math.max(nodes[at].outsetInside ?? 0, outset);
+      if (indexOf.has(element) || !(element instanceof HTMLElement)) continue;
       const sticky = style.position === 'sticky';
       const scroll = scrollOf(element, style);
       const squeezed = squeezedText(element, style, minTextChars, rootPx);
@@ -541,6 +560,40 @@ function measureInner(
       nodes[index].inner.push(inner);
     }
   }
+}
+
+/**
+ * How far an element reaches sideways past its place in the layout, on purpose, in px: set out by
+ * a negative margin, such as a text button's hit area past its label; by an absolute pseudo-element,
+ * such as an invisible hit area; or by a transform, such as a turning spinner's corners. The
+ * content of every node around it may be that much wider without overflowing.
+ */
+function outsetOf(element: Element, style: CSSStyleDeclaration): number {
+  let outset = Math.max(0, -px(style.marginLeft), -px(style.marginRight));
+  if (style.position !== 'static')
+    for (const pseudo of ['::before', '::after']) {
+      const reach = getComputedStyle(element, pseudo);
+      if (reach.position === 'absolute' && !['none', 'normal'].includes(reach.content))
+        outset = Math.max(outset, -px(reach.left), -px(reach.right));
+    }
+  return Math.max(outset, transformReach(element, style, element.getBoundingClientRect()).x);
+}
+
+/**
+ * How far a transform, such as a turn or a scale, takes an element's box past its laid-out box on
+ * each side, in px, sideways and up and down.
+ */
+function transformReach(
+  element: Element,
+  style: CSSStyleDeclaration,
+  rect: DOMRect,
+): { x: number; y: number } {
+  if (style.transform === 'none') return { x: 0, y: 0 };
+  const [width, height] =
+    element instanceof HTMLElement
+      ? [element.offsetWidth, element.offsetHeight]
+      : [px(style.width), px(style.height)];
+  return { x: Math.max(0, (rect.width - width) / 2), y: Math.max(0, (rect.height - height) / 2) };
 }
 
 /**

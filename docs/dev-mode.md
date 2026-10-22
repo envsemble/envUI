@@ -84,15 +84,15 @@ A list of problems, each a plain object. The same application at 22 rem:
 }
 ```
 
-| `rule`                  | What it finds                                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------------------------- |
-| `content-overflow`      | Content wider than a node that doesn't scroll; only the deepest such node.                     |
-| `child-overflow`        | A child that spills out of a node that neither scrolls nor clips.                              |
-| `overlay-off-window`    | An open overlay that reaches outside the window.                                               |
-| `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, border or shadow. |
-| `sticky-without-scroll` | A sticky element whose scroll container never scrolls, so it never sticks.                     |
-| `text-squeezed`         | Text longer than `minTextChars` that wraps in a box narrower than that many characters.        |
-| `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads.         |
+| `rule`                  | What it finds                                                                                                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content-overflow`      | Content wider than a node that doesn't scroll; only the deepest such node. What a negative margin, an absolute pseudo-element or a transform sets out on purpose, such as a hit area, doesn't count. |
+| `child-overflow`        | A child in the flow that spills out of a node that neither scrolls nor clips, beyond what its negative margins set it out by.                                                                        |
+| `overlay-off-window`    | An open overlay that reaches outside the window.                                                                                                                                                     |
+| `layout-paints`         | A primitive, scaffold or Page without a part class that paints a background, border or shadow.                                                                                                       |
+| `sticky-without-scroll` | A sticky element whose scroll container never scrolls, so it never sticks.                                                                                                                           |
+| `text-squeezed`         | Text longer than `minTextChars` that wraps in a box narrower than that many characters.                                                                                                              |
+| `skeleton-shift`        | Only from `skeletonShift()`: an element that moves or resizes when its skeleton loads.                                                                                                               |
 
 ### at()
 
