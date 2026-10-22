@@ -42,6 +42,20 @@ test('the outermost boundary is the window and never collapses, nested ones size
   expect(await containerType(page, '#centered-theme')).toBe('inline-size');
   // An outermost Theme in a row shares the row instead of collapsing.
   expect(await width(page, '#outer-island')).toBeGreaterThan(100);
+  // One that renders an inline element is a block as wide as its parent, and one with padding
+  // holds it inside that width rather than overflow.
+  await append(
+    page,
+    `<div id="plain-root" style="inline-size: 40rem">
+       <span class="env-theme" data-env-theme="light" id="inline-theme">Inline</span>
+       <div class="env-theme" data-env-theme="light" id="padded-theme" style="padding: 1rem">
+         Padded
+       </div>
+     </div>`,
+  );
+  expect(await width(page, '#inline-theme')).toBeCloseTo(640, 0);
+  expect(await containerType(page, '#inline-theme')).toBe('inline-size');
+  expect(await width(page, '#padded-theme')).toBeCloseTo(640, 0);
   // The fixture's own root Theme is the window; a Theme inside it, such as a dark island in a Row,
   // sizes to its content and is no container.
   const root = page.locator('#root > .env-theme');
