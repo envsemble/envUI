@@ -212,9 +212,11 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -314,10 +316,13 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -411,7 +416,8 @@
       "usedIn": {
         "patterns": [
           "forms",
-          "loading"
+          "loading",
+          "key-figures"
         ]
       }
     },
@@ -1404,6 +1410,7 @@
           "settings",
           "loading",
           "empty-states",
+          "key-figures",
           "data-tables"
         ]
       }
@@ -1767,7 +1774,7 @@
       "category": "Layout & surfaces",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.",
+      "summary": "A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.",
       "aliases": [
         "tile",
         "panel",
@@ -1776,17 +1783,13 @@
         "link card",
         "button card",
         "action card",
-        "feature card",
-        "promo card",
         "ClickableCard",
-        "ActionCard",
-        "FeatureCard"
+        "ActionCard"
       ],
       "useWhen": [
         "Content about one subject stands apart from the page, such as a project's summary.",
         "A summary needs its own actions along the bottom, such as Share and Open (`actions`).",
-        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).",
-        "A feature is introduced with an icon, a sentence and one action (`layout=\"feature\"`)."
+        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`)."
       ],
       "avoidWhen": [
         {
@@ -1807,7 +1810,11 @@
         },
         {
           "text": "A region with no content yet.",
-          "use": "EmptyState"
+          "see": "empty-states"
+        },
+        {
+          "text": "A feature introduced with an icon, a sentence and the one action that starts it.",
+          "see": "feature-cards"
         }
       ],
       "related": [
@@ -1838,12 +1845,6 @@
           "title": "Content card",
           "description": "The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.",
           "file": "docs/examples/card/ActionStrip.tsx"
-        },
-        {
-          "name": "FeatureCards",
-          "title": "Feature card",
-          "description": "`layout=\"feature\"`: an icon, a title and a sentence, and one action.",
-          "file": "docs/examples/card/FeatureCards.tsx"
         },
         {
           "name": "Destinations",
@@ -1886,12 +1887,6 @@
           "title": "Card anatomy",
           "description": "",
           "file": "docs/examples/card/CardAnatomy.tsx"
-        },
-        {
-          "name": "InviteFeature",
-          "title": "Invite feature",
-          "description": "",
-          "file": "docs/examples/card/InviteFeature.tsx"
         }
       ],
       "parts": {
@@ -1921,14 +1916,6 @@
             {
               "class": "env-card-heading",
               "description": "The title."
-            },
-            {
-              "class": "env-card-icon",
-              "description": "The icon of the feature layout."
-            },
-            {
-              "class": "env-card-layout",
-              "description": "The row of the feature layout: icon, text and actions."
             },
             {
               "class": "env-card-meta",
@@ -1964,23 +1951,15 @@
               "parts": [
                 "env-card"
               ]
-            },
-            {
-              "attribute": "data-layout",
-              "values": [
-                "feature",
-                "stack"
-              ],
-              "parts": [
-                "env-card"
-              ]
             }
           ]
         }
       },
       "usedIn": {
         "patterns": [
-          "loading"
+          "loading",
+          "key-figures",
+          "feature-cards"
         ]
       }
     },
@@ -1997,6 +1976,9 @@
         "call to action",
         "CTA",
         "icon button",
+        "close button",
+        "dismiss button",
+        "remove button",
         "confirm button",
         "copy button",
         "button group",
@@ -2069,6 +2051,18 @@
           "file": "docs/examples/button/ConnectedButtons.tsx"
         },
         {
+          "name": "DismissTip",
+          "title": "Dismiss tip",
+          "description": "An IconButton with the Close cross closes, dismisses or removes what it sits in. Name it Close in the application's language, or say what it removes where several sit together.",
+          "file": "docs/examples/button/DismissTip.tsx"
+        },
+        {
+          "name": "RemovePeople",
+          "title": "Remove people",
+          "description": "",
+          "file": "docs/examples/button/RemovePeople.tsx"
+        },
+        {
           "name": "PendingAction",
           "title": "Pending action",
           "description": "While `pending`, a spinner replaces the content at the same size, and presses do nothing.",
@@ -2127,6 +2121,18 @@
           "title": "Don't: A disabled button that doesn’t say why.",
           "description": "",
           "file": "docs/examples/button/DisabledUntilValid.tsx"
+        },
+        {
+          "name": "CloseAtEnd",
+          "title": "Do: A close button at the end of the header of what it closes.",
+          "description": "",
+          "file": "docs/examples/button/CloseAtEnd.tsx"
+        },
+        {
+          "name": "CloseAtStart",
+          "title": "Don't: At the start, it reads as part of the content.",
+          "description": "",
+          "file": "docs/examples/button/CloseAtStart.tsx"
         },
         {
           "name": "SpecificLabel",
@@ -2428,127 +2434,17 @@
           "feedback",
           "loading",
           "empty-states",
+          "key-figures",
           "navigation",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
         ]
-      }
-    },
-    {
-      "name": "CloseButton",
-      "page": "close-button",
-      "doc": "docs/components/close-button.md",
-      "category": "Actions",
-      "status": "beta",
-      "since": "1.0.0",
-      "summary": "The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language.",
-      "aliases": [
-        "close button",
-        "dismiss button",
-        "remove button",
-        "x button",
-        "close icon"
-      ],
-      "useWhen": [
-        "A panel, a notification or a tip closes or is dismissed in place.",
-        "A list of items, such as people or files, lets each be removed."
-      ],
-      "avoidWhen": [
-        {
-          "text": "A dialog's own close, which Dialog renders itself.",
-          "use": "Dialog"
-        },
-        {
-          "text": "An action that deletes something for good, which needs its consequence named.",
-          "use": "ConfirmButton"
-        },
-        {
-          "text": "Any other icon-only action.",
-          "use": "IconButton"
-        }
-      ],
-      "related": [
-        "button",
-        "dialog",
-        "alert"
-      ],
-      "exports": [
-        "CloseButton"
-      ],
-      "examples": [
-        {
-          "name": "DismissTip",
-          "title": "Dismiss tip",
-          "description": "CloseButton is an icon-only button with a cross that closes, dismisses or removes what it sits in. Under a coarse pointer, its hit area reaches the 2.75 rem touch size.",
-          "file": "docs/examples/close-button/DismissTip.tsx"
-        },
-        {
-          "name": "RemovePeople",
-          "title": "Remove people",
-          "description": "",
-          "file": "docs/examples/close-button/RemovePeople.tsx"
-        },
-        {
-          "name": "ApplicationLabel",
-          "title": "Application label",
-          "description": "`aria-label`, else EnvUIProvider's `messages.common.close`, else Close, in the language the provider sets.",
-          "file": "docs/examples/close-button/ApplicationLabel.tsx"
-        },
-        {
-          "name": "CloseVariants",
-          "title": "Close variants",
-          "description": "",
-          "file": "docs/examples/close-button/CloseVariants.tsx"
-        },
-        {
-          "name": "CloseAtEnd",
-          "title": "Do: At the end of the header of what it closes, where people look for it.",
-          "description": "",
-          "file": "docs/examples/close-button/CloseAtEnd.tsx"
-        },
-        {
-          "name": "CloseAtStart",
-          "title": "Don't: At the start: it reads as part of the content.",
-          "description": "",
-          "file": "docs/examples/close-button/CloseAtStart.tsx"
-        },
-        {
-          "name": "OneClose",
-          "title": "Do: One way to close, beside the actions.",
-          "description": "",
-          "file": "docs/examples/close-button/OneClose.tsx"
-        },
-        {
-          "name": "TwoCloses",
-          "title": "Don't: A cross and a Close button: two ways to do one thing.",
-          "description": "",
-          "file": "docs/examples/close-button/TwoCloses.tsx"
-        },
-        {
-          "name": "CloseButtonAnatomy",
-          "title": "CloseButton anatomy",
-          "description": "",
-          "file": "docs/examples/close-button/CloseButtonAnatomy.tsx"
-        }
-      ],
-      "parts": {
-        "CloseButton": {
-          "root": "env-close-button",
-          "parts": [
-            {
-              "class": "env-close-button",
-              "description": "The button that closes a dialog, panel or message."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": []
       }
     },
     {
@@ -9728,6 +9624,14 @@
             {
               "class": "env-code-diff",
               "description": "The diff of two versions of code."
+            },
+            {
+              "class": "env-code-diff-failed",
+              "description": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert."
+            },
+            {
+              "class": "env-code-diff-failed-icon",
+              "description": "The error icon of a diff that failed to load, in the danger color."
             }
           ],
           "states": []
@@ -9747,6 +9651,7 @@
       "summary": "Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change.",
       "aliases": [
         "Counter",
+        "CounterBadge",
         "DiffCount",
         "InfoChip",
         "info chip",
@@ -9770,7 +9675,7 @@
         "A short state sits beside the content it describes, such as In review, Blocked or Archived.",
         "A short name or category marks an item, such as a team or a folder (`variant=\"outline\"`).",
         "A piece of neutral metadata sits beside related content, such as a plan or a count of seats.",
-        "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (CounterBadge).",
+        "A number belongs to a label, such as unread messages beside a navigation item or comments on a button (`count`).",
         "The size of a change shows beside a file or a version, such as +12 −3 (DiffStat)."
       ],
       "avoidWhen": [
@@ -9792,20 +9697,19 @@
         },
         {
           "text": "A headline number with its label and trend, such as on a dashboard.",
-          "use": "Stat"
+          "see": "key-figures"
         }
       ],
       "related": [
         "card",
         "drawer",
         "button",
-        "stat",
+        "key-figures",
         "code",
         "colors"
       ],
       "exports": [
         "Badge",
-        "CounterBadge",
         "DiffStat"
       ],
       "examples": [
@@ -9888,14 +9792,27 @@
           "parts": [
             {
               "class": "env-badge",
-              "description": "The badge: a small pill label."
+              "description": "The badge: a small pill label, or with data-count a compact count."
+            },
+            {
+              "class": "env-badge-count-label",
+              "description": "What a count means, such as 12 unread, for assistive technology; visually hidden."
             },
             {
               "class": "env-badge-label",
-              "description": "The badge's text."
+              "description": "The badge's text, or its count."
             }
           ],
           "states": [
+            {
+              "attribute": "data-count",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-badge"
+              ]
+            },
             {
               "attribute": "data-tone",
               "values": [
@@ -9919,31 +9836,6 @@
               ],
               "parts": [
                 "env-badge"
-              ]
-            }
-          ]
-        },
-        "CounterBadge": {
-          "root": "env-counter-badge",
-          "parts": [
-            {
-              "class": "env-counter-badge",
-              "description": "The count badge."
-            },
-            {
-              "class": "env-counter-badge-label",
-              "description": "The count."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-tone",
-              "values": [
-                "accent",
-                "neutral"
-              ],
-              "parts": [
-                "env-counter-badge"
               ]
             }
           ]
@@ -9976,6 +9868,7 @@
           "settings",
           "feedback",
           "empty-states",
+          "key-figures",
           "navigation",
           "filtering",
           "data-tables",
@@ -10014,7 +9907,7 @@
         },
         {
           "text": "A handful of key figures for a dashboard, such as revenue this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "Items nested inside other items, such as folders and files.",
@@ -10030,11 +9923,11 @@
       ],
       "related": [
         "list",
-        "stat",
+        "key-figures",
         "badge",
         "checkbox",
         "pagination",
-        "empty-state",
+        "empty-states",
         "loading",
         "typography"
       ],
@@ -10374,14 +10267,14 @@
         },
         {
           "text": "One headline number with its trend.",
-          "use": "Stat"
+          "see": "key-figures"
         }
       ],
       "related": [
         "table",
         "list",
         "card",
-        "stat",
+        "key-figures",
         "loading"
       ],
       "exports": [
@@ -10661,11 +10554,11 @@
         },
         {
           "text": "A compact count beside a label, such as unread messages.",
-          "use": "CounterBadge"
+          "use": "Badge"
         },
         {
           "text": "A headline figure with its label and trend, such as on a dashboard.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "How far a task has come.",
@@ -10674,7 +10567,7 @@
       ],
       "related": [
         "button",
-        "stat",
+        "key-figures",
         "badge",
         "typography",
         "accessibility"
@@ -10742,7 +10635,9 @@
         }
       },
       "usedIn": {
-        "patterns": []
+        "patterns": [
+          "key-figures"
+        ]
       }
     },
     {
@@ -10780,7 +10675,7 @@
         },
         {
           "text": "A key figure on a dashboard, such as the average score this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "A state or a category, such as Approved or Featured.",
@@ -10788,7 +10683,7 @@
         }
       ],
       "related": [
-        "stat",
+        "key-figures",
         "badge",
         "meter",
         "radio",
@@ -11689,209 +11584,6 @@
       }
     },
     {
-      "name": "Stat",
-      "page": "stat",
-      "doc": "docs/components/stat.md",
-      "category": "Content & guidance",
-      "status": "stable",
-      "since": "0.5.0",
-      "summary": "Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns.",
-      "aliases": [
-        "KPI",
-        "metric",
-        "statistic",
-        "key figure",
-        "key metric",
-        "big number",
-        "stat card",
-        "StatGroup",
-        "Stat.Group",
-        "Stat.Root"
-      ],
-      "useWhen": [
-        "The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.",
-        "A figure with how it changed since an earlier period, such as +12% from last month."
-      ],
-      "avoidWhen": [
-        {
-          "text": "Many values to compare or sort, such as figures for each project.",
-          "use": "Table"
-        },
-        {
-          "text": "A quantity within a known range, such as the seats assigned of a plan's five.",
-          "use": "Meter"
-        },
-        {
-          "text": "A count on a control, such as unread messages on a tab.",
-          "use": "CounterBadge"
-        },
-        {
-          "text": "A summary people open or act on, with a description and actions.",
-          "use": "Card"
-        }
-      ],
-      "related": [
-        "animated-number",
-        "meter",
-        "table",
-        "card",
-        "surface",
-        "colors"
-      ],
-      "exports": [
-        "Stat",
-        "Stat.Root",
-        "Stat.Group"
-      ],
-      "examples": [
-        {
-          "name": "ProjectHealth",
-          "title": "Project health",
-          "description": "A stat is a labelled key figure, with how it changed. Stat.Group puts a few on one surface.",
-          "file": "docs/examples/stat/ProjectHealth.tsx"
-        },
-        {
-          "name": "TrendTones",
-          "title": "Trend tones",
-          "description": "A trend's `tone` replaces the default where a rise is bad news, or a fall good news.",
-          "file": "docs/examples/stat/TrendTones.tsx"
-        },
-        {
-          "name": "OnAPane",
-          "title": "Backgrounds",
-          "description": "Stat.Group is `default` on the page, and `muted` on a pane; `page` and `raised` where they fit.",
-          "file": "docs/examples/stat/OnAPane.tsx"
-        },
-        {
-          "name": "InACard",
-          "title": "One figure",
-          "description": "A Stat.Root has no surface; a Card gives one figure a frame.",
-          "file": "docs/examples/stat/InACard.tsx"
-        },
-        {
-          "name": "TrendInWords",
-          "title": "Do: Say the change in words, with its period.",
-          "description": "",
-          "file": "docs/examples/stat/TrendInWords.tsx"
-        },
-        {
-          "name": "TrendWithoutWords",
-          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
-          "description": "",
-          "file": "docs/examples/stat/TrendWithoutWords.tsx"
-        },
-        {
-          "name": "BadNewsTone",
-          "title": "Do: A rise that is bad news in the danger tone.",
-          "description": "",
-          "file": "docs/examples/stat/BadNewsTone.tsx"
-        },
-        {
-          "name": "DefaultToneForBadNews",
-          "title": "Don't: A rising error rate in the default success tone.",
-          "description": "",
-          "file": "docs/examples/stat/DefaultToneForBadNews.tsx"
-        },
-        {
-          "name": "StatAnatomy",
-          "title": "Stat anatomy",
-          "description": "",
-          "file": "docs/examples/stat/StatAnatomy.tsx"
-        },
-        {
-          "name": "GroupColumns",
-          "title": "Group columns",
-          "description": "",
-          "file": "docs/examples/stat/GroupColumns.tsx"
-        }
-      ],
-      "parts": {
-        "Stat": {
-          "root": "env-stat",
-          "parts": [
-            {
-              "class": "env-stat",
-              "description": "One statistic."
-            },
-            {
-              "class": "env-stat-description",
-              "description": "The sentence under the value."
-            },
-            {
-              "class": "env-stat-footer",
-              "description": "The row with the trend and the description."
-            },
-            {
-              "class": "env-stat-group",
-              "description": "A row of statistics."
-            },
-            {
-              "class": "env-stat-label",
-              "description": "The label."
-            },
-            {
-              "class": "env-stat-trend",
-              "description": "The change since the last period."
-            },
-            {
-              "class": "env-stat-value",
-              "description": "The value."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-direction",
-              "values": [
-                "down",
-                "flat",
-                "up"
-              ],
-              "parts": [
-                "env-stat-trend"
-              ]
-            },
-            {
-              "attribute": "data-env-skeleton",
-              "values": [],
-              "parts": [
-                "env-stat-description"
-              ]
-            },
-            {
-              "attribute": "data-tone",
-              "values": [
-                "danger",
-                "neutral",
-                "success",
-                "warning"
-              ],
-              "parts": [
-                "env-stat-trend"
-              ]
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": []
-      }
-    },
-    {
       "name": "CalendarHeatmap",
       "page": "calendar-heatmap",
       "doc": "docs/components/calendar-heatmap.md",
@@ -11919,7 +11611,7 @@
         },
         {
           "text": "A headline number with its trend.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "Choosing a day.",
@@ -11931,7 +11623,7 @@
         }
       ],
       "related": [
-        "stat",
+        "key-figures",
         "table",
         "date-picker",
         "tooltip",
@@ -12178,183 +11870,6 @@
       }
     },
     {
-      "name": "EmptyState",
-      "page": "empty-state",
-      "doc": "docs/components/empty-state.md",
-      "category": "Feedback & overlays",
-      "status": "stable",
-      "since": "0.1.0",
-      "summary": "Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action.",
-      "aliases": [
-        "empty state",
-        "blank slate",
-        "zero state",
-        "no data",
-        "no results",
-        "nothing found",
-        "error state",
-        "load error",
-        "placeholder"
-      ],
-      "useWhen": [
-        "A list, table or page has no content yet, such as before the first project.",
-        "A search or filter matches nothing.",
-        "Content failed to load and people can try again (`tone=\"danger\"`).",
-        "A state takes the place of a whole page's or region's content (`align=\"center\"`)."
-      ],
-      "avoidWhen": [
-        {
-          "text": "Content that is on its way, which keeps its layout while it loads, as a skeleton.",
-          "use": "Surface"
-        },
-        {
-          "text": "A message about a page or section that still has its content.",
-          "use": "Alert"
-        },
-        {
-          "text": "Feedback after an action, such as a failed save.",
-          "use": "Toast"
-        },
-        {
-          "text": "Work of unknown length in a small area.",
-          "use": "Spinner"
-        }
-      ],
-      "related": [
-        "loading",
-        "alert",
-        "toast",
-        "card",
-        "button"
-      ],
-      "exports": [
-        "EmptyState"
-      ],
-      "examples": [
-        {
-          "name": "FirstProject",
-          "title": "First project",
-          "description": "An empty state takes the place of content that isn't there: it says why and offers the action that resolves it.",
-          "file": "docs/examples/empty-state/FirstProject.tsx"
-        },
-        {
-          "name": "InPlaceOfContent",
-          "title": "In place of content",
-          "description": "`align=\"center\"` centres the state in the height its region gives it.",
-          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
-        },
-        {
-          "name": "LoadFailed",
-          "title": "Failed to load",
-          "description": "`tone=\"danger\"` shows the error icon and announces the state. Try again shows its progress.",
-          "file": "docs/examples/empty-state/LoadFailed.tsx"
-        },
-        {
-          "name": "NoResults",
-          "title": "Do: No results: say so, and offer to clear the search.",
-          "description": "",
-          "file": "docs/examples/empty-state/NoResults.tsx"
-        },
-        {
-          "name": "FirstUseForNoResults",
-          "title": "Don't: The first-use state for a search that matched nothing.",
-          "description": "",
-          "file": "docs/examples/empty-state/FirstUseForNoResults.tsx"
-        },
-        {
-          "name": "OneAction",
-          "title": "Do: One action that resolves the state.",
-          "description": "",
-          "file": "docs/examples/empty-state/OneAction.tsx"
-        },
-        {
-          "name": "CompetingActions",
-          "title": "Don't: Several actions: none of them reads as the way forward.",
-          "description": "",
-          "file": "docs/examples/empty-state/CompetingActions.tsx"
-        },
-        {
-          "name": "SayWhatHappened",
-          "title": "Do: Say what happened, that work is safe, and what to do.",
-          "description": "",
-          "file": "docs/examples/empty-state/SayWhatHappened.tsx"
-        },
-        {
-          "name": "ErrorCode",
-          "title": "Don't: A code and an apology, with nothing to do next.",
-          "description": "",
-          "file": "docs/examples/empty-state/ErrorCode.tsx"
-        },
-        {
-          "name": "EmptyStateAnatomy",
-          "title": "EmptyState anatomy",
-          "description": "",
-          "file": "docs/examples/empty-state/EmptyStateAnatomy.tsx"
-        }
-      ],
-      "parts": {
-        "EmptyState": {
-          "root": "env-empty-state",
-          "parts": [
-            {
-              "class": "env-empty-state",
-              "description": "The empty state."
-            },
-            {
-              "class": "env-empty-state-description",
-              "description": "The sentence under the title."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-align",
-              "values": [
-                "center",
-                "start"
-              ],
-              "parts": [
-                "env-empty-state"
-              ]
-            },
-            {
-              "attribute": "data-tone",
-              "values": [
-                "danger",
-                "neutral"
-              ],
-              "parts": [
-                "env-empty-state"
-              ]
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "empty-states",
-          "app-frame",
-          "window-frame",
-          "filtering",
-          "data-tables"
-        ]
-      }
-    },
-    {
       "name": "Spinner",
       "page": "spinner",
       "doc": "docs/components/spinner.md",
@@ -12377,7 +11892,7 @@
       "useWhen": [
         "Work of unknown length in a small area, such as a list that updates after a filter changes.",
         "An update to content already shown, beside the content, which stays in place meanwhile.",
-        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with a label beside it (`LoadingState`)."
+        "Content whose shape isn't known while it loads, such as a file's preview (`size=\"lg\"`), or search results, with its label beside it (`showLabel`)."
       ],
       "avoidWhen": [
         {
@@ -12406,8 +11921,7 @@
         "accessibility"
       ],
       "exports": [
-        "Spinner",
-        "LoadingState"
+        "Spinner"
       ],
       "examples": [
         {
@@ -12419,7 +11933,7 @@
         {
           "name": "SearchingDocuments",
           "title": "Searching documents",
-          "description": "LoadingState puts a label beside the spinner that says what is loading, for loading whose shape isn't known; where it is known, show the component itself as a skeleton.",
+          "description": "`showLabel` puts the label beside the spinner, to say what is loading where its shape isn't known; where it is known, show the component itself as a skeleton.",
           "file": "docs/examples/spinner/SearchingDocuments.tsx"
         },
         {
@@ -12465,14 +11979,25 @@
           "parts": [
             {
               "class": "env-spinner",
-              "description": "The spinner."
+              "description": "The spinner, or with data-show-label the status line that holds it and its label."
             },
             {
               "class": "env-spinner-arc",
               "description": "The turning arc."
+            },
+            {
+              "class": "env-spinner-label",
+              "description": "The label shown beside the spinner, which says what is loading."
             }
           ],
           "states": [
+            {
+              "attribute": "data-show-label",
+              "values": [],
+              "parts": [
+                "env-spinner"
+              ]
+            },
             {
               "attribute": "data-size",
               "values": [
@@ -12485,20 +12010,6 @@
               ]
             }
           ]
-        },
-        "LoadingState": {
-          "root": "env-loading-state",
-          "parts": [
-            {
-              "class": "env-loading-state",
-              "description": "The spinner with a label."
-            },
-            {
-              "class": "env-loading-state-label",
-              "description": "The label that says what is loading."
-            }
-          ],
-          "states": []
         }
       },
       "usedIn": {
@@ -12786,7 +12297,7 @@
         },
         {
           "text": "A region without content yet, such as an empty list or no search results.",
-          "use": "EmptyState"
+          "see": "empty-states"
         },
         {
           "text": "An error about one field of a form.",
@@ -12803,7 +12314,7 @@
       ],
       "related": [
         "toast",
-        "empty-state",
+        "empty-states",
         "badge",
         "dialog",
         "colors"
@@ -12942,7 +12453,8 @@
       "usedIn": {
         "patterns": [
           "forms",
-          "feedback"
+          "feedback",
+          "empty-states"
         ]
       }
     },
@@ -13263,7 +12775,7 @@
         "panes",
         "dialog",
         "popover",
-        "close-button",
+        "button",
         "panel-dock"
       ],
       "exports": [
@@ -13791,7 +13303,7 @@
       "category": "Feedback & overlays",
       "status": "stable",
       "since": "0.3.0",
-      "summary": "Actions, destinations and the shared organization switcher, opened from a trigger or a right click.",
+      "summary": "Actions and destinations, opened from a trigger or a right click.",
       "aliases": [
         "dropdown menu",
         "context menu",
@@ -13803,7 +13315,6 @@
         "submenu",
         "MenuItem",
         "OrganizationMenu",
-        "organization switcher",
         "theme menu",
         "theme choice"
       ],
@@ -13812,7 +13323,7 @@
         "A few destinations that share a trigger, such as the account pages behind the avatar.",
         "Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.",
         "Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).",
-        "Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher)."
+        "Switching between the organizations a person belongs to, as the organization switcher pattern shows."
       ],
       "avoidWhen": [
         {
@@ -13872,7 +13383,6 @@
         "Menu.RadioItem",
         "Menu.CheckboxItem",
         "ContextMenu",
-        "OrganizationSwitcher",
         "ThemeRadioGroup"
       ],
       "examples": [
@@ -13891,20 +13401,8 @@
         {
           "name": "AccountMenu",
           "title": "Account menu",
-          "description": "An AvatarButton trigger and a Menu.Header with the account. The full menu, with the theme and the organizations, is the account menu pattern.",
+          "description": "An AvatarButton trigger and a Menu.Header with the account. The full menu, with the theme and the organizations, is the account menu pattern, and a switch between organizations of its own the organization switcher.",
           "file": "docs/examples/menu/AccountMenu.tsx"
-        },
-        {
-          "name": "SwitchOrganization",
-          "title": "Switch organization",
-          "description": "OrganizationSwitcher shows the active organization and switches between the person's organizations; `onCreate` adds the create action. It fits a navigation Drawer's `header`.",
-          "file": "docs/examples/menu/SwitchOrganization.tsx"
-        },
-        {
-          "name": "FirstOrganization",
-          "title": "First organization",
-          "description": "Without organizations, the switcher is only the create action.",
-          "file": "docs/examples/menu/FirstOrganization.tsx"
         },
         {
           "name": "GroupsAndSeparators",
@@ -14086,63 +13584,6 @@
             }
           ]
         },
-        "OrganizationSwitcher": {
-          "root": "env-organization-switcher",
-          "parts": [
-            {
-              "class": "env-organization-switcher",
-              "description": "The organization switcher's popup."
-            },
-            {
-              "class": "env-organization-switcher-create",
-              "description": "The item that creates an organization."
-            },
-            {
-              "class": "env-organization-switcher-description",
-              "description": "An organization's description."
-            },
-            {
-              "class": "env-organization-switcher-header",
-              "description": "The header of the popup."
-            },
-            {
-              "class": "env-organization-switcher-heading",
-              "description": "The heading of the popup."
-            },
-            {
-              "class": "env-organization-switcher-option",
-              "description": "One organization."
-            },
-            {
-              "class": "env-organization-switcher-options",
-              "description": "The list of organizations."
-            },
-            {
-              "class": "env-organization-switcher-trigger",
-              "description": "The button that opens the switcher."
-            },
-            {
-              "class": "env-organization-switcher-trigger-label",
-              "description": "The current organization's name in the trigger."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-checked",
-              "values": [],
-              "parts": [
-                "env-organization-switcher-option"
-              ]
-            },
-            {
-              "attribute": "data-highlighted",
-              "values": [],
-              "parts": [
-                "env-organization-switcher-create"
-              ]
-            }
-          ]
-        },
         "Popup": {
           "shared": true,
           "root": "env-popup",
@@ -14219,6 +13660,7 @@
           "destructive-actions",
           "app-frame",
           "account-menu",
+          "organization-switcher",
           "window-frame",
           "filtering",
           "data-tables",
@@ -15097,7 +14539,7 @@
         },
         {
           "text": "A key figure without a range, such as the active projects this month.",
-          "use": "Stat"
+          "see": "key-figures"
         },
         {
           "text": "A value people set within a range, such as a volume or a limit.",
@@ -15110,7 +14552,7 @@
       ],
       "related": [
         "progress",
-        "stat",
+        "key-figures",
         "slider",
         "colors"
       ],
@@ -15421,6 +14863,8 @@
       "related": [
         "index",
         "setup",
+        "organization-switcher",
+        "key-figures",
         "loading",
         "app-frame",
         "scaffold",
@@ -15436,7 +14880,9 @@
         "box",
         "panes",
         "scale",
+        "feature-cards",
         "spinner",
+        "empty-states",
         "colors"
       ]
     },
@@ -15658,7 +15104,7 @@
         "accessibility",
         "typography",
         "text-field",
-        "empty-state",
+        "empty-states",
         "toast",
         "confirm-dialog"
       ]
@@ -16037,7 +15483,6 @@
         "useToast",
         "Alert",
         "Badge",
-        "CounterBadge",
         "Drawer",
         "List",
         "DescriptionList",
@@ -16087,7 +15532,7 @@
         {
           "name": "UnreadCount",
           "title": "Unread counts",
-          "description": "A CounterBadge's `aria-label` says what it counts, \"12 unread\".",
+          "description": "A count Badge's `aria-label` says what it counts, \"12 unread\".",
           "file": "docs/examples/feedback/UnreadCount.tsx"
         },
         {
@@ -16131,7 +15576,7 @@
       "avoidWhen": [
         {
           "text": "Content that turned out empty, or that failed to load.",
-          "use": "EmptyState"
+          "see": "empty-states"
         }
       ],
       "composes": [
@@ -16153,7 +15598,6 @@
         "Column",
         "Row",
         "Text",
-        "LoadingState",
         "Avatar"
       ],
       "related": [
@@ -16181,7 +15625,7 @@
         {
           "name": "SearchResultsLoading",
           "title": "No known shape",
-          "description": "LoadingState says what is loading beside a spinner, for results whose number and shape aren't known yet.",
+          "description": "A Spinner with `showLabel` says what is loading beside it, for results whose number and shape aren't known yet.",
           "file": "docs/examples/loading/SearchResultsLoading.tsx"
         },
         {
@@ -16243,6 +15687,7 @@
       "since": "1.0.0",
       "summary": "Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.",
       "aliases": [
+        "EmptyState",
         "empty state",
         "no results",
         "no data",
@@ -16267,7 +15712,7 @@
         }
       ],
       "composes": [
-        "EmptyState",
+        "Alert",
         "PageHeader",
         "SearchField",
         "Select",
@@ -16284,7 +15729,6 @@
       "related": [
         "loading",
         "feedback",
-        "empty-state",
         "list",
         "table"
       ],
@@ -16293,7 +15737,7 @@
         {
           "name": "FirstUse",
           "title": "First use",
-          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay. Until something exists, it holds the create action; then the page's own header action takes over.",
+          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action, in a Column of Text and a Button. Until something exists, it holds the create action; then the page's own header action takes over.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
@@ -16305,7 +15749,7 @@
         {
           "name": "LoadFailed",
           "title": "Load failed",
-          "description": "A danger state has the alert role, so it is announced; it says the documents are safe and offers Try again.",
+          "description": "A failure is an Alert with `tone=\"danger\"` and `announce`, so it is announced, in the room the table takes; it says the documents are safe and offers Try again.",
           "file": "docs/examples/empty-states/LoadFailed.tsx"
         },
         {
@@ -16337,6 +15781,129 @@
           "title": "Empty states anatomy",
           "description": "",
           "file": "docs/examples/empty-states/EmptyStatesAnatomy.tsx"
+        }
+      ]
+    },
+    {
+      "name": "key-figures",
+      "title": "Key figures",
+      "group": "Patterns",
+      "intent": "Keep people informed",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.",
+      "aliases": [
+        "Stat",
+        "Stat.Root",
+        "Stat.Group",
+        "StatGroup",
+        "stat",
+        "stats",
+        "KPI",
+        "metric",
+        "statistic",
+        "key figure",
+        "key metric",
+        "big number",
+        "stat card",
+        "trend"
+      ],
+      "useWhen": [
+        "The few figures that sum up a view, such as a dashboard's active projects, tasks done and lead time.",
+        "A figure with how it changed since an earlier period, such as +12% from last month."
+      ],
+      "avoidWhen": [
+        {
+          "text": "Many values to compare or sort, such as figures for each project.",
+          "use": "Table"
+        },
+        {
+          "text": "A quantity within a known range, such as the seats assigned of a plan's five.",
+          "use": "Meter"
+        },
+        {
+          "text": "A count on a control, such as unread messages on a tab.",
+          "use": "Badge"
+        },
+        {
+          "text": "A figure that changes while people look at it.",
+          "use": "AnimatedNumber"
+        }
+      ],
+      "composes": [
+        "Surface",
+        "Grid",
+        "Column",
+        "Row",
+        "Text",
+        "Badge",
+        "AnimatedNumber",
+        "Button",
+        "Card"
+      ],
+      "related": [
+        "animated-number",
+        "badge",
+        "meter",
+        "table",
+        "card",
+        "surface"
+      ],
+      "doc": "docs/patterns/key-figures.md",
+      "examples": [
+        {
+          "name": "ProjectHealth",
+          "title": "Project health",
+          "description": "A key figure is a muted label, a large figure in Text and a Badge that says how it changed, with the period beside it. A Surface holds a few of them in a Grid of even columns.",
+          "file": "docs/examples/key-figures/ProjectHealth.tsx"
+        },
+        {
+          "name": "OnAPane",
+          "title": "On a pane",
+          "description": "A group on a pane takes the `muted` fill, so its figures stand apart; the pane's heading names it.",
+          "file": "docs/examples/key-figures/OnAPane.tsx"
+        },
+        {
+          "name": "InACard",
+          "title": "One figure",
+          "description": "A Card frames a single figure.",
+          "file": "docs/examples/key-figures/InACard.tsx"
+        },
+        {
+          "name": "TrendInWords",
+          "title": "Do: Say the change in words, with its period.",
+          "description": "",
+          "file": "docs/examples/key-figures/TrendInWords.tsx"
+        },
+        {
+          "name": "TrendWithoutWords",
+          "title": "Don't: A bare percentage: without the icon and color, it doesn't say which way.",
+          "description": "",
+          "file": "docs/examples/key-figures/TrendWithoutWords.tsx"
+        },
+        {
+          "name": "BadNewsTone",
+          "title": "Do: A rise that is bad news in the danger tone.",
+          "description": "",
+          "file": "docs/examples/key-figures/BadNewsTone.tsx"
+        },
+        {
+          "name": "GoodNewsToneForBadNews",
+          "title": "Don't: A rising error rate in the success tone.",
+          "description": "",
+          "file": "docs/examples/key-figures/GoodNewsToneForBadNews.tsx"
+        },
+        {
+          "name": "KeyFiguresAnatomy",
+          "title": "Key figures anatomy",
+          "description": "",
+          "file": "docs/examples/key-figures/KeyFiguresAnatomy.tsx"
+        },
+        {
+          "name": "GroupColumns",
+          "title": "Group columns",
+          "description": "",
+          "file": "docs/examples/key-figures/GroupColumns.tsx"
         }
       ]
     },
@@ -16509,7 +16076,6 @@
         "ThemeRadioGroup",
         "Page",
         "PageHeader",
-        "EmptyState",
         "IconButton",
         "Button",
         "Row",
@@ -16597,7 +16163,7 @@
         },
         {
           "text": "Switching organizations from a control of its own, such as at the top of the navigation.",
-          "use": "OrganizationSwitcher"
+          "see": "organization-switcher"
         }
       ],
       "composes": [
@@ -16653,6 +16219,83 @@
       ]
     },
     {
+      "name": "organization-switcher",
+      "title": "Organization switcher",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.",
+      "aliases": [
+        "OrganizationSwitcher",
+        "OrganizationMenu",
+        "organization switcher",
+        "organization menu",
+        "workspace switcher",
+        "team switcher",
+        "tenant switcher",
+        "switch organization"
+      ],
+      "useWhen": [
+        "People belong to several organizations, and switch between them from a control of its own, such as at the top of the navigation drawer."
+      ],
+      "avoidWhen": [
+        {
+          "text": "The person's own things, such as account settings and Sign out, where a submenu can hold the organizations too.",
+          "see": "account-menu"
+        },
+        {
+          "text": "The application's places, such as Projects and Settings.",
+          "see": "navigation"
+        }
+      ],
+      "composes": [
+        "Menu",
+        "Button",
+        "Column",
+        "Text"
+      ],
+      "related": [
+        "menu",
+        "account-menu",
+        "navigation",
+        "drawer"
+      ],
+      "doc": "docs/patterns/organization-switcher.md",
+      "examples": [
+        {
+          "name": "SwitchOrganization",
+          "title": "Switch organization",
+          "description": "The organization switcher is a Menu opened from a secondary Button that names the active organization: a radio group of the person's organizations, each with their role as its description, and an action that creates one. It fits the `header` of a navigation Drawer or the start of the TopBar.",
+          "file": "docs/examples/organization-switcher/SwitchOrganization.tsx"
+        },
+        {
+          "name": "FirstOrganization",
+          "title": "Before the first organization",
+          "description": "Without organizations, the switcher is only the create action, a Button of its own.",
+          "file": "docs/examples/organization-switcher/FirstOrganization.tsx"
+        },
+        {
+          "name": "CurrentName",
+          "title": "Do: The trigger names the active organization.",
+          "description": "",
+          "file": "docs/examples/organization-switcher/CurrentName.tsx"
+        },
+        {
+          "name": "GenericLabel",
+          "title": "Don't: A generic label: nothing says where people are.",
+          "description": "",
+          "file": "docs/examples/organization-switcher/GenericLabel.tsx"
+        },
+        {
+          "name": "OrganizationSwitcherAnatomy",
+          "title": "Organization switcher anatomy",
+          "description": "",
+          "file": "docs/examples/organization-switcher/OrganizationSwitcherAnatomy.tsx"
+        }
+      ]
+    },
+    {
       "name": "window-frame",
       "title": "Window frame",
       "group": "Patterns",
@@ -16689,7 +16332,6 @@
         "Menu",
         "Page",
         "PageHeader",
-        "EmptyState",
         "Button",
         "IconButton",
         "Column",
@@ -16739,6 +16381,86 @@
           "title": "Window frame anatomy",
           "description": "",
           "file": "docs/examples/window-frame/WindowFrameAnatomy.tsx"
+        }
+      ]
+    },
+    {
+      "name": "feature-cards",
+      "title": "Feature cards",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.",
+      "aliases": [
+        "FeatureCard",
+        "feature card",
+        "feature layout",
+        "layout=\"feature\"",
+        "call to action card",
+        "promo card",
+        "onboarding card"
+      ],
+      "useWhen": [
+        "A feature or a next step is introduced on a page, such as importing plans or inviting the team, with one action that starts it."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A summary of one subject people open or act on, with a title row and actions.",
+          "use": "Card"
+        },
+        {
+          "text": "A region with nothing to show yet, whose action ends that state.",
+          "see": "empty-states"
+        },
+        {
+          "text": "A message about a page or section that people may need to act on.",
+          "use": "Alert"
+        }
+      ],
+      "composes": [
+        "Card",
+        "Row",
+        "Column",
+        "Text",
+        "Button"
+      ],
+      "related": [
+        "card",
+        "empty-states",
+        "button"
+      ],
+      "doc": "docs/patterns/feature-cards.md",
+      "examples": [
+        {
+          "name": "ImportPlans",
+          "title": "Import plans",
+          "description": "A feature card is a Card holding a Row: a muted icon, a heading and a sentence in a Column of Text, and the one Button that starts the feature, at the end of the row.",
+          "file": "docs/examples/feature-cards/ImportPlans.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action, the one that starts the feature.",
+          "description": "",
+          "file": "docs/examples/feature-cards/OneAction.tsx"
+        },
+        {
+          "name": "SeveralActions",
+          "title": "Don't: Several actions: none of them says what the card is for.",
+          "description": "",
+          "file": "docs/examples/feature-cards/SeveralActions.tsx"
+        },
+        {
+          "name": "FeatureCardAnatomy",
+          "title": "Feature cards anatomy",
+          "description": "",
+          "file": "docs/examples/feature-cards/FeatureCardAnatomy.tsx"
+        },
+        {
+          "name": "InviteFeature",
+          "title": "Invite feature",
+          "description": "",
+          "file": "docs/examples/feature-cards/InviteFeature.tsx"
         }
       ]
     },
@@ -16794,11 +16516,9 @@
         "Radio",
         "Menu",
         "Button",
-        "CounterBadge",
         "Badge",
         "List",
         "Text",
-        "EmptyState",
         "useContainerSize"
       ],
       "related": [
@@ -16814,13 +16534,13 @@
         {
           "name": "SearchAndFilters",
           "title": "Search and filters",
-          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an EmptyState names the query and offers Clear filters, under the toolbar that stays.",
+          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an empty state names the query and offers Clear filters, under the toolbar that stays.",
           "file": "docs/examples/filtering/SearchAndFilters.tsx"
         },
         {
           "name": "FilterPanel",
           "title": "Filters in a popover",
-          "description": "A Filters button, with a CounterBadge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
+          "description": "A Filters button, with a count Badge of the filters in use, opens a Popover of checkboxes in groups that apply as they change.",
           "file": "docs/examples/filtering/FilterPanel.tsx"
         },
         {
@@ -16909,7 +16629,6 @@
         "ConfirmDialog",
         "Toast",
         "useToast",
-        "EmptyState",
         "placeholders",
         "Surface",
         "Column",
@@ -16947,7 +16666,7 @@
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an EmptyState takes its place.",
+          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an empty state takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
         },
         {
@@ -17099,7 +16818,7 @@
     "Alert": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is a CloseButton, a client leaf named in the provider's language.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.",
       "props": [
         {
           "name": "tone",
@@ -17349,22 +17068,8 @@
     "Badge": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats.",
+      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "Meaning of the state; done is the purple of completed work. Neutral by default."
-        },
-        {
-          "name": "variant",
-          "type": "'soft' | 'solid' | 'outline'",
-          "required": false,
-          "default": "'soft'",
-          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
-        },
         {
           "name": "icon",
           "type": "ReactNode",
@@ -17374,8 +17079,34 @@
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
+          "required": false,
           "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+        },
+        {
+          "name": "count",
+          "type": "number | string",
+          "required": false,
+          "description": "A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in tabular figures, as beside a navigation label, in a tab or on a button."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "Meaning of the state; done is the purple of completed work. Neutral by default. A count in the accent tone, solid, draws attention, such as unread messages that need an answer."
+        },
+        {
+          "name": "variant",
+          "type": "'soft' | 'solid' | 'outline'",
+          "required": false,
+          "default": "'soft'",
+          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "What the count means, such as 12 unread, which assistive technology reads in place of the number; the number alone otherwise."
         }
       ],
       "native": [
@@ -17503,7 +17234,7 @@
     "Button": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons; icon-only with iconOnly. It renders a native button or link.",
+      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons. It renders a native button or link. An icon alone is an IconButton.",
       "props": [
         {
           "name": "variant",
@@ -17535,7 +17266,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -17562,30 +17293,10 @@
           "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
           "name": "href",
           "type": "string",
           "required": false,
           "description": "The destination: the element is a native link, through the LinkProvider's link component."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -17822,7 +17533,7 @@
     "Card": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, a feature card with an icon and an action, or one link or button.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, or one link or button.",
       "props": [
         {
           "name": "background",
@@ -17861,14 +17572,14 @@
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The card's title at the top: an `h3` in the title type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "3, or 2 in the feature layout",
-          "description": "The title's heading level, for the page's outline; the type stays as the layout sets it."
+          "default": "3",
+          "description": "The title's heading level, for the page's outline; the type stays the title type."
         },
         {
           "name": "meta",
@@ -17883,23 +17594,10 @@
           "description": "A sentence under the title, in muted text."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from assistive technology."
-        },
-        {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature layout at its end, moving below the text and filling the card's width in a card narrower than 38 rem."
-        },
-        {
-          "name": "layout",
-          "type": "'stack' | 'feature'",
-          "required": false,
-          "default": "'stack'",
-          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the title and description, and the actions at the end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
         },
         {
           "name": "render",
@@ -17991,51 +17689,6 @@
       "status": "stable",
       "page": "checkbox",
       "doc": "docs/components/checkbox.md"
-    },
-    "CloseButton": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "The button that closes, dismisses or removes what it sits in, such as a dialog, a notification, a tab or a chip: an icon-only button with a cross, named Close in the provider's language. Under a coarse pointer, its hit area reaches the touch size even where it draws smaller.",
-      "props": [
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Close', or EnvUIProvider's messages.common.close",
-          "description": "The button's name, such as Close notification or Remove Alex Morgan where more than one thing closes nearby."
-        },
-        {
-          "name": "variant",
-          "type": "'ghost' | 'secondary'",
-          "required": false,
-          "default": "'ghost'",
-          "description": "ghost, the quiet icon on chrome and inside surfaces, or secondary, on the neutral fill, where the button should read as a control of its own, such as over an image."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The icon; a Close cross by default."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "As Button's: the height, and the width, of the square button."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "description": "As Button's: a spinner replaces the icon while the work runs."
-        }
-      ],
-      "native": [
-        "button"
-      ],
-      "status": "beta",
-      "page": "close-button",
-      "doc": "docs/components/close-button.md"
     },
     "Code": {
       "kind": "component",
@@ -18741,7 +18394,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -19071,38 +18724,6 @@
       "status": "stable",
       "page": "button",
       "doc": "docs/components/button.md"
-    },
-    "CounterBadge": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A compact rounded count, for example beside a navigation label or a menu item.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number | string",
-          "required": true,
-          "description": "The count, such as 12, or short text such as 99+; shown in tabular figures."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "description": "Full meaning for assistive technology, such as \"12 unread\"; the number alone otherwise."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral (default) is a quiet fill; accent draws attention."
-        }
-      ],
-      "native": [
-        "span"
-      ],
-      "status": "stable",
-      "page": "badge",
-      "doc": "docs/components/badge.md"
     },
     "DatePicker": {
       "kind": "component",
@@ -19564,7 +19185,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -19583,26 +19204,6 @@
           "type": "boolean",
           "required": false,
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -19958,75 +19559,6 @@
       "status": "stable",
       "page": "drop-zone",
       "doc": "docs/components/drop-zone.md"
-    },
-    "EmptyState": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "What a region shows when it has nothing to show: no items yet, no matches, or content that failed to load. A title, a description, an optional icon and the action that resolves the state.",
-      "props": [
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What is missing or what happened, such as \"No projects yet\"; a heading of `headingLevel`."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Why, and what people can do, in a sentence or two of muted text under the title."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon above the text; an error state shows the error icon without it."
-        },
-        {
-          "name": "action",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The action that resolves the state, such as a Button that creates the first item."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "More content under the description, such as a short list of next steps."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral for a state with nothing to show yet; danger for content that failed to load, which shows the error icon by default and is announced as an alert. Pair it with a retry action."
-        },
-        {
-          "name": "headingLevel",
-          "type": "1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "description": "The title's heading level in the page outline; 4 by default. The appearance stays the same."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center'",
-          "required": false,
-          "description": "`start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the place of a page's or region's content: a larger icon, centred text and action, centred vertically in the height the application gives it."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "empty-state",
-      "doc": "docs/components/empty-state.md"
     },
     "EnvUIProvider": {
       "kind": "component",
@@ -20530,8 +20062,20 @@
     "IconButton": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the neutral secondary one.",
+      "description": "A square button that shows its icon alone, named by aria-label, such as a close button with the Close cross; with href, a native link. Without a variant it takes its container's, and else the neutral secondary one.",
       "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
         {
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
@@ -20573,7 +20117,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "status": "stable",
       "page": "button",
@@ -20771,26 +20316,6 @@
       "status": "stable",
       "page": "list",
       "doc": "docs/components/list.md"
-    },
-    "LoadingState": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "spinner",
-      "doc": "docs/components/spinner.md"
     },
     "Markdown": {
       "kind": "component",
@@ -21048,7 +20573,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         }
       ],
       "native": [],
@@ -21162,7 +20687,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "href",
@@ -21282,7 +20807,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "icon",
@@ -21930,102 +21455,6 @@
       "status": "beta",
       "page": "month-picker",
       "doc": "docs/components/month-picker.md"
-    },
-    "OrganizationSwitcher": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Shows the active organization and switches between the person's organizations; fits a top bar or the top of a navigation drawer.",
-      "props": [
-        {
-          "name": "items",
-          "type": "readonly OrganizationSwitcherItem[]",
-          "required": true,
-          "description": "Organizations the signed-in person belongs to, in display order."
-        },
-        {
-          "name": "value",
-          "type": "string | null",
-          "required": true,
-          "description": "The active organization's id, or null before one is chosen."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": true,
-          "description": "Called with the id of the organization chosen, unless it is the active one; the application switches and reports progress."
-        },
-        {
-          "name": "onCreate",
-          "type": "() => void",
-          "required": false,
-          "description": "Offers creating an organization at the end of the menu, or as the only action without organizations."
-        },
-        {
-          "name": "heading",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.heading",
-          "description": "Heading inside the menu."
-        },
-        {
-          "name": "createLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
-          "description": "Label of the create action."
-        },
-        {
-          "name": "placeholder",
-          "type": "string",
-          "required": false,
-          "default": "'Choose organization', or EnvUIProvider's messages.organizationSwitcher.placeholder",
-          "description": "Trigger text while no organization is active."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Prevents opening, for example while a switch is in progress."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.label",
-          "description": "Accessible name of the menu."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Class of the menu popup, beside env-organization-switcher; ref and style go to the popup too. Without organizations there is no popup."
-        },
-        {
-          "name": "triggerClassName",
-          "type": "string",
-          "required": false,
-          "description": "Class of the trigger button, or of the create button without organizations."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The menu popup's ref; the trigger is a Button of its own."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "The menu popup's inline style."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "menu",
-      "doc": "docs/components/menu.md"
     },
     "Page": {
       "kind": "component",
@@ -23991,7 +23420,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Whether the sheet shows its close button, a CloseButton at the end of the heading. Leave it out only where the sheet holds another control that closes it."
+          "description": "Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it out only where the sheet holds another control that closes it."
         },
         {
           "name": "closeLabel",
@@ -24173,13 +23602,20 @@
     "Spinner": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+          "description": "The work it stands for, such as Refreshing members or Loading project. Alone it names the spinner as a progress bar for assistive technology; with showLabel it shows beside it. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centres the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
         },
         {
           "name": "size",
@@ -24195,96 +23631,6 @@
       "status": "stable",
       "page": "spinner",
       "doc": "docs/components/spinner.md"
-    },
-    "Stat": {
-      "kind": "namespace",
-      "import": "@envsemble/envui",
-      "description": "",
-      "parts": [
-        "Stat.Root",
-        "Stat.Group"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
-    },
-    "Stat.Group": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "Stats on one surface, a pane's fill by default, in as many even columns as fit; they wrap as space runs out. Use the muted background for a group on a pane. A group named with aria-label or aria-labelledby is exposed as a group, so assistive technology announces the name.",
-      "props": [
-        {
-          "name": "background",
-          "type": "'default' | 'muted' | 'page' | 'raised'",
-          "required": false,
-          "default": "'default'",
-          "description": "The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its stats stand apart; page or raised where those fit."
-        },
-        {
-          "name": "padding",
-          "type": "SurfaceAppearanceProps['padding']",
-          "required": false,
-          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
-          "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
-    },
-    "Stat.Root": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
-      "props": [
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What the figure measures, such as Active projects, in muted text above it."
-        },
-        {
-          "name": "value",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
-        },
-        {
-          "name": "trend",
-          "type": "Trend",
-          "required": false,
-          "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "stat",
-      "doc": "docs/components/stat.md"
     },
     "Surface": {
       "kind": "component",
@@ -25116,6 +24462,18 @@
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -25150,7 +24508,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "aliases": [
         "theme switcher",

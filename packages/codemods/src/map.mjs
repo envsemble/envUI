@@ -340,12 +340,19 @@ function validateTokens(tokens) {
 const propName = /^[A-Za-z_$][A-Za-z0-9_$-]*$/;
 const propValue = (value) => ['string', 'number', 'boolean'].includes(typeof value);
 
-/** An element a structure case adds as a prop, such as `{ "element": "article" }` for render={<article />}. */
+/**
+ * An element a structure case adds as a prop: `{ "element": "article" }` for render={<article />},
+ * or a component with the module it is imported from, such as
+ * `{ "element": "Close", "from": "@envsemble/envui/icons/Close" }` for icon={<Close />}.
+ */
 const elementValue = (value) =>
   isObject(value) &&
-  Object.keys(value).length === 1 &&
   typeof value.element === 'string' &&
-  /^[a-z][a-z0-9]*$/.test(value.element);
+  ((Object.keys(value).length === 1 && /^[a-z][a-z0-9]*$/.test(value.element)) ||
+    (Object.keys(value).length === 2 &&
+      /^[A-Z][A-Za-z0-9]*$/.test(value.element) &&
+      typeof value.from === 'string' &&
+      /^@envsemble\/envui(?:\/[A-Za-z0-9-]+)*$/.test(value.from)));
 
 /**
  * Problems with the rules for one component's props, or one call's object properties: each has a
@@ -353,7 +360,7 @@ const elementValue = (value) =>
  * replace them, or `to`, the name it takes in 1.0, with `values` for the literals that change. A
  * rule with neither is report-only: the prop keeps its name and value, and every use is reported.
  * `each` holds the rules for the properties of each object in an array the prop takes, such as an
- * organization's `name`; a rule with `each` alone reports only a value it can't read.
+ * option's `leading`; a rule with `each` alone reports only a value it can't read.
  */
 function validatePropRules(where, names) {
   const problems = [];
@@ -505,6 +512,8 @@ function validateStructureCase(at, each) {
       );
   if (each.element !== undefined && !isComponentName(each.element))
     problems.push(`${at}: "element" must be a component name.`);
+  if (each.childless !== undefined && typeof each.childless !== 'boolean')
+    problems.push(`${at}: "childless" must be true or false.`);
   for (const [prop, operation] of entriesOf(each.props))
     problems.push(...validatePropOperation(`${at}.props.${prop}`, operation));
   for (const [prop, value] of Object.entries(each.add ?? {}))
@@ -565,6 +574,9 @@ function validateStructureCase(at, each) {
     if (childRule.report !== undefined && typeof childRule.report !== 'string')
       problems.push(`${at}.children.${child}: "report" must be a string.`);
   }
+  for (const [prop, message] of entriesOf(each.reportProps))
+    if (!propName.test(prop) || typeof message !== 'string' || message.trim() === '')
+      problems.push(`${at}.reportProps.${prop} must be a report.`);
   if (each.report !== undefined && typeof each.report !== 'string')
     problems.push(`${at}: "report" must be a string.`);
   return problems;

@@ -85,8 +85,9 @@
       "env-avatar-group-tooltip": "The tooltip that names an avatar or the hidden ones."
     },
     "Badge": {
-      "env-badge": "The badge: a small pill label.",
-      "env-badge-label": "The badge's text."
+      "env-badge": "The badge: a small pill label, or with data-count a compact count.",
+      "env-badge-count-label": "What a count means, such as 12 unread, for assistive technology; visually hidden.",
+      "env-badge-label": "The badge's text, or its count."
     },
     "Bar": {
       "env-bar": "The navigation bar: a nav landmark across the bottom of a compact window.",
@@ -147,8 +148,6 @@
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
       "env-card-heading": "The title.",
-      "env-card-icon": "The icon of the feature layout.",
-      "env-card-layout": "The row of the feature layout: icon, text and actions.",
       "env-card-meta": "The short fact at the end of the title row."
     },
     "Checkbox": {
@@ -157,9 +156,6 @@
       "env-checkbox-indicator": "The check or dash inside the box.",
       "env-checkbox-input": "The native input.",
       "env-checkbox-label": "The label."
-    },
-    "CloseButton": {
-      "env-close-button": "The button that closes a dialog, panel or message."
     },
     "Code": {
       "env-code": "Inline code."
@@ -170,7 +166,9 @@
       "env-code-block-heading": "The block's heading, such as a file name."
     },
     "CodeDiff": {
-      "env-code-diff": "The diff of two versions of code."
+      "env-code-diff": "The diff of two versions of code.",
+      "env-code-diff-failed": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert.",
+      "env-code-diff-failed-icon": "The error icon of a diff that failed to load, in the danger color."
     },
     "ColorPicker": {
       "env-color-picker": "The color picker.",
@@ -247,10 +245,6 @@
       "env-copy-button-field": "The field that shows the value beside the button.",
       "env-copy-button-status": "The announcement that the value was copied."
     },
-    "CounterBadge": {
-      "env-counter-badge": "The count badge.",
-      "env-counter-badge-label": "The count."
-    },
     "DatePicker": {
       "env-date-picker": "The date field.",
       "env-date-picker-actions": "The row of actions under the calendar.",
@@ -320,10 +314,6 @@
       "env-editor-status": "The editor's status line, such as a character count.",
       "env-editor-toolbar": "The editor's formatting toolbar."
     },
-    "EmptyState": {
-      "env-empty-state": "The empty state.",
-      "env-empty-state-description": "The sentence under the title."
-    },
     "Field": {
       "env-field": "The field: label, control, description and error.",
       "env-field-control": "The control.",
@@ -376,10 +366,6 @@
       "env-loading-bar": "The loading bar.",
       "env-loading-bar-contained": "A loading bar inside a region rather than the frame.",
       "env-loading-bar-indicator": "The moving part of the bar."
-    },
-    "LoadingState": {
-      "env-loading-state": "The spinner with a label.",
-      "env-loading-state-label": "The label that says what is loading."
     },
     "Markdown": {
       "env-markdown": "The rendered Markdown.",
@@ -457,17 +443,6 @@
       "env-drawer-label": "A destination's label.",
       "env-drawer-count": "A destination's count, at the item's end; 999+ above 999.",
       "env-drawer-footer": "Content below the destinations, at the bottom of the drawer."
-    },
-    "OrganizationSwitcher": {
-      "env-organization-switcher": "The organization switcher's popup.",
-      "env-organization-switcher-create": "The item that creates an organization.",
-      "env-organization-switcher-description": "An organization's description.",
-      "env-organization-switcher-header": "The header of the popup.",
-      "env-organization-switcher-heading": "The heading of the popup.",
-      "env-organization-switcher-option": "One organization.",
-      "env-organization-switcher-options": "The list of organizations.",
-      "env-organization-switcher-trigger": "The button that opens the switcher.",
-      "env-organization-switcher-trigger-label": "The current organization's name in the trigger."
     },
     "Page": {
       "env-page": "The page: a readable width and the gutter; it never paints.",
@@ -651,17 +626,9 @@
       "env-slider-value": "The value as text."
     },
     "Spinner": {
-      "env-spinner": "The spinner.",
-      "env-spinner-arc": "The turning arc."
-    },
-    "Stat": {
-      "env-stat": "One statistic.",
-      "env-stat-description": "The sentence under the value.",
-      "env-stat-footer": "The row with the trend and the description.",
-      "env-stat-group": "A row of statistics.",
-      "env-stat-label": "The label.",
-      "env-stat-trend": "The change since the last period.",
-      "env-stat-value": "The value."
+      "env-spinner": "The spinner, or with data-show-label the status line that holds it and its label.",
+      "env-spinner-arc": "The turning arc.",
+      "env-spinner-label": "The label shown beside the spinner, which says what is loading."
     },
     "Surface": {
       "env-surface": "A surface: fill, padding and corners."

@@ -2,6 +2,9 @@
 // is rewritten, and the rest is reported where it stands.
 import {
   AppShell,
+  Button,
+  CloseButton,
+  CounterBadge,
   Drawer,
   ListDetail,
   LoadingState,
@@ -37,6 +40,10 @@ export function Frame({ gap }: { gap: StackProps['gap'] }) {
         <LoadingState label="Loading">
           <Skeleton width="40%" />
         </LoadingState>
+        <LoadingState label="Loading projects" />
+        <CloseButton onClick={() => {}} />
+        <Button iconOnly icon={<span />} aria-label="More" variant="ghost" />
+        <CounterBadge value={3} tone="accent" />
         <ListDetail.Root detailShown={wide} onBack={() => {}} backLabel="All">
           <ListDetail.List>List</ListDetail.List>
           <ListDetail.Detail>Detail</ListDetail.Detail>

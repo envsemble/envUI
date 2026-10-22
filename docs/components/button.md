@@ -9,6 +9,9 @@ aliases:
   - call to action
   - CTA
   - icon button
+  - close button
+  - dismiss button
+  - remove button
   - confirm button
   - copy button
   - button group
@@ -65,6 +68,20 @@ A button starts an action. With `href` it is a native link that looks like a but
 ```tsx example=ConnectedButtons caption="ButtonGroup: related buttons joined in a row or a column."
 
 ```
+
+### Close and remove
+
+An IconButton with the Close cross closes, dismisses or removes what it sits in. Name it Close in the application's language, or say what it removes where several sit together.
+
+```tsx example=DismissTip
+
+```
+
+```tsx example=RemovePeople caption="Beside others like it, each button names what it removes."
+
+```
+
+Under a coarse pointer, an icon button drawn smaller than the touch size, such as a close button in a chip or a tab, reaches the 2.75 rem touch size with its hit area when its container sets `--env-icon-button-hit-area: var(--env-control-height-touch)` on it or around it. Alert, Toast, Combobox chips, DocumentTabs and PanelDock's tabs set it on their own close buttons.
 
 ### States
 
@@ -148,6 +165,14 @@ Keyboard focus draws a ring 2 px outside a button, or on the edge of a ghost but
 
 - `href` for a destination, `onClick` for an action.
 
+```tsx do=CloseAtEnd caption="A close button at the end of the header of what it closes."
+
+```
+
+```tsx dont=CloseAtStart caption="At the start, it reads as part of the content."
+
+```
+
 ### Labels
 
 Start with a verb and say what will happen.
@@ -218,7 +243,7 @@ Labels wrap, and icon-only buttons keep their size. On touch screens every butto
 
 ## Changelog
 
-- **1.0.0**: `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge, CounterBadge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
+- **1.0.0**: IconButton is the one icon-only button, and takes `href`: `Button iconOnly` is gone, and CloseButton is an IconButton with the Close cross, which the `v1-structure` codemod writes. `variant` is `primary`, `secondary`, `outline`, `ghost` or `text`, and `tone` is `neutral`, `accent` or `danger`: `important` is `variant="primary" tone="accent"`, `destructive` is `variant="primary" tone="danger"`, `outlined` is `outline` and `quiet` is `ghost`, which the `v1-props` codemod writes. Outline, ghost and text buttons take the danger tone. `fullWidth`. Buttons take the variant their container gives where they set none. The page is `button`, after the component, and Link has a page of its own. CopyButton takes `write`, a clipboard writer of the application's own. A Badge or DiffStat inside a button takes its colors through their custom properties, which the button sets.
 - **0.6.0**: The `quiet` variant on Button, IconButton and ConfirmButton; CopyButton; ButtonGroup `fullWidth`.
 - **0.5.0**: ConfirmButton `icon`, an icon-only form that grows when armed.
 - **0.4.0**: `pending` on Button and IconButton; ConfirmButton.

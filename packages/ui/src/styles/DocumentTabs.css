@@ -200,10 +200,11 @@
   font-synthesis: style;
   padding-inline-end: 0.125em;
 }
-/* The close button, a CloseButton, is a small circle that keeps its space so tabs do not change
+/* The close button, an IconButton with a cross, is a small circle that keeps its space so tabs do not change
    width; it shows on the active tab, on hover and with keyboard focus. The strip sets its size
    through the control size it reads, also inside a container that gives controls a size. */
 .env-document-tabs-item .env-document-tabs-close {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-control-height: var(--env-document-tabs-close-size);
   --env-control-icon-size: 1rem;
   visibility: hidden;

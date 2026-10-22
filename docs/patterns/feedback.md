@@ -27,7 +27,6 @@ composes:
   - useToast
   - Alert
   - Badge
-  - CounterBadge
   - Drawer
   - List
   - DescriptionList
@@ -101,7 +100,7 @@ One tone per status everywhere, with words that carry the meaning without the co
 
 ### Unread counts
 
-A CounterBadge's `aria-label` says what it counts, "12 unread".
+A count Badge's `aria-label` says what it counts, "12 unread".
 
 ```tsx example=UnreadCount
 
@@ -120,7 +119,7 @@ A CounterBadge's `aria-label` says what it counts, "12 unread".
 - Put a message as close as it can be to what it is about.
 - One message per event: a toast or a status text, not both; a field's error, not a toast too.
 - Never put the only way to reach something, or a decision, in a toast.
-- envUI has no notification centre yet; CounterBadge, [Popover](../components/popover.md) and [List](../components/list.md) are its parts.
+- envUI has no notification centre yet; a Badge with `count`, [Popover](../components/popover.md) and [List](../components/list.md) are its parts.
 
 ### Content
 
@@ -142,7 +141,7 @@ Feedback doesn't move focus, except to the Alert after a refused form or failed 
 
 - One Toast.Provider at the root, and messages that make sense out of context.
 - `announce` only on an Alert that appears because something just happened.
-- An `aria-label` on every CounterBadge whose number alone doesn't say what it counts.
+- An `aria-label` on every count whose number alone doesn't say what it counts.
 
 ## Changelog
 

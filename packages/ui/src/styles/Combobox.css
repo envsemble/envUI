@@ -140,9 +140,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* The remove button is a CloseButton a little smaller than the chip, at that size also under a
+/* The remove button is an IconButton with a cross, a little smaller than the chip, at that size also under a
    coarse pointer, where its hit area reaches the touch size within the field. */
 .env-combobox-chip-remove {
+  --env-icon-button-hit-area: var(--env-control-height-touch);
   --env-control-height: calc(var(--env-combobox-row) - 0.25rem);
   --env-touch-height: 0rem;
   --env-icon-size: 0.875rem;

@@ -5,7 +5,7 @@
 .env-card-footer {
   gap: 0.5rem;
 }
-.env-card:where([data-layout='feature']) .env-card-icon {
+.env-feature-card .env-feature-card-icon {
   color: inherit;
 }
 .env-badge {
@@ -19,6 +19,6 @@
 .env-avatar-group:where([data-size='xl']) {
   --ring: red;
 }
-.env-stat-description {
+.env-stat-detail {
   font-style: italic;
 }

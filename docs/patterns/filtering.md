@@ -39,11 +39,9 @@ composes:
   - Radio
   - Menu
   - Button
-  - CounterBadge
   - Badge
   - List
   - Text
-  - EmptyState
   - useContainerSize
 related:
   - data-tables
@@ -58,7 +56,7 @@ related:
 
 ## Overview
 
-Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an [EmptyState](../components/empty-state.md) names the query and offers Clear filters, under the toolbar that stays.
+Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an [empty state](empty-states.md) names the query and offers Clear filters, under the toolbar that stays.
 
 ```tsx example=SearchAndFilters
 
@@ -72,7 +70,7 @@ Write the query and the filters into the address through the router, so a reload
 
 ### Filters in a popover
 
-A Filters button, with a CounterBadge of the filters in use, opens a [Popover](../components/popover.md) of checkboxes in groups that apply as they change.
+A Filters button, with a count Badge of the filters in use, opens a [Popover](../components/popover.md) of checkboxes in groups that apply as they change.
 
 ```tsx example=FilterPanel
 
@@ -115,7 +113,7 @@ Each filter in use is a token named after it, "Status: Open", that removes it, b
 1. **Toolbar** (`env-page-header-toolbar`, `toolbar`)
 2. **Search** (`env-text-field`)
 3. **Filter** (`env-select`)
-4. **More filters** (`env-counter-badge`)
+4. **More filters** (`env-badge[data-count]`)
 5. **Count** (`env-page-header ~ env-text`)
 
 The toolbar is no [Toolbar](../components/toolbar.md): every control keeps its tab stop, and the search its arrow keys.
@@ -136,7 +134,7 @@ Typing filters without moving focus, and the count is announced politely. The po
 
 - A SearchField named by its label, cleared with its button or <kbd>Esc</kbd>.
 - A Popover that is a dialog named by its `title`, and a modal Sheet that keeps focus inside.
-- A CounterBadge that reads its `aria-label` in place of the number.
+- A count Badge that reads its `aria-label` in place of the number.
 
 ### You provide
 

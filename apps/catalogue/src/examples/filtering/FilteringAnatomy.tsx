@@ -1,12 +1,12 @@
 import {
   Button,
   Column,
-  CounterBadge,
   PageHeader,
   Row,
   SearchField,
   Select,
   Text,
+  Badge,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 
@@ -33,7 +33,7 @@ export default function FilteringAnatomy() {
               defaultValue="active"
             />
             <Button variant="secondary" size="sm" startIcon={<FilterList />}>
-              Filters <CounterBadge value={2} aria-label="2 in use" />
+              Filters <Badge count={2} aria-label="2 in use" />
             </Button>
           </Row>
         }

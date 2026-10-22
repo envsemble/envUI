@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 test('public component, stylesheet, new export and Markdown documentation update live', async ({
   page,
 }) => {
-  const buttonSource = resolve('packages/ui/src/actions/Button.tsx');
+  const buttonSource = resolve('packages/ui/src/actions/internal/ButtonBase.tsx');
   const stylesheet = resolve('packages/ui/src/styles/Button.css');
   const index = resolve('packages/ui/src/index.ts');
   const example = resolve('apps/catalogue/src/examples/text-field/Variants.tsx');

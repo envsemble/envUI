@@ -72,8 +72,15 @@
         },
         {
           "id": "empty-state",
-          "label": "empty state",
-          "envui": ["EmptyState"]
+          "label": "an empty state with a heading and an action when nothing matches",
+          "rendered": [
+            {
+              "check": "appears",
+              "search": "zzzz no such project",
+              "roles": ["heading", "button"],
+              "at": ["80rem", "22rem"]
+            }
+          ]
         },
         {
           "id": "clear-action",
@@ -134,7 +141,7 @@
         {
           "id": "count",
           "label": "project count",
-          "envui": ["Badge", "CounterBadge"]
+          "envui": ["Badge"]
         },
         {
           "id": "actions",
@@ -183,7 +190,7 @@
         {
           "id": "counts",
           "label": "count in each tab",
-          "envui": ["Badge", "CounterBadge"]
+          "envui": ["Badge"]
         }
       ]
     },
@@ -276,7 +283,7 @@
         {
           "id": "error-message",
           "label": "error message",
-          "envui": ["Alert", "EmptyState"]
+          "envui": ["Alert"]
         },
         {
           "id": "retry",
@@ -614,7 +621,7 @@
         {
           "id": "loading-indicator",
           "label": "a loading indicator with a message",
-          "envui": ["LoadingState"]
+          "envui": ["Spinner.showLabel"]
         },
         {
           "id": "activity-text",

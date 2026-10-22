@@ -14,7 +14,7 @@ export function FormActions({ stacked, onCancel }) {
       </Stack>
       <Stack gap={2}>
         <Button fullWidth>Continue</Button>
-        <Button iconOnly icon={<span />} aria-label="More" />
+        <IconButton icon={<span />} aria-label="More" />
         <IconButton icon={<span />} aria-label="Help" />
         <a href="/help">Help</a>
       </Stack>

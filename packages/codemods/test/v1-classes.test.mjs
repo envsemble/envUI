@@ -65,10 +65,12 @@ test('renameClass renames a class that 1.0 uses again alone, and leaves the name
 });
 
 test('renameClass leaves names that already continue the new name', () => {
-  assert.equal(renameClass('env-counter', classes), 'env-counter-badge');
-  assert.equal(renameClass('env-counter-label', classes), 'env-counter-badge-label');
-  assert.equal(renameClass('env-counter-badge', classes), 'env-counter-badge');
-  assert.equal(renameClass('env-counter-badge-label', classes), 'env-counter-badge-label');
+  // 0.x's env-counter was env-counter-badge in 1.0.0-prerelease.0: a second run keeps it.
+  const continuing = [{ from: 'env-counter', to: 'env-counter-badge' }];
+  assert.equal(renameClass('env-counter', continuing), 'env-counter-badge');
+  assert.equal(renameClass('env-counter-label', continuing), 'env-counter-badge-label');
+  assert.equal(renameClass('env-counter-badge', continuing), 'env-counter-badge');
+  assert.equal(renameClass('env-counter-badge-label', continuing), 'env-counter-badge-label');
 });
 
 test('v1-classes renames every class entry in style sheets and class names', () => {

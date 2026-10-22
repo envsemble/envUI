@@ -140,6 +140,23 @@ describe('the browser step in the score', () => {
     );
   });
 
+  it('measures a check with a search after it, and an appears check with its roles', () => {
+    const [appears] = renderedChecks({
+      id: 'search',
+      capabilities: [
+        {
+          id: 'empty',
+          label: 'an empty state when nothing matches',
+          rendered: [{ check: 'appears', search: 'zzzz', roles: ['heading', 'button'] }],
+        },
+      ],
+    });
+    assert.equal(appears.state, 'searched');
+    assert.deepEqual(appears.at, layoutWidths);
+    assert.deepEqual(Object.keys(appears.selectors), ['heading', 'button']);
+    assert.match(appears.selectors.heading, /\[role="heading"\]/);
+  });
+
   it('counts a problem seen at several widths once, and the page overflowing as one', () => {
     const problem = { rule: 'content-overflow', node: 'row', path: 'page > row', message: 'm' };
     const problems = distinctProblems([

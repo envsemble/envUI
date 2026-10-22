@@ -115,9 +115,6 @@ test('public components hydrate server output without recoverable errors', async
   await docked.getByRole('button', { name: 'Minimize' }).click();
   await chips.getByRole('button', { name: 'Show Hydrated notes' }).click();
   await expect(dockDraft).toHaveValue('Hydrated draft');
-  await expect(page.getByRole('group', { name: 'Hydrated stats' })).toHaveText(
-    'Hydrated stat128+12%Last 30 days',
-  );
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
   // Without a locale, the server writes the days in en-GB and the browser, once hydrated, in its

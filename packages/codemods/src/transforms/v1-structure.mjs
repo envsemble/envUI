@@ -9,14 +9,19 @@
 //   prop of `when` whose value is an expression can't be matched, so the element stays as it is
 //   and the entry's `report` is reported.
 // - `has`: props the element must set, whatever their values, an expression included, such as
-//   SplitView's `start` and `end` or WindowFrame's `titleBar`; an element without one of them is no
-//   case's.
+//   SplitView's `start` and `end` or Button's `iconOnly`; an element without one of them is no
+//   case's. Where every case has `has`, an element that sets none of their props is left alone,
+//   also where it spreads props.
+// - `childless`: the case is only for an element without children, such as LoadingState without
+//   the skeleton blocks 1.0.0-prerelease.0 let it hold; an element with children tries the next.
 // - `element`: the component the element becomes, imported from the same entry point (under a free
 //   alias where the file already uses the name); the old import goes once nothing else uses it.
 // - `props`: per prop, null drops it, "render" turns `as="article"` into `render={<article />}`,
 //   and `{ "to", "values" }` renames it and maps its literal values (null drops one).
-// - `add`: props the element gets, unless it already sets them: a literal, or `{ "element": "article" }`
-//   for an element such as render={<article />}.
+// - `add`: props the element gets, unless it already sets them: a literal, `{ "element": "article" }`
+//   for an element such as render={<article />}, or a component with the module it comes from,
+//   `{ "element": "Close", "from": "@envsemble/envui/icons/Close" }` for icon={<Close />}, imported
+//   under a free name unless the file already imports it from there or from the icons barrel.
 // - `children`: per component of a direct child element, props it gets (`add`, unless it sets one
 //   of `unless`) or a `report`; `*` stands for any other child, text and expressions included.
 // - `content`: the element's new children, in order, made from its props: each is an `element`
@@ -30,6 +35,8 @@
 // - `lift`: props whose values become the element's first children, in order, such as a title
 //   bar passed as an element: an element stays an element, and another value an expression. Unlike
 //   `content`, it keeps the element's own children after them.
+// - `reportProps`: per prop, a note reported where the element sets it, such as a prop the new
+//   element doesn't take; the prop stays, so the type checker points at it too.
 // - `report`: a note reported at every element the case rewrites.
 // A dotted `element`, such as `WindowFrame.Content`, is a part of a namespace the entry exports.
 // An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
@@ -127,6 +134,46 @@ export default function transform(file, api, options = {}) {
       last.insertAfter(j.importDeclaration([specifier], j.stringLiteral(entry.name)));
     }
     imports.components.set(local, { entry, imported: name });
+    imported.set(key, local);
+    return local;
+  }
+
+  /**
+   * The local name under which the file imports `name` from the module `source`, adding the import;
+   * an icon imported from the icons barrel, `@envsemble/envui/icons`, counts too.
+   */
+  function localFrom(source, name) {
+    const key = `${source} ${name}`;
+    if (imported.has(key)) return imported.get(key);
+    const barrel = source.startsWith('@envsemble/envui/icons/') ? '@envsemble/envui/icons' : null;
+    let local;
+    root.find(j.ImportDeclaration).forEach((path) => {
+      const from = path.node.source.value;
+      if (local || path.node.importKind === 'type' || (from !== source && from !== barrel)) return;
+      const specifier = (path.node.specifiers ?? []).find(
+        (each) =>
+          each.type === 'ImportSpecifier' &&
+          each.importKind !== 'type' &&
+          (each.imported.name ?? each.imported.value) === name,
+      );
+      if (specifier) local = specifier.local.name;
+    });
+    if (!local) {
+      local = name;
+      for (let index = 2; topNames.has(local); index += 1)
+        local = index === 2 ? `Env${name}` : `Env${name}${index}`;
+      topNames.add(local);
+      const specifier =
+        local === name
+          ? j.importSpecifier(j.identifier(name))
+          : j.importSpecifier(j.identifier(name), j.identifier(local));
+      const last = root.find(j.ImportDeclaration).paths().at(-1);
+      // The module in the quotes the file's last import uses.
+      const literal = j.literal(source);
+      const quote = last.node.source.extra?.raw?.[0] === '"' ? '"' : "'";
+      literal.extra = { raw: `${quote}${source}${quote}`, rawValue: source };
+      last.insertAfter(j.importDeclaration([specifier], literal));
+    }
     imported.set(key, local);
     return local;
   }
@@ -269,6 +316,9 @@ export default function transform(file, api, options = {}) {
       rule.cases.every((each) => each.content && (each.has ?? []).length > 0)
     )
       continue;
+    // Where every case needs a prop of `has`, such as Button's iconOnly, an element that sets none
+    // of them is no case's, spread props or not: most buttons spread props for other reasons.
+    if (!hasCaseProps && rule.cases.every((each) => (each.has ?? []).length > 0)) continue;
     if (spreads(attributes)) {
       reporter.warn(
         path.node,
@@ -278,6 +328,7 @@ export default function transform(file, api, options = {}) {
     }
     let chosen;
     for (const each of rule.cases) {
+      if (each.childless && hasChildren(path.node)) continue;
       const result = (each.has ?? []).every((prop) => hasAttribute(attributes, prop))
         ? matchesWhen(attributes, each.when)
         : false;
@@ -306,6 +357,10 @@ export default function transform(file, api, options = {}) {
       path.node.closingElement ??= j.jsxClosingElement(path.node.openingElement.name);
     }
     const reports = applyProps(attributes, chosen.props, where);
+    for (const [prop, message] of Object.entries(chosen.reportProps ?? {})) {
+      const index = attributeIndex(attributes, prop);
+      if (index !== -1) reports.push([attributes[index], `${where}'s ${prop}: ${message}`]);
+    }
     const added = Object.entries(chosen.add ?? {})
       .filter(([prop]) => !hasAttribute(attributes, prop))
       .map(([prop, value]) =>
@@ -313,7 +368,15 @@ export default function transform(file, api, options = {}) {
           ? j.jsxAttribute(
               j.jsxIdentifier(prop),
               j.jsxExpressionContainer(
-                j.jsxElement(j.jsxOpeningElement(j.jsxIdentifier(value.element), [], true)),
+                j.jsxElement(
+                  j.jsxOpeningElement(
+                    j.jsxIdentifier(
+                      value.from ? localFrom(value.from, value.element) : value.element,
+                    ),
+                    [],
+                    true,
+                  ),
+                ),
               ),
             )
           : jsxAttribute(j, prop, value),

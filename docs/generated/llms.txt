@@ -37,12 +37,11 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [PageHeader](docs/components/page-header.md): A page's heading row, with its title, an optional trail and description, its actions and a toolbar row, that wraps to its own width and can stick to the top. Parts: `.env-page-header`.
 - [Surface](docs/components/surface.md): A container with a background, an inset and corners, but no layout of its own. Also: placeholders, isPlaceholder, useSkeleton. Parts: `.env-surface`.
 - [List](docs/components/list.md): A vertical list of connected rows, each with a title, a detail and an action, that can open what it names, show the current one and be put in order. Parts: `.env-list`.
-- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button. Parts: `.env-card`.
+- [Card](docs/components/card.md): A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button. Parts: `.env-card`.
 
 ## Components: Actions
 
 - [Button](docs/components/button.md): Starts an action, or goes to a destination with href, alone, icon-only, confirmed in place, copying a value or connected in a group. Also: IconButton, ConfirmButton, CopyButton, ButtonGroup. Parts: `.env-button`, `.env-icon-button`, `.env-confirm-button`, `.env-copy-button`, `.env-button-group`.
-- [CloseButton](docs/components/close-button.md): The icon-only button that closes, dismisses or removes what it sits in, named Close in the application's language. Parts: `.env-close-button`.
 - [SearchTrigger](docs/components/search-trigger.md): The button that opens search or a command palette, with its ⌘K or Ctrl+K shortcut, as a field-like row or an icon. Parts: `.env-search-trigger`.
 - [Toolbar](docs/components/toolbar.md): A row, or a column, of controls for one subject, one tab stop from the page, moved through with the arrow keys. Parts: `.env-toolbar`.
 - [Link](docs/components/link.md): A destination inside running text, underlined by default, routed by the application. Parts: `.env-link`.
@@ -84,7 +83,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [RichText](docs/components/rich-text.md): Formatted text people edit as it looks, saved as Markdown with references, and shown again read-only. Also: RichTextEditor, createRichTextExtensions. Parts: `.env-rich-text`, `.env-rich-text-editor`.
 - [Markdown](docs/components/markdown.md): Renders a Markdown string in envUI's typography and code, and MarkdownEditor writes one with a toolbar and a preview. Also: MarkdownEditor. Parts: `.env-markdown`, `.env-markdown-editor`.
 - [Code](docs/components/code.md): Inline code in text, highlighted code blocks with a copy button, and the changes between two versions of a file. Also: CodeBlock, CodeDiff, countDiffLines. Parts: `.env-code`, `.env-code-block`, `.env-code-diff`.
-- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: CounterBadge, DiffStat. Parts: `.env-badge`, `.env-counter-badge`, `.env-diff-stat`.
+- [Badge](docs/components/badge.md): Small static pills that name a state in its tone or a piece of metadata, show a count, or the size of a change. Also: DiffStat. Parts: `.env-badge`, `.env-diff-stat`.
 - [Table](docs/components/table.md): Semantic data tables on a rounded surface: sorting, resizable columns, selected rows and stacked rows in narrow containers. Parts: `.env-table`.
 - [DescriptionList](docs/components/description-list.md): The facts about one thing, as labels and their values, beside each other or stacked by the list's own width. Parts: `.env-description-list`.
 - [Kbd](docs/components/kbd.md): Key caps that show a key, or keys pressed together joined by plus, in text, hints and menus. Parts: `.env-kbd`.
@@ -94,20 +93,18 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element. Parts: `.env-disclosure`.
 - [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue. Parts: `.env-avatar`, `.env-avatar-button`, `.env-avatar-group`.
 - [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList. Parts: `.env-message`, `.env-message-list`.
-- [Stat](docs/components/stat.md): Labelled key figures for dashboards, with how they changed and over what period, grouped in even columns. Parts: `.env-stat`.
 - [CalendarHeatmap](docs/components/calendar-heatmap.md): A calendar grid that shades each day by its value, with a tooltip and keyboard access for every day. Parts: `.env-calendar-heatmap`.
 
 ## Components: Feedback & overlays
 
-- [EmptyState](docs/components/empty-state.md): Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action. Parts: `.env-empty-state`.
-- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Also: LoadingState. Parts: `.env-spinner`, `.env-loading-state`.
+- [Spinner](docs/components/spinner.md): Work of unknown length in a small area, such as a panel that is updating, as a turning arc. Parts: `.env-spinner`.
 - [Toast](docs/components/toast.md): Brief feedback after an action, such as Changes saved, at the edge of the window, announced and dismissed after a few seconds or by people. Also: useToast. Parts: `.env-toast`.
 - [Alert](docs/components/alert.md): An inline message about a page or a section, in an info, success, warning or danger tone, with an optional action and dismiss button. Parts: `.env-alert`.
 - [Dialog](docs/components/dialog.md): A focused task over the page, as a centered modal or a modal near the top of the window, with shared focus and dismissal. Also: DialogClose. Parts: `.env-dialog-popup`.
 - [Sheet](docs/components/sheet.md): A panel that slides in over the page from the end, the start or the bottom edge of the window, for filters, details, an inspector or a short set of choices. Parts: `.env-sheet-popup`.
 - [ConfirmDialog](docs/components/confirm-dialog.md): An alert dialog that asks people to confirm an action whose consequence needs a sentence, and waits for the action to finish. Parts: `.env-dialog-popup`.
 - [CommandPalette](docs/components/command-palette.md): A quick-open dialog near the top of the window, with a search field over a list the application filters and ranks. Parts: `.env-command-palette`.
-- [Menu](docs/components/menu.md): Actions, destinations and the shared organization switcher, opened from a trigger or a right click. Also: ContextMenu, OrganizationSwitcher, ThemeRadioGroup. Parts: `.env-menu`, `.env-organization-switcher`.
+- [Menu](docs/components/menu.md): Actions and destinations, opened from a trigger or a right click. Also: ContextMenu, ThemeRadioGroup. Parts: `.env-menu`.
 - [Menubar](docs/components/menubar.md): A desktop-style menubar of menus, such as File, Edit and View, with shortcuts, submenus and access keys. Parts: `.env-menubar`.
 - [Tooltip](docs/components/tooltip.md): A short label beside a control on hover and keyboard focus, such as an icon-only button's name or why a control is disabled. Parts: `.env-tooltip`.
 - [Popover](docs/components/popover.md): A floating panel beside its trigger for details or a small form; Esc or a press outside closes it. Parts: `.env-popover`.
@@ -126,13 +123,16 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [Notifications and feedback](docs/patterns/feedback.md): Tell people what happened, what state things are in and what needs them, in the place and at the volume each message deserves.
 - [Loading](docs/patterns/loading.md): Show that something is loading, in the place and shape of what is coming, without implying how long it takes.
 - [Empty states](docs/patterns/empty-states.md): Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.
+- [Key figures](docs/patterns/key-figures.md): Show the few labelled figures that sum up a view, such as a dashboard's, with how each changed and over what period.
 
 ## Patterns: Find and navigate
 
 - [Navigation](docs/patterns/navigation.md): Let people move between the places of an application, see where they are, and find their way back.
 - [App frame](docs/patterns/app-frame.md): Frame an application's screens with a Scaffold, a TopBar and the same destinations as a Bar, a Rail or a Drawer, by the width of the window.
 - [Account menu](docs/patterns/account-menu.md): Show who is signed in and give them their own things, such as account settings, the theme and Sign out, from their avatar.
+- [Organization switcher](docs/patterns/organization-switcher.md): Show the active organization and switch between the person's organizations, from a Menu at the top of the navigation or in the top bar.
 - [Window frame](docs/patterns/window-frame.md): Frame an installed application's window that draws its own title bar, with the title bar across the top and the content scrolling below it.
+- [Feature cards](docs/patterns/feature-cards.md): Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.
 - [Filtering and search](docs/patterns/filtering.md): Let people narrow a list or a table to what they want, see how many items match, and undo it in one step.
 - [Data tables](docs/patterns/data-tables.md): Show many records in rows and columns that people can sort, page through, select and act on, also on narrow screens.
 - [Progressive disclosure](docs/patterns/progressive-disclosure.md): Show what most people need first, and keep the rest one step away, in the place and at the depth that fits it.

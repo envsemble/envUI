@@ -25,12 +25,12 @@ avoidWhen:
   - text: A form that people fill in and submit.
     use: Field
   - text: One headline number with its trend.
-    use: Stat
+    see: key-figures
 related:
   - table
   - list
   - card
-  - stat
+  - key-figures
   - loading
 components:
   - DescriptionList

@@ -49,7 +49,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 ## Actions
 
 - [Button](components/button.md)
-- [CloseButton](components/close-button.md)
 - [SearchTrigger](components/search-trigger.md)
 - [Toolbar](components/toolbar.md)
 - [Link](components/link.md)
@@ -101,12 +100,10 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Disclosure](components/disclosure.md)
 - [Avatar](components/avatar.md)
 - [Message](components/message.md)
-- [Stat](components/stat.md)
 - [CalendarHeatmap](components/calendar-heatmap.md)
 
 ## Feedback & overlays
 
-- [EmptyState](components/empty-state.md)
 - [Spinner](components/spinner.md)
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)
@@ -130,10 +127,13 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Notifications and feedback](patterns/feedback.md)
 - [Loading](patterns/loading.md)
 - [Empty states](patterns/empty-states.md)
+- [Key figures](patterns/key-figures.md)
 - [Navigation](patterns/navigation.md)
 - [App frame](patterns/app-frame.md)
 - [Account menu](patterns/account-menu.md)
+- [Organization switcher](patterns/organization-switcher.md)
 - [Window frame](patterns/window-frame.md)
+- [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)

@@ -18,9 +18,12 @@ import {
 } from '../content/internal/CodeColors.js';
 import { diffTheme } from '../content/internal/CodeThemes.js';
 import { useCodeContrast } from '../content/internal/useCodeContrast.js';
-import { EmptyState } from '../feedback/EmptyState.js';
+import { Column } from '../foundations/Layout.js';
+import { Text } from '../foundations/Text.js';
+import { DecorativeIcon } from '../internal/DecorativeIcon.js';
+import { Error as ErrorIcon } from '../icons/Error.js';
 import { useTheme } from '../foundations/Theme.js';
-import { LoadingState } from '../feedback/LoadingState.js';
+import { Spinner } from '../feedback/Spinner.js';
 import { Refresh } from '../icons/Refresh.js';
 import { codeDiff as codeDiffMessages } from '../foundations/messages/codeDiff.js';
 import { classNames } from '../internal/classNames.js';
@@ -189,26 +192,32 @@ export function CodeDiff({
       aria-busy={!loaded && !failed ? true : undefined}
     >
       {failed ? (
-        <EmptyState
-          tone="danger"
-          headingLevel={3}
-          title={messages.failed}
-          description={messages.failedDescription}
-          action={
-            <Button
-              variant="secondary"
-              startIcon={<Refresh />}
-              onClick={() => {
-                setFailed(false);
-                setAttempt((current) => current + 1);
-              }}
-            >
-              {messages.retry}
-            </Button>
-          }
-        />
+        // An alert, so the failure is announced: the error icon, a heading, a sentence and Retry.
+        <Column role="alert" gap={4} className="env-code-diff-failed">
+          <span className="env-code-diff-failed-icon">
+            <DecorativeIcon>
+              <ErrorIcon />
+            </DecorativeIcon>
+          </span>
+          <Column gap={2}>
+            <Text render={<h3 />} variant="title">
+              {messages.failed}
+            </Text>
+            <Text variant="body-sm">{messages.failedDescription}</Text>
+          </Column>
+          <Button
+            variant="secondary"
+            startIcon={<Refresh />}
+            onClick={() => {
+              setFailed(false);
+              setAttempt((current) => current + 1);
+            }}
+          >
+            {messages.retry}
+          </Button>
+        </Column>
       ) : !loaded ? (
-        <LoadingState label={messages.loading} />
+        <Spinner label={messages.loading} showLabel />
       ) : before === after ? (
         <File
           file={{ name: filename, contents: after, lang: lang as never }}

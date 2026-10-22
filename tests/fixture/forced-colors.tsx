@@ -24,7 +24,6 @@ import {
   TextField,
   Theme,
   Tree,
-  CloseButton,
   Field,
   Toolbar,
   type ButtonProps,
@@ -74,7 +73,6 @@ function Page() {
             data-testid={`variant-${name}`}
           />
         ))}
-        <CloseButton data-testid="variant-close" />
         <IconButton icon={<Close />} aria-label="Close" data-testid="variant-icon" />
         <IconButton
           icon={<Close />}

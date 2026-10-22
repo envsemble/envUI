@@ -7,7 +7,7 @@
   margin-inline-start: 0;
 }
 .env-popup-theme .env-organization-menu-radio,
-.env-organization-switcher-option[data-checked] .env-organization-menu-radio-dot {
+.env-organization-menu-option[data-checked] .env-organization-menu-radio-dot {
   color: var(--env-color-fg-accent);
 }
 .env-panel-dock[data-chips] .env-panel-dock-tab,

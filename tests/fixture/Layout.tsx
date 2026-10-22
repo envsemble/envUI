@@ -114,9 +114,9 @@ export function LayoutFixture() {
             Unavailable destination
           </Card>
           <Card
-            layout="feature"
             headingLevel={2}
             title="Additional content"
+            actions={<Button variant="secondary">Open</Button>}
             description="Supporting context"
             data-testid="feature-extra"
           >

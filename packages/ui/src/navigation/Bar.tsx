@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithRef } from 'react';
 import { Column, Row } from '../foundations/Layout.js';
-import { CounterBadge } from '../content/CounterBadge.js';
+import { Badge } from '../content/Badge.js';
 import { classNames } from '../internal/classNames.js';
 import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
@@ -126,9 +126,7 @@ export function Bar({
                     'aria-current': destination.current ? ('page' as const) : undefined,
                     'aria-label': countedName(destination.label, destination.count, messages),
                     end:
-                      count === undefined ? undefined : (
-                        <CounterBadge value={count} aria-hidden="true" />
-                      ),
+                      count === undefined ? undefined : <Badge count={count} aria-hidden="true" />,
                     children: destination.label,
                   };
                   return destination.href === undefined ? (

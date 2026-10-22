@@ -12,7 +12,8 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import { CloseButton } from '../actions/CloseButton.js';
+import { IconButton } from '../actions/Button.js';
+import { Close } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { markTriggerOwner } from '../internal/triggerOwner.js';
 import { setRef } from '../internal/setRef.js';
@@ -82,7 +83,7 @@ export interface SheetProps
   /** Actions at the end of the content, such as Apply, with the primary action last. */
   actions?: ReactNode;
   /**
-   * Whether the sheet shows its close button, a CloseButton at the end of the heading. Leave it
+   * Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it
    * out only where the sheet holds another control that closes it.
    * @default true
    */
@@ -254,7 +255,9 @@ export function Sheet({
                       closeButton ? (
                         <BaseDrawer.Close
                           render={
-                            <CloseButton
+                            <IconButton
+                              variant="ghost"
+                              icon={<Close />}
                               aria-label={ownCloseLabel ?? messages.close}
                               disabled={pending}
                             />

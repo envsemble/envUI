@@ -89,9 +89,14 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="name-cell"]', 'display', '::before')).toBe(
     'inline-block',
   );
-  expect(await style(page, '[data-testid="stat"] .env-stat-value', 'display', '::before')).toBe(
-    'inline-block',
-  );
+  // A count badge is a filled shape too, whatever its variant: no fill or edge of its own.
+  const shape = await style(page, '[data-testid="badge-skeleton"]', 'background-color');
+  for (const count of ['count-solid-skeleton', 'count-outline-skeleton']) {
+    expect(await style(page, `[data-testid="${count}"]`, 'background-color')).toBe(shape);
+    expect(await style(page, `[data-testid="${count}"]`, 'border-top-color')).toBe(
+      'rgba(0, 0, 0, 0)',
+    );
+  }
 
   // A top bar's missing title is a bar too.
   await expect(page.getByTestId('top-bar')).toHaveAttribute('aria-busy', 'true');
@@ -183,7 +188,7 @@ test(
   },
 );
 
-test('LoadingState is a spinner with a label, for loading with no known shape', async ({
+test('a Spinner with showLabel is a busy status with its label, for loading with no known shape', async ({
   page,
 }) => {
   await open(page);
@@ -191,7 +196,9 @@ test('LoadingState is a spinner with a label, for loading with no known shape', 
   await expect(state).toHaveRole('status');
   await expect(state).toHaveAttribute('aria-busy', 'true');
   await expect(state).toHaveText('Loading activity');
-  await expect(state.locator('.env-spinner')).toBeVisible();
+  await expect(state).toHaveClass(/env-spinner/);
+  await expect(state.locator('.env-spinner-label')).toBeVisible();
+  await expect(state.locator('svg')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('the shift check reports what moves or resizes when a skeleton loads', async ({ page }) => {

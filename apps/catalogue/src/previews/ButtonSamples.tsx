@@ -1,4 +1,4 @@
-import { Button, type ButtonProps } from '@envsemble/envui';
+import { Button, IconButton, type ButtonProps, type IconButtonProps } from '@envsemble/envui';
 import { Check } from '@envsemble/envui/icons/Check';
 import { ChevronRight } from '@envsemble/envui/icons/ChevronRight';
 import { Close } from '@envsemble/envui/icons/Close';
@@ -46,11 +46,7 @@ export function ButtonSample({
   const icon = <example.icon />;
   const props = { variant: example.variant, tone: example.tone, className, disabled, inert };
   if (form === 'icon') {
-    return (
-      <Button
-        {...({ ...props, iconOnly: true, icon, 'aria-label': example.label } as ButtonProps)}
-      />
-    );
+    return <IconButton {...({ ...props, icon, 'aria-label': example.label } as IconButtonProps)} />;
   }
   return (
     <Button

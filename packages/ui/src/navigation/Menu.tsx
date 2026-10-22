@@ -160,7 +160,7 @@ interface ItemContentProps {
    * handles the shortcut itself.
    */
   shortcut?: string;
-  /** End content, such as a Badge or CounterBadge; it is part of the item's name. */
+  /** End content, such as a Badge or a count; it is part of the item's name. */
   end?: ReactNode;
 }
 

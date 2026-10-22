@@ -4,7 +4,7 @@
     "Alert": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Alert.tsx",
-      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is a CloseButton, a client leaf named in the provider's language.",
+      "description": "An inline banner for a page- or section-level message, in its tone. It stays a server component: its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.",
       "props": [
         {
           "name": "tone",
@@ -254,22 +254,8 @@
     "Badge": {
       "kind": "component",
       "source": "packages/ui/src/content/Badge.tsx",
-      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats.",
+      "description": "A small pill label for a state, such as In progress, Blocked or Archived, or for neutral metadata, such as a plan or a count of seats; with count, a compact count, such as 12 unread.",
       "props": [
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "Meaning of the state; done is the purple of completed work. Neutral by default."
-        },
-        {
-          "name": "variant",
-          "type": "'soft' | 'solid' | 'outline'",
-          "required": false,
-          "default": "'soft'",
-          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
-        },
         {
           "name": "icon",
           "type": "ReactNode",
@@ -279,8 +265,34 @@
         {
           "name": "children",
           "type": "ReactNode",
-          "required": true,
+          "required": false,
           "description": "The label: a state, a name or a category in a word or two. It stays on one line and ends with an ellipsis where the badge is wider than its container."
+        },
+        {
+          "name": "count",
+          "type": "number | string",
+          "required": false,
+          "description": "A count, such as 12, or short text such as 99+, in place of a label: a compact round pill, in tabular figures, as beside a navigation label, in a tab or on a button."
+        },
+        {
+          "name": "tone",
+          "type": "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'done'",
+          "required": false,
+          "default": "'neutral'",
+          "description": "Meaning of the state; done is the purple of completed work. Neutral by default. A count in the accent tone, solid, draws attention, such as unread messages that need an answer."
+        },
+        {
+          "name": "variant",
+          "type": "'soft' | 'solid' | 'outline'",
+          "required": false,
+          "default": "'soft'",
+          "description": "soft tints the background, solid fills it with the tone, outline draws a border."
+        },
+        {
+          "name": "aria-label",
+          "type": "string",
+          "required": false,
+          "description": "What the count means, such as 12 unread, which assistive technology reads in place of the number; the number alone otherwise."
         }
       ],
       "native": [
@@ -408,7 +420,7 @@
     "Button": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons; icon-only with iconOnly. It renders a native button or link.",
+      "description": "Starts an action, or goes to a destination with href, in one of five variants and three tones, with optional icons. It renders a native button or link. An icon alone is an IconButton.",
       "props": [
         {
           "name": "variant",
@@ -440,7 +452,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -467,30 +479,10 @@
           "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
         },
         {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
           "name": "href",
           "type": "string",
           "required": false,
           "description": "The destination: the element is a native link, through the LinkProvider's link component."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -727,7 +719,7 @@
     "Card": {
       "kind": "component",
       "source": "packages/ui/src/content/Card.tsx",
-      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, a feature card with an icon and an action, or one link or button.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, or one link or button.",
       "props": [
         {
           "name": "background",
@@ -766,14 +758,14 @@
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The card's title at the top: an `h3` in the title type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "3, or 2 in the feature layout",
-          "description": "The title's heading level, for the page's outline; the type stays as the layout sets it."
+          "default": "3",
+          "description": "The title's heading level, for the page's outline; the type stays the title type."
         },
         {
           "name": "meta",
@@ -788,23 +780,10 @@
           "description": "A sentence under the title, in muted text."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from assistive technology."
-        },
-        {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature layout at its end, moving below the text and filling the card's width in a card narrower than 38 rem."
-        },
-        {
-          "name": "layout",
-          "type": "'stack' | 'feature'",
-          "required": false,
-          "default": "'stack'",
-          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the title and description, and the actions at the end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
         },
         {
           "name": "render",
@@ -892,51 +871,6 @@
       ],
       "native": [
         "input"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CloseButton": {
-      "kind": "component",
-      "source": "packages/ui/src/actions/CloseButton.tsx",
-      "description": "The button that closes, dismisses or removes what it sits in, such as a dialog, a notification, a tab or a chip: an icon-only button with a cross, named Close in the provider's language. Under a coarse pointer, its hit area reaches the touch size even where it draws smaller.",
-      "props": [
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Close', or EnvUIProvider's messages.common.close",
-          "description": "The button's name, such as Close notification or Remove Alex Morgan where more than one thing closes nearby."
-        },
-        {
-          "name": "variant",
-          "type": "'ghost' | 'secondary'",
-          "required": false,
-          "default": "'ghost'",
-          "description": "ghost, the quiet icon on chrome and inside surfaces, or secondary, on the neutral fill, where the button should read as a control of its own, such as over an image."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The icon; a Close cross by default."
-        },
-        {
-          "name": "size",
-          "type": "'sm' | 'md' | 'lg'",
-          "required": false,
-          "description": "As Button's: the height, and the width, of the square button."
-        },
-        {
-          "name": "pending",
-          "type": "boolean",
-          "required": false,
-          "description": "As Button's: a spinner replaces the icon while the work runs."
-        }
-      ],
-      "native": [
-        "button"
       ],
       "entries": [
         "@envsemble/envui"
@@ -1646,7 +1580,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -1972,38 +1906,6 @@
       ],
       "native": [
         "button"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "CounterBadge": {
-      "kind": "component",
-      "source": "packages/ui/src/content/CounterBadge.tsx",
-      "description": "A compact rounded count, for example beside a navigation label or a menu item.",
-      "props": [
-        {
-          "name": "value",
-          "type": "number | string",
-          "required": true,
-          "description": "The count, such as 12, or short text such as 99+; shown in tabular figures."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "description": "Full meaning for assistive technology, such as \"12 unread\"; the number alone otherwise."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'accent'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral (default) is a quiet fill; accent draws attention."
-        }
-      ],
-      "native": [
-        "span"
       ],
       "entries": [
         "@envsemble/envui"
@@ -2469,7 +2371,7 @@
           "name": "fullWidth",
           "type": "boolean",
           "required": false,
-          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column. An icon-only button keeps its square size."
+          "description": "Fill the width of the container, such as the actions of a narrow form stacked in a column."
         },
         {
           "name": "startIcon",
@@ -2488,26 +2390,6 @@
           "type": "boolean",
           "required": false,
           "description": "Work started by this button is running: a spinner replaces the content without changing the button's size, and the button reports busy and ignores activation until pending ends."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The action's name, such as Delete draft, for an icon-only button."
-        },
-        {
-          "name": "iconOnly",
-          "type": "boolean",
-          "required": false,
-          "description": "Show only icon, in a square button that keeps its size; name it with aria-label."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "requiredWhen": "`iconOnly` is `true`",
-          "description": "The icon of an icon-only button."
         }
       ],
       "native": [
@@ -2855,75 +2737,6 @@
           "type": "Ref<HTMLInputElement>",
           "required": false,
           "description": "The native file input that opens the file picker, for example from a Replace button."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "EmptyState": {
-      "kind": "component",
-      "source": "packages/ui/src/feedback/EmptyState.tsx",
-      "description": "What a region shows when it has nothing to show: no items yet, no matches, or content that failed to load. A title, a description, an optional icon and the action that resolves the state.",
-      "props": [
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What is missing or what happened, such as \"No projects yet\"; a heading of `headingLevel`."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Why, and what people can do, in a sentence or two of muted text under the title."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon above the text; an error state shows the error icon without it."
-        },
-        {
-          "name": "action",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The action that resolves the state, such as a Button that creates the first item."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "More content under the description, such as a short list of next steps."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral for a state with nothing to show yet; danger for content that failed to load, which shows the error icon by default and is announced as an alert. Pair it with a retry action."
-        },
-        {
-          "name": "headingLevel",
-          "type": "1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "description": "The title's heading level in the page outline; 4 by default. The appearance stays the same."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center'",
-          "required": false,
-          "description": "`start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the place of a page's or region's content: a larger icon, centred text and action, centred vertically in the height the application gives it."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
         }
       ],
       "native": [
@@ -3425,8 +3238,20 @@
     "IconButton": {
       "kind": "component",
       "source": "packages/ui/src/actions/Button.tsx",
-      "description": "Shorthand for Button's icon-only mode. Without a variant it takes its container's, and else the neutral secondary one.",
+      "description": "A square button that shows its icon alone, named by aria-label, such as a close button with the Close cross; with href, a native link. Without a variant it takes its container's, and else the neutral secondary one.",
       "props": [
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
         {
           "name": "variant",
           "type": "'primary' | 'secondary' | 'outline' | 'ghost' | 'text'",
@@ -3468,7 +3293,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3658,26 +3484,6 @@
       ],
       "native": [
         "ul"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "LoadingState": {
-      "kind": "component",
-      "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "description": "Loading with no known shape: a spinner with a label that says what is loading, in a status region marked busy. Where the shape of what loads is known, render it as a skeleton instead, with `skeleton` on its surface.",
-      "props": [
-        {
-          "name": "label",
-          "type": "string",
-          "required": false,
-          "default": "'Loading', or EnvUIProvider's messages.common.loading",
-          "description": "What is loading, such as Loading project: shown beside the spinner, and read as the status."
-        }
-      ],
-      "native": [
-        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -3939,7 +3745,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         }
       ],
       "native": [],
@@ -4053,7 +3859,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "href",
@@ -4173,7 +3979,7 @@
           "name": "end",
           "type": "ReactNode",
           "required": false,
-          "description": "End content, such as a Badge or CounterBadge; it is part of the item's name."
+          "description": "End content, such as a Badge or a count; it is part of the item's name."
         },
         {
           "name": "icon",
@@ -4817,102 +4623,6 @@
       ],
       "native": [
         "button"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "OrganizationSwitcher": {
-      "kind": "component",
-      "source": "packages/ui/src/navigation/OrganizationSwitcher.tsx",
-      "description": "Shows the active organization and switches between the person's organizations; fits a top bar or the top of a navigation drawer.",
-      "props": [
-        {
-          "name": "items",
-          "type": "readonly OrganizationSwitcherItem[]",
-          "required": true,
-          "description": "Organizations the signed-in person belongs to, in display order."
-        },
-        {
-          "name": "value",
-          "type": "string | null",
-          "required": true,
-          "description": "The active organization's id, or null before one is chosen."
-        },
-        {
-          "name": "onValueChange",
-          "type": "(value: string) => void",
-          "required": true,
-          "description": "Called with the id of the organization chosen, unless it is the active one; the application switches and reports progress."
-        },
-        {
-          "name": "onCreate",
-          "type": "() => void",
-          "required": false,
-          "description": "Offers creating an organization at the end of the menu, or as the only action without organizations."
-        },
-        {
-          "name": "heading",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.heading",
-          "description": "Heading inside the menu."
-        },
-        {
-          "name": "createLabel",
-          "type": "string",
-          "required": false,
-          "default": "'Create organization', or EnvUIProvider's messages.organizationSwitcher.create",
-          "description": "Label of the create action."
-        },
-        {
-          "name": "placeholder",
-          "type": "string",
-          "required": false,
-          "default": "'Choose organization', or EnvUIProvider's messages.organizationSwitcher.placeholder",
-          "description": "Trigger text while no organization is active."
-        },
-        {
-          "name": "disabled",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Prevents opening, for example while a switch is in progress."
-        },
-        {
-          "name": "aria-label",
-          "type": "string",
-          "required": false,
-          "default": "'Organizations', or EnvUIProvider's messages.organizationSwitcher.label",
-          "description": "Accessible name of the menu."
-        },
-        {
-          "name": "className",
-          "type": "string",
-          "required": false,
-          "description": "Class of the menu popup, beside env-organization-switcher; ref and style go to the popup too. Without organizations there is no popup."
-        },
-        {
-          "name": "triggerClassName",
-          "type": "string",
-          "required": false,
-          "description": "Class of the trigger button, or of the create button without organizations."
-        },
-        {
-          "name": "ref",
-          "type": "Ref<HTMLDivElement>",
-          "required": false,
-          "description": "The menu popup's ref; the trigger is a Button of its own."
-        },
-        {
-          "name": "style",
-          "type": "CSSProperties",
-          "required": false,
-          "description": "The menu popup's inline style."
-        }
-      ],
-      "native": [
-        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -6876,7 +6586,7 @@
           "type": "boolean",
           "required": false,
           "default": "true",
-          "description": "Whether the sheet shows its close button, a CloseButton at the end of the heading. Leave it out only where the sheet holds another control that closes it."
+          "description": "Whether the sheet shows its close button, an IconButton with a cross at the end of the heading. Leave it out only where the sheet holds another control that closes it."
         },
         {
           "name": "closeLabel",
@@ -7058,13 +6768,20 @@
     "Spinner": {
       "kind": "component",
       "source": "packages/ui/src/feedback/Spinner.tsx",
-      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. The hook --env-spinner-color recolors it, such as to a button's label color.",
+      "description": "Work of unknown length in a small area, such as a panel that is updating: an arc in the control blue that turns, and keeps turning slowly with a reduced-motion preference. With a label it is a progress bar named by it; without one it is hidden from assistive technology. With showLabel it is a status line with its label beside it, for loading with no known shape. The hook --env-spinner-color recolors it, such as to a button's label color.",
       "props": [
         {
           "name": "label",
           "type": "string",
           "required": false,
-          "description": "The work it stands for, such as Refreshing members, which names the spinner as a progress bar for assistive technology. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+          "description": "The work it stands for, such as Refreshing members or Loading project. Alone it names the spinner as a progress bar for assistive technology; with showLabel it shows beside it. Leave it out where a busy control or region already says so; the spinner is then hidden from assistive technology."
+        },
+        {
+          "name": "showLabel",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Show the label beside the spinner, for loading with no known shape, such as search results: a status line, marked busy, that centres the spinner and its label in its row. Without a label it says Loading in the provider's language, from EnvUIProvider's messages.common.loading."
         },
         {
           "name": "size",
@@ -7076,96 +6793,6 @@
       ],
       "native": [
         "span"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Stat": {
-      "kind": "namespace",
-      "source": "packages/ui/src/content/Stat.tsx",
-      "description": "",
-      "parts": [
-        "Stat.Root",
-        "Stat.Group"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Stat.Group": {
-      "kind": "component",
-      "source": "packages/ui/src/content/Stat.tsx",
-      "description": "Stats on one surface, a pane's fill by default, in as many even columns as fit; they wrap as space runs out. Use the muted background for a group on a pane. A group named with aria-label or aria-labelledby is exposed as a group, so assistive technology announces the name.",
-      "props": [
-        {
-          "name": "background",
-          "type": "'default' | 'muted' | 'page' | 'raised'",
-          "required": false,
-          "default": "'default'",
-          "description": "The group's fill, as for Surface: default on the page, or muted for a group on a pane, so its stats stand apart; page or raised where those fit."
-        },
-        {
-          "name": "padding",
-          "type": "SurfaceAppearanceProps['padding']",
-          "required": false,
-          "default": "1.25 rem in narrow windows, growing to 1.5 rem from 50 rem wide",
-          "description": "The inset on every side, as a step of the spacing scale, such as 4 for 1 rem; 0 removes it. Without it, the inset follows the window's width, as for Surface."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "entries": [
-        "@envsemble/envui"
-      ]
-    },
-    "Stat.Root": {
-      "kind": "component",
-      "source": "packages/ui/src/content/Stat.tsx",
-      "description": "A labelled key figure for a dashboard, such as Active projects 128, with an optional trend and description. It has no surface of its own; Stat.Group puts several on one, or a Card holds one.",
-      "props": [
-        {
-          "name": "label",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What the figure measures, such as Active projects, in muted text above it."
-        },
-        {
-          "name": "value",
-          "type": "ReactNode",
-          "required": true,
-          "description": "The figure, formatted by the application with its unit, such as 1,284 or 2.5 days, or an AnimatedNumber that rolls to new values. It shows large, in tabular digits."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A muted note below the figure, after the trend, such as the period: Last 30 days."
-        },
-        {
-          "name": "trend",
-          "type": "Trend",
-          "required": false,
-          "description": "The change since an earlier period, such as up and +12% from last month, shown below the figure as a direction icon and text in its tone."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
       ],
       "entries": [
         "@envsemble/envui"
@@ -7997,6 +7624,18 @@
       "description": "Switches between the light and dark themes and stores the choice.",
       "props": [
         {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "A disabled button cannot be pressed; a disabled link has no destination, cannot be focused or followed, and reports aria-disabled."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "required": false,
+          "description": "The destination: the button is a native link, through the LinkProvider's link component."
+        },
+        {
           "name": "size",
           "type": "'sm' | 'md' | 'lg'",
           "required": false,
@@ -8031,7 +7670,8 @@
         }
       ],
       "native": [
-        "button"
+        "button",
+        "a"
       ],
       "entries": [
         "@envsemble/envui"

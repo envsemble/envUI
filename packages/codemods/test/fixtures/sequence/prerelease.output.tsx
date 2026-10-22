@@ -12,7 +12,12 @@ import {
   useBreakpoint,
   type StackProps,
   Panes,
+  Badge,
+  IconButton,
+  Spinner,
 } from '@envsemble/envui';
+
+import { Close } from '@envsemble/envui/icons/Close';
 
 export function Frame({ gap }: { gap: StackProps['gap'] }) {
   const wide = useBreakpoint('md');
@@ -37,6 +42,10 @@ export function Frame({ gap }: { gap: StackProps['gap'] }) {
         <LoadingState label="Loading">
           <Skeleton width="40%" />
         </LoadingState>
+        <Spinner showLabel label="Loading projects" />
+        <IconButton variant="ghost" icon={<Close />} aria-label="Close" onClick={() => {}} />
+        <IconButton icon={<span />} aria-label="More" variant="ghost" />
+        <Badge variant="solid" count={3} tone="accent" />
         <Panes.Root
           behavior="list-detail"
           open={wide}

@@ -2,9 +2,8 @@
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import { Button } from '../../actions/Button.js';
-import { CloseButton } from '../../actions/CloseButton.js';
-import { CounterBadge } from '../../content/CounterBadge.js';
+import { Button, IconButton } from '../../actions/Button.js';
+import { Badge } from '../../content/Badge.js';
 import { Theme, useTheme } from '../../foundations/Theme.js';
 import { toast as toastMessages } from '../../foundations/messages/toast.js';
 import { useMessages } from '../../internal/EnvUIContext.js';
@@ -14,6 +13,7 @@ import type { ToastController } from './useToastController.js';
 import type { ToastEntry } from './ToastInternals.js';
 import type { ToastPlacement } from './ToastTypes.js';
 import { usePortalContainer } from '../../internal/PortalContainerContext.js';
+import { Close } from '../../icons/Close.js';
 
 const glideId = 'env-toast-glide';
 const revealId = 'env-toast-reveal';
@@ -224,10 +224,10 @@ export function ToastRegion({
             aria-label={regionLabel}
           >
             {hiddenCount > 0 && (
-              <CounterBadge
+              <Badge
                 className="env-toast-queued-count"
                 data-toast-id="queued"
-                value={`+${hiddenCount}`}
+                count={`+${hiddenCount}`}
                 aria-label={messages.hidden({ count: hiddenCount })}
               />
             )}
@@ -256,7 +256,9 @@ export function ToastRegion({
                       }
                       dismiss={
                         entry.dismissible !== false && (
-                          <CloseButton
+                          <IconButton
+                            variant="ghost"
+                            icon={<Close />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                             onClick={() => toastStore.close(toast.id)}
@@ -298,11 +300,11 @@ export function ToastRegion({
           }}
         >
           {hiddenCount > 0 && (
-            <CounterBadge
+            <Badge
               className="env-toast-queued-count"
               data-toast-id="queued"
               role="status"
-              value={`+${hiddenCount}`}
+              count={`+${hiddenCount}`}
               aria-label={messages.hidden({ count: hiddenCount })}
             />
           )}
@@ -354,7 +356,9 @@ export function ToastRegion({
                       <BaseToast.Close
                         aria-hidden={false}
                         render={
-                          <CloseButton
+                          <IconButton
+                            variant="ghost"
+                            icon={<Close />}
                             className="env-toast-dismiss"
                             aria-label={messages.dismiss}
                           />

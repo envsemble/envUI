@@ -10,8 +10,8 @@ import { TextField, /* The old name. */ Input } from '@envsemble/envui';
 import { Notice } from '@envsemble/envui';
 // @ts-ignore -- moves with the names
 // @ts-expect-error -- not exported by the installed 1.0
-import { StatGroup } from '@envsemble/envui';
-import { Stat } from '@envsemble/envui';
+import { PanelDockHeader } from '@envsemble/envui';
+import { PanelDock } from '@envsemble/envui';
 
 export const settings = (
   <>
@@ -24,8 +24,8 @@ export const settings = (
     <Input label="Name" />
     <TextField label="Email" />
     <Notice>Saved</Notice>
-    <StatGroup>
-      <Stat label="Members" value={3} />
-    </StatGroup>
+    <PanelDock>
+      <PanelDockHeader />
+    </PanelDock>
   </>
 );

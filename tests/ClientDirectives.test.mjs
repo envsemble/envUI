@@ -189,10 +189,9 @@ test('a server component imports envUI and renders it on the server', () => {
       'href="/destination"',
       'href="/destination" pending',
       'href="/destination" disabled',
-      'iconOnly icon={…} aria-label="Home"',
     ],
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
-    Card: ['layout="feature"', 'href="/destination"'],
+    Card: ['href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
     Alert: ['tone="danger"', 'announce'],
     Text: ['variant="headline"', 'emphasis="muted"'],
@@ -203,7 +202,7 @@ test('a server component imports envUI and renders it on the server', () => {
         main.variants[name]?.includes(variant),
         `${name} renders on the server with ${variant}`,
       );
-  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item', 'Stat.Root'])
+  for (const name of ['Badge', 'Card', 'Text', 'Button', 'Alert', 'List.Item'])
     assert.ok(main.server.includes(name), `${name} renders on the server`);
   for (const name of [
     'Menu.Item',
@@ -212,7 +211,6 @@ test('a server component imports envUI and renders it on the server', () => {
     'Table.Root',
     'useToast',
     'EnvUIProvider',
-    'CloseButton',
     'Toolbar.Root',
     'Field.Root',
   ])

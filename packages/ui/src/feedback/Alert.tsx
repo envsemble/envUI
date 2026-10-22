@@ -53,7 +53,7 @@ const toneIcons: Record<AlertTone, ReactNode> = {
 
 /**
  * An inline banner for a page- or section-level message, in its tone. It stays a server component:
- * its dismiss button is a CloseButton, a client leaf named in the provider's language.
+ * its dismiss button is an IconButton with a cross, a client leaf named in the provider's language.
  */
 export function Alert(allProps: AlertProps) {
   const {

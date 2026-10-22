@@ -15,8 +15,7 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Button } from '../actions/Button.js';
-import { CloseButton } from '../actions/CloseButton.js';
+import { Button, IconButton } from '../actions/Button.js';
 import { panes } from '../foundations/messages/panes.js';
 import { ArrowBack } from '../icons/ArrowBack.js';
 import { classNames } from '../internal/classNames.js';
@@ -28,6 +27,7 @@ import { withDisplayName } from '../internal/withDisplayName.js';
 import { inSkeleton } from '../foundations/inSkeleton.js';
 import { skeletonAttributes, type SkeletonProps } from '../internal/skeleton.js';
 import { readPanesSize, writePanesSize } from './panesSize.js';
+import { Close } from '../icons/Close.js';
 
 /**
  * How Panes behaves below `splitAt`: supporting, a main pane with a supporting pane that becomes a
@@ -466,7 +466,12 @@ function Supporting({
       {/* Always rendered, so the server's markup has it; the style sheet shows it only while the
           pane is a sheet, and hidden it is out of the tab order and the accessibility tree. */}
       <div className="env-panes-close">
-        <CloseButton aria-label={closeLabel ?? messages.close} onClick={close} />
+        <IconButton
+          variant="ghost"
+          icon={<Close />}
+          aria-label={closeLabel ?? messages.close}
+          onClick={close}
+        />
       </div>
       {inSkeleton(skeleton, children)}
     </div>

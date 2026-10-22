@@ -2,8 +2,8 @@ import { useCallback, useRef, useState, type ComponentType } from 'react';
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
+  Alert,
   Button,
-  CloseButton,
   ConfirmButton,
   CopyButton,
   EnvUIProvider,
@@ -190,17 +190,14 @@ function FieldSample() {
   );
 }
 
-/** CloseButton: its default name, a provider's message and an own label. */
+/** An Alert's dismiss button, a small IconButton with a cross, for its touch-size hit area. */
 function CloseButtonSample() {
   return (
-    <Row gap={2} data-testid="close-buttons">
-      <CloseButton data-testid="close-default" />
-      <EnvUIProvider messages={{ common: { close: 'Schließen' } }}>
-        <CloseButton data-testid="close-provider" />
-        <CloseButton aria-label="Remove Alex Morgan" data-testid="close-own" />
-      </EnvUIProvider>
-      <CloseButton size="sm" variant="secondary" data-testid="close-small" />
-    </Row>
+    <div data-testid="close-buttons">
+      <Alert title="Saved" onDismiss={() => {}}>
+        The draft is saved.
+      </Alert>
+    </div>
   );
 }
 

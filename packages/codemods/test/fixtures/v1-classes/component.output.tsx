@@ -14,7 +14,7 @@ export function Notice({ tone, open, compact }: { tone: string; open: boolean; c
       })}
       style={{ '--env-alert-tone': 'red', margin: 0, background: 'var(--env-list-item-fill)' }}
     >
-      <span className="env-counter-badge-label  owner env-environment">Alex Morgan</span>
+      <span className="env-badge-count-label  owner env-environment">Alex Morgan</span>
       <span className={compact ? 'env-list-item env-navigation-compact' : `env-list-item ${tone}-row`} />
       <span className={clsx(['env-pager-link', open ? 'env-pager-link-title' : null])} />
       <span className={`${tone}env-row env-list-item`} data-class="env-row" />
@@ -29,7 +29,7 @@ export function focusNotice(root: HTMLElement) {
     cell.classList.toggle('env-calendar-heatmap-day', true);
   });
   const row = root.closest('.env-list .env-list-item');
-  if (row?.matches(':is(.env-list-item, .env-contrast-row-pane)')) row.classList.add('env-counter-badge', 'env-counter-badge');
+  if (row?.matches(':is(.env-list-item, .env-contrast-row-pane)')) row.classList.add('env-counter', 'env-counter-badge');
   root.classList.replace('env-alert', 'env-alert');
   root.getElementsByClassName('env-list-item env-list-item-fill');
   root.style.setProperty('--env-calendar-heatmap-mix', '20%');

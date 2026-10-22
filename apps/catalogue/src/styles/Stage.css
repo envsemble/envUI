@@ -52,24 +52,22 @@
    or holds one fills the stage, unless it sets its width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
   > :where(
-    .env-card[data-layout='feature'],
     .env-description-list[data-layout='auto'],
     .env-page,
     .env-page-header,
     .env-panes,
-    .env-stat-group,
+    [data-env-name='key-figures'],
     .env-document-tabs,
     .env-panel-dock,
     .env-scaffold,
     [data-env-skeleton],
     [data-env-container],
     :has(
-      .env-card[data-layout='feature'],
       .env-description-list[data-layout='auto'],
       .env-page,
       .env-page-header,
       .env-panes,
-      .env-stat-group,
+      [data-env-name='key-figures'],
       .env-document-tabs,
       .env-panel-dock,
       .env-scaffold,

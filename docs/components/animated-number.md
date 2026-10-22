@@ -20,14 +20,14 @@ avoidWhen:
   - text: A count that doesn't change while people look at it, which is plain text.
     use: Text
   - text: A compact count beside a label, such as unread messages.
-    use: CounterBadge
+    use: Badge
   - text: A headline figure with its label and trend, such as on a dashboard.
-    use: Stat
+    see: key-figures
   - text: How far a task has come.
     use: Progress
 related:
   - button
-  - stat
+  - key-figures
   - badge
   - typography
   - accessibility

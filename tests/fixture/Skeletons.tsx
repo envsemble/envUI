@@ -3,6 +3,7 @@ import {
   Alert,
   AnimatedNumber,
   Avatar,
+  Badge,
   Bar,
   Button,
   Card,
@@ -13,18 +14,18 @@ import {
   Grid,
   Kbd,
   List,
-  LoadingState,
   Menu,
   Message,
   Popover,
   Rail,
-  Stat,
+  Row,
   Surface,
   Table,
   Text,
   TopBar,
   placeholders,
   useSkeleton,
+  Spinner,
 } from '@envsemble/envui';
 import { installDevMode } from '@envsemble/envui/dev';
 import { Folder } from '@envsemble/envui/icons/Folder';
@@ -97,6 +98,12 @@ export function SkeletonsFixture() {
           <Text variant="title" render={<h2 />}>
             Projects
           </Text>
+          {/* Badges, a label and counts in each variant, are filled shapes in a skeleton. */}
+          <Row gap={2}>
+            <Badge data-testid="badge-skeleton">Draft</Badge>
+            <Badge count={3} tone="accent" variant="solid" data-testid="count-solid-skeleton" />
+            <Badge count={5} variant="outline" data-testid="count-outline-skeleton" />
+          </Row>
           <Reader />
           <Grid columns="repeat(3, minmax(0, 1fr))" gap={3}>
             {list.map((project) => (
@@ -121,9 +128,6 @@ export function SkeletonsFixture() {
               />
             ))}
           </List.Root>
-          <Stat.Group>
-            <Stat.Root label="Projects" value={items?.length} data-testid="stat" />
-          </Stat.Group>
           <Table.Root aria-label="Projects table">
             <Table.Head>
               <Table.Row>
@@ -259,7 +263,7 @@ export function SkeletonsFixture() {
       <Dialog trigger={<Button>Open the dialog</Button>} title="Project" skeleton>
         <Text>Loading the project</Text>
       </Dialog>
-      <LoadingState label="Loading activity" data-testid="loading-state" />
+      <Spinner label="Loading activity" showLabel data-testid="loading-state" />
     </Column>
   );
 }

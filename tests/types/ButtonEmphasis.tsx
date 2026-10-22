@@ -121,7 +121,10 @@ export const unions = (
       Remove
     </ConfirmButton>
     <CopyButton value="text" variant={variant} aria-label="Copy link" />
-    <Button variant={anyVariant} iconOnly icon={icon} aria-label="Settings" />
+    <IconButton variant={anyVariant} icon={icon} aria-label="Settings" />
+    <IconButton href="/settings" variant="ghost" icon={icon} aria-label="Settings" />
+    {/* @ts-expect-error IconButton is the one icon-only button. */}
+    <Button iconOnly icon={icon} aria-label="Settings" />
   </>
 );
 

@@ -1,6 +1,6 @@
 ---
 title: Menu
-summary: Actions, destinations and the shared organization switcher, opened from a trigger or a right click.
+summary: Actions and destinations, opened from a trigger or a right click.
 status: stable
 since: 0.3.0
 category: Feedback & overlays
@@ -15,7 +15,6 @@ aliases:
   - submenu
   - MenuItem
   - OrganizationMenu
-  - organization switcher
   - theme menu
   - theme choice
 useWhen:
@@ -23,7 +22,7 @@ useWhen:
   - A few destinations that share a trigger, such as the account pages behind the avatar.
   - Options that change a view, such as a sort order or whether hidden files show, as radio and checkbox items.
   - Actions for an area or its rows on right click, beside the visible controls that offer them too (ContextMenu).
-  - Switching between the organizations a person belongs to, in the application shell (OrganizationSwitcher).
+  - Switching between the organizations a person belongs to, as the organization switcher pattern shows.
 avoidWhen:
   - text: The signed-in person's menu, with its header and theme submenu.
     see: account-menu
@@ -55,7 +54,6 @@ related:
 components:
   - Menu
   - ContextMenu
-  - OrganizationSwitcher
   - ThemeRadioGroup
 ---
 
@@ -79,25 +77,9 @@ A menu shows a short list of actions or destinations from one control, on a temp
 
 ### Account menu
 
-An AvatarButton trigger and a **Menu.Header** with the account. The full menu, with the theme and the organizations, is the [account menu](../patterns/account-menu.md) pattern.
+An AvatarButton trigger and a **Menu.Header** with the account. The full menu, with the theme and the organizations, is the [account menu](../patterns/account-menu.md) pattern, and a switch between organizations of its own the [organization switcher](../patterns/organization-switcher.md).
 
 ```tsx example=AccountMenu
-
-```
-
-### Organization switcher
-
-**OrganizationSwitcher** shows the active organization and switches between the person's organizations; `onCreate` adds the create action. It fits a navigation [Drawer](../components/drawer.md)'s `header`.
-
-```tsx example=SwitchOrganization
-
-```
-
-### Before the first organization
-
-Without organizations, the switcher is only the create action.
-
-```tsx example=FirstOrganization
 
 ```
 
@@ -212,7 +194,7 @@ Not shown: a submenu's row, `env-menu-submenu-trigger`, and the check of a choic
 
 ## Changelog
 
-- **1.0.0**: ThemeRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu` is `OrganizationSwitcher`, with the `env-organization-switcher-*` classes. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup. OrganizationSwitcher takes `items`, `value` and `onValueChange` (were `organizations`, `currentOrganizationId` and `onSelect`), its items are `OrganizationSwitcherItem`s with a `label` and a `description` (were `name` and `detail`), `className` styles its popup, as `ref` and `style` do, and `triggerClassName` its trigger, its rows are Menu.RadioItems in a group its heading names, and its strings come from `messages.organizationSwitcher`.
+- **1.0.0**: ThemeRadioGroup, the theme choice for any menu. The parts are members of the `Menu` namespace: `Menu` is `Menu.Root`, and `MenuItem`, `MenuHeader`, `MenuSeparator`, `MenuGroup`, `MenuRadioGroup`, `MenuRadioItem`, `MenuCheckboxItem` and `MenuSubmenu` are `Menu.Item`, `Menu.Header`, `Menu.Separator`, `Menu.Group`, `Menu.RadioGroup`, `Menu.RadioItem`, `Menu.CheckboxItem` and `Menu.Submenu`. Menus have one anatomy at the scale's row height: `density` and the `MenuDensity` type are gone. `OrganizationMenu`, OrganizationSwitcher in 1.0.0-prerelease.0, is the organization switcher pattern, built from Menu.Root, Menu.RadioGroup and Menu.RadioItem. ContextMenu keeps its name, and a `content` function that returns `null` leaves the menu closed on that element. Menu.Item's `trailing` is `end`. A Menu.Item with `href` closes the menu as it is followed and takes an `onClick`, which runs as it is followed, and a disabled one renders no link. Every menu's popup is the shared popup surface, which takes the direction at its trigger, and Menu.Root takes `side="inline-start"` and `"inline-end"` and passes `ref`, `style` and native props to its popup.
 - **0.5.0**: ContextMenu; `description`, `shortcut` and `trailing` on items; MenuGroup, MenuRadioGroup, MenuRadioItem and MenuCheckboxItem; `density="compact"` on Menu and ContextMenu; MenuSubmenu.
 - **0.4.0**: OrganizationMenu's `detail` for each organization, and its trigger is a secondary Button with up and down arrows. Menu items keep 1.5 rem inline padding, and hover and press shift 6 and 10 points of lightness.
 - **0.3.0**: Menu, MenuHeader, MenuItem for actions and destinations, MenuSeparator, and OrganizationMenu; menus grow from their trigger.

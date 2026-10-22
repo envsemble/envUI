@@ -1,14 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  EmptyState,
-  Column,
-  Row,
-  Surface,
-  Table,
-  Text,
-  placeholders,
-} from '@envsemble/envui';
+import { Alert, Button, Column, Row, Table, Text, placeholders } from '@envsemble/envui';
 import { Upload } from '@envsemble/envui/icons/Upload';
 
 export default function LoadFailed() {
@@ -59,25 +50,19 @@ export default function LoadFailed() {
           </Table.Body>
         </Table.Root>
       ) : (
-        // In place of the table, in the space it takes. envUI has no region height for an
-        // example: the surface gives the state that space.
-        <Surface
-          background="default"
-          padding={0}
-          style={{ display: 'grid', minBlockSize: '14rem' }}
+        // A failure is a danger Alert that announces itself, in the table's place.
+        <Alert
+          tone="danger"
+          announce
+          title="Couldn’t load documents"
+          action={
+            <Button variant="secondary" onClick={retry}>
+              Try again
+            </Button>
+          }
         >
-          <EmptyState
-            align="center"
-            tone="danger"
-            title="Couldn’t load documents"
-            description="Your documents are safe. Check your connection and try again."
-            action={
-              <Button variant="secondary" onClick={retry}>
-                Try again
-              </Button>
-            }
-          />
-        </Surface>
+          Your documents are safe. Check your connection and try again.
+        </Alert>
       )}
     </Column>
   );

@@ -43,8 +43,11 @@
       "ClickableCard": { "to": ["Card"] },
       "ClickableCardProps": { "to": ["CardProps"] },
       "CommandPaletteSelectOptions": { "to": ["CommandPaletteActionOptions"] },
-      "Counter": { "to": ["CounterBadge"] },
-      "CounterProps": { "to": ["CounterBadgeProps"] },
+      "Counter": {
+        "to": [],
+        "use": "Counter is Badge with count in 1.0: <Badge count={value}>, solid in the accent tone; v1-structure rewrites each use."
+      },
+      "CounterProps": { "to": ["BadgeProps"] },
       "DateTimeField": { "to": ["DatePicker"] },
       "DateTimeFieldProps": { "to": ["DatePickerProps"] },
       "DiffCount": { "to": ["DiffStat"] },
@@ -60,6 +63,14 @@
       "DirectionLinksProps": { "to": ["Pager.RootProps"] },
       "DisclosureNote": { "to": ["Disclosure"] },
       "DisclosureNoteProps": { "to": ["DisclosureProps"] },
+      "EmptyState": {
+        "to": [],
+        "use": "EmptyState is gone: the empty states pattern builds one from a Column with an icon, a Text heading of the level the page's outline needs, a Text sentence and a Button, centred with align=\"center\" where it takes a region's place, and a danger Alert with announce where content failed to load; no codemod rewrites it."
+      },
+      "EmptyStateProps": {
+        "to": [],
+        "use": "EmptyState is gone, with its props: the empty states pattern builds one from Column, Text and Button."
+      },
       "EnvUILogo": {
         "to": [],
         "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."
@@ -70,11 +81,11 @@
       },
       "FeatureCard": {
         "to": [],
-        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, title, description and actions for action; v1-structure rewrites each use."
+        "use": "FeatureCard is the feature cards pattern in 1.0: a Card holding a Row with an icon, a Column of Text and a Button; v1-structure reports each use."
       },
       "FeatureCardProps": {
         "to": [],
-        "use": "CardProps, with layout=\"feature\": actions for action."
+        "use": "CardProps; FeatureCard is the feature cards pattern in 1.0, a Card holding a Row of Text and a Button."
       },
       "FileDropzone": { "to": ["DropZone"] },
       "FileDropzoneProps": { "to": ["DropZoneProps"] },
@@ -96,6 +107,11 @@
         "to": [],
         "use": "TopBar's loading and loadingLabel props show page progress along its bottom edge; Progress shows the progress of a task."
       },
+      "LoadingState": {
+        "to": [],
+        "use": "LoadingState is a Spinner with showLabel in 1.0: <Spinner label=\"…\" showLabel />, which says Loading without a label; v1-structure rewrites each use."
+      },
+      "LoadingStateProps": { "to": ["SpinnerProps"] },
       "Menu": { "to": ["Menu.Root"] },
       "MenuCheckboxItem": { "to": ["Menu.CheckboxItem"] },
       "MenuCheckboxItemProps": { "to": ["Menu.CheckboxItemProps"] },
@@ -133,9 +149,18 @@
       "Notice": { "to": ["Alert"] },
       "NoticeProps": { "to": ["AlertProps"] },
       "NoticeTone": { "to": ["AlertTone"] },
-      "OrganizationMenu": { "to": ["OrganizationSwitcher"] },
-      "OrganizationMenuOrganization": { "to": ["OrganizationSwitcherItem"] },
-      "OrganizationMenuProps": { "to": ["OrganizationSwitcherProps"] },
+      "OrganizationMenu": {
+        "to": [],
+        "use": "OrganizationMenu, OrganizationSwitcher in 1.0.0-prerelease.0, is gone: the organization switcher pattern builds it from a Menu.Root whose trigger is a secondary Button naming the active organization, a Menu.RadioGroup of Menu.RadioItems with the person's role as each description, and a Menu.Item that creates one; no codemod rewrites it."
+      },
+      "OrganizationMenuOrganization": {
+        "to": [],
+        "use": "OrganizationSwitcher is gone, with its items: the organization switcher pattern renders the application's own organizations as Menu.RadioItems."
+      },
+      "OrganizationMenuProps": {
+        "to": [],
+        "use": "Menu.RootProps; OrganizationSwitcher is gone: the organization switcher pattern builds it from Menu.Root, Menu.RadioGroup and Button."
+      },
       "PanelDock": { "to": ["PanelDock.Root"] },
       "PanelDockControls": {
         "to": [],
@@ -152,7 +177,7 @@
       "SelectOption": { "to": ["SelectItem"] },
       "Skeleton": {
         "to": [],
-        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, LoadingState is a spinner with a label."
+        "use": "Skeletons are the components themselves in 1.0: put skeleton on the surface that holds the content, such as a Surface, Card, List.Root or Table.Root, and render its normal components over placeholders(count) while the items load; its text becomes bars and its controls filled shapes. For loading with no known shape, a Spinner with showLabel shows a spinner and its label."
       },
       "SkeletonProps": {
         "to": [],
@@ -167,12 +192,30 @@
         "use": "Row, Column, Grid, Box, Surface and Text render another element through render, such as render={<section />}; they no longer take as."
       },
       "StackProps": { "to": [], "use": "RowProps or ColumnProps." },
-      "Stat": { "to": ["Stat.Root"] },
-      "StatGroup": { "to": ["Stat.Group"] },
-      "StatGroupProps": { "to": ["Stat.GroupProps"] },
-      "StatProps": { "to": ["Stat.RootProps"] },
-      "StatTrend": { "to": ["Stat.Trend"] },
-      "StatTrendTone": { "to": ["Stat.TrendTone"] },
+      "Stat": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern builds a figure from Text, a muted label and a headline figure in tabular digits, with a Badge that says the trend in words, and a group from a Surface around a Grid; no codemod rewrites it."
+      },
+      "StatGroup": {
+        "to": [],
+        "use": "Stat.Group is gone: the key figures pattern puts the figures in a Surface with role=\"group\" around a Grid of even columns."
+      },
+      "StatGroupProps": {
+        "to": [],
+        "use": "SurfaceProps; Stat.Group is gone: the key figures pattern puts the figures in a Surface around a Grid."
+      },
+      "StatProps": {
+        "to": [],
+        "use": "Stat is gone, with its props: the key figures pattern builds a figure from Text and a Badge."
+      },
+      "StatTrend": {
+        "to": [],
+        "use": "Stat is gone: the key figures pattern says the trend with a Badge, its tone and a trending icon."
+      },
+      "StatTrendTone": {
+        "to": [],
+        "use": "BadgeTone; Stat is gone: the key figures pattern says the trend with a Badge in its tone."
+      },
       "SurfaceCorners": { "to": ["SurfaceRadius"] },
       "SurfaceDensity": {
         "to": [],

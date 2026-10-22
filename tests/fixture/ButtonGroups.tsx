@@ -20,13 +20,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
             data-testid={orientation}
           >
             <Button onClick={() => setActivations((value) => value + 1)}>Continue</Button>
-            <Button
-              variant="primary"
-              tone="accent"
-              iconOnly
-              icon={<Check />}
-              aria-label="Confirm"
-            />
+            <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Confirm" />
             <IconButton icon={<Settings />} aria-label="Settings" />
             <Button href="#group-destination" variant="outline" startIcon={<Settings />}>
               Manage
@@ -37,7 +31,7 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           </ButtonGroup>
         ))}
         <ButtonGroup data-testid="important-end">
-          <Button variant="primary" tone="accent" iconOnly icon={<Check />} aria-label="Approve" />
+          <IconButton variant="primary" tone="accent" icon={<Check />} aria-label="Approve" />
           <Button variant="secondary">Cancel</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="important-top">
@@ -50,10 +44,9 @@ export function ButtonGroupsFixture({ theme }: { theme: ThemeValue }) {
           <Button>Only action</Button>
         </ButtonGroup>
         <ButtonGroup orientation="vertical" data-testid="single-important">
-          <Button
+          <IconButton
             variant="primary"
             tone="accent"
-            iconOnly
             icon={<Check />}
             aria-label="Only confirmation"
           />

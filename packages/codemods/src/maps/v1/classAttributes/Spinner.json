@@ -16,5 +16,11 @@
     "attributes": {
       "data-size": "lg"
     }
+  },
+  "env-loading-state": {
+    "class": "env-spinner",
+    "attributes": {
+      "data-show-label": ""
+    }
   }
 }

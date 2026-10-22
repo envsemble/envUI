@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Column, Text } from '@envsemble/envui';
+import { Button, List, Column, Text } from '@envsemble/envui';
 import { TaskAlt } from '@envsemble/envui/icons/TaskAlt';
 
 export default function AllDone() {
@@ -50,11 +50,19 @@ export default function AllDone() {
         </List.Root>
       ) : (
         // A cleared queue states the fact and what comes next: no celebration, and no action.
-        <EmptyState
-          icon={<TaskAlt />}
-          title="No reviews waiting"
-          description="When someone asks you to review a document, it appears here."
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <TaskAlt width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No reviews waiting
+            </Text>
+            <Text variant="body-sm">
+              When someone asks you to review a document, it appears here.
+            </Text>
+          </Column>
+        </Column>
       )}
     </Column>
   );

@@ -25,7 +25,6 @@ import { type ControlSize } from '../foundations/Theme.js';
 import { combobox as comboboxMessages } from '../foundations/messages/combobox.js';
 import { common as commonMessages } from '../foundations/messages/common.js';
 import { IconButton } from '../actions/Button.js';
-import { CloseButton } from '../actions/CloseButton.js';
 import { Spinner } from '../feedback/Spinner.js';
 import { Check } from '../icons/Check.js';
 import { ChevronRight } from '../icons/ChevronRight.js';
@@ -504,7 +503,13 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
                   {!disabled && !readOnly && (
                     <BaseCombobox.ChipRemove
                       className="env-combobox-chip-remove"
-                      render={<CloseButton aria-label={removeName(text)} />}
+                      render={
+                        <IconButton
+                          variant="ghost"
+                          icon={<Close />}
+                          aria-label={removeName(text)}
+                        />
+                      }
                     />
                   )}
                 </BaseCombobox.Chip>

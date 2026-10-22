@@ -9,11 +9,11 @@ import {
   type ReactNode,
 } from 'react';
 import { IconButton } from '../../actions/Button.js';
-import { CloseButton } from '../../actions/CloseButton.js';
 import { Tooltip } from '../../feedback/Tooltip.js';
 import { panelDock as panelDockMessages } from '../../foundations/messages/panelDock.js';
 import { CloseFullscreen } from '../../icons/CloseFullscreen.js';
 import { Minimize } from '../../icons/Minimize.js';
+import { Close } from '../../icons/Close.js';
 import { OpenInFull } from '../../icons/OpenInFull.js';
 import { classNames } from '../../internal/classNames.js';
 import { Grid, Row } from '../../foundations/Layout.js';
@@ -136,7 +136,12 @@ function WindowControls() {
         />
       )}
       <Tooltip content={messages.close}>
-        <CloseButton aria-label={messages.close} onClick={panel.close} />
+        <IconButton
+          variant="ghost"
+          icon={<Close />}
+          aria-label={messages.close}
+          onClick={panel.close}
+        />
       </Tooltip>
     </Row>
   );

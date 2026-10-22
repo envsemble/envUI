@@ -58,8 +58,8 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
+        "IconButton",
         "Skeleton"
       ]
     },
@@ -231,14 +231,27 @@
       "parts": [
         {
           "class": "env-badge",
-          "description": "The badge: a small pill label."
+          "description": "The badge: a small pill label, or with data-count a compact count."
+        },
+        {
+          "class": "env-badge-count-label",
+          "description": "What a count means, such as 12 unread, for assistive technology; visually hidden."
         },
         {
           "class": "env-badge-label",
-          "description": "The badge's text."
+          "description": "The badge's text, or its count."
         }
       ],
       "states": [
+        {
+          "attribute": "data-count",
+          "values": [
+            ""
+          ],
+          "parts": [
+            "env-badge"
+          ]
+        },
         {
           "attribute": "data-tone",
           "values": [
@@ -319,7 +332,7 @@
         }
       ],
       "uses": [
-        "CounterBadge",
+        "Badge",
         "Icon",
         "Menu",
         "Skeleton"
@@ -689,14 +702,6 @@
           "description": "The title."
         },
         {
-          "class": "env-card-icon",
-          "description": "The icon of the feature layout."
-        },
-        {
-          "class": "env-card-layout",
-          "description": "The row of the feature layout: icon, text and actions."
-        },
-        {
           "class": "env-card-meta",
           "description": "The short fact at the end of the title row."
         }
@@ -730,20 +735,9 @@
           "parts": [
             "env-card"
           ]
-        },
-        {
-          "attribute": "data-layout",
-          "values": [
-            "feature",
-            "stack"
-          ],
-          "parts": [
-            "env-card"
-          ]
         }
       ],
       "uses": [
-        "Icon",
         "Surface",
         "Text"
       ]
@@ -776,21 +770,6 @@
       "states": [],
       "uses": [
         "Icon"
-      ]
-    },
-    "CloseButton": {
-      "root": "env-close-button",
-      "source": "packages/ui/src/actions/CloseButton.tsx",
-      "parts": [
-        {
-          "class": "env-close-button",
-          "description": "The button that closes a dialog, panel or message."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Icon",
-        "IconButton"
       ]
     },
     "Code": {
@@ -844,14 +823,22 @@
         {
           "class": "env-code-diff",
           "description": "The diff of two versions of code."
+        },
+        {
+          "class": "env-code-diff-failed",
+          "description": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert."
+        },
+        {
+          "class": "env-code-diff-failed-icon",
+          "description": "The error icon of a diff that failed to load, in the danger color."
         }
       ],
       "states": [],
       "uses": [
         "Button",
-        "EmptyState",
         "Icon",
-        "LoadingState"
+        "Spinner",
+        "Text"
       ]
     },
     "ColorPicker": {
@@ -1051,7 +1038,6 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Field",
         "Icon",
         "IconButton",
@@ -1231,7 +1217,10 @@
       ],
       "states": [],
       "uses": [
-        "Button"
+        "Button",
+        "Icon",
+        "IconButton",
+        "Spinner"
       ]
     },
     "ConfirmDialog": {
@@ -1274,36 +1263,12 @@
       "uses": [
         "Button",
         "Icon",
+        "IconButton",
         "Popup",
         "Skeleton",
+        "Spinner",
         "Theme",
         "Tooltip"
-      ]
-    },
-    "CounterBadge": {
-      "root": "env-counter-badge",
-      "source": "packages/ui/src/content/CounterBadge.tsx",
-      "parts": [
-        {
-          "class": "env-counter-badge",
-          "description": "The count badge."
-        },
-        {
-          "class": "env-counter-badge-label",
-          "description": "The count."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-tone",
-          "values": [
-            "accent",
-            "neutral"
-          ],
-          "parts": [
-            "env-counter-badge"
-          ]
-        }
       ]
     },
     "DatePicker": {
@@ -1741,8 +1706,8 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
+        "IconButton",
         "Menu"
       ]
     },
@@ -1880,47 +1845,6 @@
         "Field",
         "Icon",
         "Spinner"
-      ]
-    },
-    "EmptyState": {
-      "root": "env-empty-state",
-      "source": "packages/ui/src/feedback/EmptyState.tsx",
-      "parts": [
-        {
-          "class": "env-empty-state",
-          "description": "The empty state."
-        },
-        {
-          "class": "env-empty-state-description",
-          "description": "The sentence under the title."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-align",
-          "values": [
-            "center",
-            "start"
-          ],
-          "parts": [
-            "env-empty-state"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "danger",
-            "neutral"
-          ],
-          "parts": [
-            "env-empty-state"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon",
-        "Skeleton",
-        "Text"
       ]
     },
     "Field": {
@@ -2222,24 +2146,6 @@
         "IconButton",
         "Skeleton",
         "Text"
-      ]
-    },
-    "LoadingState": {
-      "root": "env-loading-state",
-      "source": "packages/ui/src/feedback/LoadingState.tsx",
-      "parts": [
-        {
-          "class": "env-loading-state",
-          "description": "The spinner with a label."
-        },
-        {
-          "class": "env-loading-state-label",
-          "description": "The label that says what is loading."
-        }
-      ],
-      "states": [],
-      "uses": [
-        "Spinner"
       ]
     },
     "Markdown": {
@@ -2670,69 +2576,6 @@
         "Theme"
       ]
     },
-    "OrganizationSwitcher": {
-      "root": "env-organization-switcher",
-      "source": "packages/ui/src/navigation/OrganizationSwitcher.tsx",
-      "parts": [
-        {
-          "class": "env-organization-switcher",
-          "description": "The organization switcher's popup."
-        },
-        {
-          "class": "env-organization-switcher-create",
-          "description": "The item that creates an organization."
-        },
-        {
-          "class": "env-organization-switcher-description",
-          "description": "An organization's description."
-        },
-        {
-          "class": "env-organization-switcher-header",
-          "description": "The header of the popup."
-        },
-        {
-          "class": "env-organization-switcher-heading",
-          "description": "The heading of the popup."
-        },
-        {
-          "class": "env-organization-switcher-option",
-          "description": "One organization."
-        },
-        {
-          "class": "env-organization-switcher-options",
-          "description": "The list of organizations."
-        },
-        {
-          "class": "env-organization-switcher-trigger",
-          "description": "The button that opens the switcher."
-        },
-        {
-          "class": "env-organization-switcher-trigger-label",
-          "description": "The current organization's name in the trigger."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-checked",
-          "values": [],
-          "parts": [
-            "env-organization-switcher-option"
-          ]
-        },
-        {
-          "attribute": "data-highlighted",
-          "values": [],
-          "parts": [
-            "env-organization-switcher-create"
-          ]
-        }
-      ],
-      "uses": [
-        "Button",
-        "Icon",
-        "Menu"
-      ]
-    },
     "Page": {
       "root": "env-page",
       "source": "packages/ui/src/layout/Page.tsx",
@@ -3112,7 +2955,6 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Icon",
         "IconButton",
         "Tooltip"
@@ -3209,8 +3051,8 @@
       ],
       "uses": [
         "Button",
-        "CloseButton",
         "Icon",
+        "IconButton",
         "ResizeHandle",
         "Skeleton"
       ]
@@ -4011,8 +3853,9 @@
         }
       ],
       "uses": [
-        "CloseButton",
         "Dialog",
+        "Icon",
+        "IconButton",
         "Skeleton",
         "Surface",
         "Theme"
@@ -4083,14 +3926,25 @@
       "parts": [
         {
           "class": "env-spinner",
-          "description": "The spinner."
+          "description": "The spinner, or with data-show-label the status line that holds it and its label."
         },
         {
           "class": "env-spinner-arc",
           "description": "The turning arc."
+        },
+        {
+          "class": "env-spinner-label",
+          "description": "The label shown beside the spinner, which says what is loading."
         }
       ],
       "states": [
+        {
+          "attribute": "data-show-label",
+          "values": [],
+          "parts": [
+            "env-spinner"
+          ]
+        },
         {
           "attribute": "data-size",
           "values": [
@@ -4102,77 +3956,6 @@
             "env-spinner"
           ]
         }
-      ]
-    },
-    "Stat": {
-      "root": "env-stat",
-      "source": "packages/ui/src/content/Stat.tsx",
-      "parts": [
-        {
-          "class": "env-stat",
-          "description": "One statistic."
-        },
-        {
-          "class": "env-stat-description",
-          "description": "The sentence under the value."
-        },
-        {
-          "class": "env-stat-footer",
-          "description": "The row with the trend and the description."
-        },
-        {
-          "class": "env-stat-group",
-          "description": "A row of statistics."
-        },
-        {
-          "class": "env-stat-label",
-          "description": "The label."
-        },
-        {
-          "class": "env-stat-trend",
-          "description": "The change since the last period."
-        },
-        {
-          "class": "env-stat-value",
-          "description": "The value."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-direction",
-          "values": [
-            "down",
-            "flat",
-            "up"
-          ],
-          "parts": [
-            "env-stat-trend"
-          ]
-        },
-        {
-          "attribute": "data-env-skeleton",
-          "values": [],
-          "parts": [
-            "env-stat-description"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "danger",
-            "neutral",
-            "success",
-            "warning"
-          ],
-          "parts": [
-            "env-stat-trend"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon",
-        "Skeleton",
-        "Surface"
       ]
     },
     "Surface": {
@@ -4513,13 +4296,6 @@
             "muted",
             "subtle"
           ],
-          "parts": [
-            "env-text"
-          ]
-        },
-        {
-          "attribute": "data-env-skeleton",
-          "values": [],
           "parts": [
             "env-text"
           ]
@@ -4906,10 +4682,10 @@
         }
       ],
       "uses": [
+        "Badge",
         "Button",
-        "CloseButton",
-        "CounterBadge",
         "Icon",
+        "IconButton",
         "Theme"
       ]
     },
@@ -4964,7 +4740,6 @@
         }
       ],
       "uses": [
-        "Button",
         "IconButton",
         "Kbd",
         "Tooltip"
@@ -5519,7 +5294,6 @@
         "DatePicker",
         "Dialog",
         "Drawer",
-        "EmptyState",
         "HoverCard",
         "List",
         "Menu",
@@ -5535,7 +5309,6 @@
         "SegmentedControl",
         "Select",
         "Sheet",
-        "Stat",
         "Surface",
         "Table",
         "TimePicker",

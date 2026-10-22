@@ -193,6 +193,25 @@ function waitForQuiet({ quiet, limit }) {
   });
 }
 
+/** The headings, buttons and links of the page, which the `appears` check reads. */
+const roleSelectors = {
+  heading: 'h1, h2, h3, h4, h5, h6, [role="heading"]',
+  button: 'button, [role="button"], input[type="button"], input[type="submit"], a[href]',
+};
+
+/**
+ * Marks the visible elements of the given roles before the browser step types its search, so the
+ * `appears` check finds only what the search brought.
+ */
+function markPresent(roles) {
+  for (const selector of roles) {
+    for (const element of document.querySelectorAll(selector)) {
+      const box = element.getBoundingClientRect();
+      if (box.width > 0 && box.height > 0) element.setAttribute('data-bench-before', '');
+    }
+  }
+}
+
 /**
  * Measures the page at the window's current width: dev mode's `layout.at()` at that width, the
  * page's own horizontal overflow, and the task's rendered checks. Returns plain data.
@@ -376,6 +395,18 @@ function measureHere({ width, checks }) {
           ? { pass: true }
           : { pass: false, detail: `${describe(check.anchor)} is ${off}rem off centre` };
       }
+      case 'appears': {
+        // What the search brought: a visible element of each role that wasn't visible before it.
+        const missing = check.roles.filter(
+          (role) =>
+            !Array.from(document.querySelectorAll(check.selectors[role])).some(
+              (element) => !element.hasAttribute('data-bench-before') && isVisible(element),
+            ),
+        );
+        return missing.length
+          ? { pass: false, detail: `no new ${missing.join(' or ')} after searching` }
+          : { pass: true };
+      }
       case 'busy': {
         const busy = Array.from(document.querySelectorAll('[aria-busy="true"]')).some(isVisible);
         return busy ? { pass: true } : { pass: false, detail: 'nothing visible is aria-busy' };
@@ -411,8 +442,10 @@ function measureHere({ width, checks }) {
 
 /**
  * The rendered checks of a task, flattened: each with the capability it belongs to, the widths it
- * applies at (all four by default) and the state it is measured in (`loaded` by default, or
- * `loading`, measured as soon as the app has rendered).
+ * applies at (all four by default) and the state it is measured in (`loaded` by default,
+ * `loading`, measured as soon as the app has rendered, or `searched`, measured after the browser
+ * step types the check's `search` into the page's search field). An `appears` check takes the
+ * selectors of its roles.
  */
 export function renderedChecks(task) {
   return (task.capabilities ?? []).flatMap((capability) =>
@@ -421,7 +454,10 @@ export function renderedChecks(task) {
       capability: capability.id,
       key: `${capability.id}#${index}`,
       at: check.at ?? layoutWidths,
-      state: check.state ?? 'loaded',
+      state: check.state ?? (check.search === undefined ? 'loaded' : 'searched'),
+      ...(check.check === 'appears' && {
+        selectors: Object.fromEntries(check.roles.map((role) => [role, roleSelectors[role]])),
+      }),
     })),
   );
 }
@@ -617,6 +653,50 @@ async function measureRun({ browser, appDir, tmpDir, task, env, fault, run, outc
     for (const result of reading.checks) outcome.checks.push({ ...result, width });
   }
   outcome.problems = distinctProblems(outcome.widths);
+  await measureSearched({ page, checks, run, outcome });
+}
+
+/** The page's search field: a search input or searchbox, or a field named or labelled Search. */
+const searchField =
+  'input[type="search"], [role="searchbox"], input[aria-label*="search" i], input[placeholder*="search" i], input[name*="search" i]';
+
+/**
+ * The searched checks, after the loaded state: the step types each check's `search` into the
+ * page's search field at the widest width, waits for the DOM to settle, and measures at the
+ * check's widths. Without a search field, each check fails.
+ */
+async function measureSearched({ page, checks, run, outcome }) {
+  const searched = checks.filter((check) => check.state === 'searched');
+  for (const query of new Set(searched.map((check) => check.search))) {
+    run.alive();
+    const here = searched.filter((check) => check.search === query);
+    const widest = layoutWidths.at(-1);
+    await page.setViewportSize({ width: remToPx(widest), height: windowHeight });
+    const roles = [...new Set(here.flatMap((check) => Object.values(check.selectors ?? {})))];
+    await page.evaluate(markPresent, roles);
+    const field = page.locator(searchField).filter({ visible: true }).first();
+    const typed = await field
+      .fill(query, { timeout: timeouts.quiet * 4 })
+      .then(() => true)
+      .catch(() => false);
+    if (!typed) {
+      for (const check of here)
+        for (const width of check.at)
+          outcome.checks.push({ key: check.key, pass: false, detail: 'no search field', width });
+      continue;
+    }
+    await page.evaluate(waitForQuiet, { quiet: timeouts.quiet, limit: timeouts.quiet * 10 });
+    for (const width of layoutWidths) {
+      const atWidth = here.filter((check) => check.at.includes(width));
+      if (!atWidth.length) continue;
+      await page.setViewportSize({ width: remToPx(width), height: windowHeight });
+      await page.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+      );
+      const reading = await page.evaluate(measureHere, { width: null, checks: atWidth });
+      for (const result of reading.checks) outcome.checks.push({ ...result, width });
+    }
+  }
 }
 
 function withTimeout(promise, ms, message, ErrorType = Error) {

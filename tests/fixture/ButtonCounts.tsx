@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  Badge,
-  Button,
-  CounterBadge,
-  DiffStat,
-  Tabs,
-  Text,
-  Theme,
-  type ThemeValue,
-  Row,
-} from '@envsemble/envui';
+import { Badge, Button, DiffStat, Tabs, Text, Theme, type ThemeValue, Row } from '@envsemble/envui';
 
 /** The 1.0 emphasis of each 0.7 variant, which the samples are still named by. */
 const emphasis = {
@@ -37,7 +27,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'submissions',
             button: (
               <Button>
-                Submissions <CounterBadge value={24} tone="accent" />
+                Submissions <Badge count={24} tone="accent" variant="solid" />
               </Button>
             ),
             content: <Text>Submissions</Text>,
@@ -46,7 +36,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
             value: 'drafts',
             button: (
               <Button>
-                Drafts <CounterBadge value={3} />
+                Drafts <Badge count={3} />
               </Button>
             ),
             content: <Text>Drafts</Text>,
@@ -77,7 +67,7 @@ export function ButtonCountsFixture({ theme }: { theme: ThemeValue }) {
       <Row wrap align="center" gap={4}>
         {variants.map((variant) => (
           <Button key={variant} {...emphasis[variant]}>
-            {variant} <CounterBadge value={7} /> <Badge tone="success">New</Badge>{' '}
+            {variant} <Badge count={7} /> <Badge tone="success">New</Badge>{' '}
             <DiffStat additions={3} deletions={1} />
           </Button>
         ))}

@@ -6,9 +6,8 @@ import type {
   ReactNode,
 } from 'react';
 import { classNames } from '../internal/classNames.js';
-import { DecorativeIcon } from '../internal/DecorativeIcon.js';
 import { Text } from '../foundations/Text.js';
-import { Column, Grid, Row, type SpaceStep } from '../foundations/Layout.js';
+import { Column, Row, type SpaceStep } from '../foundations/Layout.js';
 import { Surface } from '../foundations/Surface.js';
 import { ActionElement, type ActionElementProps } from '../internal/ActionElement.js';
 import { given, type SkeletonProps } from '../internal/skeleton.js';
@@ -42,37 +41,21 @@ interface CardSurfaceProps extends SkeletonProps {
 /** What only a content card takes; an interactive card is one link or button. */
 interface CardContentOptions {
   /**
-   * The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the
-   * headline type. headingLevel sets another level. Given as undefined, such as over a placeholder
-   * item, a skeleton shows a bar in its place.
+   * The card's title at the top: an `h3` in the title type. headingLevel sets another level. Given
+   * as undefined, such as over a placeholder item, a skeleton shows a bar in its place.
    */
   title?: ReactNode;
   /**
-   * The title's heading level, for the page's outline; the type stays as the layout sets it.
-   * @default 3, or 2 in the feature layout
+   * The title's heading level, for the page's outline; the type stays the title type.
+   * @default 3
    */
   headingLevel?: CardHeadingLevel;
   /** A short fact at the end of the title row, such as when the card was updated. */
   meta?: ReactNode;
   /** A sentence under the title, in muted text. */
   description?: ReactNode;
-  /**
-   * A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from
-   * assistive technology.
-   */
-  icon?: ReactNode;
-  /**
-   * The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature
-   * layout at its end, moving below the text and filling the card's width in a card narrower than
-   * 38 rem.
-   */
+  /** The card's controls, such as Buttons, in a strip along the bottom of the card. */
   actions?: ReactNode;
-  /**
-   * stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an
-   * icon at the start, the title and description, and the actions at the end.
-   * @default 'stack'
-   */
-  layout?: 'stack' | 'feature';
   /**
    * The element for the card's meaning, such as render={<article />} or render={<section />}. A
    * div by default.
@@ -114,13 +97,13 @@ export type CardButtonProps = CardSurfaceProps &
 
 /**
  * A content card (the default), a link card with href, or a button card with onClick. A link or
- * button card holds its content alone: no title, actions or layout.
+ * button card holds its content alone: no title or actions.
  */
 export type CardProps = CardContentProps | CardLinkProps | CardButtonProps;
 
 /**
  * A rounded surface that groups content about one subject: a content card with an optional
- * title row and actions, a feature card with an icon and an action, or one link or button.
+ * title row and actions, or one link or button.
  */
 export function Card(props: CardProps) {
   if (props.href !== undefined || props.onClick !== undefined)
@@ -148,7 +131,6 @@ function InteractiveCard({
           render={<ActionElement {...(props as ActionElementProps)} />}
           className={classNames('env-card', className)}
           style={style}
-          data-layout="stack"
           data-interactive=""
         />
       }
@@ -178,75 +160,40 @@ function ContentCardLayout({
   headingLevel,
   meta,
   description,
-  icon,
   actions,
-  layout = 'stack',
   render,
   className,
   style,
   children,
   ...props
 }: CardContentProps & { slots: Record<'title' | 'meta' | 'description', boolean> }) {
-  const feature = layout === 'feature';
   const hasTitle = title != null || slots.title;
   const hasMeta = meta != null || slots.meta;
   const hasActions = actions != null && actions !== false;
-  const level = headingLevel ?? (feature ? 2 : 3);
+  const level = headingLevel ?? 3;
   const Heading = `h${level}` as const;
   const headingText = hasTitle && (
-    <Text
-      render={<Heading />}
-      variant={feature ? 'headline' : 'title'}
-      className="env-card-heading"
-    >
+    <Text render={<Heading />} variant="title" className="env-card-heading">
       {title}
     </Text>
   );
-  // The feature layout's title stands alone in its column unless a meta shares its row.
-  const header =
-    feature && !hasMeta
-      ? headingText
-      : (hasTitle || hasMeta) && (
-          <Row wrap align="center" gap={3} className="env-card-header">
-            {headingText}
-            {hasMeta && (
-              <Text render={<span />} variant="body-sm" className="env-card-meta">
-                {meta}
-              </Text>
-            )}
-          </Row>
-        );
+  const header = (hasTitle || hasMeta) && (
+    <Row wrap align="center" gap={3} className="env-card-header">
+      {headingText}
+      {hasMeta && (
+        <Text render={<span />} variant="body-sm" className="env-card-meta">
+          {meta}
+        </Text>
+      )}
+    </Row>
+  );
   const descriptionText = (description != null || slots.description) && (
-    <Text
-      variant={feature ? 'body-sm' : 'body'}
-      emphasis={feature ? undefined : 'muted'}
-      className="env-card-description"
-    >
+    <Text variant="body" emphasis="muted" className="env-card-description">
       {description}
     </Text>
   );
   let content: ReactNode;
-  if (feature) {
-    content = (
-      <Grid align="center" gap={4} className="env-card-layout">
-        {icon != null && (
-          <div className="env-card-icon">
-            <DecorativeIcon>{icon}</DecorativeIcon>
-          </div>
-        )}
-        <Column gap={4} className="env-card-body">
-          {(header || descriptionText) && (
-            <Column gap={1}>
-              {header}
-              {descriptionText}
-            </Column>
-          )}
-          {children}
-        </Column>
-        {hasActions && <div className="env-card-footer">{actions}</div>}
-      </Grid>
-    );
-  } else if (hasActions) {
+  if (hasActions) {
     content = (
       <>
         <Column gap={4} className="env-card-body">
@@ -284,10 +231,9 @@ function ContentCardLayout({
         <Column
           {...props}
           render={render}
-          gap={!feature && hasActions ? 0 : 4}
+          gap={hasActions ? 0 : 4}
           className={classNames('env-card', className)}
           style={style}
-          data-layout={layout}
           data-actions={hasActions ? '' : undefined}
         />
       }

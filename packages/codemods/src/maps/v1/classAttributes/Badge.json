@@ -1,0 +1,14 @@
+{
+  "env-counter": {
+    "class": "env-badge",
+    "attributes": {
+      "data-count": ""
+    }
+  },
+  "env-counter-badge": {
+    "class": "env-badge",
+    "attributes": {
+      "data-count": ""
+    }
+  }
+}

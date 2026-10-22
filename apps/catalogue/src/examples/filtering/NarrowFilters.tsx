@@ -1,9 +1,7 @@
 import { useRef, useState } from 'react';
 import {
   Button,
-  CounterBadge,
   DialogClose,
-  EmptyState,
   List,
   Radio,
   RadioGroup,
@@ -15,6 +13,7 @@ import {
   Text,
   useContainerSize,
   windowClasses,
+  Badge,
 } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -89,7 +88,7 @@ export default function NarrowFilters() {
             trigger={
               <Button variant="secondary" size="sm" startIcon={<FilterList />}>
                 Filters
-                {applied > 0 && <CounterBadge value={applied} aria-label={`${applied} in use`} />}
+                {applied > 0 && <Badge count={applied} aria-label={`${applied} in use`} />}
               </Button>
             }
             title="Filters"
@@ -141,21 +140,24 @@ export default function NarrowFilters() {
           ))}
         </List.Root>
       ) : (
-        // The toolbar stays above the empty state, so people can change what they asked for.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching projects"
-          description={
-            term
-              ? `No project names contain “${query.trim()}” with these filters.`
-              : 'No projects match these filters.'
-          }
-          action={
-            <Button variant="secondary" onClick={clearAll}>
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching projects
+            </Text>
+            <Text variant="body-sm">
+              {term
+                ? `No project names contain “${query.trim()}” with these filters.`
+                : 'No projects match these filters.'}
+            </Text>
+          </Column>
+          <Button variant="secondary" onClick={clearAll}>
+            Clear filters
+          </Button>
+        </Column>
       )}
     </Column>
   );

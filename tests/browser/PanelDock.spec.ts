@@ -1589,7 +1589,7 @@ test('the dock and its window controls take their names from EnvUIProvider, and 
   await expect(notizen.getByRole('button', { name: 'Minimieren' })).toHaveCount(0);
   await expect(notizen.getByRole('button', { name: 'Notizen bearbeiten' })).toBeVisible();
   // The application's actions and the window controls are ghost buttons; the tab's close button is
-  // a CloseButton.
+  // a ghost IconButton with a cross.
   for (const button of [
     entwurf.getByRole('button', { name: 'Entwurf bearbeiten' }),
     entwurf.getByRole('button', { name: 'Minimieren' }),

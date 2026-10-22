@@ -37,8 +37,8 @@
       "navigation/internal/PanelDockContext.ts": "shell",
       "actions/AvatarButton.tsx": "composites",
       "actions/Button.tsx": "composites",
+      "actions/internal/ButtonBase.tsx": "composites",
       "actions/ButtonGroup.tsx": "base",
-      "actions/CloseButton.tsx": "composites",
       "actions/ConfirmButton.tsx": "composites",
       "actions/CopyButton.tsx": "composites",
       "actions/SearchTrigger.tsx": "composites",
@@ -54,7 +54,6 @@
       "content/Code.tsx": "base",
       "content/CodeBlock.tsx": "composites",
       "content/ColorSwatch.tsx": "base",
-      "content/CounterBadge.tsx": "base",
       "content/DescriptionList.tsx": "base",
       "content/DiffStat.tsx": "base",
       "content/Disclosure.tsx": "base",
@@ -65,7 +64,6 @@
       "content/Message.tsx": "composites",
       "content/Rating.tsx": "base",
       "content/RelativeTime.tsx": "composites",
-      "content/Stat.tsx": "base",
       "content/Table.tsx": "base",
       "content/formatRelativeTime.ts": "base",
       "feedback/Alert.tsx": "composites",
@@ -73,13 +71,13 @@
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Sheet.tsx": "composites",
-      "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
-      "feedback/LoadingState.tsx": "composites",
       "feedback/Meter.tsx": "base",
       "feedback/Progress.tsx": "base",
       "feedback/Popover.tsx": "base",
       "feedback/Spinner.tsx": "base",
+      "feedback/internal/SpinnerLabel.tsx": "base",
+      "feedback/internal/SpinnerArc.tsx": "base",
       "feedback/Tooltip.tsx": "base",
       "feedback/internal/AlertDismiss.tsx": "composites",
       "feedback/toast/ToastBody.tsx": "composites",
@@ -119,8 +117,6 @@
       "navigation/Bar.tsx": "composites",
       "navigation/Drawer.tsx": "base",
       "navigation/Rail.tsx": "base",
-      "navigation/OrganizationSwitcher.tsx": "composites",
-      "navigation/internal/OrganizationOptions.tsx": "composites",
       "navigation/Pager.tsx": "base",
       "navigation/Pagination.tsx": "composites",
       "navigation/Tabs.tsx": "composites",
@@ -227,7 +223,8 @@
         ]
       },
       "Button": {
-        "classes": ["env-icon-button"]
+        "classes": ["env-icon-button"],
+        "modules": ["actions/internal/ButtonBase.tsx"]
       },
       "AvatarButton": {
         "styles": ["Button.css"]
@@ -242,7 +239,7 @@
         "styles": ["Text.css"]
       },
       "Badge": {
-        "modules": ["content/CounterBadge.tsx", "content/DiffStat.tsx"]
+        "modules": ["content/DiffStat.tsx"]
       },
       "Code": {
         "modules": [
@@ -260,6 +257,9 @@
       },
       "Alert": {
         "modules": ["feedback/internal/AlertDismiss.tsx"]
+      },
+      "Spinner": {
+        "modules": ["feedback/internal/SpinnerLabel.tsx", "feedback/internal/SpinnerArc.tsx"]
       },
       "Scaffold": {
         "modules": ["layout/internal/useScrollKeys.ts"]
@@ -349,10 +349,6 @@
       "Menu": {
         "modules": ["navigation/ContextMenu.tsx", "navigation/internal/MenuPopup.tsx"]
       },
-      "OrganizationSwitcher": {
-        "styles": ["Menu.css"],
-        "modules": ["navigation/internal/OrganizationOptions.tsx"]
-      },
       "PanelDock": {
         "modules": [
           "navigation/panel-dock/Root.tsx",
@@ -381,9 +377,6 @@
       "PopupSurface": {
         "classes": ["env-popup"],
         "styles": ["Popup.css"]
-      },
-      "CloseButton": {
-        "styles": ["Button.css"]
       },
       "ColorPicker": {
         "modules": ["forms/internal/ColorPlane.tsx"]
@@ -468,8 +461,8 @@
         },
         {
           "stylesheet": "Code.css",
-          "classes": ["env-loading-state", "env-empty-state"],
-          "note": "A code diff pads its loading and empty states."
+          "classes": ["env-spinner"],
+          "note": "A code diff pads its loading state."
         },
         {
           "stylesheet": "Composer.css",

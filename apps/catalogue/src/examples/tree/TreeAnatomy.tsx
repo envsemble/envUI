@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CounterBadge, Tree, type TreeItem } from '@envsemble/envui';
+import { Tree, type TreeItem, Badge } from '@envsemble/envui';
 import { Description } from '@envsemble/envui/icons/Description';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
@@ -12,7 +12,7 @@ const rowsFor = (open: boolean): TreeItem[] =>
       icon: <FolderOpen />,
       expandable: true,
       expanded: open,
-      end: <CounterBadge value={2} aria-label="2 unread" />,
+      end: <Badge count={2} aria-label="2 unread" />,
     },
     {
       id: 'design/brand.md',

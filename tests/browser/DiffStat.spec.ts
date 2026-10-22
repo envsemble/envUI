@@ -30,10 +30,10 @@ test('a diff stat is one pill with additions in green and deletions in red, name
     });
     expect(additions).toBe(success);
     expect(deletions).toBe(danger);
-    // As tall as a counter, so it sits in the same places.
+    // As tall as a count badge, so it sits in the same places.
     const counter = (await page
       .getByTestId(`button-counts-${theme}`)
-      .locator('.env-counter-badge')
+      .locator('.env-badge[data-count]')
       .first()
       .boundingBox())!;
     expect(Math.abs((await count.boundingBox())!.height - counter.height)).toBeLessThan(0.5);

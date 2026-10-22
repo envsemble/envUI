@@ -164,6 +164,6 @@ Examples, screenshots and tests use one neutral set of sample data, so they look
 - [Accessibility](../foundations/accessibility.md)
 - [Typography](../foundations/typography.md)
 - [TextField](../components/text-field.md)
-- [EmptyState](../components/empty-state.md)
+- [Empty states](../patterns/empty-states.md)
 - [Toast](../components/toast.md)
 - [ConfirmDialog](../components/confirm-dialog.md)

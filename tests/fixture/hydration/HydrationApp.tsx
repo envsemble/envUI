@@ -26,7 +26,6 @@ import {
   Composer,
   Message,
   MessageList,
-  Stat,
   CalendarHeatmap,
   Combobox,
   PanelDock,
@@ -263,14 +262,6 @@ export function HydrationApp() {
             )}
           </PanelDock.Root>
         </div>
-        <Stat.Group aria-label="Hydrated stats">
-          <Stat.Root
-            label="Hydrated stat"
-            value="128"
-            trend={{ direction: 'up', label: '+12%' }}
-            description="Last 30 days"
-          />
-        </Stat.Group>
         <DropZone
           size="sm"
           label="Hydrated files"

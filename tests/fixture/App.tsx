@@ -46,7 +46,6 @@ import { AffixesFixture } from './Affixes.js';
 import { SlidersFixture } from './Sliders.js';
 import { ComposerFixture } from './Composer.js';
 import { MessagesFixture } from './Messages.js';
-import { StatsFixture } from './Stats.js';
 import { DropZonesFixture } from './DropZones.js';
 import { ButtonCountsFixture } from './ButtonCounts.js';
 import { CalendarHeatmapFixture } from './CalendarHeatmaps.js';
@@ -60,7 +59,6 @@ import { DatePickerFixture } from './DatePickers.js';
 import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
-import { EmptyStatesFixture } from './EmptyStates.js';
 import { SheetsFixture } from './Sheets.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
@@ -294,12 +292,6 @@ export default function App() {
               <MessagesFixture theme="dark" />
             </>
           )}
-          {includes('stats') && (
-            <>
-              <StatsFixture theme="light" />
-              <StatsFixture theme="dark" />
-            </>
-          )}
           {includes('drop-zones') && (
             <>
               <DropZonesFixture theme="light" />
@@ -376,12 +368,6 @@ export default function App() {
             <>
               <RatingsFixture theme="light" />
               <RatingsFixture theme="dark" />
-            </>
-          )}
-          {includes('empty-states') && (
-            <>
-              <EmptyStatesFixture theme="light" />
-              <EmptyStatesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

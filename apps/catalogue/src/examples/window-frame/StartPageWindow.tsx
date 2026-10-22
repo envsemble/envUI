@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { Button, Column, EmptyState, Page, Scaffold, TopBar } from '@envsemble/envui';
+import { Button, Column, Page, Scaffold, TopBar, Text } from '@envsemble/envui';
 import { NoteAdd } from '@envsemble/envui/icons/NoteAdd';
 
 /** Stands in for the window: a Scaffold fills its container, the window's height by default. */
@@ -18,14 +18,24 @@ export default function StartPageWindow() {
     >
       <Page width="sm">
         <Column align="center">
-          <EmptyState
+          <Column
+            gap={4}
+            padding={5}
             align="center"
-            icon={<NoteAdd />}
-            title="Start writing"
-            description="Your notes stay on this device until you share them."
-            headingLevel={3}
-            action={<Button>New note</Button>}
-          />
+            justify="center"
+            style={{ textAlign: 'center' }}
+          >
+            <Text render={<span />} emphasis="muted">
+              <NoteAdd width="2.5rem" height="2.5rem" />
+            </Text>
+            <Column gap={2} align="center" style={{ maxInlineSize: '30rem' }}>
+              <Text render={<h3 />} variant="title">
+                Start writing
+              </Text>
+              <Text variant="body-sm">Your notes stay on this device until you share them.</Text>
+            </Column>
+            <Button>New note</Button>
+          </Column>
         </Column>
       </Page>
     </Scaffold>

@@ -414,7 +414,7 @@ export function buildParts({
       for (const file of reachable(group.source)) {
         for (const other of filesOf.get(file) ?? [])
           if (groups.get(other).source !== group.source) uses.add(other);
-        // The components its files import and render, such as Bar's Menu and CounterBadge.
+        // The components its files import and render, such as Bar's Menu and Badge.
         for (const { source: next, names, namespace } of renders.get(file) ?? [])
           if (next !== group.source)
             for (const other of groupsBySource.get(next) ?? [])

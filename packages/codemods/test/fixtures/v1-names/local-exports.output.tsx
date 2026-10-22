@@ -1,4 +1,4 @@
-import { CounterBadge, TextField, Menu, MenuItem } from '@envsemble/envui';
+import { DiffStat, TextField, Menu, MenuItem } from '@envsemble/envui';
 
 export { TextField, MenuItem, Menu };
-export { CounterBadge as Badge };
+export { DiffStat as Changes };

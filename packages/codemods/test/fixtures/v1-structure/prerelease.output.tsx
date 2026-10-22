@@ -1,4 +1,4 @@
-import { Drawer, LoadingState, Sheet, Text } from '@envsemble/envui';
+import { Drawer, LoadingState, Sheet, Text, Spinner } from '@envsemble/envui';
 
 const destinations = [{ label: 'Inbox', icon: 'inbox', href: '/inbox' }];
 
@@ -14,6 +14,6 @@ export const Filters = ({ open }: { open: boolean }) => (
     <LoadingState label="Loading projects">
       <Text>Projects</Text>
     </LoadingState>
-    <LoadingState label="Loading" />
+    <Spinner showLabel label="Loading" />
   </>
 );

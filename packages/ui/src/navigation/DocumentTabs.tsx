@@ -13,7 +13,8 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
-import { CloseButton } from '../actions/CloseButton.js';
+import { IconButton } from '../actions/Button.js';
+import { Close } from '../icons/Close.js';
 import { classNames } from '../internal/classNames.js';
 import { Row } from '../foundations/Layout.js';
 import { DecorativeIcon } from '../internal/DecorativeIcon.js';
@@ -411,7 +412,10 @@ export function DocumentTabs({
               {item.icon != null && <DecorativeIcon>{item.icon}</DecorativeIcon>}
               <span className="env-document-tabs-tab-label">{item.label}</span>
             </BaseTabs.Tab>
-            <CloseButton
+            <IconButton
+              variant="ghost"
+              icon={<Close />}
+              aria-label={closeName(item.label)}
               aria-hidden
               tabIndex={-1}
               title={closeName(item.label)}
