@@ -57,7 +57,11 @@ test('public composition owns spacing and content-fit sizing without documentati
           const rectangles = [...element.children].map((child) => child.getBoundingClientRect());
           return {
             root,
-            inset: rectangles[0].top - element.getBoundingClientRect().top,
+            // From the content box: a card's body with actions has the card's inset.
+            inset:
+              rectangles[0].top -
+              element.getBoundingClientRect().top -
+              parseFloat(getComputedStyle(element).paddingTop),
             gaps: rectangles.slice(1).map((rect, i) => rect.top - rectangles[i].bottom),
           };
         });
