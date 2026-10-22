@@ -58,6 +58,15 @@ test('the readout describes and checks the layout nodes, also at other widths', 
   expect(
     await page.evaluate(() => document.querySelector('.env-theme')!.hasAttribute('style')),
   ).toBe(false);
+  // A height too, as a window of that size would show the page.
+  const sized = await page.evaluate(() =>
+    window.envui!.layout!.at([{ width: '22rem', height: '20rem' }]),
+  );
+  expect(sized[0]).toMatchObject({ width: '22rem', height: '20rem', windowClass: 'compact' });
+  expect(sized[0].text).toMatch(/^root .*· 22×20rem · compact/m);
+  expect(
+    await page.evaluate(() => document.querySelector('.env-theme')!.hasAttribute('style')),
+  ).toBe(false);
 
   // An open overlay is listed with where it landed, and found off the window.
   await page.getByRole('button', { name: 'Open the popover' }).click();
@@ -182,7 +191,7 @@ test('"only the selected" shows the selected node and what is inside it', async 
 });
 
 test(
-  'the frame lays the page out at another width, not the viewport',
+  'the frame lays the page out at another size, not the viewport',
   { tag: '@engines' },
   async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
@@ -192,58 +201,107 @@ test(
     const root = page.locator('.env-theme').first();
     const view = panel.locator('.env-dev-view');
     const scene = panel.locator('.env-dev-scene');
-    const handle = panel.getByRole('slider', { name: 'Page width, right edge' });
+    const right = panel.getByRole('slider', { name: 'Page width, right edge' });
+    const bottom = panel.getByRole('slider', { name: 'Page height, bottom edge' });
     const label = panel.locator('.env-dev-frame-label');
+    const rootSize = () =>
+      root.evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        return `${box.width}×${box.height}`;
+      });
     const rootWidth = () => root.evaluate((element) => element.getBoundingClientRect().width);
-    const realWidth = await rootWidth();
+    const own = await rootSize();
+    const ownWidth = await rootWidth();
     const viewBox = await view.boundingBox();
-    await expect(handle).toHaveAttribute('aria-valuenow', String(Math.round(realWidth)));
+    await expect(right).toHaveAttribute('aria-valuenow', String(Math.round(ownWidth)));
 
-    // A width from View settings: the page is laid out at 22rem, and the planes follow; the window
-    // and the view keep their size.
-    await panel.getByRole('button', { name: 'View settings' }).click();
-    await page.getByRole('button', { name: '22rem' }).click();
-    await page.keyboard.press('Escape');
-    await expect.poll(rootWidth).toBe(352);
-    await expect(scene).toHaveCSS('width', '352px');
-    await expect(label).toHaveText('22rem · 352px · compact');
-    await expect(handle).toHaveAttribute('aria-valuetext', '22rem · 352px · compact');
+    // A device lays the page out at its size, and the planes follow; the window and the view keep
+    // theirs.
+    await panel.getByRole('button', { name: 'Device' }).click();
+    await page.getByRole('menuitemradio', { name: /^iPhone SE/ }).click();
+    await expect.poll(rootSize).toBe('375×667');
+    await expect(scene).toHaveCSS('width', '375px');
+    await expect(label).toHaveText('iPhone SE · 375×667px · 23.44×41.69rem · compact');
+    await expect(right).toHaveAttribute('aria-valuetext', /^iPhone SE · 375×667px/);
     expect(page.viewportSize()).toEqual({ width: 1280, height: 720 });
     expect(await view.boundingBox()).toEqual(viewBox);
-    // The inspector's readout follows the width.
+    // The inspector's readout follows the size.
     await panel.getByRole('tab', { name: 'Readout' }).click();
     await expect(panel.getByRole('tabpanel', { name: 'Readout' }).locator('pre')).toContainText(
-      'scaffold "app" · 22×',
+      'scaffold "app" · 23.44×',
     );
+    // Rotate swaps the width and the height.
+    await panel.getByRole('button', { name: 'Rotate' }).click();
+    await expect.poll(rootSize).toBe('667×375');
+    await expect(label).toContainText('667×375px · 41.69×23.44rem · medium');
 
-    // The arrow keys on a handle step by 1rem, with Shift by 5rem, across window classes.
-    await handle.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect.poll(rootWidth).toBe(368);
-    for (let step = 0; step < 3; step++) await page.keyboard.press('Shift+ArrowRight');
-    await expect(label).toHaveText('38rem · 608px · medium');
-    // Dragging the right edge to the left narrows it.
-    const box = (await handle.boundingBox())!;
+    // The arrow keys on an edge step by 1rem, with Shift by 5rem; stepping makes it a free frame.
+    await bottom.focus();
+    await page.keyboard.press('ArrowUp');
+    await expect.poll(rootSize).toBe('667×391');
+    await expect(label).toHaveText('667×391px · 41.69×24.44rem · medium');
+    await right.focus();
+    await page.keyboard.press('Shift+ArrowLeft');
+    await expect.poll(rootWidth).toBe(587);
+    // Dragging the right edge to the left narrows it, with the whole frame in view.
+    await panel.getByRole('button', { name: 'Fit' }).click();
+    const box = (await right.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
     await page.mouse.move(box.x + box.width / 2 - 40, box.y + box.height / 2, { steps: 5 });
     await page.mouse.up();
-    await expect.poll(rootWidth).toBeLessThan(608);
+    await expect.poll(rootWidth).toBeLessThan(587);
 
-    // Back to the real width: the root's style is as it was.
-    await panel.getByRole('button', { name: 'Back to the real width' }).click();
-    await expect.poll(rootWidth).toBe(realWidth);
+    // Back to the page's own size: the root's style is as it was.
+    await panel.getByRole('button', { name: "Back to the page's own size" }).click();
+    await expect.poll(rootSize).toBe(own);
     expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
-    // Closing dev mode with a width set puts it back too.
-    await handle.focus();
-    await page.keyboard.press('Shift+ArrowLeft');
-    await expect.poll(rootWidth).toBeLessThan(realWidth);
+    // Closing dev mode with a size set puts it back too.
+    await bottom.focus();
+    await page.keyboard.press('Shift+ArrowUp');
+    await expect.poll(rootSize).not.toBe(own);
     await page.keyboard.press('Escape');
     await expect(panel).toBeHidden();
-    expect(await rootWidth()).toBe(realWidth);
+    expect(await rootSize()).toBe(own);
     expect(await root.evaluate((element) => element.hasAttribute('style'))).toBe(false);
   },
 );
+
+test("dev mode switches the page's theme, and gives it back as it closes", async ({ page }) => {
+  await open(page);
+  const toggle = page.getByRole('button', { name: 'Dev mode', exact: true });
+  await toggle.click();
+  const panel = page.getByRole('region', { name: 'Dev mode' });
+  const boundary = page.locator('.env-theme:not([data-env-dev] *)').first();
+  const ownTheme = await boundary.getAttribute('data-env-theme');
+  const ownContrast = await boundary.getAttribute('data-env-contrast');
+  const devTheme = await page.locator('.env-dev').getAttribute('data-env-theme');
+  const surfaces = panel.locator('.env-dev-surface');
+  const surfaceColor = () =>
+    surfaces.evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element).color).join(),
+    );
+  const before = await surfaceColor();
+
+  await panel.getByRole('button', { name: 'Page theme' }).click();
+  await page.getByRole('menuitemradio', { name: 'Dark' }).click();
+  await expect(boundary).toHaveAttribute('data-env-theme', 'dark');
+  await panel.getByRole('button', { name: 'Page theme' }).click();
+  await page.getByRole('menuitemcheckbox', { name: 'High contrast' }).click();
+  await expect(boundary).toHaveAttribute('data-env-contrast', 'high');
+  // The check item leaves its menu open; Escape closes the menu first.
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('menu')).toBeHidden();
+  // Dev mode's own UI keeps its theme, and the planes copy the page again in its new colors.
+  await expect(page.locator('.env-dev')).toHaveAttribute('data-env-theme', devTheme!);
+  await expect.poll(surfaceColor).not.toBe(before);
+
+  // Closing dev mode gives the page its own theme back.
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeHidden();
+  expect(await boundary.getAttribute('data-env-theme')).toBe(ownTheme);
+  expect(await boundary.getAttribute('data-env-contrast')).toBe(ownContrast);
+});
 
 test('the side columns hide and show, and the view takes their room', async ({ page }) => {
   await open(page);
