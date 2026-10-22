@@ -62,6 +62,7 @@
 }
 
 .docs-when-tile {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-content: start;
@@ -69,10 +70,16 @@
   min-inline-size: 0;
 }
 
-.docs-when-picture {
-  display: block;
+/* The name's link covers the tile's picture and name, so the whole preview leads to the page. The
+   lines below keep their own links above it. */
+.docs-when-link::after {
+  position: absolute;
+  inset: 0;
   border-radius: var(--env-radius-surface);
-  color: inherit;
+  content: '';
+}
+.docs-when-line {
+  position: relative;
 }
 
 /* The stage, as wide as the tile and of one height in a row; what it shows is scaled to fit. */
