@@ -8,6 +8,13 @@ import { Column, Text, type SpaceStep } from '@envsemble/envui';
 export const SpecimenHeadingLevel = createContext<2 | 3>(2);
 
 /**
+ * The level of the titles of a specimen's parts inside an Example: below its title, or at the
+ * specimen's own level where it has none, so no level is skipped. Unset, they take the level below
+ * the specimen's.
+ */
+const PartHeadingLevel = createContext<2 | 3 | 4 | null>(null);
+
+/**
  * Whether an Example shows its content on the dotted stage, as a foundation page's preview does;
  * its caption stays below the stage.
  */
@@ -31,7 +38,8 @@ export function Example({
   gap?: SpaceStep;
   size?: 'compact' | 'field' | 'content' | 'wide' | 'collection';
 }) {
-  const Heading = `h${useContext(SpecimenHeadingLevel)}` as const;
+  const level = useContext(SpecimenHeadingLevel);
+  const Heading = `h${level}` as const;
   const staged = useContext(ExampleStage);
   return (
     <Column
@@ -52,7 +60,9 @@ export function Example({
           {title}
         </Text>
       ) : null}
-      {staged ? <div className="docs-foundation-stage">{children}</div> : children}
+      <PartHeadingLevel value={title ? ((level + 1) as 3 | 4) : level}>
+        {staged ? <div className="docs-foundation-stage">{children}</div> : children}
+      </PartHeadingLevel>
       {caption && (
         <Text variant="caption" className="docs-caption">
           {caption}
@@ -86,7 +96,9 @@ export function Specimen({
   children: ReactNode;
   caption?: ReactNode;
 }) {
-  const Heading = useContext(SpecimenHeadingLevel) === 3 ? 'h4' : 'h3';
+  const specimenLevel = useContext(SpecimenHeadingLevel);
+  const level = useContext(PartHeadingLevel) ?? ((specimenLevel + 1) as 3 | 4);
+  const Heading = `h${level}` as const;
   return (
     <Column render={<section />} gap={3} className="docs-specimen">
       <Text render={<Heading />} variant="title">
