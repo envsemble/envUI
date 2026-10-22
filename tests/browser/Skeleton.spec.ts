@@ -89,6 +89,14 @@ test('a skeleton is one busy region with inert content, draws text as bars and s
   expect(await style(page, '[data-testid="name-cell"]', 'display', '::before')).toBe(
     'inline-block',
   );
+  // A count badge is a filled shape too, whatever its variant: no fill or edge of its own.
+  const shape = await style(page, '[data-testid="badge-skeleton"]', 'background-color');
+  for (const count of ['count-solid-skeleton', 'count-outline-skeleton']) {
+    expect(await style(page, `[data-testid="${count}"]`, 'background-color')).toBe(shape);
+    expect(await style(page, `[data-testid="${count}"]`, 'border-top-color')).toBe(
+      'rgba(0, 0, 0, 0)',
+    );
+  }
 
   // A top bar's missing title is a bar too.
   await expect(page.getByTestId('top-bar')).toHaveAttribute('aria-busy', 'true');

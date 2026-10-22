@@ -3,6 +3,7 @@ import {
   Alert,
   AnimatedNumber,
   Avatar,
+  Badge,
   Bar,
   Button,
   Card,
@@ -17,6 +18,7 @@ import {
   Message,
   Popover,
   Rail,
+  Row,
   Surface,
   Table,
   Text,
@@ -96,6 +98,12 @@ export function SkeletonsFixture() {
           <Text variant="title" render={<h2 />}>
             Projects
           </Text>
+          {/* Badges, a label and counts in each variant, are filled shapes in a skeleton. */}
+          <Row gap={2}>
+            <Badge data-testid="badge-skeleton">Draft</Badge>
+            <Badge count={3} tone="accent" variant="solid" data-testid="count-solid-skeleton" />
+            <Badge count={5} variant="outline" data-testid="count-outline-skeleton" />
+          </Row>
           <Reader />
           <Grid columns="repeat(3, minmax(0, 1fr))" gap={3}>
             {list.map((project) => (

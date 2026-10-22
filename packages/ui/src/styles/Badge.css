@@ -96,11 +96,12 @@
 .env-badge[data-count][data-tone='neutral'] {
   --env-badge-tone: var(--env-color-fg-default);
 }
-.env-badge[data-count][data-variant='solid'] {
+/* The variant in :where(), so a skeleton's fill below still wins over it. */
+.env-badge[data-count]:where([data-variant='solid']) {
   background: var(--env-badge-count-bg, var(--env-badge-fill));
   color: var(--env-badge-count-fg, var(--env-color-fg-on-emphasis));
 }
-.env-badge[data-count][data-variant='outline'] {
+.env-badge[data-count]:where([data-variant='outline']) {
   border: var(--env-badge-count-border, var(--env-badge-outline));
   background: var(--env-badge-count-bg, transparent);
 }
