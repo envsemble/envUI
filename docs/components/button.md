@@ -81,6 +81,8 @@ An IconButton with the Close cross closes, dismisses or removes what it sits in.
 
 ```
 
+Under a coarse pointer, an icon button drawn smaller than the touch size, such as a close button in a chip or a tab, reaches the 2.75 rem touch size with its hit area when its container sets `--env-icon-button-hit-area: var(--env-control-height-touch)` on it or around it. Alert, Toast, Combobox chips, DocumentTabs and PanelDock's tabs set it on their own close buttons.
+
 ### States
 
 Hover, press, keyboard focus and disabled, for each variant.

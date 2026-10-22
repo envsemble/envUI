@@ -574,6 +574,9 @@ function validateStructureCase(at, each) {
     if (childRule.report !== undefined && typeof childRule.report !== 'string')
       problems.push(`${at}.children.${child}: "report" must be a string.`);
   }
+  for (const [prop, message] of entriesOf(each.reportProps))
+    if (!propName.test(prop) || typeof message !== 'string' || message.trim() === '')
+      problems.push(`${at}.reportProps.${prop} must be a report.`);
   if (each.report !== undefined && typeof each.report !== 'string')
     problems.push(`${at}: "report" must be a string.`);
   return problems;

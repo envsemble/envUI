@@ -10,6 +10,8 @@ export function Panel({ onClose, compact, save }) {
       <Button iconOnly={false}>Save</Button>
       <Button iconOnly icon={<Settings />} aria-label="Settings" variant="ghost" />
       <Button iconOnly icon={<Settings />} aria-label="Settings" />
+      <Button iconOnly icon={<Settings />} aria-label="Delete" tone="danger" fullWidth />
+      <Button iconOnly icon={<Settings />} aria-label="Help" variant="text" underline />
       <CloseButton onClick={onClose} />
       <CloseButton aria-label="Remove Alex Morgan" size="sm" variant="secondary" />
       <Close />

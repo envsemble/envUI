@@ -44,6 +44,11 @@
           "props": {
             "iconOnly": null
           },
+          "reportProps": {
+            "fullWidth": "IconButton has no fullWidth: an icon-only button keeps its square size, so drop it.",
+            "underline": "IconButton has no underline, which only a text button's label takes: drop it.",
+            "tone": "Without a variant, IconButton is secondary, which takes no tone: give it the variant the tone needs, such as variant=\"primary\" or \"ghost\" with tone=\"danger\"."
+          },
           "report": "Without a variant, Button iconOnly was primary outside a container that gives one, where IconButton is secondary: add variant=\"primary\" if it should stay primary."
         },
         {
@@ -54,6 +59,10 @@
           "element": "IconButton",
           "props": {
             "iconOnly": null
+          },
+          "reportProps": {
+            "fullWidth": "IconButton has no fullWidth: an icon-only button keeps its square size, so drop it.",
+            "underline": "IconButton has no underline, which only a text button's label takes: drop it."
           }
         },
         {

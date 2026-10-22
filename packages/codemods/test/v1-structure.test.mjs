@@ -26,10 +26,15 @@ const reports = {
   'badges.tsx': [`line 10: CounterBadge: ${counterBadge.report}`],
   // CloseButton's default name and Button iconOnly without a variant are reported where rewritten;
   // an iconOnly that is an expression stays.
+  // Props IconButton doesn't take are reported where Button iconOnly set them.
   'buttons.tsx': [
     `line 8: Button: ${button.report}`,
     `line 12: Button: ${button.cases[0].report}`,
-    `line 13: CloseButton: ${closeButton.cases[0].report}`,
+    `line 13: Button's fullWidth: ${button.cases[0].reportProps.fullWidth}`,
+    `line 13: Button's tone: ${button.cases[0].reportProps.tone}`,
+    `line 13: Button: ${button.cases[0].report}`,
+    `line 14: Button's underline: ${button.cases[1].reportProps.underline}`,
+    `line 15: CloseButton: ${closeButton.cases[0].report}`,
   ],
   'list-contrast.tsx': [`line 6: List.Root: ${listRoot.report}`],
   // Reported and left as they are: the prerelease's Drawer and a LoadingState's child.

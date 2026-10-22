@@ -35,6 +35,8 @@
 // - `lift`: props whose values become the element's first children, in order, such as a title
 //   bar passed as an element: an element stays an element, and another value an expression. Unlike
 //   `content`, it keeps the element's own children after them.
+// - `reportProps`: per prop, a note reported where the element sets it, such as a prop the new
+//   element doesn't take; the prop stays, so the type checker points at it too.
 // - `report`: a note reported at every element the case rewrites.
 // A dotted `element`, such as `WindowFrame.Content`, is a part of a namespace the entry exports.
 // An element that spreads props, such as `<ActionGroup {...group}>`, may set any of them, so no case
@@ -355,6 +357,10 @@ export default function transform(file, api, options = {}) {
       path.node.closingElement ??= j.jsxClosingElement(path.node.openingElement.name);
     }
     const reports = applyProps(attributes, chosen.props, where);
+    for (const [prop, message] of Object.entries(chosen.reportProps ?? {})) {
+      const index = attributeIndex(attributes, prop);
+      if (index !== -1) reports.push([attributes[index], `${where}'s ${prop}: ${message}`]);
+    }
     const added = Object.entries(chosen.add ?? {})
       .filter(([prop]) => !hasAttribute(attributes, prop))
       .map(([prop, value]) =>

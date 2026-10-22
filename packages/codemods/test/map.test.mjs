@@ -145,6 +145,9 @@ test('validateMap reports malformed maps', () => {
   assert.equal(structure({ has: ['titleBar'], element: 'Frame.Root' }), '');
   // Any value is `has`, which matchesWhen understands; a "*" in `when` would throw there.
   assert.match(structure({ when: { titleBar: '*' } }), /when\.titleBar must list literals/);
+  assert.equal(structure({ element: 'Frame', reportProps: { fullWidth: 'Drop it.' } }), '');
+  assert.match(structure({ reportProps: { fullWidth: '' } }), /reportProps\.fullWidth must be/);
+  assert.match(structure({ childless: 'yes' }), /"childless" must be true or false/);
 });
 
 test('a reported class is kept by the class renames that a shorter entry would make', () => {

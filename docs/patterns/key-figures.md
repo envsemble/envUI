@@ -130,10 +130,10 @@ The grid shows as many even columns as fit, each at least 11 rem wide, and stack
 ### envUI provides
 
 - The Badge's icon hidden from assistive technology, so its words are what is read.
-- The group role, named by `aria-label` or `aria-labelledby`, on the Surface that holds the figures.
 
 ### You provide
 
+- `role="group"` on the Surface that holds the figures, named by `aria-label` or `aria-labelledby`.
 - A trend in words that say which way, such as +12% or 2 fewer, never in color or an arrow alone.
 - Tabular digits on the figure, `font-variant-numeric: tabular-nums`, so it keeps its width as it changes; AnimatedNumber uses them.
 - A heading level for the group's own heading, where it has one, that fits the page; the figures themselves are not headings.
