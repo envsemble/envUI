@@ -3,7 +3,7 @@
 // The page as dev mode's UI sees it, kept current: its geometry once an animation frame while it
 // changes, for the 3D view, and the full readout once it settles, for the inspector.
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isDevElement, keyOf, layoutAttribute, measure, overlaySelector } from '../measure.js';
 import type { LayoutProblem, Snapshot } from '../model.js';
 import { onPartsChange } from '../parts.js';
@@ -20,7 +20,17 @@ export interface LivePage {
   } | null;
   /** How often each node's content changed, by its key: the 3D view copies a node's surfaces again when it does. */
   versions: Map<number, number>;
+  /** Raised when every surface must be copied again, as after the page's theme changes. */
+  epoch: number;
+  /**
+   * Copies every surface again, now and once transitions have run, as after a change that
+   * restyles the whole page without changing its nodes, such as its theme.
+   */
+  refresh: () => void;
 }
+
+/** How long after a refresh the surfaces are copied once more, past the theme's transitions. */
+const transitionsEnd = 400;
 
 /** How long the page must stay still before the full readout is taken, and the longest it waits. */
 const settle = 180;
@@ -30,6 +40,14 @@ export function useLivePage(root: HTMLElement): LivePage {
   const [geometry, setGeometry] = useState<Snapshot | null>(null);
   const [full, setFull] = useState<LivePage['full']>(null);
   const versions = useRef(new Map<number, number>()).current;
+  const [epoch, setEpoch] = useState(0);
+  const again = useRef(0);
+  useEffect(() => () => window.clearTimeout(again.current), []);
+  const refresh = useCallback(() => {
+    setEpoch((value) => value + 1);
+    window.clearTimeout(again.current);
+    again.current = window.setTimeout(() => setEpoch((value) => value + 1), transitionsEnd);
+  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -121,5 +139,5 @@ export function useLivePage(root: HTMLElement): LivePage {
     };
   }, [root, versions]);
 
-  return { geometry, full, versions };
+  return { geometry, full, versions, epoch, refresh };
 }

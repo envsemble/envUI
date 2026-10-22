@@ -19,27 +19,36 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react';
-import { Button, IconButton } from '../../actions/Button.js';
+import { IconButton } from '../../actions/Button.js';
 import * as Toolbar from '../../actions/Toolbar.js';
 import { Popover } from '../../feedback/Popover.js';
 import { Slider } from '../../forms/Slider.js';
-import { Column, Row } from '../../foundations/Layout.js';
+import { Row } from '../../foundations/Layout.js';
 import { Text } from '../../foundations/Text.js';
+import * as Menu from '../../navigation/Menu.js';
+import { Tooltip } from '../../feedback/Tooltip.js';
 import { Close } from '../../icons/Close.js';
+import { Contrast } from '../../icons/Contrast.js';
+import { DarkMode } from '../../icons/DarkMode.js';
 import { Devices } from '../../icons/Devices.js';
 import { FilterAlt } from '../../icons/FilterAlt.js';
 import { Info } from '../../icons/Info.js';
 import { Label } from '../../icons/Label.js';
 import { LeftPanelOpen } from '../../icons/LeftPanelOpen.js';
+import { LightMode } from '../../icons/LightMode.js';
 import { Padding } from '../../icons/Padding.js';
+import { Palette } from '../../icons/Palette.js';
 import { RightPanelOpen } from '../../icons/RightPanelOpen.js';
+import { ScreenRotation } from '../../icons/ScreenRotation.js';
 import { Tune } from '../../icons/Tune.js';
 import type { LayoutProblem, NodeData, Snapshot } from '../model.js';
 import { queriesFor, thresholdsFor } from '../queries.js';
 import { labelOf } from '../readout.js';
 import { round, toRem, windowClasses, windowClassOf } from '../units.js';
 import { ViewFit, ViewFront, ViewLeft, ViewRight, ViewTilted, ViewTop } from './icons.js';
-import { FrameHandle } from './FrameHandle.js';
+import { deviceGroups } from './devices.js';
+import { FrameHandle, realSize, type FrameEdge, type FrameSize } from './FrameHandle.js';
+import type { PageTheme } from './pageTheme.js';
 import { surfaceOf } from './surfaces.js';
 import type { LivePage } from './useLivePage.js';
 
@@ -60,9 +69,6 @@ const presets: { label: string; icon: ReactNode; rx: number; ry: number }[] = [
   { label: 'From the right', icon: <ViewRight />, rx: 0, ry: -70 },
 ];
 
-/** The widths the docs check every example at, one in each window class, in rem. */
-const checkWidths = [22, 40, 60, 80];
-
 type CachedSurface = { signature: string; element: HTMLElement; restore: () => void };
 
 export interface View3DProps {
@@ -75,8 +81,16 @@ export interface View3DProps {
   sides: { tree: boolean; inspector: boolean };
   onSidesChange: (sides: { tree: boolean; inspector: boolean }) => void;
   /** The width the responsive frame lays the page out at, in px, or null for its real width. */
-  frameWidth: number | null;
-  onFrameWidthChange: (width: number | null) => void;
+  /** The size the responsive frame lays the page out at. */
+  frame: FrameSize;
+  onFrameChange: (frame: FrameSize) => void;
+  /** The inspected page's theme, which dev mode can switch, or null where it has no theme. */
+  pageTheme: {
+    value: PageTheme;
+    /** Whether it is the page's own, not one dev mode set. */
+    own: boolean;
+    onChange: (theme: PageTheme | null) => void;
+  } | null;
   onClose: () => void;
 }
 
@@ -127,8 +141,9 @@ export function View3D({
   treeHover,
   sides,
   onSidesChange,
-  frameWidth,
-  onFrameWidthChange,
+  frame,
+  onFrameChange,
+  pageTheme,
   onClose,
 }: View3DProps) {
   const snapshot = live.geometry;
@@ -319,7 +334,7 @@ export function View3D({
             origin={origin}
             z={(node.level - from) * spacing}
             element={snapshot.elements?.[node.index]}
-            version={live.versions.get(node.key) ?? 0}
+            version={(live.versions.get(node.key) ?? 0) + live.epoch}
             surfaces={surfaces}
             rootPx={snapshot.rootPx}
             names={names}
@@ -339,15 +354,17 @@ export function View3D({
         ) : null}
         <Frame
           width={origin.w}
-          set={frameWidth}
+          height={origin.h}
+          size={frame}
           rootPx={snapshot.rootPx}
           z={(top - from) * spacing + 4}
-          onWidthChange={onFrameWidthChange}
+          onSizeChange={onFrameChange}
         />
       </div>
 
       <Toolbar.Root
         aria-label="3D view"
+        size="sm"
         className="env-dev-float env-dev-toolbar"
         onPointerDown={keepPointer}
       >
@@ -386,16 +403,36 @@ export function View3D({
             onClick={() => setOnlySelected((value) => !value)}
           />
           <Toolbar.Button
-            icon={<Devices />}
+            icon={<Palette />}
             label="Color by window class"
             pressed={colorBy === 'window'}
             onClick={() => setColorBy((value) => (value === 'window' ? 'kind' : 'window'))}
           />
         </Toolbar.Group>
         <Toolbar.Separator />
+        <DeviceMenu
+          frame={frame}
+          width={origin.w}
+          height={origin.h}
+          onFrameChange={onFrameChange}
+        />
+        <Toolbar.Button
+          icon={<ScreenRotation />}
+          label="Rotate"
+          onClick={() =>
+            onFrameChange({
+              width: frame.height ?? Math.round(origin.h),
+              height: frame.width ?? Math.round(origin.w),
+              device: frame.device,
+            })
+          }
+        />
+        {pageTheme ? <PageThemeMenu {...pageTheme} /> : null}
+        <Toolbar.Separator />
         <Popover
           title="View settings"
           side="bottom"
+          className="env-dev-popover"
           trigger={<IconButton icon={<Tune />} aria-label="View settings" />}
         >
           <Slider
@@ -426,42 +463,19 @@ export function View3D({
               if (value < from) setFrom(value);
             }}
           />
-          <Column gap={2} role="group" aria-label="Page width">
-            <Quiet>Page width</Quiet>
-            <Row gap={1} wrap>
-              {checkWidths.map((rem) => (
-                <Button
-                  key={rem}
-                  size="sm"
-                  variant="outline"
-                  aria-pressed={frameWidth === rem * snapshot.rootPx}
-                  title={windowClassOf(rem)}
-                  onClick={() => onFrameWidthChange(rem * snapshot.rootPx)}
-                >
-                  {`${rem}rem`}
-                </Button>
-              ))}
-              <Button
-                size="sm"
-                variant="ghost"
-                disabled={frameWidth === null}
-                onClick={() => onFrameWidthChange(null)}
-              >
-                Real width
-              </Button>
-            </Row>
-          </Column>
         </Popover>
         <Popover
           title="Moving around"
           side="bottom"
+          className="env-dev-popover"
           trigger={<IconButton icon={<Info />} aria-label="How to move around" />}
         >
           <Text variant="body-sm" emphasis="default">
             Drag to turn, Shift+drag to pan. The wheel scrolls what is under the pointer; Ctrl+wheel
             zooms. Click a plane, or a node in the tree, to select it; Only the selected shows it
-            and what is inside it. Drag a handle of the frame, or use the arrow keys on it, to lay
-            the page out at another width; double-click it for the real width.
+            and what is inside it. Drag a handle of the frame, or use the arrow keys on an
+            edge&apos;s, to lay the page out at another size; double-click one for the page&apos;s
+            own size.
           </Text>
         </Popover>
         <Toolbar.Separator />
@@ -503,29 +517,40 @@ export function View3D({
 }
 
 interface FrameProps {
-  /** The page's width now, in px. */
+  /** The page's size now, in px. */
   width: number;
+  height: number;
   /** How high it floats: above every plane, where its handles and label are never covered. */
   z: number;
-  /** The width the frame sets, in px, or null where the page has its real width. */
-  set: number | null;
+  /** The size the frame sets. */
+  size: FrameSize;
   rootPx: number;
-  onWidthChange: (width: number | null) => void;
+  onSizeChange: (size: FrameSize) => void;
 }
 
+const frameEdges: FrameEdge[] = ['start', 'end', 'bottom', 'bottom-start', 'bottom-end'];
+
 /**
- * The responsive frame: the rectangle the page is laid out in, floating above the planes, with a
- * handle on each side edge. Dragging a handle, or the arrow keys on it, sets the width the page
- * is laid out at; the label above says it in rem and px with its window class.
+ * The responsive frame: the rectangle the page is laid out in, floating above the planes, with
+ * handles on its side and bottom edges and its bottom corners. Dragging a handle, or the arrow
+ * keys on an edge's, sets the size the page is laid out at; the label above says it in px and rem
+ * with its window class, and the device it came from.
  */
-function Frame({ width, z, set, rootPx, onWidthChange }: FrameProps) {
-  const rem = round(width / rootPx);
-  const windowClass = windowClassOf(rem);
-  const text = `${rem}rem · ${Math.round(width)}px · ${windowClass}`;
+function Frame({ width, height, z, size, rootPx, onSizeChange }: FrameProps) {
+  const windowClass = windowClassOf(width / rootPx);
+  const text = [
+    size.device,
+    `${Math.round(width)}×${Math.round(height)}px`,
+    `${round(width / rootPx)}×${round(height / rootPx)}rem`,
+    windowClass,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const set = size.width !== null || size.height !== null;
   return (
     <div
       className="env-dev-frame"
-      data-set={set === null ? undefined : ''}
+      data-set={set ? '' : undefined}
       style={{ transform: `translateZ(${z}px)` }}
     >
       <Row
@@ -538,29 +563,145 @@ function Frame({ width, z, set, rootPx, onWidthChange }: FrameProps) {
         <Text variant="body-sm" emphasis="default" render={<span />}>
           {text}
         </Text>
-        {set !== null ? (
+        {set ? (
           <IconButton
             variant="ghost"
             size="sm"
             icon={<Close />}
-            aria-label="Back to the real width"
-            title="Back to the real width"
-            onClick={() => onWidthChange(null)}
+            aria-label="Back to the page's own size"
+            title="Back to the page's own size"
+            onClick={() => onSizeChange(realSize)}
           />
         ) : null}
       </Row>
-      {(['start', 'end'] as const).map((edge) => (
+      {frameEdges.map((edge) => (
         <FrameHandle
           key={edge}
           edge={edge}
           width={width}
-          set={set}
+          height={height}
+          size={size}
           rootPx={rootPx}
           text={text}
-          onWidthChange={onWidthChange}
+          onSizeChange={onSizeChange}
         />
       ))}
     </div>
+  );
+}
+
+/**
+ * The devices the frame can take, as a browser's responsive mode lists them: the page's own size,
+ * a free frame, then phones, tablets, laptops and screens at their CSS viewport sizes.
+ */
+function DeviceMenu({
+  frame,
+  width,
+  height,
+  onFrameChange,
+}: {
+  frame: FrameSize;
+  width: number;
+  height: number;
+  onFrameChange: (frame: FrameSize) => void;
+}) {
+  const own = frame.width === null && frame.height === null;
+  const value = own ? 'own' : (frame.device ?? 'responsive');
+  return (
+    <Menu.Root
+      aria-label="Device"
+      trigger={
+        <Tooltip content="Device">
+          <IconButton icon={<Devices />} aria-label="Device" />
+        </Tooltip>
+      }
+    >
+      <Menu.RadioGroup
+        value={value}
+        onValueChange={(next) => {
+          if (next === 'own') onFrameChange(realSize);
+          else if (next === 'responsive')
+            onFrameChange({
+              width: frame.width ?? Math.round(width),
+              height: frame.height ?? Math.round(height),
+              device: null,
+            });
+        }}
+      >
+        <Menu.RadioItem value="own" description="As the page is laid out">
+          The page&apos;s own size
+        </Menu.RadioItem>
+        <Menu.RadioItem value="responsive" description="A frame of any size">
+          Responsive
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
+      {deviceGroups.map((group) => (
+        <Menu.RadioGroup
+          key={group.label}
+          label={group.label}
+          value={value}
+          onValueChange={(next) => {
+            const device = group.devices.find((candidate) => candidate.name === next);
+            if (device) onFrameChange({ ...device, device: device.name });
+          }}
+        >
+          {group.devices.map((device) => (
+            <Menu.RadioItem
+              key={device.name}
+              value={device.name}
+              description={`${device.width}×${device.height}`}
+            >
+              {device.name}
+            </Menu.RadioItem>
+          ))}
+        </Menu.RadioGroup>
+      ))}
+    </Menu.Root>
+  );
+}
+
+/** The inspected page's theme: light or dark, with high contrast, or the page's own. */
+function PageThemeMenu({
+  value,
+  own,
+  onChange,
+}: {
+  value: PageTheme;
+  own: boolean;
+  onChange: (theme: PageTheme | null) => void;
+}) {
+  return (
+    <Menu.Root
+      aria-label="Page theme"
+      trigger={
+        <Tooltip content="Page theme">
+          <IconButton icon={<Contrast />} aria-label="Page theme" />
+        </Tooltip>
+      }
+    >
+      <Menu.RadioGroup
+        label="Page theme"
+        value={value.theme}
+        onValueChange={(theme) => onChange({ ...value, theme: theme as PageTheme['theme'] })}
+      >
+        <Menu.RadioItem value="light" icon={<LightMode />}>
+          Light
+        </Menu.RadioItem>
+        <Menu.RadioItem value="dark" icon={<DarkMode />}>
+          Dark
+        </Menu.RadioItem>
+      </Menu.RadioGroup>
+      <Menu.CheckboxItem
+        checked={value.contrast === 'high'}
+        onCheckedChange={(high) => onChange({ ...value, contrast: high ? 'high' : 'standard' })}
+      >
+        High contrast
+      </Menu.CheckboxItem>
+      <Menu.Separator />
+      <Menu.Item disabled={own} onClick={() => onChange(null)}>
+        The page&apos;s own theme
+      </Menu.Item>
+    </Menu.Root>
   );
 }
 
@@ -824,7 +965,7 @@ function Swatch({
 function KindLegend() {
   const kinds = ['box', 'row', 'column', 'grid', 'scaffold', 'page', 'overlay'];
   return (
-    <Row gap={3} wrap className="env-dev-legend" role="group" aria-label="Legend">
+    <Row gap={2} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {kinds.map((kind) => (
         <Swatch
           key={kind}
@@ -839,7 +980,7 @@ function KindLegend() {
 
 function WindowLegend({ rootPx }: { rootPx: number }) {
   return (
-    <Row gap={3} wrap className="env-dev-legend" role="group" aria-label="Legend">
+    <Row gap={2} wrap className="env-dev-legend" role="group" aria-label="Legend">
       {windowClasses.map((windowClass, index) => {
         const next = windowClasses[index + 1];
         const range = next

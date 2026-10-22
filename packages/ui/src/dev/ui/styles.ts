@@ -109,6 +109,29 @@ export const devStyles = /* css */ `
   .env-dev-frame-handle[data-edge='end'] {
     inset-inline-start: 100%;
   }
+  .env-dev-frame-handle[data-edge^='bottom'] {
+    inset-block-start: 100%;
+  }
+  .env-dev-frame-handle[data-edge='bottom'] {
+    inset-inline-start: 50%;
+    inline-size: 2.5rem;
+    block-size: 0.5rem;
+    cursor: ns-resize;
+  }
+  /* A corner's handle is a small square, which moves both edges. */
+  .env-dev-frame-handle:is([data-edge='bottom-start'], [data-edge='bottom-end']) {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    border-radius: 0.1875rem;
+  }
+  .env-dev-frame-handle[data-edge='bottom-start'] {
+    inset-inline-start: 0;
+    cursor: nesw-resize;
+  }
+  .env-dev-frame-handle[data-edge='bottom-end'] {
+    inset-inline-start: 100%;
+    cursor: nwse-resize;
+  }
   .env-dev-frame-handle:hover,
   .env-dev-frame[data-set] .env-dev-frame-handle {
     background: var(--env-color-border-focus);
@@ -238,6 +261,12 @@ export const devStyles = /* css */ `
   .env-dev-legend,
   .env-dev-frame-label {
     font: var(--env-type-body-small);
+    font-size: var(--env-font-size-caption);
+  }
+  /* Dev mode's popovers sit closer around their content than an application's. */
+  .env-dev-popover {
+    gap: var(--env-space-2);
+    padding: var(--env-space-3);
   }
   .env-dev-legend {
     position: absolute;
@@ -324,10 +353,10 @@ export const devStyles = /* css */ `
     padding-block: var(--env-space-3);
   }
   .env-dev-sidebar[data-side='tree'] {
-    inline-size: min(17rem, 22vw);
+    inline-size: min(15rem, 20vw);
   }
   .env-dev-sidebar[data-side='inspector'] {
-    inline-size: min(24rem, 30vw);
+    inline-size: min(21rem, 27vw);
     padding-block-start: var(--env-space-1);
   }
   .env-dev-hide {

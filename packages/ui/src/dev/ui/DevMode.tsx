@@ -12,6 +12,8 @@ import { ViewInAr } from '../../icons/ViewInAr.js';
 import { resizeRoot } from '../api.js';
 import { resolveRoot } from '../measure.js';
 import { Inspector, NodeTree } from './Inspector.js';
+import { realSize, type FrameSize } from './FrameHandle.js';
+import { holdTheme, themeBoundaryOf, themeOf, type PageTheme } from './pageTheme.js';
 import { useLivePage } from './useLivePage.js';
 import { View3D } from './View3D.js';
 
@@ -42,10 +44,20 @@ function pageTheme(): ThemeValue {
 
 export function DevMode({ controller }: { controller: DevModeController }) {
   const [open, setOpen] = useState(controller.open);
-  useEffect(() => controller.subscribe(setOpen), [controller]);
+  // Dev mode's own UI takes the page's theme as it opens, and keeps it while the page's theme is
+  // switched from dev mode, so its controls stay where the eye left them.
+  const [theme, setTheme] = useState(pageTheme);
+  useEffect(
+    () =>
+      controller.subscribe((next) => {
+        if (next) setTheme(pageTheme());
+        setOpen(next);
+      }),
+    [controller],
+  );
   return (
     <PortalContainer container={controller.host}>
-      <Theme theme={pageTheme()} scale="compact" className="env-dev">
+      <Theme theme={theme} scale="compact" className="env-dev">
         {open ? <Panel controller={controller} /> : null}
         {controller.button ? (
           <IconButton
@@ -88,17 +100,35 @@ function Panel({ controller }: { controller: DevModeController }) {
   const [selected, setSelected] = useState<number | null>(null);
   const [treeHover, setTreeHover] = useState<number | null>(null);
   const [sides, setSides] = useState({ tree: true, inspector: true });
-  // The width the responsive frame lays the page out at, in px, or null for its real width.
-  const [frameWidth, setFrameWidth] = useState<number | null>(null);
+  // The size the responsive frame lays the page out at.
+  const [frame, setFrame] = useState<FrameSize>(realSize);
+  // The page's theme as dev mode switches it, or null for the page's own.
+  const [boundary] = useState(() => themeBoundaryOf(root));
+  const [look, setLook] = useState<PageTheme | null>(null);
+  const { refresh } = live;
   const panel = useRef<HTMLDivElement>(null);
   // While the panel covers the page, the page is inert and focus is in the panel.
   useLayoutEffect(() => cover(root, panel.current, returnFocus), [root, returnFocus]);
   // The frame resizes the root as at() does, and puts its style back on a reset and as dev mode
   // closes; the page re-lays out under the panel and the live page measures it again.
   useLayoutEffect(
-    () => (frameWidth === null ? undefined : resizeRoot(root, frameWidth)),
-    [root, frameWidth],
+    () =>
+      frame.width === null && frame.height === null
+        ? undefined
+        : resizeRoot(root, frame.width, frame.height),
+    [root, frame.width, frame.height],
   );
+  // The page's theme holds until dev mode goes back to the page's own or closes; the planes copy
+  // the page again in its new colors.
+  useLayoutEffect(() => {
+    if (!boundary || !look) return;
+    return holdTheme(boundary, look);
+  }, [boundary, look]);
+  const firstLook = useRef(true);
+  useEffect(() => {
+    if (firstLook.current) firstLook.current = false;
+    else refresh();
+  }, [look, refresh]);
   return (
     <div
       ref={panel}
@@ -128,8 +158,13 @@ function Panel({ controller }: { controller: DevModeController }) {
         treeHover={treeHover}
         sides={sides}
         onSidesChange={setSides}
-        frameWidth={frameWidth}
-        onFrameWidthChange={setFrameWidth}
+        frame={frame}
+        onFrameChange={setFrame}
+        pageTheme={
+          boundary
+            ? { value: look ?? themeOf(boundary), own: look === null, onChange: setLook }
+            : null
+        }
         onClose={() => controller.setOpen(false)}
       />
       {sides.inspector ? (
