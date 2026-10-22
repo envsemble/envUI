@@ -18,6 +18,8 @@ import {
   type ReactNode,
   type Ref,
 } from 'react';
+import { classNames } from '../internal/classNames.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { setRef } from '../internal/setRef.js';
 import { HoverCardTriggerContext, isTriggerOwner, markTooltip } from '../internal/triggerOwner.js';
 import {
@@ -56,7 +58,8 @@ export interface TooltipProps
    * is wrapped in an element that hovering opens the tooltip on. Around a button, link, tab or menu
    * item, it is focusable and carries the control's name, role and state, reported disabled, so
    * keyboard focus opens it too. One element: text, a Fragment or a component that doesn't pass
-   * the ref on to its element gets no tooltip, and says so while developing.
+   * the ref on to its element gets no tooltip, and says so while developing. Text, such as a
+   * focusable span or Text that holds text, takes a quiet dotted underline, env-hover-detail.
    */
   children: ReactElement<TriggerProps>;
   /**
@@ -488,8 +491,16 @@ function TooltipTrigger({
               />
             ) : (
               // The control's own aria-describedby would win over the trigger's, so it carries
-              // the joined one.
-              cloneElement(control, { 'aria-describedby': describedBy })
+              // the joined one. Text that shows more takes the dotted underline.
+              cloneElement(control, {
+                'aria-describedby': describedBy,
+                ...(isTextTrigger(children) && {
+                  className: classNames(
+                    (control.props as { className?: string }).className,
+                    hoverDetailClass,
+                  ),
+                }),
+              } as TriggerProps)
             )
           }
         >

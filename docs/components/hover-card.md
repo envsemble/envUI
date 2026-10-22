@@ -43,6 +43,14 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ```
 
+### Text with more details
+
+A trigger that is text rather than a link, such as a span or Text, takes a quiet dotted underline, `env-hover-detail`, that says it shows more on hover or focus; links, buttons and avatars keep their own look. Make the text focusable with `tabIndex={0}`, so keyboard focus opens the card too.
+
+```tsx example=TextDetails
+
+```
+
 ## Variants
 
 | Width | Use for                                                         |
@@ -79,7 +87,7 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 ```
 
 1. **Card** (`env-hover-card`, `children`)
-2. **Trigger** (`env-link`, `trigger`)
+2. **Trigger** (`env-link`, `trigger`); a text trigger takes `env-hover-detail`
 
 ## Accessibility
 
@@ -103,5 +111,5 @@ A hover card shows supplementary details beside its trigger, usually a link, onc
 
 ## Changelog
 
-- **1.0.0**: `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
+- **1.0.0**: A text trigger, such as a span or Text that holds text, takes a quiet dotted underline, `env-hover-detail`. `width` is `md` or `lg`, the widest the card grows as it sizes to its content; `className`, `style`, `ref` and data attributes reach the card, `env-hover-card`, which renders on PopupSurface in the trigger's text direction. A Tooltip around it, or as its `trigger`, shows no tooltip.
 - **0.6.0**: HoverCard.

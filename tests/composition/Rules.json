@@ -199,7 +199,8 @@
       "env-icon": "The icon wrapper, which every component colors through currentColor and sizes through --env-icon-size.",
       "env-prose": "The prose typography (Prose.css) of Markdown, RichText and RichTextEditor's document.",
       "env-skeleton-content": "A skeleton's inert content without a box, which every component that takes skeleton renders inside its busy root (Skeleton.css).",
-      "env-skeleton-status": "The visually hidden status beside a skeleton list (Skeleton.css)."
+      "env-skeleton-status": "The visually hidden status beside a skeleton list (Skeleton.css).",
+      "env-hover-detail": "The dotted underline (HoverDetail.css) of text that shows more on hover or focus, which HoverCard and Tooltip give a text trigger."
     },
     "components": {
       "dev": {
@@ -397,7 +398,8 @@
       "Prose.css": "The prose typography Markdown and the rich-text components share.",
       "Motion.css": "The keyframes several components share.",
       "Skeleton.css": "The skeleton state every component that paints a container takes, by element and data-env-skeleton.",
-      "Reset.css": "The box-sizing reset inside every theme boundary."
+      "Reset.css": "The box-sizing reset inside every theme boundary.",
+      "HoverDetail.css": "The dotted underline of text that shows more, which HoverCard and Tooltip give a text trigger."
     },
     "childRules": {
       "$comment": "A container may lay out a child that belongs to another component: place, size and space it, never restyle it. Each rule lets one stylesheet's selectors name a child's classes, as long as they declare only layoutProperties and the rule's own properties.",

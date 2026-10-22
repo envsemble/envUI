@@ -1,0 +1,15 @@
+/* Text that shows more on hover or focus, a HoverCard's or Tooltip's text trigger: a quiet dotted
+   underline in the muted text color, below the descenders. Not a link, so no link color, and the
+   cursor stays the page's own. Zero specificity, so the text's own styles and an application's
+   win. */
+:where(.env-hover-detail) {
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--env-color-fg-muted);
+  text-underline-offset: 0.25em;
+}
+@media (forced-colors: active) {
+  :where(.env-hover-detail) {
+    text-decoration-color: CanvasText;
+  }
+}

@@ -2,6 +2,7 @@
 
 import { PreviewCard as BasePreviewCard } from '@base-ui/react/preview-card';
 import {
+  isValidElement,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -14,6 +15,7 @@ import { PopupSurface, type PopupSide } from '../internal/PopupSurface.js';
 import { keepsOpen, usePortalContainer } from '../internal/PortalContainerContext.js';
 import type { SkeletonProps } from '../internal/skeleton.js';
 import { Grid } from '../foundations/Layout.js';
+import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
@@ -26,7 +28,11 @@ const parts = {
 export interface HoverCardProps
   extends Omit<ComponentPropsWithRef<'div'>, 'children' | 'defaultValue'>,
     SkeletonProps {
-  /** The element that opens the card on hover and keyboard focus; it receives the ref. */
+  /**
+   * The element that opens the card on hover and keyboard focus; it receives the ref. Text, such
+   * as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; a link or
+   * another control keeps its own look.
+   */
   trigger: ReactElement;
   /** The details. Supplementary: never the only place essential information appears. */
   children: ReactNode;
@@ -101,6 +107,11 @@ export function HoverCard({
   // The card takes the text direction at its trigger.
   const triggerRef = useRef<HTMLAnchorElement>(null);
   openRef.current = open;
+  // A Tooltip as the trigger passes the props on to its control, which is the one to tell.
+  const control = isTooltip(trigger.type)
+    ? (trigger.props as { children?: unknown }).children
+    : trigger;
+  const textTrigger = isValidElement(control) && isTextTrigger(control);
   function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;
@@ -124,6 +135,7 @@ export function HoverCard({
         <BasePreviewCard.Trigger
           ref={triggerRef}
           render={trigger}
+          className={textTrigger ? hoverDetailClass : undefined}
           delay={delay}
           closeDelay={closeDelay}
           onFocus={openOnKeyboardFocus}
