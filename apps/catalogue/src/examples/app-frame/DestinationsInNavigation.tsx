@@ -26,7 +26,9 @@ export default function DestinationsInNavigation() {
       style={{ blockSize: '16rem' }}
       forms={{ compact: 'rail', medium: 'rail', expanded: 'rail', large: 'rail' }}
       topBar={<TopBar title="Northwind" />}
-      navigation={{ rail: <Rail destinations={destinations} /> }}
+      navigation={{
+        rail: <Rail aria-label="Main, destinations in the rail" destinations={destinations} />,
+      }}
     >
       <Page
         header={

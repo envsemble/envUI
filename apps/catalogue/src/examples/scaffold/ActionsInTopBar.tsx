@@ -17,7 +17,9 @@ export default function ActionsInTopBar() {
       landmarks={false}
       style={{ blockSize: '20rem', inlineSize: 'min(100%, 22rem)' }}
       topBar={<TopBar title="Invoices" actions={<Button size="sm">New invoice</Button>} />}
-      navigation={{ bar: <Bar destinations={destinations} /> }}
+      navigation={{
+        bar: <Bar aria-label="Main, actions in the top bar" destinations={destinations} />,
+      }}
     >
       <Page>
         <Text emphasis="muted">Four invoices are due this month.</Text>

@@ -15,6 +15,7 @@ export default function ActionAtTheBottom() {
     // As tall as a short window; the main action sits below the destinations.
     <div style={{ blockSize: '22rem' }}>
       <Rail
+        aria-label="Main, action at the bottom"
         destinations={destinations}
         footer={<IconButton variant="primary" icon={<Edit />} aria-label="New message" />}
       />

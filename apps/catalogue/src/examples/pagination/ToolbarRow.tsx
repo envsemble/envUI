@@ -8,7 +8,7 @@ export default function ToolbarRow() {
     <Grid columns="minmax(0, 1fr) auto" align="center" gap={3}>
       <SearchField label="Search invoices" size="sm" />
       <Pagination
-        aria-label="Invoice pages"
+        aria-label="Invoice pages, toolbar row"
         page={page}
         pageSize={25}
         total={112}

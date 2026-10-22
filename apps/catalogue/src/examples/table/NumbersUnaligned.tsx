@@ -9,7 +9,7 @@ const invoices = [
 export default function NumbersUnaligned() {
   return (
     // Amounts as text: aligned to the start, their digits don't line up.
-    <Table.Root aria-label="Invoices">
+    <Table.Root aria-label="Invoices, amounts as text">
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Invoice</Table.HeaderCell>

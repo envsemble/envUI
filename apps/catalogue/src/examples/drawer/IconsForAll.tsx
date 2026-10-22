@@ -12,5 +12,5 @@ const destinations: DrawerDestination[] = [
 ];
 
 export default function IconsForAll() {
-  return <Drawer destinations={destinations} />;
+  return <Drawer aria-label="Main, icons for all" destinations={destinations} />;
 }

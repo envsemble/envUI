@@ -24,7 +24,9 @@ export default function TopBarOnThePage() {
       forms={{ compact: 'drawer', medium: 'drawer' }}
       style={{ blockSize: '16rem' }}
       topBar={<TopBar title="Northwind" background="page" />}
-      navigation={{ drawer: <Drawer destinations={destinations} /> }}
+      navigation={{
+        drawer: <Drawer aria-label="Main, top bar on the page" destinations={destinations} />,
+      }}
     >
       <Page header={<PageHeader title="Documents" headingLevel={3} />}>
         <Text emphasis="muted">Twelve documents.</Text>

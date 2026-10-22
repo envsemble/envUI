@@ -11,7 +11,7 @@ export default function SwitchesApplyAtOnce() {
       style={{ inlineSize: 'min(100%, 22rem)' }}
     >
       <Text render={<h3 id="immediate-heading" />} variant="title">
-        Email notifications
+        Mobile notifications
       </Text>
       <List.Root aria-labelledby="immediate-heading">
         <List.Item

@@ -13,7 +13,7 @@ export default function MismatchedSize() {
     >
       <SearchField label="Search invoices" size="sm" />
       <Pagination
-        aria-label="Invoice pages"
+        aria-label="Invoice pages, mismatched size"
         page={page}
         pageSize={25}
         total={112}

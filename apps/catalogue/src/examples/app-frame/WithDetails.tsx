@@ -31,9 +31,9 @@ export default function WithDetails() {
       style={preview}
       topBar={<TopBar title="Documents" />}
       navigation={{
-        bar: <Bar destinations={destinations} />,
-        rail: <Rail destinations={destinations} />,
-        drawer: <Drawer destinations={destinations} />,
+        bar: <Bar aria-label="Main, with details" destinations={destinations} />,
+        rail: <Rail aria-label="Main, with details" destinations={destinations} />,
+        drawer: <Drawer aria-label="Main, with details" destinations={destinations} />,
       }}
     >
       <Panes.Root behavior="supporting" open={details} onOpenChange={setDetails}>

@@ -6,7 +6,7 @@ export default function DirectionInTitles() {
   return (
     // The direction is said twice: by the label and again in the title.
     <Pager.Root
-      aria-label="Guide pages"
+      aria-label="Guide pages, direction in titles"
       previous={{ href: '/guide/install', children: 'Back to install', icon: <ArrowBack /> }}
       next={{ href: '/guide/invite', children: 'Next: invite', icon: <ArrowForward /> }}
     />

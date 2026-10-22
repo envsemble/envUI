@@ -9,7 +9,10 @@ const files = [
 export default function NumbersAlignedStart() {
   return (
     // Numbers aligned to the start: hundreds and tens look alike at a glance.
-    <Table.Root aria-label="Files" style={{ inlineSize: 'min(100%, 20rem)' }}>
+    <Table.Root
+      aria-label="Files, sizes aligned at the start"
+      style={{ inlineSize: 'min(100%, 20rem)' }}
+    >
       <Table.Head>
         <Table.Row>
           <Table.HeaderCell>Name</Table.HeaderCell>

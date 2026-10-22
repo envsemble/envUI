@@ -26,7 +26,9 @@ export default function ActionsInPageHeader() {
       landmarks={false}
       style={{ blockSize: '20rem', inlineSize: 'min(100%, 22rem)' }}
       topBar={<TopBar title="Northwind" />}
-      navigation={{ bar: <Bar destinations={destinations} /> }}
+      navigation={{
+        bar: <Bar aria-label="Main, actions in the page header" destinations={destinations} />,
+      }}
     >
       <Page
         header={

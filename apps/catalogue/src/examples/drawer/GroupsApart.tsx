@@ -9,5 +9,5 @@ const destinations: DrawerDestination[] = [
 ];
 
 export default function GroupsApart() {
-  return <Drawer aria-label="Help" destinations={destinations} />;
+  return <Drawer aria-label="Help, groups apart" destinations={destinations} />;
 }
