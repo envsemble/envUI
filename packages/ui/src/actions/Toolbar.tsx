@@ -8,13 +8,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
-import {
-  Button,
-  IconButton,
-  type IconButtonProps,
-  type ButtonProps as ButtonElementProps,
-  type ButtonVariant,
-} from './Button.js';
+import { IconButton, type IconButtonProps, type ButtonVariant } from './Button.js';
 import { Tooltip } from '../feedback/Tooltip.js';
 import { Kbd } from '../content/Kbd.js';
 import { ControlDefaults } from '../internal/ControlDefaults.js';
@@ -139,7 +133,7 @@ function Group({ className, disabled, render, children, ...props }: GroupProps) 
 
 export type SeparatorProps = ComponentPropsWithRef<'div'>;
 
-/** Space between groups of a toolbar's controls, with no line. */
+/** A line between groups of a toolbar's controls, across the toolbar's direction. */
 function Separator({ className, ...props }: SeparatorProps) {
   return (
     <BaseToolbar.Separator {...props} className={classNames('env-toolbar-separator', className)} />
@@ -239,14 +233,13 @@ function Link({ icon, label, className, ...props }: LinkProps) {
     <Tooltip content={label}>
       <BaseToolbar.Link
         render={
-          <Button
+          <IconButton
             {...({
               ...props,
-              iconOnly: true,
               icon,
               'aria-label': label,
               className: classNames('env-toolbar-button', className),
-            } as ButtonElementProps)}
+            } as IconButtonProps)}
           />
         }
       />
