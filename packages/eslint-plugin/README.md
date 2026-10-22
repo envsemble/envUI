@@ -98,10 +98,10 @@ It is a warning, not an error, in `configs.recommended`: plain CSS stays allowed
 What it reads:
 
 - every object literal in the `style` value, through conditions, spreads and calls, such as `style={{ ...base, ...(stacked ? { display: 'flex' } : {}) }}` and `style={useMemo(() => ({ display: 'grid' }), [])}`;
-- a `const` of the same file that holds an object literal, with or without `as const`, as in `style={row}` with `const row = { display: 'flex' }`, and one of its keys, as in `style={styles.toolbar}`; the declaration is reported once, however many elements use it;
-- both branches of a condition, as in `display: wide ? 'grid' : 'flex'`.
+- a `const` of the same file that holds an object literal, with or without `as const`, where the style takes it as it is: `style={row}` with `const row = { display: 'flex' }`, one of its keys, as in `style={styles.toolbar}`, either branch of a condition, and a spread, as in `style={{ ...row, padding: 0 }}`; the declaration is reported once, however many elements use it;
+- both branches of a condition, as in `display: wide ? 'grid' : 'flex'`, and a `const` of the same file that holds a string, as in `display: d` with `const d = 'flex'`.
 
-A computed display, a style object from another module or a function's parameter, and style sheets pass: plain CSS in a style sheet is the application's own business. Flex and grid properties without a `display` of their own, such as `flex: 1` or `gridColumn` on a child, pass too. The rule has no options.
+A computed display, a constant passed to a call, as in `style={css(config)}`, whose result the rule can't know, a style object from another module or a function's parameter, and style sheets pass: plain CSS in a style sheet is the application's own business. Flex and grid properties without a `display` of their own, such as `flex: 1` or `gridColumn` on a child, pass too. The rule has no options.
 
 ### no-html-elements
 
