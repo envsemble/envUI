@@ -73,7 +73,7 @@
         {
           "id": "empty-state",
           "label": "empty state",
-          "envui": ["EmptyState"]
+          "envui": ["Column", "Text"]
         },
         {
           "id": "clear-action",
@@ -276,7 +276,7 @@
         {
           "id": "error-message",
           "label": "error message",
-          "envui": ["Alert", "EmptyState"]
+          "envui": ["Alert"]
         },
         {
           "id": "retry",

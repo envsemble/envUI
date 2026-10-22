@@ -251,6 +251,7 @@ const componentPatterns: Record<string, string> = {
   'account-menu': 'account-menu',
   stat: 'key-figures',
   stats: 'key-figures',
+  'empty-state': 'empty-states',
 };
 
 /** Keep downloaded references and old bookmarks working after topic consolidation. */

@@ -6,7 +6,6 @@ import {
   Column,
   CommandPalette,
   Drawer,
-  EmptyState,
   Menu,
   Page,
   PageHeader,
@@ -111,12 +110,17 @@ export default function AppFrame() {
       }}
     >
       <Page width="lg" header={<PageHeader title={page.label} headingLevel={3} />}>
-        <EmptyState
-          icon={<Description />}
-          title="Nothing here yet"
-          description="The router renders the page in the Scaffold's body."
-          headingLevel={4}
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <Description width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              Nothing here yet
+            </Text>
+            <Text variant="body-sm">The router renders the page in the Scaffold's body.</Text>
+          </Column>
+        </Column>
       </Page>
       <CommandPalette
         open={searching}

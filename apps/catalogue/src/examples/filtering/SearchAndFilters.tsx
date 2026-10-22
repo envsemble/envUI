@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import {
   Badge,
   Button,
-  EmptyState,
   List,
   PageHeader,
   SearchField,
@@ -96,21 +95,24 @@ export default function SearchAndFilters() {
           ))}
         </List.Root>
       ) : (
-        // The toolbar stays above the empty state, so people can change what they asked for.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching projects"
-          description={
-            term
-              ? `No project names contain “${query.trim()}” with these filters.`
-              : 'No projects match these filters.'
-          }
-          action={
-            <Button variant="secondary" onClick={clear}>
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching projects
+            </Text>
+            <Text variant="body-sm">
+              {term
+                ? `No project names contain “${query.trim()}” with these filters.`
+                : 'No projects match these filters.'}
+            </Text>
+          </Column>
+          <Button variant="secondary" onClick={clear}>
+            Clear filters
+          </Button>
+        </Column>
       )}
     </Column>
   );

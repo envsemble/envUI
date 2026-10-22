@@ -26,7 +26,6 @@ composes:
   - Menu
   - Page
   - PageHeader
-  - EmptyState
   - Button
   - IconButton
   - Column

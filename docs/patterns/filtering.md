@@ -42,7 +42,6 @@ composes:
   - Badge
   - List
   - Text
-  - EmptyState
   - useContainerSize
 related:
   - data-tables
@@ -57,7 +56,7 @@ related:
 
 ## Overview
 
-Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an [EmptyState](../components/empty-state.md) names the query and offers Clear filters, under the toolbar that stays.
+Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an [empty state](empty-states.md) names the query and offers Clear filters, under the toolbar that stays.
 
 ```tsx example=SearchAndFilters
 

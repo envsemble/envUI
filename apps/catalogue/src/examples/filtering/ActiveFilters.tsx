@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, EmptyState, List, Menu, Column, Row, Text } from '@envsemble/envui';
+import { Button, List, Menu, Column, Row, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Close } from '@envsemble/envui/icons/Close';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
@@ -100,17 +100,20 @@ export default function ActiveFilters() {
           ))}
         </List.Root>
       ) : (
-        // The filters stay above the empty state, so people can remove one instead.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching tasks"
-          description={`No tasks match ${filters.map((filter) => filter.label).join(' and ')}.`}
-          action={
-            <Button variant="secondary" onClick={clear}>
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching tasks
+            </Text>
+            <Text variant="body-sm">{`No tasks match ${filters.map((filter) => filter.label).join(' and ')}.`}</Text>
+          </Column>
+          <Button variant="secondary" onClick={clear}>
+            Clear filters
+          </Button>
+        </Column>
       )}
     </Column>
   );

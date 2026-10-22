@@ -1,0 +1,10 @@
+{
+  "@envsemble/envui": {
+    "EmptyState": {
+      "use": "EmptyState is gone: the empty states pattern builds one from a Column with an icon, a Text heading of the level the page's outline needs, a Text sentence and a Button, centred with align=\"center\" where it takes a region's place, and a danger Alert with announce where content failed to load; no codemod rewrites it."
+    },
+    "EmptyStateProps": {
+      "use": "EmptyState is gone, with its props: the empty states pattern builds one from Column, Text and Button."
+    }
+  }
+}

@@ -36,7 +36,6 @@ composes:
   - ThemeRadioGroup
   - Page
   - PageHeader
-  - EmptyState
   - IconButton
   - Button
   - Row

@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  Column,
-  EmptyState,
-  SegmentedControl,
-  Table,
-  placeholders,
-} from '@envsemble/envui';
+import { Button, Column, SegmentedControl, Table, placeholders, Text } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { FolderOpen } from '@envsemble/envui/icons/FolderOpen';
 
@@ -42,12 +35,18 @@ export default function EmptyAndLoading() {
   // space, hidden, so the page doesn't jump.
   const content =
     rows?.length === 0 ? (
-      <EmptyState
-        icon={<FolderOpen />}
-        title={`No ${name} projects yet`}
-        description="Projects bring a team’s documents, tasks and people together."
-        action={<Button startIcon={<Add />}>Create project</Button>}
-      />
+      <Column gap={4} padding={5}>
+        <Text render={<span />} emphasis="muted">
+          <FolderOpen width="1.5rem" height="1.5rem" />
+        </Text>
+        <Column gap={2}>
+          <Text render={<h4 />} variant="title">{`No ${name} projects yet`}</Text>
+          <Text variant="body-sm">
+            Projects bring a team’s documents, tasks and people together.
+          </Text>
+        </Column>
+        <Button startIcon={<Add />}>Create project</Button>
+      </Column>
     ) : (
       <div style={{ visibility: rows || showPlaceholders ? undefined : 'hidden' }}>
         <Table.Root aria-label={`${name} projects`} skeleton={!rows}>

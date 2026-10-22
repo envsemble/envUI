@@ -35,7 +35,7 @@ related:
   - badge
   - checkbox
   - pagination
-  - empty-state
+  - empty-states
   - loading
   - typography
 components:
@@ -131,7 +131,7 @@ Density changes only the rows' padding; controls in cells keep the small height.
 - Name every table with a `caption`, or an `aria-label` where a heading above names it.
 - Open a row through a link or button in a cell, with `interactive` for the highlight, never a click handler on the row.
 - Start each row with the cell that identifies it; it titles the row when rows stack.
-- Show an [EmptyState](empty-state.md) when there are no rows, and [Pagination](pagination.md) for a long table.
+- Show an [empty state](../patterns/empty-states.md) when there are no rows, and [Pagination](pagination.md) for a long table.
 
 ## Anatomy
 

@@ -168,7 +168,9 @@
       "env-code-block-heading": "The block's heading, such as a file name."
     },
     "CodeDiff": {
-      "env-code-diff": "The diff of two versions of code."
+      "env-code-diff": "The diff of two versions of code.",
+      "env-code-diff-failed": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert.",
+      "env-code-diff-failed-icon": "The error icon of a diff that failed to load, in the danger color."
     },
     "ColorPicker": {
       "env-color-picker": "The color picker.",
@@ -313,10 +315,6 @@
     "EditorChrome": {
       "env-editor-status": "The editor's status line, such as a character count.",
       "env-editor-toolbar": "The editor's formatting toolbar."
-    },
-    "EmptyState": {
-      "env-empty-state": "The empty state.",
-      "env-empty-state-description": "The sentence under the title."
     },
     "Field": {
       "env-field": "The field: label, control, description and error.",

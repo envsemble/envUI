@@ -624,8 +624,13 @@ test('envui mcp answers every tool over stdio from the installed files', async (
       'A members page: a filterable table with an empty state, pagination and a confirm-delete dialog',
   });
   const names = planned.candidates.map((item) => item.component);
-  for (const name of ['Table', 'EmptyState', 'Pagination', 'ConfirmDialog'])
+  for (const name of ['Table', 'Pagination', 'ConfirmDialog'])
     assert.ok(names.includes(name), name);
+  // An empty state is a pattern, built from Column, Text and Button.
+  assert.ok(
+    planned.patterns.some((page) => page.name === 'empty-states'),
+    planned.patterns.map((page) => page.name).join(', '),
+  );
   // Candidates to confirm, each with the words that matched, never a list of imports to paste.
   assert.equal(planned.imports, undefined);
   const table = planned.candidates.find((item) => item.component === 'Table');

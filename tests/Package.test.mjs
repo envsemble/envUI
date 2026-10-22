@@ -260,7 +260,6 @@ test('a packed consumer resolves compiled public exports and its own React insta
     'Box',
     'List',
     'Disclosure',
-    'EmptyState',
     'placeholders',
     'isPlaceholder',
     'useSkeleton',

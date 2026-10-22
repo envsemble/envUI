@@ -3,13 +3,14 @@ import {
   Avatar,
   Button,
   ConfirmDialog,
-  EmptyState,
   IconButton,
   Link,
   Menu,
   Row,
   Table,
   Tooltip,
+  Column,
+  Text,
 } from '@envsemble/envui';
 import { Add } from '@envsemble/envui/icons/Add';
 import { Delete } from '@envsemble/envui/icons/Delete';
@@ -52,20 +53,26 @@ export default function RowActions() {
   return (
     <>
       {projects.length === 0 ? (
-        <EmptyState
-          icon={<FolderOpen />}
-          title="No projects yet"
-          description="Projects bring a team’s documents, tasks and people together."
-          action={
-            <Button
-              ref={createButton}
-              startIcon={<Add />}
-              onClick={() => setProjects([{ ...initialProjects[0], id: crypto.randomUUID() }])}
-            >
-              Create project
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <FolderOpen width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No projects yet
+            </Text>
+            <Text variant="body-sm">
+              Projects bring a team’s documents, tasks and people together.
+            </Text>
+          </Column>
+          <Button
+            ref={createButton}
+            startIcon={<Add />}
+            onClick={() => setProjects([{ ...initialProjects[0], id: crypto.randomUUID() }])}
+          >
+            Create project
+          </Button>
+        </Column>
       ) : (
         <Table.Root aria-label="Your projects">
           <Table.Head>

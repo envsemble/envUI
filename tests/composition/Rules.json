@@ -71,7 +71,6 @@
       "feedback/ConfirmDialog.tsx": "composites",
       "feedback/Dialog.tsx": "composites",
       "feedback/Sheet.tsx": "composites",
-      "feedback/EmptyState.tsx": "base",
       "feedback/HoverCard.tsx": "base",
       "feedback/Meter.tsx": "base",
       "feedback/Progress.tsx": "base",
@@ -465,8 +464,8 @@
         },
         {
           "stylesheet": "Code.css",
-          "classes": ["env-spinner", "env-empty-state"],
-          "note": "A code diff pads its loading and empty states."
+          "classes": ["env-spinner"],
+          "note": "A code diff pads its loading state."
         },
         {
           "stylesheet": "Composer.css",

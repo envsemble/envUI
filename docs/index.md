@@ -104,7 +104,6 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 
 ## Feedback & overlays
 
-- [EmptyState](components/empty-state.md)
 - [Spinner](components/spinner.md)
 - [Toast](components/toast.md)
 - [Alert](components/alert.md)

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Alert, Button, EmptyState, Column, Row, Surface, Text, TextField } from '@envsemble/envui';
+import { Alert, Button, Column, Row, Surface, Text, TextField } from '@envsemble/envui';
 import { Example, ExampleStage } from '../Example';
 import { VerdictFigure } from '../../template/Figures';
 
@@ -150,27 +150,35 @@ export function ContentPreview() {
         title="Empty states"
         rule="A title that states the fact, a sentence on why or what next, and one action."
         doing={
-          <EmptyState
-            headingLevel={3}
-            title="No matching projects"
-            description="No project names contain “roadmap”. Check the spelling or clear the filters."
-            action={<Button variant="secondary">Clear filters</Button>}
-          />
+          <Column gap={4} padding={5}>
+            <Column gap={2}>
+              <Text render={<h3 />} variant="title">
+                No matching projects
+              </Text>
+              <Text variant="body-sm">
+                No project names contain “roadmap”. Check the spelling or clear the filters.
+              </Text>
+            </Column>
+            <Button variant="secondary">Clear filters</Button>
+          </Column>
         }
         doCaption="Names the query and offers the way back."
         avoiding={
-          <EmptyState
-            headingLevel={3}
-            title="Nothing here!"
-            description="Looks like there’s nothing to show. Try something else, or start something new!"
-            action={
-              <Row wrap gap={3}>
-                <Button>Create project</Button>
-                <Button variant="secondary">Import</Button>
-                <Button variant="secondary">Reset</Button>
-              </Row>
-            }
-          />
+          <Column gap={4} padding={5}>
+            <Column gap={2}>
+              <Text render={<h3 />} variant="title">
+                Nothing here!
+              </Text>
+              <Text variant="body-sm">
+                Looks like there’s nothing to show. Try something else, or start something new!
+              </Text>
+            </Column>
+            <Row wrap gap={3}>
+              <Button>Create project</Button>
+              <Button variant="secondary">Import</Button>
+              <Button variant="secondary">Reset</Button>
+            </Row>
+          </Column>
         }
         avoidCaption="Doesn’t say why it is empty, and offers three competing ways out."
       />

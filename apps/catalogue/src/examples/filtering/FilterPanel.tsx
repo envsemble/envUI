@@ -1,15 +1,5 @@
 import { useRef, useState } from 'react';
-import {
-  Button,
-  Checkbox,
-  EmptyState,
-  List,
-  Popover,
-  Column,
-  Row,
-  Text,
-  Badge,
-} from '@envsemble/envui';
+import { Button, Checkbox, List, Popover, Column, Row, Text, Badge } from '@envsemble/envui';
 import { FilterList } from '@envsemble/envui/icons/FilterList';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
@@ -108,24 +98,27 @@ export default function FilterPanel() {
           ))}
         </List.Root>
       ) : (
-        // The Filters button stays above the empty state, so people can change one filter instead.
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching documents"
-          description="No documents match these filters."
-          action={
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setFilters([]);
-                // The empty state goes with the filters, so focus moves to the Filters button.
-                toolbar.current?.querySelector('button')?.focus();
-              }}
-            >
-              Clear filters
-            </Button>
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching documents
+            </Text>
+            <Text variant="body-sm">No documents match these filters.</Text>
+          </Column>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setFilters([]);
+              // The empty state goes with the filters, so focus moves to the Filters button.
+              toolbar.current?.querySelector('button')?.focus();
+            }}
+          >
+            Clear filters
+          </Button>
+        </Column>
       )}
     </Column>
   );

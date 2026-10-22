@@ -209,7 +209,8 @@ const goldenQueries = [
   { query: 'dashboard', first: 'page:dashboard-page' },
   { query: '404', first: 'page:error-pages' },
   { query: 'not found', first: 'page:error-pages' },
-  { query: 'empty state', first: 'page:empty-state', second: 'page:empty-states' },
+  { query: 'empty state', first: 'page:empty-states' },
+  { query: 'stat', first: 'page:key-figures' },
   { query: 'undo delete', first: 'page:destructive-actions' },
 ];
 for (const { query, first, second } of goldenQueries) {

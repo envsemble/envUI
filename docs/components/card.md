@@ -32,7 +32,7 @@ avoidWhen:
   - text: A message about the page or a section.
     use: Alert
   - text: A region with no content yet.
-    use: EmptyState
+    see: empty-states
 related:
   - surface
   - column

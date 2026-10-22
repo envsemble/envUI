@@ -31,7 +31,7 @@
       },
       "heading": {
         "to": "title",
-        "report": "Card's heading is title in 1.0, as on EmptyState and Dialog; headingLevel still sets its level."
+        "report": "Card's heading is title in 1.0, as on Dialog; headingLevel still sets its level."
       }
     }
   }

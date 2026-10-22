@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import {
   Badge,
   Button,
-  EmptyState,
   List,
   PageHeader,
   SearchField,
@@ -72,22 +71,26 @@ export default function NoResults() {
           ))}
         </List.Root>
       ) : (
-        <EmptyState
-          icon={<SearchOff />}
-          title="No matching projects"
-          description={
-            term
-              ? `Nothing matches “${query.trim()}” with these filters. Check the spelling or clear the filters.`
-              : 'No projects match these filters.'
-          }
-          action={
-            filtered ? (
-              <Button variant="secondary" onClick={clear}>
-                Clear filters
-              </Button>
-            ) : undefined
-          }
-        />
+        <Column gap={4} padding={5}>
+          <Text render={<span />} emphasis="muted">
+            <SearchOff width="1.5rem" height="1.5rem" />
+          </Text>
+          <Column gap={2}>
+            <Text render={<h4 />} variant="title">
+              No matching projects
+            </Text>
+            <Text variant="body-sm">
+              {term
+                ? `Nothing matches “${query.trim()}” with these filters. Check the spelling or clear the filters.`
+                : 'No projects match these filters.'}
+            </Text>
+          </Column>
+          {filtered && (
+            <Button variant="secondary" onClick={clear}>
+              Clear filters
+            </Button>
+          )}
+        </Column>
       )}
     </Column>
   );

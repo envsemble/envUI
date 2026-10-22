@@ -842,14 +842,22 @@
         {
           "class": "env-code-diff",
           "description": "The diff of two versions of code."
+        },
+        {
+          "class": "env-code-diff-failed",
+          "description": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert."
+        },
+        {
+          "class": "env-code-diff-failed-icon",
+          "description": "The error icon of a diff that failed to load, in the danger color."
         }
       ],
       "states": [],
       "uses": [
         "Button",
-        "EmptyState",
         "Icon",
-        "Spinner"
+        "Spinner",
+        "Text"
       ]
     },
     "ColorPicker": {
@@ -1856,47 +1864,6 @@
         "Field",
         "Icon",
         "Spinner"
-      ]
-    },
-    "EmptyState": {
-      "root": "env-empty-state",
-      "source": "packages/ui/src/feedback/EmptyState.tsx",
-      "parts": [
-        {
-          "class": "env-empty-state",
-          "description": "The empty state."
-        },
-        {
-          "class": "env-empty-state-description",
-          "description": "The sentence under the title."
-        }
-      ],
-      "states": [
-        {
-          "attribute": "data-align",
-          "values": [
-            "center",
-            "start"
-          ],
-          "parts": [
-            "env-empty-state"
-          ]
-        },
-        {
-          "attribute": "data-tone",
-          "values": [
-            "danger",
-            "neutral"
-          ],
-          "parts": [
-            "env-empty-state"
-          ]
-        }
-      ],
-      "uses": [
-        "Icon",
-        "Skeleton",
-        "Text"
       ]
     },
     "Field": {
@@ -4418,13 +4385,6 @@
           ]
         },
         {
-          "attribute": "data-env-skeleton",
-          "values": [],
-          "parts": [
-            "env-text"
-          ]
-        },
-        {
           "attribute": "data-variant",
           "values": [
             "body-sm",
@@ -5418,7 +5378,6 @@
         "DatePicker",
         "Dialog",
         "Drawer",
-        "EmptyState",
         "HoverCard",
         "List",
         "Menu",

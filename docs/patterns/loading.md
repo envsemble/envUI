@@ -20,7 +20,7 @@ useWhen:
   - Work with a measurable end, such as an upload, runs while people wait.
 avoidWhen:
   - text: Content that turned out empty, or that failed to load.
-    use: EmptyState
+    see: empty-states
 composes:
   - Scaffold
   - TopBar
@@ -130,7 +130,7 @@ After 200 ms the bar along the top bar's bottom edge shows the next page is on i
 ```
 
 - Give media an aspect ratio, with `width` and `height` or `aspect-ratio`, so it holds its place; dev mode's `envui.layout.skeletonShift()` reports what moves.
-- When content fails or turns out empty, show an [EmptyState](../components/empty-state.md) in its place.
+- When content fails or turns out empty, show an [empty state](empty-states.md) in its place.
 
 ### Content
 

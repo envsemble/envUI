@@ -1811,7 +1811,7 @@
         },
         {
           "text": "A region with no content yet.",
-          "use": "EmptyState"
+          "see": "empty-states"
         }
       ],
       "related": [
@@ -9648,6 +9648,14 @@
             {
               "class": "env-code-diff",
               "description": "The diff of two versions of code."
+            },
+            {
+              "class": "env-code-diff-failed",
+              "description": "What the diff shows when it fails to load: the error, a sentence and Retry, announced as an alert."
+            },
+            {
+              "class": "env-code-diff-failed-icon",
+              "description": "The error icon of a diff that failed to load, in the danger color."
             }
           ],
           "states": []
@@ -9943,7 +9951,7 @@
         "badge",
         "checkbox",
         "pagination",
-        "empty-state",
+        "empty-states",
         "loading",
         "typography"
       ],
@@ -11886,183 +11894,6 @@
       }
     },
     {
-      "name": "EmptyState",
-      "page": "empty-state",
-      "doc": "docs/components/empty-state.md",
-      "category": "Feedback & overlays",
-      "status": "stable",
-      "since": "0.1.0",
-      "summary": "Explains why a region has no content, such as nothing yet, no results or a failed load, and offers the next action.",
-      "aliases": [
-        "empty state",
-        "blank slate",
-        "zero state",
-        "no data",
-        "no results",
-        "nothing found",
-        "error state",
-        "load error",
-        "placeholder"
-      ],
-      "useWhen": [
-        "A list, table or page has no content yet, such as before the first project.",
-        "A search or filter matches nothing.",
-        "Content failed to load and people can try again (`tone=\"danger\"`).",
-        "A state takes the place of a whole page's or region's content (`align=\"center\"`)."
-      ],
-      "avoidWhen": [
-        {
-          "text": "Content that is on its way, which keeps its layout while it loads, as a skeleton.",
-          "use": "Surface"
-        },
-        {
-          "text": "A message about a page or section that still has its content.",
-          "use": "Alert"
-        },
-        {
-          "text": "Feedback after an action, such as a failed save.",
-          "use": "Toast"
-        },
-        {
-          "text": "Work of unknown length in a small area.",
-          "use": "Spinner"
-        }
-      ],
-      "related": [
-        "loading",
-        "alert",
-        "toast",
-        "card",
-        "button"
-      ],
-      "exports": [
-        "EmptyState"
-      ],
-      "examples": [
-        {
-          "name": "FirstProject",
-          "title": "First project",
-          "description": "An empty state takes the place of content that isn't there: it says why and offers the action that resolves it.",
-          "file": "docs/examples/empty-state/FirstProject.tsx"
-        },
-        {
-          "name": "InPlaceOfContent",
-          "title": "In place of content",
-          "description": "`align=\"center\"` centres the state in the height its region gives it.",
-          "file": "docs/examples/empty-state/InPlaceOfContent.tsx"
-        },
-        {
-          "name": "LoadFailed",
-          "title": "Failed to load",
-          "description": "`tone=\"danger\"` shows the error icon and announces the state. Try again shows its progress.",
-          "file": "docs/examples/empty-state/LoadFailed.tsx"
-        },
-        {
-          "name": "NoResults",
-          "title": "Do: No results: say so, and offer to clear the search.",
-          "description": "",
-          "file": "docs/examples/empty-state/NoResults.tsx"
-        },
-        {
-          "name": "FirstUseForNoResults",
-          "title": "Don't: The first-use state for a search that matched nothing.",
-          "description": "",
-          "file": "docs/examples/empty-state/FirstUseForNoResults.tsx"
-        },
-        {
-          "name": "OneAction",
-          "title": "Do: One action that resolves the state.",
-          "description": "",
-          "file": "docs/examples/empty-state/OneAction.tsx"
-        },
-        {
-          "name": "CompetingActions",
-          "title": "Don't: Several actions: none of them reads as the way forward.",
-          "description": "",
-          "file": "docs/examples/empty-state/CompetingActions.tsx"
-        },
-        {
-          "name": "SayWhatHappened",
-          "title": "Do: Say what happened, that work is safe, and what to do.",
-          "description": "",
-          "file": "docs/examples/empty-state/SayWhatHappened.tsx"
-        },
-        {
-          "name": "ErrorCode",
-          "title": "Don't: A code and an apology, with nothing to do next.",
-          "description": "",
-          "file": "docs/examples/empty-state/ErrorCode.tsx"
-        },
-        {
-          "name": "EmptyStateAnatomy",
-          "title": "EmptyState anatomy",
-          "description": "",
-          "file": "docs/examples/empty-state/EmptyStateAnatomy.tsx"
-        }
-      ],
-      "parts": {
-        "EmptyState": {
-          "root": "env-empty-state",
-          "parts": [
-            {
-              "class": "env-empty-state",
-              "description": "The empty state."
-            },
-            {
-              "class": "env-empty-state-description",
-              "description": "The sentence under the title."
-            }
-          ],
-          "states": [
-            {
-              "attribute": "data-align",
-              "values": [
-                "center",
-                "start"
-              ],
-              "parts": [
-                "env-empty-state"
-              ]
-            },
-            {
-              "attribute": "data-tone",
-              "values": [
-                "danger",
-                "neutral"
-              ],
-              "parts": [
-                "env-empty-state"
-              ]
-            }
-          ]
-        },
-        "Skeleton": {
-          "shared": true,
-          "root": null,
-          "parts": [
-            {
-              "class": "env-skeleton-content",
-              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
-            },
-            {
-              "class": "env-skeleton-status",
-              "description": "The visually hidden status beside a skeleton list, which says what is loading."
-            }
-          ],
-          "states": []
-        }
-      },
-      "usedIn": {
-        "patterns": [
-          "empty-states",
-          "app-frame",
-          "window-frame",
-          "filtering",
-          "data-tables"
-        ]
-      }
-    },
-    {
       "name": "Spinner",
       "page": "spinner",
       "doc": "docs/components/spinner.md",
@@ -12492,7 +12323,7 @@
         },
         {
           "text": "A region without content yet, such as an empty list or no search results.",
-          "use": "EmptyState"
+          "see": "empty-states"
         },
         {
           "text": "An error about one field of a form.",
@@ -12509,7 +12340,7 @@
       ],
       "related": [
         "toast",
-        "empty-state",
+        "empty-states",
         "badge",
         "dialog",
         "colors"
@@ -12648,7 +12479,8 @@
       "usedIn": {
         "patterns": [
           "forms",
-          "feedback"
+          "feedback",
+          "empty-states"
         ]
       }
     },
@@ -15144,6 +14976,7 @@
         "panes",
         "scale",
         "spinner",
+        "empty-states",
         "colors"
       ]
     },
@@ -15365,7 +15198,7 @@
         "accessibility",
         "typography",
         "text-field",
-        "empty-state",
+        "empty-states",
         "toast",
         "confirm-dialog"
       ]
@@ -15837,7 +15670,7 @@
       "avoidWhen": [
         {
           "text": "Content that turned out empty, or that failed to load.",
-          "use": "EmptyState"
+          "see": "empty-states"
         }
       ],
       "composes": [
@@ -15948,6 +15781,7 @@
       "since": "1.0.0",
       "summary": "Show what a region holds when it has nothing to show, tell first use from no results, done and failed, and offer the one way on.",
       "aliases": [
+        "EmptyState",
         "empty state",
         "no results",
         "no data",
@@ -15972,7 +15806,7 @@
         }
       ],
       "composes": [
-        "EmptyState",
+        "Alert",
         "PageHeader",
         "SearchField",
         "Select",
@@ -15989,7 +15823,6 @@
       "related": [
         "loading",
         "feedback",
-        "empty-state",
         "list",
         "table"
       ],
@@ -15998,7 +15831,7 @@
         {
           "name": "FirstUse",
           "title": "First use",
-          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay. Until something exists, it holds the create action; then the page's own header action takes over.",
+          "description": "An empty state says why a region has nothing to show and what people can do, in place of the list or the table, under the heading and toolbar that stay: an icon, a heading, a sentence and the one action, in a Column of Text and a Button. Until something exists, it holds the create action; then the page's own header action takes over.",
           "file": "docs/examples/empty-states/FirstUse.tsx"
         },
         {
@@ -16010,7 +15843,7 @@
         {
           "name": "LoadFailed",
           "title": "Load failed",
-          "description": "A danger state has the alert role, so it is announced; it says the documents are safe and offers Try again.",
+          "description": "A failure is an Alert with `tone=\"danger\"` and `announce`, so it is announced, in the room the table takes; it says the documents are safe and offers Try again.",
           "file": "docs/examples/empty-states/LoadFailed.tsx"
         },
         {
@@ -16337,7 +16170,6 @@
         "ThemeRadioGroup",
         "Page",
         "PageHeader",
-        "EmptyState",
         "IconButton",
         "Button",
         "Row",
@@ -16517,7 +16349,6 @@
         "Menu",
         "Page",
         "PageHeader",
-        "EmptyState",
         "Button",
         "IconButton",
         "Column",
@@ -16625,7 +16456,6 @@
         "Badge",
         "List",
         "Text",
-        "EmptyState",
         "useContainerSize"
       ],
       "related": [
@@ -16641,7 +16471,7 @@
         {
           "name": "SearchAndFilters",
           "title": "Search and filters",
-          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an EmptyState names the query and offers Clear filters, under the toolbar that stays.",
+          "description": "Filtering helps people find items in a long list or table: a search and a few filters above the results, each applied as people choose it, a count of what matches, and one way to clear it all. When nothing matches, an empty state names the query and offers Clear filters, under the toolbar that stays.",
           "file": "docs/examples/filtering/SearchAndFilters.tsx"
         },
         {
@@ -16736,7 +16566,6 @@
         "ConfirmDialog",
         "Toast",
         "useToast",
-        "EmptyState",
         "placeholders",
         "Surface",
         "Column",
@@ -16774,7 +16603,7 @@
         {
           "name": "EmptyAndLoading",
           "title": "Loading and empty",
-          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an EmptyState takes its place.",
+          "description": "The first load shows the table as a skeleton over placeholder rows after 200 ms, through `skeleton` on Table.Root, as in Loading; with no records, an empty state takes its place.",
           "file": "docs/examples/data-tables/EmptyAndLoading.tsx"
         },
         {
@@ -19680,75 +19509,6 @@
       "status": "stable",
       "page": "drop-zone",
       "doc": "docs/components/drop-zone.md"
-    },
-    "EmptyState": {
-      "kind": "component",
-      "import": "@envsemble/envui",
-      "description": "What a region shows when it has nothing to show: no items yet, no matches, or content that failed to load. A title, a description, an optional icon and the action that resolves the state.",
-      "props": [
-        {
-          "name": "title",
-          "type": "ReactNode",
-          "required": true,
-          "description": "What is missing or what happened, such as \"No projects yet\"; a heading of `headingLevel`."
-        },
-        {
-          "name": "description",
-          "type": "ReactNode",
-          "required": false,
-          "description": "Why, and what people can do, in a sentence or two of muted text under the title."
-        },
-        {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon above the text; an error state shows the error icon without it."
-        },
-        {
-          "name": "action",
-          "type": "ReactNode",
-          "required": false,
-          "description": "The action that resolves the state, such as a Button that creates the first item."
-        },
-        {
-          "name": "children",
-          "type": "ReactNode",
-          "required": false,
-          "description": "More content under the description, such as a short list of next steps."
-        },
-        {
-          "name": "tone",
-          "type": "'neutral' | 'danger'",
-          "required": false,
-          "default": "'neutral'",
-          "description": "neutral for a state with nothing to show yet; danger for content that failed to load, which shows the error icon by default and is announced as an alert. Pair it with a retry action."
-        },
-        {
-          "name": "headingLevel",
-          "type": "1 | 2 | 3 | 4 | 5 | 6",
-          "required": false,
-          "description": "The title's heading level in the page outline; 4 by default. The appearance stays the same."
-        },
-        {
-          "name": "align",
-          "type": "'start' | 'center'",
-          "required": false,
-          "description": "`start` (default) for a state inside a card, panel or dialog. `center` for a state that takes the place of a page's or region's content: a larger icon, centred text and action, centred vertically in the height the application gives it."
-        },
-        {
-          "name": "skeleton",
-          "type": "boolean",
-          "required": false,
-          "default": "false",
-          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
-        }
-      ],
-      "native": [
-        "div"
-      ],
-      "status": "stable",
-      "page": "empty-state",
-      "doc": "docs/components/empty-state.md"
     },
     "EnvUIProvider": {
       "kind": "component",

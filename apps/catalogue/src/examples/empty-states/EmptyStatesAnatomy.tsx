@@ -1,4 +1,4 @@
-import { Button, Column, EmptyState, PageHeader, SearchField } from '@envsemble/envui';
+import { Button, Column, PageHeader, SearchField, Text } from '@envsemble/envui';
 import { SearchOff } from '@envsemble/envui/icons/SearchOff';
 
 export default function EmptyStatesAnatomy() {
@@ -10,13 +10,20 @@ export default function EmptyStatesAnatomy() {
         headingLevel={3}
         toolbar={<SearchField label="Search projects" defaultValue="roadmap" />}
       />
-      <EmptyState
-        icon={<SearchOff />}
-        title="No matching projects"
-        description="Nothing matches “roadmap”. Try other words, or clear the search."
-        action={<Button variant="secondary">Clear search</Button>}
-        headingLevel={4}
-      />
+      <Column gap={4} padding={5}>
+        <Text render={<span />} emphasis="muted">
+          <SearchOff width="1.5rem" height="1.5rem" />
+        </Text>
+        <Column gap={2}>
+          <Text render={<h4 />} variant="title">
+            No matching projects
+          </Text>
+          <Text variant="body-sm">
+            Nothing matches “roadmap”. Try other words, or clear the search.
+          </Text>
+        </Column>
+        <Button variant="secondary">Clear search</Button>
+      </Column>
     </Column>
   );
 }

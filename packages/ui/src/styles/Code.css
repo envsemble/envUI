@@ -89,6 +89,10 @@
   color: var(--env-code-foreground);
 }
 .env-code-diff > .env-spinner,
-.env-code-diff > .env-empty-state {
+.env-code-diff-failed {
   padding: var(--env-space-5);
+}
+/* A diff that failed to load says so with the error icon in the danger color. */
+.env-code-diff-failed-icon {
+  color: var(--env-color-fg-danger);
 }

@@ -240,11 +240,6 @@
       "count": 4
     }
   },
-  "packages/ui/src/styles/EmptyState.css": {
-    "declaration-property-unit-disallowed-list": {
-      "count": 3
-    }
-  },
   "packages/ui/src/styles/Field.css": {
     "declaration-property-unit-disallowed-list": {
       "count": 1

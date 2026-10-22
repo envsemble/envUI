@@ -59,7 +59,6 @@ import { DatePickerFixture } from './DatePickers.js';
 import { TimePickersFixture } from './TimePickers.js';
 import { MonthPickersFixture } from './MonthPickers.js';
 import { QuietButtonsFixture } from './QuietButtons.js';
-import { EmptyStatesFixture } from './EmptyStates.js';
 import { SheetsFixture } from './Sheets.js';
 import { TooltipsFixture } from './Tooltips.js';
 import { MetersFixture } from './Meters.js';
@@ -369,12 +368,6 @@ export default function App() {
             <>
               <RatingsFixture theme="light" />
               <RatingsFixture theme="dark" />
-            </>
-          )}
-          {includes('empty-states') && (
-            <>
-              <EmptyStatesFixture theme="light" />
-              <EmptyStatesFixture theme="dark" />
             </>
           )}
           {includes('menus') && (

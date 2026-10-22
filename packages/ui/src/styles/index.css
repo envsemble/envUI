@@ -32,7 +32,6 @@
 @import './Pagination.css' layer(env.components);
 @import './Kbd.css' layer(env.components);
 @import './List.css' layer(env.components);
-@import './EmptyState.css' layer(env.components);
 @import './Spinner.css' layer(env.components);
 @import './LoadingBar.css' layer(env.components);
 @import './Text.css' layer(env.components);

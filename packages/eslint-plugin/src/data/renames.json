@@ -63,6 +63,14 @@
       "DirectionLinksProps": { "to": ["Pager.RootProps"] },
       "DisclosureNote": { "to": ["Disclosure"] },
       "DisclosureNoteProps": { "to": ["DisclosureProps"] },
+      "EmptyState": {
+        "to": [],
+        "use": "EmptyState is gone: the empty states pattern builds one from a Column with an icon, a Text heading of the level the page's outline needs, a Text sentence and a Button, centred with align=\"center\" where it takes a region's place, and a danger Alert with announce where content failed to load; no codemod rewrites it."
+      },
+      "EmptyStateProps": {
+        "to": [],
+        "use": "EmptyState is gone, with its props: the empty states pattern builds one from Column, Text and Button."
+      },
       "EnvUILogo": {
         "to": [],
         "use": "envUI ships no logos in 1.0: keep the artwork in the application, as an SVG file or a component that draws it with Icon."

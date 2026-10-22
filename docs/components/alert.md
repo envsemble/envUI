@@ -23,7 +23,7 @@ avoidWhen:
   - text: Brief feedback after an action, such as Saved or Invitation sent.
     use: Toast
   - text: A region without content yet, such as an empty list or no search results.
-    use: EmptyState
+    see: empty-states
   - text: An error about one field of a form.
     use: TextField
   - text: A status beside a label, such as Draft or Blocked.
@@ -32,7 +32,7 @@ avoidWhen:
     use: Dialog
 related:
   - toast
-  - empty-state
+  - empty-states
   - badge
   - dialog
   - colors
