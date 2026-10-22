@@ -30,7 +30,7 @@ export function Specimen({
   if (!Component) throw new Error(`No specimen apps/catalogue/src/specimens/${page}/${name}.tsx`);
   return (
     <SpecimenHeadingLevel value={headingLevel}>
-      <Preview>
+      <Preview specimen={name}>
         <LoadBoundary
           what="specimen"
           modules={[`src/specimens/${page}/${name}.tsx`]}

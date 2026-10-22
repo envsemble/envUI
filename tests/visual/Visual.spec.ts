@@ -77,6 +77,14 @@ interface OpenList {
   count?: number;
   /** The option or item highlighted as the list opens from the keyboard; none for a tooltip or toasts. */
   highlighted?: string;
+  /**
+   * The list moves focus to its highlighted option, as a select or menu does, a moment after it
+   * opens; the capture waits for it, so the focus ring is on the option rather than the trigger. A
+   * combobox and the palette keep focus in their input.
+   */
+  focusesHighlighted?: boolean;
+  /** Pixels that may differ, where some edges are drawn a few levels apart from run to run. */
+  maxDiffPixels?: number;
   /** A modal palette covers the page, so its capture leaves the trigger out. */
   withTrigger: boolean;
   /**
@@ -88,6 +96,13 @@ interface OpenList {
 
 const liveExample = (page: Page, name: string) =>
   page.locator(`.docs-live-example[data-example="${name}"]`);
+
+/**
+ * The popups the test opened, without those of the figures shown open as pictures, which render
+ * into a layer of their own figure.
+ */
+const opened = (page: Page, popups: Locator) =>
+  popups.and(page.locator(':not(.docs-open-example *)'));
 
 /** Toasts of the tones example, shown in order and captured stacked, with their timers stopped. */
 function toasts(name: string, tones: string[], themes: readonly ThemeName[]): OpenList {
@@ -101,7 +116,7 @@ function toasts(name: string, tones: string[], themes: readonly ThemeName[]): Op
     open: async (page) => {
       for (const tone of tones) await press(page, show(page, tone));
     },
-    popup: (page) => page.locator('.env-toast'),
+    popup: (page) => opened(page, page.locator('.env-toast')),
     count: tones.length,
     withTrigger: false,
     pauseTimers: true,
@@ -119,22 +134,29 @@ const openLists: OpenList[] = [
   {
     name: 'select',
     themes: ['light', 'dark', 'light-hc'],
-    route: 'components/select/preview',
-    trigger: (page) => page.getByRole('combobox', { name: 'Visibility', exact: true }),
+    route: 'components/select/overview',
+    trigger: (page) =>
+      liveExample(page, 'ProjectVisibility').getByRole('combobox', {
+        name: 'Visibility',
+        exact: true,
+      }),
     key: 'Space',
-    popup: (page) => page.getByRole('listbox'),
+    popup: (page) => opened(page, page.getByRole('listbox')),
     // Team is selected; Public is a disabled option below it.
     highlighted: 'Team',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
     name: 'select-small',
     themes: ['light'],
-    route: 'components/select/preview',
-    trigger: (page) => page.getByRole('combobox', { name: 'Zoom', exact: true }),
+    route: 'components/select/overview',
+    trigger: (page) =>
+      liveExample(page, 'SmallToolbar').getByRole('combobox', { name: 'Zoom', exact: true }),
     key: 'Space',
-    popup: (page) => page.getByRole('listbox'),
+    popup: (page) => opened(page, page.getByRole('listbox')),
     highlighted: '100%',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
@@ -144,8 +166,10 @@ const openLists: OpenList[] = [
     trigger: (page) =>
       liveExample(page, 'ChooseOwner').getByRole('combobox', { name: 'Owner', exact: true }),
     key: 'ArrowDown',
-    popup: (page) => page.getByRole('listbox'),
+    popup: (page) => opened(page, page.getByRole('listbox')),
     highlighted: 'Alex Morgan',
+    // The avatars' round edges come out up to four levels apart between runs, a few pixels each.
+    maxDiffPixels: 16,
     withTrigger: true,
   },
   {
@@ -158,8 +182,9 @@ const openLists: OpenList[] = [
         exact: true,
       }),
     key: 'ArrowDown',
-    popup: (page) => page.getByRole('menu', { name: 'Report actions', exact: true }),
+    popup: (page) => opened(page, page.getByRole('menu', { name: 'Report actions', exact: true })),
     highlighted: 'Rename',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
@@ -169,8 +194,9 @@ const openLists: OpenList[] = [
     trigger: (page) =>
       liveExample(page, 'Choices').getByRole('button', { name: 'View', exact: true }),
     key: 'ArrowDown',
-    popup: (page) => page.getByRole('menu', { name: 'View options', exact: true }),
+    popup: (page) => opened(page, page.getByRole('menu', { name: 'View options', exact: true })),
     highlighted: 'Name',
+    focusesHighlighted: true,
     withTrigger: true,
   },
   {
@@ -183,7 +209,8 @@ const openLists: OpenList[] = [
         exact: true,
       }),
     key: 'Enter',
-    popup: (page) => page.getByRole('dialog', { name: 'Go to document', exact: true }),
+    popup: (page) =>
+      opened(page, page.getByRole('dialog', { name: 'Go to document', exact: true })),
     highlighted: 'Roadmap.md',
     withTrigger: false,
   },
@@ -204,7 +231,7 @@ const openLists: OpenList[] = [
       await page.keyboard.press('Shift+Tab');
       await page.keyboard.press('Tab');
     },
-    popup: (page) => page.locator('.env-tooltip', { hasText: 'Refresh members' }),
+    popup: (page) => opened(page, page.locator('.env-tooltip', { hasText: 'Refresh members' })),
     withTrigger: true,
   },
   // The strong fills of toasts, each with its edge. Three show at once, so the danger notice, which
@@ -297,11 +324,21 @@ function namer() {
 
 /**
  * Every capture scrolls from the top, so a specimen's offset never depends on the one before.
- * Soft, so one run reports every changed image of a page.
+ * Soft, so one run reports every changed image of a page. A specimen taller than the window is
+ * captured in a window tall enough to hold it: scrolled through a shorter one, its image came out
+ * shifted, with its top cut off and a blank band below.
  */
 async function capture(locator: Locator, path: string[]) {
-  await locator.page().evaluate(() => window.scrollTo(0, 0));
-  await expect.soft(locator).toHaveScreenshot(path);
+  const page = locator.page();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const viewport = page.viewportSize()!;
+  const height = Math.ceil((await locator.boundingBox())?.height ?? 0) + 64;
+  if (height > viewport.height) await page.setViewportSize({ ...viewport, height });
+  try {
+    await expect.soft(locator).toHaveScreenshot(path);
+  } finally {
+    if (height > viewport.height) await page.setViewportSize(viewport);
+  }
 }
 
 /** Waits until open popups have finished growing in, so their boxes have their final size. */
@@ -413,16 +450,27 @@ test.describe('catalogue', () => {
           );
           for (const example of await examples.all()) {
             if (!(await example.isVisible())) continue;
-            // Untitled examples are named after their first disclosure or specimen heading.
-            const heading = example
-              .locator(':scope > h2, :scope > .docs-example-heading > h2, summary, h3')
-              .first();
-            const title = (await heading.count()) ? await heading.textContent() : '';
+            // An example is named after its title; an untitled one after its specimen, such as
+            // InteractionStates, or else its first disclosure or part heading.
+            const own = example.locator(
+              ':scope > :is(h2, h3), :scope > .docs-example-heading > :is(h2, h3)',
+            );
+            const specimen = await example.evaluate(
+              (element) => element.closest('[data-specimen]')?.getAttribute('data-specimen') ?? '',
+            );
+            const part = example.locator('summary, h3, h4').first();
+            const title = (await own.count())
+              ? await own.first().textContent()
+              : specimen
+                ? specimen.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                : (await part.count())
+                  ? await part.textContent()
+                  : '';
             await take(example, `${theme.name}-${name(slug(title ?? ''))}.png`);
             specimens++;
           }
-          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, which
-          // the catalogue keeps in closed disclosures.
+          // The forced hover, pressed, focus and disabled states of InteractionStates.ts, opened
+          // where the catalogue keeps them in a closed disclosure.
           const states = page.locator(
             '.docs-preview [role="region"][aria-label$="interaction states"]',
           );
@@ -434,12 +482,12 @@ test.describe('catalogue', () => {
             matrices.push(label);
             const summary = matrix.locator('xpath=ancestor::details[1]/summary');
             const closed = (await summary.count()) > 0 && !(await matrix.isVisible());
-            if (closed) await press(page, summary);
+            // A matrix shown open is already in its specimen's image.
+            if (!closed) continue;
+            await press(page, summary);
             await take(matrix, `${theme.name}-states-${name(slug(label))}.png`);
-            if (closed) {
-              await press(page, summary);
-              await expect(matrix).toBeHidden();
-            }
+            await press(page, summary);
+            await expect(matrix).toBeHidden();
           }
         }
         // A page without a specimen gives its first live example, named after its file.
@@ -502,26 +550,42 @@ test.describe('open lists', () => {
         // waits on a timer yet, so the second it skips to stop changes nothing.
         if (list.pauseTimers)
           await page.clock.pauseAt((await page.evaluate(() => Date.now())) + 1000);
-        if (list.open) await list.open(page, trigger);
-        else {
-          await trigger.focus();
-          await page.keyboard.press(list.key!);
-        }
         const popup = list.popup(page);
-        await expect(popup).toHaveCount(list.count ?? 1);
-        for (const each of await popup.all()) await expect(each).toBeVisible();
-        await settlePopups(page, list.pauseTimers);
+        // Options pass data-highlighted on to their parts, such as a radio item's indicator.
+        const highlighted = popup.locator(
+          '[data-highlighted]:not([data-highlighted] [data-highlighted])',
+        );
+        // A select or menu moves focus to its highlighted option a moment after it opens. On a busy
+        // machine Base UI now and then leaves focus on the trigger instead, with the list open; the
+        // list is then closed and opened again, at most twice, so the image shows the option focused.
+        for (let attempt = 1; ; attempt++) {
+          if (list.open) await list.open(page, trigger);
+          else {
+            await trigger.focus();
+            await page.keyboard.press(list.key!);
+          }
+          await expect(popup).toHaveCount(list.count ?? 1);
+          for (const each of await popup.all()) await expect(each).toBeVisible();
+          await settlePopups(page, list.pauseTimers);
+          if (!list.focusesHighlighted) break;
+          try {
+            await expect(highlighted).toBeFocused({ timeout: 2000 });
+            break;
+          } catch (error) {
+            if (attempt === 3) throw error;
+            await page.keyboard.press('Escape');
+            await expect(popup).toHaveCount(0);
+            await finishAnimations(page);
+          }
+        }
         if (list.highlighted) {
-          // Options pass data-highlighted on to their parts, such as a radio item's indicator.
-          const highlighted = popup.locator(
-            '[data-highlighted]:not([data-highlighted] [data-highlighted])',
-          );
           await expect(highlighted).toHaveCount(1);
           await expect(highlighted).toContainText(list.highlighted);
         }
         const popups = await popup.all();
         await expect(page).toHaveScreenshot(['open', `${theme.name}-${list.name}.png`], {
           clip: await around(page, list.withTrigger ? [trigger, ...popups] : popups),
+          maxDiffPixels: list.maxDiffPixels,
         });
       });
     }

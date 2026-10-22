@@ -8,14 +8,18 @@ function preventExampleNavigation(event: MouseEvent<HTMLDivElement>) {
   }
 }
 
-/** One specimen area that follows the documentation's current theme. */
-export function Preview({ children }: { children: ReactNode }) {
+/**
+ * One specimen area that follows the documentation's current theme; `specimen` names the catalogue
+ * specimen it shows, so the visual baseline can name an untitled one's image after it.
+ */
+export function Preview({ specimen, children }: { specimen?: string; children: ReactNode }) {
   const theme = useTheme();
   return (
     <Column
       render={<Theme {...theme} />}
       gap={0}
       className="docs-preview"
+      data-specimen={specimen}
       onClickCapture={preventExampleNavigation}
       onAuxClickCapture={preventExampleNavigation}
     >
