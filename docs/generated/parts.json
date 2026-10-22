@@ -702,14 +702,6 @@
           "description": "The title."
         },
         {
-          "class": "env-card-icon",
-          "description": "The icon of the feature layout."
-        },
-        {
-          "class": "env-card-layout",
-          "description": "The row of the feature layout: icon, text and actions."
-        },
-        {
           "class": "env-card-meta",
           "description": "The short fact at the end of the title row."
         }
@@ -743,20 +735,9 @@
           "parts": [
             "env-card"
           ]
-        },
-        {
-          "attribute": "data-layout",
-          "values": [
-            "feature",
-            "stack"
-          ],
-          "parts": [
-            "env-card"
-          ]
         }
       ],
       "uses": [
-        "Icon",
         "Surface",
         "Text"
       ]

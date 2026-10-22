@@ -81,11 +81,11 @@
       },
       "FeatureCard": {
         "to": [],
-        "use": "Card with layout=\"feature\" and headingLevel={2}: icon, title, description and actions for action; v1-structure rewrites each use."
+        "use": "FeatureCard is the feature cards pattern in 1.0: a Card holding a Row with an icon, a Column of Text and a Button; v1-structure reports each use."
       },
       "FeatureCardProps": {
         "to": [],
-        "use": "CardProps, with layout=\"feature\": actions for action."
+        "use": "CardProps; FeatureCard is the feature cards pattern in 1.0, a Card holding a Row of Text and a Button."
       },
       "FileDropzone": { "to": ["DropZone"] },
       "FileDropzoneProps": { "to": ["DropZoneProps"] },

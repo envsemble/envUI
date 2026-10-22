@@ -216,6 +216,7 @@
           "navigation",
           "app-frame",
           "account-menu",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -321,6 +322,7 @@
           "account-menu",
           "organization-switcher",
           "window-frame",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -1772,7 +1774,7 @@
       "category": "Layout & surfaces",
       "status": "stable",
       "since": "0.1.0",
-      "summary": "A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.",
+      "summary": "A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.",
       "aliases": [
         "tile",
         "panel",
@@ -1781,17 +1783,13 @@
         "link card",
         "button card",
         "action card",
-        "feature card",
-        "promo card",
         "ClickableCard",
-        "ActionCard",
-        "FeatureCard"
+        "ActionCard"
       ],
       "useWhen": [
         "Content about one subject stands apart from the page, such as a project's summary.",
         "A summary needs its own actions along the bottom, such as Share and Open (`actions`).",
-        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).",
-        "A feature is introduced with an icon, a sentence and one action (`layout=\"feature\"`)."
+        "The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`)."
       ],
       "avoidWhen": [
         {
@@ -1813,6 +1811,10 @@
         {
           "text": "A region with no content yet.",
           "see": "empty-states"
+        },
+        {
+          "text": "A feature introduced with an icon, a sentence and the one action that starts it.",
+          "see": "feature-cards"
         }
       ],
       "related": [
@@ -1843,12 +1845,6 @@
           "title": "Content card",
           "description": "The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.",
           "file": "docs/examples/card/ActionStrip.tsx"
-        },
-        {
-          "name": "FeatureCards",
-          "title": "Feature card",
-          "description": "`layout=\"feature\"`: an icon, a title and a sentence, and one action.",
-          "file": "docs/examples/card/FeatureCards.tsx"
         },
         {
           "name": "Destinations",
@@ -1891,12 +1887,6 @@
           "title": "Card anatomy",
           "description": "",
           "file": "docs/examples/card/CardAnatomy.tsx"
-        },
-        {
-          "name": "InviteFeature",
-          "title": "Invite feature",
-          "description": "",
-          "file": "docs/examples/card/InviteFeature.tsx"
         }
       ],
       "parts": {
@@ -1926,14 +1916,6 @@
             {
               "class": "env-card-heading",
               "description": "The title."
-            },
-            {
-              "class": "env-card-icon",
-              "description": "The icon of the feature layout."
-            },
-            {
-              "class": "env-card-layout",
-              "description": "The row of the feature layout: icon, text and actions."
             },
             {
               "class": "env-card-meta",
@@ -1969,16 +1951,6 @@
               "parts": [
                 "env-card"
               ]
-            },
-            {
-              "attribute": "data-layout",
-              "values": [
-                "feature",
-                "stack"
-              ],
-              "parts": [
-                "env-card"
-              ]
             }
           ]
         }
@@ -1986,7 +1958,8 @@
       "usedIn": {
         "patterns": [
           "loading",
-          "key-figures"
+          "key-figures",
+          "feature-cards"
         ]
       }
     },
@@ -2467,6 +2440,7 @@
           "account-menu",
           "organization-switcher",
           "window-frame",
+          "feature-cards",
           "filtering",
           "data-tables",
           "progressive-disclosure"
@@ -14908,6 +14882,7 @@
         "box",
         "panes",
         "scale",
+        "feature-cards",
         "spinner",
         "empty-states",
         "colors"
@@ -16412,6 +16387,86 @@
       ]
     },
     {
+      "name": "feature-cards",
+      "title": "Feature cards",
+      "group": "Patterns",
+      "intent": "Find and navigate",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "Introduce a feature with an icon, a heading, a sentence and the one action that starts it, in a Card.",
+      "aliases": [
+        "FeatureCard",
+        "feature card",
+        "feature layout",
+        "layout=\"feature\"",
+        "call to action card",
+        "promo card",
+        "onboarding card"
+      ],
+      "useWhen": [
+        "A feature or a next step is introduced on a page, such as importing plans or inviting the team, with one action that starts it."
+      ],
+      "avoidWhen": [
+        {
+          "text": "A summary of one subject people open or act on, with a title row and actions.",
+          "use": "Card"
+        },
+        {
+          "text": "A region with nothing to show yet, whose action ends that state.",
+          "see": "empty-states"
+        },
+        {
+          "text": "A message about a page or section that people may need to act on.",
+          "use": "Alert"
+        }
+      ],
+      "composes": [
+        "Card",
+        "Row",
+        "Column",
+        "Text",
+        "Button"
+      ],
+      "related": [
+        "card",
+        "empty-states",
+        "button"
+      ],
+      "doc": "docs/patterns/feature-cards.md",
+      "examples": [
+        {
+          "name": "ImportPlans",
+          "title": "Import plans",
+          "description": "A feature card is a Card holding a Row: a muted icon, a heading and a sentence in a Column of Text, and the one Button that starts the feature, at the end of the row.",
+          "file": "docs/examples/feature-cards/ImportPlans.tsx"
+        },
+        {
+          "name": "OneAction",
+          "title": "Do: One action, the one that starts the feature.",
+          "description": "",
+          "file": "docs/examples/feature-cards/OneAction.tsx"
+        },
+        {
+          "name": "SeveralActions",
+          "title": "Don't: Several actions: none of them says what the card is for.",
+          "description": "",
+          "file": "docs/examples/feature-cards/SeveralActions.tsx"
+        },
+        {
+          "name": "FeatureCardAnatomy",
+          "title": "Feature cards anatomy",
+          "description": "",
+          "file": "docs/examples/feature-cards/FeatureCardAnatomy.tsx"
+        },
+        {
+          "name": "InviteFeature",
+          "title": "Invite feature",
+          "description": "",
+          "file": "docs/examples/feature-cards/InviteFeature.tsx"
+        }
+      ]
+    },
+    {
       "name": "filtering",
       "title": "Filtering and search",
       "group": "Patterns",
@@ -17480,7 +17535,7 @@
     "Card": {
       "kind": "component",
       "import": "@envsemble/envui",
-      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, a feature card with an icon and an action, or one link or button.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, or one link or button.",
       "props": [
         {
           "name": "background",
@@ -17519,14 +17574,14 @@
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The card's title at the top: an `h3` in the title type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "3, or 2 in the feature layout",
-          "description": "The title's heading level, for the page's outline; the type stays as the layout sets it."
+          "default": "3",
+          "description": "The title's heading level, for the page's outline; the type stays the title type."
         },
         {
           "name": "meta",
@@ -17541,23 +17596,10 @@
           "description": "A sentence under the title, in muted text."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from assistive technology."
-        },
-        {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature layout at its end, moving below the text and filling the card's width in a card narrower than 38 rem."
-        },
-        {
-          "name": "layout",
-          "type": "'stack' | 'feature'",
-          "required": false,
-          "default": "'stack'",
-          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the title and description, and the actions at the end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
         },
         {
           "name": "render",

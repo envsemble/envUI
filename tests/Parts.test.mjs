@@ -22,7 +22,8 @@ test('a component lists its root, its part classes and the states it is styled b
   assert.equal(card.parts[0].class, 'env-card', 'the root comes first');
   assert.ok(card.parts.some((part) => part.class === 'env-card-header' && part.description));
   // Values come from the attribute's type, and "" is an attribute set without a value.
-  assert.deepEqual(state(card, 'data-layout').values, ['feature', 'stack']);
+  assert.equal(state(card, 'data-layout'), undefined, 'the feature layout is a pattern');
+  assert.deepEqual(state(component('Badge'), 'data-variant').values, ['outline', 'soft', 'solid']);
   assert.deepEqual(state(card, 'data-actions').values, ['']);
   // A class built from a value is expanded over the value's type.
   assert.ok(component('Avatar').parts.some((part) => part.class === 'env-avatar-fallback-person'));

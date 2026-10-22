@@ -1,6 +1,6 @@
 ---
 title: Card
-summary: A rounded surface that groups content about one subject, as a content card with a title and actions, a feature card, or one link or button.
+summary: A rounded surface that groups content about one subject, as a content card with a title and actions, or one link or button.
 status: stable
 since: 0.1.0
 category: Layout & surfaces
@@ -12,16 +12,12 @@ aliases:
   - link card
   - button card
   - action card
-  - feature card
-  - promo card
   - ClickableCard
   - ActionCard
-  - FeatureCard
 useWhen:
   - Content about one subject stands apart from the page, such as a project's summary.
   - A summary needs its own actions along the bottom, such as Share and Open (`actions`).
   - The whole surface leads to one destination or starts one action, such as a project in a grid (`href`, `onClick`).
-  - A feature is introduced with an icon, a sentence and one action (`layout="feature"`).
 avoidWhen:
   - text: A fill, padding and corners without card semantics or spacing, such as a toolbar's background.
     use: Surface
@@ -33,6 +29,8 @@ avoidWhen:
     use: Alert
   - text: A region with no content yet.
     see: empty-states
+  - text: A feature introduced with an icon, a sentence and the one action that starts it.
+    see: feature-cards
 related:
   - surface
   - column
@@ -68,14 +66,6 @@ A card groups content about one subject on a rounded surface.
 The default: `title`, `meta`, `description`, and `actions` in a strip along the bottom.
 
 ```tsx example=ActionStrip
-
-```
-
-### Feature card
-
-`layout="feature"`: an icon, a title and a sentence, and one action.
-
-```tsx example=FeatureCards
 
 ```
 
@@ -144,15 +134,9 @@ With `onClick`, the whole card is one button. It holds only phrasing content, su
 6. **Content** (`env-card-body > env-text:last-child`, `children`)
 7. **Actions** (`env-card-footer`, `actions`)
 
-The feature layout adds `env-card-layout` and its icon, `env-card-icon`.
-
 ## Adapting to width
 
-A card fills its container. Narrower than 38 rem, a feature card moves its action below the text.
-
-```tsx example=InviteFeature widths="24 40"
-
-```
+A card fills its container.
 
 ## Accessibility
 
@@ -167,7 +151,7 @@ A card fills its container. Narrower than 38 rem, a feature card moves its actio
 ### envUI provides
 
 - Native `<a>` and `<button>` for link and button cards, named by their text.
-- The title as an `h3`, or `h2` in the feature layout.
+- The title as an `h3`, or the level of `headingLevel`.
 - A focus outline, and `aria-disabled` on a disabled link card.
 
 ### You provide
@@ -179,7 +163,7 @@ A card fills its container. Narrower than 38 rem, a feature card moves its actio
 
 ## Changelog
 
-- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and `layout="feature"` the feature card. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, as on EmptyState, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
+- **1.0.0**: ClickableCard, ActionCard and FeatureCard are Card: `onClick` makes a button card, `render` the element of a content card, and the feature card is the [feature cards](../patterns/feature-cards.md) pattern, built from a Card with a Row of Text and a Button, in place of `layout` and `icon`, with `env-card-layout` and `env-card-icon`. `tone` is `background`, `heading` is `title`, which takes `headingLevel`, and Card takes `description`; the native `title` attribute is not a prop of a card. The page is `card`, after the component.
 - **0.5.0**: `meta` sits at the end of the heading row, also in right-to-left text.
 - **0.2.0**: Link cards render through the application's router link, from `LinkProvider`.
 - **0.1.0**: Card for plain, interactive and action-strip cards, with ClickableCard and ActionCard as wrappers; FeatureCard.

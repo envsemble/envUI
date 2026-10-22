@@ -133,6 +133,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [Account menu](patterns/account-menu.md)
 - [Organization switcher](patterns/organization-switcher.md)
 - [Window frame](patterns/window-frame.md)
+- [Feature cards](patterns/feature-cards.md)
 - [Filtering and search](patterns/filtering.md)
 - [Data tables](patterns/data-tables.md)
 - [Progressive disclosure](patterns/progressive-disclosure.md)

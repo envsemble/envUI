@@ -19,10 +19,10 @@
         }
       },
       "layout": {
-        "current": ["stack", "feature"],
-        "report": "Card's layout is stack or feature in 1.0: actions alone give a card its action strip, so content and action go.",
+        "report": "Card's layout is gone in 1.0: actions alone give a card its action strip, and the feature layout is the feature cards pattern in 1.0: a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature; rebuild it by hand.",
         "values": {
           "content": {},
+          "stack": {},
           "action": {
             "report": "layout=\"action\" gave a card the action strip, which actions alone give in 1.0: this card has no actions, so it lays out as a stack. Pass the actions it should show.",
             "unless": ["actions"]
@@ -32,6 +32,9 @@
       "heading": {
         "to": "title",
         "report": "Card's heading is title in 1.0, as on Dialog; headingLevel still sets its level."
+      },
+      "icon": {
+        "report": "Card's icon went with the feature layout in 1.0: the feature layout is the feature cards pattern in 1.0: a Card holding a Row with the icon in muted Text, a Column with a headline Text heading and a Text sentence, and the Button that starts the feature; rebuild it by hand."
       }
     }
   }

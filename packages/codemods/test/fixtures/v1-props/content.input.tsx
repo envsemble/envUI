@@ -23,6 +23,8 @@ export const Content = ({ size }: { size: 'small' | 'large' }) => (
     </Card>
     <Card tone="row">Plain</Card>
     <Card layout="action">No actions yet</Card>
+    <Card layout="stack" title="Stacked" />
+    <Card layout="feature" icon={<span />} title="Invite your team" />
     <SegmentedControl aria-label="Views" options={views} value="open" onValueChange={() => {}} />
     <Avatar name="Jordan Ellis" size={size} />
   </>

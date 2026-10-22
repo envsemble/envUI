@@ -44,9 +44,9 @@ test('public composition owns spacing and content-fit sizing without documentati
       const rail = (await actionCard.locator('.env-card-footer').boundingBox())!;
       expect(Math.abs(rail.y - body.y - body.height)).toBeLessThan(1);
       const extra = scope.getByTestId('feature-extra');
-      // The feature layout's content follows its heading and description 1 rem apart.
+      // A card's content follows its heading and description 1 rem apart.
       const description = (await extra.locator('.env-card-description').boundingBox())!;
-      const extraContent = (await extra.locator('.env-card-body > :nth-child(2)').boundingBox())!;
+      const extraContent = (await extra.locator('.env-card-body > :nth-child(3)').boundingBox())!;
       expect(extraContent.y - description.y - description.height).toBeGreaterThanOrEqual(15);
       for (const [selector, step] of [
         ['.env-card-body', 1],

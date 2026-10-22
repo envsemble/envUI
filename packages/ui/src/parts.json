@@ -148,8 +148,6 @@
       "env-card-footer": "The strip of actions.",
       "env-card-header": "The row with the title and the meta.",
       "env-card-heading": "The title.",
-      "env-card-icon": "The icon of the feature layout.",
-      "env-card-layout": "The row of the feature layout: icon, text and actions.",
       "env-card-meta": "The short fact at the end of the title row."
     },
     "Checkbox": {

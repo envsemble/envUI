@@ -32,7 +32,10 @@ const reports = {
   ],
   'content.tsx': [
     `line 25: Card's layout: ${report('Card', 'layout', 'action')}`,
-    `line 27: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
+    // The feature layout is a pattern now: the prop and its icon stay, reported.
+    `line 27: Card's layout has a value the codemod can't move: ${report('Card', 'layout')}`,
+    `line 27: ${report('Card', 'icon')}`,
+    `line 29: Avatar's size has a value the codemod can't move: ${report('Avatar', 'size')}`,
   ],
   'form-vocabulary.tsx': [
     `line 19: TextField's variant has a value the codemod can't move: ${report('TextField', 'variant')}`,

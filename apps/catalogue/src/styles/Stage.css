@@ -39,7 +39,6 @@
    or holds one fills the stage, unless it sets its width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject)
   > :where(
-    .env-card[data-layout='feature'],
     .env-description-list[data-layout='auto'],
     .env-page,
     .env-page-header,
@@ -51,7 +50,6 @@
     [data-env-skeleton],
     [data-env-container],
     :has(
-      .env-card[data-layout='feature'],
       .env-description-list[data-layout='auto'],
       .env-page,
       .env-page-header,

@@ -31,7 +31,7 @@
   },
   "packages/ui/src/styles/Card.css": {
     "declaration-property-unit-disallowed-list": {
-      "count": 5
+      "count": 2
     }
   },
   "packages/ui/src/styles/Code.css": {

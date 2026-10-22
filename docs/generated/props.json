@@ -719,7 +719,7 @@
     "Card": {
       "kind": "component",
       "source": "packages/ui/src/content/Card.tsx",
-      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, a feature card with an icon and an action, or one link or button.",
+      "description": "A rounded surface that groups content about one subject: a content card with an optional title row and actions, or one link or button.",
       "props": [
         {
           "name": "background",
@@ -758,14 +758,14 @@
           "name": "title",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's title at the top: an `h3` in the title type, or in the feature layout an `h2` in the headline type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+          "description": "The card's title at the top: an `h3` in the title type. headingLevel sets another level. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
         },
         {
           "name": "headingLevel",
           "type": "1 | 2 | 3 | 4 | 5 | 6",
           "required": false,
-          "default": "3, or 2 in the feature layout",
-          "description": "The title's heading level, for the page's outline; the type stays as the layout sets it."
+          "default": "3",
+          "description": "The title's heading level, for the page's outline; the type stays the title type."
         },
         {
           "name": "meta",
@@ -780,23 +780,10 @@
           "description": "A sentence under the title, in muted text."
         },
         {
-          "name": "icon",
-          "type": "ReactNode",
-          "required": false,
-          "description": "A decorative icon at the start of the feature layout, 1.5 rem in the muted color; hidden from assistive technology."
-        },
-        {
           "name": "actions",
           "type": "ReactNode",
           "required": false,
-          "description": "The card's controls, such as Buttons: in a strip along the bottom of the card, or in the feature layout at its end, moving below the text and filling the card's width in a card narrower than 38 rem."
-        },
-        {
-          "name": "layout",
-          "type": "'stack' | 'feature'",
-          "required": false,
-          "default": "'stack'",
-          "description": "stack, content spaced 1 rem apart, with the actions in a strip along the bottom; or feature, an icon at the start, the title and description, and the actions at the end."
+          "description": "The card's controls, such as Buttons, in a strip along the bottom of the card."
         },
         {
           "name": "render",

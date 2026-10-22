@@ -10,6 +10,7 @@ const dialog = map.structure['@envsemble/envui'].Dialog;
 const card = map.structure['@envsemble/envui'].Card;
 const listDetail = map.structure['@envsemble/envui']['ListDetail.Root'];
 const actionCard = map.structure['@envsemble/envui'].ActionCard;
+const featureCard = map.structure['@envsemble/envui'].FeatureCard;
 const drawer = map.structure['@envsemble/envui'].Drawer;
 const loadingState = map.structure['@envsemble/envui'].LoadingState;
 const closeButton = map.structure['@envsemble/envui'].CloseButton;
@@ -42,8 +43,9 @@ const reports = {
     `line 7: ListDetail.Root: ${listDetail.cases[0].report}`,
   ],
   'cards.tsx': [
-    `line 7: Card: ${card.report}`,
-    `line 8: Card: ${card.cases[0].report}`,
+    `line 7: FeatureCard: ${featureCard.report}`,
+    `line 13: Card: ${card.report}`,
+    `line 14: Card: ${card.cases[0].report}`,
     `line 24: ActionCard: ${actionCard.cases[0].report}`,
   ],
   'action-group.tsx': [
@@ -73,6 +75,7 @@ for (const fixture of fixtures('v1-structure')) {
           report.endsWith(actionGroup.report) ||
           report.endsWith(button.report) ||
           report.endsWith(counterBadge.report) ||
+          report.endsWith(featureCard.report) ||
           report.endsWith(listRoot.report) ||
           report.endsWith(dialog.report) ||
           report.endsWith(card.report) ||

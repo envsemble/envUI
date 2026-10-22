@@ -89,13 +89,6 @@ test('a card heading takes its level, the element comes from render and a link c
   await expect(page.getByTestId('card-h4').getByRole('heading', { level: 4 })).toHaveText(
     'Fourth level',
   );
-  // The feature layout's heading is an h2 unless headingLevel says otherwise.
-  await expect(
-    page.getByTestId('standalone-feature-icon').getByRole('heading', { level: 2 }),
-  ).toHaveText('Connected workspace');
-  await expect(page.getByTestId('feature-h3').getByRole('heading', { level: 3 })).toHaveText(
-    'Feature heading',
-  );
   const article = page.getByTestId('article-card');
   await expect(article).toHaveJSProperty('tagName', 'ARTICLE');
   await expect(article).toHaveAttribute('data-actions', '');
@@ -104,41 +97,4 @@ test('a card heading takes its level, the element comes from render and a link c
   await expect(link).not.toHaveAttribute('aria-label');
   await expect(link).not.toHaveAttribute('aria-labelledby');
   await expect(link).toHaveAccessibleName('Northwind launch 12 open tasks');
-});
-
-test('a feature card responds to its own width without consumer containment CSS', async ({
-  page,
-}) => {
-  await page.goto(`${fixtureUrl}/?fixture=cards`);
-  for (const name of ['icon', 'plain']) {
-    const card = page.getByTestId(`standalone-feature-${name}`);
-    await expect(card).toHaveAttribute('data-layout', 'feature');
-    const copy = card.locator('.env-card-body');
-    const action = card.locator('.env-card-footer');
-    const button = action.getByRole('button');
-    await expect
-      .poll(() => card.evaluate((element) => getComputedStyle(element).containerType))
-      .toBe('inline-size');
-    for (const [width, stacked] of [
-      ['24rem', true],
-      ['60rem', false],
-    ] as const) {
-      await card.evaluate((element, value) => {
-        (element as HTMLElement).style.width = value;
-      }, width);
-      const copyRect = (await copy.boundingBox())!;
-      const actionRect = (await action.boundingBox())!;
-      const buttonRect = (await button.boundingBox())!;
-      if (stacked) {
-        expect(actionRect.y).toBeGreaterThanOrEqual(copyRect.y + copyRect.height);
-        const layoutRect = (await card.locator('.env-card-layout').boundingBox())!;
-        expect(Math.abs(buttonRect.width - layoutRect.width)).toBeLessThan(1);
-      } else {
-        expect(actionRect.x).toBeGreaterThanOrEqual(copyRect.x + copyRect.width);
-        expect(
-          Math.abs(actionRect.y + actionRect.height / 2 - copyRect.y - copyRect.height / 2),
-        ).toBeLessThan(1);
-      }
-    }
-  }
 });

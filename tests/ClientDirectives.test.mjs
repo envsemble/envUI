@@ -191,7 +191,7 @@ test('a server component imports envUI and renders it on the server', () => {
       'href="/destination" disabled',
     ],
     Link: ['(defaults)', 'href="/destination"', 'href="/destination" disabled'],
-    Card: ['layout="feature"', 'href="/destination"'],
+    Card: ['href="/destination"'],
     Badge: ['tone="danger"', 'variant="solid"'],
     Alert: ['tone="danger"', 'announce'],
     Text: ['variant="headline"', 'emphasis="muted"'],
