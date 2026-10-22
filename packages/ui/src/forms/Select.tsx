@@ -185,7 +185,11 @@ export function Select({
     >
       <FieldFrame
         id={id}
-        label={label != null ? <BaseSelect.Label>{label}</BaseSelect.Label> : null}
+        label={
+          label != null ? (
+            <BaseSelect.Label className="env-select-label">{label}</BaseSelect.Label>
+          ) : null
+        }
         description={description}
         error={error}
         className="env-select"

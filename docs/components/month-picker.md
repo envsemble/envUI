@@ -108,13 +108,22 @@ Months outside `min` and `max` are unavailable, and the year buttons stop at the
 
 1. **Field** (`env-month-picker`)
 2. **Control** (`env-date-picker-control`)
-3. **Label** (`env-date-picker-control > label`, `label`)
+3. **Label** (`env-date-picker-label`, `label`)
 4. **Value** (`env-date-picker-value`)
 5. **Clear** (`env-date-picker-clear`, `clearable`)
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-Not shown: the popup, `env-month-picker-popup`, with the year's grid of months, `env-month-picker-grid`, between the previous and next year buttons.
+```tsx anatomy=MonthPickerPopupAnatomy open stage=raised
+
+```
+
+1. **Popup** (`env-month-picker-popup`)
+2. **Previous year** (`env-month-picker-previous`)
+3. **Year** (`env-month-picker-heading`)
+4. **Next year** (`env-month-picker-next`)
+5. **Month** (`env-month-picker-month`)
+6. **Actions** (`env-date-picker-actions`)
 
 ## Accessibility
 

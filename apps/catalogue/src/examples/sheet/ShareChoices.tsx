@@ -6,7 +6,8 @@ const choices = ['Copy link', 'Email', 'Download PDF'];
 
 export default function ShareChoices() {
   const [chosen, setChosen] = useState('');
-  const [open, setOpen] = useState(false);
+  // Shown open in the docs; start closed, useState(false), to open it from its trigger.
+  const [open, setOpen] = useState(true);
   return (
     <Column gap={3} align="start">
       <Sheet

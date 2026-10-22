@@ -21,6 +21,9 @@
   overflow: hidden;
   border-radius: var(--env-radius-full);
   background: var(--env-color-bg-neutral-muted);
+  /* The translucent fill is too faint to show the track's extent, so a ring draws it at 3:1, as on a
+     switch that is off; the indicator covers it where it fills. */
+  box-shadow: inset 0 0 0 1px var(--env-color-border-default);
 }
 .env-meter-indicator,
 .env-progress-indicator {
@@ -58,20 +61,24 @@
   display: flex;
   gap: var(--env-space-1);
   background: none;
+  box-shadow: none;
 }
+/* Each segment is a track of its own, with its ring; its fill grows from the start of the line,
+   over the ring. */
 .env-progress-segment {
   flex: 1 1 0;
+  overflow: hidden;
   border-radius: var(--env-radius-full);
-  background:
-    linear-gradient(
-      to var(--env-progress-segment-edge, right),
-      var(--env-color-bg-brand-emphasis) calc(var(--env-progress-segment-fill, 0) * 100%),
-      transparent 0
-    ),
-    var(--env-color-bg-neutral-muted);
+  background: var(--env-color-bg-neutral-muted);
+  box-shadow: inset 0 0 0 1px var(--env-color-border-default);
 }
-.env-progress-segment:dir(rtl) {
-  --env-progress-segment-edge: left;
+.env-progress-segment::before {
+  content: '';
+  display: block;
+  inline-size: calc(var(--env-progress-segment-fill, 0) * 100%);
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--env-color-bg-brand-emphasis);
 }
 @media (prefers-reduced-motion: reduce) {
   .env-meter-indicator,
@@ -98,21 +105,21 @@
   }
   .env-progress-segment {
     forced-color-adjust: none;
-    background:
-      linear-gradient(
-        to var(--env-progress-segment-edge, right),
-        Highlight calc(var(--env-progress-segment-fill, 0) * 100%),
-        transparent 0
-      ),
-      Canvas;
+    background: Canvas;
+    box-shadow: none;
+  }
+  .env-progress-segment::before {
+    background: Highlight;
   }
 }
 
 /* In a skeleton, a meter's or a progress bar's track is a bar of the skeleton's color, with no
    value in it. */
-[data-env-skeleton] :is(.env-meter-track, .env-progress-track) {
+[data-env-skeleton] :is(.env-meter-track, .env-progress-track, .env-progress-segment) {
   background: var(--env-skeleton-color);
+  box-shadow: none;
 }
-[data-env-skeleton] :is(.env-meter-indicator, .env-progress-indicator) {
+[data-env-skeleton] :is(.env-meter-indicator, .env-progress-indicator),
+[data-env-skeleton] .env-progress-segment::before {
   visibility: hidden;
 }

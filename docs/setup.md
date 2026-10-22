@@ -347,7 +347,27 @@ What a server component passes to a client component must be serializable: strin
 - `@envsemble/envui/dev` for [dev mode](dev-mode.md), in development only: load it with a dynamic `import()` behind a development check, so production builds contain none of it.
 - `@envsemble/envui/assets/*` for raw assets, such as the Inter font file.
 
-The content, rich-text and diff entries depend on Shiki, with its code themes, react-markdown, remark-gfm, marked, Tiptap and Diffs. They are optional peer dependencies: applications using only the main entry do not install them. An application importing `@envsemble/envui/content`, `@envsemble/envui/rich-text` or `@envsemble/envui/diff` installs the packages listed under `peerDependencies` in the package manifest, for example `npm install shiki @shikijs/langs react-markdown remark-gfm`, and `@pierre/diffs` for the diff entry.
+The content, rich-text and diff entries use Shiki, react-markdown, remark-gfm, marked, Tiptap and Diffs, which envUI doesn't list as dependencies, so an application using only the main entry never installs them. An application importing one of these entries installs that entry's libraries itself, in the versions below or later ones within the same major version. Rich text highlights its code blocks with Shiki, and diffs take their code colors from it, so those entries need Shiki too:
+
+- `@envsemble/envui/content`:
+
+  ```sh
+  npm install shiki@^4.5.0 @shikijs/langs@^4.5.0 react-markdown@^10.1.0 remark-gfm@^4.0.1
+  ```
+
+- `@envsemble/envui/rich-text`:
+
+  ```sh
+  npm install @tiptap/core@^3.31.4 @tiptap/extension-image@^3.31.4 @tiptap/extension-list@^3.31.4 @tiptap/extension-mention@^3.31.4 @tiptap/extension-placeholder@^3.31.4 @tiptap/extension-table@^3.31.4 @tiptap/markdown@^3.31.4 @tiptap/pm@^3.31.4 @tiptap/react@^3.31.4 @tiptap/starter-kit@^3.31.4 @tiptap/static-renderer@^3.31.4 @tiptap/suggestion@^3.31.4 marked@^17.0.6 shiki@^4.5.0 @shikijs/langs@^4.5.0
+  ```
+
+- `@envsemble/envui/diff`:
+
+  ```sh
+  npm install @pierre/diffs@^1.5.2 shiki@^4.5.0
+  ```
+
+They aren't peer dependencies because GitHub Packages drops `peerDependenciesMeta`, the field that marks a peer optional, and npm installs every peer that isn't marked optional. A missing library fails the application's build where the entry imports it.
 
 Keep optional content/editor imports with their features. Import icons by subpath, one module each, such as `import { Add } from '@envsemble/envui/icons/Add'`, rather than from the `@envsemble/envui/icons` barrel: the barrel re-exports every symbol, so a bundler reads the whole catalogue for one icon, and Vite without `@vitejs/plugin-react` prints a warning about the `'use client'` directive of each of its thousands of modules (2,734 for one icon). See [icons](foundations/icons.md) when adding icons.
 

@@ -38,6 +38,8 @@ export default function FilterPanel() {
   return (
     <Column gap={4} align="start">
       <Sheet
+        // Shown open in the docs; without defaultOpen, it opens from its trigger.
+        defaultOpen
         trigger={
           <Button variant="secondary" startIcon={<FilterList />}>
             Filters

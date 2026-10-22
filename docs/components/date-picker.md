@@ -149,13 +149,24 @@ Days outside `min` and `max` are unavailable, and the month buttons stop at them
 
 1. **Field** (`env-date-picker`)
 2. **Control** (`env-date-picker-control`)
-3. **Label** (`env-date-picker-control > label`, `label`)
+3. **Label** (`env-date-picker-label`, `label`)
 4. **Value** (`env-date-picker-value`)
 5. **Clear** (`env-date-picker-clear`, `clearable`)
 6. **Calendar icon** (`env-date-picker-icon`)
 7. **Description** (`env-field-description`, `description`)
 
-Not shown: the popup, `env-date-picker-popup`, with the calendar, and the times, `env-date-picker-time`, beside it.
+```tsx anatomy=DatePickerPopupAnatomy open stage=raised
+
+```
+
+1. **Popup** (`env-date-picker-popup`)
+2. **Previous month** (`env-calendar-previous`)
+3. **Month** (`env-calendar-heading`)
+4. **Next month** (`env-calendar-next`)
+5. **Day** (`env-calendar-day`)
+6. **Actions** (`env-date-picker-actions`)
+
+Not shown: the times, `env-date-picker-time`, beside the calendar with `granularity="minute"`.
 
 ## Accessibility
 

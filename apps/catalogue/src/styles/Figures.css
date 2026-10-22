@@ -362,3 +362,11 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* The dev mode page's picture of the 3D view: a capture, not a live example, so no stage. */
+.docs-dev-mode-picture {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--env-radius-surface);
+}

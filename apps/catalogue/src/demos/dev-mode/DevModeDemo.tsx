@@ -16,6 +16,10 @@ import type { DevModeHandle, LayoutApi, LayoutProblem } from '@envsemble/envui/d
 import { keepLinksInPlace } from '../../template/LiveExample';
 import { DemoApp } from './DemoApp';
 import demoSource from './DemoApp.tsx?raw';
+// The 3D view of the application below, captured from the real dev mode by
+// scripts/CaptureDevModeImage.mjs (npm run docs:dev-mode-image).
+import viewLight from './dev-mode-3d-light.webp';
+import viewDark from './dev-mode-3d-dark.webp';
 // The parts' descriptions the inspector shows, fetched as dev mode opens.
 import partsUrl from '../../../../../docs/generated/parts.json?url';
 
@@ -66,13 +70,44 @@ const calls: Record<
   },
 };
 
+/** The captured images' size in CSS pixels; the files hold twice as many. */
+const viewSize = { width: 960, height: 600 };
+
 /**
- * Dev mode on a small application, for the dev mode page: the real `@envsemble/envui/dev`, loaded
- * with this module only and scoped to the application's root, so its 3D view, inspector and
- * readout describe the application rather than the page around it. It is uninstalled as the page
- * goes.
+ * The dev mode page's lead: a picture of dev mode's 3D view of the application, in the reader's
+ * theme, and a button that starts the live demo. Nothing of dev mode loads before it is pressed.
  */
 export function DevModeDemo() {
+  const { theme } = useTheme();
+  const [started, setStarted] = useState(false);
+  return (
+    <Column gap={7}>
+      <img
+        className="docs-dev-mode-picture"
+        src={theme === 'dark' ? viewDark : viewLight}
+        alt="Dev mode's 3D view of a small application: its layout boxes pulled apart into stacked, tilted layers, the scaffold at the bottom, then the top bar, the navigation and the page, and the cards, their headers and the list on top, each outlined in the color of its kind and labelled with its name."
+        width={viewSize.width}
+        height={viewSize.height}
+      />
+      {started ? (
+        <LiveDemo />
+      ) : (
+        <Row>
+          <Button variant="primary" startIcon={<ViewInAr />} onClick={() => setStarted(true)}>
+            Try dev mode
+          </Button>
+        </Row>
+      )}
+    </Column>
+  );
+}
+
+/**
+ * Dev mode on a small application, for the dev mode page: the real `@envsemble/envui/dev`, loaded
+ * as the demo starts and scoped to the application's root, so its 3D view, inspector and readout
+ * describe the application rather than the page around it. It is uninstalled as the page goes.
+ */
+function LiveDemo() {
   const theme = useTheme();
   const root = useRef<HTMLDivElement>(null);
   const [devMode, setDevMode] = useState<DevModeHandle | null>(null);
@@ -136,6 +171,8 @@ export function DevModeDemo() {
           role="group"
           aria-label="Example application"
           className="docs-live-example"
+          // The application's page has the page's color: a shade darker stage shows its edges.
+          data-stage="shaded"
           {...keepLinksInPlace}
         >
           <div ref={root} data-dev-mode-demo="">

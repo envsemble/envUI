@@ -52,7 +52,8 @@
     "plugin:generate": "node scripts/GeneratePlugin.mjs",
     "plugin:check": "node scripts/GeneratePlugin.mjs --check",
     "changeset": "changeset",
-    "changeset:version": "changeset version && node scripts/GeneratePlugin.mjs && npm install --package-lock-only --ignore-scripts"
+    "changeset:version": "changeset version && node scripts/GeneratePlugin.mjs && npm install --package-lock-only --ignore-scripts",
+    "docs:dev-mode-image": "node scripts/CaptureDevModeImage.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

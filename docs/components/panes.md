@@ -41,7 +41,7 @@ components:
 
 Panes is the invisible structure of two panes side by side, after Material's supporting pane and list-detail layouts. Its own width decides how they sit: side by side from `splitAt`, and in less room as `behavior` says.
 
-`behavior="supporting"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`.
+`behavior="supporting"`: a main pane and a supporting one, such as a document and its details. In less room the supporting pane is a modal sheet while `open`, which Panes.Trigger in the main pane opens; the trigger hides while the panes sit side by side.
 
 ```tsx example=SupportingPane
 
@@ -67,7 +67,7 @@ Each pane scrolls on its own when Panes has a height, as in a [Scaffold](scaffol
 
 Panes.Divider resizes the supporting pane or the list, by pointer and the arrow keys. It is the gap between the panes, with a small grip in it, never a line. Panes keeps the same gap without a divider, so give each pane a [Surface](surface.md) and they stand apart across it. `persist` keeps the width people choose in a cookie; read it on the server with `readPanesSize` and pass it as `persistedSize`, so nothing moves as the page hydrates.
 
-```tsx example=ResizableDetails
+```tsx example=ResizableDetails widths="44"
 
 ```
 
@@ -103,7 +103,7 @@ Panes.Divider resizes the supporting pane or the list, by pointer and the arrow 
 3. **Divider** (`env-panes-divider`)
 4. **Detail** (`env-panes-detail`)
 
-The supporting behavior has `env-panes-main` and `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet; the detail's back button is `env-panes-back`.
+The supporting behavior has `env-panes-main` and `env-panes-supporting`, with its close button, `env-panes-close`, and its scrim, `env-panes-scrim`, while it is a sheet, and the trigger that opens it, `env-panes-trigger`; the detail's back button is `env-panes-back`.
 
 ## Adapting to width
 
@@ -137,13 +137,14 @@ A list and its detail show one at a time in less room: choose a message, and Inb
 - The supporting sheet as a modal dialog: focus moves in and stays, the rest of the page is inert, and focus returns as it closes.
 - Focus on the back button as the detail opens alone, and on the list's current row as it closes.
 - The divider as a focusable `separator` with its value in rem.
+- Panes.Trigger, which opens the supporting sheet, says whether it is open with `aria-expanded`, and hides while the panes sit side by side.
 
 ### You provide
 
 - The `label`s and the `backLabel`, in the application's language.
 - `open`, and `aria-current` on the list's current row.
-- The button that opens the supporting pane in less room.
+- A Panes.Trigger, or a button of your own, that opens the supporting pane in less room.
 
 ## Changelog
 
-- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, and a divider in rem.
+- **1.0.0**: Panes, which replaces SplitPane and ListDetail: the supporting and list-detail behaviors, `splitAt` at a window class, a divider in rem, and Panes.Trigger, which opens the supporting sheet.

@@ -214,6 +214,7 @@
       "env-combobox-input": "The text input.",
       "env-combobox-item": "One option.",
       "env-combobox-item-indicator": "The check of a chosen option.",
+      "env-combobox-label": "The label.",
       "env-combobox-leading": "The leading icon of the well.",
       "env-combobox-list": "The list of options.",
       "env-combobox-popup": "The popup with the options.",
@@ -267,6 +268,7 @@
       "env-date-picker-control": "The field's well.",
       "env-date-picker-end": "The buttons at the end of the well.",
       "env-date-picker-icon": "The calendar icon.",
+      "env-date-picker-label": "The label.",
       "env-date-picker-native": "The native input that holds the value for forms.",
       "env-date-picker-panes": "The calendar and the times side by side.",
       "env-date-picker-placeholder": "The text shown without a date.",
@@ -522,7 +524,8 @@
       "env-panes-divider": "The gap between the panes, with its grip, that resizes them.",
       "env-panes-back": "The button back to the list, when one pane shows at a time.",
       "env-panes-close": "The supporting sheet's close button, which shows only while the pane is a sheet.",
-      "env-panes-scrim": "The scrim behind the supporting sheet."
+      "env-panes-scrim": "The scrim behind the supporting sheet.",
+      "env-panes-trigger": "The button in the main pane that opens the supporting sheet, which hides while the panes sit side by side."
     },
     "Popover": {
       "env-popover": "The popover.",
@@ -619,6 +622,7 @@
       "env-select-icon": "The chevron.",
       "env-select-item": "One option.",
       "env-select-item-indicator": "The check of the chosen option.",
+      "env-select-label": "The label.",
       "env-select-list": "The list of options.",
       "env-select-popup": "The popup with the options.",
       "env-select-trigger": "The button that shows the value and opens the list."
@@ -685,6 +689,7 @@
       "env-text-field-control": "The well around the input and its adornments.",
       "env-text-field-end": "The buttons at the end of the well.",
       "env-text-field-input": "The input.",
+      "env-text-field-label": "The label.",
       "env-text-field-prefix": "Fixed text before the input.",
       "env-text-field-start": "The icon at the start of the well.",
       "env-text-field-suffix": "Fixed text after the input."

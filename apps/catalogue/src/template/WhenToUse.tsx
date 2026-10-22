@@ -287,16 +287,17 @@ function Tiles({ alternatives, path }: { alternatives: Alternative[]; path: stri
     <ul ref={list} className="docs-when-tiles" data-count={alternatives.length}>
       {alternatives.map(({ key, name, href, preview, lines }) => (
         <li key={key} className="docs-when-tile">
-          {href ? (
-            // The picture leads to the page too, for a pointer; the name is the link to read.
-            <a href={href} className="docs-when-picture" tabIndex={-1} aria-hidden>
-              <TilePreview preview={preview} near={near} />
-            </a>
-          ) : (
-            <TilePreview preview={preview} near={near} />
-          )}
+          <TilePreview preview={preview} near={near} />
+          {/* The name is the link; it stretches over the picture, so a pointer can follow it from
+              there too without a link around the preview, whose example may hold links itself. */}
           <Text render={<span />} className="docs-when-name">
-            {href ? <Link href={href}>{name}</Link> : name}
+            {href ? (
+              <Link href={href} className="docs-when-link">
+                {name}
+              </Link>
+            ) : (
+              name
+            )}
           </Text>
           <div className="docs-when-line">
             <Documentation markdown={lines.join(' ')} path={path} />

@@ -139,6 +139,9 @@ function painted(element: Element) {
 }
 
 async function open(page: Page) {
+  // The fixture's calendar shows October 2026 with the 14th chosen and compares with the 20th, so
+  // today is a day of that month that is neither.
+  await page.clock.install({ time: new Date('2026-10-16T12:00:00') });
   await page.emulateMedia({ forcedColors: 'active' });
   await page.goto(`${fixtureUrl}/forced-colors.html`);
   await page.waitForSelector('body[data-styles-ready] .env-theme');
@@ -439,7 +442,10 @@ const popupSurfaces =
 test(
   'every popup keeps a visible edge under forced colors, where its fill is gone',
   { tag: '@engines' },
-  async ({ page }) => {
+  async ({ page, browserName }) => {
+    // It opens and closes all fifteen kinds of popup: about 7 s in Firefox alone, and past the
+    // default 30 s while the other engines' workers keep every core busy.
+    test.slow(browserName === 'firefox');
     await page.emulateMedia({ contrast: 'no-preference', forcedColors: 'active' });
     await page.goto(`${fixtureUrl}/?fixture=theme-contrast`);
     for (const kind of popupKinds) {

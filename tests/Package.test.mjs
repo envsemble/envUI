@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { compileDocumentation } from '../scripts/GenerateDocumentation.mjs';
 import { readMap } from '../packages/codemods/src/map.mjs';
+import { documentedLibraries } from '../scripts/EntryLibraries.mjs';
 
 const repository = fileURLToPath(new URL('../', import.meta.url));
 const cacheDirectory = join(repository, '.cache');
@@ -97,13 +98,13 @@ before(
     ]) {
       dependencies[name] = manifest.devDependencies[name];
     }
-    // This consumer uses the content and rich-text entries, so it installs their optional peers.
+    // This consumer uses the content, rich-text and diff entries, so it installs the libraries
+    // the setup guide names for them, at the versions envUI is tested with.
     const libraryManifest = JSON.parse(
       await readFile(join(repository, 'packages/ui/package.json'), 'utf8'),
     );
-    for (const name of Object.keys(libraryManifest.peerDependenciesMeta ?? {})) {
-      dependencies[name] = libraryManifest.devDependencies[name];
-    }
+    for (const libraries of Object.values(await documentedLibraries(repository)))
+      for (const { name } of libraries) dependencies[name] = libraryManifest.devDependencies[name];
     dependencies['@envsemble/envui'] = `file:../packed/${packed[0].filename}`;
     await writeFile(
       join(consumerDirectory, 'package.json'),
@@ -301,18 +302,10 @@ test('a packed consumer resolves compiled public exports and its own React insta
   assert.match(installedManifest.peerDependencies.react, /19/);
   // ColorPicker's area and hue are envUI's own, on Base UI's Slider.
   assert.equal(installedManifest.dependencies['react-colorful'], undefined);
-  // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add them.
-  for (const name of [
-    'shiki',
-    'react-markdown',
-    'remark-gfm',
-    'marked',
-    '@tiptap/react',
-    '@pierre/diffs',
-  ]) {
-    assert.equal(installedManifest.dependencies[name], undefined);
-    assert.equal(installedManifest.peerDependenciesMeta[name]?.optional, true);
-  }
+  // Basic UI installs without the content, rich-text and diff stacks; apps using those entries add
+  // them. They aren't peers either, as npm installs every peer the registry doesn't mark optional.
+  assert.deepEqual(Object.keys(installedManifest.dependencies), ['@base-ui/react']);
+  assert.deepEqual(Object.keys(installedManifest.peerDependencies).sort(), ['react', 'react-dom']);
   assert.match(
     JSON.parse(await readFile(consumerRequire.resolve('react/package.json'), 'utf8')).version,
     /^19\./,

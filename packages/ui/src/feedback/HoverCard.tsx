@@ -19,6 +19,29 @@ import { hoverDetailClass, isTextTrigger } from '../internal/hoverDetail.js';
 import { HoverCardTriggerContext, isTooltip, markTriggerOwner } from '../internal/triggerOwner.js';
 import type { PopoverOpenChangeDetails, PopoverOpenChangeReason } from './Popover.js';
 
+/** Says what a HoverCard can't do while developing, once per message. */
+function warn(message: string) {
+  let developing = false;
+  try {
+    // Written inline so bundlers replace process.env.NODE_ENV, as in Theme.
+    developing = process.env.NODE_ENV !== 'production';
+  } catch {
+    // No bundler defined process.env.NODE_ENV.
+  }
+  if (!developing || warned.has(message)) return;
+  warned.add(message);
+  // A development-only warning, as React warns of a prop it can't use.
+  // eslint-disable-next-line no-console
+  console.warn(`envUI: ${message}`);
+}
+const warned = new Set<string>();
+
+/** Whether keyboard focus reaches a text trigger: it has a tabIndex of 0 or more. */
+function takesFocus(trigger: ReactElement) {
+  const tabIndex = (trigger.props as { tabIndex?: number | string }).tabIndex;
+  return tabIndex !== undefined && Number(tabIndex) >= 0;
+}
+
 const parts = {
   Portal: BasePreviewCard.Portal,
   Positioner: BasePreviewCard.Positioner,
@@ -30,7 +53,8 @@ export interface HoverCardProps
     SkeletonProps {
   /**
    * The element that opens the card on hover and keyboard focus; it receives the ref. Text, such
-   * as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; a link or
+   * as a span or Text that holds text, takes a quiet dotted underline, env-hover-detail; give it
+   * tabIndex={0}, so keyboard focus reaches it, which envUI reports while developing. A link or
    * another control keeps its own look.
    */
   trigger: ReactElement;
@@ -112,6 +136,12 @@ export function HoverCard({
     ? (trigger.props as { children?: unknown }).children
     : trigger;
   const textTrigger = isValidElement(control) && isTextTrigger(control);
+  // Text takes no focus of its own: without a tabIndex, the card's details are out of the
+  // keyboard's reach.
+  if (textTrigger && !takesFocus(control))
+    warn(
+      'A HoverCard whose trigger is text needs tabIndex={0} on it, so keyboard focus opens the card too.',
+    );
   function setOpen(next: boolean, reason: PopoverOpenChangeReason) {
     if (next === openRef.current) return;
     openRef.current = next;

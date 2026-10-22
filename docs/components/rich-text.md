@@ -203,6 +203,7 @@ On Apple keyboards, <kbd>⌘</kbd> replaces <kbd>Ctrl</kbd> and <kbd>⌥</kbd> r
 ## Changelog
 
 - **1.0.0**: RichTextEditor takes the field vocabulary: `description` instead of `hint`, and the variants `outline`, `underline` and `ghost` instead of `outlined`, `plain` and `quiet`, which drew as outlined; the `v1-props` codemod writes them. The document sits in the field's box, with its border, its states and a disabled field whose label stays readable, and task items show envUI's checkboxes beside their text. The toolbar is the Toolbar MarkdownEditor shares, with tooltips, the link dialog is the shared one, and every word comes from EnvUIProvider's `messages`. Suggestions are rows of a listbox in the editor, above a Dialog it sits in, and close as focus leaves; a controlled editor raises no `flushSync` warning. The `./rich-text` entry is experimental.
+- **1.0.0**: Tiptap, marked, Shiki and the Pierre themes are no longer peer dependencies; applications that import the rich-text entry install them, as [Setup](../setup.md#public-entry-points) lists.
 - **0.5.0**: Text in the document takes the control font size, 1 rem on touch screens, so focusing it doesn't zoom the page.
 - **0.2.0**: Tiptap and marked are optional peer dependencies, installed by applications that import the rich-text entry.
 - **0.1.0**: RichTextEditor, RichText and `createRichTextExtensions` in `@envsemble/envui/rich-text`, built on Tiptap, with Markdown values, references and slash commands.

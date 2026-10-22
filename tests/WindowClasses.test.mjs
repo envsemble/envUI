@@ -65,8 +65,8 @@ test('windowClasses holds the widths of the window-class tokens, from compact up
 test('the outermost theme boundary is the env-window container, and takes its width', () => {
   assert.match(
     sheets['Theme.css'],
-    /:where\(\.env-theme\):not\(:where\(\.env-theme \.env-theme\)\) \{\s*container: env-window \/ inline-size;\s*inline-size: 100%;/,
-    'Theme.css makes the outermost .env-theme the env-window container, as wide as its context',
+    /:where\(\.env-theme\):not\(:where\(\.env-theme \.env-theme\)\) \{\s*container: env-window \/ inline-size;\s*display: block;\s*box-sizing: border-box;\s*inline-size: 100%;/,
+    'Theme.css makes the outermost .env-theme the env-window container, a block as wide as its context',
   );
   // An outermost popup boundary is a box out of flow, which a grid or flex body gives no cell; an
   // overlay's has no box, its positioner being the container, and a toast's is no container.

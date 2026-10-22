@@ -45,7 +45,7 @@ components:
 
 A popover is a floating panel beside its trigger, for details people ask for or a small form that changes something nearby. It takes focus as it opens and closes with <kbd>Esc</kbd>, a press outside or when focus leaves it; it isn't modal, so the page stays usable.
 
-```tsx example=DocumentDetails
+```tsx example=DocumentDetails open stage=raised
 
 ```
 
@@ -53,7 +53,7 @@ A popover is a floating panel beside its trigger, for details people ask for or 
 
 A function child receives `close`, to close the popover once its action is done.
 
-```tsx example=RenameInPlace
+```tsx example=RenameInPlace open stage=raised
 
 ```
 
@@ -74,7 +74,7 @@ A function child receives `close`, to close the popover once its action is done.
 
 A popover is as wide as its content up to its width. `side` places it below its trigger, above, beside it or at the inline start or end, and `align` lines it up; it flips where there is no room.
 
-```tsx example=FieldHelp caption="side right, beside a value it explains."
+```tsx example=FieldHelp open stage=raised caption="side right, beside a value it explains."
 
 ```
 

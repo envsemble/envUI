@@ -10,7 +10,7 @@ aliases:
 
 Dev mode describes and checks a page's layout while you develop it: as text for agents, and in 3D with an inspector for people. It reads the rendered page, changing nothing but the root's width while `at()` measures, and lives in its own entry point, `@envsemble/envui/dev`, so a production build contains none of it.
 
-This page runs the real dev mode, with `root` set to the application below. Its three fixed columns squeeze the cards at a narrow width; turn them off and the problems go.
+Below is dev mode's 3D view of a small application. Try dev mode runs the real dev mode on it, with `root` set to the application. Its three fixed columns squeeze the cards at a narrow width; turn them off and the problems go.
 
 <!-- demo: DevModeDemo -->
 

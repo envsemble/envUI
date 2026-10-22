@@ -106,7 +106,7 @@ The tree is as tall as its parent and renders only the rows in view, so give it 
 
 ## Anatomy
 
-```tsx anatomy=TreeAnatomy
+```tsx anatomy=TreeAnatomy enlarge
 
 ```
 

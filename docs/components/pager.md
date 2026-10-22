@@ -84,7 +84,7 @@ Pager.Previous and Pager.Next as children of Pager.Root make the same pair, and 
 
 ## Anatomy
 
-```tsx anatomy=PagerAnatomy
+```tsx anatomy=PagerAnatomy enlarge
 
 ```
 

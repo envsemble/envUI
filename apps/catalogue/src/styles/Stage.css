@@ -117,7 +117,9 @@
     .docs-width-box,
     .docs-when-canvas
   )
-  > .env-scaffold {
+  > .env-scaffold,
+/* The dev mode demo's application sits in the element dev mode measures. */
+.docs-live-example > [data-dev-mode-demo] > .env-scaffold {
   background-color: var(--env-color-bg-page);
 }
 

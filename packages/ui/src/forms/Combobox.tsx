@@ -463,7 +463,7 @@ export function Combobox<Item extends ComboboxItem = ComboboxItem>(props: Combob
           id={id}
           label={
             label != null ? (
-              <label htmlFor={id} id={labelId}>
+              <label htmlFor={id} id={labelId} className="env-combobox-label">
                 {label}
               </label>
             ) : null

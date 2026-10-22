@@ -186,7 +186,7 @@ Name the value in a short noun phrase, and keep lasting instructions in the desc
 
 1. **Field** (`env-text-field`)
 2. **Control** (`env-text-field-control`)
-3. **Label** (`env-text-field-control > label`, `label`)
+3. **Label** (`env-text-field-label`, `label`)
 4. **Start icon** (`env-text-field-start`, `startIcon`)
 5. **Prefix** (`env-text-field-prefix`, `prefix`)
 6. **Input** (`env-text-field-input`)

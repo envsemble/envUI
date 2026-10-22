@@ -105,7 +105,7 @@ test('public components hydrate server output without recoverable errors', async
   await expect(docked.getByRole('heading', { level: 3, name: 'Hydrated notes' })).toBeVisible();
   const chips = page.getByRole('list', { name: 'Hydrated chips' });
   await expect(
-    chips.getByRole('button', { name: 'Show Hydrated budget' }),
+    chips.getByRole('button', { name: 'Open Hydrated budget' }),
   ).toHaveAccessibleDescription('Hydrated changes');
   await expect(chips.getByRole('button', { name: 'Discard Hydrated budget' })).toBeVisible();
   const dockHandle = docked.getByRole('separator', { name: 'Height of Hydrated notes' });
@@ -113,7 +113,7 @@ test('public components hydrate server output without recoverable errors', async
   const dockDraft = docked.getByRole('textbox', { name: 'Hydrated notes draft' });
   await dockDraft.fill('Hydrated draft');
   await docked.getByRole('button', { name: 'Minimize' }).click();
-  await chips.getByRole('button', { name: 'Show Hydrated notes' }).click();
+  await chips.getByRole('button', { name: 'Open Hydrated notes' }).click();
   await expect(dockDraft).toHaveValue('Hydrated draft');
   const activity = page.getByRole('grid', { name: 'Hydrated activity' });
   await expect(activity.getByRole('gridcell')).toHaveCount(31);
