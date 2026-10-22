@@ -137,7 +137,7 @@
     "ToggleGroup": ["SegmentedControl", "ButtonGroup"],
     "ButtonGroup": ["ButtonGroup", "ActionGroup"],
     "ActionGroup": ["ActionGroup"],
-    "Accordion": ["Disclosure"],
+    "Accordion": ["Accordion", "Disclosure"],
     "Collapsible": ["Disclosure"],
     "Disclosure": ["Disclosure"],
     "Expander": ["Disclosure"],

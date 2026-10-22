@@ -98,6 +98,7 @@ Choose the pages needed for the current task. Each entry gives its purpose and p
 - [AnimatedNumber](components/animated-number.md)
 - [Rating](components/rating.md)
 - [RelativeTime](components/relative-time.md)
+- [Accordion](components/accordion.md)
 - [Disclosure](components/disclosure.md)
 - [Avatar](components/avatar.md)
 - [Message](components/message.md)

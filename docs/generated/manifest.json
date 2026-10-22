@@ -11099,6 +11099,185 @@
       }
     },
     {
+      "name": "Accordion",
+      "page": "accordion",
+      "doc": "docs/components/accordion.md",
+      "category": "Content & guidance",
+      "status": "beta",
+      "since": "1.0.0",
+      "summary": "A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel.",
+      "aliases": [
+        "accordion",
+        "collapsible sections",
+        "expandable list",
+        "frequently asked questions",
+        "FAQ",
+        "expansion panels"
+      ],
+      "useWhen": [
+        "A list of questions or topics that people open one or a few at a time, such as frequently asked questions.",
+        "Long reference or settings content split into sections that people scan by their headings."
+      ],
+      "avoidWhen": [
+        {
+          "text": "One optional detail next to other content.",
+          "use": "Disclosure"
+        },
+        {
+          "text": "Switching between views of the same content.",
+          "use": "Tabs"
+        },
+        {
+          "text": "A hierarchy people expand level by level, such as folders.",
+          "use": "Tree"
+        }
+      ],
+      "related": [
+        "disclosure",
+        "tabs",
+        "tree"
+      ],
+      "exports": [
+        "Accordion",
+        "Accordion.Root",
+        "Accordion.Item"
+      ],
+      "examples": [
+        {
+          "name": "FrequentQuestions",
+          "title": "Frequent questions",
+          "description": "An accordion is a list of sections, each a heading that shows and hides the panel below it. One section is open at a time.",
+          "file": "docs/examples/accordion/FrequentQuestions.tsx"
+        },
+        {
+          "name": "SeveralOpen",
+          "title": "Several open",
+          "description": "`multiple` lets people keep several sections open at once.",
+          "file": "docs/examples/accordion/SeveralOpen.tsx"
+        },
+        {
+          "name": "OpenFromOutside",
+          "title": "Open from outside",
+          "description": "`value` and `onValueChange` control which sections are open.",
+          "file": "docs/examples/accordion/OpenFromOutside.tsx"
+        },
+        {
+          "name": "SayWhatItHolds",
+          "title": "Do: Titles that say what each section holds, such as the question it answers.",
+          "description": "",
+          "file": "docs/examples/accordion/SayWhatItHolds.tsx"
+        },
+        {
+          "name": "VagueTitles",
+          "title": "Don't: More information or Details: people open each one to find out.",
+          "description": "",
+          "file": "docs/examples/accordion/VagueTitles.tsx"
+        },
+        {
+          "name": "AccordionAnatomy",
+          "title": "Accordion anatomy",
+          "description": "",
+          "file": "docs/examples/accordion/AccordionAnatomy.tsx"
+        }
+      ],
+      "parts": {
+        "Accordion": {
+          "root": "env-accordion",
+          "parts": [
+            {
+              "class": "env-accordion",
+              "description": "The accordion: sections separated by full-width hairlines."
+            },
+            {
+              "class": "env-accordion-content",
+              "description": "The panel's content, in muted text lined up with the title."
+            },
+            {
+              "class": "env-accordion-header",
+              "description": "An item's heading, which holds its button."
+            },
+            {
+              "class": "env-accordion-indicator",
+              "description": "The plus that becomes a minus while the item is open."
+            },
+            {
+              "class": "env-accordion-item",
+              "description": "One section, with the hairline under it."
+            },
+            {
+              "class": "env-accordion-label",
+              "description": "An item's title."
+            },
+            {
+              "class": "env-accordion-panel",
+              "description": "The panel that opens below the heading."
+            },
+            {
+              "class": "env-accordion-trigger",
+              "description": "The button that opens and closes the item."
+            }
+          ],
+          "states": [
+            {
+              "attribute": "data-disabled",
+              "values": [],
+              "parts": [
+                "env-accordion-trigger"
+              ]
+            },
+            {
+              "attribute": "data-ending-style",
+              "values": [],
+              "parts": [
+                "env-accordion-panel"
+              ]
+            },
+            {
+              "attribute": "data-interactive",
+              "values": [
+                ""
+              ],
+              "parts": [
+                "env-accordion-trigger"
+              ]
+            },
+            {
+              "attribute": "data-panel-open",
+              "values": [],
+              "parts": [
+                "env-accordion-trigger"
+              ]
+            },
+            {
+              "attribute": "data-starting-style",
+              "values": [],
+              "parts": [
+                "env-accordion-panel"
+              ]
+            }
+          ]
+        },
+        "Skeleton": {
+          "shared": true,
+          "root": null,
+          "parts": [
+            {
+              "class": "env-skeleton-content",
+              "description": "A skeleton's content: no box of its own, inert, inside the busy root."
+            },
+            {
+              "class": "env-skeleton-status",
+              "description": "The visually hidden status beside a skeleton list, which says what is loading."
+            }
+          ],
+          "states": []
+        }
+      },
+      "usedIn": {
+        "patterns": []
+      }
+    },
+    {
       "name": "Disclosure",
       "page": "disclosure",
       "doc": "docs/components/disclosure.md",
@@ -11114,16 +11293,18 @@
         "summary",
         "expander",
         "expandable section",
-        "accordion",
         "show more",
         "toggle details"
       ],
       "useWhen": [
         "Optional guidance or details that most people don't need, such as how a setting works.",
-        "Settings that most people leave alone, such as advanced options in a form.",
-        "A list of questions whose answers people open one at a time."
+        "Settings that most people leave alone, such as advanced options in a form."
       ],
       "avoidWhen": [
+        {
+          "text": "A list of questions or sections whose answers people open one at a time.",
+          "use": "Accordion"
+        },
         {
           "text": "Instructions or errors people need to complete a task, which must stay visible.",
           "use": "TextField"
@@ -11142,6 +11323,7 @@
         }
       ],
       "related": [
+        "accordion",
         "tree",
         "tabs",
         "popover",
@@ -17110,6 +17292,134 @@
     }
   ],
   "exports": {
+    "Accordion": {
+      "kind": "namespace",
+      "import": "@envsemble/envui",
+      "description": "",
+      "parts": [
+        "Accordion.Root",
+        "Accordion.Item"
+      ],
+      "status": "beta",
+      "page": "accordion",
+      "doc": "docs/components/accordion.md"
+    },
+    "Accordion.Item": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "One section of an accordion: its heading, a button with a plus or minus at its start, and the panel below it.",
+      "props": [
+        {
+          "name": "title",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The heading that opens and closes the section, in medium weight: say what the panel holds, such as a question it answers. Given as undefined, such as over a placeholder item, a skeleton shows a bar in its place."
+        },
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The panel, in muted text lined up with the title, shown while the item is open."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "required": false,
+          "description": "Names the item in the accordion's value, for an accordion that is controlled or opens items at first. Without it, the item takes a generated one."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "description": "The item ignores presses and can't be focused; it stays dimmed."
+        },
+        {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "description": "Receives whether this item is open, each time it opens or closes."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "accordion",
+      "doc": "docs/components/accordion.md"
+    },
+    "Accordion.Root": {
+      "kind": "component",
+      "import": "@envsemble/envui",
+      "description": "A list of sections, each a heading that shows and hides its panel, separated by full-width hairlines. A plus at the start of a heading becomes a minus while its section is open. One item is open at a time unless `multiple` is set. Built on Base UI's Accordion.",
+      "props": [
+        {
+          "name": "children",
+          "type": "ReactNode",
+          "required": false,
+          "description": "The items: Accordion.Item, one for each section."
+        },
+        {
+          "name": "value",
+          "type": "readonly string[]",
+          "required": false,
+          "description": "The values of the open items, for a controlled accordion: update it from onValueChange. Use defaultValue instead to leave it to the accordion."
+        },
+        {
+          "name": "defaultValue",
+          "type": "readonly string[]",
+          "required": false,
+          "default": "[]",
+          "description": "The values of the items open at first, for an accordion that keeps its own state."
+        },
+        {
+          "name": "onValueChange",
+          "type": "(value: string[]) => void",
+          "required": false,
+          "description": "Receives the values of the open items, each time an item opens or closes."
+        },
+        {
+          "name": "multiple",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Lets several items be open at once; otherwise opening one closes the one that was open."
+        },
+        {
+          "name": "headingLevel",
+          "type": "2 | 3 | 4 | 5 | 6",
+          "required": false,
+          "default": "3",
+          "description": "The level of each item's heading, for the page's outline; they look the same at every level."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Every item ignores presses and can't be focused."
+        },
+        {
+          "name": "hiddenUntilFound",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Keeps closed panels in the page, hidden until found, so the browser's find in page reaches their text and opens the item that holds it, where the browser supports it."
+        },
+        {
+          "name": "skeleton",
+          "type": "boolean",
+          "required": false,
+          "default": "false",
+          "description": "Shows the component, and everything inside it, as a skeleton while its content loads: text becomes bars, icons, avatars, media and controls filled shapes of their size, and borders and corners stay. It is a busy region, and its content can't be focused or read until it loads. Turning it on or off renders its content anew, so state inside it starts over."
+        }
+      ],
+      "native": [
+        "div"
+      ],
+      "status": "beta",
+      "page": "accordion",
+      "doc": "docs/components/accordion.md"
+    },
     "Alert": {
       "kind": "component",
       "import": "@envsemble/envui",
@@ -27165,7 +27475,7 @@
         "id": "color.border.muted",
         "cssVariable": "--env-color-border-muted",
         "type": "color",
-        "description": "Decorative lines and outlines that are not a control’s only boundary: table lines, quote bars, keyboard keys and color swatches. envUI draws no line that only divides: sections, list rows, title bars, menus and Markdown rules separate by space and background. A floating layer takes its own, clearer edge, elevation.{level}.border.",
+        "description": "The hairlines between the items of one list, across its full width: table rows, Markdown rules, menu separators and accordion items; and decorative edges that are not a control’s only boundary: quote bars, keyboard keys and color swatches. Regions separate by space and background instead. A floating layer takes its own, clearer edge, elevation.{level}.border.",
         "values": {
           "light": "#cfd1d5",
           "dark": "#5d6166",

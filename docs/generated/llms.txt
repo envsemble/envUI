@@ -91,6 +91,7 @@ Part classes (`.env-<component>-<part>`) and state attributes (`data-*`) are pub
 - [AnimatedNumber](docs/components/animated-number.md): A number in text that rolls to its new value when it changes, so a count updated elsewhere is noticed. Parts: `.env-animated-number`.
 - [Rating](docs/components/rating.md): A read-only rating as stars filled in half steps, named once for assistive technology. Parts: `.env-rating`.
 - [RelativeTime](docs/components/relative-time.md): A moment as text relative to now, such as 3 hours ago, kept current, with the date and time in a tooltip. Also: formatRelativeTime. Parts: `.env-relative-time`.
+- [Accordion](docs/components/accordion.md): A list of sections separated by full-width hairlines, each a heading with a plus or minus that shows and hides its panel. Parts: `.env-accordion`.
 - [Disclosure](docs/components/disclosure.md): A one-line summary that shows and hides optional details below it, on the native details element. Parts: `.env-disclosure`.
 - [Avatar](docs/components/avatar.md): A round picture of a person or organization, with the default person picture or initials as fallback, as a button, or overlapping in a group. Also: AvatarButton, AvatarGroup, avatarHue. Parts: `.env-avatar`, `.env-avatar-button`, `.env-avatar-group`.
 - [Message](docs/components/message.md): Conversation entries in a log: compact bubbles for your own messages, full-width content from others. Also: MessageList. Parts: `.env-message`, `.env-message-list`.
