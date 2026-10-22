@@ -1,7 +1,7 @@
 /* Menus are the desktop dropdown: a raised popup, a PopupSurface like Popover's and Select's, with
    small corners and concentric rows of the scale's row height that highlight on hover and keyboard
    focus, hairline separators, small muted group labels, and shortcuts as small muted keys at the
-   end. env-popup gives the popup its fill, edge, shadow and motion. */
+   end. env-popup gives the popup its fill, edge and motion. */
 .env-menu-positioner {
   z-index: var(--env-z-popover);
   outline: none;
@@ -15,7 +15,7 @@
   /* From 12 rem up to 22 rem, and never wider than the room the positioner finds in the window. */
   max-inline-size: min(22rem, var(--available-width, calc(100vw - 2rem)));
   /* Small corners, concentric with the rows inside. Menus float at elevation 2, PopupSurface's
-     default: a shadow and a hairline edge that forced colors keep once the shadow is gone. */
+     default: the popup fill and a hairline edge. */
   border-radius: calc(var(--env-radius-sm) + var(--env-space-1));
 }
 /* Labels line up across rows: once a row has a leading check mark or icon, the others keep its place. */

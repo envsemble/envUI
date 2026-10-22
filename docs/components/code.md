@@ -64,7 +64,7 @@ Code sits inside a sentence, for a command, a value or a file name.
 
 ### Highlighting
 
-envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the theme's own color for code in text, and blocks and diffs on a muted grey a step from the page. A block shows its plain source first and colors it once the highlighter loads.
+envUI picks the code theme from the app theme: Shiki's `github-light-default` in the light theme and `github-dark-dimmed`, a grey dark theme, in the dark one, and `github-light-high-contrast` and `github-dark-high-contrast` under high contrast, with every token at 4.5:1 contrast, or 7:1 under high contrast. Inline code sits on the neutral muted fill and blocks on a layer of the text color of their own, both translucent, so they stand a step apart from the page, a pane, a card, a muted fill or a popup alike; diffs sit on an opaque muted grey. A block shows its plain source first and colors it once the highlighter loads.
 
 ```tsx example=PlainOutput caption="Without a language, the source stays plain text."
 

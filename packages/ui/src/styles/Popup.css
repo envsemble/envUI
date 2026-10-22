@@ -1,7 +1,8 @@
 /* PopupSurface: the floating surfaces of popovers, menus, selects and tooltips share their portal
    theme, their positioner's layer and, through env-popup, the popup colors, edge, corners and
-   motion of an elevation. envUI draws no shadows: the fill and the edge set a popup apart. An owner's own class, such as env-popover, adds its layout and
-   the inline sizes of its data-width. */
+   motion of an elevation. envUI draws no shadows: the fill and the edge set a popup apart. An
+   owner's own class, such as env-popover, adds its layout and the inline sizes of its
+   data-width. */
 /* The theme boundary of a popup's portal. Under a themed document root it has no box: the popup
    measures the root, the window. Where it is the outermost boundary it is the env-window container
    (Theme.css): a box of no height at the start of the document, out of flow, so it takes no cell

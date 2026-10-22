@@ -47,10 +47,10 @@ export interface CodeDiffProps extends Omit<ComponentPropsWithRef<'div'>, 'child
 }
 
 /**
- * Diffs paints its own background from the theme's editor color; it takes the code blocks'
- * background instead, as the style sheet chooses it for the contrast, so diffs and snippets match.
+ * Diffs paints its own background from the theme's editor color; it takes the diff background
+ * instead, as the style sheet chooses it for the contrast.
  */
-const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: var(--env-code-background-now, var(--env-code-background)); --diffs-dark-bg: var(--env-code-background-now, var(--env-code-background)); }`;
+const DIFF_BACKGROUND_CSS = `:host { --diffs-light-bg: var(--env-code-background-now, var(--env-code-diff-background)); --diffs-dark-bg: var(--env-code-background-now, var(--env-code-diff-background)); }`;
 
 /** Side by side from this many rem of the diff's own width. */
 const SPLIT_FROM_REM = 56;

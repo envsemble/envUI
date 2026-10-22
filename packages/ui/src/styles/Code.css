@@ -26,12 +26,12 @@
   background: var(--env-code-background-now, var(--env-code-background));
   color: var(--env-code-foreground-now, var(--env-code-foreground));
 }
+/* Inline code: the neutral muted fill, a layer of the text color, so it stands apart from the
+   page, panes, cards, muted fills and popups alike, as code blocks do with a layer of their own. */
 .env-code {
-  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-inline-background-high);
-
   padding: 0.125em 0.375em;
   border-radius: var(--env-radius-sm);
-  background: var(--env-code-background-now, var(--env-code-inline-background));
+  background: var(--env-color-bg-neutral-muted);
   font: 0.9em/1.4 var(--env-code-font-family);
   /* A container where a column should keep room for its longest word, such as a table cell, sets
      --env-code-overflow-wrap to break-word. */
@@ -88,10 +88,13 @@
   white-space: nowrap;
 }
 
-/* A code diff: Diffs draws the code on a transparent background, so the boundary takes code's
-   background, as a code block does. */
+/* A code diff: Diffs draws the code on a transparent background, so the boundary takes the diff
+   background, which is opaque, since Diffs mixes its line tints from it. */
 .env-code-diff {
+  --env-code-background-now: var(--env-code-high-contrast) var(--env-code-diff-background-high);
+
   min-inline-size: 0;
+  background: var(--env-code-background-now, var(--env-code-diff-background));
   overflow: hidden;
   border-radius: var(--env-radius-sm);
 }

@@ -120,7 +120,7 @@ Each kind also takes the flag `open`, written alone, such as ` ```tsx do=OneMenu
 
 ### Stage fill
 
-`stage=raised` fills a figure's stage with the raised background instead of the page's; the dots and the frame stay. Use it only when the default doesn't show the subject clearly: when the subject has the page's color, such as an open menu or popover, white on white in the light theme. `stage=shaded` fills it a shade darker than both the page's and the navigation's backgrounds, in each theme, for a figure that shows both, such as a Scaffold with its navigation, top bar and body; a Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead. Check the figure in light and dark.
+`stage=raised` fills a figure's stage with the pane background (`--env-color-bg-default`) instead of the page's, in the light theme only, standard and high contrast; the dots and the frame stay. Use it only when the default doesn't show the subject clearly: when the subject has the page's color in the light theme, such as an open menu or popover, white on white. In the dark theme a popup is already a step lighter than the page, so the stage keeps the page's color there. `stage=shaded` fills it a shade darker than both the page's and the navigation's backgrounds, in each theme, for a figure that shows both, such as a Scaffold with its navigation, top bar and body; a Scaffold on the stage paints the page's background in its body. Don't draw a frame or an edge around the subject instead. Check the figure in light and dark.
 
 ### Open overlays
 

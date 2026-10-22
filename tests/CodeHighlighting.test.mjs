@@ -58,9 +58,10 @@ test('every highlighted token is readable on its code background, in code blocks
   const { codeTheme, diffTheme } = await import(
     '../packages/ui/dist/content/internal/CodeThemes.js'
   );
-  const { codeBackground, codeColors, codeContrastTargets } = await import(
+  const { codeBackgrounds, codeColors, codeContrastTargets, diffBackground } = await import(
     '../packages/ui/dist/content/internal/CodeColors.js'
   );
+  const { tokens } = await import('../packages/ui/src/generated/tokens.ts');
   const { over, readableReplacements } = await import(
     '../packages/ui/dist/content/internal/ReadableColors.js'
   );
@@ -104,11 +105,13 @@ test('every highlighted token is readable on its code background, in code blocks
         for (const [key, [scheme, contrast]] of Object.entries(variants)) {
           const color = token[key].color;
           if (!color || !token.content.trim()) continue;
-          const ratio = wcagContrast(color, codeBackground(scheme, contrast));
-          assert.ok(
-            ratio >= targets[contrast],
-            `${language} ${key} "${token.content}" ${color}: ${ratio}`,
-          );
+          for (const background of codeBackgrounds('block', scheme, contrast)) {
+            const ratio = wcagContrast(color, background);
+            assert.ok(
+              ratio >= targets[contrast],
+              `${language} ${key} "${token.content}" ${color} on ${background}: ${ratio}`,
+            );
+          }
         }
 
   /** The text colors of a theme, from its token rules and foreground. */
@@ -132,41 +135,72 @@ test('every highlighted token is readable on its code background, in code blocks
   };
   for (const scheme of ['light', 'dark'])
     for (const contrast of ['standard', 'high']) {
-      const background = codeBackground(scheme, contrast);
       const target = targets[contrast];
       const theme = await codeTheme(scheme, contrast);
-      for (const color of textColors(theme))
-        assert.ok(wcagContrast(color, background) >= target, `${scheme} ${contrast} ${color}`);
-      // The fixed colors around tokens are the installed theme's: inline code on its color for code
-      // in text over its editor, and its foreground, moved where it falls short on either background.
-      const original = github[scheme][contrast].colors;
-      const text = original['textCodeBlock.background'];
-      const inline = over(
-        text.slice(0, 7),
-        Number.parseInt(text.slice(7), 16) / 255,
-        original['editor.background'],
+      const colors = codeColors(scheme, contrast);
+      // Code sits on the page, a pane or card, a raised surface, a popup, a muted fill or a list
+      // item, as the tokens give them; inline code's layer is the neutral muted fill.
+      const tokenTheme = `${scheme}${contrast === 'high' ? '-high-contrast' : ''}`;
+      const value = (id) => tokens[id].values[tokenTheme];
+      assert.deepEqual(
+        [...colors.surfaces].sort(),
+        [
+          ...new Set(
+            [
+              ...['page', 'default', 'raised', 'popup', 'muted'].map((name) => `color.bg.${name}`),
+              'color.list-item.bg',
+            ].map(value),
+          ),
+        ].sort(),
+        `${scheme} ${contrast}: update the surfaces in CodeColors.ts to the color tokens`,
       );
+      const { color: layer, alpha } = colors.inline;
+      const [r, g, b] = [1, 3, 5].map((start) =>
+        Number.parseInt(layer.slice(start, start + 2), 16),
+      );
+      assert.equal(`rgb(${r} ${g} ${b} / ${alpha})`, value('color.bg.neutral.muted'));
+      // Blocks and inline code are a step from every surface they sit on, as a level of the
+      // background ladder is from the next.
+      const blocks = codeBackgrounds('block', scheme, contrast);
+      const inlines = codeBackgrounds('inline', scheme, contrast);
+      for (const kind of ['block', 'inline'])
+        for (const surface of colors.surfaces) {
+          const { color, alpha: opacity } = colors[kind];
+          const step = wcagContrast(over(color, opacity, surface), surface);
+          assert.ok(step >= 1.09, `${scheme} ${contrast} ${kind} on ${surface}: ${step}`);
+        }
+      for (const color of textColors(theme))
+        for (const background of blocks)
+          assert.ok(
+            wcagContrast(color, background) >= target,
+            `${scheme} ${contrast} ${color} on ${background}`,
+          );
+      // The foreground is the installed theme's, moved where it falls short on a block or inline
+      // code over any surface.
+      const original = github[scheme][contrast].colors;
       const fg = original['editor.foreground'];
       const readable =
         readableReplacements(
           [fg],
-          [background, inline],
+          [...blocks, ...inlines],
           codeContrastTargets[contrast],
           scheme === 'light' ? 'darker' : 'lighter',
         )[fg.toLowerCase()] ?? fg;
-      const { foreground } = codeColors(scheme, contrast);
-      assert.deepEqual(
-        [codeColors(scheme, contrast).inline, foreground],
-        [inline, readable],
+      const { foreground } = colors;
+      assert.equal(
+        foreground,
+        readable,
         `${scheme} ${contrast}: update CodeColors.ts to the installed themes`,
       );
       // Inline code and a block's plain text take the theme's foreground, on either background.
       assert.equal(theme.colors['editor.foreground'], foreground);
-      for (const surface of [background, inline])
+      for (const surface of [...blocks, ...inlines])
         assert.ok(
           wcagContrast(foreground, surface) >= target,
           `${scheme} ${contrast} foreground ${foreground} on ${surface}`,
         );
+      // Diffs sit on their own opaque background, from which Diffs mixes its line tints.
+      const background = diffBackground(scheme, contrast);
       // Tokens that were distinct stay apart: by 0.02 in OKLab, or as far as they were.
       const distance = differenceEuclidean('oklab');
       const mapped = [...pairs(github[scheme][contrast], theme)];

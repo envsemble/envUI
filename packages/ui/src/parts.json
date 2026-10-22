@@ -237,7 +237,7 @@
       "env-confirm-dialog-form": "The form that holds the dialog's fields and its confirming action."
     },
     "ConnectedRows": {
-      "env-connected-rows": "Rows joined into one block: lists and vertical radio groups.",
+      "env-connected-rows": "Rows joined into one block, a small gap apart, with large outer and small inner corners.",
       "env-connected-row": "One joined row."
     },
     "CopyButton": {

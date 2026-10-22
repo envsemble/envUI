@@ -1,6 +1,6 @@
 /* The dotted stage every figure sits on, live examples, do and don't figures, anatomy figures and,
-   on a page on the figure template, specimens alike, so a reader can tell an example from the page around
-   it. It takes the theme the reader has chosen and centres what it shows. A device of the
+   on a page on the figure template, specimens alike, so a reader can tell an example from the page
+   around it. It takes the theme the reader has chosen and centres what it shows. A device of the
    documentation, kept out of envUI. */
 .docs-live-example,
 .docs-verdict-stage,
@@ -31,17 +31,26 @@
   background-position: center;
 }
 
-/* A stage of another fill, where the page's own would hide the subject, such as an open popup of
-   the page's color in the light theme (`stage="raised"`), or a Scaffold's page and navigation
-   (`stage="shaded"`): a shade darker than both the page's background and the navigation's, in
-   each theme, so both stand apart from the stage. The dots and the frame stay. */
+/* A stage of another fill, where the page's own would hide the subject. `stage="raised"`: an open
+   popup is white in the light theme, the page's color, so there the stage takes the pane fill,
+   which stays a step from white under high contrast too, where the raised fill is white. In the
+   dark theme a popup is a step lighter than the page and shows on it, so the stage stays the
+   page's. `stage="shaded"`: a Scaffold's page and navigation, a shade darker than both the page's
+   background and the navigation's, in each theme, so both stand apart from the stage. The dots and
+   the frame stay. */
+.env-theme {
+  --docs-stage-raised: var(--env-color-bg-default);
+}
+.env-theme[data-env-theme='dark'] {
+  --docs-stage-raised: var(--env-color-bg-page);
+}
 :is(
   .docs-live-example,
   .docs-verdict-stage,
   .docs-anatomy-stage,
   .docs-when-stage
 )[data-stage='raised'] {
-  background-color: var(--env-color-bg-raised);
+  background-color: var(--docs-stage-raised);
 }
 
 /* A shade below the darker of the two: the navigation's in the light themes, the page's in the
@@ -69,8 +78,9 @@
 }
 
 /* A part that takes its width from its container, such as a size container (a primitive with
-   `container` too), a strip of tabs, a window or a skeleton, has none of its own and would collapse if centred: an example that is
-   or holds one fills the stage, unless it sets its width. */
+   `container` too), a strip of tabs, a window or a skeleton, has none of its own and would
+   collapse if centred: an example that is or holds one fills the stage, unless it sets its
+   width. */
 :is(.docs-live-example, .docs-verdict-stage, .docs-anatomy-subject, .docs-when-canvas)
   > :where(
     .env-description-list[data-layout='auto'],

@@ -55,9 +55,9 @@
   );
 }
 
-/* A panel is the raised dialog surface with a hairline border and a shadow, rounded at the top and
-   standing on the bottom edge. It shares the row with its preferred width and shrinks toward its
-   minimum width when the row runs out of room. */
+/* A panel is the raised dialog surface with a hairline edge, rounded at the top and standing on
+   the bottom edge. It shares the row with its preferred width and shrinks toward its minimum width
+   when the row runs out of room. */
 .env-panel-dock-panel {
   --env-panel-dock-panel-color: var(--env-color-bg-raised);
   position: relative;
@@ -77,9 +77,11 @@
   pointer-events: auto;
   outline: none;
 }
-/* The active panel is in front. */
+/* The active panel is in front, and its edge takes the accent, the one cue that tells it from the
+   panels beside it; under high contrast the others' edge is already the default border. */
 .env-panel-dock-panel[data-active] {
   z-index: calc(var(--env-z-raised) + 1);
+  border-color: var(--env-color-border-accent-emphasis);
 }
 .env-panel-dock-panel:focus-visible,
 .env-panel-dock-content:focus-visible {
