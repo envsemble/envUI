@@ -250,7 +250,7 @@ export function HydrationApp() {
             }
             onClose={(id) => setDockPanels((current) => current.filter((panel) => panel.id !== id))}
             minimizedLabel="Hydrated chips"
-            restoreLabel={(label) => `Show ${label}`}
+            openLabel={(label) => `Open ${label}`}
             closeLabel={(label) => `Discard ${label}`}
             resizeLabel={(title) => `Height of ${title}`}
           >
